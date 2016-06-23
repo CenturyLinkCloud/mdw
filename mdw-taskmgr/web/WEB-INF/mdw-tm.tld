@@ -1,0 +1,827 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TagLib definition file for MDW JSF components.
+  Note: This file exists solely to support context help and syntax
+  completion in Eclipse.  The MDW JSF components are intended for use
+  in facelets rather than JSPs, so Tag classes are not needed or
+  provided.
+-->
+
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+                        "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib>
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>MDW</short-name>
+  <uri>http://www.centurylink.com/mdw/jsf</uri>
+
+  <tag>
+    <name>filter</name>
+    <body-content>JSP</body-content>
+    <description>Renders a filter and its criteria fields for a SortableList.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>name</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Name to be used in the label of the filter.</description>
+    </attribute>
+    <attribute>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>DataModel containing the filter criteria list.</description>
+    </attribute>
+    <attribute>
+      <name>filterAction</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Action to be performed by the filter (eg: go_eventsChart).</description>
+    </attribute>
+    <attribute>
+      <name>width</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Width (incl. px or % designation).</description>
+    </attribute>
+    <attribute>
+      <name>showHeader</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Defaults to true.</description>
+    </attribute>    
+    <attribute>
+      <name>headerClass</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Style class to be used for the header.</description>
+    </attribute>
+    <attribute>
+      <name>footerClass</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Style class to be used for the footer.</description>
+    </attribute>
+    <attribute>
+      <name>labelRowClass</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Style class to be used for the label row.</description>
+    </attribute>
+    <attribute>
+      <name>inputRowClass</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Style class to be used for the input fields.</description>
+    </attribute>
+    <attribute>
+      <name>showCommandButtons</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Defaults to true.</description>
+    </attribute>    
+    <attribute>
+      <name>submitButtonLabel</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Label for the filter submit button.</description>
+    </attribute>
+    <attribute>
+      <name>resetButtonLabel</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>Label for the filter reset button.</description>
+    </attribute>
+    <attribute>
+      <name>swapButtonPosition</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Reset button will appear to left of Submit if true.</description>
+    </attribute>
+    <attribute>
+      <name>commandButtonClass</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Style class to be used for the command buttons.</description>
+    </attribute>
+    <attribute>
+      <name>inputTdHeight</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Height for the TD element rendered for criteria inputs.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>criteria</name>
+    <body-content>JSP</body-content>
+    <description>Individual criterion row for a SortableList filter.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>name</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Name of the criterion field.</description>
+    </attribute>
+    <attribute>
+      <name>label</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Label to be displayed with the criterion field.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>taskActionComp</name>
+    <body-content>JSP</body-content>
+    <description>Task Action base component.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>applyTo</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Designates the task(s) which the action is to take effect on.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>arrayData</name>
+    <body-content>JSP</body-content>
+    <description>
+      Renders an (optionally) editable collection of string data in a DataItem.
+    </description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Should be a String array.</description>
+    </attribute>
+    <attribute>
+      <name>dataItem</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>The DataItem implementor to which this array data applies.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>attachments</name>
+    <body-content>JSP</body-content>
+    <description>Component for uploading attachment files.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>attachmentsListEntity</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>SortableList containing the attachement ListItems.</description>
+    </attribute>
+    <attribute>
+      <name>attachmentsListLabel</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Label for the attachments list.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>attachmentAction</name>
+    <body-content>JSP</body-content>
+    <description>Action buttons for attachment item.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>actionController</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Should extend AttachmentsActionController.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>notes</name>
+    <body-content>JSP</body-content>
+    <description>Component for displaying instance notes.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>notesListEntity</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>SortableList containing the notes ListItems.</description>
+    </attribute>
+    <attribute>
+      <name>notesListLabel</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Label for the notes list.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>note</name>
+    <body-content>JSP</body-content>
+    <description>Component for editing a note.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>notesItem</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Extends com.centurylink.mdw.taskmgr.ui.notes.NotesItem.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>noteAction</name>
+    <body-content>JSP</body-content>
+    <description>Action buttons for note item.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>actionController</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Should extend NotesActionController.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>date</name>
+    <body-content>JSP</body-content>
+    <description>Renders a date input with a javascript calendar picker.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>dateId</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Component ID to be assigned to the date input text field.</description>
+    </attribute>
+    <attribute>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>A java.util.Date.</description>
+    </attribute>
+    <attribute>
+      <name>dateValidator</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>
+        Specifies an optional faces validator to be applied to the date value. Should implement
+        javax.faces.validator.Validator.
+      </description>
+    </attribute>
+    <attribute>
+      <name>inlineValidationMessage</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>
+        Boolean indicating whether the validation message should appear on the same line as the
+        input.
+      </description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>dateRange</name>
+    <body-content>JSP</body-content>
+    <description>
+      Displays a pair of dates for selecting a range (eg for use in filter criteria).
+    </description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>fromDateValue</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Starting date of the range. A java.util.Date.</description>
+    </attribute>
+    <attribute>
+      <name>toDateValue</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Ending date of the range. A java.util.Date.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>detailData</name>
+    <body-content>JSP</body-content>
+    <description>
+      Displays an (optionally) editable column of values. Input components depend on the data type
+      of the values. Fields to display are specified in TaskView.xml.
+    </description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>detailEntity</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>
+        An instance of com.centurylink.mdw.taskmgr.ui.detail.Detail. See JavaDocs.
+      </description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>instanceData</name>
+    <body-content>JSP</body-content>
+    <description>
+      Displays an (optionally) editable column of values. Input components depend on the data type
+      of the values. Fields to display are specified dynamically.
+    </description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>instanceDataTitle</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Title to be displayed for the instance data.</description>
+    </attribute>
+    <attribute>
+      <name>instanceDataEntity</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>
+        An instance of com.centurylink.mdw.taskmgr.ui.detail.InstanceData. See JavaDocs.
+      </description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>editableItem</name>
+    <body-content>JSP</body-content>
+    <description>
+      Convenience component for editing a name and comment associated with an item.
+    </description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>itemEntity</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>
+        Should implement com.centurylink.mdw.taskmgr.ui.EditableItem. See JavaDocs.
+      </description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>editableItemCommandButtons</name>
+    <body-content>JSP</body-content>
+    <description>Command buttons for saving changes to an editableItem.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>itemActionController</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>
+        Runtime instance of a controller to handle button events. Implements
+        com.centurylink.mdw.taskmgr.ui.EditableItemActionController.
+      </description>
+    </attribute>
+    <attribute>
+      <name>itemLabel</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Label to include in certain buttons.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>field</name>
+    <body-content>JSP</body-content>
+    <description>
+      A dynamic field component included in detailData and instanceData. Display characteristics
+      depend on data type.
+    </description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>dataItemRendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>dataItem</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>
+        Runtime instance of data item containing the value. Implements
+        com.centurylink.mdw.taskmgr.ui.detail.DataItem.
+      </description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>heading</name>
+    <body-content>JSP</body-content>
+    <description>Renders a pre-styled heading label.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>headingTitle</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Heading title to display.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>list</name>
+    <body-content>JSP</body-content>
+    <description>Renders a sortable list whose columns are specified in TaskView.xml.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>listId</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Component ID to be used for the dataTable.</description>
+    </attribute>
+    <attribute>
+      <name>listEntity</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>
+        Extends com.centurylink.mdw.taskmgr.ui.list.SortableList. Accessed via ListManager.
+      </description>
+    </attribute>
+    <attribute>
+      <name>label</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Label to be displayed for the list.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>listFilter</name>
+    <body-content>JSP</body-content>
+    <description>
+      Filter for entering criteria to restrict list contents. Criteria elements specified in
+      TaskView.xml.
+    </description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>filterEntity</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Instance of com.centurylink.mdw.taskmgr.ui.filter.Filter.</description>
+    </attribute>
+    <attribute>
+      <name>renderHeader</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Defaults to true.</description>
+    </attribute>    
+    <attribute>
+      <name>renderCommandButtons</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Defaults to true.</description>
+    </attribute>    
+    <attribute>
+      <name>submitButtonLabel</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Overrides default submit button label.</description>
+    </attribute>
+    <attribute>
+      <name>resetButtonLabel</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Overrides default reset button label.</description>
+    </attribute>
+    <attribute>
+      <name>swapButtonPosition</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If true the reset button will appear on the left.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>workflowImage</name>
+    <body-content>JSP</body-content>
+    <description>Displays a graphic image depicting a snapshot of the MDW workflow.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>workflowImageUrl</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>URL for displaying the workflow image.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>taskAction</name>
+    <body-content>JSP</body-content>
+    <description>Specialized component for performing actions on tasks.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>applyTo</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>
+        The task(s) to which the selected action is applied. Can be a TaskDetail or a List of
+        FullTaskInstances.
+      </description>
+    </attribute>
+    <attribute>
+      <name>allowableTaskActions</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>List of TaskActions which are to be allowed for this component.</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>chart</name>
+    <body-content>JSP</body-content>
+    <description>Represents data in a customizable chart.</description>
+    <attribute>
+      <name>chartId</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>datasource</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Should extend com.qwest.taskmgr.ui.chart.Chart.</description>
+    </attribute>
+    <attribute>
+      <name>is3d</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Makes the chart 3d</description>
+    </attribute>
+    <attribute>
+      <name>type</name>
+      <required>true</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>
+        Defines the type of the chart, possible values are;
+        pie|ring|timeseries|xyline|polar|scatter|xyarea|xysteparea|
+        xystep|bubble|candlestick|boxandwhisker|highlow|histogram|
+        wind|bar|stackedbar|line|area|stackedarea|gantt|waterfall
+      </description>
+    </attribute>
+    <attribute>
+      <name>xlabel</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Label for the x-axis</description>
+    </attribute>
+    <attribute>
+      <name>ylabel</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Label for the y-axis</description>
+    </attribute>
+    <attribute>
+      <name>orientation</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>vertical|horizontal , Defines the orientation</description>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>excelExport</name>
+    <body-content>JSP</body-content>
+    <description>Renders an icon to download a sortable list as an Excel spreadsheet.</description>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>Unique identifier of the component.</description>
+    </attribute>
+    <attribute>
+      <name>rendered</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <description>If false, will not be rendered.</description>
+    </attribute>
+    <attribute>
+      <name>list</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>ID of the SortableList to be exported.</description>
+    </attribute>
+  </tag>
+
+</taglib>
+

@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:dj="http://www.centurylink.com/mdw/jsf/dojo"
+  xmlns:mt="http://www.centurylink.com/mdw/jsf/mdwtools">
+
+  <ui:composition>
+  
+    <dj:layout
+      id="navPanelContentPane"
+      dojoType="dijit.layout.ContentPane"
+      layoutAlign="client"
+      style="white-space:nowrap" >
+      <mt:filepanelDir />
+      <ui:fragment rendered="#{propertyDirView.hasRootDirs}">
+        <mt:propertyDir />
+      </ui:fragment>
+      <ui:fragment rendered="#{webUtil.dbConfigEnabled &amp;&amp; !webUtil.standAloneMode}">
+        <mt:propertyGroups />
+      </ui:fragment>
+    </dj:layout>
+    
+    <dj:layout
+      id="dirViewGrepPane"
+      dojoType="dijit.layout.ContentPane"
+      layoutAlign="bottom">
+      <div
+        id="fileInfo"
+        class="info" />
+      <mt:fpGrep />
+    </dj:layout>
+    
+  </ui:composition>
+
+</html>

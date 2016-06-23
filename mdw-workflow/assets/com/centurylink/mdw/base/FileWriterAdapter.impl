@@ -1,0 +1,10 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.adapter.file.FileWriterAdapter" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="File Writer" IconFile="writer.jpg" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET>
+  <TEXT NAME='OutputFilepath' LABEL='File Path' />
+  <BOOLEAN NAME='AppendToFile' LABEL='Append' DEFAULT='true' />
+  <TEXT NAME='WriteString' LABEL='Content String' />
+  <HYPERLINK URL='/MDWWeb/doc/FileWriterActivity.html'>
+    File Writer Help
+  </HYPERLINK>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

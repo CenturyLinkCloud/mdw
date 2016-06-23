@@ -1,0 +1,40 @@
+<html>
+<head>
+<title>Custom Attributes</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Custom Attributes</h1>
+
+MDW 5 has the capability to associate custom attributes with specific types (or "languages") of <a href='workflowAssets.html'>Workflow Assets</a>.
+Workflow assets are MDW design artifacts such as Scripts, Templates, Pages, Reports, Rules, and Web Resources.
+<br/><br/>
+<br/>
+<h3>Setting Up Custom Attributes</h3>
+
+If you are authorized for instance-level changes (i.e. you belong to "System Admins" role), you will see a "Custom" tab when you select a definition document in Process Explorer view and show its properties.
+This tab enables you to specify your custom attributes along with the UI widgets that will be exposed for editing by end users.
+The syntax for specifying the attributes is the &lt;PAGELET/&gt; language described under <a href="implementor.html">Activity Implementors</a>.
+
+Here's an example that defines a single boolean attribute called "Certified" controlled by a checkbox:
+<pre>
+&lt;PAGELET&gt;
+  &lt;BOOLEAN NAME='Certified'/&gt;
+&lt;/PAGELET&gt;
+</pre>
+
+On the "Custom" tab you'll also specify the roles whose users are permitted to modify the attribute values for a specific definition document instance.
+<br/><br/>
+<img src="images/customTab.jpg" />
+<br/>
+<br/>
+<h3>User Access</h3>
+Users who belong to one of the specified roles will see an Attributes tab when they show the properties for a definition document of the specified type.
+<br/><br/>
+<img src="images/attributesTab.jpg" />
+<br/>
+<h3>Design versus Runtime</h3>
+An important thing to note here is that while the custom attribute design info described in the section above applies for all definition documents of the relevant type (eg: Drools), the end-user entered attribute data applies to one specific instance that they are working on.
+
+</body>
+</html>

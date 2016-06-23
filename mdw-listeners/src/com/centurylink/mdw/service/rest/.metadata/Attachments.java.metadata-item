@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69392405
+item-spec=4D4457413A314B37464735204154544143484D454E5453204A4156412D313930323238313034583436313458302E412D5352433B36
+file-version=6
+checksum=efacd26288a522eb9823e684344d7822
+fetch-size=2355
+mtime=1458863357
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/rest/Attachments.java
+project=4D4457413A4D445741
+project-uid=31770127

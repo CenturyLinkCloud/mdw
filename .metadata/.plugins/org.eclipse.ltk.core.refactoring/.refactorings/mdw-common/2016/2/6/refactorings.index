@@ -1,0 +1,10 @@
+1454302474089	Rename local variable 'paramsJson'
+1454347982803	Rename local variable 'activityStubReturnJson'
+1454616615972	Copy compilation unit
+1454616628490	Move compilation unit
+1454636196883	Rename local variable 'attributes'
+1454711880634	Copy compilation unit
+1454711954267	Rename package 'com.centurylink.mdw.model.value.value'
+1454711976642	Move compilation unit
+1454711982406	Delete element
+1454712065808	Rename field 'taskInstanceId'

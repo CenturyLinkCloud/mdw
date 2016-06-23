@@ -1,0 +1,22 @@
+Jan 04, 2016 9:19:57 PM org.eclipse.birt.chart.device.swt.SwtDisplayServer <init>
+INFO: SWT Display Server: win32 v4,528
+Jan 04, 2016 9:19:57 PM org.eclipse.birt.chart.device.swt.SwtDisplayServer <init>
+INFO: SWT Display Server: win32 v4,528
+Jan 04, 2016 9:19:58 PM org.eclipse.birt.chart.device.swt.R31Enhance <clinit>
+INFO: Advanced SWT graphics functions enabled.
+Jan 04, 2016 9:19:58 PM org.eclipse.birt.chart.device.swt.SwtRendererImpl setProperty
+INFO: Using graphics context org.eclipse.swt.graphics.GC@GC {-469684677}
+Jan 04, 2016 9:19:59 PM org.eclipse.birt.chart.computation.withaxes.PlotWith2DAxes getMinMax
+INFO: Processing stacked info for axis org.eclipse.birt.chart.model.component.impl.AxisImpl@517290ff (type: Linear, titlePosition: Left, gapWidth: <unset>, orientation: Vertical, labelPosition: Left, staggered: <unset>, interval: <unset>, primaryAxis: true, categoryAxis: <unset>, percent: false, labelWithinAxes: <unset>, aligned: <unset>, sideBySide: <unset>, labelSpan: <unset>, axisPercent: <unset>)
+Jan 04, 2016 9:19:59 PM org.eclipse.birt.chart.render.EmptyWithAxes renderSeries
+INFO: org.eclipse.birt.chart.render.EmptyWithAxes: renderSeries() [1/2]
+Jan 04, 2016 9:19:59 PM org.eclipse.birt.chart.extension.render.Bar renderSeries
+INFO: org.eclipse.birt.chart.extension.render.Bar: renderSeries() [2/2]
+Jan 04, 2016 9:19:59 PM org.eclipse.birt.chart.device.swt.SwtRendererImpl setProperty
+INFO: Using graphics context org.eclipse.swt.graphics.GC@GC {-469684677}
+Jan 04, 2016 9:19:59 PM org.eclipse.birt.chart.computation.withaxes.PlotWith2DAxes getMinMax
+INFO: Processing stacked info for axis org.eclipse.birt.chart.model.component.impl.AxisImpl@7b789ac3 (type: Linear, titlePosition: Left, gapWidth: <unset>, orientation: Vertical, labelPosition: Left, staggered: <unset>, interval: <unset>, primaryAxis: true, categoryAxis: <unset>, percent: false, labelWithinAxes: <unset>, aligned: <unset>, sideBySide: <unset>, labelSpan: <unset>, axisPercent: <unset>)
+Jan 04, 2016 9:19:59 PM org.eclipse.birt.chart.render.EmptyWithAxes renderSeries
+INFO: org.eclipse.birt.chart.render.EmptyWithAxes: renderSeries() [1/2]
+Jan 04, 2016 9:19:59 PM org.eclipse.birt.chart.extension.render.Bar renderSeries
+INFO: org.eclipse.birt.chart.extension.render.Bar: renderSeries() [2/2]

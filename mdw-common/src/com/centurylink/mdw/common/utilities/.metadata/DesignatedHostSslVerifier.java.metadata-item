@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65490673
+item-spec=4D4457413A314B3737545A2044455349474E41544544484F535453534C5645524946494552204A4156412D313833383338323637583439393358302E412D5352433B31
+file-version=1
+checksum=506710aab3602c7057ded3ed7e622eee
+fetch-size=4279
+mtime=1446135496
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/DesignatedHostSslVerifier.java
+project=4D4457413A4D445741
+project-uid=31770127

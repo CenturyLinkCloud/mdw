@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  
+  <html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:mdw="http://www.centurylink.com/mdw/jsf"
+    xmlns:rich="http://richfaces.org/rich">
+  
+    <ui:composition>
+      
+      <t:panelGroup rendered="#{rendered == null ? true : rendered}">
+    
+        <t:inputText
+          id="dataItemStringInput"
+          rendered="#{dataItem.valueEditable &amp;&amp; dataItem.string &amp;&amp; !dataItem.select}"
+          value="#{dataItem.dataValue}"
+          required="#{dataItem.valueRequired &amp;&amp; !dataItem.submitWithoutValidation}"
+          styleClass="mdw_inputFieldWide #{dataItem.styleClass}"
+          sequenceId="#{dataItemSequenceId}">
+          <mdw:validator
+            id="dataItemStringInputValidator" 
+            rendered="#{dataItem.validator != null}"
+            validatorId="#{dataItem.validator}"
+            sequenceId="#{dataItemSequenceId}" />
+        </t:inputText>
+        <t:message 
+          for="dataItemStringInput"
+          styleClass="mdw_message" />
+          
+        <t:selectBooleanCheckbox
+          id="dataItemBooleanInput"
+          rendered="#{dataItem.valueEditable &amp;&amp; dataItem.typeBoolean &amp;&amp; !dataItem.select}" 
+          value="#{dataItem.dataValue}"
+          styleClass="mdw_inputField #{dataItem.styleClass}" />          
+  
+        <t:inputText
+          id="dataItemDigitInput"
+          rendered="#{dataItem.valueEditable &amp;&amp; dataItem.digit &amp;&amp; !dataItem.select}"
+          value="#{dataItem.dataValue}"
+          required="#{dataItem.valueRequired &amp;&amp; !dataItem.submitWithoutValidation}"
+          styleClass="mdw_inputField #{dataItem.styleClass}">
+          <t:validateRegExpr pattern="^\d+$" />
+        </t:inputText>
+        <t:message
+          for="dataItemDigitInput"
+          styleClass="mdw_message" />
+  
+        <t:inputText
+          id="dataItemDecimalInput"
+          rendered="#{dataItem.valueEditable &amp;&amp; dataItem.decimal &amp;&amp; !dataItem.select}"
+          value="#{dataItem.dataValue}"
+          required="#{dataItem.valueRequired &amp;&amp; !dataItem.submitWithoutValidation}"
+          styleClass="mdw_inputField #{dataItem.styleClass}">
+          <t:validateRegExpr pattern="^\d+(\.\d+)?$" />
+        </t:inputText>
+        <t:message
+          for="dataItemDecimalInput" 
+          styleClass="mdw_message" />
+   
+        <t:selectOneMenu
+          id="dataItemSelectInput"
+          rendered="#{dataItem.valueEditable &amp;&amp; dataItem.select &amp;&amp; !dataItem.array &amp;&amp; !dataItem.map}"
+          value="#{dataItem.dataValue}"
+          required="#{dataItem.valueRequired} &amp;&amp; !dataItem.submitWithoutValidation"        
+          styleClass="mdw_inputField" >
+          <f:converter converterId="stringDataConverter" />
+          <f:selectItems value="#{dataItem.selectList}" />
+        </t:selectOneMenu>        
+        <t:message
+          for="dataItemSelectInput" 
+          styleClass="mdw_message" />
+
+        <rich:calendar
+          id="dataItemDateInput"
+          sequenceId="#{dataItemSequenceId}"
+          rendered="#{dataItem.valueEditable &amp;&amp; dataItem.date &amp;&amp; !dataItem.select}"
+          value="#{dataItem.dataValue}"
+          required="#{dataItem.valueRequired &amp;&amp; !dataItem.submitWithoutValidation}"
+          showWeeksBar="false"
+          datePattern="MMM d, yyyy HH:mm" 
+          inputClass="mdw_inputField #{dataItem.styleClass}"
+          buttonIcon="/images/sm_cal.gif" 
+          inputStyle="margin-top:-2px;"
+          buttonClass="mdw_calendarBtn" />
+        <t:message
+          for="dataItemDateInput" 
+          styleClass="mdw_message" />
+  
+        <t:commandLink
+          action="#{dataItem.performLinkAction}"
+          rendered="#{dataItem.link &amp;&amp; dataItem.dataValue != null}"
+          immediate="true"
+          styleClass="mdw_links">
+          <t:outputText
+            value="#{dataItem.dataValue}" />
+        </t:commandLink>
+        
+        <mdw:arrayData
+          id="listDataInput"
+          sequenceId="#{dataItemSequenceId}"
+          value="#{dataItem.dataValue}"
+          rendered="#{dataItem.array || dataItem.map}" />
+          
+        <t:inputTextarea
+          id="documentDataInput"
+          wrap="off"
+          rendered="#{dataItem.valueEditable &amp;&amp; dataItem.document}"
+          value="#{dataItem.dataValue}"
+          required="#{dataItem.valueRequired &amp;&amp; !dataItem.submitWithoutValidation}"
+          rows="10"
+          styleClass="mdw_textAreaInput #{dataItem.styleClass}"
+          documentType="#{dataItem.dataType}">
+          <f:converter converterId="documentConverter" />
+        </t:inputTextarea>
+        <t:message
+          for="documentDataInput" 
+          styleClass="mdw_message" />
+        
+        
+        <t:panelGroup rendered="#{!dataItem.valueEditable &amp;&amp; !dataItem.link &amp;&amp; !dataItem.array &amp;&amp; !dataItem.map &amp;&amp; !dataItem.document}">
+          <pre class="mdw_detailsValueColumn #{dataItem.styleClass}" style="padding:0;margin:0">
+            <t:outputText
+              id="dataItemText"
+              value="#{dataItem.dataValue}"
+              escape="#{dataItem.escape}" /></pre>
+        </t:panelGroup>
+
+        <t:panelGroup rendered="#{!dataItem.valueEditable &amp;&amp; dataItem.document &amp;&amp; !dataItem.html}">
+          <pre class="mdw_detailsValueColumn #{dataItem.styleClass}" style="padding:0;margin:0" >
+            <t:outputText
+              id="documentText"
+              value="#{dataItem.dataValue}"
+              escape="true"
+              documentType="#{dataItem.dataType}">
+              <f:converter converterId="documentConverter" />
+            </t:outputText></pre>
+        </t:panelGroup>
+        
+        <t:panelGroup rendered="#{!dataItem.valueEditable &amp;&amp; dataItem.document &amp;&amp; dataItem.html}">
+            <t:outputText
+              id="htmlText"
+              value="#{dataItem.dataValue}"
+              escape="false"
+              documentType="#{dataItem.dataType}">
+              <f:converter converterId="documentConverter" />
+            </t:outputText>
+        </t:panelGroup>
+
+      </t:panelGroup>
+    
+    </ui:composition>
+  
+  </html>

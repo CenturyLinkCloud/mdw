@@ -1,0 +1,27 @@
+process: # 13670
+  name: MDWTestMainProcess
+  instance: 1
+  activity: # 6 "2016-02-22 14:59:13"
+    name: Process Start
+    status: Completed
+  activity: # 33 "2016-02-22 14:59:13"
+    name: multiple processes ?
+    status: Completed
+  activity: # 17 "2016-02-22 14:59:13"
+    name: Read order
+    status: Completed
+  activity: # 25 "2016-02-22 14:59:13"
+    name: Get orderId
+    status: Completed
+  activity: # 11 "2016-02-22 14:59:13"
+    name: Process Finish
+    status: Completed
+  variable: # 20700
+    name: order
+    value: <Order><orderId>30/KQGS/662822//CTRL</orderId></Order>
+  variable: # 20702
+    name: orderId
+    value: 30/KQGS/662822//CTRL
+  variable: # 20701
+    name: processCase
+    value: ServiceOrder

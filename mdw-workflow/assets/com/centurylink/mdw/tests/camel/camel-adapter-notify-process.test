@@ -1,0 +1,12 @@
+// camel-adapter-notify-process
+start process("CamelEventWait") {
+	variables = [eventId: 2537]
+}
+sleep 45
+start process("MDWTestCamelAdapter") {
+	variables = [testRequest: asset("eventRequest.xml").text]
+}
+wait process("CamelEventWait") {
+    timeout = 30
+}
+verify processes("MDWTestCamelAdapter", "CamelEventWait")

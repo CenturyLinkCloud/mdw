@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49046712
+item-spec=4D4457413A314B3737545A204D44574A415641455843455054494F4E204A4156412D2D313939333332333834302E412D5352433B33
+file-version=3
+checksum=85e5e33ca29eefb66612d1762797015f
+fetch-size=637
+mtime=1403133545
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/java/MdwJavaException.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,84 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="GPON ServiceOrder Processor" version="0.14" description="">
+    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1,y=128,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=735,y=140,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="Validate and &#13;&#10;Decompose&#13;&#10;Service Order" Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity">
+      <bpm:Attribute Name="Java" Value="/**&#13;&#10; * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.&#13;&#10; */&#13;&#10;&#13;&#10;package com.dsp;&#13;&#10;&#13;&#10;import java.util.Map;&#13;&#10;&#13;&#10;import com.centurylink.mdw.java.JavaExecutionException;&#13;&#10;import com.centurylink.mdw.java.JavaExecutor;&#13;&#10;import com.centurylink.mdw.java.MdwJavaException;&#13;&#10;import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;&#13;&#10;&#13;&#10;/**&#13;&#10; * Dynamic Java executor.&#13;&#10; */&#13;&#10;public class ValidateandDecomposeServiceOrder_A3 implements JavaExecutor&#13;&#10;{&#13;&#10;  &#13;&#10;  public void initialize(ActivityRuntimeContext context) throws MdwJavaException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;  }&#13;&#10;&#13;&#10;  public Object execute(Map&lt;String,Object> variables) throws JavaExecutionException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;   //&#13;&#10;    return null;&#13;&#10;  }&#13;&#10;&#13;&#10;}&#13;&#10;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=110,y=109,w=106,h=89"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A5" Name="Wait for &#13;&#10;Provisioning Complete &#13;&#10;Event" Implementation="com.centurylink.mdw.workflow.activity.event.EventWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_TIMEOUT" Value="Cancelled"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=484,y=93,w=138,h=98"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A6" Name="Launch Multiple &#13;&#10;Fulfillment Flows" Implementation="com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=293,y=123,w=100,h=60"/>
+      <bpm:Attribute Name="processname" Value="com.dsp/Add HSI Service"/>
+      <bpm:Attribute Name="processversion" Value="[0.18,1)"/>
+      <bpm:Attribute Name="synchronous" Value="TRUE"/>
+      <bpm:Attribute Name="variables" Value="designAssignFailureGroup=$designAssignFailureGroup;designAssignFailureReason=$designAssignFailureReason;designAssignFailureUser=$designAssignFailureUser;dispatchableItems=$dispatchableItems;dispatchTicketId=$dispatchTicketId;download_speed_mbps=$download_speed_mbps;downloadSpeedProfileId=$downloadSpeedProfileId;hsiServiceId=$hsiServiceId;ontProfileId=$ontProfileId;orderDueDate=$orderDuedate;ponCircuitId=$ponCircuitId;radiusClassOfService=$radiusClassOfService;radiusConfigDueDate=$radiusConfigDueDate;radiusConfigFailureGroup=$radiusConfigFailureGroup;radiusConfigFailureReason=$radiusConfigFailureReason;radiusConfigFailureUser=$radiusConfigFailureUser;status=$status;totalDispatchableItems=$totalDispatchableItems;upload_speed_mbps=$upload_speed_mbps;uploadSpeedProfileId=$uploadSpeedProfileId"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=65,ly=136,type=Elbow,xs=65&amp;106,ys=148&amp;148"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A5" To="A2" Event="FINISH" Id="T4">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=679,ly=160,type=Elbow,xs=626&amp;731,ys=160&amp;160"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A6" Event="FINISH" Id="T5">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=258,ly=153,type=Elbow,xs=220&amp;289,ys=153&amp;153"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A6" To="A5" Event="FINISH" Id="T6">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=445,ly=152,type=Elbow,xs=397&amp;480,ys=153&amp;153"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=50,y=50,w=273,h=27"/>
+    <bpm:Variables Name="designAssignFailureGroup" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="designAssignFailureReason" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="designAssignFailureUser" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="designAssignTestStatus" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="dispatchableItems" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.util.List&lt;String>"/>
+    </bpm:Variables>
+    <bpm:Variables Name="dispatchTicketId" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="download_speed_mbps" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="hsiServiceId" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="ontProfileId" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="ponCircuitId" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="radiusClassOfService" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="status" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="totalDispatchableItems" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="upload_speed_mbps" ReferredAs="" Category="INOUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

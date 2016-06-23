@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49573173
+item-spec=4D4457413A314B3848384C204255535345525649434541444150544552204A4156414A45542D323130383535343136362E412D4441543B33
+file-version=3
+checksum=a6a5ca462113ef7dcf9331afd28110f4
+fetch-size=3071
+mtime=1406050436
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=templates/source/src/activities/adapters/BusServiceAdapter.javajet
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

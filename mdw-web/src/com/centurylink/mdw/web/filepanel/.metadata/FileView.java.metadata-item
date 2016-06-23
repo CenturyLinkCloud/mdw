@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855884
+item-spec=4D4457413A314B374B524A2046494C4556494557204A4156412D2D3835303430333233312E412D5352433B32
+file-version=2
+checksum=4f5d10dc66c65c93d10ca07edc4ccbb1
+fetch-size=13061
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/filepanel/FileView.java
+project=4D4457413A4D445741
+project-uid=31770127

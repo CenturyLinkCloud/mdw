@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+  
+  	<script language="javascript">
+		function checkFileUpload()
+		{
+			var fileName = document.getElementById('fileUploadInput');
+			if (fileName.value == null || fileName.value == ""){
+				alert("Please select a file to upload ");
+				return false;
+			}
+		}		
+	</script>
+  
+    <h:outputText
+      value="Select file to attach:"
+      rendered="#{actionController.action!='deleteAttachment'}"
+      styleClass="mdw_fileUpload" />
+    <div style="position:relative;">      
+	    <t:inputFileUpload
+	      id="fileupload"
+	      immediate="true"
+	      accept="*"
+	      rendered="#{actionController.action!='deleteAttachment'}"
+	      value="#{actionController.upFile}"
+	      storage="file"
+	      style="width:440px;height:20px;position:relative;filter:alpha(opacity:0);opacity:0;z-index:2;#{webUtil.firefox?'text-align:right':''};"
+	      required="false"
+	      maxlength="#{webUtil.maxUploadFileSize}"
+	      onchange="this.form.fileUploadInput.value=this.value;"
+	      onkeypress="return false;">
+	      <f:validator validatorId="attachmentValidator"/>
+	    </t:inputFileUpload>
+		  <t:div rendered="#{actionController.action!='deleteAttachment'}" style="position:absolute;top:#{webUtil.firefox?'-2px':'0px'};left:0px;z-index:1;">
+		    <input id="fileUploadInput" type="text" autocomplete="off" class="mdw_fileUpload" style="width:350px;background-color:#e4e4e4;background-image:none;" onkeypress="return false;" />
+		    <input id="fileUploadBrowse"  type="submit" value="Browse..." onclick="return false;" />
+		  </t:div>
+    </div>
+    
+    <t:commandButton
+      value="Attach File"
+      styleClass="mdw_detailFormButtons"
+      rendered="#{actionController.action=='viewAttachments'}"
+      action="#{actionController.upload}"
+      onclick="return checkFileUpload();"/>
+
+    <t:div rendered="#{actionController.action=='deleteAttachment'}"> 
+	    <t:outputText
+	      value="Do you want to delete #{attachmentsItem.name}?"
+	      styleClass="mdw_fileInputControl"  />
+	    <br/>
+	    <t:commandButton
+	      value="Confirm Delete"
+	      styleClass="mdw_detailFormButtons"
+	      action="#{actionController.confirmDeleteAttachment}">
+	    </t:commandButton>
+	    <t:commandButton
+	      value="Cancel"
+	      styleClass="mdw_detailFormButtons"
+	      action="#{actionController.cancelDeleteAttachment}">
+	    </t:commandButton>
+	  </t:div>
+    
+  </ui:composition>
+  
+</html>

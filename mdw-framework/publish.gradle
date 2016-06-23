@@ -1,0 +1,212 @@
+// // publishes build output to a maven repository
+// eg: Archiva or Nexus
+
+repositories {
+    maven {
+        url mdwRepoUrl
+    }
+    maven {
+        url devRepoUrl
+    }
+}
+
+configurations {
+    publish
+}
+
+dependencies {
+    publish group: "com.centurylink.mdw", name: "mdw-designer-core", version: "${mdwDesignerVersion}"
+    publish group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0ctl"
+    publish files("../${mdwOutputDir}/mdw-common-${mdwVersion}.jar")
+    publish files("../${mdwOutputDir}/mdw-schemas-${mdwVersion}.jar")
+    publish group: "org.json", name: "json", version: "20090211"
+    publish group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
+    publish group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"
+}
+
+task buildFeatures(type: Copy) {
+    from "features"
+    into "../${mdwOutputDir}"
+    rename("mdw-dependencies.xml", "mdw-${mdwVersion}-dependencies.xml")
+    rename("mdw-features.xml", "mdw-${mdwVersion}-features.xml")
+    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: ["mdw.version": "${mdwVersion}".toString()])
+}
+
+task buildMiscSources() << {
+    def hubSources = file("../${mdwOutputDir}/mdw-hub-${mdwVersion}-sources.jar")
+    if (hubSources.exists())
+        file("../${mdwOutputDir}/mdwhub-${mdwVersion}-sources.jar").bytes = hubSources.bytes
+    def taskmgrSources = file("../${mdwOutputDir}/mdw-taskmgr-${mdwVersion}-sources.jar")
+    if (taskmgrSources.exists())
+        file("../${mdwOutputDir}/taskmgr-${mdwVersion}-sources.jar").bytes = taskmgrSources.bytes
+    def mdwwebSources = file("../${mdwOutputDir}/mdw-web-${mdwVersion}-sources.jar")
+    if (mdwwebSources.exists()) {
+        file("../${mdwOutputDir}/mdwweb-${mdwVersion}-sources.jar").bytes = mdwwebSources.bytes
+        file("../${mdwOutputDir}/mdwweb-jsf2-${mdwVersion}-sources.jar").bytes = mdwwebSources.bytes
+    }
+}
+
+task buildBaseConfigs() << {
+    // TODO include application-context.xml as well
+    def ctAppFilter = file("../mdw-web/src/META-INF/mdw/CTAPPFilter.config")
+    file("../${mdwOutputDir}/CTAPPFilter-${mdwVersion}.config").bytes = ctAppFilter.bytes;
+    def appConfigXml = file("../mdw-common/src/META-INF/mdw/spring/application-context.xml")
+    file("../${mdwOutputDir}/application-context-${mdwVersion}.xml").bytes = appConfigXml.bytes;
+}
+
+task cleanPackages(type: Delete) {
+    delete fileTree(dir: "../${mdwAssetOutputDir}")
+}
+
+task buildExtraPackages(type: Copy) {
+    from "../mdw-workflow/packages"
+    into "../${mdwAssetOutputDir}"
+    include "**/*.xml"
+    exclude "**/.metadata", "**/*_MonitoringAttributes.xml"
+}
+buildExtraPackages.mustRunAfter cleanPackages
+
+// export all the packages in the mdw-workflow/assets directory
+task exportAssetPackages {
+    description = "Export Asset Packages"
+
+    // superCats are categorized as the parent package 
+    // (eg com.centurylink.mdw.tests.camel is category "tests" instead of "camel")
+    def superCats = [ "services", "tests" ]
+    
+    def assetRootPath = file("../${mdwAssetRoot}").toString()
+    def mdwPkgVer = mdwVersion;
+    if (mdwVersion.endsWith("-SNAPSHOT"))
+        mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
+    println "Exporting asset packages from " + assetRootPath + ":" 
+    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.xml').each { pkgFile ->
+        doLast {
+            def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('/','.').replace('\\','.')
+            def pkgCat = pkgName.substring(pkgName.lastIndexOf('.') + 1)
+            superCats.find { 
+                if (pkgName.endsWith(it + "." + pkgCat)) {
+                    pkgCat = it
+                    return true
+                }
+                return false
+            }
+            println "    " + pkgCat + ": " + pkgName
+            println "        setting package.xml version: ${mdwPkgVer}"
+            pkgFile.setWritable(true)
+            def pkgXml = pkgFile.text
+            pkgFile.withWriter { w ->
+                w << pkgXml.replaceAll("<bpm:package .*? xmlns:bpm=\"http://mdw\\.centurylink\\.com/bpm\"",
+                    "<bpm:package name=\"${pkgName}\" version=\"${mdwPkgVer}\" xmlns:bpm=\"http://mdw.centurylink.com/bpm\"")
+            }
+            if (pkgName.equals("com.centurylink.mdw.db")) {
+                javaexec {
+                    maxHeapSize "1280m"
+                    classpath configurations.publish
+                    main = "com.centurylink.mdw.designer.Exporter"
+                    args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.xml"
+                }
+            }
+            else {
+                javaexec {
+                    classpath configurations.publish
+                    main = "com.centurylink.mdw.designer.Exporter"
+                    args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.xml"
+                }
+            }
+        }
+    }
+}
+exportAssetPackages.mustRunAfter cleanPackages
+
+task buildPackages(type: Copy) {
+    dependsOn(cleanPackages, exportAssetPackages, buildExtraPackages)
+}
+
+task checkAllowed() << {
+    assert publishUser != null : "Missing property: publishUser"
+    assert publishPassword != null : "Missing property: publishPassword"
+    // disallow non-snapshot archiva/nexus publish except from Jenkins
+    if (publishBaseUrl == archivaUrl || publishBaseUrl == nexusUrl) {
+        assert !mdwVersion.endsWith("SNAPSHOT")
+        assert "true".equalsIgnoreCase(System.getProperty("RUNNING_ON_BUILD_SERVER")): "Must be run from build server"
+    }
+}
+
+task publishBase(type: HttpPut) {
+    dependsOn(checkAllowed, buildFeatures, buildBaseConfigs)
+    from "../${mdwOutputDir}/mdw-base-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-config-${mdwVersion}.zip"
+    from "../${mdwOutputDir}/mdw-${mdwVersion}-dependencies.xml"
+    from "../${mdwOutputDir}/mdw-${mdwVersion}-features.xml"
+    from "../${mdwOutputDir}/CTAPPFilter-${mdwVersion}.config"
+    from "../${mdwOutputDir}/application-context-${mdwVersion}.xml"
+    baseUrl "${publishBaseUrl}/mdw/${mdwVersion}"
+    user publishUser
+    password publishPassword
+}
+
+task publishMdwWar(type: HttpPut) {
+    dependsOn checkAllowed
+    from "../${mdwOutputDir}/mdw-${mdwVersion}.war"
+    baseUrl "${publishBaseUrl}/mdw/${mdwVersion}"
+    withSources true
+    user publishUser
+    password publishPassword
+}
+
+task publishAdminWar(type: HttpPut) {
+    dependsOn(checkAllowed, buildFeatures)
+    from "../${mdwOutputDir}/mdwadmin-${mdwVersion}.war"
+    baseUrl "${publishBaseUrl}/mdwadmin/${mdwVersion}"
+    user publishUser
+    password publishPassword
+}
+
+task publishWars() {
+    dependsOn(publishMdwWar, publishAdminWar)
+}
+
+// must be run after build.gradle target buildAll
+task publishBundles(type: HttpPut) {
+    dependsOn(checkAllowed, buildMiscSources)
+    from "../${mdwOutputDir}/mdw-schemas-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-common-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-services-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-listeners-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-workflow-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-web-${mdwVersion}.war"
+    from "../${mdwOutputDir}/mdwweb-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdwweb-jsf2-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-taskmgr-${mdwVersion}.war"
+    from "../${mdwOutputDir}/taskmgr-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-hub-${mdwVersion}.war"
+    from "../${mdwOutputDir}/mdwhub-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-reports-${mdwVersion}.war"
+    from "../${mdwOutputDir}/mdw-jsf-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-jsf2-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-camel-${mdwVersion}.jar"    
+    groupUrl "${publishBaseUrl}"
+    withSources true
+    user publishUser
+    password publishPassword
+}
+
+// TODO: consider using standard Maven repository structure
+// (especially if we end up rehosting asset discovery to a different repo)
+task publishAssets(type: HttpPut) {
+    dependsOn(checkAllowed, buildPackages)
+    from "../${mdwAssetOutputDir}"
+    assetsUrl "${publishBaseUrl}/assets"
+    user publishUser
+    password publishPassword
+}
+
+task cleanTests(type: Delete) {
+    delete "${mdwDiscoveryLoc}/Regression Test Suites/MDWFramework 5.5"
+}
+  
+task publishBuild(dependsOn: [publishBase, publishBundles, publishWars, publishAssets]) << {
+    println "*** MDW build ${mdwVersion} published to ${publishBaseUrl} ***"
+}
+
+

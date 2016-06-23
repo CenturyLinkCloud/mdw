@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69213366
+item-spec=4D4457413A314B374B524A20414343455353434F4E54524F4C46494C544552204A4156412D3130313130313930322E412D5352433B3135
+file-version=15
+checksum=ad4ea7a3e1760bc71b3343b393aa4131
+fetch-size=8520
+mtime=1458179993
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/servlet/filter/AccessControlFilter.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62585160
+item-spec=4D4457413A314B384357442050524F43455353494E5354414E434550414745204A4156412D34313233373538312E412D5352433B35
+file-version=5
+checksum=8809646ac130e2c0f39a8808fa2381e9
+fetch-size=8707
+mtime=1436816372
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/runtime/ProcessInstancePage.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

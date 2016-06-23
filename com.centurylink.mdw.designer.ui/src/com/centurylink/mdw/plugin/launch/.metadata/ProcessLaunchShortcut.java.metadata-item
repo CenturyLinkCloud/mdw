@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549742
+item-spec=4D4457413A314B3848384C2050524F434553534C41554E434853484F5254435554204A4156412D323031323330393233312E412D5352433B36
+file-version=6
+checksum=38f251dcf75c733246282649d5ec3d82
+fetch-size=9380
+mtime=1453322013
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/launch/ProcessLaunchShortcut.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

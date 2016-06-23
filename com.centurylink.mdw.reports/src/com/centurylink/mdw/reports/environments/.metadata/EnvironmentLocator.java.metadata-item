@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852595
+item-spec=4D4457413A314B384C4B5320454E5649524F4E4D454E544C4F4341544F52204A4156412D3835303235373731312E412D5352433B32
+file-version=2
+checksum=feb6702cb00b2b6aabe5e2da74b9e51a
+fetch-size=1275
+mtime=1393988948
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/reports/environments/EnvironmentLocator.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

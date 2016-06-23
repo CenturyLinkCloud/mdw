@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67364854
+item-spec=4D4457413A314B3737545A2041555448454E54494341544F52204A4156412D31393033343135323858313738373458302E412D5352433B32
+file-version=2
+checksum=4cafcdceaf912802bfca130bfce25c95
+fetch-size=700
+mtime=1452716917
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/auth/Authenticator.java
+project=4D4457413A4D445741
+project-uid=31770127

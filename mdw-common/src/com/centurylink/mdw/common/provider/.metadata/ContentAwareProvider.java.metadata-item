@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852946
+item-spec=4D4457413A314B3737545A20434F4E54454E54415741524550524F5649444552204A4156412D2D313136323131363134322E412D5352433B32
+file-version=2
+checksum=564668d3f848a534fb049114923f06fc
+fetch-size=717
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/provider/ContentAwareProvider.java
+project=4D4457413A4D445741
+project-uid=31770127

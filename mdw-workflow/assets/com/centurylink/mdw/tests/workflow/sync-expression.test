@@ -1,0 +1,6 @@
+// sync-expression
+start process("MDWTestMainProcess") {
+    variables = [ processCase: "Sync with custom expr"]
+}
+wait process
+verify process

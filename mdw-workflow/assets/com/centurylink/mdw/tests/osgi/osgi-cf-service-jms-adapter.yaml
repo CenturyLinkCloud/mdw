@@ -1,0 +1,31 @@
+process:
+  name: JMS Adapter OSGi service
+  instance: 1
+  activity: 
+    name: Start
+    status: Completed
+  activity: 
+    name: |
+      Synchronous
+      JMS Request
+    status: Completed
+  activity: 
+    name: Stop
+    status: Completed
+  variable: 
+    name: syncRequest
+    value: |
+      <tns:GetEmployee xmlns:tns="http://mdw-servicemix.centurylink.com/serviceTypes">
+        <tns:sapId>DHO115360</tns:sapId>
+      </tns:GetEmployee>
+  variable: 
+    name: syncResponse
+    value: |
+      <GetEmployeeResponse xmlns="http://mdw-servicemix.centurylink.com/serviceTypes">
+        <sapId>DHO115360</sapId>
+        <firstName>Donald</firstName>
+        <lastName>Oakes</lastName>
+      </GetEmployeeResponse>
+  variable: 
+    name: synchronous
+    value: true

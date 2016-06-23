@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49043759
+item-spec=4D4457413A314B3737545A20434C415353504154485554494C204A4156412D3139393530373236302E412D5352433B33
+file-version=3
+checksum=ac771c37b35b14dbe97a02b3b61bbcd3
+fetch-size=10663
+mtime=1403020524
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/ClasspathUtil.java
+project=4D4457413A4D445741
+project-uid=31770127

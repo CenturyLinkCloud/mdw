@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68515501
+item-spec=4D4457413A314B374B524A204E4F5449434554454D504C41544550484153454C495354454E4552204A4156412D2D3537373639373034382E412D5352433B36
+file-version=6
+checksum=5a843d8d6d8d15485e585212af56318e
+fetch-size=9163
+mtime=1456273074
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/phase/NoticeTemplatePhaseListener.java
+project=4D4457413A4D445741
+project-uid=31770127

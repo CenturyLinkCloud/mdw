@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549697
+item-spec=4D4457413A314B3848384C20534552564552434F4E464947555241544F52204A4156412D323039393830353335372E412D5352433B35
+file-version=5
+checksum=4e369aedaa499b9bf910ac879fe9bb6f
+fetch-size=7976
+mtime=1453322256
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/server/ServerConfigurator.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

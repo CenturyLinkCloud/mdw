@@ -1,0 +1,75 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="EmbeddedWithSubprocess" version="0.6" description="">
+    <bpm:Activity Id="Activity1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=119,y=74,w=32,h=32"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity2" Name="Force Error" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="bad script"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=124,y=221,w=24,h=24"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity3" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=121,y=366,w=32,h=32"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="Activity1" To="Activity2" Event="FINISH" Id="Transition3">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=93,ly=197,type=Elbow,xs=136&amp;136,ys=110&amp;217"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity2" To="Activity3" Event="FINISH" Id="Transition4">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=136,ly=304,type=Elbow,xs=136&amp;136,ys=249&amp;362"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="ERROR_TRANSITION_ID" Value="84481"/>
+    <bpm:Attribute Name="NodeStyle" Value="Icon"/>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="SLA" Value="0"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=23,y=20,w=242,h=27"/>
+    <bpm:Attribute Name="START_TRANSITION_ID" Value="2328555"/>
+    <bpm:Variables Name="passToSub" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="receiveFromSub" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:SubProcess Id="SubProcess1" name="Exception Handler" version="0.4" description="">
+      <bpm:Activity Id="Activity5" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+        <bpm:Attribute Name="SLA" Value="0"/>
+        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=333,y=63,w=32,h=32"/>
+      </bpm:Activity>
+      <bpm:Activity Id="Activity6" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+        <bpm:Attribute Name="SLA" Value="0"/>
+        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=633,y=63,w=32,h=32"/>
+      </bpm:Activity>
+      <bpm:Activity Id="Activity4" Name="Subprocess From Embedded" Implementation="com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity">
+        <bpm:Attribute Name="SLA" Value="0"/>
+        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=478,y=65,w=20,h=20"/>
+        <bpm:Attribute Name="processname" Value="com.centurylink.mdw.tests/SubprocessForEmbedded"/>
+        <bpm:Attribute Name="processversion" Value="[0.4,1)"/>
+        <bpm:Attribute Name="synchronous" Value="TRUE"/>
+        <bpm:Attribute Name="variables" Value="fromParent=$passToSub;toParent=$receiveFromSub"/>
+      </bpm:Activity>
+      <bpm:Transition CompletionCode="" From="Activity5" To="Activity4" Event="FINISH" Id="Transition1">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=422,ly=75,type=Elbow,xs=369&amp;474,ys=75&amp;75"/>
+      </bpm:Transition>
+      <bpm:Transition CompletionCode="" From="Activity4" To="Activity6" Event="FINISH" Id="Transition2">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=565,ly=75,type=Elbow,xs=502&amp;629,ys=75&amp;75"/>
+      </bpm:Transition>
+      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Exception Handler"/>
+      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=293,y=23,w=395,h=110"/>
+      <bpm:Attribute Name="ENTRY_TRANSITION_ID" Value="2328556"/>
+      <bpm:Attribute Name="START_TRANSITION_ID" Value="2328549"/>
+    </bpm:SubProcess>
+  </bpm:Process>
+</bpm:processDefinition>

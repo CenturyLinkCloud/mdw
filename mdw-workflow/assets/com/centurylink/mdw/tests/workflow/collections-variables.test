@@ -1,0 +1,4 @@
+// collections-variables
+start process("MDWTestVariables")
+wait process
+verify process

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549400
+item-spec=4D4457413A314B3848384C20534552564552474954204A4156412D31383835303236333758323934363758302E412D5352433B36
+file-version=6
+checksum=1f2c5f3b774b03748b4d0aabf9f048a6
+fetch-size=2591
+mtime=1453322014
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/ServerGit.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

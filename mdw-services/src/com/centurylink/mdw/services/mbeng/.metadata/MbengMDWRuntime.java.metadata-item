@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854792
+item-spec=4D4457413A314B37435A30204D42454E474D445752554E54494D45204A4156412D2D313433313530333531302E412D5352433B32
+file-version=2
+checksum=e8c26986e230c96087045cecf529054f
+fetch-size=7781
+mtime=1393990151
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/mbeng/MbengMDWRuntime.java
+project=4D4457413A4D445741
+project-uid=31770127

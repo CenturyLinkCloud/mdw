@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71509081
+item-spec=4D4457413A314B3737545A204143544956495459434F554E54204A4156412D32303335353337303158323037393358302E412D5352433B34
+file-version=4
+checksum=f81246ca55f082cc1d7c26811e317df8
+fetch-size=3567
+mtime=1466010649
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/activity/ActivityCount.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=55713539
+item-spec=4D4457413A314B3654583320414444204F5448455220434F4E53545241494E54532053514C2D2D313936313431373938322E412D4441543B31
+file-version=1
+checksum=4194d9d356a11de34b38e6e73a1ad66b
+fetch-size=135
+mtime=1329519401
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/5.5 Pure/add_other_constraints.sql
+project=4D4457413A4D445741
+project-uid=31770127

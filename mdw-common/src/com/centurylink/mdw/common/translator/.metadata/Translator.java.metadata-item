@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852670
+item-spec=4D4457413A314B3737545A205452414E534C41544F52204A4156412D3932343034343035352E412D5352433B32
+file-version=2
+checksum=8e53f60e6f059f2c5a0fabe5f5bcf8a6
+fetch-size=252
+mtime=1393988446
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/translator/Translator.java
+project=4D4457413A4D445741
+project-uid=31770127

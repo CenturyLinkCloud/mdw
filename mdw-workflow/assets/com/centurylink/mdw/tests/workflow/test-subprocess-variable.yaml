@@ -1,0 +1,63 @@
+process: # 1454
+  name: MDWTestMainProcess
+  instance: 1
+  activity: # 6 "2016-04-11 15:40:49"
+    name: Process Start
+    status: Completed
+  activity: # 33 "2016-04-11 15:40:49"
+    name: multiple processes ?
+    status: Completed
+  activity: # 23 "2016-04-11 15:40:49"
+    name: Set input argument
+    status: Completed
+  activity: # 22 "2016-04-11 15:40:49"
+    name: Invoke single process
+    status: Completed
+  activity: # 26 "2016-04-11 15:42:50"
+    name: Display result
+    status: Completed
+  activity: # 11 "2016-04-11 15:42:50"
+    name: Process Finish
+    status: Completed
+  variable: # 3080
+    name: N
+    value: 7
+  variable: # 3079
+    name: processCase
+    value: SingleSubProcess
+  variable: # 3085
+    name: Sum
+    value: 49
+  variable: # 3081
+    name: xmldata
+    value: |
+      <ROOT>
+         <MINUTES>2</MINUTES>
+      </ROOT>
+process: # 1455
+  name: MDWTestSubProcess
+  instance: 1
+  activity: # 34 "2016-04-11 15:40:49"
+    name: Start
+    status: Completed
+  activity: # 31 "2016-04-11 15:40:49"
+    name: Calculate sqaure
+    status: Completed
+  activity: # 32 "2016-04-11 15:40:49"
+    name: Wait for a while
+    status: Completed
+  activity: # 33 "2016-04-11 15:42:49"
+    name: Finish
+    status: Completed
+  variable: # 3082
+    name: argument
+    value: 7
+  variable: # 3084
+    name: result
+    value: 49
+  variable: # 3083
+    name: testxml
+    value: |
+      <ROOT>
+         <MINUTES>2</MINUTES>
+      </ROOT>

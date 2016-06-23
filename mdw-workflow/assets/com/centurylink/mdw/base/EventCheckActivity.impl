@@ -1,0 +1,13 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.event.EventCheckActivity" Type="com.centurylink.mdw.activity.types.EventWaitActivity" Label="Event Check Activity" IconFile="check.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET>
+  <TABLE NAME='WAIT_EVENT_NAMES' LABEL='Events'>
+    <TEXT LABEL='Event Name'/>
+    <TEXT LABEL='Completion Code'/>
+    <BOOLEAN LABEL='Recurring' DEFAULT='false'/>
+  </TABLE>
+  <DROPDOWN NAME="rcvdMsgDocVar" LABEL="Received Message Variable (Optional)"  SOURCE="DocumentVariables" VX="180" VW="160" />
+  <HYPERLINK URL='/MDWWeb/doc/EventCheckActivity.html'>
+    Event Check Activity Help
+  </HYPERLINK>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

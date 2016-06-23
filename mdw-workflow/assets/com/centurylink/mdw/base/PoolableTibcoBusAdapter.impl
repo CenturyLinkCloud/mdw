@@ -1,0 +1,22 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.adapter.tibco.PoolableTibcoBusAdapter" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="Poolable Bus Adapter" IconFile="adapter.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET ICON="adapter.png" LABEL="Synchronous Bus Adapter" BASETYPES="com.centurylink.mdw.activity.types.AdapterActivity">
+  <TEXT DEFAULT="prop:mdw.bus.uri" LABEL="Bus URI" NAME="uri"/>
+  <TEXT LABEL="Topic" NAME="topic"/>
+  <SELECT DEFAULT="false" LABEL="Override Inbox?" NAME="override_inbox">
+    <OPTION>false</OPTION>
+    <OPTION>true</OPTION>
+  </SELECT>
+  <HYPERLINK URL="/MDWWeb/doc/SynchronousBusAdapter.html">Bus Adapter Activity Help</HYPERLINK>
+  <DROPDOWN LABEL="Request Variable" NAME="REQUEST_VARIABLE" SOURCE="Variables" VW="120"/>
+  <DROPDOWN LABEL="Response Variable" NAME="RESPONSE_VARIABLE" SOURCE="Variables" VW="120"/>
+  <SELECT DEFAULT="true" LABEL="Log req/resp" NAME="DO_LOGGING">
+    <OPTION>false</OPTION>
+    <OPTION>true</OPTION>
+  </SELECT>
+  <TEXT LABEL="Max tries" NAME="max_tries" VW="60"/>
+  <TEXT LABEL="Retry Interval (sec)" NAME="retry_interval" VW="80"/>
+  <TEXT LABEL="Response Timeout (sec)" NAME="timeout" VW="80"/>
+  <HYPERLINK LABEL="Request XSD" NAME="REQUEST_XSD"/>
+  <HYPERLINK LABEL="Response XSD" NAME="RESPONSE_XSD"/>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

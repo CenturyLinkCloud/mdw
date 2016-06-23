@@ -1,0 +1,13 @@
+version=10.2
+item-uid=47016484
+item-spec=4D4457413A314B3848384C20444953434F56455259455843455054494F4E204A4156412D2D313934353137363739382E412D5352433B33
+file-version=3
+checksum=986ca540ccbf45b624f1f62efed0f20e
+fetch-size=473
+mtime=1394674300
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/DiscoveryException.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

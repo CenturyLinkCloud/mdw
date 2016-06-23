@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62790282
+item-spec=4D4457413A314B384357442053455256455241434345535352455354204A4156412D323134333834363633382E412D5352433B3130
+file-version=10
+checksum=c9011d9a351c2aa7a8554e1041952062
+fetch-size=3441
+mtime=1437683355
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/ServerAccessRest.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,6 @@
+# external event handler (and scheduled job) compatibility mappings
+com.qwest.mdw.listener.DefaultEventHandler=com.centurylink.mdw.listener.DefaultEventHandler
+com.qwest.mdw.listener.FormEventHandler=com.centurylink.mdw.listener.FormEventHandler
+com.qwest.mdw.webservice.rest.InstanceLevelActionHandler=com.centurylink.mdw.service.action.InstanceLevelActionHandler
+com.qwest.mdw.listener.RegressionTestEventHandler=com.centurylink.mdw.listener.RegressionTestEventHandler
+com.qwest.mdw.timer.cleanup.ProcessCleanup=com.centurylink.mdw.timer.cleanup.ProcessCleanup

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdw-workflow>
+  <sourceProject name="mdw-workflow" author="aa56486"/>
+  <webProject name="mdw-hub" deployDir="deploy" />
+  <mdwFramework version="5.5.30-SNAPSHOT"/>
+  <server host="localhost" port="8080" container="Tomcat"/>
+  <repository provider="Git" localPath="assets"/>
+  <database jdbcUrl="jdbc:mysql://127.0.0.1:3306/mdw?user=root&amp;password=wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x"/>
+</mdw-workflow>

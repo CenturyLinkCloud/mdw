@@ -1,0 +1,17 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity" Type="com.centurylink.mdw.activity.types.SynchronizationActivity" Label="Synchronization Activity" IconFile="sync.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET ICON="sync.png" LABEL="Synchronization Activity" BASETYPES="com.centurylink.mdw.activity.types.SynchronizationActivity">
+  <LIST NAME="Synced Activities" SOURCE="Activities" EDITABLE="false"/>
+  <TEXT NAME="Sync Expression" MULTILINE="true" VW="390"/>
+  <TABLE NAME="WAIT_EVENT_NAMES" LABEL="Events" SECTION="Events">
+    <TEXT LABEL="Event Name" />
+    <TEXT LABEL="Completion Code"/>
+    <BOOLEAN LABEL="Recurring" DEFAULT="true" READONLY="true"/>
+  </TABLE>
+  <DROPDOWN NAME="STATUS_AFTER_EVENT" LABEL="Status after receiving event" DEFAULT="Cancelled" LW="175" VX="200" VW="120" SECTION="Events">
+    <OPTION>Hold</OPTION>
+    <OPTION>Waiting</OPTION>
+  </DROPDOWN>
+  <NOTE>Note: for MDW 4 versions earlier than 4.4.15 and MDW versions earlier than 5.1.02, you must use escaped activity names instead of logical IDs</NOTE>
+  <HYPERLINK URL="/MDWWeb/doc/synchronization.html">Synchronization Activity Help</HYPERLINK>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

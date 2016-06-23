@@ -1,0 +1,22 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity" Type="com.centurylink.mdw.activity.types.GeneralActivity" Label="Timer Wait" IconFile="wait.jpg" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET ICON="wait.jpg" LABEL="Timer Wait" BASETYPES="">
+  <TEXT NAME="TIMER_WAIT" LABEL="Duration" UNITS_ATTR="Unit"/>
+  <SELECT NAME="Unit" SECTION="None">
+    <OPTION>Seconds</OPTION>
+    <OPTION>Minutes</OPTION>
+    <OPTION>Hours</OPTION>
+  </SELECT>
+  <TEXT NAME="Custom Validator"/>
+  <TABLE NAME="WAIT_EVENT_NAMES" LABEL="Events">
+    <TEXT LABEL="Event Name"/>
+    <TEXT LABEL="Completion Code"/>
+    <BOOLEAN LABEL="Recurring" DEFAULT="true" READONLY="true"/>
+  </TABLE>
+  <DROPDOWN NAME="STATUS_AFTER_EVENT" LABEL="Status after receiving event" DEFAULT="Cancelled" LW="175" VX="200" VW="120">
+    <OPTION>Hold</OPTION>
+    <OPTION>Waiting</OPTION>
+    <OPTION>Cancelled</OPTION>
+  </DROPDOWN>
+  <HYPERLINK URL="/MDWWeb/doc/TimerWaitActivity.html">Timer Wait Activity Help</HYPERLINK>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

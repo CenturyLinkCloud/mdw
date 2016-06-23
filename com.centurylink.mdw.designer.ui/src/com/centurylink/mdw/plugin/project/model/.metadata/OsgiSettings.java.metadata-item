@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851422
+item-spec=4D4457413A314B3848384C204F53474953455454494E4753204A4156412D313838383537343639382E412D5352433B33
+file-version=3
+checksum=2c9478ba7847a294b68f79cafce7ccc8
+fetch-size=1018
+mtime=1393988850
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/project/model/OsgiSettings.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

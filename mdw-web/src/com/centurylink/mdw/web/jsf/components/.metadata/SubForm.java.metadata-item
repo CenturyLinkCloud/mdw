@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855818
+item-spec=4D4457413A314B374B524A20535542464F524D204A4156412D38323234313335342E412D5352433B32
+file-version=2
+checksum=60d384a1102bc810392b869050164b77
+fetch-size=6861
+mtime=1393990233
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/components/SubForm.java
+project=4D4457413A4D445741
+project-uid=31770127

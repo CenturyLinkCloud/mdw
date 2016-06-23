@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71476418
+item-spec=4D4457413A314B3737545A204153534554484541444552204A4156412D32303336343132303758323931393758302E412D5352433B31
+file-version=1
+checksum=4c3e33510be21c8d3e78a0c1a7fa759d
+fetch-size=2146
+mtime=1465937232
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/asset/AssetHeader.java
+project=4D4457413A4D445741
+project-uid=31770127

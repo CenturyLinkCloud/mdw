@@ -1,0 +1,29 @@
+process: # 13676
+  name: JMS Adapter
+  instance: 1
+  activity: # 1 "2016-02-22 15:25:59"
+    name: Start
+    status: Completed
+  activity: # 4 "2016-02-22 15:25:59"
+    name: Synchronous?
+    status: Completed
+  activity: # 9 "2016-02-22 15:25:59"
+    name: Platform?
+    status: Completed
+  activity: # 10 "2016-02-22 15:25:59"
+    name: |
+      Asynchronous OSGi
+      JMS Request
+    status: Completed
+  activity: # 1 "2016-02-22 15:25:59"
+    name: Stop
+    status: Completed    
+  variable: # 20722
+    name: mode
+    value: Asynchronous
+  variable: # 20720
+    name: platform
+    value: OSGi
+  variable: # 20721
+    name: request
+    value: <hi>Async request - OSGi</hi>

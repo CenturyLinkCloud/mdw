@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851710
+item-spec=4D4457413A314B3848384C204C4942455854454E53494F4E204A4156412D313935313036373536392E412D5352433B32
+file-version=2
+checksum=ddeb62163cf41e710b7edebb56682d18
+fetch-size=2470
+mtime=1393988850
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/project/extensions/LibExtension.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

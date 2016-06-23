@@ -1,0 +1,16 @@
+// adapter-stub-echo
+assert stubbing
+
+// response generater -- simply echo the request
+def responder = { Object request ->
+    return request;
+}
+stub adapter(gpath("request.name() == 'EmployeeLookup'"), responder) {
+    delay = 5
+}
+start process("com.centurylink.mdw.tests/TestAdapterStub") {
+    variables = [request: asset("EmployeeLookup.xml").text]
+}
+
+wait process
+verify process

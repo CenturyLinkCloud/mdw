@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68539553
+item-spec=4D4457413A314B3848384C2054455354524553554C5453464F524D4154544552204A4156412D31393137323039393658323135363758342E412D5352433B33
+file-version=3
+checksum=9a11f24a0c1bb1724d43777e13a8d39a
+fetch-size=4863
+mtime=1456360369
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/ant/TestResultsFormatter.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

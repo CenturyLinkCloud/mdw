@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71476412
+item-spec=4D4457413A314B3737545A204143544956495459564F204A4156412D2D3533343637333737352E412D5352433B37
+file-version=7
+checksum=b0e1b4649887ca4550d3c2c7d7a90346
+fetch-size=7943
+mtime=1465938510
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/activity/ActivityVO.java
+project=4D4457413A4D445741
+project-uid=31770127

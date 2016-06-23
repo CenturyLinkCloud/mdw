@@ -1,0 +1,4 @@
+// GET request to Services/Attributes/{ownerType}/{ownerId}}
+{
+  "MyAttrName": "MyAttrValue"
+}

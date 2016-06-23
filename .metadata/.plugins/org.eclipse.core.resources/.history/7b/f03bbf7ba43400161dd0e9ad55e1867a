@@ -1,0 +1,17 @@
+PROC 1 # 10348
+ACT Start Completed # 11064 "2014-12-09 20:37:45"
+ACT GetEmployee Completed # 11065 "2014-12-09 20:37:50"
+ACT Stop Completed # 11068 "2014-12-09 20:37:50"
+VAR request <<=====
+<tns:GetEmployee xmlns:tns="http://mdw-servicemix.centurylink.com/serviceTypes">
+  <tns:workstationId>dxoakes</tns:workstationId>
+</tns:GetEmployee>
+=====>> # 10875
+VAR response <<=====
+<GetEmployeeResponse xmlns="http://mdw-servicemix.centurylink.com/serviceTypes">
+  <!-- this is purposely different from the non-stubbed response -->
+  <workstationId>dxoakes</workstationId>
+  <firstName>Don</firstName>
+  <lastName>Oakes</lastName>
+</GetEmployeeResponse>
+=====>> # 10878

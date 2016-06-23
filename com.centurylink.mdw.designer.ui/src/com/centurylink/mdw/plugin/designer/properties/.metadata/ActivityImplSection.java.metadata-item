@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549574
+item-spec=4D4457413A314B3848384C204143544956495459494D504C53454354494F4E204A4156412D2D3134373835313434352E412D5352433B35
+file-version=5
+checksum=9495bee47b663b72d06bc8391f68ac93
+fetch-size=5259
+mtime=1453326988
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/properties/ActivityImplSection.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

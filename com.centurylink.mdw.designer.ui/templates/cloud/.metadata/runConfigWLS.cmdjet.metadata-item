@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44582976
+item-spec=4D4457413A314B3848384C2052554E434F4E464947574C5320434D444A45542D2D3839363534323030312E412D4441543B31
+file-version=1
+checksum=85bbe7bd7113bc205c0055dd7689dbe4
+fetch-size=665
+mtime=1319312971
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=templates/cloud/runConfigWLS.cmdjet
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

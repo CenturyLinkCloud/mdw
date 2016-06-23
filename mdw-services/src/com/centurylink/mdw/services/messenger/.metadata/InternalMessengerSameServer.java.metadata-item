@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67298159
+item-spec=4D4457413A314B37435A3020494E5445524E414C4D455353454E47455253414D45534552564552204A4156412D2D3936313636373532332E412D5352433B34
+file-version=4
+checksum=0dc423e6eb8bd7158c4e29143e72d162
+fetch-size=2841
+mtime=1452290062
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/messenger/InternalMessengerSameServer.java
+project=4D4457413A4D445741
+project-uid=31770127

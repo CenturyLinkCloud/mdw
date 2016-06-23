@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855383
+item-spec=4D4457413A314B374B524A20444952564945574E4F41555448204A4156412D2D3132393231393134392E412D5352433B32
+file-version=2
+checksum=ec96bbe3b70171cc6a430613ceb51e94
+fetch-size=356
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/filepanel/DirViewNoAuth.java
+project=4D4457413A4D445741
+project-uid=31770127

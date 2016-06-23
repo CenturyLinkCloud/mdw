@@ -1,0 +1,47 @@
+apply plugin: "osgi"
+
+dependencies {
+    compile project(":mdw-schemas")
+    compile project(":mdw-common")
+    compile group: "javax.xml", name: "jaxrpc-api", version: "1.1"
+    compile group: "expect4j", name: "expect4j", version: "1.1.0"
+    compile group: "commons-pool", name: "commons-pool", version: "1.5.4"
+    compile group: "junit", name: "junit", version: "4.8.1"
+}
+
+clean {
+    dependsOn cleanJar
+}
+
+jar {
+    manifest {
+        classesDir = sourceSets.main.output.classesDir
+        symbolicName = "com.centurylink.mdw.services"
+        instruction "Bundle-Activator",
+            "com.centurylink.mdw.services.bundle.ServicesBundleActivator"
+        instruction "Bundle-ClassPath",
+            ".",
+            "META-INF/mdw"
+        instruction "Export-Package",
+            "!com.centurylink.mdw.services.bundle",
+            "com.centurylink.mdw.services.*"
+        instruction "Private-Package",
+            "com.centurylink.mdw.services.bundle"
+        instruction "Import-Package",
+            "com.centurylink.mdw.common.config.service",
+            "com.centurylink.mdw.java",
+            "com.centurylink.mdw.task",
+            "com.centurylink.mdw.task.impl",              
+            "com.centurylink.bam.impl",
+            "com.centurylink.mdw.service.impl",
+            "com.centurylink.mdw.workflow.impl",
+            "com.centurylink.mdw.bpm.impl",
+            "org.apache.xmlbeans.impl.schema",
+            "groovy.util;version='[1.7,3)'",
+            "noNamespace.impl",
+            "*"
+        instruction "DynamicImport-Package",
+            "schemaorg_apache_xmlbeans.*",
+            "com.centurylink.mdw.workflow.task.notifier"
+    }
+}

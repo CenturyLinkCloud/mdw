@@ -1,0 +1,13 @@
+version=10.2
+item-uid=64372141
+item-spec=4D4457413A314B36545833204352454154452042414D204F424A532053514C2D31373930313531343458323330303558302E412D4441543B31
+file-version=1
+checksum=54ab0dadf473d497b88f8a18d9e25f5c
+fetch-size=5215
+mtime=1399507996
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/oldScripts/create_bam_objs.sql
+project=4D4457413A4D445741
+project-uid=31770127

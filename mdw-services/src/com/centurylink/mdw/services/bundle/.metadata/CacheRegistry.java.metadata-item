@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69322826
+item-spec=4D4457413A314B37435A302043414348455245474953545259204A4156412D313636393832343733342E412D5352433B3130
+file-version=10
+checksum=85e0ef2eb1c85191a6e5d5914cc66767
+fetch-size=8666
+mtime=1458573761
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/bundle/CacheRegistry.java
+project=4D4457413A4D445741
+project-uid=31770127

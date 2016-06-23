@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71519029
+item-spec=4D4457413A314B37435A30204556454E544D414E414745524245414E204A4156412D2D3231363537363233362E412D5352433B3239
+file-version=29
+checksum=20c1918b521333f15418091b06b20298
+fetch-size=79514
+mtime=1466028495
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/event/EventManagerBean.java
+project=4D4457413A4D445741
+project-uid=31770127

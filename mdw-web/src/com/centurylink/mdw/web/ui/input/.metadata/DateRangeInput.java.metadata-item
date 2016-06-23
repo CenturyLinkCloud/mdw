@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855710
+item-spec=4D4457413A314B374B524A204441544552414E4745494E505554204A4156412D3330323232303832312E412D5352433B32
+file-version=2
+checksum=c7a67ab9d923a37b97b4618dd29d0996
+fetch-size=4033
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/ui/input/DateRangeInput.java
+project=4D4457413A4D445741
+project-uid=31770127

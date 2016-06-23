@@ -1,0 +1,10 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.rules.DroolsDecisionTableActivity" Type="com.centurylink.mdw.activity.types.RuleActivity" Label="Drools Decision Table" IconFile="excel.gif" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET>
+  <DROPDOWN NAME='KnowledgeBase' LABEL='Knowledge Base' SOURCE='RuleSets' TYPE='EXCEL,EXCEL_2007' />
+  <TEXT NAME='DecisionTableSheet' LABEL='Worksheet (Optional)' VW='175'/>
+  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/> 
+  <HYPERLINK URL='/MDWWeb/doc/droolsActivities.html'>
+    Decision Table Activity Help
+  </HYPERLINK>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

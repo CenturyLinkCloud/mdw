@@ -1,0 +1,818 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.2.2.v201301221637 Build &lt;4.2.2.v20130206-1509></property>
+    <text-property name="title">Tasks Grouped by User and State</text-property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/grouped_listing.gif</property>
+    <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.groupedlisting</property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <parameters>
+        <scalar-parameter name="startDate" id="157">
+            <text-property name="promptText">Start Date</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">2012-01-01</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Custom</property>
+                <property name="pattern">yyyy-MM-dd</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="endDate" id="158">
+            <text-property name="promptText">End Date</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">2014-01-01</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Custom</property>
+                <property name="pattern">yyyy-MM-dd</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="MDWDataSource" id="43">
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>contentBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>metadataBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledMetadataBidiFormatStr</name>
+                </ex-property>
+                <ex-property>
+                    <name>disabledContentBidiFormatStr</name>
+                </ex-property>
+            </list-property>
+            <property name="odaDriverClass">oracle.jdbc.driver.OracleDriver</property>
+            <property name="odaURL">jdbc:oracle:thin:@mdwdevdb.dev.qintra.com:1594:mdwdev</property>
+            <property name="odaUser">mdw</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">bWR3</encrypted-property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="MDWDataSet" id="44">
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">DSP_StartDate</property>
+                    <property name="paramName">startDate</property>
+                    <property name="dataType">date</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">DSP_EndDate</property>
+                    <property name="paramName">endDate</property>
+                    <property name="dataType">date</property>
+                    <property name="position">2</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">TASK_INSTANCE_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">TASK_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">TASK_INSTANCE_STATUS</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">TASK_INSTANCE_OWNER</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">TASK_INSTANCE_OWNER_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">TASK_CLAIM_USER_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">CREATE_DT</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">CREATE_USR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">MOD_DT</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">MOD_USR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">COMMENTS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">TASK_START_DT</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">TASK_END_DT</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">TASK_INSTANCE_STATE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">TASK_INSTANCE_REFERRED_AS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">TASK_INST_SECONDARY_OWNER</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">TASK_INST_SECONDARY_OWNER_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">OWNER_APP_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">ASSOCIATED_TASK_INST_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">DUE_DATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">PRIORITY</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">MASTER_REQUEST_ID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">USER_INFO_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">CUID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">CREATE_DT_25</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">CREATE_USR_26</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">MOD_DT_27</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">28</property>
+                        <property name="name">MOD_USR_28</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">COMMENTS_29</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">30</property>
+                        <property name="name">END_DATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">32</property>
+                        <property name="name">TASK_STATE_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">33</property>
+                        <property name="name">TASK_STATE_DESC</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">MDWDataSource</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">TASK_INSTANCE_ID</property>
+                    <property name="nativeName">TASK_INSTANCE_ID</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">TASK_ID</property>
+                    <property name="nativeName">TASK_ID</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">TASK_INSTANCE_STATUS</property>
+                    <property name="nativeName">TASK_INSTANCE_STATUS</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">TASK_INSTANCE_OWNER</property>
+                    <property name="nativeName">TASK_INSTANCE_OWNER</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">TASK_INSTANCE_OWNER_ID</property>
+                    <property name="nativeName">TASK_INSTANCE_OWNER_ID</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">TASK_CLAIM_USER_ID</property>
+                    <property name="nativeName">TASK_CLAIM_USER_ID</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">CREATE_DT</property>
+                    <property name="nativeName">CREATE_DT</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">CREATE_USR</property>
+                    <property name="nativeName">CREATE_USR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">MOD_DT</property>
+                    <property name="nativeName">MOD_DT</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">MOD_USR</property>
+                    <property name="nativeName">MOD_USR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">COMMENTS</property>
+                    <property name="nativeName">COMMENTS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">TASK_START_DT</property>
+                    <property name="nativeName">TASK_START_DT</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">TASK_END_DT</property>
+                    <property name="nativeName">TASK_END_DT</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">TASK_INSTANCE_STATE</property>
+                    <property name="nativeName">TASK_INSTANCE_STATE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">TASK_INSTANCE_REFERRED_AS</property>
+                    <property name="nativeName">TASK_INSTANCE_REFERRED_AS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">TASK_INST_SECONDARY_OWNER</property>
+                    <property name="nativeName">TASK_INST_SECONDARY_OWNER</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">TASK_INST_SECONDARY_OWNER_ID</property>
+                    <property name="nativeName">TASK_INST_SECONDARY_OWNER_ID</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">OWNER_APP_NAME</property>
+                    <property name="nativeName">OWNER_APP_NAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">ASSOCIATED_TASK_INST_ID</property>
+                    <property name="nativeName">ASSOCIATED_TASK_INST_ID</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">DUE_DATE</property>
+                    <property name="nativeName">DUE_DATE</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">PRIORITY</property>
+                    <property name="nativeName">PRIORITY</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">MASTER_REQUEST_ID</property>
+                    <property name="nativeName">MASTER_REQUEST_ID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">USER_INFO_ID</property>
+                    <property name="nativeName">USER_INFO_ID</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">CUID</property>
+                    <property name="nativeName">CUID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">CREATE_DT_25</property>
+                    <property name="nativeName">CREATE_DT</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">CREATE_USR_26</property>
+                    <property name="nativeName">CREATE_USR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">MOD_DT_27</property>
+                    <property name="nativeName">MOD_DT</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">28</property>
+                    <property name="name">MOD_USR_28</property>
+                    <property name="nativeName">MOD_USR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">29</property>
+                    <property name="name">COMMENTS_29</property>
+                    <property name="nativeName">COMMENTS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">30</property>
+                    <property name="name">END_DATE</property>
+                    <property name="nativeName">END_DATE</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">32</property>
+                    <property name="name">TASK_STATE_ID</property>
+                    <property name="nativeName">TASK_STATE_ID</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">33</property>
+                    <property name="name">TASK_STATE_DESC</property>
+                    <property name="nativeName">TASK_STATE_DESC</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select * from task_instance ti , user_info ui ,
+task_state ts where 
+ti.task_claim_user_id = ui.user_info_id 
+and ts.task_state_id = ti.task_instance_state 
+and ti.create_dt between ? and ?
+]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="41">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="42">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="orientation">landscape</property>
+            <property name="topMargin">0.5in</property>
+            <property name="leftMargin">0.5in</property>
+            <property name="bottomMargin">0.5in</property>
+            <property name="rightMargin">0.5in</property>
+            <page-footer>
+                <grid id="3">
+                    <property name="width">100%</property>
+                    <column id="4"/>
+                    <row id="5">
+                        <cell id="6">
+                            <text id="7">
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                            </text>
+                        </cell>
+                    </row>
+                </grid>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="Tasks" id="13">
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">left</property>
+            <property name="widows">2</property>
+            <property name="width">100%</property>
+            <property name="dataSet">MDWDataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">TASK_NAME</property>
+                    <text-property name="displayName">CUID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["CUID"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">TASK_INSTANCE_STATUS</property>
+                    <text-property name="displayName">TASK_INSTANCE_STATUS</text-property>
+                    <expression name="expression">dataSetRow["TASK_INSTANCE_STATUS"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">TASK_INSTANCE_ID</property>
+                    <text-property name="displayName">TASK_INSTANCE_ID</text-property>
+                    <expression name="expression">dataSetRow["TASK_INSTANCE_ID"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">TASK_STATUS</property>
+                    <text-property name="displayName">State</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["TASK_STATE_DESC"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Status Agg</property>
+                    <text-property name="displayName">Status Aggregation</text-property>
+                    <property name="dataType">integer</property>
+                    <simple-property-list name="aggregateOn">
+                        <value>TASK_STATE</value>
+                    </simple-property-list>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">dataSetRow["TASK_INSTANCE_STATE"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">UI_CUID</property>
+                    <text-property name="displayName">UI_CUID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["CUID"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">TASK_STATE</property>
+                    <text-property name="displayName">TASK_STATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["TASK_STATE_DESC"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <list-property name="sort">
+                <structure>
+                    <expression name="key">row["TASK_NAME"]</expression>
+                    <property name="direction">asc</property>
+                </structure>
+                <structure>
+                    <expression name="key">row["TASK_STATUS"]</expression>
+                    <property name="direction">asc</property>
+                </structure>
+            </list-property>
+            <column id="35">
+                <property name="width">1.823in</property>
+            </column>
+            <column id="96">
+                <property name="width">3.25in</property>
+            </column>
+            <column id="104">
+                <property name="width">2.1979166666666665in</property>
+                <property name="textAlign">right</property>
+                <property name="orphans">2</property>
+            </column>
+            <header>
+                <row id="14">
+                    <cell id="15">
+                        <label id="45">
+                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontSize">small</property>
+                            <property name="textUnderline">underline</property>
+                            <property name="textAlign">left</property>
+                            <property name="widows">2</property>
+                            <text-property name="text">User</text-property>
+                        </label>
+                    </cell>
+                    <cell id="89">
+                        <label id="106">
+                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontSize">small</property>
+                            <property name="textUnderline">underline</property>
+                            <text-property name="text">State</text-property>
+                        </label>
+                    </cell>
+                    <cell id="97">
+                        <label id="107">
+                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontSize">small</property>
+                            <property name="textUnderline">underline</property>
+                            <text-property name="text">Count</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <group id="18">
+                <property name="groupName">UI_CUID</property>
+                <expression name="keyExpr" type="javascript">row["UI_CUID"]</expression>
+                <list-property name="sort">
+                    <structure>
+                        <expression name="key" type="javascript">row["UI_CUID"]</expression>
+                        <property name="direction">asc</property>
+                        <property name="strength">-1</property>
+                    </structure>
+                </list-property>
+                <header>
+                    <row id="19">
+                        <property name="backgroundColor">#E5E5E5</property>
+                        <cell id="20">
+                            <property name="colSpan">3</property>
+                            <property name="rowSpan">1</property>
+                            <data id="46">
+                                <property name="fontFamily">"Arial"</property>
+                                <property name="fontSize">small</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <property name="resultSetColumn">TASK_NAME</property>
+                            </data>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="23">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <cell id="24">
+                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontSize">small</property>
+                        </cell>
+                        <cell id="94"/>
+                        <cell id="102"/>
+                    </row>
+                </footer>
+            </group>
+            <group id="78">
+                <property name="groupName">TASK_STATE</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr" type="javascript">row["TASK_STATE"]</expression>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">true</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <property name="pageBreakInside">auto</property>
+                <list-property name="sort">
+                    <structure>
+                        <expression name="key" type="javascript">row["TASK_STATE"]</expression>
+                        <property name="direction">asc</property>
+                        <property name="strength">-1</property>
+                    </structure>
+                </list-property>
+                <header>
+                    <row id="79">
+                        <cell id="80">
+                            <data id="156">
+                                <property name="fontFamily">"Arial"</property>
+                                <property name="fontSize">small</property>
+                                <property name="paddingLeft">10pt</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">true</expression>
+                                    </structure>
+                                </list-property>
+                                <property name="resultSetColumn">TASK_STATUS</property>
+                            </data>
+                        </cell>
+                        <cell id="91">
+                            <data id="87">
+                                <property name="fontFamily">"Arial"</property>
+                                <property name="fontSize">small</property>
+                                <property name="color">#004080</property>
+                                <property name="resultSetColumn">TASK_STATUS</property>
+                            </data>
+                        </cell>
+                        <cell id="99">
+                            <data id="88">
+                                <property name="fontFamily">"Arial"</property>
+                                <property name="fontSize">small</property>
+                                <property name="resultSetColumn">Status Agg</property>
+                            </data>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="83">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <cell id="84">
+                            <property name="fontFamily">"Arial"</property>
+                            <property name="fontSize">small</property>
+                        </cell>
+                        <cell id="93"/>
+                        <cell id="101"/>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="27">
+                    <cell id="28">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">small</property>
+                    </cell>
+                    <cell id="92"/>
+                    <cell id="100"/>
+                </row>
+            </detail>
+            <footer>
+                <row id="31">
+                    <cell id="32">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">small</property>
+                    </cell>
+                    <cell id="95"/>
+                    <cell id="103"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+    <list-property name="images">
+        <structure>
+            <property name="name">mdw_medium.gif</property>
+            <property name="type">image/gif</property>
+            <property name="data">
+                R0lGODdhUABBAOf/AEhMTkpOUExQUk5PV1FPUlJPU01RU0tSWVJSW1BUV1VTV05WXVFVYlNXWlNWZFVZ
+                XFhZYlNbYlZbXVZaaFxaXVVcb1ldYFJedWBeYltgYl5fZ19gaF1iZFpidGRiZV9kZmVjZ15mbWFmaGRo
+                dWVpbFpqh2pobGZrbWdrbmxqbm1rb2ltcFtukWVtgGZudV9ui2Rvh2twcnFvc1x1nHB0d292fnJ3eWN4
+                p3R4e3R5fHh5gnd7fnB7lGd8q3l+gGiAqWWAtWuAsHmAiH5/iHyBg3yAj36Dhn6CkW+EtHiEnWaGwXaF
+                pICFiHSHq4KHiYKGlWmJxHGIxXSJuYSJi3KJxoWKjWuMxm+LzYaLjoeLmoGMpYiNj2+PynuOsomOkXKP
+                0WuR0m2Q2IqPkn2QtHSQ0m+S2oyRk4aSn4qSmXaT1W+V1nGU3I6TlXyVvnmWxXuVy3aW0YKVunmV2JGW
+                mXSa25OYm5mXm3ub13ac3X6a3ZabnZaaqXie34Wdx5ubpZidn4Cf3JmeoIWf1pugoqKfo5yho4Sj356i
+                pYqj2oel1I2l0J2lraOkrY2m3oin46GmqKGltI+o4J2pw5aq3Kesrq6ssJqu4a+tsaevxKuwspWy4p6y
+                162ytKOy0rOxta6ztZm15qm0z7e0ubG2uaC45LS5u7a7vqW96Le8v727v7i+wLm/wbC/4KzA5sG+w7vA
+                w7HA4b3CxbLG7MHGyLfH58LHysjGysDJ0cTJzL3J5L/L2cjJ08bLzszKzsTM4b7N7snO0MvQ0s7T1sjU
+                79bT2NDV2NPV0tLX2tXW4NjW2tTZ29ja1tfc3tTc8djd4Nvd2s/f89fe9Nvg49/h3t/g6t3j5eHk4N/k
+                5t/j8+bj6OHm6eTm4ujl6uXn5N/o8OPo6+Pn9+bo5ebn8eTp7Ofp5ubs7urs6Ovu6unu8e3v7Ojw+e/x
+                7uny++3y9fDx+/Hz8O/19/P18vT38/L3+fb49PT5/Pf59vX6/fj69/n7+Pr8+fj9//v9+vn///z/+/7/
+                /CwAAAAAUABBAAAI/gD/CRxIsKDBgwgTKlzIsKHDhxAjSpxIsaLFhfwy8mOo8eJFfvry4aNHEl8+fQL5
+                7ctXz57LfPk2FgyJz6U9mDI9QizDs2eZbd/OtRumic8aOYA0+SJXrt28mP+wnTIkZw2dSbm4mVtHL5/O
+                nT55vqqlC1DYnoJwLdvWrh2oszwF3VKmrV29nF8VwjWzRw3cnnA+1UJm9m+ZwLWcobubdyFcF2AM9+xC
+                6I5knloOuXK2zmvjhHB7XOZpRcroMkiIHKqlTR7ezwQNk2lyRAcPMrLjnBFy++wVE04+KVu3D/bBv1BC
+                oKBhY8eSv1Rq7PAx/XnYMBRsHAJmzrPx2L4Z/jwgsWNLIEZwr0zgEMOH+UVwE6ioM+sbvuLfB8K9IMAC
+                DTOUzALMfgZkYIMZmQgIlwEkmPGKNvbkB15YACRgwhSZAFNNOXBVSAKGGnJ4lgEibJGKNfRIqN9ZAEhg
+                QyG4XPOOPR26OEgtMtI44gdToIKiigJ1mAERmRzTmT5CEmnkSXAJ8MEWqFyTIpBNcuBEKdLEs1GVV2a5
+                5VlOTmGKlED+06QHU6RSjTxBgommmmyaCSaPY06pYpN0kilnWGHW2SafedopIZ5i6kmon3v61Keed85Z
+                6JSHGuoooo0C+uifigaKaU+LCppfpJBOKqmllA4qaqikjprppVSeuilP/p2+WkasraaK6qqIglrmgh5A
+                +WOinGoKLE8G9Oqjp8btA1cDJ2yxiqrBsrpss88iCxs/+HxTyx87kCACeX/UYp+stGa7bbff7hDuuEDm
+                cw4xovyxxbx/jFLMOZ7p+o+78MpLr734lqlPPOEQM8sqqKwyCzHbxIPSsLMKO3DBBye8cMMPq7hSPOh8
+                s801QKETTz746btxxx+HPDJ+QIIkEkn0mKRPTvoKpM9I9MhTUsZlGqSRSsXxU/PNJOkcM8//uIxzzCfh
+                pTTMMr+WUEYw2YTP1brCpTLJsm4Tzjkjy6T112EvtA80pBhCRxl0NAJLNeSkA6rQZ41VTDgOy2o3/t4P
+                w7V33gmB48hfcoQizNx7BTKKMfhmlPjijdMdlhmKM+6dQc2scVkfoCJ5Frji4iMr6OzCRbroB4Ejx2md
+                T+sstDwx+/qtPcle7UH7GHKWFS9osEELP4TxV6eeh1Wsr7QTa+yvvCJ/0C9nQRGBAhSYgAMRT+B2avG4
+                wh6xtK4aVJhPHRggQQxTBEJJJuhtr+/74ROEzVlKBNBAClNQYksxyhzufvjws5VBZHEWFhQAAz54BC+u
+                kY51iMhW3ItWrgAYv4FY4iwVsJAZUPGMdpikHq2joAAhRiuCjK8nCHiAdoBRDtRFEFaBeuH3JjjCmg1k
+                bWEpgAV8QIliEGdF/hAMYPeSN0NGDURzYRkABozgCWbAI2MhrKEIh1gQfqwuLAuwEpa0BMQhypBWQpSg
+                Ef+xDz5gUIte6qIY6SHDA7xpTf+IBlzcmCY4yrGCAolEAZfYxCcKRB1R9IkD0FSKachDHXmAyyCnUEh5
+                uAMPNhRIK6K3wx6mIyb1GNz2ruiTEmTACaNwhjd0BxdPgtIZ4iAlHvnRDLjMgAaBqEU4DtmI4cXQjGG5
+                AgyEAIlNcNI3LxjCIjqBw0j+4x6QPEsQsvCJXbCimNvTxGkUAYfTJMKY+aAF6wTRuWGMBg6BGMNo1OAH
+                Y/IDHif8Sxr2MLd6IEIyXBACdbggGTIUYQfm/sQHNSwjmSTg81Qg8cY74RKEEJAgBkRAwxv+EoURiGAF
+                zTvWQfTxDmRwMz0tEAEKIoqijMgjG6F4AxnCEAYo3KADEuDACoigh0+oQhJuGGkYrgCEEkAgAyf4Z1hs
+                N8aU5AMdy8BEG7gwUpq+IAIZIAEOXHc7fuRjHc5wxSGmYIMVkOAEMijPI1YhjGcYIxVTxYFVSbACGzhB
+                D5wwRSbYgIMTpGtdqPOZPcxxDFQQYgo7iMEJSIACGzDBDpUQRSbM0Na3hi4l+EiHM2rxiULUwQxmqMMj
+                RIELZ2zFHM+wxScO8VgzsKEQmYiFMJTRi0/4awv1utflZkKPcjyjFqN4uIQeIFuHQVziFcIoBi44oYd5
+                oRZg3uFHPdqhDWUAYxaxiEUtgsGMutzEHu3YxjKOm1wBJeMa5TiHNYRRMYUxDHAI0Yc91rENZgSjFtXl
+                RTGqYY5yXIO7CPMuxgjiVHmswxwe85o53tEVn86jHeUYxzaAshV51AMf8EAZyL4hMq4ppL73JceAv7GV
+                eBw4wR5bcINZJpB9qAQfLXkJVOhbNZdc7SQ2e1lJmuYQp+bDajJL8dKi1rODBAQAOw==
+            </property>
+        </structure>
+    </list-property>
+</report>

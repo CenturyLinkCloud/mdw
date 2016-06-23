@@ -1,0 +1,19 @@
+{
+  "Common": [
+    "Process Design",
+    "Process Design",
+    "Process Execution"
+  ],
+  "Site Admin": [
+    "Process Design",
+    "Process Execution",
+    "User Admin"
+  ],
+  "cuid": "dxoakes",
+  "groups": [
+    "Common",
+    "MDW Support",
+    "Site Admin"
+  ],
+  "name": "Donald Oakes"
+}

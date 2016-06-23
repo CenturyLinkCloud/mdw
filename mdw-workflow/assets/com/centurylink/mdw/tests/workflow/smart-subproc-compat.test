@@ -1,0 +1,6 @@
+// smart-subproc-compat
+start process("SmartProcessParent") {
+    variables = [ testCase: "oldStyle" ]
+}
+wait process
+verify processes("SmartProcessParent", "SmartProcessChildCompat")

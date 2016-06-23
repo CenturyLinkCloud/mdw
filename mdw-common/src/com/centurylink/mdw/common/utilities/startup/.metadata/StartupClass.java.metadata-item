@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852994
+item-spec=4D4457413A314B3737545A2053544152545550434C415353204A4156412D2D313939333332333834302E412D5352433B32
+file-version=2
+checksum=2bce379ace4ed3b2d187d1cec5cc6ad9
+fetch-size=819
+mtime=1393988446
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/startup/StartupClass.java
+project=4D4457413A4D445741
+project-uid=31770127

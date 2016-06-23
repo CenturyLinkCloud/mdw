@@ -1,0 +1,15 @@
+// note: requires server stubbing to be turned on
+
+// response generater -- simply echo the request
+def responder = { Object request ->
+    return;
+}
+stub adapter(gpath("request.name() == 'EmployeeLookup'"), responder) {
+    delay = 5
+}
+start process("com.centurylink.mdw.tests/TestAdapterStub") {
+    variables = [request: file("EmployeeLookup.xml").text]
+}
+sleep 20
+wait process
+verify process

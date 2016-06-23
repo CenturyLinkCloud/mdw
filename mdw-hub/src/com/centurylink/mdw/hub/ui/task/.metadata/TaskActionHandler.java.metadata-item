@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68586352
+item-spec=4D4457413A314B37595142205441534B414354494F4E48414E444C4552204A4156412D2D3438323431363736372E412D5352433B34
+file-version=4
+checksum=205780ace26a75c0ffbcc4f92428b2a8
+fetch-size=5240
+mtime=1456535313
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/ui/task/TaskActionHandler.java
+project=4D4457413A4D445741
+project-uid=31770127

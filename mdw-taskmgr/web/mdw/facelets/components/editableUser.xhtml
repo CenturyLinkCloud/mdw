@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+
+    <t:panelGrid
+      rendered="#{rendered}"
+      columns="2"
+      width="100%"
+      columnClasses="mdw_detailsLabelColumn,mdw_detailsValueColumn">
+      <mdw:label value="CUID" required="true" />
+      <t:panelGroup>
+        <t:inputText
+          id="editableUserNameInput"
+          value="#{itemEntity.name}"
+          required="true"
+          size="60"
+          disabled="#{disabled}"
+          styleClass="mdw_inputField" 
+          />
+        <t:message
+          for="editableUserNameInput"
+          detailFormat="Please enter a name."
+          styleClass="mdw_message" />
+      </t:panelGroup>    
+      <mdw:label value="Full Name" />
+      <t:inputText
+        value="#{itemEntity.comment}"
+        size="120"
+        disabled="#{disabled}"
+        styleClass="mdw_inputField" />
+    </t:panelGrid>
+
+  </ui:composition>
+
+</html>
+

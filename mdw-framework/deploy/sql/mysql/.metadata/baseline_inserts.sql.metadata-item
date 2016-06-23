@@ -1,0 +1,13 @@
+version=10.2
+item-uid=54986280
+item-spec=4D4457413A314B3654583320424153454C494E4520494E53455254532053514C2D2D313430363534373538312E412D4441543B34
+file-version=4
+checksum=6572178c25f94ae2f6594dae44aac0b3
+fetch-size=1126
+mtime=1428421687
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/mysql/baseline_inserts.sql
+project=4D4457413A4D445741
+project-uid=31770127

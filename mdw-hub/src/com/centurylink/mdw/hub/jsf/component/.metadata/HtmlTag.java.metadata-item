@@ -1,0 +1,13 @@
+version=10.2
+item-uid=47166295
+item-spec=4D4457413A314B375951422048544D4C544147204A4156412D2D313330333532313132372E412D5352433B33
+file-version=3
+checksum=1085be8f7228875fa9743d973cb4066b
+fetch-size=670
+mtime=1395432977
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/jsf/component/HtmlTag.java
+project=4D4457413A4D445741
+project-uid=31770127

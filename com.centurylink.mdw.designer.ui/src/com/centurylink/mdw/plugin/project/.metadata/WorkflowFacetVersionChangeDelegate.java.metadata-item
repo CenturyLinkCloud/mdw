@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851365
+item-spec=4D4457413A314B3848384C20574F524B464C4F57464143455456455253494F4E4348414E474544454C4547415445204A4156412D2D3839363534323030312E412D5352433B32
+file-version=2
+checksum=859fd733722b2d26c4398a9be8e1924b
+fetch-size=644
+mtime=1393988850
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/project/WorkflowFacetVersionChangeDelegate.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

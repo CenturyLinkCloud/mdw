@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<facelet-taglib 
+    xmlns="http://java.sun.com/xml/ns/javaee" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    version="2.0" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facelettaglibrary_2_0.xsd"
+    id="mdw-hub">
+
+  <namespace>http://www.centurylink.com/mdw-hub/jsf</namespace>
+  
+  <tag>
+    <tag-name>mdwLoginForm</tag-name>
+    <source>../authentication/mdwLoginForm.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>ctLoginForm</tag-name>
+    <source>../authentication/ctLoginForm.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>taskNav</tag-name>
+    <source>../menus/taskNav.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>createTaskNav</tag-name>
+    <source>../menus/createTaskNav.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>orderNav</tag-name>
+    <source>../menus/orderNav.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>processNav</tag-name>
+    <source>../menus/processNav.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>launchProcessNav</tag-name>
+    <source>../menus/launchProcessNav.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>requestNav</tag-name>
+    <source>../menus/requestNav.xhtml</source>
+  </tag>
+  
+</facelet-taglib>
+  

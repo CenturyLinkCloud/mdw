@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44536361
+item-spec=4D4457413A314B36545833204752414E545320544F20555345522053514C2D313936353835333736372E412D4441543B31
+file-version=1
+checksum=d52f274e69c856d25a2c4d852dcefd1d
+fetch-size=285
+mtime=1329519401
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/oldScripts/grants_to_user.sql
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854381
+item-spec=4D4457413A314B37464735205343484544554C454450524F434553535354415254204A4156412D313634323437323537332E412D5352433B33
+file-version=3
+checksum=f26c192b51af1c3ac68ba071309e2b18
+fetch-size=2437
+mtime=1393990106
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/timer/process/ScheduledProcessStart.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,29 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity" Type="com.centurylink.mdw.activity.types.InvokeProcessActivity" Label="Invoke Multiple Subprocesses" IconFile="subprocess.gif" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET ICON="subprocess.gif" LABEL="Invoke Multiple Subprocesses" BASETYPES="com.centurylink.mdw.activity.types.InvokeProcessActivity">
+  <DROPDOWN NAME="Execution Plan" LABEL="Execution Plan Variable" SOURCE="DocumentVariables" LW="200" VW="160" VX="220"/>
+  <TEXT NAME="DELAY_BETWEEN" LABEL="Delay Between Instances (sec)" LW="200" VX="220" VW="80"/>
+  <TABLE NAME="processmap" LABEL="Processes" USE_POPUP="true">
+    <TEXT LABEL="Logical Name"/>
+    <DROPDOWN LABEL="Subprocess" SOURCE="Process"/>
+    <DROPDOWN LABEL="Process Version" SOURCE="ProcessVersion"/>
+  </TABLE>
+  <SELECT NAME="synchronous" DEFAULT="TRUE">
+    <OPTION>TRUE</OPTION>
+    <OPTION>FALSE</OPTION>
+  </SELECT>
+  <SELECT NAME="Force Parallel Execution" DEFAULT="FALSE">
+    <OPTION>TRUE</OPTION>
+    <OPTION>FALSE</OPTION>
+  </SELECT>
+  <TABLE NAME="WAIT_EVENT_NAMES" LABEL="Events" USE_POPUP="true" SECTION="Events">
+    <TEXT LABEL="Event Name"/>
+    <TEXT LABEL="Completion Code"/>
+    <BOOLEAN LABEL="Recurring" DEFAULT="true" READONLY="true"/>
+  </TABLE>
+  <DROPDOWN NAME="STATUS_AFTER_EVENT" LABEL="Status after receiving event" DEFAULT="Hold" LW="175" VX="200" VW="120" SECTION="Events">
+    <OPTION>Hold</OPTION>
+    <OPTION>Waiting</OPTION>
+  </DROPDOWN>
+  <HYPERLINK URL="/MDWWeb/doc/InvokeMultipleSubprocesses.html">Invoke Multiple Subprocesses Help</HYPERLINK>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

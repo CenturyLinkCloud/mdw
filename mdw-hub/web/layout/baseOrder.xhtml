@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf"
+  xmlns:hub="http://www.centurylink.com/mdw-hub/jsf">
+
+  <ui:composition template="/layout/detail.xhtml">
+
+    <ui:param
+      name="layoutWidth"
+      value="960" />
+
+    <ui:define name="detailHeader">
+      Order #{detailManager.orderDetail.masterRequestId} 
+    </ui:define>
+      
+    <ui:define name="detailLinks">
+      <hub:orderNav />
+    </ui:define>
+
+    <ui:define name="detailContent">
+      <ui:insert name="orderSummary">
+        <mdw:panel id="orderDataPanel" label="Order XML" collapsible="true" styleClass="mdw_panel">
+           <pre class="mdw_detailsRawContent">#{detailManager.orderDetail.detailData}</pre> 
+        </mdw:panel>
+        <mdw:panel id="orderSummaryPanel" label="Order Transient Data" collapsible="true" styleClass="mdw_panel" style="margin-top:5px;">
+           <pre class="mdw_detailsRawContent">#{detailManager.orderDetail.transientData}</pre> 
+        </mdw:panel>
+        <mdw:panel id="orderEventDataPanel" label="Order BAM Event Data" collapsible="true" styleClass="mdw_panel" style="margin-top:5px;">    
+          <t:dataTable
+            columnClasses="mdw_label,mdw_value"
+            value="#{detailManager.orderDetail.eventData}"
+            var="eventDataItem"
+            rowIndexVar="dataItemRowIndex"
+            width="100%">
+            <t:column
+              style="width:100px;">
+              <t:outputText            
+                value="#{eventDataItem.eventName}" />
+            </t:column>
+            <t:column
+              style="width:100px;">
+              <t:outputText            
+                value="#{eventDataItem.eventData}" />
+            </t:column>
+            <t:column
+              style="width:100px;">
+              <t:outputText            
+                value="#{eventDataItem.eventCategory}" />
+            </t:column>
+            <t:column
+              style="width:100px;">
+              <t:outputText            
+                value="#{eventDataItem.eventId}" />
+            </t:column>
+            <t:column
+              style="width:100px;">
+              <t:outputText            
+                value="#{eventDataItem.eventTime}" />
+            </t:column>
+          </t:dataTable>
+        </mdw:panel>
+        <mdw:panel id="orderBamAttrDataPanel" label="Order BAM Attribute Data" collapsible="true" styleClass="mdw_panel" style="margin-top:5px;">    
+          <t:dataTable
+            columnClasses="mdw_label,mdw_value"
+            value="#{detailManager.orderDetail.bamAttrData}"
+            var="attrDataItem"
+            rowIndexVar="dataItemRowIndex"
+            width="100%">
+            <t:column
+              style="width:100px;">
+              <t:outputText            
+                value="#{attrDataItem.attributeName}" />
+            </t:column>
+            <t:column
+              style="width:100px;">
+              <t:outputText            
+                value="#{attrDataItem.attributeValue}" />
+            </t:column>
+          </t:dataTable>
+        </mdw:panel>
+
+      </ui:insert>
+    </ui:define>
+
+    <ui:define name="commandContent">
+    </ui:define>
+
+  </ui:composition>
+
+</html>

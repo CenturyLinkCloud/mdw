@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65140493
+item-spec=4D4457413A314B3737545A2050524F434553534C495354204A4156412D2D313734353232333735392E412D5352433B36
+file-version=6
+checksum=3fc6c4eadce4d3fa9febb49a956b6ae4
+fetch-size=4181
+mtime=1444430772
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/process/ProcessList.java
+project=4D4457413A4D445741
+project-uid=31770127

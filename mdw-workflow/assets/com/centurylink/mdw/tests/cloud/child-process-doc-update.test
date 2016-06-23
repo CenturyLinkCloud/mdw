@@ -1,0 +1,7 @@
+// child-process-doc-update
+start process("ReflectChildDocUpdate") {
+    variables = [actionRequest: asset("jaxb-action-request.xml").text,
+                 assetDefinedJaxbIn: file("jaxb-asset.xml").text]
+}
+wait process
+verify processes("ReflectChildDocUpdate", "JaxbDocument")

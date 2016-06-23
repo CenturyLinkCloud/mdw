@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67298691
+item-spec=4D4457413A314B3746473520554E5343484544554C45444556454E544D4F4E49544F52204A4156412D313634323437323537332E412D5352433B34
+file-version=4
+checksum=974d7da325da0e1f81704cee4be9fa66
+fetch-size=3025
+mtime=1452293235
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/timer/startup/UnscheduledEventMonitor.java
+project=4D4457413A4D445741
+project-uid=31770127

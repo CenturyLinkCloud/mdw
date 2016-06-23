@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71476507
+item-spec=4D4457413A314B37464735205441534B5345525649434553494D504C204A4156412D313634323437323537332E412D5352433B3233
+file-version=23
+checksum=f3fac5b83e74ae362d518b542dab4781
+fetch-size=21368
+mtime=1465945530
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/task/TaskServicesImpl.java
+project=4D4457413A4D445741
+project-uid=31770127

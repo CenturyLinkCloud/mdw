@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49940698
+item-spec=4D4457413A314B37595142205245504F52544954454D204A4156412D313938363837323537342E412D5352433B32
+file-version=2
+checksum=0d33e761ffa33c76b4fd97b093ace394
+fetch-size=1845
+mtime=1408468243
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/report/ReportItem.java
+project=4D4457413A4D445741
+project-uid=31770127

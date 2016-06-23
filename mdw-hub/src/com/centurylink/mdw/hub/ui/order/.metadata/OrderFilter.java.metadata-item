@@ -1,0 +1,13 @@
+version=10.2
+item-uid=47301866
+item-spec=4D4457413A314B37595142204F5244455246494C544552204A4156412D313439303534333939342E412D5352433B33
+file-version=3
+checksum=0245d8e6f897acf26cf61d397dde4948
+fetch-size=3510
+mtime=1395966697
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/ui/order/OrderFilter.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,262 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:annotation>
+    <xs:documentation xml:lang = "en">
+	Last Modified By: Jiyang Xu
+	Last Modification Date: 2007-11-24
+        Version 2.0
+    </xs:documentation>
+  </xs:annotation>
+  <xs:complexType name="pageletT">
+  	<xs:choice minOccurs="0" maxOccurs="unbounded">
+  	      	<xs:element name="BUTTON" type="buttonT">
+      		<xs:annotation>
+      			<xs:documentation>
+      				This is not implemented yet.
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="TEXT" type="textT" >
+      		<xs:annotation>
+      			<xs:documentation>
+      				Any single line string value
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="RULE" type="ruleT">
+      		<xs:annotation>
+      			<xs:documentation>
+      				This is for a large area of text, mainly for
+      				defining rules.
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="LIST" type="listT" >
+      		<xs:annotation>
+      			<xs:documentation>
+      				A list of string values
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="SELECT" type="selectT" >
+      		<xs:annotation>
+      			<xs:documentation>
+      				Shows a drop down list of values
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="BOOLEAN" type="booleanT">
+      		<xs:annotation>
+      			<xs:documentation>
+      				This is not implemented yet.
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="READONLY" type="textT">
+      		<xs:annotation>
+      			<xs:documentation>
+      				This is not implemented yet.
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="DROPDOWN" type="dropdownT">
+      		<xs:annotation>
+      			<xs:documentation>
+      				The class of activity implementor.
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="MAPPING" type="mappingT">
+      		<xs:annotation>
+      			<xs:documentation>
+      				Currently this represent the variable mapping for
+      				calling a subproces.
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="HYPERLINK" type="hyperlinkT">
+      		<xs:annotation>
+      			<xs:documentation>
+      				A hyperlink to web pages
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="DATETIME" type="datetimeT">
+      		<xs:annotation>
+      			<xs:documentation>
+      				Represent a date, time or both
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="TABLE" type="tableT">
+      		<xs:annotation>
+      			<xs:documentation>
+      				Represent a table with multiple columns
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+      	<xs:element name="NOTE" type="noteT">
+      		<xs:annotation>
+      			<xs:documentation>
+      				Represent some static text
+      			</xs:documentation>
+      		</xs:annotation>
+      	</xs:element>
+	</xs:choice>
+    <xs:attribute name="NAME" type="xs:string"/>
+    <xs:attribute name="ICON" type="xs:string"/>
+    <xs:attribute name="LABEL" type="xs:string"/>
+    <xs:attribute name="BASETYPES" type="xs:string"/>
+  </xs:complexType>
+  
+  <xs:complexType name="widgetT">
+      <xs:attribute name="NAME" type="xs:string"/>
+      <xs:attribute name="LABEL" type="xs:string"/>
+      <xs:attribute name="DEFAULT" type="xs:string"/>
+      <xs:attribute name="LX" type="xs:int"/>
+      <xs:attribute name="LY" type="xs:int"/>
+      <xs:attribute name="LW" type="xs:int"/>
+      <xs:attribute name="LH" type="xs:int"/>
+      <xs:attribute name="VX" type="xs:int"/>
+      <xs:attribute name="VY" type="xs:int"/>
+      <xs:attribute name="VW" type="xs:int"/>
+      <xs:attribute name="VH" type="xs:int"/>
+      <xs:attribute name="SECTION" type="xs:string"/>
+      <xs:attribute name="ADVANCED" type="xs:boolean"/>
+  </xs:complexType>
+  
+  <xs:complexType name="textT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  			<xs:attribute name="SIZE" type="xs:int"/>
+  			<xs:attribute name="READONLY" type="xs:boolean"/>
+  			<xs:attribute name="MULTILINE" type="xs:boolean"/>
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ruleT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  			<xs:attribute name="READONLY" type="xs:boolean"/>
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="booleanT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  			<xs:attribute name="READONLY" type="xs:boolean"/>
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="selectT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  			<xs:sequence>
+        		<xs:element name="OPTION" type="optionT"
+        			minOccurs="0" maxOccurs="unbounded"/>
+      		</xs:sequence>
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="dropdownT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  			<xs:sequence>
+        		<xs:element name="OPTION" type="optionT"
+        			minOccurs="0" maxOccurs="unbounded"/>
+      		</xs:sequence>
+  			<xs:attribute name="EDITABLE" type="xs:boolean"/>
+  			<xs:attribute name="SOURCE" type="xs:string"/>
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="buttonT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  			<xs:attribute name="ACTION" type="xs:string"/>
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="emptyT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="listT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  			<xs:attribute name="DELIMITER" type="xs:string"/>
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="hyperlinkT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  			<xs:attribute name="URL" type="xs:string" />
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="datetimeT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  			<xs:attribute name="UNITS" type="xs:string"/>
+  			<xs:attribute name="UNITS_ATTR" type="xs:string"/>
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="tableT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+      			<xs:element name="TEXT" type="textT" >
+      				<xs:annotation>
+      					<xs:documentation>
+      						A text column
+      					</xs:documentation>
+    		  		</xs:annotation>
+     		 	</xs:element>
+      			<xs:element name="DROPDOWN" type="dropdownT" >
+      				<xs:annotation>
+      					<xs:documentation>
+      						A column using dropdown
+      					</xs:documentation>
+    		  		</xs:annotation>
+     		 	</xs:element>
+     		 	<xs:element name="BOOLEAN" type="booleanT" >
+      				<xs:annotation>
+      					<xs:documentation>
+      						A boolean column
+      					</xs:documentation>
+    		  		</xs:annotation>
+     		 	</xs:element>
+  			</xs:choice>
+  			<xs:attribute name="MODIFYONLY" type="xs:boolean"/>
+  			<xs:attribute name="USE_POPUP" type="xs:boolean"/>
+		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="noteT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="mappingT">
+  	<xs:complexContent>
+  		<xs:extension base="widgetT">
+  			<xs:attribute name="SOURCE" type="xs:string"/>
+  		</xs:extension>
+  	</xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="optionT">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="VALUE" type="xs:string" use="optional" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  
+  <xs:element name="PAGELET" type="pageletT"/>
+</xs:schema>

@@ -1,0 +1,326 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.cloud;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+
+import com.centurylink.mdw.common.cache.impl.RuleSetCache;
+import com.centurylink.mdw.common.constant.PropertyNames;
+import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
+import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.java.CompiledJavaCache;
+import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.model.value.process.PackageVO;
+
+/**
+ * Used for Tomcat (and generally in cloud mode) to include Jar assets and library jars
+ * on the classpath.
+ */
+public class CloudClassLoader extends ClassLoader {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    private List<File> classpath;
+    public List<File> getClasspath() { return classpath; }
+
+    private PackageVO packageVO;
+
+    private File assetRoot;
+
+    private List<RuleSetVO> jarAssets;
+    public List<RuleSetVO> getJarAssets() {
+        if (jarAssets == null) {
+            jarAssets = new ArrayList<RuleSetVO>();
+            jarAssets.addAll(RuleSetCache.getRuleSets(RuleSetVO.JAR));
+            // same-package jars go first
+            Collections.sort(jarAssets, new Comparator<RuleSetVO>() {
+                public int compare(RuleSetVO rs1, RuleSetVO rs2) {
+                    String pkgName = packageVO.getName();
+                    if (pkgName.equals(rs1.getPackageName()) && !pkgName.equals(rs2.getPackageName()))
+                        return -1;
+                    else if (pkgName.equals(rs2.getPackageName()) && !pkgName.equals(rs1.getPackageName()))
+                        return 1;
+                    else
+                        return 0;
+                }
+            });
+        }
+        return jarAssets;
+    }
+
+    public CloudClassLoader(PackageVO pkg) {
+        super(pkg.getClassLoader());
+        packageVO = pkg;
+
+        classpath = new ArrayList<File>();
+
+        String cp = pkg.getProperty(PropertyNames.MDW_CLASSPATH);
+        if (cp != null) {
+            String[] cps = cp.trim().split(File.pathSeparator);
+            for (int i = 0; i < cps.length; i++) {
+                classpath.add(new File(cps[i]));
+            }
+        }
+
+        String libdir = pkg.getProperty(PropertyNames.MDW_JAR_LIBRARY_PATH);
+        if (libdir != null) {
+            File dir = new File(libdir);
+            if (dir.isDirectory()) {
+                for (File f : dir.listFiles()) {
+                    if (f.getName().endsWith(".jar"))
+                      classpath.add(f);
+                }
+            }
+        }
+
+        String assetLoc = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION);
+        if (assetLoc != null)
+            assetRoot = new File(assetLoc);
+    }
+
+    /**
+     * TODO: allow packages to isolate their classes
+     */
+    private static Map<String,Class<?>> sharedClassCache = new HashMap<String,Class<?>>();
+
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        byte[] b = null;
+        try {
+            RuleSetVO javaRuleSet = RuleSetCache.getRuleSet(name, RuleSetVO.JAVA);
+            // try dynamic java first
+            if (javaRuleSet != null)
+                return CompiledJavaCache.getClass(getParent(), packageVO, name, javaRuleSet.getRuleSet());
+            // try shared cache
+            Class<?> found;
+            synchronized(sharedClassCache) {
+                found = sharedClassCache.get(name);
+            }
+            if (found != null)
+                return found;
+            // next try dynamic jar assets
+            String path = name.replace('.', '/') + ".class";
+            b = findInJarAssets(path);
+            // lastly try the file system
+            if (b == null)
+                b = findInFileSystem(path);
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(),  ex);
+        }
+
+        if (b == null)
+            throw new ClassNotFoundException(name);
+
+        if (logger.isMdwDebugEnabled())
+            logger.mdwDebug("Class " + name + " loaded by Cloud classloader for package: " + packageVO.getLabel());
+
+        String pkgName = packageVO.getName();
+        int lastDot = name.lastIndexOf('.');
+        if (lastDot > 0)
+            pkgName = name.substring(0, lastDot);
+
+        Package pkg = getPackage(pkgName);
+        if (pkg == null)
+            definePackage(pkgName, null, null, null, "MDW", packageVO.getVersionString(), "CenturyLink", null);
+        Class<?> clz = defineClass(name, b, 0, b.length);
+        synchronized(sharedClassCache) {
+            Class<?> found = sharedClassCache.get(name);
+            if (found != null)
+                clz = found;
+            else
+                sharedClassCache.put(name, clz);
+        }
+        return clz;
+    }
+
+    private byte[] findInFileSystem(String path) throws IOException {
+        byte[] b = null;
+        for (int i = 0; b == null && i < classpath.size(); i++) {
+            File file = classpath.get(i);
+            if (file.isDirectory()) {
+                b = findInDirectory(file, path);
+            }
+            else {
+                String filepath = file.getPath();
+                if (filepath.endsWith(".jar")) {
+                    b = findInJarFile(file, path);
+                }
+            }
+        }
+        return b;
+    }
+
+    private byte[] findInDirectory(File dir, String path) throws IOException {
+        byte[] b = null;
+        File f = new File(dir.getPath() + "/" + path);
+        if (f.exists()) {
+            FileInputStream fi = null;
+            try {
+                fi = new FileInputStream(f);
+                b = new byte[fi.available()];
+                fi.read(b);
+                fi.close();
+            }
+            finally {
+                if (fi != null)
+                    fi.close();
+            }
+        }
+        return b;
+    }
+
+    private byte[] findInJarFile(File jar, String path) throws IOException {
+        byte[] b = null;
+        InputStream is = null;
+        try {
+            JarFile jf = new JarFile(jar);
+            ZipEntry ze = jf.getEntry(path);
+            if (ze != null) {
+                int k, n, m;
+                is = jf.getInputStream(ze);
+                n = is.available();
+                m = 0;
+                k = 1;
+                b = new byte[n];
+                while (m < n && k > 0) {
+                    k = is.read(b, m, n-m);
+                    if (k > 0)
+                        m += k;
+                }
+                if (m < n) {
+                    String msg = "Package class loader: expect " + n + ", read " + m;
+                    throw new IOException(msg);
+                }
+            }
+        }
+        finally {
+            if (is != null)
+                is.close();
+        }
+        return b;
+    }
+
+    private byte[] findInJarAssets(String path) throws IOException {
+        // prefer assets in the same package
+        byte[] b = null;
+        if (assetRoot != null) {
+            for (RuleSetVO jarAsset : getJarAssets()) {
+                File jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
+                b = findInJarFile(jarFile, path);
+                if (b != null)
+                    return b;
+            }
+        }
+        return b;
+    }
+
+    private Map<String,Boolean> classesFound;
+
+    /**
+     * Looks for classes in Jar assets or on the prop-specified classpath.
+     * Results are cached, so Jar/CP changes require app redeployment.
+     */
+    public boolean hasClass(String name) {
+        if (classesFound == null)
+            classesFound = new HashMap<String,Boolean>();
+        Boolean found = classesFound.get(name);
+        if (found != null)
+            return found;
+
+        byte[] b = null;
+        try {
+            // try dynamic jar assets
+            String path = name.replace('.', '/') + ".class";
+            b = findInJarAssets(path);
+            // try the file system
+            if (b == null)
+                b = findInFileSystem(path);
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(),  ex);
+        }
+        found = b != null;
+        classesFound.put(name, found);
+        return found;
+    }
+
+    /**
+     * This is used by XMLBeans for loading the type system.
+     */
+    @Override
+    public InputStream getResourceAsStream(String name) {
+        byte[] b = null;
+        try {
+            RuleSetVO resource = RuleSetCache.getRuleSet(packageVO.getName() + "/" + name);
+            if (resource != null)
+                b = resource.getRawContent();
+            if (b == null)
+                b = findInJarAssets(name);
+            if (b == null)
+                b = findInFileSystem(name);
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(),  ex);
+        }
+
+        if (b == null)
+            return super.getResourceAsStream(name);
+        else
+            return new ByteArrayInputStream(b);
+    }
+
+    /**
+     * Only looks on file system.
+     */
+    @Override
+    public URL getResource(String name) {
+        URL result = null;
+        for (int i=0; result==null && i<classpath.size(); i++) {
+            File one = classpath.get(i);
+            if (one.isDirectory()) {
+                File searchResource = new File(one.getPath() + "/" + name);
+                if ( searchResource.exists() ) {
+                    try {
+                        result = searchResource.toURI().toURL();
+                    } catch (MalformedURLException mfe) {
+                        result = null;
+                    }
+                }
+            }
+        }
+        if (result == null)
+            result = super.findResource(name);
+        return result;
+    }
+
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        if (!logger.isMdwDebugEnabled()) {
+            return super.loadClass(name);
+        }
+        else {
+            Class<?> loaded = super.loadClass(name);
+            logger.mdwDebug("Loaded class: '" + name + "' from CloudClassLoader with parent: " + getParent());
+            if (logger.isTraceEnabled())
+                logger.traceException("Stack trace: ", new Exception("ClassLoader stack trace"));
+            return loaded;
+        }
+    }
+
+}

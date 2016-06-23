@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549850
+item-spec=4D4457413A314B3848384C2050524F4A45435453454354494F4E204A4156412D2D313232313530323335342E412D5352433B3138
+file-version=18
+checksum=934ce4e0920969756fdf8c02afb42875
+fetch-size=13245
+mtime=1453326936
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/properties/ProjectSection.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,10 @@
+// cancel-wait-after-start
+start process("MDWTestSuppsEmbedded") {
+	variables = [testCase: "cancel-on-event"]
+}
+sleep 30
+send message("REST") {
+    payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
+}
+sleep 90
+verify processes("MDWTestSuppsEmbedded", "MDWTestSuppsEmbedded Cancellation Handler")

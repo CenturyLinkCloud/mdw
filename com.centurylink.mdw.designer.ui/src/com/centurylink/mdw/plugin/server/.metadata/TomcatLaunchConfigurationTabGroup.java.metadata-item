@@ -1,0 +1,13 @@
+version=10.2
+item-uid=51517537
+item-spec=4D4457413A314B3848384C20544F4D4341544C41554E4348434F4E46494755524154494F4E54414247524F5550204A4156412D2D3631393733333932372E412D5352433B31
+file-version=1
+checksum=680b88e8899022957c2319cf6314dbaa
+fetch-size=1437
+mtime=1415827932
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/server/TomcatLaunchConfigurationTabGroup.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

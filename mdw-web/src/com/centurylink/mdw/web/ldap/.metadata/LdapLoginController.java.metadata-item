@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67346484
+item-spec=4D4457413A314B374B524A204C4441504C4F47494E434F4E54524F4C4C4552204A4156412D2D313431363539393931372E412D5352433B34
+file-version=4
+checksum=19bc4166dda3fae86b8cbc0a25bd80bf
+fetch-size=3670
+mtime=1452547553
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/ldap/LdapLoginController.java
+project=4D4457413A4D445741
+project-uid=31770127

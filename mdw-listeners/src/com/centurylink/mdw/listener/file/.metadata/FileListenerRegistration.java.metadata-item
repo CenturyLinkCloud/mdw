@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854441
+item-spec=4D4457413A314B374647352046494C454C495354454E4552524547495354524154494F4E204A4156412D3631333734343436392E412D5352433B32
+file-version=2
+checksum=55f067b40ad648c203c47cef472e2a6f
+fetch-size=4155
+mtime=1393990105
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listener/file/FileListenerRegistration.java
+project=4D4457413A4D445741
+project-uid=31770127

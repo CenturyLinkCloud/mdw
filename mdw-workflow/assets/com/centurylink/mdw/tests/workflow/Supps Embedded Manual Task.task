@@ -1,0 +1,25 @@
+<task:taskTemplate logicalId="MDWTestEmbedded:A1" category="COM" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>Supps Embedded Manual Task</task:name>
+  <task:attribute name="Variables">SetInEmbedded,SetInEmbedded,Not Displayed,0,,java.lang.String;SetInMain,SetInMain,Not Displayed,0,,java.lang.String;case,case,Not Displayed,0,,java.lang.String;launcher,launcher,Not Displayed,0,,com.qwest.mbeng.MbengTableArray</task:attribute>
+  <task:attribute name="Groups">MDW Support</task:attribute>
+  <task:attribute name="Indices" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Notices">Open,,,;Assigned,,,;Completed,,,;Cancelled,,,;In Progress,,,;Alert,,,;Jeopardy,,,;Forward,,,;</task:attribute>
+  <task:attribute name="NoticeGroups" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="RecipientVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="CCGroups" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="CCVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="AutoAssign" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Auto Assign Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="RoutingStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Routing Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="SubTaskStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="SubTask Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="IndexProvider">com.centurylink.mdw.services.task.CustomTaskIndexProvider</task:attribute>
+  <task:attribute name="AssigneeVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="FormName" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Priority" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="PriorityStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Prioritization Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="CustomPage" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Rendering" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+</task:taskTemplate>

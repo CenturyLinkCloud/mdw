@@ -1,0 +1,101 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="MDWTestTaskAndEvent" version="0.7" description="">
+    <bpm:Activity Id="Activity39" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=61,y=206,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity38" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=515,y=210,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity41" Name="Check" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="Category" Value="COM"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="30"/>
+      <bpm:Attribute Name="TaskName" Value="New Task for uuu"/>
+      <bpm:Attribute Name="Unit" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=184,y=361,w=100,h=60"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity40" Name="Task that also waits for event" Implementation="com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity">
+      <bpm:Attribute Name="AlertIntervalUnits" Value="Hours"/>
+      <bpm:Attribute Name="Category" Value="ORD"/>
+      <bpm:Attribute Name="Groups" Value="Fallout#MDW Support"/>
+      <bpm:Attribute Name="Notices" Value="Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLAUnits" Value="Hours"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Hold"/>
+      <bpm:Attribute Name="STATUS_AFTER_TIMEOUT" Value="Hold"/>
+      <bpm:Attribute Name="TaskLogicalId" Value="MDWTestTaskAndEvent:Activity40"/>
+      <bpm:Attribute Name="TaskName" Value="Manual task that also waits for event"/>
+      <bpm:Attribute Name="TaskSLA" Value="48"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},NonTaskAction,true"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=256,y=200,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="Activity39" To="Activity40" Event="FINISH" Id="Transition33">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=210,ly=193,type=Elbow,xs=125&amp;252,ys=226&amp;226"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity40" To="Activity38" Event="FINISH" Id="Transition34">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=412,ly=231,type=Elbow,xs=360&amp;511,ys=230&amp;230"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="NonTaskAction" From="Activity40" To="Activity41" Event="FINISH" Id="Transition35">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=163,ly=291,type=Elbow,xs=270&amp;270,ys=264&amp;357"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity41" To="Activity40" Event="FINISH" Id="Transition36">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=349,ly=317,type=Elbow,xs=288&amp;288&amp;345&amp;345,ys=357&amp;305&amp;305&amp;264"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="ERROR_PROCESS_ID" Value="-3"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="SLA" Value="0"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+    <bpm:Attribute Name="START_TRANSITION_ID" Value="2327205"/>
+    <bpm:Attribute Name="Transition with no Label" Value="Acts as Default"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=29,y=25,w=214,h=27"/>
+    <bpm:SubProcess Id="SubProcess4" name="Exception Handler" version="0.4" description="">
+      <bpm:Activity Id="Activity44" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+        <bpm:Attribute Name="SLA" Value="0"/>
+        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=330,y=72,w=60,h=40"/>
+      </bpm:Activity>
+      <bpm:Activity Id="Activity42" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+        <bpm:Attribute Name="SLA" Value="0"/>
+        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=630,y=72,w=60,h=40"/>
+      </bpm:Activity>
+      <bpm:Activity Id="Activity43" Name="uuu Fallout" Implementation="com.centurylink.mdw.workflow.activity.task.TaskCreateAndWaitControlledActivity">
+        <bpm:Attribute Name="Category" Value="COM"/>
+        <bpm:Attribute Name="SLA" Value="0"/>
+        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+        <bpm:Attribute Name="TaskName" Value="uuu Fallout"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=460,y=62,w=100,h=60"/>
+        <bpm:Attribute Name="TaskLogicalId" Value="MDWTestTaskAndEvent:Activity43"/>
+        <bpm:Attribute Name="Variables" Value=""/>
+      </bpm:Activity>
+      <bpm:Transition CompletionCode="" From="Activity43" To="Activity42" Event="FINISH" Id="Transition31">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=595,ly=92,type=Elbow,xs=564&amp;626,ys=92&amp;92"/>
+      </bpm:Transition>
+      <bpm:Transition CompletionCode="" From="Activity44" To="Activity43" Event="FINISH" Id="Transition32">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=425,ly=92,type=Elbow,xs=394&amp;456,ys=92&amp;92"/>
+      </bpm:Transition>
+      <bpm:Attribute Name="ENTRY_TRANSITION_ID" Value="2327206"/>
+      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="START_TRANSITION_ID" Value="2327196"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=290,y=32,w=440,h=120"/>
+      <bpm:Variables Name="EmbeddedSubProcessTaskAction" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+        <bpm:type Name="java.lang.String"/>
+      </bpm:Variables>
+    </bpm:SubProcess>
+  </bpm:Process>
+</bpm:processDefinition>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=47004911
+item-spec=4D4457413A314B384357442050524F4345535356414C494441544F52204A4156412D313934383932363737322E412D5352433B33
+file-version=3
+checksum=e2eb29cb2938e61df67bafcaef173549
+fetch-size=8093
+mtime=1394653190
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/utils/ProcessValidator.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

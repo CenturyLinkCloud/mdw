@@ -1,0 +1,83 @@
+process: # 13616
+  name: SimpleDynamicJava
+  instance: 1
+  activity: # 1 "2016-02-22 12:16:18"
+    name: Start
+    status: Completed
+  activity: # 5 "2016-02-22 12:16:18"
+    name: |
+      Perform Critical
+      Business Function
+    status: Completed
+  activity: # 4 "2016-02-22 12:16:18"
+    name: Stop
+    status: Completed
+  variable: # 20644
+    name: completionDate
+    value: Fri Dec 25 00:00:00 MST 2015
+  variable: # 20645
+    name: dispensation
+    value: <dispensation outcome="Escalation"/>
+
+  variable: # 20642
+    name: instructions
+    value: |
+      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+        <Action Name="escalate">
+          <Parameter name="orderNumber">12345678</Parameter>
+          <Parameter name="priority">URGENT</Parameter>
+          <Parameter name="customerId">dxoakes</Parameter>
+          <Parameter name="contactTn">303-992-9747</Parameter>
+        </Action>
+      </mdw:ActionRequest>
+  variable: # 20646
+    name: outcome
+    value: Escalation
+  variable: # 20643
+    name: responsibleParty
+    value: dxoakes
+  variable: # 20647
+    name: userMessage
+    value: |
+      Escalatation required.
+      Order Number: 12345678
+      Customer ID: dxoakes
+      Contact TN: 303-992-9747
+process: # 13615
+  name: SimpleDynamicJava
+  instance: 2
+  activity: # 1 "2016-02-22 12:16:08"
+    name: Start
+    status: Completed
+  activity: # 5 "2016-02-22 12:16:08"
+    name: |
+      Perform Critical
+      Business Function
+    status: Completed
+  activity: # 2 "2016-02-22 12:16:09"
+    name: Stop
+    status: Completed
+  variable: # 20639
+    name: completionDate
+    value: Fri Dec 25 00:00:00 MST 2015
+  variable: # 20640
+    name: dispensation
+    value: <dispensation outcome="Acknowledgment"/>
+
+  variable: # 20637
+    name: instructions
+    value: |
+      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+        <Action Name="acknowledge">
+          <Parameter name="orderNumber">12345678</Parameter>
+          <Parameter name="priority">NORMAL</Parameter>
+          <Parameter name="customerId">dxoakes</Parameter>
+          <Parameter name="contactTn">303-992-9747</Parameter>
+        </Action>
+      </mdw:ActionRequest>
+  variable: # 20641
+    name: outcome
+    value: Acknowledgment
+  variable: # 20638
+    name: responsibleParty
+    value: dxoakes

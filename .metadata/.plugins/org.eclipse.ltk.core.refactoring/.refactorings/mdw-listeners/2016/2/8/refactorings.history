@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;Values.java&apos; to &apos;mdw-listeners/src/com.centurylink.mdw.service.rest&apos;&#x0D;&#x0A;- Original project: &apos;mdw-listeners&apos;&#x0D;&#x0A;- Destination element: &apos;mdw-listeners/src/com.centurylink.mdw.service.rest&apos;&#x0D;&#x0A;- Original element: &apos;com.centurylink.mdw.service.rest.Values.java&apos;" description="Copy compilation unit" destination="/src&lt;com.centurylink.mdw.service.rest" element1="/src&lt;com.centurylink.mdw.service.rest{Values.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1455927601176" units="1" version="1.0"/>
+</session>

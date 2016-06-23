@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549847
+item-spec=4D4457413A314B3848384C2053455256455253455454494E4753204A4156412D2D32373836333330322E412D5352433B37
+file-version=7
+checksum=9a70939c257c98f09ec6c5b6ec7ed0e8
+fetch-size=12639
+mtime=1453322263
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/project/model/ServerSettings.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

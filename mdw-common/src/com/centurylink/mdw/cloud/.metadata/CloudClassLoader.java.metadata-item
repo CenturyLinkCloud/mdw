@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67252622
+item-spec=4D4457413A314B3737545A20434C4F5544434C4153534C4F41444552204A4156412D2D3331393432323635302E412D5352433B39
+file-version=9
+checksum=19ebbc51dddbac2b9db08cff0b927abf
+fetch-size=11176
+mtime=1452120495
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/cloud/CloudClassLoader.java
+project=4D4457413A4D445741
+project-uid=31770127

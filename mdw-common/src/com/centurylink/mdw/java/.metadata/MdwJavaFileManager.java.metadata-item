@@ -1,0 +1,13 @@
+version=10.2
+item-uid=55382617
+item-spec=4D4457413A314B3737545A204D44574A41564146494C454D414E41474552204A4156412D2D323034323033343031312E412D5352433B33
+file-version=3
+checksum=3299d37e6db7816ac9a882fd907fefbf
+fetch-size=1892
+mtime=1430423209
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/java/MdwJavaFileManager.java
+project=4D4457413A4D445741
+project-uid=31770127

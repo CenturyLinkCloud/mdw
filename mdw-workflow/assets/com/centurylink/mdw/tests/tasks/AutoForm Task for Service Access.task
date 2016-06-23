@@ -1,0 +1,8 @@
+<task:taskTemplate logicalId="ManualTaskServices:A3" category="COM" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>AutoForm Task for Service Access</task:name>
+  <task:attribute name="Variables">dateVar,Date,Optional,2,dateIdx,java.util.Date;jaxbVar,Task JAXB,Not Displayed,3,,javax.xml.bind.JAXBElement;objectVar,Task Model,Not Displayed,4,,java.lang.Object;stringVar,String,Read Only,1,,java.lang.String;#{objectVar.taskmaster},Taskmaster,Required,5,tmIdx,;#{jaxbVar.elementOne},Element One,Optional,6,,;#{jaxbVar.elementTwo},Element Two,Read Only,7,,;#{jaxbVar.attributeOne},Attribute One,Not Displayed,8,,;unassignedVar,,Optional,9,,java.lang.String;docVar,,Optional,10,,org.w3c.dom.Document</task:attribute>
+  <task:attribute name="Groups">MDW Support</task:attribute>
+  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
+  <task:attribute name="IndexProvider">com.centurylink.mdw.services.task.AutoFormTaskIndexProvider</task:attribute>
+  <task:attribute name="FormName">Autoform</task:attribute>
+</task:taskTemplate>

@@ -1,0 +1,60 @@
+// GET Request to Services/Solutions/dons1001?app=appId
+{
+  "created": "11-17-2015 20:40:36",
+  "createdBy": "dxoakes",
+  "id": "dons1002",
+  "members": {"tasks": [
+    {
+      "description": "Testing variable display and entry.",
+      "dueDate": "2015-03-28 16:55:26.0",
+      "dueInSeconds": -27023771,
+      "id": 10160,
+      "masterRequestId": "dxoakes-150327-165240167",
+      "name": "A Task For Testing Variables",
+      "ownerId": 11027,
+      "ownerType": "PROCESS_INSTANCE",
+      "priority": 0,
+      "secondaryOwnerId": 17299,
+      "secondaryOwnerType": "WORK_TRANSITION_INSTANCE",
+      "startDate": "2015-03-27 16:55:25",
+      "status": "Open",
+      "taskId": 106532216
+    },
+    {
+      "assignee": "dxoakes",
+      "description": "This is a task for testing MDW 5.1 style task\ntemplate, which contains indices and groups",
+      "dueDate": "2015-02-24 00:35:08.0",
+      "dueInSeconds": -29843789,
+      "id": 10122,
+      "masterRequestId": "dxoakes-150221-003420498",
+      "name": "General Task",
+      "ownerId": 10732,
+      "ownerType": "PROCESS_INSTANCE",
+      "priority": 0,
+      "secondaryOwnerId": 24232,
+      "secondaryOwnerType": "DOCUMENT",
+      "startDate": "2015-02-21 00:35:08",
+      "status": "Assigned",
+      "taskId": 170227589
+    },
+    {
+      "dueDate": "2015-03-27 20:50:49.0",
+      "dueInSeconds": -27096048,
+      "id": 10146,
+      "masterRequestId": "X000902",
+      "name": "Manual Acknowledgment",
+      "ownerId": 10988,
+      "ownerType": "PROCESS_INSTANCE",
+      "priority": 0,
+      "secondaryOwnerId": 31694,
+      "secondaryOwnerType": "DOCUMENT",
+      "startDate": "2015-03-27 12:50:48",
+      "status": "Open",
+      "taskId": 113540514
+    }
+  ]},
+  "name": "Dons Other Solution",
+  "ownerId": "dxoakes",
+  "ownerType": "USER",
+  "values": {"Opportunity ID": "12345"}
+}

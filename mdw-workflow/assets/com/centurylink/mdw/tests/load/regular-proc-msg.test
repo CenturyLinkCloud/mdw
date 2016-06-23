@@ -1,0 +1,17 @@
+// regular-proc-msg
+// send messages with CSV placeholders
+// TODO csv/xlsx substitution for asset tests
+send message {
+    payload = """\
+<ser:ActionRequest xmlns:ser='http://mdw.centurylink.com/services'>
+  <Action Name='RegressionTest'>
+    <Parameter name='MasterRequestId'>${masterRequestId}</Parameter>
+    <Parameter name='ProcessName'>MDWLoadTestRegular</Parameter>
+    <Parameter name='Run'>#{RunNumber}</Parameter>
+    <Parameter name='Color'>#{Color}</Parameter>
+  </Action>
+</ser:ActionRequest>"""
+}
+
+wait process("MDWLoadTestRegular")
+verify process("MDWLoadTestRegular")

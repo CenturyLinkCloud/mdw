@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852673
+item-spec=4D4457413A314B3737545A20494E564F4B4550524F434553534143544956495459204A4156412D3932343034343035352E412D5352433B33
+file-version=3
+checksum=f76139ec40ae1957056ab56e070191d0
+fetch-size=269
+mtime=1393988480
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/activity/types/InvokeProcessActivity.java
+project=4D4457413A4D445741
+project-uid=31770127

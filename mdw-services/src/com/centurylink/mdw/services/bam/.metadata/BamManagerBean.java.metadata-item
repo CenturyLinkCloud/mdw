@@ -1,0 +1,13 @@
+version=10.2
+item-uid=48143589
+item-spec=4D4457413A314B37435A302042414D4D414E414745524245414E204A4156412D2D313738303534323532372E412D5352433B34
+file-version=4
+checksum=1954d18845a3316a32ee4b2e72a2a0cc
+fetch-size=4492
+mtime=1398888572
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/bam/BamManagerBean.java
+project=4D4457413A4D445741
+project-uid=31770127

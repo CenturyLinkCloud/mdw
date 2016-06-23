@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+    <rich:tree
+      switchType="client"
+      style="width:180px;"
+      value="#{tasksWorkgroupTree.treeNode}"
+      var="treeItem"
+      nodeFace="#{treeItem.title}"
+      stateAdvisor="#{tasksWorkgroupTree}">
+      <rich:treeNode
+        type="Workgroup"
+        iconLeaf="/images/group.gif"
+        icon="/images/group.gif">
+        <h:outputText value="#{treeItem.groupName}" />
+        <a4j:support event="onselected" ajaxSingle="true" reRender="workgroupTasksOutputPanel,userTasksOutputPanel,groupReportOutputPanel">
+          <f:setPropertyActionListener value="#{treeItem}" target="#{tasksWorkgroupTree.group}" />
+        </a4j:support>
+      </rich:treeNode>
+      <rich:treeNode
+        type="User"
+        iconLeaf="/images/person.gif"
+        icon="/images/person.gif">
+        <h:outputText value="#{treeItem.name}" />
+        <a4j:support event="onselected" ajaxSingle="true" reRender="workgroupTasksOutputPanel,userTasksOutputPanel,groupReportOutputPanel,userTasksListToday">
+          <f:setPropertyActionListener value="#{treeItem}" target="#{tasksWorkgroupTree.scopedUser}" />
+        </a4j:support>        
+      </rich:treeNode>
+    </rich:tree>
+  </ui:composition>
+
+</html>

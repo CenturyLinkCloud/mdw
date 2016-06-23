@@ -1,0 +1,7 @@
+instanceId=PROCESS_INSTANCE_ID
+masterRequestId=MASTER_REQUEST_ID
+owner=OWNER
+ownerId=OWNER_ID
+status=STATUS_CD
+startDate=START_DT
+endDate=END_DT

@@ -1,0 +1,6 @@
+// restful-adapter-get
+start process("RestfulServiceAdapter") {
+    variables = [httpMethod: "GET"]
+}
+wait process
+verify process

@@ -1,0 +1,8 @@
+<PAGELET>
+  <TABLE NAME="BAM Data" VH="150">
+    <TEXT NAME="name" LABEL="Name" VW="150"/>
+    <DROPDOWN NAME="value" LABEL="Value" SOURCE="Variables">
+      <OPTION VALUE="#{context.masterRequestId}">masterRequestId</OPTION>
+    </DROPDOWN>
+  </TABLE>
+</PAGELET>

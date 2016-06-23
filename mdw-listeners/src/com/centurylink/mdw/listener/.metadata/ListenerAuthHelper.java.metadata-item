@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854399
+item-spec=4D4457413A314B37464735204C495354454E45524155544848454C504552204A4156412D313634323437323537332E412D5352433B32
+file-version=2
+checksum=88a9845babb613d293ea8ff57fcc3baf
+fetch-size=2719
+mtime=1393990105
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listener/ListenerAuthHelper.java
+project=4D4457413A4D445741
+project-uid=31770127

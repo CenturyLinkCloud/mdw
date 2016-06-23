@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+    
+  <ui:composition>
+    <div class="mdw_footer">
+      <ui:fragment rendered="#{webUtil.appName != 'MDW' &amp;&amp; webUtil.appName != 'MDWFramework' &amp;&amp; !webUtil.osgi}">
+        #{webUtil.appName} #{webUtil.appVersion}
+        <br/>
+      </ui:fragment>
+      MDW #{webUtil.mdwVersion}
+      <br/>
+      Copyright &#169; 2014 CenturyLink, Inc.
+    </div>
+  </ui:composition>
+  
+</html>
+

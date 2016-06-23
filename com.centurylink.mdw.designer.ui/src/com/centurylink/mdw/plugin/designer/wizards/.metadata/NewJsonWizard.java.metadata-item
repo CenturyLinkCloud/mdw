@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69631822
+item-spec=4D4457413A314B3848384C204E45574A534F4E57495A415244204A4156412D3139373234383035345831373931315832302E412D5352433B32
+file-version=2
+checksum=9487c9bfb9e4610165a6b84bad857091
+fetch-size=543
+mtime=1459882904
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/NewJsonWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44536455
+item-spec=4D4457413A314B365458332044524F50205441424C45532053514C7E30312D2D313133353437343437372E412D4441543B31
+file-version=1
+checksum=c7f7dbf05eebdf9339f0ddebf5f50094
+fetch-size=1018
+mtime=1329798434
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/oldScripts/drop_tables.sql
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,329 @@
+<html>
+<head>
+<title>Automated Testing in MDW</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Automated Testing in MDW</h1>
+
+<p>Typical steps for function testing of MDW applications include:</p>
+<ol>
+  <li>Start a process by sending a message whose content corresponds to a registered Event Handler,
+      or by launching directly.</li>
+  <li>If the process generates manual tasks, complete them so that process flow will proceed.</li>
+  <li>If the process calls an external system through an adapter activity,
+      let the system respond, or in situations where the system is unavailable 
+      or its interface is not a focus of current testing, supply a simulated
+      response (through <a href="groovyTestScriptSyntax.html#stubAdapterResponse">stubbing</a>) .</li>
+  <li>If the process waits for an asynchronous external message,
+      arrange for the external system to send the required message, or emulate this by invoking 
+      the relevant Event Handler with an appropriate message.</li>
+  <li>Verify that the process instance has completed as expected and that its workflow has progressed
+      according to the correct route through the appropriate activities.</li>
+  <li>Verify that any requests/responses to external systems are correct.</li>
+  <li>Verify that outcome data values (process variables) are populated as expected.</li>
+</ol>
+
+<p>Using Designer you can create repeatable test cases to automate these and other actions.
+   Your test cases can be executed on demand in Designer
+   or from your build server as part of a continuous integration lifecycle using the 
+   <a href="#runningTestsUsingAnt">Ant Automated Test task</a>.
+   MDW also supports load testing to exercise your workflow processes and capture performance metrics.<p>   
+
+<h3>Sections in This Guide</h3>
+
+<ul>
+  <li><a href="#testCases">Test Cases</a></li>
+  <li><a href="#creatingTestCases">Creating Test Cases</a></li>
+  <li><a href="#runningTests">Running Tests</a></li>
+  <li><a href="#testResultsAndOutput">Test Results and Output</a></li>
+  <li><a href="#loadTesting">Load Testing</a></li>
+  <li><a href="#runningTestsUsingAnt">Running Tests Using Ant/Maven/Gradle</a></li>
+  <li><a href="#webUI">Web UI for Automated Tests</a></li>
+  <li><a href="#nonMdwCucumber">Non-MDW Cucumber Features</a></li>
+</ul>
+
+<h3><a id="testCases">Test Cases</a></h3>
+<p>A test case is a way to specify how to run an automated function or load test.
+   Each test case is stored as a <a href="workflowAssets.html">workflow asset</a>.
+   A typical test case will make use of the following resources:</p>
+<ul>
+   <li><code>&lt;<i>test_case_name></i>.test</code> or <code>&lt;<i>test_case_name></i>.feature</code> (required) - The main test execution script in 
+   <a href="groovyTestScriptSyntax.html">Groovy</a> or <a href="gherkinTestScriptSyntax.html">Gherkin</a> syntax respectively.
+   A number of <a href="groovyTestScriptSyntax.html#launchProcess">Groovy examples</a> and 
+   <a href="gherkinTestScriptSyntax.html#launchProcess">Gherkin examples</a> are available to get you started.
+   
+   <li><code>&lt;<i>test_case_name></i>.yaml</code> (optional) - This is the YAML asset that contains the expected results for
+   your test execution.  By convention this asset has the same name as the test case, with the 'yaml' extension; however, in your test script
+   you can designate a different YAML asset that contains the expected results.  A test case can initiate multiple process instances, and in that
+   case the expected results for all these instances are included in the results file with a <i>name</i> element
+   to indicate the name of the process and a <i>instance</i> element which is a 0-based sequence
+   number indicating the <i>n</i>-th instance of the process with this name.
+   The content of this expected results YAML for each process specifies the sequence of activity instances to be executed,
+   and the expected values of all variables at the end of execution.  The easiest way to get a first
+   iteration of this file is to launch the test and click the "Create/Replace Results" checkbox in the Designer dialog.
+   Running test cases in Designer is described below.  For load tests the expected result files are not required or evaluated since this
+   could consume resources and distort the generated performance metrics.</li>
+   
+   <li><code>(test input files)</code> (optional) - Input/payload values can be declared inside your test script,
+   but frequently you'll find it convenient to keep this content in separate files.</li>
+   
+   <li><code>placeHolderMap.csv</code> (optional) - This file is in Comma-Separated-Value format as saved and recognized
+   by Microsoft Excel. It supplies parameterized values to be substituted for placeholders during test execution.
+   The first row in this file contains placeholder names, and the second and subsequent rows consist of data values
+   to apply.  This is especially useful during load testing where unique values may be required for each execution.</li>
+</ul>
+
+When a test case is executed, the MDW automated tester generates result and log files.
+By default these are written to a subdirectory under testResults with the same path as your test case asset.
+This test case result directory may contain the following files:
+<ul>
+   <li><code>execute.log</code> - This is the log file for the tester thread.  This output can also
+   be viewed in real time during execution in the Designer Test Exec view.</li>
+   <li><code>&lt;<i>test_case_name></i>.yaml</code> - For each test case, a results file with the 
+   same name as the expected results YAML asset is generated.  Success or failure of function tests
+   is determined by comparing each of these files</li>
+</ul>
+
+<h3><a id="creatingTestCases">Creating Test Cases</a></h3>
+  <p>To launch the Test Case Wizard, right-click on a workflow package in Process Explorer 
+  and select New > Test Case from the menu.</p>
+  
+  <img src="images/start-stop-test.jpg" />
+  
+  <p>When you click Finish, a blank Groovy test script command file will be generated and opened in an editor pane.
+  If you've got the MDW framework test processes present in your workspace you can use the following test script verbatim.
+  If you don't have the MDW test processes, you can create a simple process and reference that in the "start" and "verify" commands.</p>  
+  <pre>
+// start-stop process test
+start process("com.centurylink.mdw.tests/StartStop")
+wait process
+verify process 
+  </pre>
+  
+  <p>The meaning of this sequence is fairly obvious.  For a full discussion of the available testing commands,
+  refer to the <a href="groovyTestScriptSyntax.html">Groovy Test Script Syntax</a> guide.</p> 
+
+  <p><span style="text-decoration:underline">Note:</span> You can import the MDW framework test cases (or any other shared cases)
+  using the MDW <a href="workflowAssets.html#discovery">Asset Discovery</a> mechanism.  The framework test cases
+  provide examples of over one hundred functioning tests that you can refer to when creating your own. The framework test case assets 
+  are in workflow packages com.centurylink.mdw.tests and com.centurylink.mdw.tests.cases.</p>
+  
+<h3><a id="runningTests">Running Tests</a></h3>
+
+  <p>If your server is running you can execute the test case now by right-clicking on it and selecting "Run..." from the menu.
+  Make sure to enable "Create/Replace Results" or else the case will fail with an error telling you that no expected result file exists
+  for the process being verified.</p>
+
+  <img src="images/start-stop-launch.jpg" />
+
+  <p>As your test case executes the Test Exec view in Designer shows a green bar to indicate progress and displays the test
+  output in its console pane on the right side.  The test should succeed since the expected results YAML asset is generated from
+  the actual outcome.  And on completion the results asset start-stop.yaml should appear in your workflow package in Process Explorer.</p>
+     
+  <p><span style="text-decoration:underline">Note:</span> Test cases run on the client in Designer and interact with the
+  server through built-in REST services.  Since test scripts are run on the client, this means that you need the 
+  <a href="http://groovy.codehaus.org/Eclipse+Plugin">Groovy Plugin</a> installed to run test cases in Eclipse.
+  In Designer RCP, Groovy is already included so no additional plugin is necessary.</p>
+
+  There are three main ways to launch automated tests in Designer:
+  <ul>
+    <li><span style="font-weight:bold">Run an individual test case:</span><br/>
+    This is handy to run a single test as in the scenario we just walked through.</span></li>
+    <li><span style="font-weight:bold">Run all test cases in a workflow package:</span><br/>
+    Right-clicking in Process Explorer on a workflow package and selecting "Run..." is a convenient way
+    to execute all cases in that package.</li> 
+    <li><span style="font-weight:bold">Run all test cases in your project:</span><br/>
+    Running by right-clicking on the project in Process Explorer allows you to easily execute all the test cases (for example,
+    to make sure you haven't broken anything prior to pushing your commits to a remote Git repository.</li>
+  </ul>
+  
+  <p>The automated test launch dialog supports the options summarized below.  These are saved as an Eclipse launch configuration,
+  which is a named setup that remembers these settings as well as the list of test cases to run.  The launch configuration dialog contains separate tabs
+  for Function Testing and Load Testing.  For Load Testing, next to each selected case a Count column appears to specify the number of
+  executions for that test.</p>
+    
+  <ul>
+    <li><span style="font-weight:bold">Thread Count</span>:<br/>
+  Multiple test cases can be executed in parallel using separate threads.
+  Because each thread consumes resources, you can tweak the number of threads to optimize the tradeoff
+  between execution speed and system responsiveness.<br/><br/></li>
+    <li><span style="font-weight:bold">Interval (Seconds):</span><br/>
+  Test cases are launched in a staggered manner to avoid overloading system resources initially.<br/><br/></li>
+    <li><span style="font-weight:bold">Verbose:</span><br/>
+  Includes verbose output in the execute.log output file.  This can be viewed at runtime in the TestExec view output pane.<br/><br/></li>
+    <li><span style="font-weight:bold">Stubbing:</span><br/>
+  Responses from external systems can be stubbed out in case the system is not available or should
+  not be introduced as a bottleneck during load testing.<br/><br/></li>
+    <li><span style="font-weight:bold">Pin to Server:</span><br/>
+  Normally in a load-balanced environment test runs are distributed among the servers.
+  If this checkbox is selected, execution will be constrained to a single node in the cluster.<br/><br/></li>
+    <li><span style="font-weight:bold">Create/Replace Results:</span><br/>
+  A convenient way to create initial expected results from actual test execution.  <strong>Note:</strong> this will overwrite
+  any existing results YAML asset.<br/><br/></li>
+  </ul>
+
+<h3><a id="testResultsAndOutput">Test Results and Output</a></h3>
+  <p>The green bar in Test Exec view will be familar to developers who've used the JUnit runner in Eclipse.
+  The Test Exec tree pane shows which cases are scheduled to run, along with their statuses.
+  While a test is running its tree icon displays an arrow symbol indicating that it is in progress, and
+  when it's completed, the icon is updated to to indicate success or failure.  The same status indication appears on the
+  test case in Process Explorer view.  The difference is that Process Explorer remembers the history of all test cases,
+  whereas Test Exec view shows only the current run(s).</p>
+  
+  <p>While a test is executing or when it's completed, you can select it in Test Exec tree view to see its output.
+  Once the test has produced results, the icon for its result node in Test Exec view changes to indicate 
+  that there are now actual results corresponding to the expected results file.</p>
+    
+  <img src="images/start-stop-success.jpg" />
+   
+  <p>Now that your start-stop test is complete,
+  you can right-click on the start-stop.yaml results in Test Exec and select Compare Results and
+  the Eclipse Text Compare editor should show the differences, with the expected results on the left and the
+  actual results on the right.  Using the merge-left center icon, or simply by cutting and pasting, you can copy the
+  actual results into the expected results file and hit ctrl-s to save.  This is another way you can overwrite an existing results
+  asset once you've had a good test case run.</p>
+  
+  <p>For a detailed explanation of the contents of these test result files format, refer to the
+  <a href="testResultsFormat.html">MDW Test Results Format</a> document.</p>
+  
+  <p>Another option available by right-clicking on the StartStopProcess_I1 result is "Open Process Instance",
+  which is especially handy for troubleshooting when you need to look into the reason why a test case failed.</p>
+
+<h4>HTML Test Results</h4>
+  <p>Process Explorer shows the status of all the tests that have been executed for a project.  This same information
+  can be displayed as an HTML page by right-clicking on the Automated Tests folder and selecting 
+  Format Results > Function Tests (or Load Tests, if available).
+  </p>
+  <p>
+  With <a href="assetPersistence.html">VCS Assets</a>, the XSL stylesheet for transforming raw test results into HTML
+  in Designer can be customized by creating any workflow package ending in ".testing" and within that creating an XSL
+  asset named function-test-results.xsl (for function testing) and/or load-test-results.xsl (for load testing).
+  The default stylesheets with these names are available in the com.centurylink.mdw.testing package as a starting point.   
+  </p>
+  <p>  
+  The HTML results summary can also be generated during test case execution using <a href="#ant">Ant</a>.
+  In a continuous integration environment it's a good idea to generate the test case HTML summary into a location that's 
+  accessible to a web server so that a link to the current test results can always be accessed from a browser.
+  </p>
+
+<h3><a id="loadTesting">Load Testing</a></h3>
+<p>Load tests are similar to automated function tests, and in Designer they're launched using the same
+dialog.  On the Load Testing tab there's a Count column in the Test Case table where you'll enter the desired
+number of executions for each selected test.</p>
+<p>The loader tester can run most test cases defined for function testing, but any
+<a href="groovyTestScriptSyntax.html#verifyProcessResults"><span class="cmd">verify</span></a> commands are ignored.
+The load tester does not generate per-test result files or validate outcomes; instead focusing on overall throughput.
+Therefore test cases to be used for load testing should be already known to execute correctly.  Load tests performance
+results are generated in main testResults directory.  An HTML summary can be viewed in Process Explorer by right-clicking
+on the Automated Tests folder and selecting Format Results > Load Tests</p>
+
+<h4>Load Test Placeholders</h4>
+<p>You can add a test resource file called <span class="cmd">placeHolderMap.csv</span> to supply different values for separate runs.
+The load tester uses the rows in the file sequentially. If the number of runs is larger than the number of rows in the file,
+the load tester repeats from the first row again once the last row is used.  In your process variables or message content,
+the placeholder syntax <code>#{placeholdeNamer}</code> will be substituted from corresponding column value in the CSV file.
+An special implicit value, <code>#{RunNumber}</code> is assigned a 1-based index value corresponding to the sequential run 
+number within the given case.  For example, consider the following test script:</p>
+<pre>
+// start process with CSV placeholders
+start process("com.centurylink.mdw.tests/MDWLoadTestRegular") {
+    variables = [Run: "#{RunNumber}", Color: "#{Color}", Month: "#{Month}" ]
+}
+</pre>
+<p>Values for <i>RunNumber</i>, <i>Color</i> and <i>Month</i> would be automatically populated from this CSV content:</p>
+<pre>
+Color,Month
+Red,January
+Green,Feburary
+Blue,March
+</pre>
+
+<h3><a id="runningTestsUsingAnt">Running Tests Using Ant</a></h3>
+<p>To provide test coverage as part of your continuous integration procedure, you can use the MDW automated test
+<a href="http://ant.apache.org">Ant</a> task in a build script.  Here's an example automated test target which runs regular groovy tests:</p>
+<pre>&lt;target>
+  &lt;echo message="Running MDW Automated Tests" />                    
+  &lt;taskdef name="mdwtests" onerror="report"
+    classname="com.centurylink.mdw.designer.testing.AutoTestAntTask" 
+    classpathref="maven.test.classpath" />
+
+  &lt;taskdef name="testReport" onerror="ignore" 
+    classname="com.centurylink.mdw.ant.taskdef.AutoTestReport" 
+    classpathref="maven.test.classpath" />  
+              
+  &lt;mdwtests
+    suiteName="mdwdemo"
+    excludes="*-gherkin"
+    serverUrl="http://ne1itcdrhews10.dev.intranet:12081/mdw"
+    workflowDir="workflow/assets"
+    testCasesDir="testCases"
+    testResultsDir="testResults"
+    testResultsSummaryFile="testResults/TestSuiteResults.xml"
+    threadCount="5"
+    intervalSecs="2"
+    sslTrustStore="src/main/resources/CenturyLinkQCA.jks"
+    user="mdwapp"
+    password="ldap_012"
+    stubbing="false"
+    verbose="false" />
+  &lt;!-- mdwtests
+    suiteName="mdwdemo-gherkin"
+    includes="*-gherkin"
+    serverUrl="http://ne1itcdrhews10.dev.intranet:12081/mdw"
+    workflowDir="workflow/assets"
+    testCasesDir="testCases"
+    testResultsDir="testResults"
+    testResultsSummaryFile="testResults/TestSuiteResults.xml"
+    threadCount="5"
+    intervalSecs="2"
+    sslTrustStore="src/main/resources/CenturyLinkQCA.jks"
+    user="mdwapp"
+    password="ldap_012"
+    stubbing="false"
+    verbose="false" /-->  
+  &lt;testReport todir="testResults"
+      testOutputFile="testResults/TestSuiteResults.xml" 
+      xslFile="./testCases/test-results.xsl"
+      emailRecipients="manoj.agrawal@centurylink.com">
+      &lt;report todir="testResults" format="noframes" />      
+    &lt;/testReport>
+  &lt;copy file="testResults/junit-noframes.html" 
+    tofile="testResults/mdwdemoTestResults.html" />
+&lt;/target>  
+</pre>
+<p>If you uncomment mdwdemo-gherkin section and comment mdedemo-groovy then it will run all the test cases named as *-gherkin. 
+mdwaap is a user here which is authenticated against LDAP. You can replace it with your own app user. You will also need CenturyLinkQCA.jks which can be downloaded from <a href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/CenturyLinkQCA.jks">here</a>
+<br>Note: You cannot mix and match Groovy and Gherkin test cases in the same target, but you can have run two separate targets successively to execute both sets of tests.</br>
+<p>
+There is good way to get a good pom.xml sample to start with is to use Test Case import feature in eclipse and select a gherkin test case from standard out of the box tests provided by MDW team. 
+</p>
+<p>The test results XML can be transformed into friendlier HTML and e-mailed to a distribution
+using the test report task:</p> 
+<pre>
+  &lt;taskdef name="testReport" onerror="ignore" 
+    classname="com.centurylink.mdw.ant.taskdef.AutoTestReport" 
+    classpathref="tests.classpath" />  
+
+  &lt;target name="reportTestResults">
+    &lt;testReport todir="testResults"
+      testOutputFile="testResults/TestSuiteResults.xml" 
+      xslFile="./testCases/test-results.xsl"
+      emailRecipients="mdw.development@centurylink.com">
+      &lt;report todir="testResults" format="noframes" />      
+    &lt;/testReport>  
+    &lt;copy file="testResults/junit-noframes.html" 
+      tofile="${publish.dir}/NightlyTestResults.html" />
+  &lt;/target>
+</pre>
+
+<h3><a id="webUI">Web UI for Automated Tests</a></h3>
+<p>TODO: describe this feature with screenshots from AdminUI</p>
+
+<h3><a id="nonMdwCucumber">Non-MDW Cucumber Features</a></h3>
+<p>As described above, MDW test cases can be written as Cucumber features using <a href="gherkinTestScriptSyntax.html">Gherkin syntax</a>.
+   As a convenience, the MDW Eclipse plugin also provides a facility to execute Cucumber features that are not MDW test cases.
+   A brief description of this capability is available under <a href="generalCucumberFeatures.html">General Cucumber Features</a>.</p>
+
+</body>
+</html>

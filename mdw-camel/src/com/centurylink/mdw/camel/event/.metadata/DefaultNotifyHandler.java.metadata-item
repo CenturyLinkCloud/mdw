@@ -1,0 +1,13 @@
+version=10.2
+item-uid=55273931
+item-spec=4D4457413A314B38334D422044454641554C544E4F5449465948414E444C4552204A4156412D323131333832313734312E412D5352433B34
+file-version=4
+checksum=a2fa6b6f36f2f7a67a93957b31d16427
+fetch-size=3548
+mtime=1429902056
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/camel/event/DefaultNotifyHandler.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:dj="http://www.centurylink.com/mdw/jsf/dojo"
+  xmlns:mt="http://www.centurylink.com/mdw/jsf/mdwtools">
+
+  <ui:composition>
+  
+    <dj:toolbar
+      id="grepToolbar"
+      dojoType="dijit.Toolbar"
+      layoutAlign="top" >
+      
+      <table width="100%" cellspacing="0" cellpadding="0" class="borderTop">
+        <tr style="background-color:#cccccc;" >
+          <td width="50px" style="padding-left:2px">
+            <span>Grep In: </span>
+          </td>
+          <td>
+            <span id="grepDirectory" />
+          </td>
+        </tr>
+        <tr>
+          <td style="padding-left:2px">
+            <h:outputLabel
+              value="Pattern:"
+              id="patternLabel"
+              for="patternTextBox" />
+          </td>
+          <td>
+            <h:inputText
+              id="patternTextBox"
+              size="20"
+              style="height:15px;margin-top:3px;" />
+          </td>
+        </tr>
+        <tr>
+          <td style="padding-left:2px">
+            <h:outputLabel
+              value="Files:"
+              id="filesLabel"
+              for="filesTextBox" />
+          </td>
+          <td>
+            <h:inputText
+              id="filesTextBox"
+              size="13"
+              style="height:15px;margin-top:3px;" />
+            <dj:button
+              dojoType="dijit.form.Button"
+              id="grepButton"
+              label="Grep"
+              styleClass="toolbarButton"
+              labelClass="toolbarButtonLabel"
+              style="margin-bottom:5px;margin-left:3px;"
+              onclick="grep();" />
+          </td>      
+        </tr>
+      </table>
+    
+    </dj:toolbar>
+        
+  </ui:composition>
+
+</html>      

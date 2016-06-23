@@ -1,0 +1,7 @@
+start process("com.centurylink.mdw.tests.workflow/JMS Adapter") {
+  variables = [ platform: "OSGi",
+                mode: "Asynchronous",
+                request: "<hi>Async request - OSGi</hi>" ]
+}
+wait process
+verify process

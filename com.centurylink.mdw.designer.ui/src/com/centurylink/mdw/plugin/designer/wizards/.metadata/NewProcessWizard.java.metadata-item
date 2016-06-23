@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549487
+item-spec=4D4457413A314B3848384C204E455750524F4345535357495A415244204A4156412D2D3132313630353031382E412D5352433B36
+file-version=6
+checksum=62690e1ca72128f94b6748f0580c5d32
+fetch-size=3899
+mtime=1453322032
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/NewProcessWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

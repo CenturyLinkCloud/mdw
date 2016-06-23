@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67359086
+item-spec=4D4457413A314B3737545A2054454D504C41544544454D41494C204A4156412D2D313439303039353737372E412D5352433B39
+file-version=9
+checksum=e244af45abd79b66f8b34cac4c6d1d43
+fetch-size=20695
+mtime=1452710788
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/email/TemplatedEmail.java
+project=4D4457413A4D445741
+project-uid=31770127

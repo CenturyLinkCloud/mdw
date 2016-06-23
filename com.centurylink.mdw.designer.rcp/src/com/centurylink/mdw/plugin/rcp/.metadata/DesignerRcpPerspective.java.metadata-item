@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67469961
+item-spec=4D4457413A314B3848324B2044455349474E45525243505045525350454354495645204A4156412D2D313439393330383937392E412D5352433B36
+file-version=6
+checksum=698fc8009a86ce650456c131c238f8ea
+fetch-size=4843
+mtime=1453155546
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/rcp/DesignerRcpPerspective.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,1 @@
+WEB-INF/lib directory needed for development deployment.

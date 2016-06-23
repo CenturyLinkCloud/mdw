@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69392429
+item-spec=4D4457413A314B3746473520474954564353204A4156412D31383333343731333258313330353758322E412D5352433B3133
+file-version=13
+checksum=dc9952ea7d9f9dd2f8c823021f4d8ce3
+fetch-size=7038
+mtime=1458863414
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/rest/GitVcs.java
+project=4D4457413A4D445741
+project-uid=31770127

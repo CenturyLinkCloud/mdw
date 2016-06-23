@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TaskJaxb
+  attributeOne="attr one val"
+  attributeTwo="attr two val">
+  <elementOne>elem one val</elementOne>
+  <elementTwo>elem two val</elementTwo>
+</TaskJaxb>

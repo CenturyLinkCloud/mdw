@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67935017
+item-spec=4D4457413A314B37435A302050524F4345535344414F204A4156412D3835383734353430302E412D5352433B35
+file-version=5
+checksum=71ff8aaa4ea1e56dd5871ee87d5d87bc
+fetch-size=8151
+mtime=1454949461
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/dao/process/ProcessDAO.java
+project=4D4457413A4D445741
+project-uid=31770127

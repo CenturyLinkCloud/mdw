@@ -1,0 +1,3 @@
+// rest-listener
+send asset("GetEmployeeRequest.xml")
+verify response asset("GetEmployeeResponse.xml")

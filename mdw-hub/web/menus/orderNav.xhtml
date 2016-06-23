@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+    <mdw:navMenu
+      id="orderNavLinks"
+      rendered="#{rendered == null ? true : rendered}"      
+      styleClass="mdw_hubNavLinks"
+      itemGroupClass="mdw_hubNavMenu_item_group"
+      activeItemClass="mdw_hubNavActiveLink"
+      inActiveItemClass="mdw_hubNavLink"
+      activeItemImage="/images/nav_sel.png"
+      activeItemImageClass="mdw_hubActiveNavImage"
+      imageBorderClass="mdw_hubNavImageBorder">
+      
+      <mdw:navLink
+        id="orderDetailLink"
+        label="Order Data"
+        action="go_orderDetail"
+        title="View Order Details">
+        <f:setPropertyActionListener
+          target="#{arrayDataItemActionController.action}" 
+          value="#{arrayDataItemActionController.defaultAction}" />
+        <f:param name="orderId" value="#{detailManager.orderDetail.orderId}" />
+      </mdw:navLink>
+      <mdw:navLink
+        id="tasksForOrderLink"
+        label="Tasks for Order"
+        action="go_tasksForOrder"
+        title="View Tasks for This Order">
+        <f:param name="orderId" value="#{detailManager.orderDetail.orderId}" />
+      </mdw:navLink>    
+      <mdw:navLink
+        id="orderNotesLink"
+        label="Order Notes #{listManager.orderNotes.hasItems ? '*' : ''}"
+        action="go_orderNotes"
+        title="View Order Notes">
+        <f:setPropertyActionListener
+          target="#{orderNotesActionController.action}"
+          value="#{orderNotesActionController.defaultAction}" />
+        <f:param name="orderId" value="#{detailManager.orderDetail.orderId}" />
+      </mdw:navLink>      
+      <mdw:navLink
+        id="orderAttachmentsLink"
+        label="Order Attachments #{listManager.orderAttachments.hasItems ? '*' : ''}"
+        action="go_orderAttachments"
+        title="Order Attachments">
+        <f:setPropertyActionListener
+          target="#{orderAttachmentsActionController.action}"
+          value="#{orderAttachmentsActionController.defaultAction}" />
+        <f:param name="orderId" value="#{detailManager.orderDetail.orderId}" />
+      </mdw:navLink>
+      <mdw:navLink
+        id="orderListLink"
+        label="Order List"
+        action="#{taskListScopeActionController.goOrders}"
+        title="Back to Order List" />
+
+    </mdw:navMenu>
+
+  </ui:composition>
+  
+</html>

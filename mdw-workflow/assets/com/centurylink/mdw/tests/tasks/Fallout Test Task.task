@@ -1,0 +1,5 @@
+<task:taskTemplate logicalId="FalloutTaskTest:A4" category="COM" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>Fallout Test Task</task:name>
+  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
+  <task:attribute name="IndexProvider">com.centurylink.mdw.services.task.CustomTaskIndexProvider</task:attribute>
+</task:taskTemplate>

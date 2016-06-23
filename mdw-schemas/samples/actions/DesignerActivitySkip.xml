@@ -1,0 +1,11 @@
+<ser:ActionRequest xmlns:ser="http://mdw.qwest.com/services">
+  <Action Name="PerformInstanceLevelAction">
+    <Parameter name="mdw.WorkType">ACTIVITY</Parameter>
+    <Parameter name="mdw.Action">SKIP</Parameter>
+    <Parameter name="mdw.DefinitionId">3</Parameter>
+    <Parameter name="mdw.InstanceId">17633082</Parameter>
+    <!-- non-null completion code 
+    <Parameter name="mdw.CompletionCode">myResult</Parameter>
+     -->
+  </Action>
+</ser:ActionRequest>

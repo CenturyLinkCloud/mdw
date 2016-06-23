@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50487908
+item-spec=4D4457413A314B3848384C205441534B454D41494C4E4F54494345205848544D4C2D313437323336323939302E412D5352433B32
+file-version=2
+checksum=b88d263d402501f4c306dab96e1b4e0c
+fetch-size=2469
+mtime=1409865439
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=templates/facelet/taskEmailNotice.xhtml
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

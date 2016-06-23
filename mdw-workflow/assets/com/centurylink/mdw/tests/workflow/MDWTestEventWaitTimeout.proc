@@ -1,0 +1,92 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="MDWTestEventWaitTimeout" version="0.9" description="">
+    <bpm:Activity Id="A2" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=36,y=208,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A4" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=490,y=212,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A1" Name="Check" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="TIMER_WAIT" Value="2"/>
+      <bpm:Attribute Name="Unit" Value="Minutes"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=159,y=363,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="Event Wait" Implementation="com.centurylink.mdw.workflow.activity.event.EventWaitActivity">
+      <bpm:Attribute Name="$+Id" Value="472083"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Hold"/>
+      <bpm:Attribute Name="STATUS_AFTER_TIMEOUT" Value="Hold"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},NonTaskAction,false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=234,y=200,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A2" To="A3" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=188,ly=195,type=Elbow,xs=100&amp;230,ys=228&amp;228"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A4" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=390,ly=233,type=Elbow,xs=338&amp;486,ys=232&amp;232"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A1" Event="DELAY" Id="T3">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=200,ly=293,type=Elbow,xs=246&amp;246,ys=264&amp;359"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T4">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=325,ly=316,type=Elbow,xs=263&amp;263&amp;320&amp;320,ys=359&amp;307&amp;307&amp;262"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="ERROR_PROCESS_ID" Value="-3"/>
+    <bpm:Attribute Name="ERROR_TRANSITION_ID" Value="68528"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="SLA" Value="0"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+    <bpm:Attribute Name="Transition with no Label" Value="Acts as Default"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=38,y=63,w=248,h=27"/>
+    <bpm:Attribute Name="START_TRANSITION_ID" Value="2327302"/>
+    <bpm:SubProcess Id="P2" name="Exception Handler" version="0.4" description="">
+      <bpm:Activity Id="A5" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=398,y=71,w=60,h=40"/>
+        <bpm:Attribute Name="SLA" Value="0"/>
+      </bpm:Activity>
+      <bpm:Activity Id="A6" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+        <bpm:Attribute Name="SLA" Value="0"/>
+        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=698,y=71,w=60,h=40"/>
+      </bpm:Activity>
+      <bpm:Activity Id="A7" Name="Event Wait Fallout" Implementation="com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity">
+        <bpm:Attribute Name="Category" Value="COM"/>
+        <bpm:Attribute Name="FormName" Value="Autoform"/>
+        <bpm:Attribute Name="IndexProvider" Value="com.centurylink.mdw.services.task.AutoFormTaskIndexProvider"/>
+        <bpm:Attribute Name="Notices" Value="$DefaultNotices"/>
+        <bpm:Attribute Name="SLA" Value="0"/>
+        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+        <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+        <bpm:Attribute Name="TaskLogicalId" Value="MDWTestEventWaitTimeout:A7"/>
+        <bpm:Attribute Name="TaskName" Value="Event Wait Fallout"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=523,y=61,w=105,h=61"/>
+        <bpm:Attribute Name="Wait for Task" Value="TRUE"/>
+      </bpm:Activity>
+      <bpm:Transition CompletionCode="" From="A7" To="A6" Event="FINISH" Id="T5">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=663,ly=91,type=Elbow,xs=632&amp;694,ys=91&amp;91"/>
+      </bpm:Transition>
+      <bpm:Transition CompletionCode="" From="A5" To="A7" Event="FINISH" Id="T6">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=491,ly=91,type=Elbow,xs=462&amp;519,ys=91&amp;91"/>
+      </bpm:Transition>
+      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=358,y=31,w=440,h=120"/>
+      <bpm:Attribute Name="ENTRY_TRANSITION_ID" Value="2327303"/>
+      <bpm:Attribute Name="START_TRANSITION_ID" Value="2327293"/>
+      <bpm:Variables Name="EmbeddedSubProcessTaskAction" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+        <bpm:type Name="java.lang.String"/>
+      </bpm:Variables>
+    </bpm:SubProcess>
+  </bpm:Process>
+</bpm:processDefinition>

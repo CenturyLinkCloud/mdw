@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdw:Task logicalId="ManualTaskWithEmailFeature:A3"
+  xmlns:mdw="http://mdw.centurylink.com/services" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://mdw.centurylink.com/services ../Services.xsd">
+  <MasterRequestId>aa72442~130701-114120</MasterRequestId>
+  <Priority>1</Priority>
+  <DueInSeconds>86400</DueInSeconds>
+  <Assignee>dxoakes</Assignee>
+  <Workgroups>MDW Support</Workgroups>
+  <Comments><![CDATA[This is important.]]></Comments>
+  <OwnerApplicationName>NGWM</OwnerApplicationName>
+  <AssociatedTaskInstanceId>123456</AssociatedTaskInstanceId>
+</mdw:Task>

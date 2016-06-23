@@ -1,0 +1,78 @@
+import com.centurylink.mdw.common.utilities.JsonUtil
+
+// manual-task-services
+start process("ManualTaskServices") {
+    variables = [ dateVar: Date.parse("MM-dd-yyyy HH:mm:ss", "04-01-2016 14:36:00"),
+                  stringVar: "Hello",
+                  docVar: "<full>\n  <document content='xml'/>\n</full>",
+                  jaxbVar: '''<TaskJaxb
+  attributeOne="attrOneValue"
+  attributeTwo="attrTwoValue">
+  <elementOne>elementOneValue</elementOne>
+  <elementTwo>elementTwoValue</elementTwo>
+</TaskJaxb>''' ]
+}
+
+sleep 10
+def taskInst = action task("AutoForm Task for Service Access") {
+    outcome = "Claim"
+}
+
+// check the values through the REST API
+def response = get http("services/Tasks/${taskInst.id}/values")
+assert response.code == 200
+response.expected = asset("task-values-json-1.json").text
+verify response
+
+// update some values through the REST API
+def values = [:]
+values["dateVar"] = "Fri Apr 01 15:36:00 MDT 2016"
+values["#{jaxbVar.elementOne}"] = "newElementOneValue"
+values["#{objectVar.taskmaster}"] = "dxoakes"
+values["docVar"] = "<empty/>"
+values["unassignedVar"] = "now assigned"
+response = put http("services/Tasks/${taskInst.id}/values") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = JsonUtil.getJson(values)
+}
+assert response.code == 200
+
+// check the values through the REST API
+response = get http("services/Tasks/${taskInst.id}/values")
+assert response.code == 200
+response.expected = asset("task-values-json-2.json").text
+verify response
+
+// try to set a read-only var (nothing should update)
+values = [:]
+values["dateVar"] = "Fri Apr 01 16:36:00 MDT 2016"
+values["stringVar"] = "do not update"
+response = put http("services/Tasks/${taskInst.id}/values") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = JsonUtil.getJson(values)
+}
+// TODO fix HttpHelper.put() to capture response for errored requests
+//def statusMsg = new groovy.json.JsonSlurper().parseText(response.content)
+//assert statusMsg.code == 400
+//assert statusMsg.status.message == "Read-only value: stringVar"
+
+// nothing should have changed
+response = get http("services/Tasks/${taskInst.id}/values")
+assert response.code == 200
+response.expected = asset("task-values-json-2.json").text
+verify response
+
+action task("AutoForm Task for Service Access") {
+    outcome = "Complete"
+    variables = [unassignedVar: "updated during task completion"]
+}
+
+verify process
+
+// check values again
+response = get http("services/Tasks/${taskInst.id}/values")
+assert response.code == 200
+response.expected = asset("task-values-json-3.json").text
+verify response

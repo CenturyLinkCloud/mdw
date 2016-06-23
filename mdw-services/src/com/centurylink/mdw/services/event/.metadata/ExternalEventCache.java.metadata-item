@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65568711
+item-spec=4D4457413A314B37435A302045585445524E414C4556454E544341434845204A4156412D313636393832343733342E412D5352433B35
+file-version=5
+checksum=0be2ffbe4d1a7311d0b406f44b930449
+fetch-size=3663
+mtime=1446496007
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/event/ExternalEventCache.java
+project=4D4457413A4D445741
+project-uid=31770127

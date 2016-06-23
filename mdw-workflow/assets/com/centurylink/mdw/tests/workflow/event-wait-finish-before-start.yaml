@@ -1,0 +1,21 @@
+process: # 13651
+  name: MDWTestSuppsEmbedded
+  instance: 1
+  activity: # 13 "2016-02-22 13:18:26"
+    name: Start
+    status: Completed
+  activity: # 5 "2016-02-22 13:18:26"
+    name: which case?
+    status: Completed
+  activity: # 9 "2016-02-22 13:18:26"
+    name: Wait for some event
+    status: Completed
+  activity: # 10 "2016-02-22 13:18:26"
+    name: update case value
+    status: Completed
+  activity: # 7 "2016-02-22 13:18:26"
+    name: Stop
+    status: Completed
+  variable: # 20677
+    name: testCase
+    value: finish-resume-on-wait

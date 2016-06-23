@@ -1,0 +1,279 @@
+spool create_indexes.lst;
+undefine index_tbs_name
+
+CREATE INDEX ACTINST_PROCINST_FK ON ACTIVITY_INSTANCE
+(PROCESS_INSTANCE_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX ATTRIBUTE_OWNERID_IDX ON ATTRIBUTE
+(ATTRIBUTE_OWNER_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX ATTRIBUTE_OWNER_NAME_IDX ON ATTRIBUTE
+(ATTRIBUTE_OWNER, ATTRIBUTE_OWNER_ID, ATTRIBUTE_NAME)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX EVENTLOG_OWNER_IDX ON EVENT_LOG
+(EVENT_LOG_OWNER, EVENT_LOG_OWNER_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX EVENTWAITINST_OWNER_IDX ON EVENT_WAIT_INSTANCE
+(EVENT_WAIT_INSTANCE_OWNER, EVENT_WAIT_INSTANCE_OWNER_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX EVENTWAITINST_EVENT_NAME_IDX ON EVENT_WAIT_INSTANCE
+(EVENT_NAME)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX PROCINST_OWNER_IDX ON PROCESS_INSTANCE
+(OWNER, OWNER_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );           
+CREATE INDEX TASKINST_OWNER_IDX ON TASK_INSTANCE
+(TASK_INSTANCE_OWNER)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX TASKINST_OWNER_OWNERID_IDX ON TASK_INSTANCE
+(TASK_INSTANCE_OWNER, TASK_INSTANCE_OWNER_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX TASKINST_OWNERID_IDX ON TASK_INSTANCE
+(TASK_INSTANCE_OWNER_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX TASKINST_TASK_FK ON TASK_INSTANCE
+(TASK_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX VARINST_PROCINST_FK ON VARIABLE_INSTANCE
+(PROCESS_INST_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX VARINST_VALUE_IDX ON VARIABLE_INSTANCE
+(VARIABLE_VALUE)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX TRANSINST_DESTINST_IDX ON WORK_TRANSITION_INSTANCE
+(DEST_INST_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX TRANSINST_PROCINST_FK ON WORK_TRANSITION_INSTANCE
+(PROCESS_INST_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX EVENTINST_DOCUMENT_FK ON EVENT_INSTANCE
+(DOCUMENT_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX TASKINSTGRP_GROUP_FK
+ON TASK_INST_GRP_MAPP (USER_GROUP_ID)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX TASKINSTIDX_IDXKEY_FK
+ON TASK_INST_INDEX (INDEX_KEY)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE UNIQUE INDEX USERGROUP_GROUPNAME
+ON USER_GROUP (GROUP_NAME)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX RULESET_GROUP_FK ON RULE_SET (GROUP_NAME)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+CREATE INDEX RULESET_LANGUAGE_IDX 
+ON RULE_SET (LANGUAGE)
+TABLESPACE &&index_tbs_name
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           );
+           
+undefine index_tbs_name  
+spool off;
+

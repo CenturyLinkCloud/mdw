@@ -1,0 +1,19 @@
+// activity-stubbing-closure
+assert stubbing
+assert hasTestingPackage
+
+// also requires the MDW workflow package com.centurylink.mdw.testing
+def timerStubMatcher = { Object runtimeContext -> // instance of ActivityRuntimeContext
+    return "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity"
+        .equals(runtimeContext.getActivity().getImplementorClassName());
+}
+
+start process("TestActivityStub") {
+    variables = [flowPath: "all timers"]
+    activityStubs = [
+        activity(timerStubMatcher) { // logical id for timer activity
+            return null // default transition
+        }]
+}
+wait process
+verify process

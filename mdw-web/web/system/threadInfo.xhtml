@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mt="http://www.centurylink.com/mdw/jsf/mdwtools"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition template="/layout/helper.xhtml">
+  
+    <ui:define name="helperLinks">
+      <mt:helperNav />
+    </ui:define>
+  
+    <ui:define name="helperContent">
+      <h:panelGrid
+        columns="1"
+        width="100%"
+        styleClass="mdw_systemPanel"        
+        columnClasses="mdw_detailsValuePlain"
+        headerClass="mdw_systemPanelTitle">
+        <f:facet name="header">
+          <h:outputText value="VM Threads and MDW Thread Pools." />
+        </f:facet>
+        <h:panelGroup style="margin:10px">
+          <h:commandButton
+            id="threadDumpButton"
+            value="Thread Dump"
+            styleClass="mdw_detailFormButtons" 
+            action="#{webUtil.doThreadDump}" />
+          <h:commandButton
+            id="poolStatusButton"
+            rendered="#{webUtil.mdwThreadPool}"
+            value="Pool Status"
+            styleClass="mdw_detailFormButtons" 
+            action="#{webUtil.doThreadPoolStatus}" />
+        </h:panelGroup>
+      </h:panelGrid>
+      <br/>
+      <hr/>
+      <pre class="mdw_system">#{webUtil.threadDump}</pre>
+      <pre class="mdw_system">#{webUtil.threadPoolStatus}</pre>
+    </ui:define>
+  
+  </ui:composition>
+  
+</html>

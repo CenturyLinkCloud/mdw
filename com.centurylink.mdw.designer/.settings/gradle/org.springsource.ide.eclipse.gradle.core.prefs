@@ -1,0 +1,5 @@
+#org.springsource.ide.eclipse.gradle.core.preferences.GradleProjectPreferences
+#Sun Jan 19 01:40:20 MST 2014
+org.springsource.ide.eclipse.gradle.classpath.enableSorting=true
+org.springsource.ide.eclipse.gradle.classpath.jar.remap.gradle.to.maven=true
+org.springsource.ide.eclipse.gradle.rootprojectloc=

@@ -1,0 +1,12 @@
+#Thu Feb 18 14:16:33 MST 2016
+PoolableTibcoBusAdapter.proc=3
+SynchronousBusAdapter.proc=2
+bus-adapter-poolable.test=2
+bus-adapter-poolable.yaml=2
+bus-adapter-poolable2.test=2
+bus-adapter-poolable2.yaml=2
+bus-adapter-stubbed.test=2
+bus-adapter-stubbed.yaml=2
+bus-adapter-synchronous.test=2
+bus-adapter-synchronous.yaml=2
+bus_stubbed_response.xml=1

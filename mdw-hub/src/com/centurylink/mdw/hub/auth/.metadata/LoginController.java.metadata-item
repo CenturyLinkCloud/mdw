@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67363229
+item-spec=4D4457413A314B37595142204C4F47494E434F4E54524F4C4C4552204A4156412D3139303334313730385831373837345831322E412D5352433B32
+file-version=2
+checksum=b1dae1af327bb7cf4b10781ce4e544b0
+fetch-size=2955
+mtime=1452715140
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/auth/LoginController.java
+project=4D4457413A4D445741
+project-uid=31770127

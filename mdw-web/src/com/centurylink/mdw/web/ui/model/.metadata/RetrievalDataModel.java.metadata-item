@@ -1,0 +1,13 @@
+version=10.2
+item-uid=48347544
+item-spec=4D4457413A314B374B524A2052455452494556414C444154414D4F44454C204A4156412D313333383730353931312E412D5352433B33
+file-version=3
+checksum=b2f7cd9ec7b2015925a8239f790e5efa
+fetch-size=1213
+mtime=1399587229
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/ui/model/RetrievalDataModel.java
+project=4D4457413A4D445741
+project-uid=31770127

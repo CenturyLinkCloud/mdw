@@ -1,0 +1,10 @@
+// Add a note - POST request to /mdw/Services/Notes
+// Sample JSON below
+{
+        "ownerType" : "TASK_INSTANCE",
+        "ownerId" : 11854,
+        "name" : "Note Four",
+        "details" : "Details for note four.",
+        "user" : "dxoakes"
+}
+

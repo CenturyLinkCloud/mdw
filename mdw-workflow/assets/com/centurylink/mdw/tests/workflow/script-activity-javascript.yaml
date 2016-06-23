@@ -1,0 +1,71 @@
+process: # 13775
+  name: ScriptTest
+  instance: 1
+  activity: # 3 "2016-02-23 12:43:34"
+    name: Start
+    status: Completed
+  activity: # 8 "2016-02-23 12:43:34"
+    name: Script Flavor?
+    status: Completed
+  activity: # 4 "2016-02-23 12:43:34"
+    name: JavaScript
+    status: Completed
+  activity: # 6 "2016-02-23 12:43:34"
+    name: Looking Good?
+    status: Completed
+  activity: # 1 "2016-02-23 12:43:34"
+    name: Still Okay?
+    status: Completed
+  activity: # 2 "2016-02-23 12:43:34"
+    name: Stop
+    status: Completed
+  variable: # 21056
+    name: bystanderDomDoc
+    value: <xml>I won't change</xml>
+
+  variable: # 21059
+    name: bystanderXmlBean
+    value: <xml>I won't change</xml>
+  variable: # 21061
+    name: createdDomDoc
+    value: |
+      <records>
+         <car make="Infiniti" model="G35x" year="2005">
+            <country>Japan</country>
+            <aspect type="Sedan">Not too big</aspect>
+         </car>
+      </records>
+  variable: # 21062
+    name: createdInt
+    value: 8
+  variable: # 21063
+    name: createdString
+    value: createdStringValue
+  variable: # 21064
+    name: createdXmlBean
+    value: |
+      <createdXmlBean>
+        <innerElement attr="attrVal"/>
+      </createdXmlBean>
+  variable: # 21057
+    name: modifiedDomDoc
+    value: |
+      <records>
+        <car make="Infiniti" model="G35x" year="2005">
+          <country>Japan</country>
+          <aspect type="Sedan">Not too big</aspect>
+        </car>
+      <newCar shiny="new"/>
+      </records>
+  variable: # 21055
+    name: modifiedInt
+    value: 16
+  variable: # 21060
+    name: modifiedString
+    value: MyStringToModify has been modified
+  variable: # 21054
+    name: modifiedXmlBean
+    value: <xmlBeanToBeModified>MODIFIED</xmlBeanToBeModified>
+  variable: # 21058
+    name: scriptFlavor
+    value: JavaScript

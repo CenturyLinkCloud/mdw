@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549379
+item-spec=4D4457413A314B3848384C20574F524B464C4F5753454C454354494F4E50524F5649444552204A4156412D313935313036373536392E412D5352433B34
+file-version=4
+checksum=7377186eb79a3b4fadce1ebfc4e7a3f1
+fetch-size=2385
+mtime=1453322014
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/WorkflowSelectionProvider.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69365145
+item-spec=4D4457413A314B3759514220444F43554D454E54434F4E54454E54534552564C4554204A4156412D31393634373736303158313136343358302E412D5352433B31
+file-version=1
+checksum=3e7b7229958a72ba650f7d2da48ab5d1
+fetch-size=160
+mtime=1449287748
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/servlet/DocumentContentServlet.java
+project=4D4457413A4D445741
+project-uid=31770127

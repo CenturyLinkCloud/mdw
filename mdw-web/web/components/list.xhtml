@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:rich="http://richfaces.org/rich"  
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+    
+    <h:panelGroup
+      rendered="#{rendered == null ? true : rendered}"
+      style="block">
+      
+      <mdw:javascriptInclude
+        fileLocation="/script/listSupport.js" />
+      
+      <mdw:dataScroller
+        id="#{listId}_scroller"
+        listId="#{listEntity.listId}"
+        filterId="#{listEntity.filter.id}"
+        rendered="#{renderScroller == null ? true : renderScroller}"
+        for="#{listId}"
+        pageCountVar="pageCount"
+        pageIndexVar="pageIndex"
+        paginator="false"
+        pageControlsClass="mdw_pageControls"
+        paginationLinksClass="mdw_pageLink"
+        summaryLabel="#{label == null ? listEntity.name : label}"
+        summaryClass="mdw_pageHeader"
+        subLabel="#{subLabel}"
+        subLabelClass="mdw_subLabel"        
+        totalsClass="mdw_paginationTotals"
+        exportListId="#{listEntity.exportable ? listEntity.listId : null}"
+        timingOutput="#{listEntity.showTimings ? listEntity.timingOutput : null}"
+        ajaxEnabled="#{listEntity.ajaxEnabled}"
+        ajaxListButton="#{listEntity.ajaxListButtonClass}"
+        ajaxListLink="#{listEntity.ajaxListLinkClass}"
+        searchable="#{listEntity.searchable}"
+        customButtons="#{listEntity.customButtons}"
+        showAllDisplayRows="#{listEntity.showAllDisplayRows}">
+        <f:facet name="all">
+          <t:outputText value="All" rendered="#{listEntity.allRowsLink}" title="Show All" style="text-decoration:underline;color:#7c7c7c;" />
+        </f:facet>
+        <f:facet name="first">
+          <h:graphicImage value="/images/skipUp.png" alt="first" title="First Page" style="border:none;" />
+        </f:facet>
+        <f:facet name="previous">
+          <h:graphicImage value="/images/pageUp.png" alt="previous" title="Page Up" style="border:none;" />
+        </f:facet>
+        <f:facet name="next">
+          <h:graphicImage value="/images/pageDown.png" alt="next" title="Page Down" style="border:none;" />
+        </f:facet>
+        <f:facet name="last">
+          <h:graphicImage value="/images/skipDown.png" alt="last" title="Last Page" style="border:none;" />        
+        </f:facet>
+        
+        <!-- list menu -->
+        <rich:dropDownMenu
+          id="#{listEntity.id}_menu"
+          rendered="#{listEntity.listMenu != null}" 
+          binding="#{listEntity.listMenu}"
+          mode="ajax"
+          hideDelay="200"
+          popupWidth="50"
+          styleClass="mdw_listButton">
+        </rich:dropDownMenu>
+
+        <!-- action menu -->
+        <rich:dropDownMenu
+          id="#{listEntity.id}_actions"
+          rendered="#{listEntity.actionMenu != null}"
+          binding="#{listEntity.actionMenu}"
+          target="#{listEntity}"
+          mode="ajax"
+          hideDelay="200"
+          popupWidth="110"
+          styleClass="mdw_listButton">
+        </rich:dropDownMenu>
+        <h:panelGroup rendered="#{listEntity.actionMenu != null}">
+          <ui:include src="/components/html5/actionComment.xhtml" />
+        </h:panelGroup>
+      </mdw:dataScroller>
+
+      <mdw:dataTable
+        id="#{listId}"
+        styleClass="mdw_list"
+        headerClass="mdw_sortRow"
+        rowClasses="mdw_columnarRow1"
+        currentRowClass="mdw_currentRow"
+        value="#{listEntity.items}"
+        var="listItem"
+        displayRows="#{listEntity.displayRows}"
+        sortColumn="#{listEntity.sort}"
+        sortAscending="#{listEntity.ascending}"
+        groupByColumn="#{listEntity.groupBy}"
+        groupHeaderClass="mdw_groupHeader"
+        groupLabelClass="mdw_groupLink"
+        groupExpandImage="/images/expand_row.gif"
+        groupCollapseImage="/images/collapse_row.gif"
+        groupingImageClass="mdw_expandCollapseGroup"
+        preserveSort="#{preserveListSort == null ? true : preserveListSort}"
+        firstRow="#{listEntity.firstRow}">
+
+        <t:columns
+          id="#{listId}_columns"
+          value="#{listEntity.headers}"
+          var="colHeader"
+          styleClass="mdw_gridLine">
+
+          <f:facet name="header">
+            <h:panelGroup style="block">
+              <h:selectBooleanCheckbox
+                rendered="#{listEntity.hasItems &amp;&amp; listEntity.headerCheckbox}"
+                onclick="selectAll(this.form, this.checked);" />
+
+              <h:panelGroup rendered="#{listEntity.columnarFilters}">
+                <ui:include src="/components/html5/columnarFilters.xhtml" />
+              </h:panelGroup>
+                                  
+              <t:commandSortHeader 
+                id="#{listId}_sortHeader"
+                rendered="#{!listEntity.headerCheckbox}"
+                columnName="#{colHeader.label}"
+                arrow="false"
+                immediate="true"
+                styleClass="mdw_sortTitle"
+                style="width:#{listEntity.columnWidth}">
+                <f:facet name="ascending">
+                  <h:graphicImage
+                    rendered="#{listEntity.sortable}"
+                    value="/images/arrowdown.gif"
+                    styleClass="mdw_sortArrow"
+                    alt="Sort descending." />
+                </f:facet>
+                <f:facet name="descending">
+                  <h:graphicImage
+                    rendered="#{listEntity.sortable}"
+                    value="/images/arrowup.gif"
+                    styleClass="mdw_sortArrow" 
+                    alt="Sort ascending." />
+                </f:facet>
+                <h:outputText
+                  rendered="#{listEntity.sortable}"
+                  value="#{colHeader.label}" />
+              </t:commandSortHeader>
+               
+              <h:outputText
+                id="#{listId}_header"
+                rendered="#{!listEntity.headerCheckbox &amp;&amp; !listEntity.sortable}"
+                value="#{colHeader.label}"
+                immediate="true"
+                styleClass="mdw_listTitle"
+                style="width:#{listEntity.columnWidth}">
+              </h:outputText>
+
+              <div style="float:right;">
+                <h:graphicImage
+                  id="filterBtn"
+                  rendered="#{colHeader.filterInput != null}"
+                  value="/images/filter.gif"
+                  styleClass="mdw_filterImg"
+                  style="#{colHeader.filterInput.valueEmpty || !listSearch.valueEmpty? 'visibility:hidden;' : 'visibility:visible;'}"
+                  onmouseover="this.style.borderColor='black';"
+                  onmouseout="this.style.borderColor='transparent';"
+                  onclick="showFilterInput(this);"
+                  title="Filter" 
+                  alt="Filter" />
+              </div>
+            </h:panelGroup>              
+          </f:facet>
+
+          <h:selectBooleanCheckbox
+            rendered="#{listEntity.valueCheckbox}"
+            value="#{listItem.marked}" 
+            immediate="true"
+            onclick="#{listEntity.onclick}" />
+
+          <h:panelGroup rendered="#{listEntity.expandable &amp;&amp; listEntity.expandAttribute == null}">
+            <h:graphicImage
+              id="expand"
+              value="/images/expand_row.gif"
+              onclick="expandListItem(this);"
+              styleClass="mdw_expandCollapseRow"
+              style="display:inline;"
+              alt="Expand #{listEntity.columnValue}" />
+            <h:graphicImage
+              id="collapse"
+              value="/images/collapse_row.gif"
+              onclick="collapseListItem(this);"
+              styleClass="mdw_expandCollapseRow"
+              style="display:none;"
+              alt="Collapse #{listEntity.columnValue}" />
+          </h:panelGroup>
+
+          <h:commandLink 
+            action="#{listEntity.performLinkAction}"
+            target="#{listEntity.linkTarget}"
+            immediate="true"
+            rendered="#{listEntity.valueLink &amp;&amp; !listEntity.ajaxEnabled}"
+            onclick="#{listEntity.onclick == null ? listEntity.onClickScript : listEntity.onclick}"
+            styleClass="#{listEntity.styleClass} mdw_listLinks">
+            <h:outputText
+              rendered="#{!listEntity.valueImage}"
+              value="#{listEntity.columnValue}" />
+            <h:graphicImage
+              rendered="#{listEntity.valueImage}" 
+              value="#{listEntity.image}"
+              alt="#{listEntity.columnValue}"
+              title="#{listEntity.columnValue}"
+              styleClass="mdw_listImage" />
+            <ui:fragment rendered="#{listEntity.filter == null}">
+              <f:param
+                name="sortableListId"
+                value="#{listId}" />
+            </ui:fragment>        
+          </h:commandLink>
+          
+          <!-- exactly as above, but for ajax enablement -->
+          <a4j:commandLink 
+            action="#{listEntity.performLinkAction}"
+            target="#{listEntity.linkTarget}"            
+            immediate="true"
+            rendered="#{listEntity.valueLink &amp;&amp; listEntity.ajaxEnabled}"
+            onclick="#{listEntity.onclick == null ? listEntity.onClickScript : listEntity.onclick}"
+            styleClass="#{listEntity.styleClass} mdw_listLinks">
+            <h:outputText
+              rendered="#{!listEntity.valueImage}"
+              value="#{listEntity.columnValue}"
+              styleClass="#{listEntity.styleClass} mdw_listLinks" />
+            <h:graphicImage
+              rendered="#{listEntity.valueImage}" 
+              value="#{listEntity.image}"
+              alt="#{listEntity.columnValue}"
+              title="#{listEntity.columnValue}"
+              styleClass="mdw_listImage" />
+            <ui:fragment rendered="#{listEntity.filter == null}">
+              <f:param
+                name="sortableListId"
+                value="#{listId}" />
+            </ui:fragment>        
+          </a4j:commandLink>
+          
+          <h:outputLink
+            rendered="#{listEntity.htmlLink}"
+            value="#{listEntity.linkAction}"
+            target="#{listEntity.linkTarget}"            
+            onclick="#{listEntity.onclick}">
+            <t:outputText
+              rendered="#{!listEntity.valueImage}"
+              value="#{listEntity.columnValue}" />
+            <h:graphicImage
+              rendered="#{listEntity.valueImage}" 
+              value="#{listEntity.image}"
+              alt="#{listEntity.columnValue}"
+              title="#{listEntity.columnValue}"
+              styleClass="#{listEntity.styleClass} mdw_listImage" />
+            <ui:fragment rendered="#{listEntity.filter == null}">
+              <f:param
+                name="sortableListId"
+                value="#{listId}" />
+            </ui:fragment>   
+          </h:outputLink>            
+  
+          <h:outputText
+            rendered="#{!listEntity.valueCheckbox &amp;&amp; !listEntity.valueLink &amp;&amp; listEntity.expandAttribute == null &amp;&amp; !listEntity.valueImage &amp;&amp; !listEntity.htmlLink}"
+            value="#{listEntity.columnValue}"
+            styleClass="#{listEntity.styleClass}"
+            onclick="#{listEntity.onclick}" />
+
+          <h:panelGroup
+            id="expanded"
+            rendered="#{listEntity.expandedContent != null}"
+            layout="block"
+            styleClass="#{listEntity.styleClass}">
+            <h:panelGroup
+              id="expandedContent"
+              layout="block"
+              style="display:none;">
+              <ui:include src="#{listEntity.expandedContent}">
+                <ui:param name="listEntity" value="#{listEntity}" />
+              </ui:include>
+            </h:panelGroup>
+          </h:panelGroup>
+            
+        </t:columns>
+        
+      </mdw:dataTable>
+      
+    </h:panelGroup>
+    
+  </ui:composition>
+
+</html>

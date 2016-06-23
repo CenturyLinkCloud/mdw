@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65890129
+item-spec=4D4457413A314B3654583320485454504420434F4E462D31383330313036303958313132363758382E412D4441543B33
+file-version=3
+checksum=d6bd22da5fe288824e34b01c9e790af7
+fetch-size=20732
+mtime=1447131332
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/mdt/mdwa-dev1-30241-40229/httpd.conf
+project=4D4457413A4D445741
+project-uid=31770127

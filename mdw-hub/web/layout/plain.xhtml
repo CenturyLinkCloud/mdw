@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <title>MDW Task Manager</title>
+    <t:stylesheet path="/css/mdw.css" />    
+  </head>
+
+  <body class="mdw_body">
+    <t:messages layout="table"
+      id="mdwMainMessages"
+      styleClass="mdw_contextMessages"
+      showDetail="true" 
+      globalOnly="true" />
+
+    <h:form
+      id="mainDetailForm"
+      style="padding:0px;margin:0px">
+      <ui:insert name="detailContent" />
+      <div align="left" style="margin-left:5px;margin-top:3px">
+        <ui:insert name="commandContent" />
+      </div>
+
+    </h:form>
+
+    <ui:debug hotkey="x" rendered="#{mdw.properties['MDWWeb/facelets.debug']}" />
+
+  </body>
+
+</html>

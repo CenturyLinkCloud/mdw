@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851308
+item-spec=4D4457413A314B3848384C205345525645525354415455534C495354454E4552204A4156412D2D3439363837343436372E412D5352433B32
+file-version=2
+checksum=c7608238ebbe7062078e85d714c8d28e
+fetch-size=467
+mtime=1393988850
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/server/ServerStatusListener.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

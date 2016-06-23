@@ -1,0 +1,13 @@
+version=10.2
+item-uid=51944469
+item-spec=4D4457413A314B38435744204C4F4144544553544C4F474D4F4E49544F52204A4156412D2D313436393333373836302E412D5352433B33
+file-version=3
+checksum=d637906ab4a5b34e8847ce589d1fb7f9
+fetch-size=3269
+mtime=1418782681
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/testing/LoadTestLogMonitor.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

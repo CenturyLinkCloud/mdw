@@ -1,0 +1,29 @@
+process: # 13603
+  name: DroolsActivity
+  instance: 1
+  activity: # 3 "2016-02-22 11:42:24"
+    name: Start
+    status: Completed
+  activity: # 1 "2016-02-22 11:42:24"
+    name: |
+      Apply Order 
+      Routing
+    status: Completed
+  activity: # 2 "2016-02-22 11:42:24"
+    name: Stop
+    status: Completed
+  variable: # 20582
+    name: billedPrice
+    value: 1495
+  variable: # 20581
+    name: dueDate
+    value: ${yesterday}
+  variable: # 20580
+    name: orderNumber
+    value: ${masterRequestId}
+  variable: # 20579
+    name: quotedPrice
+    value: 1500
+  variable: # 20578
+    name: region
+    value: Eastern

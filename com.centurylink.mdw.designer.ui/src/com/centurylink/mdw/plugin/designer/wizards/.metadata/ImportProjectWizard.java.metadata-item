@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70837417
+item-spec=4D4457413A314B3848384C20494D504F525450524F4A45435457495A415244204A4156412D3139323131363136352E412D5352433B38
+file-version=8
+checksum=085a7a38965097ba3e214204764dcf85
+fetch-size=10044
+mtime=1464280405
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/ImportProjectWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,8 @@
+// PUT request to Services/Users/newuser?app=appId
+{
+  "cuid": "dxoakes",
+  "name": "Don Oakes",
+  "attributes": {
+    "Email Address": "donald.oakes@centurylink.com"
+  }
+}

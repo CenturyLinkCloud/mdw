@@ -1,0 +1,9 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.rules.DroolsActivity" Type="com.centurylink.mdw.activity.types.RuleActivity" Label="Drools Activity" IconFile="drools.jpg" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET>
+  <DROPDOWN NAME='KnowledgeBase' LABEL='Knowledge Base' SOURCE='RuleSets' TYPE='DROOLS,GUIDED' />
+  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>
+  <HYPERLINK URL='/MDWWeb/doc/droolsActivities.html'>
+    Drools Activity Help
+  </HYPERLINK>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

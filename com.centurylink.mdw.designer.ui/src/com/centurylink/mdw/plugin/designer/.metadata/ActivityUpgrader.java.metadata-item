@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70272672
+item-spec=4D4457413A314B3848384C2041435449564954595550475241444552204A4156412D323030313738353137583335383258302E412D5352433B31
+file-version=1
+checksum=e3a8d433b21b678df8cefe883bf331f7
+fetch-size=5609
+mtime=1462482313
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/ActivityUpgrader.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

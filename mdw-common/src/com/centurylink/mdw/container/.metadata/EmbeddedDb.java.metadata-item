@@ -1,0 +1,13 @@
+version=10.2
+item-uid=64636838
+item-spec=4D4457413A314B3737545A20454D4245444445444442204A4156412D31383030363831393558313630323958302E412D5352433B33
+file-version=3
+checksum=9ecbc7cbb2bf9cafa913987611d054b0
+fetch-size=1065
+mtime=1442523534
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/container/EmbeddedDb.java
+project=4D4457413A4D445741
+project-uid=31770127

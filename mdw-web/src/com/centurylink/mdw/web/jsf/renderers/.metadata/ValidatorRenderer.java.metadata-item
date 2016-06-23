@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855644
+item-spec=4D4457413A314B374B524A2056414C494441544F5252454E4445524552204A4156412D2D3835373334323337322E412D5352433B32
+file-version=2
+checksum=45d04d2ec9c6bf00663fe9d30b6f6434
+fetch-size=2488
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/renderers/ValidatorRenderer.java
+project=4D4457413A4D445741
+project-uid=31770127

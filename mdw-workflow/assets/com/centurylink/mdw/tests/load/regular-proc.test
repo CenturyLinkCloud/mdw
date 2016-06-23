@@ -1,0 +1,9 @@
+// regular-proc
+// uses placeHolderMap.csv
+// TODO csv/xlsx substitution for asset tests
+start process("MDWLoadTestRegular") {
+    variables = [Run: "#{RunNumber}", Color: "#{Color}" ]
+}
+
+wait process
+verify process

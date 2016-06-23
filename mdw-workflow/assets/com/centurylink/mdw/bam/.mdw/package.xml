@@ -1,0 +1,13 @@
+<bpm:package name="com.centurylink.mdw.bam" version="5.5.34" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:ApplicationProperties>
+    <bpm:PropertyGroup Name="demo">
+      <bpm:Property Name="OsgiBundleSymbolicName">com.centurylink.mdw.workflow</bpm:Property>
+    </bpm:PropertyGroup>
+    <bpm:PropertyGroup Name="dev">
+      <bpm:Property Name="OsgiBundleSymbolicName">com.centurylink.mdw.workflow</bpm:Property>
+    </bpm:PropertyGroup>
+    <bpm:PropertyGroup Name="cloudDev">
+      <bpm:Property Name="OsgiBundleSymbolicName">com.centurylink.mdw.workflow</bpm:Property>
+    </bpm:PropertyGroup>
+  </bpm:ApplicationProperties>
+</bpm:package>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851194
+item-spec=4D4457413A314B3843574420464F524D44455349474E43414E564153204A4156412D2D3439353637383237352E412D5352433B32
+file-version=2
+checksum=154320276d3d0667b1c02ca6d759ac64
+fetch-size=23617
+mtime=1393988749
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/pages/FormDesignCanvas.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

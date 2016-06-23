@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44536607
+item-spec=4D4457413A314B365458332043524541544520494E44455845532053514C7E30322D2D3531323630353237302E412D4441543B31
+file-version=1
+checksum=2c96314f22f769d04782cdc6a80f4987
+fetch-size=7611
+mtime=1360783167
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/oldScripts/create_indexes.sql
+project=4D4457413A4D445741
+project-uid=31770127

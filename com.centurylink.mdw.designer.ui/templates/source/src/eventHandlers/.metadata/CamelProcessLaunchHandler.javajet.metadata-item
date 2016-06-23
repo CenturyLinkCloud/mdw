@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49573164
+item-spec=4D4457413A314B3848384C2043414D454C50524F434553534C41554E434848414E444C4552204A4156414A45542D2D313936323936303633322E412D4441543B33
+file-version=3
+checksum=338ec50962afdce8ae3dc52fa5e8c1b7
+fetch-size=2275
+mtime=1406050436
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=templates/source/src/eventHandlers/CamelProcessLaunchHandler.javajet
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

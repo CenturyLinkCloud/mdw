@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851845
+item-spec=4D4457413A314B3848384C20434F4D504F534552204A4156412D2D313532363437343732382E412D5352433B32
+file-version=2
+checksum=4ad37da33ca2402ec449db5b938329bf
+fetch-size=3404
+mtime=1393988849
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/properties/editor/Composer.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

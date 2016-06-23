@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+
+    <mdw:navMenu
+      id="helperNavLinks"
+      label="MDW Web"
+      styleClass="mdw_navMenu"
+      style="width:180px;"
+      headerClass="mdw_navMenu_header_wide"
+      inActiveLinkClass="mdw_navLink"
+      activeLinkClass="mdw_navActiveLink"
+      collapsible="true"
+      expanded="true"
+      expandImage="/images/expand.gif"
+      collapseImage="/images/collapse.gif"
+      expandCollapseImageClass="mdw_navMenu_image">
+
+      <mdw:navLink
+        label="System Information"
+        action="go_systemInformation"
+        title="MDW Runtime Environment"
+        style="width:170px;" />
+      <mdw:navLink
+        label="HTTP Poster"
+        action="go_httpHelper"
+        title="Submit an HTTP Post Request"
+        rolesNeeded="Site Admin"
+        style="width:170px;" />
+      <mdw:navLink
+        label="JMS Messenger"
+        action="go_jmsHelper"
+        title="Send a Message to a JMS Queue"
+        rolesNeeded="Site Admin"
+        style="width:170px;" />
+      <mdw:navLink
+        label="MQSeries Helper"
+        action="go_mqHelper"
+        title="Send a Message to an MQSeries Queue"
+        rolesNeeded="Site Admin"
+        style="width:170px;" />
+      <mdw:navLink
+        label="Caches &amp; Properties"
+        action="go_refreshCache"
+        title="Refresh the MDW Application Cache"
+        rolesNeeded="Site Admin"
+        style="width:170px;" />
+      <mdw:navLink
+        label="Locate Class"
+        action="go_locateClass"
+        title="Locate a Java Class on the File System"
+        rolesNeeded="Site Admin"
+        style="width:170px;" />
+      <mdw:navLink
+        label="Thread Information"
+        action="go_threadInfo"
+        title="VM Threads or MDW Thread Pools"
+        rolesNeeded="Site Admin"
+        style="width:170px;" />
+    </mdw:navMenu>
+    
+  </ui:composition>
+
+</html>

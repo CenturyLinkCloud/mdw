@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+
+    <!-- prefs panel -->
+    <rich:modalPanel
+      id="listPrefsModalPanel"
+      rendered="#{rendered == null ? true : rendered}"
+      width="600"
+      height="500">
+      <f:facet name="header">
+        <h:panelGroup>
+          <div style="height:14px;">
+            <h:graphicImage value="/images/prefs.gif" />
+            <h:outputText value="List Preferences" style="position:relative;top:-3px;left:2px;" />
+          </div>
+        </h:panelGroup>
+      </f:facet>
+      <f:facet name="controls">
+        <h:panelGroup>
+          <h:graphicImage
+            id="hideListPrefsLink"
+            value="/images/close.png"
+            styleClass="hidelink" />
+          <rich:componentControl 
+            for="listPrefsModalPanel" 
+            attachTo="hideListPrefsLink" 
+            operation="hide" 
+            event="onclick"/>
+        </h:panelGroup>
+      </f:facet>
+      <h:outputText value="Select the columns you'd like to display for this list." />
+      <hr/>
+      <h:form id="listPrefsForm" forceId="true">
+        <mdw:pickList 
+          itemsLabel="Columns"
+          controller="#{prefsController}"
+          controllerAction="selectedColumnsChanged"
+          availableItems="#{prefsController.unselectedColumns}"
+          selectedItems="#{prefsController.selectedColumns}"
+          listWidth="200px" />
+        <br/>
+        <t:commandButton
+          id="listPrefsOKButton"
+          value="OK"
+          style="width:60px;" />
+        <t:commandButton
+          id="listPrefsResetButton"
+          value="Restore Defaults"
+          action="#{prefsController.resetListPrefs}"
+          immediate="true"
+          style="width:110px;margin-left:5px;" />          
+        <t:commandButton
+          id="listPrefsCancelButton"
+          value="Cancel"
+          onclick="resetToOriginal();return false;"
+          style="width:60px;margin-right:2px;margin-left:5px;" />
+        <rich:componentControl
+          for="listPrefsModalPanel" 
+          attachTo="listPrefsCancelButton"
+          operation="hide"
+          event="onclick" />
+      </h:form>      
+    </rich:modalPanel>
+
+    <rich:componentControl
+      rendered="#{rendered == null ? true : rendered}"
+      for="listPrefsModalPanel"
+      attachTo="listPrefsButton"
+      operation="show"
+      event="onclick"/>
+  
+ </ui:composition>
+
+</html>

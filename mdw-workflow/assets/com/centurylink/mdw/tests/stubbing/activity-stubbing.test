@@ -1,0 +1,21 @@
+// activity-stubbing
+assert stubbing
+assert hasTestingPackage
+
+start process("TestActivityStub") {
+    variables = [flowPath: "various", updatedString: "before update"]
+    activityStubs = [
+        activity("Stubbed Script") {
+            variables = [updatedString: "updated", updatedDoc: "<updated/>"]
+            return "toTimer"
+        },
+        activity("A4") { // logical id for timer activity
+            sleep = 2
+            return null // default transition
+        },
+        activity("TestActivityStubSubproc:A3") { // subproc logical id
+            // no need to return null for default transition
+        }]
+}
+wait process
+verify processes("TestActivityStub", "TestActivityStubSubproc")

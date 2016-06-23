@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50900020
+item-spec=4D4457413A314B3848384C20564945574C41594F5554584D4C454449544F52204A4156412D2D313231323735333534352E412D5352433B35
+file-version=5
+checksum=9377eb582153841582e14328e0c05e07
+fetch-size=1425
+mtime=1412361139
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/editors/ViewLayoutXmlEditor.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549622
+item-spec=4D4457413A314B3848384C204E45575041434B41474550414745204A4156412D2D313331353234343037302E412D5352433B3131
+file-version=11
+checksum=e481546aa8f15ab73b5d59d8af85480c
+fetch-size=5817
+mtime=1453327308
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/NewPackagePage.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

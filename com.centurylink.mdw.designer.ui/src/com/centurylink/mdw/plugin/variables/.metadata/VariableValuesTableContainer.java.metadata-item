@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68853402
+item-spec=4D4457413A314B3848384C205641524941424C4556414C5545535441424C45434F4E5441494E4552204A4156412D2D313632303231363434342E412D5352433B34
+file-version=4
+checksum=a9d7080c7e8296bf169ee9714b20d87a
+fetch-size=11167
+mtime=1457554757
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/variables/VariableValuesTableContainer.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68853387
+item-spec=4D4457413A314B37435A302054455354494E475345525649434553494D504C204A4156412D3138343239363238365831383536385831302E412D5352433B36
+file-version=6
+checksum=8f9e06b82d5449362ab734a69e2d001b
+fetch-size=13216
+mtime=1457568669
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/asset/TestingServicesImpl.java
+project=4D4457413A4D445741
+project-uid=31770127

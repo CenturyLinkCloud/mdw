@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46850972
+item-spec=4D4457413A314B3843574420574F524B5452414E534954494F4E534449414C4F47204A4156412D2D313232363530373937322E412D5352433B32
+file-version=2
+checksum=a5be868aa743e4c7ca9c3099a5c9468f
+fetch-size=6408
+mtime=1393988737
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/runtime/WorkTransitionsDialog.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

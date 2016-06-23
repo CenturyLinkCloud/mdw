@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+   <extensionContent id="org.eclipse.wtp" name="WTP" style="css/overview.css" path="tutorials/@">
+     <group id="content-group" style-id="content-group">
+    	<link style-id="content-link" label="Web development" url="http://www.eclipse.org/webtools/community/education/" id="wtp">
+      		<text>The Eclipse Web Tools Platform (WTP) project extends the Eclipse platform with tools for developing Web and Java EE applications. In these pages you will find a set of courses designed to teach anything from XML, HTML and standards based Web development to advanced topics such as Java Server Faces and Java Persistence.</text>
+    	</link>
+     </group>
+  </extensionContent>
+</introContent>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44564481
+item-spec=4D4457413A314B37565330204C4F47494E205848544D4C2D2D313239313931313530372E412D5352433B31
+file-version=1
+checksum=b69e9625cf7a741c09ee703f499bbcf2
+fetch-size=640
+mtime=1375988974
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=web/facelets/authentication/login.xhtml
+project=4D4457413A4D445741
+project-uid=31770127

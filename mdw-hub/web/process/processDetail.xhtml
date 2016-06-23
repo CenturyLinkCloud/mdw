@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf"
+  xmlns:hub="http://www.centurylink.com/mdw-hub/jsf">
+
+  <ui:composition template="/layout/detail.xhtml">
+
+    <ui:param
+      name="layoutWidth"
+      value="960" />
+
+    <ui:define name="detailHeader">
+      Process Instance #{detailManager.processDetail.instanceId} 
+    </ui:define>
+      
+    <ui:define name="detailLinks">
+      <hub:processNav />
+    </ui:define>
+
+    <ui:define name="detailContent">
+      <mdw:panel id="processSummaryPanel" label="Summary" collapsible="true" styleClass="mdw_panel">
+        <div style="min-height: 200px;">
+        </div>
+      </mdw:panel>
+      <mdw:panel id="processVariablesPanel" label="Variables" collapsible="true" styleClass="mdw_panel">
+        <div style="min-height: 200px;">
+        </div>
+      </mdw:panel>
+    </ui:define>
+
+  </ui:composition>
+
+</html>

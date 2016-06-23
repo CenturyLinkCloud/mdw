@@ -1,0 +1,28 @@
+process: # 13847
+  name: TimerWaitActivityOrder
+  instance: 1
+  activity: # 1 "2016-02-23 19:02:30"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-23 19:02:30"
+    name: Wait 20s
+    status: Completed
+  activity: # 4 "2016-02-23 19:02:30"
+    name: |
+      Should Finish
+      Quickly
+    status: Completed
+  activity: # 5 "2016-02-23 19:02:31"
+    name: Sync
+    status: Completed
+  activity: # 6 "2016-02-23 19:03:00"
+    name: |
+      Update
+      Result
+    status: Completed
+  activity: # 2 "2016-02-23 19:03:00"
+    name: Stop
+    status: Completed
+  variable: # 21173
+    name: cumulativeResult
+    value: _0123456789_update

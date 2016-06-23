@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67363232
+item-spec=4D4457413A314B375951422043414348494E474449535041544348534552564C4554204A4156412D2D3332393836313534322E412D5352433B36
+file-version=6
+checksum=287e3b48bba204011032a76c37ccae3a
+fetch-size=7744
+mtime=1452715535
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/servlet/CachingDispatchServlet.java
+project=4D4457413A4D445741
+project-uid=31770127

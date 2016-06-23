@@ -1,0 +1,5 @@
+// PUT request to Services/Roles/A%20New%20Role?app=appId
+{
+  "name": "A New Role",
+  "description": "Description for a new role."
+}

@@ -1,0 +1,120 @@
+<html>
+<head>
+<title>Business Live View</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Business Live View</h1>
+
+<h3>What is the Business Live View?</h3>
+<p>The Business Live View is a business-driven GUI view of an end-to-end workflow, potentially spanning different applications, displayed on a web or mobile client.
+The view is created from <a href='http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/MDW%20and%20BPM%20Overviews/BAM-Design.doc'>BAM monitoring events</a> that have been defined at certain stages throughout the workflow.
+The technology used is the following:
+</p>
+<li>Html5 canvas (for drawing workflows on web and mobile clients)</li>
+<li>Websockets (Uses an "upgraded" HTTP protocol allowing web browsers to maintain an open connection with a server)</li>
+<li>BAM events (existing MDW functionality enhanced for "live" data)</li>
+<h3>How does it work?</h3>
+In a simplistic form, assuming the configuration below is completed, a typical BLV process proceeds as follows:
+ <ol>
+ <li>User adds BAM Monitoring Start/Finish events to certain activities throughout a process,say, "MyBLVProcess", specifying a certain realm, e.g. MOBRealm</li>
+ <li>The user runs the "MyBLVProcess"</li>
+ <li>As each activity is started/finished, MDW generates BAM events as needed and sends them to a preconfigured websocket. Any clients listening "live" on this websocket will received the BAM events and their HTML5 workflow display will be updated.
+ <li>MDW also saves these BAM events in the database</li>
+ <li>The web user has the option of 2 different views of the Business Live Data :
+ <ol>
+ <li><b>Business Live View</b></li>
+  <ol>
+ <li>This view displays (in a flat workflow format), the possible <b>business</b> routes that a workflow could potentially take, and also, highlights using <span style="color:green">green</span>, the actual route a workflow has taken.</li>
+ <li>This view supports <b>zooming in and out</b> and dragging the workflow to wherever the user feels is comfortable.</li>
+ <li>This view is also LIVE and will be updated whenever more business events (BAM) are triggered throughout the workflow.</li>
+ <li>The user can drill down by double clicking on any business event to gain more information on the event/activity of any specific BAM attributes.</li>
+ <li>There is also a movable and minimizable <b>"Live BAM Data" popup</b> which allows the user to search for any specific BAM attribute data that has been configured.</li> 
+  </ol>
+ <img src="images/blv_business_example.jpg" />
+ <br>
+ <li><b>Workflow Live View</b></li>
+  <ol>
+ <li>This view displays the workflow of the main process in an identical size to that seen in Designer</li>
+ <li>The activities which are BAM-enabled are depicted with the BAM event underneath the main activity</li>
+ <li>This view supports <b>zooming in and out</b> and dragging the workflow to wherever the user feels is comfortable.</li>
+ <li>This view is also LIVE and will be updated whenever more business events (BAM) are triggered throughout the workflow.</li>
+ <li>As the process progresses, and BAM events are received, this is displayed by the BAM event turning <span style="color:green">green</span>, and when both BAM events for an activity turn green the whole activity will become green</li>
+ <li>The user can drill down by double clicking on any business event to gain more information on the event/activity of any specific BAM attributes.</li>
+ <li>If an activity has subprocesses, then the user can drill down into these subprocesses and view the full workflow and BAM data.
+ <li>There is also a movable and minimizable <b>"Live BAM Data" popup</b> which allows the user to search for any specific BAM attribute data that has been configured.</li> 
+  </ol>
+  <img src="images/blv_workflow_example.jpg" />
+ 
+ </ol>  
+ </ol> 
+<h3>Prerequisites</h3>
+<li>Must be running either ServiceMix 4.5.3 or JBoss Fuse v6.1 (patch 139) - These both support the websocket technology used in BLV</li>
+<li>Must have a minimum of MDW v5.5.01 installed and running</li>
+
+<h3>How to configure your server for BLV</h3>
+In addition to the normal steps to install MDW 5.5 features on your ServiceMix or Fuse instance, the following steps are also required to enable Business Live View:
+<li>Install the camel-websocket feature</li>
+features:install camel-websocket 
+<li>Also make sure that the bundle camel-core is in an Active state. If it's not then start it. </li>
+<li>Edit the file etc/mdw-activemq-blueprint.xml and ensure that there is a transportConnector added for BLV and a brokerURL defined (see <span style="color:blue">blue</span> below)</li>
+<pre>
+    &lt;broker&gt;
+       &lt;transportConnectors&gt;
+            &lt;transportConnector name="openwire" uri="tcp://0.0.0.0:61618"/&gt;
+            <span style="color:blue">&lt;transportConnector uri="tcp://localhost:61616" /&gt;</span>
+        &lt;/transportConnectors&gt;
+    &lt;/broker&gt;
+    <span style="color:blue">&lt;bean id="activemqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"&gt;
+        &lt;property name="brokerURL" value="vm://mdw-activemq?create=false&amp;amp;waitForStart=10000" /&gt;
+    &lt;/bean&gt;</span>
+</pre>
+<li>Ensure that etc/com.centurylink.mdw.cfg file has the following properties set (please note the comments for each)</li>
+<pre>
+mdw.container.jms_provider=ActiveMQ
+mdw.activemq.connection.factory=mdw-activemq
+
+# Set mdw.bam.useSSL=true only when using SSL
+mdw.bam.useSSL=false
+
+# Note, if using on a server, "localhost" should be replaced by the fully qualified host name
+# Used by BAM to send BAM messages to an external event handler
+mdw.bam.url=http://localhost:8282/MDWWeb/Services/REST
+
+# Name of realm to filter out BAM messages for BLV
+# This equates to the Realm name used in the BAM monitoring Tab in MDW Designer
+mdw.bam.realm=MyRealm
+
+# Set to "wss" if SSL, "ws" if non-SSL and change port to 9191 for SSL
+# In the next property "localhost" should also be replaced by the actual DNS name
+# since it is called from javascript client
+mdw.bam.websocket=ws://localhost:9090/blvTopic
+
+# Note, this is used by BLV to call web services from client javascript.
+# For non SSL it should be something like (with fully qualified domain name)
+# mdw.bam.services.url=http://lxdenvmtc099.dev.qintra.com:20001/MDWWeb
+# For SSL it should be something like  (with fully qualified domain name)
+# mdw.bam.services.url=https://lxdenvmtc099.dev.qintra.com:20001/MDWWeb
+mdw.bam.services.url=http://localhost:8282/MDWWeb
+</pre>
+<h3>Discover the required "bam" package</h3>
+In order for your application to enable the sending of BAM messages, you have to import a "bam" workflow package into your project as follows:
+ <ol>
+<li>From MDW Designer, right click on your project and choose "Import/Workflow Package</li>
+<li>Select the "Discover" radio button and click "Next"</li>
+<li>Ensure that "bam", "hub" and "camel" have been selected and click "Next" and "Finish"</li>
+ </ol>
+<h3>Connect your workflow package to enable BLV and BAM</h3>
+In order for the framework to identify the correct parent Spring app context to associate with the BamToWebsocket.xml file in com.century.mdw.bam package, you'll need to set a configuration parameter to tie your workflow package to your OSGi bundle.<ol>
+<li>Right-click on your workflow package in Process Explorer and select Show Properties.  </li>
+<li>Select the Configuration property tab and under Environments click the Add button and enter the name "dev".</li>
+<li>Add a property named OsgiBundleSymbolicName and under dev assign the value "com.centurylink.mdw.workflow"</li>
+
+<li>Restart your JBoss server</li> 
+ 
+<li>BLV is available from a tab in http://yourHost:yourPort/MDWHub</li> 
+ </ol>
+
+
+</body>
+</html>

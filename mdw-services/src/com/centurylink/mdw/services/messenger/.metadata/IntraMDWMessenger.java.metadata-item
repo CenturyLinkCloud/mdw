@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854639
+item-spec=4D4457413A314B37435A3020494E5452414D44574D455353454E474552204A4156412D3732373230363239362E412D5352433B32
+file-version=2
+checksum=64850b99fe80e237d8e15bc6748a52c4
+fetch-size=1274
+mtime=1393990151
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/messenger/IntraMDWMessenger.java
+project=4D4457413A4D445741
+project-uid=31770127

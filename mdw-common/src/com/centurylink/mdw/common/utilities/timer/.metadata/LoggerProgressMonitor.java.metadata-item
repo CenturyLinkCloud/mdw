@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62780001
+item-spec=4D4457413A314B3737545A204C4F4747455250524F47524553534D4F4E49544F52204A4156412D31373533373039303758323236363358322E412D5352433B31
+file-version=1
+checksum=2c8699628ccdce450c4bdc93e28c50cc
+fetch-size=1086
+mtime=1437669826
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/timer/LoggerProgressMonitor.java
+project=4D4457413A4D445741
+project-uid=31770127

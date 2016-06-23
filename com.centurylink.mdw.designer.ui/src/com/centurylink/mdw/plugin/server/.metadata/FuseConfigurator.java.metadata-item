@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549463
+item-spec=4D4457413A314B3848384C2046555345434F4E464947555241544F52204A4156412D2D3333323833353637362E412D5352433B35
+file-version=5
+checksum=c8d94c0ae542cc94bd49c855800a8f05
+fetch-size=3507
+mtime=1453322256
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/server/FuseConfigurator.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

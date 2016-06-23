@@ -1,0 +1,51 @@
+{
+  "#{jaxbVar.elementOne}": {
+    "display": "Optional",
+    "label": "Element One",
+    "sequence": 6,
+    "type": "java.lang.String",
+    "value": "newElementOneValue"
+  },
+  "#{jaxbVar.elementTwo}": {
+    "display": "ReadOnly",
+    "label": "Element Two",
+    "sequence": 7,
+    "type": "java.lang.String",
+    "value": "elementTwoValue"
+  },
+  "#{objectVar.taskmaster}": {
+    "display": "Required",
+    "indexKey": "tmIdx",
+    "label": "Taskmaster",
+    "sequence": 5,
+    "type": "java.lang.String",
+    "value": "dxoakes"
+  },
+  "dateVar": {
+    "display": "Optional",
+    "indexKey": "dateIdx",
+    "label": "Date",
+    "sequence": 2,
+    "type": "java.util.Date",
+    "value": "Fri Apr 01 15:36:00 MDT 2016"
+  },
+  "docVar": {
+    "display": "Optional",
+    "sequence": 10,
+    "type": "org.w3c.dom.Document",
+    "value": "<empty/>\r\n"
+  },
+  "stringVar": {
+    "display": "ReadOnly",
+    "label": "String",
+    "sequence": 1,
+    "type": "java.lang.String",
+    "value": "Hello"
+  },
+  "unassignedVar": {
+    "display": "Optional",
+    "sequence": 9,
+    "type": "java.lang.String",
+    "value": "now assigned"
+  }
+}

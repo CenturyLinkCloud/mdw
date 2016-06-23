@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44536369
+item-spec=4D4457413A314B365458332044524F502053455155454E4345532053514C2D313936353835333736372E412D4441543B31
+file-version=1
+checksum=22d7cd274c198c2961a77d9069d711aa
+fetch-size=339
+mtime=1329519401
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/oldScripts/drop_sequences.sql
+project=4D4457413A4D445741
+project-uid=31770127

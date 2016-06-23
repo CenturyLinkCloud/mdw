@@ -1,0 +1,13 @@
+version=10.2
+item-uid=64103199
+item-spec=4D4457413A314B3737545A20544F4D4341544E414D494E47204A4156412D2D3533343637333737352E412D5352433B35
+file-version=5
+checksum=0a9570586fa13b8bcecc0b61881572d0
+fetch-size=4506
+mtime=1440039189
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/container/plugins/tomcat/TomcatNaming.java
+project=4D4457413A4D445741
+project-uid=31770127

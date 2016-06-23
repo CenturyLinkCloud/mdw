@@ -1,0 +1,11 @@
+ println 'verifying Value service '
+
+def purReq = post http("Services/Attributes/PROCESS/1002?format=json") {
+  payload = asset('com.centurylink.mdw.testing/Values.json').text
+}
+
+def resp = get http("Services/Attributes/PROCESS/1002?format=json")
+
+def values = new groovy.json.JsonSlurper().parseText(resp.getContent())
+
+assert values.OVERRIDE_5 == "On"

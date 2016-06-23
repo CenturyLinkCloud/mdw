@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68844469
+item-spec=4D4457413A314B37435A302042554E444C4520434F4E5445585420584D4C2D2D313433313530333531302E412D5352433B3138
+file-version=18
+checksum=e4df794db0eb1e1c6785098cb1502ddc
+fetch-size=8907
+mtime=1457540753
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/META-INF/spring/bundle-context.xml
+project=4D4457413A4D445741
+project-uid=31770127

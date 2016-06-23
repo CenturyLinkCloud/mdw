@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549670
+item-spec=4D4457413A314B3848384C20534552564943454D49585345525645524245484156494F52204A4156412D2D313030313532323838372E412D5352433B38
+file-version=8
+checksum=4903b27f6234cd43b297ef8074de0f9d
+fetch-size=7316
+mtime=1453326690
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/server/ServiceMixServerBehavior.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

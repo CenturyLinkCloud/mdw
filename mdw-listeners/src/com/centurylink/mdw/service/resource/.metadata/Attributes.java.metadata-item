@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62476583
+item-spec=4D4457413A314B374647352041545452494255544553204A4156412D31373431393330363258313335393958322E412D5352433B31
+file-version=1
+checksum=715dcb316a19efcba15bffae356aee2b
+fetch-size=1531
+mtime=1436495845
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/resource/Attributes.java
+project=4D4457413A4D445741
+project-uid=31770127

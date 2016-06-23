@@ -1,0 +1,4 @@
+<task:taskTemplate logicalId="subtaskB" category="GEN" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>Subtask B</task:name>
+  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
+</task:taskTemplate>

@@ -1,0 +1,100 @@
+process: # 13586
+  name: JaxbDocument
+  instance: 1
+  activity: # 1 "2016-02-22 10:50:53"
+    name: Start
+    status: Completed
+  activity: # 7 "2016-02-22 10:50:53"
+    name: |
+      Programmatic
+      Access/Create
+    status: Completed
+  activity: # 8 "2016-02-22 10:50:53"
+    name: |
+      Programmatic
+      Update
+    status: Completed
+  activity: # 2 "2016-02-22 10:50:53"
+    name: Stop
+    status: Completed
+  variable: # 20463
+    name: actionRequest
+    value: |
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <ActionRequest xmlns:ns2="http://mdw.centurylink.com/services">
+          <Action Name="updatedAction">
+              <Parameter name="appName">MDW</Parameter>
+              <Parameter name="insertedParam">insertedValue</Parameter>
+          </Action>
+      </ActionRequest>
+  variable: # 20462
+    name: assetDefinedJaxb
+    value: |
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <JaxbAsset xmlns:ns2="http://mdw.centurylink.com/services" requiredAttribute="x" optionalAttribute="updatedOptionalAttr">
+          <RequiredElement>inputDocRequiredElement</RequiredElement>
+          <OptionalElement>updatedOptionalElem</OptionalElement>
+      </JaxbAsset>
+  variable: # 20464
+    name: locallyCreatedJaxb
+    value: |
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <JaxbAsset xmlns:ns2="http://mdw.centurylink.com/services" requiredAttribute="from" optionalAttribute="mdw">
+          <RequiredElement>hello</RequiredElement>
+          <OptionalElement>jaxb</OptionalElement>
+      </JaxbAsset>
+  variable: # 20465
+    name: requiredAttrValue
+    value: x
+  variable: # 20466
+    name: requiredElemValue
+    value: inputDocRequiredElement
+process: # 13585
+  name: ReflectChildDocUpdate
+  instance: 1
+  activity: # 1 "2016-02-22 10:50:53"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-22 10:50:53"
+    name: |
+      Invoke
+      JaxbDocument
+    status: Completed
+  activity: # 4 "2016-02-22 10:50:53"
+    name: |
+      Pull
+      Values
+    status: Completed
+  activity: # 2 "2016-02-22 10:50:53"
+    name: Stop
+    status: Completed
+  variable: # 20467
+    name: actionName
+    value: updatedAction
+  variable: # 20460
+    name: actionRequest
+    value: |
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <ActionRequest xmlns:ns2="http://mdw.centurylink.com/services">
+          <Action Name="updatedAction">
+              <Parameter name="appName">MDW</Parameter>
+              <Parameter name="insertedParam">insertedValue</Parameter>
+          </Action>
+      </ActionRequest>
+  variable: # 20461
+    name: assetDefinedJaxbIn
+    value: |
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <JaxbAsset xmlns:ns2="http://mdw.centurylink.com/services" requiredAttribute="x" optionalAttribute="updatedOptionalAttr">
+          <RequiredElement>inputDocRequiredElement</RequiredElement>
+          <OptionalElement>updatedOptionalElem</OptionalElement>
+      </JaxbAsset>
+  variable: # 20468
+    name: insertedParam
+    value: insertedValue
+  variable: # 20469
+    name: optionalAttr
+    value: updatedOptionalAttr
+  variable: # 20470
+    name: optionalElement
+    value: updatedOptionalElem

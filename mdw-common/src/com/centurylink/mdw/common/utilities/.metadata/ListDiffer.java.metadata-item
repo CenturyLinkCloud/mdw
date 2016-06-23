@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853042
+item-spec=4D4457413A314B3737545A204C495354444946464552204A4156412D3632343338353535352E412D5352433B32
+file-version=2
+checksum=d4c6b655a60608483608f42f6fc61ac9
+fetch-size=1023
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/ListDiffer.java
+project=4D4457413A4D445741
+project-uid=31770127

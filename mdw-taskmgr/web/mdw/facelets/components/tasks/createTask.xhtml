@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+    <table
+      width="100%"
+      border="0"
+      cellspacing="0"
+      cellpadding="0">
+      <tr>
+        <td colspan="10" class="mdw_topLine">
+          <table width="100%" border="0" cellspacing="0" cellpadding="3">
+            <tr>
+              <td class="mdw_pageHeader">
+                <t:outputText value="Create a New Task"/>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr valign="top">
+        <td class="mdw_detailTableSubtitle">
+          Task Information
+        </td>
+      </tr>
+    </table>
+
+    <mdw:subform id="taskNameForm">
+	    <table
+	      width="100%"
+	      border="0"
+	      cellspacing="5"
+	      cellpadding="0">
+	      <tr valign="top">
+	        <td class="mdw_detailsLabelColumn" width="70">
+	          Category:
+	        </td>
+	        <td>
+	          <t:selectOneMenu
+	            id="category"
+	            styleClass="mdw_inputField"
+	            onchange="taskNameForm_submit();"
+	            value="#{newTask.categoryId}">
+	            <f:selectItems
+	              value="#{taskCategories.taskCategorySelectItems}"/>
+	          </t:selectOneMenu>
+	        </td>
+	      </tr>
+	      <tr valign="top">
+	        <td class="mdw_detailsLabelColumn" width="70">
+	          Task Name:
+	        </td>
+	        <td>
+	          <t:selectOneMenu
+	            id="taskId"
+	            styleClass="mdw_inputField"
+	            value="#{newTask.taskId}"
+	            onchange="taskNameForm_submit();">
+	            <f:selectItems
+	              value="#{newTask.taskNamesForSelectedCategoryId}" />
+	          </t:selectOneMenu>
+	        </td>
+	      </tr>
+	      <tr valign="top">
+	        <td class="mdw_detailsLabelColumn" width="70">
+	          Due Date:
+	        </td>
+	        <td>
+		      <mdw:date
+		        id="createTaskDueDateInput"
+	            dateId="createTaskDueDate"
+		        rendered="true"
+		        value="#{newTask.dueDate}"
+		        validationMessage="true"/>
+		      <t:outputText
+	            rendered="true"
+	            value="#{newTask.dueDateErrMsg}"
+	            style="color:red"/>
+	        </td>
+	      </tr>
+	    </table>
+    </mdw:subform>
+    <table
+      width="100%"
+      border="0"
+      cellspacing="5"
+      cellpadding="0">
+      <tr valign="top">
+        <td class="mdw_detailsLabelColumn" width="70">
+          Comments:
+        </td>
+        <td>
+           <t:inputText
+             id="addTaskComment"
+             value="#{newTask.comments}"
+             styleClass="mdw_inputField"
+             style="width:300px">
+           </t:inputText>
+        </td>
+      </tr>
+    </table>
+  </ui:composition>
+
+</html>

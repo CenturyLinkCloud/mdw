@@ -1,0 +1,25 @@
+<task:taskTemplate logicalId="TaskIndexTesting:A4" category="COM" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>An AutoForm Task</task:name>
+  <task:attribute name="Variables">dateVar,Date Var,Optional,0,dateVarIndex,java.util.Date;intVar,Int Var,Required,0,intVarIndex,java.lang.Integer;isCustom,isCustom,Not Displayed,0,,java.lang.Boolean;jaxbVar,JAXB Var,Read Only,0,,javax.xml.bind.JAXBElement;stringListVar,String List Var,Not Displayed,0,,java.util.List&lt;String>;stringVar,String Var,Required,0,stringVarIndex,java.lang.String</task:attribute>
+  <task:attribute name="Groups">MDW Support</task:attribute>
+  <task:attribute name="Indices" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
+  <task:attribute name="NoticeGroups" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="RecipientVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="CCGroups" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="CCVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="AutoAssign" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Auto Assign Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="RoutingStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Routing Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="SubTaskStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="SubTask Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="IndexProvider" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="AssigneeVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="FormName">Autoform</task:attribute>
+  <task:attribute name="Priority" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="PriorityStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Prioritization Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="CustomPage" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Rendering" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+</task:taskTemplate>

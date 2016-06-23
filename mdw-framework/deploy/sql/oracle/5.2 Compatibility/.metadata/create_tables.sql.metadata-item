@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69484241
+item-spec=4D4457413A314B3654583320435245415445205441424C45532053514C2D2D3236353537303936342E412D4441543B34
+file-version=4
+checksum=a1e3eade39f1bb834ad39daefdfd8611
+fetch-size=16156
+mtime=1459365577
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/5.2 Compatibility/create_tables.sql
+project=4D4457413A4D445741
+project-uid=31770127

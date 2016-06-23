@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67297949
+item-spec=4D4457413A314B3746473520524D494C495354454E4552494D504C204A4156412D3631333734343436392E412D5352433B36
+file-version=6
+checksum=df689b0193603fb49c25c26f7becd055
+fetch-size=4858
+mtime=1452276451
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listener/rmi/RMIListenerImpl.java
+project=4D4457413A4D445741
+project-uid=31770127

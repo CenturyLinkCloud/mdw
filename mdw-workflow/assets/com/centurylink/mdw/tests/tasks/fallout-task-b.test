@@ -1,0 +1,16 @@
+// fallout-task-b
+start process("com.centurylink.mdw.tests.workflow/MDWTestMainProcess") {
+    variables = [processCase: "task_action_B"]
+}
+sleep 30
+action task("A Task For Testing Variables") {
+    outcome = "Claim"
+}
+sleep 20
+action task("A Task For Testing Variables") {
+    outcome = "B"
+} 
+sleep 30
+verify processes("com.centurylink.mdw.tests.workflow/MDWTestMainProcess", "MDWTestMainProcess Exception Handler")
+
+

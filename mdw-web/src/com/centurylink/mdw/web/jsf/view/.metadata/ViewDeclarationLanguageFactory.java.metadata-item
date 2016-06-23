@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855506
+item-spec=4D4457413A314B374B524A20564945574445434C41524154494F4E4C414E4755414745464143544F5259204A4156412D313436343734383836302E412D5352433B32
+file-version=2
+checksum=178291013617ed1f0ec00fe16f0cc823
+fetch-size=1130
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/view/ViewDeclarationLanguageFactory.java
+project=4D4457413A4D445741
+project-uid=31770127

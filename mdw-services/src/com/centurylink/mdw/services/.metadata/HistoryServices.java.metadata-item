@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70346508
+item-spec=4D4457413A314B37435A3020484953544F52595345525649434553204A4156412D31373735333335363058323731353858362E412D5352433B32
+file-version=2
+checksum=8849ea8a8dbafec999f9e48949a7f76b
+fetch-size=406
+mtime=1462579357
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/HistoryServices.java
+project=4D4457413A4D445741
+project-uid=31770127

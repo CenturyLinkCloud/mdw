@@ -1,0 +1,13 @@
+version=10.2
+item-uid=56161869
+item-spec=4D4457413A314B364C3758204D445750524F43455353444546494E4954494F4E205853442D2D323035323434363431312E412D4441543B38
+file-version=8
+checksum=b5a76e5c86b9d8141595fdc97b06090e
+fetch-size=8801
+mtime=1432854588
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=schemas/Workflow/MDWProcessDefinition.xsd
+project=4D4457413A4D445741
+project-uid=31770127

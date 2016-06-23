@@ -1,0 +1,15 @@
+// raw-http
+// note: this is an old-style technique that's not a good illustration
+send message("REST") {
+    payload = '''\
+<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+  <Action Name="RegressionTest">
+    <Parameter name="MasterRequestId">%%M%%</Parameter>
+    <Parameter name="ProcessName">MDWTestMainProcess</Parameter>
+    <Parameter name="processCase">ServiceOrder</Parameter>
+    <Parameter name="order"><![CDATA[<Order><orderId>30/KQGS/662822//CTRL</orderId></Order>]]></Parameter>
+  </Action>
+</mdw:ActionRequest>'''
+}    
+sleep 45
+verify process("com.centurylink.mdw.tests.workflow/MDWTestMainProcess")

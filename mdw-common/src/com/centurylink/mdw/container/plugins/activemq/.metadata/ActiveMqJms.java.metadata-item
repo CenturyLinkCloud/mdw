@@ -1,0 +1,13 @@
+version=10.2
+item-uid=56085031
+item-spec=4D4457413A314B3737545A204143544956454D514A4D53204A4156412D313032313137333332342E412D5352433B35
+file-version=5
+checksum=2a4b197d05be6124dfca79022a824f86
+fetch-size=6274
+mtime=1432852707
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/container/plugins/activemq/ActiveMqJms.java
+project=4D4457413A4D445741
+project-uid=31770127

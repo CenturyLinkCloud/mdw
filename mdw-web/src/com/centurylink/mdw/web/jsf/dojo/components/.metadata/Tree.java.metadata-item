@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855659
+item-spec=4D4457413A314B374B524A2054524545204A4156412D313839363138383832392E412D5352433B32
+file-version=2
+checksum=cef5cf385821259e007de8dd6537a8a9
+fetch-size=2715
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/dojo/components/Tree.java
+project=4D4457413A4D445741
+project-uid=31770127

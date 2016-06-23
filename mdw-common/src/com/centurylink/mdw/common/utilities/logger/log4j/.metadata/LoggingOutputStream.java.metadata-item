@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65581878
+item-spec=4D4457413A314B3737545A204C4F4747494E474F555450555453545245414D204A4156412D31383432393631303958313835363858322E412D5352433B31
+file-version=1
+checksum=a36e86b7612dde703773ec477daf4ea0
+fetch-size=1965
+mtime=1446501876
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/logger/log4j/LoggingOutputStream.java
+project=4D4457413A4D445741
+project-uid=31770127

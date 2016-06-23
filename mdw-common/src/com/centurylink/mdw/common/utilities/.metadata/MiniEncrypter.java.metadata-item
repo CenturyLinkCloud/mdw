@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853490
+item-spec=4D4457413A314B3737545A204D494E49454E43525950544552204A4156412D313938373932323237332E412D5352433B32
+file-version=2
+checksum=ee200c89d9a4b3e23a469fab7db9cf50
+fetch-size=4079
+mtime=1393988446
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/MiniEncrypter.java
+project=4D4457413A4D445741
+project-uid=31770127

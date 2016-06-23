@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853868
+item-spec=4D4457413A314B38334D4220524F55544553444546494E4954494F4E52554C45534554204A4156412D313934363638343332392E412D5352433B32
+file-version=2
+checksum=d4e8151b471ae0aba182cbb406498de9
+fetch-size=1097
+mtime=1393989706
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/camel/route/RoutesDefinitionRuleSet.java
+project=4D4457413A4D445741
+project-uid=31770127

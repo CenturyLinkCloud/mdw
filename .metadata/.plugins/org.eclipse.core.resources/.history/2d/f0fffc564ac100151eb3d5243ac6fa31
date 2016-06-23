@@ -1,0 +1,371 @@
+Environments Cheat Sheet:
+-------------------------
+
+===========================
+lxdenvmtc143.dev.qintra.com
+===========================
+"sudo su - wlsmdt"
+
+MDW Discovery Server
+--------------------
+lxdenvmtc143.dev.qintra.com:7021
+tomcat: /prod/ecom2/local/apps/tomcat/tomcat7-mdwDiscovery
+
+configManager: http://lxdenvmtc143.dev.qintra.com:7021/mdw/system/configManager
+filepanel: http://lxdenvmtc143.dev.qintra.com:7021/mdw/system/filepanel
+(use this to post updates to ConfigManagerProjects.xml)
+
+to stop: (in /prod/ecom2/local/apps/tomcat/tomcat7-mdwDiscovery/bin)
+./stop.sh
+to start: (in /prod/ecom2/local/apps/tomcat/tomcat7-mdwDiscovery/bin)
+./start.sh
+
+(Hosts Discovery, ConfigManager, Environment, and Regression Test suites).
+
+MDW Eclipse Update
+------------------
+lxdenvmtc143.dev.qintra.com:6101
+
+tomcat: /prod/ecom2/local/apps/tomcat/tomcat7-mdwUpdate
+
+Plugin Update Site: http://lxdenvmtc143.dev.qintra.com:6101/MdwPlugin
+Plugin Preview Update Site: http://lxdenvmtc143.dev.qintra.com:6101/MdwPluginPreview
+RCP Update Site: http://lxdenvmtc143.dev.qintra.com:6101/MdwRcp
+
+to stop: (in /prod/ecom2/local/apps/tomcat/tomcat7-mdwUpdate/bin)
+./stop.sh
+
+to start: (in /prod/ecom2/local/apps/tomcat/tomcat7-mdwUpdate/bin)
+./start.sh
+
+5.5 regression test Tomcat instance:
+-------------------------------------
+/prod/ecom2/local/apps/tomcat/tomcat7-mdw
+startup: /prod/ecom2/local/apps/tomcat/tomcat7-mdw/bin/start.sh
+(automatically stopped/started by Jenkins "MDW55 - Deploy" build)
+http://lxdenvmtc143.dev.qintra.com:8989/mdw
+
+5.5 regression test Fuse instance:
+-------------------------------------
+/prod/ecom2/local/apps/jboss-fuse-6.1.0.redhat-379/instances/test-fuse
+startup: /prod/ecom2/local/apps/jboss-fuse-6.1.0.redhat-379/instances/test-fuse/bin/start
+(automatically stopped/started by Jenkins "MDW55 - Deploy" build)
+http://lxdenvmtc143.dev.qintra.com:8585/MDWHub
+
+Jenkins on lxdenvmtc143:
+------------------------
+to stop: (in /prod/ecom2/local/apps/tomcat/tomcat7-jenkins/bin)
+./stop.sh
+
+to start: (in /prod/ecom2/local/apps/tomcat/tomcat7-jenkins/bin)
+./start.sh
+workspace: /prod/ecom2/local/apps/jenkins/workspace/MDW55 - Build/
+
+URL : http://lxdenvmtc143.dev.qintra.com:8181/jenkins/
+Anthill on lxdenvmtc143: 
+------------------------
+to stop: (in /prod/ecom2/local/apps/tomcat/tomcat7-anthill/bin)
+./stop.sh
+
+to start: (in /prod/ecom2/local/apps/tomcat/tomcat7-anthill/bin)
+./start.sh
+
+URL: http://lxdenvmtc143.dev.qintra.com:7209/anthill
+
+Cleanup: /prod/ecom2/local/apps/tomcat/tomcat7-anthill/anthillOS/publishDir/
+do not delete OSGi, buildLogs and Tomcat directories
+find .  -name "*5.2.xx*" -print
+some commands to list disk space
+df -k
+du
+
+===========================
+lxdenvmtc144.dev.qintra.com
+===========================
+
+MDW Public Apache
+-----------------
+lxdenvmtc144.dev.qintra.com
+Build Site and Maven Repo:
+/opt/apache/mdw-public-50000: http://
+startup: /opt/apache/mdw-public-50000/server/start
+
+MDW 5.2 Apache
+--------------
+lxdenvmtc144.dev.qintra.com
+
+Development Cloud:
+/opt/apache/mdw-50500: https://lxdenvmtc144.dev.qintra.com:50500/MDWWeb
+/opt/apache/mdw-taskmgr-50505 https://lxdenvmtc144.dev.qintra.com:50505/MDWTaskManagerWeb
+
+ServiceMix Dev 1 (reusing old mdw51 instance due to disk space shortage):
+/opt/apache/mdw51-50600: https://lxdenvmtc144.dev.qintra.com:50600/MDWWeb
+/opt/apache/mdw51-taskmgr-50605 https://lxdenvmtc144.dev.qintra.com:50605/MDWTaskManagerWeb
+
+Integration Cloud:
+/opt/apache/mdw-50700: https://lxdenvmtc144.dev.qintra.com:50700/MDWWeb
+/opt/apache/mdw-taskmgr-50705 https://lxdenvmtc144.dev.qintra.com:50705/MDWTaskManagerWeb
+
+
+===========================
+lxomavmtc203.dev.qintra.com
+===========================
+
+MDW ServiceMix Dev 1 Environment:
+---------------------------------
+sudo su - webdev
+
+instance loc: /opt/web/servicemix/instances/mdwdev1
+
+to stop: (in /opt/web/servicemix/instances/mdwdev1/bin)
+./stop (or ps -ef | grep for java and kill appropriate PID)
+
+to start: (in /opt/web/servicemix/instances/mdwdev1/bin)
+./start_smx.sh (or ./start_smx_debug.xh)
+
+karaf ssh:
+lxomavmtc203.dev.qintra.com:8117 
+
+install a new 5.2 build:
+karaf@mdwdev1> features:addurl mvn:com.centurylink.mdw/mdw/5.2.XX/xml/features
+karaf@mdwdev1> features:uninstall mdw
+karaf@mdwdev1> features:install mdw
+
+
+
+===========================
+qtdenvmdt317.dev.qintra.com
+===========================
+
+anthillDomain on qtdenvmdt317: 
+------------------------------
+to stop:
+(in bin (in /home/wlsmdt/domains/anthillDomain/bin))
+./stopWebLogic.sh
+
+to start:
+(NOT in bin (in /home/wlsmdt/domains/anthillDomain))
+nohup ./startWebLogic.sh > ./logs/wls-output.log 2>&1  &
+tail -f ./logs/wls-output.log
+
+console: http://qtdenvmdt317.dev.qintra.com:7209/console
+anthill: http://qtdenvmdt317.dev.qintra.com:7209/anthill
+filepanel: http://qtdenvmdt317.dev.qintra.com:7209/filepanel
+
+Cleanup: /prod/ecom2/local/apps/apps10/anthill/anthillOS/publishDir
+
+find . -type f -name "*5.2.16*" -exec rm -i {} \;
+
+
+ps -ef | grep jrrt
+
+
+publicDomain
+Hosts RCP WebStart/JNLP Code
+----------------------------
+(IN bin directory)
+./stopManagedWebLogic.sh ManagedServer1 t3://localhost:7101
+
+./stopWebLogic.sh
+
+nohup ./startWebLogic.sh > ../logs/admin-output.log 2>&1  &
+tail -f ../logs/admin-output.log
+
+nohup ./startManagedWebLogic.sh ManagedServer1 http://localhost:7101 > ../logs/managed-output.log 2>&1 &
+tail -f ../logs/managed-output.log
+
+WebLogic Console: http://qtdenvmdt317.dev.qintra.com:7101/console
+
+
+=======================
+lxdnd54c.dev.qintra.com
+=======================
+
+MDW 4.5 Anthill (IOM Integration):
+----------------------------------
+lxdnd54c.dev.qintra.com (non-ldap credentials)
+
+to stop:
+(in bin (in /prod/ecom2/local/apps/apps10/anthillDomain/bin))
+./stopWebLogic.sh
+
+to start:
+(NOT in bin (in /prod/ecom2/local/apps/apps10/anthillDomain))
+nohup ./startWebLogic.sh > ./logs/wls-output.log 2>&1  &
+tail -f ./logs/wls-output.log
+
+console: http://lxdnd54c.dev.qintra.com:7001/console
+anthill: http://lxdnd54c.dev.qintra.com:7001/anthill
+filepanel: http://lxdnd54c.dev.qintra.com:7001/filepanel
+
+
+
+=======================
+lxomd12p.dev.qintra.com
+=======================
+
+MDW 5.5 Tomcat 6.0 (JBoss EWS)
+------------------------------
+HTTP: 9341
+
+sudo su - mdwapp
+
+installed location : /foss/foss-ews/instances/mdwapp/current
+
+to start: (in /foss/foss-ews/scripts/current)
+./start mdwapp
+
+to stop: (in /foss/foss-ews/scripts/current)
+./stop mdwapp
+(fails due to port conflict -- manually kill process identified by:
+ ps -ef | grep mdwapp | grep java)
+
+http://lxomd12p.dev.qintra.com:9341/mdw/Services/AppSummary
+https://lxdenvmtc144.dev.qintra.com:50808/mdw
+
+Install a new build:
+cd /foss/foss-ews/instances/mdwapp/current/mdw/apps
+rm -rf mdw
+wget http://archiva.corp.intranet/archiva/repository/mdw/com/centurylink/mdw/mdw/5.5.XX/mdw-5.5.XX.war -Omdw.war
+rm -rf mdwadmin
+wget http://archiva.corp.intranet/archiva/repository/mdw/com/centurylink/mdw/mdwadmin/5.5.XX/mdwadmin-5.5.XX.war -Omdwadmin.war
+rm -rf mdwreports
+wget http://archiva.corp.intranet/archiva/repository/mdw/com/centurylink/mdw/mdwreports/5.5.XX/mdwreports-5.5.XX.war -Omdwreports.war
+
+=============
+10.180.11.100
+=============
+FOSS MySQL MDW DB:
+jdbc:mysql://10.180.11.100:3306/mdw
+user = mdwapp 
+
+=======================
+lxdnd00e.dev.qintra.com
+=======================
+
+MDW 5.5 Tomcat (JBoss EWS)
+--------------------------
+HTTP: 9341
+
+TODO: Cannot write to `mdw-5.5.06-SNAPSHOT.war' (No space left on device).
+
+
+===========================
+ne1itcdrhews10.dev.intranet
+===========================
+MDW 55 EWS Dev 1 (JBoss EWS -- Tomcat) Java 1.7
+-----------------------------------------------
+HTTP: 12081
+
+login to jump server lxomavmd171.dev.qintra.com
+sudo su - mdwweblk
+ssh -o ServerAliveInterval=5 -o ServerAliveCountMax=1 ne1itcdrhews10.dev.intranet 
+
+our instance is under:
+/foss/foss-ews/instances/mdwews-dev1/current
+
+to start: (in /foss/foss-ews/scripts/current)
+./start mdwews-dev1
+
+to stop: (in /foss/foss-ews/scripts/current)
+./stop mdwews-dev1
+(fails due to port conflict -- manually kill process identified by:
+ ps -ef | grep mdwews-dev1 | grep java)
+
+http://ne1itcdrhews10.dev.intranet:12081/mdw/Services/AppSummary
+http://ne1itcdrhews10.dev.intranet:12081/mdw/system/filepanel/index.jsf
+https://mdw-mdwews.dev.intranet:40223/mdw
+
+Install a new build:
+cd /foss/foss-ews/instances/mdwews-dev1/current/Qwest/apps
+rm -rf mdw
+wget http://mdwapp:ldap_012@lxomavmpc110.qintra.com:8081/nexus/content/repositories/snapshots/com/centurylink/mdw/mdw/5.5.xx/mdw-5.5.xx.war -Omdw.war
+rm -rf mdwadmin
+wget http://mdwapp:ldap_012@lxomavmpc110.qintra.com:8081/nexus/content/repositories/snapshots/com/centurylink/mdw/mdwadmin/5.5.xx/mdwadmin-5.5.xx.war -Omdwadmin.war
+
+DB: FOSS MySQL (VCS assets)
+
+============================
+ne1itcdrhfuse16.dev.intranet (Fuse 6.1.x), Java 1.7
+============================
+login to jump server lxomavmd171.dev.qintra.com
+sudo su - mdwflkc
+ssh -o ServerAliveInterval=5 -o ServerAliveCountMax=1 ne1itcdrhfuse16.dev.intranet   
+
+MDW 55 Fuse Dev 1 
+-----------------
+HTTP: 8001
+SSH:  9001
+Instance 1 Location: (Git VCS Assets)
+/foss/foss-fuse/instances/mdwa_dev1_1
+
+to start:
+/foss/foss-fuse/instances/mdwa_dev1_1/bin/start
+
+to stop:
+/foss/foss-fuse/instances/mdwa_dev1_1/bin/stop
+
+Get instance status
+admin list
+
+Karaf Console Access:
+ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p 10001 aa56486@ne1itcdrhfuse16.dev.intranet
+
+MDW 55 Fuse Dev 1a
+------------------
+Instance 3 Location: (Git VCS Assets)
+HTTP: 8003
+SSH:  9003
+/foss/foss-fuse/instances/mdwa_dev1_1a
+
+to start:
+/foss/foss-fuse/instances/mdwa_dev1_1a/bin/start
+
+to stop:
+/foss/foss-fuse/instances/mdwa_dev1_1a/bin/stop
+
+ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p 10003 <CUID>@ne1itcdrhfuse16.dev.intranet
+
+How to look at Apache configuration:
+------------------------------------
+Request a sudo access on lxomavd171 (sudo -l   will give you all available sudo commands to you)
+sudo su - weblk
+ssh qtdenvmdt066.dev.qintra.com   (get this info from Jump Page of MDW Fuse)
+ps -ef| grep  mdwa-dev1-30241-40229 (get this info from Jump Page of MDW Fuse, this will give you Apache directory location)
+cd /opt/apache/qwest/websites/mdwa-dev1-30241-40229
+
+MDW 55 Fuse Dev 2
+-----------------
+Instance 2 Location: (Non-Git VCS Assets)
+HTTP: 8002
+SSH:  9002
+/foss/foss-fuse/instances/mdwa_dev2_1
+
+to start:
+/foss/foss-fuse/instances/mdwa_dev2_1/bin/start
+
+to stop:
+/foss/foss-fuse/instances/mdwa_dev2_1/bin/stop
+
+ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p 10002 <CUID>@ne1itcdrhfuse16.dev.intranet
+
+===========================
+URL for Diagnostic Services:
+http://localhost:7001/MDWWeb/Services/SystemInfo?format=text&type=threadDump
+(valid types are threadDump, threadPoolStatus, and memoryInfo
+
+===========================
+RedHat Support:
+https://access.redhat.com/support
+mdw-core/mdw-core
+
+
+Internal PaaS:
+cf login -a https://api.pcf-lab.test.qintra.com
+(enter CUID when prompted for Email, and LDAP password)
+cf target -o MDW -s dev1
+(probably unnecessary)
+
+Server Site Information:
+https://dc.qintra.com/systems/<server_host>
+(eg: https://dc.qintra.com/systems/lxomavnap017)

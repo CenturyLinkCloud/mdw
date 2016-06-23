@@ -1,0 +1,3 @@
+# variable types compatibility
+com.qwest.mdw.model.StringDocument=com.centurylink.mdw.model.StringDocument
+com.qwest.mdw.model.FormDataDocument=com.centurylink.mdw.model.FormDataDocument

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549469
+item-spec=4D4457413A314B3848384C2050524F43455353494E5354414E4345484945524152434859434F4E54454E5450524F5649444552204A4156412D2D313137353539383335322E412D5352433B35
+file-version=5
+checksum=ef8ab614c97147c5ecaeed2683fa626a
+fetch-size=3618
+mtime=1453322013
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/views/ProcessInstanceHierarchyContentProvider.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

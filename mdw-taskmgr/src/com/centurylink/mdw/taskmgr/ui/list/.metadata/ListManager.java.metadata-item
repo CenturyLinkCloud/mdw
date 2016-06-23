@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62375677
+item-spec=4D4457413A314B37565330204C4953544D414E41474552204A4156412D2D313338353635333232332E412D5352433B3130
+file-version=10
+checksum=3825f757c0328de9b5460d5699a5efde
+fetch-size=18238
+mtime=1436212206
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/list/ListManager.java
+project=4D4457413A4D445741
+project-uid=31770127

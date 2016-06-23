@@ -1,0 +1,13 @@
+version=10.2
+item-uid=64238542
+item-spec=4D4457413A314B365458332053455256455220584D4C2D2D313537393235323831322E412D5352433B33
+file-version=3
+checksum=491fe3ecf9eeac49ff629a85fbbbf203
+fetch-size=5773
+mtime=1440630130
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/mdt/lxdenvmtc143/tomcat7-mdwDiscovery/server.xml
+project=4D4457413A4D445741
+project-uid=31770127

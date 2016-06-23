@@ -1,0 +1,178 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="MDWTestProcessAsService" version="0.15" description="">
+    <bpm:Activity Id="A7" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=26,y=280,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A1" Name="Count > 100?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
+      <bpm:Attribute Name="Expression" Value="( [ $count >= 100 ] &quot;TRUE&quot; ; &quot;FALSE&quot; )"/>
+      <bpm:Attribute Name="SCRIPT" Value="MagicBox"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=704,y=392,w=90,h=47"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Display Response" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="println response"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=687,y=268,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A5" Name="Syntax errror" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="intentional syntax error"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=497,y=133,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A12" Name="Call a web service" Implementation="com.centurylink.mdw.workflow.adapter.soap.DocumentWebServiceAdapter">
+      <bpm:Attribute Name="DO_LOGGING" Value="True"/>
+      <bpm:Attribute Name="PostScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="PreScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="REQUEST_VARIABLE" Value="req"/>
+      <bpm:Attribute Name="RESPONSE_VARIABLE" Value="response"/>
+      <bpm:Attribute Name="SERVICE" Value="invokeWebService"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=564,y=272,w=100,h=60"/>
+      <bpm:Attribute Name="WSDL" Value="#{props['mdw.services.url']}/SOAP/Employee.wsdl"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A10" Name="count = 0" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="document response;&#10;&amp; $response = &quot;LoadTestResponse&quot;;&#10;$response.Status = &quot;OK&quot;;&#10;$count = 0;"/>
+      <bpm:Attribute Name="SCRIPT" Value="MagicBox"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=432,y=391,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A8" Name="Set up request" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="req = '''&lt;tns:GetEmployee xmlns:tns=\&quot;http://mdw-servicemix.centurylink.com/serviceTypes\&quot;>&#13;&#10;  &lt;tns:workstationId>dxoakes&lt;/tns:workstationId>&#13;&#10;&lt;/tns:GetEmployee>'''"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=435,y=272,w=100,h=60"/>
+      <bpm:Attribute Name="Output Documents" Value="req"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A9" Name="count = count + 1" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="count = count + 1;&#10;"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=699,y=487,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=900,y=140,w=60,h=40"/>
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A6" Name="Get OrderId" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Output Documents" Value="response"/>
+      <bpm:Attribute Name="Rule" Value="import groovy.util.XmlParser&#10;&#10;def orderDoc = new XmlParser().parseText(order)&#10;def orderId = orderDoc.orderId.text()&#10;response = &quot;&lt;orderId>&quot; + orderId + &quot;&lt;/orderId>&quot;"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=483,y=26,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A4" Name="XSLT transformation" Implementation="com.centurylink.mdw.workflow.activity.transform.TransformActivity">
+      <bpm:Attribute Name="Input Documents" Value="inputxml"/>
+      <bpm:Attribute Name="Output Documents" Value="response"/>
+      <bpm:Attribute Name="Rule" Value="&lt;xsl:stylesheet version=&quot;1.0&quot; &#10;   xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot;&#10;   xmlns=&quot;http://www.cramer.com/qwest/srpf&quot;&#10;   xmlns:s=&quot;http://www.cramer.com/qwest/srpf&quot;&#10;   xmlns:bim=&quot;http://www.qwest.com/XMLSchema/BIM&quot;&#10;   xmlns:q=&quot;http://mdw.qwest.com/XMLSchema&quot;>&#10;&#10;&lt;xsl:output method=&quot;html&quot; indent=&quot;yes&quot; omit-xml-declaration=&quot;yes&quot;/>&#10;&#10;&lt;xsl:template match=&quot;/&quot;>&#10;  &lt;html>&#10;   &lt;body>&#10;     &lt;h2>SeRT Order&#10; &lt;xsl:value-of select='s:OrderRetrieval/s:RequestType'/>&#10;     &lt;/h2>&#10;     &lt;table>&#10;       &lt;tr>&lt;th>Field&lt;/th>&lt;th>Value&lt;/th>&lt;/tr>&#10;       &lt;tr>&lt;td>Customer Name&lt;/td>&#10;    &lt;td>&lt;xsl:value-of select=&#10;   's:OrderRetrieval/s:OrderDetails/s:Customer/s:CustomerFullName'/>&#10;           &lt;/td>&lt;/tr>&#10;     &lt;/table>&#10;   &lt;/body>&#10;  &lt;/html>&#10;&lt;/xsl:template>&#10;&#10;&lt;/xsl:stylesheet>&#10;&#10;"/>
+      <bpm:Attribute Name="SCRIPT" Value="XSLT"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="Transform Language" Value="GPath"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=320,y=544,w=190,h=57"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A13" Name="case?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
+      <bpm:Attribute Name="Expression" Value="processCase"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=147,y=266,w=76,h=68"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A5" To="A3" Event="FINISH" Id="T3">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=770,ly=159,type=ElbowH,xs=601&amp;896,ys=160&amp;160"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A8" To="A12" Event="FINISH" Id="T5">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=552,ly=302,type=ElbowH,xs=539&amp;560,ys=302&amp;302"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A12" To="A2" Event="FINISH" Id="T6">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=660,ly=293,type=Elbow,xs=668&amp;683,ys=300&amp;300"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A2" To="A3" Event="FINISH" Id="T7">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=666,ly=261,type=Elbow,xs=791&amp;896,ys=298&amp;160"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A10" To="A1" Event="FINISH" Id="T9">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=622,ly=415,type=Elbow,xs=536&amp;700,ys=415&amp;415"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="TRUE" From="A1" To="A3" Event="FINISH" Id="T10">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=856,ly=363,type=ElbowH,xs=798&amp;896,ys=415&amp;160"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="FALSE" From="A1" To="A9" Event="FINISH" Id="T11">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=749,ly=461,type=Elbow,xs=749&amp;749,ys=443&amp;483"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="200"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A9" To="A1" Event="FINISH" Id="T12">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=749,ly=413,type=ElbowH,xs=695&amp;616&amp;616&amp;700,ys=504&amp;504&amp;416&amp;416"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="200"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A4" To="A3" Event="FINISH" Id="T14">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=748,ly=137,type=ElbowH,xs=514&amp;846&amp;846&amp;896,ys=569&amp;569&amp;160&amp;160"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A6" To="A3" Event="FINISH" Id="T16">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=727,ly=107,type=ElbowH,xs=587&amp;896,ys=56&amp;160"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="GetOrder" From="A13" To="A6" Event="FINISH" Id="T17">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=397,ly=68,type=Elbow,xs=227&amp;479,ys=300&amp;56"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="Adapter" From="A13" To="A8" Event="FINISH" Id="T18">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=365,ly=310,type=Elbow,xs=227&amp;431,ys=302&amp;302"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="LoadTest" From="A13" To="A10" Event="FINISH" Id="T19">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=364,ly=388,type=Elbow,xs=227&amp;428,ys=300&amp;421"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="XSLT" From="A13" To="A4" Event="FINISH" Id="T20">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=362,ly=508,type=Elbow,xs=185&amp;415,ys=338&amp;540"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A7" To="A13" Event="FINISH" Id="T21">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=116,ly=300,type=Elbow,xs=90&amp;143,ys=300&amp;300"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="SyntaxError" From="A13" To="A5" Event="FINISH" Id="T22">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=360,ly=231,type=Elbow,xs=227&amp;493,ys=300&amp;163"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="SERVICE"/>
+    <bpm:Attribute Name="PerformanceLevel" Value="0"/>
+    <bpm:Attribute Name="Response to Invoker" Value="When Terminate"/>
+    <bpm:Attribute Name="SLA" Value="0"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+    <bpm:Attribute Name="START_TRANSITION_ID" Value="2331845"/>
+    <bpm:Attribute Name="Transition with no Label" Value="Matches Any Return Code"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=53,y=31,w=248,h=27"/>
+    <bpm:Variables Name="count" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.Integer"/>
+    </bpm:Variables>
+    <bpm:Variables Name="inputxml" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="org.apache.xmlbeans.XmlObject"/>
+    </bpm:Variables>
+    <bpm:Variables Name="order" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="com.centurylink.mdw.model.StringDocument"/>
+    </bpm:Variables>
+    <bpm:Variables Name="processCase" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="req" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="com.centurylink.mdw.model.StringDocument"/>
+    </bpm:Variables>
+    <bpm:Variables Name="response" ReferredAs="" Category="OUTPUT" DisplaySequence="0">
+      <bpm:type Name="org.w3c.dom.Document"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

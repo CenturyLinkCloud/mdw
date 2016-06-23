@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65333768
+item-spec=4D4457413A314B3737545A20415353455446494C45204A4156412D2D3833373832313735332E412D5352433B34
+file-version=4
+checksum=491ac4a39f240c71903eed1caeed9b0c
+fetch-size=1080
+mtime=1445445105
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/dataaccess/file/AssetFile.java
+project=4D4457413A4D445741
+project-uid=31770127

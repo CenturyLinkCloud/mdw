@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:rich="http://richfaces.org/rich"  
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition template="/facelets/layout/layout.xhtml">
+  
+    <ui:define name="content">
+      <h:form id="filteredListForm">
+        <table cellpadding="0" cellspacing="2">
+          <tr>
+            <td valign="top" height="100%" class="mdw_panelBorderLeft">
+              <mdw:panelContainer id="togglePanelContainer">
+                <mdw:togglePanel
+                  id="filterTogglePanel"
+                  label="Filters"
+                  switchType="client"
+                  opened="#{tasksWorkgroupTree.user == null}"
+                  headerClass="mdw_panelHeaderStd"
+                  closedHeaderClass="mdw_panelHeaderClosed"                  
+                  closedHeaderImage="/images/filters90deg_lg.gif"
+                  bodyClass="mdw_panelBodyStd"
+                  style="border:none;">
+                  <mdw:filterPrefs prefsController="#{userPrefs}" />
+                  <mdw:listFilter
+                    id="workgroupTasksFilter"
+                    filterEntity="#{listManager.workgroupTasks.filter}"
+                    width="180px" />
+                </mdw:togglePanel>
+                <mdw:togglePanel
+                  id="treeTogglePanel"
+                  label="Hierarchy"
+                  switchType="client"
+                  opened="#{tasksWorkgroupTree.user != null}"
+                  headerClass="mdw_panelHeaderStd"
+                  closedHeaderClass="mdw_panelHeaderClosed"                  
+                  closedHeaderImage="/images/hierarchy90deg_lg.gif"                  
+                  bodyClass="mdw_panelBodyStd"
+                  style="border:none;">
+                  <ui:include src="workgroupTree.xhtml" />
+                </mdw:togglePanel>
+                <mdw:togglePanel
+                  id="quickViewTogglePanel"
+                  label="Quick Views"
+                  switchType="client"
+                  opened="false"
+                  headerClass="mdw_panelHeaderStd"
+                  closedHeaderClass="mdw_panelHeaderClosed"                  
+                  closedHeaderImage="/images/quickViews90deg_lg.gif"                  
+                  bodyClass="mdw_panelBodyStd"
+                  style="border:none;">
+                  <mdw:listFilter
+                    id="myTasksFilter"
+                    filterEntity="#{listManager.myTasksToday.filter}"
+                    width="180px"
+                    submitButtonLabel=" Save " /> 
+                </mdw:togglePanel>
+              </mdw:panelContainer>
+
+              <div align="center">
+                <a4j:status>
+                  <f:facet name="start">
+                    <h:panelGroup>
+                      <h:outputText
+                        value="Loading..."
+                        styleClass="mdw_filterInput" />
+                      <br/>
+                      <h:graphicImage
+                        value="/images/loading.gif" />
+                    </h:panelGroup>
+                  </f:facet>
+                </a4j:status>
+              </div>
+   
+            </td>             
+            <td valign="top" width="100%" height="100%" class="mdw_panelBorder">
+              <a4j:outputPanel keepTransient="false"
+                id="workgroupTasksOutputPanel">
+                <rich:panel
+                  rendered="#{tasksWorkgroupTree.group == null &amp;&amp; tasksWorkgroupTree.scopedUser == null &amp;&amp; tasksWorkgroupTree.user == null}"
+                  headerClass="mdw_panelHeaderStd"
+                  bodyClass="mdw_panelBodyStd"
+                  styleClass="mdw_richPanelUnbordered">
+                  <f:facet name="header">
+                    <h:outputText value="Workgroup View" />
+                  </f:facet>
+                  <t:inputHidden id="refreshWorkgroupTasks" forceId="true" value="true" />
+                  <mdw:list
+                    id="workgroupTasksList"
+                    listId="workgroupTasks"
+                    listEntity="#{listManager.workgroupTasks}"
+                    label="Tasks for My Workgroups: "
+                    subLabel="#{authenticatedUser.workgroupsAsString}" />
+                  <br/>
+                  <mdw:taskActionMenu
+                    id="workgroupTasksAction"
+                    menuBinding="#{listManager.workgroupTasks.taskActionMenu}"
+                    rendered="#{listManager.workgroupTasks.hasItems}"
+                    applyTo="#{listManager.workgroupTasks.marked}" />
+                </rich:panel>
+              </a4j:outputPanel>
+              <a4j:outputPanel keepTransient="false"
+                id="userTasksOutputPanel">
+                <rich:panel
+                  rendered="#{tasksWorkgroupTree.scopedUser != null || tasksWorkgroupTree.user != null}"
+                  headerClass="mdw_panelHeaderStd"
+                  bodyClass="mdw_panelBodyStd"
+                  styleClass="mdw_richPanelUnbordered">
+                  <f:facet name="header">
+                    <h:outputText value="User View" />
+                  </f:facet>
+                  <t:inputHidden id="refreshUserTasks" forceId="true" value="true" />
+                  <ui:include src="userView.xhtml" />
+                </rich:panel>
+              </a4j:outputPanel>
+              <a4j:outputPanel
+                id="groupReportOutputPanel">
+                <rich:panel
+                  rendered="#{tasksWorkgroupTree.group != null}"
+                  headerClass="mdw_panelHeaderStd"
+                  bodyClass="mdw_panelBodyStd"
+                  styleClass="mdw_richPanelUnbordered">
+                  <f:facet name="header">
+                    <h:outputText value="Workgroup Chart" />
+                  </f:facet>
+                  <mdw:report
+                    id="birtReport"
+                    reportEntity="#{mdwReport}" />
+                </rich:panel>
+              </a4j:outputPanel>
+            </td>
+          </tr>
+        </table>
+      </h:form>
+      
+      <mdw:listPrefs prefsController="#{userPrefs}" />
+      
+    </ui:define>
+
+  </ui:composition>
+
+</html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf"
+  xmlns:hub="http://www.centurylink.com/mdw-hub/jsf">
+
+  <ui:composition template="/layout/detail.xhtml">
+
+    <ui:param
+      name="layoutWidth"
+      value="960" />
+
+    <ui:define name="detailHeader">
+      Task #{task.id} -- #{task.name} 
+    </ui:define>
+
+    <ui:define name="detailLinks">
+      <hub:taskNav />
+    </ui:define>
+
+    <ui:define name="detailContent">
+      <mdw:panel id="taskWorkflowPanel" label="Workflow Image" styleClass="mdw_panel">    
+        <img src="#{detailManager.taskDetail.workflowSnapshotUrl}" alt="Workflow Image for Task #{task.id}" />
+      </mdw:panel>
+    </ui:define>
+
+  </ui:composition>
+
+</html>

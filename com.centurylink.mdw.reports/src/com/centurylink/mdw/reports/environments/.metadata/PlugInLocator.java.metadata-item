@@ -1,0 +1,13 @@
+version=10.2
+item-uid=48720334
+item-spec=4D4457413A314B384C4B5320504C5547494E4C4F4341544F52204A4156412D2D3936393439333337302E412D5352433B35
+file-version=5
+checksum=b4e1c33e413850558d6fc8e7f6c1d6a8
+fetch-size=5508
+mtime=1401315851
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/reports/environments/PlugInLocator.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

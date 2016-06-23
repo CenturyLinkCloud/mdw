@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49718618
+item-spec=4D4457413A314B3848384C20544F4D4341543730434F4E46494755524154494F4E204A4156412D313538323534303635372E412D5352433B31
+file-version=1
+checksum=ec53e1b1e320473dcf70077f3f4b585e
+fetch-size=1133
+mtime=1407187475
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/server/Tomcat70Configuration.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,15 @@
+// process-as-service-exception
+send message {
+    payload = '''<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+  <Action Name="RegressionTest">
+    <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+    <Parameter name="ProcessName">MDWTestProcessAsService</Parameter>
+    <Parameter name="processCase">SyntaxError</Parameter>
+  </Action>
+</mdw:ActionRequest>'''
+}
+verify response {
+    expected = '''<bpm:MDWStatusMessage xmlns:bpm="http://mdw.centurylink.com/bpm"><StatusCode>-1</StatusCode><bpm:StatusMessage>com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'MDWTestProcessAsServicev0_16_Syntaxerrror_5'
+groovy.lang.MissingPropertyException: No such property: syntax for class: MDWTestProcessAsServicev0_16_Syntaxerrror_5</bpm:StatusMessage></bpm:MDWStatusMessage>'''
+}
+verify process("com.centurylink.mdw.tests.workflow/MDWTestProcessAsService")

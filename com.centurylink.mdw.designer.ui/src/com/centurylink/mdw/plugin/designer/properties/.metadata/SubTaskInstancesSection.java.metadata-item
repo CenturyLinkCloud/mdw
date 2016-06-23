@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70275416
+item-spec=4D4457413A314B3848384C205355425441534B494E5354414E43455353454354494F4E204A4156412D313437323336323939302E412D5352433B33
+file-version=3
+checksum=ff004996dc2394ea3c35735e0126988c
+fetch-size=2261
+mtime=1462494734
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/properties/SubTaskInstancesSection.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

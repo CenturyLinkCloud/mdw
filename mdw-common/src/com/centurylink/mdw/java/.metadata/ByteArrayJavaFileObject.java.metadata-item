@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853024
+item-spec=4D4457413A314B3737545A204259544541525241594A41564146494C454F424A454354204A4156412D2D3739393638343738382E412D5352433B32
+file-version=2
+checksum=1d4e765e6ee169db7eddb6eb43d09537
+fetch-size=933
+mtime=1393986797
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/java/ByteArrayJavaFileObject.java
+project=4D4457413A4D445741
+project-uid=31770127

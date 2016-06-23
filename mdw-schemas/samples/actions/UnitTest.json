@@ -1,0 +1,11 @@
+actionRequest.toString(2)
+	 (java.lang.String) {
+  "Action": {
+    "name": "UnitTest",
+    "parameters": [{"appName": "MDW Automated Testing"}]
+  },
+  "Script": {
+    "groovy": "1 == 1",
+    "name": "unit-test-version-spec"
+  }
+}

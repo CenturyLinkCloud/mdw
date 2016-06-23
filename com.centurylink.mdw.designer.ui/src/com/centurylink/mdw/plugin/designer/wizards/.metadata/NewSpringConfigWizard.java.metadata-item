@@ -1,0 +1,13 @@
+version=10.2
+item-uid=55116494
+item-spec=4D4457413A314B3848384C204E4557434F4E464947444F4357495A415244204A4156412D313838383537343639382E412D5352433B35
+file-version=5
+checksum=8fa6aff90b48b0bf48c7675df11852c3
+fetch-size=673
+mtime=1428614395
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/NewSpringConfigWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

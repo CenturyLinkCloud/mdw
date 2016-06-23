@@ -1,0 +1,10 @@
+// set variable in embedded
+start process("MDWTestEmbedded") {
+    variables = [testCase: "set-parameter-value"]
+}
+wait process {
+    activityLogicalId = "A7"
+    status = "Completed"  // valid values are Completed, Cancelled, Failed, Waiting and Hold
+    timeout = 300
+}
+verify process

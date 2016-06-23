@@ -1,0 +1,10 @@
+<bpm:package name="com.centurylink.mdw.tests.routing" version="5.5.34" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:ApplicationProperties>
+    <bpm:PropertyGroup Name="dev">
+      <bpm:Property Name="mdw.task.resume.notify.endpoint">http://mdwapp:ldap_012@localhost:8080/mdw</bpm:Property>
+    </bpm:PropertyGroup>
+    <bpm:PropertyGroup Name="int">
+      <bpm:Property Name="mdw.task.resume.notify.endpoint">http://mdwapp:ldap_012@localhost:8989/mdw</bpm:Property>
+    </bpm:PropertyGroup>
+  </bpm:ApplicationProperties>
+</bpm:package>

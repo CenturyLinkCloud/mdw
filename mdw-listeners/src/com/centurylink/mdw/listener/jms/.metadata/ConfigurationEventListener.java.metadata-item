@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854390
+item-spec=4D4457413A314B3746473520434F4E46494755524154494F4E4556454E544C495354454E4552204A4156412D313634323437323537332E412D5352433B32
+file-version=2
+checksum=35c56cd2977d310ee6672366c04e3655
+fetch-size=2477
+mtime=1393990105
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listener/jms/ConfigurationEventListener.java
+project=4D4457413A4D445741
+project-uid=31770127

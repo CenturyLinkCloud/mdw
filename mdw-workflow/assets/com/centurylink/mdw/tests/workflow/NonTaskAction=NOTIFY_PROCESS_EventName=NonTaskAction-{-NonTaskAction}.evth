@@ -1,0 +1,4 @@
+<bpm:externalEventHandler xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:EventName>NonTaskAction</bpm:EventName>
+  <bpm:EventHandler>NOTIFY_PROCESS?EventName=NonTaskAction-{/NonTaskAction}</bpm:EventHandler>
+</bpm:externalEventHandler>

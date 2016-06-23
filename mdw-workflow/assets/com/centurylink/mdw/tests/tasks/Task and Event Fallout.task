@@ -1,0 +1,22 @@
+<task:taskTemplate logicalId="MDWTestTaskAndEvent:Activity43" category="COM" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>Task and Event Fallout</task:name>
+  <task:attribute name="Notices">$DefaultNotices</task:attribute>
+  <task:attribute name="NoticeGroups" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="RecipientVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="CCGroups" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="CCVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="AutoAssign" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Auto Assign Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="RoutingStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Routing Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="SubTaskStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="SubTask Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="IndexProvider">com.centurylink.mdw.services.task.AutoFormTaskIndexProvider</task:attribute>
+  <task:attribute name="AssigneeVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="FormName">Autoform</task:attribute>
+  <task:attribute name="Priority" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="PriorityStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Prioritization Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="CustomPage" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Rendering" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+</task:taskTemplate>

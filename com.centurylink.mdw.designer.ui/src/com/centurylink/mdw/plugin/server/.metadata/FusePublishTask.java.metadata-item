@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851281
+item-spec=4D4457413A314B3848384C20465553455055424C4953485441534B204A4156412D2D313231303236333138342E412D5352433B32
+file-version=2
+checksum=c25284433a882e5b61934c60e1e716d9
+fetch-size=186
+mtime=1393988850
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/server/FusePublishTask.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

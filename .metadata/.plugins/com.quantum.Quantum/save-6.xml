@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+<SAVED_DATA>
+	<bookmarks>
+		<jdbcDriver className="org.apache.derby.jdbc.EmbeddedDriver" name="org.apache.derby.jdbc.EmbeddedDriver" type="DERBY" version="">
+			<jar fileName="C:/eclipse_4.5.1/plugins/com.quantum.derby_3.3.10/lib/derby.jar" />
+		</jdbcDriver>
+		<jdbcDriver className="com.mysql.jdbc.Driver" name="MySQL Connector Java" type="MYSQL" version="mysql-connector-java-5.1.29 ( Revision: alexander.soklakov@oracle.com-20140120140810-s44574olh90i6i4l )">
+			<jar fileName="C:\workspaces\mdw55\com.centurylink.mdw.designer.core\lib\mysql-connector-java-5.1.29.jar" />
+		</jdbcDriver>
+		<bookmark>
+			<name>(Internal) Derby</name>
+			<username>QUANTUM</username>
+			<password />
+			<prompt>false</prompt>
+			<connect>jdbc:derby:C:/eclipse_4.5.1/plugins/com.quantum.derby_3.3.10/data/quantum</connect>
+			<autoCommit>true</autoCommit>
+			<autoCommitPreference>Always True</autoCommitPreference>
+			<autoCommitIgnoreView>false</autoCommitIgnoreView>
+			<quoteAll>false</quoteAll>
+			<sendQueryAsIs>false</sendQueryAsIs>
+			<stripNewline>false</stripNewline>
+			<shutdownOnDisconnect>true</shutdownOnDisconnect>
+			<defaultEncoding />
+			<driver>org.apache.derby.jdbc.EmbeddedDriver</driver>
+			<type>DERBY</type>
+			<substituteVariables>false</substituteVariables>
+			<variablesRegexp>\$\{(.*?)\}</variablesRegexp>
+			<driverLocation>C:/eclipse_4.5.1/plugins/com.quantum.derby_3.3.10/lib/derby.jar</driverLocation>
+			<Other_Schemas schemaRule="useAll" />
+			<quickList />
+			<queryList />
+		</bookmark>
+		<bookmark>
+			<name>Local MDW 5.5</name>
+			<username>root</username>
+			<password>mdw</password>
+			<prompt>false</prompt>
+			<connect>jdbc:mysql://localhost:3306/mdw</connect>
+			<autoCommit>true</autoCommit>
+			<autoCommitPreference>Always True</autoCommitPreference>
+			<autoCommitIgnoreView>false</autoCommitIgnoreView>
+			<quoteAll>false</quoteAll>
+			<sendQueryAsIs>false</sendQueryAsIs>
+			<stripNewline>false</stripNewline>
+			<shutdownOnDisconnect>false</shutdownOnDisconnect>
+			<defaultEncoding />
+			<driver>com.mysql.jdbc.Driver</driver>
+			<type>MYSQL</type>
+			<substituteVariables>false</substituteVariables>
+			<variablesRegexp>\$\{(.*?)\}</variablesRegexp>
+			<driverLocation>C:\workspaces\mdw55\com.centurylink.mdw.designer.core\lib\mysql-connector-java-5.1.29.jar</driverLocation>
+			<Other_Schemas schemaRule="useAll" />
+			<quickList />
+			<queryList>
+				<query>
+					<queryString>select * from event_wait_instance where event_name = 'TaskInstance:314'</queryString>
+				</query>
+				<query>
+					<queryString>select * from event_wait_instance where event_name like '%314'</queryString>
+				</query>
+				<query>
+					<queryString>delete from solution_map</queryString>
+				</query>
+				<query>
+					<queryString>delete from solution</queryString>
+				</query>
+				<query>
+					<queryString>delete from value</queryString>
+				</query>
+				<query>
+					<queryString>select * from task_instance where task_instance_id = 38252</queryString>
+				</query>
+				<query>
+					<queryString>select * from task_instance where TASK_INST_SECONDARY_OWNER = 38258</queryString>
+				</query>
+				<query>
+					<queryString>select * from task_instance where TASK_INSTance_id = 316</queryString>
+				</query>
+				<query>
+					<queryString>select * from TASK_INSTANCE ti, WORK_TRANSITION_INSTANCE wti
+  where ti.TASK_INST_SECONDARY_OWNER=&quot;WORK_TRANSITION_INSTANCE&quot;
+ and ti.TASK_INST_SECONDARY_OWNER_ID=wti.WORK_TRANS_INST_ID
+ and wti.DEST_INST_ID=38258</queryString>
+				</query>
+				<query>
+					<queryString>select * from TASK_INSTANCE ti, WORK_TRANSITION_INSTANCE wti
+  where ti.TASK_INST_SECONDARY_OWNER=&quot;WORK_TRANSITION_INSTANCE&quot;
+ and ti.TASK_INST_SECONDARY_OWNER_ID=wti.WORK_TRANS_INST_ID</queryString>
+				</query>
+				<query>
+					<queryString>select * from task_instance where create_dt &gt; '2016-02-24'</queryString>
+				</query>
+				<query>
+					<queryString>select * from TASK_INSTANCE ti, WORK_TRANSITION_INSTANCE wti
+  where ti.TASK_INST_SECONDARY_OWNER=&quot;DOCUMENT&quot;
+ and ti.TASK_INST_SECONDARY_OWNER_ID=wti.WORK_TRANS_INST_ID
+ and wti.DEST_INST_ID=38258</queryString>
+				</query>
+				<query>
+					<queryString>select * from TASK_INSTANCE ti, WORK_TRANSITION_INSTANCE wti
+  where ti.TASK_INST_SECONDARY_OWNER='DOCUMENT'
+ and ti.TASK_INST_SECONDARY_OWNER_ID=wti.WORK_TRANS_INST_ID
+ and wti.DEST_INST_ID=38258</queryString>
+				</query>
+				<query>
+					<queryString>select * from  WORK_TRANSITION_INSTANCE wti
+  where DEST_INST_ID=38258</queryString>
+				</query>
+				<query>
+					<queryString>select * from activity_instance where activity_instance_id=38258</queryString>
+				</query>
+				<query>
+					<queryString>select * from document where document_id= 56061</queryString>
+				</query>
+				<query>
+					<queryString>select * from task_instance where create_dt &gt; '2016-02-25'</queryString>
+				</query>
+				<query>
+					<queryString>select * from event_wait_instance where event_name like '%320'</queryString>
+				</query>
+				<query>
+					<queryString>select * from event_instance where create_dt &gt; '2016-02-25' and event_name = 'TaskInstance:320'</queryString>
+				</query>
+				<query>
+					<queryString>select * from event_wait_instance where create_dt &gt; '2016-02-24' and event_name = 'TaskInstance:320'</queryString>
+				</query>
+			</queryList>
+		</bookmark>
+	</bookmarks>
+</SAVED_DATA>

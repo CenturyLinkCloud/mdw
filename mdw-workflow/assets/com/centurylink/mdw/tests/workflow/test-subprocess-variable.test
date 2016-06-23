@@ -1,0 +1,17 @@
+// test sub-process variable access
+start process("com.centurylink.mdw.tests.workflow/MDWTestMainProcess") {
+    variables = [processCase: "SingleSubProcess", N: 7]
+}
+wait process("com.centurylink.mdw.tests.workflow/MDWTestMainProcess") {
+    timeout = 180
+}
+
+def instances = load processes("MDWTestMainProcess", "MDWTestSubProcess")
+instances.each {
+    println "found process: ${it.processName}"
+    if (it.processName == 'MDWTestSubProcess') {
+        def root = new groovy.util.XmlSlurper().parseText(it.variable['testxml']);
+        assert root.name() == 'ROOT'
+        assert root.MINUTES.text() == '2'
+    }
+}

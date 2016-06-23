@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<route xmlns="http://camel.apache.org/schema/spring"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://camel.apache.org/schema/spring 
+                      http://camel.apache.org/schema/spring/camel-spring.xsd">
+	<from uri="mdw:workflow/this"/>	
+	<filter>
+		<xpath>/StartStopProcess</xpath>
+			<to uri="mdw:process?name=StartStopProcess"/>		
+	</filter>	
+	<filter>
+		<xpath>/NotifyProcess</xpath>
+			<to uri="mdw:notify?eventId=${/NotifyProcess/eventName/node()}"/>
+	</filter>
+</route>

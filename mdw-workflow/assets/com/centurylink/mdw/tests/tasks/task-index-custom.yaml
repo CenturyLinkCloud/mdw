@@ -1,0 +1,45 @@
+process: # 13704
+  name: TaskIndexTesting
+  instance: 1
+  activity: # 1 "2016-02-23 09:46:12"
+    name: Start
+    status: Completed
+  activity: # 5 "2016-02-23 09:46:12"
+    name: |
+      Custom
+      ?
+    status: Completed
+  activity: # 6 "2016-02-23 09:46:12"
+    name: |
+      Provider
+      ?
+    status: Completed
+  activity: # 3 "2016-02-23 09:46:12"
+    name: A Custom Task
+    status: Completed
+  activity: # 2 "2016-02-23 09:46:46"
+    name: Stop
+    status: Completed
+  variable: # 20807
+    name: dateVar
+    value: ${laterToday}
+  variable: # 20803
+    name: intVar
+    value: 9
+  variable: # 20808
+    name: isCustom
+    value: true
+  variable: # 20805
+    name: jaxbVar
+    value: |
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <TaskJaxb attributeOne="attr one val" attributeTwo="attr two val">
+          <elementOne>elem one val</elementOne>
+          <elementTwo>elem two val</elementTwo>
+      </TaskJaxb>
+  variable: # 20804
+    name: stringListVar
+    value: ["four", "five", "six"]
+  variable: # 20806
+    name: stringVar
+    value: updatedStringValue

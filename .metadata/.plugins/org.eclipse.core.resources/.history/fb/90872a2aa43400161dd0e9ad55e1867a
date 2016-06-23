@@ -1,0 +1,4 @@
+<bpm:externalEventHandler xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:EventName>Signal</bpm:EventName>
+  <bpm:EventHandler>NOTIFY_PROCESS?EventName=Signal-{/Signal}</bpm:EventHandler>
+</bpm:externalEventHandler>

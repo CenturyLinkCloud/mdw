@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69365126
+item-spec=4D4457413A314B3737545A205041434B4147454C495354204A4156412D313831313631383830583639313558302E412D5352433B37
+file-version=7
+checksum=bbb9a321967b010c2668aaf6604a132d
+fetch-size=3254
+mtime=1458779206
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/asset/PackageList.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,77 @@
+process: # 13772
+  name: ScriptTest
+  instance: 1
+  activity: # 3 "2016-02-23 12:34:26"
+    name: Start
+    status: Completed
+  activity: # 8 "2016-02-23 12:34:26"
+    name: Script Flavor?
+    status: Completed
+  activity: # 7 "2016-02-23 12:34:27"
+    name: Groovy
+    status: Completed
+  activity: # 9 "2016-02-23 12:34:39"
+    name: Access Library
+    status: Completed
+  activity: # 6 "2016-02-23 12:34:39"
+    name: Looking Good?
+    status: Completed
+  activity: # 1 "2016-02-23 12:34:40"
+    name: Still Okay?
+    status: Completed
+  activity: # 2 "2016-02-23 12:34:40"
+    name: Stop
+    status: Completed
+  variable: # 21031
+    name: bystanderDomDoc
+    value: <xml>I won't change</xml>
+
+  variable: # 21034
+    name: bystanderXmlBean
+    value: <xml>I won't change</xml>
+  variable: # 21036
+    name: createdDomDoc
+    value: |
+      <records>
+         <car make="Infiniti" model="G35x" year="2005">
+            <country>Japan</country>
+            <aspect type="Sedan">Not too big</aspect>
+         </car>
+      </records>
+  variable: # 21037
+    name: createdInt
+    value: 8
+  variable: # 21038
+    name: createdString
+    value: createdStringValue
+  variable: # 21039
+    name: createdXmlBean
+    value: |
+      <createdXmlBean>
+        <innerElement attr="attrVal"/>
+      </createdXmlBean>
+  variable: # 21032
+    name: modifiedDomDoc
+    value: |
+      <records>
+        <car make="Infiniti" model="G35x" year="2005">
+          <country>Japan</country>
+          <aspect type="Sedan">Not too big</aspect>
+        </car>
+      <newCar shiny="new"/>
+      </records>
+  variable: # 21030
+    name: modifiedInt
+    value: 12
+  variable: # 21035
+    name: modifiedString
+    value: HereIsAString has been modified
+  variable: # 21028
+    name: modifiedXmlBean
+    value: <xmlBeanToBeModified>MODIFIED</xmlBeanToBeModified>
+  variable: # 21033
+    name: scriptFlavor
+    value: Groovy
+  variable: # 21029
+    name: telephoneNumbers
+    value: 303-555-7861~303-555-1952

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67917391
+item-spec=4D4457413A314B374B524A204C4441504155544846494C544552204A4156412D2D323038353035373238342E412D5352433B36
+file-version=6
+checksum=49dbc60a6d80791bdf5e9bdd60e1de5c
+fetch-size=5605
+mtime=1454710526
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/servlet/filter/MdwAuthFilter.java
+project=4D4457413A4D445741
+project-uid=31770127

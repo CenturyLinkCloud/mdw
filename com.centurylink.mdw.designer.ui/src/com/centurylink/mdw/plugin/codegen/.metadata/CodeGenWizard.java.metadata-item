@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67918958
+item-spec=4D4457413A314B3848384C20434F444547454E57495A415244204A4156412D2D313331353234343037302E412D5352433B3133
+file-version=13
+checksum=553032f032b57b177a6842b610094027
+fetch-size=12459
+mtime=1454700401
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/codegen/CodeGenWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

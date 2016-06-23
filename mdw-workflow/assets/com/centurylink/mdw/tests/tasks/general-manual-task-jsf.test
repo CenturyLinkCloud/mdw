@@ -1,0 +1,36 @@
+// general-manual-task-jsf
+def today = new Date();
+start process("MDWTestGeneralManualTask") {
+    variable = [ runJsfTask: true,
+                 NotDisplayed: "Not_displayed",
+                 ArrayVar: [ "a", "b", "c" ],
+                 IntegerVar: 314,
+                 DateVar: today,
+                 MasterRequest: "<FORMDATA/>" ]
+}
+sleep 30
+action task("Autoform General Task") {
+    outcome = "Claim"
+}
+sleep 15
+action task("Autoform General Task") {
+    outcome = "Complete"
+}
+sleep 15
+action task("General Task") {
+    outcome = "Claim"
+}
+sleep 15
+action task("General Task") {
+    outcome = "Complete"
+}
+sleep 15
+action task("JSF Task") {
+    outcome = "Claim"
+}
+sleep 15
+action task("JSF Task") {
+    outcome = "Complete"
+}
+sleep 15
+verify process

@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!DOCTYPE facelet-taglib PUBLIC
+  "-//Sun Microsystems, Inc.//DTD Facelet Taglib 1.0//EN"
+  "http://java.sun.com/dtd/facelet-taglib_1_0.dtd">
+
+  <!-- NOTE: modified for mdw-hub -->
+
+<facelet-taglib>
+
+  <namespace>http://www.centurylink.com/mdw/jsf/mdwtools</namespace>
+  
+  <tag>
+    <tag-name>helperNav</tag-name>
+    <source>../menus/helperNav.xhtml</source>
+  </tag>  
+  
+  <tag>
+    <tag-name>metricsNav</tag-name>
+    <source>../menus/metricsNav.xhtml</source>
+  </tag>  
+  
+  <tag>
+    <tag-name>dirPanel</tag-name>
+    <component>
+      <component-type>com.centurylink.mdw.ajax.DirPanel</component-type>
+      <renderer-type>com.centurylink.mdw.ajax.DirPanelRenderer</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>filePanel</tag-name>
+    <component>
+      <component-type>com.centurylink.mdw.ajax.FilePanel</component-type>
+      <renderer-type>com.centurylink.mdw.ajax.FilePanelRenderer</renderer-type>
+    </component>
+  </tag>
+  <tag>
+    <tag-name>projectPanel</tag-name>
+    <component>
+      <component-type>com.centurylink.mdw.ajax.ProjectPanel</component-type>
+      <renderer-type>com.centurylink.mdw.ajax.ProjectPanelRenderer</renderer-type>
+    </component>
+  </tag>
+  
+  <!-- filepanel components -->  
+  <tag>
+    <tag-name>fpNavPanel</tag-name>
+    <source>../system/filepanel/navPanel.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>fileView</tag-name>
+    <source>../system/filepanel/fileView.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>fpToolbar</tag-name>
+    <source>../system/filepanel/toolbar.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>fpSearch</tag-name>
+    <source>../system/filepanel/search.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>fpOptions</tag-name>
+    <source>../system/filepanel/options.xhtml</source>
+  </tag>  
+  <tag>
+    <tag-name>filepanelDir</tag-name>
+    <source>../system/filepanel/dir.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>propertyDir</tag-name>
+    <source>../system/property/dir.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>fpGrep</tag-name>
+    <source>../system/filepanel/grep.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>propertyGroups</tag-name>
+    <source>../system/property/groups.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>metricsDashboardRichFaces</tag-name>
+    <source>../reports/dashboard_richfaces.xhtml</source>
+  </tag>  
+  <!-- config manager components -->
+  <tag>
+    <tag-name>cmNavPanel</tag-name>
+    <source>../system/configManager/navPanel.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>cmToolbar</tag-name>
+    <source>../system/configManager/toolbar.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>configView</tag-name>
+    <source>../system/configManager/configView.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>cmProjects</tag-name>
+    <source>../system/configManager/projects.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>cmOptions</tag-name>
+    <source>../system/configManager/options.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>cmRcp</tag-name>
+    <source>../system/configManager/rcp.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>cmFooter</tag-name>
+    <source>../system/configManager/footer.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>cmSummary</tag-name>
+    <source>../system/configManager/summary.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>cmManage</tag-name>
+    <source>../system/configManager/manage.xhtml</source>
+  </tag>
+  <tag>
+    <tag-name>cmDefine</tag-name>
+    <source>../system/configManager/define.xhtml</source>
+  </tag> 
+  
+</facelet-taglib>

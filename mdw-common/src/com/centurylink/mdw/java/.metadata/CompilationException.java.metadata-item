@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49046705
+item-spec=4D4457413A314B3737545A20434F4D50494C4154494F4E455843455054494F4E204A4156412D2D3739313334393732372E412D5352433B31
+file-version=1
+checksum=b67a3f99e370441e0aeb3b97e488c306
+fetch-size=368
+mtime=1403133657
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/java/CompilationException.java
+project=4D4457413A4D445741
+project-uid=31770127

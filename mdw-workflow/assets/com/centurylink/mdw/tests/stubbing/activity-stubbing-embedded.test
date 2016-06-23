@@ -1,0 +1,12 @@
+// activity-stubbing-embedded
+assert stubbing
+assert hasTestingPackage
+
+start process("TestActivityStub") {
+    variables = [flowPath: "various"]
+    activityStubs = [
+        activity("Exception Handler:A7") { // embedded exception handler activity stubbed
+        }]
+}
+wait process
+verify processes("TestActivityStub", "TestActivityStubSubproc")

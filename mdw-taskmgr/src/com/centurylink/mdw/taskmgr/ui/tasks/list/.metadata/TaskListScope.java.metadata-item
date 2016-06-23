@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855062
+item-spec=4D4457413A314B37565330205441534B4C49535453434F5045204A4156412D323032393339363230342E412D5352433B32
+file-version=2
+checksum=27b3b5da1fe62e0f68a55ba4de91f7d6
+fetch-size=2312
+mtime=1393990193
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/tasks/list/TaskListScope.java
+project=4D4457413A4D445741
+project-uid=31770127

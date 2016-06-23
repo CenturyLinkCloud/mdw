@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549313
+item-spec=4D4457413A314B3848384C2043414D454C524F555445204A4156412D2D31393131343439332E412D5352433B36
+file-version=6
+checksum=a43c0b9084b5192aa564f23820469144
+fetch-size=1721
+mtime=1453321519
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/model/CamelRoute.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

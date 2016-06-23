@@ -1,0 +1,73 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="GroovyReturnVals" version="0.5" description="">
+    <bpm:Activity Id="Activity97" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=306,y=71,w=32,h=32"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity99" Name="New Synchronization Activity" Implementation="com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="Synced Activities" Value="No Return Val#Explicit Return Val#No Return Val&#13;&#10;(with SubProc)"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=339,y=387,w=24,h=24"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity100" Name="No Return Val" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="x = &quot;myString&quot;;"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=241,y=218,w=24,h=24"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity95" Name="Explicit Return Val" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="return &quot;x&quot;;"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=121,y=217,w=24,h=24"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity98" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=336,y=479,w=32,h=32"/>
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity101" Name="No Return Val&#13;&#10;(with SubProc)" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="&#13;&#10;x = myFunc();&#13;&#10;&#13;&#10;def myFunc() {&#13;&#10; return &quot;y&quot;;&#13;&#10;}"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=379,y=214,w=24,h=24"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="Activity97" To="Activity95" Event="FINISH" Id="Transition73">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=173,ly=83,type=Elbow,xs=306&amp;133&amp;133,ys=87&amp;87&amp;217"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity97" To="Activity100" Event="FINISH" Id="Transition74">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=294,ly=157,type=Elbow,xs=322&amp;253,ys=107&amp;214"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity100" To="Activity99" Event="FINISH" Id="Transition75">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=255,ly=320,type=Elbow,xs=253&amp;253&amp;336,ys=242&amp;394&amp;394"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity99" To="Activity98" Event="FINISH" Id="Transition76">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=355,ly=440,type=Elbow,xs=351&amp;351,ys=415&amp;475"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="x" From="Activity95" To="Activity99" Event="FINISH" Id="Transition77">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=214,ly=384,type=Elbow,xs=145&amp;136&amp;136&amp;339,ys=229&amp;229&amp;405&amp;405"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity97" To="Activity101" Event="FINISH" Id="Transition78">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=352,ly=159,type=Elbow,xs=322&amp;391,ys=107&amp;210"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity101" To="Activity99" Event="FINISH" Id="Transition79">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=421,ly=292,type=Elbow,xs=392&amp;392&amp;364,ys=242&amp;394&amp;394"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="NodeStyle" Value="Icon"/>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="SLA" Value="0"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=44,y=20,w=166,h=27"/>
+    <bpm:Attribute Name="START_TRANSITION_ID" Value="2322854"/>
+    <bpm:Variables Name="returnVal" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

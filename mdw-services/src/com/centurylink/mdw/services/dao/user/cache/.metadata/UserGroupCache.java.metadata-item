@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70789514
+item-spec=4D4457413A314B37435A30205553455247524F55504341434845204A4156412D313636393832343733342E412D5352433B3139
+file-version=19
+checksum=9da2a3332d474733e8d733e206ce1d16
+fetch-size=12978
+mtime=1464106273
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/dao/user/cache/UserGroupCache.java
+project=4D4457413A4D445741
+project-uid=31770127

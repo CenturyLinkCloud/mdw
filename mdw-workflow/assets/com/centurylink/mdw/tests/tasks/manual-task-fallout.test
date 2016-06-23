@@ -1,0 +1,6 @@
+// manual-task-fallout
+// TODO: test all features 
+// (currently only tests task creation)
+start process("FalloutTaskTest")
+sleep 10  // process is not completed, can't wait for it
+verify process("FalloutTaskTest")

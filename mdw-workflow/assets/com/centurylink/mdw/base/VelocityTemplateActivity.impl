@@ -1,0 +1,8 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.template.VelocityTemplateActivity" Type="com.centurylink.mdw.activity.types.GeneralActivity" Label="Velocity Template" IconFile="velocity.jpg" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET>
+  <DROPDOWN NAME='Template Name' LABEL='Template' SOURCE='RuleSets' TYPE='VELOCITY' VW='300' />
+  <TEXT NAME='velocityToolboxFile' LABEL='Toolbox File (optional)' VW='290' />
+  <RULE NAME='Rule' TYPE='ACTION'  />
+  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

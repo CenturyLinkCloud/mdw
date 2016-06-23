@@ -1,0 +1,8 @@
+// single-process
+start process("com.centurylink.mdw.tests.workflow/MDWTestMainProcess") {
+	variables = [processCase: "SingleSubProcess", N: 7]
+}
+wait process("com.centurylink.mdw.tests.workflow/MDWTestMainProcess") {
+    timeout = 180
+}
+verify processes("com.centurylink.mdw.tests.workflow/MDWTestMainProcess", "MDWTestSubProcess")

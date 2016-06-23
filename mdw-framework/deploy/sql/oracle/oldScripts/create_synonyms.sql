@@ -1,0 +1,51 @@
+spool create_synonyms.lst;
+undefine mdw_user_name
+
+create public synonym EVENT_TYPE for &&mdw_user_name..EVENT_TYPE;					
+create public synonym MDW_COMMON_ID_SEQ for &&mdw_user_name..MDW_COMMON_ID_SEQ;
+create public synonym VARIABLE_TYPE for &&mdw_user_name..VARIABLE_TYPE;				
+create public synonym ACTIVITY_IMPLEMENTOR for &&mdw_user_name..ACTIVITY_IMPLEMENTOR;		
+create public synonym USER_INFO for &&mdw_user_name..USER_INFO;					
+create public synonym USER_GROUP for &&mdw_user_name..USER_GROUP;					
+create public synonym USER_GROUP_MAPPING for &&mdw_user_name..USER_GROUP_MAPPING;			
+create public synonym USER_ROLE for &&mdw_user_name..USER_ROLE;					
+create public synonym USER_ROLE_MAPPING for &&mdw_user_name..USER_ROLE_MAPPING;			
+create public synonym TASK for &&mdw_user_name..TASK;						
+create public synonym TASK_INSTANCE for &&mdw_user_name..TASK_INSTANCE;				
+create public synonym VARIABLE_INSTANCE for &&mdw_user_name..VARIABLE_INSTANCE;			
+create public synonym WORK_TRANSITION_INSTANCE for &&mdw_user_name..WORK_TRANSITION_INSTANCE;	
+create public synonym WORK_TRANS_INST_ID_SEQ for &&mdw_user_name..WORK_TRANS_INST_ID_SEQ;		
+create public synonym TASK_STATUS for &&mdw_user_name..TASK_STATUS;				
+create public synonym WORK_STATUS for &&mdw_user_name..WORK_STATUS;				
+create public synonym WORK_TRANSITION_STATUS for &&mdw_user_name..WORK_TRANSITION_STATUS;		
+create public synonym MDW_COMMON_INST_ID_SEQ for &&mdw_user_name..MDW_COMMON_INST_ID_SEQ;			
+create public synonym ATTACHMENT_ID_SEQ for &&mdw_user_name..ATTACHMENT_ID_SEQ;				
+create public synonym TASK_TYPE for &&mdw_user_name..TASK_TYPE;						
+create public synonym TASK_CATEGORY for &&mdw_user_name..TASK_CATEGORY;					
+create public synonym ATTACHMENT for &&mdw_user_name..ATTACHMENT;						
+create public synonym TASK_STATE for &&mdw_user_name..TASK_STATE; 
+create public synonym EXTERNAL_EVENT for &&mdw_user_name..EXTERNAL_EVENT;					
+create public synonym ACTIVITY_INSTANCE for &&mdw_user_name..ACTIVITY_INSTANCE;				
+create public synonym ACTIVITY_INSTANCE_ID_SEQ for &&mdw_user_name..ACTIVITY_INSTANCE_ID_SEQ;		
+create public synonym PROCESS_INSTANCE for &&mdw_user_name..PROCESS_INSTANCE;				
+create public synonym ATTRIBUTE for &&mdw_user_name..ATTRIBUTE;						
+create public synonym RULE_SET for &&mdw_user_name..RULE_SET;						
+create public synonym EVENT_LOG for &&mdw_user_name..EVENT_LOG;						
+create public synonym EVENT_LOG_ID_SEQ for &&mdw_user_name..EVENT_LOG_ID_SEQ;				
+create public synonym INSTANCE_NOTE for &&mdw_user_name..INSTANCE_NOTE;					
+create public synonym INSTANCE_NOTE_ID_SEQ for &&mdw_user_name..INSTANCE_NOTE_ID_SEQ;			
+create public synonym EVENT_WAIT_INSTANCE_ID_SEQ for &&mdw_user_name..EVENT_WAIT_INSTANCE_ID_SEQ;		
+create public synonym EVENT_WAIT_INSTANCE for &&mdw_user_name..EVENT_WAIT_INSTANCE;			
+create public synonym PACKAGE for &&mdw_user_name..PACKAGE;						
+create public synonym PACKAGE_RULESETS for &&mdw_user_name..PACKAGE_RULESETS;
+create public synonym PACKAGE_EXTERNAL_EVENTS for &&mdw_user_name..PACKAGE_EXTERNAL_EVENTS;
+create public synonym EVENT_INSTANCE for &&mdw_user_name..EVENT_INSTANCE;
+create public synonym DOCUMENT for &&mdw_user_name..DOCUMENT;
+create public synonym PACKAGE_ACTIVITY_IMPLEMENTORS for &&mdw_user_name..PACKAGE_ACTIVITY_IMPLEMENTORS;
+create public synonym VARIABLE_INST_ID_SEQ for &&mdw_user_name..VARIABLE_INST_ID_SEQ;
+create public synonym TASK_INST_GRP_MAPP for &&mdw_user_name..TASK_INST_GRP_MAPP;
+create public synonym TASK_INST_INDEX for &&mdw_user_name..TASK_INST_INDEX;
+create public synonym RESOURCE_TYPE for &&mdw_user_name..RESOURCE_TYPE;
+
+undefine mdw_user_name
+spool off;

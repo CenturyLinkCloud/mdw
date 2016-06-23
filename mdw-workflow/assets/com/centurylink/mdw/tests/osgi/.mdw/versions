@@ -1,0 +1,20 @@
+#Wed Feb 24 10:03:46 MST 2016
+JMS\ Adapter\ OSGi\ service.proc=4
+OsgiServiceAdapter.proc=3
+TestUserService.java=3
+asset-version-1.test=2
+asset-version-1.yaml=1
+asset-version-2.test=2
+asset-version-2.yaml=1
+bundle-version-r1.test=3
+bundle-version-r1.yaml=1
+bundle-version-r2.test=3
+bundle-version-r2.yaml=1
+jms-adapter-osgi-async.test=1 Renamed from e\:\\workspaces\\mdw\\mdw-workflow\\assets\\com\\centurylink\\mdw\\tests\\osgi\\jsm-adapter-osgi-async.test
+jms-adapter-osgi-async.yaml=1
+jms_request.xml=1
+jsm-adapter-osgi-async.test=1
+osgi-cf-service-jms-adapter.test=1
+osgi-cf-service-jms-adapter.yaml=2
+osgi-service-adapter.test=1
+osgi-service-adapter.yaml=1

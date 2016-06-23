@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49302610
+item-spec=4D4457413A314B374B524A204556454E5454524947474552204A4156412D2D313531383836303539382E412D5352433B33
+file-version=3
+checksum=889bad17939ccb7fa361b29c066132b5
+fetch-size=1252
+mtime=1404329440
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/event/EventTrigger.java
+project=4D4457413A4D445741
+project-uid=31770127

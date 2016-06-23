@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49302642
+item-spec=4D4457413A314B384C4B532052554E54494D454C4F4341544F52204A4156412D3835303235373731312E412D5352433B34
+file-version=4
+checksum=fa2487e079b6c86ccec7b0c81952009d
+fetch-size=5938
+mtime=1404329528
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/reports/environments/RuntimeLocator.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

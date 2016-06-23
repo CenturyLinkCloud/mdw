@@ -1,0 +1,42 @@
+process: # 13605
+  name: DroolsDecisionTable
+  instance: 1
+  activity: # 2 "2016-02-22 11:52:08"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-22 11:52:08"
+    name: Setup XMLBean
+    status: Completed
+  activity: # 1 "2016-02-22 11:52:08"
+    name: |
+      Drools 
+      Decision Table
+    status: Completed
+  activity: # 4 "2016-02-22 11:52:09"
+    name: Stop
+    status: Completed
+  variable: # 20591
+    name: dueDate
+    value: Fri Mar 20 12:30:00 MDT 2015
+  variable: # 20590
+    name: orderNumber
+    value: 295417
+  variable: # 20589
+    name: quotedPrice
+    value: 150
+  variable: # 20588
+    name: region
+    value: Western
+  variable: # 20593
+    name: ruleVersion
+    value: drools-orderRoutingDecisionTable.xlsx v1
+  variable: # 20594
+    name: workgroup
+    value: Cheapskates
+  variable: # 20592
+    name: xmlBeanVar
+    value: |
+      <ser:ApplicationSummary xmlns:ser="http://mdw.centurylink.com/services">
+        <ApplicationName>Cheapskates</ApplicationName>
+        <MdwVersion>5.5</MdwVersion>
+      </ser:ApplicationSummary>

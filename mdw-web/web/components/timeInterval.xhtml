@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+    <t:panelGroup rendered="#{rendered == null ? true : rendered}" >
+      <h:inputText
+        value="#{intervalValue.days}"
+        required="false"
+        size="150"
+        style="width:35px;"          
+        styleClass="mdw_inputField"
+        rendered="#{days == null ? false : days}" />
+      <h:outputText 
+        value="days" 
+        style="height:15px;padding-left:5px;padding-right:5px;"
+        rendered="#{days == null ? false : days}" />
+      <h:inputText
+        value="#{intervalValue.hrs}"
+        required="false"
+        size="150"
+        style="width:35px;"          
+        styleClass="mdw_inputField"
+        rendered="#{hrs == null ? false : hrs}" />
+      <h:outputText 
+        value="hrs" 
+        style="height:15px;padding-left:5px;padding-right:5px;"
+        rendered="#{hrs == null ? false : hrs}" />
+      <h:inputText
+        value="#{intervalValue.mins}"
+        required="false"
+        size="150"
+        style="width:35px;"          
+        styleClass="mdw_inputField"
+        rendered="#{mins == null ? false : mins}" />
+      <h:outputText 
+        value="mins" 
+        style="height:15px;padding-left:5px;padding-right:5px;"
+        rendered="#{mins == null ? false : mins}" />
+      <h:inputText
+        value="#{intervalValue.secs}"
+        required="false"
+        size="150"
+        style="width:35px;"          
+        styleClass="mdw_inputField"
+        rendered="#{secs == null ? false : secs}" />
+      <h:outputText 
+        value="secs" 
+        style="height:15px;padding-left:5px;padding-right:5px;"
+        rendered="#{secs == null ? false : secs}" />
+    </t:panelGroup>
+  </ui:composition>
+
+</html>

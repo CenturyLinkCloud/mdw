@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68586332
+item-spec=4D4457413A314B37595142205441534B4C4953544D454E55204A4156412D2D3132343537393135322E412D5352433B35
+file-version=5
+checksum=9fcd10b23e8e2f6a06ad5b96a15b030f
+fetch-size=738
+mtime=1456531925
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/ui/list/ListMenu.java
+project=4D4457413A4D445741
+project-uid=31770127

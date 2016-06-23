@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68561038
+item-spec=4D4457413A314B3737545A20535052494E47415050434F4E54455854204A4156412D2D313736333231393332372E412D5352433B3133
+file-version=13
+checksum=bb6b5cb03548c55f23dae1f5db208a7f
+fetch-size=11662
+mtime=1456442146
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/spring/SpringAppContext.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,249 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="MDWTestEmbedded" version="0.7" description="">
+    <bpm:Activity Id="A13" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=27,y=328,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A10" Name="update case value" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="$case = &quot;good&quot;;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=554,y=320,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="Set Variable in Main" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="SetInMain = &quot;Hello&quot;;&#10;&#10;return &quot;ERROR:&quot;;&#10;"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=462,y=200,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A7" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=851,y=462,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A15" Name="Wait for 3 min" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="$+Id" Value="26997"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Hold"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="3"/>
+      <bpm:Attribute Name="Unit" Value="Minutes"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},CORRECT,true"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=357,y=299,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A1" Name="Manual task with event wait" Implementation="com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity">
+      <bpm:Attribute Name="Category" Value="COM"/>
+      <bpm:Attribute Name="Groups" Value="MDW Support"/>
+      <bpm:Attribute Name="TaskName" Value="Manual task"/>
+      <bpm:Attribute Name="Variables" Value="SetInEmbedded,SetInEmbedded,Not Displayed,0,,java.lang.String;SetInMain,SetInMain,Not Displayed,0,,java.lang.String;case,case,Not Displayed,0,,java.lang.String;launcher,launcher,Not Displayed,0,,com.qwest.mbeng.MbengTableArray"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},CORRECT,true"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=354,y=676,w=100,h=60"/>
+      <bpm:Attribute Name="TaskLogicalId" Value="MDWTestEmbedded:A1"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A12" Name="Sync arm1" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="print(&quot;Hello&quot;);"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=352,y=476,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A6" Name="sync arm2&#10;(delay 2 min)" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="$SetInMain = &quot;Ah hah!&quot;;"/>
+      <bpm:Attribute Name="SCRIPT" Value="MagicBox"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=350,y=585,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A4" Name="set up arg table" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Output Documents" Value="launcher"/>
+      <bpm:Attribute Name="Rule" Value="table launcher &#10;    with argument, result, retcode&#10;    option key=argument;&#10;variable index;&#10;do $index = 0;&#10;do new (1, &quot;&quot;, &quot;START&quot;) in $launcher;&#10;do new (2, &quot;&quot;, &quot;START&quot;) in $launcher;&#10;do new (3, &quot;&quot;, &quot;START&quot;) in $launcher;&#10;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=285,y=870,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A14" Name="timer wait - keep waiting" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Waiting"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="2"/>
+      <bpm:Attribute Name="Unit" Value="Minutes"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},CORRECT,true"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=352,y=776,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A8" Name="sum up" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="table launcher;&#10;&#10;do $case = 0;&#10;&#10;foreach row in $launcher&#10;if row.retcode == &quot;FINISH&quot;&#10;then $case = $case + row.result;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=680,y=878,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A11" Name="3 subproceses" Implementation="com.centurylink.mdw.workflow.activity.process.InvokeMultipleProcessActivity">
+      <bpm:Attribute Name="DELAY_BETWEEN" Value="5"/>
+      <bpm:Attribute Name="KeyColumn" Value="argument"/>
+      <bpm:Attribute Name="ParameterTable" Value="launcher"/>
+      <bpm:Attribute Name="ReturnCodeColumn" Value="retcode"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Hold"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},CORRECT,true"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=437,y=873,w=100,h=60"/>
+      <bpm:Attribute Name="processname" Value="MDWTestSubProcess"/>
+      <bpm:Attribute Name="processversion" Value="1005"/>
+      <bpm:Attribute Name="synchronous" Value="TRUE"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A9" Name="Wait for some event" Implementation="com.centurylink.mdw.workflow.activity.event.EventWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_TIMEOUT" Value="Cancelled"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},Hold::CORRECT,true;Signal-{$MasterRequestID},,false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=359,y=386,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Synch with Wait" Implementation="com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity">
+      <bpm:Attribute Name="$+Id" Value="27875"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Hold"/>
+      <bpm:Attribute Name="Sync Expression" Value="Sync_arm1 &amp;&amp; sync_arm2_delay_2_min_"/>
+      <bpm:Attribute Name="Synced Activities" Value="Sync arm1#sync arm2&#10;(delay 2 min)"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},CORRECT,true"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=498,y=524,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A5" Name="which case?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
+      <bpm:Attribute Name="Expression" Value="$case"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=32,y=541,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A13" To="A5" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=374,ly=892,type=Elbow,xs=59&amp;59,ys=372&amp;537"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A7" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=685,ly=323,type=Elbow,xs=566&amp;847,ys=230&amp;482"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="set-parameter-value" From="A5" To="A3" Event="FINISH" Id="T3">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=296,ly=247,type=ElbowH,xs=96&amp;458,ys=561&amp;230"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="correct-resume-on-hold" From="A5" To="A15" Event="FINISH" Id="T4">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=176,ly=289,type=ElbowH,xs=96&amp;353,ys=561&amp;329"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A15" To="A10" Event="FINISH" Id="T5">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=518,ly=337,type=Elbow,xs=461&amp;550,ys=339&amp;339"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A9" To="A10" Event="FINISH" Id="T6">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=504,ly=391,type=Elbow,xs=463&amp;550,ys=416&amp;350"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A10" To="A7" Event="FINISH" Id="T7">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=755,ly=445,type=Elbow,xs=658&amp;847,ys=350&amp;482"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="correct-resume-on-wait" From="A5" To="A9" Event="FINISH" Id="T8">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=141,ly=386,type=Elbow,xs=96&amp;355,ys=561&amp;416"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="sync-wait" From="A5" To="A12" Event="FINISH" Id="T9">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=283,ly=505,type=ElbowH,xs=96&amp;202&amp;202&amp;348,ys=562&amp;562&amp;526&amp;526"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="sync-wait" From="A5" To="A6" Event="FINISH" Id="T10">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="2"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=269,ly=596,type=ElbowH,xs=96&amp;203&amp;203&amp;346,ys=562&amp;562&amp;623&amp;623"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A12" To="A2" Event="FINISH" Id="T11">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=478,ly=529,type=Elbow,xs=456&amp;494,ys=530&amp;530"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A6" To="A2" Event="FINISH" Id="T12">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=486,ly=566,type=Elbow,xs=454&amp;494,ys=615&amp;554"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A2" To="A7" Event="FINISH" Id="T13">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=720,ly=499,type=ElbowH,xs=602&amp;847,ys=554&amp;482"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="task-wait" From="A5" To="A1" Event="FINISH" Id="T14">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=254,ly=681,type=ElbowH,xs=96&amp;202&amp;202&amp;350,ys=562&amp;562&amp;708&amp;708"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A1" To="A7" Event="FINISH" Id="T15">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=760,ly=465,type=ElbowH,xs=458&amp;633&amp;633&amp;847,ys=709&amp;709&amp;506&amp;506"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="timer-wait-keep-waiting" From="A5" To="A14" Event="FINISH" Id="T16">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=197,ly=776,type=Elbow,xs=96&amp;348,ys=561&amp;806"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A14" To="A7" Event="FINISH" Id="T17">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=651,ly=644,type=Elbow,xs=456&amp;847,ys=806&amp;482"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="subproc-hold" From="A5" To="A4" Event="FINISH" Id="T18">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=123,ly=879,type=ElbowH,xs=96&amp;220&amp;220&amp;281,ys=571&amp;571&amp;909&amp;909"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A11" To="A8" Event="FINISH" Id="T19">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=643,ly=749,type=Elbow,xs=541&amp;676,ys=905&amp;905"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A4" To="A11" Event="FINISH" Id="T20">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=412,ly=901,type=Elbow,xs=389&amp;433,ys=901&amp;901"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A8" To="A7" Event="FINISH" Id="T21">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=805,ly=690,type=Elbow,xs=730&amp;881,ys=874&amp;506"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="CORRECT_TRANSITION_ID" Value="157825"/>
+    <bpm:Attribute Name="ERROR_TRANSITION_ID" Value="157824"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="SLA" Value="0"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+    <bpm:Attribute Name="Transition with no Label" Value="Acts as Default"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=34,y=46,w=182,h=27"/>
+    <bpm:Attribute Name="START_TRANSITION_ID" Value="2327615"/>
+    <bpm:Variables Name="case" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="launcher" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="com.qwest.mbeng.MbengTableArray"/>
+    </bpm:Variables>
+    <bpm:Variables Name="SetInEmbedded" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="SetInMain" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:SubProcess Id="P2" name="Exception Handler" version="0.6" description="">
+      <bpm:Activity Id="A17" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=709,y=78,w=60,h=40"/>
+      </bpm:Activity>
+      <bpm:Activity Id="A18" Name="Set Variable in Embedded" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+        <bpm:Attribute Name="Rule" Value="SetInEmbedded = SetInMain + &quot;, World!&quot;;"/>
+        <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=826,y=72,w=100,h=60"/>
+      </bpm:Activity>
+      <bpm:Activity Id="A16" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=982,y=81,w=60,h=40"/>
+      </bpm:Activity>
+      <bpm:Transition CompletionCode="" From="A17" To="A18" Event="FINISH" Id="T22">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=787,ly=98,type=Elbow,xs=773&amp;822,ys=98&amp;98"/>
+      </bpm:Transition>
+      <bpm:Transition CompletionCode="" From="A18" To="A16" Event="FINISH" Id="T23">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=968,ly=101,type=Elbow,xs=930&amp;978,ys=101&amp;101"/>
+      </bpm:Transition>
+      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Exception Handler"/>
+      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=709,y=45,w=333,h=105"/>
+      <bpm:Attribute Name="ENTRY_TRANSITION_ID" Value="2327617"/>
+      <bpm:Attribute Name="START_TRANSITION_ID" Value="2327578"/>
+      <bpm:Variables Name="EmbeddedSubProcessTaskAction" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+        <bpm:type Name="java.lang.String"/>
+      </bpm:Variables>
+    </bpm:SubProcess>
+    <bpm:SubProcess Id="P3" name="Correction Handler" version="0.6" description="">
+      <bpm:Activity Id="A20" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=295,y=80,w=60,h=40"/>
+      </bpm:Activity>
+      <bpm:Activity Id="A21" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=617,y=80,w=60,h=40"/>
+      </bpm:Activity>
+      <bpm:Activity Id="A19" Name="wait 1 min" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+        <bpm:Attribute Name="TIMER_WAIT" Value="1"/>
+        <bpm:Attribute Name="Unit" Value="Minutes"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=424,y=71,w=100,h=60"/>
+      </bpm:Activity>
+      <bpm:Transition CompletionCode="" From="A20" To="A19" Event="FINISH" Id="T24">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=441,ly=92,type=Elbow,xs=359&amp;420,ys=100&amp;100"/>
+      </bpm:Transition>
+      <bpm:Transition CompletionCode="" From="A19" To="A21" Event="FINISH" Id="T25">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=573,ly=100,type=Elbow,xs=528&amp;613,ys=100&amp;100"/>
+      </bpm:Transition>
+      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Correction Handler"/>
+      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=255,y=40,w=440,h=120"/>
+      <bpm:Attribute Name="ENTRY_TRANSITION_ID" Value="2327616"/>
+      <bpm:Attribute Name="START_TRANSITION_ID" Value="2327569"/>
+      <bpm:Variables Name="EmbeddedSubProcessTaskAction" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+        <bpm:type Name="java.lang.String"/>
+      </bpm:Variables>
+    </bpm:SubProcess>
+  </bpm:Process>
+</bpm:processDefinition>

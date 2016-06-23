@@ -1,0 +1,28 @@
+process: # 10907
+  name: PoolableTibcoBusAdapter
+  instance: 1
+  activity: # 1 "2016-02-18 15:37:26"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-18 15:37:30"
+    name: PoolableBusAdapter
+    status: Completed
+  activity: # 2 "2016-02-18 15:37:30"
+    name: Stop
+    status: Completed
+  variable: # 12544
+    name: ServiceRequest
+    value: |
+      <TestGeneralEvent>
+        <ProcessName>MDWTestMainProcess</ProcessName>
+        <adaptor_type>webservice</adaptor_type>
+        <EventType>ORDER_START</EventType>
+        <MasterRequestId>${masterRequestId}</MasterRequestId>
+      </TestGeneralEvent>
+  variable: # 12545
+    name: ServiceResponse
+    value: |
+      <xs:MDWStatusMessage xmlns:xs="http://mdw.qwest.com/XMLSchema">
+        <StatusCode>0</StatusCode>
+        <xs:StatusMessage>SUCCESS</xs:StatusMessage>
+      </xs:MDWStatusMessage>

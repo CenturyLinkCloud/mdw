@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44583350
+item-spec=4D4457413A314B3848384C2053544152545745424C4F47494320434D4420544D504C4A45542D2D313231323735333534352E412D4441543B31
+file-version=1
+checksum=66ef80057a67ddc4cad4295ee8a01f9b
+fetch-size=1469
+mtime=1317428064
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=templates/ear/deploy/config/startWebLogic.cmd.tmpljet
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

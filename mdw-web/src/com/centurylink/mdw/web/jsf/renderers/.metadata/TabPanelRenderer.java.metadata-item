@@ -1,0 +1,13 @@
+version=10.2
+item-uid=47167143
+item-spec=4D4457413A314B374B524A2054414250414E454C52454E4445524552204A4156412D2D313138383933323836372E412D5352433B33
+file-version=3
+checksum=efed583880f53a2de5fda3f9961648a7
+fetch-size=12234
+mtime=1395265148
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/renderers/TabPanelRenderer.java
+project=4D4457413A4D445741
+project-uid=31770127

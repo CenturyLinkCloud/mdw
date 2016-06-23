@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853505
+item-spec=4D4457413A314B3737545A2057494C444341524446494C454E414D4546494C544552204A4156412D2D313131333430353937312E412D5352433B32
+file-version=2
+checksum=d8a25437ba1c3885aacbda6a1c9602cc
+fetch-size=4309
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/file/WildcardFilenameFilter.java
+project=4D4457413A4D445741
+project-uid=31770127

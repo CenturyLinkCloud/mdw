@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67722705
+item-spec=4D4457413A314B3848384C20584D4C444F43204A4156412D2D313231323735333534352E412D5352433B35
+file-version=5
+checksum=5b8688f264b3e55205e60d523528b915
+fetch-size=1450
+mtime=1454002383
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/model/XmlDoc.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

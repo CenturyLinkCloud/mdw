@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62387296
+item-spec=4D4457413A314B3737545A20444F4D48454C504552204A4156412D2D323030373033383436362E412D5352433B39
+file-version=9
+checksum=89d35371df70925d5786eecfa59c6659
+fetch-size=8026
+mtime=1436286152
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/xml/DomHelper.java
+project=4D4457413A4D445741
+project-uid=31770127

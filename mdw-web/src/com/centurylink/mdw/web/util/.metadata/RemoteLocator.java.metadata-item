@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855452
+item-spec=4D4457413A314B374B524A2052454D4F54454C4F4341544F52204A4156412D2D313537333136373133382E412D5352433B32
+file-version=2
+checksum=bd12a8a0b8b6bc33772f25e78b7df346
+fetch-size=776
+mtime=1393990224
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/util/RemoteLocator.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50878694
+item-spec=4D4457413A314B375951422044415348424F41524450414E454C484F4C444552204A4156412D313830333336313234392E412D5352433B32
+file-version=2
+checksum=a4cf86c6f49f478b1086f40db0ede0c8
+fetch-size=1178
+mtime=1410750927
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/ui/reports/DashboardPanelHolder.java
+project=4D4457413A4D445741
+project-uid=31770127

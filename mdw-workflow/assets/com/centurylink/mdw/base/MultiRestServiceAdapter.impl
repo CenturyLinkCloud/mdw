@@ -1,0 +1,29 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.adapter.rest.MultiRestServiceAdapter" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="Multi-RESTful Service Adapter" IconFile="adapter.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET>
+  <TABLE NAME='EndpointUri' LABEL="Destination Endpoints">
+   <TEXT LABEL="Endpoint URI"/>
+  </TABLE>
+  <TEXT NAME='USER' LABEL='Basic Auth User' VW='120'/>    
+  <TEXT NAME='PASS' LABEL='Basic Auth Password' VW='120'/>   
+  <DROPDOWN NAME='HttpMethod' LABEL='HTTP Method' DEFAULT='POST' VW='100'>
+    <OPTION>GET</OPTION>
+    <OPTION>POST</OPTION>
+    <OPTION>PUT</OPTION>
+    <OPTION>DELETE</OPTION>
+  </DROPDOWN>
+  <TEXT NAME='ConnectTimeout' LABEL='Connect Timeout (ms)' VW='100'/>
+  <TEXT NAME='ReadTimeout' LABEL='Read Timeout (ms)' VW='100'/>
+  <DROPDOWN NAME='REQUEST_VARIABLE' LABEL='Request Variable' SOURCE='Variables' VW='200'/>
+  <DROPDOWN NAME='RESPONSE_VARIABLE' LABEL='Response Variable' SOURCE='Variables' VW='200'/>
+  <DROPDOWN NAME='HeadersVariable' LABEL='Headers Variable' SOURCE='Variables' VW='200'/>
+  <SELECT NAME='DO_LOGGING' LABEL='Log req/resp' DEFAULT='True'>
+    <OPTION>True</OPTION>
+    <OPTION>False</OPTION>
+  </SELECT>
+  <HYPERLINK NAME='REQUEST_XSD' LABEL='Request XSD'/>
+  <HYPERLINK NAME='RESPONSE_XSD' LABEL='Response XSD'/>
+  <HYPERLINK URL='/MDWWeb/doc/RestfulAdapter.html'>
+    RESTful Adapter Help
+  </HYPERLINK>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

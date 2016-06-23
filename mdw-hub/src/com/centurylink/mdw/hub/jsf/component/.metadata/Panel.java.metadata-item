@@ -1,0 +1,13 @@
+version=10.2
+item-uid=48706024
+item-spec=4D4457413A314B375951422050414E454C204A4156412D313336363038363033332E412D5352433B33
+file-version=3
+checksum=48ee7475b2c95fa6708176ad05084655
+fetch-size=7832
+mtime=1401301424
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/jsf/component/Panel.java
+project=4D4457413A4D445741
+project-uid=31770127

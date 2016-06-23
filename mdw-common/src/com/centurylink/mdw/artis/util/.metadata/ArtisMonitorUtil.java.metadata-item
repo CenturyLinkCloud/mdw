@@ -1,0 +1,13 @@
+version=10.2
+item-uid=63006202
+item-spec=4D4457413A314B3737545A2041525449534D4F4E49544F525554494C204A4156412D31373534353639393858333038373858382E412D5352433B33
+file-version=3
+checksum=89af013d1309c9ee1f8028bc070711e3
+fetch-size=3902
+mtime=1438184083
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/artis/util/ArtisMonitorUtil.java
+project=4D4457413A4D445741
+project-uid=31770127

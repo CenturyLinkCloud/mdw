@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns="http://mdw.centurylink.com/services"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://mdw.centurylink.com/services"
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified">
+  
+  <xsd:element name="ApplicationSummary">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="ApplicationName" type="xsd:string"/>
+        <xsd:element name="Version" type="xsd:string"/>
+        <xsd:element name="MdwVersion" type="xsd:string"/>
+        <xsd:element name="MdwHubUrl" type="xsd:anyURI" minOccurs="0" />
+        <xsd:element name="MdwWebUrl" type="xsd:anyURI" minOccurs="0" />
+        <xsd:element name="ServicesUrl" type="xsd:anyURI" minOccurs="0" />
+        <xsd:element name="TaskManagerUrl" type="xsd:anyURI" minOccurs="0"/>
+        <xsd:element name="DesignerUrl" type="xsd:anyURI" minOccurs="0" />
+        <xsd:element name="ReportsUrl" type="xsd:anyURI" minOccurs="0" />
+        <xsd:element name="AdminUrl" type="xsd:anyURI" minOccurs="0" />
+        <xsd:element name="OAuthTokenUrl" type="xsd:anyURI" minOccurs="0" />
+        <xsd:element name="DbInfo" type="DbInfo" minOccurs="0"/>
+        <xsd:element name="Container" type="xsd:string" minOccurs="0"/>
+        <xsd:element name="Database" type="xsd:string" minOccurs="0"/>
+        <xsd:element name="Repository" type="Repository" minOccurs="0"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:complexType name="DbInfo">
+    <xsd:attribute name="jdbcUrl" type="xsd:string" use="required"/>
+    <xsd:attribute name="user" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="Repository">
+    <xsd:attribute name="provider" type="xsd:string" use="required"/>
+    <xsd:attribute name="url" type="xsd:string" use="required"/>
+    <xsd:attribute name="branch" type="xsd:string" use="optional"/>  <!-- default is master -->
+    <xsd:attribute name="commit" type="xsd:string" use="optional"/>
+  </xsd:complexType>
+
+</xsd:schema>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=47166289
+item-spec=4D4457413A314B3759514220574F524B464C4F574153534554464143454C4554464143544F5259204A4156412D2D313331383231383230342E412D5352433B33
+file-version=3
+checksum=853ce1b25613580244bbf3fbda663d40
+fetch-size=4320
+mtime=1395174185
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/jsf/WorkflowAssetFaceletFactory.java
+project=4D4457413A4D445741
+project-uid=31770127

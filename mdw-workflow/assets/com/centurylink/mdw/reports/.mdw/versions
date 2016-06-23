@@ -1,0 +1,14 @@
+#Wed Sep 02 09:33:10 MDT 2015
+Dashboard-OrderByCUIDReport.rptdesign=4
+Dashboard-ProcessesByStatus.rptdesign=3
+Dashboard-ProcessesStatusJNDI.rptdesign=7
+Dashboard-UserTasksDrillChart.rptdesign=29
+Metrics_Tasks_By_Assigned_User.rptdesign=6
+Metrics_Tasks_By_Category.rptdesign=5
+Metrics_Tasks_By_State.rptdesign=9
+dashboard.js=1
+jquery-ui.min.js=1
+jquery.cookie.js=1
+jquery.min.js=1
+manualTasksReport.rptdesign=1000
+userTasksChart.rptdesign=1000

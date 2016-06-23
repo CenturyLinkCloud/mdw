@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62702911
+item-spec=4D4457413A314B3848384C20494D504F52544154545249425554455350414745204A4156412D2D3839323034343236322E412D5352433B35
+file-version=5
+checksum=0485cb40e241d6daab429f183981c86f
+fetch-size=1578
+mtime=1437425060
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/ImportAttributesPage.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

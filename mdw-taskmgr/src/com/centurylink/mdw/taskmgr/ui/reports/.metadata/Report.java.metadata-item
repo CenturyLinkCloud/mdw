@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854906
+item-spec=4D4457413A314B37565330205245504F5254204A4156412D2D313239313931313530372E412D5352433B32
+file-version=2
+checksum=3fe76623e09924bf271d0b0c5c08d74b
+fetch-size=701
+mtime=1393990193
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/reports/Report.java
+project=4D4457413A4D445741
+project-uid=31770127

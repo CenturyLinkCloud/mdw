@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853987
+item-spec=4D4457413A314B37595142204C4953544D454E55434F4E54524F4C4C4552204A4156412D313738333131303034302E412D5352433B32
+file-version=2
+checksum=395e52bd42392e20609a387261bf031d
+fetch-size=2193
+mtime=1393989989
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/ui/ListMenuController.java
+project=4D4457413A4D445741
+project-uid=31770127

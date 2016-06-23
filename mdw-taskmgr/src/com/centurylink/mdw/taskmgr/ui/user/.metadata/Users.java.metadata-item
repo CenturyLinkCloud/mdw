@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69236130
+item-spec=4D4457413A314B37565330205553455253204A4156412D313731353637353032302E412D5352433B36
+file-version=6
+checksum=fdfe6234a406cff38270da8f298c20bd
+fetch-size=10229
+mtime=1458254183
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/user/Users.java
+project=4D4457413A4D445741
+project-uid=31770127

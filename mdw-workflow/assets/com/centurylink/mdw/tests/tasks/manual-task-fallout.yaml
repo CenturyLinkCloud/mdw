@@ -1,0 +1,20 @@
+process: # 13697
+  name: FalloutTaskTest
+  instance: 1
+  activity: # 1 "2016-02-23 09:29:25"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-23 09:29:25"
+    name: |
+      Throw
+      Exception
+    status: Failed
+process: # 13699
+  name: FalloutTaskTest Exception Handler
+  instance: 1
+  activity: # 7 "2016-02-23 09:29:26"
+    name: Start
+    status: Completed
+  activity: # 4 "2016-02-23 09:29:26"
+    name: Fallout Test Task
+    status: Waiting

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+      
+    <t:panelGrid
+      width="100%"
+      columns="2"
+      columnClasses="mdw_detailsLabelColumn,mdw_detailsValueColumn">
+
+      <t:outputText value="Process: " />
+      <t:selectOneMenu
+        id="processSelect"
+        value="#{newProcessInstance.processId}"
+        onchange="myfaces.oam.submitForm('mainDetailForm','mainDetailForm:processSelect');"
+        styleClass="mdw_inputField">
+        <f:selectItems
+          value="#{processes.processSelectItems}"/>
+      </t:selectOneMenu>
+      
+      <t:panelGroup>
+        <t:outputText value="Master Request ID: " style="white-space:nowrap;" />
+        <t:outputText value=" * " style="color:red;padding-right:10px;"/>
+      </t:panelGroup>
+      <t:inputText
+        id="masterRequestIdInput"
+        forceId="true"
+        value="#{newProcessInstance.masterRequestId}"
+        styleClass="mdw_inputField"
+        style="width:200px;"
+        disabled="document.forms['mainDetailForm'].processSelect.value!=0;" />
+
+    </t:panelGrid>
+    
+    
+    <t:panelGrid width="100%" rendered="#{newProcessInstance.hasInputParameters}"
+      rowClasses="mdw_detailTableSubtitle">
+      <t:outputText value="Process Variables" />
+    </t:panelGrid>
+    <t:dataTable width="100%" 
+      id="processVariablesTable"
+      value="#{newProcessInstance.inputParameters}"
+      var="variableDataItem"
+      rowIndexVar="rowIndex">
+      <t:column 
+        styleClass="mdw_detailsLabelColumn"
+        style="width:150px;">
+        <t:outputText value="#{variableDataItem.label}" />
+      </t:column>
+      <t:column
+        styleClass="mdw_detailsValueColumn">
+        <mdw:field
+          dataItem="#{variableDataItem}"
+          dataItemSequenceId="#{variableDataItem.sequenceId}" />
+      </t:column>
+    </t:dataTable>
+
+  </ui:composition>
+</html>

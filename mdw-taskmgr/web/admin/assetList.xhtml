@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:t="http://myfaces.apache.org/tomahawk">
+
+  <ui:composition>
+
+    <div style="max-height:500px;overflow:auto;padding:0;">
+      <a4j:form id="assetListForm" ajaxSubmit="true" reRender="adminDetailPanel" styleClass="mdw_form">
+        <mdw:list
+          id="workassetsList"
+          listId="assets"
+          listEntity="#{listManager.assets}"
+          label="Assets" />
+      </a4j:form>
+    </div>
+    
+    
+     <!-- task import panel -->
+    <rich:modalPanel
+      id="assetImportModalPanel"
+      width="500"
+      height="175">
+      <f:facet name="header">
+        <h:panelGroup>
+          <div style="height:14px;">
+            <h:graphicImage value="/images/import.png" />
+            <h:outputText value="Import Asset" style="position:relative;top:-3px;left:2px;" />
+          </div>
+        </h:panelGroup>
+      </f:facet>
+      <f:facet name="controls">
+        <h:panelGroup>
+          <h:graphicImage
+            id="assetHideImportLink"
+            value="/images/close.png"
+            styleClass="hidelink" />
+          <rich:componentControl 
+            for="assetImportModalPanel" 
+            attachTo="assetHideImportLink" 
+            operation="hide" 
+            event="onclick"/>
+        </h:panelGroup>
+      </f:facet>
+      <h:form 
+        id="assetImportForm"
+        enctype="multipart/form-data">
+        <h:outputText value="Select file to import:" styleClass="mdw_fileUpload"/>
+        <div style="position:relative;">      
+          <t:inputFileUpload
+            id="fileupload"
+            immediate="true"
+            accept="*"
+            value="#{workgroupTree.importFile}"
+            storage="file"
+            style="width:440px;height:20px;position:relative;filter:alpha(opacity:0);opacity:0;z-index:2;#{webUtil.firefox?'text-align:right':''};"
+            required="false"
+            maxlength="#{webUtil.maxUploadFileSize}"
+            onchange="this.form.fileUploadInput.value=this.value;"
+            onkeypress="return false;">
+            <f:validator validatorId="attachmentValidator"/>
+          </t:inputFileUpload>
+          <t:div style="position:absolute;top:#{webUtil.firefox?'-2px':'0px'};left:0px;z-index:1;">
+            <input id="fileUploadInput" type="text" autocomplete="off" class="mdw_fileUpload" style="width:350px;background-color:#e4e4e4;background-image:none;" onkeypress="return false;" />
+            <input id="fileUploadBrowse"  type="submit" value="Browse..." onclick="return false;" />
+          </t:div>
+        </div>
+        
+         <div style="position:relative;">   
+           <h:inputTextarea
+          id="assetComments"
+          value="#{workgroupTree.comments}"
+          wrap="off"
+          cols= "1"
+          rows="2"
+          styleClass="mdw_textAreaInput"
+          style="margin-bottom:8px;" />
+         </div>
+         
+         
+        <h:commandButton
+          value="Import"
+          styleClass="mdw_detailFormButtons"
+          style="margin-top:10px;"
+          action="#{workgroupTree.doImport}" />
+      
+        <h:commandButton
+          id="assetImportCancelButton"
+          value="Cancel"          
+          action="#{assetsActionController.doCancel}"
+          style="width:60px;margin-right:2px;margin-left:5px;" />
+        <rich:componentControl
+          for="assetImportModalPanel" 
+          attachTo="assetImportCancelButton"
+          operation="hide"
+          event="onclick" />
+          
+      </h:form>      
+    </rich:modalPanel>
+    
+    
+    
+    <!-- task export panel -->
+    <rich:modalPanel
+      id="assetExportModalPanel"
+      width="250"
+      height="100">
+      <f:facet name="header">
+        <h:panelGroup>
+          <div style="height:14px;">
+            <h:graphicImage value="/images/export.png" />
+            <h:outputText value="Export Asset" style="position:relative;top:-3px;left:2px;" />
+          </div>
+        </h:panelGroup>
+      </f:facet>
+      <f:facet name="controls">
+        <h:panelGroup>
+          <h:graphicImage
+            id="assetHideExportLink"
+            value="/images/close.png"
+            styleClass="hidelink" />
+          <rich:componentControl 
+            for="assetExportModalPanel" 
+            attachTo="assetHideExportLink" 
+            operation="hide" 
+            event="onclick"/>
+        </h:panelGroup>
+      </f:facet>
+      
+     <h:form 
+        id="assetExportForm"
+        enctype="multipart/form-data">
+        
+      <h:outputText value="Export selected Asset Templates to a file?" />
+      <br/>
+      <h:commandButton	
+        value="Export"
+        styleClass="mdw_detailFormButtons"
+        style="margin-top:10px;"     
+        onclick="#{rich:component('assetExportModalPanel')}.hide();"
+        action="#{assetsActionController.doExport}" />
+      <h:commandButton
+        id="assetExportCancelButton"
+        value="Cancel"       
+         action="#{assetsActionController.doCancel}"
+        style="width:60px;margin-right:2px;margin-left:5px;" />
+      <rich:componentControl
+        for="assetExportModalPanel" 
+        attachTo="assetExportCancelButton"
+        operation="hide"
+        event="onclick" />
+     </h:form> 
+    </rich:modalPanel>
+    
+    
+      <rich:componentControl
+      for="assetImportModalPanel"
+      attachTo="importAssetTemplates"
+      operation="show"
+      event="onclick"/>   
+      </ui:composition>
+      
+      <rich:componentControl
+      for="assetExportModalPanel"
+      attachTo="exportAssetTemplates"
+      operation="show"
+      event="onclick"/>
+
+</html>

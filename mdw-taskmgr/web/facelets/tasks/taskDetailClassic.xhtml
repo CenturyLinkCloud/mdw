@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition template="/facelets/layout/detail.xhtml">
+
+    <ui:define name="detailLinks">
+      <mdw:taskNav />
+    </ui:define>
+
+    <ui:define name="detailContent">
+      <mdw:heading
+        headingTitle="Task #{detailManager.taskDetail.instanceId} -- #{detailManager.taskDetail.taskName}" />        
+      <mdw:detailData 
+        detailEntity="#{detailManager.taskDetail}" />
+      <t:inputHidden id="taskInstanceId" forceId="true" name="taskInstanceId" value="#{detailManager.taskDetail.instanceId}" />    
+      <mdw:instanceData 
+        instanceDataTitle="Task Instance Data"
+        instanceDataEntity="#{detailManager.taskDetail}" />
+    </ui:define>
+
+    <ui:define name="actionContent">
+      <mdw:taskAction
+        id="taskDetailAction"
+        rendered="#{detailManager.taskDetail.applicableForCurrentUsersWorkgroups &amp;&amp; detailManager.taskDetail.anyValidTaskActions}"
+        subformId="detailForm"
+        applyTo="#{detailManager.taskDetail}"
+        allowableTaskActions="#{detailManager.taskDetail.taskActionSelectItems}"
+        submitDetailData="true" />
+    </ui:define>
+
+    <ui:param
+      name="commandAlign"
+      value="right" />
+
+    <ui:define name="commandContent">
+      <t:commandButton
+        id="taskDetailSave"
+        rendered="#{detailManager.taskDetail.instanceDataSavable}"
+        value="Save"
+        action="go_taskDetail"
+        actionFor="detailForm"
+        styleClass="mdw_detailFormButtons">
+        <f:actionListener
+          type="com.centurylink.mdw.taskmgr.ui.tasks.detail.TaskInstanceActionController">
+        </f:actionListener>
+      </t:commandButton>
+    </ui:define>
+
+  </ui:composition>
+
+</html>

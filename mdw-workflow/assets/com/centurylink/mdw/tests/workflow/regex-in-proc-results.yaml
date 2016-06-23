@@ -1,0 +1,32 @@
+process: # 13431
+  name: FindEmployee
+  instance: 1
+  activity: # 1 "2016-02-17 18:11:35"
+    name: Start
+    status: Completed
+  activity: # 5 "2016-02-17 18:11:35"
+    name: |
+      Real
+      Lookup?
+    status: Completed
+  activity: # 3 "2016-02-17 18:11:35"
+    name: Lookup
+    status: Completed
+  activity: # 2 "2016-02-17 18:11:35"
+    name: Stop
+    status: Completed
+  variable: # 20079
+    name: requestHeaders
+    value: ${~.*} # ignore this value
+  variable: # 20081
+    name: response
+    value: |
+      <GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
+                <sapId>DHO115360</sapId>
+                <workstationId>${~d.}oakes</workstationId>
+                <firstName>${~Don.*}</firstName>
+                <lastName>${~O.*s}</lastName>
+              </GetEmployeeResponse>
+  variable: # 20080
+    name: workstationId
+    value: dxoakes

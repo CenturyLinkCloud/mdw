@@ -1,0 +1,13 @@
+version=10.2
+item-uid=54388851
+item-spec=4D4457413A314B3759514220494E54455246414345494E5354414E4345454E4143544F52204A4156412D2D3438393430363632302E412D5352433B31
+file-version=1
+checksum=7951687a387a50b1acf6970ede2de23f
+fetch-size=666
+mtime=1424371900
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/config/interfaces/InterfaceInstanceEnactor.java
+project=4D4457413A4D445741
+project-uid=31770127

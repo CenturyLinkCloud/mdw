@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete element from project &apos;mdw-workflow&apos;&#x0D;&#x0A;- Original project: &apos;mdw-workflow&apos;&#x0D;&#x0A;- Original element: &apos;value-json-service.test&apos;" description="Delete element" element1="assets/com/centurylink/mdw/tests/services/value-json-service.test" elements="0" flags="589830" id="org.eclipse.jdt.ui.delete" resources="1" stamp="1456372723857" subPackages="false" version="1.0"/>
+</session>

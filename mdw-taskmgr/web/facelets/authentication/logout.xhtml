@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+<ui:composition>
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache,no-store" />
+    
+    <title>MDW Task Manager</title>
+    <link rel="shortcut icon" href="/#{webUtil.webContextRoot}/images/mdw.ico" />
+    <t:stylesheet path="/css/mdw.css" />
+  </head>
+
+  <body class="mdw_body">
+    <ui:include src="/facelets/layout/header.xhtml" />
+
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mdw_pageHeader" style="margin-bottom:15px;">
+      <tr>
+        <td align="center">
+          <t:outputText value="You are now logged out of MDW Task Manager." />
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <t:outputText value="To ensure that your session is completely terminated, please close your browser window." />
+        </td>
+      </tr>
+      <tr>
+        <td align="center"><br />
+          <h:form id="loginUrlForm" style="height:0px;padding:0px;margin:0px">
+            <h:commandLink action="go_login" styleClass="mdw_links">
+              <h:outputText value="Return To Login Page" />
+            </h:commandLink>
+          </h:form>
+        </td>
+      </tr>
+    </table>
+  
+    <ui:include src="/facelets/layout/footer.xhtml" />
+
+  </body>
+
+</ui:composition>
+
+</html>
+

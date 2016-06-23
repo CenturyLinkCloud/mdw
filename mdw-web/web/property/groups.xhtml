@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:dj="http://www.centurylink.com/mdw/jsf/dojo"
+  xmlns:mt="http://www.centurylink.com/mdw/jsf/mdwtools">
+
+  <ui:composition>
+  
+    <mt:dirPanel
+      id="propertyGroupDataPanel"
+      dataUrl="../property/groupData.jsf" />
+      
+    <dj:tree
+      dojoType="dijit.Tree"
+      id="propertyGroupTree"
+      source="propertyGroupDataPanel"
+      label="Property Groups"
+      getLabel="getTreeLabel"
+      getIconClass="getTreeIconClass"
+      selectHandler="filePanelPropertySelect"
+      style="padding:3px" />
+        
+  </ui:composition>
+
+</html>

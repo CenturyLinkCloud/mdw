@@ -1,0 +1,130 @@
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:osgi="http://www.springframework.org/schema/osgi"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd   
+  http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+  http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+    <!-- Allows us to use system properties as variables in this configuration file -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <broker id="mdw-activemq" xmlns="http://activemq.apache.org/schema/core" 
+        brokerName="mdw-activemq" 
+        dataDirectory="${karaf.data}/activemq/mdw" 
+        useShutdownHook="false" 
+        schedulerSupport="true">
+
+        <!--
+            For better performances use VM cursor and small memory limit.
+            For more information, see:
+            
+            http://activemq.apache.org/message-cursors.html
+            
+            Also, if your producer is "hanging", it's probably due to producer flow control.
+            For more information, see:
+            http://activemq.apache.org/producer-flow-control.html
+        -->
+              
+        <destinationPolicy>
+            <policyMap>
+              <policyEntries>
+                <policyEntry topic=">" producerFlowControl="true" memoryLimit="1mb">
+                  <pendingSubscriberPolicy>
+                      <vmCursor />
+                  </pendingSubscriberPolicy>
+                </policyEntry>
+                <policyEntry queue=">" producerFlowControl="true" memoryLimit="1mb">
+                  <!-- Use VM cursor for better latency
+                       For more information, see:
+                       http://activemq.apache.org/message-cursors.html
+                  <pendingQueuePolicy>
+                    <vmQueueCursor/>
+                  </pendingQueuePolicy>
+                  -->
+                </policyEntry>
+              </policyEntries>
+            </policyMap>
+        </destinationPolicy> 
+
+        <!-- Use the following to configure how ActiveMQ is exposed in JMX -->
+        <managementContext>
+            <!-- substitute your ServiceMix instance name for mdwdev1, and use a unique value for the port -->
+            <managementContext connectorPort="12312" jmxDomainName="mdwdev1.jms" createConnector="false"/>
+        </managementContext>
+
+        <!-- 
+            Configure message persistence for the broker. The default persistence
+            mechanism is the KahaDB store (identified by the kahaDB tag). 
+            For more information, see: 
+            http://activemq.apache.org/persistence.html 
+        -->
+        <persistenceAdapter>
+            <kahaDB directory="${karaf.data}/activemq/default/kahadb"/>
+        </persistenceAdapter>
+
+       <!--
+            The systemUsage controls the maximum amount of space the broker will 
+            use before slowing down producers. For more information, see:
+            http://activemq.apache.org/producer-flow-control.html
+             
+        <systemUsage>
+            <systemUsage>
+                <memoryUsage>
+                    <memoryUsage limit="20 mb"/>
+                </memoryUsage>
+                <storeUsage>
+                    <storeUsage limit="1 gb" name="foo"/>
+                </storeUsage>
+                <tempUsage>
+                    <tempUsage limit="100 mb"/>
+                </tempUsage>
+            </systemUsage>
+        </systemUsage>
+        -->
+
+        <shutdownHooks>
+           <bean xmlns="http://www.springframework.org/schema/beans" id="hook" class="org.apache.activemq.hooks.SpringContextHook" />
+        </shutdownHooks>
+
+        <!-- The transport connectors ActiveMQ will listen to -->
+        <transportConnectors>
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:61618"/>
+        </transportConnectors>
+
+    </broker>
+
+    <bean id="activemqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory" depends-on="mdw-activemq">
+        <property name="brokerURL" value="vm://mdw-activemq?marshal=true" />
+        <!-- for sending JMS messages to external systems
+        <property name="brokerURL" value="tcp://server:port" />
+        -->
+    </bean>
+
+    <bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+        <property name="maxConnections" value="8" />
+        <property name="connectionFactory" ref="activemqConnectionFactory" />
+    </bean>
+
+    <bean id="resourceManager" class="org.apache.activemq.pool.ActiveMQResourceManager" init-method="recoverResource">
+          <property name="transactionManager" ref="transactionManager" />
+          <property name="connectionFactory" ref="activemqConnectionFactory" />
+          <property name="resourceName" value="activemq.default" />
+    </bean>
+
+    <osgi:reference id="transactionManager" interface="javax.transaction.TransactionManager" />
+
+    <osgi:service ref="pooledConnectionFactory">
+        <osgi:interfaces>
+            <value>javax.jms.ConnectionFactory</value>
+        </osgi:interfaces>
+        <osgi:service-properties>
+            <entry key="name" value="mdw-activemq"/>
+        </osgi:service-properties>
+    </osgi:service>
+
+</beans>
+
+

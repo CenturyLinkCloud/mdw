@@ -1,0 +1,7 @@
+<task:taskTemplate logicalId="AutoAssignedFromJaxbElem" category="GEN" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>AutoAssigned From Jaxb Elem</task:name>
+  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
+  <task:attribute name="Groups">MDW Support</task:attribute>
+  <task:attribute name="AssigneeVar">#{jaxbWithAssignee.elementOne}</task:attribute>
+  <task:attribute name="AutoAssign">Process Variable</task:attribute>
+</task:taskTemplate>

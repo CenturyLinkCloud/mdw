@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65420791
+item-spec=4D4457413A314B364C37582053554343455353524553504F4E5345204A534F4E2D31383336373239313758313239383058342E412D4441543B31
+file-version=1
+checksum=38b3ceb3296365bd52a500721137828c
+fetch-size=62
+mtime=1445969320
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=samples/actions/SuccessResponse.json
+project=4D4457413A4D445741
+project-uid=31770127

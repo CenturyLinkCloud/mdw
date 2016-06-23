@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851344
+item-spec=4D4457413A314B3848384C204E45574A41564157495A415244204A4156412D2D3735313533373734352E412D5352433B33
+file-version=3
+checksum=2186b7ca4832badeb7d9ff4aa0d9d69e
+fetch-size=558
+mtime=1393988849
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/NewJavaWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

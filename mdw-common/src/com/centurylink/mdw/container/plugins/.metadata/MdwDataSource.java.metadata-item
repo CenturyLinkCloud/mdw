@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853012
+item-spec=4D4457413A314B3737545A204D445744415441534F55524345204A4156412D2D313939333332333834302E412D5352433B32
+file-version=2
+checksum=a03010f70bc7ffb45587ab7a237224f7
+fetch-size=884
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/container/plugins/MdwDataSource.java
+project=4D4457413A4D445741
+project-uid=31770127

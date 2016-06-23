@@ -1,0 +1,40 @@
+process: # 15429
+  name: ManualTaskServices
+  instance: 1
+  activity: # 1 "2016-04-01 22:51:46"
+    name: Start
+    status: Completed
+  activity: # 4 "2016-04-01 22:51:46"
+    name: |
+      Assign
+      Obj Var
+    status: Completed
+  activity: # 3 "2016-04-01 22:51:46"
+    name: |
+      AutoForm Task 
+      for Service Access
+    status: Waiting
+  variable: # 25525
+    name: dateVar
+    value: Fri Apr 01 15:36:00 MDT 2016
+  variable: # 25522
+    name: docVar
+    value: <empty/>
+
+  variable: # 25523
+    name: jaxbVar
+    value: |
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <TaskJaxb attributeOne="attrOneValue" attributeTwo="attrTwoValue">
+          <elementOne>newElementOneValue</elementOne>
+          <elementTwo>elementTwoValue</elementTwo>
+      </TaskJaxb>
+  variable: # 25526
+    name: objectVar
+    value: ${~.*} # TODO use toString() 
+  variable: # 25524
+    name: stringVar
+    value: Hello
+  variable: # 25527
+    name: unassignedVar
+    value: updated during task completion

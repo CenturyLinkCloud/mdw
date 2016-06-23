@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65340292
+item-spec=4D4457413A314B364C37582052554E5343484544554C45444A4F4220584D4C2D31383331373632343258343234395832302E412D5352433B31
+file-version=1
+checksum=80f9f2352b1c80f9cbe1f7c9d1ac8706
+fetch-size=431
+mtime=1405005754
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=samples/actions/RunScheduledJob.xml
+project=4D4457413A4D445741
+project-uid=31770127

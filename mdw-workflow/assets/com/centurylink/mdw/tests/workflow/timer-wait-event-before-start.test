@@ -1,0 +1,13 @@
+// timer-wait-event-before-start
+masterRequestId = System.currentTimeMillis();
+send message("REST") {
+    payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
+}
+sleep 30
+start process("MDWTestEmbedded") {
+    variables = [testCase: "correct-resume-on-hold"]
+}
+wait process {
+    timeout = 300
+}
+verify process

@@ -1,0 +1,4 @@
+// illustrates regular expressions in expected response
+send file("GetEmployeeRequest.xml")
+sleep 10
+verify process("com.centurylink.mdw.tests.services/FindEmployee")

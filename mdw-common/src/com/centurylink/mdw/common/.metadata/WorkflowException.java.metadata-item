@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852985
+item-spec=4D4457413A314B3737545A20574F524B464C4F57455843455054494F4E204A4156412D313933393231323130322E412D5352433B32
+file-version=2
+checksum=0766cff2f36bd5e5c372a5a6f81b2f4a
+fetch-size=812
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/WorkflowException.java
+project=4D4457413A4D445741
+project-uid=31770127

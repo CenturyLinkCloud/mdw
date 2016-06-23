@@ -1,0 +1,115 @@
+process: # 13681
+  name: LdapAdapter
+  instance: 1
+  activity: # 4 "2016-02-22 18:11:09"
+    name: Start
+    status: Completed
+  activity: # 1 "2016-02-22 18:11:09"
+    name: |
+      LDAP Adapter
+      Single Result
+    status: Completed
+  activity: # 6 "2016-02-22 18:11:09"
+    name: Wait 10s
+    status: Completed
+  activity: # 3 "2016-02-22 18:11:39"
+    name: |
+      LDAP Adapter
+      Multiple Results
+    status: Completed
+  activity: # 8 "2016-02-22 18:11:39"
+    name: |
+      10 More
+      Seconds
+    status: Completed
+  activity: # 9 "2016-02-22 18:12:09"
+    name: |
+      LDAP Adapter
+      Document Binding
+    status: Completed    
+  activity: # 7 "2016-02-22 18:11:39"
+    name: Sync
+    status: Completed
+  variable: # 20744
+    name: cuid
+    value: dxoakes
+  variable: # 20744
+    name: department
+    value: OSS_IVR_CONVERSION_DEV
+  variable: # 20744
+    name: emailAddress
+    value: Donald.Oakes@CenturyLink.com
+  variable: # 20744
+    name: lastName
+    value: Oakes
+  variable: # 20746
+    name: lastNameInput
+    value: Oakes
+  variable: # 20747
+    name: matchingCuids
+    value: dxoakes~ab14788
+  variable: # 20748
+    name: matchingMnetIds
+    value: 420104~320853
+  variable: # 20745
+    name: mnetId
+    value: 420104
+  variable: # 20745
+    name: sapId
+    value: DHO115360
+  variable: # 20745
+    name: sapIdInput
+    value: DHO115360    
+  variable: # 20745
+    name: state
+    value: CO
+  variable: # 20745
+    name: userDocument
+    value: |
+      <user:user xmlns:user="http://mdw.centurylink.com/user">
+        <user:firstName>Donald</user:firstName>
+        <user:lastName>Oakes</user:lastName>
+        <user:cuid>dxoakes</user:cuid>
+        <user:sapId>DHO115360</user:sapId>
+        <user:mnetId>420104</user:mnetId>
+        <user:attributes>
+          <user:attribute name="uid">dxoakes</user:attribute>
+          <user:attribute name="legacycompany">Q</user:attribute>
+          <user:attribute name="manager">uid=ibortot,ou=People,dc=mnet,dc=qintra,dc=com</user:attribute>
+          <user:attribute name="street">700 W MINERAL AVE</user:attribute>
+          <user:attribute name="nationname">United States</user:attribute>
+          <user:attribute name="givenName">Donald</user:attribute>
+          <user:attribute name="saploginid">DHO115360</user:attribute>
+          <user:attribute name="nationnumber">USA</user:attribute>
+          <user:attribute name="title">SR LEAD SOFTWARE DEVELOPER</user:attribute>
+          <user:attribute name="roomNumber">COQ184SD00E20.10</user:attribute>
+          <user:attribute name="postalCode">80120</user:attribute>
+          <user:attribute name="initials">H</user:attribute>
+          <user:attribute name="sAMAccountName">dxoakes</user:attribute>
+          <user:attribute name="costcenter">T6009533</user:attribute>
+          <user:attribute name="mnetid">420104</user:attribute>
+          <user:attribute name="st">CO</user:attribute>
+          <user:attribute name="employeeType">Management</user:attribute>
+          <user:attribute name="mail">Donald.Oakes@CenturyLink.com</user:attribute>
+          <user:attribute name="tier1">INFORMATION TECHNOLOGIES (IT)</user:attribute>
+          <user:attribute name="sn">Oakes</user:attribute>
+          <user:attribute name="companynumber">T600</user:attribute>
+          <user:attribute name="imapmailserver">qtdenexmbm23</user:attribute>
+          <user:attribute name="l">LITTLETON</user:attribute>
+          <user:attribute name="objectClass">top</user:attribute>
+          <user:attribute name="departmentname">OSS_IVR_CONVERSION_DEV</user:attribute>
+          <user:attribute name="companyname">QWEST CORPORATION</user:attribute>
+          <user:attribute name="acf2">DXOAKES</user:attribute>
+          <user:attribute name="docshareaccess">TRUE</user:attribute>
+          <user:attribute name="departmentNumber">31.8.3.1</user:attribute>
+          <user:attribute name="cn">Donald Oakes</user:attribute>
+          <user:attribute name="telephoneNumber">+13039929747</user:attribute>
+          <user:attribute name="tier2">OSS_DEVELOPMENT</user:attribute>
+          <user:attribute name="displayName">Oakes, Donald H</user:attribute>
+          <user:attribute name="employeeNumber">00115360</user:attribute>
+          <user:attribute name="tier3">OSS_FULFILLMENT</user:attribute>
+          <user:attribute name="joblevel">5</user:attribute>
+          <user:attribute name="preferredname">Donald</user:attribute>
+          <user:attribute name="mobile">+13036706952</user:attribute>
+        </user:attributes>
+      </user:user>    

@@ -1,0 +1,153 @@
+<html>
+<head>
+<title>Notification Activities</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Notification Activities</h1>
+
+A Notification Activity is used in a process definition at locations where you want to send a notice to interested parties.
+Currently only e-mail notification is supported, but it is envisioned that in the future other types of notices will be available (such as pager, text message and desktop notification).
+<br/>
+<h3>E-Mail Templates</h3>
+E-Mail templates can reside in the database as <a href="workflowAssets.html">MDW workflow assets</a>, or on the file system in a classpath-accessible location.
+Two separate formats are supported for creating e-mail templates: simple HTML templates, and more sophisticated Facelets templates.
+
+<h4>HTML Templates</h4> 
+HTML templates are parameterized HTML files that govern the format of your e-mail notices.
+A pre-built sample template comes with the MDW Baseline workflow package (mdwNotification.html).
+The parameterized values in a template are embedded using the MDW <a href="bindingExpressions.html">binding expressions</a> syntax.
+Using these parameters you can insert appropriate values, such as the Order Number, into both the e-mail body and the subject.
+
+<br/><br/>
+<h4>Facelet Templates</h4>
+For more complex requirements, such as iterating over a list of element values from an XML document variable, a Facelet-formatted template can be used.
+When you create a template artifact in MDW Designer, you'll be given the option to select Facelet or HTML for the language.
+For templates loaded from the file system, the format is inferred based on the file extension (.html versus .xhtml).
+The framework provides the example Facelet template asset (mdwNotification.xhtml).
+In general the syntax for Facelet templates is similar to that for HTML templates, except that variable access takes the form #{paramValue}, and the whole range of JSF components is available to help build the e-mail content.
+The same built-in parameters are available as those listed above for HTML templates (via the TaskRunTimeContext managed bean in case of Task notification and ProcessRunTimeContext managed beans in case of Notification activity).
+<br/><br/>
+<h3>Examples</h3>
+<h4>Email Template </h4>
+	<pre>        Values for stringArrayVar:"#{variables.stringArrayVar[0]}"
+ &lt;ul type="square" style="padding:0px;margin-top:0px;"&gt;
+          &lt;ui:repeat value="#{variables.stringArrayVar}" var="stringVal"&gt;
+            &lt;li&gt;#{stringVal}&lt;/li&gt;
+          &lt;/ui:repeat&gt;
+ &lt;/ul&gt;</pre><br/><br/>
+<h4>Output</h4>
+ 	Values for stringArrayVar:&quot;String 1&quot;
+ <ul type="square" style="padding:0px;margin-top:0px;">
+            <li>String 1</li>
+            <li>String 2</li>
+	     </ul>      
+
+<h4>Email Template </h4>
+<pre>  Using a JSF component to iterate:
+&lt;t:dataTable value="#{variables.xmlBeanVar.actionRequest.action.parameterList}" var="actionParam" border="2" cellpadding="3"&gt;
+	&lt;h:column&gt;
+		&lt;f:facet name="header" &gt;
+			&lt;h:outputText value="Name"/&gt;
+		&lt;/f:facet&gt;    
+		&lt;h:outputText value="#{actionParam.name}"/&gt;
+	&lt;/h:column&gt;
+	&lt;h:column&gt;
+		&lt;f:facet name="header" &gt;
+			&lt;h:outputText value="Value"/&gt;
+		&lt;/f:facet&gt;    
+	&lt;h:outputText value="#{actionParam.stringValue}"/&gt;
+	&lt;/h:column&gt;
+&lt;/t:dataTable&gt;</pre>
+<h4>Output</h4> 
+	   Using a JSF component to iterate:
+<table border="2" cellpadding="3">
+<thead>
+<tr><th>Name</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>foregroundColor</td><td>black</td></tr>
+<tr><td>backgroundColor</td><td>white</td></tr></tbody></table>
+	 <br/><br/>Using a Map and Array types<br><table border="2" cellpadding="3">
+			<thead>
+				<tr>
+					<th>Variable Type</th>
+					<th>Value (This is a example of populating in <br>Dynamic Java method execute(Map<String,Object> variables)</th>
+					<th>Email Template Expression</th>
+					<th>Output</th>
+					
+					
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>java.lang.Object</td><td>Map<String, BAMField> mainMap = new HashMap<String, BAMField>();<br>
+            variables.put("mainMap",mainMap);
+        <br>BAMField aqcbNumber = new BAMField();
+        <br>aqcbNumber.setName("AQCBNumber");
+        <br>aqcbNumber.setValue("ABCD1234");
+        </td>
+					<td>#{mainMap['aqcbNumber'].value}</td>
+					<td>ABCD1234</td>
+					
+					
+				</tr>
+				<tr>
+					<td>java.lang.Object</td><td>List<BAMField> mainList = new ArrayList<BAMField>();</BAMField></BAMField><br>mainMap.put("aqcbNumber", aqcbNumber);
+        <br>variables.put("mainList",mainList);
+        <br>mainList.add(aqcbNumber);
+        <br>mainList.add(aqcbNumber);
+        </td>
+					<td>#{mainList[1].value}</td>
+					<td>ABCD1234</td>
+					
+					
+				</tr>
+				<tr>
+					<td>java.lang.Integer[]</td>
+					<td>Integer[] count = new Integer[2];
+        <br>count[0] = new Integer(0);
+        <br>count[1] = new Integer(1);
+        <br>variables.put("countArray",count);</td>
+					<td>#{countArray[1]}</td>
+					<td>1</td>
+					
+					
+				</tr>
+			</tbody>
+		</table> 
+<h3>Images</h3>
+You may also insert image attachments into your e-mail body by specifying the file name as follows: &lt;img src="${image:ctl.png}"/&gt;.
+This syntax is identical regardless of the template format.
+The image file referenced can come from the database in the form of a workflow asset, or from the file system via the application classpath.
+For images stored as workflow assets, the resource name should include a logical file extension (such as .gif, .png or .jpeg) to enable the notifier to infer a MIME type for the image.
+The advantage of inserting images as attachments is that this avoids the problem of e-mail clients which for security reasons refuse to display images referenced via external URLs. 
+
+<h3>Template Locations</h3>
+Templates can be loaded as workflow artifacts from the database or as files from the application classpath.
+Templates in the DB can be created in MDW Designer by clicking on a package in Process Explorer view and selecting New > Template and specifying the language as Facelet or HTML.
+DB templates support versioning, import/export, auth-control, and the other standard features for MDW design artifacts. 
+If you create the template this way, then you'll reference it by its name on the Notification Activity design tab.
+If you maintain your template on the file system, the customary location is in the deploy/config directory, but anyplace that is available on your runtime classpath will work.
+In this case you'll reference the template by its filename on the notification activity design tab.
+ 
+<br/><br/>
+<h3>Recipients</h3>
+Notification recipients are configured on the "Recipients" and "CC Recipients" tabs in Designer.  They can be designated by selecting MDW workgroups, by specifying 
+a process variable which holds the recipients, or a combination of both.  If a process variable is used, it can be of type java.lang.String or 
+java.lang.String[].  The string value(s) in the process variable may equate to CUIDs, e-mail addresses, or Workgroup names.  In general it is recommended that
+the variable always designate workgroup names rather than individuals, since these values may vary according to environment, and also because TaskManager
+provides a means for end-users to maintain their own workgroups via the Admin tab.
+
+<br/><br/>
+<h3>Attachments</h3>
+MDW provides the ability to upload attachments using TaskManager.  These attachments can be files in any arbitrary format, and they
+can be associated with either individual task instances or at the Master Request ID level.  Either type of attachment can be configured
+to accompany Notifications.  To designate which files should be attached to a notification, enter a filename pattern such as *.doc on the Design tab.
+Multiple attachment patterns can be specified by delimiting with the tilde character (~).  
+
+<br/><br/><br/>
+If you require customized behavior, you can extend EmailNotificationActivity and populate your own dynamic values for your template.
+<br/><br/>
+For a discussion of how to configure notifications based on task instance lifecycle events, see the topic <a href="taskNotices.html">Task Notices</a>. 
+</body>
+</html>

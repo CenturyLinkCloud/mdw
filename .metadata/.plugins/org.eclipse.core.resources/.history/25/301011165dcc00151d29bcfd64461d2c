@@ -1,0 +1,275 @@
+##### container service options
+# data source provider. MDW is the default choice.
+# If you specify other data sources, you must configure that in corresponding container
+#> MDW, WebLogic, JBoss, OSGi
+mdw.container.datasource_provider=OSGi
+# JMS provider. When you specify anything other than none (no JMS supported),
+# you must configure JMS queues properly.
+#> none, WebLogic, JBoss, ActiveMQ
+mdw.container.jms_provider=ActiveMQ
+# ActiveMQ Connector URL (not used in ServiceMix - see mdw-activemq.xml)
+#mdw.activemq.connector.url=tcp://localhost:62626
+#mdw.activemq.local.connector.url=vm://localhost?marshal=true
+# Broker Name (not used in ServiceMix - see mdw-activemq.xml)
+#mdw.activemq.broker.name=mdw-activemq
+# Spring connection factory (for connection pooling)
+#mdw.activemq.connection.factory=mdw-activemq
+# thread pool provider
+#> MDW, WebLogic
+mdw.container.threadpool_provider=MDW
+# messenger used for sending internal events to clustered servers.
+# The same_server option should only be used for single server (otherwise broadcast will
+# not work).
+# Default is jms when JMS provider is not none and http o/w
+#> http, jms, rmi, same_server
+mdw.container.messenger=jms
+##### database parameters.
+mdw.database.driver=oracle.jdbc.driver.OracleDriver
+mdw.database.url=jdbc:oracle:thin:@mdwdevdb.dev.qintra.com:1594:mdwdev
+mdw.database.username=mdwdemo
+mdw.database.password=mdwdemo
+mdw.database.poolsize=5
+mdw.database.poolMaxIdle=3
+mdw.database.connectionProperties=defaultRowPrefetch=200
+
+# log every query in log file named "mdwsqllog". The default value is "none"
+# this only works for MDW data source
+#> none, query, timing
+mdw.database.trace=timing
+
+# only set asset.location if you're using file-based (VCS) asset persistence
+mdw.asset.location=c:/workspaces/mdw55/mdw-workflow/assets
+# compatibility for inflight processes stored in db (leave off for pure-5.5)
+# mdw.asset.compatibility.datasource=MDWDataSource
+mdw.git.local.path=c:/workspaces/mdw55/mdw-workflow
+#mdw.git.remote.url=http://localhost/mdwdemo.git
+#mdw.git.branch=master
+
+# for ServiceMix/OSGi, this is a list of application-specific PIDs to load properties from
+# mdw.application.config.pids
+##### Hosts and ports for this and all clustered servers
+# a list of clustered servers in the form host1:port1,/host2:port2,host3:port3
+# If not set, derived as a list of one server which is this server
+mdw.server.list=localhost:8181
+##### logging, BAM and development environment options 
+# The logging level for MDW's SimpleLogger. Default is INFO
+#> INFO, WARN, DEBUG, MDW_DEBUG
+mdw.logging.level=INFO
+# The directory where other logging files reside. Default the directory where the server is started
+# A percentage sign is a place holder for server instance name
+mdw.logging.dir=data/log
+# The log file for MDW's SimpleLogger, which always append log entries to console,
+# and when this is property is specified, it also appends log entries to the file
+#% mdw.logging.file=data/log/mdw.log
+# Points to a directory where database resources can be loaded from files. This is
+# for development environment only, to override entries in database
+#% mdw.file.dir=e:/workspaces/mdw/deploy/database
+# Specify the engine URL of BAM (if set to 'log' then output goes to log file)
+# Note: this setting is environment-specific
+#
+# Set to true if using SSL
+mdw.bam.useSSL=false
+# Set to "wss" if SSL, "ws" if non-SSL 
+# Note, if using on a server, localhost should be replaced by the fully qualified host name
+mdw.bam.websocket=ws://localhost:9090/blvTopic
+# Note, this is used by BLV to call web services from client javascript.
+# For non SSL it should be something like (with fully qualified domain name)
+# mdw.bam.services.url=http://lxdenvmtc099.dev.qintra.com:20001/MDWHub
+# For SSL it should be something like  (with fully qualified domain name)
+# mdw.bam.services.url=https://lxdenvmtc099.dev.qintra.com:20001/MDWWeb
+mdw.bam.services.url=http://localhost:8181/MDWWeb
+# Used by BAM to send BAM messages to an external event
+mdw.bam.url=http://localhost:8181/MDWWeb
+# This is Order Service Repository URL from where you get Order Related information. 
+mdw.order.service.url=http://osrsmxtest.test.intranet:10001/MDWWeb
+# Name of realm to filter out BAM messages for BLV 
+mdw.bam.realm=mdw
+# Properties for BamToWebsocket.xml
+# keystore file
+mdw.bam.keyStore.file=etc/mdw.jks
+# keystore file password
+mdw.bam.keyStore.keyPassword=guest1
+# broker url
+mdw.bam.brokerURL=tcp://localhost:61616
+# fromuri for the BAM messages (should be the activemq topic)
+mdw.bam.route.fromuri=activemq:topic:blvTopic
+# touri for the BAM messages (should be the websocket)
+# for SSL websockets it should be similar to the below 
+# mdw.bam.route.touri=websocket://0.0.0.0:9999/blvTopic?sendToAll=true&sslContextParametersRef=#sslContextParameters
+# for non-SSL websockets, use the below
+mdw.bam.route.touri=websocket://0.0.0.0:9090/blvTopic?sendToAll=true
+##### Remote Task manager options
+# A boolean value indicating whether user authorization will
+# go through the remote task manager. Default is false.
+#> false, true
+#% mdw.taskmanager.remote.authorization=true
+# A boolean value indicating whether task summary is managed by
+# the remote task manager. Default is false.
+#> false, true
+#% mdw.taskmanager.remote.summary=true
+# A boolean value indicating whether task detail is managed by
+# the remote task manager. Default is false
+#> false, true
+#% mdw.taskmanager.remote.detail=false
+# Specify JNDI of remote task manager. This is required
+# when any of the above three flags is true.
+#% mdw.taskmanager.remote.jndi=
+# Specify the JMS queue name of remote task manager.
+# Default is "com.centurylink.mdw.workflow.external.event.controller.queue"
+#% mdw.taskmanager.remote.queuename=
+##### Tibco Bus acount and listener parameters
+# The account name for Tibco bus access
+mdw.bus.account=MIDD50
+# default bus URI for bus adaptors. An individual activity may override through
+# its attribute
+mdw.bus.uri=rvd://239.75.2.3:7523/denvzd.qwest.net:7523
+# The topic name of bus processor (listener) named "MDWBusProcessor"
+# Note: this setting is environment-specific.
+#mdw.listener.bus.MDWBusProcessor.topic=Q.*.ORDEH.MDW.dev
+# The URI name of bus processor (listener) named "MDWBusProcessor"
+#mdw.listener.bus.MDWBusProcessor.uri=rvd://239.75.2.3:7523/denvzd.qwest.net:7523
+# The bus processor class responding to the message (must implement com.centurylink.bus.responder.BusProcessor)
+# The default is com.centurylink.mdw.listener.tibco.MDWBusListener
+# and you do not need to specify it unless you would like to use your own
+#% mdw.listener.bus.MDWBusProcessor.busProcessor=com.centurylink.mdw.listener.tibco.MDWBusListener
+# The queue size of bus processor (listener) named "MDWBusProcessor".
+#mdw.listener.bus.MDWBusProcessor.queueSize=20
+# The minimum number of works for the bus processor (listener) named "MDWBusProcessor"
+# Default is 1.
+#% mdw.listener.bus.MDWBusProcessor.minWorker=
+# The maximum number of works for the bus processor (listener) named "MDWBusProcessor"
+# Default is 1.
+#% mdw.listener.bus.MDWBusProcessor.maxWorker=1
+# The DQ name of of the bus processor (listener) named "MDWBusProcessor".
+#mdw.listener.bus.MDWBusProcessor.dqName=LOCAL_ORDEH_MDW_dev
+#    <Property Name="mdw.listener.file.TestFileListener.ClassName">com.centurylink.mdw.listener.file.TestFileListener</Property> -->
+#     <Property Name="mdw.listener.file.TestFileListener.Directory">c:/tmp</Property> -->
+#     <Property Name="mdw.listener.file.TestFileListener.FilenamePattern">MDW_FILE_*_DATA.TXT</Property> -->
+#     <Property Name="mdw.listener.file.TestFileListener.IntervalMinutes">100</Property> -->
+##### Scheduled job (a.k.a. timer tasks)
+# cron spec - run every 3 hours
+# Scheduled job - process clean up.
+# mdw.timer.task.ProcessCleanup.TimerClass=com.centurylink.mdw.timer.cleanup.ProcessCleanup
+# run daily at 2:30 am
+# mdw.timer.task.ProcessCleanup.Schedule=30 2 * * ? *
+# Schedule job - email reader
+# mdw.timer.task.EmailReader.TimerClass=com.centurylink.mdw.timer.email.EMailReader
+# run every 5 min
+# mdw.timer.task.EmailReader.Schedule=0-59/5 * * * ? *
+
+# main MDW urls
+mdw.task.manager.url=http://localhost:8181/MDWTaskManagerWeb
+mdw.web.url=http://localhost:8181/MDWWeb
+mdw.services.url=http://localhost:8181/MDWWeb
+mdw.hub.url=http://localhost:8181/MDWHub
+mdw.reports.url=http://localhost:8181/MDWReports/reportsList.jsf
+
+# if runtimeEnv=dev then this sets the MDWHub user and bypasses authentication
+mdw.hub.user=dev
+
+##### Start up classes. These will be loaded in ascending order of the property names
+# The bus listener is not automatically turned on. Need to enable this option to initialize bus listener.
+# MDWFramework.StartupClasses-BusListenerRegistration=com.centurylink.mdw.listener.tibco.BusListenerRegistration
+# FileListenerRegistration initializes file system listeners as specified in ApplicationListeners.xml. 
+#% MDWFramework.StartupClasses-FileListenerRegistration=com.centurylink.mdw.listener.file.FileListenerRegistration
+# The MQ listener is not automatically turned on. Need to enable this option to initialize MQ Listener
+#% MDWFramework.StartupClasses-MQListenerRegistration=com.centurylink.mdw.listener.mq.MDWMQListenerRegistration
+
+##### The following are properties related to MDW task manager
+# The absolute file system location for storing Task Manager attachments.
+#      Note: this setting is environment-specific. -->
+MDWFramework.TaskManagerWeb-attachments.storage.location=Database
+# The base URL for downloading Task Manager attachments (usually points directly to managed server host:port).
+#      Note: this setting is environment-specific. -->
+MDWFramework.TaskManagerWeb-attachments.download.servlet.url=http://localhost:8181/MDWTaskManagerWeb/servlet/AttachmentDownloadServlet
+# The base URL for accessing workflow snapshot JPEG images (usually points directly to managed server host:port).
+# If not set, derive as http://first_managed_server_hostport/designer_context_root/servlet/imageServlet
+#        Note: this setting is environment-specific. -->
+MDWFramework.TaskManagerWeb-workflow.snapshot.image.url=http://localhost:8181/MDWWeb/servlet/imageServlet
+# Controls whether exception stack trace and other error details are visible when UI errors are encountered. -->
+#> true, false
+MDWFramework.TaskManagerWeb-render.error.details=true
+# The FROM address shown in Task Manager e-mail notifications.
+MDWFramework.TaskManagerWeb-task.notice.email.from.address=mdw@centurylink.com
+# Timeout value for JMS message to create task instance (General Manual Task)
+MDWFramework.TaskManagerWeb-task.create.jms.timeout=60
+
+##### The following are properties related to work flow engine
+# Specifies a notify delay (in seconds) to avoid a race condition for internal event handlers.
+MDWFramework.WorkflowEngine-ActivityResumeDelay=2
+# If true, then stack trace information will be recorded with activity status messages when an error is encountered.
+#> true, false
+MDWFramework.WorkflowEngine-ActivityStatusMessage.ShowStackTrace=true
+
+##### The following properties are about the application in general
+# The workflow application name.
+MDWFramework.ApplicationDetails-ApplicationName=MDWFramework
+# The Master Application List name for the workflow app
+MDWFramework.ApplicationDetails-MALApplicationAcronym=MDWFramework
+# Specifies the directory where application config files reside (can be relative).
+MDWFramework.ApplicationDetails-ConfigDir=etc
+# Specifies the runtime directory where application temporary files reside (can be relative).
+MDWFramework.ApplicationDetails-TempDir=mdw/.temp
+
+##### The following properties are for LDAP (direct usage, not through CT API)
+# The LDAP host used for LDAP Library authentication, and by the LDAP adapter activity.
+#         Note: this setting is environment-specific.
+LDAP-Host=ldapt.dev.qintra.com
+# The LDAP port used for LDAP Library authentication, and by the LDAP adapter activity.
+LDAP-Port=1636
+# The LDAP base DN. -->
+LDAP-BaseDN=dc=mnet,dc=qintra,dc=com
+# The application LDAP username.
+LDAP-AppCUID=mdwapp
+# The application LDAP password.
+LDAP-AppPassword=ldap_012
+
+##### The following properties are for process cleanup
+MDWFramework.ProcessCleanup-ProcessExpirationAgeInDays=180
+MDWFramework.ProcessCleanup-ExternalEventExpirationAgeInDays=180
+MDWFramework.ProcessCleanup-MaximumProcessExpiration=10000
+MDWFramework.ProcessCleanup-CommitInterval=10000
+MDWFramework.ProcessCleanup-RuntimeCleanupScript=Cleanup-Runtime.sql
+
+##### The following properties are for script executers to be used
+MDWFramework.ScriptExecutors-Groovy=com.centurylink.mdw.script.GroovyExecutor
+MDWFramework.ScriptExecutors-JavaScript=com.centurylink.mdw.script.JavaScriptExecutor
+
+##### The following properties are for email notification
+# SMTP Host for E-Mail Notifications.
+MDWFramework.JavaMail-smtpHost=mailgate.uswc.uswest.com
+# SMTP Port for E-Mail Notifications.
+MDWFramework.JavaMail-smtpPort=25
+# SMTP Connection Timeout.
+MDWFramework.JavaMail-connectionTimeout=10000
+# SMTP Transport Timeout.
+MDWFramework.JavaMail-smtpTimeout=10000
+
+mdw.listener.email.MDWAPPReader.host=qtdenexmbm22.AD.QINTRA.COM
+mdw.listener.email.MDWAPPReader.username=mdwsupt
+mdw.listener.email.MDWAPPReader.password=ldap_123
+mdw.listener.email.MDWAPPReader.deleteEmail=false
+
+# filepanel properties
+mdw.filepanel.root.dirs=./data/log,/tmp/argos/log,~/.argos/log,./mdw/.temp
+mdw.filepanel.config.dirs=./etc,./deploy
+mdw.filepanel.masked.lines=mdw.database.password=,LDAP-AppPassword=
+mdw.filepanel.binary.patterns=*.zip,*.gz,*.gif,*.jpg,*.png,*.jks
+
+# MDWHub
+# rendering engine for custom pages: HTML5, Compatibility
+mdw.default.rendering.engine=HTML5
+#mdw.default.rendering.engine=Compatibility
+
+# Business Live View
+# TODO make topic name more unique (eg: com.centurylink.mdw.blv)
+mdw.blv.topic.name=blvTopic
+
+# Artis
+mdw.artis.key=ArtisMDW
+mdw.artis.config.location=etc/artis.properties
+mdw.artis.forceall=false
+mdw.artis.forceallwithconfig=false
+
+# Dynamic Java JSF Annotations (default = true)
+mdw.taskmgr.dynamic.java.jsf.annotations=false

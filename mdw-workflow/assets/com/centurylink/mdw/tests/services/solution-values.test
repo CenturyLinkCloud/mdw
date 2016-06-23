@@ -1,0 +1,114 @@
+// solution-values
+import groovy.json.JsonSlurper
+import org.json.JSONObject
+import org.json.JSONArray
+import com.centurylink.mdw.common.utilities.JsonUtil
+import com.centurylink.mdw.model.value.project.Solution
+
+def id1 = 'sol-' + masterRequestId + '_1'
+def name1 = 'Test: ' + id1
+def solution1 = new Solution(id1, name1)
+def id2 = 'sol-' + masterRequestId + '_2'
+def name2= 'Test: ' + id2
+def solution2 = new Solution(id2, name2)
+solution1.description = solution2.description = 'Solution for automated test'
+solution1.ownerType = solution2.ownerType = 'USER'
+solution1.ownerId = solution2.ownerId = 'dxoakes'
+
+// create solutions
+def response = post http("services/Solutions/${id1}") {
+    user  = 'mdwapp'
+    password = 'ldap_012' 
+    payload = solution1.getJson().toString(2)
+}
+assert new JsonSlurper().parseText(response.content).status.code == 0
+response = post http("services/Solutions/${id2}") {
+    user  = 'mdwapp'
+    password = 'ldap_012' 
+    payload = solution2.getJson().toString(2)
+}
+assert new JsonSlurper().parseText(response.content).status.code == 0
+
+// confirm solutions
+response = get http("services/Solutions/${id1}")
+assert response.code == 200
+assert new Solution(new JSONObject(response.content)).getId() == id1
+response = get http("services/Solutions/${id2}")
+assert response.code == 200
+assert new Solution(new JSONObject(response.content)).getId() == id2
+
+// add some values
+def valName1 = 'testVal1_' + masterRequestId
+def valName2 = 'testVal2_' + masterRequestId
+def values = [:]
+values[valName1] = id1
+values[valName2] = 'something_' + id1
+response = post http("services/Values/SOLUTION/${id1}") {
+    user  = 'mdwapp'
+    password = 'ldap_012'
+    payload = JsonUtil.getJson(values)
+}
+values = [:]
+values[valName1] = id2
+values[valName2] = 'somethingElse_' + id2
+response = put http("services/Values/SOLUTION/${id2}") {
+    user  = 'mdwapp'
+    password = 'ldap_012'
+    payload = JsonUtil.getJson(values)
+}
+
+// find solutions based on values
+def contains(jsonArray, value) {
+    for (def i = 0; i < jsonArray.length(); i++) {
+        if (jsonArray.getString(i).equals(value))
+          return true;
+    }
+    return false;
+}
+// by name
+response = get http("services/ValueHolders/${valName1}")
+assert response.code == 200
+assert contains(new JSONArray(response.content), id1)
+assert contains(new JSONArray(response.content), id2)
+// by name and value
+response = get http("services/ValueHolders/${valName1}/${id1}")
+assert response.code == 200
+assert contains(new JSONArray(response.content), id1)
+assert !contains(new JSONArray(response.content), id2)
+// by name, value and ownerType
+response = get http("services/ValueHolders/${valName1}/${id1}?holderType=SOLUTION")
+assert response.code == 200
+assert contains(new JSONArray(response.content), id1)
+assert !contains(new JSONArray(response.content), id2)
+// by name and value wildcard
+response = get http("services/ValueHolders/${valName2}/something*")
+assert response.code == 200
+assert contains(new JSONArray(response.content), id1)
+assert contains(new JSONArray(response.content), id2)
+response = get http("services/ValueHolders/${valName2}/somethingElse*")
+assert response.code == 200
+assert !contains(new JSONArray(response.content), id1)
+assert contains(new JSONArray(response.content), id2)
+
+// cleanup
+response = delete http("services/Solutions/${id1}") {
+    user  = 'mdwapp'
+    password = 'ldap_012'
+}
+assert new JsonSlurper().parseText(response.content).status.code == 0
+response = delete http("services/Solutions/${id2}") {
+    user  = 'mdwapp'
+    password = 'ldap_012'
+}
+assert new JsonSlurper().parseText(response.content).status.code == 0
+
+// confirm cleanup
+response = get http("services/Solutions/${id1}")
+assert response.code == 404
+response = get http("services/Values/SOLUTION/${id1}")
+assert response.content == '{}'
+response = get http("services/Solutions/${id2}")
+assert response.code == 404
+response = get http("services/Values/SOLUTION/${id2}")
+assert response.content == '{}'
+

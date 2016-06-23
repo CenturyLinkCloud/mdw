@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853168
+item-spec=4D4457413A314B3737545A205245534F5552434552455155455354204A4156412D3334353234343039342E412D5352433B32
+file-version=2
+checksum=f5c1536529d6b9311143b45913c343fa
+fetch-size=1661
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/service/types/ResourceRequest.java
+project=4D4457413A4D445741
+project-uid=31770127

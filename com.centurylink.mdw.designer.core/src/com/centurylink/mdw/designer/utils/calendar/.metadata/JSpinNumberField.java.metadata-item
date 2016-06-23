@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46850930
+item-spec=4D4457413A314B38435744204A5350494E4E554D4245524649454C44204A4156412D313633313939303338342E412D5352433B33
+file-version=3
+checksum=0b380e35a84c2ee4d00c6b5fb6f1bca4
+fetch-size=4319
+mtime=1393988749
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/utils/calendar/JSpinNumberField.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

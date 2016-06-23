@@ -1,0 +1,148 @@
+// Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
+'use strict';
+
+var routesSvc = angular.module('routes', []);
+
+routesSvc.factory('routes', function() {
+  return {
+    def: [
+      {
+        path: '/users', 
+        templateUrl: 'users/users.html',
+        controller: 'UsersController'
+      },
+      {
+        path: '/users/:userId',
+        templateUrl: 'users/user.html',
+        controller: 'UserController'
+      },
+      {
+        path: '/groups',
+        templateUrl: 'groups/groups.html',
+        controller: 'GroupsController'
+      },
+      {
+        path: '/groups/:groupName',
+        templateUrl: 'groups/group.html',
+        controller: 'GroupController'
+      },
+      {
+        path: '/roles',
+        templateUrl: 'roles/roles.html',
+        controller: 'RolesController'
+      },
+      {
+        path: '/roles/:roleName',
+        templateUrl: 'roles/role.html',
+        controller: 'RoleController'
+      },
+      {
+        path: '/packages',
+        templateUrl: 'assets/packages.html',
+        controller: 'PackagesController'
+      },
+      {
+        path: '/assets/import',
+        templateUrl: 'assets/gitImport.html',
+        controller: 'PackagesController'
+      },
+      {
+        path: '/packages/:packageName',
+        templateUrl: 'assets/package.html',
+        controller: 'PackageController'
+      },    
+      {
+        path: '/asset/:packageName/:assetName',
+        templateUrl: 'assets/asset.html',
+        controller: 'AssetController'
+      },
+      {
+        path: '/tasks/:taskInstanceId',
+        templateUrl: 'tasks/task.html',
+        controller: 'TaskController'
+      },
+      {
+        path: '/tasks/:taskInstanceId/notes',
+        templateUrl: 'tasks/taskNotes.html',
+        controller: 'TaskNotesController'
+      },
+      {
+        path: '/tasks/:taskInstanceId/attachments',
+        templateUrl: 'tasks/taskAttachments.html',
+        controller: 'TaskAttachmentsController'
+      },
+      {
+        path: '/tasks/:taskInstanceId/history',
+        templateUrl: 'tasks/taskHistory.html',
+        controller: 'TaskHistoryController'
+      },
+      {
+        path: '/taskTemplates',
+        templateUrl: 'taskTemplates/templates.html',
+        controller: 'TasksController'
+      },
+      {
+        path: '/taskTemplates/:taskName',
+        templateUrl: 'taskTemplates/tasktabs.html',
+        controller: 'TaskController'
+      },
+      {
+        path: '/tests',
+        templateUrl: 'testing/tests.html',
+        controller: 'TestsController'
+      },
+      {
+        path: '/tests/:testCaseName',
+        templateUrl: 'testing/test.html',
+        controller: 'TestController'
+      },      
+      {
+        path: '/history',
+        templateUrl: 'history/history.html',
+        controller: 'HistoryController'
+      },
+      {
+        path: '/dashboard',
+        templateUrl: 'dashboard/main.html'
+      },
+      {
+        path: '/masterRequests',
+        templateUrl: 'masterRequests/requests.html',
+        controller: 'RequestsController'
+      },
+      {
+        path: '/masterRequests/:requestId',
+        templateUrl: 'masterRequests/request.html',
+        controller: 'RequestController'
+      },      
+      {
+        path: '/orders',
+        templateUrl: 'masterRequests/todo.html'
+      },
+      {
+        path: '/workflow',
+        templateUrl: 'masterRequests/todo.html'
+      },      
+      {
+        path: '/serviceRequests',
+        templateUrl: 'serviceRequests/requests.html',
+        controller: 'RequestsController'
+      },
+      {
+        path: '/serviceRequests/:requestId',
+        templateUrl: 'serviceRequests/request.html',
+        controller: 'RequestController'
+      },
+      {
+        path: '/solutions',
+        templateUrl: 'solutions/solutions.html',
+        controller: 'SolutionsController'        
+      },
+      {
+        path: '/solutions/:solutionId',
+        templateUrl: 'solutions/solution.html',
+        controller: 'SolutionController'
+      }
+   ]
+  };
+});

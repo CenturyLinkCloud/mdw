@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65568336
+item-spec=4D4457413A314B3737545A2054454D504C4154454341434845204A4156412D2D313131333430353937312E412D5352433B39
+file-version=9
+checksum=744ef6f556d3bab38d16b37871a8a36f
+fetch-size=5149
+mtime=1446567880
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/cache/impl/TemplateCache.java
+project=4D4457413A4D445741
+project-uid=31770127

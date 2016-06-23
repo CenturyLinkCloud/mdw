@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62508253
+item-spec=4D4457413A314B3737545A20414354494F4E52455155455354204A4156412D313734313832393233583536343458302E412D5352433B33
+file-version=3
+checksum=112c5c1a0537d792a06106e60ab27cb9
+fetch-size=2616
+mtime=1436542232
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/service/ActionRequest.java
+project=4D4457413A4D445741
+project-uid=31770127

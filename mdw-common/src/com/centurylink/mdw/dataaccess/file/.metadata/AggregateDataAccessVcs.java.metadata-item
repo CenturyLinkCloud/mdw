@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71531719
+item-spec=4D4457413A314B3737545A2041474752454741544544415441414343455353564353204A4156412D32303138313037373658323238343658302E412D5352433B3230
+file-version=20
+checksum=60d1402d0eb06103197cc082d93ec9a6
+fetch-size=32859
+mtime=1466101312
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/dataaccess/file/AggregateDataAccessVcs.java
+project=4D4457413A4D445741
+project-uid=31770127

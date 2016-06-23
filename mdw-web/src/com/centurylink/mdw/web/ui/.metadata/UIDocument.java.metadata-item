@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50496656
+item-spec=4D4457413A314B374B524A205549444F43554D454E54204A4156412D3732303031303431342E412D5352433B34
+file-version=4
+checksum=82daef5e54a80b3c51f6f2dd48afa0c9
+fetch-size=10015
+mtime=1410393111
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/ui/UIDocument.java
+project=4D4457413A4D445741
+project-uid=31770127

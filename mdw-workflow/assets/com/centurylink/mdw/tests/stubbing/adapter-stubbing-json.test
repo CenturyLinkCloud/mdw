@@ -1,0 +1,18 @@
+// activity-stubbing-json
+assert stubbing
+
+// json stub for "employee" object
+def jsonMatcher = { Object request ->
+    def result = new groovy.json.JsonSlurper().parseText(request);
+    return result.employee != null && result.employee.id == "dxoakes"
+}
+
+stub adapter(jsonMatcher) {
+    delay = 5
+    response = asset("employeeResponse.json").text
+}
+start process("TestAdapterStub") {
+    variables = [request: asset("employeeRequest.json").text]
+}
+wait process
+verify process

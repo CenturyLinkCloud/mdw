@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65252431
+item-spec=4D4457413A314B37435A3020555345525345525649434553204A4156412D2D313732333933363437322E412D5352433B3134
+file-version=14
+checksum=7bace1e7c4ddc1e95a24a9d45f7ae179
+fetch-size=2433
+mtime=1444882679
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/UserServices.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68515504
+item-spec=4D4457413A314B374B524A204D445742415345204A4156412D3334333233353832312E412D5352433B35
+file-version=5
+checksum=56c0fe37f2f5c0cef88c344373f699c4
+fetch-size=12053
+mtime=1456270900
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/ui/MDWBase.java
+project=4D4457413A4D445741
+project-uid=31770127

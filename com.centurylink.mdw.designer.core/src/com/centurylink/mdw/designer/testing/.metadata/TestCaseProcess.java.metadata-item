@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67581065
+item-spec=4D4457413A314B3848384C20544553544341534550524F43455353204A4156412D2D313732303135373139342E412D5352433B39
+file-version=9
+checksum=d0872fe2567247a8870623a559a51a04
+fetch-size=2742
+mtime=1453419175
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/testing/TestCaseProcess.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

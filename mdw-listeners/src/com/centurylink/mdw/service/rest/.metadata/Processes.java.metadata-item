@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71479242
+item-spec=4D4457413A314B374647352050524F434553534553204A4156412D32303133313534313858323035393758302E412D5352433B38
+file-version=8
+checksum=4bf1d5494df344d468d04e851b4af2e0
+fetch-size=5950
+mtime=1465952996
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/rest/Processes.java
+project=4D4457413A4D445741
+project-uid=31770127

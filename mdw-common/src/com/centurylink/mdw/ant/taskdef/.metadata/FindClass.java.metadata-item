@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853057
+item-spec=4D4457413A314B3737545A2046494E44434C415353204A4156412D3932343034343035352E412D5352433B33
+file-version=3
+checksum=e8f499e5dfa117e2ecff601e327b0b5a
+fetch-size=1102
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/ant/taskdef/FindClass.java
+project=4D4457413A4D445741
+project-uid=31770127

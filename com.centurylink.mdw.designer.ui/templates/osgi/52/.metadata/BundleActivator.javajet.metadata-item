@@ -1,0 +1,13 @@
+version=10.2
+item-uid=45091545
+item-spec=4D4457413A314B3848384C2042554E444C45414354495641544F52204A4156414A45542D2D3933383538313133372E412D4441543B31
+file-version=1
+checksum=e4d641e3fad924c05c390f841fcd63c0
+fetch-size=1209
+mtime=1391129358
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=templates/osgi/52/BundleActivator.javajet
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

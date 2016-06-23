@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854669
+item-spec=4D4457413A314B37435A30205354554248454C504552204A4156412D3732373230363239362E412D5352433B32
+file-version=2
+checksum=d5e618f924627d32b9c79e1fdb6191a4
+fetch-size=1925
+mtime=1393990151
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/event/StubHelper.java
+project=4D4457413A4D445741
+project-uid=31770127

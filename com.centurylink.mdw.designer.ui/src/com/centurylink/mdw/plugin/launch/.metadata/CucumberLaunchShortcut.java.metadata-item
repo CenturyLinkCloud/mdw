@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68101334
+item-spec=4D4457413A314B3848384C20435543554D424552544553544C41554E434853484F5254435554204A4156412D31393234313338353258313338353158382E412D5352433B34
+file-version=4
+checksum=955e46b844b765fa4c9fcf33cb6e2da8
+fetch-size=6371
+mtime=1455212092
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/launch/CucumberLaunchShortcut.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

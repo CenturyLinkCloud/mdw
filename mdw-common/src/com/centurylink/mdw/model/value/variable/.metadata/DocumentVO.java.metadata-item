@@ -1,0 +1,13 @@
+version=10.2
+item-uid=54500756
+item-spec=4D4457413A314B3737545A20444F43554D454E54564F204A4156412D3730353935323530362E412D5352433B35
+file-version=5
+checksum=7d5ca65ca3c9370d4b7f9bcda774faa4
+fetch-size=4186
+mtime=1425406010
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/variable/DocumentVO.java
+project=4D4457413A4D445741
+project-uid=31770127

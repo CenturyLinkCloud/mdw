@@ -1,0 +1,207 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.services.task.factory;
+
+import com.centurylink.mdw.common.ApplicationContext;
+import com.centurylink.mdw.common.cache.impl.PackageVOCache;
+import com.centurylink.mdw.common.exception.StrategyException;
+import com.centurylink.mdw.common.service.RegisteredService;
+import com.centurylink.mdw.common.task.TaskServiceRegistry;
+import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.value.process.ProcessVO;
+import com.centurylink.mdw.observer.task.AutoAssignStrategy;
+import com.centurylink.mdw.observer.task.PrioritizationStrategy;
+import com.centurylink.mdw.observer.task.RoutingStrategy;
+import com.centurylink.mdw.observer.task.SubTaskStrategy;
+import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.ServiceLocator;
+
+public class TaskInstanceStrategyFactory {
+
+    public static final String STRATEGY_IMPL_PACKAGE = "com.centurylink.mdw.workflow.task.strategy";
+
+    public enum StrategyType {
+        AutoAssignStrategy,
+        RoutingStrategy,
+        PrioritizationStrategy,
+        SubTaskStrategy
+    }
+
+    private static TaskInstanceStrategyFactory factoryInstance;
+    public static TaskInstanceStrategyFactory getInstance() {
+        if (factoryInstance == null)
+            factoryInstance = new TaskInstanceStrategyFactory();
+        return factoryInstance;
+    }
+
+    /**
+     * Returns a workgroup routing strategy instance based on an attribute value
+     * which can consist of either the routing strategy logical name, or an xml document.
+     * @param attributeValue
+     * @return the routing strategy implementor instance
+     */
+    public static RoutingStrategy getRoutingStrategy(String attributeValue) throws StrategyException {
+        TaskInstanceStrategyFactory factory = getInstance();
+        String className = factory.getStrategyClassName(attributeValue, StrategyType.RoutingStrategy);
+        RoutingStrategy strategy = (RoutingStrategy) factory.getStrategyInstance(RoutingStrategy.class, className, null);
+        return strategy;
+    }
+
+    /**
+     *  Returns a workgroup routing strategy instance based on an attribute value and bundle spec
+     *  which can consist of either the routing strategy logical name, or an xml document.
+     * @param attributeValue
+     * @param processInstanceId
+     * @return
+     * @throws StrategyException
+     */
+    public static RoutingStrategy getRoutingStrategy(String attributeValue, Long processInstanceId) throws StrategyException {
+        PackageVO packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
+        TaskInstanceStrategyFactory factory = getInstance();
+        String className = factory.getStrategyClassName(attributeValue, StrategyType.RoutingStrategy);
+        RoutingStrategy strategy = (RoutingStrategy) factory.getStrategyInstance(RoutingStrategy.class, className, packageVO);
+        return strategy;
+    }
+
+    /**
+     * Returns a subtask strategy instance based on an attribute value
+     * which can consist of either the subtask strategy logical name, or an xml document.
+     * @param attributeValue
+     * @return the subtask strategy implementor instance
+     */
+    public static SubTaskStrategy getSubTaskStrategy(String attributeValue) throws StrategyException {
+        TaskInstanceStrategyFactory factory = getInstance();
+        String className = factory.getStrategyClassName(attributeValue, StrategyType.SubTaskStrategy);
+        SubTaskStrategy strategy = (SubTaskStrategy) factory.getStrategyInstance(SubTaskStrategy.class, className, null);
+        return strategy;
+    }
+
+    /**
+     * Returns a subtask strategy instance based on an attribute value and bundle spec
+     * which can consist of either the subtask strategy logical name, or an xml document.
+     * @param attributeValue
+     * @return the subtask strategy implementor instance
+     */
+    public static SubTaskStrategy getSubTaskStrategy(String attributeValue, Long processInstanceId) throws StrategyException {
+        PackageVO packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
+        TaskInstanceStrategyFactory factory = getInstance();
+        String className = factory.getStrategyClassName(attributeValue, StrategyType.SubTaskStrategy);
+        SubTaskStrategy strategy = (SubTaskStrategy) factory.getStrategyInstance(SubTaskStrategy.class, className, packageVO);
+        return strategy;
+    }
+
+    /**
+     * Returns a Prioritization routing strategy instance based on an attribute value
+     * which can consist of either the routing strategy logical name, or an xml document.
+     * @param attributeValue
+     * @return the Prioritization strategy implementor instance
+     */
+    public static PrioritizationStrategy getPrioritizationStrategy(String attributeValue) throws StrategyException {
+        TaskInstanceStrategyFactory factory = getInstance();
+        String className = factory.getStrategyClassName(attributeValue, StrategyType.PrioritizationStrategy);
+        PrioritizationStrategy strategy = (PrioritizationStrategy) factory.getStrategyInstance(PrioritizationStrategy.class, className, null);
+        return strategy;
+    }
+
+    /**
+     * Returns a Prioritization routing strategy instance based on an attribute value and bundle spec
+     * which can consist of either the routing strategy logical name, or an xml document.
+     * @param attributeValue
+     * @return the Prioritization strategy implementor instance
+     */
+    public static PrioritizationStrategy getPrioritizationStrategy(String attributeValue, Long processInstanceId) throws StrategyException {
+        PackageVO packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
+        TaskInstanceStrategyFactory factory = getInstance();
+        String className = factory.getStrategyClassName(attributeValue, StrategyType.PrioritizationStrategy);
+        PrioritizationStrategy strategy = (PrioritizationStrategy) factory.getStrategyInstance(PrioritizationStrategy.class, className, packageVO);
+        return strategy;
+    }
+
+   /**
+     * Returns an auto-assign strategy instance based on the logical name.
+     * @param logicalName
+     * @return the strategy implementor instance
+     */
+    public static AutoAssignStrategy getAutoAssignStrategy(String logicalName) throws StrategyException {
+        TaskInstanceStrategyFactory factory = getInstance();
+        String className = factory.getStrategyClassName(logicalName, StrategyType.AutoAssignStrategy);
+        return (AutoAssignStrategy) factory.getStrategyInstance(AutoAssignStrategy.class, className, null);
+    }
+
+    /**
+     * Returns an auto-assign strategy instance based on the logical name and bundle spec.
+     * @param logicalName
+     * @return the strategy implementor instance
+     */
+    public static AutoAssignStrategy getAutoAssignStrategy(String logicalName, Long processInstanceId) throws StrategyException {
+        PackageVO packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
+        TaskInstanceStrategyFactory factory = getInstance();
+        String className = factory.getStrategyClassName(logicalName, StrategyType.AutoAssignStrategy);
+        return (AutoAssignStrategy) factory.getStrategyInstance(AutoAssignStrategy.class, className, packageVO);
+    }
+
+    public Object getStrategyInstance(Class<? extends RegisteredService> strategyInterface, String strategyClassName, PackageVO packageVO) throws StrategyException {
+        try {
+            TaskServiceRegistry registry = TaskServiceRegistry.getInstance();
+            // cloud mode
+            Object strategy = registry.getDynamicStrategy(packageVO, strategyInterface, strategyClassName);
+            if (strategy == null) {
+                if (ApplicationContext.isOsgi()) {
+                    if (packageVO != null && packageVO.getBundleSpec() != null)
+                        strategy = registry.getStrategy(strategyInterface, strategyClassName, packageVO.getBundleSpec());
+                    if (strategy == null)
+                        strategy = registry.getStrategy(strategyInterface, strategyClassName); // For Compatibility
+                    if (strategy != null)  // Get new instance since OSGi service always returns same instance of class.
+                        strategy = strategy.getClass().newInstance();
+                }
+                else {
+                    strategy = packageVO.getClassLoader().loadClass(strategyClassName).newInstance();
+                }
+            }
+            return strategy;
+        }
+        catch (Exception ex) {
+            throw new StrategyException(ex.getMessage(), ex);
+        }
+    }
+
+    private String getStrategyClassName(String attrValue, StrategyType type) {
+        String logicalName;
+        if (isXml(attrValue)) {
+            logicalName = "something";  // TODO
+        }
+        else {
+            logicalName = attrValue;
+        }
+
+        if (logicalName.indexOf(".") > 0) {
+            return logicalName;  // full package specified (custom strategy)
+        }
+        else {
+            return STRATEGY_IMPL_PACKAGE + "." + logicalName.replaceAll(" ", "").replaceAll("-", "") + type.toString();
+        }
+    }
+
+    private boolean isXml(String attrValue) {
+        return attrValue.indexOf('<') >= 0 || attrValue.indexOf('>') >= 0;
+    }
+
+    /**
+     * Get Package
+     * @param processInstanceId
+     * @return
+     */
+    private static PackageVO getPackage(Long processInstanceId) {
+        try {
+            EventManager eventManager = ServiceLocator.getEventManager();
+            ProcessVO process = eventManager.findProcessByProcessInstanceId(processInstanceId);
+            PackageVO packageVO = PackageVOCache.getProcessPackage(process.getId());
+            return packageVO;
+        }
+        catch (Exception ex) {
+            return null;
+        }
+    }
+
+}

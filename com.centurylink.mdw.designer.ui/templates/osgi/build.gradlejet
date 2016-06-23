@@ -1,0 +1,142 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.project.model.* com.centurylink.mdw.plugin.preferences.model.*"
+        class="OsgiGradleBuildEmitter" %>
+<% Map map = (Map) argument;
+   WorkflowProject workflowProject = (WorkflowProject) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+apply plugin: "java"
+apply plugin: "osgi"
+    
+sourceCompatibility = 1.6
+version = "1.0.01"
+
+ext {
+    mdwVersion = "<%=workflowProject.getMdwVersion()%>"
+    osgiVersion = "4.2.0"
+    springVersion = "3.0.5.RELEASE"
+    serverInstanceDir = "<%=workflowProject.getServerSettings().getServerLocWithFwdSlashes()%>"
+}
+
+sourceSets {
+    main {
+        output.classesDir = "<%=workflowProject.getOsgiSettings().getOutputDir()%>"
+    }
+}
+    
+repositories {
+    maven {
+        url "http://archiva.corp.intranet/archiva/repository/development"
+    }
+    maven {
+        url "http://archiva.corp.intranet/archiva/repository/mdw"
+    }
+<%
+if (workflowProject.isSnapshotMdwVersion())
+{
+%>
+    maven {
+        url "http://archiva.corp.intranet/archiva/repository/snapshots"
+    }
+<%
+}
+%>
+}
+
+task copyMeta(type: Copy) {
+    from("src/main/resources") {
+        include "META-INF/mdw/**"
+        include "META-INF/spring/**"
+        exclude "META-INF/**/.metadata"
+        exclude "META-INF/**/.*ignore"
+    }
+    into sourceSets.main.output.classesDir
+}
+    
+processResources {
+    dependsOn copyMeta
+}
+
+dependencies {
+    compile group: "com.centurylink.mdw", name: "mdw-schemas", version: mdwVersion
+    compile group: "com.centurylink.mdw", name: "mdw-common", version: mdwVersion
+    compile group: "com.centurylink.mdw", name: "mdw-services", version: mdwVersion
+    compile group: "com.centurylink.mdw", name: "mdw-listeners", version: mdwVersion
+    compile group: "com.centurylink.mdw", name: "mdw-workflow", version: mdwVersion
+    compile group: "org.osgi", name: "org.osgi.core", version: osgiVersion
+    compile group: "org.osgi", name: "org.osgi.compendium", version: osgiVersion
+    compile group: "org.springframework", name: "spring-core", version: springVersion
+    compile group: "org.springframework", name: "spring-beans", version: springVersion
+    compile group: "org.springframework", name: "spring-context", version: springVersion
+    compile group: "org.springframework", name: "spring-aop", version: springVersion
+    compile group: "junit", name: "junit", version:"4.8.1"    
+}
+
+clean {
+    dependsOn cleanJar
+}
+
+task copyConfig(type: Copy) {
+    from sourceSets.main.resources
+    include "etc/*"
+    into "${serverInstanceDir}"
+}
+
+build {
+    dependsOn copyConfig
+}
+
+jar {
+    manifest {
+        classesDir = sourceSets.main.output.classesDir
+        symbolicName = "<%=workflowProject.getDefaultSourceCodePackage()%>"
+        instruction "Bundle-Activator",
+            "<%=workflowProject.getDefaultSourceCodePackage()%>.bundle.WorkflowBundleActivator"
+        instruction "Bundle-ClassPath",
+            ".",
+            "META-INF/mdw",
+            "lib/mdw-base-${mdwVersion}.jar"
+        instruction "Export-Package",
+            "!<%=workflowProject.getDefaultSourceCodePackage()%>.bundle",
+            "<%=workflowProject.getDefaultSourceCodePackage()%>.*"
+        instruction "Private-Package",
+            "<%=workflowProject.getDefaultSourceCodePackage()%>.bundle"
+        instruction "Import-Package",
+            "!com.centurylink.mdw.workflow.provider",
+            "!com.centurylink.mdw.listeners.provider",
+            "!com.centurylink.mdw.translator",
+            "com.centurylink.mdw.common.config.service",
+            "com.centurylink.mdw.common.provider",
+            "com.centurylink.mdw.jaxb",
+            "com.centurylink.mdw.java",
+            "com.centurylink.mdw.xml",
+            "com.centurylink.mdw.services.bam",
+            "com.centurylink.mdw.monitor",
+            "com.centurylink.mdw.activity.types",
+            "com.centurylink.mdw.event",
+            "com.centurylink.mdw.workflow.activity",
+            "com.centurylink.mdw.common.translator",
+            "com.centurylink.mdw.common.translator.impl",
+            "com.centurylink.mdw.common.exception",
+            "com.centurylink.mdw.model.value.activity",
+            "com.centurylink.mdw.bpm",
+            "com.centurylink.mdw.bpm.impl",
+            "com.centurylink.mdw.variable",
+            "org.apache.xmlbeans.impl.schema",
+            "org.apache.commons.codec.binary",
+            "org.springframework.beans.factory",
+            "noNamespace.impl",
+            "javax.tools",
+            "javax.xml.bind",
+            "javax.xml.bind.annotation.adapters",
+            "javax.xml.bind.attachment",
+            "javax.xml.validation",
+            "javax.xml.stream",
+            "javax.xml.transform",
+            "javax.xml.namespace",
+            "javax.xml.xpath",
+            "org.w3c.dom",
+            "org.xml.sax",
+            "*"
+        instruction "DynamicImport-Package",
+            "schemaorg_apache_xmlbeans.*"
+    }
+}

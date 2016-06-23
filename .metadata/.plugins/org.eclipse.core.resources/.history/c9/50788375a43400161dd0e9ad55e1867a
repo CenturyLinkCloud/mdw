@@ -1,0 +1,25 @@
+
+start process("com.centurylink.mdw.reports/CreatePromotions") {
+  variables = [messageSize: 200, name: "Everybody"]
+  
+    activityStubs = [
+    activity("A7") {
+        return "FB"
+    },
+    activity("A4") { // logical id for timer activity
+        return null // default transition
+    },
+    activity("A9") {  
+        // no need to return null for default transition
+    },
+    activity("A3") { 
+        // no need to return null for default transition
+    },
+    activity("A6") {  
+        // no need to return null for default transition
+    }]
+}
+wait process("com.centurylink.mdw.reports/CreatePromotions") {
+    timeout = 60
+}
+verify process

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852907
+item-spec=4D4457413A314B3737545A2050524F5045525459455843455054494F4E204A4156412D2D313136323131363134322E412D5352433B32
+file-version=2
+checksum=ad30f1284b2cfb16bd69648b1ec82471
+fetch-size=650
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/exception/PropertyException.java
+project=4D4457413A4D445741
+project-uid=31770127

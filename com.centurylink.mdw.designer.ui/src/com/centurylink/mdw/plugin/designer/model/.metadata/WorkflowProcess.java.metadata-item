@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68433735
+item-spec=4D4457413A314B3848384C2050524F4345535356455253494F4E204A4156412D2D313838313434303735362E412D5352433B3330
+file-version=30
+checksum=b6ef2b748946ba576c5edd6028e6ee0f
+fetch-size=25590
+mtime=1455816969
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/model/WorkflowProcess.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

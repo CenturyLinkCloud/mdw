@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855674
+item-spec=4D4457413A314B374B524A2054455854424F58204A4156412D2D3835373334323337322E412D5352433B32
+file-version=2
+checksum=dc7909c4487bbe2f404f7b0e39782aa4
+fetch-size=3162
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/dojo/components/TextBox.java
+project=4D4457413A4D445741
+project-uid=31770127

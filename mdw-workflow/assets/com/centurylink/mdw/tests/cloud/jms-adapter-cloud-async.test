@@ -1,0 +1,8 @@
+// jms-adapter-cloud-async
+start process("com.centurylink.mdw.tests.workflow/JMS Adapter") {
+  variables = [ platform: "Cloud",
+                mode: "Asynchronous",
+                request: "<hi>Async request</hi>" ]
+}
+wait process
+verify process

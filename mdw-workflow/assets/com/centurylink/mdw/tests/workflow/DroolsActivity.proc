@@ -1,0 +1,71 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="DroolsActivity" version="0.14" description="">
+    <bpm:Activity Id="A3" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=221,y=36,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A1" Name="Apply Order &#13;&#10;Routing" Implementation="com.centurylink.mdw.workflow.activity.rules.DroolsActivity">
+      <bpm:Attribute Name="Facts" Value="dueDate#region"/>
+      <bpm:Attribute Name="KnowledgeBase" Value="com.centurylink.mdw.tests.workflow/drools-orderRoutingDrool.drl"/>
+      <bpm:Attribute Name="KnowledgeBase_assetVersion" Value="[0.1,1)"/>
+      <bpm:Attribute Name="Logging" Value="TRUE"/>
+      <bpm:Attribute Name="Rules Language" Value="Drools"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="Stateful" Value="FALSE"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=203,y=123,w=100,h=69"/>
+      <bpm:Attribute Name="assetVersion" Value="[0.6,1)"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A4" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=52,y=296,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=405,y=295,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A3" To="A1" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=227,ly=95,type=Elbow,xs=251&amp;251,ys=80&amp;119"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="WESTERN" From="A1" To="A4" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=93,ly=232,type=Elbow,xs=199&amp;82,ys=157&amp;292"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="EASTERN" From="A1" To="A2" Event="FINISH" Id="T3">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=369,ly=234,type=Elbow,xs=307&amp;435,ys=157&amp;291"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="SLA" Value="0"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=39,y=33,w=128,h=27"/>
+    <bpm:Attribute Name="START_TRANSITION_ID" Value="2344974"/>
+    <bpm:Variables Name="billedPrice" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.Integer"/>
+    </bpm:Variables>
+    <bpm:Variables Name="dueDate" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.util.Date"/>
+    </bpm:Variables>
+    <bpm:Variables Name="orderNumber" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="quotedPrice" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.Integer"/>
+    </bpm:Variables>
+    <bpm:Variables Name="region" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="workgroup" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:TextNote Content="TODO: Custom attributes for VCS Assets" Reference="">
+      <bpm:Attribute Name="LOGICAL_ID" Value="N5"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=316,y=123,w=309,h=22"/>
+    </bpm:TextNote>
+  </bpm:Process>
+</bpm:processDefinition>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;task-values-service.test&apos; to &apos;mdw-workflow/assets/com.centurylink.mdw.tests.tasks&apos;&#x0D;&#x0A;- Original project: &apos;mdw-workflow&apos;&#x0D;&#x0A;- Destination element: &apos;mdw-workflow/assets/com.centurylink.mdw.tests.tasks&apos;&#x0D;&#x0A;- Original element: &apos;task-values-service.test&apos;" description="Copy file" destination="/assets&lt;com.centurylink.mdw.tests.tasks" element1="assets/com/centurylink/mdw/tests/tasks/task-values-service.test" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1460755173615" units="0" version="1.0"/>
+</session>

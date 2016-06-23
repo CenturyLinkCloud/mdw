@@ -1,0 +1,13 @@
+version=10.2
+item-uid=66950363
+item-spec=4D4457413A314B37464735205245535446554C5345525649434553534552564C4554204A4156412D2D313738363531363935302E412D5352433B34
+file-version=4
+checksum=f3d44b398e9a5730150d2107851e3b1d
+fetch-size=9962
+mtime=1449767514
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listener/rest/RestfulServicesServlet.java
+project=4D4457413A4D445741
+project-uid=31770127

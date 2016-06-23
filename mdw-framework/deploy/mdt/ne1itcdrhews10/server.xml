@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Server
+    port="12080"
+    shutdown="SHUTDOWN">
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  <Listener className="org.apache.catalina.core.JasperListener" />
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+    <Resource
+        name="UserDatabase"
+        auth="Container"
+        type="org.apache.catalina.UserDatabase"
+        description="User database that can be updated and saved"
+        factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+        pathname="conf/mdwews-dev1-users.xml" />
+  <Service
+        name="Catalina">
+    <Executor
+        name="tomcatThreadPool"
+        namePrefix="catalina-exec-"
+        minSpareThreads="10"
+        maxThreads="150"/>
+    <Connector
+        port="12081"
+        redirectPort="12083"
+        executor="tomcatThreadPool"
+        connectionTimeout="20000"
+        maxHttpHeaderSize="8192">
+    </Connector>
+    <Connector
+        protocol="org.apache.coyote.http11.Http11Protocol"
+        port="12083"
+        executor="tomcatThreadPool"
+        connectionTimeout="600000"
+        redirectPort="12083"
+        clientAuth="false"
+        SSLEnabled="true"
+        sslProtocol="TLS"
+        scheme="https"
+        secure="true"
+        keyAlias="ctl_dev"
+        keystoreFile="/foss/foss-ews/certs/foss.keystore"
+        keystorePass="fossspt"
+        maxHttpHeaderSize="8192">
+    </Connector>
+    <Connector
+        port="12082"
+        redirectPort="12083"
+        protocol="AJP/1.3"
+        executor="tomcatThreadPool"
+        emptySessionPath="true"
+        enableLookups="false"
+        connectionTimeout="600000">
+    </Connector>
+    <Engine
+        name="Catalina"
+        jvmRoute="${jvmRoute}"
+        defaultHost="localhost">
+      <Host
+        name="localhost"
+          appBase="/foss/foss-ews/instances/mdwews-dev1/current/CenturyLink/apps"
+          autoDeploy="false">
+        <Realm className="org.apache.catalina.realm.JAASRealm"
+          appName="cleartrust_login"
+          roleClassNames="com.qwest.appsec.CTRole"
+          useContextClassLoader="false"
+          userClassNames="com.qwest.appsec.CTUser"/>
+        <Valve
+          className="org.apache.catalina.valves.AccessLogValve"
+          directory="logs"
+          prefix="mdwews-dev1_access"
+          suffix=".log"
+          rotatable="false"
+          pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+      </Host>
+    </Engine>
+  </Service>
+</Server>    

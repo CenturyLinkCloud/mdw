@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+    <h:form id="tabsForm" onsubmit="hubLoading();">
+      <mdw:tabPanel
+        id="hubTabPanel"
+        styleClass="mdw_tabpanel"
+        tabClass="mdw_tab"
+        activeTabClass="mdw_tab_active"
+        inActiveTabClass="mdw_tab_inactive"
+        firstTabClass="mdw_tab_first"
+        lastTabClass="mdw_tab_last"
+        activeTabImage="/images/tab_sel.png"
+        activeTabImageClass="mdw_tab_active_image"
+        spacerImage="/images/tab_spacer.png"
+        tabChangeListener="com.centurylink.mdw.taskmgr.ui.NavigationTabChangeListener">
+      
+        <mdw:tab
+          id="myTasksTab"
+          rendered="#{taskListScopeActionController.adminUrl == null &amp;&amp; authenticatedUser.hasWorkgroups}"          
+          label="My Tasks"
+          action="#{taskListScopeActionController.goMyTasks}"
+          tabindex="1" />
+        <mdw:tab
+          id="workgroupTasksTab"
+          default="true"
+          rendered="#{taskListScopeActionController.adminUrl == null &amp;&amp; authenticatedUser.hasWorkgroupsOtherThanCommon}"          
+          label="Workload"
+          action="#{taskListScopeActionController.goWorkgroupTasks}"
+          tabindex="2" />        
+        <mdw:tabLink
+          id="tasksLink"
+          rendered="#{taskListScopeActionController.adminUrl != null}"
+          label="Tasks"
+          action="#{taskListScopeActionController.adminUrl}/#/tasks"
+          tabindex="3" />
+      
+        <mdw:tabLink
+          id="workflowLink"
+          rendered="#{taskListScopeActionController.adminUrl != null}"
+          label="Workflow"
+          action="#{taskListScopeActionController.adminUrl}/#/workflow/processes"
+          tabindex="3" />
+        <mdw:tab 
+          id="ordersTab"
+          rendered="#{taskListScopeActionController.adminUrl == null}"
+          rolesNeeded="Process Execution"
+          label="Orders" 
+          action="#{taskListScopeActionController.goOrders}"
+          tabindex="4" />
+        <mdw:tab
+          id="processesTab"
+          rendered="#{taskListScopeActionController.adminUrl == null}"
+          rolesNeeded="Process Execution"
+          label="Processes"
+          action="#{taskListScopeActionController.goProcesses}"
+          tabindex="5" />        
+
+        <mdw:tabLink
+          id="servicesLink"
+          rendered="#{taskListScopeActionController.adminUrl != null}"
+          label="Services"
+          action="#{taskListScopeActionController.adminUrl}/#/services"
+          tabindex="6" />
+
+        <mdw:tabLink
+          id="dashboardLink"
+          rendered="#{taskListScopeActionController.adminUrl != null}"
+          label="Dashboard"
+          action="#{taskListScopeActionController.adminUrl}/#/dashboard/processes"
+          tabindex="7" />
+        <mdw:tab
+          id="metricsTab"
+          rendered="#{taskListScopeActionController.adminUrl == null}"
+          label="Metrics"
+          action="#{taskListScopeActionController.goMetrics}"
+          active="#{taskListScopeActionController.mdwReportsRequest}"
+          tabindex="7" />
+        
+        <mdw:tabLink
+          id="adminLink"
+          rendered="#{taskListScopeActionController.adminUrl != null}"
+          label="Admin"
+          action="#{taskListScopeActionController.adminUrl}"
+          tabindex="8" />
+        <mdw:tab 
+          id="adminTab"
+          rendered="#{taskListScopeActionController.adminUrl == null}"
+          rolesNeeded="User Admin"
+          label="Administration" 
+          action="#{taskListScopeActionController.goAdmin}"
+          tabindex="8" />
+
+        <mdw:tab 
+          id="systemTab"
+          rolesNeeded="Site Admin"
+          label="System" 
+          action="#{taskListScopeActionController.goSystem}"
+          tabindex="9" />
+          
+      </mdw:tabPanel>
+    </h:form>
+    
+  </ui:composition>
+
+</html>

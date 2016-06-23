@@ -1,0 +1,35 @@
+process:
+  name: OsgiServiceAdapter
+  instance: 1
+  activity: 
+    name: Start
+    status: Completed
+  activity: 
+    name: Create User
+    status: Completed
+  activity: 
+    name: Ping User
+    status: Completed
+  activity: 
+    name: Stop
+    status: Completed
+  variable: 
+    name: cuid
+    value: dxoakes    
+  variable: 
+    name: user
+    value: |
+      cuid: dxoakes,
+      firstName: null,
+      lastName: null,
+      emailAddress: null,
+      phoneNumber: null,
+      notificationPrefrence: null,
+      allowable actions:
+      workgroups
+  variable: 
+    name: userResponse
+    value: pong: Donald Oakes    
+  variable: 
+    name: userVO
+    value: rO0ABXNyACtjb20uY2VudHVyeWxpbmsubWR3Lm1vZGVsLnZhbHVlLnVzZXIuVXNlclZPWcazV+NgzwUCAAZMAARjdWlkdAASTGphdmEvbGFuZy9TdHJpbmc7TAAHZW5kRGF0ZXEAfgABWwAGZ3JvdXBzdAAzW0xjb20vY2VudHVyeWxpbmsvbWR3L21vZGVsL3ZhbHVlL3VzZXIvVXNlckdyb3VwVk87TAACaWR0ABBMamF2YS9sYW5nL0xvbmc7TAAEbmFtZXEAfgABTAALcHJlZmVyZW5jZXN0AA9MamF2YS91dGlsL01hcDt4cHQAB2R4b2FrZXNwdXIAM1tMY29tLmNlbnR1cnlsaW5rLm1kdy5tb2RlbC52YWx1ZS51c2VyLlVzZXJHcm91cFZPO/lSkOlkaujzAgAAeHAAAAAEc3IAMGNvbS5jZW50dXJ5bGluay5tZHcubW9kZWwudmFsdWUudXNlci5Vc2VyR3JvdXBWTyi9APyL9q/KAgAHTAAHY29tbWVudHEAfgABTAAHZW5kRGF0ZXEAfgABTAAJZ3JvdXBOYW1lcQB+AAFMAAJpZHEAfgADTAALcGFyZW50R3JvdXBxAH4AAUwABXJvbGVzdAAQTGphdmEvdXRpbC9MaXN0O1sABXVzZXJzdAAuW0xjb20vY2VudHVyeWxpbmsvbWR3L21vZGVsL3ZhbHVlL3VzZXIvVXNlclZPO3hwcHB0AAZDb21tb25zcgAOamF2YS5sYW5nLkxvbmc7i+SQzI8j3wIAAUoABXZhbHVleHIAEGphdmEubGFuZy5OdW1iZXKGrJUdC5TgiwIAAHhwAAAAAAAAAABwc3IAE2phdmEudXRpbC5BcnJheUxpc3R4gdIdmcdhnQMAAUkABHNpemV4cAAAAAN3BAAAAAp0AA5Qcm9jZXNzIERlc2lnbnQAEVByb2Nlc3MgRXhlY3V0aW9udAAOVGFzayBFeGVjdXRpb254cHNxAH4ACXBwdAATRmFsbG91dCBTcGVjaWFsaXN0c3NxAH4ADgAAAAAAADokcHBwc3EAfgAJdAARTURXIFN1cHBvcnQgR3JvdXBwdAALTURXIFN1cHBvcnRzcQB+AA4AAAAAAAAAAXBwcHNxAH4ACXQAEnNpdGUgYWRtaW5pc3RyYXRvcnB0AApTaXRlIEFkbWluc3EAfgAOAAAAAAAAAAJwc3EAfgARAAAABHcEAAAACnQADlByb2Nlc3MgRGVzaWdudAARUHJvY2VzcyBFeGVjdXRpb250AApVc2VyIEFkbWludAAOVGFzayBFeGVjdXRpb254cHNxAH4ADgAAAAAAACcQdAAMRG9uYWxkIE9ha2VzcA==

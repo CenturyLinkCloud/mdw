@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855305
+item-spec=4D4457413A314B375653302050414745444C495354444154414D4F44454C204A4156412D2D3634303731353531372E412D5352433B35
+file-version=5
+checksum=f55e513548ebceec9709815dcaa20c10
+fetch-size=7725
+mtime=1393990193
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/data/PagedListDataModel.java
+project=4D4457413A4D445741
+project-uid=31770127

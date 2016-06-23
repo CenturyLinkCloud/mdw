@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67205604
+item-spec=4D4457413A314B3746473520434F4E4E454354494F4E504F4F4C4D414E4147455248414E444C4552204A4156412D2D3539323837373839372E412D5352433B36
+file-version=6
+checksum=028f59eef74f84e9d36ee00f11b321dd
+fetch-size=17439
+mtime=1451926691
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listener/formaction/ConnectionPoolManagerHandler.java
+project=4D4457413A4D445741
+project-uid=31770127

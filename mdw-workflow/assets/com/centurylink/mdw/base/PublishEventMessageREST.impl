@@ -1,0 +1,20 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.event.PublishEventMessageRest" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="Multi-Publish Event Message REST" IconFile="send.gif" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET>
+   <TEXT NAME='Event Name'/>
+   <TEXT NAME='Message' MULTILINE='true' VH='150'/>
+   <TABLE NAME='EndpointUri' LABEL="Destination Endpoints">
+   <TEXT LABEL="Endpoint URI"/>
+  </TABLE>
+  <TEXT NAME='ConnectTimeout' LABEL='Connect Timeout (ms)' VW='100'/>
+  <TEXT NAME='ReadTimeout' LABEL='Read Timeout (ms)' VW='100'/>
+  <TEXT LABEL="Max tries" NAME="max_tries" VW="60"/>
+  <TEXT LABEL="Retry Interval (sec)" NAME="retry_interval" VW="80"/>
+  <TEXT LABEL="Response Timeout (sec)" NAME="timeout" VW="80"/>
+  <DROPDOWN NAME='HeadersVariable' LABEL='Headers Variable' SOURCE='Variables' VW='200'/>
+  <DROPDOWN NAME='RESPONSE_VARIABLE' LABEL='Response Variable' SOURCE='Variables' VW='200'/>
+  <SELECT NAME='DO_LOGGING' LABEL='Log req/resp' DEFAULT='True'>
+    <OPTION>True</OPTION>
+    <OPTION>False</OPTION>
+  </SELECT>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

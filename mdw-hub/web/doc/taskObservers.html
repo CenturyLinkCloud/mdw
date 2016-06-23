@@ -1,0 +1,62 @@
+<html>
+<head>
+<title>Task Observers</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Task Observers</h1>
+
+Task observers can register to be notified when a stage in the task instance lifecycle is reached.
+You register a task instance observer by adding its fully-qualified class name on the Observers tab of the Manual Task Activity properties.
+Your observer class must implement the TaskInstanceObserver interface or extend TaskActionReporter, which provides default no-op implementations for the interface methods.
+
+<h3>Lifecycle Outcomes</h3>
+An observer may be notified when the following lifecycle transitions occur for a task instance.
+See the documentation topic <a href="taskAction.html">Task Actions</a> for an explanation of the actions which may trigger these transitions.
+<br/><br/>
+<table>
+  <tr>
+    <th>Open</th>
+    <td>Task instance is newly-created or becomes unassigned</td>
+  </tr>
+  <tr>
+    <th>Assigned</th>
+    <td>Task instance has been claimed or assigned to someone</td>
+  </tr>
+  <tr>
+    <th>Failed</th>
+    <td>Task instance has been failed due to a user performing the Abort action</td>
+  </tr>
+  <tr>
+    <th>Completed</th>
+    <td>Task instance has been completed by a user performing the Complete action or a custom action</td>
+  </tr>
+  <tr>
+    <th>Cancelled</th>
+    <td>Task instance has been cancelled by a user</td>
+  </tr>
+  <tr>
+    <th>In Progress</th>
+    <td>Task instance has been flagged as being worked by a user</td> 
+  </tr>
+  <tr>
+    <th>Alert</th>
+    <td>Task instance is approaching its scheduled Due Date without having been completed</td>
+  </tr>
+  <tr>
+    <th>Jeopardy</th>
+    <td>Task instance has passed its scheduled Due Date without having been completed</td>
+  </tr>
+  <tr>
+    <th>Hold</th>
+    <td>Task instance has been placed on hold</td>
+  </tr>
+</table>
+<br/><br/>
+Your registered observer receives the task instance ID as a parameter, and may use this value to retrieve data related to the task instance, such as the task name.
+<br/><br/>
+A very common use of task observers has been to send e-mail notices when a task lifecycle outcome has been reached.
+With MDW 4.2 the ability to send templated notifications is built in to the framework (see <a href="taskNotices.html">Task Notices</a>). 
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete 2 elements from project &apos;mdw-hub&apos;&#x0D;&#x0A;- Original project: &apos;mdw-hub&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     mdwweb-jsf2-5.5.28-SNAPSHOT.jar&#x0D;&#x0A;     taskmgr-5.5.28-SNAPSHOT.jar" description="Delete elements" element1="web/WEB-INF/lib/taskmgr-5.5.28-SNAPSHOT.jar" element2="web/WEB-INF/lib/mdwweb-jsf2-5.5.28-SNAPSHOT.jar" elements="0" flags="589830" id="org.eclipse.jdt.ui.delete" resources="2" stamp="1459914097583" subPackages="false" version="1.0"/>
+</session>

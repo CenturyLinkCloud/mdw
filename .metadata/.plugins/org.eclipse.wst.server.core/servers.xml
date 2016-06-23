@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<servers>
+  <server auto-publish-setting="1" auto-publish-time="1" configuration-id="/Servers/Tomcat w mdw55-config" hostname="localhost" id="Tomcat w mdw55" javaOptions="-DruntimeEnv=dev&#13;&#10;-Dmdw.config.location=c:\workspaces\mdw55\mdw-framework\config&#13;&#10;-Dmdw.hub.dev.web.root=c:\workspaces\mdw55\mdw-hub\web&#13;&#10;-Djavax.net.ssl.trustStore=c:\workspaces\mdw\mdw-framework\deploy\certs\CenturyLinkQCA.jks&#13;&#10;-Djava.net.preferIPv4Stack=true&#13;&#10;-Xms512m -Xmx1024m -XX:MaxPermSize=256m" name="Tomcat w mdw55" runtime-id="Apache Tomcat v7.0" server-type="com.centurylink.server.tomcat.70" server-type-id="com.centurylink.server.tomcat.70" start-timeout="900" stop-timeout="150" testEnvironment="true" timestamp="3">
+    <list key="modules" value0="mdw-admin::org.eclipse.jst.jee.server:mdw-admin::jst.web::3.0" value1="mdw-hub::org.eclipse.jst.jee.server:mdw-hub::jst.web::2.5"/>
+  </server>
+</servers>

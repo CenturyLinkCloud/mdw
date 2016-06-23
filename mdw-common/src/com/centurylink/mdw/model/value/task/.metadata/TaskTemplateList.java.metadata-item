@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67164727
+item-spec=4D4457413A314B3737545A205441534B54454D504C4154454C495354204A4156412D31383733383131383658313431393058302E412D5352433B32
+file-version=2
+checksum=bc2e8d7afddac00df5e280f1e93e475f
+fetch-size=2536
+mtime=1450896227
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/task/TaskTemplateList.java
+project=4D4457413A4D445741
+project-uid=31770127

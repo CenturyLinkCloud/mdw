@@ -1,0 +1,65 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="FalloutTaskTest" version="0.1" description="">
+    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=55,y=220,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=475,y=220,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="Throw&#13;&#10;Exception" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="throw new Exception(&quot;Fallout&quot;)"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=220,y=210,w=101,h=74"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A9" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=418,y=163,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=207,ly=194,type=Elbow,xs=119&amp;216,ys=240&amp;240"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=397,ly=240,type=Elbow,xs=325&amp;471,ys=240&amp;240"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="Alt" From="A3" To="A9" Event="FINISH" Id="T5">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=369,ly=215,type=Elbow,xs=325&amp;414,ys=247&amp;184"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=21,y=24,w=142,h=27"/>
+    <bpm:SubProcess Id="P6" name="Exception Handler" version="0" description="">
+      <bpm:Activity Id="A7" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=302,y=80,w=60,h=40"/>
+      </bpm:Activity>
+      <bpm:Activity Id="A4" Name="Fallout Test Task" Implementation="com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity">
+        <bpm:Attribute Name="AlertIntervalUnits" Value="Hours"/>
+        <bpm:Attribute Name="Category" Value="COM"/>
+        <bpm:Attribute Name="IndexProvider" Value="com.centurylink.mdw.services.task.CustomTaskIndexProvider"/>
+        <bpm:Attribute Name="Notices" Value="Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"/>
+        <bpm:Attribute Name="SLAUnits" Value="Hours"/>
+        <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+        <bpm:Attribute Name="TaskName" Value="Fallout Test Task"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=421,y=70,w=111,h=62"/>
+        <bpm:Attribute Name="TaskLogicalId" Value="FalloutTaskTest:A4"/>
+      </bpm:Activity>
+      <bpm:Activity Id="A8" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+        <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=602,y=80,w=60,h=40"/>
+      </bpm:Activity>
+      <bpm:Transition CompletionCode="" From="A7" To="A4" Event="FINISH" Id="T3">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=392,ly=100,type=Elbow,xs=366&amp;417,ys=100&amp;100"/>
+      </bpm:Transition>
+      <bpm:Transition CompletionCode="" From="A4" To="A8" Event="FINISH" Id="T4">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=567,ly=100,type=Elbow,xs=536&amp;598,ys=100&amp;100"/>
+      </bpm:Transition>
+      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
+      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Exception Handler"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=262,y=40,w=440,h=120"/>
+    </bpm:SubProcess>
+    <bpm:TextNote Content="TODO: Test all features." Reference="">
+      <bpm:Attribute Name="LOGICAL_ID" Value="N5"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=29,y=64,w=197,h=22"/>
+    </bpm:TextNote>
+  </bpm:Process>
+</bpm:processDefinition>

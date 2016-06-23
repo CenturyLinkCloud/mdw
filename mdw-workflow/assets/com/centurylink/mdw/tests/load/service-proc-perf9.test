@@ -1,0 +1,12 @@
+// service-proc-perf9
+masterRequestId = System.currentTimeMillis();
+send message("REST") {
+    payload = file("myorderreq9.xml").text
+}
+wait process("com.centurylink.mdw.tests.workflow/MDWTestProcessAsService")
+verify response {
+    expected = '''\
+<LoadTestResponse>
+  <Status>OK</Status>
+</LoadTestResponse>'''
+}

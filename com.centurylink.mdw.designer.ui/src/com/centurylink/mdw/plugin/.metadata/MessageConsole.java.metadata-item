@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852106
+item-spec=4D4457413A314B3848384C204D455353414745434F4E534F4C45204A4156412D313739343833323938322E412D5352433B32
+file-version=2
+checksum=e5894ae149320fc0f7b9a04c489133f5
+fetch-size=5984
+mtime=1393988850
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/MessageConsole.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition template="main.xhtml">
+
+  <ui:define name="content">
+  
+    <ui:fragment rendered="#{authenticatedUser.loaded}">
+      <h:form
+        id="filteredListForm"
+        style="padding:0px;margin:0px;"
+        onsubmit="hubLoading();">
+
+        <t:inputHidden id="packageName" forceId="true" name="packageName" value="#{mdwPackage.packageName}" />    
+        
+        <div class="mdw_tabbedContent">
+          <ui:insert name="list" />
+        </div>
+    </h:form>
+    <mdw:listPrefs prefsController="#{userPrefs}" />
+  </ui:fragment>  
+  
+ </ui:define>
+
+ </ui:composition>
+
+</html>

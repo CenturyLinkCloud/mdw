@@ -1,0 +1,13 @@
+version=10.2
+item-uid=51718993
+item-spec=4D4457413A314B3848384C20494D504F525450524F4345535350414745204A4156412D323030333434383933382E412D5352433B31
+file-version=1
+checksum=1b3115f718b10e1c81b2601a6c10f5c1
+fetch-size=312
+mtime=1416958940
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/ImportProcessPage.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

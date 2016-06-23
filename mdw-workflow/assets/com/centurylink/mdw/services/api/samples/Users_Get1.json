@@ -1,0 +1,20 @@
+// GET request to Services/Users/dxoakes?app=appId
+{
+  "cuid": "dxoakes",
+  "name": "Donald Oakes",
+  "attributes": {
+    "Email Address": "donald.oakes@centurylink.com",
+    "Phone Number": "303-992-9747"
+  },
+  "roles": [
+    "Process Design",
+    "Process Execution",
+    "Task Execution"
+  ],
+  "workgroups": [
+    "Common",
+    "Fallout Specialists",
+    "MDW Support",
+    "Site Admin"
+  ]
+}

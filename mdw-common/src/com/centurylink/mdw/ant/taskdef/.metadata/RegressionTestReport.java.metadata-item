@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68539487
+item-spec=4D4457413A314B3737545A2052454752455353494F4E544553545245504F5254204A4156412D31393038353532323758323434393858302E412D5352433B32
+file-version=2
+checksum=368db25a4dba6ea8e2c108f9718f47a2
+fetch-size=247
+mtime=1456355016
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/ant/taskdef/RegressionTestReport.java
+project=4D4457413A4D445741
+project-uid=31770127

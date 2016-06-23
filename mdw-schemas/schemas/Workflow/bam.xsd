@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+     targetNamespace="http://www.centurylink.com/bam"
+     xmlns:bam="http://www.centurylink.com/bam" 
+     elementFormDefault="qualified">
+     
+    <element name="MasterRequest" type="bam:MasterRequestT"/>
+    
+    <element name="CustomEvent" type="bam:CustomEventT"></element>
+
+    <complexType name="MasterRequestT">
+    	<sequence>
+    		<element name="MasterRequestId" type="string" />
+    		<element name="Realm" type="string" />
+    		<element name="RequestTime" type="dateTime" />
+    		<element name="AttributeList" type="bam:AttributeListT" minOccurs="0" />
+    		<element name="Component" type="bam:ComponentT" minOccurs="0" maxOccurs="unbounded" />
+    		<element name="ComponentRelation"
+    			type="bam:ComponentRelationT" minOccurs="0"
+    			maxOccurs="unbounded" />
+    	</sequence>
+    	<attribute name="version" type="int"></attribute>
+    </complexType>
+
+    <complexType name="AttributeT">
+		<sequence>
+			<element name="Name" type="string"></element>
+			<element name="Value" type="string"></element>
+            <element name="EventRowId" type="string" maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="ComponentT">
+		<sequence>
+			<element name="ComponentId" type="string"/>
+			<element name="ComponentType" type="string"/>
+			<element name="AttributeList" type="bam:AttributeListT" minOccurs="0"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="AttributeListT">
+		<sequence>
+			<element name="Attribute" type="bam:AttributeT" maxOccurs="unbounded" minOccurs="0"/>
+		</sequence>
+	</complexType>
+
+
+    <complexType name="ComponentRelationT">
+    	<sequence>
+    		<element name="RelationType" type="string"/>
+    		<element name="ComponentId1" type="string"/>
+    		<element name="ComponentId2" type="string"/>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="CustomEventT">
+    	<sequence>
+    		<element name="MasterRequestId" type="string"></element>
+    		<element name="Realm" type="string"></element>
+    		<element name="EventName" type="string"></element>
+    		<element name="EventData" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="EventTime" type="dateTime"></element>
+    		<element name="EventCategory" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="SubCategory" type="string" maxOccurs="1" minOccurs="0"></element>
+        	<element name="EventSubCategory" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="ComponentId" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="Attributes" type="bam:AttributeListT" maxOccurs="1" minOccurs="0"></element>
+    		<element name="SourceSystem" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="SourceEventId" type="string" maxOccurs="1" minOccurs="0"></element>
+	        <element name="ProcessId" type="string" maxOccurs="1" minOccurs="0"></element>
+	        <element name="ProcessName" type="string" maxOccurs="1" minOccurs="0"></element>
+	        <element name="ProcessVersion" type="string" maxOccurs="1" minOccurs="0"></element>
+	       	<element name="ProcessInstanceId" type="string" maxOccurs="1" minOccurs="0"></element>
+	        <element name="ActivityId" type="string" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="ProcessEventT">
+    	<sequence>
+    		<element name="MasterRequestId" type="string"></element>
+    		<element name="Realm" type="string"></element>
+    		<element name="ProcessId" type="string"></element>
+    		<element name="ProcessInstanceId" type="string"></element>
+    		<element name="ActivityId" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="ActivityInstanceId" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="Status" type="string"></element>
+    		<element name="Message" type="string"></element>
+    		<element name="SourceSystem" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="EventTime" type="dateTime"></element>
+    	</sequence>
+    </complexType>
+
+    <element name="ProcessEvent" type="bam:ProcessEventT"></element>
+    <element name="LiveEvent" type="bam:LiveEventT"></element>
+    <complexType name="LiveEventT">
+      <sequence>
+        <element name="MasterRequestId" type="string"></element>
+        <element name="Realm" type="string"></element>
+        <element name="EventList" type="bam:EventListT" minOccurs="0"/>
+        <element name="AttributeList" type="bam:AttributeListT" minOccurs="0"/>
+      </sequence>
+    </complexType>
+    
+  <complexType name="EventT">
+    <sequence>  
+        <element name="EventName" type="string"></element>
+        <element name="EventId" type="string" maxOccurs="1" minOccurs="0"></element>  
+        <element name="EventRowId" type="string" maxOccurs="1" minOccurs="0"></element>      
+        <element name="EventData" type="string" maxOccurs="1" minOccurs="0"></element>
+        <element name="EventTime" type="dateTime"></element>
+        <element name="EventCategory" type="string" maxOccurs="1" minOccurs="0"></element>
+        <element name="SubCategory" type="string" maxOccurs="1" minOccurs="0"></element>
+        <element name="ComponentId" type="string" maxOccurs="1" minOccurs="0"></element>
+        <element name="SourceSystem" type="string" maxOccurs="1" minOccurs="0"></element>
+        <element name="SourceEventId" type="string" maxOccurs="1" minOccurs="0"></element>
+    </sequence>
+  </complexType>
+    
+  <complexType name="EventListT">
+    <sequence>
+      <element name="Event" type="bam:EventT" maxOccurs="unbounded" minOccurs="0"/>
+    </sequence>
+  </complexType>    
+</schema>

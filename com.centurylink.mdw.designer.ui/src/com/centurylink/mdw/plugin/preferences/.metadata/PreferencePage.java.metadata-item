@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852382
+item-spec=4D4457413A314B3848384C20505245464552454E434550414745204A4156412D2D3432363537373339322E412D5352433B32
+file-version=2
+checksum=150086df85181af3db2b824e74262ae2
+fetch-size=12091
+mtime=1393988850
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/preferences/PreferencePage.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

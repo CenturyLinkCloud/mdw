@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49731637
+item-spec=4D4457413A314B3654583320534545442055534552532053514C2D35383136343537362E412D4441543B33
+file-version=3
+checksum=0b8b36585bdd08302f6e2539c1a324ae
+fetch-size=5503
+mtime=1407342761
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/oldScripts/seed_users.sql
+project=4D4457413A4D445741
+project-uid=31770127

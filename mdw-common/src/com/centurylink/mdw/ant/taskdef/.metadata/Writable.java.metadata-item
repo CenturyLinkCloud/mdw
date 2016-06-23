@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853213
+item-spec=4D4457413A314B3737545A205752495441424C45204A4156412D3334353234343039342E412D5352433B32
+file-version=2
+checksum=4c1557e317eae06cf5cd46179045cc72
+fetch-size=1890
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/ant/taskdef/Writable.java
+project=4D4457413A4D445741
+project-uid=31770127

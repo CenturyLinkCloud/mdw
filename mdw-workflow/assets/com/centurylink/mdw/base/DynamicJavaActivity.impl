@@ -1,0 +1,9 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity" Type="com.centurylink.mdw.activity.types.GeneralActivity" Label="Dynamic Java" IconFile="java.jpg" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET>
+  <TEXT NAME='Java' TYPE='Java' />
+  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>
+  <HYPERLINK URL='/MDWWeb/doc/todo.html'>
+    Dynamic Java Activity Help
+  </HYPERLINK>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

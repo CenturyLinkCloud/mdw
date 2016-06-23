@@ -1,0 +1,3 @@
+# substitutions for custom page assets
+com\\.qwest\\.mdw\\.=com.centurylink.mdw.
+http\://www.qwest.com/mdw/jsf=http://www.centurylink.com/mdw/jsf

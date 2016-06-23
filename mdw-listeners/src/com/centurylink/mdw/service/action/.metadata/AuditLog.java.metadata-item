@@ -1,0 +1,13 @@
+version=10.2
+item-uid=54414665
+item-spec=4D4457413A314B374647352041554449544C4F47204A4156412D2D36373033373537332E412D5352433B32
+file-version=2
+checksum=3de6a295de2825533e92a3bf6d83a739
+fetch-size=1356
+mtime=1424722922
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/action/AuditLog.java
+project=4D4457413A4D445741
+project-uid=31770127

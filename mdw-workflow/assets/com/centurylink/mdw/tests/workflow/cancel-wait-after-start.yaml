@@ -1,0 +1,27 @@
+process: # 13466
+  name: MDWTestSuppsEmbedded
+  instance: 1
+  activity: # 13 "2016-02-18 15:58:20"
+    name: Start
+    status: Completed
+  activity: # 5 "2016-02-18 15:58:20"
+    name: which case?
+    status: Completed
+  activity: # 25 "2016-02-18 15:58:20"
+    name: Wait for 3 min
+    status: Cancelled
+  variable: # 20120
+    name: testCase
+    value: cancel-on-event
+process: # 13467
+  name: MDWTestSuppsEmbedded Cancellation Handler
+  instance: 1
+  activity: # 27 "2016-02-18 15:58:50"
+    name: Start
+    status: Completed
+  activity: # 30 "2016-02-18 15:58:50"
+    name: wait 1 min
+    status: Completed
+  activity: # 28 "2016-02-18 15:59:50"
+    name: Stop
+    status: Completed

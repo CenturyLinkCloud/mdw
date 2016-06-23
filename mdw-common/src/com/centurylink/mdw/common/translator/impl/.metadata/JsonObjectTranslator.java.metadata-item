@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853102
+item-spec=4D4457413A314B3737545A204A534F4E4F424A4543545452414E534C41544F52204A4156412D2D3834383339343935382E412D5352433B32
+file-version=2
+checksum=f4dcc153904c8b6f202cde5acb8505dc
+fetch-size=1327
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/translator/impl/JsonObjectTranslator.java
+project=4D4457413A4D445741
+project-uid=31770127

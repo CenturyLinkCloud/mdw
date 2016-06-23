@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+<ui:composition template="/facelets/layout/filteredList.xhtml">
+
+  <ui:define name="filter">
+    <mdw:listFilter
+      id="workgroupTasksFilter"
+      filterEntity="#{listManager.workgroupTasks.filter}" /> 
+  </ui:define>
+
+  <ui:define name="navLinks">
+    <mdw:navMenu
+      id="workgroupTasksNavLinks"
+      name="Actions"
+      width="164px"
+      linkStyleClass="mdw_navLink"
+      activeLinkStyleClass="mdw_navActiveLink"
+      tdStyleClass="mdw_topLine"
+      headerStyleClass="mdw_pageHeader">
+      <mdw:navLink
+        label="Create Task"
+        action="go_createTask"
+        title="Create a new task instance" />
+    </mdw:navMenu>
+  </ui:define>  
+
+  
+  <ui:define name="list">
+    <mdw:list
+      id="workgroupTasksList"
+      listId="workgroupTasks"
+      listEntity="#{listManager.workgroupTasks}"
+      label="#{authenticatedUser.userBelongsToAdminGrp ? 'Tasks for all Workgroups' : 'Tasks for My Workgroups: '}"
+      subLabel="#{authenticatedUser.userBelongsToAdminGrp ? '' : authenticatedUser.workgroupsAsString}" />
+  </ui:define>
+  
+  <ui:define name="listAction">
+    <mdw:taskActionMenu
+      id="workgroupTasksAction"
+      menuBinding="#{listManager.workgroupTasks.taskActionMenu}"
+      rendered="#{listManager.workgroupTasks.hasItems}"
+      applyTo="#{listManager.workgroupTasks.marked}" />
+  </ui:define>
+  
+</ui:composition>
+
+</html>

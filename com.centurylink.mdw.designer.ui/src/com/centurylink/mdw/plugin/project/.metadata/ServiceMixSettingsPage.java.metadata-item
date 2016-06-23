@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549841
+item-spec=4D4457413A314B3848384C20534552564943454D495853455454494E475350414745204A4156412D2D32373836333330322E412D5352433B37
+file-version=7
+checksum=54b395ccaac6a2779d76475d0b64f9cc
+fetch-size=12466
+mtime=1453322829
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/project/ServiceMixSettingsPage.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

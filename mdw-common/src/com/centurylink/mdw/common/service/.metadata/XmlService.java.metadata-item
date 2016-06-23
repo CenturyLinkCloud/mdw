@@ -1,0 +1,13 @@
+version=10.2
+item-uid=61720265
+item-spec=4D4457413A314B3737545A20584D4C53455256494345204A4156412D2D3438353936333630352E412D5352433B33
+file-version=3
+checksum=fd7e8564cfdd7fe396276f5aa9637347
+fetch-size=383
+mtime=1435098888
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/service/XmlService.java
+project=4D4457413A4D445741
+project-uid=31770127

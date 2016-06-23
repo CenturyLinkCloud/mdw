@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68561056
+item-spec=4D4457413A314B3737545A2043415445474F5259204A4156412D2D313939333332333834302E412D5352433B33
+file-version=3
+checksum=19aa8d35067bc1c53f25c177bce689b3
+fetch-size=848
+mtime=1456421937
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/data/common/Category.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,30 @@
+<task:taskTemplate logicalId="MDWTestGeneralManualTask:A5" category="COM" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>JSF Task</task:name>
+  <task:description>This is a task for testing MDW 5.1 style task
+template, which contains indices and groups</task:description>
+  <task:attribute name="TaskDescription">This is a task for testing MDW 5.1 style task
+template, which contains indices and groups</task:attribute>
+  <task:attribute name="TaskSLA">259200</task:attribute>
+  <task:attribute name="ALERT_INTERVAL">1728000</task:attribute>
+  <task:attribute name="Variables">ArrayVar,ArrayVar,Not Displayed,0,,java.lang.String[];DateVar,DateVar,Not Displayed,0,,java.util.Date;IntegerVar,IntegerVar,Not Displayed,0,,java.lang.Integer;MasterRequest,MasterRequest,Not Displayed,0,,com.centurylink.mdw.model.FormDataDocument;NotDisplayed,NotDisplayed,Not Displayed,0,,java.lang.String;runJsfTask,runJsfTask,Not Displayed,0,,java.lang.Boolean</task:attribute>
+  <task:attribute name="Groups">MDW Support</task:attribute>
+  <task:attribute name="Indices">State#City</task:attribute>
+  <task:attribute name="Notices">Open,taskOpenEmail,com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier;Assigned,taskAssignEmail,com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier;Failed,,;Completed,,;Cancelled,,;In Progress,,;Alert,,;Jeopardy,,;Hold,,;Forward,,</task:attribute>
+  <task:attribute name="NoticeGroups" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="RecipientVar">benjxu@yahoo.com</task:attribute>
+  <task:attribute name="CCGroups" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="CCVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="AutoAssign" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Auto Assign Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="RoutingStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Routing Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="SubTaskStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="SubTask Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="AssigneeVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="FormName">jsf:JiyangTestForm</task:attribute>
+  <task:attribute name="Priority" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="PriorityStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Prioritization Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="CustomPage" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <task:attribute name="Rendering" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+</task:taskTemplate>

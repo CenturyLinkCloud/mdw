@@ -1,0 +1,11 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.camel.adapter.CamelRouteAdapter" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="Camel Route Adapter" IconFile="camel.gif" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET>
+  <DROPDOWN NAME='RouteDefinition' LABEL='Route Definition' SOURCE='RuleSets' TYPE='CAMEL_ROUTE' />
+  <BOOLEAN LABEL='Asynchronous' NAME='Asynchronous' />
+  <DROPDOWN NAME='REQUEST_VARIABLE' LABEL='Request Variable' SOURCE='Variables' VW='200'/>
+  <DROPDOWN NAME='RESPONSE_VARIABLE' LABEL='Response Variable' SOURCE='Variables' VW='200'/>
+  <HYPERLINK URL='/MDWWeb/doc/todo.html'>
+    Camel Route Adapter Help
+  </HYPERLINK>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

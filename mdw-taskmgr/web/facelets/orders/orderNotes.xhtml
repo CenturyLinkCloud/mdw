@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition template="/facelets/layout/detail.xhtml">
+
+    <ui:define name="detailLinks">
+      <mdw:orderNav />
+    </ui:define>
+
+    <ui:define name="detailContent">
+    
+      <table 
+        cellspacing="0"
+        cellpadding="0"
+        width="100%">
+        <tr valign="top">
+          <td height="175">
+            <mdw:list
+              id="notes"
+              listId="notesList"
+              listEntity="#{listManager.orderNotes}"
+              label="Notes for Order #{detailManager.orderDetail.masterRequestId}" />
+          </td>
+        </tr>
+        <tr>
+          <td class="mdw_detailTableSubtitle">
+            <t:outputText>Add/Edit Note</t:outputText>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <t:panelGroup>
+            <mdw:note
+              id="note"
+              notesItem="#{orderNotesItem}" />
+            </t:panelGroup>
+          </td>
+        </tr>
+      </table>
+    
+    </ui:define>
+
+    <ui:define name="commandContent">
+      <mdw:notesAction
+        actionController="#{orderNotesActionController}" 
+        notesItem="#{orderNotesItem}" />
+    </ui:define>
+
+  </ui:composition>
+
+</html>

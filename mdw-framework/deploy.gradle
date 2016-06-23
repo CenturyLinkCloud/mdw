@@ -1,0 +1,85 @@
+// deploy a new build prior to testing and publishing
+
+apply plugin: "java"
+
+repositories {
+    maven {
+        url mdwRepoUrl
+    }    
+    maven {
+        url devRepoUrl
+    }
+}
+
+configurations {
+    deploy
+}
+
+dependencies {
+    deploy group: "com.centurylink.mdw", name: "mdw-designer-core", version: "${mdwDesignerVersion}"
+    deploy files("../${mdwOutputDir}/mdw-common-${mdwVersion}.jar")
+    deploy files("../${mdwOutputDir}/mdw-schemas-${mdwVersion}.jar")
+    deploy group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
+}
+
+task stopTomcat(type: ServerStop) {
+    workingDir tomcatBinDir
+    
+    if (System.properties["os.name"].startsWith("Windows"))
+        commandLine "stop.bat"
+    else
+        commandLine "./stop.sh"
+    
+    ignoreExitValue true
+    verifyUrl testServerUrl
+}
+
+task cleanAssets(type: Delete) {
+    delete deployAssetDir
+}
+cleanAssets.mustRunAfter stopTomcat
+
+task cleanWars(type: Delete) {
+    delete "${deployWarDir}/mdw.war"
+    delete "${deployWarDir}/mdw"
+}
+cleanWars.mustRunAfter stopTomcat
+
+task deployAssets(type: Copy) {
+    from "../${mdwAssetRoot}"
+    into deployAssetDir
+}
+deployAssets.mustRunAfter cleanAssets
+
+task deployMdwWar(type: Copy) {
+    from "../mdw-framework/deploy/app"
+    into "${deployWarDir}"
+    include "mdw-${mdwVersion}.war"
+    rename("mdw-${mdwVersion}.war", "mdw.war")
+}
+deployMdwWar.mustRunAfter cleanWars
+
+// doesn't work on windows (blocks build task thread)
+// http://forums.gradle.org/gradle/topics/exec_task_issues_details
+task startTomcat(type: ServerStart) {
+    workingDir tomcatBinDir
+    if (System.properties["os.name"].startsWith("Windows"))
+        commandLine "start.bat"
+    else
+        commandLine "./start.sh"
+        
+    verifyUrl testServerUrl
+    timeout 90
+    
+    // store the output instead of printing to the console:
+    standardOutput = errorOutput = new ByteArrayOutputStream()
+    // extension method startTomcat.output() can be used to obtain the output:
+    ext.output = {
+      return standardOutput.toString()
+    }
+}
+startTomcat.mustRunAfter(stopTomcat, deployAssets, deployMdwWar)
+
+task deployMdw(dependsOn: [stopTomcat, cleanAssets, cleanWars, deployAssets, deployMdwWar, startTomcat]) << {
+    println "*** MDW build ${mdwVersion} published to ${deployAssetDir}, ${deployWarDir} ***"
+}

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851335
+item-spec=4D4457413A314B3848384C204E4557584D4C444F4357495A415244204A4156412D2D313934353137363739382E412D5352433B33
+file-version=3
+checksum=3ea12387228f0f8092eed62e737aab49
+fetch-size=551
+mtime=1393988849
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/NewXmlDocWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71479257
+item-spec=4D4457413A314B3746473520414354494F4E53455256494345204A4156412D313831383631383939583235383758382E412D5352433B3137
+file-version=17
+checksum=c15baf0dca4f323ed1ceea42cff2a601
+fetch-size=11367
+mtime=1465948902
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/rest/RestService.java
+project=4D4457413A4D445741
+project-uid=31770127

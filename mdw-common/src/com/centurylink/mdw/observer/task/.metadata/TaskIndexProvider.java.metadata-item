@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65967245
+item-spec=4D4457413A314B3737545A205441534B494E44455850524F5649444552204A4156412D31383530363537303558323039323958302E412D5352433B31
+file-version=1
+checksum=7fe828bed5e3cb6c81b8b4b70b286891
+fetch-size=498
+mtime=1447288197
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/observer/task/TaskIndexProvider.java
+project=4D4457413A4D445741
+project-uid=31770127

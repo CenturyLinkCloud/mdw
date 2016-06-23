@@ -1,0 +1,82 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.hub.ui.requests;
+
+import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
+import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.model.value.requests.RequestVO;
+import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.taskmgr.ui.detail.Detail;
+import com.centurylink.mdw.taskmgr.ui.layout.DetailUI;
+import com.centurylink.mdw.web.jsf.FacesVariableUtil;
+import com.centurylink.mdw.web.ui.UIException;
+import com.centurylink.mdw.web.util.RemoteLocator;
+
+public class RequestDetail extends Detail {
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    /**
+     * @param detailUI
+     */
+    public RequestDetail(DetailUI detailUI) {
+        super(detailUI);
+    }
+
+    public RequestDetail() {
+        super(null);
+    }
+
+    protected void retrieveInstance(String instanceId) throws UIException {
+        try {
+            EventManager evtMgr = RemoteLocator.getEventManager();
+            RequestVO listenerRequest = evtMgr.getListenerRequest(new Long(instanceId), RequestVO.LISTENER_REQUEST);
+            RequestVO listenerResponse = evtMgr.getListenerRequest(new Long(instanceId), RequestVO.LISTENER_RESPONSE);
+            RequestItem reqItem = new RequestItem(listenerRequest, listenerResponse);
+            setModelWrapper(reqItem);
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            throw new UIException("Error retrieving Request/Response Detail.", ex);
+        }
+    }
+
+    public RequestItem getRequest() {
+        return (RequestItem) getModelWrapper();
+    }
+
+    private String requestType;
+
+    public String getRequestType() {
+        return requestType;
+    }
+
+    public void setRequestType(String requestType) {
+        this.requestType = requestType;
+    }
+
+    public RequestVO getRequestBean() {
+        RequestItem reqItem = (RequestItem) FacesVariableUtil.getValue("requestItem");
+        if (requestType.contains("LISTENER_REQUEST")) {
+            return reqItem.getListenerRequestVO();
+        }
+        else {
+            return reqItem.getListenerResponseVO();
+        }
+    }
+
+    public String getRequestLabel() {
+        if (requestType.equals("LISTENER_RESPONSE")) {
+            return "Response for Request ";
+        }
+        else if (requestType.equals("LISTENER_REQUEST_CONTENT")) {
+            return "Request Content ";
+        }
+        else if (requestType.equals("LISTENER_RESPONSE_CONTENT")) {
+            return "Response Content for Request ";
+        }
+        else {
+            return "Request ";
+        }
+    }
+}

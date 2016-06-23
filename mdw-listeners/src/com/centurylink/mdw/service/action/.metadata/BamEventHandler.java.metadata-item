@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69322760
+item-spec=4D4457413A314B374647352042414D4556454E5448414E444C4552204A4156412D2D313933393237363331332E412D5352433B33
+file-version=3
+checksum=73c7bd08e9c00556fcbf5c697fa369cc
+fetch-size=1601
+mtime=1458585260
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/action/BamEventHandler.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+indentationChar=space
+indentationSize=2
+inlineElements=sub,b,acronym,select,font,a,img,abbr,label,td,sup,br,i,th,li,cite,input,u,title,strike,s,strong,q,basefont,em,big,small,span
+lineWidth=100
+splitMultiAttrs=true

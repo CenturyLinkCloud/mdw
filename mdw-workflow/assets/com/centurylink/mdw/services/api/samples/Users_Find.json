@@ -1,0 +1,8 @@
+// GET request to Services/Users?find=Oak&app=appId
+{
+  "count": 1,
+  "users": [{
+    "cuid": "dxoakes",
+    "name": "Donald Oakes"
+  }]
+}

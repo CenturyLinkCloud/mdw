@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855677
+item-spec=4D4457413A314B374B524A20444154414954454D56414C494441544F52204A4156412D2D313431363539393931372E412D5352433B32
+file-version=2
+checksum=67d7615453166f707ba57c8e782e2067
+fetch-size=3198
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/validators/DataItemValidator.java
+project=4D4457413A4D445741
+project-uid=31770127

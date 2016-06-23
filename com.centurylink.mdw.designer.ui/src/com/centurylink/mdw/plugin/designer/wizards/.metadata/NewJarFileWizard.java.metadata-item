@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851341
+item-spec=4D4457413A314B3848384C204E45574A415246494C4557495A415244204A4156412D2D3735313533373734352E412D5352433B33
+file-version=3
+checksum=f7e21c7e6bf8658d7012b15507807bc9
+fetch-size=554
+mtime=1393988849
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/NewJarFileWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

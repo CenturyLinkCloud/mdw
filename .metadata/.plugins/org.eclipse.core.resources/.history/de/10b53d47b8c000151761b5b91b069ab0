@@ -1,0 +1,78 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.plugin.launch;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.wst.common.project.facet.core.FacetedProjectFramework;
+
+import com.centurylink.mdw.designer.testing.TestCase;
+import com.centurylink.mdw.plugin.PluginMessages;
+import com.centurylink.mdw.plugin.designer.model.RegressionTestSuite;
+import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
+import com.centurylink.mdw.plugin.project.model.WorkflowProject;
+
+public class LaunchPropertyTester extends org.eclipse.core.expressions.PropertyTester
+{
+  public boolean test(Object receiver, String property, Object[] args, Object expectedValue)
+  {
+    IAdaptable adaptable = (IAdaptable) receiver;
+    if ("canLaunchRegressionTest".equals(property))
+    {
+      if (adaptable instanceof IProject)
+      {
+        try
+        {
+          IProject project = (IProject) adaptable;
+          if (!FacetedProjectFramework.hasProjectFacet(project, "mdw.workflow"))
+            return false;
+          WorkflowProject workflowProject = WorkflowProjectManager.getInstance().getWorkflowProject(project);
+          if (workflowProject == null)
+            return false;
+          RegressionTestSuite trialTestSuite = new RegressionTestSuite(workflowProject);
+          return trialTestSuite.hasTestCasesDir();
+        }
+        catch (CoreException ex)
+        {
+          PluginMessages.log(ex);
+          return false;
+        }
+      }
+      else if (adaptable instanceof IFolder)
+      {
+        IFolder folder = (IFolder) adaptable;
+        if (folder.getName().equals("testCases"))
+          return true;
+        for (String commandsFileName : TestCase.TEST_CASE_LANGUAGES.values())
+        {
+          if (folder.getFile(commandsFileName).exists())
+            return true;
+        }
+
+        return false;
+      }
+      else if (adaptable instanceof IFile)
+      {
+        IFile file = (IFile) adaptable;
+        return TestCase.TEST_CASE_LANGUAGES.values().contains(file.getName());
+      }
+      else if (adaptable instanceof IFileEditorInput)
+      {
+        IFileEditorInput fileEditorInput = (IFileEditorInput) adaptable;
+        return TestCase.TEST_CASE_LANGUAGES.values().contains(fileEditorInput.getFile().getName());
+      }
+      else
+      {
+        return false;
+      }
+    }
+
+    return false;
+  }
+
+}

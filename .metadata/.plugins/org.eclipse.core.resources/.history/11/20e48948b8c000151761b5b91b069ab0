@@ -1,0 +1,154 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.plugin;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+
+import javax.naming.NamingException;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.widgets.Shell;
+
+import com.centurylink.mdw.auth.CertificateChainInfo;
+import com.centurylink.mdw.auth.CertificateHandler;
+import com.centurylink.mdw.auth.LdapAuthenticator;
+import com.centurylink.mdw.auth.MdwSecurityException;
+import com.centurylink.mdw.common.exception.MDWException;
+import com.centurylink.mdw.plugin.designer.dialogs.ValueDisplayDialog;
+
+public class ImportingLdapAuthenticator
+{
+  public static final String LDAP_IMPORT_URL = "mdw.ldap.import.url";
+  public static final String LDAP_PRINCIPAL = "mdw.ldap.principal";
+
+  public static final int RESULT_OK = 0;
+  public static final int RESULT_RESTART = 1;
+  public static final int RESULT_EXIT = 2;
+
+  public int authenticate(Shell shell, String user, String password) throws MDWException, NamingException
+  {
+    String ldapUrl = System.getProperty(LDAP_IMPORT_URL);
+    if (ldapUrl == null)
+    {
+      // normal mechanism
+      String trustStoreProp = System.getProperty("javax.net.ssl.trustStore");
+      if (trustStoreProp == null) // not explicitly set -- use CTL
+      {
+        try
+        {
+          URL localUrl = PluginUtil.getLocalResourceUrl("resources/CenturyLinkQCA.jks");
+          File trustStore = new File(new URI(localUrl.toString()));
+          System.setProperty("javax.net.ssl.trustStore", trustStore.getAbsolutePath());
+          new LdapAuthenticator().authenticate(user, password);
+          return RESULT_OK;
+        }
+        catch (Exception ex)
+        {
+          throw new MDWException(ex.getMessage(), ex);
+        }
+        finally
+        {
+          System.clearProperty("javax.net.ssl.trustStore");
+        }
+      }
+      else
+      {
+        new LdapAuthenticator().authenticate(user, password);
+        return RESULT_OK;
+      }
+    }
+    else
+    {
+      String principal = System.getProperty(LDAP_PRINCIPAL);
+      if (principal == null)
+        throw new MDWException("Missing system property: " + LDAP_PRINCIPAL);
+      principal = principal.replaceAll("\\<USER\\>", user);
+
+      try
+      {
+        LdapAuthenticator auth = new LdapAuthenticator();
+        auth.authenticate(ldapUrl, principal, password);
+        return RESULT_OK;
+      }
+      catch (NamingException ex)
+      {
+        throw new MDWException(-1, ex.getMessage(), ex);
+      }
+      catch (MdwSecurityException ex)
+      {
+        if (ex.getErrorCode() == MdwSecurityException.UNTRUSTED_CERT)
+        {
+          // try and import the certificate
+          try
+          {
+            String lowerCaseUrl = ldapUrl.toLowerCase();
+            int port = 0;
+            if (lowerCaseUrl.startsWith("ldap://"))
+              port = 389;
+            else if (lowerCaseUrl.startsWith("ldaps://"))
+              port = 636;
+            else
+              throw new MalformedURLException("Bad LDAP URL: " + ldapUrl);
+
+            int hostBegin = ldapUrl.indexOf("://");
+            int hostEnd = ldapUrl.indexOf(":", hostBegin + 3);
+            if (hostEnd < 0)
+            {
+              hostEnd = ldapUrl.indexOf("/", hostBegin + 3);
+              if (hostEnd < 0)
+                hostEnd = ldapUrl.length();
+            }
+            else
+            {
+              int portEnd = ldapUrl.indexOf("/", hostEnd + 1);
+              if (portEnd < 0)
+                portEnd = ldapUrl.length();
+              try
+              {
+                port = Integer.parseInt(ldapUrl.substring(hostEnd + 1, portEnd));
+              }
+              catch (NumberFormatException ex2)
+              {
+                throw new MalformedURLException("Bad LDAP URL: " + ldapUrl);
+              }
+            }
+            String host = ldapUrl.substring(hostBegin + 3, hostEnd);
+
+            CertificateHandler certHandler = new CertificateHandler();
+            CertificateChainInfo chainInfo = certHandler.getCertificateInfo(host, port);
+            String display = "Click OK if you trust the following certificate chain presented by the LDAP server (requires restart):\n\n";
+            for (int i = 0; i < chainInfo.getCertificateChain().length; i++)
+              display += chainInfo.getCertSummary(i) + "\n";
+            ValueDisplayDialog dlg = new ValueDisplayDialog(shell, "Import Certificates?", display, true);
+            int res = dlg.open();
+            if (res == Dialog.OK)
+            {
+              // import the certificate(s)
+              for (int i = 0; i < chainInfo.getCertificateChain().length; i++)
+                certHandler.importCertificateChain(chainInfo.getCertificateChain()[i], host + "-" + (i + 1));
+
+              return RESULT_RESTART;
+            }
+            else
+            {
+              return RESULT_EXIT;
+            }
+          }
+          catch (Exception ex2)
+          {
+            throw new MDWException(-1, ex2.getMessage(), ex2);
+          }
+        }
+        else
+        {
+          throw new MDWException(ex.getErrorCode(), ex.getMessage(), ex);
+        }
+      }
+    }
+  }
+
+}

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49046718
+item-spec=4D4457413A314B3737545A2044594E414D49434A4156415452414E534C41544F52204A4156412D2D3834383339343935382E412D5352433B34
+file-version=4
+checksum=00be15c38def8fee2e13fefd0b86b1ed
+fetch-size=2081
+mtime=1403130832
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/translator/DynamicJavaTranslator.java
+project=4D4457413A4D445741
+project-uid=31770127

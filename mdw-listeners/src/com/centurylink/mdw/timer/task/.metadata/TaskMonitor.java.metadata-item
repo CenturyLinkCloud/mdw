@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854321
+item-spec=4D4457413A314B37464735205441534B4D4F4E49544F52204A4156412D2D313038323636363932322E412D5352433B32
+file-version=2
+checksum=b0fa3d10ed2edc4ca0d8e3319564e7c6
+fetch-size=1270
+mtime=1393990106
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/timer/task/TaskMonitor.java
+project=4D4457413A4D445741
+project-uid=31770127

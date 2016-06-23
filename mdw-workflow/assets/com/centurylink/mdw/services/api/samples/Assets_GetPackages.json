@@ -1,0 +1,77 @@
+// GET request to: /mdw/Services/Assets?app=appId
+{
+  "assetRoot": "e:/workspaces/mdw/mdw-workflow/assets",
+  "serverInstance": "localhost:8080",
+  "vcsBranch": "master",
+  "vcsRemoteUrl": "https://8.22.8.164/mdw/mdw-workflow.git",
+  "packages": [
+    {
+      "name": "com.centurylink.mdw.artis",
+      "version": "5.5.25"
+    },
+    {
+      "name": "com.centurylink.mdw.bam",
+      "version": "5.5.25"
+    },
+    {
+      "name": "com.centurylink.mdw.base",
+      "version": "5.5.25"
+    },
+    {
+      "name": "com.centurylink.mdw.camel",
+      "version": "5.5.25"
+    },
+    {
+      "name": "com.centurylink.mdw.db",
+      "version": "5.5.25"
+    },
+    {
+      "name": "com.centurylink.mdw.hub",
+      "version": "5.5.25"
+    },
+    {
+      "name": "com.centurylink.mdw.reports",
+      "version": "5.5.25"
+    },
+    {
+      "name": "com.centurylink.mdw.tests",
+      "version": "5.5.25"
+    },
+    {
+      "name": "com.centurylink.mdw.tests.multiver",
+      "version": "0.0.05"
+    },
+    {
+      "name": "DonsOtherPackage2",
+      "version": "0.0.01"
+    },
+    {
+      "name": "DotNetTest",
+      "version": "0.0.01"
+    },
+    {
+      "name": "mdw-admin",
+      "version": "0.0.01"
+    },
+    {
+      "name": "mdw-admin.css",
+      "version": "0.0.01"
+    },
+    {
+      "name": "mdw-admin.demo",
+      "version": "0.0.01"
+    },
+    {
+      "name": "mdw-admin.js",
+      "version": "0.0.01"
+    },
+    {
+      "name": "mdw-admin.layout",
+      "version": "0.0.01"
+    },
+    {
+      "name": "mdw-admin.samples",
+      "version": "0.0.01"
+    }
+  ]
+}

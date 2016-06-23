@@ -1,0 +1,63 @@
+// task-autoassign
+// NOTE: this will fail until Designer 8.9.1 which adds HTTP auth support
+import com.centurylink.mdw.common.task.TaskList
+import com.centurylink.mdw.model.value.task.TaskActionVO
+
+start process("TaskAutoAssign") {
+    variables = [ stringAssignee: "aa56486",
+                  jaxbWithAssignee: '''<TaskJaxb
+  attributeOne="aa56486">
+  <elementOne>dxoakes</elementOne>
+</TaskJaxb>''' ]
+}
+
+sleep 20
+
+// use Tasks service to check assignees
+// TODO: URLEncoding in TestCaseHttp?
+def response = get http("services/Tasks?masterRequestId=%3D%27${masterRequestId}%27")
+assert response.code == 200
+def taskList = new TaskList('tasks', response.content)
+def autoAssignedTask, autoAssignedFromJaxbElem, autoAssignedFromJaxbAttr
+taskList.tasks.each {
+    if (it.name == 'Auto Assign Task')
+        autoAssignedTask = it
+    else if (it.name == 'AutoAssigned From Jaxb Elem')
+        autoAssignedFromJaxbElem = it
+    else if (it.name == 'Auto Assigned From Jaxb Attr')
+        autoAssignedFromJaxbAttr = it      
+}
+assert autoAssignedTask && autoAssignedTask.assigneeCuid == 'aa56486'
+assert autoAssignedFromJaxbElem && autoAssignedFromJaxbElem.assigneeCuid == 'dxoakes'
+assert autoAssignedFromJaxbAttr && autoAssignedFromJaxbAttr.assigneeCuid == 'aa56486'
+
+// update assignees 
+def taskAction = new TaskActionVO();
+taskAction.taskInstanceId = autoAssignedTask.taskInstanceId
+taskAction.taskAction = 'Assign'
+taskAction.assignee = 'dxoakes'
+taskAction.user = 'mdwapp'
+response = post http("services/Tasks/${taskAction.taskInstanceId}/Assign") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = taskAction.getJson().toString(2)
+}
+taskAction.taskInstanceId = autoAssignedFromJaxbElem.taskInstanceId
+taskAction.assignee = 'aa56486'
+response = post http("services/Tasks/${taskAction.taskInstanceId}/Assign") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = taskAction.getJson().toString(2)
+}
+taskAction.taskInstanceId = autoAssignedFromJaxbAttr.taskInstanceId
+taskAction.assignee = 'dxoakes'
+response = post http("services/Tasks/${taskAction.taskInstanceId}/Assign") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = taskAction.getJson().toString(2)
+}
+
+verify process
+
+// verify process (variables should reflect new assignees)
+

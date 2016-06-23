@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549880
+item-spec=4D4457413A314B3848384C20534552564943454D49585055424C4953485441534B204A4156412D2D3432363537373339322E412D5352433B3131
+file-version=11
+checksum=8d10f2d5deb3ce92db29b178c2d1fabf
+fetch-size=15321
+mtime=1453326690
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/server/ServiceMixPublishTask.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

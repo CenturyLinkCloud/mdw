@@ -1,0 +1,5 @@
+# provides backward compatibility for renamed mdw classes
+http\://mdw.qwest.com/workflow=http://mdw.centurylink.com/workflow
+http\://mdw.qwest.com/services=http://mdw.centurylink.com/services
+http\://www.qwest.com/BusinessActivityMonitor=http://www.centurylink.com/bam
+http\://mdw.qwest.com/XMLSchema=http://mdw.centurylink.com/bpm

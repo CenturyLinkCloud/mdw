@@ -1,0 +1,28 @@
+process: # 13736
+  name: MDWTestProcessAsService
+  instance: 1
+  activity: # 7 "2016-02-23 10:58:23"
+    name: Start
+    status: Completed
+  activity: # 13 "2016-02-23 10:58:23"
+    name: case?
+    status: Completed
+  activity: # 6 "2016-02-23 10:58:23"
+    name: Get OrderId
+    status: Completed
+  activity: # 3 "2016-02-23 10:58:23"
+    name: Stop
+    status: Completed
+  variable: # 20898
+    name: order
+    value: |
+      <order>
+        <orderId>X000001</orderId>
+        <customerId>DHO115360</customerId>
+      </order>
+  variable: # 20899
+    name: processCase
+    value: GetOrder
+  variable: # 20900
+    name: response
+    value: <orderId>X000001</orderId>

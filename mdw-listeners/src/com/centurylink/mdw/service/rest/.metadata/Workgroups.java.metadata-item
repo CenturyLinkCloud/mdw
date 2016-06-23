@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70789504
+item-spec=4D4457413A314B3746473520574F524B47524F555053204A4156412D313839393839333331583336353858382E412D5352433B3130
+file-version=10
+checksum=7bca9e3a16ed9fd455480d15d83aa412
+fetch-size=7287
+mtime=1464106413
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/rest/Workgroups.java
+project=4D4457413A4D445741
+project-uid=31770127

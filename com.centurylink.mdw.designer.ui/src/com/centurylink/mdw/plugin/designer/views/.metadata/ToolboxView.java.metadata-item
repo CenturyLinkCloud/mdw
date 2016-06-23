@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68483508
+item-spec=4D4457413A314B3848384C20544F4F4C424F5856494557204A4156412D2D32373836333330322E412D5352433B3230
+file-version=20
+checksum=ecb04afb5aa12752e6197e5e4abef0ac
+fetch-size=13781
+mtime=1456187736
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/views/ToolboxView.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

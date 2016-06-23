@@ -1,0 +1,209 @@
+/**
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.model.value.activity;
+
+import java.io.Serializable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.centurylink.mdw.common.service.Jsonable;
+
+public class ActivityInstance implements Jsonable, Serializable {
+
+    private Long id;
+    private Long definitionId;
+    private String startDate;
+    private String endDate;
+    private int statusCode;
+    private String status;
+    private String statusMessage;
+    private String completionCode;
+    private Long ownerId;
+    private String masterRequestId;
+    private String processName;
+    private Long processId;
+
+    private boolean definitionMissing;
+    public boolean isDefinitionMissing() { return definitionMissing; }
+    public void setDefinitionMissing(boolean missing) { this.definitionMissing = missing; }
+
+    private String version = "0";
+    public String getVersion() { return version; }
+    public void setVersion(String version) { this.version = version; }
+
+    private String packageName;
+    public String getPackageName() { return packageName; }
+    public void setPackageName(String pkg) { this.packageName = pkg; }
+
+    private String activityName;
+    public String getActivityName() { return activityName; }
+    public void setActivityName(String activityName) { this.activityName = activityName; }
+
+    public ActivityInstance() {
+    }
+
+    public ActivityInstance(JSONObject json) throws JSONException {
+        if (json.has("id"))
+            id = json.getLong("id");
+        if (json.has("activityId"))
+            definitionId = json.getLong("activityId");
+        if (json.has("startDate"))
+            startDate = json.getString("startDate");
+        if (json.has("endDate"))
+            endDate = json.getString("endDate");
+        if (json.has("statusCode"))
+            statusCode = json.getInt("statusCode");
+        if (json.has("statusMessage"))
+            statusMessage = json.getString("statusMessage");
+        if (json.has("completionCode"))
+            completionCode = json.getString("completionCode");
+        if (json.has("ownerId"))
+            ownerId = json.getLong("ownerId");
+        if (json.has("processName"))
+            processName = json.getString("processName");
+        if (json.has("masterRequestId"))
+            masterRequestId = json.getString("masterRequestId");
+        if (json.has("activityName"))
+            activityName = json.getString("activityName");
+    }
+
+    /**
+     * Creates a skeleton activity instance VO (without an ID).
+     */
+
+    public ActivityInstance(long id, long activityId) {
+        setId(id);
+        setDefinitionId(activityId);
+    }
+
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public Long getDefinitionId() {
+        return definitionId;
+    }
+    public void setDefinitionId(Long definitionId) {
+        this.definitionId = definitionId;
+    }
+    public String getStartDate() {
+        return startDate;
+    }
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+    public String getEndDate() {
+        return endDate;
+    }
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+    public int getStatusCode() {
+        return statusCode;
+    }
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+    public String getCompletionCode() {
+        return completionCode;
+    }
+    public void setCompletionCode(String completionCode) {
+        this.completionCode = completionCode;
+    }
+    public Long getOwnerId() {
+        return ownerId;
+    }
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public String getJsonName() {
+        return "ActivityInstance";
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * @return the masterRequestId
+     */
+    public String getMasterRequestId() {
+        return masterRequestId;
+    }
+
+    /**
+     * @param masterRequestId the masterRequestId to set
+     */
+    public void setMasterRequestId(String masterRequestId) {
+        this.masterRequestId = masterRequestId;
+    }
+
+    /**
+     * @return the processName
+     */
+    public String getProcessName() {
+        return processName;
+    }
+
+    /**
+     * @param processName the processName to set
+     */
+    public void setProcessName(String processName) {
+        this.processName = processName;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Long getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(Long processId) {
+        this.processId = processId;
+    }
+
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        if (id != null)
+            json.put("id", id);
+        if (definitionId != null)
+            json.put("activityId", definitionId);
+        if (startDate != null)
+            json.put("startDate", startDate);
+        if (endDate != null)
+            json.put("endDate", endDate);
+        if (statusCode > 0)
+            json.put("statusCode", statusCode);
+        if (statusMessage != null)
+            json.put("statusMessage", statusMessage);
+        if (status != null)
+            json.put("status", status);
+        if (completionCode != null)
+            json.put("completionCode", completionCode);
+        if (ownerId != null)
+            json.put("ownerId", ownerId);
+        if (status != null)
+            json.put("status", status);
+        if (masterRequestId != null)
+            json.put("masterRequestId", masterRequestId);
+        if (processName != null)
+            json.put("processName", processName);
+        if (activityName != null)
+            json.put("activityName", activityName);
+        return json;
+    }
+
+}

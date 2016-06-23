@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <title>Task Manager Notification</title>
+    <style type="text/css">
+      .buttonLink {
+        width: 30px; 
+        height: 15px;
+        padding: 2px;
+        background-color: #d4d0c8;
+        border-top: 2px solid #ffffff;
+        border-right: 2px solid #333333;
+        border-bottom: 2px solid #333333;
+        border-left: 2px solid #ffffff;
+        text-decoration: none;
+        color: #000000;
+        cursor: default;
+        font-family: Verdana,Arial,Helvetica,sans-serif;
+        font-size: 10px;
+        vertical-align: middle;       
+      }
+    </style>
+  </head>
+  <body style="margin-top:8px;">
+    <table cellpadding="0" cellspacing="0" style="height:56px;" />
+      <tr>
+        <td style="width:100%;margin-left:5px;white-space:nowrap;">
+          <img src="#{image:mdw.png}" alt="MDW" />
+          <img src="#{image:tm.png}" alt="Task Manager" />
+        </td>
+        <td style="padding-right:5px;white-space:nowrap;">
+          <img src="#{image:ctl.png}" alt="CenturyLink (TM)" />
+        </td>
+      </tr>
+    </table>
+    
+    <div style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:12px;clear:left;margin:10px;">
+      <span style="color:#094D9C;"><b>A new task has been opened for your workgroup:</b></span><br/>
+      <b>"#{taskName}"</b><hr align="left"/>
+      <ul type="square" style="padding:0px;margin-top:0px;">
+        <li>Order ID: #{orderId}</li>
+        <li>Task ID: #{taskInstanceId}</li>
+        <li>Due Date: #{dueDate}</li>
+      </ul>
+      To view or act on this task, click on the following link:<br/>
+      <a href="#{taskInstanceUrl}">#{taskInstanceUrl}</a>
+      <br/><br/>
+      To mark this task as completed, click here:
+      <span class="buttonLink">
+        <a href="#{taskActionUrl}&mdw.Action=Complete">Complete</a>
+      </span>
+    </div>
+
+    <div style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:10px;clear:left;margin:10px;">
+      Please do not reply to this automatically-generated e-mail.
+    </div>
+    
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding-top:15px;">
+      <tr>
+        <td align="center">
+          <span style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9px;color:#999999;clear:left;margin:5px;width:600px;">
+            <br/><br/>
+            <strong>CONFIDENTIAL</strong><br/>
+            Copyright &#169; 2014 CenturyLink, Inc. - All Rights Reserved.
+          </span>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

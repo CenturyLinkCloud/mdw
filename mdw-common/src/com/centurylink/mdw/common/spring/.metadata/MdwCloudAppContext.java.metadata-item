@@ -1,0 +1,13 @@
+version=10.2
+item-uid=54500681
+item-spec=4D4457413A314B3737545A204D4457434C4F5544415050434F4E54455854204A4156412D2D313334333639353439372E412D5352433B31
+file-version=1
+checksum=195672c6c9724263eef679020288868f
+fetch-size=1690
+mtime=1425339160
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/spring/MdwCloudAppContext.java
+project=4D4457413A4D445741
+project-uid=31770127

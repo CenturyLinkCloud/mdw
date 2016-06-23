@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49573064
+item-spec=4D4457413A314B3848384C20414441505445524143544956495459204A4156412D2D313331353234343037302E412D5352433B34
+file-version=4
+checksum=72afe9ee6112937ada3d6b6e3f5fdf63
+fetch-size=2271
+mtime=1406223669
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/codegen/meta/AdapterActivity.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

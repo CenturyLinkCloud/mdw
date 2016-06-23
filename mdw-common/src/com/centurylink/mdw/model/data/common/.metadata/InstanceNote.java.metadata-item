@@ -1,0 +1,13 @@
+version=10.2
+item-uid=48018447
+item-spec=4D4457413A314B3737545A20494E5354414E43454E4F5445204A4156412D2D3834383339343935382E412D5352433B33
+file-version=3
+checksum=17d901bebc0271d9797c0ab160fe453e
+fetch-size=3780
+mtime=1398372336
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/data/common/InstanceNote.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69534224
+item-spec=4D4457413A314B37565330205441534B44455441494C204A4156412D2D313338353635333232332E412D5352433B39
+file-version=9
+checksum=68e27780846ff0a7abc5ab209b1166ee
+fetch-size=18658
+mtime=1459465165
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/tasks/detail/TaskDetail.java
+project=4D4457413A4D445741
+project-uid=31770127

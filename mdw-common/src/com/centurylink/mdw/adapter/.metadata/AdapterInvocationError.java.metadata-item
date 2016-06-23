@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69914391
+item-spec=4D4457413A314B3737545A2041444150544552494E564F434154494F4E4552524F52204A4156412D31393930333430383158313530343758302E412D5352433B31
+file-version=1
+checksum=08d1c24339154dea36397d14e2bc5be1
+fetch-size=208
+mtime=1460653344
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/adapter/AdapterInvocationError.java
+project=4D4457413A4D445741
+project-uid=31770127

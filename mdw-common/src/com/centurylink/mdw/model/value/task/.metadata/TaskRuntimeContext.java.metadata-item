@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69534193
+item-spec=4D4457413A314B3737545A205441534B52554E54494D45434F4E54455854204A4156412D2D3533343637333737352E412D5352433B34
+file-version=4
+checksum=339e9331e6c45963317ca68d390c735f
+fetch-size=6387
+mtime=1459527682
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/task/TaskRuntimeContext.java
+project=4D4457413A4D445741
+project-uid=31770127

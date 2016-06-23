@@ -1,0 +1,13 @@
+// simple-dynamic-java
+// creates two instances
+start process("SimpleDynamicJava") {
+    variables = [ responsibleParty: "dxoakes",
+                  instructions: asset("acknowledge.xml").text ]
+}
+sleep 10
+start process("SimpleDynamicJava") {
+    variables = [ responsibleParty: "dxoakes",
+                  instructions: asset("escalate.xml").text ]
+}
+sleep 60
+verify process("SimpleDynamicJava")

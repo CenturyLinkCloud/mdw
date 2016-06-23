@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853856
+item-spec=4D4457413A314B38334D42204358464E4F5449465948414E444C4552204A4156412D313934363638343332392E412D5352433B32
+file-version=2
+checksum=fffbc7fc17ae2a795e2d9ee79c2b3fc2
+fetch-size=702
+mtime=1393989706
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/camel/cxf/CxfNotifyHandler.java
+project=4D4457413A4D445741
+project-uid=31770127

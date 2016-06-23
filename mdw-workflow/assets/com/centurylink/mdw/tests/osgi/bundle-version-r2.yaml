@@ -1,0 +1,45 @@
+process:
+  name: BundleVersionTest
+  instance: 1
+  activity: 
+    name: Start
+    status: Completed
+  activity: 
+    name: |
+      Dons
+      General
+    status: Completed
+  activity: 
+    name: |
+      Bundle
+      Activity
+    status: Completed
+  activity: 
+    name: |
+      Dynamic Java
+      Bundle Access
+    status: Completed    
+  activity: 
+    name: |
+      Object Var
+      Bundle Access
+    status: Completed
+  activity: 
+    name: |
+      Custom Page
+      Bundle Access
+    status: Completed
+  variable: 
+    name: bundleIds
+    value: 774~774~774
+  variable: 
+    name: bundleJavaObject
+    value: |
+      com.centurylink.mdw.test.bundle [774],com.centurylink.mdw.java.CompiledJavaCache$DynamicJavaClassLoader with parent BundleDelegatingClassLoader for [mdw-bundle-test (com.centurylink.mdw.test.bundle)]
+      and Workflow Package: com.centurylink.mdw.tests.bundle v2.0.11 (BundleSpec: com.centurylink.mdw.test.bundle v[2.0,3), ClassLoader: BundleDelegatingClassLoader for [mdw-bundle-test (com.centurylink.mdw.test.bundle)]),
+  variable: 
+    name: mapObject
+    value: rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAx3CAAAABAAAAACdAAFYmVhbjFzcgAvY29tLmNlbnR1cnlsaW5rLm1kd2RlbW93b3JrZmxvdy5iZWFuLkJ1bmRsZUJlYW4C0f21tFQBuwIAA0wAC2NyZWF0ZWRGcm9tdAASTGphdmEvbGFuZy9TdHJpbmc7TAANbmV3RmllbGRGb3JSMnEAfgAETAALdXBkYXRlZEZyb21xAH4ABHhwdAF5Y29tLmNlbnR1cnlsaW5rLm1kdy5qYXZhLkNvbXBpbGVkSmF2YUNhY2hlJER5bmFtaWNKYXZhQ2xhc3NMb2FkZXIgd2l0aCBwYXJlbnQgQnVuZGxlRGVsZWdhdGluZ0NsYXNzTG9hZGVyIGZvciBbbWR3LWJ1bmRsZS10ZXN0IChjb20uY2VudHVyeWxpbmsubWR3LnRlc3QuYnVuZGxlKV0KYW5kIFdvcmtmbG93IFBhY2thZ2U6IGNvbS5jZW50dXJ5bGluay5tZHcudGVzdHMuYnVuZGxlIHYyLjAuMTEgKEJ1bmRsZVNwZWM6IGNvbS5jZW50dXJ5bGluay5tZHcudGVzdC5idW5kbGUgdlsyLjAsMyksIENsYXNzTG9hZGVyOiBCdW5kbGVEZWxlZ2F0aW5nQ2xhc3NMb2FkZXIgZm9yIFttZHctYnVuZGxlLXRlc3QgKGNvbS5jZW50dXJ5bGluay5tZHcudGVzdC5idW5kbGUpXSl0AABxAH4AB3QABWJlYW4yc3EAfgADdAAoY29tLmNlbnR1cnlsaW5rLm1kdy50ZXN0cy5idW5kbGUgdjIuMC4xMXEAfgAHcQB+AAd4
+  variable: 
+    name: stringVariable
+    value: R2

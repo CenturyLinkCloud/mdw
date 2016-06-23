@@ -1,0 +1,13 @@
+version=10.2
+item-uid=63999067
+item-spec=4D4457413A314B375653302050524F434553534553204A4156412D2D34323434373035362E412D5352433B33
+file-version=3
+checksum=28f4195b529eab8ecaa0632c4fc8464d
+fetch-size=2821
+mtime=1440007929
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/process/Processes.java
+project=4D4457413A4D445741
+project-uid=31770127

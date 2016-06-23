@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="com.centurylink.mdw.plugin.launch.Process">
+<stringAttribute key="externalEventRequest" value=""/>
+<booleanAttribute key="launchViaExternalEvent" value="false"/>
+<intAttribute key="logWatcherPort" value="7181"/>
+<stringAttribute key="masterRequestId" value="com.centurylink.mdw.plugin.User@39f41c7e~160215-164945"/>
+<booleanAttribute key="nofifyProcess" value="false"/>
+<stringAttribute key="notifyProcessEvent" value=""/>
+<stringAttribute key="notifyProcessRequest" value=""/>
+<stringAttribute key="owner" value="Designer"/>
+<stringAttribute key="ownerId" value="1455580185230"/>
+<booleanAttribute key="processInstanceLiveView" value="false"/>
+<stringAttribute key="processName" value="GroovyReturnVals"/>
+<stringAttribute key="processVersion" value="0.5"/>
+<stringAttribute key="responseVarName" value=""/>
+<booleanAttribute key="showLogsInConsole" value="false"/>
+<booleanAttribute key="synchronous" value="false"/>
+<mapAttribute key="variableValues"/>
+<stringAttribute key="workflowProject" value="mdw-workflow"/>
+</launchConfiguration>

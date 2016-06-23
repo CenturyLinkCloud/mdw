@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71303627
+item-spec=4D4457413A314B3737545A20535452494E4748454C504552204A4156412D2D323038373036353535362E412D5352433B39
+file-version=9
+checksum=af14c63843afddc143ac47172809cda8
+fetch-size=45943
+mtime=1465348585
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/StringHelper.java
+project=4D4457413A4D445741
+project-uid=31770127

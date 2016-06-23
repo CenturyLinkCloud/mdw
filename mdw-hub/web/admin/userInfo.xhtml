@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:a4j="http://richfaces.org/a4j">
+  
+  <ui:composition template="/layout/layout.xhtml">
+
+    <ui:define name="messages">
+      <h:messages 
+        styleClass="mdw_contextMessages"
+        showDetail="true" 
+        globalOnly="false" />
+    </ui:define>
+    
+    <ui:define name="content">
+      <rich:panel header="User Information" styleClass="mdw_panelBorder" style="margin-top:12px;">
+        <h:form id="myInfoForm" styleClass="mdw_form">       
+          <h:panelGrid
+            columns="3"
+            width="100%"
+            cellpadding="6"
+            cellspacing="2"
+            columnClasses="mdw_label,mdw_value,mdw_validation">
+    
+            <mdw:label
+              for="userId"
+              value="User ID:" />
+            <h:inputText
+              id="userId"
+              value="#{userItem.cuid}"
+              disabled="true"
+              size="50"
+              style="width:125px;"
+              styleClass="mdw_inputField" />
+            <mdw:blank /> 
+            
+            <mdw:label
+              for="userName"
+              value="Name:"
+              required="true" />
+            <h:inputText
+              id="userName"
+              value="#{userItem.name}"
+              required="true"
+              size="150"
+              style="width:300px;"          
+              styleClass="mdw_inputField" />
+            <h:message for="userName" errorClass="mdw_error" />
+            
+            <mdw:label
+              for="email"
+              value="E-Mail:" />
+            <h:inputText
+              id="email"
+              value="#{userItem.preferences['emailAddress']}"
+              size="200"
+              style="width:400px;"          
+              styleClass="mdw_inputField" />
+            <h:message for="email" errorClass="mdw_error" />
+
+            <mdw:label
+              for="phone"
+              value="Phone:" />
+            <h:inputText
+              id="phone"
+              value="#{userItem.preferences['phoneNumber']}"
+              size="100"
+              style="width:200px;"          
+              styleClass="mdw_inputField" />
+            <h:message for="phone" errorClass="mdw_error" />
+
+            <div style="margin-top:25px;" />
+            <h:panelGroup>
+              <h:commandButton 
+                id="saveUser"
+                value="Save"
+                rendered="#{userItem.id == authenticatedUser.id}"
+                action="#{userActionController.saveUserWithPreferences}" />
+              <h:commandButton
+                id="cancelUserInfo"
+                value="Cancel"
+                action="go_myTasks"
+                immediate="true"
+                style="margin-left:5px;" />
+            </h:panelGroup>
+            
+          </h:panelGrid>
+        </h:form>
+      </rich:panel>
+    </ui:define>
+  </ui:composition>
+  
+</html>

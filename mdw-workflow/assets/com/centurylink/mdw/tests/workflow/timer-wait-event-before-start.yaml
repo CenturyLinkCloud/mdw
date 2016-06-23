@@ -1,0 +1,33 @@
+process: # 13848
+  name: MDWTestEmbedded
+  instance: 1
+  activity: # 13 "2016-02-23 19:03:02"
+    name: Start
+    status: Completed
+  activity: # 5 "2016-02-23 19:03:02"
+    name: which case?
+    status: Completed
+  activity: # 15 "2016-02-23 19:03:02"
+    name: Wait for 3 min
+    status: Completed
+  activity: # 10 "2016-02-23 19:06:02"
+    name: update case value
+    status: Completed
+  activity: # 7 "2016-02-23 19:06:02"
+    name: Stop
+    status: Completed
+  variable: # 21174
+    name: testCase
+    value: correct-resume-on-hold
+process: # 13849
+  name: MDWTestEmbedded Correction Handler
+  instance: 1
+  activity: # 20 "2016-02-23 19:03:02"
+    name: Start
+    status: Completed
+  activity: # 19 "2016-02-23 19:03:02"
+    name: wait 1 min
+    status: Completed
+  activity: # 21 "2016-02-23 19:04:02"
+    name: Stop
+    status: Completed

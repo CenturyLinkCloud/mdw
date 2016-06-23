@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852754
+item-spec=4D4457413A314B3737545A2044594E414D49434A415641494D504C454D454E544F52204A4156412D33313532323931312E412D5352433B32
+file-version=2
+checksum=015fb0573b4554c7572faf50aff231f2
+fetch-size=405
+mtime=1393986797
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/java/DynamicJavaImplementor.java
+project=4D4457413A4D445741
+project-uid=31770127

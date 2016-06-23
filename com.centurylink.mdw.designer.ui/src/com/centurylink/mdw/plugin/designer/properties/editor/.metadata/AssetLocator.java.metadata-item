@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69631865
+item-spec=4D4457413A314B3848384C2041535345544C4F4341544F52204A4156412D313138353930373030372E412D5352433B3131
+file-version=11
+checksum=258950ed8a5049954d0533c056a44b01
+fetch-size=8454
+mtime=1459962515
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/properties/editor/AssetLocator.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

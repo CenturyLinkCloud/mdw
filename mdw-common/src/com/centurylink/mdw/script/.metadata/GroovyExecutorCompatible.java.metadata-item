@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853066
+item-spec=4D4457413A314B3737545A2047524F4F56594558454355544F52434F4D50415449424C45204A4156412D2D3739393638343738382E412D5352433B32
+file-version=2
+checksum=b6f26ded173170f74b2cf530d8030af8
+fetch-size=1123
+mtime=1393986797
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/script/GroovyExecutorCompatible.java
+project=4D4457413A4D445741
+project-uid=31770127

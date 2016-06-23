@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68532258
+item-spec=4D4457413A314B3746473520554E495454455354204A4156412D2D38353038373131302E412D5352433B33
+file-version=3
+checksum=f92932d753559c80c90eeb17429ef577
+fetch-size=3205
+mtime=1456331757
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/action/UnitTest.java
+project=4D4457413A4D445741
+project-uid=31770127

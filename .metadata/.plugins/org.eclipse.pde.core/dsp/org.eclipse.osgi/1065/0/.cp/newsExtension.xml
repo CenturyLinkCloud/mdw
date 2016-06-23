@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+   <extensionContent id="org.eclipse.wtp" name="WTP" style="css/overview.css" path="whatsnew/@">
+     <group id="content-group" style-id="content-group">
+    	<link style-id="content-link" label="Web development tools" url="http://www.eclipse.org/webtools/development/news/main.php" id="wtp">
+      		<text>The Eclipse Web Tools Platform (WTP) project extends the Eclipse platform with tools for developing Web and Java EE applications. In these pages you will find the New and Noteworthy about our releases</text>
+    	</link>
+     </group>
+  </extensionContent>
+</introContent>

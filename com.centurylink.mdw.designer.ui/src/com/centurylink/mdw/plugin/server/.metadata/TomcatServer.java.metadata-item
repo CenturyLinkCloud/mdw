@@ -1,0 +1,13 @@
+version=10.2
+item-uid=64261663
+item-spec=4D4457413A314B3848384C20544F4D434154534552564552204A4156412D313538323534303635372E412D5352433B36
+file-version=6
+checksum=1aaf9ead132a07f5b25bb0022787824a
+fetch-size=8729
+mtime=1440790939
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/server/TomcatServer.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

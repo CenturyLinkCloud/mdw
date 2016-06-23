@@ -1,0 +1,164 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="LdapAdapter" version="0.1" description="">
+    <bpm:Activity Id="A4" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=208,y=44,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="LDAP Adapter&#13;&#10;Multiple Results" Implementation="com.centurylink.mdw.workflow.adapter.ldap.LdapAdapter">
+      <bpm:Attribute Name="AppCuid" Value="prop:LDAP/AppCUID"/>
+      <bpm:Attribute Name="AppPassword" Value="prop:LDAP/AppPassword"/>
+      <bpm:Attribute Name="BaseDn" Value="prop:LDAP/BaseDN"/>
+      <bpm:Attribute Name="Bindings" Value="matchingCuids=uid;matchingMnetIds=mnetid;unmatchedMultiple=unmatched;matchingHomePhones=homephone"/>
+      <bpm:Attribute Name="LdapHost" Value="prop:LDAP/Host"/>
+      <bpm:Attribute Name="LdapPort" Value="prop:LDAP/Port"/>
+      <bpm:Attribute Name="PostScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="PreScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="SearchContext" Value="ou=People"/>
+      <bpm:Attribute Name="SearchFilter" Value="(sn=${lastNameInput})"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=233,y=199,w=116,h=67"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A5" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=274,y=390,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A1" Name="LDAP Adapter&#13;&#10;Single Result" Implementation="com.centurylink.mdw.workflow.adapter.ldap.LdapAdapter">
+      <bpm:Attribute Name="AppCuid" Value="prop:LDAP/AppCUID"/>
+      <bpm:Attribute Name="AppPassword" Value="prop:LDAP/AppPassword"/>
+      <bpm:Attribute Name="BaseDn" Value="prop:LDAP/BaseDN"/>
+      <bpm:Attribute Name="Bindings" Value="department=departmentname;emailAddress=mail;firstName=givenname;lastName=sn;mnetId=mnetid;phoneNumber=telephonenumber;rcCode=rc;state=st;unmatchedSingle=unmatched;sapId=saploginid"/>
+      <bpm:Attribute Name="LdapHost" Value="prop:LDAP/Host"/>
+      <bpm:Attribute Name="LdapPort" Value="prop:LDAP/Port"/>
+      <bpm:Attribute Name="PostScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="PreScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="SearchContext" Value="ou=People"/>
+      <bpm:Attribute Name="SearchFilter" Value="(uid=${cuid})"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=36,y=190,w=110,h=69"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A6" Name="Wait 10s" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="10"/>
+      <bpm:Attribute Name="Unit" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=354,y=41,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A7" Name="Sync" Implementation="com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity">
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="Synced Activities" Value="LDAP Adapter&#13;&#10;Single Result#LDAP Adapter&#13;&#10;Multiple Results#LDAP Adapter&#13;&#10;Document Binding"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=254,y=300,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A8" Name="10 More&#13;&#10;Seconds" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="10"/>
+      <bpm:Attribute Name="Unit" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=521,y=44,w=106,h=67"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A9" Name="LDAP Adapter&#13;&#10;Document Binding" Implementation="com.centurylink.mdw.workflow.adapter.ldap.LdapAdapter">
+      <bpm:Attribute Name="AppCuid" Value="prop:LDAP/AppCUID"/>
+      <bpm:Attribute Name="AppPassword" Value="prop:LDAP/AppPassword"/>
+      <bpm:Attribute Name="BaseDn" Value="prop:LDAP/BaseDN"/>
+      <bpm:Attribute Name="Bindings" Value="userDocument=results"/>
+      <bpm:Attribute Name="LdapHost" Value="prop:LDAP/Host"/>
+      <bpm:Attribute Name="LdapPort" Value="prop:LDAP/Port"/>
+      <bpm:Attribute Name="OsgiBundleSymbolicName" Value="com.centurylink.donsservicemix"/>
+      <bpm:Attribute Name="PostScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="PreScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="SearchContext" Value="ou=People"/>
+      <bpm:Attribute Name="SearchFilter" Value="(saploginid=${sapIdInput})"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=523,y=166,w=113,h=69"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A7" To="A5" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=304,ly=359,type=Elbow,xs=304&amp;304,ys=364&amp;386"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A4" To="A1" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=86,ly=40,type=Elbow,xs=204&amp;91,ys=64&amp;186"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A4" To="A6" Event="FINISH" Id="T3">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=303,ly=81,type=Elbow,xs=272&amp;350,ys=64&amp;64"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A6" To="A3" Event="FINISH" Id="T5">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=348,ly=144,type=Elbow,xs=404&amp;291,ys=105&amp;195"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A1" To="A7" Event="FINISH" Id="T6">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=199,ly=278,type=Elbow,xs=150&amp;250,ys=224&amp;330"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A7" Event="FINISH" Id="T7">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=301,ly=277,type=Elbow,xs=301&amp;301,ys=270&amp;296"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A6" To="A8" Event="FINISH" Id="T8">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=488,ly=72,type=Elbow,xs=458&amp;517,ys=72&amp;72"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A8" To="A9" Event="FINISH" Id="T9">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=575,ly=138,type=Elbow,xs=575&amp;575,ys=115&amp;162"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A9" To="A7" Event="FINISH" Id="T10">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=426,ly=249,type=Elbow,xs=519&amp;358,ys=200&amp;330"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="SLA" Value="0"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+    <bpm:Attribute Name="START_TRANSITION_ID" Value="2358799"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=20,y=13,w=121,h=27"/>
+    <bpm:Variables Name="cuid" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="department" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="emailAddress" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="firstName" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="lastName" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="lastNameInput" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="matchingCuids" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String[]"/>
+    </bpm:Variables>
+    <bpm:Variables Name="matchingHomePhones" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String[]"/>
+    </bpm:Variables>
+    <bpm:Variables Name="matchingMnetIds" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.Integer[]"/>
+    </bpm:Variables>
+    <bpm:Variables Name="mnetId" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.Integer"/>
+    </bpm:Variables>
+    <bpm:Variables Name="phoneNumber" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="rcCode" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="sapId" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="sapIdInput" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="state" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="unmatchedMultiple" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String[]"/>
+    </bpm:Variables>
+    <bpm:Variables Name="unmatchedSingle" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="userDocument" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="org.apache.xmlbeans.XmlObject"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

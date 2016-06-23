@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549721
+item-spec=4D4457413A314B3848384C2050524F4A45435456435353454354494F4E204A4156412D31383830303136313558323631313058342E412D5352433B32
+file-version=2
+checksum=469a425f7c0607a9b92cdf69d0e7bb0e
+fetch-size=8967
+mtime=1453324124
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/properties/ProjectVcsSection.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855686
+item-spec=4D4457413A314B374B524A204D445745585445524E414C434F4E54455854464143544F5259204A4156412D2D3835373334323337322E412D5352433B32
+file-version=2
+checksum=1f64e0b1788ca278af940667d042eeb0
+fetch-size=3265
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/view/MdwExternalContextFactory.java
+project=4D4457413A4D445741
+project-uid=31770127

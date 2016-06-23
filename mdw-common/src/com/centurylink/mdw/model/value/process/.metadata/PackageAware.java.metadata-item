@@ -1,0 +1,13 @@
+version=10.2
+item-uid=54500746
+item-spec=4D4457413A314B3737545A205041434B4147454157415245204A4156412D2D3632393334343630322E412D5352433B31
+file-version=1
+checksum=ebbfba061faa840a113af9e8e479fe0b
+fetch-size=204
+mtime=1425411219
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/process/PackageAware.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50900017
+item-spec=4D4457413A314B3848384C204A41564144454255474C41554E4348434F4E46494755524154494F4E204A4156412D2D313231323735333534352E412D5352433B34
+file-version=4
+checksum=4a5f682ab9d865fa60173da287a28793
+fetch-size=1338
+mtime=1412361426
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/launch/JavaDebugLaunchConfiguration.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

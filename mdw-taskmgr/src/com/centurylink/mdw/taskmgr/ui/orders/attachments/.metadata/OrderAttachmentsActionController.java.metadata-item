@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855107
+item-spec=4D4457413A314B37565330204F524445524154544143484D454E5453414354494F4E434F4E54524F4C4C4552204A4156412D2D313037313933323034302E412D5352433B32
+file-version=2
+checksum=77d9742a0117446ac01bb521db738b9d
+fetch-size=2716
+mtime=1393990193
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/orders/attachments/OrderAttachmentsActionController.java
+project=4D4457413A4D445741
+project-uid=31770127

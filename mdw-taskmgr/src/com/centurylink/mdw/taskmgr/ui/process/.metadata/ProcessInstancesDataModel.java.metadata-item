@@ -1,0 +1,13 @@
+version=10.2
+item-uid=64948734
+item-spec=4D4457413A314B375653302050524F43455353494E5354414E434553444154414D4F44454C204A4156412D3430363235343239302E412D5352433B39
+file-version=9
+checksum=042fdefb823322ccb5dfc12673093c6f
+fetch-size=4665
+mtime=1443656553
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/process/ProcessInstancesDataModel.java
+project=4D4457413A4D445741
+project-uid=31770127

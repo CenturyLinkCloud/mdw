@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:dj="http://www.centurylink.com/mdw/jsf/dojo"
+  xmlns:mt="http://www.centurylink.com/mdw/jsf/mdwtools">
+
+  <ui:composition template="/layout/panels.xhtml">
+  
+    <ui:define name="title">FilePanel ${webUtil.localHostName}</ui:define>
+
+    <ui:define name="script">
+      <script type="text/javascript" src="../script/dojo/dojo.js" djConfig="parseOnLoad:true,usePlainJson:true"></script>
+      <script type="text/javascript" src="../script/filepanel.js"></script>
+      <script type="text/javascript" src="../script/view.js"></script>
+    </ui:define>
+  
+    <ui:define name="nav">
+      <mt:fpNavPanel />
+    </ui:define>
+  
+    <ui:define name="toolbar">
+      <mt:fpToolbar />
+    </ui:define>    
+    
+    <ui:define name="content">
+      <mt:fileView />
+    </ui:define>
+      
+  </ui:composition>
+  
+</html>

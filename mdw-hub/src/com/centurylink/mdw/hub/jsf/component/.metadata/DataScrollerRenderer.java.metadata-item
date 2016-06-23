@@ -1,0 +1,13 @@
+version=10.2
+item-uid=47965559
+item-spec=4D4457413A314B3759514220444154415343524F4C4C455252454E4445524552204A4156412D2D313331383231383230342E412D5352433B39
+file-version=9
+checksum=c592c8ded32f5bf4492777ade78ff954
+fetch-size=3348
+mtime=1398195068
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/jsf/component/DataScrollerRenderer.java
+project=4D4457413A4D445741
+project-uid=31770127

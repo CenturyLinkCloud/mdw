@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68853405
+item-spec=4D4457413A314B3848384C205641524941424C4556414C55454449414C4F47204A4156412D2D32373836333330322E412D5352433B33
+file-version=3
+checksum=9abf842ce82b19d3a3d5c411e3d121b1
+fetch-size=12919
+mtime=1457555014
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/dialogs/VariableValueDialog.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

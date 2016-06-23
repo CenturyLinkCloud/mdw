@@ -1,0 +1,8 @@
+// document-web-service-adapter
+// uses the FindEmployee service proc thru the GetEmployee handler
+start process("DocumentWebService") {
+    variables = [ requestDoc: file("employee-request.xml").text ]
+}
+
+wait process
+verify process

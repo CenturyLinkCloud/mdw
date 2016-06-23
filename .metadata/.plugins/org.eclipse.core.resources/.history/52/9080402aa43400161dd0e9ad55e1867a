@@ -1,0 +1,26 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="TestActivityStubSubproc" version="0.1" description="">
+    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=65,y=114,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=485,y=114,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="Stubbed Event&#13;&#10;Wait" Implementation="com.centurylink.mdw.workflow.activity.event.EventWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_TIMEOUT" Value="Cancelled"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="notGonnaHappen,,false,"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=249,y=112,w=99,h=72"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=231,ly=114,type=Elbow,xs=129&amp;245,ys=134&amp;134"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=417,ly=134,type=Elbow,xs=352&amp;481,ys=134&amp;134"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=33,y=29,w=222,h=27"/>
+  </bpm:Process>
+</bpm:processDefinition>

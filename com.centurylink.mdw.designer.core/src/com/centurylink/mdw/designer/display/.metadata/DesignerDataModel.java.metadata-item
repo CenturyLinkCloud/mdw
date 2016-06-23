@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70252294
+item-spec=4D4457413A314B384357442044455349474E4552444154414D4F44454C204A4156412D2D313638393331373332372E412D5352433B3137
+file-version=17
+checksum=216513e663a4155eacf45b5a6bd3c179
+fetch-size=50556
+mtime=1462467111
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/display/DesignerDataModel.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

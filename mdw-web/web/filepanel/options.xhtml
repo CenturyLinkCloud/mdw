@@ -1,0 +1,133 @@
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:dj="http://www.centurylink.com/mdw/jsf/dojo"
+  xmlns:mt="http://www.centurylink.com/mdw/jsf/mdwtools">
+
+  <ui:composition>
+
+    <dj:dropDown
+      dojoType="dijit.form.DropDownButton"
+      id="optionsDropDown"
+      label="Options">
+      <dj:menu
+        dojoType="dijit.Menu"
+        id="optionsMenu">
+        <!-- show line numbers -->
+        <dj:menuItem
+          dojoType="dijit.MenuItem"
+          id="showLineNumbers"
+          checkedState="#{prefs.showLineNumbers}"
+          onclick="toggleLineNumbers(this.id);"
+          label="Show Line Numbers" />
+        <!-- show file timestamps -->                    
+        <dj:menuItem
+          dojoType="dijit.MenuItem"
+          id="showTimeStamps"
+          checkedState="#{prefs.showTimeStamps}"
+          onclick="toggleTimeStamps(this.id);"
+          label="Show File Timestamps" />                    
+        <!-- file view font size -->
+        <dj:menuItem
+          dojoType="dijit.PopupMenuItem"
+          id="fontSizeMenuItem"
+          label="File View Font Size">
+          <dj:menu
+            dojoType="dijit.Menu"
+            id="fontSizeMenu">
+            <dj:menuItem
+              dojoType="dijit.MenuItem"
+              id="fontSize8pt"
+              checkedState="#{prefs.fileViewFontSize == '8pt'}"
+              onclick="setFileViewFontSize('8pt');"
+              label="8pt" />
+            <dj:menuItem
+              dojoType="dijit.MenuItem"
+              id="fontSize9pt"
+              checkedState="#{prefs.fileViewFontSize == '9pt'}"
+              onclick="setFileViewFontSize('9pt');"
+              label="9pt" />
+            <dj:menuItem
+              dojoType="dijit.MenuItem"
+              id="fontSize10pt"
+              checkedState="#{prefs.fileViewFontSize == '10pt'}"
+              onclick="setFileViewFontSize('10pt');"
+              label="10pt" />
+            <dj:menuItem
+              dojoType="dijit.MenuItem"
+              id="fontSize12pt"
+              checkedState="#{prefs.fileViewFontSize == '12pt'}"
+              onclick="setFileViewFontSize('12pt');"
+              label="12pt" />
+            </dj:menu>
+        </dj:menuItem>
+        <!-- buffer lines -->
+        <dj:menuItem
+          dojoType="dijit.PopupMenuItem"
+          id="bufferLinesMenuItem"
+          label="Buffer Lines">
+          <dj:textBox
+            dojoType="dijit.form.NumberTextBox"
+            id="bufferLinesTextBox"
+            inputValue="#{prefs.bufferLines}"
+            required="true"
+            constraints="{min:0,max:2500,places:0}"
+            promptMessage="Number of lines to retrieve per Ajax request (0 - 2500)."
+            invalidMessage="Invalid buffer size."
+            onchange="setBufferLines(this.getValue());" />                    
+        </dj:menuItem>
+        <!-- refetch threshold -->
+        <dj:menuItem
+          dojoType="dijit.PopupMenuItem"
+          id="refetchThresholdMenuItem"
+          label="Refetch Threshold">
+          <dj:textBox
+            dojoType="dijit.form.NumberTextBox"
+            id="refetchThresholdTextBox"
+            inputValue="#{prefs.refetchThreshold}"
+            required="true"
+            constraints="{min:1,max:1000,places:0}"
+            promptMessage="Refetch when slider within X lines of buffer limit (1 and 1000)."
+            invalidMessage="Invalid refetch threshold."
+            onchange="setRefetchThreshold(this.getValue());" />                    
+        </dj:menuItem>                
+        <!-- tail interval -->
+        <dj:menuItem
+          dojoType="dijit.PopupMenuItem"
+          id="tailIntervalMenuItem"
+          label="Tail Interval">
+          <dj:textBox
+            dojoType="dijit.form.NumberTextBox"
+            id="tailIntervalTextBox"
+            inputValue="#{prefs.tailInterval}"
+            required="true"
+            constraints="{min:3,max:3600,places:0}"
+            promptMessage="Tail refresh interval in seconds (3 - 3600)."
+            invalidMessage="Invalid tail interval."
+            onchange="setTailInterval(this.getValue());" />                    
+        </dj:menuItem>
+        <!-- slider increments -->
+        <dj:menuItem
+          dojoType="dijit.PopupMenuItem"
+          id="sliderIncrementLinesMenuItem"
+          label="Slider Increment Lines">
+          <dj:textBox
+            dojoType="dijit.form.NumberTextBox"
+            id="sliderIncrementLinesTextBox"
+            inputValue="#{prefs.sliderIncrementLines}"
+            required="true"
+            constraints="{min:1,max:200,places:0}"
+            promptMessage="Lines scrolled per slider increment (1 - 100)."
+            invalidMessage="Invalid slider increment size."
+            onchange="setSliderIncrementLines(this.getValue());" />                    
+        </dj:menuItem>
+      </dj:menu>              
+    </dj:dropDown>
+
+  </ui:composition>
+
+</html>

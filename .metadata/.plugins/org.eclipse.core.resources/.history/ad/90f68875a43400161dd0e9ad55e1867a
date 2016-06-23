@@ -1,0 +1,11 @@
+println 'verifying Value service '
+
+def purReq = post http("Services/Attributes?ownerType=PROCESS") {
+  payload = asset('mdw-hub.tasks/Values.json').text
+}
+
+def resp = get http("Services/Attributes/ownerType=PROCESS?format=json")
+
+def values = new groovy.json.JsonSlurper().parseText(resp.getContent())
+
+assert values.name == "OVERRIDE_5:SIMUL@STUB_MODE"

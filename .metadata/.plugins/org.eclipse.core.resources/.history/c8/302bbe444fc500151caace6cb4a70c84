@@ -1,0 +1,47 @@
+// Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
+'use strict';
+
+var tabsSvc = angular.module('tabs', []);
+
+tabsSvc.factory('tabs', function() {
+  return {
+    def: [
+     {
+       id: 'myTasksTab',
+       label: 'My Tasks',
+       url: $mdwHubRoot + '/taskList/myTasks',
+       condition: 'user.workgroups && user.workgroups.length > 0'
+     },
+     {
+       id: 'workgroupTasksTab',
+       label: 'Workload',     
+       url: $mdwHubRoot + '/taskList/workgroupTasks',
+       condition: 'user.hasWorkgroupsOtherThanCommon()'
+     },
+     {
+       id: 'requestsTab',
+       label: 'Requests',
+       url: '#/masterRequests',
+       something: 'elsewise',
+       routes: ['/masterRequests', '/serviceRequests', '/workflow', '/solutions']
+     },
+     {
+       id: 'dashboardTab',
+       label: 'Dashboard',   
+       url: '#/dashboard',
+       routes: ['/dashboard']
+     },
+     {
+       id: 'adminTab',
+       label: 'Admin',
+       url: '#/users'
+     },
+     {
+       id: 'systemTab',
+       label: 'System',
+       url: $mdwHubRoot + '/system/systemInformation.jsf',
+       condition: 'user.hasRole("Site Admin")'
+     }
+   ]
+  };
+});

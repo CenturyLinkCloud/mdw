@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49573158
+item-spec=4D4457413A314B3848384C204A4D5341444150544552204A4156414A45542D2D313936323936303633322E412D4441543B32
+file-version=2
+checksum=0811ec3a8c0521a65265a777f16e3175
+fetch-size=2241
+mtime=1406050437
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=templates/source/52/src/activities/adapters/JmsAdapter.javajet
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

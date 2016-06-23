@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854600
+item-spec=4D4457413A314B37435A30204556454E54455843455054494F4E204A4156412D313035313830373831332E412D5352433B32
+file-version=2
+checksum=3864b968fd19f5c4facba9bd1ef0b075
+fetch-size=419
+mtime=1393990151
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/EventException.java
+project=4D4457413A4D445741
+project-uid=31770127

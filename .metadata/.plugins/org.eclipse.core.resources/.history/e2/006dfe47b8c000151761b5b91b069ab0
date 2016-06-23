@@ -1,0 +1,185 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.plugin.designer.wizards;
+
+import java.util.List;
+
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
+
+import com.centurylink.mdw.plugin.WizardPage;
+import com.centurylink.mdw.plugin.designer.model.PackageVersion;
+import com.centurylink.mdw.plugin.designer.model.ProcessVersion;
+import com.centurylink.mdw.plugin.designer.model.RegressionTestCase;
+import com.centurylink.swt.widgets.CTreeCombo;
+import com.centurylink.swt.widgets.CTreeComboItem;
+
+public class NewExpectedResultPage extends WizardPage
+{
+  private CTreeCombo processTreeCombo;
+  private Text fileNameTextField;
+
+  private String fileName;
+  String getFileName() { return fileName; }
+
+  public NewExpectedResultPage()
+  {
+    setTitle("New Expected Result");
+    setDescription("Select the workflow process and/or enter the results file name.");
+  }
+
+  @Override
+  public void drawWidgets(Composite parent)
+  {
+    // create the composite to hold the widgets
+    Composite composite = new Composite(parent, SWT.NULL);
+
+    // create the layout for this wizard page
+    GridLayout gl = new GridLayout();
+    int ncol = 2;
+    gl.numColumns = ncol;
+    composite.setLayout(gl);
+
+    createProcessTreeControls(composite, ncol);
+    createFileNameControls(composite, ncol);
+    setControl(composite);
+
+    processTreeCombo.forceFocus();
+  }
+
+  private void createProcessTreeControls(Composite parent, int ncol)
+  {
+    new Label(parent, SWT.NONE).setText("Process:");
+    processTreeCombo = new CTreeCombo(parent, SWT.BORDER | SWT.FULL_SELECTION);
+    GridData gd = new GridData(GridData.BEGINNING);
+    gd.widthHint = 350;
+    gd.heightHint = 16;
+    processTreeCombo.setLayoutData(gd);
+    fillProcessTreeCombo();
+    processTreeCombo.addListener(SWT.Selection, new Listener()
+    {
+      public void handleEvent(Event event)
+      {
+        CTreeComboItem[] selItems = processTreeCombo.getSelection();
+        if (selItems.length == 1)
+        {
+          CTreeComboItem selItem = selItems[0];
+          if (selItem.getParentItem() == null)
+          {
+            // ignore package selection
+            processTreeCombo.setSelection(new CTreeComboItem[0]);
+          }
+          else
+          {
+            try
+            {
+              Thread.sleep(200);
+            }
+            catch (InterruptedException ex)
+            {
+            }
+
+            String processName = selItem.getText();
+            setFileName(processName);
+            processTreeCombo.dropDown(false);
+            handleFieldChanged();
+          }
+        }
+      }
+    });
+    processTreeCombo.addListener(SWT.Modify, new Listener()
+    {
+      public void handleEvent(Event event)
+      {
+        if (processTreeCombo.getSelection().length == 0)
+        {
+          // triggered when something was typed in the combo instead of selecting -- use it verbatim
+          // note: also triggered on selection, but immediately followed by SWT.Selection event, so no harm done
+          setFileName(processTreeCombo.getText().trim());
+          handleFieldChanged();
+        }
+      }
+    });
+  }
+
+  private void createFileNameControls(Composite parent, int ncol)
+  {
+    new Label(parent, SWT.NONE).setText("File Name:");
+
+    fileNameTextField = new Text(parent, SWT.SINGLE | SWT.BORDER);
+    GridData gd = new GridData(GridData.BEGINNING);
+    gd.widthHint = 345;
+    fileNameTextField.setLayoutData(gd);
+    fileNameTextField.addModifyListener(new ModifyListener()
+    {
+      public void modifyText(ModifyEvent e)
+      {
+        fileName = fileNameTextField.getText().trim();
+        handleFieldChanged();
+      }
+    });
+  }
+
+  private void fillProcessTreeCombo()
+  {
+    processTreeCombo.removeAll();
+    List<PackageVersion> packages = getTestCase().getWorkflowProject().getTopLevelUserVisiblePackages();
+    for (PackageVersion pkg : packages)
+    {
+      CTreeComboItem packageItem = new CTreeComboItem(processTreeCombo, SWT.NONE);
+      packageItem.setText(pkg.getName());
+      packageItem.setImage(pkg.getIconImage());
+      for (ProcessVersion process : pkg.getProcesses())
+      {
+        CTreeComboItem processItem = new CTreeComboItem(packageItem, SWT.NONE);
+        processItem.setText(process.getName());
+        processItem.setImage(process.getIconImage());
+      }
+    }
+  }
+
+  private void setFileName(String processName)
+  {
+    // set the file name
+    RegressionTestCase testCase = getTestCase();
+    String rootFileName = "E_" + processName;
+    IFolder folder = testCase.getExpectedResultsFolder();
+    int seq = 1;
+    fileName = null;
+    while (fileName == null)
+    {
+      if (folder.getFile(rootFileName + "_I" + seq + ".txt").exists())
+        seq++;
+      else
+        fileName = rootFileName + "_I" + seq + ".txt";
+    }
+    fileNameTextField.setText(fileName);
+  }
+
+  @Override
+  public boolean isPageComplete()
+  {
+    return isPageValid();
+  }
+
+  boolean isPageValid()
+  {
+    return fileName != null;
+  }
+
+  public RegressionTestCase getTestCase()
+  {
+    return ((NewExpectedResultWizard)getWizard()).getTestCase();
+  }
+
+}

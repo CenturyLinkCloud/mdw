@@ -1,0 +1,60 @@
+process: # 13623
+  name: MDWTestMainProcess
+  instance: 1
+  activity: # 6 "2016-02-22 12:31:00"
+    name: Process Start
+    status: Completed
+  activity: # 33 "2016-02-22 12:31:00"
+    name: multiple processes ?
+    status: Completed
+  activity: # 15 "2016-02-22 12:31:00"
+    name: Create argument
+    status: Completed
+  activity: # 10 "2016-02-22 12:31:00"
+    name: Invoke process that errs
+    status: Completed
+  activity: # 11 "2016-02-22 12:31:50"
+    name: Process Finish
+    status: Completed
+  variable: # 20660
+    name: processCase
+    value: error handler delegation
+process: # 13626
+  name: MDWTestMainProcess Exception Handler
+  instance: 1
+  activity: # 29 "2016-02-22 12:31:30"
+    name: Process Start
+    status: Completed
+  activity: # 28 "2016-02-22 12:31:30"
+    name: My fallout task
+    status: Completed
+  activity: # 30 "2016-02-22 12:31:50"
+    name: Process Finish
+    status: Completed
+process: # 13625
+  name: MDWTestMainProcess Exception Handler
+  instance: 2
+  activity: # 29 "2016-02-22 12:31:00"
+    name: Process Start
+    status: Completed
+  activity: # 28 "2016-02-22 12:31:00"
+    name: My fallout task
+    status: Completed
+  activity: # 30 "2016-02-22 12:31:30"
+    name: Process Finish
+    status: Completed
+process: # 13624
+  name: MDWTestSubProcess2
+  instance: 1
+  activity: # 30 "2016-02-22 12:31:00"
+    name: Start
+    status: Completed
+  activity: # 26 "2016-02-22 12:31:00"
+    name: Script with syntax error
+    status: Cancelled
+  activity: # 26 "2016-02-22 12:31:30"
+    name: Script with syntax error
+    status: Completed
+  activity: # 28 "2016-02-22 12:31:50"
+    name: Stop
+    status: Completed

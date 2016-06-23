@@ -1,0 +1,18 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity" Type="com.centurylink.mdw.activity.types.TaskActivity" Label="Custom Manual Task" IconFile="task.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET>
+  <DROPDOWN NAME='TASK_TEMPLATE' LABEL='Task Template' SOURCE='TaskTemplates' EDITABLE='TRUE' REFRESH='true' VW='375'/>
+  <HYPERLINK URL="/MDWWeb/doc/taskTemplates.html">Task Template Help</HYPERLINK>
+  <TEXT NAME='TASK_PAGELET' LABEL='Pagelet' DEFAULT='com.centurylink.mdw.base/CustomManualTask.pagelet' READONLY='TRUE' VW='300'/>  
+  <TABLE NAME="WAIT_EVENT_NAMES" LABEL="Events" SECTION="Events" ADVANCED="true">
+    <TEXT LABEL="Event Name"/>
+    <TEXT LABEL="Completion Code"/>
+    <BOOLEAN LABEL="Recurring" DEFAULT="true" READONLY="true"/>
+  </TABLE>
+  <DROPDOWN NAME="STATUS_AFTER_EVENT" LABEL="Status after receiving event" DEFAULT="Cancelled" LW="175" VX="200" VW="120" SECTION="Events" ADVANCED="true">
+    <OPTION>Hold</OPTION>
+    <OPTION>Waiting</OPTION>
+    <OPTION>Cancelled</OPTION>
+  </DROPDOWN>
+  <HYPERLINK URL="/MDWWeb/doc/taskWaitingEvents.html" SECTION="Events" ADVANCED="true">Task Events Help</HYPERLINK>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

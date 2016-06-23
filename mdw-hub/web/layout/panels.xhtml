@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:dj="http://www.centurylink.com/mdw/jsf/dojo"
+  xmlns:mt="http://www.centurylink.com/mdw/jsf/mdwtools">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <title><ui:insert name="title">MDWHub</ui:insert></title>
+    <link rel="shortcut icon" href="/#{webUtil.webContextRoot}/images/mdw.ico" />
+    <link rel="stylesheet" type="text/css" href="../css/mdwweb.css" />
+    <ui:insert name="script" />
+  </head>
+
+  <body class="tundra">
+  
+    <dj:layout
+      id="mainLayoutContainer"
+      rendered="#{webUtil.filePanelAccess}"
+      dojoType="dijit.layout.LayoutContainer"
+      styleClass="mainContent">
+      
+      <dj:layout
+        id="toolbarPane"
+        dojoType="dijit.layout.ContentPane"
+        layoutAlign="top">
+        <ui:insert name="toolbar" />
+      </dj:layout>
+
+      <dj:splitContainer
+        id="mainSplitContainer" 
+        dojoType="dijit.layout.SplitContainer" 
+        orientation="horizontal" 
+        layoutAlign="client"
+        sizerWidth="7"
+        activeSizing="false"
+        style="border:1px solid #bfbfbf;">
+             
+        <dj:layout
+          id="navPanelLayoutContainer"
+          dojoType="dijit.layout.LayoutContainer"
+          layoutAlign="left"
+          sizeShare="25">
+          <ui:insert name="nav" />
+        </dj:layout>
+        
+        <dj:layout
+          id="fileViewLayoutContainer"      
+          dojoType="dijit.layout.LayoutContainer"
+          sizeShare="75">
+            <ui:insert name="content" />
+        </dj:layout>
+        
+      </dj:splitContainer>
+            
+    </dj:layout>
+
+    <h:outputText
+      rendered="#{!webUtil.filePanelAccess}" 
+      value="FilePanel Access Disallowed" 
+      styleClass="mdw_error"
+      style="padding:10px;line-height:30px;" />
+
+  </body>
+
+</html>

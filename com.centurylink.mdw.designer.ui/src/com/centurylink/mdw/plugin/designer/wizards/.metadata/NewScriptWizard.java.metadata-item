@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851332
+item-spec=4D4457413A314B3848384C204E455753435249505457495A415244204A4156412D2D313934353137363739382E412D5352433B33
+file-version=3
+checksum=17fb39ecd06c821b975eb30a3413dcac
+fetch-size=550
+mtime=1393988849
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/NewScriptWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

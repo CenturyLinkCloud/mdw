@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://mdw.centurylink.com/workflow" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    elementFormDefault="qualified" 
+    targetNamespace="http://mdw.centurylink.com/workflow">
+
+  <xsd:element name="ConfigManagerProjects">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element maxOccurs="unbounded" name="WorkflowApp" type="WorkflowApplication"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="ConfigManager">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element maxOccurs="unbounded" minOccurs="0" name="Interface" type="Interface"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:complexType name="Interface">
+    <xsd:sequence>
+      <xsd:element name="EndPoint" type="InterfaceEndpoint"/>
+      <xsd:element name="RequestXsdUrl" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="ResponseXsdUrl" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="Process" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="Activity" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="Adapter" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="ExternalEvent" type="xsd:string" minOccurs="0"/>
+    </xsd:sequence>
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:attribute name="protocol" type="xsd:string" use="required"/>
+    <xsd:attribute name="direction" type="InterfaceDirection" use="required"/>
+  </xsd:complexType>
+  
+  <xsd:complexType name="InterfaceInstance">
+    <xsd:sequence>
+      <xsd:element name="EndPointValue" type="xsd:string"/>
+      <xsd:element name="Topic" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="StubMode" type="xsd:boolean" default="false"/>
+      <xsd:element name="StubXml" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="LogRequest" type="xsd:boolean" default="true"/>
+      <xsd:element name="LogResponse" type="xsd:boolean" default="true"/>
+      <xsd:element name="ValidateRequest" type="xsd:boolean" default="false"/>
+      <xsd:element name="ValidateResponse" type="xsd:boolean" default="false"/>
+    </xsd:sequence>
+    <xsd:attribute name="interfaceName" type="xsd:string" use="required"/>
+  </xsd:complexType>
+  
+  <xsd:simpleType name="InterfaceDirection">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="IN"/>
+      <xsd:enumeration value="OUT"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+    
+  <xsd:complexType name="InterfaceEndpoint">
+    <xsd:attribute name="group" type="xsd:string" use="optional"/>
+    <xsd:attribute name="property" type="xsd:string" use="optional"/>
+    <xsd:attribute name="responder" type="xsd:string" use="optional"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="WorkflowApplication">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Url" type="WorkflowUrl"/>
+      <xsd:element minOccurs="0" name="Repository" type="VcsRepository" />
+      <xsd:element maxOccurs="unbounded" name="Environment" type="WorkflowEnvironment"/>
+    </xsd:sequence>
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:attribute name="malAppName" type="xsd:string" use="optional"/>
+    <xsd:attribute name="appName" type="xsd:string" use="optional"/>
+    <xsd:attribute name="ecomAcronym" type="xsd:string" use="optional"/>
+    <xsd:attribute name="acronym" type="xsd:string" use="optional"/>
+    <xsd:attribute name="webContextRoot" type="xsd:string" use="optional"/>
+    <!-- specify the following if services have a separate context root from web -->
+    <!-- will also be used for apps where only some envs are upgraded -->
+    <xsd:attribute name="servicesContextRoot" type="xsd:string" use="optional"/>
+    <!-- the following two entries are not needed for MDW 4.x+ apps since they will be autodiscovered -->
+    <xsd:attribute name="designerContextRoot" type="xsd:string" use="optional"/>
+    <xsd:attribute name="taskManagerContextRoot" type="xsd:string" use="optional"/>
+    <!-- config manager apps which should be accessible for BAM reporting -->
+    <xsd:attribute name="bamRelatedApps" type="xsd:string" use="optional"/>
+  </xsd:complexType>
+  
+  <xsd:complexType name="WorkflowEnvironment">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" name="ManagedServer" type="ManagedNode"/>
+      <xsd:element minOccurs="0" maxOccurs="unbounded" name="Url" type="WorkflowUrl"/>
+      <xsd:element minOccurs="0" name="EnvironmentDb" type="EnvironmentDB"/>
+    </xsd:sequence>
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:attribute name="owner" type="xsd:string" use="required"/>
+    <xsd:attribute name="envSuffix" type="xsd:string" use="optional"/>
+  </xsd:complexType>
+  
+  <xsd:complexType name="WorkflowUrl">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="id" type="xsd:string" use="required"/>
+        <xsd:attribute name="label" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:simpleContent>  
+  </xsd:complexType>
+
+  <xsd:complexType name="VcsRepository">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="provider" type="xsd:string" use="required"/>
+        <xsd:attribute name="url" type="xsd:string" use="optional"/>
+        <xsd:attribute name="localPath" type="xsd:string" use="optional"/>
+        <xsd:attribute name="user" type="xsd:string" use="optional"/>
+        <xsd:attribute name="password" type="xsd:string" use="optional"/>
+      </xsd:extension>
+    </xsd:simpleContent>  
+  </xsd:complexType>
+
+  <xsd:complexType name="EnvironmentDB">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="jdbcUrl" type="xsd:string" use="required"/>
+        <xsd:attribute name="user" type="xsd:string" use="required"/>
+        <xsd:attribute name="password" type="xsd:string" use="required"/>
+        <xsd:attribute name="schemaOwner" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:simpleContent>  
+  </xsd:complexType>
+
+  <xsd:complexType name="ManagedNode">
+    <xsd:attribute name="host" type="xsd:string" use="required"/>
+    <xsd:attribute name="port" type="xsd:integer" use="required"/>
+    <xsd:attribute name="webRoot" type="xsd:string" use="optional"/>
+  </xsd:complexType>
+  
+  <xsd:element name="BusConnector">
+    <xsd:complexType>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="BusTopic" type="BusTopic"/>
+        <xsd:element name="BusProcessor" type="BusProcessor"/>
+        <xsd:element name="Attribute" type="BusAttribute"/>
+      </xsd:choice>
+    </xsd:complexType>  
+  </xsd:element>
+  
+  <xsd:complexType name="BusTopic">
+    <xsd:sequence>
+      <xsd:element name="Attribute" type="BusAttribute" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:attribute name="class" type="xsd:string" use="required"/>
+  </xsd:complexType>
+  
+  <xsd:complexType name="BusProcessor">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="Attribute" type="BusAttribute" />
+      <xsd:element name="BusPolicy" type="BusPolicy" />
+    </xsd:choice>  
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:attribute name="class" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="BusPolicy">
+    <xsd:sequence>
+      <xsd:element name="Attribute" type="BusAttribute" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>  
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="BusAttribute" mixed="true">
+    <xsd:sequence>
+      <xsd:element name="entry" type="BusEntry" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>  
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:attribute name="type" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="BusEntry">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="type" type="xsd:string" use="required"/>
+      </xsd:extension>
+    </xsd:simpleContent> 
+  </xsd:complexType>
+  
+</xsd:schema>

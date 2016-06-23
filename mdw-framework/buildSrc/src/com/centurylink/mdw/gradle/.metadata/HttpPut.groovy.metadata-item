@@ -1,0 +1,13 @@
+version=10.2
+item-uid=55289574
+item-spec=4D4457413A314B3654583320485454505055542047524F4F56592D2D313936353431353533312E412D4441543B37
+file-version=7
+checksum=19022350bb704f4449e977d660b0891d
+fetch-size=9395
+mtime=1430156749
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=buildSrc/src/com/centurylink/mdw/gradle/HttpPut.groovy
+project=4D4457413A4D445741
+project-uid=31770127

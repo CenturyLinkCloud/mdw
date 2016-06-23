@@ -1,0 +1,9 @@
+ println 'verifying Value service '
+
+def delReq = delete http("Services/Solutions/dons1000?format=json") {
+  payload = asset('com.centurylink.mdw.testing/NewSolution.json').text
+}
+
+def solutions = new groovy.json.JsonSlurper().parseText(delReq.getContent())
+
+assert solutions.status.message == "Success"

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=48255298
+item-spec=4D4457413A314B375951422053435249505452454E4445524552204A4156412D323037313637313037302E412D5352433B31
+file-version=1
+checksum=69384e50d2c5f955dff0a7c1e6a33703
+fetch-size=2120
+mtime=1399481320
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/jsf/component/ScriptRenderer.java
+project=4D4457413A4D445741
+project-uid=31770127

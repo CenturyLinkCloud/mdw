@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68028388
+item-spec=4D4457413A314B374B524A20534543555249545946494C544552204A4156412D38323234313335342E412D5352433B35
+file-version=5
+checksum=daf822177b28ce34ac82d6ae88ffd2a7
+fetch-size=8994
+mtime=1454714189
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/servlet/filter/SecurityFilter.java
+project=4D4457413A4D445741
+project-uid=31770127

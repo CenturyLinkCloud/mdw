@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853898
+item-spec=4D4457413A314B38334D42204D4457434F4E53554D4552204A4156412D323131333832313734312E412D5352433B33
+file-version=3
+checksum=4229a0407a2aa1393c590a8e11b0db38
+fetch-size=2520
+mtime=1393989706
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/camel/MdwConsumer.java
+project=4D4457413A4D445741
+project-uid=31770127

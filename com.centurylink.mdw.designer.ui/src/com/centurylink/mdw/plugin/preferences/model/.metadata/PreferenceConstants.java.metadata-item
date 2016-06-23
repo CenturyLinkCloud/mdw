@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70837360
+item-spec=4D4457413A314B3848384C20505245464552454E4345434F4E5354414E5453204A4156412D3139323131363136352E412D5352433B3139
+file-version=19
+checksum=1a444c8f7b9b788c751817e764446b94
+fetch-size=9253
+mtime=1464278485
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/preferences/model/PreferenceConstants.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

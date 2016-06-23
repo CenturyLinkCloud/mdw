@@ -1,0 +1,5 @@
+ println 'verifying Events post service '
+
+def postReq = post http("Services/Events/38638/manoj38638") {
+  payload = "{}"
+}

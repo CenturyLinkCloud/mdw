@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk">
+
+  <ui:composition>
+    <t:div
+      id="#{itemName}Collapsed"
+      forceId="true"
+      rendered="#{rendered == null ? true : rendered}"
+      style="margin-bottom:10px;">
+      <h:graphicImage
+        value="/images/expand.gif"
+        onclick="document.getElementById('#{itemName}Expanded').style.display='';document.getElementById('#{itemName}Collapsed').style.display='none';"
+        style="cursor:pointer;"
+        hspace="5"
+        alt="Expand #{itemLabel}" />
+      <h:outputLink
+        value="#"
+        onclick="document.getElementById('#{itemName}Expanded').style.display='';document.getElementById('#{itemName}Collapsed').style.display='none';return false;">
+        <h:outputText
+          value="Show #{itemLabel}"
+          styleClass="mdw_pageHeader" />
+      </h:outputLink>
+    </t:div>
+    
+    <t:div
+      id="#{itemName}Expanded"
+      forceId="true"
+      rendered="#{rendered == null ? true : rendered}"
+      style="display:none;">
+      <h:graphicImage
+        value="/images/collapse.gif"
+        onclick="document.getElementById('#{itemName}Expanded').style.display='none';document.getElementById('#{itemName}Collapsed').style.display='';"
+        style="cursor:pointer;"
+        hspace="5" 
+        alt="Collapse #{itemLabel}" />
+      <h:outputLink
+        value="#"
+        onclick="document.getElementById('#{itemName}Expanded').style.display='none';document.getElementById('#{itemName}Collapsed').style.display='';return false;">
+        <t:outputText
+          value="Hide #{itemLabel}"
+          styleClass="mdw_pageHeader" />
+      </h:outputLink>
+      <pre class="mdw_detailsValueColumn" style="margin-top:5px;padding-top:5px">
+        <h:outputText
+          value="#{itemValue}" />
+      </pre>
+    </t:div>
+      
+  </ui:composition>
+
+</html>

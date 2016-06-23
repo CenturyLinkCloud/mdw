@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44536409
+item-spec=4D4457413A314B3654583320435245415445205441424C455350414345532053514C2D2D313133353437343437372E412D4441543B31
+file-version=1
+checksum=e02138805923266ba09f6225a78ffd4f
+fetch-size=679
+mtime=1329519401
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/oldScripts/create_tablespaces.sql
+project=4D4457413A4D445741
+project-uid=31770127

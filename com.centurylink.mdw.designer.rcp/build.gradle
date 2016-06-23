@@ -1,0 +1,34 @@
+// TODO headless build
+dependencies {
+    compile project(":com.centurylink.mdw.designer.core")
+    compile project(":com.centurylink.mdw.designer.ui")
+    compile project(":com.centurylink.mdw.reports")
+}
+
+task cleanCompile(type: Delete) {
+    delete sourceSets.main.output.classesDir
+}
+
+clean {
+    dependsOn(cleanCompile, cleanJar)
+}
+
+task updateDesignerVersion << {
+    File manifestFile = new File("./META-INF/MANIFEST.MF")
+    ant.replaceregexp(file: manifestFile, match: "Bundle-Version:.*", replace: "Bundle-Version: ${version}", byline: true)
+    ant.replaceregexp(file: manifestFile, match: "com.centurylink.mdw.designer.core;bundle-version=\".*\"", replace: "com.centurylink.mdw.designer.core;bundle-version=\"${version}\"", byline: true)
+    ant.replaceregexp(file: manifestFile, match: "com.centurylink.mdw.designer.ui;bundle-version=\".*\"", replace: "com.centurylink.mdw.designer.ui;bundle-version=\"${version}\"", byline: true)
+    ant.replaceregexp(file: manifestFile, match: "com.centurylink.mdw.reports;bundle-version=\".*\"", replace: "com.centurylink.mdw.reports;bundle-version=\"${version}\"", byline: true)
+    
+    File pluginXMLFile = new File("./plugin.xml")
+    ant.replaceregexp(file: pluginXMLFile, match: "Model-Driven Workflow&#x0A;Version .*&#x0A;Copyright", replace: "Model-Driven Workflow&#x0A;Version ${version}&#x0A;Copyright", byline: true)
+    
+    File buildPropertiesFile = new File("./build.properties")
+    ant.replaceregexp(file: buildPropertiesFile, match: "plugin.version=.*", replace: "plugin.version=${version}", byline: true)
+    
+    File featureFile = new File("../com.centurylink.mdw.designer.feature/feature.xml")
+    ant.replaceregexp(file: featureFile, match: "label=\"MDWDesignerFeature\" version=\".*\"", replace: "label=\"MDWDesignerFeature\" version=\"${version}\"", byline: true)
+
+    File siteFile = new File("../com.centurylink.mdw.designer.feature/site.xml")
+    ant.replaceregexp(file: siteFile, match: "feature url=\"features/com.centurylink.mdw.designer.feature_.*.jar\" id=\"com.centurylink.mdw.designer.feature\" version=\".*\"", replace: "feature url=\"features/com.centurylink.mdw.designer.feature_${version}.jar\" id=\"com.centurylink.mdw.designer.feature\" version=\"${version}\"", byline: true)
+}

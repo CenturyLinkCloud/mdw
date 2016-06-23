@@ -1,0 +1,130 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.plugin.designer.views;
+
+import java.util.List;
+
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+
+import com.centurylink.mdw.plugin.designer.model.ElementChangeEvent;
+import com.centurylink.mdw.plugin.designer.model.ElementChangeListener;
+import com.centurylink.mdw.plugin.designer.model.RegressionTestCase;
+import com.centurylink.mdw.plugin.designer.model.RegressionTestSuite;
+import com.centurylink.mdw.plugin.designer.model.ElementChangeEvent.ChangeType;
+import com.centurylink.mdw.plugin.designer.model.RegressionTestCase.ExpectedResult;
+
+public class RegressionTestContentProvider implements ITreeContentProvider, ElementChangeListener
+{
+  private static Object[] EMPTY_ARRAY = new Object[0];
+  
+  private TreeViewer treeViewer;
+  
+  @SuppressWarnings("unchecked")
+  public Object[] getElements(Object inputElement)
+  {
+    List<RegressionTestSuite> testSuites = (List<RegressionTestSuite>) inputElement;
+    return testSuites.toArray(new RegressionTestSuite[0]);
+  }
+
+  public Object[] getChildren(Object parentElement)
+  {
+    if (parentElement instanceof RegressionTestSuite)
+    {
+      RegressionTestSuite testSuite = (RegressionTestSuite) parentElement;
+      return testSuite.getTestCases().toArray(new RegressionTestCase[0]);
+    }
+    else if (parentElement instanceof RegressionTestCase)
+    {
+      RegressionTestCase testCase = (RegressionTestCase) parentElement;
+      return testCase.getExpectedResults().toArray(new ExpectedResult[0]);
+    }
+    else
+    {
+      return EMPTY_ARRAY;
+    }
+  }
+  
+  public Object getParent(Object element)
+  {
+    if (element instanceof RegressionTestCase)
+    {
+      RegressionTestCase testCase = (RegressionTestCase) element;
+      return testCase.getTestSuite();
+    }
+    else if (element instanceof ExpectedResult)
+    {
+      ExpectedResult expectedResult = (ExpectedResult) element;
+      return expectedResult.getTestCase();
+    }
+    return null;
+  }
+
+  public boolean hasChildren(Object element)
+  {
+    if (element instanceof RegressionTestSuite)
+    {
+      RegressionTestSuite testSuite = (RegressionTestSuite) element;
+      return testSuite.getTestCases().size() > 0;
+    }
+    else if (element instanceof RegressionTestCase)
+    {
+      RegressionTestCase testCase = (RegressionTestCase) element;
+      return testCase.getExpectedResults().size() > 0;
+    }
+    return false;
+  }
+
+  public void dispose()
+  {
+  }
+
+  /**
+   * Registers this content provider as a listener to changes on the new input
+   * (for workflow element changes), and deregisters the viewer from the old input.
+   * In response to these ElementChangeEvents, we update the viewer.
+   */
+  @SuppressWarnings("unchecked")
+  public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
+  {
+    this.treeViewer = (TreeViewer) viewer;
+    
+    if (oldInput != null)
+    {
+      List<RegressionTestSuite> oldSuites = (List<RegressionTestSuite>) oldInput;
+      for (RegressionTestSuite oldSuite : oldSuites)
+        oldSuite.removeElementChangeListener(this);      
+    }
+    if (newInput != null)
+    {
+      List<RegressionTestSuite> newSuites = (List<RegressionTestSuite>) newInput;
+      for (RegressionTestSuite newSuite : newSuites)
+        newSuite.addElementChangeListener(this);      
+    }    
+  }
+
+  public void elementChanged(final ElementChangeEvent ece)
+  {
+    // updates to the treeViewer must be on the UI thread
+    treeViewer.getTree().getDisplay().asyncExec(new Runnable()
+    {
+      public void run()
+      {
+        handleElementChange(ece);
+      }
+    });
+  }
+  
+  /**
+   * Handles STATUS_CHANGE events.
+   */
+  private void handleElementChange(ElementChangeEvent ece)
+  {
+    if (ece.getChangeType().equals(ChangeType.STATUS_CHANGE))
+    {
+      treeViewer.update(ece.getWorkflowElement(), null);
+    }
+  }
+}

@@ -1,0 +1,12 @@
+// sync-hold-wait-sync
+start process("MDWTestEmbedded") {
+    variables = [testCase: "sync-wait"]
+}
+sleep 30
+send message("REST") {
+    payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
+}
+wait process {
+    timeout = 120
+}
+verify process

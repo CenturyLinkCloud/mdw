@@ -1,0 +1,13 @@
+version=10.2
+item-uid=63853324
+item-spec=4D4457413A314B375951422050524F434553535354415254434F4E54524F4C4C4552204A4156412D31373737313730383258333038323158302E412D5352433B31
+file-version=1
+checksum=2dec04ab072a2304d7574fb052f4a554
+fetch-size=1853
+mtime=1440019877
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/ui/process/ProcessStartController.java
+project=4D4457413A4D445741
+project-uid=31770127

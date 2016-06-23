@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855722
+item-spec=4D4457413A314B374B524A2046494C4545444954204A4156412D3330323232303832312E412D5352433B32
+file-version=2
+checksum=83ea3ca999b06e3ee10229ff68125f97
+fetch-size=4486
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/filepanel/FileEdit.java
+project=4D4457413A4D445741
+project-uid=31770127

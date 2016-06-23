@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49302625
+item-spec=4D4457413A314B374B524A2046494C54455252454E4445524552204A4156412D2D313138383933323836372E412D5352433B34
+file-version=4
+checksum=87f56286d121b2410e011bb6dccd29c5
+fetch-size=10519
+mtime=1404320523
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/renderers/FilterRenderer.java
+project=4D4457413A4D445741
+project-uid=31770127

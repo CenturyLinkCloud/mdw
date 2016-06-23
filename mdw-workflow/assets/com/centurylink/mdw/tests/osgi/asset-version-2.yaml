@@ -1,0 +1,27 @@
+process:
+  name: AssetVersionTest
+  instance: 1
+  activity: 
+    name: Start
+    status: Completed
+  activity: 
+    name: LoadAssetVersions
+    status: Completed
+  activity: 
+    name: Test AV Routing
+    status: Completed
+  activity: 
+    name: AssetVersionTest
+    status: Waiting
+  variable: 
+    name: customPageAssetVersion
+    value: [1.0,2)
+  variable: 
+    name: drlAssetVersion
+    value: [1.0,2)
+  variable: 
+    name: startPageAssetVersion
+    value: [1.0,2) 
+  variable: 
+    name: version
+    value: V2  

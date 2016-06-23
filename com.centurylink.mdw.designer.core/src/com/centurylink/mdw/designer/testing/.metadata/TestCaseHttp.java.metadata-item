@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70472799
+item-spec=4D4457413A314B3843574420544553544341534548545450204A4156412D31383536373432373058323134343358382E412D5352433B34
+file-version=4
+checksum=80d3e18a7ee36a15da845107c7ac6461
+fetch-size=661
+mtime=1463522994
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/testing/TestCaseHttp.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

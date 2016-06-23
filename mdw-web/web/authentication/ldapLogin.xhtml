@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition template="/layout/layout.xhtml">
+  
+    <ui:define name="messages">
+      <div align="center" style="margin:5px;">
+        <t:outputText
+          id="loginPrompt"
+          value="Please log in to MDW Web"
+          styleClass="mdw_contextMessages" />
+        <t:messages
+          id="loginMessages"
+          styleClass="mdw_contextMessages"
+          showDetail="true" 
+          globalOnly="true" />
+      </div>
+    </ui:define>
+  
+    <ui:define name="content">
+      <h:form 
+        id="authForm"
+        method="post"
+        action="ldapLogin.jsf">
+      
+        <table align="center" style="border: medium double" >
+          <tr>
+            <td align="center" style="padding-top:15px">       
+            <table width="100%">
+              <tr> 
+                <td class="mdw_pageHeader">
+                  Please enter your LDAP User ID and Password.<br/>
+                </td>
+              </tr>
+            </table>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding-top:15px">
+              <table cellspacing="3" align="center">          
+                <tr>         
+                  <td align="right" width="55px" class="mdw_detailsLabelColumn">User ID:</td>
+                  <td align="left"> 
+                    <t:inputText
+                      id="user"
+                      value="#{ldapLogin.user}"
+                      styleClass="mdw_inputField"
+                      style="width:80px;maxlength:30" />
+                  </td>
+                </tr>
+                <tr> 
+                  <td align="right" width="55px" class="mdw_detailsLabelColumn">Password:</td>
+                  <td align="left">
+                    <t:inputSecret
+                      id="password"
+                      redisplay="true"
+                      value="#{ldapLogin.password}"
+                      styleClass="mdw_inputField"
+                      style="width:80px;maxlength:30" />
+                  </td>
+                </tr>
+                <tr> 
+                  <td>
+                    <mdw:blank />
+                  </td>
+                  <td align="left">
+                    <t:commandButton
+                      id="loginButton"
+                      value="Login"
+                      styleClass="mdw_detailFormButtons">
+                      <f:actionListener type="com.centurylink.mdw.web.ldap.LdapLoginController" />                      
+                    </t:commandButton>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>       
+      </h:form>
+    </ui:define>
+  </ui:composition>
+
+</html>
+

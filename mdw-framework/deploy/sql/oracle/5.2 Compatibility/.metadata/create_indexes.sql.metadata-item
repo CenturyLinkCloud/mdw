@@ -1,0 +1,13 @@
+version=10.2
+item-uid=64523583
+item-spec=4D4457413A314B365458332043524541544520494E44455845532053514C2D2D3236353537303936342E412D4441543B33
+file-version=3
+checksum=fa08d54b9793925cbf14aee67cc8f545
+fetch-size=1901
+mtime=1442003697
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/5.2 Compatibility/create_indexes.sql
+project=4D4457413A4D445741
+project-uid=31770127

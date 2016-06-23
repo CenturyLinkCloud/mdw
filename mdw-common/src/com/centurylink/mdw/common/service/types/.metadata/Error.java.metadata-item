@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853156
+item-spec=4D4457413A314B3737545A204552524F52204A4156412D3334353234343039342E412D5352433B32
+file-version=2
+checksum=4dee0ca8677d563beaea77b28fd38185
+fetch-size=1547
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/service/types/Error.java
+project=4D4457413A4D445741
+project-uid=31770127

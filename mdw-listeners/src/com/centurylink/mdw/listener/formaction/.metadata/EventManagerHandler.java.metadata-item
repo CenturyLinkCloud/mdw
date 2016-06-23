@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50880559
+item-spec=4D4457413A314B37464735204556454E544D414E4147455248414E444C4552204A4156412D2D3539323837373839372E412D5352433B33
+file-version=3
+checksum=2062c5b0a4f670add185ced560b6ecfd
+fetch-size=30920
+mtime=1412208442
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listener/formaction/EventManagerHandler.java
+project=4D4457413A4D445741
+project-uid=31770127

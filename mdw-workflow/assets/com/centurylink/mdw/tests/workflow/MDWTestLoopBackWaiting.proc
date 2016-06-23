@@ -1,0 +1,58 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="MDWTestLoopBackWaiting" version="0.4" description="">
+    <bpm:Activity Id="Activity2" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=144,y=76,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity3" Name="Loop Back" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="RETURN_CODE" Value="comp"/>
+      <bpm:Attribute Name="Rule" Value="return &quot;BACK&quot;"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=498,y=281,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity1" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=146,y=431,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity4" Name="Loop Control" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Expression" Value="N = N + 1;&#10;if (N==3) {&#10;    comp = &quot;TEMP&quot;;&#10;} else if (N>5) {&#10;    comp = &quot;DONE&quot;;&#10;} else {&#10;    comp = &quot;RETRY&quot;;&#10;}"/>
+      <bpm:Attribute Name="RETURN_CODE" Value="comp"/>
+      <bpm:Attribute Name="Rule" Value="n++&#10;if (n == 3)&#10;    return &quot;TEMP&quot;&#10;else if (n > 5)&#10;    return &quot;DONE&quot;&#10;else&#10;    return &quot;BACK&quot;"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=176,y=259,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="Activity2" To="Activity4" Event="FINISH" Id="Transition3">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=199,ly=185,type=Straight,xs=174&amp;226,ys=116&amp;259"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="DONE" From="Activity4" To="Activity1" Event="FINISH" Id="Transition4">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=201,ly=375,type=Straight,xs=226&amp;176,ys=319&amp;431"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="BACK" From="Activity4" To="Activity4" Event="FINISH" Id="Transition5">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="1"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=242,ly=149,type=Curve,xs=226&amp;247,ys=289&amp;176"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="3"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="TEMP" From="Activity4" To="Activity3" Event="FINISH" Id="Transition6">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=374,ly=205,type=Curve,xs=280&amp;365&amp;494,ys=255&amp;230&amp;277"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="BACK" From="Activity3" To="Activity4" Event="FINISH" Id="Transition7">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=382,ly=328,type=Curve,xs=494&amp;350&amp;280,ys=292&amp;331&amp;323"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="ERROR_PROCESS_ID" Value="262002"/>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="SLA" Value="0"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=27,y=26,w=239,h=27"/>
+    <bpm:Attribute Name="START_TRANSITION_ID" Value="2325804"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Variables Name="n" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.Integer"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67913116
+item-spec=4D4457413A314B37464735205343484544554C45444556454E544D4F4E49544F52204A4156412D2D313038323636363932322E412D5352433B33
+file-version=3
+checksum=cfeb63175564b8d6b7d54f8c28742cd2
+fetch-size=1763
+mtime=1454620478
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/timer/startup/ScheduledEventMonitor.java
+project=4D4457413A4D445741
+project-uid=31770127

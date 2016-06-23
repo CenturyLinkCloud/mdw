@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65340268
+item-spec=4D4457413A314B364C37582055504441544541545452494255544553204A534F4E2D313833313736323431583432343958382E412D4441543B31
+file-version=1
+checksum=28b75d890cd9a61341f490f9ad48dd91
+fetch-size=237
+mtime=1436490406
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=samples/actions/UpdateAttributes.json
+project=4D4457413A4D445741
+project-uid=31770127

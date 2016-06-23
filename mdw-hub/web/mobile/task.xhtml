@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition template="../layout/mobile/detail.xhtml">
+        
+    <ui:define name="detailContent">
+      <h:messages 
+        id="mdwMainMessages"
+        styleClass="mdw_contextMessages"
+        showDetail="true" 
+        globalOnly="false" />
+    
+      <ui:insert name="taskSummary">
+        <ui:include src="../tasks/taskSummary.xhtml" />
+      </ui:insert>
+      
+      <ui:insert name="customContent" />
+    
+      <ui:insert name="taskData">
+        <ui:include src="../tasks/taskData.xhtml">
+          <ui:param name="collapsed" value="true" />
+        </ui:include>
+      </ui:insert>
+      
+      <ui:insert name="taskCommand">
+        <t:inputHidden
+          id="taskInstanceId" 
+          immediate="true"        
+          forceId="true" 
+          name="taskInstanceId" 
+          value="#{detailManager.taskDetail.instanceId}" />    
+        <input type="hidden"
+          id="mdw.mobile" 
+          name="mdw.mobile" 
+          value="true" />    
+        <div>
+          <h:commandButton
+            id="taskDetailSave"
+            rendered="#{task.assignee == authenticatedUser.cuid &amp;&amp; !task.inFinalStatus}"
+            value="Save"
+            styleClass="mdw_detailFormButtons">
+            <f:actionListener
+              type="com.centurylink.mdw.taskmgr.ui.tasks.detail.TaskInstanceActionController">
+            </f:actionListener>
+          </h:commandButton>
+        </div>
+      </ui:insert>
+      
+      
+    </ui:define>
+  </ui:composition>
+
+</html>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=54349172
+item-spec=4D4457413A314B374B524A20444953434F56455259524544495245435446494C544552204A4156412D313233333733353538382E412D5352433B32
+file-version=2
+checksum=617b245ef7dc859c5f0e8bd885c30e2b
+fetch-size=1482
+mtime=1424306384
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/servlet/filter/DiscoveryRedirectFilter.java
+project=4D4457413A4D445741
+project-uid=31770127

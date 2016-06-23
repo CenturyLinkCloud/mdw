@@ -1,0 +1,6 @@
+// osgi-service-adapter
+start process("OsgiServiceAdapter") {
+    variables = [ cuid: "dxoakes" ]
+}
+wait process
+verify process

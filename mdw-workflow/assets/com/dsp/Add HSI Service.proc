@@ -1,0 +1,209 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="Add HSI Service" version="0.18" description="">
+    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=25,y=261,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="Design &amp; Assign &#13;&#10;HSI Service" Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity">
+      <bpm:Attribute Name="Java" Value="/**&#13;&#10; * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.&#13;&#10; */&#13;&#10;&#13;&#10;package com.dsp;&#13;&#10;&#13;&#10;import java.util.Map;&#13;&#10;&#13;&#10;import com.centurylink.mdw.java.JavaExecutionException;&#13;&#10;import com.centurylink.mdw.java.JavaExecutor;&#13;&#10;import com.centurylink.mdw.java.MdwJavaException;&#13;&#10;import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;&#13;&#10;&#13;&#10;/**&#13;&#10; * Dynamic Java executor.&#13;&#10; */&#13;&#10;public class Design_AssignHSIService_A3 implements JavaExecutor&#13;&#10;{&#13;&#10;  &#13;&#10;  public void initialize(ActivityRuntimeContext context) throws MdwJavaException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;  }&#13;&#10;&#13;&#10;  public Object execute(Map&lt;String,Object> variables) throws JavaExecutionException&#13;&#10;  {&#13;&#10;&#13;&#10;//&#13;&#10;    return (String)variables.get(&quot;DesignAssignTestStatus&quot;);&#13;&#10;  }&#13;&#10;&#13;&#10;}&#13;&#10;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=200,y=235,w=97,h=70"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A4" Name="Design/Assign Failure" Implementation="com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity">
+      <bpm:Attribute Name="Category" Value="COM"/>
+      <bpm:Attribute Name="FormName" Value="Autoform"/>
+      <bpm:Attribute Name="Notices" Value="Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="TaskLogicalId" Value="Add HSI Service:A4"/>
+      <bpm:Attribute Name="TaskName" Value="New Task for Add HSI Service"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=317,y=138,w=100,h=60"/>
+      <bpm:Attribute Name="Wait for Task" Value="TRUE"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A5" Name="Identify &#13;&#10;Dispatchable Items" Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity">
+      <bpm:Attribute Name="Java" Value="/**&#13;&#10; * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.&#13;&#10; */&#13;&#10;&#13;&#10;package com.dsp;&#13;&#10;&#13;&#10;import java.util.Map;&#13;&#10;&#13;&#10;import com.centurylink.mdw.java.JavaExecutionException;&#13;&#10;import com.centurylink.mdw.java.JavaExecutor;&#13;&#10;import com.centurylink.mdw.java.MdwJavaException;&#13;&#10;import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;&#13;&#10;&#13;&#10;/**&#13;&#10; * Dynamic Java executor.&#13;&#10; */&#13;&#10;public class IdentifyDispatchableItems_A5 implements JavaExecutor&#13;&#10;{&#13;&#10;  &#13;&#10;  public void initialize(ActivityRuntimeContext context) throws MdwJavaException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;  }&#13;&#10;&#13;&#10;  public Object execute(Map&lt;String,Object> variables) throws JavaExecutionException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;   //&#13;&#10;    return null;&#13;&#10;  }&#13;&#10;&#13;&#10;}&#13;&#10;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=409,y=284,w=114,h=77"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A7" Name="Create/Update&#13;&#10;Dispatch Ticket" Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity">
+      <bpm:Attribute Name="Java" Value="/**&#13;&#10; * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.&#13;&#10; */&#13;&#10;&#13;&#10;package com.dsp;&#13;&#10;&#13;&#10;import java.util.Map;&#13;&#10;&#13;&#10;import com.centurylink.mdw.java.JavaExecutionException;&#13;&#10;import com.centurylink.mdw.java.JavaExecutor;&#13;&#10;import com.centurylink.mdw.java.MdwJavaException;&#13;&#10;import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;&#13;&#10;&#13;&#10;/**&#13;&#10; * Dynamic Java executor.&#13;&#10; */&#13;&#10;public class CreateUpdateDispatchTicket_A7 implements JavaExecutor&#13;&#10;{&#13;&#10;  &#13;&#10;  public void initialize(ActivityRuntimeContext context) throws MdwJavaException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;  }&#13;&#10;&#13;&#10;  public Object execute(Map&lt;String,Object> variables) throws JavaExecutionException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;   //&#13;&#10;    return null;&#13;&#10;  }&#13;&#10;&#13;&#10;}&#13;&#10;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=577,y=284,w=107,h=81"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A8" Name="Wait for &#13;&#10;Dispatch &#13;&#10;Event" Implementation="com.centurylink.mdw.workflow.activity.event.EventWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_TIMEOUT" Value="Cancelled"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=773,y=266,w=100,h=88"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A9" Name="Create ONT&#13;&#10;and Data Service" Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity">
+      <bpm:Attribute Name="Java" Value="/**&#13;&#10; * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.&#13;&#10; */&#13;&#10;&#13;&#10;package com.dsp;&#13;&#10;&#13;&#10;import java.util.Map;&#13;&#10;&#13;&#10;import com.centurylink.mdw.java.JavaExecutionException;&#13;&#10;import com.centurylink.mdw.java.JavaExecutor;&#13;&#10;import com.centurylink.mdw.java.MdwJavaException;&#13;&#10;import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;&#13;&#10;&#13;&#10;/**&#13;&#10; * Dynamic Java executor.&#13;&#10; */&#13;&#10;public class CreateONTandDataService_A9 implements JavaExecutor&#13;&#10;{&#13;&#10;  &#13;&#10;  public void initialize(ActivityRuntimeContext context) throws MdwJavaException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;  }&#13;&#10;&#13;&#10;  public Object execute(Map&lt;String,Object> variables) throws JavaExecutionException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;    return null;&#13;&#10;  }//&#13;&#10;&#13;&#10;}&#13;&#10;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=707,y=51,w=102,h=72"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A10" Name="Create Customer&#13;&#10;in RADIUS" Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity">
+      <bpm:Attribute Name="Java" Value="/**&#13;&#10; * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.&#13;&#10; */&#13;&#10;&#13;&#10;package com.dsp;&#13;&#10;&#13;&#10;import java.util.Map;&#13;&#10;&#13;&#10;import com.centurylink.mdw.java.JavaExecutionException;&#13;&#10;import com.centurylink.mdw.java.JavaExecutor;&#13;&#10;import com.centurylink.mdw.java.MdwJavaException;&#13;&#10;import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;&#13;&#10;&#13;&#10;/**&#13;&#10; * Dynamic Java executor.&#13;&#10; */&#13;&#10;public class CreateCustomerinRADIUS_A10 implements JavaExecutor&#13;&#10;{&#13;&#10;  &#13;&#10;  public void initialize(ActivityRuntimeContext context) throws MdwJavaException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;  }&#13;&#10;&#13;&#10;  public Object execute(Map&lt;String,Object> variables) throws JavaExecutionException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;   //&#13;&#10;    return null;&#13;&#10;  }&#13;&#10;&#13;&#10;}&#13;&#10;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=584,y=492,w=100,h=77"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A11" Name="Fallout for &#13;&#10;Create ONT and &#13;&#10;Data Service failure" Implementation="com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity">
+      <bpm:Attribute Name="Category" Value="COM"/>
+      <bpm:Attribute Name="FormName" Value="Autoform"/>
+      <bpm:Attribute Name="Notices" Value="Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="TaskLogicalId" Value="Add HSI Service:A11"/>
+      <bpm:Attribute Name="TaskName" Value="New Task for Add HSI Service"/>
+      <bpm:Attribute Name="Variables" Value="dispatchableItems,dispatchableItems,Not Displayed,0,,java.lang.Integer;status,status,Not Displayed,0,,java.lang.String"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=948,y=40,w=107,h=92"/>
+      <bpm:Attribute Name="Wait for Task" Value="TRUE"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A12" Name="Improv failure" Implementation="com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity">
+      <bpm:Attribute Name="Category" Value="COM"/>
+      <bpm:Attribute Name="FormName" Value="Autoform"/>
+      <bpm:Attribute Name="Notices" Value="Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="TaskLogicalId" Value="Add HSI Service:A12"/>
+      <bpm:Attribute Name="TaskName" Value="New Task for Add HSI Service"/>
+      <bpm:Attribute Name="Variables" Value="dispatchableItems,dispatchableItems,Not Displayed,0,,java.lang.Integer;status,status,Not Displayed,0,,java.lang.String"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=878,y=519,w=100,h=60"/>
+      <bpm:Attribute Name="Wait for Task" Value="TRUE"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A13" Name="Activate DTN" Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity">
+      <bpm:Attribute Name="Java" Value="/**&#13;&#10; * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.&#13;&#10; */&#13;&#10;&#13;&#10;package com.dsp;&#13;&#10;&#13;&#10;import java.util.Map;&#13;&#10;&#13;&#10;import com.centurylink.mdw.java.JavaExecutionException;&#13;&#10;import com.centurylink.mdw.java.JavaExecutor;&#13;&#10;import com.centurylink.mdw.java.MdwJavaException;&#13;&#10;import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;&#13;&#10;&#13;&#10;/**&#13;&#10; * Dynamic Java executor.&#13;&#10; */&#13;&#10;public class ActivateDTN_A13 implements JavaExecutor&#13;&#10;{&#13;&#10;  &#13;&#10;  public void initialize(ActivityRuntimeContext context) throws MdwJavaException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;  }&#13;&#10;&#13;&#10;  public Object execute(Map&lt;String,Object> variables) throws JavaExecutionException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;   //&#13;&#10;    return null;&#13;&#10;  }&#13;&#10;&#13;&#10;}&#13;&#10;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=929,y=274,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A14" Name="Update OSR" Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity">
+      <bpm:Attribute Name="Java" Value="/**&#13;&#10; * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.&#13;&#10; */&#13;&#10;&#13;&#10;package com.dsp;&#13;&#10;&#13;&#10;import java.util.Map;&#13;&#10;&#13;&#10;import com.centurylink.mdw.java.JavaExecutionException;&#13;&#10;import com.centurylink.mdw.java.JavaExecutor;&#13;&#10;import com.centurylink.mdw.java.MdwJavaException;&#13;&#10;import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;&#13;&#10;&#13;&#10;/**&#13;&#10; * Dynamic Java executor.&#13;&#10; */&#13;&#10;public class UpdateOSR_A14 implements JavaExecutor&#13;&#10;{&#13;&#10;  &#13;&#10;  public void initialize(ActivityRuntimeContext context) throws MdwJavaException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;  }&#13;&#10;&#13;&#10;  public Object execute(Map&lt;String,Object> variables) throws JavaExecutionException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;    return null;//&#13;&#10;  }&#13;&#10;&#13;&#10;}&#13;&#10;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1065,y=272,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A15" Name="Notify Service Order Processor" Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity">
+      <bpm:Attribute Name="Java" Value="/**&#13;&#10; * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.&#13;&#10; */&#13;&#10;&#13;&#10;package com.dsp;&#13;&#10;&#13;&#10;import java.util.Map;&#13;&#10;&#13;&#10;import com.centurylink.mdw.java.JavaExecutionException;&#13;&#10;import com.centurylink.mdw.java.JavaExecutor;&#13;&#10;import com.centurylink.mdw.java.MdwJavaException;&#13;&#10;import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;&#13;&#10;&#13;&#10;/**&#13;&#10; * Dynamic Java executor.&#13;&#10; */&#13;&#10;public class NotifyServiceOrderProcessor_A15 implements JavaExecutor&#13;&#10;{&#13;&#10;  &#13;&#10;  public void initialize(ActivityRuntimeContext context) throws MdwJavaException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;  }&#13;&#10;&#13;&#10;  public Object execute(Map&lt;String,Object> variables) throws JavaExecutionException&#13;&#10;  {&#13;&#10;    // TODO Auto-generated method stub&#13;&#10;    return null;//&#13;&#10;  }&#13;&#10;&#13;&#10;}&#13;&#10;"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1061,y=373,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A16" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1079,y=486,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="FAILURE" From="A3" To="A4" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=336,ly=240,type=Elbow,xs=301&amp;367,ys=270&amp;202"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="SUCCESS" From="A3" To="A5" Event="FINISH" Id="T4">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=353,ly=294,type=Elbow,xs=301&amp;405,ys=294&amp;294"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A5" To="A7" Event="FINISH" Id="T5">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=557,ly=322,type=Elbow,xs=527&amp;573,ys=322&amp;322"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A7" To="A8" Event="FINISH" Id="T6">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=733,ly=319,type=Elbow,xs=688&amp;769,ys=319&amp;319"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A7" To="A9" Event="FINISH" Id="T7">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=703,ly=226,type=Elbow,xs=630&amp;758,ys=280&amp;127"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A7" To="A10" Event="FINISH" Id="T8">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=633,ly=416,type=Elbow,xs=634&amp;634,ys=369&amp;488"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A9" To="A11" Event="FINISH" Id="T9">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=931,ly=93,type=Elbow,xs=813&amp;944,ys=87&amp;87"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A10" To="A12" Event="FINISH" Id="T10">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=715,ly=576,type=Elbow,xs=688&amp;874,ys=544&amp;544"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="RETRY" From="A12" To="A10" Event="FINISH" Id="T11">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=815,ly=548,type=Elbow,xs=874&amp;688,ys=544&amp;544"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="RETRY" From="A11" To="A9" Event="FINISH" Id="T12">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=863,ly=86,type=Elbow,xs=944&amp;813,ys=87&amp;87"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A8" To="A13" Event="FINISH" Id="T13">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=904,ly=304,type=Elbow,xs=877&amp;925,ys=304&amp;304"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A9" To="A8" Event="FINISH" Id="T14">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=791,ly=160,type=Elbow,xs=791&amp;791,ys=127&amp;262"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="COMPLETE" From="A11" To="A8" Event="FINISH" Id="T15">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=911,ly=191,type=Elbow,xs=1001&amp;823,ys=136&amp;262"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A10" To="A8" Event="FINISH" Id="T16">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=695,ly=519,type=Elbow,xs=688&amp;823,ys=530&amp;358"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="COMPLETE" From="A12" To="A8" Event="FINISH" Id="T17">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=866,ly=432,type=Elbow,xs=928&amp;823,ys=515&amp;358"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A13" To="A14" Event="FINISH" Id="T18">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1047,ly=303,type=Elbow,xs=1033&amp;1061,ys=303&amp;303"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A14" To="A15" Event="FINISH" Id="T19">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1113,ly=352,type=Elbow,xs=1113&amp;1113,ys=336&amp;369"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A15" To="A16" Event="FINISH" Id="T20">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1109,ly=459,type=Elbow,xs=1109&amp;1109,ys=437&amp;482"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T21">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=142,ly=281,type=Elbow,xs=89&amp;196,ys=281&amp;281"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="RETRY" From="A4" To="A3" Event="FINISH" Id="T22">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=280,ly=199,type=Elbow,xs=313&amp;248,ys=168&amp;231"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=50,y=50,w=146,h=27"/>
+    <bpm:Variables Name="designAssignFailureDueDate" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="designAssignFailureGroup" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="designAssignFailureReason" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="designAssignFailureUser" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="designAssignTestStatus" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="dispatchableItems" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.util.List&lt;String>"/>
+    </bpm:Variables>
+    <bpm:Variables Name="dispatchTicketId" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="download_speed_mbps" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="downloadSpeedProfileId" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="hsiServiceId" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="ontProfileId" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="orderDueDate" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.util.Date"/>
+    </bpm:Variables>
+    <bpm:Variables Name="ponCircuitId" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="radiusClassOfService" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="radiusConfigDueDate" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="radiusConfigFailureGroup" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="radiusConfigFailureReason" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="radiusConfigFailureUser" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="status" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="totalDispatchableItems" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="upload_speed_mbps" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="uploadSpeedProfileId" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

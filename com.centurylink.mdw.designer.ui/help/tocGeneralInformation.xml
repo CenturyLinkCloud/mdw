@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="General Information" link_to="toc.xml#generalInformation"> 
+	<topic label="Introduction" href="help/doc/introduction.html"> 
+	</topic>
+  <topic label="Designer Install Guide" href="help/doc/DesignerInstallGuide.html"> 
+  </topic>
+  <topic label="Services Cookbook" href="help/doc/tutorials/ServicesCookbook.html">
+  </topic>
+  <topic label="Cloud Foundry Cookbook" href="help/doc/tutorials/MdwCloudFoundryCookbook.html">
+  </topic>
+  <topic label="JBoss Fuse Cookbook" href="help/doc/tutorials/MdwFuseCookbook.html">
+  </topic>
+  <topic label="Apache Tomcat Cookbook" href="help/doc/tutorials/MdwTomcatCookbook.html"> 
+  </topic>
+  <topic label="Apache ServiceMix Cookbook" href="help/doc/tutorials/MdwServiceMixCookbook.html">
+  </topic>
+  <topic label="Camel Integration Cookbook" href="help/doc/tutorials/MdwCamelCookbook.html">
+  </topic>
+  <topic label="mdwdemo" href="help/doc/tutorials/mdwdemo.html">
+  </topic>
+  <topic label="MDW Web Services" href="help/doc/webServices.html"> 
+  </topic>
+  <topic label="MDW Authentication" href="help/doc/mdwAuth.html"> 
+  </topic>
+</toc>

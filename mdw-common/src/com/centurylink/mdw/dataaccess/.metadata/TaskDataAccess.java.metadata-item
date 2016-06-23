@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50880413
+item-spec=4D4457413A314B3737545A205441534B44415441414343455353204A4156412D2D3636323934343032332E412D5352433B31
+file-version=1
+checksum=c2419fb99bbd9359db899d726f977934
+fetch-size=366
+mtime=1412178391
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/dataaccess/TaskDataAccess.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854411
+item-spec=4D4457413A314B37464735204556454E5448414E444C455250524F56494445524245414E204A4156412D313634323437323537332E412D5352433B32
+file-version=2
+checksum=72f54f02ce0c9910c7b6888d46bee144
+fetch-size=2905
+mtime=1393990106
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listeners/provider/EventHandlerProviderBean.java
+project=4D4457413A4D445741
+project-uid=31770127

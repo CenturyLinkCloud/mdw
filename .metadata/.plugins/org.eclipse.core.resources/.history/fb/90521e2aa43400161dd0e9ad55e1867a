@@ -1,0 +1,54 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="ReflectChildDocUpdate" version="0.3" description="Renamed from e:\workspaces\mdw\mdw-workflow\assets\com\centurylink\mdw\tests\ParentProc.proc">
+    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=35,y=86,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=463,y=90,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="Invoke&#13;&#10;JaxbDocument" Implementation="com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=165,y=74,w=101,h=70"/>
+      <bpm:Attribute Name="processname" Value="com.centurylink.mdw.tests/JaxbDocument"/>
+      <bpm:Attribute Name="processversion" Value="[0.3,1)"/>
+      <bpm:Attribute Name="synchronous" Value="TRUE"/>
+      <bpm:Attribute Name="variables" Value="actionRequest=$actionRequest;assetDefinedJaxb=$assetDefinedJaxbIn"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A4" Name="Pull&#13;&#10;Values" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="import com.centurylink.mdw.common.service.types.Parameter;&#13;&#10;&#13;&#10;optionalElement = assetDefinedJaxbIn.getOptionalElement()&#13;&#10;optionalAttr = assetDefinedJaxbIn.getOptionalAttribute()&#13;&#10;actionName = actionRequest.getAction().getName()&#13;&#10;insertedParam = null&#13;&#10;for (Parameter param : actionRequest.getAction().getParameter()) {&#13;&#10;    if (param.getName().equals('insertedParam'))&#13;&#10;        insertedParam = param.getValue()&#13;&#10;}"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=324,y=73,w=106,h=71"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=139,ly=88,type=Elbow,xs=99&amp;161,ys=106&amp;106"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A4" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=299,ly=86,type=Elbow,xs=270&amp;320,ys=109&amp;109"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A4" To="A2" Event="FINISH" Id="T3">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=443,ly=110,type=Elbow,xs=434&amp;459,ys=110&amp;110"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=27,y=21,w=207,h=27"/>
+    <bpm:Variables Name="actionName" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="actionRequest" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="javax.xml.bind.JAXBElement"/>
+    </bpm:Variables>
+    <bpm:Variables Name="assetDefinedJaxbIn" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="javax.xml.bind.JAXBElement"/>
+    </bpm:Variables>
+    <bpm:Variables Name="insertedParam" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="optionalAttr" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="optionalElement" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

@@ -1,0 +1,23 @@
+process: # 13853
+  name: MDWTestTimerWait
+  instance: 1
+  activity: # 43 "2016-02-23 19:42:07"
+    name: Start
+    status: Completed
+  activity: # 42 "2016-02-23 19:42:07"
+    name: which case?
+    status: Completed
+  activity: # 45 "2016-02-23 19:42:07"
+    name: |
+      Timer and Event
+      Wait - hold
+    status: Completed
+  activity: # 47 "2016-02-23 19:42:27"
+    name: wait for 1 min
+    status: Completed
+  activity: # 46 "2016-02-23 19:44:07"
+    name: Stop
+    status: Completed
+  variable: # 21178
+    name: testCase
+    value: hold

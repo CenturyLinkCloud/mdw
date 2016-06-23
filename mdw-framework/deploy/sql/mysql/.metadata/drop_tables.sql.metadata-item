@@ -1,0 +1,13 @@
+version=10.2
+item-uid=51279189
+item-spec=4D4457413A314B365458332044524F50205441424C45532053514C2D39333630343634352E412D4441543B31
+file-version=1
+checksum=38f7f88c6d196bfc55238dd2c4972502
+fetch-size=539
+mtime=1415134138
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/mysql/drop_tables.sql
+project=4D4457413A4D445741
+project-uid=31770127

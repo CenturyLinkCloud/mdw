@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65340263
+item-spec=4D4457413A314B364C375820535441545553524553504F4E5345204A534F4E2D313833313736323431583432343958362E412D4441543B31
+file-version=1
+checksum=0b5c51bce4c1f00d38c7c01ffb409ae0
+fetch-size=115
+mtime=1435248722
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=samples/actions/ErrorResponse.json
+project=4D4457413A4D445741
+project-uid=31770127

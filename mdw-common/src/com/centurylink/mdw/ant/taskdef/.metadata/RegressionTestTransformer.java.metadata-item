@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68539490
+item-spec=4D4457413A314B3737545A2052454752455353494F4E544553545452414E53464F524D4552204A4156412D31393038353532323758323434393858322E412D5352433B32
+file-version=2
+checksum=b9d377cd2c3ddabf8538f3f601fddc8e
+fetch-size=372
+mtime=1456355008
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/ant/taskdef/RegressionTestTransformer.java
+project=4D4457413A4D445741
+project-uid=31770127

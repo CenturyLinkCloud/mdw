@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44564655
+item-spec=4D4457413A314B375653302041434345535344454E494544205848544D4C2D2D3335363136383233392E412D5352433B31
+file-version=1
+checksum=163f1f4069d7f3027653acd60f98a0ac
+fetch-size=1059
+mtime=1375988974
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=web/facelets/authentication/accessDenied.xhtml
+project=4D4457413A4D445741
+project-uid=31770127

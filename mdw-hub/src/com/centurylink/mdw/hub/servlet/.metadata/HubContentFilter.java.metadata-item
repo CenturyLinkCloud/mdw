@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71029511
+item-spec=4D4457413A314B3759514220485542434F4E54454E5446494C544552204A4156412D313830333039333035583239353158302E412D5352433B35
+file-version=5
+checksum=3ffd6ba7f72773b5ece02da310cd3dda
+fetch-size=1934
+mtime=1464966873
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/servlet/HubContentFilter.java
+project=4D4457413A4D445741
+project-uid=31770127

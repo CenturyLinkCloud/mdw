@@ -1,0 +1,1 @@
+See http://wiki.eclipse.org/User_Interface_Guidelines#Folder_Structure for naming conventions.

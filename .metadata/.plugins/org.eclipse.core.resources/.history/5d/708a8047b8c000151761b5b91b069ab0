@@ -1,0 +1,536 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.plugin.designer.wizards;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+
+import com.centurylink.mdw.designer.testing.TestCase;
+import com.centurylink.mdw.plugin.MdwPlugin;
+import com.centurylink.mdw.plugin.PluginMessages;
+import com.centurylink.mdw.plugin.PluginUtil;
+import com.centurylink.mdw.plugin.WizardPage;
+import com.centurylink.mdw.plugin.designer.model.RegressionTestSuite;
+import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
+import com.centurylink.mdw.plugin.designer.wizards.ImportTestCaseWizard.TestSuitePageFormat;
+import com.centurylink.mdw.plugin.preferences.model.MdwSettings;
+import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
+import com.centurylink.mdw.plugin.project.model.WorkflowProject;
+
+public class ImportTestCasePage extends WizardPage
+{
+  private MdwSettings mdwSettings;
+
+  private Button importDirectoryRadio;
+  private Text directoryPathText;
+  private Button browseImportDirButton;
+  private Button discoverRadio;
+  private Combo testSuiteCombo;
+  private Text testSuiteDirectoryText;
+  private Button testSuiteDirectoryBrowseButton;
+
+  List<String> discoveredTestSuiteNames;
+  List<String> testCaseNames;
+
+  public ImportTestCasePage()
+  {
+    setTitle("Import Automated Test Cases");
+    setDescription("Import MDW functional/load tests into your project.");
+  }
+
+  @Override
+  public void drawWidgets(Composite parent)
+  {
+    mdwSettings = MdwPlugin.getSettings();
+
+    // create the composite to hold the widgets
+    Composite composite = new Composite(parent, SWT.NULL);
+
+    // create the layout for this wizard page
+    GridLayout gl = new GridLayout();
+    int ncol = 3;
+    gl.numColumns = ncol;
+    composite.setLayout(gl);
+
+    createWorkflowProjectControls(composite, ncol);
+    createTestSuiteDirectoryControls(composite, ncol);
+    createSpacer(composite, ncol);
+    createDirectoryControls(composite, ncol);
+    createSpacer(composite, ncol);
+    createDiscoveryControls(composite, ncol);
+    setControl(composite);
+
+    testSuiteDirectoryText.setText(getTestSuite().getTestCasesDir().toString());
+    enableDiscoveryControls(false);
+    directoryPathText.forceFocus();
+  }
+
+  protected void createWorkflowProjectControls(Composite parent, int ncol)
+  {
+    super.createWorkflowProjectControls(parent, ncol);
+    workflowProjectCombo.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
+        WorkflowProject workflowProj = WorkflowProjectManager.getInstance().getWorkflowProject(workflowProjectCombo.getText());
+        getTestSuite().setWorkflowProject(workflowProj);
+        testSuiteDirectoryText.setText(getTestSuite().getTestCasesDir().toString());
+        handleFieldChanged();
+      }
+    });
+  }
+
+  private void createTestSuiteDirectoryControls(Composite parent, int ncol)
+  {
+    new Label(parent, SWT.NONE).setText("Test Suite Directory:");
+    testSuiteDirectoryText = new Text(parent, SWT.BORDER | SWT.SINGLE);
+    GridData gd = new GridData(SWT.LEFT);
+    gd.widthHint = 400;
+    testSuiteDirectoryText.setLayoutData(gd);
+
+    testSuiteDirectoryText.addModifyListener(new ModifyListener()
+    {
+      public void modifyText(ModifyEvent e)
+      {
+        File suiteDir = new File(testSuiteDirectoryText.getText().trim());
+        getTestSuite().setTestCasesDir(suiteDir);
+        handleFieldChanged();
+      }
+    });
+
+    testSuiteDirectoryBrowseButton = new Button(parent, SWT.PUSH);
+    testSuiteDirectoryBrowseButton.setText("Browse...");
+    testSuiteDirectoryBrowseButton.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
+        DirectoryDialog dlg = new DirectoryDialog(getShell());
+        String path = dlg.open();
+        if (path != null)
+          testSuiteDirectoryText.setText(path);
+      }
+    });
+  }
+
+  private void createDirectoryControls(Composite parent, int ncol)
+  {
+    importDirectoryRadio = new Button(parent, SWT.RADIO | SWT.LEFT);
+    GridData gd = new GridData(GridData.BEGINNING);
+    gd.horizontalSpan = ncol;
+    importDirectoryRadio.setLayoutData(gd);
+    importDirectoryRadio.setSelection(true);
+    importDirectoryRadio.setText("Import from External Directory");
+    importDirectoryRadio.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
+        boolean selected = importDirectoryRadio.getSelection();
+        discoverRadio.setSelection(!selected);
+        enableDiscoveryControls(!selected);
+        enableDirectoryControls(selected);
+        handleFieldChanged();
+      }
+    });
+
+    Label label = new Label(parent, SWT.NONE);
+    label.setText("Test Cases Directory:");
+    gd = new GridData(GridData.BEGINNING);
+    gd.horizontalIndent = 25;
+    label.setLayoutData(gd);
+
+    directoryPathText = new Text(parent, SWT.SINGLE | SWT.BORDER);
+    gd = new GridData(GridData.BEGINNING);
+    gd.widthHint = 400;
+    gd.horizontalSpan = ncol - 2;
+    directoryPathText.setLayoutData(gd);
+    directoryPathText.addModifyListener(new ModifyListener()
+      {
+        public void modifyText(ModifyEvent e)
+        {
+          handleFieldChanged();
+        }
+      });
+
+    browseImportDirButton = new Button(parent, SWT.PUSH);
+    browseImportDirButton.setText("Browse...");
+    browseImportDirButton.addSelectionListener(new SelectionAdapter()
+      {
+        public void widgetSelected(SelectionEvent e)
+        {
+          DirectoryDialog dlg = new DirectoryDialog(getShell());
+          String path = dlg.open();
+          if (path != null)
+            directoryPathText.setText(path);
+        }
+      });
+  }
+
+  private void createDiscoveryControls(Composite parent, int ncol)
+  {
+    discoverRadio = new Button(parent, SWT.RADIO | SWT.LEFT);
+    GridData gd = new GridData(GridData.BEGINNING);
+    gd.horizontalSpan = ncol;
+    discoverRadio.setLayoutData(gd);
+    discoverRadio.setSelection(false);
+    discoverRadio.setText("Discover");
+    discoverRadio.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
+        boolean selected = discoverRadio.getSelection();
+        importDirectoryRadio.setSelection(!selected);
+        enableDirectoryControls(!selected);
+        enableDiscoveryControls(selected);
+        handleFieldChanged();
+      }
+    });
+
+    Label label = new Label(parent, SWT.NONE);
+    label.setText("Test Suite:");
+    gd = new GridData(GridData.BEGINNING);
+    gd.horizontalIndent = 25;
+    label.setLayoutData(gd);
+
+    testSuiteCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
+    gd = new GridData(GridData.BEGINNING);
+    gd.widthHint = 300;
+    testSuiteCombo.setLayoutData(gd);
+    testSuiteCombo.addModifyListener(new ModifyListener()
+      {
+        public void modifyText(ModifyEvent e)
+        {
+          handleFieldChanged();
+        }
+      });
+  }
+
+  private void enableDirectoryControls(boolean enabled)
+  {
+    if (directoryPathText.isEnabled() != enabled)
+    {
+      directoryPathText.setEnabled(enabled);
+      browseImportDirButton.setEnabled(enabled);
+    }
+  }
+
+  private void enableDiscoveryControls(boolean enabled)
+  {
+    if (testSuiteCombo.isEnabled() != enabled)
+    {
+      testSuiteCombo.setEnabled(enabled);
+      if (enabled)
+      {
+        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable()
+        {
+          public void run()
+          {
+            testSuiteCombo.removeAll();
+            testSuiteCombo.add("");
+            // populate the combo
+            discoveredTestSuiteNames = discoverTestSuiteNames();
+            if (discoveredTestSuiteNames != null)
+            {
+              for (String testSuiteName : discoveredTestSuiteNames)
+                testSuiteCombo.add(testSuiteName);
+            }
+          }
+        });
+      }
+    }
+  }
+
+  private List<String> discoverTestSuiteNames()
+  {
+    List<String> testSuiteNames = new ArrayList<String>();
+    try
+    {
+      String urlBase = mdwSettings.getDiscoveryUrl();
+      if (!urlBase.endsWith("/"))
+        urlBase += "/";
+      URL url = new URL(urlBase + "Regression%20Test%20Suites");
+      String releasesPage = PluginUtil.downloadContent(url);
+
+      // try Tomcat dir list format
+      setPageFormat(TestSuitePageFormat.Tomcat);
+      testSuiteNames = findTestSuites(releasesPage, ImportTestCaseWizard.TOMCAT_SUITES_TOKEN, ImportTestCaseWizard.TOMCAT_SUITES_END);
+
+      if (testSuiteNames.isEmpty())
+      {
+        // try WebLogic dir list format
+        testSuiteNames = findTestSuites(releasesPage, ImportTestCaseWizard.WEBLOGIC_SUITES_TOKEN, ImportTestCaseWizard.WEBLOGIC_SUITES_END);
+        if (!testSuiteNames.isEmpty())
+          setPageFormat(TestSuitePageFormat.WebLogic);
+      }
+      if (testSuiteNames.isEmpty())
+      {
+        // try Apache dir list format
+        testSuiteNames = findTestSuites(releasesPage, ImportTestCaseWizard.APACHE_SUITES_TOKEN, ImportTestCaseWizard.APACHE_SUITES_END);
+        if (!testSuiteNames.isEmpty())
+          setPageFormat(TestSuitePageFormat.Apache);
+      }
+      if (testSuiteNames.isEmpty())
+      {
+        // try new sharepoint format
+        testSuiteNames = findTestSuites(releasesPage, ImportTestCaseWizard.SHAREPOINT_SUITES_TOKEN, ImportTestCaseWizard.SHAREPOINT_SUITES_END);
+        if (!testSuiteNames.isEmpty())
+          setPageFormat(TestSuitePageFormat.SharePoint);
+      }
+
+      return testSuiteNames;
+    }
+    catch (Exception ex)
+    {
+      PluginMessages.uiError(getShell(), ex, "Import Projects");
+      return null;
+    }
+  }
+
+  public List<String> findTestSuites(String suitesPage, String token, String endToken)
+  {
+    Pattern pattern = Pattern.compile(token + ".*?" + endToken);
+    Matcher matcher = pattern.matcher(suitesPage);
+
+    List<String> suiteNames = new ArrayList<String>();
+    while (matcher.find())
+    {
+      String match = matcher.group();
+      String suiteName = match.substring(token.replaceAll("\\\\", "").length(), match.length() - endToken.replaceAll("\\\\", "").length());
+      suiteName = suiteName.replaceAll("%20", " ");
+      if (!suiteNames.contains(suiteName) && !"/Releases".equals(suiteName) && !suiteName.isEmpty())
+        suiteNames.add(suiteName);
+    }
+    return suiteNames;
+  }
+
+  @Override
+  public boolean canFlipToNextPage()
+  {
+    return isPageComplete();
+  }
+
+  @Override
+  public IWizardPage getNextPage()
+  {
+    BusyIndicator.showWhile(getShell().getDisplay(), new Runnable()
+    {
+      public void run()
+      {
+        getTestSuite().readCases();
+        populateTestCaseNames();
+      }
+    });
+    return getImportWizard().getTestCaseSelectPage();
+  }
+
+  private ImportTestCaseWizard getImportWizard()
+  {
+    return (ImportTestCaseWizard)getWizard();
+  }
+
+  private void setPageFormat(TestSuitePageFormat format)
+  {
+    getImportWizard().setPageFormat(format);
+  }
+
+  private TestSuitePageFormat getPageFormat()
+  {
+    return getImportWizard().getPageFormat();
+  }
+
+  public void populateTestCaseNames()
+  {
+    testCaseNames = new ArrayList<String>();
+
+    if (importDirectoryRadio.getSelection())
+    {
+        String dirPath = directoryPathText.getText().trim();
+        setImportLocation(dirPath);
+        File dir = new File(dirPath);
+        if (!dir.exists() || !dir.isDirectory())
+        {
+          PluginMessages.uiMessage("Invalid test suite directory: " + dirPath, "Import Test Cases", PluginMessages.INFO_MESSAGE);
+          return;
+        }
+
+        File[] testCaseDirs = dir.listFiles(new FileFilter()
+        {
+          public boolean accept(File file)
+          {
+            if (!file.isDirectory())
+              return false;
+            if (file.getName().equalsIgnoreCase("CVS") || file.getName().equals(".metadata"))
+              return false;
+            for (String commandsFileName : TestCase.TEST_CASE_LANGUAGES.values())
+            {
+              if (new File(file.toString() + "/" + commandsFileName).exists())
+                return true;
+            }
+            return false;
+          }
+        });
+
+        if (testCaseDirs == null || testCaseDirs.length == 0)
+        {
+          PluginMessages.uiMessage("Directory does not contain any test cases: " + dir, "Import Test Cases", PluginMessages.INFO_MESSAGE);
+          return;
+        }
+
+        for (File testCaseDir : testCaseDirs)
+          testCaseNames.add(testCaseDir.getName());
+    }
+    else
+    {
+      String testSuiteName = testSuiteCombo.getText();
+      setTestSuiteName(testSuiteName);
+      String escapedSuiteName = testSuiteName.replaceAll(" ", "%20");
+      String urlBase = mdwSettings.getDiscoveryUrl();
+      if (!urlBase.endsWith("/"))
+        urlBase += "/";
+      String suiteUrl = urlBase + "Regression%20Test%20Suites/" + escapedSuiteName;
+      setImportLocation(suiteUrl);
+      try
+      {
+        String suitesPage = PluginUtil.downloadContent(new URL(suiteUrl));
+
+        if (getPageFormat() == TestSuitePageFormat.Tomcat)
+          testCaseNames = findTestCases(suitesPage, ImportTestCaseWizard.TOMCAT_SUITES_TOKEN, ImportTestCaseWizard.TOMCAT_SUITES_END);
+        else if (getPageFormat() == TestSuitePageFormat.WebLogic)
+          testCaseNames = findTestCases(suitesPage, ImportTestCaseWizard.WEBLOGIC_SUITES_TOKEN, ImportTestCaseWizard.WEBLOGIC_SUITES_END);
+        else if (getPageFormat() == TestSuitePageFormat.Apache)
+          testCaseNames = findTestCases(suitesPage, ImportTestCaseWizard.APACHE_SUITES_TOKEN, ImportTestCaseWizard.APACHE_SUITES_END);
+        else if (getPageFormat() == TestSuitePageFormat.SharePoint)
+          testCaseNames = findTestCases(suitesPage, ImportTestCaseWizard.SHAREPOINT_SUITES_TOKEN + testSuiteName, ImportTestCaseWizard.SHAREPOINT_SUITES_END);
+      }
+      catch (Exception ex)
+      {
+        PluginMessages.uiError(getShell(), ex, "Discover Test Cases", getWorkflowProject());
+      }
+
+      if (testCaseNames == null || testCaseNames.size() == 0)
+      {
+        PluginMessages.uiMessage("Location does not contain any test cases: " + suiteUrl, "Import Test Cases", PluginMessages.INFO_MESSAGE);
+        return;
+      }
+    }
+
+    setTestCaseList(testCaseNames);
+    ((ImportTestCaseWizard)getWizard()).initializeTestCaseSelectPage();
+  }
+
+  private List<String> findTestCases(String suitesPage, String token, String endToken)
+  {
+    List<String> caseNames = new ArrayList<String>();
+    Pattern pattern = Pattern.compile(token + ".*?" + endToken);
+    Matcher matcher = pattern.matcher(suitesPage);
+    while (matcher.find())
+    {
+      String match = matcher.group();
+      String caseName = match.substring(token.replaceAll("\\\\", "").length(), match.length() - endToken.replaceAll("\\\\", "").length());
+      caseName = caseName.replaceAll("%20", " ");
+      if (caseName.startsWith("/"))
+        caseName = caseName.substring(1);
+      if (caseName.startsWith(testSuiteCombo.getText() + "/"))
+          caseName = caseName.substring(testSuiteCombo.getText().length() + 1);
+      if (!caseNames.contains(caseName) && !caseName.endsWith(".xml") && !caseName.equals("CVS") && !caseName.endsWith("Regression Test Suites") && !caseName.equals(".metadata"))
+        caseNames.add(caseName);
+    }
+    return caseNames;
+  }
+
+  @Override
+  public boolean isPageComplete()
+  {
+    return isPageValid();
+  }
+
+  boolean isPageValid()
+  {
+    if (importDirectoryRadio.getSelection())
+    {
+      return directoryPathText != null
+        && checkDir(directoryPathText.getText());
+    }
+    else
+    {
+      return testSuiteCombo.getText().length() > 0;
+    }
+  }
+
+  public IStatus[] getStatuses()
+  {
+    String msg = null;
+
+    if (importDirectoryRadio.getSelection())
+    {
+      if (!checkFile(directoryPathText.getText().trim()))
+        msg = "Please enter a valid directory path.";
+    }
+    else
+    {
+      if (discoveredTestSuiteNames == null)
+        msg = "Unable to discover test suites.";
+    }
+
+    if (msg == null)
+      return null;
+
+    IStatus[] is = {new Status(IStatus.ERROR, getPluginId(), 0, msg, null)};
+    return is;
+  }
+
+  private ImportTestCaseWizard getImportTestCaseWizard()
+  {
+    return (ImportTestCaseWizard)getWizard();
+  }
+
+  private void setTestCaseList(List<String> testCases)
+  {
+    getImportTestCaseWizard().setTestCaseList(testCases);
+  }
+
+  private RegressionTestSuite getTestSuite()
+  {
+    return getImportTestCaseWizard().getTestSuite();
+  }
+
+  @Override
+  public WorkflowElement getWorkflowElement()
+  {
+    return getTestSuite();
+  }
+
+  public void setTestSuiteName(String suiteName)
+  {
+    getImportTestCaseWizard().setTestSuiteName(suiteName);
+  }
+
+  public void setImportLocation(String location)
+  {
+    getImportTestCaseWizard().setImportLocation(location);
+  }
+
+}

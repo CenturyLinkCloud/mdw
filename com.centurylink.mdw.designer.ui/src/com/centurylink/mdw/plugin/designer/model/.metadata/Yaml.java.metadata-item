@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68128920
+item-spec=4D4457413A314B3848384C2059414D4C204A4156412D31393039343239313358323433303858302E412D5352433B35
+file-version=5
+checksum=a000215057db59023ed36c08b0dc34af
+fetch-size=1042
+mtime=1455316002
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/model/Yaml.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

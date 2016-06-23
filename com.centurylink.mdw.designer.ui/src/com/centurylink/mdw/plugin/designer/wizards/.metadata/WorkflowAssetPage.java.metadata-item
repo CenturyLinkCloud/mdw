@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70435835
+item-spec=4D4457413A314B3848384C20444546494E4954494F4E444F4350414745204A4156412D2D313232313530323335342E412D5352433B3131
+file-version=11
+checksum=57deddf2dadc680365844d4591c47502
+fetch-size=12386
+mtime=1463164605
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/WorkflowAssetPage.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

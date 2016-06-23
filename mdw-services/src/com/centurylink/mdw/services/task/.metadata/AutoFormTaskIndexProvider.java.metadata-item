@@ -1,0 +1,13 @@
+version=10.2
+item-uid=66433129
+item-spec=4D4457413A314B37435A30204155544F464F524D5441534B494E44455850524F5649444552204A4156412D31383530363538333758323039323958342E412D5352433B32
+file-version=2
+checksum=c40db01822b70ef52db481856182df17
+fetch-size=1843
+mtime=1447974354
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/task/AutoFormTaskIndexProvider.java
+project=4D4457413A4D445741
+project-uid=31770127

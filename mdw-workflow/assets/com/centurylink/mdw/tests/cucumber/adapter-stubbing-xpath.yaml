@@ -1,0 +1,27 @@
+process: # 13224
+  name: TestAdapterStub
+  instance: 1
+  activity: # 1 "2016-02-17 14:40:53"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-17 14:40:53"
+    name: GetEmployee
+    status: Completed
+  activity: # 2 "2016-02-17 14:40:58"
+    name: Stop
+    status: Completed
+  variable: # 19347
+    name: request
+    value: |
+      <tns:GetEmployee xmlns:tns="http://mdw-servicemix.centurylink.com/serviceTypes">
+        <tns:workstationId>dxoakes</tns:workstationId>
+      </tns:GetEmployee>
+  variable: # 19348
+    name: response
+    value: |
+      <GetEmployeeResponse xmlns="http://mdw-servicemix.centurylink.com/serviceTypes">
+        <!-- this is purposely different from the non-stubbed response -->
+        <workstationId>dxoakes</workstationId>
+        <firstName>Don</firstName>
+        <lastName>Oakes</lastName>
+      </GetEmployeeResponse>

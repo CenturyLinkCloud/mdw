@@ -1,0 +1,6 @@
+// sync-activity
+start process("MDWTestMainProcess") {
+    variables = [ processCase: "Synchronization" ]
+}
+wait process
+verify process

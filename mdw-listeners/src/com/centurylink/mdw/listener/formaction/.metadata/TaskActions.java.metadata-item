@@ -1,0 +1,13 @@
+version=10.2
+item-uid=64903507
+item-spec=4D4457413A314B37464735205441534B414354494F4E53204A4156417E30312D3631333734343436392E412D5352433B33
+file-version=3
+checksum=9758132a1de31966abc6c1df74097448
+fetch-size=5802
+mtime=1443549206
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listener/formaction/TaskActions.java
+project=4D4457413A4D445741
+project-uid=31770127

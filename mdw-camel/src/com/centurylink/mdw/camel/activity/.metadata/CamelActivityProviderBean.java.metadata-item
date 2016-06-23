@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853874
+item-spec=4D4457413A314B38334D422043414D454C414354495649545950524F56494445524245414E204A4156412D323131333832313734312E412D5352433B32
+file-version=2
+checksum=26f62b8ec403cd888300cd854ac5e372
+fetch-size=1169
+mtime=1393989706
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/camel/activity/CamelActivityProviderBean.java
+project=4D4457413A4D445741
+project-uid=31770127

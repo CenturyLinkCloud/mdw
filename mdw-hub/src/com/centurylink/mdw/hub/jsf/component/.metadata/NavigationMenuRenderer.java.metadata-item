@@ -1,0 +1,13 @@
+version=10.2
+item-uid=47465221
+item-spec=4D4457413A314B37595142204E415649474154494F4E4D454E5552454E4445524552204A4156412D2D3332393836313534322E412D5352433B33
+file-version=3
+checksum=4a5852429773b9617fa332e0ff2346c5
+fetch-size=11380
+mtime=1396384811
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/jsf/component/NavigationMenuRenderer.java
+project=4D4457413A4D445741
+project-uid=31770127

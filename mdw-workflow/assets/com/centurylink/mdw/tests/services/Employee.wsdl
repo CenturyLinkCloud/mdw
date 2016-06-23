@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+  name="wsdl-first"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:tns="http://mdw.centurylink.com"
+  xmlns:typens="http://mdw.centurylink.com/serviceTypes"
+  targetNamespace="http://mdw.centurylink.com">
+
+  <wsdl:types>
+    <xsd:schema
+      targetNamespace="http://mdw.centurylink.com/serviceTypes"
+      elementFormDefault="qualified">
+      <xsd:element name="GetEmployee">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element
+              name="sapId"
+              type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetEmployeeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element
+              name="workstationId"
+              type="xsd:string" />
+            <xsd:element
+              name="sapId"
+              type="xsd:string" />
+            <xsd:element
+              name="firstName"
+              type="xsd:string" />
+            <xsd:element
+              name="lastName"
+              type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="UnknownEmployeeFault">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element
+              name="sapId"
+              type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+
+  <wsdl:message name="GetEmployeeRequest">
+    <wsdl:part
+      name="payload"
+      element="typens:GetEmployee" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeeResponse">
+    <wsdl:part
+      name="payload"
+      element="typens:GetEmployeeResponse" />
+  </wsdl:message>
+  <wsdl:message name="UnknownEmployeeFault">
+    <wsdl:part
+      name="payload"
+      element="typens:UnknownEmployeeFault" />
+  </wsdl:message>
+
+  <wsdl:portType name="EmployeeLookup">
+    <wsdl:operation name="GetEmployee">
+      <wsdl:input message="tns:GetEmployeeRequest" />
+      <wsdl:output message="tns:GetEmployeeResponse" />
+      <wsdl:fault
+        name="UnknownEmployee"
+        message="tns:UnknownEmployeeFault" />
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding
+    name="EmployeeSOAPBinding"
+    type="tns:EmployeeLookup">
+    <soap:binding
+      style="document"
+      transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetEmployee">
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="UnknownEmployee">
+        <soap:fault
+          use="literal"
+          name="UnknownEmployee" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="EmployeeService">
+    <wsdl:port
+      binding="tns:EmployeeSOAPBinding"
+      name="soap">
+      <soap:address location="${mdw.services.url}/SOAP/Employee.wsdl" />
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

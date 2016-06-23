@@ -1,0 +1,13 @@
+version=10.2
+item-uid=64261700
+item-spec=4D4457413A314B3848384C204A41564150524F43455353434F4E534F4C45204A4156412D2D313838313434303735362E412D5352433B36
+file-version=6
+checksum=0f98f810fb7280aa698dea65aad68ce1
+fetch-size=20731
+mtime=1440810350
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/views/JavaProcessConsole.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

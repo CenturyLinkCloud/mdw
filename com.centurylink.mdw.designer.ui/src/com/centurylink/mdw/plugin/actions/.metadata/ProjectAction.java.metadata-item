@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851923
+item-spec=4D4457413A314B3848384C2050524F4A454354414354494F4E204A4156412D2D313331353234343037302E412D5352433B32
+file-version=2
+checksum=7fde75cc3aeda912068ed4a23e67aa2b
+fetch-size=4218
+mtime=1393988849
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/actions/ProjectAction.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

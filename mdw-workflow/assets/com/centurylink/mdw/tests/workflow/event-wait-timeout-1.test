@@ -1,0 +1,18 @@
+// event-wait-timeout-1
+start process("MDWTestEventWaitTimeout")
+sleep 10
+send message("REST") {
+    payload = '''\
+<ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
+  <Action Name="RegressionTest">
+    <Parameter name="MasterRequestId">%%M%%</Parameter>
+    <Parameter name="Maintenance">Timeout</Parameter>
+  </Action>
+</ser:ActionRequest>'''    
+}
+sleep 180
+send message("REST") {
+    payload = "<NonTaskAction>%%M%%</NonTaskAction>"
+}
+sleep 15
+verify process

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67934236
+item-spec=4D4457413A314B365458332043524541544520534F4C5554494F4E532053514C2D31383535393233333558323134353458362E412D4441543B33
+file-version=3
+checksum=d412006fcf7e00afb924b78c788a4742
+fetch-size=1631
+mtime=1454963897
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/5.5 Pure/solutions/create_solutions.sql
+project=4D4457413A4D445741
+project-uid=31770127

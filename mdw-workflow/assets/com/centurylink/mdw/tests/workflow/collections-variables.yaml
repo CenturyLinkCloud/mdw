@@ -1,0 +1,29 @@
+process: # 13590
+  name: MDWTestVariables
+  instance: 1
+  activity: # 1 "2016-02-22 10:59:24"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-22 10:59:26"
+    name: PopulateVariables
+    status: Completed
+  activity: # 2 "2016-02-22 10:59:26"
+    name: Stop
+    status: Completed
+  variable: # 20487
+    name: intListVar
+    value: [1,2,3]
+  variable: # 20488
+    name: longListVar
+    value: [1,2,3]
+  variable: # 20486
+    name: stringListVar
+    value: ["string1","string2","string3"]
+  variable: # 20489
+    name: stringMapVar
+    value: |
+      {
+        "name1": "'string1",
+        "name2": "{string2",
+        "name3": "string3}"
+      }

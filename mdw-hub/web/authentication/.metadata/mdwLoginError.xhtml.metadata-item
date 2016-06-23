@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67363271
+item-spec=4D4457413A314B37595142204D44574C4F47494E4552524F52205848544D4C2D31393034313236303358323538323958302E412D5352433B31
+file-version=1
+checksum=3ac0a8d3b595332b089134e80fa4f820
+fetch-size=670
+mtime=1452716473
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=web/authentication/mdwLoginError.xhtml
+project=4D4457413A4D445741
+project-uid=31770127

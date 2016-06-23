@@ -1,0 +1,9 @@
+// drools-decision-table
+start process("DroolsDecisionTable") {
+    variables = [dueDate: "Thu Mar 20 12:30:00 MDT 2015", 
+                 region: "Western",
+                 quotedPrice: 150,
+                 orderNumber: 295417]
+}
+wait process
+verify process

@@ -1,0 +1,126 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="SQL Adapter" version="0.5" description="">
+    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=250,y=11,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=261,y=400,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="Query Using&#13;&#10;JDBC URL" Implementation="com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter">
+      <bpm:Attribute Name="OsgiBundleSymbolicName" Value="com.centurylink.donsservicemix"/>
+      <bpm:Attribute Name="Output Documents" Value="userDocument"/>
+      <bpm:Attribute Name="PostScript" Value="import java.sql.ResultSet&#13;&#10;&#13;&#10;import com.centurylink.mdw.user.UserDocument&#13;&#10;import com.centurylink.mdw.user.UserDocument.User&#13;&#10;&#13;&#10;ResultSet rs = (ResultSet) response;&#13;&#10;if (rs.next()) {&#13;&#10;  userDocument = UserDocument.Factory.newInstance();&#13;&#10;  User user = userDocument.addNewUser();&#13;&#10;  user.setCuid(rs.getString(&quot;cuid&quot;));&#13;&#10;  String name = rs.getString(&quot;name&quot;);&#13;&#10;  String[] names = name.split(&quot; &quot;);&#13;&#10;  user.setFirstName(names[0]);&#13;&#10;  user.setLastName(names[1]);&#13;&#10;}&#13;&#10;else {&#13;&#10;  throw new RuntimeException(&quot;User query returns no results: &quot; + runtimeContext.getAttributes().get(&quot;sqlQuery&quot;));&#13;&#10;}"/>
+      <bpm:Attribute Name="PostScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="PreScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=97,y=125,w=102,h=75"/>
+      <bpm:Attribute Name="jdbcDataSource" Value="jdbc:oracle:thin:mdw/mdw@mdwdevdb.dev.qintra.com:1594:mdwdev"/>
+      <bpm:Attribute Name="parameterVariable" Value="userCuid"/>
+      <bpm:Attribute Name="queryType" Value="Select"/>
+      <bpm:Attribute Name="sqlQuery" Value="select * from user_info where cuid = ?"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A4" Name="Query Multiple Params,&#13;&#10;Multiple Results" Implementation="com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter">
+      <bpm:Attribute Name="OsgiBundleSymbolicName" Value="com.centurylink.donsservicemix"/>
+      <bpm:Attribute Name="PostScript" Value="import java.sql.ResultSet&#13;&#10;&#13;&#10;ResultSet rs = (ResultSet) response;&#13;&#10;List&lt;String> users = new ArrayList&lt;String>();&#13;&#10;while (rs.next()) {&#13;&#10;  users.add(rs.getString(&quot;name&quot;));&#13;&#10;}&#13;&#10;mdwSupportUsers = users.toArray(new String[0]);"/>
+      <bpm:Attribute Name="PostScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="PreScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=304,y=185,w=145,h=78"/>
+      <bpm:Attribute Name="jdbcDataSource" Value="MDWDataSource"/>
+      <bpm:Attribute Name="parameterVariable" Value="userCuids"/>
+      <bpm:Attribute Name="queryType" Value="Select"/>
+      <bpm:Attribute Name="sqlQuery" Value="select * from user_info ui, user_group_mapping ugm, user_group ug&#13;&#10;where ui.user_info_id = ugm.user_info_id&#13;&#10;and ugm.user_group_id = ug.user_group_id&#13;&#10;and ug.group_name = 'Site Admin'&#13;&#10;and (ui.cuid = ? or ui.cuid = ?)"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A5" Name="Sync" Implementation="com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity">
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="Synced Activities" Value="Query Using&#13;&#10;JDBC URL#Query Multiple Params,&#13;&#10;Multiple Results#Reset&#13;&#10;User Name"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=228,y=293,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A6" Name="Update&#13;&#10;User Name" Implementation="com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter">
+      <bpm:Attribute Name="DESCRIPTION" Value="Where clause is hard-coded to avoid any mishaps due to bad input data."/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=472,y=13,w=100,h=66"/>
+      <bpm:Attribute Name="jdbcDataSource" Value="MDWDataSource"/>
+      <bpm:Attribute Name="queryType" Value="Update"/>
+      <bpm:Attribute Name="sqlQuery" Value="update user_info set name = 'Don Oakes' where cuid = 'dxoakes'"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A7" Name="Select User&#13;&#10;And Bind Name" Implementation="com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter">
+      <bpm:Attribute Name="OsgiBundleSymbolicName" Value="com.centurylink.donsservicemix"/>
+      <bpm:Attribute Name="PostScript" Value="import java.sql.ResultSet&#13;&#10;&#13;&#10;ResultSet rs = (ResultSet) response;&#13;&#10;if (rs.next()) {&#13;&#10;  return rs.getString(&quot;name&quot;);&#13;&#10;}"/>
+      <bpm:Attribute Name="PostScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="PreScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=478,y=153,w=100,h=72"/>
+      <bpm:Attribute Name="jdbcDataSource" Value="MDWDataSource"/>
+      <bpm:Attribute Name="queryType" Value="Select"/>
+      <bpm:Attribute Name="sqlQuery" Value="select name from user_info where cuid = 'dxoakes'"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A8" Name="Reset&#13;&#10;User Name" Implementation="com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter">
+      <bpm:Attribute Name="DESCRIPTION" Value="Where clause is hard-coded to avoid any mishaps due to bad input data."/>
+      <bpm:Attribute Name="PostScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="PreScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=474,y=291,w=101,h=67"/>
+      <bpm:Attribute Name="jdbcDataSource" Value="MDWDataSource"/>
+      <bpm:Attribute Name="queryType" Value="Update"/>
+      <bpm:Attribute Name="sqlQuery" Value="update user_info set name = 'Donald Oakes' where cuid = 'dxoakes'"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A9" Name="Wait 60s" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="60"/>
+      <bpm:Attribute Name="Unit" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=342,y=13,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A10" Name="Wait 10s" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="10"/>
+      <bpm:Attribute Name="Unit" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=268,y=88,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=253,ly=9,type=Elbow,xs=246&amp;203,ys=31&amp;162"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A5" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=177,ly=247,type=Elbow,xs=148&amp;278,ys=204&amp;289"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A1" To="A10" Event="FINISH" Id="T3">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=283,ly=63,type=Elbow,xs=289&amp;289,ys=55&amp;84"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A5" To="A2" Event="FINISH" Id="T4">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=291,ly=344,type=Elbow,xs=291&amp;291,ys=357&amp;396"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A4" To="A5" Event="FINISH" Id="T5">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=316,ly=276,type=Elbow,xs=316&amp;316,ys=267&amp;289"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A1" To="A9" Event="FINISH" Id="T6">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=322,ly=28,type=Elbow,xs=314&amp;338,ys=32&amp;32"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A6" To="A7" Event="FINISH" Id="T7">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=525,ly=111,type=Elbow,xs=525&amp;525,ys=83&amp;149"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="Don Oakes" From="A7" To="A8" Event="FINISH" Id="T8">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=534,ly=248,type=Elbow,xs=526&amp;526,ys=229&amp;287"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A8" To="A5" Event="FINISH" Id="T9">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=401,ly=323,type=Elbow,xs=470&amp;332,ys=323&amp;323"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A9" To="A6" Event="FINISH" Id="T10">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=457,ly=43,type=Elbow,xs=446&amp;468,ys=43&amp;43"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A10" To="A4" Event="FINISH" Id="T11">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=336,ly=166,type=Elbow,xs=336&amp;336,ys=152&amp;181"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=21,y=21,w=115,h=27"/>
+    <bpm:Variables Name="mdwSupportUsers" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String[]"/>
+    </bpm:Variables>
+    <bpm:Variables Name="userCuid" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="userCuids" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String[]"/>
+    </bpm:Variables>
+    <bpm:Variables Name="userDocument" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="org.apache.xmlbeans.XmlObject"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

@@ -1,0 +1,116 @@
+//Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
+'use strict';
+
+var activityMod = angular.module('activities', ['ngResource', 'mdw', 'infinite-scroll']);
+
+activityMod.controller('ActivitiesController', ['$scope', '$http', '$location', '$window', '$uibModal', 'mdw', 'util', 'ACTIVITY_STATUSES', 'EXCEL_DOWNLOAD',
+                                               function($scope, $http, $location, $window, $uibModal, mdw, util, ACTIVITY_STATUSES, EXCEL_DOWNLOAD) {
+  
+  // TODO: hardcoded
+  var d = new Date();
+  d.setTime(d.getTime() - 7 * util.dayMs);
+  $scope.startDate = util.serviceDate(d);
+  $scope.start = 0;
+  $scope.max = 50;
+  
+  $scope.allStatuses = ACTIVITY_STATUSES;
+  
+  $scope.url = mdw.roots.services + '/services/Activities?app=mdw-admin' + '&start=' + $scope.start + '&max=' + $scope.max + '&startDate=' + $scope.startDate;
+  $http.get($scope.url).error(function(data, status) {
+    console.log('HTTP ' + status + ': ' + $scope.url);
+  }).success(function(data, status, headers, config) {
+    $scope.total = data.total;
+    $scope.activities = data.activityInstances;
+    $scope.activities.forEach(function(activity) {
+      if (activity.status == 'Failed' || activity.status == 'In Progress')
+        activity.alert = true;
+    });
+  });
+  
+  $scope.confirmAction = function(action) {
+    $scope.action = action;
+    $scope.closePopover();
+    $scope.selectedActivities = $scope.getSelectedActivities();
+    var modalInstance = $uibModal.open({
+      scope: $scope,
+      templateUrl: 'workflow/activityActionConfirm.html',
+      controller: 'ActivitiesController',
+      size: 'sm'
+    });    
+  };
+  
+  $scope.selectedState = { all: false };
+  $scope.toggleAll = function() {
+    $scope.activities.forEach(function(activity) {
+      activity.selected = $scope.selectedState.all;
+    });
+  };
+  $scope.notAllSelected = function() {
+    $scope.selectedState.all = false;
+  };
+
+  $scope.getSelectedActivities = function() {
+    var selected = [];
+    if ($scope.activities) {
+      $scope.activities.forEach(function(activity) {
+        if (activity.selected)
+          selected.push(activity);
+      });
+    }
+    return selected;
+  };
+  
+  $scope.getSelectedActivitiesMessage = function() {
+    if ($scope.selectedActivities) {
+      var base = 'Do you want to perform the selected action on ';
+      if ($scope.selectedActivities.length == 1)
+        return base + 'the selected activity?';
+      else
+        return base + $scope.selectedActivities.length + ' activities?';
+    }
+  };
+  
+  $scope.performActionOnActivities = function() {
+    
+    if (!$scope.busy) {
+      $scope.busy = true;
+      // take the action
+      console.log('Performing: "' + $scope.action + '" on ' + $scope.selectedActivities.length + ' activities');
+      // TODO: chunk into multiple activity instances (say same as page max) per request
+      // TODO: use a promise to refresh list after all actions performed
+      var errorHandler = function(data, status) {
+        console.log('http: ' + status + ': ' + url);
+        this.busy = false;
+        $scope.$close();
+      };
+      var successHandler = function(data, status, headers, config) {
+        $scope.busy = false;
+        $scope.selectedActivities = null;
+        $scope.$close();
+        $scope.selectedState.all = false;
+        $scope.activities.forEach(function(activity) {
+          activity.selected = false;
+        });
+      };
+      for (var i = 0; i < $scope.selectedActivities.length; i++) {
+        var request = $http({
+          method : "post",
+          url : mdw.roots.services + '/Services/Activities/' + $scope.selectedActivities[i].id + '/' + $scope.action + '?app=mdw-admin',
+          data : {}
+        });
+        
+        request.error(errorHandler).success(successHandler);
+      }
+      $window.location.reload();
+    }
+  };
+  
+  $scope.cancelAction = function () {
+    $scope.$dismiss('cancel');
+  };
+  
+  $scope.downloadExcel = function() {
+    window.location = $scope.url + '&' + EXCEL_DOWNLOAD;
+  };  
+  
+}]);

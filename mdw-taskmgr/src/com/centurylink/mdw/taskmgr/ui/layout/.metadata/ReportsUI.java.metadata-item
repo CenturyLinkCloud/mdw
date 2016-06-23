@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50878390
+item-spec=4D4457413A314B37565330205245504F5254535549204A4156412D3130303234313535392E412D5352433B31
+file-version=1
+checksum=a62fb9ee5282c64885c0db5e5c5de24e
+fetch-size=747
+mtime=1412176460
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/layout/ReportsUI.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=55121916
+item-spec=4D4457413A314B3737545A20524553504F4E5345434F444553204A4156412D3930323630383535392E412D5352433B31
+file-version=1
+checksum=4f86bf3f4dc3def2c0de6f980f54eed0
+fetch-size=216
+mtime=1428435549
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/service/types/ResponseCodes.java
+project=4D4457413A4D445741
+project-uid=31770127

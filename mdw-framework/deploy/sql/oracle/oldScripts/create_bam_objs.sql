@@ -1,0 +1,211 @@
+/* Usage:sqlplus mdw/<pwd>@<SID> @create_bam_objs.sql            */
+/*                     
+ *      data_tbs_name  = MDWDEV_DATA
+        index_tbs_name = MDWDEV_DATA
+        whenever sqlerror continue
+        whenever sqlerror exit
+
+ * */
+
+spool create_bam_objs.log;
+undefine data_tbs_name
+undefine index_tbs_name
+
+CREATE TABLE BAM_MASTER_REQUEST
+(
+  MASTER_REQUEST_ROWID  NUMBER,
+  MASTER_REQUEST_ID     VARCHAR2(64 BYTE)		NOT NULL,
+  SOURCE_SYSTEM         VARCHAR2(32 BYTE)		NOT NULL,
+  REQUEST_TIME          DATE                    NOT NULL,
+  RECORD_TIME           DATE                    NOT NULL
+)
+TABLESPACE &&data_tbs_name
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          2M
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+ALTER TABLE BAM_MASTER_REQUEST ADD (
+  PRIMARY KEY
+  (MASTER_REQUEST_ROWID)
+  USING INDEX
+    TABLESPACE &&index_tbs_name
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          448K
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+               ));
+               
+ALTER TABLE BAM_MASTER_REQUEST ADD 
+ UNIQUE (SOURCE_SYSTEM, MASTER_REQUEST_ID)
+ ENABLE
+ VALIDATE;
+ 
+CREATE TABLE BAM_EVENT
+(
+  EVENT_ROWID           NUMBER,
+  MASTER_REQUEST_ROWID  NUMBER                  NOT NULL,
+  EVENT_NAME            VARCHAR2(40 BYTE)       NOT NULL,
+  EVENT_CATEGORY        VARCHAR2(40 BYTE),
+  EVENT_SUBCATEGORY     VARCHAR2(40 BYTE),
+  SOURCE_SYSTEM         VARCHAR2(40 BYTE),
+  EVENT_ID              VARCHAR2(64 BYTE),
+  EVENT_DATA            VARCHAR2(4000 BYTE),
+  RECORD_TIME           DATE                    NOT NULL,
+  EVENT_TIME            DATE                    NOT NULL,
+  NOTE                  VARCHAR2(4000 BYTE)
+)
+TABLESPACE &&data_tbs_name
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          21M
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+ALTER TABLE BAM_EVENT ADD (
+  PRIMARY KEY
+  (EVENT_ROWID)
+  USING INDEX
+    TABLESPACE &&index_tbs_name
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          3M
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+               ));
+
+ALTER TABLE BAM_EVENT ADD (
+  FOREIGN KEY (MASTER_REQUEST_ROWID) 
+  REFERENCES BAM_MASTER_REQUEST (MASTER_REQUEST_ROWID));
+
+
+
+CREATE TABLE BAM_ATTRIBUTE
+(
+  MASTER_REQUEST_ROWID  NUMBER                  NOT NULL,
+  EVENT_ROWID           NUMBER					NOT NULL,
+  COMPONENT_ROWID       NUMBER,
+  ATTRIBUTE_NAME        VARCHAR2(64 BYTE)       NOT NULL,
+  ATTRIBUTE_VALUE       VARCHAR2(4000 BYTE)
+)
+TABLESPACE &&data_tbs_name
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          256K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+ALTER TABLE BAM_ATTRIBUTE ADD (
+  CONSTRAINT EVENT_ROWID 
+  FOREIGN KEY (EVENT_ROWID) 
+  REFERENCES BAM_EVENT (EVENT_ROWID));
+
+ALTER TABLE BAM_ATTRIBUTE ADD 
+ FOREIGN KEY (MASTER_REQUEST_ROWID)
+ REFERENCES BAM_MASTER_REQUEST (MASTER_REQUEST_ROWID);
+
+CREATE TABLE BAM_COMPONENT
+(
+  COMPONENT_ROWID       NUMBER,
+  MASTER_REQUEST_ROWID  NUMBER                  NOT NULL,
+  COMPONENT_ID          VARCHAR2(256 BYTE)      NOT NULL,
+  COMPONENT_TYPE        VARCHAR2(256 BYTE)
+)
+TABLESPACE &&data_tbs_name
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+ALTER TABLE BAM_COMPONENT ADD (
+  PRIMARY KEY
+  (COMPONENT_ROWID));
+
+ALTER TABLE BAM_COMPONENT ADD (
+  FOREIGN KEY (MASTER_REQUEST_ROWID) 
+  REFERENCES BAM_MASTER_REQUEST (MASTER_REQUEST_ROWID));
+
+CREATE TABLE BAM_COMPONENT_RELATION
+(
+  COMPONENT_A_ROWID  NUMBER                     NOT NULL,
+  COMPONENT_B_ROWID  NUMBER                     NOT NULL,
+  RELATION_TYPE      VARCHAR2(32 BYTE)          NOT NULL
+)
+TABLESPACE &&data_tbs_name
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+undefine data_tbs_name
+undefine index_tbs_name
+spool off;

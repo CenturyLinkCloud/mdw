@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67364857
+item-spec=4D4457413A314B3737545A20434C454152545255535441555448454E54494341544F52204A4156412D31383037343134343558373033385831382E412D5352433B35
+file-version=5
+checksum=96443f0db4ca6cbe2d5c49915cd3a966
+fetch-size=3626
+mtime=1452716944
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/auth/ClearTrustAuthenticator.java
+project=4D4457413A4D445741
+project-uid=31770127

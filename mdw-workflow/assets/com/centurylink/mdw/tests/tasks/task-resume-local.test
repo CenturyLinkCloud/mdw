@@ -1,0 +1,41 @@
+// task-resume-local
+// See also com.centurylink.mdw.tests.routing/task-resume-service.test 
+// (task-resume-service uses HTTP to notify workflow vs the usual in-VM
+// mechanism tested here).  YAML outcome should be the same.
+
+// autoform task
+start process("TaskResumeLocal") {
+    variables = [ custom: false, inputString: "autoformBeforeUpdate" ]
+}
+sleep 10
+action task("autoform task for local resume") {
+    outcome = "Claim"
+}
+sleep 10
+action task("autoform task for local resume") {
+    outcome = "Complete"
+    variables = [
+        inputString: "autoformAfterUpdate",
+        requiredString: "autoformRequiredValue" ]
+}
+wait process
+
+// custom task
+start process("TaskResumeLocal") {
+    variables = [ custom: true, inputString: "customBeforeUpdate" ]
+}
+sleep 10
+action task("custom task for local resume") {
+    outcome = "Claim"
+}
+sleep 10
+action task("custom task for local resume") {
+    outcome = "Complete"
+    variables = [
+        inputString: "customAfterUpdate",
+        requiredString: "customRequiredValue" ]
+}
+wait process
+
+// verify both instances vs yaml
+verify process("TaskResumeLocal")

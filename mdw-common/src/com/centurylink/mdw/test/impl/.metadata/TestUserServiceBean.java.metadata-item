@@ -1,0 +1,13 @@
+version=10.2
+item-uid=55392284
+item-spec=4D4457413A314B3737545A205445535455534552534552564943454245414E204A4156412D313739383938323034342E412D5352433B33
+file-version=3
+checksum=5dce76fbf6b6b5ecfae2aeb19482cc73
+fetch-size=640
+mtime=1430512642
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/test/impl/TestUserServiceBean.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,26 @@
+process: # 13637
+  name: EventCheck
+  instance: 1
+  activity: # 1 "2016-02-22 12:51:21"
+    name: Start
+    status: Completed
+  activity: # 23 "2016-02-22 12:51:21"
+    name: |
+      Event Check 
+      Activity
+    status: Completed
+  activity: # 2 "2016-02-22 12:51:26"
+    name: Stop
+    status: Completed
+  variable: # 20664
+    name: response
+    value: <EventCheck/>
+process: # 13638
+  name: EventCheck Correction Handler
+  instance: 1
+  activity: # 7 "2016-02-22 12:51:21"
+    name: Start
+    status: Completed
+  activity: # 8 "2016-02-22 12:51:26"
+    name: Stop
+    status: Completed

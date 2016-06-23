@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68101314
+item-spec=4D4457413A314B3848384C20464F4C444552545245454449414C4F47204A4156412D31393239323037383358313637323258302E412D5352433B31
+file-version=1
+checksum=772356cb56d7e10d74d2b2b5b7647250
+fetch-size=1419
+mtime=1455221323
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/dialogs/FolderTreeDialog.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

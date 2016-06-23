@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46851515
+item-spec=4D4457413A314B3848384C20434F4D4D454E5454524159204A4156412D2D31393131343439332E412D5352433B32
+file-version=2
+checksum=40fe07cb05a9b4e60f75013d189e6748
+fetch-size=1607
+mtime=1393988849
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/dialogs/CommentTray.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50900049
+item-spec=4D4457413A314B3848384C20564945574C41594F5554454449544154545249425554454449414C4F47204A4156412D2D313030313532323838372E412D5352433B34
+file-version=4
+checksum=e73637e66fd896a64112971e07de15be
+fetch-size=7696
+mtime=1412361139
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/editors/ViewLayoutEditAttributeDialog.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

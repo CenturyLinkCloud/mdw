@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65490677
+item-spec=4D4457413A314B3737545A20474954494D504F52544552204A4156412D313638383335303539362E412D5352433B3131
+file-version=11
+checksum=29995109726f4d08f575acc04d7203e5
+fetch-size=6107
+mtime=1446135616
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/GitImporter.java
+project=4D4457413A4D445741
+project-uid=31770127

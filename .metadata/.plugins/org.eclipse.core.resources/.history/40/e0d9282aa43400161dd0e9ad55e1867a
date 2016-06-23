@@ -1,0 +1,141 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="ScriptTest" version="0.9" description="">
+    <bpm:Activity Id="A3" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=185,y=33,w=32,h=32"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A1" Name="Still Okay?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
+      <bpm:Attribute Name="Expression" Value="&quot;Sure&quot;"/>
+      <bpm:Attribute Name="SCRIPT" Value="MagicBox"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=184,y=474,w=32,h=20"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A7" Name="Groovy" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Output Documents" Value="createdDomDoc#createdXmlBean#modifiedDomDoc#modifiedXmlBean"/>
+      <bpm:Attribute Name="Rule" Value="import javax.xml.parsers.DocumentBuilderFactory;&#13;&#10;import org.apache.xmlbeans.*;&#13;&#10;&#13;&#10;println 'Groovy Started 27';&#13;&#10;&#13;&#10;// create variables&#13;&#10;createdInt = 8;&#13;&#10;createdString = &quot;createdStringValue&quot;;&#13;&#10;createdXmlBean = XmlObject.Factory.parse(&quot;&lt;createdXmlBean>\n  &lt;innerElement attr='attrVal'/>\n&lt;/createdXmlBean>&quot;);&#13;&#10;createdDomDoc = buildDomDoc();&#13;&#10;&#13;&#10;modifiedInt += 10;&#13;&#10;modifiedString += ' has been modified';&#13;&#10;def modCursor = modifiedXmlBean.newCursor();&#13;&#10;modCursor.toFirstChild();&#13;&#10;modCursor.setTextValue(&quot;MODIFIED&quot;);&#13;&#10;def newCar = modifiedDomDoc.createElement('newCar');&#13;&#10;newCar.setAttribute('shiny', 'new');&#13;&#10;modifiedDomDoc.firstChild.appendChild(newCar);&#13;&#10;&#13;&#10;println 'Groovy Done';&#13;&#10;&#13;&#10;return &quot;groovyOutcome&quot;;&#13;&#10;&#13;&#10;&#13;&#10;def buildDomDoc()&#13;&#10;{&#13;&#10;  def builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();&#13;&#10;  def document = builder.newDocument();&#13;&#10;  def root = document.createElement('records');&#13;&#10;  document.appendChild(root);&#13;&#10;  def car = document.createElement('car');&#13;&#10;  car.setAttribute('make', 'Infiniti');&#13;&#10;  car.setAttribute('model', 'G35x');&#13;&#10;  car.setAttribute('year', '2005');&#13;&#10;  root.appendChild(car);&#13;&#10;  def countryNode = document.createElement('country');&#13;&#10;  countryNode.appendChild(document.createTextNode('Japan'));&#13;&#10;  car.appendChild(countryNode);&#13;&#10;  def record = document.createElement('aspect');&#13;&#10;  record.setAttribute('type', 'Sedan');&#13;&#10;  record.appendChild(document.createTextNode(&quot;Not too big&quot;));&#13;&#10;  car.appendChild(record);&#13;&#10;  &#13;&#10;  return document;&#13;&#10;}"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=67,y=202,w=24,h=24"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A9" Name="Access Library" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="import com.centurylink.mdw.tests.TnValidator;&#13;&#10;&#13;&#10;tnVal = new TnValidator();&#13;&#10;for (tn in telephoneNumbers)&#13;&#10;{&#13;&#10;  if (!tnVal.validate(tn))&#13;&#10;    return 'Invalid';&#13;&#10;}&#13;&#10;&#13;&#10;// closure access&#13;&#10;telephoneNumbers.each(tnVal.registerTn);&#13;&#10;&#13;&#10;return 'Valid';&#13;&#10;&#13;&#10;"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=70,y=306,w=24,h=24"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A4" Name="JavaScript" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Output Documents" Value="createdDomDoc#createdXmlBean#modifiedDomDoc#modifiedXmlBean"/>
+      <bpm:Attribute Name="Rule" Value="importPackage(javax.xml.parsers);&#13;&#10;importPackage(org.apache.xmlbeans);&#13;&#10;&#13;&#10;// create variables&#13;&#10;createdInt = 8;&#13;&#10;createdString = &quot;createdStringValue&quot;;&#13;&#10;createdXmlBean = XmlObject.Factory.parse(&quot;&lt;createdXmlBean>\n  &lt;innerElement attr='attrVal'/>\n&lt;/createdXmlBean>&quot;);&#13;&#10;createdDomDoc = buildDomDoc();&#13;&#10;&#13;&#10;modifiedInt += 10;&#13;&#10;modifiedString += ' has been modified';&#13;&#10;var modCursor = modifiedXmlBean.newCursor();&#13;&#10;modCursor.toFirstChild();&#13;&#10;modCursor.setTextValue(&quot;MODIFIED&quot;);&#13;&#10;var newCar = modifiedDomDoc.createElement('newCar');&#13;&#10;newCar.setAttribute('shiny', 'new');&#13;&#10;modifiedDomDoc.firstChild.appendChild(newCar);&#13;&#10;&#13;&#10;return &quot;javaScriptOutcome&quot;;&#13;&#10;&#13;&#10;&#13;&#10;function buildDomDoc()&#13;&#10;{&#13;&#10;  var builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();&#13;&#10;  var document = builder.newDocument();&#13;&#10;  var root = document.createElement('records');&#13;&#10;  document.appendChild(root);&#13;&#10;  var car = document.createElement('car');&#13;&#10;  car.setAttribute('make', 'Infiniti');&#13;&#10;  car.setAttribute('model', 'G35x');&#13;&#10;  car.setAttribute('year', '2005');&#13;&#10;  root.appendChild(car);&#13;&#10;  var countryNode = document.createElement('country');&#13;&#10;  countryNode.appendChild(document.createTextNode('Japan'));&#13;&#10;  car.appendChild(countryNode);&#13;&#10;  var record = document.createElement('aspect');&#13;&#10;  record.setAttribute('type', 'Sedan');&#13;&#10;  record.appendChild(document.createTextNode(&quot;Not too big&quot;));&#13;&#10;  car.appendChild(record);&#13;&#10;  &#13;&#10;  return document;&#13;&#10;}"/>
+      <bpm:Attribute Name="SCRIPT" Value="JavaScript"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=187,y=217,w=24,h=24"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A5" Name="MagicBox" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="SCRIPT" Value="MagicBox"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=309,y=223,w=24,h=24"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=184,y=549,w=32,h=32"/>
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A6" Name="Looking Good?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
+      <bpm:Attribute Name="Expression" Value="'Yep'"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=184,y=390,w=32,h=20"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A8" Name="Script Flavor?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
+      <bpm:Attribute Name="Expression" Value="scriptFlavor"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=182,y=117,w=32,h=20"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A3" To="A8" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=166,ly=76,type=Elbow,xs=199&amp;199,ys=69&amp;113"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="Groovy" From="A8" To="A7" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=81,ly=155,type=Elbow,xs=178&amp;78&amp;78,ys=126&amp;126&amp;198"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="JavaScript" From="A8" To="A4" Event="FINISH" Id="T3">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=204,ly=171,type=Elbow,xs=199&amp;199,ys=141&amp;213"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="javaScriptOutcome" From="A4" To="A6" Event="FINISH" Id="T4">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=155,ly=283,type=Elbow,xs=199&amp;199,ys=245&amp;386"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="Valid" From="A9" To="A6" Event="FINISH" Id="T5">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=70,ly=356,type=ElbowV,xs=81&amp;81&amp;180,ys=334&amp;398&amp;398"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="magicOutcome" From="A5" To="A6" Event="FINISH" Id="T6">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=279,ly=321,type=ElbowV,xs=321&amp;321&amp;220,ys=251&amp;398&amp;398"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="Yep" From="A6" To="A1" Event="FINISH" Id="T7">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=200,ly=442,type=Elbow,xs=200&amp;200,ys=414&amp;470"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="Sure" From="A1" To="A2" Event="FINISH" Id="T8">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=200,ly=521,type=Elbow,xs=200&amp;200,ys=498&amp;545"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="groovyOutcome" From="A7" To="A9" Event="FINISH" Id="T9">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=41,ly=251,type=Elbow,xs=80&amp;80,ys=230&amp;302"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="MagicBox" From="A8" To="A5" Event="FINISH" Id="T10">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=328,ly=169,type=ElbowV,xs=218&amp;320&amp;320,ys=126&amp;126&amp;219"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="NodeStyle" Value="Icon"/>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="SLA" Value="0"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+    <bpm:Attribute Name="START_TRANSITION_ID" Value="2334952"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=27,y=20,w=93,h=27"/>
+    <bpm:Variables Name="bystanderDomDoc" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="org.w3c.dom.Document"/>
+    </bpm:Variables>
+    <bpm:Variables Name="bystanderXmlBean" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="org.apache.xmlbeans.XmlObject"/>
+    </bpm:Variables>
+    <bpm:Variables Name="createdDomDoc" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="org.w3c.dom.Document"/>
+    </bpm:Variables>
+    <bpm:Variables Name="createdInt" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="createdString" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="createdXmlBean" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="org.apache.xmlbeans.XmlObject"/>
+    </bpm:Variables>
+    <bpm:Variables Name="modifiedDomDoc" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="org.w3c.dom.Document"/>
+    </bpm:Variables>
+    <bpm:Variables Name="modifiedInt" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.Integer"/>
+    </bpm:Variables>
+    <bpm:Variables Name="modifiedString" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="modifiedXmlBean" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="org.apache.xmlbeans.XmlObject"/>
+    </bpm:Variables>
+    <bpm:Variables Name="printedString" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="scriptFlavor" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="telephoneNumbers" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String[]"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

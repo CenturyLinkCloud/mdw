@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855296
+item-spec=4D4457413A314B37565330204154544143484D454E54444F574E4C4F4144204A4156412D2D3634303731353531372E412D5352433B34
+file-version=4
+checksum=c7d96104cb328a0498bb956acd8567c8
+fetch-size=6464
+mtime=1393990193
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/servlet/AttachmentDownload.java
+project=4D4457413A4D445741
+project-uid=31770127

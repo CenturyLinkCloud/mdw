@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- spring config asset for jaxb-document test -->
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- jaxb marshaller/unmarshaller pooling -->
+  <bean id="myJaxbTranslator" class="com.centurylink.mdw.jaxb.JaxbElementTranslator">
+    <property name="marshaller" ref="myMarshaller" />
+    <property name="unmarshaller" ref="myUnmarshaller" />
+  </bean>
+
+  <!-- JAXB context needs to be configured with specific classes as follows -->
+  <bean id="myJaxbContext" class="javax.xml.bind.JAXBContext" factory-method="newInstance">
+    <constructor-arg>
+      <list>
+        <value type="java.lang.Class">com.centurylink.mdw.tests.tasks.TaskJaxb</value>
+      </list>
+    </constructor-arg>
+  </bean>
+  
+  <!-- pool JAXB marshallers to improve performance -->
+  <bean id="myMarshallerTarget" class="javax.xml.bind.Marshaller"
+    factory-bean="myJaxbContext" factory-method="createMarshaller" scope="prototype">
+  </bean>
+  <bean id="myUnmarshallerTarget" class="javax.xml.bind.Unmarshaller"
+    factory-bean="myJaxbContext" factory-method="createUnmarshaller" scope="prototype">
+  </bean>
+  
+  <bean id="myMarshallerPoolTargetSource" class="org.springframework.aop.target.CommonsPoolTargetSource">
+    <property name="targetBeanName" value="myMarshallerTarget" />
+    <property name="maxSize" value="5" />
+  </bean>
+  <bean id="myUnmarshallerPoolTargetSource" class="org.springframework.aop.target.CommonsPoolTargetSource">
+    <property name="targetBeanName" value="myUnmarshallerTarget" />
+    <property name="maxSize" value="5" />
+  </bean>
+  
+  <bean id="myMarshaller" class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="targetSource" ref="myMarshallerPoolTargetSource" />
+  </bean>
+  <bean id="myUnmarshaller" class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="targetSource" ref="myUnmarshallerPoolTargetSource" />
+  </bean>
+    
+</beans>
+ 

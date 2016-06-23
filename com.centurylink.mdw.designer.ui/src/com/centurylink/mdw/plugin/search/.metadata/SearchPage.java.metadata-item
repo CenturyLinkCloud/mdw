@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549793
+item-spec=4D4457413A314B3848384C2053454152434850414745204A4156412D2D313632303231363434342E412D5352433B35
+file-version=5
+checksum=63c1405e10bbfef095a79d8e062b15e0
+fetch-size=11340
+mtime=1453321520
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/search/SearchPage.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49561688
+item-spec=4D4457413A314B3737545A2054454D504C415445204A4156412D2D313939333332333834302E412D5352433B33
+file-version=3
+checksum=cd80b3048d3480fdb677cd4eb150d3ab
+fetch-size=1322
+mtime=1406141367
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/email/Template.java
+project=4D4457413A4D445741
+project-uid=31770127

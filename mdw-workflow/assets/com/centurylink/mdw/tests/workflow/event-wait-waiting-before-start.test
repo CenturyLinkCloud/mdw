@@ -1,0 +1,14 @@
+// event-wait-waiting-before-start
+send message("REST") {
+    payload = "<NonTaskAction>%%M%%</NonTaskAction>"
+}
+sleep 30
+start process("MDWTestSuppsEmbedded") {
+    variables = [ testCase: "correct-waiting-on-wait" ]
+}
+sleep 90
+send message("REST") {
+    payload = "<Signal>%%M%%</Signal>"
+}
+sleep 30
+verify process

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62585157
+item-spec=4D4457413A314B384357442050524F43455353494E5354414E43454C4F4144494E47544852454144204A4156412D3939323034363734352E412D5352433B35
+file-version=5
+checksum=310af97cf4da128476aede7deda61c04
+fetch-size=6108
+mtime=1436816772
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/runtime/ProcessInstanceLoader.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

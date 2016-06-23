@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46850717
+item-spec=4D4457413A314B3843574420435553544F4D4F5054494F4E50414E45204A4156412D2D313738333035393034332E412D5352433B32
+file-version=2
+checksum=36b00bc2188c15e7cfb509da01e39fef
+fetch-size=523
+mtime=1393988737
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/utils/CustomOptionPane.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

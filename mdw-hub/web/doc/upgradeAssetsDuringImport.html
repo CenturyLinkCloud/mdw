@@ -1,0 +1,22 @@
+<html>
+<head>
+<title>Upgrade Assets During Import</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h2>Upgrade Assets During Import</h2>
+<p>When importing an old-style package (identified by use of pre-5.5 activity implementors), MDW Designer gives you the option to automatically
+upgrade certain MDW base workflow elements during import:</p>
+<img src="images/upgradeAssetsDuringImport.jpg" alt="Import package dialog with upgrade option"></img>
+<p>These upgrades include:</p>
+  <ul>
+    <li>Activity implementor class names</li>
+    <li>Variable type class names</li>
+    <li><a href="InvokeSubProcessActivity.html">Smart subprocess versioning</a></li>
+    <li>Replace obsolete Variable Value Evaluators with equivalent Expression Evaluators</li>
+    <li>Update task notification attributes to new-style format</li>
+  </ul>
+<p>It's highly recommended that you elect this option when importing.  Otherwise you run the risk of polluting your VCS assets with old-style
+implementors, breaking subprocess synchronization, and other problems.</p>
+</body>
+</html>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853496
+item-spec=4D4457413A314B3737545A204345525449464945444D455353414745204A4156412D313938373932323237332E412D5352433B32
+file-version=2
+checksum=baa4257a29aea46aa239eb048ccb66e8
+fetch-size=4205
+mtime=1393986797
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/data/monitor/CertifiedMessage.java
+project=4D4457413A4D445741
+project-uid=31770127

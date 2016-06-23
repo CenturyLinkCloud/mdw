@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853114
+item-spec=4D4457413A314B3737545A20444F43554D454E545245464552454E4345204A4156412D2D3833333930333736352E412D5352433B32
+file-version=2
+checksum=9ababfa0b5b819d91cf640a09ba1081b
+fetch-size=1352
+mtime=1393986797
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/variable/DocumentReference.java
+project=4D4457413A4D445741
+project-uid=31770127

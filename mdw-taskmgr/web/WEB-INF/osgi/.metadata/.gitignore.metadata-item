@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67374820
+item-spec=4D4457413A314B375653302047495449474E4F52457E30312D3139303438353130315831333137325831382E412D4441543B31
+file-version=1
+checksum=ca7634611779895b5a91e762a99ad365
+fetch-size=14
+mtime=1452750630
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=web/WEB-INF/osgi/.gitignore
+project=4D4457413A4D445741
+project-uid=31770127

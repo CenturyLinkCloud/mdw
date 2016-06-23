@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854654
+item-spec=4D4457413A314B37435A302057414954494E47464F524D45204A4156412D3732373230363239362E412D5352433B32
+file-version=2
+checksum=8c413e582d5427a3aa39989cd56c67b4
+fetch-size=1713
+mtime=1393990151
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/task/WaitingForMe.java
+project=4D4457413A4D445741
+project-uid=31770127

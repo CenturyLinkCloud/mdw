@@ -1,0 +1,51 @@
+apply plugin: "osgi"
+
+dependencies {
+    compile project(":mdw-schemas")
+    compile project(":mdw-common")
+    compile project(":mdw-services")
+    compile project(":mdw-listeners")
+    compile project(":mdw-workflow")
+    
+    compile group: "org.apache.camel", name: "camel-core", version: "2.8.4"
+    compile group: "org.apache.camel", name: "camel-spring", version: "2.8.4"
+    compile group: "org.apache.camel", name: "camel-cxf", version: "2.8.4"
+    compile group: "org.apache.cxf", name: "cxf-rt-bindings-soap", version: "2.4.6"
+    compile group: "org.apache.cxf", name: "cxf-api", version: "2.4.6"
+}
+
+clean {
+    dependsOn cleanJar
+}
+
+jar {
+    manifest {
+        classesDir = sourceSets.main.output.classesDir
+        symbolicName = "com.centurylink.mdw.camel"
+        instruction "Bundle-Activator",
+            "com.centurylink.mdw.camel.bundle.CamelBundleActivator"
+        instruction "Bundle-ClassPath",
+            ".",
+            "META-INF/mdw"
+        instruction "Export-Package",
+            "!com.centurylink.mdw.camel.bundle",
+            "com.centurylink.mdw.camel.*"
+        instruction "Private-Package",
+            "com.centurylink.mdw.camel.bundle"
+        instruction "Import-Package",
+            "org.apache.camel",
+            "org.apache.camel.model",
+            "org.apache.camel.model.config",
+            "org.apache.camel.model.dataformat",
+            "org.apache.camel.model.language",
+            "org.apache.camel.model.loadbalancer",
+            "org.apache.camel.builder.xml",
+            "org.apache.xmlbeans.impl.schema",
+            "com.centurylink.mdw.service.impl",
+            "com.centurylink.mdw.workflow.impl",
+            "com.centurylink.mdw.bpm",
+            "com.centurylink.mdw.bpm.impl",
+            "noNamespace.impl",
+            "*"
+    }
+}

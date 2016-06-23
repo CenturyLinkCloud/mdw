@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;pc&apos; in &apos;com.centurylink.mdw.services.workflow.WorkflowServicesImpl.populateActivities(...)&apos; to &apos;activityInstance&apos;&#x0D;&#x0A;- Original project: &apos;mdw-services&apos;&#x0D;&#x0A;- Original element: &apos;com.centurylink.mdw.services.workflow.WorkflowServicesImpl.populateActivities(ActivityList).pc&apos;&#x0D;&#x0A;- Renamed element: &apos;pc&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename local variable &apos;pc&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;com.centurylink.mdw.services.workflow{WorkflowServicesImpl.java[WorkflowServicesImpl~populateActivities~QActivityList;@pc!14526!14552!14543!14544!QActivityInstance;!0!false" name="activityInstance" references="true" stamp="1464281549086" version="1.0"/>
+</session>

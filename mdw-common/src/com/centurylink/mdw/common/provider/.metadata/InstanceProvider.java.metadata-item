@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853279
+item-spec=4D4457413A314B3737545A20494E5354414E434550524F5649444552204A4156412D2D3834383339343935382E412D5352433B32
+file-version=2
+checksum=fc978a71834a5c4875b58c84ef5cccbb
+fetch-size=2217
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/provider/InstanceProvider.java
+project=4D4457413A4D445741
+project-uid=31770127

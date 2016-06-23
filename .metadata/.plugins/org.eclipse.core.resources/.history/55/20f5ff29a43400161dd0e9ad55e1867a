@@ -1,0 +1,37 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="MDWTestMQSeries" version="0.1" description="">
+    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=60,y=260,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=480,y=260,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="MQ Series Adapter" Implementation="com.centurylink.mdw.workflow.adapter.mqseries.MqSeriesAdapter">
+      <bpm:Attribute Name="ChannelName" Value="CLIENT.MDW"/>
+      <bpm:Attribute Name="CorrelationId" Value="444"/>
+      <bpm:Attribute Name="DO_LOGGING" Value="true"/>
+      <bpm:Attribute Name="HostName" Value="vodclwfmas101.dev.qintra.com"/>
+      <bpm:Attribute Name="Port" Value="1991"/>
+      <bpm:Attribute Name="QueueManagerName" Value="TESTMC"/>
+      <bpm:Attribute Name="QueueName" Value="TEST.QUEUE"/>
+      <bpm:Attribute Name="ReplyQueueName" Value="TEST.QUEUE"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=243,y=249,w=116,h=60"/>
+      <bpm:Attribute Name="synchronous" Value="False"/>
+      <bpm:Attribute Name="REQUEST_VARIABLE" Value="request"/>
+      <bpm:Attribute Name="RESPONSE_VARIABLE" Value="response"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=210,ly=215,type=Elbow,xs=124&amp;239,ys=280&amp;280"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=422,ly=280,type=Elbow,xs=363&amp;476,ys=280&amp;280"/>
+    </bpm:Transition>
+    <bpm:Variables Name="request" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="response" ReferredAs="" Category="OUTPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

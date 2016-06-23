@@ -1,0 +1,9 @@
+// POST request to Services/Tasks/TaskInstanceId/Action
+// e.g http://localhost:8181/mdw/Services/Tasks/22962/Claim
+{
+      "taskaction" : "Claim",
+      "user": "aa70413",
+      "assignee": "aa70413",
+      "taskInstanceId": 22962
+}
+

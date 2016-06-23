@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition template="/facelets/layout/detail.xhtml">
+
+    <ui:define name="detailLinks">
+      <mdw:createTaskNav />
+    </ui:define>
+
+    <ui:define name="detailContent">
+      <mdw:heading
+        headingTitle="Create a New Task Instance" /> 
+      <t:panelGrid 
+        width="100%"
+        rowClasses="mdw_detailTableSubtitle">
+        <t:outputText value="Task Information" />
+      </t:panelGrid>       
+  
+      <t:inputHidden id="dueDateReset" value="false" forceId="true" />
+
+      <t:panelGrid 
+        width="100%"
+        columns="2"
+        columnClasses="mdw_detailsLabelColumn,mdw_detailsValueColumn">
+        <t:outputText value="Category: " />
+        <t:selectOneMenu
+          id="category"
+          styleClass="mdw_inputField"
+          onchange="detailForm_submit();"
+          value="#{newTask.categoryId}">
+          <f:selectItems
+            value="#{newTask.taskCategorySelectItems}"/>
+        </t:selectOneMenu>
+        
+        <t:outputText value="Task Name: " /> 
+        <t:selectOneMenu
+          id="taskId"
+          styleClass="mdw_inputField"
+          value="#{newTask.taskId}"
+          onchange="document.forms['mainDetailForm'].dueDateReset.value='true';detailForm_submit();">
+          <f:selectItems
+            value="#{newTask.taskNamesForSelectedCategoryId}" />
+        </t:selectOneMenu>
+        
+        <t:outputText value="Due Date: " />
+        <t:panelGroup>
+         <mdw:date
+           id="createTaskDueDateInput"
+           dateId="createTaskDueDate"
+           value="#{newTask.dueDate}"
+           dateValidator="pastDateValidator"
+           inlineValidationMessage="true" />
+         <t:message
+           for="createTaskDueDate"
+           styleClass="mdw_contextMessages" />
+        </t:panelGroup>
+        
+        <t:outputText value="Comments: " />
+        <t:inputText
+          id="addTaskComment"
+          value="#{newTask.comments}"
+          styleClass="mdw_inputField"
+          style="width:300px"
+          maxlength="1024" />
+        
+        <t:outputText value="Related ID: " />
+        <t:inputText
+          id="RelatedId"
+          value="#{newTask.relatedId}"
+          styleClass="mdw_inputField"
+          style="width:300px"
+          maxlength="30" />
+      </t:panelGrid>
+          
+    </ui:define>
+
+    <ui:define name="commandContent">
+      <t:commandButton
+        id="createButton"
+        disabled="#{!newTask.createAllowed}"
+        value="Create"
+        onclick="document.forms['mainDetailForm'].dueDateReset.value='false';return true;"
+        action="go_workgroupTaskDetail"
+        styleClass="mdw_detailFormButtons">
+        <f:actionListener type="com.centurylink.mdw.taskmgr.ui.tasks.create.TaskCreationActionController" />
+      </t:commandButton>
+    </ui:define>
+
+  </ui:composition>
+
+</html>

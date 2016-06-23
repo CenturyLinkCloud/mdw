@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mt="http://www.centurylink.com/mdw/jsf/mdwtools"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition template="/layout/helper.xhtml">
+  
+    <ui:define name="helperLinks">
+      <mt:helperNav />
+    </ui:define>
+  
+    <ui:define name="helperContent">
+      <t:panelGrid
+        columns="2"
+        width="100%"
+        styleClass="mdw_systemPanel"
+        columnClasses="mdw_detailsLabelColumn,mdw_detailsValueColumn"
+        headerClass="mdw_systemPanelTitle">
+        <f:facet name="header">
+          <t:outputText value="Simulate an External Event" />
+        </f:facet>
+        <mdw:label value="Event Message" required="true" for="eventMessageTextarea" />
+        <t:inputTextarea
+          id="eventMessageTextarea"
+          value="#{eventTrigger.message}"
+          required="true"
+          rows="25"
+          styleClass="mdw_inputField mdw_textAreaInput" />
+        <mdw:label value="Response" />
+        <t:panelGroup>
+          <pre class="mdw_detailsValueColumn" style="padding:0;margin:0">
+            <t:outputText
+              value="#{eventTrigger.response}"
+              escape="true" /></pre>
+        </t:panelGroup>
+      </t:panelGrid>
+    </ui:define>
+    
+    <ui:define name="commandButtons">
+      <t:commandButton
+        id="sendMessageButton"
+        value="Send Message"
+        styleClass="mdw_detailFormButtons" 
+        action="go_eventTrigger"
+        actionFor="detailForm">
+        <f:actionListener type="com.centurylink.mdw.web.event.EventTriggerController"/>
+      </t:commandButton>    
+    </ui:define>
+  
+  </ui:composition>
+  
+</html>

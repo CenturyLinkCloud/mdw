@@ -1,0 +1,712 @@
+<?xml version="1.0"?>
+<view
+  xmlns="http://mdw.centurylink.com/task"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://mdw.centurylink.com/task http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Development/Task/TaskView_v02.xsd"
+  skin="blueSky">
+
+  <list
+    id="userTaskList"
+    name="My Tasks"
+    model="com.centurylink.mdw.hub.ui.task.UserTasks"
+    controller="com.centurylink.mdw.hub.ui.task.TaskListController"
+    defaultSortColumn="instanceId"
+    displayRows="25"
+    allRowsLink="true"
+    groupingOptions="name=Task Name,dueDate,orderId=Order,advisory"
+    showTimings="false">
+    <column
+      attribute="selected"
+      name=""
+      checkbox="true" />
+    <column
+      attribute="instanceId"
+      name="Task ID"
+      linkAction="taskDetail"
+      linkCondition="#{item.advisory != 'Invalid'}" />
+    <column
+      attribute="categoryCode"
+      name="Category" />
+    <column
+      attribute="name"
+      name="Name" />
+    <column
+      attribute="orderId"
+      name="Order ID"
+      linkAction="orderDetail"
+      linkCondition="#{item.orderId != null}" />
+    <column
+      attribute="#{item.ownerType == 'EXTERNAL' ? 'External' : item.processInstanceId}" 
+      name="Process"
+      linkAction="processDetail" 
+      linkCondition="#{item.ownerType != 'EXTERNAL'}" />
+    <column
+      attribute="status"    
+      name="Status" />
+    <column
+      attribute="startDate"    
+      name="Start Date"
+      dateFormat="MMM dd, yyyy hh:mm aa" />
+    <column
+      attribute="dueDate"    
+      name="Due Date"
+      dateFormat="MMM dd, yyyy" />
+    <column
+      attribute="advisory"
+      name="Advisory"
+      styleClass="mdw_advisoryItem" />
+  </list>
+  
+  <list
+    id="workgroupTaskList"
+    name="All Tasks"
+    model="com.centurylink.mdw.hub.ui.task.WorkgroupTasks"
+    controller="com.centurylink.mdw.hub.ui.task.TaskListController"
+    defaultSortColumn="instanceId"
+    paginatedResponse="true"
+    exportable="true"
+    allRowsLink="true"
+    displayRows="25"
+    pageSizeOptions="25,50,100,200"
+    groupingOptions="name=Task Name,assigneeName,dueDate,orderId=Order,advisory"
+    customButtons="createTask,Create Task,add.gif,go_createTask"    
+    showTimings="false"
+    columnarFilters="true"
+    searchable="true"
+    filter="workgroupTasksFilter"
+    maxShowAllRows="500">
+    <column
+      attribute="selected"
+      name=""
+      checkbox="true" />
+    <column
+      attribute="instanceId"
+      name="Task ID"
+      linkAction="taskDetail"
+      linkCondition="#{item.advisory != 'Invalid'}"
+      filterField="instanceId" />
+    <column
+      attribute="categoryCode"
+      name="Category"
+      filterField="categoryId" />
+    <column
+      attribute="name"
+      name="Name"
+      filterField="name" />
+    <column
+      attribute="orderId"
+      name="Order ID"
+      linkAction="orderDetail"
+      linkCondition="#{item.orderId != null}"
+      filterField="masterRequestId" />
+    <column
+      attribute="#{item.ownerType == 'EXTERNAL' ? 'External' : item.processInstanceId}"
+      name="Process"
+      linkAction="processDetail"
+      linkCondition="#{item.ownerType != 'EXTERNAL'}" />      
+    <column
+      attribute="status"
+      name="Status"
+      filterField="status" />
+    <column
+      attribute="startDate"    
+      name="Start Date"
+      dateFormat="MMM dd, yyyy hh:mm aa" />      
+    <column
+      attribute="assigneeName"
+      name="Assignee"
+      filterField="assignee" />
+    <column
+      attribute="dueDate"
+      name="Due Date"
+      dateFormat="MMM dd, yyyy"
+      filterField="dueDate" />
+    <column
+      attribute="advisory"
+      name="Advisory"
+      styleClass="mdw_advisoryItem"
+      filterField="advisory" />
+      
+    <!-- illustrates Task Indices syntax -->    
+    <!-- 
+    Syntax :
+    <column
+      attribute="#indiceskey"    
+      name="DisplayName"
+      filterField="filterAttribute" />    
+    Example:
+    <column
+      attribute="#orderIdKey"    
+      name="Order"
+      filterField="#orderIdKey" />     
+       -->
+    <!-- illustrates process variables syntax ($-prefixed)-->   
+    <!-- 
+    Syntax :
+    <column
+      attribute="$processVariableName"    
+      name="DisplayName"
+      filterField="filterAttribute" />
+    <column
+      attribute="$userName"    
+      name="User Name" 
+      filterField="$userName"/>
+     -->      
+  </list>
+
+  <filter
+    id="workgroupTasksFilter"
+    name="Filters"
+    model="com.centurylink.mdw.taskmgr.ui.tasks.filter.TaskFilter"
+    width="160px">
+    <!--  columnar filters for process variables and for task indices   -->
+   <!--   
+   <field
+      attribute="$userName"
+      name="User Name"  
+      modelType="java.lang.String"
+      type="textInput" />
+    <field
+      attribute="#orderIdKey"
+      name="Order Num"
+      modelType="java.lang.String"
+      type="textInput" /> -->
+    <field
+      attribute="instanceId"
+      name="Task ID"
+      modelAttribute="id"
+      modelType="java.lang.Long"
+      type="digitInput" />
+    <field
+      attribute="name"
+      name="Task Name"
+      modelAttribute="taskName"
+      modelType="java.lang.String"
+      type="selectInput"      
+      lister="com.centurylink.mdw.taskmgr.ui.tasks.TaskNames" />
+    <field
+      attribute="categoryId"
+      name="Category"
+      modelAttribute="categoryId"
+      modelType="java.lang.Integer"
+      type="selectInput"
+      lister="com.centurylink.mdw.taskmgr.ui.tasks.TaskCategories" />
+    <field
+      attribute="masterRequestId"
+      name="Order ID"
+      modelAttribute="orderId"
+      modelType="java.lang.String"
+      type="textInput" />
+    <field
+      attribute="status"
+      name="Status"
+      modelAttribute="statusCode"
+      modelType="java.lang.Integer"
+      defaultValue="-1"
+      type="selectInput"
+      lister="com.centurylink.mdw.taskmgr.ui.tasks.TaskStatuses" />
+    <field
+      attribute="advisory"
+      name="Advisory"
+      modelAttribute="stateCode"
+      modelType="java.lang.Long"
+      defaultValue="-1"
+      type="selectInput"
+      lister="com.centurylink.mdw.taskmgr.ui.tasks.TaskAdvisories" />
+    <field
+      attribute="dueDate"
+      name="Due Date Range"
+      modelType="java.util.Date"
+      modelAttribute="estimatedCompletionDate"
+      type="dateRange" />
+    <field
+      attribute="assignee"
+      name="Assignee"
+      modelAttribute="taskClaimUserId"
+      modelType="java.lang.Long"
+      type="selectInput"
+      lister="com.centurylink.mdw.taskmgr.ui.user.Users" />
+  </filter>
+
+  <list
+    id="taskNotes"
+    name="Task Notes"
+    model="com.centurylink.mdw.taskmgr.ui.tasks.notes.TaskNotes"
+    controller="com.centurylink.mdw.taskmgr.ui.tasks.notes.TaskNotesActionController"
+    defaultSortColumn="Modified Date"
+    defaultSortDescending="true"
+    displayRows="0">
+    <column
+      attribute="summary"
+      name="Summary"
+      expandable="true"
+      expandedContent="/components/noteContent.xhtml"
+      styleClass="mdw_noteColumn" />
+    <column
+      attribute="modifiedBy"
+      name="Modified By" />
+    <column
+      attribute="modifiedDate"
+      name="Modified Date"
+      dateFormat="MMM dd, yyyy hh:mm aa" />
+    <column
+      attribute="'Edit'"
+      name=""
+      linkAction="editNote"
+      image="/images/edit.gif" />
+    <column
+      attribute="'Delete'"
+      name=""
+      linkAction="deleteNote"
+      image="/images/delete.gif" />
+  </list>
+
+  <list
+    id="taskAttachments"
+    name="Task Attachments"
+    model="com.centurylink.mdw.taskmgr.ui.tasks.attachments.TaskAttachments"
+    controller="com.centurylink.mdw.taskmgr.ui.tasks.attachments.TaskAttachmentsActionController"
+    defaultSortColumn="Modified Date"
+    defaultSortDescending="true"
+    displayRows="0">
+    <column
+      attribute="name"
+      name="File Name"
+      linkAction="/servlet/AttachmentDownloadServlet?attachmentId=#{item.id}&amp;masterRequestId=#{item.masterRequestId}&amp;ownerId=#{item.ownerId}&amp;owner=#{item.owner}&amp;fileName=#{item.name}" />
+    <column
+      attribute="modifiedBy"
+      name="Modified By" />
+    <column
+      attribute="modifiedDate"
+      name="Modified Date"
+      dateFormat="MMM dd, yyyy hh:mm aa" />
+    <column
+      attribute="'Delete'"
+      name=""
+      linkAction="deleteAttachment"
+      image="/images/delete.gif" />
+  </list>
+  
+  <list
+    id="orderNotes"
+    name="Order Notes"
+    model="com.centurylink.mdw.taskmgr.ui.orders.notes.OrderNotes"
+    controller="com.centurylink.mdw.taskmgr.ui.orders.notes.OrderNotesActionController"
+    defaultSortColumn="Modified Date"
+    defaultSortDescending="true"
+    displayRows="15"
+    allRowsLink="true">
+    <column
+      attribute="summary"
+      name="Summary"
+      expandable="true"
+      expandedContent="/components/noteContent.xhtml"
+      styleClass="mdw_noteColumn" />
+    <column
+      attribute="modifiedBy"
+      name="Modified By" />
+    <column
+      attribute="modifiedDate"
+      name="Modified Date"
+      dateFormat="MMM dd, yyyy hh:mm aa" />
+    <column
+      attribute="'Edit'"
+      name=""
+      linkAction="editNote"
+      image="/images/edit.gif" />
+    <column
+      attribute="'Delete'"
+      name=""
+      linkAction="deleteNote"
+      image="/images/delete.gif" />
+  </list>
+  
+  <list
+    id="orderAttachments"
+    name="Order Attachments"
+    model="com.centurylink.mdw.taskmgr.ui.orders.attachments.OrderAttachments"
+    controller="com.centurylink.mdw.taskmgr.ui.orders.attachments.OrderAttachmentsActionController"
+    defaultSortColumn="Modified Date"
+    defaultSortDescending="true"
+    displayRows="15"
+    allRowsLink="true">
+    <column
+      attribute="name"
+      name="File Name"
+      linkAction="/servlet/AttachmentDownloadServlet?attachmentId=#{item.id}&amp;masterRequestId=#{item.masterRequestId}&amp;ownerId=#{item.ownerId}&amp;owner=#{item.owner}&amp;fileName=#{item.name}&amp;contentType=#{item.contentType}" />
+    <column
+      attribute="modifiedBy"
+      name="Modified By" />
+    <column
+      attribute="modifiedDate"
+      name="Modified Date"
+      dateFormat="MMM dd, yyyy hh:mm aa" />
+    <column
+      attribute="'Delete'"
+      name=""
+      linkAction="deleteAttachment"
+      image="/images/delete.gif" />
+  </list>
+
+  <list
+    id="taskHistory"
+    name="Task History"
+    model="com.centurylink.mdw.taskmgr.ui.tasks.history.TaskHistory"
+    defaultSortColumn="Date/Time"
+    displayRows="0">
+    <column
+      attribute="createDate"
+      name="Date/Time"
+      dateFormat="MMM dd, yyyy hh:mm aa" />
+    <column
+      attribute="eventName"
+      name="Action Performed" />
+    <column
+      attribute="eventSource"
+      name="User" />
+    <column
+      attribute="comments"
+      name="Comments" />
+  </list>
+
+  <list
+    id="subTaskList"
+    name="SubTasks"
+    model="com.centurylink.mdw.taskmgr.ui.tasks.list.SubTaskList"
+    controller="com.centurylink.mdw.hub.ui.task.TaskListController"
+    defaultSortColumn="Task ID"
+    displayRows="20"
+    allRowsLink="true">
+    <column
+      attribute="instanceId"
+      name="Task ID"
+      linkAction="taskDetail" />
+    <column
+      attribute="name"
+      name="Name" />
+    <column
+      attribute="status"
+      name="Status" />
+    <column
+      attribute="categoryCode"
+      name="Category" />
+    <column
+      attribute="assignee"
+      name="Assignee" />
+    <column
+      attribute="startDate"    
+      name="Start Date"
+      dateFormat="MMM dd, yyyy hh:mm aa" />
+    <column
+      attribute="dueDate"    
+      name="Due Date"
+      dateFormat="MMM dd, yyyy" />
+    <column
+      attribute="advisory"
+      name="Advisory"
+      styleClass="mdw_advisoryItem" />
+  </list>
+
+  <list
+    id="orderTaskList"
+    name="Order Task List"
+    model="com.centurylink.mdw.taskmgr.ui.orders.OrderTaskList"
+    controller="com.centurylink.mdw.taskmgr.ui.orders.OrderTaskListActionController"
+    defaultSortColumn="Task ID"
+    displayRows="20"
+    allRowsLink="true">
+    <column
+      attribute="instanceId"
+      name="Task ID"
+      linkAction="taskDetail" />
+    <column
+      attribute="name"
+      name="Name" />
+    <column
+      attribute="status"
+      name="Status" />
+    <column
+      attribute="dueDate"
+      name="Due Date" />
+    <column
+      attribute="assignee"
+      name="Assignee" />
+    <column
+      attribute="advisory"
+      name="Advisory"
+      styleClass="mdw_advisoryItem" />
+  </list>
+
+  <list
+    id="processInstanceList"
+    name="Process Instances"
+    model="com.centurylink.mdw.taskmgr.ui.process.ProcessInstances"
+    filter="processInstanceFilter"
+    controller="com.centurylink.mdw.hub.ui.process.ProcessListController"
+    defaultSortColumn="Instance ID"
+    defaultSortDescending="true"
+    displayRows="25"
+    paginatedResponse="true"
+    columnarFilters="true"
+    customButtons="launchProcess,Launch Process,run.gif,go_processLaunch"
+    exportable="true"
+    allRowsLink="true">
+    <column
+      attribute="instanceId"
+      name="Instance ID"
+      linkAction="processDetail"
+      filterField="instanceId" />
+    <column
+      attribute="processName"
+      name="Process Name"
+      filterField="processId" />
+    <column
+      attribute="masterRequestId"
+      name="Master Request ID"
+      linkAction="orderDetail"
+      filterField="masterRequestId" />    
+    <column
+      attribute="owner"
+      name="Owner" />
+    <column
+      attribute="ownerId"
+      name="Owner ID" />
+    <column
+      attribute="status"
+      name="Status" 
+      filterField="status"/>      
+    <column
+      attribute="startDate"
+      name="Start" 
+      filterField="startDate"/>
+    <column
+      attribute="endDate"
+      name="End"
+      filterField="endDate"/>
+    <!-- illustrate process variable syntax -->
+    <!-- 
+    <column
+      attribute="$case"    
+      name="Case (Var)" />
+    <column
+      attribute="$Sum"    
+      name="Sum (Var)" />
+    <column
+      attribute="$dateVar"    
+      name="Date Var" />
+    -->
+    <!-- illustrate expression language syntax -->
+    <!--
+    <column
+      attribute="#{item.processName}"    
+      name="Process" />
+    -->      
+  </list>
+
+  <filter
+    id="processInstanceFilter"
+    name="Filters"
+    model="com.centurylink.mdw.taskmgr.ui.process.ProcessFilter"
+    width="160px">
+    <field
+      attribute="processId"
+      name="Process"
+      modelAttribute="processId"
+      modelType="java.lang.String"
+      type="selectInput"
+      expandable="true"
+      lister="com.centurylink.mdw.taskmgr.ui.process.Processes" />
+    <field
+      attribute="instanceId"
+      name="Instance ID"
+      modelAttribute="id"
+      modelType="java.lang.Long"
+      type="digitInput" />
+    <field
+      attribute="masterRequestId"
+      name="Master Request ID"
+      linkAction="orderDetail"
+      modelAttribute="masterRequestId"
+      modelType="java.lang.String"
+      type="textInput" />
+    <field
+      attribute="status"
+      name="Status"
+      modelAttribute="statusCode"
+      modelType="java.lang.Integer"
+      type="selectInput"
+      lister="com.centurylink.mdw.taskmgr.ui.process.ProcessStatuses" />
+    <field
+      attribute="startDate"
+      name="Start Date Range"
+      modelType="java.util.Date"
+      modelAttribute="startDate"
+      type="dateRange" />
+    <field
+      attribute="endDate"
+      name="End Date Range"
+      modelType="java.util.Date"
+      modelAttribute="endDate"
+      type="dateRange" />
+    <!-- illustrate process variable syntax -->
+    <!--
+    <field
+      attribute="$case"
+      name="Case (Var)"
+      modelAttribute="case"
+      modelType="java.lang.String"
+      type="textInput" />
+    <field
+      attribute="$Sum"
+      name="Sum (Var)"
+      modelAttribute="Sum"
+      modelType="java.lang.Integer"
+      type="digitInput" />
+    <field
+      attribute="$dateVar"
+      name="Date Var Range"
+      modelType="java.util.Date"
+      modelAttribute="dateVar"
+      type="dateRange"
+      defaultValue="-1/14" />
+    -->
+  </filter>
+  <list
+    id="orderList"
+    name="All Orders"
+    model="com.centurylink.mdw.hub.ui.order.Orders"
+    filter="ordersFilter"
+    controller="com.centurylink.mdw.hub.ui.order.OrderListActionController"
+    defaultSortColumn="masterRequestId"
+    defaultSortDescending="true"
+    columnarFilters="true"
+    displayRows="25"
+    pageSizeOptions="25,50,100,200"
+    showAllDisplayRows="500"
+    paginatedResponse="true"
+    exportable="true"
+    allRowsLink="true"
+    showTimings="true">
+    <column
+      attribute="masterRequestId"
+      name="Order ID"
+      linkAction="orderDetail"
+      filterField="masterRequestId"/>
+    <column
+      attribute="processName"
+      name="Process Name"
+      filterField="processName"/>
+    <column
+      attribute="startDate"    
+      name="Start Date"
+      dateFormat="MMM dd, yyyy"
+      filterField="startDate"/>      
+    <column
+      attribute="endDate"
+      name="End Date"
+      dateFormat="MMM dd, yyyy"
+      filterField="endDate"/>
+     <column
+      attribute="blvLink"
+      name=""
+      linkAction="/orders/liveView.jsf?MasterRequestId=#{item.masterRequestId}&amp;orderNavLinks_selectedItem=orderBusinessLiveView"
+      image="/images/hub_icon.gif" />
+  </list>
+  
+  <filter
+    id="ordersFilter"
+    name="Filters"
+    model="com.centurylink.mdw.hub.ui.order.OrderFilter"
+    width="160px">
+    <field
+      attribute="masterRequestId"
+      name="Order ID"
+      modelAttribute="masterRequestId"
+      modelType="java.lang.String"
+      type="textInput" />
+    <field
+      attribute="processName"
+      name="Process Name"
+      modelAttribute="processName"
+      modelType="java.lang.String"
+      type="textInput" />
+     <field
+       attribute="startDate"
+       name="Start Date Range"
+       modelType="java.util.Date"
+       modelAttribute="startDate"
+       type="dateRange" />
+     <field
+       attribute="endDate"
+       name="End Date Range"
+       modelType="java.util.Date"
+       modelAttribute="endDate"
+       type="dateRange" />
+  </filter>
+
+  <!-- TODO: columnar filters -->  
+  <list
+    id="reportsList"
+    name="Reports"
+    model="com.centurylink.mdw.hub.report.Reports"
+    controller="com.centurylink.mdw.hub.report.ReportListController"
+    filter="reportsListFilter"
+    columnarFilters="true"
+    defaultSortColumn="name"
+    displayRows="25"
+    exportable="true"
+    allRowsLink="true"
+    pageSizeOptions="25,50,100,200"
+    groupingOptions="name,package"
+    searchable="true"
+    showTimings="false">
+    <column
+      attribute="name"
+      name="Name"
+      linkAction="openReport" />
+    <column
+      attribute="version"
+      name="Version" />
+    <column
+      attribute="package"
+      name="Package" />
+    <column
+      attribute="comments"
+      name="Comments" />
+  </list>
+  
+  <filter
+    id="reportsListFilter"
+    name="Filters"
+    model="com.centurylink.mdw.taskmgr.ui.filter.Filter">
+    <field
+      attribute="name"
+      name="name"
+      modelAttribute="name"
+      modelType="java.lang.String"
+      type="textInput" />
+    <field
+      attribute="package"
+      name="Package"
+      modelAttribute="package"
+      modelType="java.lang.String"
+      type="selectInput"    
+      lister="com.centurylink.mdw.hub.report.Reports" />
+  </filter>
+  <reports id="dashboardReports">
+    <report
+      id="myReport1"
+      name="Dashboard-ProcessesByStatus"
+      packageName="com.centurylink.mdw.reports"
+      comments=""
+      version=""
+      type=""
+      height=""
+      width=""
+      left=""
+      top="">
+    </report>
+  </reports>
+  
+  
+</view>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852748
+item-spec=4D4457413A314B3737545A20434F4E46494755524154494F4E53455256494345464143544F5259204A4156412D2D3438353936333630352E412D5352433B32
+file-version=2
+checksum=aeaee16d882f74108b593101dbf78fe9
+fetch-size=386
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/config/service/ConfigurationServiceFactory.java
+project=4D4457413A4D445741
+project-uid=31770127

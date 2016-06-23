@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:a4j="http://richfaces.org/a4j">
+  
+  <ui:composition>
+      <div style="max-height:500px;overflow:auto;padding:0;">
+       
+    <a4j:form id="taskAdminForm" ajaxSubmit="true" styleClass="mdw_form">
+      <rich:tabPanel switchType="client" selectedTab="#{taskItem.selectedTab}">
+      <rich:tab id="general" name="general" label="General">      
+      <t:panelGrid
+        columns="3"
+        width="100%"
+        cellpadding="6"
+        cellspacing="2"
+        columnClasses="mdw_label,mdw_value,mdw_validation">
+
+        <mdw:label
+          for="taskName"
+          value="Name:"
+          required="#{taskItem.editableByCurrentUser}" />
+        <h:inputText 
+          id="taskName"
+          value="#{taskItem.name}"
+          required="#{taskItem.editableByCurrentUser}"
+          size="150"
+          style="width:300px;"          
+          styleClass="mdw_inputField">
+            <rich:toolTip direction="top-right" mode="client" styleClass="mdw_inputField" layout="block">
+	            <h:panelGrid columns="2">
+	                <h:outputText   style="white-space:nowrap" value="Task ID:" />
+	                <h:outputText value="#{taskItem.id}" styleClass="mdw_inputField" />
+	            </h:panelGrid>
+	        </rich:toolTip>
+        </h:inputText>
+        <rich:message for="taskName" errorClass="mdw_error" />
+        
+        <mdw:label
+          for="taskDesc"
+          value="Description:"
+          required="false" />
+        <h:inputTextarea 
+          id="taskDesc" 
+          wrap="off" 
+          value="#{taskItem.comment}"
+          required="false"
+          rows="6"
+          styleClass="mdw_textAreaInput #{!taskItem.editableByCurrentUser ? 'mdw_readOnly' : ''}" />
+        <rich:message for="taskDesc" errorClass="mdw_error" />
+        
+        <mdw:label
+          for="taskCategory"
+          value="Category:" />
+        <h:selectOneMenu  
+          id="taskCategory" 
+          value="#{taskItem.taskCategoryId}" 
+          directInputSuggestions="true" 
+          styleClass="mdw_inputField">
+          <f:selectItems value="#{taskCategories.taskCategorySelectItems}" />
+        </h:selectOneMenu>
+        <rich:message for="taskCategory" errorClass="mdw_error" />
+        
+        <mdw:label
+          for="logicalId"
+          value="Logical Id:"
+          required="#{taskItem.editableByCurrentUser}" />
+        <h:inputText
+          id="logicalId"
+          value="#{taskItem.logicalId}"
+          required="#{taskItem.editableByCurrentUser}"
+          size="150"
+          style="width:200px;"          
+          styleClass="mdw_inputField" />
+        <rich:message 
+          for="logicalId" 
+          errorClass="mdw_error" />
+        
+        <mdw:label
+          for="alert"
+          value="Alert Interval:"
+          required="false" />
+        <mdw:timeInterval
+          id = "alert" 
+          intervalValue="#{taskItem.alert}" 
+          days="true" 
+          hrs="true"/>
+        <rich:message for="alert" errorClass="mdw_error" />
+        
+        <mdw:label
+          for="sla"
+          value="Sla:"
+          required="false" />
+        <mdw:timeInterval 
+          intervalValue="#{taskItem.sla}" 
+          days="true" 
+          hrs="true"/>
+        <rich:message for="sla" errorClass="mdw_error" />
+        <mdw:label
+          for="priorityStrategy"
+          value="Prioritization Strategy:"
+          required="false" />
+        <rich:comboBox 
+          id="priorityStrategy"
+          value="#{taskItem.priorityStrategy}"
+          required="false"
+          defaultLabel=""
+          enableManualInput="true"
+          styleClass="mdw_inputField">
+            <f:selectItem itemValue="Rules-Based"/>
+            <f:selectItem itemValue="Specified"/>
+        </rich:comboBox>
+        <rich:message for="priorityStrategy" errorClass="mdw_error" />        
+        
+        <mdw:label
+          for="subTaskStrategy"
+          value="SubTask Strategy:"
+          required="false" />
+        <rich:comboBox 
+          id="subTaskStrategy"
+          value="#{taskItem.subTaskStrategy}"
+          required="false"
+          defaultLabel=""
+          enableManualInput="true"
+          styleClass="mdw_inputField">
+            <f:selectItem itemValue="Rules-Based"/>
+        </rich:comboBox>
+        <rich:message for="subTaskStrategy" errorClass="mdw_error" />
+        
+        </t:panelGrid>
+        </rich:tab>
+        
+        <rich:tab id="workgroups" name="workgroups" label="Workgroups">
+        <t:panelGrid
+          columns="3"
+          width="100%"
+          cellpadding="6"
+          cellspacing="2"
+          columnClasses="mdw_label,mdw_value,mdw_validation">
+        <t:panelGroup colspan="3">
+          <rich:panel header="Workgroup Membership" styleClass="mdw_defaultPanel" style="margin-left:0;padding-top:0px;">
+            <mdw:pickList
+              itemsLabel="Groups"
+              disabled="#{!taskItem.editableByCurrentUser}"
+              controller="#{taskTemplateActionController}"
+              controllerAction="userGroupValueChanged"
+              availableItems="#{taskItem.workgroupsNotForTask}"
+              selectedItems="#{taskItem.workgroupsForTask}" />
+          </rich:panel>
+        </t:panelGroup>
+        <mdw:label
+          for="routingStrategy"
+          value="Routing Strategy:"
+          required="false" />
+        <rich:comboBox 
+          id="routingStrategy"
+          value="#{taskItem.routingStrategy}"
+          required="false"
+          defaultLabel=""
+          enableManualInput="true"
+          styleClass="mdw_inputField">
+            <f:selectItem itemValue="Rules-Based"/>
+        </rich:comboBox>
+        <rich:message for="routingStrategy" errorClass="mdw_error" />
+        
+        <mdw:label
+          for="autoAssign"
+          value="Auto Assign:"
+          required="false" />
+        <rich:comboBox 
+          id="autoAssign"
+          value="#{taskItem.autoAssign}"
+          required="false"
+          defaultLabel=""
+          enableManualInput="true"
+          styleClass="mdw_inputField">
+            <f:selectItem itemValue="Round Robin"/>
+            <f:selectItem itemValue="Shortest Queue"/>
+        </rich:comboBox>
+        <rich:message for="autoAssign" errorClass="mdw_error" />
+        
+        </t:panelGrid>
+        
+        </rich:tab>
+        
+        
+        <rich:tab id="notice" name="notice" label="Notices">
+        <t:panelGrid>
+        
+        <t:panelGroup colspan="3">
+          <rich:panel header="E-Mail Templates" styleClass="mdw_defaultPanel" style="margin-left:0;">
+            <t:dataTable
+              value="#{taskItem.noticeOutcomes}" 
+              var="outcome"
+              newspaperColumns="2"
+              columnClasses="mdw_label,mdw_value">
+              <f:facet name="spacer">
+                <f:verbatim>&amp;#160;&amp;#160;&amp;#160;&amp;#160;&amp;#160;&amp;#160;</f:verbatim>
+              </f:facet>              
+              <h:column>
+                <h:outputText
+                  value="#{outcome.label}"
+                  style="white-space:nowrap;" />
+              </h:column>
+              <h:column>
+                <h:inputText
+                  value="#{outcome.template}"
+                  styleClass="mdw_value"
+                  style="width:200px;" />
+              </h:column>
+            </t:dataTable>
+          </rich:panel>
+        </t:panelGroup>
+
+        <t:panelGroup colspan="3">
+          <rich:panel header="Notification Groups" styleClass="mdw_defaultPanel" style="margin-left:0;">
+            <mdw:pickList
+              itemsLabel="NoticeGroups"
+              disabled="#{!taskItem.editableByCurrentUser}"
+              selectSize="8"
+              controller="#{taskTemplateActionController}"
+              controllerAction="noticeGroupValueChanged"
+              availableItems="#{taskItem.noticegroupsNotForTask}"
+              selectedItems="#{taskItem.noticegroupsForTask}" />
+          </rich:panel>
+        </t:panelGroup>
+                
+      </t:panelGrid>
+      </rich:tab>
+        </rich:tabPanel>
+        <t:panelGroup rendered="#{workgroupTree.addMode &amp;&amp; workgroupTree.addType == 'Task'}" colspan="3">
+          <a4j:commandButton
+            id="createtask"
+            value="Create task"
+            action="#{workgroupTree.createTask}"
+            reRender="adminDetailPanel,taskList"
+            style="margin-top:8px;" />
+          <a4j:commandButton 
+            id="canceltask"
+            type="reset"
+            immediate="true"
+            value="Cancel"
+            actionListener="#{workgroupTree.cancelAddMode}"
+            reRender="adminDetailPanel"
+            style="margin-left:15px;" />
+        </t:panelGroup>
+        <t:panelGroup rendered="#{!workgroupTree.addMode &amp;&amp; taskItem.editableByCurrentUser}" colspan="3">
+          <h:commandButton 
+            id="savetask"
+            value="Save Task"
+            action="#{workgroupTree.saveTask}"
+            style="margin-top:5px;" />
+          <h:commandButton
+            id="deletetask"
+            value="Delete Task"
+            onclick="return false;"
+            style="margin-left:15px;margin-top:5px;">
+            <rich:componentControl
+              for="deleteDlg"
+              attachTo="deletetask" operation="show" event="onclick" />
+          </h:commandButton>
+        </t:panelGroup>
+        <div style="margin-top:5px;">
+        <t:panelGroup colspan="3">
+          <a4j:status>
+            <f:facet name="start">
+              <h:graphicImage style="margin-left:5px;" value="/images/loading.gif" />
+            </f:facet>
+            <f:facet name="stop">
+              <a4j:outputPanel ajaxRendered="true">
+                <h:messages showDetail="true" globalOnly="true" styleClass="mdw_message" style="margin-left:15px;" />
+              </a4j:outputPanel>
+            </f:facet>
+          </a4j:status>
+        </t:panelGroup>
+        </div>
+    </a4j:form>
+    </div>
+  </ui:composition>
+  
+</html>

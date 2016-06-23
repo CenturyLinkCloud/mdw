@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853450
+item-spec=4D4457413A314B3737545A20434F44455554494C204A4156412D2D3736373833373339322E412D5352433B31
+file-version=1
+checksum=4a4ca57f83fa36e5dc2b4a3066f5e97c
+fetch-size=3612
+mtime=1393988811
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/CodeUtil.java
+project=4D4457413A4D445741
+project-uid=31770127

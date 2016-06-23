@@ -1,0 +1,585 @@
+<html>
+<head>
+<title>Using Adapter Activities</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+<style>
+var {
+  font-style: italic;
+  color: #0000a0;
+}
+dfn { color: brown; }
+</style>
+</head>
+<body>
+<h1>Using Adapter Activities</h1>
+<p>Prior to MDW 4.5.12 and MDW 5.1.05, the class <code>AdapterActivityBase</code> is an abstract
+class that provides common base for all adapter activities,
+and most activities extend this base class directly.</p>
+
+<p>Since MDW 4.5.12 and MDW 5.1.05, we improved the adapter mechanism so that
+the adapters can be directly used in connection pools, and support automatic
+retries through adapter configuration, rather than a retry loop (a link from
+it to itself) as typically used with old implementors.
+In order to keep backward compatibility, we introduced a new
+base class, <code>PoolableAdapterBase</code>, to support the new functionalities.
+Adapters defined on top of the new base class are called <dfn>poolable adapters</dfn>.
+A poolable adapter can therefore be used in two ways:</p>
+<ul>
+   <li>Used directly as an activity. Activities that
+       use these adapters directly are called <dfn>direct connection
+   		adapter activities</dfn>.
+   <li>Used via a connection pool. The connection pool should be configured
+   		to use the adapter, and the process should use the activity implementor
+   		<a href='ConnectionPoolAdapter.html'>ConnectionPoolAdapter</a> or its
+   		subclasses which interface with connection pools.
+   		Such activity implementors are called <dfn>pooled connection 
+   		adapter activities</dfn>.</li>
+</ul>
+<p>MDW provides a set of common adapters for common protocols such
+as SOAP based MDW web services, Tibco BUS, JMS and MQ Series, 
+as well as the adapter activity using connection pools, mentioned above.
+These adapters are highly configurable and hence
+can meet common needs in many cases. You may however
+encounter situations where further customization beyond configuration is needed.
+Here is a list of common reasons:</p>
+<ul>
+  <li>The out-of-box adapters all take requests (messages to be sent to
+    external systems) from a process variable, specified during configuration.
+    If there is a need to get request messages from a place other than a variable,
+    it can be achieved by overriding the <code>getRequestData</code>
+    method to be described below.</li>
+  <li>Similarly, the out-of-box adapters all put responses (messages received
+    as responses from external systems in synchronous transport protocols)
+    an a configured process variable. If there is a need to store the responses
+    elsewhere, it can be achieved by overriding the method <code>onSuccess</code>.
+    This method may also be needed to perform custom logics such as extracting
+    or translating the responses before persistence.</li>
+  <li>The out-of-box adapters consider reception of any response data from
+    the external systems as a success, even though the response may
+    indicates an error condition and may need to be retried, because such
+    knowledge is external systems specific. It is common to have a need
+    to convert the seemingly successful responses into failures (retriable
+    and non-retriable). This can be achieved by overriding the method <code>invoke</code>.</li>
+  <li>Performing custom retry logic and other business logic in case of failure:
+    you can override the method <code>onFailure</code>.</li>   
+  <li>Passing meta information in addition to the request messages. Meta data
+    are transport protocol specific. Examples are correlation IDs for
+    MQ Series and JMS adapters, and name-value pairs for bus adapter
+    in addition to the standard <code>DATA</code> field for request data.
+    This can be achieved
+    by overriding the method <code>getMetaData</code>.</li>
+  <li>You may have a need to send messages to a system using a protocol
+    not supported by any out-of-box adapters. One common case is invoking
+    SOAP-based web services. In this case you will need to implement
+    a brand new adapter by extending <code>PoolableAdapterBase</code>
+    directly.</li>
+</ul>
+<p>The next section describes such customizations in details.</p>
+
+<h2>Implementing Poolable Adapters</h2>
+<p>A new poolable adapter should extend the abstract base class
+<code>com.centurylink.mdw.workflow.adapter.PoolableAdapterBase</code>.
+The following describes the methods you must implement or may extend.</p>
+
+<ul>
+<li><code>void init(Properties parameters)</code>.
+This method is used by connection pools only.
+It is invoked by the pool manager when a new
+connection instance is created and added to a connection pool.
+The following is the implementation of the MQ adapter:
+<pre>
+public void init(Properties parameters) {
+    qmgr_name = parameters.getProperty(PROP_QUEUE_MANAGER_NAME);
+    queue_name = parameters.getProperty(PROP_REQUEST_QUEUE_NAME);
+    replyQueueName = parameters.getProperty(PROP_REPLY_QUEUE_NAME);
+    isSynchronous = "true".equalsIgnoreCase(parameters.getProperty(PROP_SYNCHRONOUS_RESPONSE));
+}
+</pre>
+</li>
+
+<li><code>void init()</code>.
+This method is invoked by adapter activities only.
+Typically the method should set configuration parameters from attributes
+and their default values. Note that the invoke method should
+not call <code>getAttributeValue</code> to get configuration
+parameters as the method is not available when used in a connection pool.
+All activity attributes must be set as Java instance variables in this method.
+The following is the implementation of the MQ adapter:
+<pre>
+public void init() throws ConnectionException, AdapterException {
+    qmgr_name = getAttribute(PROP_QUEUE_MANAGER_NAME, null, true);
+    queue_name = getAttribute(PROP_REQUEST_QUEUE_NAME, null, true);
+    replyQueueName = getAttribute(PROP_REPLY_QUEUE_NAME, null, true);
+    isSynchronous = "true".equalsIgnoreCase(getAttributeValue(PROP_SYNCHRONOUS_RESPONSE));
+}
+</pre>
+</li>
+
+<li><code>Object openConnection()</code>. 
+This method is to be implemented to open a communication channel
+with the external system. It is invoked by an adapter activity
+when it opens a connection, right after the call to <code>init()</code>.
+When it is used with connection pools,
+with one-connection-for-all style,
+the method is invoked by the pool manager immediately after
+the <code>init()</code> call when a new connection instance is created.
+With one-connection-per-call style, the method is invoked
+right before a message is to be sent.
+Its implementation typically remembers the object representing
+the open connection in a Java instance variable.
+The method can throw <code>ConnectionException</code> or <code>AdapterException</code>.
+See the description for <code>invoke</code> method for their differences.
+The method should return an object identifying the open connection, and the
+object will passed to <code>invoke</code> and <code>closeConnection</code> methods.
+It is typical to return the adapter class instance itself.
+The following is the implementation of the MQ adapter:
+<pre>
+public Object openConnection() throws ConnectionException {
+    try {
+        qmgr = new MQQueueManager(qmgr_name);
+        return this;
+    } catch (Exception e) {
+        throw new ConnectionException(ConnectionException.CONNECTION_DOWN,
+            "Failed to open connection to MQ server", e);
+    }
+}
+</pre>
+</li>
+
+<li><code>void closeConnection(Object connection)</code>. 
+The method should close the connection with the external system opened by <code>openConnection</code>.
+The method is invoked by an adapter activity when it is closing a connection
+after the message is sent.
+When it is used with a connection pool,
+with one-connection-for-all style,
+the method is invoked by the pool manager when the connection is removed from the connection
+pool.
+With one-connection-per-call style, the method is invoked
+right after a message is sent.
+The only argument is passed in with object returned by <code>openConnection</code>.
+The following is the implementation of the MQ adapter:
+<pre>
+public void closeConnection(Object connection) {
+    try {
+        qmgr.close();
+    } catch (Exception e) {
+    }     
+}
+</pre>
+</li>
+<li><code>String invoke(Object connection, String message, int timeout, Map&lt;String,String> meta_data)</code>. 
+You will need to implement this method to actually send a message.
+It should also wait for responses for synchronous and certified messages.
+The timeout value is in seconds. The implementation should allow a value less than 0
+to use the global value specified in the configuration parameter <code>timeout</code>,
+or a hard-coded default value when the configuration parameter is absent.
+<p>
+In case of error detected, the method should}
+	<ul>
+ 		<li>Throws ConnectionException when it is expecting the certified message manager
+ 			or the connection pool adapter to retry automatically. The type of error must
+ 			be retriable (typically for connectivity issues). If you use a constructor
+ 			for ConnectionException that takes an error code, you should set
+ 			it to <code>ConnectionException.CONNECTION_DOWN</code> (41290) if the exception
+ 			is used to count for automatic shutdown after consecutively receiving such exceptions.
+ 			The single argument constructor sets this code by default.
+ 			</li>
+ 		<li>Throws AdapterException when the error is not retriable, such as data error
+ 			that can only be fixed by manual intervention elsewhere. If the message is certified,
+ 			the method is called by the certified message manager, which will put the message
+ 			in CM-Hold status and log a Sentry-sensitive log entry. If the message is synchronous,
+ 			the method is typically invoked by a connection pool adapter, which will lead to
+ 			an error transition, typically end up in exception handler.</li>
+	</ul>
+<p>
+If the adapter is used to support certified messages, the method should verify
+the responses it receives are correct acknowledgment. 
+<p>
+The following is the implementation of the MQ adapter:
+<pre>
+public String invoke(Object connection, String requestData, int timeout,
+    Map&lt;String,String> metainfo) throws AdapterException, ConnectionException
+{
+    try {
+        MQMessage msg = new MQMessage();
+        msg.writeString((String)requestData);
+        int openQueueOptions = MQC.MQOO_INPUT_AS_Q_DEF|MQC.MQOO_OUTPUT|MQC.MQOO_BROWSE;
+        MQPutMessageOptions putOptions = new MQPutMessageOptions();
+        putOptions.options = putOptions.options | MQC.MQPMO_SET_IDENTITY_CONTEXT;
+        String correlationId = metainfo==null?null:metainfo.get(PROP_CORRELATION_ID);
+        if (correlationId!=null) msg.correlationId = correlationId.getBytes();
+        if (replyQueueName!=null) msg.replyToQueueName = replyQueueName;	
+        MQQueue replyQueue;
+        if (isSynchronous) {
+            if (replyQueueName==null) replyQueueName = "REPLY_MODEL_QUEUE";
+            String dynamicQueueName = replyQueueName + "*";
+            replyQueue = qmgr.accessQueue(replyQueueName, openQueueOptions,
+                null,dynamicQueueName,null);
+            msg.replyToQueueName = replyQueue.name;
+        } else replyQueue = null;
+        qmgr.put(queue_name, msg);
+        String result;
+        if (replyQueue!=null) {
+            MQGetMessageOptions getOptions = new MQGetMessageOptions();
+            getOptions.options = getOptions.options|MQC.MQGMO_WAIT;
+            if (timeout<=0) timeout = defaultTimeout;
+            getOptions.waitInterval = timeout*1000;
+            MQMessage rmsg = new MQMessage();
+            rmsg.messageId = msg.messageId;
+            replyQueue.get(rmsg, getOptions, 1024*1024);
+            result = rmsg.readString(rmsg.getTotalMessageLength());
+        } else result = null;
+        return result;
+    } catch (Exception e) {
+        throw new AdapterException(-1, "Exception in invoking JmsAdapter" , e);
+    }
+}
+</pre>
+</li>
+<li><code>boolean ping()</code>.
+This method is only used by connection pools.
+ The method is for pinging the external system after the pool
+ is automatically shut down due to consecutive connection failures.
+ The method should return true when the connection with the 
+ external system is up, and false otherwise.
+The following is the implementation of the MQ adapter, which
+cannot really implement this semantics, being a generic protocol adapter
+and not knowing how to tell if an interfacing system is up:
+<pre>
+public boolean ping() {
+    return false;    // need to implement this in application specific subclass
+}
+</pre>
+</li>
+<li><code>String getLabel()</code>: The method is used
+by the designer to obtain the label for the activity implementor.
+You typically should override this method to return a unique and descriptive
+name for the adapter. Here is the sample implementation for the MQ adapter:
+<pre>
+@Override
+public String getLabel() {
+    return "MQ Series Adapter";
+}
+</pre>
+</li>
+<li><code>boolean canBeSynchronous()</code>: you must implement this method. It should
+return true if the adapter can be used synchronously (receiving a response), and false otherwise.
+The following is the implementation of the MQ adapter:
+<pre>
+protected boolean canBeSynchronous() {
+    return true;
+}
+</pre>
+If the adapter can be used both synchronously and asynchronously, an option will be shown
+in the activity configuration to choose between the two.
+. And the method <code>isSynchronous</code>
+is the API to determine whether the adapter is used synchronously (an adapter can support
+both mode but can only be configured to use one.
+</li>
+<li><code>boolean canBeAsynchronous()</code>: you must implement this method. It should
+return true if the adapter can be used asynchronously (sending a one way message without
+expecting a reply), and false otherwise.
+The following is the implementation of the MQ adapter:
+<pre>
+protected boolean canBeAsynchronous() {
+    return true;
+}
+</pre>
+</li>
+<li><code>Map<String,String> getMetaData()</code>: you may override this method
+if there is meta data to be passed when calling the <code>invoke</code> method. The super class implementation simply returns null.
+The following is the implementation of the MQ adapter, which may optionally
+pass in a correlation ID as meta data:
+<pre>
+@Override
+protected Map&lt;String,String> getMetaData() throws AdapterException, ConnectionException {
+    HashMap&lt;String,String> meta_data;
+    try {
+        String correlationId = this.getAttributeValueSmart(MqSeriesAdapter.PROP_CORRELATION_ID);
+        if (correlationId!=null) {
+            meta_data = new HashMap&lt;String,String>();
+            meta_data.put(MqSeriesAdapter.PROP_CORRELATION_ID, correlationId);
+        } else meta_data = null;
+    } catch (PropertyException e) {
+        super.logexception("failed to evaluate correlation ID", e);
+        meta_data = null;
+    }
+    return meta_data;
+}
+</pre>
+</li>
+</ul>
+<p>The above are all the methods that you typically implement or override,
+and the MQ adapter implements only these methods, which are shown as example above.
+The following methods may be overridden less commonly:</p>
+<ul>
+<li><code>getRequestData()</code>: this method returns the request message. The default
+implementation reads it from a variable configured in the designer. You can override it
+to get the message from elsewhere.</li>
+<li><code>onSuccess(String response)</code>: the method is invoked when the external system
+returns a successful response. The method may convert external-system-detected errors into failure
+by throwing an exception here (ConnectionException for retriable errors and
+AdapterException for non-retriable errors), although it is preferable to perform such interpretation
+in the method <code>invoke</code>, as the logic can be shared with connection pools.
+Throwing an exception here
+also triggers the method <code>onFailure</code> to be called.
+This method is also the place to translate external responses
+into internal format and persist them somewhere, if these are needed.
+The default implementation stores the message in a variable configured in the designer.
+</li>
+<li><code>onFailure(int tryCount, int maxTries, Throwable errorCause)</code>: 
+The method is invoked on the failure of each try.
+The outcome of the method must be one of the following:
+  <ul>
+    <li>throw ConnectionException. The engine will put the activity in error status,
+	    and schedule automatically retry of the activity.</li>
+	<li>throw AdapterException. The engine will put the activity in error status,
+	    and transition based on ERROR event (typically lead to exception handler).</li>
+	<li>return a completion code w/o throwing exception. The engine will complete
+	    the activity and transition accordingly.</li>
+  </ul>
+The default implementation does the following:
+  <ul>
+    <li>if <var>errorCause</var> is an AdapterException, throws it.</li>
+    <li>if <var>errorCause</var> is a ConnectionException:
+        <ul>
+          <li>if <var>tryCount</var> (the number of tries already made) is less than 
+          	<var>maxTries</var> (maximum allowed tries, as configured in the designer), throws it</li>
+          <li>otherwise throws AdapterException with error code 
+          	<code>AdapterConnectionPool.EXCEPTION_EXCEED_MAXTRIES</code>
+        </ul></li>
+    <li>in any other case, throw AdapterException with <var>errorCode</var> as its error code</li>
+  </ul>
+When you override this method, you would normally invoke this super method as the last thing,
+to preserve the above logic.
+</li>
+</ul>
+<p>You can look at out-of-box poolable adapters as samples.
+We note that the out-of-box adapters typically do not throw exceptions when
+it receives any messages from external systems, even the messages may indicate
+some error conditions (e.g. an XML message that contains an error message).
+This is obviously due to the fact there is no generic way to identify what messages indicate
+errors. When you implement your application-specific adapters, which you may
+have knowledge as to what response messages indicate errors, you should throw
+exceptions as described above appropriately, so that the auto-retry mechanism can
+function properly. </p>
+
+<h2>Implementing Pooled Connection Adapter Activities</h2>
+<p>The out-of-box implementor <a href='ConnectionPoolAdapter.html'>ConnectionPoolAdapter</a>
+is implemented as a subclass of <code>PoolableAdapterBase</code> as well,
+even though itself is not really a poolable adapter
+and should be never be used by a connection pool.
+This is because it shares many common functionalities as direct connection
+adapter activities. As a good consequence, you can customize the connection pool
+adapter just like other adapters, as described above. Some methods only
+used by connection pools are not meant to be overridden, such as <code>init(Properties)</code>,
+and <code>ping</code>.  The methods that may have needs to be overridden include:</
+<ul>
+  <li><code>invoke</code></li>
+  <li><code>onSuccess</code></li>
+  <li><code>onFailure</code></li>
+  <li><code>getRequestData</code></li>
+  <li><code>getMetaData</code></li>
+</ul>
+
+<h2>Implementing Old Adapters</h2>
+<p>This section is provided for those using older versions of MDW where
+poolable adapters are not available, or for any historical reasons you
+need still to use the old (non-poolable) adapters.</p>
+
+<p>
+The following methods must be implemented by concrete subclasses.
+<ul>
+  <li><code>isSynchronous</code>:
+     The method determines if the adapter itself is synchronous, i.e.
+     waiting for responses.
+  </li>
+  <li><code>openConnection</code>:
+  	The method should open a connection to the external system.
+    You may implement this through a connection pool you implement,
+    then this method is to get an instance from the pool.
+  </li>
+  <li><code>closeConnection</code>:
+  	The method is called to close a connection opened.
+    If you have implemented your connection pool, then
+    this method should return the connection instance
+    to the pool.
+  </li>
+  <li><code>invoke</code>:
+    This method must be implemented to perform the
+    real invocation of external system service.
+        <br>
+    Note it is preferred to do data translation
+    in getRequest() and handleAdapterSuccess() rather than
+    in this method, as logging is done outside this
+    method and typically we prefer the logged messages
+    to be as close to raw messages as possible.
+    
+    Of course some minimal translation may be needed, for
+    instance in the case the request is not a single
+    object. In case of RMI call, the request may
+    be an array of arguments.
+    <br>
+    If the adapter is synchronous but the underlying protocol
+    is asynchronous, the method needs to wait for responses
+    and return them. If the adapter is asynchronous but
+    the protocol is synchronous (e.g. RMI, Web Service),
+    then the execute() method logs the response in
+    adapter instance table for later use.
+    <br>
+    The response must be returned if the adapter is synchronous,
+    or the underlying protocol is synchronous. It must return null
+    if the adapter is asynchronous and the underlying
+    protocol is asynchronous
+        <br>
+    The method may throw <code>AdapterException</code>.
+    This exception can be set with a retryable indicator. When it is true,
+    the work flow engine will retry this adapter activity (double check???).
+    You can also set an error code here, which will be passed
+    to <code>handleAdapterFailure</code>.
+  </li>
+</ul>
+The following methods are likely to be overridden
+<ul>
+  <li><code>getLabel</code>: The subclasses should override this method to give
+     specific names displayed in the designer activity implementor paine.
+  </li>
+  <li><code>getType</code>: The method should
+  	return an XML specification for customizing the
+  	attribute dialog. Follow <a href="implementor.html">this link</a>
+  	for the syntax.
+  </li>
+  <li><code>getRequest</code>:
+     Override this method if need to translate data from variable
+     or need to get data elsewhere. The default
+     method assumes the data is in the variable REQUEST_VARIABLE
+      
+     Also, if a translation is needed to convert data in internal
+     format to one required by external system, this is the place
+     for doing it.
+     The method should throw <code>TranslationException</code>,
+     when the translation fails. 
+  </li>
+  <li><code>handleAdapterSuccess</code>:
+    The method is invoked when the external system interaction is a success.
+     (i.e. the external system responded something, even an error code).
+     The method may convert external-system-detected errors into failure
+     by throwing an Adapter exception here. 
+     This method is also the place to translate external responses
+     into internal format and persist them somewhere, if these are
+     needed. 
+     For one way communication protocols, you can leave the default
+     which does nothing.
+     The method should throw <code>TranslationException</code>,
+     when the translation fails. Throwing non-retryable
+     exceptions will lead to handleAdapterFailure to be called.
+     <br>
+     The default method assigns the response to the variable
+     specified in the attribute RESPONSE_VARIABLE, when the response is not null.
+  </li>
+  <li><code>handleAdapterFailure</code>:
+     The method is invoked when the requests failed to send
+     or the response is not received from external systems
+     (for protocols where responses are expected).
+     The default method throws a ActivityException
+     which will cause an ERROR transition.
+     You can invoke the following method to retry the call,
+     or set to a different return code to follow process definition
+     transitions.
+     <pre>
+     	setReturnCode(ActivityResultCodeConstant.RESULT_RETRY);
+     </pre>
+  </li>
+</ul>
+The following methods should be overridden when the
+request or response data are not strings.
+<ul>
+  <li><code>externalRequestToString</code>:
+    This method is used to serialize external system requests for
+    logging purpose.
+  </li>
+  <li><code>externalResponseToString</code>:
+    This method is used to serialize external system responses for
+    logging purpose.
+  </li>
+  <li><code>externalResponseFromString</code>:
+    This is used when the adapter is asynchronous but
+    the protocol is synchronous, where response data is
+    logged in adapter instance table. This method is invoked
+    to translate serialized data back to the actual data.
+     
+    This method is also used to translate stubbed data
+    from strings to objects.
+  </li>
+</ul>
+The following methods can be overridden but
+there should rarely be a need to do so.
+<ul>
+  <li><code>getStubResponse</code>:
+    This method returns stubbed response from external system.
+    The default method reads the stubbed response from
+    the attribute STUB_RESPONSE and this implementation is
+    probably good for most cases. One reason you may want
+    to override the method is to get more dynamic stub
+    responses (different responses based on request data).
+  </li>
+  <li><code>doLogging</code>: This method
+      determines if external requests/responses should
+      be logged into adapter instance table.
+      The default method reads the attribute value
+      DO_LOGGING. If the attribute is missing, the default
+      is on for logging.
+      You may need to override <code>externalRequestToString</code>
+      and <code>externalResponseToString</code> in order to log the
+      information properly.
+  </li>
+  <li><code>execute</code>: 
+     This method is invoked by the workflow engine to execute
+     the activity. The default implementation performs the function
+     by directly or indirectly calling other methods described here, so you
+     should rarely have need to override this method. You may
+     want to override it to perform additional implementation
+     specific functions prior and/or after the standard
+     executer. If you do override it, be sure to invoke
+     the superclass version.
+  </li>
+  <li><code>getIconName</code>: you only need to override this method
+      if you would like to have a distinct icon in the designer,
+      instead of the default adapter icon.
+  </li>
+</ul>
+<h3>Support for Basic Authentication</h3>
+<p>MDW provides support for Basic Authentication in the following adapters and web services</p>
+<h4>Outgoing adapters</h4>
+<p>
+The adapters below include configuration to set a user/password Basic Authentication combination that will be sent with each request  
+</p>
+<ul>
+  <li><code>SoapWebServiceAdapter</code>
+  </li>
+  <li><code>DocumentWebServiceAdapter</code>
+  </li>
+  <li><code>RestfulServiceAdapter</code>
+  </li>
+</ul>
+<p> For specific details on how to configure the above adapters for Basic Authentication, please refer to these adapters in the eclipse help.
+</p>
+<h4>Hosted web services</h4>
+<p>
+The MDW servlets below support HTTP Basic Authentication for hosted web services.  
+</p>
+<ul>
+  <li><code>SoapListenerServlet</code>
+  </li>
+  <li><code>RestfulServicesServlet</code>
+  </li>
+ </ul>
+<p>
+To enable these servlets to use Basic authentication, you should set the following property in your <b>mdw.properties</b> or <b>com.centurylink.mdw.cfg</b> configuration file.
+<br/><br/>
+<code>mdw.http.listeners.auth.mode=Basic</code>
+<br/><br/>
+After authentication is successful, the authenticated username will be available in the metaInfo property "AuthenticatedUser" or Listener.AUTHENTICATED_USER_HEADER
+</p>
+</body>
+</html>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70452226
+item-spec=4D4457413A314B3737545A204C4F41444552504552534953544552564353204A4156412D2D313736393335303835382E412D5352433B3936
+file-version=96
+checksum=07ab65d1dae15052d48aa2d5c0567cc1
+fetch-size=81977
+mtime=1463428739
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/dataaccess/file/LoaderPersisterVcs.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<contributor name="com.centurylink.mdw.designer.ui"/>
+<contributor name="org.eclipse.pde"/>
+<contributor name="org.eclipse.datatools.intro"/>
+<contributor name="org.eclipse.m2e.core.ui"/>
+<contributor name="org.eclipse.ui.intro"/>
+<contributor name="org.eclipse.mylyn.help.ui"/>
+<contributor name="org.eclipse.jdt"/>
+<contributor name="org.eclipse.epp.mpc.ui"/>
+<contributor name="org.eclipse.pde.ui"/>
+<contributor name="org.eclipse.platform"/>
+<contributor name="org.eclipse.wtp.epp.package.jee.intro"/>
+<contributor name="org.eclipse.egit.doc"/>
+<contributor name="org.eclipse.recommenders.rcp"/>
+<contributor name="org.eclipse.ui.intro.universal"/>
+</root>

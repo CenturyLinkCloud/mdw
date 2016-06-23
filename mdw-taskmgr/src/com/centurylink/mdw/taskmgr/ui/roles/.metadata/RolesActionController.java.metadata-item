@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855056
+item-spec=4D4457413A314B3756533020524F4C4553414354494F4E434F4E54524F4C4C4552204A4156412D2D3431313939333633382E412D5352433B32
+file-version=2
+checksum=69be66d4c5ebcc3cb95e13dd4bf0251c
+fetch-size=2204
+mtime=1393990193
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/roles/RolesActionController.java
+project=4D4457413A4D445741
+project-uid=31770127

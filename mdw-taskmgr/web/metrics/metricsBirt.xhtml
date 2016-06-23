@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+<ui:composition template="/facelets/layout/main.xhtml">
+
+
+	<ui:define name="content">
+    <mdw:javascriptInclude fileLocation="/script/calendar.js" />
+    
+		<h:form id="birtForm">
+			<table cellpadding="0" cellspacing="2" width="100%" class="mdw_tabbedContent">
+				<tr>
+					<td valign="top" height="100%"
+						class="mdw_panelBorderLeft"><mdw:panelContainer
+							id="togglePanelContainer">
+							<mdw:togglePanel id="TogglePanel2" label="Metrics Reports"
+								switchType="client" bodyClass="mdw_panelBodyInner"
+								style="border:none;width:200px;padding:0px;" headerClass="mdw_panelHeaderInner"
+								closedHeaderClass="mdw_panelHeaderClosed"
+								closedHeaderImage="/images/open.gif">
+								<ui:include src="birtReportForMetrics.xhtml" />
+								<a4j:outputPanel keepTransient="false" id="FilterPanel">
+									<a4j:region rendered="#{reportMetrics.typeOfReport != null}">
+										<rich:panel
+                      rendered="#{reportMetrics.reportTitle != null}"
+                      header="Filter" 
+                      headerClass="mdw_panelHeaderStacked"
+											bodyClass="mdw_panelBodyStacked"
+											styleClass="mdw_richPanelUnbordered"
+                      style="margin-top:20px;" >
+                      <mdw:listFilter id="reportFilter"
+                        filterEntity="#{mdwReport.filter}"
+                        event="onclick"
+                        renderPrefsButton="false"
+                        submitButtonLabel=" Apply "
+                        width="190" />
+                    </rich:panel>
+									</a4j:region>
+								</a4j:outputPanel>
+							</mdw:togglePanel>
+						</mdw:panelContainer></td>
+
+					<td valign="top" width="100%" height="100%" class="mdw_panelBorderLeft">
+						<a4j:outputPanel keepTransient="false" id="ReportOutputPanel">
+							<rich:panel headerClass="mdw_panelHeaderInner"
+								bodyClass="mdw_panelBodyStd" styleClass="mdw_richPanelUnbordered">
+								<f:facet name="header">
+									<h:outputText id="reportTitle"
+										rendered="#{reportMetrics.reportTitle != null}"
+										value="#{reportMetrics.reportTitle}" />
+								</f:facet>
+								<a4j:status>
+									<f:facet name="start">
+										<h:graphicImage style="margin-left:5px;"
+											value="/images/detailLoading.gif" />
+									</f:facet>
+									<f:facet name="stop">
+										<a4j:region rendered="#{reportMetrics.typeOfReport != null}">
+											<mdw:report id="birtReport" reportEntity="#{mdwReport}" />
+										</a4j:region>
+									</f:facet>
+								</a4j:status>
+							</rich:panel>
+						</a4j:outputPanel>
+					</td>
+				</tr>
+				<tr>
+				</tr>
+			</table>
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>
+
+</html>

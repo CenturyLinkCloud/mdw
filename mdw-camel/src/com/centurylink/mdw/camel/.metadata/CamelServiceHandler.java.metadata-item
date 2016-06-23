@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853895
+item-spec=4D4457413A314B38334D422043414D454C5345525649434548414E444C4552204A4156412D323131333832313734312E412D5352433B32
+file-version=2
+checksum=d1241490dfeca7608012bb9b05a89779
+fetch-size=2275
+mtime=1393989706
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/camel/CamelServiceHandler.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,14 @@
+// adapter-stub substitutions
+assert stubbing
+
+// gpath stub for EmployeeLookup request
+stub adapter(gpath("request.name() == 'EmployeeLookup'")) {
+    delay = 5
+    response = asset("EmployeeLookupResponseSubst.xml").text
+}
+start process("TestAdapterStub") {
+    variables = [request: asset("EmployeeLookup.xml").text]
+}
+
+wait process
+verify process

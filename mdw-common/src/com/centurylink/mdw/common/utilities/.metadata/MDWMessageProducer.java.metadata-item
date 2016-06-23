@@ -1,0 +1,13 @@
+version=10.2
+item-uid=56058899
+item-spec=4D4457413A314B3737545A204D44574D45535341474550524F4455434552204A4156412D2D3339303633373732362E412D5352433B33
+file-version=3
+checksum=c8b52ecdd50f5c4ad1152efe8924e43c
+fetch-size=7882
+mtime=1431548123
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/MDWMessageProducer.java
+project=4D4457413A4D445741
+project-uid=31770127

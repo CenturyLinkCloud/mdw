@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549547
+item-spec=4D4457413A314B3848384C2045585445524E414C4556454E54204A4156412D2D313331353234343037302E412D5352433B39
+file-version=9
+checksum=8d0441fc0ced72371e196e6518da140f
+fetch-size=4804
+mtime=1453322013
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/model/ExternalEvent.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

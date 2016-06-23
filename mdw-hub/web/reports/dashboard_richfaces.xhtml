@@ -1,0 +1,428 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:mt="http://www.centurylink.com/mdw/jsf/mdwtools"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+<!--f:metadata>
+  <f:event
+    type="preRenderView"
+    listener="#{dragDropBean.loadLayout}" />
+</f:metadata-->
+<f:view beforePhase="#{dragDropBean.beforePhase}" />
+
+<h:head>
+  <title>Dashboard</title>
+
+</h:head>
+<h:body>
+
+  <h:outputStylesheet>
+        .rf-ind-drag{
+        font-size:11px;
+        cursor:pointer;
+         border:1px;
+        padding:2px
+        }
+        .rf-ind-acpt{border:2px solid green}
+        .rf-ind-rejt{border:2px solid red}
+    </h:outputStylesheet>
+  <mdw:javascriptInclude fileLocation="/resources/com.centurylink.mdw.reports/dashboard.js" />
+  <mdw:javascriptInclude fileLocation="/resources/com.centurylink.mdw.reports/jquery.min.js" />
+  <mdw:javascriptInclude fileLocation="/resources/com.centurylink.mdw.reports/jquery-ui.min.js" />
+  <mdw:javascriptInclude fileLocation="/resources/com.centurylink.mdw.reports/jquery.cookie.js" />
+
+
+  <script type="text/javascript">
+  function jq( myid ) {
+    return "#" + myid.replace( /:/g, "\\:" );
+}
+  
+  function getPanelLayout() {
+    
+    var reports = [];
+    var reportsArray = {};
+    var txt="";
+   // alert("savePanelLayout"+$(".mdw_panel"));
+    $(".mdw_panel").each(function( index, element ) {
+      
+   //   alert("hello");
+   // This is the full client id, e.g mainDetailForm:form:myPanel0
+   var realIndex = index;
+      var name = $("#reportName"+realIndex).val();
+      console.log("PanelLayout reportName=",name);
+      if (name != undefined ) {
+        var packageName = $("#packageName"+realIndex).val();
+      console.log("PanelLayout packageName=",packageName);
+      var height = $(this).height();
+      console.log("PanelLayout height=",height);
+     var width = $(this).width();
+      console.log("PanelLayout width=",width);
+      var position = $(this).position();
+      console.log("PanelLayout position=",position);
+
+ 
+      reports.push({ 
+           "packageName" : packageName,
+           "name" : name,
+           "height"  : height,
+           "width"       : width ,
+           "left":position.left,
+           "top": position.top
+           
+       });
+      txt=txt+"<br/><b>clientId</b>:" + name + " <b>height</b>: "+height+
+      " <b>width</b>: "+width
+      +" <b>position</b>: left="+position.left+" top="+position.top;
+      }
+     });
+    reportsArray.reports = reports;
+    var coords_div = $("#coords"); 
+    coords_div.html(txt);
+    return JSON.stringify(reportsArray);
+    
+  }
+  function showPanelLayout() {
+    
+    var reports = [];
+    var reportsArray = {};
+    var txt="";
+   // alert("savePanelLayout"+$(".mdw_panel"));
+    $(".mdw_panel").each(function( index, element ) {
+      
+   //   alert("hello");
+   // This is the full client id, e.g mainDetailForm:form:myPanel0
+   var realIndex = index;
+      var name = $("#reportName"+realIndex).val();
+      console.log("PanelLayout reportName=",name);
+      if (name != undefined ) {
+        var packageName = $("#packageName"+realIndex).val();
+      console.log("PanelLayout packageName=",packageName);
+      var height = $(this).height();
+      console.log("PanelLayout height=",height);
+     var width = $(this).width();
+      console.log("PanelLayout width=",width);
+      var position = $(this).position();
+      console.log("PanelLayout position=",position);
+
+ 
+      reports.push({ 
+           "packageName" : packageName,
+           "name" : name,
+           "height"  : height,
+           "width"       : width ,
+           "left":position.left,
+           "top": position.top
+           
+       });
+      txt=txt+"<br/><b>clientId</b>:" + name + " <b>height</b>: "+height+
+      " <b>width</b>: "+width
+      +" <b>position</b>: left="+position.left+" top="+position.top;
+      }
+     });
+    reportsArray.reports = reports;
+    var coords_div = $("#coords"); 
+    coords_div.html(txt);
+    $('#saveDashboardPopup').show();
+    
+  }
+
+ 
+      function drillDownPopup(report, param)
+      {
+        var msgDialog = $("#drillDownPopup").dialog(
+        {
+          autoOpen : true,
+          draggable : true,
+          dialogClass : 'mdw_panel',
+          title : report,
+          buttons :
+          {
+
+            Ok : function()
+            {
+
+              $(this).dialog("close");
+
+            }
+
+          }
+
+        });
+
+        var txt = "&lt;iframe src='birt_inline.jsf?mdwReport="
+            + report
+            + "&amp;CUID="
+            + param
+            + "' class='iframe' frameborder='0' onload='javascript:resizeIframe(this);'&gt;&lt;/iframe&gt;";
+        // alert(txt);
+        msgDialog.html(txt);
+        msgDialog.dialog("open");
+
+      }
+    </script>
+
+  <t:stylesheet path="/css/mdw.css" />
+  <t:stylesheet path="/css/mdw-hub.css" />
+  <h:form id="form">
+    <mdw:javascriptInclude fileLocation="/resources/com.centurylink.mdw.reports/dashboard.js" />
+ 
+    <table
+      style="min-height: 500px;"
+      id="outerTable">
+      <tr>
+        <td style="vertical-align: top"><mdw:panel
+            id="availablereportspanel"
+            label="Available Reports"
+            collapsible="true"
+            horizontal="true">
+            <rich:dataTable
+              keepSaved="true"
+              id="src"
+              var="reportItem"
+              value="#{listManager.reportsList.items}"
+              rows="30">
+              <f:facet name="noData">
+                No reports found.
+            </f:facet>
+              <rich:column
+                sortBy="#{reportItem.package}"
+                sortOrder="ascending"
+                filterValue="#{reportsFilterBean.packageFilter}"
+                filterExpression="#{fn:containsIgnoreCase(reportItem.package, reportsFilterBean.packageFilter)}">
+                <f:facet name="header">
+                  <h:panelGroup>
+                    <h:outputText value="Package " />
+                    <h:selectOneMenu value="#{reportsFilterBean.packageFilter}">
+                      <f:selectItems value="#{reportsFilterBean.reportPackages}" />
+                      <a4j:ajax
+                        render="src"
+                        execute="@this"
+                        event="change" />
+                    </h:selectOneMenu>
+                  </h:panelGroup>
+                </f:facet>
+                <a4j:outputPanel
+                  layout="block"
+                  styleClass="rf-ind-drag">
+                  <rich:dragSource
+                    type="report"
+                    dragValue="#{reportItem}" />
+                  <h:outputText
+                    value="#{reportItem.package}/#{reportItem.name}/#{reportItem.version}">
+                  </h:outputText>
+                  <rich:tooltip
+                    followMouse="false"
+                    hideDelay="0"
+                    direction="bottomRight"
+                    mode="client"
+                    styleClass="mdw_inputField"
+                    layout="block">
+                    <h:panelGrid columns="2">
+                      <h:outputText
+                        style="white-space:nowrap"
+                        value="Drag to Dashboard" />
+                      <span class="ui-icon ui-icon-arrowthick-1-e"></span>
+
+                    </h:panelGrid>
+                  </rich:tooltip>
+                </a4j:outputPanel>
+              </rich:column>
+
+              <f:facet name="footer">
+                <rich:dataScroller
+                  for="src"
+                  maxPages="5"
+                  fastControls="hide">
+                  <f:facet name="first">
+                    <h:outputText value="&lt;&lt;&lt;" />
+                  </f:facet>
+                  <f:facet name="last">
+                    <h:outputText value="&gt;&gt;&gt;" />
+                  </f:facet>
+                  <f:facet name="next">
+                    <h:outputText value="&gt;" />
+                  </f:facet>
+                  <f:facet name="previous">
+                    <h:outputText value="&lt;" />
+                  </f:facet>
+                  <f:facet name="fastforward">
+                    <h:outputText value="&gt;&gt;" />
+                  </f:facet>
+                  <f:facet name="fastrewind">
+                    <h:outputText value="&lt;&lt;" />
+                  </f:facet>
+
+                </rich:dataScroller>
+              </f:facet>
+            </rich:dataTable>
+
+          </mdw:panel></td>
+
+        <rich:popupPanel
+          id="saveDashboardPopup"
+          modal="false"
+          autosized="true"
+          resizeable="false">
+          <f:facet name="header">
+            <h:outputText value="Dashboard Layout" />
+          </f:facet>
+          <f:facet name="controls">
+            <h:outputLink
+              value="#"
+              onclick="#{rich:component('saveDashboardPopup')}.hide(); return false;">
+                X
+            </h:outputLink>
+          </f:facet>
+          <p>Dashboard Layout has been saved for the reports below (TBD)</p>
+          <div id="coords"></div>
+        </rich:popupPanel>
+
+        <td style="vertical-align: top; width: 100%; padding-left: 8px; padding-right: 5px;"><mdw:panel
+            label="Dashboard"
+            styleClass="mdw_panel"
+            style="position:relative;min-height:500px"
+            id="dashboardPanel">
+            <f:facet name="headerButtons">
+              <h:panelGroup>
+
+                <a4j:commandLink
+                  styleClass="mdw_panelImage"
+                  style="float:none;margin-left:10px;"
+                  onclick="showPanelLayout(); return false;">
+ 
+                  <h:graphicImage
+                    value="/images/add.gif"
+                     />
+                  <rich:tooltip
+                    followMouse="false"
+                    hideDelay="0"
+                    direction="bottomRight"
+                    mode="client"
+                    styleClass="tooltip"
+                    layout="block">
+                    <span style="white-space: nowrap">Show the coords of panels
+                    </span>
+
+                  </rich:tooltip>
+
+                </a4j:commandLink>
+               <a4j:commandLink
+                  styleClass="mdw_panelImage"
+                  style="float:none;margin-left:10px;"
+                  oncomplete="#{rich:component('saveDashboardPopup')}.show(); return false;">
+                  <a4j:param
+                    name="panelLayout"
+                    value="getPanelLayout()"
+                    assignTo="#{dragDropBean.dashboardLayout}"
+                    noEscape="true" />
+
+                  <h:graphicImage
+                    value="/images/save.gif"
+                     />
+                  <rich:tooltip
+                    followMouse="false"
+                    hideDelay="0"
+                    direction="bottomRight"
+                    mode="client"
+                    styleClass="tooltip"
+                    layout="block">
+                    <span style="white-space: nowrap">Persists the report layout using <br />a
+                      pluggable bean implementation (cookies/database/file etc)<br />
+                    <br />Default persistence uses <b>cookies</b>.<br/>
+                    </span>
+
+                  </rich:tooltip>
+
+                </a4j:commandLink>
+                <a4j:commandLink
+                  id="loadLink"
+                 
+                  styleClass="mdw_panelImage"
+                  style="float:none;margin-left:10px;"
+                  render="#{dragDropBean.droppedPanelNames}">
+                  <f:setPropertyActionListener
+                    value="true"
+                    target="#{dragDropBean.loadLayout}" />
+
+                  <h:graphicImage
+                    value="/images/refresh.gif"
+                    />
+                  <rich:tooltip
+                    followMouse="false"
+                    hideDelay="0"
+                    direction="bottomRight"
+                    mode="client"
+                    styleClass="tooltip"
+                    layout="block">
+                    <span style="white-space: nowrap">Loads the report layout using a
+                      pluggable bean implementation (cookies/database/file etc)<br />
+                    <br />Default persistence uses <b>cookies</b>.<br/><br/>
+                    If no previous layout has been saved, a preconfigured layout of reports will be loaded from hub-view.xml.
+                    </span>
+
+                  </rich:tooltip>
+
+                </a4j:commandLink>
+
+              </h:panelGroup>
+            </f:facet>
+            <h:outputText value="Drop here, drag, resize and organize your Dashboard panels" />
+
+
+            <rich:dropTarget
+              acceptedTypes="report"
+              dropValue="CF"
+              dropListener="#{dragDropBean.processDrop}"
+              render="#{dragDropBean.droppedPanelNames}"
+              style="min-height:500px" />
+            <!-- Have to use c: instead of ui:repeat due to when the items/value is available in JSF cycle -->
+            <c:forEach
+              var="panelId"
+              items="#{dragDropBean.panelIds}"
+              varStatus="status">
+              <mdw:panel
+                id="#{panelId}"
+                collapsible="true"
+                collapsed="true"
+                label="#{panelId}"
+                styleClass="mdw_panel"
+                style="width:100px;display:none;">
+                <f:facet name="headerButtons">
+                  <h:panelGroup>
+                    <a4j:commandLink
+                      title="Close"
+                      styleClass="mdw_panelImage"
+                      style="float:none;margin-left:10px;"
+                      oncomplete="#{rich:element(panelId)}.style.display = 'none'">
+                      <h:graphicImage
+                        value="/images/close.png"
+                        alt="Close" />
+                      <f:setPropertyActionListener
+                        value="#{panelId}"
+                        target="#{dragDropBean.closedPanelName}" />
+                    </a4j:commandLink>
+
+
+                  </h:panelGroup>
+                </f:facet>
+
+                <div id="drillDownPopup"></div>
+              </mdw:panel>
+            </c:forEach>
+          </mdw:panel></td>
+      </tr>
+    </table>
+  </h:form>
+</h:body>
+</html>
+

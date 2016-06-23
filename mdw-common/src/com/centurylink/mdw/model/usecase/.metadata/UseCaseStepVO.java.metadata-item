@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853321
+item-spec=4D4457413A314B3737545A205553454341534553544550564F204A4156412D2D323034323033343031312E412D5352433B32
+file-version=2
+checksum=5bd0b6cb81f52ff5b1db23e201982cde
+fetch-size=2558
+mtime=1393986797
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/usecase/UseCaseStepVO.java
+project=4D4457413A4D445741
+project-uid=31770127

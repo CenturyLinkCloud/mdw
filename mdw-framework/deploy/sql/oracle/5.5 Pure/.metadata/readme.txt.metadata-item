@@ -1,0 +1,13 @@
+version=10.2
+item-uid=56064673
+item-spec=4D4457413A314B3654583320524541444D45205458542D2D3537373131343834372E412D5352433B34
+file-version=4
+checksum=ce79c0765381703f4f14de8bf818abce
+fetch-size=781
+mtime=1432662251
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/5.5 Pure/readme.txt
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,15 @@
+// GET request to Services/Workgroups/A%20New%20Workgroup?app=appId
+{
+  "name": "A New Workgroup",
+  "description": "Description for a new workgroup.",
+  "users": [
+    {
+      "cuid": "aa56486",
+      "name": "Manoj Agrawal"
+    },
+    {
+      "cuid": "dxoakes",
+      "name": "Donald Oakes"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+  xmlns="http://mdw.centurylink.com/user" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  elementFormDefault="qualified" 
+  attributeFormDefault="unqualified"
+  targetNamespace="http://mdw.centurylink.com/user">
+
+  <xsd:element name="user">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="firstName" type="xsd:string" />
+        <xsd:element name="lastName" type="xsd:string" />
+        <xsd:element name="cuid" type="xsd:string" />
+        <xsd:element name="sapId" type="xsd:string" />
+        <xsd:element name="mnetId" type="xsd:string" />
+        <xsd:element name="type" type="xsd:string" />
+        <xsd:element name="attributes" type="Attributes" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="Attributes">
+    <xsd:sequence>
+      <xsd:element name="attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Attribute">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="name" type="xsd:string" use="required" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  
+
+</xsd:schema>

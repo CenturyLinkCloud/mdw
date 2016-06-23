@@ -1,0 +1,756 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.plugin.designer.model;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import com.centurylink.mdw.common.constant.WorkAttributeConstant;
+import com.centurylink.mdw.common.utilities.StringHelper;
+import com.centurylink.mdw.designer.display.DesignerDataModel;
+import com.centurylink.mdw.model.value.user.UserRoleVO;
+import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
+import com.centurylink.mdw.model.value.attribute.AttributeVO;
+import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.model.value.event.ExternalEventVO;
+import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.value.process.ProcessVO;
+import com.centurylink.mdw.model.value.task.TaskVO;
+import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
+import com.centurylink.mdw.model.value.user.UserGroupVO;
+import com.centurylink.mdw.plugin.PluginUtil;
+import com.centurylink.mdw.plugin.project.model.WorkflowProject;
+import com.centurylink.mdw.plugin.project.model.WorkflowProject.PersistType;
+
+/**
+ * Wraps a PackageVO.
+ */
+public class PackageVersion extends WorkflowElement implements Versionable, AttributeHolder, Comparable<PackageVersion>
+{
+  public static final String STATUS_EXPORTED = "Exported";
+  public static final String STATUS_NOT_EXPORTED = "NotExported";
+
+  private PackageVO packageVO;
+  public PackageVO getPackageVO() { return packageVO; }
+  public void setPackageVO(PackageVO pkgVO) { this.packageVO = pkgVO; }
+
+  public Entity getActionEntity()
+  {
+    return Entity.Package;
+  }
+
+  public void setWorkflowProject(WorkflowProject workflowProject)
+  {
+    super.setWorkflowProject(workflowProject);
+    this.setSchemaVersion(workflowProject.getDesignerProxy().getPluginDataAccess().getSchemaVersion());
+  }
+
+  public PackageVersion getPackage()
+  {
+    return this;
+  }
+
+  private List<PackageVersion> descendantPackageVersions;
+  public List<PackageVersion> getDescendantPackageVersions() { return descendantPackageVersions; }
+  public void setDescendantPackageVersions(List<PackageVersion> dpvs) { descendantPackageVersions = dpvs; }
+  public boolean hasDescendantPackageVersions()
+  {
+    return descendantPackageVersions != null && descendantPackageVersions.size() > 0;
+  }
+  public void addDescendantPackageVersion(PackageVersion packageVersion)
+  {
+    if (descendantPackageVersions == null)
+      descendantPackageVersions = new ArrayList<PackageVersion>();
+    descendantPackageVersions.add(packageVersion);
+    Collections.sort(descendantPackageVersions);
+  }
+  public void removeDescendantPackageVersion(PackageVersion packageVersion)
+  {
+    descendantPackageVersions.remove(packageVersion);
+    Collections.sort(descendantPackageVersions);
+  }
+
+  private List<ProcessVersion> processes = new ArrayList<ProcessVersion>();
+  public List<ProcessVersion> getProcesses() { return processes; }
+  public void setProcesses(List<ProcessVersion> processes) { this.processes = processes; }
+  public boolean hasProcesses()
+  {
+    return processes != null && processes.size() > 0;
+  }
+  public void addProcess(ProcessVersion processVersion)
+  {
+    if (isDefaultPackage())
+    {
+      ProcessVersion alreadyIn = getProcess(processVersion.getName());
+      if (alreadyIn != null)
+      {
+        if (processVersion.getVersionString().compareTo(alreadyIn.getVersionString()) > 0)
+        {
+          // becomes the new top level
+          removeProcess(alreadyIn);
+          processes.add(processVersion);
+          addProcessToVO(processVersion.getProcessVO());
+          processVersion.setPackage(this);
+        }
+      }
+      else
+      {
+        processes.add(processVersion);
+        addProcessToVO(processVersion.getProcessVO());
+        processVersion.setPackage(this);
+      }
+    }
+    else
+    {
+      processes.add(processVersion);
+      processVersion.setPackage(this);
+      addProcessToVO(processVersion.getProcessVO());
+    }
+    Collections.sort(processes);
+  }
+  public void removeProcess(ProcessVersion processVersion)
+  {
+    processes.remove(processVersion);
+    removeProcessFromVO(processVersion.getProcessVO());
+    Collections.sort(processes);
+  }
+  public ProcessVersion findMatchingProcess(ProcessVersion toCheck)
+  {
+    for (ProcessVersion processVersion : processes)
+    {
+      if (processVersion.getName().equals(toCheck.getName())
+          && processVersion.getVersion() == toCheck.getVersion())
+      {
+        return processVersion;
+      }
+    }
+    return null;  // not found
+  }
+  private void addProcessToVO(ProcessVO processVO)
+  {
+    if (packageVO.getProcesses() == null)
+      packageVO.setProcesses(new ArrayList<ProcessVO>());
+    packageVO.getProcesses().add(processVO);
+  }
+  private void removeProcessFromVO(ProcessVO processVO)
+  {
+    if (packageVO.getProcesses() != null)
+      packageVO.getProcesses().remove(processVO);
+  }
+
+  private List<ExternalEvent> externalEvents = new ArrayList<ExternalEvent>();
+  public List<ExternalEvent> getExternalEvents() { return externalEvents; }
+  public void setExternalEvents(List<ExternalEvent> externalEvents) { this.externalEvents = externalEvents; }
+  public boolean hasExternalEvents()
+  {
+    return externalEvents != null && externalEvents.size() > 0;
+  }
+  public void addExternalEvent(ExternalEvent externalEvent)
+  {
+    externalEvents.add(externalEvent);
+    externalEvent.setPackage(this);
+    addExternalEventToVO(externalEvent.getExternalEventVO());
+    Collections.sort(externalEvents);
+  }
+  public void removeExternalEvent(ExternalEvent externalEvent)
+  {
+    externalEvents.remove(externalEvent);
+    removeExternalEventFromVO(externalEvent.getExternalEventVO());
+    Collections.sort(externalEvents);
+  }
+  private void addExternalEventToVO(ExternalEventVO externalEventVO)
+  {
+    if (packageVO.getExternalEvents() == null)
+      packageVO.setExternalEvents(new ArrayList<ExternalEventVO>());
+    packageVO.getExternalEvents().add(externalEventVO);
+  }
+  private void removeExternalEventFromVO(ExternalEventVO externalEventVO)
+  {
+    if (packageVO.getExternalEvents() != null)
+      packageVO.getExternalEvents().remove(externalEventVO);
+  }
+
+  private List<TaskTemplate> taskTemplates = new ArrayList<TaskTemplate>();
+  public List<TaskTemplate> getTaskTemplates() { return taskTemplates; }
+  public void setTaskTemplates(List<TaskTemplate> taskTemplates) { this.taskTemplates = taskTemplates; }
+  public boolean hasTaskTemplates()
+  {
+    return taskTemplates != null && taskTemplates.size() > 0;
+  }
+  public void addTaskTemplate(TaskTemplate taskTemplate)
+  {
+    taskTemplates.add(taskTemplate);
+    taskTemplate.setPackage(this);
+    addTaskTemplateToVO(taskTemplate.getTaskVO());
+    Collections.sort(taskTemplates);
+  }
+  public void removeTaskTemplate(TaskTemplate taskTemplate)
+  {
+    taskTemplates.remove(taskTemplate);
+    removeTaskTemplateFromVO(taskTemplate.getTaskVO());
+    Collections.sort(taskTemplates);
+  }
+  private void addTaskTemplateToVO(TaskVO taskVO)
+  {
+    if (packageVO.getTaskTemplates() == null)
+      packageVO.setTaskTemplates(new ArrayList<TaskVO>());
+    packageVO.getTaskTemplates().add(taskVO);
+  }
+  private void removeTaskTemplateFromVO(TaskVO taskVO)
+  {
+    if (packageVO.getTaskTemplates() != null)
+      packageVO.getTaskTemplates().remove(taskVO);
+  }
+
+  private List<ActivityImpl> activityImpls = new ArrayList<ActivityImpl>();
+  public List<ActivityImpl> getActivityImpls() { return activityImpls; }
+  public void setActivityImpls(List<ActivityImpl> activityImpls) { this.activityImpls = activityImpls; }
+  public boolean hasActivityImpls()
+  {
+    return activityImpls != null && activityImpls.size() > 0;
+  }
+  public void addActivityImpl(ActivityImpl activityImpl)
+  {
+    activityImpls.add(activityImpl);
+    activityImpl.setPackage(this);
+    addActivityImplToVO(activityImpl.getActivityImplVO());
+    Collections.sort(activityImpls);
+  }
+  public void removeActivityImpl(ActivityImpl activityImpl)
+  {
+    activityImpls.remove(activityImpl);
+    removeActivityImplFromVO(activityImpl.getActivityImplVO());
+    Collections.sort(activityImpls);
+  }
+  private void addActivityImplToVO(ActivityImplementorVO activityImplVO)
+  {
+    if (packageVO.getImplementors() == null)
+      packageVO.setImplementors(new ArrayList<ActivityImplementorVO>());
+    packageVO.getImplementors().add(activityImplVO);
+  }
+  private void removeActivityImplFromVO(ActivityImplementorVO activityImplVO)
+  {
+    if (packageVO.getImplementors() != null)
+      packageVO.getImplementors().remove(activityImplVO);
+  }
+
+  private List<WorkflowAsset> workflowAssets = new ArrayList<WorkflowAsset>();
+  public List<WorkflowAsset> getWorkflowAssets() { return workflowAssets; }
+  public void setWorkflowAssets(List<WorkflowAsset> assets) { this.workflowAssets = assets; }
+  public boolean hasWorkflowAssets()
+  {
+    return workflowAssets != null && workflowAssets.size() > 0;
+  }
+  public void addWorkflowAsset(WorkflowAsset asset)
+  {
+    workflowAssets.add(asset);
+    asset.setPackage(this);
+    addRuleSetToVO(asset.getRuleSetVO());
+    Collections.sort(workflowAssets);
+  }
+  public void removeWorkflowAsset(WorkflowAsset asset)
+  {
+    workflowAssets.remove(asset);
+    removeRuleSetFromVO(asset.getRuleSetVO());
+    Collections.sort(workflowAssets);
+  }
+  private void addRuleSetToVO(RuleSetVO ruleSetVO)
+  {
+    if (packageVO.getRuleSets() == null)
+      packageVO.setRuleSets(new ArrayList<RuleSetVO>());
+    packageVO.getRuleSets().add(ruleSetVO);
+  }
+  private void removeRuleSetFromVO(RuleSetVO ruleSetVO)
+  {
+    if (packageVO.getRuleSets() != null)
+      packageVO.getRuleSets().remove(ruleSetVO);
+  }
+
+  private PackageVersion topLevelVersion;
+  public PackageVersion getTopLevelVersion() { return topLevelVersion; }
+  public void setTopLevelVersion(PackageVersion topLevelVersion) { this.topLevelVersion = topLevelVersion; }
+  public boolean isTopLevel()
+  {
+    // only top-level versions don't have a topLevelVersion
+    return topLevelVersion == null;
+  }
+
+  public String getVoXml()
+  {
+    return packageVO.getVoXML();
+  }
+  public void setVoXml(String voXml)
+  {
+    packageVO.setVoXML(voXml);
+  }
+
+  public Date getModifyDate()
+  {
+    return packageVO.getModifyDate();
+  }
+  public void setModifyDate(Date modDate)
+  {
+    packageVO.setModifyDate(modDate);
+  }
+  public String getFormattedModifyDate()
+  {
+    if (getModifyDate() == null)
+      return "";
+    return PluginUtil.getDateFormat().format(getModifyDate());
+  }
+
+  private boolean archived;
+  public boolean isArchived() { return archived; }
+  public void setArchived(boolean archived) { this.archived = archived; }
+
+  public boolean isReadOnly() { return isArchived(); }
+
+  public boolean hasInstanceInfo() { return false; }
+
+  private Folder archivedPackageFolder;
+  public Folder getFolder() { return archivedPackageFolder; }
+  public void setFolder(Folder apf) { this.archivedPackageFolder = apf; }
+
+  private List<Folder> childFolders = new ArrayList<Folder>();
+  public List<Folder> getChildFolders() { return childFolders; }
+  public void setChildFolders(List<Folder> folders) { this.childFolders = folders; }
+  public boolean hasChildFolders()
+  {
+    return childFolders != null && childFolders.size() > 0;
+  }
+
+  /**
+   * Synchronizes the process list on the PackageVO with the local list.
+   */
+  public void syncProcessVosFromProcessVersions()
+  {
+    List<ProcessVO> processVOs = new ArrayList<ProcessVO>();
+    for (ProcessVersion processVersion : processes)
+    {
+      processVOs.add(processVersion.getProcessVO());
+    }
+    packageVO.setProcesses(processVOs);
+  }
+
+  public void syncProcessVersionsFromProcessVos()
+  {
+    List<ProcessVersion> processVersions = new ArrayList<ProcessVersion>();
+    for (ProcessVO processVO : packageVO.getProcesses())
+    {
+      ProcessVersion processVersion = new ProcessVersion(getWorkflowProject(), processVO);
+      processVersion.setPackage(this);
+      processVersions.add(processVersion);
+    }
+    this.setProcesses(processVersions);
+  }
+
+  public PackageVersion(WorkflowProject wfProject, PackageVO packageVO)
+  {
+    this.packageVO = packageVO;
+    setWorkflowProject(wfProject);
+  }
+
+  public PackageVersion(PackageVersion cloneFrom)
+  {
+    this(cloneFrom.getWorkflowProject(), cloneFrom.getPackageVO());
+  }
+
+  public PackageVersion()
+  {
+    packageVO = new PackageVO();
+    packageVO.setRuleSets(new ArrayList<RuleSetVO>());
+  }
+
+  @Override
+  public String getTitle()
+  {
+    return "Package";
+  }
+
+  @Override
+  public Long getId()
+  {
+    return packageVO.getPackageId();
+  }
+
+  public String getIdLabel()
+  {
+    if (getWorkflowProject().getPersistType() == PersistType.Git)
+      return getId() + " (" + getHexId() + ")";
+    else
+      return String.valueOf(getId());
+  }
+
+  public String getName()
+  {
+    return packageVO.getPackageName();
+  }
+  public void setName(String name)
+  {
+    packageVO.setPackageName(name);
+  }
+
+  public boolean isDefaultPackage()
+  {
+    return getName().equals(PackageVO.DEFAULT_PACKAGE_NAME);
+  }
+
+  public ProcessVersion getProcess(String processName)
+  {
+    for (ProcessVersion processVersion : processes)
+    {
+      if (processVersion.getName().equals(processName))
+        return processVersion;
+    }
+    return null;
+  }
+
+  public WorkflowAsset getWorkflowAsset(String name)
+  {
+    for (WorkflowAsset asset : workflowAssets)
+    {
+      if (asset.getName().equals(name))
+        return asset;
+    }
+    return null;
+  }
+
+  public String getVersionString()
+  {
+    return packageVO.getVersionString();
+  }
+
+  public int getVersion()
+  {
+    return packageVO.getVersion();
+  }
+
+  public void setVersion(int v)
+  {
+    packageVO.setVersion(v);
+  }
+
+  /**
+   * TODO: Not tested, not used.  Added for Versionable Interface
+   */
+  public int getNextMajorVersion()
+  {
+    return (packageVO.getVersion()/1000 + 1) * 1000;
+  }
+
+  /**
+   * TODO: Not tested, not used.  Added for Versionable Interface
+   */
+  public int getNextMinorVersion()
+  {
+    return packageVO.getVersion()/1000 + (packageVO.getVersion()%1000 + 1) * 100;
+  }
+
+
+  public int parseVersion(String versionString) throws NumberFormatException
+  {
+    return PackageVO.parseVersion(versionString);
+  }
+
+  public String formatVersion(int version)
+  {
+    return PackageVO.formatVersion(version);
+  }
+
+  public int getSchemaVersion()
+  {
+    return packageVO.getSchemaVersion();
+  }
+
+  public void setSchemaVersion(int version)
+  {
+    packageVO.setSchemaVersion(version);
+  }
+
+
+
+  @Override
+  public String getLabel()
+  {
+    if (isDefaultPackage())
+    {
+      return getName();
+    }
+    else
+    {
+      return getName() + " " + getVersionLabel();
+    }
+  }
+
+  public String getFullPathLabel()
+  {
+    return getProjectPrefix() + getLabel();
+  }
+
+  @Override
+  public String getIcon()
+  {
+    return "package.gif";
+  }
+
+  public String getVersionLabel()
+  {
+    if (isDefaultPackage())
+      return "";
+    else
+      return "v" + getVersionString();
+  }
+
+  public boolean isExported()
+  {
+    return packageVO.isExported();
+  }
+
+  public void setExported(boolean exported)
+  {
+    packageVO.setExported(exported);
+  }
+
+  public String getDescription()
+  {
+    return packageVO.getPackageDescription();
+  }
+  public void setDescription(String description)
+  {
+    packageVO.setPackageDescription(description);
+  }
+
+  public AttributeVO getAttributeVO(String name)
+  {
+    if (packageVO.getAttributes() != null)
+    {
+      for (AttributeVO attribute : packageVO.getAttributes())
+      {
+        if (attribute.getAttributeName().equals(name))
+          return attribute;
+      }
+    }
+    return null;
+  }
+
+  public String getAttribute(String name)
+  {
+    AttributeVO attr = getAttributeVO(name);
+    return attr == null ? null : attr.getAttributeValue();
+  }
+
+  public void removeAttribute(String name)
+  {
+    if (packageVO.getAttributes() != null)
+    {
+      AttributeVO toRemove = null;
+      for (AttributeVO attribute : packageVO.getAttributes())
+      {
+        if (attribute.getAttributeName().equals(name))
+        {
+          toRemove = attribute;
+          break;
+        }
+      }
+      if (toRemove != null)
+        packageVO.getAttributes().remove(toRemove);
+    }
+  }
+
+  public void setAttribute(String name, String value)
+  {
+    if (packageVO.getAttributes() == null)
+      packageVO.setAttributes(new ArrayList<AttributeVO>());
+    AttributeVO attr = null;
+    for (AttributeVO attribute : packageVO.getAttributes())
+    {
+      if (attribute.getAttributeName().equals(name))
+      {
+        attr = attribute;
+        break;
+      }
+    }
+    if (attr == null)
+    {
+      attr = new AttributeVO(name, value);
+      packageVO.getAttributes().add(attr);
+    }
+    else
+    {
+      attr.setAttributeValue(value);
+    }
+  }
+
+  public String getVcsAssetPath()
+  {
+    if (!getWorkflowProject().isFilePersist())
+      throw new UnsupportedOperationException("Only for VCS Assets");
+
+    String projPath = getWorkflowProject().getVcsAssetPath();
+
+    if (isArchived())
+      return projPath + "/Archive/" + getLabel();
+    else
+      return projPath + "/" + getName().replace('.', '/');
+  }
+
+  public List<String> getVcsAssetMetaPaths()
+  {
+    if (!getWorkflowProject().isFilePersist())
+      throw new UnsupportedOperationException("Only for VCS Assets");
+
+    List<String> metaPaths = new ArrayList<String>();
+    String metaPkgPath = getVcsAssetPath() + "/.mdw";
+    metaPaths.add(metaPkgPath + "/package.xml");
+    metaPaths.add(metaPkgPath + "/versions");
+    return metaPaths;
+  }
+
+  public String getTags()
+  {
+    return getAttribute(WorkAttributeConstant.VERSION_TAG);
+  }
+
+  public void setTags(String tags)
+  {
+    setAttribute(WorkAttributeConstant.VERSION_TAG, tags);
+  }
+
+  public boolean workflowAssetNameExists(String name)
+  {
+    if (isDefaultPackage())
+      return getWorkflowProject().workflowAssetNameExists(name);
+
+    for (WorkflowAsset asset : workflowAssets)
+    {
+      if (asset.getName().equals(name))
+        return true;
+    }
+
+    return false;
+  }
+
+  public boolean isLatest()
+  {
+    for (PackageVersion pkg : getAllPackageVersions())
+    {
+      if (pkg.getVersion() > getVersion())
+        return false;
+    }
+    return true;
+  }
+
+  public List<PackageVersion> getAllPackageVersions()
+  {
+    List<PackageVersion> allVersions = new ArrayList<PackageVersion>();
+    for (PackageVersion pv : getWorkflowProject().getTopLevelPackages())
+    {
+      if (pv.getName().equals(getName()))
+        allVersions.add(pv);
+    }
+    for (WorkflowElement we : getWorkflowProject().getArchivedPackageFolder().getChildren())
+    {
+      PackageVersion pv = (PackageVersion) we;
+      if (pv.getName().equals(getName()) && pv.getDescendantPackageVersions() != null)
+        allVersions.addAll(pv.getDescendantPackageVersions());
+    }
+
+    Collections.sort(allVersions);
+    Collections.reverse(allVersions);
+    return allVersions;
+  }
+
+  public int compareTo(PackageVersion other)
+  {
+    int res = this.getName().compareToIgnoreCase(other.getName());
+    if (res != 0)
+      return res;
+    // versions sorted in descending order
+    return this.getVersion() - other.getVersion();
+  }
+
+  public boolean isHomogeneous(WorkflowElement we)
+  {
+    if (!super.isHomogeneous(we))
+      return false;
+
+    if (!(we instanceof PackageVersion))
+      return false;
+
+    PackageVersion other = (PackageVersion) we;
+    return (this.isTopLevel() == other.isTopLevel()
+            && this.isArchived() == other.isArchived());
+  }
+
+  public String getWelcomePagePath()
+  {
+    // TODO get welcome page from package properties
+    String welcomePage = "index.jsf";
+    return "/" + getName() + "/" + welcomePage;
+  }
+
+  // Versionable methods not currently supported
+  public String getLockingUser()
+  {
+    return null;
+  }
+  public void setLockingUser(String lockUser)
+  {
+  }
+  public String getExtension()
+  {
+    return null;
+  }
+
+  private String group;
+  public String getGroup()
+  {
+    return packageVO == null ? group : packageVO.getGroup();
+  }
+
+  public void setGroup(String group)
+  {
+    if (packageVO == null)
+      this.group = group;
+    else
+      packageVO.setGroup(group);
+  }
+
+  public DesignerDataModel getDesignerDataModel()
+  {
+    return getWorkflowProject().getDesignerDataModel();
+  }
+
+  public boolean isVisibleToUser()
+  {
+    if (StringHelper.isEmpty(getGroup()) || getGroup().equals(UserGroupVO.COMMON_GROUP))
+      return true;
+    return getDesignerDataModel().belongsToGroup(getGroup());
+  }
+
+  public boolean isUserAuthorized(String role)
+  {
+    if (getWorkflowProject().isFilePersist() && UserRoleVO.ASSET_DESIGN.equals(role))
+    {
+      if (getWorkflowProject().isRemote())
+      {
+        if (!getWorkflowProject().isGitVcs() || getWorkflowProject().getMdwVcsRepository().isGitProjectSync())
+          return false; // only unlocked remote projects can be edited
+      }
+      else
+      {
+        return true;
+      }
+    }
+    return getDesignerDataModel().userHasRole(getGroup(), role);
+  }
+
+  @Override
+  public String toString()
+  {
+    return getLabel();
+  }
+}

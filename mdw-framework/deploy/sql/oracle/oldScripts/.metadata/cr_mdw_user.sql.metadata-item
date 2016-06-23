@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44536389
+item-spec=4D4457413A314B36545833204352204D445720555345522053514C2D2D313133353437343437372E412D4441543B31
+file-version=1
+checksum=e81eb1fa4af9d1004eb36ac68681fe37
+fetch-size=441
+mtime=1329519401
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/oldScripts/cr_mdw_user.sql
+project=4D4457413A4D445741
+project-uid=31770127

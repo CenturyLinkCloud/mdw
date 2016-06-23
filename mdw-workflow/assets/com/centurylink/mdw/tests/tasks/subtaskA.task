@@ -1,0 +1,5 @@
+<task:taskTemplate logicalId="subtaskA" category="GEN" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>Subtask A</task:name>
+  <task:attribute name="FormName">Autoform</task:attribute>
+  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
+</task:taskTemplate>

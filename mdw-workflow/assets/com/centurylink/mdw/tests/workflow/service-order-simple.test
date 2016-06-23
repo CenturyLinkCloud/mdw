@@ -1,0 +1,14 @@
+// service-order-simple
+masterRequestId = System.currentTimeMillis();
+send message("REST") {
+    payload = '''<ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
+<Action Name="RegressionTest">
+<Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+<Parameter name="ProcessName">MDWTestMainProcess</Parameter>
+<Parameter name="processCase">ServiceOrder</Parameter>
+<Parameter name="order"><![CDATA[<Order><orderId>30/KQGS/662822//CTRL</orderId></Order>]]></Parameter>
+</Action>
+</ser:ActionRequest>'''
+}
+wait process("MDWTestMainProcess")
+verify process("MDWTestMainProcess")

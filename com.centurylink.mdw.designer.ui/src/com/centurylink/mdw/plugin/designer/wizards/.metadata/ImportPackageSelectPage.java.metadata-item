@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70272679
+item-spec=4D4457413A314B3848384C20494D504F52545041434B41474553454C45435450414745204A4156412D2D383230303736312E412D5352433B37
+file-version=7
+checksum=01eda4e6dcec1e009cee15d7d184f14d
+fetch-size=12612
+mtime=1462392163
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/ImportPackageSelectPage.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

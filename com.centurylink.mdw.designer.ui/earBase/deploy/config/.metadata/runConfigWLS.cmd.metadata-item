@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44582337
+item-spec=4D4457413A314B3848384C2052554E434F4E464947574C5320434D442D2D31363632343133322E412D5352433B31
+file-version=1
+checksum=9e4c2a29f9828cf5d73ea7e2a38fdb53
+fetch-size=186
+mtime=1319312558
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=earBase/deploy/config/runConfigWLS.cmd
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

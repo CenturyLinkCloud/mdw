@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854771
+item-spec=4D4457413A314B37435A3020434F4E4E454354494F4E504F4F4C524547495354524154494F4E204A4156412D313636393832343733342E412D5352433B32
+file-version=2
+checksum=4a260b6d0dc26f81c97b7d0cd471ec6d
+fetch-size=5985
+mtime=1393990167
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/pooling/ConnectionPoolRegistration.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,29 @@
+process: # 13703
+  name: TaskIndexTesting
+  instance: 1
+  activity: # 1 "2016-02-23 09:46:11"
+    name: Start
+    status: Completed
+  activity: # 5 "2016-02-23 09:46:11"
+    name: |
+      Custom
+      ?
+    status: Completed
+  activity: # 4 "2016-02-23 09:46:11"
+    name: An AutoForm Task
+    status: Completed
+  activity: # 2 "2016-02-23 09:46:44"
+    name: Stop
+    status: Completed
+  variable: # 20801
+    name: dateVar
+    value: ${laterToday}
+  variable: # 20799
+    name: intVar
+    value: 1001
+  variable: # 20802
+    name: isCustom
+    value: false
+  variable: # 20800
+    name: stringVar
+    value: after

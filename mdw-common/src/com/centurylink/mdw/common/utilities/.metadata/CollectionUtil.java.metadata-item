@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852964
+item-spec=4D4457413A314B3737545A20434F4C4C454354494F4E5554494C204A4156412D313933393231323130322E412D5352433B32
+file-version=2
+checksum=35741b455e5b698f7906c85b9a6ea075
+fetch-size=769
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/CollectionUtil.java
+project=4D4457413A4D445741
+project-uid=31770127

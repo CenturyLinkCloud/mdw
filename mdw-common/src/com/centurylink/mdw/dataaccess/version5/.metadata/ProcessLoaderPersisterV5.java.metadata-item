@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68561068
+item-spec=4D4457413A314B3737545A2050524F434553534C4F414445525045525349535445525635204A4156412D2D323038373036353535362E412D5352433B3437
+file-version=47
+checksum=f1e7d4cef4017fdc62cd2f3f82562719
+fetch-size=60439
+mtime=1456421229
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/dataaccess/version5/ProcessLoaderPersisterV5.java
+project=4D4457413A4D445741
+project-uid=31770127

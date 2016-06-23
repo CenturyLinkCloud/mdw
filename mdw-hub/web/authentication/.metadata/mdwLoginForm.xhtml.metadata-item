@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67363275
+item-spec=4D4457413A314B37595142204D44574C4F47494E464F524D205848544D4C2D31393034313236303358323538323958322E412D5352433B31
+file-version=1
+checksum=04861d54d2f78269cc260390c5886d56
+fetch-size=1940
+mtime=1452714159
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=web/authentication/mdwLoginForm.xhtml
+project=4D4457413A4D445741
+project-uid=31770127

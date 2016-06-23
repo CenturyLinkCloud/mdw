@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="com.centurylink.mdw.plugin.launch.Process">
+<stringAttribute key="externalEventRequest" value=""/>
+<booleanAttribute key="launchViaExternalEvent" value="false"/>
+<intAttribute key="logWatcherPort" value="7181"/>
+<stringAttribute key="masterRequestId" value="com.centurylink.mdw.plugin.User@4a14227a~160210-141000"/>
+<booleanAttribute key="nofifyProcess" value="false"/>
+<stringAttribute key="notifyProcessEvent" value=""/>
+<stringAttribute key="notifyProcessRequest" value=""/>
+<booleanAttribute key="org.eclipse.jdt.launching.ALLOW_TERMINATE" value="false"/>
+<mapAttribute key="org.eclipse.jdt.launching.CONNECT_MAP">
+<mapEntry key="hostname" value="localhost"/>
+<mapEntry key="port" value="8000"/>
+</mapAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value=""/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_CONNECTOR_ID" value="org.eclipse.jdt.launching.socketAttachConnector"/>
+<stringAttribute key="owner" value="Designer"/>
+<stringAttribute key="ownerId" value="1455138600920"/>
+<booleanAttribute key="processInstanceLiveView" value="true"/>
+<stringAttribute key="processName" value="BamTest"/>
+<stringAttribute key="processVersion" value="0.1"/>
+<stringAttribute key="responseVarName" value=""/>
+<booleanAttribute key="showLogsInConsole" value="true"/>
+<booleanAttribute key="synchronous" value="false"/>
+<mapAttribute key="variableValues"/>
+<stringAttribute key="workflowProject" value="mdw-workflow"/>
+</launchConfiguration>

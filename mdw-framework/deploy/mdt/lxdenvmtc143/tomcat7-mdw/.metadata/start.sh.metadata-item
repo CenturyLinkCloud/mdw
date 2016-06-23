@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65747171
+item-spec=4D4457413A314B365458332053544152542053482D2D3136393534333731392E412D4441543B33
+file-version=3
+checksum=d77a499cab6f5e30e47115ac828af7c4
+fetch-size=1566
+mtime=1446857854
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/mdt/lxdenvmtc143/tomcat7-mdw/start.sh
+project=4D4457413A4D445741
+project-uid=31770127

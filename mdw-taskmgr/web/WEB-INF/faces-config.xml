@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd" version="2.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+  <name>MDWTaskManagerWeb</name>
+
+  <lifecycle>
+    <phase-listener>com.centurylink.mdw.taskmgr.jsf.phase.NavParameterPhaseListener</phase-listener>  
+    <phase-listener>com.centurylink.mdw.taskmgr.jsf.phase.ExcelExportPhaseListener</phase-listener>
+    <phase-listener>com.centurylink.mdw.taskmgr.jsf.phase.TaskTemplatePhaseListener</phase-listener>
+    <phase-listener>com.centurylink.mdw.taskmgr.jsf.phase.ListRefreshPhaseListener</phase-listener>
+    <phase-listener>com.centurylink.mdw.taskmgr.jsf.phase.TaskListScopePhaseListener</phase-listener>
+    <phase-listener>com.centurylink.mdw.taskmgr.jsf.phase.ProcessStartPhaseListener</phase-listener>
+    <phase-listener>com.centurylink.mdw.web.jsf.phase.EngineCallbackPhaseListener</phase-listener>
+  </lifecycle>
+
+  <application>
+    <message-bundle>MDWTaskManagerCustomMessages</message-bundle>
+    <locale-config>
+      <default-locale>en_US</default-locale>
+      <supported-locale>en</supported-locale>
+    </locale-config>
+  </application>
+ 
+  <!-- task action component -->
+  <component>
+    <component-type>com.centurylink.mdw.taskmgr.jsf.components.TaskAction</component-type>
+    <component-class>com.centurylink.mdw.taskmgr.jsf.components.TaskAction</component-class>
+  </component>
+  <render-kit>
+    <renderer>
+      <component-family>javax.faces.Input</component-family>
+      <renderer-type>com.centurylink.mdw.taskmgr.jsf.renderers.TaskActionRenderer</renderer-type>
+      <renderer-class>com.centurylink.mdw.taskmgr.jsf.renderers.TaskActionRenderer</renderer-class>
+    </renderer>
+  </render-kit>
+  
+  <!-- managed beans (note: 'viewUI' is added programmatically at app scope -->
+  <managed-bean>
+    <managed-bean-name>listManager</managed-bean-name>
+    <managed-bean-class>
+      com.centurylink.mdw.taskmgr.ui.list.ListManager
+    </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>filterManager</managed-bean-name>
+    <managed-bean-class>
+      com.centurylink.mdw.taskmgr.ui.filter.FilterManager
+    </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>detailManager</managed-bean-name>
+    <managed-bean-class>
+      com.centurylink.mdw.taskmgr.ui.detail.DetailManager
+    </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>tasks</managed-bean-name>
+    <managed-bean-class>
+      com.centurylink.mdw.taskmgr.ui.tasks.Tasks
+    </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskNames</managed-bean-name>
+    <managed-bean-class>
+      com.centurylink.mdw.taskmgr.ui.tasks.TaskNames
+    </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskStatuses</managed-bean-name>
+    <managed-bean-class>
+      com.centurylink.mdw.taskmgr.ui.tasks.TaskStatuses
+    </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskAction</managed-bean-name>
+    <managed-bean-class>
+      com.centurylink.mdw.taskmgr.ui.tasks.action.TaskAction
+    </managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskCategories</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.categories.TaskCategories
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>processes</managed-bean-name>
+    <managed-bean-class>
+      com.centurylink.mdw.taskmgr.ui.process.Processes
+    </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskNotesItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.notes.TaskNotesItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>newTask</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.create.TaskCreate
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  
+  <managed-bean>
+    <managed-bean-name>task</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.FullTaskInstance
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>process</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.process.FullProcessInstance
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskData</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.detail.TaskData
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <!-- used for launching processes via the generic launch page -->
+  <managed-bean>
+    <managed-bean-name>newProcessInstance</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.process.FullProcessInstance
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+    <managed-property>
+      <property-name>masterRequestId</property-name>
+      <value>#{process.generatedMasterRequestId}</value>
+    </managed-property>    
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskAttachmentItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.attachments.TaskAttachmentItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.action.TaskActionController
+      </managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskNotesActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.notes.TaskNotesActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskAttachmentsActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.attachments.TaskAttachmentsActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskCreationActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.create.TaskCreationActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>processLaunchActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.process.ProcessLaunchActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>processStartActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.process.ProcessStartActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>workgroupActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.workgroups.WorkgroupActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>rolesActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.roles.RolesActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>userActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.user.UserActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskCategoryActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.categories.TaskCategoryActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>userItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.user.UserItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.TaskItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+   <managed-bean-name>taskCategoryItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.categories.TaskCategoryItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+   <managed-bean>
+   <managed-bean-name>taskAttributeItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.attributes.TaskAttributeItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+   <managed-bean>
+   <managed-bean-name>taskVariableItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.variable.TaskVariableItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>workgroupItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.workgroups.WorkgroupItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+ <managed-bean>
+    <managed-bean-name>assetsItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.workgroups.AssetsItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  
+  <managed-bean>
+    <managed-bean-name>roleItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.roles.RoleItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>taskListScopeActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.list.TaskListScopeActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+    <managed-property>
+      <property-name>remoteTaskRoot</property-name>
+      <value>/facelets/</value>
+    </managed-property>    
+    <managed-property>
+      <property-name>adminPage</property-name>
+      <value>/admin/groups.jsf</value>
+    </managed-property>    
+    <managed-property>
+      <property-name>activeTabParam</property-name>
+      <value>tmTabbedPage</value>
+    </managed-property>    
+    <managed-property>
+      <property-name>activeMenuItemParam</property-name>
+      <value>mdwSelectedMenuItem</value>
+    </managed-property>    
+    <managed-property>
+      <property-name>compatibilityMode</property-name>
+      <value>true</value>
+    </managed-property>    
+  </managed-bean>
+  
+  <managed-bean>
+    <managed-bean-name>taskVariableActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.variable.TaskVariableActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>arrayDataItemActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.detail.ArrayDataItemActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>arrayDataElement</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.detail.ArrayDataElement
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>webUtil</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.web.util.WebUtil
+      </managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>error</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.web.ui.UIError
+      </managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>  
+
+  <managed-bean>
+    <managed-bean-name>externalEventDetailActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.event.ExternalEventDetailActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  
+  <managed-bean>
+    <managed-bean-name>processDesignerView</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.process.ProcessDesignerView
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>userPrefs</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.user.UserPreferences
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>  
+
+  <managed-bean>
+    <managed-bean-name>ldapLogin</managed-bean-name>
+    <managed-bean-class>com.centurylink.mdw.web.ldap.LdapLogin</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>workgroupTree</managed-bean-name>
+    <managed-bean-class>com.centurylink.mdw.taskmgr.ui.workgroups.WorkgroupTree</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  
+  <managed-bean>
+    <managed-bean-name>tasksWorkgroupTree</managed-bean-name>
+    <managed-bean-class>com.centurylink.mdw.taskmgr.ui.tasks.list.TasksWorkgroupTree</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>reportMetrics</managed-bean-name>
+    <managed-bean-class>com.centurylink.mdw.taskmgr.ui.reports.ReportMetrics</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  
+  <managed-bean>
+    <managed-bean-name>userReport</managed-bean-name>
+    <managed-bean-class>com.centurylink.mdw.taskmgr.ui.user.UserReport</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+  
+  <managed-bean>
+    <managed-bean-name>mdwPackage</managed-bean-name>
+    <managed-bean-class>com.centurylink.mdw.model.value.process.PackageVO</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>orderAttachmentItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.orders.attachments.OrderAttachmentItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  
+  <managed-bean>
+    <managed-bean-name>orderAttachmentsActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.orders.attachments.OrderAttachmentsActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>orderNotesItem</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.orders.notes.OrderNotesItem
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  
+  <managed-bean>
+    <managed-bean-name>orderNotesActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.orders.notes.OrderNotesActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  
+  <managed-bean>
+    <managed-bean-name>taskTemplateActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.template.TaskTemplateActionController
+      </managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  
+  <managed-bean>
+    <managed-bean-name>taskTemplateListController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.tasks.template.TaskTemplateListController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>  
+  
+  <managed-bean>
+    <managed-bean-name>assetsActionController</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.taskmgr.ui.workgroups.AssetsActionController
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>listSearch</managed-bean-name>
+      <managed-bean-class>
+        com.centurylink.mdw.web.ui.list.ListSearch
+      </managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>  
+
+  <!-- use redirect tag for main navigation rules (corresponding to
+  tab page elements) so that URLs for these actions will be known to
+  the browser and will behave correctly when bookmarked -->
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_login</from-outcome>
+      <to-view-id>/facelets/authentication/login.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_logout</from-outcome>
+      <to-view-id>/facelets/authentication/logout.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_user</from-outcome>
+      <to-view-id>/admin/userInfo.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_myTasks</from-outcome>
+      <to-view-id>/facelets/tasks/myTasks.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_workgroupTasks</from-outcome>
+      <to-view-id>/facelets/tasks/workgroupTasks.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+  
+   <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_processes</from-outcome>
+      <to-view-id>/facelets/process/launch.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>  
+
+   <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_events</from-outcome>
+      <to-view-id>/facelets/events/events.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_admin</from-outcome>
+      <to-view-id>/admin/groups.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_users</from-outcome>
+      <to-view-id>/admin/users.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_metrics</from-outcome>
+      <to-view-id>/metrics/metricsBirt.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_createTask</from-outcome>
+      <to-view-id>/facelets/tasks/createTask.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_taskDetail</from-outcome>
+      <to-view-id>/facelets/tasks/taskDetail.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_taskDetailRedirect</from-outcome>
+      <to-view-id>/facelets/tasks/taskDetail.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_taskForm</from-outcome>
+      <to-view-id>/facelets/tasks/taskForm.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_myTaskForm</from-outcome>
+      <to-view-id>/facelets/tasks/taskForm.jsf?tmTabbedPage=myTasksTab</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_taskForm_redirect</from-outcome>
+      <to-view-id>/facelets/tasks/taskForm.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_myTaskDetail</from-outcome>
+      <to-view-id>/facelets/tasks/taskDetail.jsf?tmTabbedPage=myTasksTab</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_workgroupTaskDetail</from-outcome>
+      <to-view-id>/facelets/tasks/taskDetail.jsf?tmTabbedPage=workgroupTasksTab</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_taskNotes</from-outcome>
+      <to-view-id>/facelets/tasks/taskNotes.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_taskAttachments</from-outcome>
+      <to-view-id>/facelets/tasks/taskAttachments.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_taskHistory</from-outcome>
+      <to-view-id>/facelets/tasks/taskHistory.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_tasksForOrder</from-outcome>
+      <to-view-id>/facelets/orders/tasksForOrder.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_processList</from-outcome>
+      <to-view-id>/facelets/process/instanceList.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_processLaunch</from-outcome>
+      <to-view-id>/facelets/process/launch.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>  
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_processStart</from-outcome>
+      <to-view-id>/facelets/process/start.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>  
+
+  <!-- default orderDetail goes to order task list -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_orderDetail</from-outcome>
+      <to-view-id>/facelets/orders/tasksForOrder.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_orderWorkflow</from-outcome>
+      <to-view-id>/facelets/orders/orderWorkflow.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_taskWorkflow</from-outcome>
+      <to-view-id>/facelets/tasks/taskWorkflow.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_userReport</from-outcome>
+      <to-view-id>/facelets/reports/userReport.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_taskReport</from-outcome>
+      <to-view-id>/facelets/reports/taskReport.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_eventDetail</from-outcome>
+      <to-view-id>/facelets/events/eventDetail.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_taskCategoryReport</from-outcome>
+      <to-view-id>/facelets/reports/taskCategoryReport.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_workgroups</from-outcome>
+      <to-view-id>/facelets/admin/workgroups.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_roles</from-outcome>
+      <to-view-id>/facelets/admin/roles.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_users</from-outcome>
+      <to-view-id>/facelets/admin/users.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_taskCategory</from-outcome>
+      <to-view-id>/facelets/admin/taskCategories.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_tasks</from-outcome>
+      <to-view-id>/facelets/admin/tasks.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_error</from-outcome>
+      <to-view-id>/facelets/error.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_confirm</from-outcome>
+      <to-view-id>/facelets/confirm.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_form</from-outcome>
+      <to-view-id>/form.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_auditLog</from-outcome>
+      <to-view-id>/facelets/admin/auditLog.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_orderAttachments</from-outcome>
+      <to-view-id>/facelets/orders/orderAttachments.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>go_orderNotes</from-outcome>
+      <to-view-id>/facelets/orders/orderNotes.jsf</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- validators -->
+  <validator>
+    <validator-id>attachmentValidator</validator-id>
+    <validator-class>com.centurylink.mdw.taskmgr.jsf.validators.AttachmentValidator</validator-class>
+  </validator>
+
+  <validator>
+    <validator-id>pastDateValidator</validator-id>
+    <validator-class>com.centurylink.mdw.taskmgr.jsf.validators.PastDateValidator</validator-class>
+  </validator>
+
+  <validator>
+    <validator-id>formDateValidator</validator-id>
+    <validator-class>com.centurylink.mdw.taskmgr.jsf.validators.FormDateValidator</validator-class>
+  </validator>
+  
+  <!-- converters --> 
+  <converter>
+    <converter-id>stringDataConverter</converter-id>
+    <converter-class>com.centurylink.mdw.taskmgr.jsf.converters.StringDataConverter</converter-class>
+  </converter>
+
+  <converter>
+    <converter-id>taskActionConverter</converter-id>
+    <converter-class>com.centurylink.mdw.taskmgr.jsf.converters.TaskActionConverter</converter-class>
+  </converter>
+  
+  <converter>
+    <converter-id>documentConverter</converter-id>
+    <converter-class>com.centurylink.mdw.taskmgr.jsf.converters.DocumentConverter</converter-class>
+  </converter>
+
+</faces-config>

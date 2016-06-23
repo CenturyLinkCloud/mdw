@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Server
+    port="9340">
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  <Listener className="org.apache.catalina.core.JasperListener" />
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.ServerLifecycleListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <GlobalNamingResources>
+    <Environment
+      name="mdwappValue"
+      type="java.lang.Integer"
+      value="30"/>
+    <Resource
+      auth="Container"
+      description="User database that can be updated and saved"
+      name="UserDatabase"
+      type="org.apache.catalina.UserDatabase"
+      pathname="conf/mdwapp-users.xml"
+      factory="org.apache.catalina.users.MemoryUserDatabaseFactory"/>
+  </GlobalNamingResources>
+  <Service
+      name="Catalina">
+    <Executor name="tomcatThreadPool" namePrefix="catalina-exec-" minSpareThreads="10" maxThreads="150"/>
+    <Connector
+        port="9341"
+        redirectPort="9343"
+        executor="tomcatThreadPool"
+        connectionTimeout="20000"
+        maxHttpHeaderSize="8192"
+        proxyName="lxdenvmtc144.dev.qintra.com"
+        scheme="https"
+        secure="true">
+    </Connector>
+    <Connector
+        protocol="org.apache.coyote.http11.Http11Protocol"
+        port="9343"
+        executor="tomcatThreadPool"
+        connectionTimeout="600000"
+        redirectPort="9343"
+        clientAuth="false"
+        SSLEnabled="true"
+        sslProtocol="TLS"
+        scheme="https" secure="true"
+        keyAlias="local"
+        keystoreFile="/foss/foss-ews/certs/foss.dev.qintra.com.keystore"
+        keypass="fossdev"
+        maxHttpHeaderSize="8192">
+    </Connector>
+    <Connector
+        port="9342"
+        redirectPort="9343"
+        protocol="AJP/1.3"
+        executor="tomcatThreadPool"
+        emptySessionPath="true"
+        enableLookups="false"
+        connectionTimeout="600000">
+    </Connector>
+    <Engine
+        defaultHost="localhost"
+        jvmRoute="${jvmRoute}"
+        name="Catalina">
+      <Host
+          appBase="/foss/foss-ews/instances/mdwapp/current/mdw/apps"
+          name="localhost"
+          autoDeploy="false">
+        <Realm className="org.apache.catalina.realm.JAASRealm"
+          appName="cleartrust_login"
+          roleClassNames="com.qwest.appsec.CTRole"
+          useContextClassLoader="false"
+          userClassNames="com.qwest.appsec.CTUser"/>
+        <Valve className="org.apache.catalina.valves.AccessLogValve"
+          prefix="mdwapp_access"
+          buffered="false"
+          pattern="common"
+          rotatable="false"
+          suffix=".log"/>
+        <!--
+        <Valve className="org.apache.catalina.valves.RemoteIpValve"
+          remoteIpHeader="X-Forwarded-For"
+          remoteIpProxiesHeader="X-Forwarded-By"
+          protocolHeader="X-Forwarded-Proto" />
+        -->
+        <!--
+        <Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"
+            channelSendOptions="6">
+
+        <Manager className="org.apache.catalina.ha.session.BackupManager"
+            expireSessionsOnShutdown="false"
+            notifyListenersOnReplication="true"
+            mapSendOptions="6"/>
+
+         <Channel className="org.apache.catalina.tribes.group.GroupChannel">
+         <Membership className="org.apache.catalina.tribes.membership.McastService"
+             address="239.193.40.230"
+             port="9345"
+             frequency="1000"
+             dropTime="30000"/>
+         <Receiver className="org.apache.catalina.tribes.transport.nio.NioReceiver"
+             address="auto"
+             port="9346"
+             selectorTimeout="100"
+             maxThreads="6"/>
+
+         <Sender className="org.apache.catalina.tribes.transport.ReplicationTransmitter">
+             <Transport className="org.apache.catalina.tribes.transport.nio.PooledParallelSender"/>
+         </Sender>
+            <Interceptor className="org.apache.catalina.tribes.group.interceptors.TcpFailureDetector"/>
+            <Interceptor className="org.apache.catalina.tribes.group.interceptors.MessageDispatch15Interceptor"/>
+            <Interceptor className="org.apache.catalina.tribes.group.interceptors.ThroughputInterceptor"/>
+          </Channel>
+
+          <Valve className="org.apache.catalina.ha.tcp.ReplicationValve"
+                 filter=".*\.gif;.*\.js;.*\.jpg;.*\.png;.*\.htm;.*\.html;.*\.css;.*\.txt;"/>
+
+          <Valve className="org.apache.catalina.ha.session.JvmRouteBinderValve"/>
+
+          <ClusterListener className="org.apache.catalina.ha.session.JvmRouteSessionIDBinderListener"/>
+          <ClusterListener className="org.apache.catalina.ha.session.ClusterSessionListener"/>
+
+        </Cluster>
+        -->
+      </Host>
+    </Engine>
+  </Service>
+</Server>

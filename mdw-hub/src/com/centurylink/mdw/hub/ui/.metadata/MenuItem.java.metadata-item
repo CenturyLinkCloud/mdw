@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68586324
+item-spec=4D4457413A314B37595142204D454E554954454D204A4156412D31393432333332323158313039383658322E412D5352433B31
+file-version=1
+checksum=0674666e72a1c6ed4eea9b63b37a69b0
+fetch-size=1441
+mtime=1456528260
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/ui/MenuItem.java
+project=4D4457413A4D445741
+project-uid=31770127

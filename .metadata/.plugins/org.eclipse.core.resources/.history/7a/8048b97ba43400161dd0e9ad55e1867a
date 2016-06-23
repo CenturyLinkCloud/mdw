@@ -1,0 +1,14 @@
+PROC 1 # 10389
+ACT Start Completed # 11187 "2014-12-11 18:50:37"
+ACT GetEmployee Completed # 11188 "2014-12-11 18:50:42"
+ACT Stop Completed # 11189 "2014-12-11 18:50:42"
+VAR request <<=====
+<EmployeeLookup>
+  <id>dxoakes</id>
+</EmployeeLookup>
+=====>> # 10951
+VAR response <<=====
+<EmployeeLookup>
+  <id>dxoakes</id>
+</EmployeeLookup>
+=====>> # 10952

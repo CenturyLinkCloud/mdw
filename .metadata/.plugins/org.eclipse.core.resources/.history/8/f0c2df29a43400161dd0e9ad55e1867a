@@ -1,0 +1,4 @@
+<bpm:externalEventHandler xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:EventName>GetEmployee</bpm:EventName>
+  <bpm:EventHandler>START_PROCESS?ProcessName=FindEmployee</bpm:EventHandler>
+</bpm:externalEventHandler>

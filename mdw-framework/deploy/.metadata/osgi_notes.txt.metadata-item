@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69534531
+item-spec=4D4457413A314B36545833204F534749204E4F544553205458542D2D3531323630353237302E412D5352433B3130
+file-version=10
+checksum=9cc0a9b138ce9def469310e6fb094a5f
+fetch-size=6620
+mtime=1458852482
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/osgi_notes.txt
+project=4D4457413A4D445741
+project-uid=31770127

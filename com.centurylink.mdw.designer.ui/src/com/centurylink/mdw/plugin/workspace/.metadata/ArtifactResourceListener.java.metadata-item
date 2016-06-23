@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549673
+item-spec=4D4457413A314B3848384C2041525449464143545245534F555243454C495354454E4552204A4156412D2D313030313532323838372E412D5352433B35
+file-version=5
+checksum=0301d40aa7bcb77121c07f489192b1a6
+fetch-size=7374
+mtime=1453327337
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/workspace/ArtifactResourceListener.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

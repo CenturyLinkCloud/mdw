@@ -1,0 +1,39 @@
+process: # 1480
+  name: ManualTaskServices
+  instance: 1
+  activity: # 1 "2016-04-15 22:51:46"
+    name: Start
+    status: Completed
+  activity: # 4 "2016-04-15 22:51:46"
+    name: |
+      Assign
+      Obj Var
+    status: Completed
+  activity: # 3 "2016-04-15 22:51:46"
+    name: |
+      AutoForm Task 
+      for Service Access
+    status: Waiting
+  variable: # 3172
+    name: dateVar
+    value: Fri Apr 01 14:36:00 MDT 2016
+  variable: # 3169
+    name: docVar
+    value: |
+      <full>
+        <document content="xml"/>
+      </full>
+  variable: # 3170
+    name: jaxbVar
+    value: |
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <TaskJaxb attributeOne="attrOneValue" attributeTwo="attrTwoValue">
+          <elementOne>elementOneValue</elementOne>
+          <elementTwo>elementTwoValue</elementTwo>
+      </TaskJaxb>
+  variable: # 3173
+    name: objectVar
+    value: rO0ABXNyACtjb20uY2VudHVyeWxpbmsubWR3LnRlc3RzLnRhc2tzLk15VGFza01vZGVsAAAAAAAAAAICAAFMAAp0YXNrbWFzdGVydAASTGphdmEvbGFuZy9TdHJpbmc7eHB0AAVNYW5vag==
+  variable: # 3171
+    name: stringVar
+    value: Hello

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62585206
+item-spec=4D4457413A314B3848384C20504147454C4554544142204A4156412D2D313632383936353235332E412D5352433B34
+file-version=4
+checksum=3d1072a9bff3da9cc03d11d2abe320c1
+fetch-size=2944
+mtime=1436922680
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/properties/PageletTab.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

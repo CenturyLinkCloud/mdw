@@ -1,0 +1,11 @@
+// PUT Request to Services/Solutions/dons1002?app=appId
+{
+  "created": "11-17-2015 20:40:36",
+  "createdBy": "dxoakes",
+  "description": "Description for Dons Other Solution",
+  "id": "dons1002",
+  "name": "Dons Other Solution",
+  "ownerId": "dxoakes",
+  "ownerType": "USER",
+  "values": {"Opportunity ID": "12345"}
+}

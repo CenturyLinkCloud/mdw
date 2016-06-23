@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<mdw:html manifest="#{manifest}"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <h:head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <title>#{title == null ? "MDWHub" : title}</title>
+    <link rel="shortcut icon" href="/#{webUtil.webContextRoot}/images/mdw.ico" />
+  </h:head>
+  
+  <body class="mdw_body">
+
+    <!-- RichFaces bug https://community.jboss.org/message/614558 -->
+    <t:stylesheet path="/css/mdw.css" />
+    <t:stylesheet path="/css/mdw-hub.css" />
+    
+    <ui:insert name="header">
+      <div class="mdw_banner" style="width:#{layoutWidth}px">
+        <ui:include src="header.xhtml" />
+      </div>
+    </ui:insert>
+
+    <ui:insert name="userInfo" />
+
+    <ui:insert name="mainContent" />
+
+    <ui:insert name="content" />
+
+    <ui:insert name="footer">
+      <div style="width:#{layoutWidth}px">
+        <ui:include src="footer.xhtml" />
+      </div>
+    </ui:insert>
+
+    <ui:debug hotkey="x" rendered="#{webUtil.properties['MDWWeb/facelets.debug']}" />
+
+  </body>
+
+</mdw:html>

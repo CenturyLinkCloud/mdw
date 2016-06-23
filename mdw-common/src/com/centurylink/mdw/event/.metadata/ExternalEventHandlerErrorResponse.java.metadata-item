@@ -1,0 +1,13 @@
+version=10.2
+item-uid=51471215
+item-spec=4D4457413A314B3737545A2045585445524E414C4556454E5448414E444C45524552524F52524553504F4E5345204A4156412D313333343334303332332E412D5352433B31
+file-version=1
+checksum=5f6fda02ff4ef7d580a882562137b373
+fetch-size=1755
+mtime=1415722726
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/event/ExternalEventHandlerErrorResponse.java
+project=4D4457413A4D445741
+project-uid=31770127

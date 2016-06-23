@@ -1,0 +1,35 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="TestAdapterStub" version="0.5" description="">
+    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=49,y=112,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=469,y=112,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="GetEmployee" Implementation="com.centurylink.mdw.workflow.adapter.rest.RestfulServiceAdapter">
+      <bpm:Attribute Name="DO_LOGGING" Value="True"/>
+      <bpm:Attribute Name="EndpointUri" Value="http://purposely_bogus:10001/MDWHub/Services/REST"/>
+      <bpm:Attribute Name="HttpMethod" Value="POST"/>
+      <bpm:Attribute Name="REQUEST_VARIABLE" Value="request"/>
+      <bpm:Attribute Name="RESPONSE_VARIABLE" Value="response"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=226,y=107,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=169,ly=91,type=Elbow,xs=113&amp;222,ys=132&amp;132"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=397,ly=132,type=Elbow,xs=330&amp;465,ys=132&amp;132"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=26,y=26,w=151,h=27"/>
+    <bpm:Variables Name="request" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="com.centurylink.mdw.model.StringDocument"/>
+    </bpm:Variables>
+    <bpm:Variables Name="response" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="com.centurylink.mdw.model.StringDocument"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69945678
+item-spec=4D4457413A314B3848384C2050524F434553534C41554E43484D41494E544142204A4156412D2D35303732323137352E412D5352433B3131
+file-version=11
+checksum=5af8515cb558fce23a64615e33612294
+fetch-size=27158
+mtime=1461605900
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/launch/ProcessLaunchMainTab.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

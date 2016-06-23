@@ -1,0 +1,7 @@
+rem update C:\apache-maven-3.0.5\conf\settings.xml  file with username/password under repositoryId=corporateNexusRepo
+rem Remove below comment to execute command
+rem mvn -X deploy:deploy-file -DgroupId=artis -DartifactId=artis -Dversion=3.1.1 -Dpackaging=jar -Dfile=C:\Users\aa56486\Downloads\artis-3.1.1.jar -DrepositoryId=corporateNexusRepo -Durl=http://lxomavmpc110.qintra.com:8081/nexus/content/repositories/thirdparty/
+
+
+
+

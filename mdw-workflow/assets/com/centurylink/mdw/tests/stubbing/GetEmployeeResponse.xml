@@ -1,0 +1,6 @@
+<GetEmployeeResponse xmlns="http://mdw-servicemix.centurylink.com/serviceTypes">
+  <!-- this is purposely different from the non-stubbed response -->
+  <workstationId>dxoakes</workstationId>
+  <firstName>Don</firstName>
+  <lastName>Oakes</lastName>
+</GetEmployeeResponse>

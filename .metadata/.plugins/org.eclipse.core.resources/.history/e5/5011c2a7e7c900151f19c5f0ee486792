@@ -1,0 +1,7 @@
+PROC 1 # 40
+ACT Start Completed # 126 "2015-12-02 16:46:21"
+ACT <<=====
+Stubbed Event
+Wait
+=====>> Completed # 127 "2015-12-02 16:46:21"
+ACT Stop Completed # 128 "2015-12-02 16:46:21"

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=48298219
+item-spec=4D4457413A314B3848384C20434F4C554D4E53504543204A4156412D313838383537343639382E412D5352433B33
+file-version=3
+checksum=1c896a89ae95e5a07eaa54b337dd591b
+fetch-size=1161
+mtime=1399588545
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/properties/editor/ColumnSpec.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

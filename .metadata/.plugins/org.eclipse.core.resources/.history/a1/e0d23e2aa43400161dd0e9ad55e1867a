@@ -1,0 +1,126 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="TestActivityStub" version="0.4" description="">
+    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=35,y=58,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=574,y=233,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="Stubbed Script" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="Rule" Value="throw new Exception('Help!')"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=242,y=143,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A4" Name="Stubbed Timer" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=414,y=151,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A5" Name="Finish" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=264,y=229,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A6" Name="Stub Test&#13;&#10;Subproc" Implementation="com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=554,y=147,w=100,h=60"/>
+      <bpm:Attribute Name="processname" Value="com.centurylink.mdw.tests/TestActivityStubSubproc"/>
+      <bpm:Attribute Name="processversion" Value="[0.1,1)"/>
+      <bpm:Attribute Name="synchronous" Value="TRUE"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A11" Name="Path" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=121,y=152,w=60,h=40"/>
+      <bpm:Attribute Name="Expression" Value="flowPath"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A12" Name="Timer 1" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=104,y=294,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A13" Name="Timer 2" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=245,y=294,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A14" Name="Timer 3" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=377,y=293,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A15" Name="Done" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=529,y=305,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A1" To="A11" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=200,ly=29,type=Elbow,xs=99&amp;151,ys=78&amp;148"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="toTimer" From="A3" To="A4" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=354,ly=153,type=Elbow,xs=346&amp;410,ys=177&amp;177"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A4" To="A6" Event="FINISH" Id="T3">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=541,ly=169,type=Elbow,xs=518&amp;550,ys=179&amp;179"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A5" Event="FINISH" Id="T4">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=293,ly=214,type=Elbow,xs=294&amp;294,ys=207&amp;225"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A6" To="A2" Event="FINISH" Id="T5">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=604,ly=220,type=Elbow,xs=604&amp;604,ys=211&amp;229"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="various" From="A11" To="A3" Event="FINISH" Id="T8">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=186,ly=150,type=Elbow,xs=185&amp;238,ys=172&amp;172"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="all timers" From="A11" To="A12" Event="FINISH" Id="T9">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=163,ly=213,type=Elbow,xs=151&amp;151,ys=196&amp;290"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A12" To="A13" Event="FINISH" Id="T10">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=224,ly=324,type=Elbow,xs=208&amp;241,ys=324&amp;324"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A13" To="A14" Event="FINISH" Id="T11">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=361,ly=323,type=Elbow,xs=349&amp;373,ys=323&amp;323"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A14" To="A15" Event="FINISH" Id="T12">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=503,ly=325,type=Elbow,xs=481&amp;525,ys=325&amp;325"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=23,y=15,w=149,h=27"/>
+    <bpm:Attribute Name="SLA" Value="24"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Hours"/>
+    <bpm:Variables Name="flowPath" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="updatedString" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="updatedDoc" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="org.w3c.dom.Document"/>
+    </bpm:Variables>
+    <bpm:SubProcess Id="P8" name="Exception Handler" version="0" description="">
+      <bpm:Activity Id="A9" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=273,y=45,w=60,h=40"/>
+      </bpm:Activity>
+      <bpm:Activity Id="A7" Name="Stubbed Task" Implementation="com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity">
+        <bpm:Attribute Name="AlertIntervalUnits" Value="Hours"/>
+        <bpm:Attribute Name="Category" Value="COM"/>
+        <bpm:Attribute Name="IndexProvider" Value="com.centurylink.mdw.services.task.CustomTaskIndexProvider"/>
+        <bpm:Attribute Name="Notices" Value="Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"/>
+        <bpm:Attribute Name="SLAUnits" Value="Hours"/>
+        <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+        <bpm:Attribute Name="TaskLogicalId" Value="TestActivityStub:A7"/>
+        <bpm:Attribute Name="TaskName" Value="TestActivityStub Fallout"/>
+        <bpm:Attribute Name="Variables" Value="scriptActivityExecuted,scriptActivityExecuted,Not Displayed,0,,java.lang.Boolean"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=405,y=34,w=100,h=60"/>
+      </bpm:Activity>
+      <bpm:Activity Id="A10" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+        <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=570,y=45,w=60,h=40"/>
+      </bpm:Activity>
+      <bpm:Transition CompletionCode="" From="A9" To="A7" Event="FINISH" Id="T6">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=369,ly=65,type=Elbow,xs=337&amp;401,ys=65&amp;65"/>
+      </bpm:Transition>
+      <bpm:Transition CompletionCode="" From="A7" To="A10" Event="FINISH" Id="T7">
+        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=539,ly=65,type=Elbow,xs=509&amp;566,ys=65&amp;65"/>
+      </bpm:Transition>
+      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
+      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Exception Handler"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=232,y=20,w=449,h=87"/>
+    </bpm:SubProcess>
+  </bpm:Process>
+</bpm:processDefinition>

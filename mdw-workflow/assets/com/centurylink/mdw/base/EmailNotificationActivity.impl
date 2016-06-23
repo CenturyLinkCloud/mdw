@@ -1,0 +1,17 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.notification.EmailNotificationActivity" Type="com.centurylink.mdw.activity.types.GeneralActivity" Label="Notification" IconFile="notice.gif" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET>
+  <DROPDOWN NAME='noticeType' LABEL='Notice Type' VW='75' DEFAULT='E-Mail'>
+    <OPTION>E-Mail</OPTION>
+  </DROPDOWN>
+  <TEXT NAME='from' LABEL='From Address' VW='200' DEFAULT='mdw@centurylink.com'/>
+  <TEXT NAME='subject' LABEL='E-Mail Subject' VW='450'/>
+  <DROPDOWN NAME='template' LABEL='Template' SOURCE='RuleSets' TYPE='HTML,FACELET' VW='350' />
+  <TEXT NAME='attachments' LABEL='Attachment(s)' VW='450'/>  
+  <BOOLEAN NAME='ContinueDespiteMessagingException' LABEL='Continue Despite Messaging Exception' />
+  <HYPERLINK URL='/MDWWeb/doc/notification.html'>Notification Activity Help</HYPERLINK>
+  <LIST NAME='NoticeGroups' LABEL='Notice Groups' SOURCE='UserGroup' SECTION='Recipients'/>
+  <TEXT NAME='RecipientVar' LABEL='Recipient Emails' VW='410' SECTION='Recipients'/>
+  <LIST NAME='CCGroups' LABEL='CC Recipient Groups' SOURCE='UserGroup' SECTION='CC Recipients'/>
+  <TEXT NAME='CCVar' LABEL='CC Recipient Emails' VW='410' SECTION='CC Recipients'/>
+</PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

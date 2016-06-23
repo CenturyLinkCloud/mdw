@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf" 
+  xmlns:hub="http://www.centurylink.com/mdw-hub/jsf">
+
+  <ui:composition template="/layout/detail.xhtml">
+   <ui:param
+      name="layoutWidth"
+      value="960" />
+  	<ui:define name="detailHeader">  
+  	  <h:outputText  value="#{detailManager.requestDetail.requestLabel}- #{requestItem.requestId}"/>  
+    </ui:define>      
+    <ui:define name="detailLinks">
+      <hub:requestNav />
+    </ui:define>
+    <ui:define name="detailContent">
+    <ui:param name="reqVO" value="#{detailManager.requestDetail.requestBean}"/>    
+      <ui:insert name="requestSummary">
+        <mdw:panel id="requestSummaryPanel" label="Summary" collapsible="true" styleClass="mdw_panel" collapsed="#{collapsed}" 
+        	rendered="#{param['requestType'] == null || param['requestType'] == 'LISTENER_REQUEST' || param['requestType'] == 'LISTENER_RESPONSE'}">
+          <h:panelGrid columns="6" width="100%" cellpadding="6" cellspacing="2" columnClasses="mdw_label,mdw_value,mdw_label,mdw_value,mdw_label,mdw_value">
+           <h:outputLabel for="requestId" value="Request ID:"/>
+           <h:outputText id="requestId" value="#{reqVO.requestId}" styleClass="mdw_label" style="font-weight:bold" />
+           <h:outputLabel for="receivedDate" value="Received:"/>
+           <h:outputText id="receivedDate" value="#{reqVO.receivedDate}" styleClass="mdw_label" style="font-weight:bold">
+             <f:convertDateTime pattern="MMM d, yyyy HH:mm:ss" />
+           </h:outputText>
+           <h:commandLink id="responseLink" action="go_responseDetail" value="Response" rendered="#{param['requestType'] != 'LISTENER_RESPONSE' &amp;&amp; requestItem.listenerResponseVO != null}"/>           
+           <h:outputText value="&lt;br/&gt;" escape="false" rendered="#{param['requestType'] != 'LISTENER_RESPONSE' &amp;&amp; requestItem.listenerResponseVO != null}"/>
+           <h:outputLabel for="processInstIdLink" value="Process:"/>
+           <h:commandLink id="processInstIdLink" action="#{requestDetailLinkController.goProcessDetail}" rendered="#{authenticatedUser.roles['Process Execution']}">
+          	#{reqVO.processInstanceId} 
+           </h:commandLink>
+           <h:outputText id="processInstId" value="#{reqVO.processInstanceId}" styleClass="mdw_label" style="font-weight:bold" rendered="#{!authenticatedUser.roles['Process Execution']}"/>
+           <h:outputLabel for="processStatus" value="Status:"/>
+           <h:outputText id="processStatus" value="#{reqVO.processInstanceStatus}" styleClass="mdw_label" style="font-weight:bold" />
+           
+           <h:outputLabel for="orderIdLink" value="Order ID:"/>
+           <h:commandLink id="orderIdLink" action="#{requestDetailLinkController.goOrderDetail}" >
+          	#{reqVO.orderId} 
+           </h:commandLink>
+           <h:outputLabel for="searchKey1" value="SearchKey1:" rendered="#{reqVO.searchKey1 != null}"/>
+           <h:outputText id="searchKey1" value="#{reqVO.searchKey1}" styleClass="mdw_label" style="font-weight:bold" />
+           <h:outputLabel for="searchKey2" value="SearchKey2:" rendered="#{reqVO.searchKey2 != null}"/>
+           <h:outputText id="searchKey2" value="#{reqVO.searchKey2}" styleClass="mdw_label" style="font-weight:bold" />              
+          </h:panelGrid>
+        </mdw:panel>
+        <mdw:panel id="requestContentPanel" label="Content" collapsible="true" styleClass="mdw_panel" collapsed="#{collapsed}" style="margin-top:5px;"
+        	rendered="#{param['requestType'] == 'LISTENER_REQUEST_CONTENT' || param['requestType'] == 'LISTENER_RESPONSE_CONTENT'}">
+          <pre class="mdw_detailsRawContent">#{reqVO.content}</pre>
+        </mdw:panel>
+      </ui:insert>
+    </ui:define>
+    <ui:define name="commandContent">
+    </ui:define>
+  </ui:composition>
+  </html>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67934882
+item-spec=4D4457413A314B374647352050524F43455353494E5354414E434544415441204A4156412D2D3238383337373133322E412D5352433B38
+file-version=8
+checksum=41140178c17cb78e56d91c78a27197ae
+fetch-size=11100
+mtime=1437682247
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/resource/ProcessInstanceData.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68790222
+item-spec=4D4457413A314B37435A302042414D4441544141434345535344414F204A4156412D2D323039343236333731302E412D5352433B3130
+file-version=10
+checksum=fb949798076bab710a15478b72461c2e
+fetch-size=14440
+mtime=1457388970
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/dao/bam/BamDataAccessDao.java
+project=4D4457413A4D445741
+project-uid=31770127

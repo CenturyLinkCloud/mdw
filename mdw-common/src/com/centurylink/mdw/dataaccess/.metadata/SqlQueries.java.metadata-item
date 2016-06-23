@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49354350
+item-spec=4D4457413A314B3737545A2053514C51554552494553204A4156412D2D323030373033383436362E412D5352433B33
+file-version=3
+checksum=f9bef7bb3f2580b436c7cc5e56b39879
+fetch-size=4669
+mtime=1404756547
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/dataaccess/SqlQueries.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855422
+item-spec=4D4457413A314B374B524A2047524F5550494E474F5054494F4E204A4156412D3239313239303635302E412D5352433B32
+file-version=2
+checksum=0e03cbd6bc6c968074d17237a0d1fcb2
+fetch-size=576
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/ui/list/GroupingOption.java
+project=4D4457413A4D445741
+project-uid=31770127

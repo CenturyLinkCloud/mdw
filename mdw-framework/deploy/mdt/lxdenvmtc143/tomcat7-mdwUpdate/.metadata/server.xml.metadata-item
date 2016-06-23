@@ -1,0 +1,13 @@
+version=10.2
+item-uid=54188241
+item-spec=4D4457413A314B365458332053455256455220584D4C2D3537313531303235332E412D5352433B31
+file-version=1
+checksum=445e740e464f26ed07f41ea153d97061
+fetch-size=5773
+mtime=1424110058
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/mdt/lxdenvmtc143/tomcat7-mdwUpdate/server.xml
+project=4D4457413A4D445741
+project-uid=31770127

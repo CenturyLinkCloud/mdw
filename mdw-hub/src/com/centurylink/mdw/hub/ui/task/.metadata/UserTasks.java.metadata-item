@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68586335
+item-spec=4D4457413A314B3759514220555345525441534B53204A4156412D2D313330333532313132372E412D5352433B35
+file-version=5
+checksum=d1ee349c66c1d50ba71f5c501bb6c50f
+fetch-size=990
+mtime=1456530230
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/ui/task/UserTasks.java
+project=4D4457413A4D445741
+project-uid=31770127

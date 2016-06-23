@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="com.centurylink.mdw.plugin.launch.Process">
+<stringAttribute key="externalEventRequest" value=""/>
+<booleanAttribute key="launchViaExternalEvent" value="false"/>
+<intAttribute key="logWatcherPort" value="7181"/>
+<stringAttribute key="masterRequestId" value="aa56486~160415-180720"/>
+<booleanAttribute key="nofifyProcess" value="true"/>
+<stringAttribute key="notifyProcessEvent" value="MyEvent-aa56486-160415-180104863"/>
+<stringAttribute key="notifyProcessRequest" value="Hello"/>
+<stringAttribute key="owner" value="Designer"/>
+<stringAttribute key="ownerId" value="1460765240187"/>
+<booleanAttribute key="processInstanceLiveView" value="false"/>
+<stringAttribute key="processName" value="ManualTaskServices"/>
+<stringAttribute key="processVersion" value="0.4"/>
+<stringAttribute key="responseVarName" value=""/>
+<booleanAttribute key="showLogsInConsole" value="false"/>
+<booleanAttribute key="synchronous" value="false"/>
+<mapAttribute key="variableValues">
+<mapEntry key="dateVar" value=""/>
+<mapEntry key="docVar" value=""/>
+<mapEntry key="jaxbVar" value=""/>
+<mapEntry key="stringVar" value=""/>
+</mapAttribute>
+<stringAttribute key="workflowProject" value="mdw-workflow"/>
+</launchConfiguration>

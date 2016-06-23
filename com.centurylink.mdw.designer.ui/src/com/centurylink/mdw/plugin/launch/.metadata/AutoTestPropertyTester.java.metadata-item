@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68101331
+item-spec=4D4457413A314B3848384C204155544F5445535450524F5045525459544553544552204A4156412D31393230363233373358353936385832342E412D5352433B34
+file-version=4
+checksum=a613ade618cb3c43f042e5d0f3dfacf9
+fetch-size=4291
+mtime=1455209941
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/launch/AutoTestPropertyTester.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=55526228
+item-spec=4D4457413A314B3737545A204A4156414F424A4543545452414E534C41544F52204A4156412D3730353935323530362E412D5352433B33
+file-version=3
+checksum=37d45381c0c96410d9c082250e30eadb
+fetch-size=3848
+mtime=1430968789
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/translator/impl/JavaObjectTranslator.java
+project=4D4457413A4D445741
+project-uid=31770127

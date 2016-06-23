@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69236182
+item-spec=4D4457413A314B3843574420555345524441544141434345535352455354204A4156412D323134333834363633382E412D5352433B39
+file-version=9
+checksum=a8d63548f879702e89ade3f21a131c76
+fetch-size=5052
+mtime=1458255590
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/UserDataAccessRest.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

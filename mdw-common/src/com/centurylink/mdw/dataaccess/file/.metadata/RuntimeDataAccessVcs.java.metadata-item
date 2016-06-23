@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71508585
+item-spec=4D4457413A314B3737545A2052554E54494D4544415441414343455353564353204A4156412D2D3533313935343133382E412D5352433B3236
+file-version=26
+checksum=8524a3824358ad150d510a71605bbacc
+fetch-size=17901
+mtime=1466009999
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/dataaccess/file/RuntimeDataAccessVcs.java
+project=4D4457413A4D445741
+project-uid=31770127

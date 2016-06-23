@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62585168
+item-spec=4D4457413A314B3843574420434F4E5354414E5453204A4156412D2D313436393333373836302E412D5352433B33
+file-version=3
+checksum=411661d45499f8da61f50c594ad7a053
+fetch-size=3483
+mtime=1436816297
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/utils/Constants.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

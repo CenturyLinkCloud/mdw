@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50880616
+item-spec=4D4457413A314B37565330205441534B54454D504C415445414354494F4E434F4E54524F4C4C4552204A4156412D2D3431313939333633382E412D5352433B33
+file-version=3
+checksum=04b08ca565b469c86171ab4650701b25
+fetch-size=3252
+mtime=1412208442
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/tasks/template/TaskTemplateActionController.java
+project=4D4457413A4D445741
+project-uid=31770127

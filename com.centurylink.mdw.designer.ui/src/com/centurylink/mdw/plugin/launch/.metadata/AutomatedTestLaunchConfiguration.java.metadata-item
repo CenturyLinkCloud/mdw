@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68028444
+item-spec=4D4457413A314B3848384C2052454752455353494F4E544553544C41554E4348434F4E46494755524154494F4E204A4156412D313739343833323938322E412D5352433B3231
+file-version=21
+checksum=e6f4c7f2c4032228a19edcfd28f62aae
+fetch-size=6492
+mtime=1455040484
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/launch/AutomatedTestLaunchConfiguration.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

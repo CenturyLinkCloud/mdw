@@ -1,0 +1,13 @@
+version=10.2
+item-uid=47598076
+item-spec=4D4457413A314B37595142204F5244455253204A4156412D313439303534333939342E412D5352433B35
+file-version=5
+checksum=92e928b002b40a650ab50155b3f631c2
+fetch-size=2163
+mtime=1396558174
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/ui/order/Orders.java
+project=4D4457413A4D445741
+project-uid=31770127

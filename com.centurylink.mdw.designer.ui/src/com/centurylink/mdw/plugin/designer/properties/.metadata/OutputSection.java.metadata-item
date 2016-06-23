@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549343
+item-spec=4D4457413A314B3848384C204F555450555453454354494F4E204A4156412D2D313632383936353235332E412D5352433B34
+file-version=4
+checksum=732484dc7c854a13c0829d0bac981e56
+fetch-size=2014
+mtime=1453326989
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/properties/OutputSection.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

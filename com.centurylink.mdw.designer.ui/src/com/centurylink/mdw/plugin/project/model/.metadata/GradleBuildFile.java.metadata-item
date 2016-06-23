@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65582036
+item-spec=4D4457413A314B3848384C20475241444C454255494C4446494C45204A4156412D313735373135373034322E412D5352433B3133
+file-version=13
+checksum=6e059f4578a335308753790e15de16b2
+fetch-size=11314
+mtime=1446593370
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/project/model/GradleBuildFile.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

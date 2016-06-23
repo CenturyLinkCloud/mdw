@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44582971
+item-spec=4D4457413A314B3848384C2048454C4C4F204A4156414A45542D2D3839363534323030312E412D4441543B31
+file-version=1
+checksum=8a6c6838294e9bb6464c9698bad40ffc
+fetch-size=660
+mtime=1317428062
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=templates/source/src/pojos/Hello.javajet
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

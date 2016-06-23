@@ -1,0 +1,46 @@
+<features>
+ 
+  <feature name="mdw" version="@mdw.version@">
+    <feature>spring-dm</feature>
+    <bundle start-level="70">mvn:com.centurylink.mdw/mdw-schemas/@mdw.version@</bundle>
+    <bundle start-level="71">mvn:com.centurylink.mdw/mdw-common/@mdw.version@</bundle>
+    <bundle start-level="72">mvn:com.centurylink.mdw/mdw-services/@mdw.version@</bundle>
+    <bundle start-level="73">mvn:com.centurylink.mdw/mdw-listeners/@mdw.version@</bundle>
+    <bundle start-level="74">mvn:com.centurylink.mdw/mdw-workflow/@mdw.version@</bundle>
+    <bundle start-level="75">mvn:com.centurylink.mdw/mdw-web/@mdw.version@/war</bundle>
+    <bundle start-level="76">mvn:com.centurylink.mdw/mdw-taskmgr/@mdw.version@/war</bundle>
+    <bundle start-level="77">mvn:com.centurylink.mdw/mdw-hub/@mdw.version@/war</bundle>
+  </feature>
+  
+  <feature name="mdw-jsf" version="@mdw.version@">
+    <bundle>mvn:javax.faces/javax.faces-api/2.0</bundle>
+    <bundle start-level="78">wrap:mvn:com.centurylink.mdw/mdwweb/@mdw.version@</bundle>
+    <bundle start-level="79">wrap:mvn:com.centurylink.mdw/taskmgr/@mdw.version@</bundle>
+    <bundle start-level="80">wrap:mvn:com.centurylink.mdw/mdw-jsf/@mdw.version@</bundle>
+  </feature>  
+  
+  <feature name="mdw-jsf2" version="@mdw.version@">
+    <bundle>mvn:javax.faces/javax.faces-api/2.0</bundle>
+    <bundle start-level="78">wrap:mvn:com.centurylink.mdw/mdwweb-jsf2/@mdw.version@</bundle>
+    <bundle start-level="79">wrap:mvn:com.centurylink.mdw/taskmgr/@mdw.version@</bundle>
+    <bundle start-level="80">wrap:mvn:com.centurylink.mdw/mdw-jsf2/@mdw.version@</bundle>
+    <bundle start-level="81">wrap:mvn:com.centurylink.mdw/mdwhub/@mdw.version@</bundle>
+  </feature>
+    
+  <feature name="mdw-reports" version="@mdw.version@">
+    <feature version="@mdw.version@">mdw</feature>
+    <bundle start-level="78">mvn:com.centurylink.mdw/mdw-reports/@mdw.version@/war</bundle>
+  </feature>
+  
+  <feature name="mdw-camel" version="@mdw.version@">
+    <feature version="@mdw.version@">mdw</feature>
+    <bundle start-level="78">mvn:com.centurylink.mdw/mdw-camel/@mdw.version@</bundle>
+  </feature>
+
+  <feature name="mdw-blv" version="@mdw.version@">
+    <feature version="@mdw.version@">mdw</feature>
+    <feature version="@mdw.version@">mdw-camel</feature>
+    <feature>camel-websocket</feature>
+  </feature>
+  
+</features>

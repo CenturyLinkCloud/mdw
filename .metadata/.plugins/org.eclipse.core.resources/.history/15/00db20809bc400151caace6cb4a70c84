@@ -1,0 +1,73 @@
+// Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
+'use strict';
+
+var requestMod = angular.module('requests', ['ngResource', 'mdw', 'infinite-scroll']);
+
+requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'mdw', 'Requests', 
+                                             function($scope, $http, $location, mdw, Requests) {
+  $scope.requests = [];
+    
+  $scope.busy = false;
+  $scope.total = 0;
+  $scope.selected = null;
+  
+  $scope.getNext = function() {
+    if (!$scope.busy) {
+      $scope.busy = true;
+      
+      if ($scope.selected !== null) {
+        // request has been selected in typeahead
+        $scope.requests = [$scope.selected];
+        $scope.busy = false;
+      }
+      else {
+        // retrieve the request list
+        var type = $location.path() == '/masterRequests' ? 'master' : 'service';
+        var url = mdw.roots.services + '/Services/Requests?app=mdw-admin&type=' + type + '&start=' + $scope.requests.length;
+        $http.get(url).error(function(data, status) {
+          console.log('HTTP ' + status + ': ' + url);
+          this.busy = false;
+        }).success(function(data, status, headers, config) {
+          $scope.total = data.total;
+          $scope.requests = $scope.requests.concat(data.requests);
+          $scope.busy = false;
+        });
+      }
+    }
+  };
+  
+  $scope.hasMore = function() {
+    return $scope.requests.length === 0 || $scope.requests.length < $scope.total;
+  };
+  
+  $scope.select = function() {
+    $scope.requests = [$scope.selected];
+  };
+  
+  $scope.change = function() {
+    if ($scope.selected === null) {
+      // repopulate list
+      $scope.requests = [];
+      $scope.getNext();
+    }
+  };
+  
+  $scope.find = function(typed) {
+    return $http.get(mdw.roots.services + '/Services/Users?app=mdw-admin&type=master&find=' + typed).then(function(response) {
+      return response.data.requests;
+    });
+  };
+  
+}]);
+
+requestMod.controller('RequestController', ['$scope', '$routeParams', 'Requests',
+                                           function($scope, $routeParams, Requests) {
+  $scope.requestId = $routeParams.requestId;
+  $scope.request = Requests.get({id: $routeParams.requestId});
+}]);
+
+requestMod.factory('Requests', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/Services/Requests/:id', mdw.serviceParams(), {
+    get: {method: 'GET', isArray: false }
+  });  
+}]);

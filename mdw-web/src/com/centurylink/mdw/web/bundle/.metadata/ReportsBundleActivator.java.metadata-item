@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49134348
+item-spec=4D4457413A314B374B524A205245504F52545342554E444C45414354495641544F52204A4156412D2D3132393231393134392E412D5352433B33
+file-version=3
+checksum=6127a111039cf6ee7d0b6d25e4260f6e
+fetch-size=1201
+mtime=1403564089
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/bundle/ReportsBundleActivator.java
+project=4D4457413A4D445741
+project-uid=31770127

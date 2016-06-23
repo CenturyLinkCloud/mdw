@@ -1,0 +1,178 @@
+ TODO:
+ - Scriptified Process Imports
+ - Logging slf4j Compatibility
+ 
+ List Bundle Packages:
+ ls
+ 
+ List All Bundles (including System):
+ list -s -t 10
+ 
+ ServiceMix Web Console:
+ features:install webconsole
+ http://localhost:8181/system/console/bundles (smx/smx)
+
+ Install MDW Dependencies:
+ features:addUrl mvn:com.centurylink.mdw/mdw/5.2.xx/xml/dependencies
+ features:install mdw-dependencies 
+
+ Install MDW Feature:
+ features:removeUrl mvn:com.centurylink.mdw/mdw/5.2.12-SNAPSHOT/xml/features
+ features:addUrl mvn:com.centurylink.mdw/mdw/5.2.xx/xml/features
+ features:install mdw
+ 
+ Add Feature URL from File:
+ features:addUrl file:e:/workspaces/smx/TroubleTicketService/features.xml
+ 
+ ERROR: JarContent: Unable to read bytes. (java.lang.IllegalStateException: zip file closed)
+ solution: shutdown and restart servicemix
+
+ determine bundle that a class is being loaded from:
+ (in debugger) org.apache.log4j.Logger.class.getClassLoader()
+ 
+ Set a bundle's start level:
+ bundle-level 579 90
+ 
+ Installing jar file from local directory assuming it as already an OSGI bundle:
+ install -s file:C:/DVAR/dvar-common-5.2.01.jar
+ 
+ Install via wrap protocol:
+ wrap:mvn:com.jcraft/jsch/0.1.51$Bundle-SymbolicName=com.jcraft.jsch&Bundle-Version=0.1.51
+ (note: $ needs to be escaped (\$) when run from the karaf command line
+ 
+ Generating and installing OSGI bundle file from local directory:
+ install -s wrap:file:/E:/workspaces/DonsWorkspace/dvar/dvar-common/target/dvar-common-1.0.jar
+ install -s war:file:/E:/temp/omnivue-1.0.01.war
+
+ Install from OSGi War bundle from a repository URL: 
+ install -s war:http://lxdenvmtc144.dev.qintra.com:50000/Environment/mdw-web-5.2.04.war
+ 
+ Install a feature from a file:
+ features:addurl file:e:/workspaces/mdw/mdw-framework/deploy/app/mdw-5.5.30-SNAPSHOT-dependencies.xml
+  
+ SSL Configuration:
+ ------------------
+ copy mdw.jks into <SMIX_INSTANCE>/etc
+ copy org.ops4j.pax.web.cfg into <SMIX_INSTANCE>/etc
+ 
+ intra-project dependencies in m2e:
+ right-click on maven project > Properties > Maven > UNCHECK "Resolve dependencies from Workspace projects"
+ 
+ ActiveMQ Configuration (reqd for Timer Wait)
+ --------------------------------------------
+ see http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/ServiceMix/Example%20ActiveMQ%20Config
+ 
+ Jetty SSL Bug High CPU:
+ http://jira.codehaus.org/browse/JETTY-1435
+ 
+ ServiceMix 4.4.1 Transaction Management:
+ ----------------------------------------
+ list | grep Aries
+ start 59
+ 
+ Optional MDW Dependencies:
+ --------------------------
+# for MDW Camel integration
+features-install mdw-camel
+
+# JavaMail 1.4.5 for E-Mail Notices
+(does not need to be done in Integration environments)
+install -s mvn:javax.mail/mail/1.4.5
+install -s mvn:javax.activation/activation/1.1.0
+(repo: http://archiva.corp.intranet/archiva/repository/development)
+# the following steps are only for local dev instances (NOT for Integration)
+(may need to uninstall system bundles: packages:exports | grep mail & packages:exports | grep activation)
+
+# for Tibco Bus connectivity
+install wrap:file:c:/Tibco/TIBRV/lib/tibrvj.jar
+(version must match the native binaries installed locally)
+(also see LD_LIBRARY_PATH update for dev int servers in smx_int_notes)
+
+# for IBM MQ Series connectivity
+install -s wrap:mvn:com.ibm/connector/7.0.1.9
+install -s wrap:mvn:com.ibm/com.ibm.mq/7.0.1.9
+
+# for JavaScript activity support
+features:install servicemix-scripting
+(if that doesn't work)
+install -s mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/1.9.0
+install -s mvn:com.google.code.scriptengines/scriptengines-javascript/1.1
+
+install -s mvn:org.apache.servicemix/servicemix-scripting/2011.02
+(make sure bundle Apache ServiceMix Specs :: Scripting API 1.0 is Active) 
+
+# exjello for e-mail listeners
+install wrap:mvn:org.exjello/exjello/1.5.0.22
+
+# set Java trustStore (for LDAP Adapter Activity, etc)
+# in etc/system.properties
+javax.net.ssl.trustStore=etc/CenturyLinkQCA.jks
+
+# faces apis for dynamic java managed beans
+features:install mdw-jsf
+
+# pom.xml dependencies for dynamic java managed beans
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>mdwweb-jsf2</artifactId>  <!-- not the project but a jar artifact -->
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>taskmgr</artifactId>  <!-- not the project but a jar artifact -->
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>mdw-jsf</artifactId>
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.faces</groupId>
+      <artifactId>javax.faces-api</artifactId>
+      <version>2.0</version>
+      <scope>provided</scope>
+    </dependency>    
+
+# add to java.util.logging.properties for JSF logging
+org.apache.myfaces.level=SEVERE
+com.sun.facelets.level=SEVERE
+org.richfaces.level=SEVERE
+
+# mdw reports
+install -s mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/2.9.1_4
+features-install mdw-reports 
+
+# uninstall a specific feature version:
+features:uninstall mdw-jsf/5.2.21-SNAPSHOT
+
+# log4j logging in MDW (enables log file rolling)
+# set the following in etc/system.properties:
+mdw.logger.impl=org.apache.log4j.Logger
+# add appenders to etc/org.ops4j.pax.logging.cfg
+http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/mdw.log4j.properties
+(Note: this disables Process Instance Live View, which is only supported with SimpleLogger)
+
+# add dynamic imports for dev purposes
+dev:dynamic-import <bundleid>
+restart <bundleid>
+# then show dynamically imported packages to determine imports
+headers <bundleid>
+
+RichFaces Bug that can prevent JSF initialization:
+https://issues.jboss.org/browse/RF-13206
+RichFaces fix for supporting hot deploy in ServiceMix:
+org.richfaces.resource.ResourceFactoryImpl (see in richfaces-core-impl-4.3.3.Final-sources.jar)
+
+# increase karaf ssh idle timeout
+(in etc/org.apache.karaf.shell.cfg, value is in ms)
+sshIdleTimeout=18000000
+
+# Fuse Issue Causing Putty Prompt for Every New Session:
+https://issues.jboss.org/browse/ENTESB-1531
+workaround:
+  JBossFuse:karaf@root> osgi:list -t 0 | grep -i ssh
+  JBossFuse:karaf@root> dynamic-import <apache mina ssh id>
+    
+#When there are multiple bundles of mdw then do following
+osgi:uninstall --force mdw/5.5.xx

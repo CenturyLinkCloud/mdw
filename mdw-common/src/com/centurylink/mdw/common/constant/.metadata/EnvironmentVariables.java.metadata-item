@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67346252
+item-spec=4D4457413A314B3737545A20454E5649524F4E4D454E545641524941424C4553204A4156412D31393033343135353658313738373458342E412D5352433B31
+file-version=1
+checksum=a2f7ae59ea6fd6a59c20b9c1eaf1f392
+fetch-size=269
+mtime=1452545373
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/constant/EnvironmentVariables.java
+project=4D4457413A4D445741
+project-uid=31770127

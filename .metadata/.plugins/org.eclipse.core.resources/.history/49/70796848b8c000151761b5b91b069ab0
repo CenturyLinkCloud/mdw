@@ -1,0 +1,56 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.plugin.launch;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.CommonTab;
+import org.eclipse.debug.ui.EnvironmentTab;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
+
+import com.centurylink.mdw.plugin.PluginMessages;
+
+public class RegressionTestTabGroup extends AbstractLaunchConfigurationTabGroup
+{
+  private ILaunchConfigurationDialog dialog;
+  private RegressionTestLaunchTab regressionTestTab;
+  private LoadTestLaunchTab loadTestTab;
+  
+  
+  public void createTabs(ILaunchConfigurationDialog dialog, String mode)
+  {
+    this.dialog = dialog;
+    regressionTestTab = new RegressionTestLaunchTab();
+    loadTestTab = new LoadTestLaunchTab();
+    
+    ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[]
+    {
+        regressionTestTab, 
+        loadTestTab, 
+        new EnvironmentTab(),
+        new CommonTab()
+    };
+    setTabs(tabs);
+  }
+  
+  @Override
+  public void initializeFrom(ILaunchConfiguration configuration)
+  {
+    super.initializeFrom(configuration);
+    
+    try
+    {
+      if (configuration.getAttribute(RegressionTestLaunchConfiguration.IS_LOAD_TEST, false))
+        dialog.setActiveTab(loadTestTab);
+    }
+    catch (CoreException ex)
+    {
+      PluginMessages.log(ex);
+    }
+  }
+  
+
+}

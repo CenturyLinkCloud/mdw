@@ -1,0 +1,13 @@
+version=10.2
+item-uid=66393114
+item-spec=4D4457413A314B37565330204E415653434F5045414354494F4E434F4E54524F4C4C4552204A4156412D2D3634303731353531372E412D5352433B3135
+file-version=15
+checksum=a42fb5f1c087fd8deb1ccb4ec493f025
+fetch-size=10934
+mtime=1447863877
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/NavScopeActionController.java
+project=4D4457413A4D445741
+project-uid=31770127

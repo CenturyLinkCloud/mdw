@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68105815
+item-spec=4D4457413A314B3848384C20435543554D4245524C41554E4348434F4E46494755524154494F4E204A4156412D31373636373032373258323938363858302E412D5352433B34
+file-version=4
+checksum=7d1c3088a8dfc478c9d183b6ca02ec84
+fetch-size=1581
+mtime=1455225252
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/launch/CucumberTestLaunchConfiguration.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

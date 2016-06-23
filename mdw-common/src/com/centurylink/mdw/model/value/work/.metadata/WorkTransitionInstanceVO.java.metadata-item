@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50870267
+item-spec=4D4457413A314B3737545A20574F524B5452414E534954494F4E494E5354414E4345564F204A4156412D3334353234343039342E412D5352433B33
+file-version=3
+checksum=225bd037c4974153056241c361e2e8a9
+fetch-size=3637
+mtime=1412116503
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/work/WorkTransitionInstanceVO.java
+project=4D4457413A4D445741
+project-uid=31770127

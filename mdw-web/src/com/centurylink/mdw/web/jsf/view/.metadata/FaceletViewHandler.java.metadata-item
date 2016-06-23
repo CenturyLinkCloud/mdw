@@ -1,0 +1,13 @@
+version=10.2
+item-uid=51532948
+item-spec=4D4457413A314B374B524A20464143454C45545649455748414E444C4552204A4156412D2D313737313333363130302E412D5352433B33
+file-version=3
+checksum=b16346d23ff2cc0421bca5149b09deee
+fetch-size=8907
+mtime=1415916077
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/view/FaceletViewHandler.java
+project=4D4457413A4D445741
+project-uid=31770127

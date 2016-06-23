@@ -1,0 +1,158 @@
+<html>
+<head>
+<title>MDW Test Results Format</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>MDW Test Results Format</h1>
+<h3>Process Results</h3>
+<p>The format of <a href="automatedTesting.html">MDW automated test</a> process result files
+is the same for both actual and expected results.
+These are compared after test execution to determine success or failure.</p>
+
+<p>The general format for MDW test results is <a href="http://yaml.org/">YAML</a>.
+Each yaml asset represents at least one master process instance along with its subprocesses,
+sorted by process name.  In an actual results yaml file, the instance ID for each process is
+included in a (#-delimited) comment on the same line.
+Here's an example results file from <a href="tutorials/mdwdemo.html">mdwdemo</a>:</p>
+
+<pre>
+process: # 13059
+  name: HandleOrder
+  instance: 1
+  activity: # 1 "2016-02-12 13:24:10"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-12 13:24:10"
+    name: |
+      Prepare Lookup
+      Request
+    status: Completed
+  activity: # 5 "2016-02-12 13:24:10"
+    name: |
+      Customer
+      Lookup
+    status: Completed
+  activity: # 6 "2016-02-12 13:24:15"
+    name: Manual Ack
+    status: Completed
+  activity: # 2 "2016-02-12 13:24:40"
+    name: Stop
+    status: Completed
+  variable: # 18748
+    name: ackDate
+    value: ${today}
+  variable: # 18745
+    name: acknowledged
+    value: true
+  variable: # 18743
+    name: customerId
+    value: DHO115360
+  variable: # 18746
+    name: customerLookupRequest
+    value: |
+      &lt;tns:GetEmployee xmlns:tns="http://mdw-servicemix.centurylink.com/serviceTypes">
+        &lt;tns:sapId>DHO115360&lt;/tns:sapId>
+      &lt;/tns:GetEmployee>
+  variable: # 18747
+    name: customerLookupResponse
+    value: |
+      &lt;GetEmployeeResponse xmlns="http://mdw-servicemix.centurylink.com/serviceTypes">
+        &lt;sapId>DHO115360&lt;/sapId>
+        &lt;workstationId>dxoakes&lt;/workstationId>
+        &lt;firstName>Donald&lt;/firstName>
+        &lt;lastName>Oakes&lt;/lastName>
+      &lt;/GetEmployeeResponse>
+  variable: # 18749
+    name: customerName
+    value: Donald Oakes
+  variable: # 18744
+    name: orderNumber
+    value: ${masterRequestId}
+  variable: # 18742
+    name: request
+    value: |
+      &lt;donsOrder>
+        &lt;orderNumber>${masterRequestId}&lt;/orderNumber>
+        &lt;customerId>DHO115360&lt;/customerId>
+      &lt;/donsOrder>
+</pre>
+
+<p>Within a process structure are elements for each activity executed for this instance.
+Each activity structure shows its name and end-state status.  The path that a workflow process
+instance took can be reconstructed from this information, so its a reliable indication of
+whether the expected flow actually occurred.  For activities the values after the comment flag
+indicate the logical ID and instance ID (not relevant for comparison but useful for
+investigating failures).</p>
+
+<p>The variables set by a process are also included as elements of that process.
+The variable structure includes name and value elements.  The values can contain placeholders for
+dynamic content, as illustrated by ${today} and ${masterRequestId} in the example above.
+See <a href="#dynamicValues">Dynamic Values</a> for an explanation of this syntax. </p>
+Variable instance lines are sorted by variable name to produce a predictable result.
+
+<h3>Send Message Responses</h3>
+<p>As discussed in <a href="groovyTestScriptSyntax.html#verifyMessageResponse">Verify Message Response</a>,
+it's a good idea to externalize the expected response content to a result asset.  This asset can contain
+XML, JSON, or any other text-based content.  Frequently you'll need to embed dynamic values in your expected
+response file so that comparison with the actual response will succeed.  This is accomplished using dynamic
+placeholders as described below. 
+
+<h3><a id="dynamicValues">Dynamic Values</a></h3>
+<p>Dynamic values can be referenced in the expected result file using the form ${myDynamicValue}.
+These are evaluated using the standard Groovy expression syntax.  The <em>this</em> object in an
+evaluation context is an instance of GroovyTestCaseScript, with bindings supplied from any variables declared
+in your test case script.  Certain built-in values are also available:
+</p>
+<ul>
+  <li><code>${masterRequestId}</code> (String) - always populated with either the default generated value or the value assigned in the test case script</li>
+  <li><code>${masterProcessInstance}</code> (ProcessInstanceVO) - populated when "verify process" is executed</li>
+  <li><code>${responseMessage}</code> (String) - raw response value for most recent "send" command</li>
+</ul>
+<p>These implicit variables are accessible using standard Java Bean conventions.  For example, to access the
+master process instance ID you'd use an expression like:</p>
+<pre>
+${masterProcessInstance.id}
+</pre>
+<p>Groovy shorthand notation is also supported, so to access a process variable value you can use:</p>
+<pre>
+${masterProcessInstance.variable['myVar']}
+</pre>
+<p>
+In the case of process results, there may be rare occasions when a variable value is unknowable ahead of time.
+In that case, you can insert the comment character immediately to the right of the variable
+name in the expected results file to ignore its value altogether when comparing:</p>
+<pre>
+  variable: # 18749
+    name: customerName
+    value: Donald Oakes
+    VAR <i>variable-name</i> # 
+</pre>
+<p>
+There may be occasions where the only thing knowable about a result is its general format (numeric, XML, etc).
+Java Regular expressions can be used to support more complex dynamicism. 
+Anything between ${~ and } is evaluated as a regular expression (regex).
+Note: Because of the way results comparison operates, a maximum of one regular expression is allowed per line,
+and the expression will not match across multiple lines. 
+Here are some examples:
+<pre>
+&lt;workstationId>${~d\D}oakes&lt;/workstationId>
+&lt;firstName>${~Don.*}&lt;/firstName>
+&lt;lastName>${~O.*s}&lt;/lastName>
+</pre>
+This will match with following:
+<pre>
+&lt;workstationId>dxoakes&lt;/workstationId>
+&lt;firstName>Donald&lt;/firstName>
+&lt;lastName>Oakes&lt;/lastName>
+</pre>
+<p>
+<p>In Designer, if verbose output is selected in the test launch dialog you'll see the substituted expected results
+in the Test Exec view output pane when you click on the test case.  This is logged along with the actual results to help
+you troubleshoot a failing test case.  You can also log your own output to this window using STDOUT:</p>
+<pre>
+println 'myVar variable value: ' + masterProcessInstance.variable['inputVar']
+assert masterProcessInstance.variable['inputVar'] == 'my input variable runtime value'
+</pre>
+</body>
+</html>

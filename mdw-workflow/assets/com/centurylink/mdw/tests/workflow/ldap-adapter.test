@@ -1,0 +1,8 @@
+// ldap-adapter
+start process("LdapAdapter") {
+    variables = [ cuid: "dxoakes", lastNameInput: "Oakes", sapIdInput: "DHO115360" ]
+}
+wait process("LdapAdapter") {
+    timeout = 120
+}
+verify process

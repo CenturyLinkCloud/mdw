@@ -1,0 +1,13 @@
+version=10.2
+item-uid=55116501
+item-spec=4D4457413A314B3848384C204E455743414D454C524F55544557495A415244204A4156412D3536393538323233302E412D5352433B35
+file-version=5
+checksum=91f57c25bd5090d59c60a924d4237f89
+fetch-size=1056
+mtime=1428614682
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/NewCamelRouteWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

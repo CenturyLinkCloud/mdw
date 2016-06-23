@@ -1,0 +1,19 @@
+// GET request to Services/Workgroups?app=appId
+{
+  "count": 3,
+  "retrieveDate": "10-27-2015 12:42:50",
+  "workgroups": [
+    {
+      "description": "Description for a new workgroup.",
+      "name": "A New Workgroup"
+    },
+    {
+      "description": "MDW Support Group",
+      "name": "MDW Support"
+    },
+    {
+      "description": "Site Administrator",
+      "name": "Site Admin"
+    }
+  ]
+}

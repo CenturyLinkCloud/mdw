@@ -1,0 +1,31 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.preferences.model.* com.centurylink.mdw.plugin.codegen.meta.*"
+        class="StartActivityJavaEmitter52" %>
+<% Map map = (Map) argument;
+   Activity activity = (Activity) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<%=mdwSettings.getCopyrightNotice()%>
+
+package <%=activity.getJavaPackage()%>;
+
+import com.qwest.mdw.common.utilities.logger.StandardLogger.LogLevel;
+import com.qwest.mdw.common.utilities.timer.Tracked;
+import com.qwest.mdw.workflow.activity.ControlledActivityException;
+import com.qwest.mdw.workflow.activity.impl.process.ProcessStartControlledActivity;
+
+/**
+ * MDW process start activity.
+ */
+@Tracked(LogLevel.TRACE)
+public class <%=activity.getClassName()%> extends ProcessStartControlledActivity
+{
+  /**
+   * Here is where the main processing for the activity is performed.
+   */
+  @Override
+  public void execute() throws ControlledActivityException
+  {
+    // TODO Auto-generated method stub
+    super.execute();
+  }
+
+}

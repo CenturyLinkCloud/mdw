@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46854492
+item-spec=4D4457413A314B37464735204D4457454D41494C4C495354454E4552204A4156412D2D313738363531363935302E412D5352433B33
+file-version=3
+checksum=99b6529e581129bdb81e8a0867b459b9
+fetch-size=7291
+mtime=1393990105
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listener/email/MDWEmailListener.java
+project=4D4457413A4D445741
+project-uid=31770127

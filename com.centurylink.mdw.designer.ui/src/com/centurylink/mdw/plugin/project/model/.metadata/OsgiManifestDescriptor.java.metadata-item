@@ -1,0 +1,13 @@
+version=10.2
+item-uid=64364242
+item-spec=4D4457413A314B3848384C204F5347494D414E494645535444455343524950544F52204A4156412D313735373135373034322E412D5352433B36
+file-version=6
+checksum=b7091cd58f394716d91ad65fa4d558b4
+fetch-size=4549
+mtime=1441299801
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/project/model/OsgiManifestDescriptor.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

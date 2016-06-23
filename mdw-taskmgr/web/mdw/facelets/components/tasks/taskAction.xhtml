@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+  
+    <mdw:javascriptInclude fileLocation="/script/taskAction.js" />
+
+    <mdw:taskActionComp
+      id="taskActionComponent"
+      applyTo="#{applyTo}"
+      optionalValidationFor="mainDetailForm:detailForm">
+      
+      <t:panelGrid
+        id="taskActionPanel"
+        rendered="#{rendered}"
+        columns="6"
+        cellpadding="0px" 
+        cellspacing="0px" >
+        <t:selectOneMenu
+          id="taskActionSelect"
+          styleClass="mdw_inputField"
+          style="margin-right:5px;"
+          onchange="showHideUserSelect(this, 'taskActionUserSelect');showHideDestination(this, 'taskActionDestination');showHideComment(this, 'taskActionCommentInput');"
+          value="#{taskAction.taskAction}"
+          converter="taskActionConverter">
+          <f:selectItems
+            value="#{allowableTaskActions}" />
+        </t:selectOneMenu>
+        <t:selectOneMenu
+          id="taskActionUserSelect"
+          styleClass="mdw_inputField"
+          style="#{taskAction.action == 'Assign' ? 'margin:1px;' : 'visibility:hidden;width:0px;'}"
+          value="#{taskAction.userId}">
+          <f:selectItems
+            value="#{taskAction.userList}" />
+        </t:selectOneMenu>
+        <t:selectOneMenu
+          id="taskActionDestination"
+          styleClass="mdw_inputField"
+          style="#{taskAction.action == 'Forward' ? 'margin:1px;' : 'visibility:hidden;width:0px;'}"
+          value="#{taskAction.destination}">
+          <f:selectItems
+            value="#{taskAction.destinations}" />
+        </t:selectOneMenu>
+        <t:inputText
+          id="taskActionCommentInput"
+          styleClass="mdw_inputField"
+          style="#{taskAction.action == 'Cancel' ? 'width:300px;' : 'visibility:hidden;width:0px;'}"
+          value="#{taskAction.comment}"
+          onclick="taskCommentOnClick(this);" />
+        <t:commandButton
+          id="taskAction_go"
+          value="Go"
+          action="#{taskActionController.refresh}"
+          actionListener="#{taskActionController.processAction}"
+          actionFor=":mainDetailForm:actionForm,#{submitDetailData ? ':mainDetailForm:detailForm' : ''}"         
+          styleClass="mdw_detailFormButtons">
+        </t:commandButton>
+      </t:panelGrid>
+    
+    </mdw:taskActionComp>
+
+  </ui:composition>
+
+</html>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67101935
+item-spec=4D4457413A314B3843574420534552564552204A4156412D2D313135323430313437322E412D5352433B3133
+file-version=13
+checksum=bcba27939f52fa6ee05249c26d84c8ae
+fetch-size=11731
+mtime=1450731416
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/utils/Server.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

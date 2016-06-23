@@ -1,0 +1,6 @@
+// restful-adapter-post
+start process("RestfulServiceAdapter") {
+    variables = [httpMethod: "POST"]
+}
+wait process
+verify process

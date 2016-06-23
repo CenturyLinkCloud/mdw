@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67722967
+item-spec=4D4457413A314B3848384C204E455759414D4C57495A415244204A4156412D31393137323535393658323339393358302E412D5352433B31
+file-version=1
+checksum=758e03b079558a239b7c6ea6fb38350a
+fetch-size=564
+mtime=1454027327
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/NewYamlWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

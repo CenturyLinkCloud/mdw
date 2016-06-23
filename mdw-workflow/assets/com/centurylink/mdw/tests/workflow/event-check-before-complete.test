@@ -1,0 +1,9 @@
+// event-check-before-complete
+notify event("S-${masterRequestId}") {
+    message = "<EventCheck/>"
+}
+sleep 10
+start process("EventCheck")
+wait process
+verify process
+

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855539
+item-spec=4D4457413A314B374B524A204352495445524941204A4156412D2D3434323934303333322E412D5352433B32
+file-version=2
+checksum=66a99f068b9f79010e3ea3d1c1646768
+fetch-size=1378
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/components/Criteria.java
+project=4D4457413A4D445741
+project-uid=31770127

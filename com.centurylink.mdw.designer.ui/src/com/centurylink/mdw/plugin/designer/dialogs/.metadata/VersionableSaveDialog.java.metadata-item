@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69631871
+item-spec=4D4457413A314B3848384C2056455253494F4E41424C45534156454449414C4F47204A4156412D2D313331353234343037302E412D5352433B39
+file-version=9
+checksum=f4ed8cba40bb7a0a13f1caaa2c2229c9
+fetch-size=11080
+mtime=1459963930
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/dialogs/VersionableSaveDialog.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

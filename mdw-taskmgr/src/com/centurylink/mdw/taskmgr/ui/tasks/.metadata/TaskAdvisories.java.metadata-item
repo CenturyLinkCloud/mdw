@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68827151
+item-spec=4D4457413A314B37565330205441534B41445649534F52494553204A4156412D2D313239313931313530372E412D5352433B34
+file-version=4
+checksum=6201e0d56379b82fd9bb91b647e2a0b7
+fetch-size=773
+mtime=1457112295
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/tasks/TaskAdvisories.java
+project=4D4457413A4D445741
+project-uid=31770127

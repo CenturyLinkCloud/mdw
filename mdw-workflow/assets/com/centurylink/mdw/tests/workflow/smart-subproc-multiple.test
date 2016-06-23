@@ -1,0 +1,6 @@
+// smart-subproc-multiple
+start process("SmartProcessParent") {
+    variables = [ testCase: "multiple", subprocInputVar: "testInput" ]
+}
+wait process
+verify processes("SmartProcessParent", "SmartProcessChild", "SmartProcessChild2")

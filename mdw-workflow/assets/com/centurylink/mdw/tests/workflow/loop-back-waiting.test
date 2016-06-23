@@ -1,0 +1,8 @@
+// event-wait-loop-back
+start process("MDWTestLoopBackWaiting") {
+    variables = [n: 1]
+}
+wait process("MDWTestLoopBackWaiting") {
+    timeout = 300
+}
+verify process

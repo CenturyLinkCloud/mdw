@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:osgi="http://www.springframework.org/schema/osgi"
+  xmlns:ctx="http://www.springframework.org/schema/context"
+  xmlns:jaxws="http://cxf.apache.org/jaxws"
+  xmlns:cxf="http://camel.apache.org/schema/cxf"
+  xmlns:employee="http://mdw-servicemix.centurylink.com"
+  xmlns:mdw="http://mdw.centurylink.com/service"
+  xmlns:camel="http://camel.apache.org/schema/spring"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+    http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <bean id="mdwCamelTranslatorProvider"
+    class="com.centurylink.mdw.camel.cxf.VariableTranslatorProviderBean" />
+  <osgi:service ref="mdwCamelTranslatorProvider">
+    <osgi:interfaces>
+      <value>com.centurylink.mdw.common.provider.VariableTranslatorProvider</value>
+    </osgi:interfaces>
+  </osgi:service>
+
+  <bean id="mdwCamelActivityProvider"
+    class="com.centurylink.mdw.camel.activity.CamelActivityProviderBean" />
+  <osgi:service ref="mdwCamelActivityProvider">
+    <osgi:interfaces>
+      <value>com.centurylink.mdw.common.provider.ActivityProvider</value>
+    </osgi:interfaces>
+  </osgi:service>
+  
+  <bean id="CamelRouteCache" class="com.centurylink.mdw.camel.route.CamelRouteCache" />
+  <osgi:service ref="CamelRouteCache">
+    <osgi:interfaces>
+      <value>com.centurylink.mdw.common.provider.CacheService</value>
+    </osgi:interfaces>
+    <osgi:service-properties>
+      <entry key="alias" value="CamelRouteCache"/>
+      <!-- 
+      <entry key="PreLoaded" value="orderingCamelRoutes{Certified=true,Code=MgmtApproved}" />
+       -->
+    </osgi:service-properties>    
+  </osgi:service>
+
+  <!-- empty camel context -->  
+  <camel:camelContext xmlns="http://camel.apache.org/schema/spring">
+  </camel:camelContext>
+
+</beans>

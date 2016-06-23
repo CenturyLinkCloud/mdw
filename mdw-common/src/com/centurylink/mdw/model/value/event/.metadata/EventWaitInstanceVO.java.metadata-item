@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853051
+item-spec=4D4457413A314B3737545A204556454E5457414954494E5354414E4345564F204A4156412D2D3739393638343738382E412D5352433B32
+file-version=2
+checksum=80e19a8d74cf1ce7ed459e6bff9bca18
+fetch-size=1088
+mtime=1393988446
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/value/event/EventWaitInstanceVO.java
+project=4D4457413A4D445741
+project-uid=31770127

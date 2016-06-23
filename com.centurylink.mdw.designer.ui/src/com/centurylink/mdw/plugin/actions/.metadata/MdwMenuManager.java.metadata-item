@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67722701
+item-spec=4D4457413A314B3848384C204D44574D454E554D414E41474552204A4156412D31393137323039393658323135363758322E412D5352433B31
+file-version=1
+checksum=b89c3a9414d26a72fbe27fcb21a0ac38
+fetch-size=1194
+mtime=1454024715
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/actions/MdwMenuManager.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

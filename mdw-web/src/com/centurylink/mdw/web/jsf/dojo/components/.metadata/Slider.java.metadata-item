@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855632
+item-spec=4D4457413A314B374B524A20534C49444552204A4156412D2D31313530303336322E412D5352433B32
+file-version=2
+checksum=090189daa73f700da829b15009a1b0ac
+fetch-size=2340
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/dojo/components/Slider.java
+project=4D4457413A4D445741
+project-uid=31770127

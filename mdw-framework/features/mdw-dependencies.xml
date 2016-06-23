@@ -1,0 +1,96 @@
+<features>
+ 
+  <feature name="mdw-dependencies" version="@mdw.version@">
+    <bundle>wrap:mvn:com.qwest.appsec/AccessControl/6.8</bundle>
+    <bundle>wrap:mvn:com.qwest.mbeng/mbeng/7.1.0</bundle>
+    <bundle>mvn:com.oracle/ojdbc6/11.2.0.3</bundle>
+    <bundle>wrap:mvn:junit/junit/4.8.1</bundle>
+    <bundle>wrap:mvn:commons-beanutils/commons-beanutils/1.8.3</bundle>
+    <bundle>wrap:mvn:commons-collections/commons-collections/3.2.1</bundle>    
+    <bundle>wrap:mvn:commons-httpclient/commons-httpclient/3.0.1</bundle>
+    <bundle>wrap:mvn:commons-io/commons-io/2.4</bundle>
+    <bundle>wrap:mvn:commons-jexl/commons-jexl/1.1</bundle>
+    <bundle>wrap:mvn:commons-pool/commons-pool/1.5.4</bundle>
+    <bundle>wrap:mvn:dom4j/dom4j/1.6.1</bundle>
+    <bundle>wrap:mvn:org.apache.ant/ant/1.8.2</bundle>
+    <bundle>wrap:mvn:org.apache.ant/ant-junit/1.8.2</bundle>
+    <bundle>wrap:mvn:org.json/json/20090211</bundle>
+    <bundle>wrap:mvn:bouncycastle/bcprov-jdk15/140</bundle>
+    <bundle>wrap:mvn:javax.xml/jaxrpc-api/1.1</bundle>
+    <bundle>wrap:mvn:com.jcraft/jsch/0.1.51$Bundle-SymbolicName=com.jcraft.jsch&amp;Bundle-Version=0.1.51</bundle>
+    <bundle>wrap:mvn:expect4j/expect4j/1.1.0</bundle>
+    <bundle>wrap:mvn:oro/oro/2.0.8</bundle>
+    <bundle>mvn:com.qwest.bus/bus-all/2.1.3</bundle>
+    <bundle>wrap:mvn:velocity-tools/velocity-tools/1.4</bundle>
+    <bundle>wrap:mvn:org.apache.poi/poi-all/3.7$DynamicImport-Package=*&amp;Bundle-SymbolicName=org.apache.poi.poi-all&amp;Bundle-Version=3.7</bundle>    
+    <bundle>mvn:javax.validation/validation-api/1.1.0.Final</bundle>
+    <bundle>wrap:mvn:javax.servlet/jsp-api/2.0</bundle>
+    <bundle>wrap:mvn:javax.el/el-api/1.0</bundle>
+    <bundle>wrap:mvn:el-impl/el-impl/1.0</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.4_3</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlbeans/2.4.0_4</bundle>
+    <bundle>mvn:javax.jms/com.springsource.javax.jms/1.1.0</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance/1.0_6</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saaj-impl/1.3.21_1</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/1.7_6</bundle>
+    <bundle>mvn:com.googlecode.javaewah/JavaEWAH/0.7.9</bundle>
+    <bundle>wrap:mvn:org.apache.httpcomponents/httpclient/4.1.3</bundle>
+    <bundle>mvn:org.eclipse.jgit/org.eclipse.jgit/3.4.1.201406201815-r</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.4.5</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.4.5</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.4.5</bundle>
+    <bundle>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/2.4.5</bundle>
+    <bundle>mvn:org.yaml/snakeyaml/1.16</bundle>
+    <bundle>wrap:mvn:org.reflections/reflections/0.9.10</bundle>
+    <bundle>mvn:org.javassist/javassist/3.18.1-GA</bundle>
+    <bundle>mvn:org.apache.commons/commons-lang3/3.2.1</bundle>
+    <bundle>mvn:com.google.guava/guava/18.0</bundle>
+    <bundle>mvn:io.swagger/swagger-annotations/1.5.4</bundle>
+    <bundle>mvn:io.swagger/swagger-models/1.5.4</bundle>
+    <bundle>mvn:io.swagger/swagger-core/1.5.4</bundle>
+    <bundle>wrap:mvn:io.swagger/swagger-servlet/1.5.4</bundle>
+  </feature>
+    
+  <feature name="mdw-smx-dependencies" version="@mdw.version@">
+    <feature version="@mdw.version@">mdw-dependencies</feature>
+    <feature version="@mdw.version@">mdw-smx-drools</feature>
+    <bundle>wrap:mvn:groovy/groovy-all/1.7.2ctl$DynamicImport-Package=*&amp;Bundle-SymbolicName=groovy.groovy-all&amp;Bundle-Version=1.7.2ctl</bundle>
+    <bundle start-level='10'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/1.9.0</bundle>    
+  </feature>
+  
+  <feature name="mdw-fuse-dependencies" version="@mdw.version@">
+    <feature version="@mdw.version@">mdw-dependencies</feature>
+    <feature>activemq-camel</feature>
+    <feature>servicemix-drools</feature>
+    <bundle>mvn:mysql/mysql-connector-java/5.1.29</bundle>
+    <bundle>mvn:org.codehaus.groovy/groovy-all/2.1.9</bundle>
+    <bundle start-level='10'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr339-api-m10/2.3.0.redhat-610379</bundle>   
+  </feature>
+  
+  <feature name="mdw-smx-drools" version="@mdw.version@">
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdt-core/3.2.3_4</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr-runtime/3.4_1</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.drools/5.5.0.Final_2</bundle>
+    <bundle>mvn:org.mvel/mvel2/2.1.3.Final</bundle>
+  </feature>
+  
+  <feature name="mdw-artis" version="@mdw.version@">
+    <bundle>mvn:org.apache.commons/commons-dbcp2/2.1</bundle>
+    <bundle>mvn:org.apache.commons/commons-pool2/2.4.1</bundle>
+    <bundle>wrap:mvn:artis/artis/4.0.1</bundle>
+  </feature>
+  
+  <feature name="mdw-embedded-db" version="@mdw.version@">
+    <bundle>mvn:org.mariadb.jdbc/mariadb-java-client/1.2.0</bundle>
+  </feature>
+  
+  <feature name="mdw-javascript" version="@mdw.version@">
+    <feature>servicemix-scripting</feature>
+  </feature>
+  
+  <feature name="mdw-camel-dependencies" version="@mdw.version@">
+    <feature>camel</feature>
+    <feature>camel-cxf</feature>
+  </feature>
+  
+</features>

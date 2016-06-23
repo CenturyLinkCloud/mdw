@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49538668
+item-spec=4D4457413A314B3737545A20534348454D41545950455452414E534C41544F52204A4156412D2D313234323532353831382E412D5352433B33
+file-version=3
+checksum=025272b60066fbf6cf21dcc69c4b267a
+fetch-size=603
+mtime=1405982536
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/SchemaTypeTranslator.java
+project=4D4457413A4D445741
+project-uid=31770127

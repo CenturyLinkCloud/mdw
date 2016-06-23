@@ -1,0 +1,8 @@
+// camel-adapter-start-process
+start process("com.centurylink.mdw.tests.camel/MDWTestCamelAdapter") {
+    variables = [testRequest: "<StartStopProcess></StartStopProcess>"]
+}
+wait process("com.centurylink.mdw.tests.camel/MDWTestCamelAdapter") {
+    timeout = 30
+}
+verify processes("com.centurylink.mdw.tests.camel/MDWTestCamelAdapter")

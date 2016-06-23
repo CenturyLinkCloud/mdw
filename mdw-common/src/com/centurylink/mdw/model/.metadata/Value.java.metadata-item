@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69534470
+item-spec=4D4457413A314B3737545A2056414C5545204A4156412D3139373234373835385831373931315831342E412D5352433B32
+file-version=2
+checksum=c3084cff90fee91642725ee9c5be14c2
+fetch-size=4032
+mtime=1459566407
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/Value.java
+project=4D4457413A4D445741
+project-uid=31770127

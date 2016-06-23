@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855218
+item-spec=4D4457413A314B37565330205441534B494E5354414E4345444154414954454D204A4156412D3430363235343239302E412D5352433B32
+file-version=2
+checksum=ea043cc6ae08752d0671dcb191e127bf
+fetch-size=4163
+mtime=1393990193
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/tasks/detail/TaskInstanceDataItem.java
+project=4D4457413A4D445741
+project-uid=31770127

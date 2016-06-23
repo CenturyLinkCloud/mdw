@@ -1,0 +1,18 @@
+// bus-adapter-stubbed
+assert stubbing
+stub adapter(xpath("TestGeneralEvent")) {
+    delay = 2
+    response = asset("bus_stubbed_response.xml").text
+}
+
+start process("SynchronousBusAdapter"){
+    variables = [ServiceRequest: """<TestGeneralEvent>
+  <ProcessName>MDWTestMainProcess</ProcessName>
+  <adaptor_type>webservice</adaptor_type>
+  <EventType>ORDER_START</EventType>
+  <MasterRequestId>${masterRequestId}</MasterRequestId>
+</TestGeneralEvent>"""]
+    }
+
+wait process
+verify process

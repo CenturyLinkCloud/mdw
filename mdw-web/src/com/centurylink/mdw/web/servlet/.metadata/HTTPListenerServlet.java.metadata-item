@@ -1,0 +1,13 @@
+version=10.2
+item-uid=66834622
+item-spec=4D4457413A314B374B524A20485454504C495354454E4552534552564C4554204A4156412D2D313733303332313130302E412D5352433B35
+file-version=5
+checksum=0a4f819ee28b60390f1dc09e70c360c2
+fetch-size=5263
+mtime=1449702130
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/servlet/HTTPListenerServlet.java
+project=4D4457413A4D445741
+project-uid=31770127

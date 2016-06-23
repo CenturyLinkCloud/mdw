@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44536474
+item-spec=4D4457413A314B3654583320434C45414E555020444546494E4954494F4E532053514C2D35383136343537362E412D4441543B31
+file-version=1
+checksum=9faadb025dbef77efcc81d01684a9b10
+fetch-size=1596
+mtime=1275010403
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/Cleanup-Definitions.sql
+project=4D4457413A4D445741
+project-uid=31770127

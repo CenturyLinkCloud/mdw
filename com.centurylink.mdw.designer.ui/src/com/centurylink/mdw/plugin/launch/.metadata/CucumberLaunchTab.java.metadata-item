@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68101340
+item-spec=4D4457413A314B3848384C20435543554D4245524C41554E4348544142204A4156412D31393234313338353258313338353158362E412D5352433B34
+file-version=4
+checksum=062fb9abf0e5979b6f9308d03cba4c29
+fetch-size=12011
+mtime=1455221429
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/launch/CucumberLaunchTab.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

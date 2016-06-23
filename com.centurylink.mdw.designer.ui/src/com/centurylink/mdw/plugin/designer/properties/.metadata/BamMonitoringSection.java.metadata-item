@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549748
+item-spec=4D4457413A314B3848384C2042414D4D4F4E49544F52494E4753454354494F4E204A4156412D323039393830353335372E412D5352433B3135
+file-version=15
+checksum=c94cb94deaf6ddf049f28c27a8da22c0
+fetch-size=9504
+mtime=1453327159
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/properties/BamMonitoringSection.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

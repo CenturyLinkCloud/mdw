@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62584949
+item-spec=4D4457413A314B3737545A2050524F43455353504552534953544552204A4156412D313938373932323237332E412D5352433B3135
+file-version=15
+checksum=babafa6fe471db037e162b950aaceb3e
+fetch-size=4449
+mtime=1436910006
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/dataaccess/ProcessPersister.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,31 @@
+// GET request to: Services/Roles?app=appId
+{
+  "count": 6,
+  "retrieveDate": "10-27-2015 12:12:03",
+  "roles": [
+    {
+      "name": "A New Role",
+      "description": "Description for a new role."
+    },
+    {
+      "name": "Process Design",
+      "description": "define processes"
+    },
+    {
+      "name": "Process Execution",
+      "description": "execute processes"
+    },
+    {
+      "name": "Supervisor",
+      "description": "reassign tasks, acting as a group member"
+    },
+    {
+      "name": "Task Execution",
+      "description": "perform manual tasks"
+    },
+    {
+      "name": "User Admin",
+      "description": "manage users, groups and roles"
+    }
+  ]
+}

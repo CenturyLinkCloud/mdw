@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855239
+item-spec=4D4457413A314B37565330205441534B414354494F4E204A4156412D3430363235343239302E412D5352433B32
+file-version=2
+checksum=c78c0c1d3ec677391fbcb8fe0cc07f7e
+fetch-size=4560
+mtime=1393990193
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/jsf/components/TaskAction.java
+project=4D4457413A4D445741
+project-uid=31770127

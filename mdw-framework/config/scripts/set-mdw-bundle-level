@@ -1,0 +1,21 @@
+# Copy this file to your instance root for example C:\jboss-fuse-6.1.0.redhat-379\instances\mdw
+# Type following on your karaf shell after deploying mdw bundles
+# source set-mdw-bundle-level
+
+bs = ($.context bundles)
+each ($bs) { 
+	name = ($it symbolicName)
+	id = ($it bundleId)
+		if {$name equals "com.centurylink.mdw.schemas"} {bundle-level ($id) 70}
+		if {$name equals "com.centurylink.mdw.common"} {bundle-level ($id) 71}
+		if {$name equals "com.centurylink.mdw.services"} {bundle-level ($id) 72}
+		if {$name equals "com.centurylink.mdw.listeners"} {bundle-level ($id) 73}
+		if {$name equals "com.centurylink.mdw.workflow"} {bundle-level ($id) 74}
+		if {$name equals "com.centurylink.mdw.web"} {bundle-level ($id) 75}
+		if {$name equals "com.centurylink.mdw.taskmgr"} {bundle-level ($id) 76}
+		if {$name equals "com.centurylink.mdw.hub"} {bundle-level ($id) 77}
+		if {$name equals "com.centurylink.mdw.camel"} {bundle-level ($id) 78}
+		if {$name equals "com.centurylink.mdw.admin"} {bundle-level ($id) 79}
+		if {$name equals "com.centurylink.mdw.reports"} {bundle-level ($id) 80}
+} 
+list |grep -i mdw

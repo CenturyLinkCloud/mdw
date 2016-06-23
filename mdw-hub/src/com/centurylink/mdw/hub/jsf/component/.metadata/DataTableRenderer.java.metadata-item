@@ -1,0 +1,13 @@
+version=10.2
+item-uid=47940480
+item-spec=4D4457413A314B3759514220444154415441424C4552454E4445524552204A4156412D2D3332393836313534322E412D5352433B34
+file-version=4
+checksum=f54aa43532c6a005c065a2352baf7370
+fetch-size=20327
+mtime=1397672652
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/jsf/component/DataTableRenderer.java
+project=4D4457413A4D445741
+project-uid=31770127

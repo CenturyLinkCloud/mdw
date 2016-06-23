@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69236124
+item-spec=4D4457413A314B3756533020574F524B47524F55504954454D204A4156412D2D3634303731353531372E412D5352433B35
+file-version=5
+checksum=e5d0b6eed63de979b6f81c339b3cf097
+fetch-size=5678
+mtime=1458254616
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/workgroups/WorkgroupItem.java
+project=4D4457413A4D445741
+project-uid=31770127

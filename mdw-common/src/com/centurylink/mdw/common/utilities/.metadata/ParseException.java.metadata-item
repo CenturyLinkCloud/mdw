@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852799
+item-spec=4D4457413A314B3737545A205041525345455843455054494F4E204A4156412D2D3438353936333630352E412D5352433B32
+file-version=2
+checksum=e3159a54be4583cea041dc6d7fa3997e
+fetch-size=457
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/ParseException.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69236106
+item-spec=4D4457413A314B37435A30205441534B4D414E41474552414343455353204A4156412D2D3233373836343435382E412D5352433B3132
+file-version=12
+checksum=9da6e51eab532c16d868d29bcbe54790
+fetch-size=35888
+mtime=1458257614
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/task/TaskManagerAccess.java
+project=4D4457413A4D445741
+project-uid=31770127

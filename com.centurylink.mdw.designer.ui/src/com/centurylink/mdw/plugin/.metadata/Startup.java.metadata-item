@@ -1,0 +1,13 @@
+version=10.2
+item-uid=64261641
+item-spec=4D4457413A314B3848384C2053544152545550204A4156412D31373835303136383958323937333958302E412D5352433B31
+file-version=1
+checksum=d9a032ad9acc027283d497e904151ac0
+fetch-size=633
+mtime=1440721834
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/Startup.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

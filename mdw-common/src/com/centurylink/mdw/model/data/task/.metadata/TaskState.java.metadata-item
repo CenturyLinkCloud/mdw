@@ -1,0 +1,13 @@
+version=10.2
+item-uid=55479698
+item-spec=4D4457413A314B3737545A205441534B5354415445204A4156412D2D313939333332333834302E412D5352433B36
+file-version=6
+checksum=d65519f47ce9ab92be81706bf02548b8
+fetch-size=1447
+mtime=1430862291
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/model/data/task/TaskState.java
+project=4D4457413A4D445741
+project-uid=31770127

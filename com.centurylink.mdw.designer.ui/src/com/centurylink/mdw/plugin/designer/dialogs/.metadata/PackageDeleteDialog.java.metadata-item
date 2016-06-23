@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549289
+item-spec=4D4457413A314B3848384C205041434B41474544454C4554454449414C4F47204A4156412D313838383537343639382E412D5352433B36
+file-version=6
+checksum=cebf7e39794594c7f9f295e594a980ab
+fetch-size=1400
+mtime=1453322013
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/dialogs/PackageDeleteDialog.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

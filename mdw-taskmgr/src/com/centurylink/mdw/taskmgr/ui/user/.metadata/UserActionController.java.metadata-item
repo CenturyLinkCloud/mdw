@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69236127
+item-spec=4D4457413A314B375653302055534552414354494F4E434F4E54524F4C4C4552204A4156412D2D3634303731353531372E412D5352433B33
+file-version=3
+checksum=494eeab9b936c01a45ee77b83a659d2f
+fetch-size=6539
+mtime=1458254183
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/user/UserActionController.java
+project=4D4457413A4D445741
+project-uid=31770127

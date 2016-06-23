@@ -1,0 +1,27 @@
+process: # 13779
+  name: ScriptTest
+  instance: 1
+  activity: # 3 "2016-02-23 12:49:55"
+    name: Start
+    status: Completed
+  activity: # 8 "2016-02-23 12:49:55"
+    name: Script Flavor?
+    status: Completed
+  activity: # 10 "2016-02-23 12:49:55"
+    name: Unknown
+    status: Completed
+  activity: # 11 "2016-02-23 12:49:55"
+    name: New Process Finish
+    status: Completed
+  variable: # 21089
+    name: scriptFlavor
+    value: Unknown
+process: # 13780
+  name: ScriptTest Exception Handler
+  instance: 1
+  activity: # 13 "2016-02-23 12:49:55"
+    name: Start
+    status: Completed
+  activity: # 14 "2016-02-23 12:49:55"
+    name: Stop
+    status: Completed

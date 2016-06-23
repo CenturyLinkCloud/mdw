@@ -1,0 +1,126 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="MDWTestTimerWait" version="1.2" description="">
+    <bpm:Activity Id="Activity43" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=60,y=260,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity42" Name="which case?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
+      <bpm:Attribute Name="Expression" Value="testCase"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=171,y=260,w=60,h=40"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity46" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=741,y=263,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity49" Name="Timer and Event&#10;Wait - wait" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Waiting"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="2"/>
+      <bpm:Attribute Name="Unit" Value="Minutes"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},other,true"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=416,y=247,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity47" Name="wait for 1 min" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="$+Id" Value="69569"/>
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="1"/>
+      <bpm:Attribute Name="Unit" Value="Minutes"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=415,y=502,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity44" Name="wait for 1min" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="1"/>
+      <bpm:Attribute Name="Unit" Value="Minutes"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=417,y=146,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity50" Name="wait for 60s" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="60"/>
+      <bpm:Attribute Name="Unit" Value="Seconds"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=733,y=26,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity45" Name="Timer and Event&#10;Wait - hold" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Hold"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="2"/>
+      <bpm:Attribute Name="Unit" Value="Minutes"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},other,true"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=417,y=387,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="Activity48" Name="Timer and Event&#10;Wait - cancel" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
+      <bpm:Attribute Name="SLA" Value="0"/>
+      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
+      <bpm:Attribute Name="TIMER_WAIT" Value="2"/>
+      <bpm:Attribute Name="Unit" Value="Minutes"/>
+      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},other,true"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=420,y=24,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="cancel" From="Activity42" To="Activity48" Event="FINISH" Id="Transition34">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=268,ly=115,type=ElbowH,xs=231&amp;290&amp;290&amp;416,ys=280&amp;280&amp;49&amp;49"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity48" To="Activity46" Event="FINISH" Id="Transition35">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=623,ly=163,type=Elbow,xs=524&amp;737,ys=54&amp;283"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="wait" From="Activity42" To="Activity49" Event="FINISH" Id="Transition36">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=327,ly=280,type=Elbow,xs=235&amp;412,ys=280&amp;280"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity49" To="Activity46" Event="FINISH" Id="Transition37">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=632,ly=283,type=Elbow,xs=520&amp;737,ys=283&amp;283"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity43" To="Activity42" Event="FINISH" Id="Transition38">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=146,ly=280,type=Elbow,xs=124&amp;167,ys=280&amp;280"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity45" To="Activity46" Event="FINISH" Id="Transition39">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=633,ly=353,type=Elbow,xs=521&amp;737,ys=417&amp;283"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="hold" From="Activity42" To="Activity45" Event="FINISH" Id="Transition40">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=260,ly=369,type=ElbowH,xs=231&amp;292&amp;292&amp;413,ys=280&amp;280&amp;422&amp;422"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="other" From="Activity45" To="Activity47" Event="FINISH" Id="Transition41">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=467,ly=476,type=Elbow,xs=466&amp;466,ys=451&amp;498"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity47" To="Activity45" Event="FINISH" Id="Transition42">
+      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=502,ly=375,type=ElbowH,xs=519&amp;565&amp;565&amp;521,ys=530&amp;530&amp;433&amp;433"/>
+      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="other" From="Activity49" To="Activity44" Event="FINISH" Id="Transition43">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=486,ly=220,type=Elbow,xs=466&amp;466,ys=243&amp;210"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="other" From="Activity48" To="Activity50" Event="FINISH" Id="Transition44">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=655,ly=28,type=Elbow,xs=524&amp;729,ys=55&amp;55"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="Activity50" To="Activity46" Event="FINISH" Id="Transition45">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=771,ly=174,type=Elbow,xs=771&amp;771,ys=90&amp;259"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="SLA" Value="0"/>
+    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
+    <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="-1"/>
+    <bpm:Attribute Name="Transition with no Label" Value="Acts as Default"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=31,y=23,w=176,h=27"/>
+    <bpm:Attribute Name="START_TRANSITION_ID" Value="2327820"/>
+    <bpm:Variables Name="testCase" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

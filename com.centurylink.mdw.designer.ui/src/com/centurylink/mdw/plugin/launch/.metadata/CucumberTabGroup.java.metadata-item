@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68101311
+item-spec=4D4457413A314B3848384C20435543554D4245525445535454414247524F5550204A4156412D31393234313338353158313338353158322E412D5352433B33
+file-version=3
+checksum=b8e631f8059e3aee5e5e39e06edfad54
+fetch-size=1098
+mtime=1455211726
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/launch/CucumberTabGroup.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

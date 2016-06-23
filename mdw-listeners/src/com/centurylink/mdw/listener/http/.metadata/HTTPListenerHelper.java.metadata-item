@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67346449
+item-spec=4D4457413A314B3746473520485454504C495354454E455248454C504552204A4156412D2D3539323837373839372E412D5352433B3130
+file-version=10
+checksum=51c023aa12f7d2b5ce7851567552e6bc
+fetch-size=20631
+mtime=1452646014
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listener/http/HTTPListenerHelper.java
+project=4D4457413A4D445741
+project-uid=31770127

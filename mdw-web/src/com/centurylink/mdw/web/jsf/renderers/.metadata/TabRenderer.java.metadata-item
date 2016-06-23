@@ -1,0 +1,13 @@
+version=10.2
+item-uid=48603858
+item-spec=4D4457413A314B374B524A2054414252454E4445524552204A4156417E30312D3732303031303431342E412D5352433B33
+file-version=3
+checksum=121eeae04fccf69446ea98e935b48199
+fetch-size=10451
+mtime=1400276903
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/renderers/TabRenderer.java
+project=4D4457413A4D445741
+project-uid=31770127

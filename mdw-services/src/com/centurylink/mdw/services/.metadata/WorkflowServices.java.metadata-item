@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71453991
+item-spec=4D4457413A314B37435A3020574F524B464C4F575345525649434553204A4156412D313734313833343734583536343458322E412D5352433B3232
+file-version=22
+checksum=da311b331fea40483f3e9c2f8a90e1c0
+fetch-size=4596
+mtime=1465849827
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/WorkflowServices.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=65044757
+item-spec=4D4457413A314B37435A3020555345524D414E41474552204A4156412D2D313433313530333531302E412D5352433B36
+file-version=6
+checksum=28ba68b57ef367bbcb4cb8a6e3564349
+fetch-size=12197
+mtime=1444173566
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/services/UserManager.java
+project=4D4457413A4D445741
+project-uid=31770127

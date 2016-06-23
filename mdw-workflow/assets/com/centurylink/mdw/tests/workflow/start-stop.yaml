@@ -1,0 +1,12 @@
+process: # 13489
+  name: StartStopProcess
+  instance: 1
+  activity: # 1 "2016-02-18 16:40:44"
+    name: Start
+    status: Completed
+  activity: # 2 "2016-02-18 16:40:44"
+    name: Stop
+    status: Completed
+  variable: # 20155
+    name: inputVar
+    value: Hello from MDW Test

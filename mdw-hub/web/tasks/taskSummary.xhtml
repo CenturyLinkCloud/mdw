@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+    <mdw:panel id="taskSummaryPanel" label="Summary" collapsible="true" styleClass="mdw_panel" collapsed="#{collapsed}">
+      <t:panelGrid columns="6" width="100%" cellpadding="6" cellspacing="2" columnClasses="mdw_label,mdw_value,mdw_label,mdw_value,mdw_label,mdw_value">
+        
+        <h:outputLabel for="taskInstId" value="Task ID:" />
+        <t:panelGroup>
+          <h:outputText id="taskInstId" value="#{task.instanceId}" style="font-weight:bold" />
+          <t:panelGroup rendered="#{task.subTask}">
+            <h:outputText value=" (subtask of "/>
+            <h:commandLink action="#{masterTaskActionController.displayMasterTaskInstance}">
+              <h:outputText value="#{task.masterTaskInstanceId}" />
+            </h:commandLink><h:outputText value=")" />
+          </t:panelGroup>
+        </t:panelGroup>
+        
+        <h:outputLabel for="taskStatus" value="Status:" />
+        <h:outputText id="taskStatus" value="#{task.status}" styleClass="mdw_label" style="font-weight:bold" />
+        
+        <h:outputLabel for="assignee" value="Assignee:" />
+        <h:outputText id="assignee" value="#{task.assigneeName}" style="font-weight:bold" />
+        
+        <h:outputLabel for="taskName" value="Task Name:" />
+        <t:panelGroup colspan="5">
+          <h:inputText id="taskName" value="#{task.name}" styleClass="mdw_value mdw_readOnly" style="width:605px;" readonly="true" />
+        </t:panelGroup>
+  
+        <h:outputLabel for="orderLink" value="Order ID:" />
+        <h:commandLink id="orderLink" action="#{taskDetailLinkController.goOrderDetail}" >
+          #{task.orderId} 
+        </h:commandLink>
+        
+        <h:outputLabel for="workgroups" value="WorkGroup(s):" />
+        <t:panelGroup colspan="3">
+           <h:outputText id="workgroups" value="#{task.workgroups}" />
+        </t:panelGroup>
+  
+        <h:outputLabel for="startDate" value="Started:" />
+        <h:outputText id="startDate" value="#{task.startDate}" style="white-space:nowrap;">
+          <f:convertDateTime pattern="MMM d, yyyy HH:mm" />
+        </h:outputText>
+        
+        <!-- editable due date -->
+        <h:outputLabel for="dueDate" value="Due:" rendered="#{task.assignee == authenticatedUser.cuid &amp;&amp; !task.inFinalStatus}" />
+        <rich:calendar id="dueDate" value="#{task.dueDate}" datePattern="MMM d, yyyy HH:mm" rendered="#{task.assignee == authenticatedUser.cuid &amp;&amp; !task.inFinalStatus}" showWeeksBar="false" inputClass="mdw_value" buttonIcon="/images/sm_cal.gif" inputStyle="margin-top:-2px;" buttonClass="mdw_calendarBtn" />
+        <!-- read-only due date -->
+        <h:outputLabel for="dueDateReadOnly" value="Due:" rendered="#{task.assignee != authenticatedUser.cuid || task.inFinalStatus}" />
+        <h:outputText id="dueDateReadOnly" value="#{task.dueDate}" rendered="#{task.assignee != authenticatedUser.cuid || task.inFinalStatus}" style="white-space:nowrap;">
+          <f:convertDateTime pattern="MMM d, yyyy HH:mm" />
+        </h:outputText>
+  
+        <h:outputLabel for="endDate" value="Completed:" />
+        <h:outputText id="endDate" value="#{task.endDate}" style="white-space:nowrap;">
+          <f:convertDateTime pattern="MMM d, yyyy HH:mm" />
+        </h:outputText>
+        
+        <h:outputLabel for="processLink" value="Process:" rendered="#{task.ownerType == 'PROCESS_INSTANCE'}" />
+        <h:commandLink id="processLink" action="#{taskDetailLinkController.goProcessDetail}" rendered="#{task.ownerType == 'PROCESS_INSTANCE' &amp;&amp; authenticatedUser.roles['Process Execution']}">
+          #{task.processInstanceId} 
+        </h:commandLink>
+        <h:outputText id="processText" value="#{task.processInstanceId}" rendered="#{task.ownerType == 'PROCESS_INSTANCE' &amp;&amp; !authenticatedUser.roles['Process Execution']}" />
+        
+        <h:outputLabel for="creator" value="Creator:" rendered="#{task.ownerType == 'USER'}" />
+        <h:outputText id="creator" value="#{task.creator}" rendered="#{task.ownerType == 'USER'}" />
+  
+        <h:outputLabel for="priority" value="Priority:" />
+        <h:outputText id="priority" value="#{task.priority}" styleClass="mdw_value" >
+        </h:outputText>
+  
+        <h:commandLink id="taskTemplate" action="#{taskDetailLinkController.goTaskTemplate}" rendered="#{taskTemplateActionController.editableByCurrentUser}">
+          Task Template
+        </h:commandLink>
+        <mdw:blank />
+  
+        <h:outputLabel for="description" value="Description:" />
+        <t:panelGroup colspan="5">
+          <pre style="padding:0;margin:0" class="mdw_value">
+            <t:outputText id="description" value="#{task.description}" escape="true" /></pre>
+        </t:panelGroup>
+        
+        <h:outputLabel for="comments" value="Comments:" />
+        <t:panelGroup colspan="5">
+          <h:inputTextarea id="comments" wrap="off" value="#{task.comments}" rows="3"
+            readonly="#{task.assignee != authenticatedUser.cuid || task.inFinalStatus}" 
+            styleClass="mdw_textAreaInput #{(task.assignee != authenticatedUser.cuid || task.inFinalStatus) ? 'mdw_readOnly' : ''}" />
+        </t:panelGroup>
+  
+      </t:panelGrid>
+    </mdw:panel>
+  </ui:composition>
+
+</html>

@@ -1,0 +1,98 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="PrePostGroovyScript" version="0.6" description="">
+    <bpm:Activity Id="A3" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=33,y=102,w=67,h=38"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A6" Name="Finish" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=674,y=100,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A4" Name="Perform Validation" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="OsgiBundleSymbolicName" Value="com.centurylink.myservicemix"/>
+      <bpm:Attribute Name="Rule" Value="import org.w3c.dom.Node;&#13;&#10;&#13;&#10;Node orderNumNode   =   orderDoc.getFirstChild().getFirstChild().getNextSibling();&#13;&#10;println(&quot;orderNum Node: &quot;+orderNumNode);&#13;&#10;orderNumber         =   orderNumNode.getFirstChild().getNodeValue();&#13;&#10;println(&quot;orderNumber: &quot;+orderNumber);&#13;&#10;validationResult    =   orderNumNode.getLocalName().equals(&quot;orderNumber&quot;) &amp;&amp; !Character.isDigit(orderNumber.charAt(0));&#13;&#10;customerId          =   orderNumNode.getNextSibling().getNextSibling().getFirstChild().getNodeValue();&#13;&#10;return validationResult;&#13;&#10;"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=179,y=93,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A7" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=203,y=201,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A8" Name="Check Employee" Implementation="com.centurylink.mdw.workflow.adapter.soap.DocumentWebServiceAdapter">
+      <bpm:Attribute Name="DO_LOGGING" Value="True"/>
+      <bpm:Attribute Name="OsgiBundleSymbolicName" Value="com.centurylink.mdw.workflow"/>
+      <bpm:Attribute Name="PostScript" Value="import org.w3c.dom.Node;&#13;&#10;import org.w3c.dom.NodeList;&#13;&#10;&#13;&#10;String firstName    =   null;&#13;&#10;String lastName     =   null;&#13;&#10;&#13;&#10;println(&quot;employeeServiceResponse: &quot;+employeeServiceResponse);&#13;&#10;NodeList nodes  =   employeeServiceResponse.getFirstChild().getChildNodes();&#13;&#10;for(int i=0;i&lt;nodes.getLength();i++)&#13;&#10;{&#13;&#10;    Node node   =   nodes.item(i);&#13;&#10;    println(&quot;Node Local Name: &quot;+node.getLocalName());&#13;&#10;    if(node.getLocalName()!=null) {&#13;&#10;     if(&quot;firstName&quot;.equals(node.getLocalName()))&#13;&#10;     {&#13;&#10;      firstName=node.getFirstChild().getNodeValue();&#13;&#10;     }else if(&quot;lastName&quot;.equals(node.getLocalName()))&#13;&#10;     {&#13;&#10;         lastName=node.getFirstChild().getNodeValue();&#13;&#10;     }&#13;&#10;    }&#13;&#10;} &#13;&#10;if(firstName!=null &amp;&amp; lastName!=null)&#13;&#10;{&#13;&#10;  println(&quot;Found Employee: &quot; + firstName + &quot; &quot; + lastName);&#13;&#10;  discountPercent =   10;&#13;&#10;  return true;&#13;&#10;} else&#13;&#10;{&#13;&#10;  println(&quot;Employee Not Found &quot; + customerId);&#13;&#10;  discountPercent =   0;&#13;&#10;  return false;&#13;&#10;}&#13;&#10;println(&quot;Found Employee: &quot; + firstName + &quot; &quot; + lastName);&#13;&#10;return true;"/>
+      <bpm:Attribute Name="PostScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="PreScript" Value="return '''&lt;GetEmployee>&lt;sapId>'''+customerId+'''&lt;/sapId>&lt;/GetEmployee>''';"/>
+      <bpm:Attribute Name="PreScriptLang" Value="Groovy"/>
+      <bpm:Attribute Name="REQUEST_VARIABLE" Value="employeeServiceRequest"/>
+      <bpm:Attribute Name="RESPONSE_VARIABLE" Value="employeeServiceResponse"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=345,y=93,w=100,h=60"/>
+      <bpm:Attribute Name="WSDL" Value="#{props['mdw.services.url']}/SOAP"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A9" Name="Finish" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=372,y=199,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A14" Name="Set Variables" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
+      <bpm:Attribute Name="OsgiBundleSymbolicName" Value="com.centurylink.myservicemix"/>
+      <bpm:Attribute Name="Rule" Value="arg0=2;&#13;&#10;arg1=3;"/>
+      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=512,y=93,w=100,h=60"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A3" To="A4" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=146,ly=121,type=Elbow,xs=104&amp;175,ys=121&amp;121"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="true" From="A4" To="A8" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=298,ly=103,type=Elbow,xs=283&amp;341,ys=123&amp;123"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="false" From="A4" To="A7" Event="FINISH" Id="T3">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=237,ly=163,type=Elbow,xs=233&amp;233,ys=157&amp;197"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="false" From="A8" To="A9" Event="FINISH" Id="T5">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=409,ly=161,type=Elbow,xs=402&amp;402,ys=157&amp;195"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="true" From="A8" To="A14" Event="FINISH" Id="T7">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=456,ly=105,type=Elbow,xs=449&amp;508,ys=123&amp;123"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A14" To="A6" Event="FINISH" Id="T8">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=643,ly=120,type=Elbow,xs=616&amp;670,ys=120&amp;120"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=25,y=32,w=189,h=27"/>
+    <bpm:Variables Name="arg0" ReferredAs="" Category="STATIC" DisplaySequence="0">
+      <bpm:type Name="java.lang.Integer"/>
+    </bpm:Variables>
+    <bpm:Variables Name="arg1" ReferredAs="" Category="STATIC" DisplaySequence="0">
+      <bpm:type Name="java.lang.Integer"/>
+    </bpm:Variables>
+    <bpm:Variables Name="customerId" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="discountPercent" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.Integer"/>
+    </bpm:Variables>
+    <bpm:Variables Name="employeeServiceRequest" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="com.centurylink.mdw.model.StringDocument"/>
+    </bpm:Variables>
+    <bpm:Variables Name="employeeServiceResponse" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="org.w3c.dom.Document"/>
+    </bpm:Variables>
+    <bpm:Variables Name="orderDoc" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="org.w3c.dom.Document"/>
+    </bpm:Variables>
+    <bpm:Variables Name="orderNumber" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.String"/>
+    </bpm:Variables>
+    <bpm:Variables Name="return" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.Integer"/>
+    </bpm:Variables>
+    <bpm:Variables Name="validationResult" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="java.lang.Boolean"/>
+    </bpm:Variables>
+    <bpm:Variables Name="webserviceRequestVariable" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="com.centurylink.mdw.model.StringDocument"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=60594213
+item-spec=4D4457413A314B3737545A20434F4D5041544942494C4954594D415050494E4753204A4156412D2D313030343131333036322E412D5352433B3134
+file-version=14
+checksum=607cc4226b102ea8431a3895ce975338
+fetch-size=13880
+mtime=1433351347
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/Compatibility.java
+project=4D4457413A4D445741
+project-uid=31770127

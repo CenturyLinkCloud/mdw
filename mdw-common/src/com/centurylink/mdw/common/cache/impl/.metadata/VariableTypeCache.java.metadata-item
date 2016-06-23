@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68561035
+item-spec=4D4457413A314B3737545A205641524941424C45545950454341434845204A4156412D2D323030373033383436362E412D5352433B3130
+file-version=10
+checksum=4ff4671cf56958364fc22595a49618a9
+fetch-size=3302
+mtime=1456419832
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/cache/impl/VariableTypeCache.java
+project=4D4457413A4D445741
+project-uid=31770127

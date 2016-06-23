@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69365161
+item-spec=4D4457413A314B37464735204D44575343414E4E4552204A4156412D31383739323332373358313534383158302E412D5352433B35
+file-version=5
+checksum=147baad8c2cc883b54198cb5e9346772
+fetch-size=4591
+mtime=1458781627
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/api/MdwScanner.java
+project=4D4457413A4D445741
+project-uid=31770127

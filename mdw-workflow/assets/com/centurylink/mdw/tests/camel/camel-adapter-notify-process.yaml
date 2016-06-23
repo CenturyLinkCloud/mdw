@@ -1,0 +1,43 @@
+process: # 13452
+  name: CamelEventWait
+  instance: 1
+  activity: # 1 "2016-02-18 15:01:36"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-18 15:01:36"
+    name: |
+      Wait for
+      Event from Camel
+    status: Completed
+  activity: # 2 "2016-02-18 15:02:23"
+    name: Stop
+    status: Completed
+  variable: # 20108
+    name: eventId
+    value: 2537
+process: # 13453
+  name: MDWTestCamelAdapter
+  instance: 1
+  activity: # 1 "2016-02-18 15:02:21"
+    name: Start
+    status: Completed
+  activity: # 4 "2016-02-18 15:02:21"
+    name: Test Camel Route Adapter
+    status: Completed
+  activity: # 2 "2016-02-18 15:02:21"
+    name: Stop
+    status: Completed
+  variable: # 20109
+    name: testRequest
+    value: |
+      <NotifyProcess>
+        <eventName>CamelEvent-2537</eventName>
+      </NotifyProcess>
+  variable: # 20110
+    name: testResponse
+    value: |
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <Status xmlns:ns2="http://mdw.centurylink.com/services">
+          <Code>0</Code>
+          <Message>Success</Message>
+      </Status>

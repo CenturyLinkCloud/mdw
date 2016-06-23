@@ -1,0 +1,13 @@
+version=10.2
+item-uid=66834625
+item-spec=4D4457413A314B374647352050524F43455353434C45414E5550204A4156412D2D3539323837373839372E412D5352433B34
+file-version=4
+checksum=961c7835c873bc9d0d5028015cc03cb6
+fetch-size=18971
+mtime=1449702007
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/timer/cleanup/ProcessCleanup.java
+project=4D4457413A4D445741
+project-uid=31770127

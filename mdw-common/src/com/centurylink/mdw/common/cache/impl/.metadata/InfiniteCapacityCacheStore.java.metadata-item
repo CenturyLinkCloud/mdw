@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853120
+item-spec=4D4457413A314B3737545A20494E46494E4954454341504143495459434143484553544F5245204A4156412D2D3834383339343935382E412D5352433B32
+file-version=2
+checksum=2ea049da14065ad4285b7b0baf7547f8
+fetch-size=1357
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/cache/impl/InfiniteCapacityCacheStore.java
+project=4D4457413A4D445741
+project-uid=31770127

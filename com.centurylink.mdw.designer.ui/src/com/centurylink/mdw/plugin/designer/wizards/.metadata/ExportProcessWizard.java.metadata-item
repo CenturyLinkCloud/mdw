@@ -1,0 +1,13 @@
+version=10.2
+item-uid=51718982
+item-spec=4D4457413A314B3848384C204558504F525450524F4345535357495A415244204A4156412D313738323336353930352E412D5352433B32
+file-version=2
+checksum=7742b6cf1f2fe23dcc558033f4313ba6
+fetch-size=1134
+mtime=1416951858
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/wizards/ExportProcessWizard.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

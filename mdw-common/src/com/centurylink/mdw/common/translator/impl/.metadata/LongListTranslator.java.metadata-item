@@ -1,0 +1,13 @@
+version=10.2
+item-uid=51804346
+item-spec=4D4457413A314B3737545A204C4F4E474C4953545452414E534C41544F52204A4156412D3136393636353531392E412D5352433B31
+file-version=1
+checksum=577f68c0dc761d1641f652a344042028
+fetch-size=1298
+mtime=1418055465
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/translator/impl/LongListTranslator.java
+project=4D4457413A4D445741
+project-uid=31770127

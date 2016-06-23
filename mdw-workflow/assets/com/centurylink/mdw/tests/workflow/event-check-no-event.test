@@ -1,0 +1,4 @@
+// event-check-no-event
+start process("EventCheck")
+wait process
+verify process

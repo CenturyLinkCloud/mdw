@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67549814
+item-spec=4D4457413A314B3848384C2050524F4345535356455253494F4E5353454354494F4E204A4156412D2D3432363537373339322E412D5352433B39
+file-version=9
+checksum=7e4218c6e1e76fc3fa1c23985e6d46d4
+fetch-size=11676
+mtime=1453326989
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/designer/properties/ProcessVersionsSection.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

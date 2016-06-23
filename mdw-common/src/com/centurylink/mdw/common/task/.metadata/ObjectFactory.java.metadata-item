@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853093
+item-spec=4D4457413A314B3737545A204F424A454354464143544F5259204A4156412D2D313939333332333834302E412D5352433B32
+file-version=2
+checksum=696fcc15348939c50c3975cecc75e86a
+fetch-size=1301
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/task/ObjectFactory.java
+project=4D4457413A4D445741
+project-uid=31770127

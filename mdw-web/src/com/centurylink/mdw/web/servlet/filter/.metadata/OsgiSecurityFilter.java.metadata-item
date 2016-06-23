@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67346491
+item-spec=4D4457413A314B374B524A204F534749534543555249545946494C544552204A4156412D2D323038353035373238342E412D5352433B34
+file-version=4
+checksum=cf1ca3dff694fd0ed9a1fd4527a986d0
+fetch-size=5594
+mtime=1452555535
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/servlet/filter/OsgiSecurityFilter.java
+project=4D4457413A4D445741
+project-uid=31770127

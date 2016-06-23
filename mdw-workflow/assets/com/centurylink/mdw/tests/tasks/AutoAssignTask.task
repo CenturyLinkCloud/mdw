@@ -1,0 +1,8 @@
+<task:taskTemplate logicalId="AutoAssignTask" category="GEN" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>Auto Assign Task</task:name>
+  <task:attribute name="FormName">Autoform</task:attribute>
+  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
+  <task:attribute name="Groups">MDW Support</task:attribute>
+  <task:attribute name="AssigneeVar">stringAssignee</task:attribute>
+  <task:attribute name="AutoAssign">Process Variable</task:attribute>
+</task:taskTemplate>

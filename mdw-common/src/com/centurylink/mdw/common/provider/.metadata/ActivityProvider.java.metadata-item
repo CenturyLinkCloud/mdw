@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852997
+item-spec=4D4457413A314B3737545A20414354495649545950524F5649444552204A4156412D3932343034343035352E412D5352433B32
+file-version=2
+checksum=f524619b584ed5fdd7263d483dda19a2
+fetch-size=822
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/provider/ActivityProvider.java
+project=4D4457413A4D445741
+project-uid=31770127

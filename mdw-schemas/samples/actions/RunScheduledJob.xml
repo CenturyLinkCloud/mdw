@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdw:ActionRequest 
+  xmlns:mdw="http://mdw.centurylink.com/services" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://mdw.centurylink.com/services ../../mdw-schemas/Services.xsd">
+  <Action Name="RunScheduledJob">
+    <Parameter name="className">com.centurylink.ntfwf.FileProcessingJob</Parameter>
+  </Action>
+  <Content />
+</mdw:ActionRequest>

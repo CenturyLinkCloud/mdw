@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition template="/layout/detail.xhtml">
+
+    <ui:define name="detailFilter">
+      <mdw:panel 
+        id="reportFilterPanel" 
+        label="Report Filters" 
+        collapsible="true" 
+        horizontal="true" 
+        styleClass="mdw_panel">
+        <div style="min-width:165px;">
+          <mdw:listFilter
+            id="reportFilter"
+            filterEntity="#{mdwReport.filter}"
+            renderPrefsButton="false"
+            submitButtonLabel=" Apply " />
+        </div>
+      </mdw:panel>
+    </ui:define>
+    
+    <ui:define name="detailContent">
+      <mdw:panel
+        id="reportPanel" 
+        label="#{mdwReport.title}" 
+        styleClass="mdw_panel">
+        <f:facet name="headerButtons">
+          <h:panelGroup>
+            <h:commandLink
+              title="Refresh"
+              styleClass="mdw_panelImage"
+              style="float:none;margin-left:10px;">
+              <h:graphicImage
+                value="/images/refresh.gif" 
+                alt="Refresh" />
+            </h:commandLink>
+            <h:commandLink
+              title="Export"
+              styleClass="mdw_panelImage"
+              style="float:none;">
+              <h:graphicImage
+                value="/images/excel.gif" 
+                alt="Export" />
+              <f:param name="exportReportToExcel" value="exportReportToExcel" /> 
+                
+            </h:commandLink>
+          </h:panelGroup>        
+        </f:facet>
+        <div style="width:100%;">
+          <mdw:report
+            id="birtReport"
+            reportEntity="#{mdwReport}" />
+        </div>
+      </mdw:panel>
+    </ui:define>
+
+  </ui:composition>
+
+</html>

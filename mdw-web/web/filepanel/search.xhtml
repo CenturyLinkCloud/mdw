@@ -1,0 +1,70 @@
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:dj="http://www.centurylink.com/mdw/jsf/dojo"
+  xmlns:mt="http://www.centurylink.com/mdw/jsf/mdwtools">
+
+  <ui:composition>
+
+    <table cellpadding="0px" cellspacing="0px" width="100%" style="font-size:9pt;">
+      <tr valign="top">
+        <td width="185px">
+          <h:outputLabel
+            value="Search:"
+            id="searchLabel"
+            for="searchTextBox"
+            style="margin-right:3px;font-size:10pt;position:relative;" />
+          <h:inputText
+            id="searchTextBox"
+            size="20" 
+            style="height:15px;margin-right:4px;margin-top:2px;font-size:9pt;"/>
+        </td>
+        <td>
+          <dj:button
+            dojoType="dijit.form.Button"
+            id="forwardSearchButton"
+            label="Forward"
+            styleClass="toolbarButton #{webUtil.ieOrTrident ? 'forwardSearch_ie' : ''}"
+            iconClass="forwardSearch"
+            labelClass="toolbarButtonLabel"
+            onclick="search(true);" />
+          <dj:button
+            dojoType="dijit.form.Button"
+            id="backwardSearchButton"
+            label="Backward"
+            styleClass="toolbarButton #{webUtil.ieOrTrident ? 'backwardSearch_ie' : ''}"
+            iconClass="backwardSearch"
+            labelClass="toolbarButtonLabel"
+            style="margin:2px;"
+            onclick="search(false);" />
+       </td>
+     </tr>
+     <tr>
+       <td>
+        <h:outputText
+          id="searchMessage"
+          style="background-color:#ffffa7;margin-left:5px;" />       
+       </td>
+       <td style="padding-top:2px;">
+         <dj:checkBox
+           dojoType="dijit.form.CheckBox"
+           id="matchCaseCheckBox"
+           label="Match Case"
+           labelClass="generalLabel" />
+         <dj:checkBox
+           dojoType="dijit.form.CheckBox"
+           id="regExpCheckBox"
+           label="Reg. Exp."
+           labelClass="generalLabel" 
+           style="margin-left:5px;padding-left;5px;" />
+        </td>
+      </tr>
+    </table>
+
+  </ui:composition>
+
+</html>

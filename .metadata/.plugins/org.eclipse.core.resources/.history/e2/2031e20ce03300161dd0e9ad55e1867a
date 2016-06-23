@@ -1,0 +1,18 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.hub.ui.requests;
+
+import com.centurylink.mdw.taskmgr.ui.filter.Filter;
+import com.centurylink.mdw.taskmgr.ui.layout.FilterUI;
+
+public class RequestFilter extends Filter{
+
+    /**
+     * @param filterUI
+     */
+    public RequestFilter(FilterUI filterUI) {
+        super(filterUI);
+    }
+
+}

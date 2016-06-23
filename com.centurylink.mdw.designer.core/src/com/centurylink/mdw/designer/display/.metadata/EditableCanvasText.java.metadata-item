@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46850687
+item-spec=4D4457413A314B38435744204544495441424C4543414E56415354455854204A4156412D2D3538393431393939312E412D5352433B32
+file-version=2
+checksum=edba1607db360e8ec3505cd8d3c25799
+fetch-size=197
+mtime=1393988737
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/display/EditableCanvasText.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

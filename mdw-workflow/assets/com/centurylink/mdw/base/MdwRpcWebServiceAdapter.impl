@@ -1,0 +1,24 @@
+<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.adapter.soap.MdwRpcWebServiceAdapter" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="MDW RPC Web Service" IconFile="adapter.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:AttributeDescription><![CDATA[<PAGELET><HYPERLINK NAME='WSDL' LABEL='Endpoint/WSDL URL'/>
+  <DROPDOWN NAME='SoapVersion' LABEL='SOAP Version' VW='150'>'
+    <OPTION>SOAP 1.1 Protocol</OPTION>
+    <OPTION>SOAP 1.2 Protocol</OPTION>
+  </DROPDOWN>
+  <TEXT NAME='USER' LABEL='Basic Auth User' VW='120'/>    
+  <TEXT NAME='PASS' LABEL='Basic Auth Password' VW='120'/>    
+  <TEXT NAME='SERVICE' LABEL='Service Name' VW='120'/>    
+  <DROPDOWN NAME='REQUEST_VARIABLE' LABEL='Request Variable' SOURCE='Variables' VW='200'/>
+  <DROPDOWN NAME='RESPONSE_VARIABLE' LABEL='Response Variable' SOURCE='Variables' VW='200'/>
+  <TEXT NAME='ConnectTimeout' LABEL='Connect Timeout (ms)' VW='100'/>
+  <TEXT NAME='ReadTimeout' LABEL='Read Timeout (ms)' VW='100'/>
+  <TEXT LABEL="Max Tries" NAME="max_tries" VW="60"/>
+  <TEXT LABEL="Retry Interval (sec)" NAME="retry_interval" VW="80"/>
+  <TEXT LABEL="SOAP Action" NAME="SOAPAction" />  
+  <SELECT NAME='DO_LOGGING' LABEL='Log req/resp' DEFAULT='True'>
+    <OPTION>True</OPTION>
+    <OPTION>False</OPTION>
+  </SELECT>
+  <HYPERLINK URL='/MDWWeb/doc/MDWWebServiceAdapter.html'>
+    MDW RPC Web Service Help
+  </HYPERLINK></PAGELET>]]></bpm:AttributeDescription>
+</bpm:activityImplementor>

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=60757624
+item-spec=4D4457413A314B36545833204F5247204F5053344A205041582055524C204D564E204346472D3137313635333432345831353938375832302E412D4441543B31
+file-version=1
+checksum=6cfba424275f0ad28f2733acc427b676
+fetch-size=4640
+mtime=1433957312
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/mdt/lxdenvmtc143/test-fuse/org.ops4j.pax.url.mvn.cfg
+project=4D4457413A4D445741
+project-uid=31770127

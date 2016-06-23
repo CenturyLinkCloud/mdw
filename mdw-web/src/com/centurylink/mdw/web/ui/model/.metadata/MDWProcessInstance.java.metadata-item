@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49112930
+item-spec=4D4457413A314B374B524A204D445750524F43455353494E5354414E4345204A4156412D2D313737313333363130302E412D5352433B35
+file-version=5
+checksum=d738b3fa01b122510e10effe8fcc062a
+fetch-size=10070
+mtime=1403303930
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/ui/model/MDWProcessInstance.java
+project=4D4457413A4D445741
+project-uid=31770127

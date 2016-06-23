@@ -1,0 +1,13 @@
+version=10.2
+item-uid=56064685
+item-spec=4D4457413A314B3737545A205241424249544D45535341474550524F4455434552204A4156412D3631323339323732372E412D5352433B32
+file-version=2
+checksum=938dec582f02da940b29e6e1dc59c905
+fetch-size=6630
+mtime=1432667487
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/RabbitMessageProducer.java
+project=4D4457413A4D445741
+project-uid=31770127

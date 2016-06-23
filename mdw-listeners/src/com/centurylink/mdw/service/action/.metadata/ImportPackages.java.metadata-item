@@ -1,0 +1,13 @@
+version=10.2
+item-uid=62779984
+item-spec=4D4457413A314B3746473520494D504F52545041434B41474553204A4156412D2D3134323532383531382E412D5352433B32
+file-version=2
+checksum=c7be11bf30c39b5d7b07c894ed65579b
+fetch-size=14047
+mtime=1437673394
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/action/ImportPackages.java
+project=4D4457413A4D445741
+project-uid=31770127

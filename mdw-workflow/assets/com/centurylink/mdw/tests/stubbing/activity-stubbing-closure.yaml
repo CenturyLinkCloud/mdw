@@ -1,0 +1,24 @@
+process: # 13195
+  name: TestActivityStub
+  instance: 1
+  activity: # 1 "2016-02-17 12:45:08"
+    name: Start
+    status: Completed
+  activity: # 11 "2016-02-17 12:45:08"
+    name: Path
+    status: Completed
+  activity: # 12 "2016-02-17 12:45:08"
+    name: Timer 1
+    status: Completed
+  activity: # 13 "2016-02-17 12:45:08"
+    name: Timer 2
+    status: Completed
+  activity: # 14 "2016-02-17 12:45:08"
+    name: Timer 3
+    status: Completed
+  activity: # 15 "2016-02-17 12:45:08"
+    name: Done
+    status: Completed
+  variable: # 19308
+    name: flowPath
+    value: all timers

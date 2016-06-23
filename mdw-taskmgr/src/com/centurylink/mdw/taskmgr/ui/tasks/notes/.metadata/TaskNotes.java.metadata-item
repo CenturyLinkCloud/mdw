@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855119
+item-spec=4D4457413A314B37565330205441534B4E4F544553204A4156412D2D313233363038363130382E412D5352433B32
+file-version=2
+checksum=1217752f5c4a136ca42d9f12cb97180e
+fetch-size=2842
+mtime=1393990193
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/tasks/notes/TaskNotes.java
+project=4D4457413A4D445741
+project-uid=31770127

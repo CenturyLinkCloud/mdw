@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67799703
+item-spec=4D4457413A314B3737545A2050524F4345535354524143454D4F4E49544F52204A4156412D2D3834383339343935382E412D5352433B33
+file-version=3
+checksum=9f8d12c7a73713bcb639ef02287a74bc
+fetch-size=2013
+mtime=1454435619
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/monitor/impl/ProcessTraceMonitor.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=70789501
+item-spec=4D4457413A314B3746473520524F4C4553204A4156412D31383139353933323658323837393758302E412D5352433B3133
+file-version=13
+checksum=0048e10877d63b1fb021166cfb10ce23
+fetch-size=7088
+mtime=1464106366
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/rest/Roles.java
+project=4D4457413A4D445741
+project-uid=31770127

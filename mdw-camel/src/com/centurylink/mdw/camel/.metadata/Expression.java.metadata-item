@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853886
+item-spec=4D4457413A314B38334D422045585052455353494F4E204A4156412D323131333832313734312E412D5352433B32
+file-version=2
+checksum=c007e3abc357de827571e25c9b826111
+fetch-size=1772
+mtime=1393989706
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/camel/Expression.java
+project=4D4457413A4D445741
+project-uid=31770127

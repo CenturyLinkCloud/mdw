@@ -1,0 +1,13 @@
+version=10.2
+item-uid=54929433
+item-spec=4D4457413A314B3737545A205641524941424C455452414E534C41544F52204A4156417E30312D2D3533343637333737352E412D5352433B3130
+file-version=10
+checksum=4b7a1ba307f164db0db185c9506b8c89
+fetch-size=8096
+mtime=1427739086
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/translator/VariableTranslator.java
+project=4D4457413A4D445741
+project-uid=31770127

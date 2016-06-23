@@ -1,0 +1,12 @@
+// timer-wait-event-cancel
+start process("MDWTestTimerWait") {
+    variables = [testCase: "cancel"]
+}
+sleep 30
+send message("REST") {
+    payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
+}
+wait process {
+    timeout = 120
+}
+verify process

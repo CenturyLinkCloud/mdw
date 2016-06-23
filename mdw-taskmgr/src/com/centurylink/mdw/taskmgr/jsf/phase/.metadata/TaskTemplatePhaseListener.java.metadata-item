@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68515468
+item-spec=4D4457413A314B37565330205441534B54454D504C41544550484153454C495354454E4552204A4156412D313836353234323133362E412D5352433B34
+file-version=4
+checksum=351bef414786c2ef1ad63ffa66a0a3bc
+fetch-size=5641
+mtime=1456273074
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/jsf/phase/TaskTemplatePhaseListener.java
+project=4D4457413A4D445741
+project-uid=31770127

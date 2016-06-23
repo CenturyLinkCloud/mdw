@@ -1,0 +1,7 @@
+ // unit tests for version spec parsing
+assert onServer
+import com.centurylink.mdw.services.workflow.WorkflowServicesImpl;
+
+def workflowServicesImpl = new WorkflowServicesImpl()
+//workflowServicesImpl.registerTaskWaitEvent(326, "manoj-326", "AnotherWay", false)
+ 

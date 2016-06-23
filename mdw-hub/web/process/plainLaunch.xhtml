@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition template="/layout/plain.xhtml">
+
+    <ui:define name="detailContent">
+      <t:panelGrid width="100%"
+        rowClasses="mdw_detailTableSubtitle">
+        <t:outputText value="Process Information" />
+      </t:panelGrid>
+      <mdw:processLaunchForm />
+    </ui:define>
+    <ui:define name="commandContent">        
+      <t:commandButton
+        id="launchProcessButton"
+        value="Launch"
+        action="go_confirm"
+        actionFor="detailForm"
+        disabled="#{!newProcessInstance.launchEnabled}"
+        styleClass="mdw_detailFormButtons">
+        <f:actionListener type="com.centurylink.mdw.taskmgr.ui.process.ProcessLaunchActionController" />
+      </t:commandButton>
+    </ui:define>
+
+  </ui:composition>
+
+</html>

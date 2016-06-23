@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50878700
+item-spec=4D4457413A314B37595142205245504F52544245414E204A4156412D3735333239343032342E412D5352433B31
+file-version=1
+checksum=1c5552fb3762f1e492364b2fc52a8d6e
+fetch-size=2953
+mtime=1411175530
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/report/ReportBean.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=48663780
+item-spec=4D4457413A314B37595142204249525446494C544552204A4156412D2D313531313232393836352E412D5352433B31
+file-version=1
+checksum=cc12500dd3cce38af8baca6e16d548fb
+fetch-size=5559
+mtime=1400869116
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/report/birt/BirtFilter.java
+project=4D4457413A4D445741
+project-uid=31770127

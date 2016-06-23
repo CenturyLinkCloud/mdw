@@ -1,0 +1,13 @@
+version=10.2
+item-uid=54447633
+item-spec=4D4457413A314B374B524A2046494C4550414E454C52454E4445524552204A4156412D2D313431363539393931372E412D5352433B33
+file-version=3
+checksum=f0e3787efe8a4fbb9bebe45401dbbe94
+fetch-size=3613
+mtime=1424896783
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/ajax/renderers/FilePanelRenderer.java
+project=4D4457413A4D445741
+project-uid=31770127

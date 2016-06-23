@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50885066
+item-spec=4D4457413A314B3737545A20584D4C4245414E5452414E534C41544F52204A4156412D3334353234343039342E412D5352433B37
+file-version=7
+checksum=311ec506780051fcc10153a5c4826355
+fetch-size=5648
+mtime=1412292190
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/translator/impl/XmlBeanTranslator.java
+project=4D4457413A4D445741
+project-uid=31770127

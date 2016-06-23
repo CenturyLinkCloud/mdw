@@ -1,0 +1,11 @@
+{ house: 
+  { address: "100 Elm Street",
+    rooms: 
+      [ 
+        { name: "bedroom", 
+          floor: "second" },
+        { name: "kitchen", 
+          floor: "first" }
+       ]
+  }
+}

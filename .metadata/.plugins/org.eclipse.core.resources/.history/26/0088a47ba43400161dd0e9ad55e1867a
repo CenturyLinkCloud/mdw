@@ -1,0 +1,27 @@
+PROC 1 # 578
+ACT Start Completed # 3178 "2015-12-04 22:38:26"
+ACT <<=====
+Find the best 
+product 
+for promotion
+=====>> Completed # 3179 "2015-12-04 22:38:26"
+ACT <<=====
+Find the best 
+time
+for promotion
+=====>> Completed # 3180 "2015-12-04 22:38:26"
+ACT Sync Completed # 3181 "2015-12-04 22:38:26"
+ACT <<=====
+Twitter or
+FaceBook
+=====>> Completed # 3182 "2015-12-04 22:38:26"
+ACT <<=====
+FaceBook 
+Post
+=====>> Completed # 3183 "2015-12-04 22:38:26"
+ACT "Promotion Notifications" Completed # 3184 "2015-12-04 22:38:26"
+ACT Stop Completed # 3185 "2015-12-04 22:38:29"
+VAR greeting "Hello, Everybody" # 1838
+VAR messageSize 200 # 1836
+VAR name Everybody # 1835
+VAR something something # 1837

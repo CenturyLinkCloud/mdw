@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853553
+item-spec=4D4457413A314B3737545A20434845434B4441544142415345434F4E53545241494E5453204A4156412D38303233333038312E412D5352433B32
+file-version=2
+checksum=fb4cd9b83c3a0de05e527374e8cd514f
+fetch-size=5302
+mtime=1393986796
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/utilities/CheckDatabaseConstraints.java
+project=4D4457413A4D445741
+project-uid=31770127

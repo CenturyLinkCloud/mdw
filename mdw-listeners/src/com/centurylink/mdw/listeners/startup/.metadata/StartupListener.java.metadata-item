@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67205601
+item-spec=4D4457413A314B3746473520535441525455504C495354454E4552204A4156412D2D3539323837373839372E412D5352433B3234
+file-version=24
+checksum=147113d968ecdb316fbeafd2398571fe
+fetch-size=16379
+mtime=1451927393
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listeners/startup/StartupListener.java
+project=4D4457413A4D445741
+project-uid=31770127

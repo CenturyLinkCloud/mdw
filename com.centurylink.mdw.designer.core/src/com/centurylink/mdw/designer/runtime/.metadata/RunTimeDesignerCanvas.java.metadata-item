@@ -1,0 +1,13 @@
+version=10.2
+item-uid=50899951
+item-spec=4D4457413A314B384357442052554E54494D4544455349474E455243414E564153204A4156412D313934383932363737322E412D5352433B33
+file-version=3
+checksum=c6fbf3c0944bfc0973b0c275b252ade0
+fetch-size=9832
+mtime=1412357456
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/designer/runtime/RunTimeDesignerCanvas.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

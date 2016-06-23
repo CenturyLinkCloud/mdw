@@ -1,0 +1,20 @@
+// process-as-service-perf5
+send message {
+    payload = '''<ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
+  <Action Name="RegressionTest">
+    <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+    <Parameter name="ProcessName">MDWTestProcessAsService</Parameter>
+    <Parameter name="processCase">GetOrder</Parameter>
+    <Parameter name="PerformanceLevel">5</Parameter>
+    <Parameter name="order"><![CDATA[<order>
+  <orderId>X000002</orderId>
+  <customerId>mdw</customerId>
+</order>
+]]></Parameter>
+  </Action>
+</ser:ActionRequest>'''
+}
+verify response {
+    expected = "<orderId>X000002</orderId>"
+}
+verify process("com.centurylink.mdw.tests.workflow/MDWTestProcessAsService")

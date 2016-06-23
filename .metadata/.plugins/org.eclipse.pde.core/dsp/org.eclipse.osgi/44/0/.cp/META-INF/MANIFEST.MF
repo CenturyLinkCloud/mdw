@@ -1,0 +1,37 @@
+Manifest-Version: 1.0
+Bundle-Vendor: %bundleProvider
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Name: %bundleName
+Bundle-SymbolicName: javax.inject
+Bundle-Version: 1.0.0.v20091030
+Export-Package: javax.inject;version="1.0.0"
+Bundle-ManifestVersion: 2
+
+Name: javax/inject/Singleton.class
+SHA1-Digest: nWl5vSgc422lSXxvtBzhJ+VOZcw=
+
+Name: javax/inject/Provider.class
+SHA1-Digest: pIRji7h2izIB/+sCY2EnAFhTQn8=
+
+Name: javax/inject/Inject.class
+SHA1-Digest: hnbcAwYXUbkWOJsQxHhTqqR+c3s=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: javax/inject/Scope.class
+SHA1-Digest: KpdRdjP9gxcZBs328OYQZxzWdwg=
+
+Name: about.html
+SHA1-Digest: uLAsDULTzC8HbUXgFh/wj37WTe4=
+
+Name: plugin.properties
+SHA1-Digest: IbhZh1oflZPwsmW4C1Qm9P0e61A=
+
+Name: javax/inject/Named.class
+SHA1-Digest: Uf6bJdZYftcka5hjK5Fh3WFkURE=
+
+Name: javax/inject/Qualifier.class
+SHA1-Digest: L+DV6cqAoa7QznM+D3LiwMHs8OQ=
+

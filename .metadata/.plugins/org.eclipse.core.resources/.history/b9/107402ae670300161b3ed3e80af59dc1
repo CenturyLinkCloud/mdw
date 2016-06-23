@@ -1,0 +1,34 @@
+import com.centurylink.mdw.common.utilities.JsonUtil
+
+// manual-task-services
+start process("ManualTaskServices") {
+    variables = [ dateVar: Date.parse("MM-dd-yyyy HH:mm:ss", "04-01-2016 14:36:00"),
+                  stringVar: "Hello",
+                  docVar: "<full>\n  <document content='xml'/>\n</full>",
+                  jaxbVar: '''<TaskJaxb
+  attributeOne="attrOneValue"
+  attributeTwo="attrTwoValue">
+  <elementOne>elementOneValue</elementOne>
+  <elementTwo>elementTwoValue</elementTwo>
+</TaskJaxb>''' ]
+}
+
+sleep 30
+
+def taskInst = action task("AutoForm Task for Service Access") {
+    outcome = "Claim"
+}
+
+response = put http("services/Tasks/${taskInst.id}/regEvent/MyEvent-${masterRequestId}") {
+             payload = "{}"
+           }
+           
+assert response.code == 200
+sleep 20
+
+
+send message("REST") {
+    payload = "MyEvent-${masterRequestId}"
+}
+
+verify process

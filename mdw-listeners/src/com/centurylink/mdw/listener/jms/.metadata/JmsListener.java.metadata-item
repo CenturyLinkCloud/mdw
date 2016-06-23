@@ -1,0 +1,13 @@
+version=10.2
+item-uid=69213206
+item-spec=4D4457413A314B37464735204A4D534C495354454E4552204A4156412D3631333734343436392E412D5352433B3131
+file-version=11
+checksum=d38f03368908a198a1d072eb1e9de88b
+fetch-size=8186
+mtime=1458170610
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/listener/jms/JmsListener.java
+project=4D4457413A4D445741
+project-uid=31770127

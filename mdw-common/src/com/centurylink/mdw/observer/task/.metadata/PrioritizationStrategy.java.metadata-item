@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852991
+item-spec=4D4457413A314B3737545A205052494F524954495A4154494F4E5354524154454759204A4156412D313933393231323130322E412D5352433B32
+file-version=2
+checksum=9f6afdc0af46cd2a3b6eaf0931598fb2
+fetch-size=819
+mtime=1393986797
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/observer/task/PrioritizationStrategy.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,875 @@
+apply plugin: "osgi"
+apply plugin: "war"
+
+configurations {
+    // don't package these in the war
+    runtime.exclude module: "mdw-schemas"
+    runtime.exclude module: "mdw-common"
+    runtime.exclude module: "mdw-services"
+    runtime.exclude module: "mdw-listeners"
+    runtime.exclude module: "mdw-web"
+    runtime.exclude module: "mdw-taskmgr"
+    
+    tomcat
+    tomcatExclude
+    tomcatExtra
+}
+
+dependencies {
+    
+    compile project(":mdw-schemas")
+    compile project(":mdw-common")
+    compile project(":mdw-services")
+    compile project(":mdw-listeners")
+    // don't drag in these webapp's dependencies
+    compile(project(":mdw-web")) { transitive = false; }
+    compile(project(":mdw-taskmgr")) { transitive = false; }
+
+    compile files("web/WEB-INF/lib/mdwweb-jsf2-${mdwVersion}.jar", "web/WEB-INF/lib/taskmgr-${mdwVersion}.jar", "web/WEB-INF/lib/osrschemas-1.0.4.7.jar")
+    
+    compile group: "org.apache.myfaces.core", name: "myfaces-api", version: "2.2.1"
+    compile(group: "org.apache.myfaces.core", name: "myfaces-impl", version: "2.2.1") { exclude(module: "commons-digester") }
+    compile group: "org.apache.myfaces.tomahawk", name: "tomahawk21", version: "1.1.14"
+    compile group: "org.richfaces.ui", name: "richfaces-components-api", version: "4.3.3.Final"
+    compile group: "org.richfaces.ui", name: "richfaces-components-ui", version: "4.3.3.Final"
+    compile group: "org.richfaces.core", name: "richfaces-core-api", version: "4.3.3.Final"
+    compile group: "org.richfaces.core", name: "richfaces-core-impl", version: "4.3.3.Final"
+        
+    // richfaces dependencies
+    runtime group: "com.google.guava", name: "guava", version: "13.0.1"
+    runtime group: "cssparser", name: "cssparser", version: "0.9.5"
+    runtime group: "org.w3c.css", name: "sac", version: "1.3"
+
+    providedCompile group: "javax.jms", name: "jms", version: "1.1.1"
+    providedCompile group: "javax.mail", name: "mail", version: "1.4.5"
+    providedCompile group: "javax.servlet", name: "servlet-api", version: "2.5"
+    providedCompile group: "javax.validation", name: "validation-api", version: "1.0.0"
+
+    compile group: "javax.el", name: "el-api", version: "1.0"
+    compile group: "javax.jsp.jstl", name: "jstl", version: "1.1.2"
+    compile group: "commons-beanutils", name: "commons-beanutils", version: "1.8.3"
+    compile group: "commons-cli", name: "commons-cli", version: "1.0"
+    compile group: "commons-codec", name: "commons-codec", version: "1.3"
+    compile group: "commons-collections", name: "commons-collections", version: "3.2.2"
+    compile group: "org.apache.commons", name: "commons-digester", version: "1.8"
+    compile group: "commons-discovery", name: "commons-discovery", version: "0.4"
+    compile group: "commons-el", name: "commons-el", version: "1.0"
+    compile group: "commons-fileupload", name: "commons-fileupload", version: "1.2.1"
+    compile group: "commons-httpclient", name: "commons-httpclient", version: "3.0.1"
+    compile group: "commons-io", name: "commons-io", version: "2.4"
+    compile group: "commons-lang", name: "commons-lang", version: "2.4"
+    compile(group: "commons-validator", name: "commons-validator", version: "1.3.1") { exclude(module: "commons-digester") } 
+    compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri"); exclude(module: "jms") }
+    compile group: "org.apache.poi", name: "poi-all", version: "3.9"
+    compile group: "oro", name: "oro", version: "2.0.8"
+    providedCompile group: "junit", name: "junit", version: "4.8.1"
+    
+    // birt libraries are compiled against but separately added only to mdw-reports
+    providedCompile group: "org.eclipse.birt", name: "engineapi", version: "2.6.1"
+    providedCompile group: "org.eclipse.birt", name: "coreapi", version: "2.6.1"
+    providedCompile group: "org.eclipse.birt", name: "modelapi", version: "2.6.1"
+
+    // proprietary dependencies
+    compile group: "com.oracle", name: "ojdbc6", version: "11.2.0.3"  // for reports
+    compile group: "com.qwest.appsec", name: "AccessControl", version: "6.8"
+    compile group: "com.rsa.cleartrust", name: "asn1", version: "6.0.2.49"
+    compile group: "com.rsa.cleartrust", name: "certj", version: "6.0.2.49"
+    compile group: "com.rsa.cleartrust", name: "ct_runtime_api", version: "6.0.2.49"
+    compile group: "com.rsa.cleartrust", name: "jsafe", version: "6.0.2.49"
+    compile group: "com.rsa.cleartrust", name: "jsafeJCE", version: "6.0.2.49"
+    compile group: "com.qwest.appsec", name: "TomcatSecurityFilter", version: "1.1.2"
+
+    // required to work around ServiceMix bug: https://issues.apache.org/jira/browse/SMX4-1089
+    compile group: "org.apache.servicemix.bundles", name: "org.apache.servicemix.bundles.saaj-impl", version:"1.3.9_2"
+    
+    // swagger
+    compile group: "io.swagger", name: "swagger-servlet", version: "1.5.4"
+
+    // libraries for tomcat deployment
+    tomcat project(":mdw-schemas")
+    tomcat project(":mdw-common")
+    tomcat project(":mdw-services")
+    tomcat project(":mdw-listeners")
+    tomcat project(":mdw-workflow")    
+    tomcat project(":mdw-camel")
+    tomcat group: "org.apache.activemq", name: "activemq-all", version: "5.10.0"
+    tomcat group: "commons-dbcp", name: "commons-dbcp", version: "1.4"
+    tomcat group: "mysql", name: "mysql-connector-java", version: "5.1.29"
+    tomcat group: "dom4j", name: "dom4j", version: "1.6.1"
+    
+    tomcatExclude group: "javax.servlet", name: "servlet-api", version: "2.5"
+    tomcatExclude group: "javax.el", name: "el-api", version: "1.0"
+    tomcatExclude group: "org.apache.activemq", name: "activemq-core", version: "5.5.1"
+    tomcatExclude group: "org.apache.ant", name: "ant-junit", version: "1.8.2"
+    tomcatExclude group: "org.apache.ant", name: "ant", version: "1.8.2"
+    tomcatExclude group: "org.apache.servicemix.bundles", name: "org.apache.servicemix.bundles.commons-dbcp", version: "1.4_3"
+    tomcatExclude group: "org.apache.servicemix.bundles", name: "org.apache.servicemix.bundles.saaj-impl", version:"1.3.9_2"
+    
+    // if a workflow needs these licensed dependencies they'll have to deploy on Fuse
+    tomcatExclude group: "com.ibm", name: "com.ibm.mq", version: "7.0.1.9"
+    tomcatExclude group: "com.ibm", name: "com.ibm.mq.jmqi", version: "7.0.1.9"
+    tomcatExclude group: "com.force.api", name: "force-wsc", version: "22.0.0"
+    tomcatExclude group: "com.salesforce", name: "sfa-output", version: "1.6.0"
+    
+    // if a workflow needs camel-cxf they'll have to deploy on Fuse (component is heavyweight)
+    tomcatExclude group: "org.apache.camel", name: "camel-blueprint", version: "2.8.4"
+    tomcatExclude group: "org.apache.camel", name: "camel-cxf", version: "2.8.4"
+    
+    // runtime dependencies that need to be added back after the exclusions are subtracted
+    tomcatExtra group: "javax.ws.rs", name: "jsr311-api", version: "1.1.1"
+    tomcatExtra group: "org.springframework", name: "spring-asm", version: "3.0.5.RELEASE"
+    tomcatExtra group: "org.springframework", name: "spring-beans", version: "3.0.5.RELEASE"
+    tomcatExtra group: "org.springframework", name: "spring-context", version: "3.0.5.RELEASE"
+    tomcatExtra group: "org.springframework", name: "spring-core", version: "3.0.5.RELEASE"
+    tomcatExtra group: "org.springframework", name: "spring-expression", version: "3.0.5.RELEASE"
+    tomcatExtra group: "org.springframework", name: "spring-tx", version: "3.0.5.RELEASE"
+    tomcatExtra group: "org.apache.xbean", name: "xbean-spring", version: "3.6"
+    tomcatExtra group: "commons-logging", name: "commons-logging", version: "1.1.1"
+    tomcatExtra group: "commons-pool", name: "commons-pool", version: "1.5.4"
+    // these are for drools
+    tomcatExtra group: "org.drools", name: "knowledge-internal-api", version: "5.6.0.Final"
+    tomcatExtra group: "org.antlr", name: "antlr-runtime", version: "3.3"
+    tomcatExtra group: "com.google.protobuf", name: "protobuf-java", version: "2.5.0"
+    tomcatExtra group: "com.thoughtworks.xstream", name: "xstream", version: "1.4.1"
+    // for jgit
+    tomcatExtra group: "com.jcraft", name: "jsch", version: "0.1.51"
+    
+    // for Artis
+    tomcatExtra group: "org.apache.commons", name: "commons-dbcp2", version: "2.0.1"
+    tomcatExtra group: "org.apache.commons", name: "commons-pool2", version: "2.2"
+    
+    // camel routes and websockets
+    tomcatExtra group: "org.apache.camel", name: "camel-core", version: "2.14.0"
+    tomcatExtra group: "org.apache.camel", name: "camel-spring", version: "2.14.0"
+    tomcatExtra group: "org.apache.camel", name: "camel-jms", version: "2.14.0"
+    tomcatExtra group: "org.apache.camel", name: "camel-servlet", version: "2.14.0"
+    tomcatExtra group: "org.apache.camel", name: "camel-http", version: "2.14.0"
+    tomcatExtra group: "org.apache.camel", name: "camel-atmosphere-websocket", version: "2.14.0"
+}
+
+task cleanGen(type: Delete) {
+    // https://issuetracker.springsource.com/browse/STS-1017
+    // delete "web/WEB-INF/lib/mdwweb-jsf2-${mdwVersion}.jar"
+    // delete "web/WEB-INF/lib/taskmgr-${mdwVersion}.jar"
+}
+
+task cleanJar << {
+    delete "../${mdwOutputDir}/mdwhub-${mdwVersion}.jar"
+}
+
+task cleanMdwWar(type: Delete) {
+    delete "../${mdwOutputDir}/mdw-${mdwVersion}.war"
+}
+
+task cleanMdwReportsWar(type: Delete) {
+    delete "../${mdwOutputDir}/mdwreports-${mdwVersion}.war"
+}
+
+task cleanMdwReportsWarOsgi(type: Delete) {
+    delete "../${mdwOutputDir}/mdw-reports-${mdwVersion}.war"
+}
+
+clean {
+    dependsOn(cleanWar, cleanJar, cleanGen, cleanMdwWar, cleanMdwReportsWar, cleanMdwReportsWarOsgi)
+}
+
+task copyMdwComponents(type: Copy) {
+    from "../mdw-web/web/components"
+    into "web/components"
+    include "*.xhtml"
+}
+
+task copyMdwWeb(type: Copy) {
+    dependsOn(":mdw-web:buildJarJsf2", copyMdwComponents)
+    
+    from "../${mdwOutputDir}"
+    include "mdwweb-jsf2-${mdwVersion}.jar"
+    into "web/WEB-INF/lib"
+}
+
+task copyTaskMgr(type: Copy) {
+    dependsOn ":mdw-taskmgr:buildJar"
+    
+    from "../${mdwOutputDir}"
+    include "taskmgr-${mdwVersion}.jar"
+    into "web/WEB-INF/lib"
+}
+
+task copyWebMeta(type: Copy) {
+    from("../mdw-web/src/META-INF/mdw") {
+        include "CTAPPFilter.config"
+        include "CTECOMFilter.config"
+    }
+    from("../mdw-taskmgr/src/META-INF/mdw") {
+        include "MDWTaskView.xml"
+        include "MDWTaskActions.xml"
+    }
+    into "src/META-INF/mdw"
+}
+
+task copyCfgManager(type: Copy) {
+    from("web") {
+        include "script/cfgManager.js"
+        include "script/Interface.js"
+        include "script/projectPanel.js"
+        include "images/configMgr.png"
+    }
+    into "web/system"
+}
+
+task copyFilePanel(type: Copy) {
+    from("../mdw-web/web") {
+        include "filepanel/*"
+        include "property/*"
+        // TODO why are all the following needed on Jenkins instead of just "script/**/*"
+        include "script/**/*.js"
+        include "script/**/*.html"
+        include "script/**/*.gif"
+        include "script/**/*.png"
+        include "script/**/*.css"
+        include "script/**/LICENSE"
+        include "css/mdwweb.css"
+        include "css/tundra.css"
+        include "images/ctl_sm.png"
+        include "images/mdw_sm.png"
+        include "images/filepanel.png"
+        include "images/checkmarkNoBorder.png"
+        include "images/dir.gif"
+        include "images/download.gif"
+        include "images/edit.gif"
+        include "images/file.gif"
+        include "images/group.gif"
+        include "images/gradient18.gif"
+        include "images/item.gif"
+        include "images/mem_info.gif"
+        include "images/refresh.gif"
+        include "images/searchDown.gif"
+        include "images/searchUp.gif"
+        include "images/server.gif"
+        include "images/skipDown.png"
+        include "images/stack.gif"
+        include "images/wf_project.gif"
+    }
+    into "web/system"
+    exclude ".metadata"
+}
+
+task copyWebTools(type: Copy) {
+    dependsOn(copyFilePanel, copyCfgManager)
+    from "../mdw-web/web/event"
+    from "../mdw-web/web/http"
+    from "../mdw-web/web/jms"
+    from "../mdw-web/web/mq"
+    from "../mdw-web/web/system"
+    into "web/system"
+    exclude ".metadata"
+}
+
+compileJava {
+    dependsOn(copyMdwWeb, copyTaskMgr, copyWebMeta, copyWebTools)
+}
+
+task buildMdwJsf2 << {
+  copy {
+    from "web/WEB-INF/lib/mdw-jsf.jar"
+    into "../${mdwOutputDir}"
+    rename("mdw-jsf.jar", "mdw-jsf2-${mdwVersion}.jar")
+  }
+}
+
+task buildJar(type: Jar) {
+  dependsOn compileJava
+  archiveName = "mdwhub-${mdwVersion}.jar"
+  
+  from(sourceSets.main.output.classesDir) { include "**/*" }
+
+  from ("web") {
+      include "components/**"
+      include "menus/*.xhtml"
+      include "orders/*.xhtml"
+      include "process/*.xhtml"
+      include "tasks/*.xhtml"
+  }
+  
+  into("META-INF") {
+      from "web/WEB-INF"
+      include "faces-config.xml"
+      include "*.taglib.xml"      
+  }
+}
+
+task mdwWarSourcesJar(type: Jar) {
+    archiveName = "mdw-${mdwVersion}-sources.jar"
+    
+    from "src"
+    from "../mdw-common/src"
+    from "../mdw-listeners/src"
+    from "../mdw-services/src"
+    from "../mdw-taskmgr/src"
+    from "../mdw-web/src"
+    from "../mdw-workflow/src"
+    from "../mdw-camel/src"
+    include "**/*.java"
+    exclude "**/.metadata/**"
+}
+
+sourcesJar {
+    dependsOn mdwWarSourcesJar
+}
+
+task addBirtFaces(type: BirtFaces) {
+    operation = "add"
+    phaseListener = "com.centurylink.mdw.hub.jsf.ReportsPhaseListener"
+    includeComponent = true
+    file = file("web/WEB-INF/faces-config.xml")
+}
+
+task removeBirtFaces(type: BirtFaces) {
+    operation = "remove"
+    phaseListener = "com.centurylink.mdw.hub.jsf.ReportsPhaseListener"
+    includeComponent = true
+    file = file("web/WEB-INF/faces-config.xml")
+}
+
+// separate task needed for osgi war so that dependency not falsely met
+task addBirtFacesOsgi(type: BirtFaces) {
+    operation = "add"
+    phaseListener = "com.centurylink.mdw.hub.jsf.ReportsPhaseListener"
+    includeComponent = true
+    file = file("web/WEB-INF/faces-config.xml")
+}
+// separate task needed for osgi war so that dependency not falsely met
+task removeBirtFacesOsgi(type: BirtFaces) {
+    operation = "remove"
+    phaseListener = "com.centurylink.mdw.hub.jsf.ReportsPhaseListener"
+    includeComponent = true
+    file = file("web/WEB-INF/faces-config.xml")
+}
+
+task copyClasspathMeta(type: Copy) {
+    from("src/META-INF/mdw") {
+        include "*.properties"
+    }
+    from("src") {
+        include "META-INF/services/*"
+    }
+    into "build/classes"
+}
+
+// now includes reports
+task buildMdwFullWar(type: War) {
+    dependsOn (copyClasspathMeta, addBirtFaces)
+    
+    archiveName = "mdw-${version}.war"
+
+    classpath = war.classpath.plus(configurations.tomcat).minus(configurations.tomcatExclude).plus(configurations.tomcatExtra)
+    
+    manifest {
+        attributes("MDW-Version": mdwVersion)
+    }
+    
+    from("web") {
+        include "**/*"
+        exclude "WEB-INF/lib/mdwweb-jsf2-*.jar"  // already included as a dependency
+        exclude "WEB-INF/lib/taskmgr-*.jar"  // already included as a dependency
+        exclude "WEB-INF/lib/osrschemas-*.jar"  // already included as a dependency
+    }
+    
+    
+    from("src") {
+        // src/META-INF/mdw includes stuff that was copied in by copyWebMeta
+        include "META-INF/mdw/**"
+        include "META-INF/services/**" 
+    }
+    from("../mdw-common/src") {
+        include "META-INF/mdw/namespaces.map"
+        include "META-INF/mdw/sql-queries.xml"
+        include "META-INF/mdw/spring/*"
+    }
+    from("../mdw-workflow/src") {
+        include "META-INF/mdw/**"
+    }
+    from("../mdw-taskmgr/web") {
+        include "mdw/**"
+    }
+    
+    // birt libraries
+    from("web/WEB-INF/lib/birt") {
+        into "/WEB-INF/lib"
+        include "**/*.jar"
+    }
+
+    webXml = file("web/WEB-INF/web.xml")
+    exclude "**/.*ignore";
+    rootSpec.exclude "WEB-INF/web.xml"  // specified above
+    rootSpec.exclude "WEB-INF/lib/birt/**"  // above targets to WEB-INF/lib
+    rootSpec.exclude "doc/tutorials/**" // hosted on sharepoint
+    rootSpec.exclude "doc/environment/**" // hosted on sharepoint
+    
+    rootSpec.exclude "**/.*ignore"
+    rootSpec.exclude "**/.metadata/**"
+}
+
+// tomcat war
+task buildMdwWar {
+    dependsOn(addBirtFaces, buildMdwFullWar, removeBirtFaces)
+}
+
+task buildMdwReportsOsgi(type: War) {
+    dependsOn(addBirtFacesOsgi)
+    archiveName = "mdw-reports-${version}.war"
+    
+    from("web") {
+        include "**/*"
+        exclude "admin"
+        exclude "blv"
+        exclude "orders"
+        exclude "process"
+        exclude "requests"
+        exclude "tasks"
+        exclude "WEB-INF/lib/mdwweb-jsf2-*.jar"  // already included as a dependency
+        exclude "WEB-INF/lib/taskmgr-*.jar"  // already included as a dependency
+        exclude "WEB-INF/lib/osrschemas-*.jar"  // already included as a dependency
+    }
+    
+    from "web/reports/"
+    into "/"
+
+    from("web/WEB-INF/lib/birt") {
+        into "/WEB-INF/lib"
+        include "**/*.jar"
+     }
+        
+    from("src") {
+        include "META-INF/mdw/**"
+    }
+
+    webXml = file("web/WEB-INF/web.xml")
+    exclude "**/.*ignore";
+    rootSpec.exclude "WEB-INF/web.xml"  // specified above
+    rootSpec.exclude "WEB-INF/lib/birt/**"  // above targets to WEB-INF/lib
+    rootSpec.exclude "WEB-INF/lib/mdw-jsf.jar" // avoid dynamic java compilation at startup
+    rootSpec.exclude "index.html"
+    rootSpec.exclude "index.xhtml"
+    rootSpec.exclude "doc/**"
+    rootSpec.exclude "javadoc/**"
+    rootSpec.exclude "**/.*ignore"
+    rootSpec.exclude "**/.metadata/**"
+
+    manifest = osgiManifest {
+        classesDir = sourceSets.main.output.classesDir
+        classpath = configurations.runtime
+        symbolicName = "com.centurylink.mdw.reports"
+        instruction "Web-ContextPath",
+            "MDWReports"
+        instruction "Bundle-Name",
+            "com.centurylink.mdw.reports"
+        instruction "Bundle-Activator",
+            "com.centurylink.mdw.hub.bundle.ReportsBundleActivator"
+        instruction "Export-Package",
+            "!com.centurylink.mdw.hub.bundle",
+            "com.centurylink.mdw.hub.*"
+        instruction "Private-Package",
+            "com.centurylink.mdw.hub.bundle"
+        instruction "Import-Package",
+            "!com.centurylink.mdw.web.*",
+            "!com.centurylink.mdw.taskmgr.*",
+            "!org.ajax4jsf.*",
+            "!org.apache.myfaces.*",
+            "!org.apache.http.*",
+            "!org.eclipse.birt.*",
+            "!org.richfaces.*",
+            "!com.sun.facelets.*",
+            "!javax.faces.*",
+            "!com.qwest.appsec.actrl.*",
+            "!com.centurylink.orderRepository",
+            "!com.centurylink.orderRepository.impl",
+            "javax.sql",
+            "com.centurylink.mdw.common.service",
+            "com.centurylink.mdw.common.exception",
+            "com.centurylink.mdw.common.cache.impl",
+            "com.centurylink.mdw.common.query",
+            "com.centurylink.mdw.common.translator",
+            "com.centurylink.mdw.common.utilities.property",
+            "com.centurylink.mdw.common.utilities.property.impl",
+            "com.centurylink.mdw.common.utilities.timer",
+            "com.centurylink.mdw.dataaccess",
+            "com.centurylink.mdw.listener.http",
+            "com.centurylink.mdw.model",
+            "com.centurylink.mdw.model.data.common",
+            "com.centurylink.mdw.model.data.event",
+            "com.centurylink.mdw.model.data.task",            
+            "com.centurylink.mdw.model.data.work",
+            "com.centurylink.mdw.model.value.attribute",
+            "com.centurylink.mdw.model.value.process",
+            "com.centurylink.mdw.model.value.project",
+            "com.centurylink.mdw.model.value.task",
+            "com.centurylink.mdw.model.value.user",
+            "com.centurylink.mdw.model.value.variable",
+            "com.centurylink.mdw.model.value.activity",
+            "com.centurylink.mdw.listener",
+            "com.centurylink.mdw.listeners.startup",
+            "com.centurylink.mdw.service",
+            "com.centurylink.mdw.service.impl",
+            "com.centurylink.mdw.services",
+            "com.centurylink.mdw.services.status",
+            "com.centurylink.mdw.services.dao.process.cache",
+            "com.centurylink.mdw.services.dao.task.cache",
+            "com.centurylink.mdw.services.dao.user.cache",
+            "com.centurylink.mdw.services.task",
+            "com.centurylink.mdw.common.constant",
+            "com.centurylink.mdw.bpm",
+            "com.centurylink.mdw.bpm.impl",
+            "com.centurylink.mdw.workflow",
+            "com.centurylink.mdw.xml",
+            "com.sun.el",
+            "com.sun.el.lang",
+            "org.apache.xmlbeans",
+            "org.apache.xmlbeans.impl.schema",
+            "org.apache.xmlbeans.impl.values",
+            "org.apache.activemq.camel.component",
+            "org.apache.commons.logging",
+            "org.dom4j",
+            "org.dom4j.io",
+            "org.ietf.jgss",
+            "org.json",
+            "org.springframework.osgi.util",
+            "org.w3c.dom",
+            "org.w3c.dom.css",
+            "org.w3c.dom.stylesheets",
+            "org.xml.sax",
+            "org.xml.sax.ext",
+            "org.xml.sax.helpers",
+            "javax.el",
+            "javax.crypto",
+            "javax.crypto.spec",
+            "javax.imageio",
+            "javax.imageio.stream",
+            "javax.imageio.event",
+            "javax.jms",
+            "javax.management",
+            "javax.naming",
+            "javax.servlet",
+            "javax.servlet.http",
+            "javax.swing.tree",
+            "javax.tools",
+            "javax.xml.bind",
+            "javax.xml.datatype",
+            "javax.xml.parsers",
+            "javax.xml.namespace",
+            "javax.xml.transform",
+            "javax.xml.xpath",
+            "noNamespace.impl",
+            "*"
+        instruction "DynamicImport-Package",
+            "schemaorg_apache_xmlbeans.*"
+        instruction "Bundle-ClassPath",
+            ".",
+            "META-INF/mdw",
+            "WEB-INF/classes",
+            "WEB-INF/lib/com.centurylink.mdw.reports_${mdwDesignerVersion}.jar",
+            "WEB-INF/lib/mdwweb-jsf2-${mdwVersion}.jar",
+            "WEB-INF/lib/taskmgr-${mdwVersion}.jar",
+            "WEB-INF/lib/AccessControl-6.8.jar",
+            "WEB-INF/lib/asn1-6.0.2.49.jar",
+            "WEB-INF/lib/certj-6.0.2.49.jar",
+            "WEB-INF/lib/commons-beanutils-1.8.3.jar",
+            "WEB-INF/lib/commons-cli-1.0.jar",
+            "WEB-INF/lib/commons-codec-1.3.jar",
+            "WEB-INF/lib/commons-collections-3.2.2.jar",
+            "WEB-INF/lib/commons-digester-1.8.jar",
+            "WEB-INF/lib/commons-discovery-0.4.jar",
+            "WEB-INF/lib/commons-el-1.0.jar",
+            "WEB-INF/lib/commons-fileupload-1.2.1.jar",
+            "WEB-INF/lib/commons-httpclient-3.0.1.jar",
+            "WEB-INF/lib/commons-io-2.4.jar",
+            "WEB-INF/lib/commons-lang-2.4.jar",
+            "WEB-INF/lib/commons-validator-1.3.1.jar",
+            "WEB-INF/lib/cssparser-0.9.5.jar",
+            "WEB-INF/lib/ct_runtime_api-6.0.2.49.jar",
+            "WEB-INF/lib/el-api-1.0.jar",
+            "WEB-INF/lib/guava-13.0.1.jar",
+            "WEB-INF/lib/jsafe-6.0.2.49.jar",
+            "WEB-INF/lib/jsafeJCE-6.0.2.49.jar",
+            "WEB-INF/lib/jstl-1.1.2.jar",
+            "WEB-INF/lib/log4j-1.2.15.jar",
+            "WEB-INF/lib/myfaces-api-2.2.1.jar",
+            "WEB-INF/lib/myfaces-impl-2.2.1.jar",
+            "WEB-INF/lib/ojdbc6-11.2.0.3.jar",
+            "WEB-INF/lib/oro-2.0.8.jar",
+            "WEB-INF/lib/poi-all-3.9.jar",
+            "WEB-INF/lib/richfaces-components-api-4.3.3.Final.jar",
+            "WEB-INF/lib/richfaces-components-ui-4.3.3.Final.jar",
+            "WEB-INF/lib/richfaces-core-api-4.3.3.Final.jar",
+            "WEB-INF/lib/richfaces-core-impl-4.3.3.Final.jar",
+            "WEB-INF/lib/sac-1.3.jar",
+            "WEB-INF/lib/tomahawk21-1.1.14.jar",
+            "WEB-INF/lib/TomcatSecurityFilter-1.1.2.jar",
+            "WEB-INF/lib/com.ibm.icu_50.1.1.v201304230130.jar",
+            "WEB-INF/lib/com.lowagie.text_2.1.7.v201004222200.jar",
+            "WEB-INF/lib/derby.jar",
+            "WEB-INF/lib/flute.jar",
+            "WEB-INF/lib/javax.wsdl_1.5.1.v201012040544.jar",
+            "WEB-INF/lib/javax.xml.stream_1.0.1.v201004272200.jar",
+            "WEB-INF/lib/js.jar",
+            "WEB-INF/lib/org.apache.batik.bridge_1.6.0.v201011041432.jar",
+            "WEB-INF/lib/org.apache.batik.css_1.6.0.v201011041432.jar",
+            "WEB-INF/lib/org.apache.batik.dom.svg_1.6.0.v201011041432.jar",
+            "WEB-INF/lib/org.apache.batik.dom_1.6.0.v201011041432.jar",
+            "WEB-INF/lib/org.apache.batik.ext.awt_1.6.0.v201011041432.jar",
+            "WEB-INF/lib/org.apache.batik.parser_1.6.0.v201011041432.jar",
+            "WEB-INF/lib/org.apache.batik.pdf_1.6.0.v201105071520.jar",
+            "WEB-INF/lib/org.apache.batik.svggen_1.6.0.v201011041432.jar",
+            "WEB-INF/lib/org.apache.batik.transcoder_1.6.0.v201011041432.jar",
+            "WEB-INF/lib/org.apache.batik.util.gui_1.6.0.v201011041432.jar",
+            "WEB-INF/lib/org.apache.batik.util_1.6.0.v201011041432.jar",
+            "WEB-INF/lib/org.apache.batik.xml_1.6.0.v201011041432.jar",
+            "WEB-INF/lib/org.apache.commons.codec_1.3.0.v201101211617.jar",
+            "WEB-INF/lib/org.apache.xerces_2.9.0.v201101211617.jar",
+            "WEB-INF/lib/org.apache.xml.resolver_1.2.0.v201005080400.jar",
+            "WEB-INF/lib/org.apache.xml.serializer_2.7.1.v201005080400.jar",
+            "WEB-INF/lib/org.eclipse.birt.runtime_4.3.2.v20140225-1404.jar",
+            "WEB-INF/lib/org.eclipse.core.contenttype_3.4.200.v20130326-1255.jar",
+            "WEB-INF/lib/org.eclipse.core.expressions_3.4.501.v20131118-1915.jar",
+            "WEB-INF/lib/org.eclipse.core.filesystem_1.4.0.v20130514-1240.jar",
+            "WEB-INF/lib/org.eclipse.core.jobs_3.5.300.v20130429-1813.jar",
+            "WEB-INF/lib/org.eclipse.core.resources_3.8.101.v20130717-0806.jar",
+            "WEB-INF/lib/org.eclipse.core.runtime_3.9.100.v20131218-1515.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity.apache.derby.dbdefinition_1.0.2.v201107221459.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity.apache.derby_1.0.103.v201212070447.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity.console.profile_1.0.10.v201109250955.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity.db.generic_1.0.1.v201107221459.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity.dbdefinition.genericJDBC_1.0.2.v201310181001.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity.oda.consumer_3.2.6.v201305170644.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity.oda.design_3.3.6.v201212070447.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity.oda.flatfile_3.1.7.v201311081026.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity.oda.profile_3.2.9.v201307270622.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity.oda_3.4.2.v201311051159.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity.sqm.core_1.2.8.v201401230755.jar",
+            "WEB-INF/lib/org.eclipse.datatools.connectivity_1.2.11.v201401230755.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.hsqldb.dbdefinition_1.0.0.v201107221502.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.hsqldb_1.0.0.v201107221502.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.ibm.db2.luw.dbdefinition_1.0.6.v201401290336.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.ibm.db2.luw_1.0.3.v201401170830.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.ibm.informix.dbdefinition_1.0.4.v201107221502.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.ibm.informix_1.0.1.v201107221502.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.msft.sqlserver.dbdefinition_1.0.1.v201201240505.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.msft.sqlserver_1.0.3.v201308161009.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.mysql.dbdefinition_1.0.4.v201109022331.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.mysql_1.0.4.v201212120617.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.oda.ws_1.2.6.v201307051812.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.oda.xml_1.2.5.v201305031101.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.oracle.dbdefinition_1.0.103.v201206010214.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.oracle_1.0.0.v201107221506.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.postgresql.dbdefinition_1.0.2.v201110070445.jar",
+            "WEB-INF/lib/org.eclipse.datatools.enablement.postgresql_1.1.1.v201205252207.jar",
+            "WEB-INF/lib/org.eclipse.datatools.modelbase.dbdefinition_1.0.2.v201107221519.jar",
+            "WEB-INF/lib/org.eclipse.datatools.modelbase.derby_1.0.0.v201107221519.jar",
+            "WEB-INF/lib/org.eclipse.datatools.modelbase.sql.query_1.1.4.v201212120619.jar",
+            "WEB-INF/lib/org.eclipse.datatools.modelbase.sql_1.0.6.v201208230744.jar",
+            "WEB-INF/lib/org.eclipse.emf.common_2.9.2.v20131212-0545.jar",
+            "WEB-INF/lib/org.eclipse.emf.ecore.change_2.9.0.v20131212-0545.jar",
+            "WEB-INF/lib/org.eclipse.emf.ecore.xmi_2.9.1.v20131212-0545.jar",
+            "WEB-INF/lib/org.eclipse.emf.ecore_2.9.2.v20131212-0545.jar",
+            "WEB-INF/lib/org.eclipse.emf_2.6.0.v20140203-1126.jar",
+            "WEB-INF/lib/org.eclipse.equinox.app_1.3.100.v20130327-1442.jar",
+            "WEB-INF/lib/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar",
+            "WEB-INF/lib/org.eclipse.equinox.preferences_3.5.100.v20130422-1538.jar",
+            "WEB-INF/lib/org.eclipse.equinox.registry_3.5.301.v20130717-1549.jar",
+            "WEB-INF/lib/org.eclipse.orbit.mongodb_2.10.1.v20130422-1135.jar",
+            "WEB-INF/lib/org.eclipse.osgi_3.9.1.v20140110-1610.jar",
+            "WEB-INF/lib/org.eclipse.update.configurator_3.3.200.v20140203-1328.jar",
+            "WEB-INF/lib/org.w3c.css.sac_1.3.0.v200805290154.jar",
+            "WEB-INF/lib/org.w3c.dom.smil_1.0.0.v200806040011.jar",
+            "WEB-INF/lib/org.w3c.dom.svg_1.1.0.v201011041433.jar",
+            "WEB-INF/lib/saaj.jar",
+            "WEB-INF/lib/Tidy.jar"
+      }
+}
+
+task buildMdwReportsOsgiWar() {
+    dependsOn(addBirtFacesOsgi, buildMdwReportsOsgi, removeBirtFacesOsgi)
+}
+
+build {
+    dependsOn(buildMdwJsf2, buildJar, buildMdwWar, buildMdwReportsOsgiWar)
+}
+
+war {
+    dependsOn ":javadocs"  // include javadocs in the war TODO: maybe doc, javadoc, in separate WAR
+    
+    from("web") {
+        include "**/*"
+        exclude "WEB-INF/lib/mdwweb-jsf2-*.jar"  // already included as a dependency
+        exclude "WEB-INF/lib/taskmgr-*.jar"  // already included as a dependency
+        exclude "WEB-INF/lib/osrschemas-*.jar"  // already included as a dependency
+    }
+    from("src") {
+        include "META-INF/mdw/**"
+        include "META-INF/services/**"
+        include "META-INF/spring/**"
+    }
+    webXml = file("web/WEB-INF/web.xml")
+    exclude "**/.*ignore";
+    rootSpec.exclude "WEB-INF/web.xml"  // specified above
+    rootSpec.exclude "**/.*ignore"
+    rootSpec.exclude "**/.metadata/**"
+    rootSpec.exclude "WEB-INF/lib/birt/**"
+    rootSpec.exclude "WEB-INF/lib/com.centurylink.mdw.reports_*.jar"
+ 
+    manifest = osgiManifest {
+        classesDir = sourceSets.main.output.classesDir
+        classpath = configurations.runtime
+        symbolicName = "com.centurylink.mdw.hub"
+      instruction "Web-ContextPath",
+          "MDWHub"
+      instruction "Bundle-Activator",
+          "com.centurylink.mdw.hub.bundle.HubBundleActivator"
+      instruction "Export-Package",
+          "!com.centurylink.mdw.hub.bundle",
+          "com.centurylink.mdw.hub.*"
+      instruction "Private-Package",
+          "com.centurylink.mdw.hub.bundle"
+      instruction "Import-Package",
+          "!com.centurylink.mdw.web.*",
+          "!com.centurylink.mdw.taskmgr.*",
+          "!org.ajax4jsf.*",
+          "!org.apache.myfaces.*",
+          "!org.apache.http.*",
+          "!org.eclipse.birt.*",
+          "!org.richfaces.*",
+          "!com.sun.facelets.*",
+          "!javax.faces.*",
+          "!com.qwest.appsec.actrl.*",
+          "!com.centurylink.orderRepository",
+          "!com.centurylink.orderRepository.impl",
+          "com.centurylink.mdw.common.cache.impl",
+          "com.centurylink.mdw.common.constant",
+          "com.centurylink.mdw.common.exception",
+          "com.centurylink.mdw.script",
+          "com.centurylink.mdw.common.query",
+          "com.centurylink.mdw.common.service",
+          "com.centurylink.mdw.common.system",
+          "com.centurylink.mdw.common.translator",
+          "com.centurylink.mdw.common.utilities.file",
+          "com.centurylink.mdw.common.utilities.property",
+          "com.centurylink.mdw.common.utilities.property.impl",
+          "com.centurylink.mdw.common.utilities.timer",
+          "com.centurylink.mdw.connector.adapter",
+          "com.centurylink.mdw.container.plugins",
+          "com.centurylink.mdw.dataaccess",
+          "com.centurylink.mdw.dataaccess.file",
+          "com.centurylink.mdw.listener.http",
+          "com.centurylink.mdw.model",
+          "com.centurylink.mdw.model.data.common",
+          "com.centurylink.mdw.model.data.event",
+          "com.centurylink.mdw.model.data.task",
+          "com.centurylink.mdw.model.data.work",
+          "com.centurylink.mdw.model.listener",
+          "com.centurylink.mdw.model.value.attribute",
+          "com.centurylink.mdw.model.value.process",
+          "com.centurylink.mdw.model.value.task",
+          "com.centurylink.mdw.model.value.user",
+          "com.centurylink.mdw.model.value.variable",
+          "com.centurylink.mdw.model.value.activity",
+          "com.centurylink.mdw.listener",
+          "com.centurylink.mdw.listeners.startup",
+          "com.centurylink.mdw.osgi",
+          "com.centurylink.mdw.service",
+          "com.centurylink.mdw.service.impl",
+          "com.centurylink.mdw.services",
+          "com.centurylink.mdw.services.cache",
+          "com.centurylink.mdw.services.dao.process.cache",
+          "com.centurylink.mdw.services.dao.task.cache",
+          "com.centurylink.mdw.services.dao.user.cache",
+          "com.centurylink.mdw.services.status",
+          "com.centurylink.mdw.services.task",
+          "com.centurylink.mdw.bpm",
+          "com.centurylink.mdw.bpm.impl",
+          "com.centurylink.mdw.xml",
+          "com.qwest.mbeng",
+          "com.sun.el",
+          "com.sun.el.lang",
+          "com.sun.xml.messaging.saaj.soap",
+          "org.apache.xmlbeans",
+          "org.apache.xmlbeans.impl.schema",
+          "org.apache.xmlbeans.impl.values",          
+          "org.apache.activemq.camel.component",
+          "org.apache.commons.logging",
+          "org.json",
+          "org.springframework.osgi.util",
+          "org.w3c.dom",
+          "org.w3c.dom.css",
+          "org.w3c.dom.stylesheets",
+          "org.dom4j",
+          "org.dom4j.io",
+          "org.xml.sax",
+          "org.xml.sax.ext",
+          "org.xml.sax.helpers",
+          "javax.el",
+          "javax.crypto",
+          "javax.crypto.spec",
+          "javax.imageio",
+          "javax.imageio.stream",             
+          "javax.jms",
+          "javax.naming",
+          "javax.net.ssl",
+          "javax.servlet",
+          "javax.servlet.http",
+          "javax.swing.tree",
+          "javax.tools",
+          "javax.xml.bind",
+          "javax.xml.parsers",
+          "javax.xml.namespace",
+          "javax.xml.soap",
+          "javax.xml.transform",
+          "javax.xml.xpath",
+          "noNamespace.impl",
+          "*"
+      instruction "DynamicImport-Package",
+          "schemaorg_apache_xmlbeans.*"
+      instruction "Bundle-ClassPath",
+          ".",
+          "META-INF/mdw",
+          "WEB-INF/classes",
+          "WEB-INF/lib/mdwweb-jsf2-${mdwVersion}.jar",
+          "WEB-INF/lib/taskmgr-${mdwVersion}.jar",
+          "WEB-INF/lib/mdw-jsf.jar",
+          "WEB-INF/lib/AccessControl-6.8.jar",
+          "WEB-INF/lib/asn1-6.0.2.49.jar",
+          "WEB-INF/lib/certj-6.0.2.49.jar",
+          "WEB-INF/lib/commons-beanutils-1.8.3.jar",
+          "WEB-INF/lib/commons-cli-1.0.jar",
+          "WEB-INF/lib/commons-codec-1.3.jar",
+          "WEB-INF/lib/commons-collections-3.2.2.jar",
+          "WEB-INF/lib/commons-digester-1.8.jar",
+          "WEB-INF/lib/commons-discovery-0.4.jar",
+          "WEB-INF/lib/commons-el-1.0.jar",
+          "WEB-INF/lib/commons-fileupload-1.2.1.jar",
+          "WEB-INF/lib/commons-httpclient-3.0.1.jar",
+          "WEB-INF/lib/commons-io-2.4.jar",
+          "WEB-INF/lib/commons-lang-2.4.jar",
+          "WEB-INF/lib/commons-validator-1.3.1.jar",
+          "WEB-INF/lib/cssparser-0.9.5.jar",
+          "WEB-INF/lib/ct_runtime_api-6.0.2.49.jar",
+          "WEB-INF/lib/el-api-1.0.jar",
+          "WEB-INF/lib/guava-13.0.1.jar",
+          "WEB-INF/lib/jsafe-6.0.2.49.jar",
+          "WEB-INF/lib/jsafeJCE-6.0.2.49.jar",
+          "WEB-INF/lib/jstl-1.1.2.jar",
+          "WEB-INF/lib/log4j-1.2.15.jar",
+          "WEB-INF/lib/myfaces-api-2.2.1.jar",
+          "WEB-INF/lib/myfaces-impl-2.2.1.jar",
+          "WEB-INF/lib/ojdbc6-11.2.03.jar",
+          "WEB-INF/lib/oro-2.0.8.jar",
+          "WEB-INF/lib/poi-all-3.9.jar",
+          "WEB-INF/lib/richfaces-components-api-4.3.3.Final.jar",
+          "WEB-INF/lib/richfaces-components-ui-4.3.3.Final.jar",
+          "WEB-INF/lib/richfaces-core-api-4.3.3.Final.jar",
+          "WEB-INF/lib/richfaces-core-impl-4.3.3.Final.jar",
+          "WEB-INF/lib/sac-1.3.jar",
+          "WEB-INF/lib/tomahawk21-1.1.14.jar",
+          "WEB-INF/lib/TomcatSecurityFilter-1.1.2.jar",
+          "WEB-INF/lib/osrschemas-1.0.4.7.jar"
+    }
+}

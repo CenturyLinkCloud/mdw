@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44536630
+item-spec=4D4457413A314B3654583320414444205052494D415259204B4559532053514C7E30312D2D313730363234343332322E412D4441543B31
+file-version=1
+checksum=9031ad036c47fd604c6c7265fe329772
+fetch-size=14497
+mtime=1329798433
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=deploy/sql/oracle/oldScripts/add_primary_keys.sql
+project=4D4457413A4D445741
+project-uid=31770127

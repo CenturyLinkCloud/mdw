@@ -1,0 +1,6 @@
+// timer-wait-activity-order
+start process("TimerWaitActivityOrder") {
+    variables = [cumulativeResult: "_"]
+}
+wait process
+verify process

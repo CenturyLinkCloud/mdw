@@ -1,0 +1,13 @@
+version=10.2
+item-uid=44561732
+item-spec=4D4457413A314B374B524A2052494348205441474C494220584D4C2D2D313134343434373337332E412D5352433B31
+file-version=1
+checksum=fa760ce79594850be5fedf5a2254d6cb
+fetch-size=21915
+mtime=1314214951
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=web/WEB-INF/osgi/rich.taglib.xml
+project=4D4457413A4D445741
+project-uid=31770127

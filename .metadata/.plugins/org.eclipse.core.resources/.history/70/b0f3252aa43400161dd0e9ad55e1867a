@@ -1,0 +1,37 @@
+<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <bpm:Process Id="MainProcess" name="RpcWebServiceBasicAuth" version="0.1" description="">
+    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=76,y=92,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
+      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=510,y=92,w=60,h=40"/>
+    </bpm:Activity>
+    <bpm:Activity Id="A3" Name="Invoke ActionRequest.RefreshProcessCache" Implementation="com.centurylink.mdw.workflow.adapter.soap.MdwRpcWebServiceAdapter">
+      <bpm:Attribute Name="DO_LOGGING" Value="True"/>
+      <bpm:Attribute Name="PASS" Value="Teamweb1!"/>
+      <bpm:Attribute Name="REQUEST_VARIABLE" Value="requestDoc"/>
+      <bpm:Attribute Name="RESPONSE_VARIABLE" Value="responseDoc"/>
+      <bpm:Attribute Name="SoapVersion" Value="SOAP 1.1 Protocol"/>
+      <bpm:Attribute Name="USER" Value="aa72443"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=201,y=79,w=256,h=94"/>
+      <bpm:Attribute Name="WSDL" Value="http://X7000461:8080/mdw/Services/SOAP/"/>
+    </bpm:Activity>
+    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=188,ly=86,type=Elbow,xs=140&amp;197,ys=112&amp;112"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=488,ly=112,type=Elbow,xs=461&amp;506,ys=112&amp;112"/>
+    </bpm:Transition>
+    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
+    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
+    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
+    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=27,y=24,w=233,h=27"/>
+    <bpm:Variables Name="requestDoc" ReferredAs="" Category="INPUT" DisplaySequence="0">
+      <bpm:type Name="org.w3c.dom.Document"/>
+    </bpm:Variables>
+    <bpm:Variables Name="responseDoc" ReferredAs="" Category="LOCAL" DisplaySequence="0">
+      <bpm:type Name="com.centurylink.mdw.model.StringDocument"/>
+    </bpm:Variables>
+  </bpm:Process>
+</bpm:processDefinition>

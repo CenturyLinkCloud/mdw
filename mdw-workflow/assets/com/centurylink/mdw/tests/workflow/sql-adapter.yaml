@@ -1,0 +1,60 @@
+process: # 13792
+  name: SqlAdapter
+  instance: 1
+  activity: # 1 "2016-02-23 13:17:43"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-23 13:17:43"
+    name: |
+      Query Using
+      JDBC URL
+    status: Completed
+  activity: # 10 "2016-02-23 13:17:43"
+    name: Wait 10s
+    status: Completed
+  activity: # 9 "2016-02-23 13:17:43"
+    name: Wait 60s
+    status: Completed
+  activity: # 5 "2016-02-23 13:17:43"
+    name: Sync
+    status: Completed
+  activity: # 4 "2016-02-23 13:18:13"
+    name: |
+      Query Multiple Params,
+      Multiple Results
+    status: Completed
+  activity: # 6 "2016-02-23 13:18:43"
+    name: |
+      Update
+      User Name
+    status: Completed
+  activity: # 7 "2016-02-23 13:18:43"
+    name: |
+      Select User
+      And Bind Name
+    status: Completed
+  activity: # 8 "2016-02-23 13:18:43"
+    name: |
+      Reset
+      User Name
+    status: Completed
+  activity: # 2 "2016-02-23 13:18:43"
+    name: Stop
+    status: Completed
+  variable: # 21114
+    name: mdwSupportUsers
+    value: Donald Oakes~Manoj Agrawal
+  variable: # 21112
+    name: userCuid
+    value: dxoakes
+  variable: # 21111
+    name: userCuids
+    value: dxoakes~aa56486
+  variable: # 21113
+    name: userDocument
+    value: |
+      <user:user xmlns:user="http://mdw.centurylink.com/user">
+        <user:firstName>Donald</user:firstName>
+        <user:lastName>Oakes</user:lastName>
+        <user:cuid>dxoakes</user:cuid>
+      </user:user>

@@ -1,0 +1,14 @@
+// jaxb-document
+start process("com.centurylink.mdw.tests/JaxbDocument") {
+    variables = [actionRequest: asset("jaxb-action-request.xml").text,
+                 assetDefinedJaxb: asset("jaxb-asset.xml").text]
+}
+wait process
+verify process
+
+assert masterProcessInstance.status == 'Completed'
+// test individual element values in a JAXB variable
+def jaxbVarXml = masterProcessInstance.variable['assetDefinedJaxb']
+def jaxbVar = new XmlSlurper().parseText(jaxbVarXml)
+assert jaxbVar.RequiredElement.text() == 'inputDocRequiredElement'
+assert jaxbVar.OptionalElement.text() == 'updatedOptionalElem'

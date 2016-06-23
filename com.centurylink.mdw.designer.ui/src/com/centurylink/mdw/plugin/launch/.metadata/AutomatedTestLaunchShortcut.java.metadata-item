@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68028460
+item-spec=4D4457413A314B3848384C2052454752455353494F4E544553544C41554E434853484F5254435554204A4156412D2D313632303231363434342E412D5352433B3137
+file-version=17
+checksum=80d424500ec5dc9611ede8ff88f6e475
+fetch-size=13030
+mtime=1455063346
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/launch/AutomatedTestLaunchShortcut.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855167
+item-spec=4D4457413A314B37565330205441534B4154544143484D454E5453414354494F4E434F4E54524F4C4C4552204A4156412D2D313233363038363130382E412D5352433B32
+file-version=2
+checksum=bab2338fff698010894660089a2f2f0b
+fetch-size=3278
+mtime=1393990193
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/tasks/attachments/TaskAttachmentsActionController.java
+project=4D4457413A4D445741
+project-uid=31770127

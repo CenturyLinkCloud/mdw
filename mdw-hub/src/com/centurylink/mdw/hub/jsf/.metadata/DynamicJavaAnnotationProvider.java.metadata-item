@@ -1,0 +1,13 @@
+version=10.2
+item-uid=66809271
+item-spec=4D4457413A314B375951422044594E414D49434A415641414E4E4F544154494F4E50524F5649444552204A4156412D2D3132343537393135322E412D5352433B3133
+file-version=13
+checksum=5a790f3ed086acba7454b45e63790a34
+fetch-size=7806
+mtime=1449620354
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/jsf/DynamicJavaAnnotationProvider.java
+project=4D4457413A4D445741
+project-uid=31770127

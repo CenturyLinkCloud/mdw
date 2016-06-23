@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46853435
+item-spec=4D4457413A314B3737545A2044594E41524F57204A4156412D2D313131333430353937312E412D5352433B33
+file-version=3
+checksum=e4bc02d7a4b72f2654185baa98d6aaf1
+fetch-size=3475
+mtime=1393986797
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/groovy/DynaRow.java
+project=4D4457413A4D445741
+project-uid=31770127

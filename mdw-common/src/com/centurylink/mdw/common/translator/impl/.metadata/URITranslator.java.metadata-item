@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46852937
+item-spec=4D4457413A314B3737545A205552495452414E534C41544F52204A4156412D2D313939333332333834302E412D5352433B32
+file-version=2
+checksum=d7c3ae8d5e1a33df3c93fca5754680d5
+fetch-size=704
+mtime=1393988446
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/common/translator/impl/URITranslator.java
+project=4D4457413A4D445741
+project-uid=31770127

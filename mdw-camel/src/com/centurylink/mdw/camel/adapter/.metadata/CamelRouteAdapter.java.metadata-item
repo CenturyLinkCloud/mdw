@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49595953
+item-spec=4D4457413A314B38334D42204D445743414D454C41444150544552204A4156412D323131333832313734312E412D5352433B35
+file-version=5
+checksum=6c7d2ba92a568ca60cf88c4963f8215d
+fetch-size=7662
+mtime=1406310318
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/camel/adapter/CamelRouteAdapter.java
+project=4D4457413A4D445741
+project-uid=31770127

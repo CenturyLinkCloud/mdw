@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+  
+    <mdw:javascriptInclude fileLocation="/script/taskAction.js" />
+    <mdw:taskActionComp
+      applyTo="#{applyTo}"
+      actionFor="mainDetailForm:actionForm,#{submitDetailData ? 'mainDetailForm:detailForm' : ''}"
+      optionalValidationFor="#{optionalValidation}">
+      <!-- actionFor is not really used -->
+      
+      <h:panelGrid style="height:35px;"
+        cellpadding="0"
+        cellspacing="0"
+        rendered="#{rendered}"
+        columns="6">
+        <a4j:commandButton
+          id="submitCommentsHiddenButton"
+          action="#{taskActionController.refresh}"
+          actionListener="#{taskActionController.processAction}"
+          style="display:none;" />
+        <h:inputHidden
+          id="submitCommentsHiddenAction" />
+        <h:inputHidden
+          id="submitCommentsHiddenItem" />
+        <h:inputHidden
+          id="submitCommentsHiddenComment" />
+        <rich:dropDownMenu
+          binding="#{menuBinding}"
+          submitMode="#{actionSubmitMode == null ? 'ajax' : actionSubmitMode}"
+          direction="bottom-right" 
+          jointPoint="tr"
+          hideDelay="600"
+          onexpand="fixSubMenus();return true;">
+          <f:facet name="label">
+            <h:panelGrid cellpadding="0" cellspacing="0" styleClass="rich-panel-header mdw_dropMenu">
+              <h:outputText value="Actions > " style="white-space:nowrap;" />
+            </h:panelGrid>
+          </f:facet>
+        </rich:dropDownMenu>
+        <a4j:status>
+          <f:facet name="start">
+            <h:graphicImage style="margin-left:5px;" value="/images/loading.gif" />
+          </f:facet>
+          <f:facet name="stop">
+		        <a4j:outputPanel ajaxRendered="true">
+		          <h:messages
+                rendered="#{showValidationMessages == null ? true : showValidationMessages}"
+		            styleClass="mdw_contextMessages"
+		            showDetail="true" 
+		            globalOnly="true" />
+		        </a4j:outputPanel>
+          </f:facet>          
+        </a4j:status>
+      </h:panelGrid>
+    </mdw:taskActionComp>
+    
+    <rich:modalPanel id="commentDlg" width="450" height="200">
+      <f:facet name="header">
+        <h:panelGroup>
+          <h:outputText value="Task Comment"></h:outputText>
+        </h:panelGroup>
+      </f:facet>
+      <f:facet name="controls">
+        <h:panelGroup>
+          <h:graphicImage id="hideAddLink" value="/images/close.png" styleClass="hidelink" />
+          <rich:componentControl for="commentDlg" attachTo="hideAddLink" operation="hide" event="onclick" />
+        </h:panelGroup>
+      </f:facet>
+      <h:outputText value="Please enter a comment." styleClass="mdw_prompt" />
+      <div style="margin-top:10px;">
+        <h:inputTextarea
+          id="taskActionComments"
+          value="#{taskAction.comment}"
+          wrap="off"
+          rows="6"
+          styleClass="mdw_textAreaInput"
+          style="margin-bottom:8px;" />
+        <h:commandButton
+          id="commentOk" 
+          value="OK"
+          onclick="submitComments();return false;">
+          <rich:componentControl for="commentDlg" attachTo="commentOk" operation="hide" event="onclick" />
+        </h:commandButton>
+        <h:commandButton 
+          id="commentCancel"
+          value="Close"
+          style="margin-left:10px;"
+          onclick="return false;">
+          <rich:componentControl for="commentDlg" attachTo="commentCancel" operation="hide" event="onclick" />
+        </h:commandButton>
+      </div>
+    </rich:modalPanel>
+        
+  </ui:composition>
+
+</html>

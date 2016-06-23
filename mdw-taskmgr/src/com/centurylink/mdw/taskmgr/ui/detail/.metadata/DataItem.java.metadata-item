@@ -1,0 +1,13 @@
+version=10.2
+item-uid=51540583
+item-spec=4D4457413A314B3756533020444154414954454D204A4156412D2D3634303731353531372E412D5352433B34
+file-version=4
+checksum=ef0c1debe5776751a8c1c7672ec95cf9
+fetch-size=5812
+mtime=1415914640
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/taskmgr/ui/detail/DataItem.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,13 @@
+version=10.2
+item-uid=49752520
+item-spec=4D4457413A314B3848384C204A4156414445425547534F555243454C4F4341544F52204A4156412D2D3433353332363230312E412D5352433B33
+file-version=3
+checksum=3938db393612eaa2a6f0664143df5020
+fetch-size=1805
+mtime=1407359656
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/plugin/launch/JavaSourceLocator.java
+project=4D4457413A4D4457415F45434C49505345
+project-uid=37843026

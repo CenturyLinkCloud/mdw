@@ -1,0 +1,13 @@
+version=10.2
+item-uid=67119887
+item-spec=4D4457413A314B3746473520494D504F5254474954415353455453204A4156412D31373533383836303958323737363558302E412D5352433B33
+file-version=3
+checksum=364cc3e65bae940beb18a1fbf2382298
+fetch-size=6092
+mtime=1450817528
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/service/action/ImportGitAssets.java
+project=4D4457413A4D445741
+project-uid=31770127

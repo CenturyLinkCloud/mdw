@@ -1,0 +1,246 @@
+/**
+ * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.plugin.designer.wizards;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+
+import com.centurylink.mdw.plugin.WizardPage;
+import com.centurylink.mdw.plugin.designer.model.RegressionTestCase;
+import com.centurylink.mdw.plugin.designer.model.RegressionTestSuite;
+import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
+import com.centurylink.mdw.plugin.designer.properties.editor.ColumnSpec;
+import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
+import com.centurylink.mdw.plugin.designer.properties.editor.TableEditor;
+import com.centurylink.mdw.plugin.designer.properties.editor.TableEditor.DefaultRowImpl;
+import com.centurylink.mdw.plugin.designer.properties.editor.TableEditor.TableModelUpdater;
+
+public class ImportTestCaseSelectPage extends WizardPage
+{
+  private TableEditor testCaseTableEditor;
+  private Button selectAllButton;
+  private Button deselectAllButton;
+
+  public ImportTestCaseSelectPage()
+  {
+    setTitle("Select Test Cases to Import");
+    setDescription("Choose which test cases to import into your project.");
+  }
+
+  /**
+   * Populate the table based on the imported data.
+   */
+  public void initialize()
+  {
+    List<DefaultRowImpl> tableRows = new ArrayList<DefaultRowImpl>();
+    List<String> casesToImport = new ArrayList<String>();
+    for (String testCaseName : getTestCaseList())
+    {
+      boolean alreadyInProject = false;
+      for (RegressionTestCase existingCase : getTestSuite().getTestCases())
+      {
+        if (existingCase.getName().equals(testCaseName))
+        {
+          alreadyInProject = true;
+          break;
+        }
+      }
+      if (!alreadyInProject)
+        casesToImport.add(testCaseName);
+
+      String[] rowData = new String[3];
+      rowData[0] = "true";
+      rowData[1] = testCaseName;
+      rowData[2] = "";
+      if (alreadyInProject)
+      {
+        rowData[0] = "false";
+        rowData[2] = "Already exists in project";
+      }
+      DefaultRowImpl row = testCaseTableEditor.new DefaultRowImpl(rowData);
+      tableRows.add(row);
+    }
+
+    testCaseTableEditor.setValue(tableRows);
+    setCasesToImport(casesToImport);
+    handleFieldChanged();
+  }
+
+  @Override
+  public void drawWidgets(Composite parent)
+  {
+    // create the composite to hold the widgets
+    Composite composite = new Composite(parent, SWT.NULL);
+
+    // create the layout for this wizard page
+    GridLayout gl = new GridLayout();
+    int ncol = 4;
+    gl.numColumns = ncol;
+    composite.setLayout(gl);
+
+    createTestCaseListControls(composite, ncol);
+    createSpacer(composite, ncol);
+    createSelectButtonControls(composite, ncol);
+
+    setControl(composite);
+  }
+
+  private void createTestCaseListControls(Composite parent, int ncol)
+  {
+    testCaseTableEditor = new TableEditor(null, TableEditor.TYPE_TABLE);
+
+    // colspecs
+    List<ColumnSpec> projectColSpecs = new ArrayList<ColumnSpec>();
+    ColumnSpec selectionColSpec = new ColumnSpec(PropertyEditor.TYPE_CHECKBOX, "Import/Overwrite", "import");
+    selectionColSpec.width = 100;
+    projectColSpecs.add(selectionColSpec);
+    ColumnSpec projectColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Test Case", "testCase");
+    projectColSpec.width = 250;
+    projectColSpec.readOnly = true;
+    projectColSpecs.add(projectColSpec);
+    ColumnSpec noteColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Note", "note");
+    noteColSpec.readOnly = true;
+    noteColSpec.width = 150;
+    projectColSpecs.add(noteColSpec);
+
+    testCaseTableEditor.setColumnSpecs(projectColSpecs);
+    testCaseTableEditor.setFillWidth(true);
+    testCaseTableEditor.setModelUpdater(new TableModelUpdater()
+    {
+      public Object create()
+      {
+        return null;
+      }
+
+      @SuppressWarnings("rawtypes")
+      public void updateModelValue(List tableValue)
+      {
+        List<String> selectedCases = new ArrayList<String>();
+        for (String testCaseName : getTestCaseList())
+        {
+          for (Object rowObj : tableValue)
+          {
+            DefaultRowImpl row = (DefaultRowImpl) rowObj;
+            if (testCaseName.equals(row.getColumnValue(1)))
+            {
+              if (((Boolean)row.getColumnValue(0)).booleanValue())
+                selectedCases.add(testCaseName);
+            }
+          }
+        }
+        setCasesToImport(selectedCases);
+        handleFieldChanged();
+      }
+    });
+
+    testCaseTableEditor.render(parent, false);
+    GridData gd = new GridData(GridData.FILL_BOTH);
+    gd.horizontalSpan = ncol;
+    testCaseTableEditor.getTable().setLayoutData(gd);
+  }
+
+  private void createSelectButtonControls(Composite parent, int ncol)
+  {
+    Composite buttonComposite = new Composite(parent, SWT.NONE);
+    GridLayout layout = new GridLayout();
+    layout.numColumns = 2;
+    layout.horizontalSpacing = 5;
+    buttonComposite.setLayout(layout);
+    GridData gd = new GridData(SWT.END, SWT.TOP, true, false);
+    gd.horizontalSpan = ncol;
+    buttonComposite.setLayoutData(gd);
+
+    selectAllButton = new Button(buttonComposite, SWT.PUSH);
+    selectAllButton.setText("Select All");
+    gd = new GridData(GridData.BEGINNING);
+    gd.widthHint = 75;
+    selectAllButton.setLayoutData(gd);
+    selectAllButton.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
+        for (Object rowObj : testCaseTableEditor.getTableValue())
+        {
+          DefaultRowImpl row = (DefaultRowImpl) rowObj;
+          row.setColumnValue(0, "true");
+        }
+        setCasesToImport(getTestCaseList());
+        testCaseTableEditor.getTableViewer().update(testCaseTableEditor.getTableValue(), null);
+        handleFieldChanged();
+      }
+    });
+
+    deselectAllButton = new Button(buttonComposite, SWT.PUSH);
+    deselectAllButton.setText("Deselect All");
+    gd = new GridData(GridData.BEGINNING);
+    gd.widthHint = 70;
+    deselectAllButton.setLayoutData(gd);
+    deselectAllButton.addSelectionListener(new SelectionAdapter()
+      {
+        public void widgetSelected(SelectionEvent e)
+        {
+          for (Object rowObj : testCaseTableEditor.getTableValue())
+          {
+            DefaultRowImpl row = (DefaultRowImpl) rowObj;
+            row.setColumnValue(0, "false");
+          }
+          setCasesToImport(new ArrayList<String>());
+          testCaseTableEditor.getTableViewer().update(testCaseTableEditor.getTableValue(), null);
+          handleFieldChanged();
+        }
+      });
+  }
+
+  @Override
+  public boolean isPageComplete()
+  {
+    return isPageValid();
+  }
+
+  boolean isPageValid()
+  {
+    return getCasesToImport() != null && getCasesToImport().size() > 0;
+  }
+
+  public IStatus[] getStatuses()
+  {
+    return null;
+  }
+
+  private List<String> getCasesToImport()
+  {
+    return ((ImportTestCaseWizard)getWizard()).getTestCasesToImport();
+  }
+
+  private void setCasesToImport(List<String> cases)
+  {
+    ((ImportTestCaseWizard)getWizard()).setTestCasesToImport(cases);
+  }
+
+  private List<String> getTestCaseList()
+  {
+    return ((ImportTestCaseWizard)getWizard()).getTestCaseList();
+  }
+
+  private RegressionTestSuite getTestSuite()
+  {
+    return ((ImportTestCaseWizard)getWizard()).getTestSuite();
+  }
+
+  @Override
+  public WorkflowElement getWorkflowElement()
+  {
+    return getTestSuite();
+  }
+
+}

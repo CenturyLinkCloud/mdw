@@ -1,0 +1,28 @@
+// POST request to Services/Tasks/TaskInstanceId/indexes
+// e.g http://localhost:8181/mdw/Services/Tasks/22962/indexes
+{
+    "indexes": {
+      "ACNA": "LGT",
+      "CDDD": "06/10/2015",
+      "Circuit id": "10/VLGS/45744//UCLS",
+      "Common Order Formatted order": "2073316",
+      "Component Type": "EVC",
+      "Customer Address": "749,BROAD RIVER DR,BEAUFORT-29906,SC",
+      "Customer Name": "QCC DBA CENTURYLINK QCC",
+      "Entity ID": "2073316",
+      "Master Request ID": "MR0006930.E1",
+      "Order number": "2073316",
+      "PON": "173657444INN0002",
+      "Project ID": "EVPLQCC",
+      "Request component ID": "2073316",
+      "State": "SC",
+      "Task Due Date": "Tue Jun 09 10:35:19 CDT 2015",
+      "Task Name": "EVC/OVC Install and Activation",
+      "Task Status": "Open",
+      "Workgroup": "CDP",
+      "action": "Original"
+    },
+    "taskInstanceId": 22962
+  }
+
+

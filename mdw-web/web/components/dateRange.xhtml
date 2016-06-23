@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+
+  <ui:composition>
+    <t:panelGrid
+      rendered="#{rendered}"
+      width="100%"
+      columns="4"
+      cellspacing="0"
+      cellpadding="0"
+      columnClasses="mdw_topAlign">
+
+        <t:outputText
+          styleClass="mdw_inputText"
+          style="width:35px;"
+          value="From "/>
+
+        <mdw:date
+          id="fromDateInput"
+          dateId="fromDate"
+          value="#{fromDateValue}"
+          sequenceId="#{sequenceId}"
+          dateValidator="dateRangeValidator"
+          immediate="#{immediate}"
+          jsFunction="#{jsFunction}"/>
+
+        <t:outputText
+          styleClass="mdw_inputText"
+          value="To "/>
+
+        <mdw:date
+          id="toDateInput"
+          dateId="toDate"
+          value="#{toDateValue}"
+          sequenceId="#{sequenceId}"
+          dateValidator="dateRangeValidator"
+          immediate="#{immediate}"
+          jsFunction="#{jsFunction}"/>
+
+    </t:panelGrid>
+
+  </ui:composition>
+
+</html>

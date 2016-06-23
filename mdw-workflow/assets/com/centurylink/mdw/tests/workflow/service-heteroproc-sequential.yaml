@@ -1,0 +1,154 @@
+process: # 13552
+  name: MDWTestHeterogeneousProcessCall
+  instance: 1
+  activity: # 1 "2016-02-19 14:52:30"
+    name: Start
+    status: Completed
+  activity: # 8 "2016-02-19 14:52:30"
+    name: which case?
+    status: Completed
+  activity: # 3 "2016-02-19 14:52:30"
+    name: |
+      create
+      execution plan
+      - sequential
+    status: Completed
+  activity: # 4 "2016-02-19 14:52:30"
+    name: |
+      invoke heterogeneous
+      processes - sequential
+    status: Completed
+  activity: # 5 "2016-02-19 14:52:30"
+    name: Set result variables
+    status: Completed
+  activity: # 2 "2016-02-19 14:52:30"
+    name: Stop
+    status: Completed
+  variable: # 20355
+    name: docFromSubproc
+    value: |
+      <Result>
+         <n>3</n>
+         <nplus1>4</nplus1>
+         <cube>27</cube>
+      </Result>
+  variable: # 20346
+    name: execplan
+    value: |
+      <bpm:ProcessExecutionPlan xmlns:bpm="http://mdw.centurylink.com/bpm">
+        <bpm:SubprocessInstance>
+          <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
+          <bpm:InstanceId>${~\\d+}</bpm:InstanceId><bpm:StatusCode>4</bpm:StatusCode>
+          <bpm:Parameter Name="argument">11</bpm:Parameter>
+          <bpm:Parameter Name="result">121</bpm:Parameter>
+        </bpm:SubprocessInstance>
+        <bpm:SubprocessInstance>
+          <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
+          <bpm:InstanceId>${~\\d+}</bpm:InstanceId><bpm:StatusCode>4</bpm:StatusCode>
+          <bpm:Parameter Name="argument">13</bpm:Parameter>
+          <bpm:Parameter Name="result">169</bpm:Parameter>
+        </bpm:SubprocessInstance>
+        <bpm:SubprocessInstance>
+          <bpm:LogicalProcessName>SubProcess2</bpm:LogicalProcessName>
+          <bpm:InstanceId>${~\\d+}</bpm:InstanceId><bpm:StatusCode>4</bpm:StatusCode>
+          <bpm:Parameter Name="n">3</bpm:Parameter>
+          <bpm:Parameter Name="ncube">$ncube</bpm:Parameter>
+          <bpm:Parameter Name="resultdoc">$docFromSubproc</bpm:Parameter>
+        </bpm:SubprocessInstance>
+      </bpm:ProcessExecutionPlan>
+  variable: # 20354
+    name: ncube
+    value: 27
+  variable: # 20344
+    name: request
+    value: |
+      <ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
+        <Action Name="RegressionTest">
+          <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+          <Parameter name="ProcessName">MDWTestHeterogeneousProcessCall</Parameter>
+          <Parameter name="testcase">sequential</Parameter>
+          <Parameter name="PerformanceLevel">3</Parameter>
+        </Action>
+      </ser:ActionRequest>
+  variable: # 20357
+    name: response
+    value: |
+      <Response>
+        <ncube>27</ncube>
+        <result>121</result>
+        <result>169</result>
+        <nplus1>4</nplus1>
+      </Response>
+  variable: # 20356
+    name: result
+    value: 121
+  variable: # 20345
+    name: testcase
+    value: sequential
+process: # 13554
+  name: MDWTestSubProcess3
+  instance: 1
+  activity: # 34 "2016-02-19 14:52:30"
+    name: Start
+    status: Completed
+  activity: # 31 "2016-02-19 14:52:30"
+    name: Calculate sqaure
+    status: Completed
+  activity: # 33 "2016-02-19 14:52:30"
+    name: Finish
+    status: Completed
+  variable: # 20348
+    name: argument
+    value: 13
+  variable: # 20351
+    name: result
+    value: 169
+process: # 13553
+  name: MDWTestSubProcess3
+  instance: 2
+  activity: # 34 "2016-02-19 14:52:30"
+    name: Start
+    status: Completed
+  activity: # 31 "2016-02-19 14:52:30"
+    name: Calculate sqaure
+    status: Completed
+  activity: # 33 "2016-02-19 14:52:30"
+    name: Finish
+    status: Completed
+  variable: # 20347
+    name: argument
+    value: 11
+  variable: # 20350
+    name: result
+    value: 121
+process: # 13555
+  name: MDWTestSubProcess4
+  instance: 1
+  activity: # 34 "2016-02-19 14:52:30"
+    name: Start
+    status: Completed
+  activity: # 31 "2016-02-19 14:52:30"
+    name: Calculate cube
+    status: Completed
+  activity: # 1 "2016-02-19 14:52:30"
+    name: |
+      create output
+      document
+    status: Completed
+  activity: # 33 "2016-02-19 14:52:30"
+    name: Finish
+    status: Completed
+  variable: # 20349
+    name: n
+    value: 3
+  variable: # 20352
+    name: ncube
+    value: 27
+  variable: # 20353
+    name: resultdoc
+    value: |
+      <Result>
+         <n>3</n>
+         <nplus1>4</nplus1>
+         <cube>27</cube>
+      </Result>

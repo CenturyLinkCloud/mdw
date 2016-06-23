@@ -1,0 +1,82 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.project.model.* com.centurylink.mdw.plugin.preferences.model.*"
+        class="ReleaseBuildXmlEmitter" %>
+<% Map map = (Map) argument;
+   WorkflowProject workflowProject = (WorkflowProject) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="release" name="<%=workflowProject.getSourceProjectName()%>Release">
+
+  <property file="deploy/env/env.properties.${env}" />
+  <property file="deploy/env/project.properties" />
+  <property name="ecom.app.dir" value="Qwest" />
+
+  <target name="release" description="Produces the release tar file.">
+
+    <delete dir="${release.dir}" failonerror="false" />
+    <mkdir dir="${release.dir}" />
+    <mkdir dir="${release.dir}/${ecom.app.dir}" />
+    <mkdir dir="${release.dir}/${ecom.app.dir}/applications" />
+    <mkdir dir="${release.dir}/${ecom.app.dir}/config" />
+    <mkdir dir="${release.dir}/${ecom.app.dir}/config/wlsdeploy"/>    
+    <mkdir dir="${release.dir}/${ecom.app.dir}/lib" />
+
+    <!-- copy ear file -->
+    <copy todir="${release.dir}/${ecom.app.dir}/applications">
+      <fileset dir="${app.build.dir}" includes="${output.file}" />
+    </copy>
+
+    <antcall target="buildTargetEnv" inheritAll="false">
+      <param name="envext" value="dev" />
+    </antcall>
+    <antcall target="buildTargetEnv" inheritAll="false">
+      <param name="envext" value="int" />
+    </antcall>
+    <antcall target="buildTargetEnv" inheritAll="false">
+      <param name="envext" value="test" />
+    </antcall>
+    <antcall target="buildTargetEnv" inheritAll="false">
+      <param name="envext" value="test2" />
+    </antcall>
+    <antcall target="buildTargetEnv" inheritAll="false">
+      <param name="envext" value="e2etest" />
+    </antcall>
+    <antcall target="buildTargetEnv" inheritAll="false">
+      <param name="envext" value="prod" />
+    </antcall>
+    
+    <tar tarfile="${releaseTarFile}" basedir="${release.dir}" />
+
+    <copy file="${releaseTarFile}" tofile="${anthill.StageDir}/${releaseTarFile}" />
+
+    <copy file="${releaseTarFile}" tofile="${anthill.PublishDir}/${releaseTarFile}.zip" />
+  </target>
+  
+  
+  <target name="buildTargetEnv">
+  
+    <echo message="building files for env ${envext}" />
+
+    <filter filtersfile="deploy/env/env.properties.${envext}" />
+
+    <!-- copy properties -->
+    <copy todir="${release.dir}/${ecom.app.dir}/config" filtering="true">
+      <fileset dir="${ear.deploy.dir}/config" includes="**/*" excludes="*.jks,*.jpg,*.gif,*.png,services.py" />
+      <mapper type="glob" from="*" to="*.${envext}" />
+    </copy>
+    <copy todir="${release.dir}/${ecom.app.dir}/config">
+      <fileset dir="${ear.deploy.dir}/config" includes="*.jpg,*.gif,*.png,*.jks" />
+      <mapper type="glob" from="*" to="*.${envext}" />
+    </copy>   
+    <copy todir="${release.dir}/${ecom.app.dir}/config/wlsdeploy" filtering="true">
+      <fileset dir="${ear.deploy.dir}/config" includes="services.py" />
+      <mapper type="glob" from="*" to="*.${envext}" />
+    </copy>
+    
+    <!-- copy libs -->
+    <copy todir="${release.dir}/${ecom.app.dir}/lib">
+      <fileset dir="${ear.deploy.dir}/lib" includes="*.jar" />
+    </copy>   
+    
+  </target>
+  
+</project>

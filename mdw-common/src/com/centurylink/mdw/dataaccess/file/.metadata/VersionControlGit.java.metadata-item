@@ -1,0 +1,13 @@
+version=10.2
+item-uid=71303624
+item-spec=4D4457413A314B3848384C2056455253494F4E434F4E54524F4C474954204A4156412D3230333530373439382E412D5352433B3336
+file-version=36
+checksum=0cd05481a0405c64a4019e9ccf1bd94a
+fetch-size=22865
+mtime=1465327437
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/dataaccess/file/VersionControlGit.java
+project=4D4457413A4D445741
+project-uid=31770127

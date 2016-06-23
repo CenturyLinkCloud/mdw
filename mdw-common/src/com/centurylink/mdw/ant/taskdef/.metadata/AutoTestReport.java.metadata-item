@@ -1,0 +1,13 @@
+version=10.2
+item-uid=68539496
+item-spec=4D4457413A314B3737545A2052454752455353494F4E544553545245504F5254204A4156412D2D3533343637333737352E412D5352433B36
+file-version=6
+checksum=dbcd91999053f0bbf0c5a31343b38fc1
+fetch-size=7136
+mtime=1456354829
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/ant/taskdef/AutoTestReport.java
+project=4D4457413A4D445741
+project-uid=31770127

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- goes under tomcat7-mdwDiscovery/webapps/Discovery/META-INF -->
+<Context path="/Discovery" allowLinking="true">
+</Context>

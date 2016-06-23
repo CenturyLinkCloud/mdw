@@ -1,0 +1,11 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+<SOAP-ENV:Header/>
+<SOAP-ENV:Body>
+<GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
+          <sapId>DHO115360</sapId>
+          <workstationId>${~d.*}</workstationId>
+          <firstName>Donald</firstName>
+          <lastName>Oakes</lastName>
+        </GetEmployeeResponse>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

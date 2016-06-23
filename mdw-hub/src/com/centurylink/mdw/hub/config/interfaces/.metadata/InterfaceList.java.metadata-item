@@ -1,0 +1,13 @@
+version=10.2
+item-uid=54388857
+item-spec=4D4457413A314B3759514220494E544552464143454C495354204A4156412D2D3438393430363632302E412D5352433B31
+file-version=1
+checksum=b67e2f37ae4f96108f4be2faeb86cea1
+fetch-size=1217
+mtime=1424372101
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/hub/config/interfaces/InterfaceList.java
+project=4D4457413A4D445741
+project-uid=31770127

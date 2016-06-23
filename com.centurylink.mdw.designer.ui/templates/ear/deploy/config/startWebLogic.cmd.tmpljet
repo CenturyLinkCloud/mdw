@@ -1,0 +1,38 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.project.model.* com.centurylink.mdw.plugin.preferences.model.*"
+        class="CloudStartWebLogicCmdEmitter" %>
+<% Map map = (Map) argument;
+   WorkflowProject workflowProject = (WorkflowProject) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+@ECHO OFF
+
+SETLOCAL
+
+set DOMAIN_HOME=@domaindir@
+set APP_LIB_DIR=@applibdir@
+set CFG_DIR=%DOMAIN_HOME%\@appsubdir@\config
+
+set XPATH_LIBS=%APP_LIB_DIR%\xbean_xpath.jar;%APP_LIB_DIR%\saxon9.jar;%APP_LIB_DIR%\saxon9-dom.jar
+set EXT_PRE_CLASSPATH=%CFG_DIR%;%APP_LIB_DIR%\tibrvj.jar;%XPATH_LIBS%
+
+set RUNTIME_ENV=dev
+set TM_OPTIONS=-DruntimeEnv=%RUNTIME_ENV%
+set CT_OPTIONS=-Dcom.qwest.appsec.CTECOMFilterConfigFilePath=%CFG_DIR%/CTECOMFilter.config -Dcom.qwest.appsec.CTAPPFilterConfigFilePath=%CFG_DIR%/CTAPPFilter.config
+set LOG_OPTIONS=-Djava.util.logging.config.file=%CFG_DIR%\logging.properties
+set VVM_OPTIONS=-Dcom.sun.management.jmxremote -Dvisualvm.id=<%=workflowProject.getId()%>
+set JAVA_OPTIONS=%JAVA_OPTIONS% %TM_OPTIONS% %CT_OPTIONS% %LOG_OPTIONS% %VVM_OPTIONS% 
+<% if (!workflowProject.checkRequiredVersion(5, 1))
+{
+%>
+set JAVA_OPTIONS=%JAVA_OPTIONS% -Dcfg.uri=file:///%CFG_DIR%/busconnector.xml
+<%
+}
+%>
+
+set USER_MEM_ARGS=-Xms256m -Xmx512m -XX:MaxPermSize=256m
+
+echo EXT_PRE_CLASSPATH=%EXT_PRE_CLASSPATH%
+
+
+call "%DOMAIN_HOME%\bin\startWebLogic.cmd" %*
+
+ENDLOCAL

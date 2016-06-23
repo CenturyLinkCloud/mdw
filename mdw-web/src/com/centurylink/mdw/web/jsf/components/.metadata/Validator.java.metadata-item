@@ -1,0 +1,13 @@
+version=10.2
+item-uid=46855542
+item-spec=4D4457413A314B374B524A2056414C494441544F52204A4156412D2D31313530303336322E412D5352433B32
+file-version=2
+checksum=a0440a29ac526dc1671b9dffc7769cfa
+fetch-size=1417
+mtime=1393990223
+is-extracted=0
+is-headersubst=0
+item-status=4F50454E
+relpath=src/com/centurylink/mdw/web/jsf/components/Validator.java
+project=4D4457413A4D445741
+project-uid=31770127

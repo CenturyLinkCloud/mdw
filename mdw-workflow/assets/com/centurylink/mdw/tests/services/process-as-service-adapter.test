@@ -1,0 +1,20 @@
+// process-as-service-adapter
+send message {
+    payload = '''<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+  <Action Name="RegressionTest">
+    <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+    <Parameter name="ProcessName">MDWTestProcessAsService</Parameter>
+    <Parameter name="PerformanceLevel">3</Parameter>
+    <Parameter name="processCase">Adapter</Parameter>
+  </Action>
+</mdw:ActionRequest>'''
+}
+verify response {
+    expected = '''<GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
+          <sapId>DHO115360</sapId>
+          <workstationId>dxoakes</workstationId>
+          <firstName>Donald</firstName>
+          <lastName>Oakes</lastName>
+        </GetEmployeeResponse>'''
+}
+verify process("com.centurylink.mdw.tests.workflow/MDWTestProcessAsService")
