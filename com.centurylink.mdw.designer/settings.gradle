@@ -1,4 +1,0 @@
-includeFlat "com.centurylink.mdw.designer.core"
-includeFlat "com.centurylink.mdw.reports"
-includeFlat "com.centurylink.mdw.designer.ui"
-includeFlat "com.centurylink.mdw.designer.rcp"
