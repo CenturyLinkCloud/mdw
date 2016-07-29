@@ -1,4 +1,0 @@
-JAVA_HOME=/prod/ecom2/local/apps/java/jdk1.7.0_79
-JAVA_OPTS="-server -Xms768m -Xmx1024m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:+UseParallelGC";
-PATH=$PATH:/opt/tib/MIDD50/tibrv/bin;
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/tib/MIDD50/tibrv/lib;
