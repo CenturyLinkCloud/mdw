@@ -5,18 +5,24 @@ package com.centurylink.mdw.model.data.task;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.model.value.user.UserRoleVO;
 
 /**
  * Task Action model object.  Task actions are no longer constrained to a constant
  * set of values declared here.  Non-standard actions are governed by the result codes
  * of the outgoing transitions from the task creation activity.
+ * When treated as a Jsonable, this is the DEFINITION for a task action (from mdw-hub-actions.xml);
  *
  */
-public class TaskAction implements Serializable,Comparable<TaskAction> {
+public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction> {
 
-	private static final long serialVersionUID = 1L;
 	// standard task actions
     public static final String CREATE = "Create";
     public static final String ASSIGN = "Assign";
@@ -40,12 +46,17 @@ public class TaskAction implements Serializable,Comparable<TaskAction> {
 	private String alias;
 	private boolean requireComment;
 	private String outcome;
+	private boolean autoSave;
+	private List<ForTask> forTasks;
 
 	public String getAlias() { return alias; }
 	public void setAlias(String s) { alias = s; }
 
 	public boolean isRequireComment() { return requireComment; }
 	public void setRequireComment(boolean b) { this.requireComment = b; }
+
+	public boolean isAutoSave() { return autoSave; }
+	public void setAutoSave(boolean b) { this.autoSave = b; }
 
     /**
      * Override standard action outcome
@@ -55,6 +66,9 @@ public class TaskAction implements Serializable,Comparable<TaskAction> {
 
     public boolean isDynamic() { return dynamic; }
     public void setDynamic(boolean b) { dynamic = b; }
+
+    public List<ForTask> getForTasks() { return forTasks; }
+    public void setForTasks(List<ForTask> forTasks) { this.forTasks = forTasks; }
 
     public boolean equals(Object o) {
         if (o == null || !(o instanceof TaskAction))
@@ -164,6 +178,68 @@ public class TaskAction implements Serializable,Comparable<TaskAction> {
     	return buffer.toString();
     }
 
+    @Override
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("action", taskActionName);
+        if (alias != null)
+            json.put("alias", alias);
+        if (dynamic)
+            json.put("dynamic", true);
+        if (outcome != null)
+            json.put("outcome", outcome);
+        if (requireComment)
+            json.put("requireComment", true);
+        if (autoSave)
+            json.put("autosave", true);
+        if (forTasks != null) {
+            JSONObject forTasksJson = new JSONObject();
+            for (ForTask forTask : forTasks) {
+                forTasksJson.put(forTask.getJsonName(), forTask.getJson());
+            }
+            json.put("forTasks", forTasksJson);
+        }
+        return json;
+    }
 
+    @Override
+    public String getJsonName() {
+        return "taskAction";
+    }
 
+    /**
+     * Limit action to specified tasks
+     */
+    public class ForTask implements Jsonable {
+        private String taskId;
+        /**
+         * Logical ID or task name (for compatibility)
+         */
+        public String getTaskId() { return taskId; }
+
+        private List<String> destinations; // workgroups
+        public List<String> getDestinations() { return destinations; }
+
+        public ForTask(String taskId, List<String> destinations) {
+            this.taskId = taskId;
+            this.destinations = destinations;
+        }
+
+        public String getJsonName() {
+            return taskId;
+        }
+
+        public JSONObject getJson() throws JSONException {
+            JSONObject json = new JSONObject();
+            if (destinations != null) {
+              JSONArray destArray = new JSONArray();
+              for (String destination : destinations) {
+                  destArray.put(destination);
+              }
+              json.put("destinations", destArray);
+            }
+            return json;
+        }
+
+    }
 }

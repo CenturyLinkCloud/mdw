@@ -1,4 +1,11 @@
 {
+  "#{jaxbVar.attributeTwo}": {
+    "display": "Required",
+    "label": "Attribute Two",
+    "sequence": 11,
+    "type": "java.lang.String",
+    "value": "requiredAttributeValue"
+  },
   "#{jaxbVar.elementOne}": {
     "display": "Optional",
     "label": "Element One",
@@ -33,7 +40,7 @@
     "display": "Optional",
     "sequence": 10,
     "type": "org.w3c.dom.Document",
-    "value": "<empty/>\r\n"
+    "value": "<empty/>\n"
   },
   "stringVar": {
     "display": "ReadOnly",
@@ -46,6 +53,6 @@
     "display": "Optional",
     "sequence": 9,
     "type": "java.lang.String",
-    "value": "updated during task completion"
+    "value": "now assigned"
   }
 }

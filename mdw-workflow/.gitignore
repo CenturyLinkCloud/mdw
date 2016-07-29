@@ -1,7 +1,8 @@
-# we keep only the VCS assets in git 
-*
-!.gitignore
-!assets
-!assets/**
-!.project
-!.settings
+build/
+.temp/
+testResults/
+fuseTestResults/
+data/
+projects/
+packages/
+*.launch

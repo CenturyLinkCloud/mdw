@@ -3,7 +3,6 @@
  */
 package com.centurylink.mdw.services.user;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,28 +31,28 @@ public class UserServicesImpl implements UserServices {
     public WorkgroupList getWorkgroups() throws DataAccessException {
         List<UserGroupVO> groups = UserGroupCache.getWorkgroups();
         WorkgroupList groupList = new WorkgroupList(groups);
-        groupList.setRetrieveDate(new Date()); // TODO db date
+        groupList.setRetrieveDate(DatabaseAccess.getDbDate());
         return groupList;
     }
 
     public RoleList getRoles() throws DataAccessException {
         List<UserRoleVO> roles = UserGroupCache.getRoles();
         RoleList roleList = new RoleList(roles);
-        roleList.setRetrieveDate(new Date()); // TODO db date
+        roleList.setRetrieveDate(DatabaseAccess.getDbDate());
         return roleList;
     }
 
     public UserList getUsers() throws DataAccessException {
         List<UserVO> users = UserGroupCache.getUsers();
         UserList userList = new UserList(users);
-        userList.setRetrieveDate(new Date()); // TODO db date
+        userList.setRetrieveDate(DatabaseAccess.getDbDate());
         return userList;
     }
 
     public UserList getUsers(int start, int pageSize) throws DataAccessException {
         List<UserVO> users = UserGroupCache.getUsers(start, pageSize);
         UserList userList = new UserList(users);
-        userList.setRetrieveDate(new Date()); // TODO db date
+        userList.setRetrieveDate(DatabaseAccess.getDbDate());
         userList.setTotal(UserGroupCache.getTotalUsers());
         return userList;
     }
@@ -61,6 +60,16 @@ public class UserServicesImpl implements UserServices {
     public UserList findUsers(String prefix) throws DataAccessException {
         List<UserVO> users = UserGroupCache.findUsers(prefix);
         return new UserList(users);
+    }
+
+    public UserList findWorkgroupUsers(String[] workgroups, String prefix) throws DataAccessException {
+        try {
+            List<UserVO> users = UserGroupCache.findUsers(workgroups, prefix);
+            return new UserList(users);
+        }
+        catch (CachingException ex) {
+            throw new DataAccessException(ex.getMessage(), ex);
+        }
     }
 
     /**

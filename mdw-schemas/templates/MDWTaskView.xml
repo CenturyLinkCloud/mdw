@@ -2,7 +2,7 @@
 <view
   xmlns="http://mdw.centurylink.com/task"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://mdw.centurylink.com/task ../schemas/Task/TaskView_v02.xsd"
+  xsi:schemaLocation="http://mdw.centurylink.com/task ../schemas/Task/TaskView_v03.xsd"
   skin="laguna">
 
   <list
@@ -284,7 +284,7 @@
     <field attribute="processId" name="Process" type="selectInput" />
     <field attribute="instanceId" name="Instance ID" type="digitInput" />
     <field attribute="masterRequestId" name="Master Request ID" type="textInput" />
-    <field attribute="status" name="Status" type="selectInput" />
+    <field attribute="status" name="Status" type="multiSelectInput" />
     <field attribute="startDate" name="Start Date Range" type="dateRange" />
     <field attribute="endDate" name="End Date Range" type="dateRange" />
     <field attribute="owner" name="Owner" type="textInput" />

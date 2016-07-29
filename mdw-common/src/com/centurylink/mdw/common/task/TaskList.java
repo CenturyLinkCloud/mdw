@@ -34,6 +34,8 @@ public class TaskList implements Jsonable, InstanceList<TaskInstanceVO> {
             retrieveDate = StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
         if (jsonObj.has("count"))
             count = jsonObj.getInt("count");
+        if (jsonObj.has("total"))
+            total = jsonObj.getLong("total");
         if (jsonObj.has(name)) {
             JSONArray taskList = jsonObj.getJSONArray(name);
             for (int i = 0; i < taskList.length(); i++)
@@ -44,6 +46,8 @@ public class TaskList implements Jsonable, InstanceList<TaskInstanceVO> {
     public TaskList(String name, List<TaskInstanceVO> tasks) {
         this.name = name;
         this.tasks = tasks;
+        if (tasks != null)
+            count = tasks.size();
     }
 
     public TaskList() {
@@ -55,6 +59,8 @@ public class TaskList implements Jsonable, InstanceList<TaskInstanceVO> {
         JSONObject json = new JSONObject();
         json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
         json.put("count", count);
+        if (total > 0)
+            json.put("total", total);
         JSONArray array = new JSONArray();
         if (tasks != null) {
             for (TaskInstanceVO task : tasks)
@@ -80,9 +86,9 @@ public class TaskList implements Jsonable, InstanceList<TaskInstanceVO> {
     public int getCount() { return count; }
     public void setCount(int ct) { this.count = ct; }
 
-    public long getTotal() {
-        return count; // TODO: pagination
-    }
+    private long total;
+    public long getTotal() { return total; }
+    public void setTotal(long total) { this.total = total; }
 
     private List<TaskInstanceVO> tasks = new ArrayList<TaskInstanceVO>();
     public List<TaskInstanceVO> getTasks() { return tasks; }

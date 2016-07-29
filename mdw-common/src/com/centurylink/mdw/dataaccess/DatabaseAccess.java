@@ -460,6 +460,12 @@ public class DatabaseAccess {
     public static long getCurrentTime() {
         return System.currentTimeMillis()+db_time_diff.longValue();
     }
+    /**
+     * The current database Date/Time.  If db_time_diff is not known (eg Designer), server time is returned.
+     */
+    public static Date getDbDate() {
+        return db_time_diff == null ? new Date() : new Date(getCurrentTime());
+    }
 
     public String pagingQueryPrefix() {
         if (isMySQL)

@@ -29,6 +29,10 @@ public interface UserServices {
      * Find users whose first or last name begins with prefix.
      */
     public UserList findUsers(String prefix) throws DataAccessException;
+    /**
+     * Find users who belong to a list of workgroups.
+     */
+    public UserList findWorkgroupUsers(String[] workgroups, String prefix) throws DataAccessException;
     public UserVO getUser(String cuid) throws DataAccessException;
     public void createUser(UserVO user) throws DataAccessException;
     public void updateUser(UserVO user) throws DataAccessException;

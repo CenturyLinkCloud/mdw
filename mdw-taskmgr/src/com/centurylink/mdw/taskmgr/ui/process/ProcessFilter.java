@@ -17,6 +17,7 @@ import com.centurylink.mdw.taskmgr.ui.filter.Filter;
 import com.centurylink.mdw.taskmgr.ui.layout.FilterUI;
 import com.centurylink.mdw.web.ui.input.DateRangeInput;
 import com.centurylink.mdw.web.ui.input.Input;
+import com.centurylink.mdw.web.ui.input.MultiSelectInput;
 
 public class ProcessFilter extends Filter
 {
@@ -26,7 +27,7 @@ public class ProcessFilter extends Filter
   {
     super(filterUI);
   }
-  
+
   /**
    * Map is built differently from other task manager criteria maps.
    */
@@ -52,11 +53,19 @@ public class ProcessFilter extends Filter
           if (drCrit.getToDate() != null)
           {
             Calendar cal = Calendar.getInstance();
-            cal.setTime(drCrit.getToDate());                
+            cal.setTime(drCrit.getToDate());
             // add 24 hours to move date to midnight so
             // that query returns results matching this day
             cal.add(Calendar.DATE, 1);
-            criteria.put(crit.getModelAttribute() + "to", format.format(cal.getTime()));            
+            criteria.put(crit.getModelAttribute() + "to", format.format(cal.getTime()));
+          }
+        }
+        else if (crit.isInputTypeMultiSelect())
+        {
+          MultiSelectInput msCrit = (MultiSelectInput) crit;
+          if (!msCrit.isValueEmpty())
+          {
+              criteria.put(crit.getModelAttribute(), msCrit.getSelectedStringList().replace(':', ','));
           }
         }
         else
@@ -79,7 +88,7 @@ public class ProcessFilter extends Filter
         }
       }
     }
-    
+
     return criteria;
-  }  
+  }
 }

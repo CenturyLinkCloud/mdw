@@ -1,4 +1,4 @@
-<bpm:package name="com.centurylink.mdw.blv" version="5.5.34" xmlns:bpm="http://mdw.centurylink.com/bpm">
+<bpm:package name="com.centurylink.mdw.blv" version="5.5.35" xmlns:bpm="http://mdw.centurylink.com/bpm">
   <bpm:ApplicationProperties>
     <bpm:PropertyGroup Name="demo">
       <bpm:Property Name="OsgiBundleSymbolicName">com.centurylink.mdw.workflow</bpm:Property>

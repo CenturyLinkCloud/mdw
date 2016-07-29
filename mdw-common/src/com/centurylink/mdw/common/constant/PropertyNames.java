@@ -162,6 +162,7 @@ public class PropertyNames {
     public static final String MDW_HUB_PROCESS_DYNAMIC_JAVA_JSF_ANNOTATIONS = "mdw.hub.dynamic.java.jsf.annotations";
     public static final String MDW_HUB_OVERRIDE_PACKAGE = "mdw.hub.override.package";
     public static final String MDW_ADMIN_OVERRIDE_PACKAGE = "mdw.admin.override.package";
+    public static final String MDW_TASKS_UI = "mdw.tasks.ui";
 
     public static final String MDW_ADMIN_URL = "mdw.admin.url";
     public static final String MDW_DASHBOARD_URL = "mdw.dashboard.url";

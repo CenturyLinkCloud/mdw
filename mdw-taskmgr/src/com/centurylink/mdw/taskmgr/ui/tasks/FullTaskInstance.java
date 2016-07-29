@@ -354,11 +354,6 @@ public class FullTaskInstance extends ListItem implements ModelWrapper
     return TaskTemplateCache.getTaskTemplate(_taskInstance.getTaskId());
   }
 
-  public boolean isMasterTask()
-  {
-    return getTaskVO().isMasterTask();
-  }
-
   public boolean isSubTask()
   {
     return getTaskInstance().isSubTask();

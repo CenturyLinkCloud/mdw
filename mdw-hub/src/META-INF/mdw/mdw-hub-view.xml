@@ -2,7 +2,7 @@
 <view
   xmlns="http://mdw.centurylink.com/task"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://mdw.centurylink.com/task http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Development/Task/TaskView_v02.xsd"
+  xsi:schemaLocation="http://mdw.centurylink.com/task http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Development/Task/TaskView_v03.xsd"
   skin="blueSky">
 
   <list
@@ -13,7 +13,7 @@
     defaultSortColumn="instanceId"
     displayRows="25"
     allRowsLink="true"
-    groupingOptions="name,dueDate,orderId=Order,advisory"
+    groupingOptions="name=Task Name,dueDate,orderId=Order,advisory"
     showTimings="false">
     <column
       attribute="selected"
@@ -68,7 +68,7 @@
     allRowsLink="true"
     displayRows="25"
     pageSizeOptions="25,50,100,200"
-    groupingOptions="name=Task,assigneeName,dueDate,orderId=Order,advisory"
+    groupingOptions="name=Task Name,assigneeName,dueDate,orderId=Order,advisory"
     customButtons="createTask,Create Task,add.gif,go_createTask"    
     showTimings="false"
     columnarFilters="true"
@@ -210,6 +210,7 @@
       name="Advisory"
       modelAttribute="stateCode"
       modelType="java.lang.Long"
+      defaultValue="-1"
       type="selectInput"
       lister="com.centurylink.mdw.taskmgr.ui.tasks.TaskAdvisories" />
     <field
@@ -227,95 +228,6 @@
       lister="com.centurylink.mdw.taskmgr.ui.user.Users" />
   </filter>
 
-  <list
-    id="requestsList"
-    name="Requests"
-    model="com.centurylink.mdw.hub.ui.requests.Requests" 
-    controller="com.centurylink.mdw.hub.ui.requests.RequestsListController"   
-    defaultSortColumn="requestId"
-    defaultSortDescending="true"
-    displayRows="20"
-    showAllDisplayRows="500"
-    paginatedResponse="true"
-    exportable="true"
-    allRowsLink="true"
-    showTimings="true"
-    columnarFilters="true"
-    filter="requestsListFilter">
-    <column
-      attribute="selected"
-      name=""
-      checkbox="true" />
-    <column
-      attribute="requestId"
-      linkAction="requestDetail"
-      name="Request ID"
-      filterField="requestId"/>
-    <column
-      attribute="orderId"
-      linkAction="orderDetail"
-      name="Order ID"
-      filterField="orderId"/>
-    <column
-      attribute="processInstanceId"
-      linkAction="processDetail"     
-      name="Process"
-      filterField="processInstanceId"/>
-    <column
-      attribute="processStatus"      
-      name="Status"
-      filterField="status"/>
-    <column
-      attribute="receivedDate"    
-      name="Received Date"
-      dateFormat="MMM dd, yyyy"/> 
-    <column
-      attribute="searchKey1"
-      name="Search Key1"
-      filterField="searchKey1"/>
-    <column
-      attribute="searchKey2"
-      name="Search Key2"/>         
-  </list>
-  
-  <filter
-    id="requestsListFilter"
-    name="Filters"
-    model="com.centurylink.mdw.hub.ui.requests.RequestFilter"
-    width="160px">
-    <field
-      attribute="requestId"
-      name="Request ID"
-      modelAttribute="requestId"
-      modelType="java.lang.Long"
-      type="digitInput" />
-    <field
-      attribute="orderId"
-      name="Order ID"
-      modelAttribute="orderId"
-      modelType="java.lang.String"
-      type="textInput" />
-    <field
-      attribute="processInstanceId"
-      name="Process"
-      modelAttribute="processInstanceId"
-      modelType="java.lang.Long"
-      type="digitInput" />            
-    <field
-      attribute="searchKey1"
-      name="Search Key"
-      modelAttribute="searchKey1"
-      modelType="java.lang.String"
-      type="textInput" />
-    <field
-      attribute="status"
-      name="Status"
-      modelAttribute="processStatus"
-      modelType="java.lang.Integer"            
-      type="selectInput"
-      lister="com.centurylink.mdw.hub.ui.requests.WorkStatuses" />    
-  </filter>
-  
   <list
     id="taskNotes"
     name="Task Notes"
@@ -620,9 +532,10 @@
     <field
       attribute="status"
       name="Status"
-      modelAttribute="statusCode"
-      modelType="java.lang.Integer"
-      type="selectInput"
+      modelAttribute="statusCodeList"
+      modelType="Ljava.util.String"
+      type="multiSelectInput"
+      expandable="true"
       lister="com.centurylink.mdw.taskmgr.ui.process.ProcessStatuses" />
     <field
       attribute="startDate"
@@ -694,6 +607,11 @@
       name="End Date"
       dateFormat="MMM dd, yyyy"
       filterField="endDate"/>
+     <column
+      attribute="blvLink"
+      name=""
+      linkAction="/orders/liveView.jsf?MasterRequestId=#{item.masterRequestId}&amp;orderNavLinks_selectedItem=orderBusinessLiveView"
+      image="/images/hub_icon.gif" />
   </list>
   
   <filter

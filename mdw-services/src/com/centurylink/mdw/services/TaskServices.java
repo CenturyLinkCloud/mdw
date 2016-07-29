@@ -11,45 +11,17 @@ import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.Task;
-import com.centurylink.mdw.common.service.types.TaskAction;
 import com.centurylink.mdw.common.task.TaskList;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.value.task.TaskActionVO;
 import com.centurylink.mdw.model.value.task.TaskCount;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.value.task.TaskVO;
 import com.centurylink.mdw.task.SubTask;
 
 public interface TaskServices {
-    /**
-     * Create a manual task instance that points to a remote task.
-     * The base URL for accessing the remote task is included as the "appUrl" parameter.
-     *
-     * @param task
-     * @param parameters
-     */
-    public void createTask(Task task, Map<String,Object> parameters) throws ServiceException;
-
-    /**
-     * Update a task instance.
-     *
-     * @param task
-     * @param parameters
-     */
-    public void updateTask(Task task, Map<String,Object> parameters) throws ServiceException;
-
-    /**
-     * Perform the designated action on a task instance.
-     *
-     * @param taskAction
-     * @param parameters
-     */
-    public void performActionOnTask(TaskAction taskAction, Map<String,Object> parameters) throws ServiceException;
-
-    /**
-     * Returns all the tasks assigned to a particular user.
-     */
-    public TaskList getUserTasks(String cuid) throws TaskException, DataAccessException;
 
     /**
      * Returns tasks associated with the specified user's workgroups.
@@ -75,6 +47,17 @@ public interface TaskServices {
 
     public void applyValues(Long instanceId, Map<String,String> values) throws ServiceException;
 
+    /**
+     * Create an ad-hoc manual task instance.
+     * @return the newly-created instance id
+     */
+    public Long createTask(String userCuid, String logicalId) throws ServiceException;
+
+    /**
+     * Update a task instance.
+     */
+    public void updateTask(Task task, Map<String,Object> parameters) throws ServiceException;
+
     public void createSubTask(String subtaskLogicalId, Long masterTaskInstanceId)
     throws TaskException, DataAccessException;
 
@@ -83,8 +66,14 @@ public interface TaskServices {
 
     public TaskList getSubtasks(Long masterTaskInstanceId) throws ServiceException;
 
+    public List<TaskVO> getTaskTemplates(Query query) throws ServiceException;
+
     public List<TaskCount> getTopThroughputTasks(String aggregateBy, Query query) throws ServiceException;
 
     public Map<Date,List<TaskCount>> getTaskInstanceBreakdown(Query query) throws ServiceException;
+
+    public TaskRuntimeContext getRuntimeContext(Long instanceId) throws ServiceException;
+
+    public void performTaskAction(TaskActionVO taskAction) throws ServiceException;
 
 }

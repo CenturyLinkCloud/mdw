@@ -577,7 +577,7 @@ public class TaskActions
     }
 
 //    return false; // disabled by default
-    return true;	// changed by Jiyang to allow custom action to auto save - check with Don
+    return true;    // changed by Jiyang to allow custom action to auto save - check with Don
   }
 
   public static boolean isCommentRequired(String action, String status)

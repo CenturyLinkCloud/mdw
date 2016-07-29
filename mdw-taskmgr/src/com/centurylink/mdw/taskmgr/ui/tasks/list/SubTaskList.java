@@ -11,6 +11,7 @@ import javax.faces.model.ListDataModel;
 
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.taskmgr.ui.detail.DetailManager;
 import com.centurylink.mdw.taskmgr.ui.layout.ListUI;
 import com.centurylink.mdw.taskmgr.ui.list.SortableList;
@@ -18,6 +19,7 @@ import com.centurylink.mdw.taskmgr.ui.tasks.FullTaskInstance;
 import com.centurylink.mdw.taskmgr.ui.tasks.detail.TaskDetail;
 import com.centurylink.mdw.web.ui.UIException;
 import com.centurylink.mdw.web.ui.list.ListItem;
+import com.centurylink.mdw.web.util.RemoteLocator;
 
 public class SubTaskList extends SortableList
 {
@@ -38,6 +40,10 @@ public class SubTaskList extends SortableList
       TaskDetail taskDetail = getTaskDetail();
       FullTaskInstance fullTaskInstance = taskDetail.getFullTaskInstance();
       List<ListItem> items = new ArrayList<ListItem>();
+      List<FullTaskInstance> subTaskInsts = new ArrayList<FullTaskInstance>();
+      for (TaskInstanceVO subTaskInst : RemoteLocator.getTaskManager().getSubTaskInstances(fullTaskInstance.getId()))
+          subTaskInsts.add(new FullTaskInstance(subTaskInst));
+      fullTaskInstance.setSubTaskInstances(subTaskInsts);
       items.addAll(fullTaskInstance.getSubTaskInstances());
       return new ListDataModel<ListItem>(items);
     }
@@ -47,7 +53,7 @@ public class SubTaskList extends SortableList
       return null;
     }
   }
-  
+
   public TaskDetail getTaskDetail() throws UIException
   {
     return DetailManager.getInstance().getTaskDetail();

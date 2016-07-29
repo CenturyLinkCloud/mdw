@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.CacheEnabled;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.provider.CacheService;
@@ -15,6 +16,7 @@ import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
+import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -126,10 +128,16 @@ public class ProcessVOCache implements CacheEnabled, CacheService {
                         match = process;
                 }
             }
-            if (match == null)
+            if (match == null) {
+                if (ApplicationContext.isFileBasedAssetPersist()) {
+                    // try falling back to non-smart VO from
+                    return getProcessVO(spec.getName(), RuleSetVO.parseVersion(spec.getVersion()));
+                }
                 return null;
-            else
+            }
+            else {
                 return getProcessVO(match.getId());
+            }
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

@@ -17,6 +17,7 @@ import com.centurylink.mdw.taskmgr.ui.filter.Filter;
 import com.centurylink.mdw.taskmgr.ui.layout.FilterUI;
 import com.centurylink.mdw.web.ui.input.DateRangeInput;
 import com.centurylink.mdw.web.ui.input.Input;
+import com.centurylink.mdw.web.ui.input.MultiSelectInput;
 
 /**
  * Specialized filter for handling Tasks.
@@ -65,6 +66,14 @@ public class OrderFilter extends Filter
                         cal.add(Calendar.DATE, 1);
                         criteria.put(crit.getModelAttribute() + "to", format.format(cal.getTime()));
                     }
+                }
+                else if (crit.isInputTypeMultiSelect())
+                {
+                  MultiSelectInput msCrit = (MultiSelectInput) crit;
+                  if (!msCrit.isValueEmpty())
+                  {
+                      criteria.put(crit.getModelAttribute(), msCrit.getSelectedStringList().replace(':', ','));
+                  }
                 }
                 else
                 {

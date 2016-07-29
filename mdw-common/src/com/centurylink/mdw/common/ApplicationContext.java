@@ -485,6 +485,14 @@ public class ApplicationContext {
         return getContextRoot(getAdminUrl());
     }
 
+    /**
+     * mdw-hub or mdw-admin
+     */
+    public static String getTasksUi() {
+        String tasksUi = PropertyManager.getProperty(PropertyNames.MDW_TASKS_UI);
+        return tasksUi == null ? "mdw-hub" : tasksUi; // TODO: will be mdw-admin
+    }
+
     public static String getReportsUrl() {
         String reportsUrl = PropertyManager.getProperty(PropertyNames.MDW_REPORTS_URL);
         if (reportsUrl == null) {

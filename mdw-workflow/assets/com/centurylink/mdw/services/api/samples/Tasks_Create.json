@@ -1,17 +1,7 @@
-// POST request to Services/Tasks
-// e.g http://localhost:8181/mdw/Services/Tasks
+// POST request to Services/Tasks/create
+// e.g http://localhost:8181/mdw/Services/Tasks/create
 {
-    "appName": "DSPWF@http://localhost:8282/MDWWeb/Services/REST",
-    "assignee": "aa72442",
-    "dueInSeconds": 0,
-    "id": 872515,
-    "workgroups": ["Dons Group"],
-    "masterRequestId": "aa72442~130910-134411",
-    "priority": 2,
-    "processInstanceId": 872511,
-    "secondaryOwnerId": 27574,
-    "secondaryOwnerType": "TASK_INSTANCE",
-    "logicalId": "MasterTaskWithSubTasks:A4"
-  }	
+  "templateId": 872515
+}	
 
 

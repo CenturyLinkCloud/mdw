@@ -210,7 +210,7 @@ public class DirView
           String timestamp = sdf.format(new Date(child.lastModified()));
           boolean canEdit = userCanEdit(rootDir, child);
           boolean isBinary = binaryFiles.contains(child);
-          json.append("{ name:'" + child.getName() + "', type:'file', timestamp:'" + timestamp + "', " + (canEdit ? "editable:'true', " : "") + (_editable ? "maskable:'true', " : "") + (isBinary ? "binary:'true', " : "") + "path:'" + convertPath(child.getPath()) + "' }");
+          json.append("{ name:'" + child.getName().replaceAll("'", "\\\\'") + "', type:'file', timestamp:'" + timestamp + "', " + (canEdit ? "editable:'true', " : "") + (_editable ? "maskable:'true', " : "") + (isBinary ? "binary:'true', " : "") + "path:'" + convertPath(child.getPath()) + "' }");
         }
         if (i < children.length - 1)
         {
@@ -229,6 +229,7 @@ public class DirView
   {
     path = path.replace('\\', '/');
     path = path.replaceAll(" ", "%20");
+    path = path.replaceAll("'", "\\\\'");
     return path;
   }
 

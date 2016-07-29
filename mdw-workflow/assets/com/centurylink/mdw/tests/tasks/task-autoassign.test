@@ -15,7 +15,10 @@ sleep 20
 
 // use Tasks service to check assignees
 // TODO: URLEncoding in TestCaseHttp?
-def response = get http("services/Tasks?masterRequestId=%3D%27${masterRequestId}%27")
+def response = get http("services/Tasks?masterRequestId=%3D%27${masterRequestId}%27") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+}
 assert response.code == 200
 def taskList = new TaskList('tasks', response.content)
 def autoAssignedTask, autoAssignedFromJaxbElem, autoAssignedFromJaxbAttr

@@ -33,7 +33,7 @@ import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.dircache.DirCacheIterator;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
@@ -41,6 +41,8 @@ import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.FileMode;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
+import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.lib.ObjectStream;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.notes.Note;
@@ -59,9 +61,16 @@ import org.eclipse.jgit.treewalk.WorkingTreeIterator;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
 
+import com.centurylink.mdw.common.constant.PropertyNames;
+import com.centurylink.mdw.common.exception.PropertyException;
+import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 
+/**
+ * TODO: Caching of VCS info (probably not need for file system info).
+ */
 public class VersionControlGit implements VersionControl {
 
     public static final String HEAD_REF = "refs/heads/master";
@@ -207,7 +216,7 @@ public class VersionControlGit implements VersionControl {
         saveVersionProps(file.getParentFile());
     }
 
-    private AssetRevision parseAssetRevision(String propertyValue) {
+    public static AssetRevision parseAssetRevision(String propertyValue) {
         AssetRevision assetRevision = new AssetRevision();
         int firstSpace = propertyValue.indexOf(' ');
         if (firstSpace > 0) {
@@ -483,50 +492,6 @@ public class VersionControlGit implements VersionControl {
         cloneCommand.call();
     }
 
-    public List<DiffEntry> getDiffs() throws Exception {
-        return getDiffs(null);
-    }
-
-    public List<DiffEntry> getDiffs(String path) throws Exception {
-        return getDiffs(path, false);
-    }
-
-    public List<DiffEntry> getDiffs(String path, boolean nameStatus) throws Exception {
-        fetch();
-        ObjectId fetchHead = localRepo.resolve("FETCH_HEAD^{tree}");
-        CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
-        newTreeIter.reset(localRepo.newObjectReader(), fetchHead);
-        DiffCommand dc = git.diff().setNewTree(newTreeIter);
-        if (path != null)
-            dc.setPathFilter(PathFilter.create(path));
-        if (nameStatus)
-            dc.setShowNameAndStatusOnly(true);
-        return dc.call();
-    }
-
-    public String getDiffOutput(String path) throws Exception {
-        return getDiffOutput(getDiffs(path));
-    }
-
-    public String getDiffOutput(List<DiffEntry> diffs) throws Exception {
-        ByteArrayOutputStream diffOutput = new ByteArrayOutputStream();
-        DiffFormatter formatter = null;
-        try {
-            for (DiffEntry diff : diffs) {
-                diffOutput.write((diff.getChangeType().toString() + ":\n").getBytes());
-                formatter = new DiffFormatter(diffOutput);
-                formatter.setRepository(localRepo);
-                formatter.format(diff);
-                diffOutput.write("\n".getBytes());
-            }
-        }
-        finally {
-            if (formatter != null)
-                formatter.release();
-        }
-        return diffOutput.toString();
-    }
-
     public Status getStatus() throws Exception {
         return getStatus(null);
     }
@@ -619,5 +584,111 @@ public class VersionControlGit implements VersionControl {
             localPath = localPath.substring(0, localPath.length() - 2);
 
         return file.getAbsolutePath().substring(localPath.length() + 1).replace('\\', '/');
+    }
+
+    public GitDiffs getDiffs(String path) throws Exception {
+        fetch();
+        GitDiffs diffs = new GitDiffs();
+        ObjectId fetchHead = localRepo.resolve("FETCH_HEAD^{tree}");
+        CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
+        newTreeIter.reset(localRepo.newObjectReader(), fetchHead);
+        DiffCommand dc = git.diff().setNewTree(newTreeIter);
+        if (path != null)
+            dc.setPathFilter(PathFilter.create(path));
+        dc.setShowNameAndStatusOnly(true);
+        for (DiffEntry diff : dc.call()) {
+            if (diff.getChangeType() == ChangeType.ADD || diff.getChangeType() == ChangeType.COPY) {
+                diffs.add(DiffType.MISSING, diff.getNewPath());
+            }
+            else if (diff.getChangeType() == ChangeType.MODIFY) {
+                diffs.add(DiffType.DIFFERENT, diff.getNewPath());
+            }
+            else if (diff.getChangeType() == ChangeType.DELETE) {
+                diffs.add(DiffType.EXTRA, diff.getOldPath());
+            }
+            else if (diff.getChangeType() == ChangeType.RENAME) {
+                diffs.add(DiffType.MISSING, diff.getNewPath());
+                diffs.add(DiffType.EXTRA, diff.getOldPath());
+            }
+        }
+        // we're purposely omitting folders
+        Status status = git.status().addPath(path).call();
+        for (String untracked : status.getUntracked()) {
+            diffs.add(DiffType.EXTRA, untracked);
+        }
+        for (String added : status.getAdded()) {
+            diffs.add(DiffType.EXTRA, added);
+        }
+        for (String missing : status.getMissing()) {
+            diffs.add(DiffType.MISSING, missing);
+        }
+        for (String removed : status.getRemoved()) {
+            diffs.add(DiffType.MISSING, removed);
+        }
+        for (String changed : status.getChanged()) {
+            diffs.add(DiffType.DIFFERENT, changed);
+        }
+        for (String modified : status.getModified()) {
+            diffs.add(DiffType.DIFFERENT, modified);
+        }
+        for (String conflict : status.getConflicting()) {
+            diffs.add(DiffType.DIFFERENT, conflict);
+        }
+        return diffs;
+    }
+
+    public ObjectStream getRemoteContentStream(String branch, String path) throws Exception {
+
+        ObjectId id = localRepo.resolve("refs/remotes/origin/" + branch);
+        ObjectReader reader = localRepo.newObjectReader();
+        try {
+            RevWalk walk = new RevWalk(reader);
+            RevCommit commit = walk.parseCommit(id);
+            RevTree tree = commit.getTree();
+            TreeWalk treewalk = TreeWalk.forPath(reader, path, tree);
+            if (treewalk != null) {
+                return reader.open(treewalk.getObjectId(0)).openStream();
+            }
+            else {
+                return null;
+            }
+        }
+        finally {
+            reader.release();
+        }
+    }
+
+    public String getRemoteContentString(String branch, String path) throws Exception {
+        InputStream in = null;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            in = getRemoteContentStream(branch, path);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = in.read(bytes)) != -1)
+                out.write(bytes, 0, read);
+        }
+        finally {
+            if (in != null)
+                in.close();
+        }
+        return out.toString();
+    }
+
+    public static VersionControlGit getFrameworkGit() throws PropertyException, IOException {
+        String gitRoot = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
+        if (gitRoot == null)
+            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_LOCAL_PATH);
+        String gitRemoteUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
+        if (gitRemoteUrl == null)
+            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_REMOTE_URL);
+        String gitBranch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
+        if (gitBranch == null)
+            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_BRANCH);
+        String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
+        String password = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
+        VersionControlGit vcGit = new VersionControlGit();
+        vcGit.connect(gitRemoteUrl, user, password, new File(gitRoot));
+        return vcGit;
     }
 }

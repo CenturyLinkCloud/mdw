@@ -92,6 +92,10 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     public String getTaskActionUrl() { return taskActionUrl; }
     public void setTaskActionUrl(String taskActionUrl) { this.taskActionUrl = taskActionUrl; }
 
+    public String getTaskLogicalId() {
+        return taskTemplate.getLogicalId();
+    }
+
     public String getName() { return getTaskName(); }
     public Long getInstanceId() { return getTaskInstanceId(); }
     public String getInstanceUrl() { return getTaskInstanceUrl(); }
@@ -107,6 +111,8 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     public String getMessage() { return taskInstanceVO.getTaskMessage(); }
     public String getActivityName() { return taskInstanceVO.getActivityName(); }
     public Long getTaskId() { return taskInstanceVO.getTaskId(); }
+    public String getLogicalId() { return getTaskLogicalId(); }
+
 
     public String getFormattedDueDate() {
         Date dd = getDueDate();

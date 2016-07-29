@@ -1,10 +1,13 @@
+<?xml version="1.0"?>
 <!-- Specifies the standard bulk and individual task actions.  The 
      standard actions are applicable regardless of how the process
      is defined.  See the comments under taskDetailActions for
      information on dynamic actions to extend these configured
      standard actions. -->
-
-<taskActions>
+<taskActions
+  xmlns="http://mdw.centurylink.com/task"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://mdw.centurylink.com/task http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Task/TaskActions_v01.xsd">
 
   <bulkTaskActions>
     <!-- allowable bulk actions for any unclaimed tasks -->

@@ -2,7 +2,7 @@
 <view
   xmlns="http://mdw.centurylink.com/task"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://mdw.centurylink.com/task http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Development/Task/TaskView_v02.xsd"
+  xsi:schemaLocation="http://mdw.centurylink.com/task http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Development/Task/TaskView_v03.xsd"
   skin="blueSky">
 
   <list
@@ -532,9 +532,10 @@
     <field
       attribute="status"
       name="Status"
-      modelAttribute="statusCode"
-      modelType="java.lang.Integer"
-      type="selectInput"
+      modelAttribute="statusCodeList"
+      modelType="Ljava.util.String"
+      type="multiSelectInput"
+      expandable="true"
       lister="com.centurylink.mdw.taskmgr.ui.process.ProcessStatuses" />
     <field
       attribute="startDate"

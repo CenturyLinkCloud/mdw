@@ -73,6 +73,7 @@ public class UserDataAccessV4 extends CommonDataAccess implements UserDataAccess
     		user.setEndDate(rs.getString(4));
     	}
 		user.setName(name);
+		user.parseName();
 		return user;
     }
 

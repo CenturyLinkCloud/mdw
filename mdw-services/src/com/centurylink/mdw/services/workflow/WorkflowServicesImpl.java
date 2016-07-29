@@ -3,7 +3,9 @@
  */
 package com.centurylink.mdw.services.workflow;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,15 +35,21 @@ import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.user.UserActionVO.Action;
 import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
+import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.dao.WorkflowDAO;
 import com.centurylink.mdw.services.dao.process.EngineDataAccessDB;
 import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 
 public class WorkflowServicesImpl implements WorkflowServices {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    private WorkflowDAO getWorkflowDao() {
+        return new WorkflowDAO();
+    }
 
     protected RuntimeDataAccess getRuntimeDataAccess() throws DataAccessException {
         return DataAccess.getRuntimeDataAccess(new DatabaseAccess(null));
@@ -189,24 +197,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public static void main(String[] args){
-        WorkflowServicesImpl workflowServicesImpl = new WorkflowServicesImpl();
-                try {
-                    workflowServicesImpl.registerTaskWaitEvent(1105L, "manoj-1105");
-                }
-                catch (ServiceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-    }
-
     @Override
     public ActivityList getActivities(Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
             ActivityList list = getRuntimeDataAccess().getActivityInstanceList(query);
             timer.logTimingAndContinue("getRuntimeDataAccess().getActivityInstanceList()");
-            list = populateActivities(list);
+            list = populateActivities(list, query);
             timer.stopAndLogTiming("WorkflowServicesImpl.populateActivities()");
             return list;
         }
@@ -228,16 +225,24 @@ public class WorkflowServicesImpl implements WorkflowServices {
     @Override
     public ProcessList getProcesses(Query query) throws ServiceException {
         try {
-            // TODO variables
-            Map<String,String> criteria = query.getFilters();
-            int pageIndex = query.getStart() / PAGE_SIZE + 1; // one-based index
-            String orderBy = query.getSort();
-            return getRuntimeDataAccess().getProcessInstanceList(criteria, null, pageIndex, PAGE_SIZE, orderBy);
-
+            return getWorkflowDao().getProcessInstances(query);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(500, "Error retrieving process instance for query: " + query, ex);
         }
+    }
+
+    @Override
+    public ActivityInstanceVO getActivity(Long instanceId) throws ServiceException {
+        ActivityInstanceVO activityInstance;
+        try {
+            EventManager eventManager = ServiceLocator.getEventManager();
+            activityInstance = eventManager.getActivityInstance(instanceId);
+        }
+        catch (Exception ex) {
+            throw new ServiceException(500, "Error retrieving activity instance: " + instanceId + ": " + ex.getMessage(), ex);
+        }
+        return activityInstance;
     }
 
     public List<ProcessCount> getTopThroughputProcesses(Query query) throws ServiceException {
@@ -306,10 +311,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     /**
      * Fills in process header info, consulting latest instance comment if necessary.
+     * @param query
      */
-    protected ActivityList populateActivities(ActivityList activityList) throws DataAccessException {
+    protected ActivityList populateActivities(ActivityList activityList, Query query) throws DataAccessException {
         AggregateDataAccessVcs dataAccess = null;
         List<ActivityInstance> aList = activityList.getActivities();
+        ArrayList<ActivityInstance> toRemoveActivities = new ArrayList<ActivityInstance>();
         for (ActivityInstance activityInstance : aList) {
             ProcessVO process = ProcessVOCache.getProcessVO(activityInstance.getProcessId());
             if (process == null) {
@@ -334,19 +341,38 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 activityInstance.setName("Unknown (" + activityInstance.getDefinitionId() + ")");
             }
             else {
-                activityInstance.setProcessName(process.getName());
-                activityInstance.setProcessVersion(RuleSetVO.formatVersion(process.getVersion()));
-                activityInstance.setPackageName(process.getPackageName());
                 String logicalId = activityInstance.getDefinitionId();
                 ActivityVO actdef = process.getActivityById(logicalId);
                 if (actdef != null) {
+                    String activityName = query.getFilter("activityName");
+                    if (activityName != null) {
+                        try {
+                            String decodedActName = java.net.URLDecoder.decode(activityName, "UTF-8");
+                            if (!actdef.getActivityName().startsWith(decodedActName)) {
+                                toRemoveActivities.add(activityInstance);
+                                continue;
+                            }
+                        }
+                        catch (UnsupportedEncodingException e) {
+                            logger.severe("Unable to decode: " + activityName);
+                        }
+                    }
                     activityInstance.setName(actdef.getActivityName().replaceAll("\\r", "").replace('\n', ' '));
                     activityInstance.setProcessName(actdef.getProcessName()); // in case subproc
                 }
                 else {
                     activityInstance.setName("Unknown (" + activityInstance.getDefinitionId() + ")");
                 }
+                activityInstance.setProcessName(process.getName());
+                activityInstance.setProcessVersion(RuleSetVO.formatVersion(process.getVersion()));
+                activityInstance.setPackageName(process.getPackageName());
             }
+        }
+        if (!toRemoveActivities.isEmpty()) {
+            aList.removeAll(toRemoveActivities);
+            activityList.setActivities(aList);
+            activityList.setCount(aList.size());
+            activityList.setTotal(aList.size());
         }
         return activityList;
     }
@@ -426,6 +452,82 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
         catch (DataAccessException ex) {
             throw new ServiceException(500, "Error retrieving activity instance breakdown: query=" + query, ex);
+        }
+    }
+
+    public List<ProcessVO> getProcessDefinitions(Query query) throws ServiceException {
+        try {
+            String find = query.getFind();
+            if (find == null) {
+                return ProcessVOCache.getAllProcesses();
+            }
+            else {
+                List<ProcessVO> found = new ArrayList<ProcessVO>();
+                for (ProcessVO processVO : ProcessVOCache.getAllProcesses()) {
+                    if (processVO.getName() != null && processVO.getName().startsWith(find))
+                        found.add(processVO);
+                    else if (find.indexOf(".") > 0 && processVO.getPackageName() != null && processVO.getPackageName().startsWith(find))
+                        found.add(processVO);
+                }
+                return found;
+            }
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(500, ex.getMessage(), ex);
+        }
+    }
+    public ActivityList getActivityDefinitions(Query query) throws ServiceException {
+        try {
+            String find = query.getFind();
+            List<ActivityInstance> activityInstanceList = new ArrayList<ActivityInstance>();
+            ActivityList found = new ActivityList(ActivityList.ACTIVITY_INSTANCES, activityInstanceList);
+
+            if (find == null) {
+                List<ProcessVO> processes =  ProcessVOCache.getAllProcesses();
+                for (ProcessVO processVO : processes) {
+                    processVO =  ProcessVOCache.getProcessVO(processVO.getProcessId());
+                    List<ActivityVO> activities = processVO.getActivities();
+                    for (ActivityVO activityVO : activities) {
+                        if (activityVO.getActivityName() != null && activityVO.getActivityName().startsWith(find))
+                        {
+                            ActivityInstance ai = new ActivityInstance();
+                            ai.setId(activityVO.getActivityId());
+                            ai.setName(activityVO.getActivityName());
+                            ai.setDefinitionId(activityVO.getLogicalId());
+                            ai.setProcessId(processVO.getProcessId());
+                            ai.setProcessName(processVO.getProcessName());
+                            ai.setProcessVersion(processVO.getVersionString());
+                            activityInstanceList.add(ai);
+                        }
+                    }
+                }
+            }
+            else {
+                for (ProcessVO processVO : ProcessVOCache.getAllProcesses()) {
+                    processVO =  ProcessVOCache.getProcessVO(processVO.getProcessId());
+                    List<ActivityVO> activities = processVO.getActivities();
+                    for (ActivityVO activityVO : activities) {
+                        if (activityVO.getActivityName() != null && activityVO.getActivityName().startsWith(find))
+                        {
+                            ActivityInstance ai = new ActivityInstance();
+                            ai.setId(activityVO.getActivityId());
+                            ai.setName(activityVO.getActivityName());
+                            ai.setDefinitionId(activityVO.getLogicalId());
+                            ai.setProcessId(processVO.getProcessId());
+                            ai.setProcessName(processVO.getProcessName());
+                            ai.setProcessVersion(processVO.getVersionString());
+                            activityInstanceList.add(ai);
+                        }
+                    }
+                }
+            }
+            found.setRetrieveDate(DatabaseAccess.getDbDate());
+            found.setCount(activityInstanceList.size());
+            found.setTotal(activityInstanceList.size());
+            return found;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(500, ex.getMessage(), ex);
         }
     }
 }

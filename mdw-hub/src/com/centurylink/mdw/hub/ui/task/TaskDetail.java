@@ -15,7 +15,6 @@ import com.centurylink.mdw.hub.jsf.component.ActionMenu;
 import com.centurylink.mdw.hub.ui.MenuBuilder;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.services.TaskManager;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 import com.centurylink.mdw.taskmgr.ui.tasks.FullTaskInstance;
 import com.centurylink.mdw.web.ui.UIException;
 import com.centurylink.mdw.web.util.RemoteLocator;
@@ -43,12 +42,10 @@ public class TaskDetail extends com.centurylink.mdw.taskmgr.ui.tasks.detail.Task
             TaskInstanceVO taskInstance = taskMgr.getTaskInstanceVO(new Long(instanceId));
             FullTaskInstance fullTaskInst = new FullTaskInstance(taskInstance);
             fullTaskInst.setInFinalStatus(taskMgr.isInFinalStatus(taskInstance));
-            if (TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId()).isMasterTask()) {
-                List<FullTaskInstance> subTaskInsts = new ArrayList<FullTaskInstance>();
-                for (TaskInstanceVO subTaskInst : taskMgr.getSubTaskInstances(taskInstance.getTaskInstanceId()))
-                    subTaskInsts.add(new FullTaskInstance(subTaskInst));
-                fullTaskInst.setSubTaskInstances(subTaskInsts);
-            }
+            List<FullTaskInstance> subTaskInsts = new ArrayList<FullTaskInstance>();
+            for (TaskInstanceVO subTaskInst : taskMgr.getSubTaskInstances(taskInstance.getTaskInstanceId()))
+                subTaskInsts.add(new FullTaskInstance(subTaskInst));
+            fullTaskInst.setSubTaskInstances(subTaskInsts);
             setModelWrapper(fullTaskInst);
 
             if (getFullTaskInstance().isAutoformTask()) {

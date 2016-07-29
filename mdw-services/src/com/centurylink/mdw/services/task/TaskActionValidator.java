@@ -6,56 +6,79 @@ package com.centurylink.mdw.services.task;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.data.task.TaskAction;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
+import com.centurylink.mdw.model.value.task.TaskActionVO;
+import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.model.value.user.UserVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceVO;
 import com.centurylink.mdw.model.value.variable.VariableVO;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 
 public class TaskActionValidator {
 
-    private TaskInstanceVO taskInstance;
+    private TaskRuntimeContext runtimeContext;
 
-    public TaskActionValidator(TaskInstanceVO taskInstance) {
-        this.taskInstance = taskInstance;
+    public TaskActionValidator(TaskRuntimeContext runtimeContext) {
+        this.runtimeContext = runtimeContext;
     }
 
-    public void validateAction(UserVO user, String taskAction) throws TaskValidationException, DataAccessException {
-        if (TaskAction.isCompleting(taskAction)) {
-            if (!user.getId().equals(taskInstance.getAssigneeId()))
-                throw new TaskValidationException(ServiceException.NOT_AUTHORIZED, "Task Instance " + taskInstance.getId() + " not assigned to user " + user.getCuid());
-            TaskVO task = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
-            List<VariableVO> variables = task.getVariables();
-            if (variables != null) {
-                List<String> missingRequired = new ArrayList<String>();
-                VariableInstanceVO[] variableInsts = null; // don't retrieve unless needed
-                for (VariableVO variable : variables) {
-                    if (variable.isRequired()) {
-                        if (variableInsts == null)
-                            variableInsts = ServiceLocator.getTaskManager().getProcessInstanceVariables(taskInstance.getOwnerId());
-                        Object value = null;
-                        for (VariableInstanceVO variableInst : variableInsts) {
-                            if (variableInst.getName().equals(variable.getName()))
-                                value = variableInst.getData();
-                        }
-                        if (value == null || value.toString().isEmpty())
-                            missingRequired.add(variable.getName());
-                    }
+    public void validateAction(TaskActionVO action) throws TaskValidationException {
+
+        if (action.getTaskAction() == null)
+            throw new TaskValidationException("Missing task action");
+        if (action.getUser() == null)
+            throw new TaskValidationException("Missing task action user");
+
+        try {
+            TaskAction allowableAction = getAllowableAction(action);
+            if (allowableAction == null) {
+                throw new TaskValidationException(ServiceException.BAD_REQUEST, "Action: " + action.getTaskAction()
+                        + " not allowed on task instance: " + runtimeContext.getInstanceId() + " with status " + runtimeContext.getStatus());
+            }
+            if (allowableAction.isRequireComment() && (action.getComment() == null || action.getComment().isEmpty())) {
+                throw new TaskValidationException(ServiceException.BAD_REQUEST, "Comment required for Action: " + action.getTaskAction()
+                        + " for task instance: " + runtimeContext.getInstanceId() + " with status " + runtimeContext.getStatus());
+            }
+            if (TaskAction.isCompleting(action.getTaskAction())) {
+                if (!action.getUser().equals(runtimeContext.getAssignee())) {
+                    throw new TaskValidationException(ServiceException.NOT_AUTHORIZED, "Task Instance "
+                        + runtimeContext.getInstanceId() + " not assigned to user " + action.getUser());
                 }
-                if (!missingRequired.isEmpty()) {
-                    String missing = "Missing required values: ";
-                    for (int i = 0; i < missingRequired.size(); i++) {
-                        missing += "'" + missingRequired.get(i) + "'";
-                        missing += (i < missingRequired.size() - 1) ? "," : ".";
+                TaskVO taskTemplate = runtimeContext.getTaskTemplate();
+                List<VariableVO> variables = taskTemplate.getVariables();
+                if (variables != null) {
+                    List<String> missingRequired = new ArrayList<String>();
+                    for (VariableVO variable : variables) {
+                        if (variable.isRequired()) {
+                            Object value = runtimeContext.getValue(variable.getName());
+                            if (value == null || value.toString().isEmpty())
+                                missingRequired.add(variable.getName());
+                        }
                     }
-                    throw new TaskValidationException(ServiceException.BAD_REQUEST, missing);
+                    if (!missingRequired.isEmpty()) {
+                        String missing = "Missing required values: ";
+                        for (int i = 0; i < missingRequired.size(); i++) {
+                            missing += "'" + missingRequired.get(i) + "'";
+                            missing += (i < missingRequired.size() - 1) ? "," : ".";
+                        }
+                        throw new TaskValidationException(ServiceException.BAD_REQUEST, missing);
+                    }
                 }
             }
         }
+        catch (TaskValidationException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            throw new TaskValidationException(ServiceException.INTERNAL_ERROR, "Unable to validate action: " + action.getTaskAction()
+                    + " on task instance: " + runtimeContext.getInstanceId(), ex);
+        }
+    }
+
+    protected TaskAction getAllowableAction(TaskActionVO taskAction) throws Exception {
+        for (TaskAction allowableAction : AllowableTaskActions.getTaskDetailActions(taskAction.getUser(), runtimeContext)) {
+            if (allowableAction.getTaskActionName().equals(taskAction.getAction().toString()))
+                return allowableAction;
+        }
+        return null;
     }
 }

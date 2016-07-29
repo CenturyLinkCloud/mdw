@@ -317,20 +317,6 @@ sourcesJar {
     dependsOn mdwWarSourcesJar
 }
 
-task addBirtFaces(type: BirtFaces) {
-    operation = "add"
-    phaseListener = "com.centurylink.mdw.hub.jsf.ReportsPhaseListener"
-    includeComponent = true
-    file = file("web/WEB-INF/faces-config.xml")
-}
-
-task removeBirtFaces(type: BirtFaces) {
-    operation = "remove"
-    phaseListener = "com.centurylink.mdw.hub.jsf.ReportsPhaseListener"
-    includeComponent = true
-    file = file("web/WEB-INF/faces-config.xml")
-}
-
 // separate task needed for osgi war so that dependency not falsely met
 task addBirtFacesOsgi(type: BirtFaces) {
     operation = "add"
@@ -356,9 +342,9 @@ task copyClasspathMeta(type: Copy) {
     into "build/classes"
 }
 
-// now includes reports
-task buildMdwFullWar(type: War) {
-    dependsOn (copyClasspathMeta, addBirtFaces)
+// no longer includes BIRT/reports or JavaDocs by default
+task buildMdwWar(type: War) {
+    dependsOn (copyClasspathMeta)
     
     archiveName = "mdw-${version}.war"
 
@@ -393,26 +379,17 @@ task buildMdwFullWar(type: War) {
         include "mdw/**"
     }
     
-    // birt libraries
-    from("web/WEB-INF/lib/birt") {
-        into "/WEB-INF/lib"
-        include "**/*.jar"
-    }
-
     webXml = file("web/WEB-INF/web.xml")
     exclude "**/.*ignore";
     rootSpec.exclude "WEB-INF/web.xml"  // specified above
-    rootSpec.exclude "WEB-INF/lib/birt/**"  // above targets to WEB-INF/lib
+    rootSpec.exclude "WEB-INF/lib/birt/**"
+    rootSpec.exclude "WEB-INF/lib/com.centurylink.mdw.reports_*.jar"
+    rootSpec.exclude "javadoc/**" // hosted only in dev env
     rootSpec.exclude "doc/tutorials/**" // hosted on sharepoint
     rootSpec.exclude "doc/environment/**" // hosted on sharepoint
     
     rootSpec.exclude "**/.*ignore"
     rootSpec.exclude "**/.metadata/**"
-}
-
-// tomcat war
-task buildMdwWar {
-    dependsOn(addBirtFaces, buildMdwFullWar, removeBirtFaces)
 }
 
 task buildMdwReportsOsgi(type: War) {
@@ -438,7 +415,7 @@ task buildMdwReportsOsgi(type: War) {
     from("web/WEB-INF/lib/birt") {
         into "/WEB-INF/lib"
         include "**/*.jar"
-     }
+    }
         
     from("src") {
         include "META-INF/mdw/**"
@@ -696,7 +673,7 @@ build {
 }
 
 war {
-    dependsOn ":javadocs"  // include javadocs in the war TODO: maybe doc, javadoc, in separate WAR
+    // dependsOn ":javadocs"  // build javadocs but do not include in war
     
     from("web") {
         include "**/*"

@@ -22,6 +22,7 @@ import com.centurylink.mdw.web.ui.UIException;
 import com.centurylink.mdw.web.ui.input.DateInput;
 import com.centurylink.mdw.web.ui.input.DateRangeInput;
 import com.centurylink.mdw.web.ui.input.Input;
+import com.centurylink.mdw.web.ui.input.MultiSelectInput;
 import com.centurylink.mdw.web.util.RemoteLocator;
 
 public abstract class Filter
@@ -236,6 +237,10 @@ public abstract class Filter
         else if (input instanceof DateInput)
         {
           prefValue = getStringValue((Date)input.getValue());
+        }
+        else if (input instanceof MultiSelectInput)
+        {
+          prefValue = ((MultiSelectInput)input).toString();
         }
         else if (input.getValue() != null)
         {

@@ -24,6 +24,7 @@ import com.centurylink.mdw.web.jsf.FacesVariableUtil;
 import com.centurylink.mdw.web.ui.input.DateRangeInput;
 import com.centurylink.mdw.web.ui.input.DigitInput;
 import com.centurylink.mdw.web.ui.input.Input;
+import com.centurylink.mdw.web.ui.input.MultiSelectInput;
 import com.centurylink.mdw.web.ui.input.SelectInput;
 import com.centurylink.mdw.web.ui.input.TextInput;
 import com.centurylink.mdw.web.ui.input.TnInput;
@@ -139,6 +140,30 @@ public class Filter extends com.centurylink.mdw.web.ui.filter.Filter
             }
           }
           input = new SelectInput(field.getAttribute(), field.getName(), itemList);
+        }
+        else if (field.getType().equals("multiSelectInput"))
+        {
+          List<SelectItem> itemList = new ArrayList<SelectItem>();
+          if (field.getLister() != null)
+          {
+            Lister lister = createLister(field.getLister());
+            Method method = lister.getClass().getMethod("list", (Class[]) null);
+            itemList = (List<SelectItem>) method.invoke(lister, (Object[]) null);
+            if (field.getFirstItemLabel() != null)
+            {
+              SelectItem firstItem = (SelectItem) itemList.get(0);
+              firstItem.setLabel(field.getFirstItemLabel());
+            }
+          }
+          else if (field.getList() != null)
+          {
+            String[] strings = field.getList().split(",");
+            for (int j = 0; j < strings.length; j++)
+            {
+              itemList.add(new SelectItem(strings[j]));
+            }
+          }
+          input = new MultiSelectInput(field.getAttribute(), field.getName(), itemList);
         }
         else if (field.getType().equals("dateRange"))
         {
@@ -262,6 +287,14 @@ public class Filter extends com.centurylink.mdw.web.ui.filter.Filter
       else if (formattedFromDate != null && formattedToDate != null)
       {
         return " between " + formattedFromDate + " and " + formattedToDate;
+      }
+    }
+    else if (crit.isInputTypeMultiSelect())
+    {
+      MultiSelectInput msCrit = (MultiSelectInput) crit;
+      if (msCrit.toString().length() > 0)
+      {
+        return " in (" + msCrit.getSelectedStringList().replace(':', ',') + ") ";
       }
     }
     else

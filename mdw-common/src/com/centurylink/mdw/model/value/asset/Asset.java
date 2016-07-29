@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.file.AssetFile;
+import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 
 public class Asset implements Jsonable, Comparable<Asset> {
 
@@ -129,12 +130,10 @@ public class Asset implements Jsonable, Comparable<Asset> {
             asset.put("isBinary", true);
         if (isMarkdown())
             asset.put("isMarkdown", true);
-        if (getVcsDiffType() != null) {
+        if (getVcsDiffType() != null)
             asset.put("vcsDiffType", getVcsDiffType());
-            asset.put("vcsDiffOutput", getVcsDiffOutput());
-        }
-        if (isVcsMissing())
-            asset.put("vcsMissing", true);
+        if (vcsDiffType != null)
+            asset.put("vcsDiff", vcsDiffType);
         return asset;
     }
 
@@ -168,18 +167,7 @@ public class Asset implements Jsonable, Comparable<Asset> {
     /**
      * For asset services.
      */
-    private String vcsDiffType;
-    public String getVcsDiffType() { return vcsDiffType; }
-    public void setVcsDiffType(String diffType) { this.vcsDiffType = diffType; }
-
-    private String vcsDiffOutput;
-    public String getVcsDiffOutput() { return vcsDiffOutput; }
-    public void setVcsDiffOutput(String output) { this.vcsDiffOutput = output; }
-
-    /**
-     * Means package exists in VCS but local is missing.
-     */
-    private boolean vcsMissing;
-    public boolean isVcsMissing() { return vcsMissing; }
-    public void setVcsMissing(boolean missing) { this.vcsMissing = missing; }
+    private DiffType vcsDiffType;
+    public DiffType getVcsDiffType() { return vcsDiffType; }
+    public void setVcsDiffType(DiffType diffType) { this.vcsDiffType = diffType; }
 }

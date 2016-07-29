@@ -52,6 +52,7 @@ public class BamMessageDefinition {
     }
 
     public BamMessageDefinition(String string) throws MbengException {
+        string = string.replaceAll("&", "&amp;").replaceAll("'", "&#39;");
         DomDocument doc = new DomDocument(string);
         trigger = doc.getValue("trigger");
         eventName = doc.getValue("name");

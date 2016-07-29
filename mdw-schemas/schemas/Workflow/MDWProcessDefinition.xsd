@@ -41,6 +41,8 @@
     		maxOccurs="unbounded" minOccurs="0" />
     	<xsd:element name="RuleSet" type="MDWRuleSet"
     		maxOccurs="unbounded" minOccurs="0" />
+      <xsd:element name="TaskTemplate" type="task:TaskTemplate"
+        maxOccurs="unbounded" minOccurs="0" />
     	<xsd:element name="CustomAttribute" type="MDWAttribute"
     		minOccurs="0" maxOccurs="unbounded" />
 		<xsd:element ref="ApplicationProperties" 

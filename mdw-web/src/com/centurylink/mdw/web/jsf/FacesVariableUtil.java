@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -474,15 +475,33 @@ public class FacesVariableUtil
     if (viewIdNoExt.equals(path + outcomeNoParamsNoExt))
       return true;
 
-    // workflow asset pages with custom navigation actions
-    if (viewId.endsWith("/page.xhtml") && (fromOutcome.startsWith("nav.xhtml?toPage=") || fromOutcome.startsWith("navigation/")))
+    if (viewId.endsWith("/page.xhtml"))
     {
       try
       {
-        String pageString = fromOutcome.startsWith("nav.xhtml?toPage=") ? fromOutcome.substring(17) : fromOutcome.substring("navigation/".length());
-        String pageName = URLEncoder.encode(pageString, "UTF-8");
-        if (pageName.equals(getValue("pageName")))
-          return true;
+        if (fromOutcome.startsWith("nav.xhtml?toPage=") || fromOutcome.startsWith("navigation/"))
+        {
+          // workflow asset pages with custom navigation actions
+          String pageString = fromOutcome.startsWith("nav.xhtml?toPage=") ? fromOutcome.substring(17) : fromOutcome.substring("navigation/".length());
+          String pageName = URLEncoder.encode(pageString, "UTF-8");
+          if (pageName.equals(getValue("pageName")))
+            return true;
+        }
+        else
+        {
+          // custom page nav outcomes for tabs and nav links
+          Object pageNameVal = getValue("pageName");
+          if (pageNameVal instanceof String)
+          {
+            String pagePath = "/" +  URLDecoder.decode(pageNameVal.toString(), "UTF-8");
+            String pagePathNoExt = pagePath;
+            int lastDot = pagePath.lastIndexOf('.');
+            if (lastDot > 0)
+              pagePathNoExt = pagePath.substring(0, lastDot);
+            if (pagePathNoExt.equals(outcomeNoParamsNoExt))
+              return true;
+          }
+        }
       }
       catch (UnsupportedEncodingException ex)
       {

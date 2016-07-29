@@ -3,7 +3,9 @@
  */
 package com.centurylink.mdw.service.resource;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
@@ -122,15 +124,19 @@ public class ResourceRequestHandler extends ServiceRequestHandler {
         }
     }
 
+    private static final List<String> OLD_STYLE_SERVICE_CONFLICTS = Arrays.asList(new String[]{"Attributes", "Packages", "Processes"});
+
     protected TextService getResourceServiceInstance(String resource, Map<String,String> headers) throws ServiceException {
         if (Listener.METAINFO_PROTOCOL_REST.equals(headers.get(Listener.METAINFO_PROTOCOL))) {
-            // try new packaging first
-            try {
-                return getServiceInstance(REST_SERVICE_PROVIDER_PACKAGE, resource, headers);
-            }
-            catch (ServiceException ex) {
-                if (!(ex.getCause() instanceof ClassNotFoundException))
-                    throw ex;  // otherwise fall back to old packaging below
+            // try new-style services first (except for certain non-json requests from Designer)
+            if (!OLD_STYLE_SERVICE_CONFLICTS.contains(resource) || "application/json".equals(headers.get("accept")) || headers.containsKey("DownloadFormat")) {
+                try {
+                    return getServiceInstance(REST_SERVICE_PROVIDER_PACKAGE, resource, headers);
+                }
+                catch (ServiceException ex) {
+                    if (!(ex.getCause() instanceof ClassNotFoundException))
+                        throw ex;  // otherwise fall back to old packaging below
+                }
             }
         }
         return getServiceInstance(SERVICE_PROVIDER_IMPL_PACKAGE, resource, headers);

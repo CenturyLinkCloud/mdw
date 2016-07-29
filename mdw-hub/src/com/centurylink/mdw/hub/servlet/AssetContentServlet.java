@@ -15,12 +15,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.common.ApplicationContext;
+import com.centurylink.mdw.common.constant.PropertyNames;
+import com.centurylink.mdw.common.exception.PropertyException;
+import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
+import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.value.asset.Asset;
 
 /**
  * Only works for VCS assets.
  */
 public class AssetContentServlet extends HttpServlet {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private File assetRoot;
 
@@ -35,8 +43,9 @@ public class AssetContentServlet extends HttpServlet {
 
         String path = request.getPathInfo().substring(1);
         Asset asset = new Asset(assetRoot, path);
+        boolean gitRemote = "true".equalsIgnoreCase(request.getParameter("gitRemote"));
 
-        if (!asset.getFile().isFile()) {
+        if (!asset.getFile().isFile() && !gitRemote) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -51,18 +60,33 @@ public class AssetContentServlet extends HttpServlet {
 
         InputStream in = null;
         OutputStream out = response.getOutputStream();
-
         try {
-            in = new FileInputStream(asset.getFile());
+            if (gitRemote) {
+                String branch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
+                if (branch == null)
+                    throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_BRANCH);
+                VersionControlGit vcGit = VersionControlGit.getFrameworkGit();
+                String gitPath = vcGit.getRelativePath(asset.getFile());
+                in = vcGit.getRemoteContentStream(branch, gitPath);
+                if (in == null)
+                    throw new IOException("Git remote not found: " + gitPath);
+            }
+            else {
+                if (!asset.getFile().isFile())
+                    throw new IOException("Asset file not found: " + asset.getFile());
+                in = new FileInputStream(asset.getFile());
+            }
             int read = 0;
             byte[] bytes = new byte[1024];
             while ((read = in.read(bytes)) != -1)
                 out.write(bytes, 0, read);
         }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+        }
         finally {
             if (in != null)
                 in.close();
         }
-
     }
 }

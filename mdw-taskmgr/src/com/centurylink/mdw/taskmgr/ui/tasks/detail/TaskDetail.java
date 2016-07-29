@@ -29,7 +29,7 @@ import com.centurylink.mdw.model.value.task.TaskVO;
 import com.centurylink.mdw.model.value.variable.DocumentVO;
 import com.centurylink.mdw.model.value.variable.VariableInstanceVO;
 import com.centurylink.mdw.services.TaskManager;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
+import com.centurylink.mdw.services.task.TaskManagerBean;
 import com.centurylink.mdw.taskmgr.ui.detail.Detail;
 import com.centurylink.mdw.taskmgr.ui.detail.InstanceData;
 import com.centurylink.mdw.taskmgr.ui.detail.InstanceDataItem;
@@ -70,13 +70,10 @@ public class TaskDetail extends Detail implements InstanceData
       TaskManager taskMgr = RemoteLocator.getTaskManager();
       TaskInstanceVO taskInstance = taskMgr.getTaskInstanceVO(new Long(instanceId));
       FullTaskInstance fullTaskInst = new FullTaskInstance(taskInstance);
-      if (TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId()).isMasterTask())
-      {
-        List<FullTaskInstance> subTaskInsts = new ArrayList<FullTaskInstance>();
-        for (TaskInstanceVO subTaskInst : taskMgr.getSubTaskInstances(taskInstance.getTaskInstanceId()))
-          subTaskInsts.add(new FullTaskInstance(subTaskInst));
-        fullTaskInst.setSubTaskInstances(subTaskInsts);
-      }
+      List<FullTaskInstance> subTaskInsts = new ArrayList<FullTaskInstance>();
+      for (TaskInstanceVO subTaskInst : taskMgr.getSubTaskInstances(taskInstance.getTaskInstanceId()))
+        subTaskInsts.add(new FullTaskInstance(subTaskInst));
+      fullTaskInst.setSubTaskInstances(subTaskInsts);
       setModelWrapper(fullTaskInst);
 
       MDWBase mdw = (MDWBase) FacesVariableUtil.getValue("mdw");
@@ -143,7 +140,7 @@ public class TaskDetail extends Detail implements InstanceData
         DocumentVO docvo = taskMgr.getTaskInstanceData(getFullTaskInstance().getTaskInstance());
         FormDataDocument datadoc = new FormDataDocument();
         datadoc.load(docvo.getContent());
-        instanceData = taskMgr.constructVariableInstancesFromFormDataDocument(getTaskTemplate(), getProcessInstanceId(), datadoc);
+        instanceData = ((TaskManagerBean)taskMgr).constructVariableInstancesFromFormDataDocument(getTaskTemplate(), getProcessInstanceId(), datadoc, taskInstId);
       }
       else
       {
@@ -155,14 +152,14 @@ public class TaskDetail extends Detail implements InstanceData
 		  String varname = one[0];
 		  String displayOption = one[2];
 		  String sequence = one[3];
-	      for (VariableInstanceVO var : instanceData)
-	      {
-	    	  if (varname.equals(var.getName()) && ! displayOption.equals(TaskActivity.VARIABLE_DISPLAY_HIDDEN)) {
-	    		  InstanceDataItem item = new TaskInstanceDataItem(var, this, Integer.parseInt(sequence));
-		          _instanceDataItems.add(item);
-		          break;
-	    	  }
-	      }
+          for (VariableInstanceVO var : instanceData)
+          {
+              if (varname.equals(var.getName()) && ! displayOption.equals(TaskActivity.VARIABLE_DISPLAY_HIDDEN)) {
+                  InstanceDataItem item = new TaskInstanceDataItem(var, this, Integer.parseInt(sequence));
+                  _instanceDataItems.add(item);
+                  break;
+              }
+          }
 	  }
 
 	  // Sort Instance list as per sequence

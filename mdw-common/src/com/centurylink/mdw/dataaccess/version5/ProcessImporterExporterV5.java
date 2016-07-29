@@ -33,7 +33,9 @@ import com.centurylink.mdw.model.value.attribute.CustomAttributeVO;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
+import com.centurylink.mdw.model.value.task.TaskVO;
 import com.centurylink.mdw.model.value.work.WorkTransitionVO;
+import com.centurylink.mdw.task.TaskTemplate;
 
 /**
  * ProcessImporterExporterV5
@@ -49,13 +51,14 @@ public class ProcessImporterExporterV5 extends ProcessImporterExporterV4 {
         super(schemaTypeTranslator);
     }
 
-    public String exportPackages(List<PackageVO> packages) throws DataAccessException, XmlException {
+    @Override
+    public String exportPackages(List<PackageVO> packages, boolean includeTaskTemplates) throws DataAccessException, XmlException {
         PackageDocument pkgDoc = PackageDocument.Factory.newInstance();
         MDWPackage pkg = pkgDoc.addNewPackage();
         for (PackageVO pkgVo : packages) {
             preparePackageForExport(pkgVo);
             MDWProcessDefinition procDef = pkg.addNewProcessDefinition();
-            mapPackage(procDef, pkgVo);
+            mapPackage(procDef, pkgVo, includeTaskTemplates);
         }
         return pkgDoc.xmlText(getXmlOptions());
     }
@@ -76,6 +79,13 @@ public class ProcessImporterExporterV5 extends ProcessImporterExporterV4 {
     	}
     }
 
+    protected void exportTaskTemplates(MDWProcessDefinition procDefn, List<TaskVO> taskVos) {
+        for (TaskVO taskVo : taskVos) {
+            if (taskVo.getVersion() > 0)
+                procDefn.getTaskTemplateList().add(taskVo.toTemplate());
+        }
+    }
+
     @Override
     protected void importRuleSets(PackageVO packageVO, MDWProcessDefinition processDefn) {
     	List<RuleSetVO> rulesets = new ArrayList<RuleSetVO>();
@@ -88,6 +98,18 @@ public class ProcessImporterExporterV5 extends ProcessImporterExporterV4 {
     		ruleset.setLanguage(xmlruleset.getRuleSetLanguage());
     		ruleset.setRuleSet(xmlruleset.getRuleSetContent());
     	}
+    }
+
+    @Override
+    protected void importTaskTemplates(PackageVO packageVO, MDWProcessDefinition processDefn) {
+        List<TaskVO> taskVos = new ArrayList<TaskVO>();
+        packageVO.setTaskTemplates(taskVos);
+        for (TaskTemplate taskTemplate : processDefn.getTaskTemplateList()) {
+            if (taskTemplate.getVersion() != null && !"0".equals(taskTemplate.getVersion())) {
+                TaskVO taskVo = new TaskVO(taskTemplate);
+                taskVos.add(taskVo);
+            }
+        }
     }
 
     @Override

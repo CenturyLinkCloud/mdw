@@ -19,9 +19,9 @@ Steps for Building and Publishing a New MDW Release:
 
 3 - (If Designer version incremented) Update mdw-framework projects to the latest Designer codebase:
      - In mdw-framework/build.gradle run task updateDesignerCoreJar to download locally into
-       mdw-workflow/assets/com/centurylink/mdw/testing and mdw-web/web/WEB-INF/lib.
+       mdw-workflow/assets/com/centurylink/mdw/testing, mdw-web/web/WEB-INF/lib, and mdw-hub/web/WEB-INF/lib.
        (Note: This may require shutting down Eclipse or at least the gradle daemon and manually removing the core jar if Windows has the file locked).
-       - Delete the old mdw-web core jar.
+       - Delete the old mdw-web and mdw-hub core jars.
        - Update the core jar version in mdw-workflow/assets/com/centurylink/mdw/testing/.mdw/versions to match mdwDesignerVersion.
      - In mdw-framework/build.gradle run task updateDesignerReportsJar to download locally into mdw-hub (change to non-readonly to avoid failure)
        - Refresh mdw-hub in Eclipse and delete any old update designer reports jars under WEB-INF/lib.

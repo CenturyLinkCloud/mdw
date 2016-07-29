@@ -75,6 +75,10 @@ public class NavParameterPhaseListener implements PhaseListener
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String servletPath = httpRequest.getServletPath();
 
+        NavScopeActionController navScope = TaskListScopeActionController.getInstance();
+        if (navScope.isMdwHubRequest())
+          return; // stay out of it
+
         // check for packageName parameter
         String packageName = externalContext.getRequestParameterMap().get("packageName");
 
@@ -85,20 +89,11 @@ public class NavParameterPhaseListener implements PhaseListener
         else
           packageVO = getPackageVO(packageName);
 
-        NavScopeActionController navScope = TaskListScopeActionController.getInstance();
-        boolean isMdwHubRequest = navScope.isMdwHubRequest();
 
         if (httpRequest.getMethod().equalsIgnoreCase("get"))
         {
-          // i've been redirected from MDWHub (admin, etc)
+          // i've been redirected to MDWTaskManagerWeb from MDWHub (admin, etc)
           navScope.setMdwHubSession("true".equals(externalContext.getRequestParameterMap().get("mdwHub")));
-
-          if (isMdwHubRequest)
-          {
-            // get request for standard task manager sets compatibility mode
-            if (!servletPath.equals(navScope.getAdminPage()) && !servletPath.equals(navScope.getMetricsPage()))
-              navScope.setCompatibilityMode(true);
-          }
 
           // get request for non-existent resource without package name parameter should initialize the package
           if (facesContext.getViewRoot() == null && servletPath.indexOf('/', 1) >= 0 && packageName == null)
@@ -106,7 +101,7 @@ public class NavParameterPhaseListener implements PhaseListener
             packageName = servletPath.substring(1, servletPath.indexOf('/', 1));
             if (getPackageVO(packageName) == null) // no custom path specified
             {
-              String welcomePagePath = isMdwHubRequest ? MDWHUB_DEFAULT_WELCOME_PAGE : TASKMGR_DEFAULT_WELCOME_PAGE;
+              String welcomePagePath = TASKMGR_DEFAULT_WELCOME_PAGE;
               if (packageVO != null && packageVO.getProperty(PropertyNames.MDW_WELCOME_PAGE) != null)
                 welcomePagePath = packageVO.getProperty(PropertyNames.MDW_WELCOME_PAGE);
 
@@ -139,12 +134,6 @@ public class NavParameterPhaseListener implements PhaseListener
             ListManager.getInstance().invalidate();
             FilterManager.getInstance().invalidate();
             FacesVariableUtil.removeValue("mdwPackage");
-          }
-          if (isMdwHubRequest)
-          {
-            // no package specified, but check MDW_HUB for overrides
-            customPage = MDWPageContent.getCustomPage(getPackageVO(PackageVO.MDW_HUB), httpRequest.getServletPath().substring(1), httpRequest.getQueryString());
-            // note: for user-overridden standard hub pages, see mdw-hub's FaceletCacheFactory
           }
         }
         else
@@ -182,7 +171,7 @@ public class NavParameterPhaseListener implements PhaseListener
 
             customPage = MDWPageContent.getCustomPage(resourcePath, httpRequest.getQueryString());
 
-            if (customPage == null && !isMdwHubRequest)
+            if (customPage == null)
             {
               // default to regular Task Manager resource (adding /facelets/ to the path)
               facesContext.setViewRoot(facesContext.getApplication().getViewHandler().createView(facesContext, "/facelets/" + resourcePath));

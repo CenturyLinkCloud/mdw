@@ -54,9 +54,9 @@ public class Activities extends JsonRestService implements Exportable {
      * Retrieve activity instance(s).
      */
     @Override
-    @Path("/")
-    @ApiOperation(value="Retrieve activity instances",
-        notes="returns a page of activities that meet query criteria.",
+    @Path("/{instanceId|special}")
+    @ApiOperation(value="Retrieve an activity, query many activity instances, or perform special queries",
+        notes="If instanceId and special are not present, returns a page of activities that meet query criteria.",
         response=ActivityInstance.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
@@ -64,35 +64,53 @@ public class Activities extends JsonRestService implements Exportable {
         try {
             String segOne = getSegment(path, 1);
             if (segOne != null) {
+              try {
+                long instanceId = Long.parseLong(segOne);
+                return workflowServices.getActivity(instanceId).getJson();
+            }
+              catch (NumberFormatException ex) {
+             // path must be special
                 Query query = getQuery(path, headers);
-                if (segOne.equals("topThroughput")) {
-                    List<ActivityCount> list = workflowServices.getTopThroughputActivities(query);
-                    JSONArray actArr = new JSONArray();
-                    int ct = 0;
-                    ActivityCount other = null;
-                    long otherTot = 0;
-                    for (ActivityCount actCount : list) {
-                        if (ct >= query.getMax()) {
-                            if (other == null) {
-                                other = new ActivityCount(0);
-                                other.setName("Other");
-                            }
-                            otherTot += actCount.getCount();
-                        }
-                        else {
-                            actArr.put(actCount.getJson());
-                        }
-                        ct++;
+                if (segOne.equals("definitions")) {
+                    ActivityList activityVOs = workflowServices.getActivityDefinitions(query);
+                    JSONArray jsonActivities = new JSONArray();
+                    for (ActivityInstance activityInstance : activityVOs.getActivities()) {
+                        jsonActivities.put(activityInstance.getJson());
                     }
-                    if (other != null) {
-                        other.setCount(otherTot);
-                        actArr.put(other.getJson());
-                    }
-                    return new JsonArray(actArr).getJson();
+                    //return new JsonArray(jsonActivities).getJson();
+                    return activityVOs.getJson();
                 }
+
+              else if (segOne.equals("topThroughput")) {
+                List<ActivityCount> list = workflowServices.getTopThroughputActivities(query);
+                JSONArray actArr = new JSONArray();
+                int ct = 0;
+                ActivityCount other = null;
+                long otherTot = 0;
+                for (ActivityCount actCount : list) {
+                    if (ct >= query.getMax()) {
+                        if (other == null) {
+                            other = new ActivityCount(0);
+                            other.setName("Other");
+                        }
+                        otherTot += actCount.getCount();
+                    }
+                    else {
+                        actArr.put(actCount.getJson());
+                    }
+                    ct++;
+                }
+                if (other != null) {
+                    other.setCount(otherTot);
+                    actArr.put(other.getJson());
+                }
+                return new JsonArray(actArr).getJson();
+
+              }
                 else if (segOne.equals("instanceCounts")) {
                     Map<Date,List<ActivityCount>> dateMap = workflowServices.getActivityInstanceBreakdown(query);
                     boolean isTotals = query.getFilters().get("activityIds") == null && query.getFilters().get("statuses") == null;
+
                     Map<String,List<ActivityCount>> listMap = new HashMap<String,List<ActivityCount>>();
                     for (Date date : dateMap.keySet()) {
                         List<ActivityCount> actCounts = dateMap.get(date);
@@ -107,6 +125,7 @@ public class Activities extends JsonRestService implements Exportable {
                 else {
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);
                 }
+              }
             }
             else {
                 Query query = getQuery(path, headers);

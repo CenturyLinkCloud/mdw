@@ -24,6 +24,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.value.process.ProcessCount;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessList;
+import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -62,7 +63,20 @@ public class Processes extends JsonRestService implements Exportable {
                 catch (NumberFormatException ex) {
                     // path must be special
                     Query query = getQuery(path, headers);
-                    if (segOne.equals("topThroughput")) {
+                    if (segOne.equals("definitions")) {
+                        List<ProcessVO> processVOs = workflowServices.getProcessDefinitions(query);
+                        JSONArray jsonProcesses = new JSONArray();
+                        for (ProcessVO processVO : processVOs) {
+                            JSONObject jsonProcess = new JSONObject();
+                            jsonProcess.put("packageName", processVO.getPackageName());
+                            jsonProcess.put("processId", processVO.getId());
+                            jsonProcess.put("name", processVO.getName());
+                            jsonProcess.put("version", processVO.getVersionString());
+                            jsonProcesses.put(jsonProcess);
+                        }
+                        return new JsonArray(jsonProcesses).getJson();
+                    }
+                    else if (segOne.equals("topThroughput")) {
                         List<ProcessCount> list = workflowServices.getTopThroughputProcesses(query);
                         JSONArray procArr = new JSONArray();
                         int ct = 0;

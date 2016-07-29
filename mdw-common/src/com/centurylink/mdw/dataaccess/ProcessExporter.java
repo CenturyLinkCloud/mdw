@@ -14,10 +14,10 @@ import com.centurylink.mdw.model.value.process.ProcessVO;
 
 public interface ProcessExporter {
 
-    public String exportPackages(List<PackageVO> packages)
+    public String exportPackages(List<PackageVO> packages, boolean includeTaskTemplates)
     throws DataAccessException, XmlException;
 
-    public String exportPackage(PackageVO packageVO)
+    public String exportPackage(PackageVO packageVO, boolean includeTaskTemplates)
     throws DataAccessException, XmlException;
 
     public String exportProcess(ProcessVO processVO, int schemaVersion, List<ExternalEventVO> externalEvents)

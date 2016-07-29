@@ -49,6 +49,7 @@ import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.event.ExternalEventVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
+import com.centurylink.mdw.model.value.task.TaskVO;
 import com.centurylink.mdw.model.value.variable.VariableVO;
 import com.centurylink.mdw.model.value.work.WorkTransitionVO;
 
@@ -154,11 +155,17 @@ public class ProcessImporterExporterV4 implements ProcessImporter,ProcessExporte
             }
         }
         // create rule sets
-        if (def.getRuleSetList()!=null) importRuleSets(packageVO, def);
+        if (def.getRuleSetList() != null)
+            importRuleSets(packageVO, def);
         // create package attributes
-        if (def.getAttributeList()!=null) importPackageAttributes(packageVO, def);
+        if (def.getAttributeList() != null)
+            importPackageAttributes(packageVO, def);
         // create custom attributes
-        if (def.getCustomAttributeList()!=null) importCustomAttributes(packageVO, def);
+        if (def.getCustomAttributeList() != null)
+            importCustomAttributes(packageVO, def);
+        // create task templates
+        if (def.getTaskTemplateList() != null)
+            importTaskTemplates(packageVO, def);
         // create processes
         packageVO.setProcesses(new ArrayList<ProcessVO>());
         importConfiguration(packageVO, def);
@@ -166,7 +173,8 @@ public class ProcessImporterExporterV4 implements ProcessImporter,ProcessExporte
             ProcessVO processVO = importProcessBase(proc);
             if (processVO.isInRuleSet())
                 importProcessUsingLogicalId(proc, processVO, false);
-            else importProcessUsingMap(proc, processVO, proc.getName());
+            else
+                importProcessUsingMap(proc, processVO, proc.getName());
             packageVO.getProcesses().add(processVO);
         }
 
@@ -415,15 +423,15 @@ public class ProcessImporterExporterV4 implements ProcessImporter,ProcessExporte
 
     ///////////////////////// Exporter portion ///////////////////////////
 
-    public String exportPackages(List<PackageVO> packages) throws DataAccessException, XmlException {
+    public String exportPackages(List<PackageVO> packages, boolean includeTaskTemplates) throws DataAccessException, XmlException {
         throw new UnsupportedOperationException();
     }
 
-    public String exportPackage(PackageVO packageVO) throws DataAccessException, XmlException {
+    public String exportPackage(PackageVO packageVO, boolean includeTaskTemplates) throws DataAccessException, XmlException {
         preparePackageForExport(packageVO);
         ProcessDefinitionDocument defnDoc = ProcessDefinitionDocument.Factory.newInstance();
         MDWProcessDefinition procDefn = defnDoc.addNewProcessDefinition();
-        mapPackage(procDefn, packageVO);
+        mapPackage(procDefn, packageVO, includeTaskTemplates);
         return processDefDocToString(defnDoc);
     }
 
@@ -476,13 +484,19 @@ public class ProcessImporterExporterV4 implements ProcessImporter,ProcessExporte
         }
     }
 
-    protected void mapPackage(MDWProcessDefinition procDefn, PackageVO packageVO) throws DataAccessException {
+    protected void mapPackage(MDWProcessDefinition procDefn, PackageVO packageVO, boolean includeTaskTemplates) throws DataAccessException {
 
         List<MDWActivityImplementor> actArrList = mapActivityImplementors(packageVO.getImplementors());
-        if (packageVO.getExternalEvents()!=null) this.mapAllExternalEvents(procDefn, packageVO.getExternalEvents());
-        if (packageVO.getRuleSets()!=null) exportRuleSets(procDefn, packageVO.getRuleSets());
-        if (packageVO.getAttributes()!=null) exportPackageAttributes(procDefn, packageVO.getAttributes());
-        if (packageVO.getCustomAttributes()!=null) exportCustomAttributes(procDefn, packageVO.getCustomAttributes());
+        if (packageVO.getExternalEvents() != null)
+            mapAllExternalEvents(procDefn, packageVO.getExternalEvents());
+        if (packageVO.getRuleSets() != null)
+            exportRuleSets(procDefn, packageVO.getRuleSets());
+        if (includeTaskTemplates && packageVO.getTaskTemplates() != null)
+            exportTaskTemplates(procDefn, packageVO.getTaskTemplates());
+        if (packageVO.getAttributes() != null)
+            exportPackageAttributes(procDefn, packageVO.getAttributes());
+        if (packageVO.getCustomAttributes() != null)
+            exportCustomAttributes(procDefn, packageVO.getCustomAttributes());
         exportConfiguration(procDefn, packageVO);
         int mainProcessCounter = 1;
         for (ProcessVO processVO : packageVO.getProcesses()) {
@@ -605,6 +619,10 @@ public class ProcessImporterExporterV4 implements ProcessImporter,ProcessExporte
 
     protected void exportRuleSets(MDWProcessDefinition procDefn, List<RuleSetVO> rulesets) {
     	// this for MDW 5 only - will be overriden
+    }
+
+    protected void exportTaskTemplates(MDWProcessDefinition procDefn, List<TaskVO> taskTemplates) {
+        // this for MDW 5 only - will be overriden
     }
 
     protected void exportPackageAttributes(MDWProcessDefinition procDefn, List<AttributeVO> packageAttrs) {
@@ -950,6 +968,10 @@ public class ProcessImporterExporterV4 implements ProcessImporter,ProcessExporte
 
     protected void importRuleSets(PackageVO packageVO, MDWProcessDefinition processDefn) {
     	// this is for MDW 5 only - to be overriden
+    }
+
+    protected void importTaskTemplates(PackageVO packageVO, MDWProcessDefinition processDefn) {
+        // for MDW 5 only
     }
 
     protected void importPackageAttributes(PackageVO packageVO, MDWProcessDefinition processDefn) {

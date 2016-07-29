@@ -87,6 +87,10 @@ public class Query {
     public void setFilters(Map<String,String> filters) { this.filters = filters; }
     public void putFilter(String key, String value) { filters.put(key, value); }
 
+    public String getFilter(String key) {
+        return filters.get(key);
+    }
+
     /**
      * Empty list returns null;
      */
@@ -108,6 +112,21 @@ public class Query {
         }
         return array;
     }
+    public void setArrayFilter(String key, String[] array) {
+        if (array == null || array.length == 0) {
+            filters.remove(key);
+        }
+        else {
+            String value = "[";
+            for (int i = 0; i < array.length; i++) {
+                value += array[i];
+                if (i < array.length - 1)
+                    value += ",";
+            }
+            value += "]";
+            filters.put(key, value);
+        }
+    }
 
     public Long[] getLongArrayFilter(String key) {
         String[] strArr = getArrayFilter(key);
@@ -127,11 +146,14 @@ public class Query {
         String value = filters.get(key);
         return value == null ? -1 : Integer.parseInt(value);
     }
+    public long getLongFilter(String key) {
+        String value = filters.get(key);
+        return value == null ? -1 : Long.parseLong(value);
+    }
 
     public Date getDateFilter(String key) throws ParseException {
         return getDate(filters.get(key));
     }
-
     public void setDateFilter(String key, Date date) {
         String value = getString(date);
         if (value == null)

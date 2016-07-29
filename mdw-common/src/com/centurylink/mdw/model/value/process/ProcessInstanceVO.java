@@ -53,8 +53,6 @@ public class ProcessInstanceVO implements Serializable, Jsonable {
 
     /**
      * Creates a skeleton process instance VO (without an ID).
-     *
-     * @param processVO
      */
     public ProcessInstanceVO(Long processId, String processName) {
         setProcessName(processName);
@@ -85,6 +83,8 @@ public class ProcessInstanceVO implements Serializable, Jsonable {
             processId = jsonObj.getLong("processId");
         if (jsonObj.has("statusCode"))
             statusCode = jsonObj.getInt("statusCode");
+        if (jsonObj.has("status"))
+            status = jsonObj.getString("status");
         if (jsonObj.has("startDate"))
             startDate = jsonObj.getString("startDate");
         if (jsonObj.has("endDate"))

@@ -438,7 +438,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             saveActivityImplementors(packageVO, pkgDir);
             saveExternalEventHandlers(packageVO, pkgDir);
             saveRuleSets(packageVO, pkgDir);
-            saveProcesses(packageVO, pkgDir); // also saves task templates
+            saveTaskTemplates(packageVO, pkgDir);
+            saveProcesses(packageVO, pkgDir); // also saves v0 task templates
         }
 
         return packageVO.getPackageId();
@@ -660,11 +661,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 save(process, pkgDir);
             }
         }
-        if (packageVo.getTaskTemplates() != null) {
-            for (TaskVO taskVO : packageVo.getTaskTemplates()) {
-                save(taskVO, pkgDir);
-            }
-        }
     }
 
     public List<RuleSetVO> loadRuleSets(PackageDir pkgDir, boolean deep) throws IOException, XmlException {
@@ -795,7 +791,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * Only for top-level packages, and relies on getPackageName().
      */
     private File getTaskTemplateFile(TaskVO taskTemplate) {
-        String fileName = taskTemplate.getTaskName() + TASK_TEMPLATE_FILE_EXTENSION;
+        String fileName;
+        if (taskTemplate.getVersion() > 0)
+            fileName = taskTemplate.getName();  // use asset name
+        else
+            fileName = taskTemplate.getTaskName() + TASK_TEMPLATE_FILE_EXTENSION;
         return new File(storageDir + "/" + taskTemplate.getPackageName().replace('.', '/') + "/" + fileName);
     }
 
@@ -1020,6 +1020,9 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 if (found == null || found.getVersion() < proc.getVersion())
                     found = proc;
             }
+        }
+        if (found == null && compatibilityDataSource != null) {
+            found = getDbLoader().getProcessBase(name, version);
         }
         return found;
     }

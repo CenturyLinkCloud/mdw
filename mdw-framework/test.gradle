@@ -42,7 +42,6 @@ dependencies {
     test group: "com.sun.el", name: "el-impl", version: "1.0"
 }
 
-// temporarily exclude these tests until Designer build 8.9.1 which support service authentication
 task functionTests() << {
     ant.taskdef(
         name: "autotest", 
@@ -52,7 +51,7 @@ task functionTests() << {
         suiteName: "mdw-framework",
         baseDir: "../mdw-workflow/assets",
         includes: "**/*.test",
-        excludes: "com/centurylink/mdw/tests/load/*,com/centurylink/mdw/tests/osgi/*,com/centurylink/mdw/tests/tasks/task-non-recurring-event.test",
+        excludes: "com/centurylink/mdw/tests/load/*,com/centurylink/mdw/tests/osgi/*",
         serverUrl: testServerUrl,
         workflowDir: "../mdw-workflow/assets",
         testResultsDir: "../mdw-workflow/testResults",

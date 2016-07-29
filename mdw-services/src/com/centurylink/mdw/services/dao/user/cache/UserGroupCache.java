@@ -149,6 +149,31 @@ public class UserGroupCache implements PreloadableCache, CacheService {
         return matches;
     }
 
+    public static List<UserVO> findUsers(String[] workgroups, String prefix) throws CachingException {
+        int limit = 15;
+        List<UserVO> matches = new ArrayList<UserVO>();
+        prefix = prefix.toLowerCase();
+        int count = 0;
+        for (String groupName : workgroups) {
+            UserGroupVO workgroup = getWorkgroup(groupName);
+            for (UserVO user : workgroup.getUsers()) {
+                user = getUser(user.getId()); // load full user
+                if (isMatch(user, prefix) && !matches.contains(user)) {
+                    matches.add(user);
+                    if (++count > limit)
+                        return matches;
+                }
+            }
+        }
+        return matches;
+    }
+
+    private static boolean isMatch(UserVO user, String prefix) {
+        return (user.getFirst() != null && user.getFirst().toLowerCase().startsWith(prefix))
+                || (user.getLast() != null && user.getLast().toLowerCase().startsWith(prefix))
+                || user.getName().toLowerCase().startsWith(prefix) || user.getCuid().toLowerCase().startsWith(prefix);
+    }
+
     public static void set(UserVO user) {
         instance.users.remove(user);
         instance.users.add(user);
@@ -271,24 +296,7 @@ public class UserGroupCache implements PreloadableCache, CacheService {
             workgroups = userManager.getUserGroups(false);
 
             // users TODO: one query per user is executed for loading groups/roles
-            List<UserVO> usersTemp = userManager.getUsers();
-            // parse first and last for typeahead matching
-            for (UserVO user : usersTemp) {
-                if (user.getName() != null) {
-                    String name = user.getName().trim();
-                    int firstSp = name.indexOf(' ');
-                    if (firstSp > 0) {
-                        user.setFirst(name.substring(0, firstSp));
-                        int lastSp = name.lastIndexOf(' ');
-                        user.setLast(name.substring(lastSp + 1));
-                    }
-                    else {
-                        user.setFirst(name);
-                    }
-                }
-            }
-
-            users = usersTemp;
+            users = userManager.getUsers();
 
             userAttributeNames = userManager.getPublicUserAttributeNames();
             if (!userAttributeNames.contains(UserVO.EMAIL_ADDRESS) && !getUserAttributeNames().contains(UserVO.OLD_EMAIL_ADDRESS))

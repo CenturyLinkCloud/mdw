@@ -61,6 +61,10 @@ public class TaskVO extends RuleSetVO implements Jsonable {
     public TaskVO(TaskTemplate template) {
         setLanguage(TASK);
         setLogicalId(template.getLogicalId());
+        if (template.getVersion() != null && !"0".equals(template.getVersion()))
+            setVersion(parseVersion(template.getVersion()));
+        if (template.getAssetName() != null && !template.getAssetName().isEmpty())
+            setName(template.getAssetName());
         setTaskName(template.getName());
         setTaskTypeId(TaskType.TASK_TYPE_TEMPLATE);
         setTaskCategory(template.getCategory());
@@ -95,6 +99,7 @@ public class TaskVO extends RuleSetVO implements Jsonable {
         String groups = getAttribute(TaskAttributeConstant.GROUPS);
         if (groups != null)
             setUserGroupsFromString(groups);
+        setVersion(cloneFrom.getVersion());
     }
 
     public Integer getTaskTypeId(){
@@ -423,10 +428,6 @@ public class TaskVO extends RuleSetVO implements Jsonable {
     	setVariablesFromString(str, null);
     }
 
-    public boolean isMasterTask() {
-        return !StringHelper.isEmpty(getAttribute(TaskActivity.ATTRIBUTE_SUBTASK_STRATEGY));
-    }
-
     public static String updateVariableInString(String curString, List<VariableVO> processVariables) {
         List<String[]> parsed = StringHelper.parseTable(curString, FIELD_DELIMITER, ROW_DELIMITER, 6);
         int n = parsed.size();
@@ -511,18 +512,22 @@ public class TaskVO extends RuleSetVO implements Jsonable {
         template.setLogicalId(getLogicalId());
         template.setName(getTaskName());
         if (getTaskCategory() != null)
-          template.setCategory(getTaskCategory());
+            template.setCategory(getTaskCategory());
         if (getComment() != null)
-          template.setDescription(getComment());
+            template.setDescription(getComment());
+        if (getVersion() > 0) {
+            template.setVersion(formatVersion(getVersion()));
+            template.setAssetName(getName());
+        }
 
-        if (getAttributes() != null)
-        {
-          for (AttributeVO attrVO : getAttributes())
-          {
-            Attribute attr = template.addNewAttribute();
-            attr.setName(attrVO.getAttributeName());
-            attr.setStringValue(attrVO.getAttributeValue());
-          }
+        if (getAttributes() != null) {
+            for (AttributeVO attrVO : getAttributes()) {
+                if (!"TaskDescription".equals(attrVO.getAttributeName())) {
+                    Attribute attr = template.addNewAttribute();
+                    attr.setName(attrVO.getAttributeName());
+                    attr.setStringValue(attrVO.getAttributeValue());
+                }
+            }
         }
         return template;
     }
@@ -559,6 +564,9 @@ public class TaskVO extends RuleSetVO implements Jsonable {
             }
 
         }
+        if (getVersion() > 0)
+            json.put("version", RuleSetVO.formatVersion(getVersion()));
+
         return json;
     }
 

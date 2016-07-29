@@ -1,6 +1,7 @@
 // POST request to Services/Tasks/TaskInstanceId/indexes
 // e.g http://localhost:8181/mdw/Services/Tasks/22962/indexes
 {
+    "taskInstanceId": 22962,
     "indexes": {
       "ACNA": "LGT",
       "CDDD": "06/10/2015",
@@ -21,8 +22,7 @@
       "Task Status": "Open",
       "Workgroup": "CDP",
       "action": "Original"
-    },
-    "taskInstanceId": 22962
+    }
   }
 
 

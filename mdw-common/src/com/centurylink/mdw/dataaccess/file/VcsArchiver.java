@@ -55,6 +55,7 @@ public class VcsArchiver {
                 path = path.substring(0, slash);
         }
 
+        // copy all packages from the asset dir to the temp dir
         LoaderPersisterVcs oldLoader = new LoaderPersisterVcs("mdw", assetDir, versionControl, new MdwBaselineData());
         List<PackageDir> oldPkgDirs = oldLoader.getPackageDirs(false);
         progressMonitor.subTask("Backing up existing package(s) in: " + assetDir);
@@ -79,7 +80,8 @@ public class VcsArchiver {
     }
 
     /**
-     * Move replaced package(s) to archive.  Uses 40% of progressMonitor.
+     * Move replaced package(s) to archive from temp (those not found in updated asset folder).
+     * Uses 40% of progressMonitor.
      */
     public void archive() throws DataAccessException, IOException {
         archiveDir = new File(assetDir + "/" + ARCHIVE);

@@ -3,18 +3,19 @@
  */
 package com.centurylink.mdw.services.asset;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.w3c.dom.Element;
 
+import com.centurylink.mdw.bpm.PackageDocument;
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
 import com.centurylink.mdw.common.cache.impl.RuleSetCache;
@@ -27,9 +28,12 @@ import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.common.utilities.timer.CodeTimer;
+import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.AssetFile;
+import com.centurylink.mdw.dataaccess.file.GitDiffs;
+import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.value.asset.Asset;
@@ -66,8 +70,7 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
-
-    private VersionControlGit versionControl;
+    private VersionControl versionControl;
     public VersionControl getVersionControl() throws IOException {
         if (versionControl == null)
             versionControl = getVersionControlGit();
@@ -121,7 +124,7 @@ public class AssetServicesImpl implements AssetServices {
     }
 
     public byte[] getAssetContent(String assetPath) throws ServiceException {
-            return RuleSetCache.getRuleSet(assetPath).getRuleSet().getBytes();
+        return RuleSetCache.getRuleSet(assetPath).getRuleSet().getBytes();
     }
 
     public void saveAsset(String asset, Object content, String user, String comment) throws ServiceException {
@@ -204,12 +207,17 @@ public class AssetServicesImpl implements AssetServices {
 
         try {
             PackageDir pkgDir = getPackageDir(packageName);
-            if (!pkgDir.isDirectory())
-                return null;
+            if (pkgDir == null) {
+                pkgDir = getGhostPackage(packageName);
+                if (pkgDir == null)
+                    throw new DataAccessException("Missing package metadata directory: " + pkgDir);
+            }
             List<Asset> assets = new ArrayList<Asset>();
-            for (File file : pkgDir.listFiles())
-                if (file.isFile()) {
-                    assets.add(new Asset(pkgDir.getAssetFile(file)));
+            if (!DiffType.MISSING.equals(pkgDir.getVcsDiffType())) {
+                for (File file : pkgDir.listFiles())
+                    if (file.isFile()) {
+                        assets.add(new Asset(pkgDir.getAssetFile(file)));
+                }
             }
 
             PackageAssets pkgAssets = new PackageAssets(pkgDir);
@@ -283,6 +291,9 @@ public class AssetServicesImpl implements AssetServices {
         try {
             return getPackageDir(name);
         }
+        catch (IOException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
         catch (DataAccessException ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
@@ -290,7 +301,7 @@ public class AssetServicesImpl implements AssetServices {
     /**
      * Finds the next level of sibling PackageDirs under a set of non-package dirs.
      */
-    private List<PackageDir> findPackageDirs(List<File> dirs) throws DataAccessException {
+    private List<PackageDir> findPackageDirs(List<File> dirs) throws IOException, DataAccessException {
         List<PackageDir> pkgSubDirs = new ArrayList<PackageDir>();
         List<File> allSubDirs = new ArrayList<File>();
 
@@ -298,8 +309,7 @@ public class AssetServicesImpl implements AssetServices {
             for (File sub : dir.listFiles()) {
                 if (sub.isDirectory() && !sub.equals(archiveDir)) {
                     if (new File(sub + "/.mdw").isDirectory()) {
-                        VersionControl vc = DataAccess.getAssetVersionControl(assetRoot);
-                        PackageDir pkgSubDir = new PackageDir(assetRoot, sub, vc);
+                        PackageDir pkgSubDir = new PackageDir(assetRoot, sub, getAssetVersionControl());
                         pkgSubDir.parse();
                         pkgSubDirs.add(pkgSubDir);
                     }
@@ -317,41 +327,50 @@ public class AssetServicesImpl implements AssetServices {
     private void addVersionControlInfo(PackageList pkgList) throws ServiceException {
         try {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
-            if (gitBranch != null)
-                pkgList.setVcsBranch(gitBranch);
-            if (gitRemoteUrl != null)
-                pkgList.setVcsRemoteUrl(gitRemoteUrl);
-
             if (versionControl != null) {
-                List<PackageDir> missingPkgDirs = new ArrayList<PackageDir>();
-                List<String> diffPaths = new ArrayList<String>();
-                List<DiffEntry> diffs = versionControl.getDiffs(assetPath, true);
-                for (DiffEntry diff : diffs) {
-                    if (diff.getChangeType() == ChangeType.ADD && diff.getNewPath().endsWith(".mdw/package.xml")) {
-                        int trim = ".mdw/package.xml".length();
-                        String pkgName = diff.getNewPath().substring(assetPath.length() + 1, diff.getNewPath().length() - trim - 1).replace('/', '.');
-                        PackageDir pkgDir = new PackageDir(assetRoot, pkgName);
-                        pkgDir.setVcsMissing(true);
-                        missingPkgDirs.add(pkgDir);
+                if (gitBranch != null)
+                    pkgList.setVcsBranch(gitBranch);
+                if (gitRemoteUrl != null)
+                    pkgList.setVcsRemoteUrl(gitRemoteUrl);
+
+                if (versionControl != null) {
+                    GitDiffs diffs = versionControl.getDiffs(assetPath);
+
+                    for (PackageDir pkgDir : pkgList.getPackageDirs()) {
+                        String pkgVcPath = versionControl.getRelativePath(pkgDir);
+                        // check for extra packages
+                        for (String extraPath : diffs.getDiffs(DiffType.EXTRA)) {
+                            if (extraPath.equals(pkgVcPath + "/" + PackageDir.PACKAGE_XML_PATH)) {
+                                pkgDir.setVcsDiffType(DiffType.EXTRA);
+                                break;
+                            }
+                        }
+                        if (pkgDir.getVcsDiffType() == null) {
+                            // check for packages with sub-content changes
+                            for (DiffType diffType : DiffType.values()) {
+                                if (pkgDir.getVcsDiffType() == null) { // not already found different
+                                    for (String diff : diffs.getDiffs(diffType)) {
+                                        if (diff.startsWith(pkgVcPath + "/") && !diff.startsWith(pkgVcPath + "/.mdw")) {
+                                            pkgDir.setVcsDiffType(DiffType.DIFFERENT);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    else {
-                        if (diff.getNewPath() != null && !diffPaths.contains(diff.getNewPath()))
-                            diffPaths.add(diff.getNewPath());
-                        else if (diff.getOldPath() != null && !diffPaths.contains(diff.getOldPath()))
-                            diffPaths.add(diff.getOldPath());
-                    }
-                }
-                for (PackageDir pkgDir : pkgList.getPackageDirs()) {
-                    String pkgVcPath = versionControl.getRelativePath(pkgDir);
-                    for (String diffPath : diffPaths) {
-                        if (diffPath.startsWith(pkgVcPath)) {
-                            pkgDir.setHasVcsDiffs(true);
-                            break;
+
+                    // check for missing packages
+                    for (String missingDiff : diffs.getDiffs(DiffType.MISSING)) {
+                        if (missingDiff.endsWith(PackageDir.PACKAGE_XML_PATH)) {
+                            // add a ghost package
+                            int trim = PackageDir.PACKAGE_XML_PATH.length();
+                            String pkgName = missingDiff.substring(assetPath.length() + 1, missingDiff.length() - trim - 1).replace('/', '.');
+                            PackageDir pkgDir = getGhostPackage(pkgName);
+                            pkgList.getPackageDirs().add(pkgDir);
                         }
                     }
                 }
-
-                pkgList.getPackageDirs().addAll(missingPkgDirs);
             }
         }
         catch (Exception ex) {
@@ -364,26 +383,26 @@ public class AssetServicesImpl implements AssetServices {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
             if (versionControl != null) {
                 String pkgVcPath = versionControl.getRelativePath(pkgAssets.getPackageDir());
-                List<DiffEntry> diffs = versionControl.getDiffs(pkgVcPath, true);
-                List<Asset> missingAssets = new ArrayList<Asset>();
-                for (DiffEntry diff : diffs) {
-                    if (diff.getChangeType() == ChangeType.ADD) {
-//                        Asset missingAsset = new Asset(new File(gitRoot + "/" + diff.getNewPath()));
-//                        missingAsset.setVcsMissing(true);
-//                        missingAssets.add(missingAsset);
-                    }
-                    else {
-                        for (Asset asset : pkgAssets.getAssets()) {
-                            String assetVcPath = versionControl.getRelativePath(asset.getFile());
-                            if (assetVcPath.equals(diff.getNewPath()) || assetVcPath.equals(diff.getOldPath())) {
-                                asset.setVcsDiffType(diff.getChangeType().toString());
-                                pkgAssets.getPackageDir().setHasVcsDiffs(true);
-                                break;
-                            }
-                        }
+                GitDiffs diffs = versionControl.getDiffs(pkgVcPath);
+                pkgAssets.getPackageDir().setVcsDiffType(diffs.getDiffType(pkgVcPath + "/" + PackageDir.PACKAGE_XML_PATH));
+
+                for (Asset asset : pkgAssets.getAssets()) {
+                    String assetVcPath = versionControl.getRelativePath(asset.getFile());
+                    DiffType diffType = diffs.getDiffType(assetVcPath);
+                    if (diffType != null) {
+                        asset.setVcsDiffType(diffType);
+                        if (pkgAssets.getPackageDir().getVcsDiffType() == null)
+                          pkgAssets.getPackageDir().setVcsDiffType(DiffType.DIFFERENT);
                     }
                 }
-                pkgAssets.getAssets().addAll(missingAssets);
+
+                // check for missing assets
+                for (String missingDiff : diffs.getDiffs(DiffType.MISSING)) {
+                    if (missingDiff.startsWith(pkgVcPath + "/") && !missingDiff.startsWith(pkgVcPath + "/.mdw")) {
+                        String assetName = missingDiff.substring(pkgVcPath.length() + 1);
+                        pkgAssets.getAssets().add(getGhostAsset(pkgAssets.getPackageDir(), assetName));
+                    }
+                }
             }
         }
         catch (Exception ex) {
@@ -391,25 +410,45 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
-    public PackageDir getPackageDir(String name) throws DataAccessException {
+    public PackageDir getPackageDir(String name) throws IOException, DataAccessException {
         File dir = new File(assetRoot + "/" + name.replace('.', '/'));
         if (new File(dir + "/.mdw").isDirectory()) {
-            VersionControl vc = DataAccess.getAssetVersionControl(assetRoot);
-            PackageDir pkgDir = new PackageDir(assetRoot, dir, vc);
+            PackageDir pkgDir = new PackageDir(assetRoot, dir, getAssetVersionControl());
             pkgDir.parse();
             return pkgDir;
         }
         else {
-            throw new DataAccessException("Missing package metadata directory under: " + dir);
+            return null;
         }
+    }
+
+    /**
+     * Falls back to DataAccess version control for asset versioning.
+     */
+    private VersionControl getAssetVersionControl() throws IOException, DataAccessException {
+        VersionControl vc = getVersionControl();
+        if (vc == null)
+            vc = DataAccess.getAssetVersionControl(assetRoot);
+        return vc;
     }
 
     public Asset getAsset(String path) throws ServiceException {
         try {
             int lastSlash = path.lastIndexOf('/');
-            String pkg = path.substring(0, lastSlash);
+            String pkgName = path.substring(0, lastSlash);
             String assetName = path.substring(lastSlash + 1);
-            PackageDir pkgDir = getPackageDir(pkg);
+            PackageDir pkgDir = getPackageDir(pkgName);
+            if (pkgDir == null) {
+                pkgDir = getGhostPackage(pkgName);
+                if (pkgDir == null)
+                    throw new DataAccessException("Missing package metadata directory: " + pkgDir);
+
+                // ghost package contains ghost assets
+                Asset asset = getGhostAsset(pkgDir, assetName);
+                if (asset == null)
+                    throw new DataAccessException("Missing asset file: " + path);
+                return asset;
+            }
             AssetFile assetFile = pkgDir.getAssetFile(new File(pkgDir + "/" + assetName));
             if (assetFile.isFile()) {
                 Asset asset = new Asset(assetFile);
@@ -417,7 +456,10 @@ public class AssetServicesImpl implements AssetServices {
                 return asset;
             }
             else {
-                return null;
+                Asset asset = getGhostAsset(pkgDir, assetName);
+                if (asset == null)
+                    throw new DataAccessException("Missing asset file for path: " + assetPath);
+                return asset;
             }
         }
         catch (Exception ex) {
@@ -430,14 +472,8 @@ public class AssetServicesImpl implements AssetServices {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
             if (versionControl != null) {
                 String assetVcPath = versionControl.getRelativePath(asset.getFile());
-                List<DiffEntry> diffs = versionControl.getDiffs(assetVcPath);
-                if (!diffs.isEmpty()) {
-                    // TODO possible for more than one?
-                    DiffEntry diff = diffs.get(diffs.size() - 1);
-                    asset.setVcsDiffType(diff.getChangeType().toString());
-                    if (!asset.isBinary())
-                        asset.setVcsDiffOutput(versionControl.getDiffOutput(diffs));
-                }
+                GitDiffs diffs = versionControl.getDiffs(assetVcPath);
+                asset.setVcsDiffType(diffs.getDiffType(assetVcPath));
             }
         }
         catch (Exception ex) {
@@ -445,4 +481,102 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
+    private PackageDir getGhostPackage(String pkgName) throws Exception {
+        PackageDir pkgDir = null;
+        VersionControlGit gitVc = (VersionControlGit) getVersionControl();
+        if (gitVc != null) {
+            String pkgXmlPath = assetPath + "/" + pkgName + "/" + PackageDir.PACKAGE_XML_PATH;
+            GitDiffs diffs = gitVc.getDiffs(pkgXmlPath);
+            if (DiffType.MISSING.equals(diffs.getDiffType(pkgXmlPath))) {
+                VersionControl vc = null;
+                String versionFilePath = assetPath + "/" + pkgName + "/" + PackageDir.VERSIONS_PATH;
+                String versionPropsStr = gitVc.getRemoteContentString(gitBranch, versionFilePath);
+                if (versionPropsStr != null) {
+                    Properties versionProps = new Properties();
+                    versionProps.load(new ByteArrayInputStream(versionPropsStr.getBytes()));
+                    vc = new GhostVersionControl(versionProps);
+                }
+                pkgDir = new PackageDir(assetRoot, pkgName, vc);
+                pkgDir.setVcsDiffType(DiffType.MISSING);
+                String pkgXml = ((VersionControlGit)getVersionControl()).getRemoteContentString(gitBranch, pkgXmlPath);
+                PackageDocument pkgDoc = PackageDocument.Factory.parse(pkgXml);
+                pkgDir.setPackageVersion(pkgDoc.getPackage().getVersion());
+            }
+            else {
+                throw new IOException("Cannot locate missing package XML in version control: " + pkgXmlPath);
+            }
+        }
+        return pkgDir;
+    }
+
+    private Asset getGhostAsset(PackageDir pkgDir, String assetName) throws Exception {
+        Asset asset = null;
+        VersionControlGit gitVc = (VersionControlGit) getVersionControl();
+        if (gitVc != null) {
+            String path = assetPath + "/" + pkgDir.getPackageName() + "/" + assetName;
+            GitDiffs diffs = gitVc.getDiffs(path);
+            if (DiffType.MISSING.equals(diffs.getDiffType(path))) {
+                AssetFile assetFile = pkgDir.getAssetFile(new File(path));
+                asset = new Asset(assetFile);
+                asset.setVcsDiffType(DiffType.MISSING);
+                if (pkgDir.getVcsDiffType() != DiffType.MISSING) {
+                    // non-ghost pkg -- set version from remote
+                    String versionFilePath = assetPath + "/" + pkgDir.getPackageName() + "/" + PackageDir.VERSIONS_PATH;
+                    String versionPropsStr = gitVc.getRemoteContentString(gitBranch, versionFilePath);
+                    if (versionPropsStr != null) {
+                        Properties versionProps = new Properties();
+                        versionProps.load(new ByteArrayInputStream(versionPropsStr.getBytes()));
+                        String val = versionProps.getProperty(assetName);
+                        if (val != null)
+                            assetFile.setRevision(VersionControlGit.parseAssetRevision(val.trim()));
+                    }
+                }
+            }
+            else {
+                throw new IOException("Cannot locate missing asset in version control: " + assetPath);
+            }
+        }
+        return asset;
+    }
+
+    private class GhostVersionControl implements VersionControl {
+
+        private Properties assetRevisions;
+
+        GhostVersionControl(Properties assetRevisions) {
+            this.assetRevisions = assetRevisions;
+        }
+
+        public AssetRevision getRevision(File file) throws IOException {
+            if (assetRevisions == null)
+                return null;
+            String val = assetRevisions.getProperty(file.getName());
+            if (val == null)
+                return null;
+            return VersionControlGit.parseAssetRevision(val.trim());
+        }
+
+        public void connect(String repositoryUrl, String user, String password, File localDir) throws IOException {
+        }
+
+        public long getId(File file) throws IOException {
+            return 0;
+        }
+
+        public File getFile(long id) {
+            return null;
+        }
+
+        public void setRevision(File file, AssetRevision rev) throws IOException {
+        }
+
+        public void clearId(File file) {
+        }
+
+        public void deleteRev(File file) throws IOException {
+        }
+
+        public void clear() {
+        }
+    }
 }

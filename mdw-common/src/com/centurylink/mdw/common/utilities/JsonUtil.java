@@ -7,8 +7,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,5 +81,16 @@ public class JsonUtil {
         for (String name : JSONObject.getNames(jsonObj))
             map.put(name, jsonObj.getString(name));
         return map;
+    }
+
+    private static final DateFormat utcDateTime = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+    static {
+        utcDateTime.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+    public static final String formatUtcDateTime(Date date) {
+        return utcDateTime.format(date);
+    }
+    public static final Date parseUtcDateTime(String dt) throws java.text.ParseException {
+        return utcDateTime.parse(dt);
     }
 }

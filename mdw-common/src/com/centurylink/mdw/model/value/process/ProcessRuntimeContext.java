@@ -284,4 +284,14 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
         return ((start = str.indexOf("#{")) != -1) && (start < str.indexOf('}')) ||
                 ((start = str.indexOf("${")) != -1) && (start < str.indexOf('}'));
     }
+
+    /**
+     * Returns a variable value.  Key can be a var name or an expression.
+     */
+    public Object getValue(String key) {
+        if (isExpression(key))
+            return evaluate(key);
+        else
+            return getVariables().get(key);
+    }
 }

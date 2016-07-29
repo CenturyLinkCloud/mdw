@@ -22,7 +22,7 @@ process: # 10907
   variable: # 12545
     name: ServiceResponse
     value: |
-      <xs:MDWStatusMessage xmlns:xs="http://mdw.qwest.com/XMLSchema">
+      <bpm:MDWStatusMessage xmlns:bpm="http://mdw.centurylink.com/bpm">
         <StatusCode>0</StatusCode>
-        <xs:StatusMessage>SUCCESS</xs:StatusMessage>
-      </xs:MDWStatusMessage>
+        <bpm:StatusMessage>SUCCESS</bpm:StatusMessage>
+      </bpm:MDWStatusMessage>

@@ -412,7 +412,24 @@
       <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus204.test.intranet:10009</Url>
       <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp002tdb.test.intranet:1541:dsp002t" user="DSPADMIN" password="x7D5pT3sdMre4LObHhsHIqorDxXw1x9x" />
     </Environment>
-    
+    <Environment name="Fuse E2E Route" owner="Doug Laures">
+      <ManagedServer host="vlodctfus202.test.intranet" port="8018" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus203.test.intranet" port="8018" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus202.test.intranet:10018</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001tdb.test.intranet:1532:dsp001t" user="DSPADMIN" password="x7D5pT3sdMoIq/OSsmXp8KorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse E2E WF" owner="Doug Laures">
+      <ManagedServer host="vlodctfus204.test.intranet" port="8017" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus205.test.intranet" port="8017" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus204.test.intranet:10017</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001tdb.test.intranet:1532:dsp001t" user="DSPADMIN" password="x7D5pT3sdMoIq/OSsmXp8KorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse E2E Services" owner="Doug Laures">
+      <ManagedServer host="vlodctfus204.test.intranet" port="8016" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus205.test.intranet" port="8016" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus204.test.intranet:10016</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001tdb.test.intranet:1532:dsp001t" user="DSPADMIN" password="x7D5pT3sdMoIq/OSsmXp8KorDxXw1x9x" />
+    </Environment>
     <Environment name="Fuse Prod Route" owner="Doug Laures">
       <ManagedServer host="vlodcpfus503.foss.corp.intranet" port="8006" webRoot="MDWHub" />
       <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001pdb.corp.intranet:1527:dsp001p" user="DSPADMIN" password="lRgzf1t9jnkIq/OSsmXp8KorDxXw1x9x"/>
@@ -1064,13 +1081,13 @@
     <Repository provider="Git" url="https://8.22.8.164/mdw/mdwdemo.git" localPath="workflow/assets" user="mdw" password="6U3PywkxP7WNS723BlBuGKorDxXw1x9x" />
     <Environment name="EWS Dev 1" owner="Manoj Agrawal">
       <ManagedServer host="ne1itcdrhews10.dev.intranet" port="12081" webRoot="mdw" />
-      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB15.ne1.savvis.net:1550:mdwc" user="mdwt" password="A3ReaczeUiVIhOzYuisxuqorDxXw1x9x" />
+      <EnvironmentDb jdbcUrl="jdbc:mysql://10.180.11.159:3306/mdw" user="mdwapp" password="dpuWZEGpJ+Vq1jMGpCprtqorDxXw1x9x" />
     </Environment>
     <Environment name="Fuse Dev 1" owner="Manoj Agrawal">
       <ManagedServer host="ne1itcdrhfuse16.dev.intranet" port="8001" webRoot="MDWHub" />
       <ManagedServer host="ne1itcdrhfuse16.dev.intranet" port="8003" webRoot="MDWHub" />
       <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itcdrhfuse16.dev.intranet:10001</Url>
-      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB15.ne1.savvis.net:1550:mdwc" user="mdwf" password="A3ReaczeUiVIhOzYuisxuqorDxXw1x9x" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB15.ne1.savvis.net:1550:mdwc" user="mdwf" password="A3ReaczeUiXNtsDmmjDPPKorDxXw1x9x" />
     </Environment>
   </WorkflowApp>
   
@@ -1086,7 +1103,7 @@
     <Environment name="Fuse Dev 2" owner="Manoj Agrawal">
       <ManagedServer host="ne1itcdrhfuse16.dev.intranet" port="8002" webRoot="MDWHub" />
       <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itcdrhfuse16.ne1.savvis.net:10002</Url>
-      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc255.dev.qintra.com:1521:dspdev1" user="mdw55" password="scM2JzcQIVKqKw8V8NcfcaorDxXw1x9x" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB15.ne1.savvis.net:1550:mdwc" user="mdwf" password="A3ReaczeUiXNtsDmmjDPPKorDxXw1x9x" />
     </Environment>
   </WorkflowApp>
    
@@ -1149,12 +1166,6 @@
       <Url id="userAccessBaseUrl" label="User Access">http://mobsmxtest.test.intranet:20001</Url>
       <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob002tdb.dev.qintra.com:1544:mob002t" user="mob_mdw_user" password="3Vrf6rihnzqqKw8V8NcfcaorDxXw1x9x" />   
     </Environment>
-    <Environment name="Test 4" owner="Vineeta Menon">
-      <ManagedServer host="vlodctfus202.test.intranet" port="8014" />
-      <ManagedServer host="vlodctfus203.test.intranet" port="8014" />
-      <Url id="userAccessBaseUrl" label="User Access">http://mobfuse-test4.test.intranet:30238</Url>
-      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob004tdb.dev.qintra.com:1558:mob004t" user="mob_mdw_user" password="assUP7yWo+aqKw8V8NcfcaorDxXw1x9x" />   
-    </Environment>
     <Environment name="E2E" owner="Vineeta Menon">
       <ManagedServer host="lxomavnat004.dev.qintra.com" port="10201" />
       <ManagedServer host="lxomavnat005.dev.qintra.com" port="10201" />
@@ -1178,7 +1189,7 @@
   </WorkflowApp>  
 
   <WorkflowApp
-    name="MOB Cloud"
+    name="MOB Fuse"
     malAppName="Master Order Broker"
     ecomAcronym="mob"
     webContextRoot="MDWWeb"
@@ -1196,6 +1207,36 @@
       <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itcdrhfuse32.dev.intranet:10004</Url>
       <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB43.ne1.savvis.net:1528:mob002d" user="mob_mdw_user" password="O7DYy+tvI1OqKw8V8NcfcaorDxXw1x9x" />   
     </Environment>
+    <Environment name="Test 1" owner="Vineeta Menon">
+      <ManagedServer host="vlodctfus200.test.intranet" port="8012" />
+      <ManagedServer host="vlodctfus201.test.intranet" port="8012" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob001tdb.dev.qintra.com:1540:mob001t" user="mob_mdw_user" password="jGaLca1LbmmqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 2" owner="Vineeta Menon">
+      <ManagedServer host="vlodctfus200.test.intranet" port="8008" />
+      <ManagedServer host="vlodctfus201.test.intranet" port="8008" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob002tdb.dev.qintra.com:1544:mob002t" user="mob_mdw_user" password="3Vrf6rihnzqqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 4" owner="Vineeta Menon">
+      <ManagedServer host="vlodctfus202.test.intranet" port="8014" />
+      <ManagedServer host="vlodctfus203.test.intranet" port="8014" />
+      <Url id="userAccessBaseUrl" label="User Access">http://mobfuse-test4.test.intranet:30238</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob004tdb.dev.qintra.com:1558:mob004t" user="mob_mdw_user" password="assUP7yWo+aqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="E2E" owner="Vineeta Menon">
+      <ManagedServer host="vlodctfus204.test.intranet" port="8015" />
+      <ManagedServer host="vlodctfus205.test.intranet" port="8015" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mobe2edb.dev.qintra.com:1586:mobe2e" user="mob_mdw_user" password="rGFN82/Ki+EYcziPoLRrVaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Prod" owner="Vineeta Menon">
+      <ManagedServer host="vlodcpfus501.corp.intranet" port="8007" />
+      <ManagedServer host="vlodcpfus502.corp.intranet" port="8007" />
+      <ManagedServer host="vlodcpfus503.corp.intranet" port="8007" />
+      <ManagedServer host="vlodcpfus504.corp.intranet" port="8007" />
+      <ManagedServer host="vlodcpfus505.corp.intranet" port="8007" />
+      <ManagedServer host="vlodcpfus506.corp.intranet" port="8007" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob001pdb.qintra.com:1541:mob001p" user="mob_mdw_user" password="92Q0P7wK2lSqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>    
   </WorkflowApp>  
   
   <WorkflowApp
@@ -1702,6 +1743,11 @@
     <Environment name="Dev 1" owner="Shridhar Cherukumilli">
       <ManagedServer host="ne1itcdrhfuse21.ne1.savvis.net" port="8001" webRoot="MDWHub" />
       <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB16.ne1.savvis.net:1530:wfmtdev1" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="Dev 2" owner="Decai Zhu">
+      <ManagedServer host="ne1itcdrhfuse21.ne1.savvis.net" port="8002" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB16.ne1.savvis.net:1535:wfmtdev2" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
     </Environment>
     <Environment
       name="Test 1" owner="Decai Zhu">

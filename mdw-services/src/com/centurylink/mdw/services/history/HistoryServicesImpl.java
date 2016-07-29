@@ -6,12 +6,12 @@ package com.centurylink.mdw.services.history;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.utilities.TransactionWrapper;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.value.history.HistoryList;
 import com.centurylink.mdw.model.value.user.UserActionVO;
 import com.centurylink.mdw.services.HistoryServices;
@@ -43,7 +43,7 @@ public class HistoryServicesImpl implements HistoryServices {
         }
             Collections.sort(historyVOList);
             historyList = new HistoryList(HistoryList.ALL_HISTORY, historyVOList);
-            historyList.setRetrieveDate(new Date()); // TODO db date
+            historyList.setRetrieveDate(DatabaseAccess.getDbDate());
 
         return historyList;
     }

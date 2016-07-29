@@ -8,7 +8,7 @@ public abstract class Input
   private int _sequenceId = -1;
   public int getSequenceId() { return _sequenceId; }
   public void setSequenceId(int i) { this._sequenceId = i; }
-  
+
   private String _attribute;
   public String getAttribute() { return _attribute; }
   public void setAttribute(String s) { _attribute = s; }
@@ -36,15 +36,15 @@ public abstract class Input
   private boolean _expandable;
   public boolean isExpandable() { return _expandable; }
   public void setExpandable(boolean b) { _expandable = b; }
-  
+
   private boolean _hidden;
   public boolean isHidden() { return _hidden; }
   public void setHidden(boolean b) { _hidden = b; }
-  
+
   private String _category;
   public String getCategory() { return _category; }
   public void setCategory(String s) { _category = s; }
-  
+
   private int _colspan;
   public int getColspan() { return _colspan; }
   public void setColspan(int i) { _colspan = i; }
@@ -65,16 +65,21 @@ public abstract class Input
     return this instanceof SelectInput;
   }
 
+  public boolean isInputTypeMultiSelect()
+  {
+    return this instanceof MultiSelectInput;
+  }
+
   public boolean isInputTypeDate()
   {
     return this instanceof DateInput;
   }
-  
+
   public boolean isInputTypeDateRange()
   {
     return this instanceof DateRangeInput;
   }
-  
+
   public boolean isInputTypeDigit()
   {
     return this instanceof DigitInput;
@@ -84,11 +89,12 @@ public abstract class Input
   {
     return this instanceof TnInput;
   }
-  
+
   public boolean isValueEmpty()
   {
     return getValue() == null
       || getValue().toString().trim().length() == 0
-      || isInputTypeSelect() && getValue().equals("0");
+      || (isInputTypeSelect() && getValue().equals("0"))
+      || (isInputTypeMultiSelect() && ((String[])getValue()).length == 1 && ((String[])getValue())[0].equals("0"));
   }
 }

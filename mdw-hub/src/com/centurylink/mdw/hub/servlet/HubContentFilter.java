@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.common.ApplicationContext;
 
@@ -34,8 +35,15 @@ public class HubContentFilter implements Filter {
                 String hubUrl = ApplicationContext.getMdwHubUrl();
                 if (!hubUrl.endsWith("/"))
                     hubUrl += "/";
-                if (hubUrl.equals(httpRequest.getHeader("Referer")))
-                    path = "/index.html";  // allow welcome page override
+                if (hubUrl.equals(httpRequest.getHeader("Referer"))) {
+                    if ("mdw-admin".equals(ApplicationContext.getTasksUi())) {
+                        ((HttpServletResponse)response).sendRedirect(ApplicationContext.getAdminUrl());
+                        return;
+                    }
+                    else {
+                        path = "/index.html";  // allow welcome page override
+                    }
+                }
             }
             if (new File(hubOverrideRoot + path).isFile()) // forward to override servlet
                 request.getRequestDispatcher("/hubContent" + path).forward(request, response);

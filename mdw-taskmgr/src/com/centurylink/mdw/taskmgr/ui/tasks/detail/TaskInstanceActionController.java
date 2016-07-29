@@ -19,6 +19,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 
+import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.exception.ServiceLocatorException;
 import com.centurylink.mdw.common.translator.VariableTranslator;
@@ -27,14 +28,19 @@ import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
+import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.value.task.TaskVO;
+import com.centurylink.mdw.model.value.variable.DocumentReference;
 import com.centurylink.mdw.model.value.variable.DocumentVO;
 import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
 import com.centurylink.mdw.model.value.variable.VariableInstanceVO;
+import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.TaskException;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
+import com.centurylink.mdw.services.task.AutoFormTaskValuesProvider;
 import com.centurylink.mdw.services.task.TaskManagerAccess;
 import com.centurylink.mdw.taskmgr.ui.InstanceActionController;
 import com.centurylink.mdw.taskmgr.ui.detail.DetailItem;
@@ -96,13 +102,59 @@ public class TaskInstanceActionController extends InstanceActionController imple
           DocumentVO docvo = taskMgr.getTaskInstanceData(ti);
           formdatadoc = new FormDataDocument();
           formdatadoc.load(docvo.getContent());
+          Map<String,String> expressionValues = new HashMap<String,String>();
           List<InstanceDataItem> instanceDataList = taskDetail.getInstanceDataItems();
           for (int i = 0; i < instanceDataList.size(); i++)
           {
             TaskInstanceDataItem tidi = (TaskInstanceDataItem) instanceDataList.get(i);
             if (tidi.isValueEditable())
             {
-              formdatadoc.setValue(tidi.getTaskInstanceData().getName(), tidi.getTaskInstanceData().getRealStringValue());
+              if (!tidi.getTaskInstanceData().getName().startsWith("#{") && !tidi.getTaskInstanceData().getName().startsWith("${"))
+                formdatadoc.setValue(tidi.getTaskInstanceData().getName(), tidi.getTaskInstanceData().getRealStringValue());
+              else {
+                expressionValues.put(tidi.getTaskInstanceData().getName(), tidi.getTaskInstanceData().getStringValue());
+                // TODO - Do we need to update the formDataDoc here for expressions?
+              }
+            }
+          }
+          if (!expressionValues.isEmpty()) {
+            EventManager eventMgr = RemoteLocator.getEventManager();
+            TaskRuntimeContext runtimeContext = taskMgr.getTaskRuntimeContext(ti);
+            new AutoFormTaskValuesProvider().apply(runtimeContext, expressionValues);
+            Map<String,Object> newValues = new HashMap<String,Object>();
+            for (String name : expressionValues.keySet()) {
+                if (runtimeContext.isExpression(name)) {
+                    String rootVar;
+                    if (name.indexOf('.') > 0)
+                      rootVar = name.substring(2, name.indexOf('.'));
+                    else
+                      rootVar = name.substring(2, name.indexOf('}'));
+                    newValues.put(rootVar, runtimeContext.evaluate("#{" + rootVar + "}"));
+                }
+                else {
+                    newValues.put(name, runtimeContext.getVariables().get(name));
+                }
+            }
+            for (String name : newValues.keySet()) {
+                Object newValue = newValues.get(name);
+                VariableVO var = runtimeContext.getProcess().getVariable(name);
+                String type = var.getVariableType();
+                if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), type)) {
+                    String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), type, newValue);
+                    VariableInstanceInfo varInst = runtimeContext.getProcessInstance().getVariable(name);
+                    if (varInst == null) {
+                        Long procInstId = runtimeContext.getProcessInstanceId();
+                        Long docId = eventMgr.createDocument(type, procInstId, OwnerType.PROCESS_INSTANCE, procInstId, null, null, stringValue);
+                        eventMgr.setVariableInstance(procInstId, name, new DocumentReference(docId, null));
+                    }
+                    else {
+                        DocumentReference docRef = (DocumentReference) varInst.getData();
+                        eventMgr.updateDocumentContent(docRef.getDocumentId(), stringValue, type);
+                    }
+                }
+                else {
+                    eventMgr.setVariableInstance(runtimeContext.getProcessInstanceId(), name, newValue);
+                }
             }
           }
         }
@@ -137,14 +189,9 @@ public class TaskInstanceActionController extends InstanceActionController imple
       for (int i = 0; i < instanceDataList.size(); i++)
       {
         TaskInstanceDataItem tidi = (TaskInstanceDataItem) instanceDataList.get(i);
-        if (tidi.isValueEditable())
+        if (tidi.isValueEditable() && !tidi.getTaskInstanceData().getName().startsWith("#{") && !tidi.getTaskInstanceData().getName().startsWith("${"))
         {
-          Object newValue = tidi.getTaskInstanceData().getData();
-          if (tidi.isDocument())
-          {
-            // reset the value to docref instead of document object
-            tidi.getTaskInstanceData().setData(tidi.getDocumentReference());
-          }
+          Object newValue = tidi.isDocument() ? tidi.getDataValue() : tidi.getTaskInstanceData().getData();
           createOrUpdateTaskInstanceData(ti.getTaskInstanceId(), tidi.getTaskInstanceData(), newValue);
         }
       }
@@ -192,7 +239,7 @@ public class TaskInstanceActionController extends InstanceActionController imple
         }
       }
       saveInstanceVariables(taskDetail.getProcessInstanceId());
-      saveIndexValues(taskDetail.getFullTaskInstance(), taskDetail.getProcessInstanceId(), formdatadoc);
+//      saveIndexValues(taskDetail.getFullTaskInstance(), taskDetail.getProcessInstanceId(), formdatadoc);
       if(!changesMap.isEmpty())
         FacesVariableUtil.addMessage("Task Details saved");
     }

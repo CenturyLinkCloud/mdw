@@ -393,6 +393,24 @@ public class UserVO implements Serializable, Comparable<UserVO>, Jsonable {
     public String getLast() { return last; }
     public void setLast(String last) { this.last = last; }
 
+    /**
+     * Set first and last name based on full name.
+     */
+    public void parseName() {
+        if (getName() != null) {
+            String name = getName().trim();
+            int firstSp = name.indexOf(' ');
+            if (firstSp > 0) {
+                setFirst(name.substring(0, firstSp));
+                int lastSp = name.lastIndexOf(' ');
+                setLast(name.substring(lastSp + 1));
+            }
+            else {
+                setFirst(name);
+            }
+        }
+    }
+
     // compatibility
     /**
      * @deprecated use {@link #getName()}

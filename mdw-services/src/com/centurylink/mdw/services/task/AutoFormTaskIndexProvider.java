@@ -33,7 +33,11 @@ public class AutoFormTaskIndexProvider implements TaskIndexProvider {
                 if (!displayOption.equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED) && !StringHelper.isEmpty(indexKey)) {
                     if (indexes == null)
                         indexes = new HashMap<String,String>();
-                    Object value = runtimeContext.getVariables().get(varName);
+                    Object value = null;
+                    if (runtimeContext.isExpression(varName))
+                        value = runtimeContext.evaluateToString(varName);
+                    else
+                        value = runtimeContext.getVariables().get(varName);
                     if (value != null)
                         indexes.put(indexKey, value.toString());
                 }

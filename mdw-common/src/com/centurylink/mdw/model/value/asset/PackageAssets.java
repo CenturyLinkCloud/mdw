@@ -31,7 +31,8 @@ public class PackageAssets implements Jsonable {
         pkg.put("id", packageDir.getId());
         pkg.put("name", packageDir.getPackageName());
         pkg.put("version", packageDir.getPackageVersion());
-        pkg.put("hasVcsDiffs", packageDir.isHasVcsDiffs());
+        if (packageDir.getVcsDiffType() != null)
+            pkg.put("vcsDiff", packageDir.getVcsDiffType().toString());
         JSONArray assetArray = new JSONArray();
         if (assets != null) {
             for (Asset asset : assets)

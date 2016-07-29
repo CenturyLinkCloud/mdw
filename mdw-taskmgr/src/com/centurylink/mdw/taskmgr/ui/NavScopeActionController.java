@@ -181,6 +181,11 @@ public class NavScopeActionController
     return ApplicationContext.getAdminUrl();
   }
 
+  public String getTasksUi()
+  {
+    return ApplicationContext.getTasksUi();
+  }
+
   /**
    * Used for old TaskManager admin tab
    */

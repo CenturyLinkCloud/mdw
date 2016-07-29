@@ -18,14 +18,10 @@ import java.util.Map;
 
 import javax.ws.rs.Path;
 
-import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Exportable;
 import com.centurylink.mdw.common.service.JsonArray;
@@ -36,14 +32,11 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.common.task.TaskList;
 import com.centurylink.mdw.common.utilities.JsonUtil;
-import com.centurylink.mdw.common.utilities.ResourceFormatter.Format;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.data.event.EventLog;
 import com.centurylink.mdw.model.data.task.TaskAction;
-import com.centurylink.mdw.model.data.task.TaskStatus;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.value.task.TaskActionVO;
 import com.centurylink.mdw.model.value.task.TaskCount;
@@ -55,26 +48,24 @@ import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
 import com.centurylink.mdw.model.value.user.UserGroupVO;
 import com.centurylink.mdw.model.value.user.UserRoleVO;
 import com.centurylink.mdw.model.value.user.UserVO;
-import com.centurylink.mdw.observer.task.RemoteNotifier;
-import com.centurylink.mdw.observer.task.TaskNotifier;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskException;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.UserServices;
 import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
+import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
 import com.centurylink.mdw.services.rest.JsonRestService;
-import com.centurylink.mdw.services.task.TaskActionValidator;
+import com.centurylink.mdw.services.task.AllowableTaskActions;
 import com.centurylink.mdw.services.task.TaskManagerAccess;
-import com.centurylink.mdw.services.task.TaskValidationException;
-import com.centurylink.mdw.services.task.factory.TaskInstanceNotifierFactory;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * TODO: Clean up references to TaskManager and instead go through TaskServices.
+ */
 @Path("/Tasks")
 @Api("Task instances")
 public class Tasks extends JsonRestService implements Exportable {
@@ -105,7 +96,6 @@ public class Tasks extends JsonRestService implements Exportable {
             }
         }
         return groups;
-
     }
 
     @Override
@@ -113,31 +103,61 @@ public class Tasks extends JsonRestService implements Exportable {
         return Entity.Task;
     }
 
-
-
     /**
-     * Retrieve a task or list of tasks.
+     * Retrieve a task or list of tasks, or subData for a task instance.
      */
     @Override
     @Path("/{taskInstanceId}/{subData}")
     @ApiOperation(value="Retrieve a task instance or a page of task instances",
         notes="If taskInstanceId is not present, returns a page of task instances. " +
           "If subData is not present, returns task summary info. " +
-          "Options for subData: 'values', 'indexes', 'history', 'actions', 'subtasks', 'topThroughput'")
+          "Options for subData: 'values', 'indexes', 'history', 'actions', 'subtasks', 'topThroughput'",
+          response=Value.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         TaskServices taskServices = ServiceLocator.getTaskServices();
         try {
+            Query query = getQuery(path, headers);
+            String userCuid = headers.get(Listener.AUTHENTICATED_USER_HEADER);
             String segOne = getSegment(path, 1);
             if (segOne == null) {
                 // task list query
-                String userId = headers.get(Listener.AUTHENTICATED_USER_HEADER);
-                TaskList tasks = taskServices.getWorkgroupTasks(userId, getQuery(path, headers));
-                tasks.setName("tasks");
+                TaskList tasks = taskServices.getWorkgroupTasks(userCuid, query);
                 return tasks.getJson();
             }
             else {
-                if (segOne.equals("topThroughput")) {
-                    Query query = getQuery(path, headers);
+                if (segOne.equals("templates")) {
+                    List<TaskVO> taskVOs = taskServices.getTaskTemplates(query);
+                    JSONArray jsonTasks = new JSONArray();
+                    for (TaskVO taskVO : taskVOs) {
+                        JSONObject jsonTask = new JSONObject();
+                        jsonTask.put("packageName", taskVO.getPackageName());
+                        jsonTask.put("taskId", taskVO.getId());
+                        jsonTask.put("name", taskVO.getName());
+                        jsonTask.put("version", taskVO.getVersionString());
+                        jsonTask.put("logicalId", taskVO.getLogicalId());
+                        jsonTasks.put(jsonTask);
+                    }
+                    return new JsonArray(jsonTasks).getJson();
+                }
+                else if (segOne.equals("bulkActions")) {
+                    boolean myTasks = query.getBooleanFilter("myTasks");
+                    List<TaskAction> taskActions;
+                    if (myTasks)
+                        taskActions = AllowableTaskActions.getMyTasksBulkActions();
+                    else
+                        taskActions = AllowableTaskActions.getWorkgroupTasksBulkActions();
+                    JSONArray jsonTaskActions = new JSONArray();
+                    for (TaskAction taskAction : taskActions) {
+                        jsonTaskActions.put(taskAction.getJson());
+                    }
+                    return new JsonArray(jsonTaskActions).getJson();
+                }
+                else if (segOne.equals("assignees")) {
+                    // return potential assignees for all this user's workgroups
+                    UserVO user = UserGroupCache.getUser(userCuid);
+                    return ServiceLocator.getUserServices().findWorkgroupUsers(user.getGroupNames(), query.getFind()).getJson();
+                }
+                else if (segOne.equals("topThroughput")) {
                     // dashboard top throughput query
                     String breakdown = getSegment(path, 2);
                     List<TaskCount> list = taskServices.getTopThroughputTasks(breakdown, query);
@@ -165,7 +185,6 @@ public class Tasks extends JsonRestService implements Exportable {
                     return new JsonArray(taskArr).getJson();
                 }
                 else if (segOne.equals("instanceCounts")) {
-                    Query query = getQuery(path, headers);
                     Map<Date,List<TaskCount>> dateMap = taskServices.getTaskInstanceBreakdown(query);
                     boolean isTotals = query.getFilters().get("taskIds") == null
                             && query.getFilters().get("workgroups") == null
@@ -218,13 +237,14 @@ public class Tasks extends JsonRestService implements Exportable {
                             return json;
                         }
                         else if (extra.equals("actions")) {
-                            //TODO Fill this in with real valid actions
-                            JSONObject json = new JSONObject();
-                            List<String> validActions = new ArrayList<String>();
-                            validActions.add("Assign");
-                            validActions.add("Claim");
-                            json.put("validActions", validActions);
-                            return json;
+                            // actions for an individual task based on its status and custom outcomes
+                            TaskRuntimeContext runtimeContext = taskServices.getRuntimeContext(instanceId);
+                            List<TaskAction> taskActions = AllowableTaskActions.getTaskDetailActions(userCuid, runtimeContext);
+                            JSONArray jsonTaskActions = new JSONArray();
+                            for (TaskAction taskAction : taskActions) {
+                                jsonTaskActions.put(taskAction.getJson());
+                            }
+                            return new JsonArray(jsonTaskActions).getJson();
                         }
                         else if (extra.equals("subtasks")) {
                             TaskList subtasks = taskServices.getSubtasks(instanceId);
@@ -249,55 +269,75 @@ public class Tasks extends JsonRestService implements Exportable {
     }
 
     /**
-     * For creating a new task.
+     * For creating a new task or performing task action(s).
+     * When performing actions: old way = path='Tasks/{instanceId}/{action}', new way = path='Tasks/{action}'.
+     * Where {action} is an actual valid task action like 'Claim'.
      */
     @Override
-    @Path("/{taskInstanceId}/{action}")
-    @ApiOperation(value="Create a task instance or perform an action on an existing instance",
-        notes="If {action} is present, then the body contains a TaskAction; otherwise it contains a Task.", response=StatusMessage.class)
+    @Path("/{action}")
+    @ApiOperation(value="Create a task instance or perform an action on existing instance(s)",
+        notes="If {action} is 'Create', then the body contains a task template logical Id; otherwise it contains a TaskAction to be performed.",
+        response=StatusMessage.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="Task", paramType="body", dataType="com.centurylink.mdw.model.value.task.TaskInstanceVO"),
         @ApiImplicitParam(name="TaskAction", paramType="body", dataType="com.centurylink.mdw.model.value.task.TaskActionVO")})
     public JSONObject post(String path, JSONObject content, Map<String, String> headers)
             throws ServiceException, JSONException {
-        String instanceId = getSegment(path, 1);
+        String segOne = getSegment(path, 1);
         try {
-            if (instanceId == null) {
-                // /Tasks
+            TaskServices taskServices = ServiceLocator.getTaskServices();
+            if (segOne == null || segOne.equalsIgnoreCase("create")) {
                 // Create a new task
-                TaskInstanceVO taskInstanceIn = new TaskInstanceVO(content);
+                if (!content.has(LOGICAL_ID))
+                    throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing content field: " + LOGICAL_ID);
                 String taskLogicalId = content.getString(LOGICAL_ID);
                 if (content.has("masterTaskInstanceId")) {
                     // subtask instance
                     Long masterTaskInstId = content.getLong("masterTaskInstanceId");
-                    TaskServices taskServices = ServiceLocator.getTaskServices();
                     taskServices.createSubTask(taskLogicalId, masterTaskInstId);
                     return null;
                 }
                 else {
                     // top-level task instance
-                    String ownerAppName = content.getString("appName");
-                    Long procInstId = content.getLong(TaskAttributeConstant.PROCESS_INST_ID);
-                    return createTaskInstance(ownerAppName, taskLogicalId, procInstId, taskInstanceIn, Format.json);
+                    Long taskInstanceId = taskServices.createTask(headers.get(Listener.AUTHENTICATED_USER_HEADER), taskLogicalId);
+                    JSONObject json = new JSONObject();
+                    json.put("taskInstanceId", taskInstanceId);
+                    return json;
                 }
             }
             else {
-                // e.g Tasks/12/Claim
-                String action = getSegment(path, 2);
-
-                // Perform task action
-                // Tasks/id/action
-                if (StringUtils.isEmpty(action)) {
-                    throw new ServiceException(ServiceException.BAD_REQUEST,
-                            "Missing TaskAction on URL request, should be e.g /TaskActions/id/Action , where 'Action' is one of "
-                                    + com.centurylink.mdw.model.data.task.TaskAction.STANDARD_ACTIONS);
+                try {
+                    // for compatibility, handle taskInstanceId as segOne and actual action as segTwo
+                    long taskInstanceId = Long.parseLong(segOne);
+                    String segTwo = getSegment(path, 2);
+                    if (segTwo == null)
+                        throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing {action} on request path, should be e.g /Tasks/12345/Claim");
+                    try {
+                        TaskActionVO taskAction = new TaskActionVO(content, segTwo);
+                        if (!segTwo.equals(taskAction.getAction().toString()))
+                            throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (action): '" + taskAction.getAction() + "' is not: '" + segTwo + "'");
+                        if (taskAction.getTaskInstanceId() == null || taskInstanceId != taskAction.getTaskInstanceId())
+                            throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (instanceId): " + taskAction.getTaskInstanceId() + " is not: " + taskInstanceId);
+                        taskServices.performTaskAction(taskAction);
+                        return null;
+                    }
+                    catch (IllegalArgumentException ex2) {
+                        throw new ServiceException(HTTP_400_BAD_REQUEST, "Invalid task action: '" + segTwo + "'", ex2);
+                    }
                 }
-                // Simple validation
-                validateTaskInstanceId(path, instanceId, content.getLong("taskInstanceId"));
-
-                TaskActionVO taskAction = new TaskActionVO(content, action);
-
-                return performActionOnTask(taskAction);
+                catch (NumberFormatException ex) {
+                    // segOne must be the action
+                    try {
+                        TaskActionVO taskAction = new TaskActionVO(content, segOne);
+                        if (!segOne.equals(taskAction.getAction().toString()))
+                            throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (action): '" + taskAction.getAction() + "' is not: '" + segOne + "'");
+                        taskServices.performTaskAction(taskAction);
+                        return null;
+                    }
+                    catch (IllegalArgumentException ex2) {
+                        throw new ServiceException(HTTP_400_BAD_REQUEST, "Invalid task action: '" + segOne + "'", ex2);
+                    }
+                }
             }
         }
         catch (JSONException e) {
@@ -335,16 +375,18 @@ public class Tasks extends JsonRestService implements Exportable {
             throws ServiceException, JSONException {
         String id = getSegment(path, 1);
         if (id == null)
-            throw new ServiceException("Missing path segment: {taskInstanceId}");
-        Long instanceId = Long.parseLong(id);
-        String extra = getSegment(path, 2);
+            throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing path segment: {taskInstanceId}");
         try {
+            Long instanceId = Long.parseLong(id);
+            String extra = getSegment(path, 2);
             if (extra == null) {
-                String taskInstanceId = path;
                 // Update a task
                 TaskInstanceVO taskInstJson = new TaskInstanceVO(content);
-                // Small validation
-                validateTaskInstanceId(path, taskInstanceId, content.getLong("id"));
+                if (!content.has("id"))
+                    throw new ServiceException(HTTP_400_BAD_REQUEST, "Content is missing required field: id");
+                long contentInstanceId = content.getLong("id");
+                if (instanceId != contentInstanceId)
+                    throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (instanceId): " + contentInstanceId + " is not: " + instanceId);
 
                 String user = content.getString("user");
                 boolean clearDueDate = content.has("clearDueDate") ? content.getBoolean("clearDueDate") : false;
@@ -356,10 +398,10 @@ public class Tasks extends JsonRestService implements Exportable {
                 taskServices.applyValues(instanceId, values);
             }
             else if (extra.equals("indexes")) {
-                String taskInstanceId = getSegment(path, 2);
                 // Update task indexes
                 TaskIndexes taskIndexes = new TaskIndexes(content);
-                validateTaskInstanceId(path, taskInstanceId, content.getLong("taskInstanceId"));
+                if (instanceId != taskIndexes.getTaskInstanceId())
+                    throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (instanceId): " + taskIndexes.getTaskInstanceId() + " is not: " + instanceId);
                 TaskManager taskMgr = ServiceLocator.getTaskManager();
                 taskMgr.updateTaskIndices(taskIndexes.getTaskInstanceId(), taskIndexes.getIndexes());
 
@@ -378,6 +420,9 @@ public class Tasks extends JsonRestService implements Exportable {
                 return null;
             }
         }
+        catch (NumberFormatException ex) {
+            throw new ServiceException(HTTP_400_BAD_REQUEST, "Invalid task instance id: " + id);
+        }
         catch (ServiceException ex) {
             throw ex;
         }
@@ -387,134 +432,6 @@ public class Tasks extends JsonRestService implements Exportable {
         return null;
     }
 
-    // Utility functions are below
-
-    /**
-     * @param path
-     * @param taskInstanceId
-     * @param contentTaskInstanceId
-     * @throws ServiceException
-     */
-    private void validateTaskInstanceId(String path, String taskInstanceId,
-            long contentTaskInstanceId) throws ServiceException {
-        if (!(Long.valueOf(taskInstanceId).longValue() == contentTaskInstanceId)) {
-            throw new ServiceException(
-                    "Url " + path + " contains a different taskInstanceId from the content "
-                            + contentTaskInstanceId);
-        }
-
-    }
-
-    private JSONObject createTaskInstance(String ownerAppName, String logicalId, Long procInstId,
-            TaskInstanceVO taskInstanceIn, Format format) throws ServiceException {
-        TaskInstanceVO taskInstance = null;
-        try {
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            TaskVO task = TaskTemplateCache.getTaskTemplate(ownerAppName, logicalId);
-            if (task == null)
-                throw new ServiceException("Task template '"
-                        + (ownerAppName == null ? logicalId : ownerAppName + ":" + logicalId)
-                        + "' is not defined");
-
-            int dueInSeconds = taskInstanceIn.getDueDate() != null
-                    ? (int) ((taskInstanceIn.getDueDate().getTime()
-                            - DatabaseAccess.getCurrentTime()) / 1000)
-                    : 0;
-            Long proccessInstanceId = procInstId == null ? new Long(0L) : procInstId;
-            // TODO : collect indices
-            if (ownerAppName == null) {
-                taskInstance = taskMgr.createTaskInstance(task.getTaskId(), proccessInstanceId,
-                        taskInstanceIn.getSecondaryOwnerType(),
-                        taskInstanceIn.getSecondaryOwnerId(), taskInstanceIn.getComments(),
-                        ownerAppName, null, task.getTaskName(), dueInSeconds, null,
-                        taskInstanceIn.getTaskClaimUserCuid(), taskInstanceIn.getOrderId());
-                TaskRuntimeContext taskRuntime = null;
-                List<TaskNotifier> taskNotifiers = TaskInstanceNotifierFactory.getInstance()
-                        .getNotifiers(task.getTaskId(),
-                                OwnerType.PROCESS_INSTANCE.equals(taskInstance.getOwnerType())
-                                        ? proccessInstanceId : null,
-                                TaskStatus.STATUSNAME_OPEN);
-                for (TaskNotifier notifier : taskNotifiers) {
-                    if (notifier instanceof RemoteNotifier) {
-                        if (taskRuntime == null)
-                            taskRuntime = taskMgr.getTaskRuntimeContext(taskInstance);
-                        notifier.sendNotice(taskRuntime, TaskAction.CREATE,
-                                TaskStatus.STATUSNAME_OPEN);
-                    }
-                }
-            }
-            else {
-                int detailDueInSeconds = dueInSeconds;
-                int summaryDueInSecs = task.getSlaSeconds();
-                // json request sets associated taskInstanceId as taskInstanceId
-                Long associatedTaskInstId = taskInstanceIn.getTaskInstanceId() == null
-                        ? taskInstanceIn.getAssociatedTaskInstanceId()
-                        : taskInstanceIn.getTaskInstanceId();
-                taskInstance = taskMgr.createTaskInstance(task.getTaskId(), proccessInstanceId,
-                        taskInstanceIn.getSecondaryOwnerType(),
-                        taskInstanceIn.getSecondaryOwnerId(), taskInstanceIn.getComments(),
-                        ownerAppName, associatedTaskInstId, task.getTaskName(),
-                        summaryDueInSecs > 0 ? summaryDueInSecs : detailDueInSeconds, null,
-                        taskInstanceIn.getTaskClaimUserCuid(), taskInstanceIn.getOrderId());
-
-                if (summaryDueInSecs != 0 && summaryDueInSecs != detailDueInSeconds) {
-                    Date summaryDueDate = taskInstance.getDueDate();
-                    if (summaryDueDate != null) {
-                        Date detailDueDate = new Date(
-                                DatabaseAccess.getCurrentTime() + detailDueInSeconds * 1000);
-                        StringBuffer msg = new StringBuffer();
-                        msg.append("Warning: Task Instance ")
-                                .append(taskInstance.getTaskInstanceId())
-                                .append(" has due date from detail (").append(detailDueDate)
-                                .append(") that is being overridden by template SLA in summary (")
-                                .append(summaryDueDate).append(")");
-                        logger.warnException(msg.toString(), new Exception(msg.toString()));
-                    }
-                }
-
-                Integer detailPriority = taskInstanceIn.getPriority() == null ? null
-                        : taskInstanceIn.getPriority();
-                if (detailPriority != null) {
-                    int summaryPriority = taskInstance.getPriority();
-                    if (detailPriority != summaryPriority) {
-                        taskMgr.updateTaskInstancePriority(taskInstance.getTaskInstanceId(),
-                                detailPriority);
-                        taskInstance.setPriority(detailPriority);
-                    }
-                }
-
-                List<String> detailWorkGroups = taskInstanceIn.getGroups();
-                if (detailWorkGroups != null
-                        && !detailWorkGroups.equals(taskInstance.getWorkgroups())) {
-                    List<String> summaryWorkGroups = taskInstance.getWorkgroups();
-                    if (summaryWorkGroups == null || summaryWorkGroups.isEmpty()) {
-                        taskMgr.updateTaskInstanceWorkgroups(taskInstance.getTaskInstanceId(),
-                                detailWorkGroups);
-                        taskInstance.setWorkgroups(detailWorkGroups);
-                    }
-                    else {
-                        // we'll not override groups configured in summary
-                        // template -- just warn
-                        StringBuffer msg = new StringBuffer();
-                        msg.append("Warning: Task Instance ")
-                                .append(taskInstance.getTaskInstanceId())
-                                .append(" has workgroup routing from detail (")
-                                .append(detailWorkGroups).append(") ")
-                                .append("that is being overridden by template group assignments in summary (")
-                                .append(summaryWorkGroups).append(")");
-                        logger.warnException(msg.toString(), new Exception(msg.toString()));
-                    }
-                }
-            }
-            if (logger.isInfoEnabled())
-                logger.info(TaskActivity.TASK_CREATE_RESPONSE_ID_PREFIX
-                        + taskInstance.getTaskInstanceId());
-            return null;
-        }
-        catch (Exception e) {
-            throw new ServiceException(e.getMessage(), e);
-        }
-    }
 
     private JSONObject updateTask(String user, TaskInstanceVO taskInstIn, boolean clearDueDate)
             throws ServiceException {
@@ -555,49 +472,6 @@ public class Tasks extends JsonRestService implements Exportable {
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
-        return null;
-    }
-
-    private JSONObject performActionOnTask(TaskActionVO taskAction)
-            throws DataAccessException, ServiceException, TaskException {
-        String action = taskAction.getTaskAction();
-        Long taskInstanceId = taskAction.getTaskInstanceId();
-        String user = taskAction.getUser();
-        UserVO userVO = ServiceLocator.getUserManager().getUser(user);
-        if (userVO == null)
-            throw new ServiceException("User not found: " + user);
-        Long userId = userVO.getId();
-        Long assigneeId = null;
-        if (com.centurylink.mdw.model.data.task.TaskAction.ASSIGN.equals(action)
-                || com.centurylink.mdw.model.data.task.TaskAction.CLAIM.equals(action)) {
-            String assignee = taskAction.getAssignee();
-            if (assignee == null) {
-                assignee = user;
-            }
-            UserVO assigneeUser = ServiceLocator.getUserManager().getUser(assignee);
-            if (assigneeUser == null)
-                throw new ServiceException("Assignee user not found: " + assignee);
-            assigneeId = assigneeUser.getId();
-        }
-        String destination = taskAction.getDestination();
-        String comment = taskAction.getComment();
-
-        TaskManager taskMgr = ServiceLocator.getTaskManager();
-        TaskInstanceVO taskInst = taskMgr.getTaskInstance(taskInstanceId);
-        if (taskInst == null)
-            throw new TaskValidationException(ServiceException.NOT_FOUND, "Task instance not found: " + taskInstanceId);
-
-        TaskActionValidator validator = new TaskActionValidator(taskInst);
-        validator.validateAction(userVO, action);
-
-        taskMgr.performActionOnTaskInstance(action, taskInstanceId, userId, assigneeId, comment,
-                destination, OwnerType.PROCESS_INSTANCE.equals(taskInst.getOwnerType())
-                        && !TaskManagerAccess.getInstance().isRemoteDetail(), false);
-
-        if (logger.isDebugEnabled())
-            logger.debug("Action handler service " + getClass().getSimpleName() + ": " + action
-                    + " on task instance: " + taskInstanceId);
-
         return null;
     }
 

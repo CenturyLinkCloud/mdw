@@ -18,7 +18,7 @@ start process("com.centurylink.mdw.tests/DocumentChange") {
                   unchangedXmlBeanWrapper: asset("doc-unchangedXmlBeanWrapper.txt").text ]
 }
 
-sleep 5 // ensure consistent ordering in YAML
+sleep 15 // ensure consistent ordering in YAML
 
 start process("com.centurylink.mdw.tests/DocumentChange") {
     variables = [ outcome: "nochange",
@@ -38,6 +38,6 @@ start process("com.centurylink.mdw.tests/DocumentChange") {
                   unchangedXmlBeanWrapper: asset("doc-unchangedXmlBeanWrapper.txt").text ]
 }
 
-sleep 60
+sleep 70
 
 verify process("DocumentChange")

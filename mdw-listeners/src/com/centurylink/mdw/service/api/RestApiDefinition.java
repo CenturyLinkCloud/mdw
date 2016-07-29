@@ -11,7 +11,7 @@ import io.swagger.annotations.SwaggerDefinition;
  * Marker interface for top-level swagger definition.
  */
 @SwaggerDefinition(
-  info=@Info(title="MDW REST API", description="MDW Application Services", version="5.5.34"),
+  info=@Info(title="MDW REST API", description="MDW Application Services", version="5.5.35"),
   schemes={SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
   basePath="/mdw/services",
   externalDocs=@ExternalDocs(value="MDW", url="http://cshare.ad.qintra.com/sites/mdw/services"))

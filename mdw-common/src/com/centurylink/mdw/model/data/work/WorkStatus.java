@@ -29,6 +29,7 @@ public interface WorkStatus {
     public static final String STATUSNAME_HOLD = "Hold";
     public static final String STATUSNAME_WAITING = "Waiting";
     public static final String STATUSNAME_PURGE = "Purge";
+    public static final String STATUSNAME_ACTIVE = "[Active]"; // pseudo status meaning not final
 
     public static final Integer[] allStatusCodes = { STATUS_PENDING_PROCESS, STATUS_IN_PROGRESS,
         STATUS_FAILED, STATUS_COMPLETED, STATUS_CANCELLED, STATUS_HOLD, STATUS_WAITING};

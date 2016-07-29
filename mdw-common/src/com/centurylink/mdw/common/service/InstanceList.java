@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 public interface InstanceList<E> {
 
-    @ApiModelProperty(value="Retrieve date")
+    @ApiModelProperty(value="Retrieve date (UTC)")
     public Date getRetrieveDate();
     @ApiModelProperty(value="List count")
     public int getCount();

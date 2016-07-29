@@ -891,7 +891,7 @@ public interface TaskManager {
    public List<TaskVO> queryTasks(String whereCondition, int startIndex, int endIndex, String sortOn)
    throws DataAccessException;
 
-   public List<VariableInstanceVO> constructVariableInstancesFromFormDataDocument(TaskVO taskVO, Long processInstanceId, FormDataDocument datadoc);
+   public List<VariableInstanceVO> constructVariableInstancesFromFormDataDocument(TaskVO taskVO, Long processInstanceId, FormDataDocument datadoc) throws DataAccessException;
 
    public List<SubTask> getSubTaskList(TaskRuntimeContext runtimeContext) throws TaskException;
 
@@ -943,7 +943,7 @@ public interface TaskManager {
   public SubTaskPlan getSubTaskPlan(TaskRuntimeContext runtimeContext) throws TaskException;
 
   /**
-   * Use createIndexes(TaskRuntimeContext).
+   * Use setIndexes(TaskRuntimeContext).
    */
   @Deprecated
   public Map<String,String> collectIndices(Long taskId, Long processInstanceId, FormDataDocument formdatadoc) throws DataAccessException;

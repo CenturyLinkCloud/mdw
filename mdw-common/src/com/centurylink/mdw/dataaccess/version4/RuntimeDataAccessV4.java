@@ -253,6 +253,9 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
         if (pMap.containsKey("statusCode")){
             sqlBuff.append(" AND pi.STATUS_CD = "+new Integer((String)pMap.get("statusCode")));
         }
+        if (pMap.containsKey("statusCodeList") && !StringHelper.isEmpty(pMap.get("statusCodeList"))){
+            sqlBuff.append(" AND pi.STATUS_CD in (" + pMap.get("statusCodeList") + ")");
+        }
         if (pMap.containsKey("startDatefrom")){
             if (db.isMySQL())
                 sqlBuff.append(" AND pi.START_DT >= STR_TO_DATE('"+pMap.get("startDatefrom")+"','%d-%M-%Y')");
@@ -451,7 +454,7 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
             }
 
             ProcessList processList = new ProcessList(ProcessList.PROCESS_INSTANCES, mdwProcessInstanceList);
-            processList.setRetrieveDate(new Date()); // TODO use db time
+            processList.setRetrieveDate(DatabaseAccess.getDbDate());
             processList.setCount(mdwProcessInstanceList.size());
             processList.setTotal(count);
             return processList;
@@ -521,7 +524,7 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
                 mdwProcessInstanceList.add(pi);
             }
             ProcessList procList = new ProcessList(ProcessList.PROCESS_INSTANCES, mdwProcessInstanceList);
-            procList.setRetrieveDate(new Date()); // TODO use db date
+            procList.setRetrieveDate(DatabaseAccess.getDbDate());
             procList.setCount(mdwProcessInstanceList.size());
             procList.setTotal(count);
             return procList;

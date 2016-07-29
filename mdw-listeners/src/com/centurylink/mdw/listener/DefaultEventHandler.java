@@ -381,8 +381,7 @@ public class DefaultEventHandler implements ExternalEventHandler {
     			DocumentVO docvo = eventMgr.getDocumentVO(new Long(documentId));
     			if (type.equals(Object.class.getName())) {
     			    Object obj = VariableTranslator.realToObject(getPackageVO(docvo), "java.lang.Object", docvo.getContent());
-	    			if (obj instanceof SelfSerializable) response = obj.toString();
-	    			else response = docvo.getContent();
+	    			response = obj.toString();
     			} else response = docvo.getContent();
     		} catch (Exception e) {
     			response = "ERROR: " + e.getClass().getName() + " - " + e.getMessage();

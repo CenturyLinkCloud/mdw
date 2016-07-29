@@ -5,7 +5,6 @@ package com.centurylink.mdw.services.dao;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.requests.Request;
 import com.centurylink.mdw.model.value.requests.RequestList;
@@ -86,7 +86,7 @@ public class RequestsDAO extends VcsEntityDAO {
             RequestList requestList = new RequestList(RequestList.MASTER_REQUESTS, requests);
             requestList.setTotal(total);
             requestList.setCount(requests.size());
-            requestList.setRetrieveDate(new Date(db.getDatabaseTime()));
+            requestList.setRetrieveDate(DatabaseAccess.getDbDate());
             return requestList;
         }
         catch (Exception ex) {
@@ -101,6 +101,9 @@ public class RequestsDAO extends VcsEntityDAO {
         StringBuilder clause = new StringBuilder();
         clause.append("where pi.owner_id = d.document_id\n");
         clause.append("and pi.owner = 'DOCUMENT'\n");
+        String find = query.getFind();
+        if (find != null)
+            clause.append("and pi.master_request_id like '" + find + "%'\n");
         return clause.toString();
     }
 
@@ -155,7 +158,7 @@ public class RequestsDAO extends VcsEntityDAO {
             RequestList requestList = new RequestList(RequestList.INBOUND_REQUESTS, requests);
             requestList.setTotal(total);
             requestList.setCount(requests.size());
-            requestList.setRetrieveDate(new Date(db.getDatabaseTime()));
+            requestList.setRetrieveDate(DatabaseAccess.getDbDate());
             return requestList;
         }
         catch (Exception ex) {
@@ -224,7 +227,7 @@ public class RequestsDAO extends VcsEntityDAO {
             RequestList requestList = new RequestList(RequestList.OUTBOUND_REQUESTS, requests);
             requestList.setTotal(total);
             requestList.setCount(requests.size());
-            requestList.setRetrieveDate(new Date(db.getDatabaseTime()));
+            requestList.setRetrieveDate(DatabaseAccess.getDbDate());
             return requestList;
         }
         catch (Exception ex) {

@@ -213,7 +213,13 @@
       <entry key="alias" value="UserGroupCache"/>
     </osgi:service-properties>    
   </osgi:service>
-  
-
-
+  <bean id="AllowableTaskActions" class="com.centurylink.mdw.services.task.AllowableTaskActions" />
+  <osgi:service ref="AllowableTaskActions">
+    <osgi:interfaces>
+      <value>com.centurylink.mdw.common.provider.CacheService</value>
+    </osgi:interfaces>
+    <osgi:service-properties>
+      <entry key="alias" value="AllowableTaskActions"/>
+    </osgi:service-properties>    
+  </osgi:service>
 </beans>

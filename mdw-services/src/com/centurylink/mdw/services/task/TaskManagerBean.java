@@ -394,7 +394,22 @@ public class TaskManagerBean implements TaskManager {
      */
     public TaskInstanceVO getTaskInstance(Long pId)
     throws DataAccessException {
-        return this.getTaskDAO().getTaskInstance(pId);
+        TaskInstanceVO taskInstance = getTaskDAO().getTaskInstance(pId);
+        if (taskInstance == null)
+            return null;
+        if (taskInstance.getAssigneeId() != null && taskInstance.getAssigneeId() != 0 && taskInstance.getAssigneeCuid() == null) {
+            try {
+                UserVO user = UserGroupCache.getUser(taskInstance.getAssigneeId());
+                if (user != null) {
+                    taskInstance.setAssigneeCuid(user.getCuid());
+                    taskInstance.setAssignee(user.getName());
+                }
+            }
+            catch (CachingException ex) {
+                throw new DataAccessException(ex.getMessage(), ex);
+            }
+        }
+        return taskInstance;
     }
 
     /**
@@ -1235,7 +1250,7 @@ public class TaskManagerBean implements TaskManager {
 
         // special behavior for some types of actions
         if (action.equalsIgnoreCase(TaskAction.ASSIGN) || action.equalsIgnoreCase(TaskAction.CLAIM)) {
-            if (assigneeId == null) {
+            if (assigneeId == null || assigneeId.longValue() == 0) {
                 assigneeId = userId;
             }
             assignTaskInstance(ti, assigneeId);
@@ -2623,20 +2638,36 @@ public class TaskManagerBean implements TaskManager {
                 return id;
      }
 
-    public List<VariableInstanceVO> constructVariableInstancesFromFormDataDocument(TaskVO taskVO, Long processInstanceId, FormDataDocument datadoc) {
+    public List<VariableInstanceVO> constructVariableInstancesFromFormDataDocument(TaskVO taskVO, Long processInstanceId, FormDataDocument datadoc) throws DataAccessException {
+        return constructVariableInstancesFromFormDataDocument(taskVO, processInstanceId, datadoc, null);
+    }
+
+    public List<VariableInstanceVO> constructVariableInstancesFromFormDataDocument(TaskVO taskVO, Long processInstanceId, FormDataDocument datadoc, Long taskInstId) throws DataAccessException {
         List<VariableInstanceVO> varinstList = new ArrayList<VariableInstanceVO>();
+        TaskRuntimeContext runtimeContext = null;
         if (taskVO.getVariables() != null) {
             for (VariableVO vardef : taskVO.getVariables()) {
                 String name = vardef.getName();
-                if (!name.startsWith("#{")) {
+                VariableInstanceVO varinst = null;
+                if (!name.startsWith("#{") && !name.startsWith("${")) {
+                    varinst = new VariableInstanceVO();
                     String varvalue = datadoc.getValue(name);
-                    VariableInstanceVO varinst = new VariableInstanceVO();
-                    if (VariableTranslator.isDocumentReferenceVariable(vardef.getVariableType())) {
+                    if (VariableTranslator.isDocumentReferenceVariable(null, vardef.getVariableType())) {
                         varinst.setRealStringValue(varvalue);
                     }
                     else {
                         varinst.setStringValue(varvalue);
                     }
+                }
+                else if (taskInstId != null && taskInstId != 0L) {
+                    if (runtimeContext == null)
+                        runtimeContext = getTaskRuntimeContext(getTaskInstance(taskInstId));
+
+                    varinst = new VariableInstanceVO();
+                    varinst.setStringValue(runtimeContext.evaluateToString(name));
+                }
+
+                if (varinst != null) {
                     varinst.setVariableReferredName(vardef.getVariableReferredAs());
                     varinst.setName(vardef.getName());
                     varinst.setEditable(vardef.getDisplayMode().equals(VariableVO.DATA_OPTIONAL)
@@ -2874,9 +2905,13 @@ public class TaskManagerBean implements TaskManager {
       Long procInstId = processInstanceId;
       if (task.isUsingIndices()) {
           try {
-              ProcessInstanceVO prcInst = eventManager.getProcessInstance(processInstanceId);
-              ProcessVO procdef = ProcessVOCache.getProcessVO(prcInst.getProcessId());
-              procInstId = (prcInst.isNewEmbedded() || procdef.isEmbeddedProcess()) ? prcInst.getOwnerId() : prcInst.getId();
+              if (processInstanceId != null && processInstanceId != 0L) {
+                  ProcessInstanceVO prcInst = eventManager.getProcessInstance(processInstanceId);
+                  ProcessVO procdef = ProcessVOCache.getProcessVO(prcInst.getProcessId());
+                  procInstId = (prcInst.isNewEmbedded() || procdef.isEmbeddedProcess()) ? prcInst.getOwnerId() : prcInst.getId();
+              }
+              else
+                  procInstId = null;
           }
           catch (Exception ex) {
              throw new DataAccessException("Failed to collect Task Indices: "+ex.getMessage());
@@ -2915,7 +2950,7 @@ public class TaskManagerBean implements TaskManager {
                   List<String[]> rows = StringHelper.parseTable(v, ',', ';', 2);
                   for (String[] row : rows) {
                       if (row[0] != null && row[1] != null
-                              && row[0].length() > 0 && row[1].length() > 0) {
+                              && row[0].length() > 0 && row[1].length() > 3) {
                           if (procInstId != null) {
                               VariableInstanceInfo varInst = eventManager.getVariableInstance(procInstId, row[1].substring(2, row[1].length() - 1));
                               if (varInst != null && !varInst.getStringValue().isEmpty()) {

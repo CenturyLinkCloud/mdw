@@ -259,10 +259,6 @@
     <servlet-class>com.centurylink.mdw.web.servlet.FileUploadServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>JnlpServlet</servlet-name>
-    <servlet-class>com.centurylink.mdw.web.servlet.JnlpLaunchServlet</servlet-class>
-  </servlet>    
-  <servlet>
     <servlet-name>RestfulServicesServlet</servlet-name>
     <servlet-class>com.centurylink.mdw.web.servlet.RestfulServicesServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
@@ -270,6 +266,11 @@
   <servlet>
     <servlet-name>SoapServlet</servlet-name>
     <servlet-class>com.centurylink.mdw.web.servlet.SoapListenerServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>WorkflowImageServlet</servlet-name>
+    <servlet-class>com.centurylink.mdw.hub.servlet.WorkflowImageServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
     
@@ -358,10 +359,6 @@
     <url-pattern>/upload</url-pattern>
   </servlet-mapping>  
   <servlet-mapping>
-    <servlet-name>JnlpServlet</servlet-name>
-    <url-pattern>/RCP</url-pattern>
-  </servlet-mapping>  
-  <servlet-mapping>
     <servlet-name>RestfulServicesServlet</servlet-name>
     <url-pattern>/Services/*</url-pattern>
   </servlet-mapping>
@@ -377,7 +374,11 @@
     <servlet-name>SoapServlet</servlet-name>
     <url-pattern>/SOAP/*</url-pattern>
   </servlet-mapping>
-    
+  <servlet-mapping>
+    <servlet-name>WorkflowImageServlet</servlet-name>
+    <url-pattern>/workflowImage/*</url-pattern>
+  </servlet-mapping>
+      
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>

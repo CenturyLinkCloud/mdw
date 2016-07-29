@@ -46,7 +46,7 @@ public class Processes implements XmlService {
                 pkg.setName(process.getPackageName());
                 pkg.setVersion(PackageVO.parseVersion(process.getPackageVersion()));
                 pkg.setProcesses(Arrays.asList(new ProcessVO[]{process}));
-                return exporter.exportPackage(pkg);
+                return exporter.exportPackage(pkg, false);
             }
             else {
                 // TODO return process list

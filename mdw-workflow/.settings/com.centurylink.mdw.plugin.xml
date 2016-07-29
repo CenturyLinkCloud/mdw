@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mdw-workflow>
-  <sourceProject name="mdw-workflow" author="aa56486"/>
+  <sourceProject name="mdw-workflow" author="dxoakes"/>
   <webProject name="mdw-hub" deployDir="deploy" />
-  <mdwFramework version="5.5.30-SNAPSHOT"/>
+  <mdwFramework version="5.5.35-SNAPSHOT"/>
   <server host="localhost" port="8080" container="Tomcat"/>
   <repository provider="Git" localPath="assets"/>
-  <database jdbcUrl="jdbc:mysql://127.0.0.1:3306/mdw?user=root&amp;password=wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x"/>
+  <database jdbcUrl="jdbc:mysql://10.180.11.159:3306/mdw?user=mdwapp&amp;password=w00k13f3v3r"/>
 </mdw-workflow>

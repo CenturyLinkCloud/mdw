@@ -88,7 +88,7 @@ public class ProcessVO extends RuleSetVO {
         setImplementors(cloneFrom.getImplementors());
         setTextNotes(cloneFrom.getTextNotes());
         clearDeletedTransitions();
-        this.isInRuleSet = cloneFrom.isInRuleSet;
+        isInRuleSet = cloneFrom.isInRuleSet;
         overrideAttributesApplied = cloneFrom.overrideAttributesApplied();
     }
 

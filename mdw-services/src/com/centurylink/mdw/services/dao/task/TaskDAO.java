@@ -5,6 +5,9 @@ package com.centurylink.mdw.services.dao.task;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,8 +19,11 @@ import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.constant.MiscConstants;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.constant.TaskAttributeConstant;
+import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.exception.PropertyException;
+import com.centurylink.mdw.common.service.Query;
+import com.centurylink.mdw.common.task.TaskList;
 import com.centurylink.mdw.common.utilities.CollectionUtil;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
@@ -465,6 +471,12 @@ public class TaskDAO extends CommonDataAccess {
 
     public List<TaskCategory> getAllTaskCategories()
             throws DataAccessException {
+        if (!hasTaskTable) {
+            List<TaskCategory> categories = new ArrayList<TaskCategory>();
+            for (TaskCategory category : DataAccess.getBaselineData().getTaskCategories().values())
+                categories.add(category);
+            return categories;
+        }
         try {
             db.openConnection();
             List<TaskCategory> categories = new ArrayList<TaskCategory>();
@@ -997,7 +1009,7 @@ public class TaskDAO extends CommonDataAccess {
         } else {
             buff.append("\nfrom ").append(TASK_INSTANCE_FROM);
         }
-        if (userGroups != null && hasInstanceGroupMappings && !isUserBelongsToAdminGrp(userGroups))
+        if (userGroups != null && hasInstanceGroupMappings && !containsSiteAdmin(userGroups))
             buff.append(", task_inst_grp_mapp tigm");
         if (inclProcessInst && !db.isMySQL())
             buff.append(", process_instance pi");
@@ -1018,7 +1030,7 @@ public class TaskDAO extends CommonDataAccess {
             buff.append("and tidx.task_instance_id(+) = ti.task_instance_id ");
         }
 
-        if (userGroups != null && !isUserBelongsToAdminGrp(userGroups))
+        if (userGroups != null && !containsSiteAdmin(userGroups))
             buff.append(buildUserGroupsTaskClause(userGroups));
 
         String addWhereClause = buildWhereClause(criteria);
@@ -1107,7 +1119,7 @@ public class TaskDAO extends CommonDataAccess {
                     buff.append(") cat");
             }
         }
-        if (userGroups != null && hasInstanceGroupMappings && !isUserBelongsToAdminGrp(userGroups))
+        if (userGroups != null && hasInstanceGroupMappings && !containsSiteAdmin(userGroups))
             buff.append(", task_inst_grp_mapp tigm");
         if (inclProcessInst && !db.isMySQL())
             buff.append(", process_instance pi");
@@ -1142,7 +1154,7 @@ public class TaskDAO extends CommonDataAccess {
             }
         }
 
-        if (userGroups != null && !isUserBelongsToAdminGrp(userGroups))
+        if (userGroups != null && !containsSiteAdmin(userGroups))
           buff.append(buildUserGroupsTaskClause(userGroups));
 
         String variablesWhereClause = buildVariablesWhereClause(variablesCriteria);
@@ -1290,8 +1302,8 @@ public class TaskDAO extends CommonDataAccess {
         return clause.toString();
     }
 
-    private boolean isUserBelongsToAdminGrp(String[] userGroups) {
-        for (String groupName : userGroups) {
+    private boolean containsSiteAdmin(String[] workgroups) {
+        for (String groupName : workgroups) {
             if (UserGroupVO.SITE_ADMIN_GROUP.equals(groupName)) {
                 return true;
             }
@@ -2747,7 +2759,7 @@ public class TaskDAO extends CommonDataAccess {
 				ProcessInstanceVO procInst = eventManager.getProcessInstance(taskInst.getOwnerId());
 				Long procInstId = procInst.getId();
 				if (procInst.isNewEmbedded() || ProcessVOCache.getProcessVO(procInst.getProcessId()).isEmbeddedProcess())
-				    procInst.getOwnerId();
+				    procInstId = procInst.getOwnerId();
 				List<VariableInstanceInfo> varinstList = eventManager.getProcessInstanceVariables(procInstId);
 				for (VariableInstanceInfo varinst : varinstList) {
 					VariableVO var = null;
@@ -2837,30 +2849,308 @@ public class TaskDAO extends CommonDataAccess {
     }
 
 
-  public Map<String,String> getTaskInstIndices(Long taskInstanceId) throws DataAccessException
-  {
-    try
-    {
-      Map<String,String> indices = new HashMap<String,String>();
-      db.openConnection();
-      String sql = "select tii.index_key,tii.index_value from task_inst_index tii where tii.task_instance_id = ?";
-      ResultSet rs = db.runSelect(sql, taskInstanceId);
-      while (rs.next())
-      {
-        indices.put(rs.getString(1), rs.getString(2));
-      }
-      return indices;
+    public Map<String,String> getTaskInstIndices(Long taskInstanceId) throws DataAccessException {
+        try {
+            Map<String, String> indices = new HashMap<String, String>();
+            db.openConnection();
+            String sql = "select tii.index_key,tii.index_value from task_inst_index tii where tii.task_instance_id = ?";
+            ResultSet rs = db.runSelect(sql, taskInstanceId);
+            while (rs.next()) {
+                indices.put(rs.getString(1), rs.getString(2));
+            }
+            return indices;
+        }
+        catch (Exception ex) {
+            logger.severeException("Failed to get Task Instance Indices", ex);
+            // throw new DataAccessException(-1, "Failed to get Task Instance
+            // Indices", ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+        return null;
     }
-    catch (Exception ex)
-    {
-      logger.severeException("Failed to get Task Instance Indices", ex);
-      //throw new DataAccessException(-1, "Failed to get Task Instance Indices", ex);
+
+    /**
+     * Only for 5.5 VCS Assets.
+     */
+    public TaskList getTaskInstances(Query query) throws DataAccessException {
+        long start = System.currentTimeMillis();
+        StringBuilder sql = new StringBuilder();
+        sql.append("select ").append(TASK_INSTANCE_SELECT).append("\n");
+        StringBuilder countSql = new StringBuilder();
+        countSql.append("select count(ti.task_instance_id)\n");
+
+        if (query.getMax() != -1)
+          sql.append(db.pagingQueryPrefix());
+
+        if (db.isMySQL()) {
+            sql.append("from task_instance ti left join user_info ui on ui.user_info_id = ti.task_claim_user_id\n");
+            countSql.append("from task_instance ti left join user_info ui on ui.user_info_id = ti.task_claim_user_id\n");
+        }
+        else {
+            sql.append("from task_instance ti, user_info ui\n");
+            countSql.append("from task_instance ti, user_info ui\n");
+        }
+
+        String[] workgroups = query.getArrayFilter("workgroups");
+        if (workgroups != null && workgroups.length > 0 && !containsSiteAdmin(workgroups)) {
+            String tigm = ", task_inst_grp_mapp tigm ";
+            sql.append(tigm);
+            countSql.append(tigm);
+        }
+        sql.append("\n");
+
+        String where;
+        if (query.getFind() != null) {
+            try {
+                // numeric value means instance id
+                long findInstId = Long.parseLong(query.getFind());
+                where = "where ti.task_instance_id like '" + findInstId + "%'\n";
+            }
+            catch (NumberFormatException ex) {
+                // otherwise master request id
+                where = "where ti.master_request_id like '" + query.getFind() + "%'\n";
+            }
+        }
+        else {
+            where = buildTaskInstanceWhere(query);
+        }
+
+        if(!StringHelper.isEmpty(where)) {
+            sql.append(where);
+            countSql.append(where);
+        }
+
+        String orderBy = buildTaskInstanceOrderBy(query);
+        if(!StringHelper.isEmpty(orderBy))
+            sql.append(orderBy);
+
+        try {
+            Long total = 0L;
+            db.openConnection();
+            ResultSet rs = db.runSelect(countSql.toString(), null);
+            if (rs.next())
+                total = rs.getLong(1);
+
+            if (query.getMax() != -1)
+              sql.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
+
+            if(logger.isDebugEnabled())
+                logger.mdwDebug("queryTaskInstances() Query-->"+query) ;
+
+            List<TaskInstanceVO> taskInstances = new ArrayList<TaskInstanceVO>();
+            rs = db.runSelect(sql.toString(), null);
+            while (rs.next()) {
+                TaskInstanceVO taskInst = getTaskInstanceSub(rs, true, null, null);
+                if (taskInst != null) {
+                    if (taskInst.getAssigneeCuid() != null) {
+                        try {
+                            UserVO user = UserGroupCache.getUser(taskInst.getAssigneeCuid());
+                            if (user == null)
+                                throw new CachingException("Unable to lookup assignee: " + taskInst.getAssigneeCuid());
+                            taskInst.setAssignee(user.getName());
+                        }
+                        catch (CachingException ex) {
+                            logger.severeException("Cannot find assignee: " + taskInst.getAssigneeCuid(), ex);
+                        }
+                    }
+                    taskInstances.add(taskInst);
+                }
+            }
+            TaskList taskList = new TaskList(TaskList.TASKS, taskInstances);
+            taskList.setTotal(total);
+            taskList.setRetrieveDate(DatabaseAccess.getDbDate());
+            return taskList;
+        }
+        catch (SQLException e) {
+            throw new DataAccessException(500, "Failed to query task instances", e);
+        }
+        finally {
+            db.closeConnection();
+            if (logger.isMdwDebugEnabled()) {
+              long elapsed = System.currentTimeMillis() - start;
+              logger.mdwDebug("queryTaskInstances() Elapsed-->" + elapsed + " ms");
+            }
+        }
+
     }
-    finally
-    {
-      db.closeConnection();
+
+    private String buildTaskInstanceWhere(Query query) throws DataAccessException {
+
+        StringBuilder where = new StringBuilder();
+        if (db.isMySQL())
+            where.append("where 1=1\n");
+        else
+            where.append("where ui.user_info_id(+) = ti.task_claim_user_id\n");
+
+        // taskId
+        String taskId = query.getFilter("taskId");
+        if (taskId != null) {
+            where.append(" and ti.task_id = ").append(taskId).append("\n");
+        }
+        // workgroups
+        String[] workgroups = query.getArrayFilter("workgroups");
+        if (workgroups != null && workgroups.length > 0 && !containsSiteAdmin(workgroups)) {
+            where.append(" and tigm.task_instance_id = ti.task_instance_id").append("\n");
+            where.append(" and tigm.user_group_id in (");
+            for (int i = 0; i < workgroups.length; i++) {
+                try {
+                    if (!UserGroupVO.COMMON_GROUP.equals(workgroups[i])) {
+                        UserGroupVO group = UserGroupCache.getWorkgroup(workgroups[i]);
+                        if (group == null)
+                            throw new CachingException("Cannot find workgroup: " + workgroups[i]);
+                        where.append(group.getId());
+                        if (i < workgroups.length - 1)
+                          where.append(",");
+                    }
+                }
+                catch (CachingException ex) {
+                    // just log this
+                    logger.severeException("Failed to lookup workgroup: " + workgroups[i], ex);
+                }
+            }
+            where.append(")\n");
+        }
+        // instanceId or masterRequestId
+        long instanceId = query.getLongFilter("instanceId");
+        if (instanceId > 0) {
+            where.append("and ti.task_instance_id = " + instanceId + "\n");
+            return where.toString(); // ignore other criteria
+        }
+        String masterRequestId = query.getFilter("masterRequestId");
+        if (masterRequestId != null) {
+            where.append("and ti.master_request_id = '" + masterRequestId + "'\n");
+            return where.toString(); // ignore other criteria
+        }
+
+        // assignee
+        String assignee = query.getFilter("assignee");
+        if (assignee != null && !assignee.isEmpty()) {
+            if (assignee.equals("[Unassigned]"))
+                where.append(" and ti.task_claim_user_id is null\n");
+            else
+                where.append(" and ui.cuid = '" + assignee + "'\n");
+        }
+        // startDate
+        try {
+            Date startDate = query.getDateFilter("startDate");
+            if (startDate != null) {
+                String start = getDateFormat().format(startDate);
+                if (db.isMySQL())
+                    where.append(" and ti.task_start_dt >= STR_TO_DATE('").append(start).append("','%d-%M-%Y')\n");
+                else
+                    where.append(" and ti.task_start_dt >= '").append(start).append("'\n");
+            }
+        }
+        catch (ParseException ex) {
+            throw new DataAccessException(ex.getMessage(), ex);
+        }
+        // status
+        String status = query.getFilter("status");
+        if (status != null) {
+            if (status.equals(TaskStatus.STATUSNAME_ACTIVE)) {
+                where.append(" and ti.task_instance_status not in (")
+                  .append(TaskStatus.STATUS_COMPLETED)
+                  .append(",").append(TaskStatus.STATUS_CANCELLED)
+                  .append(")\n");
+            }
+            else if (status.equals(TaskStatus.STATUSNAME_CLOSED)) {
+                where.append(" and ti.task_instance_status in (")
+                  .append(TaskStatus.STATUS_COMPLETED)
+                  .append(",").append(TaskStatus.STATUS_CANCELLED)
+                  .append(")\n");
+            }
+            else {
+                Long statusCode = getTaskStatusCode(status);
+                if (statusCode == null)
+                    throw new DataAccessException("Unable to find code for status: " + status);
+                where.append(" and ti.task_instance_status = ").append(statusCode).append("\n");
+            }
+        }
+        // state
+        String advisory = query.getFilter("advisory");
+        if (advisory != null) {
+            if (advisory.equals(TaskState.STATE_NOT_INVALID)) {
+                where.append(" and ti.task_instance_state != " + TaskState.STATE_INVALID).append("\n");
+            }
+            else {
+                Long stateCode = getTaskStateCode(advisory);
+                if (stateCode == null)
+                    throw new DataAccessException("Unable to find code for task advisory: " + advisory);
+                where.append(" and ti.task_instance_state = ").append(stateCode).append("\n");
+            }
+        }
+        // category
+        String category = query.getFilter("category");
+        if (category != null) {
+            Long categoryCode = getTaskCategoryCode(category);
+            if (categoryCode == null)
+                throw new DataAccessException("Unable to find code for category: " + category);
+            String catTasksClause = buildCategoryTasksClause((int)categoryCode.longValue());
+            if (catTasksClause != null)
+                where.append(" and ").append(catTasksClause).append("\n");
+        }
+        // if sort by due date, exclude those tasks without
+        if ("dueDate".equals(query.getSort()))
+            where.append(" and ti.due_date is not null\n");
+
+        // TODO: Indexes, Due Date?, End Date?
+
+        return where.toString();
     }
-    return null;
-  }
+
+    private String buildTaskInstanceOrderBy(Query query) throws DataAccessException {
+        StringBuilder sb = new StringBuilder();
+        String sort = query.getSort();
+        if ("dueDate".equals(sort))
+            sb.append(" order by ti.due_date");
+        else
+            sb.append(" order by ti.task_instance_id");
+        if (query.isDescending())
+            sb.append(" desc");
+        sb.append(", ti.task_id\n");
+        return sb.toString();
+    }
+
+    protected Long getTaskStatusCode(String statusName) throws DataAccessException {
+        if (statusName != null) {
+            for (TaskStatus taskStatus : getAllTaskStatuses()) {
+                if (statusName.equals(taskStatus.getName())) {
+                    return taskStatus.getCode();
+                }
+            }
+        }
+        return null;
+    }
+
+    protected Long getTaskStateCode(String stateName) throws DataAccessException {
+        if (stateName != null) {
+            for (TaskState taskState : getAllTaskStates()) {
+                if (stateName.equals(taskState.getName())) {
+                    return taskState.getCode();
+                }
+            }
+        }
+        return null;
+    }
+
+    protected Long getTaskCategoryCode(String categoryName) throws DataAccessException {
+        if (categoryName != null) {
+            for (TaskCategory taskCategory : getAllTaskCategories()) {
+                if (categoryName.equals(taskCategory.getName())) {
+                    return taskCategory.getId(); // code is abbreviation
+                }
+            }
+        }
+        return null;
+    }
+
+    private static DateFormat dateFormat;
+    protected static DateFormat getDateFormat() {
+        if (dateFormat == null)
+            dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+        return dateFormat;
+    }
 
 }

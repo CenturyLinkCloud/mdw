@@ -105,6 +105,7 @@
       <xsd:enumeration value="dateInput"/>
       <xsd:enumeration value="dateRange"/>      
       <xsd:enumeration value="tnInput"/>
+      <xsd:enumeration value="multiSelectInput"/>
     </xsd:restriction>
   </xsd:simpleType>
 

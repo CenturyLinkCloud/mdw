@@ -1,5 +1,5 @@
 <bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="MDWTestMainProcess" version="3.27" description="">
+  <bpm:Process Id="MainProcess" name="MDWTestMainProcess" version="3.29" description="">
     <bpm:Activity Id="A6" Name="Process Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
       <bpm:Attribute Name="SLA" Value="0"/>
       <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
@@ -198,6 +198,13 @@
       <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
       <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=406,y=242,w=69,h=25"/>
     </bpm:Activity>
+    <bpm:Activity Id="A34" Name="Invoke service lvl9 process" Implementation="com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity">
+      <bpm:Attribute Name="processname" Value="com.centurylink.mdw.tests.workflow/MDWServiceLevel_9"/>
+      <bpm:Attribute Name="processversion" Value="[0.1,1)"/>
+      <bpm:Attribute Name="synchronous" Value="TRUE"/>
+      <bpm:Attribute Name="variables" Value="processCase=$processCase"/>
+      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1480,y=652,w=20,h=20"/>
+    </bpm:Activity>
     <bpm:Transition CompletionCode="" From="A2" To="A9" Event="FINISH" Id="T6">
       <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=966,ly=456,type=Elbow,xs=1034&amp;962,ys=391&amp;531"/>
     </bpm:Transition>
@@ -347,6 +354,12 @@
     <bpm:Transition CompletionCode="SingleSubProcess" From="A33" To="A23" Event="FINISH" Id="T50">
       <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=304,ly=333,type=ElbowV,xs=440&amp;252,ys=271&amp;389"/>
     </bpm:Transition>
+    <bpm:Transition CompletionCode="DocumentBinding" From="A33" To="A34" Event="FINISH" Id="T51">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=988,ly=233,type=ElbowV,xs=471&amp;1476&amp;1476,ys=255&amp;255&amp;648"/>
+    </bpm:Transition>
+    <bpm:Transition CompletionCode="" From="A34" To="A11" Event="FINISH" Id="T52">
+      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=974,ly=704,type=ElbowV,xs=1490&amp;470,ys=676&amp;876"/>
+    </bpm:Transition>
     <bpm:Attribute Name="ABORT_TRANSITION_ID" Value="192270"/>
     <bpm:Attribute Name="ERROR_PROCESS_ID" Value="282656"/>
     <bpm:Attribute Name="ERROR_TRANSITION_ID" Value="192269"/>
@@ -384,9 +397,6 @@
     </bpm:Variables>
     <bpm:Variables Name="xmldata" ReferredAs="" Category="STATIC" DisplaySequence="0">
       <bpm:type Name="org.w3c.dom.Document"/>
-    </bpm:Variables>
-    <bpm:Variables Name="exception" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.Object"/>
     </bpm:Variables>
     <bpm:SubProcess Id="P3" name="Cancellation Handler" version="3.5" description="">
       <bpm:Activity Id="A31" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
@@ -440,6 +450,7 @@
         <bpm:Attribute Name="TaskSLA" Value="24"/>
         <bpm:Attribute Name="Variables" Value="order,order,Not Displayed,0,,com.qwest.mbeng.MbengDocument;Sum,Sum,Not Displayed,0,,java.lang.Integer;intarraytest,intarraytest,Not Displayed,0,,java.lang.Integer[];maptest,maptest,Not Displayed,0,,java.util.Map;BTN,BTN,Not Displayed,0,,java.lang.String;case,case,Not Displayed,0,,java.lang.String;N,N,Not Displayed,0,,java.lang.Integer;launcher,launcher,Not Displayed,0,,com.qwest.mbeng.MbengTableArray;xmldata,xmldata,Not Displayed,0,,org.w3c.dom.Document"/>
         <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=484,y=60,w=30,h=28"/>
+        <bpm:Attribute Name="TASK_PAGELET" Value="com.centurylink.mdw.base/CustomManualTask.pagelet"/>
       </bpm:Activity>
       <bpm:Transition CompletionCode="" From="A28" To="A30" Event="FINISH" Id="T38">
         <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=556,ly=74,type=Straight,xs=514&amp;599,ys=74&amp;75"/>

@@ -23,6 +23,7 @@ import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.timer.LoggerProgressMonitor;
 import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.listener.Listener;
@@ -117,8 +118,8 @@ public class GitVcs extends JsonRestService {
                         List<String> paths = new ArrayList<String>();
                         logger.info("Pulling asset with Git Path: " + pkgPath + "/" + reqAsset);
                         paths.add(pkgPath + "/" + reqAsset);
-                        paths.add(pkgPath + "/.mdw/package.xml");
-                        paths.add(pkgPath + "/.mdw/versions");
+                        paths.add(pkgPath + "/" + PackageDir.PACKAGE_XML_PATH);
+                        paths.add(pkgPath + "/" + PackageDir.VERSIONS_PATH);
                         vcGit.checkoutBranch(branch, paths);
 
                         archiver.archive();

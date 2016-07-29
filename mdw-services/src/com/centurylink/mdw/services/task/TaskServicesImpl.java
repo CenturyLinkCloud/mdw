@@ -3,6 +3,7 @@
  */
 package com.centurylink.mdw.services.task;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -11,11 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.common.constant.OwnerType;
+import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.Task;
-import com.centurylink.mdw.common.service.types.TaskAction;
 import com.centurylink.mdw.common.task.TaskList;
 import com.centurylink.mdw.common.translator.VariableTranslator;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
@@ -25,14 +26,13 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.model.data.task.TaskStatus;
 import com.centurylink.mdw.model.value.asset.AssetHeader;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.model.value.task.TaskActionVO;
 import com.centurylink.mdw.model.value.task.TaskCount;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.model.value.user.UserGroupVO;
 import com.centurylink.mdw.model.value.user.UserVO;
 import com.centurylink.mdw.model.value.variable.DocumentReference;
 import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
@@ -42,16 +42,13 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskException;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.TaskServices;
-import com.centurylink.mdw.services.UserException;
-import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.services.dao.task.TaskDAO;
 import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
+import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
 import com.centurylink.mdw.task.SubTask;
 
 /**
- * TODO Implement replacements for old-style services createTask, updateTask and performActionOnTask.
- *
- * TODO add TaskNotes services based on InstanceNotes
+ * Services related to manual tasks.
  */
 public class TaskServicesImpl implements TaskServices {
 
@@ -66,15 +63,28 @@ public class TaskServicesImpl implements TaskServices {
         return new AggregateDataAccessVcs();
     }
 
-    /**
-     * Create a manual task instance that points to a remote task.
-     * The base URL for accessing the remote task is included as the "appUrl" parameter.
-     *
-     * @param task
-     * @param parameters
-     */
-    public void createTask(Task task, Map<String,Object> parameters) throws ServiceException {
-        throw new UnsupportedOperationException("TODO: implement for AdminUI");
+    public Long createTask(String userCuid, String logicalId) throws ServiceException {
+
+        try {
+            TaskManager taskManager = ServiceLocator.getTaskManager();
+            TaskVO template = TaskTemplateCache.getTaskTemplate(null, logicalId);
+            if (template == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Task Template '" + logicalId + "' not found");
+
+            UserVO user = UserGroupCache.getUser(userCuid);
+            if (user == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "User '" + userCuid + "' not found");
+            TaskInstanceVO instance = taskManager.createTaskInstance(template.getId(), null, null, null, user.getId(), (Long)null);
+
+            logger.info("Task instance created: " + instance.getTaskInstanceId());
+            return instance.getTaskInstanceId();
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -88,96 +98,37 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     /**
-     * Perform the designated action on a task instance.
-     *
-     * @param taskAction
-     * @param parameters
-     */
-    public void performActionOnTask(TaskAction taskAction, Map<String,Object> parameters) throws ServiceException {
-        throw new UnsupportedOperationException("TODO: implement for AdminUI");
-    }
-
-    /**
-     * Returns all the tasks assigned to a particular user.
-     */
-    public TaskList getUserTasks(String cuid) throws TaskException, DataAccessException {
-        UserVO user = ServiceLocator.getUserManager().getUser(cuid);
-        if (user == null)
-            throw new DataAccessException("Unknown user: " + cuid);
-        Map<String,String> criteria = new HashMap<String,String>();
-        criteria.put("taskClaimUserId", " = " + user.getId());
-        criteria.put("statusCode", " in (" + TaskStatus.STATUS_ASSIGNED.toString() + ", " + TaskStatus.STATUS_IN_PROGRESS.toString() + ")");
-
-        TaskDAO taskDao = new TaskDAO(new DatabaseAccess(null));
-        List<TaskInstanceVO> tasks = taskDao.queryTaskInstances(criteria, null, null, null, null);
-        Collections.sort(tasks, new Comparator<TaskInstanceVO>() {
-            public int compare(TaskInstanceVO ti1, TaskInstanceVO ti2) {
-                return ti2.getId().compareTo(ti1.getId());  // descending instanceId
-            }
-        });
-        for (TaskInstanceVO task : tasks) {
-            // TODO refactor this and handle remote task manager urls
-            task.setTaskInstanceUrl(TaskManagerAccess.getInstance().getTaskInstanceUrl(task));
-        }
-        TaskList taskList = new TaskList(TaskList.USER_TASKS, tasks);
-        taskList.setRetrieveDate(new Date()); // TODO db time
-        taskList.setCount(tasks.size());
-        return taskList;
-    }
-
-    /**
      * Returns tasks associated with the specified user's workgroups.
-     * TODO: filtering, pagination and sorting
      */
-    public TaskList getWorkgroupTasks(String cuid, Query query) throws TaskException, UserException, DataAccessException {
-        UserManager userMgr = ServiceLocator.getUserManager();
-        UserVO user = userMgr.getUser(cuid);
-        if (user == null)
-            throw new DataAccessException("Unknown user: " + cuid);
+    public TaskList getWorkgroupTasks(String cuid, Query query) throws DataAccessException {
+        try {
+            UserVO user = UserGroupCache.getUser(cuid);
+            if (user == null)
+                throw new DataAccessException("Unknown user: " + cuid);
 
-        Map<String,String> criteria = query.getFilters();
-        if (criteria == null)
-            criteria = new HashMap<String,String>();
-
-        String status = criteria.get("status");
-        if (status == null)
-            status = TaskStatus.STATUSNAME_ACTIVE;
-
-        if (status.equals(TaskStatus.STATUSNAME_ACTIVE))
-            criteria.put("statusCode", " != " + TaskStatus.STATUS_COMPLETED + " and task_instance_status != " + TaskStatus.STATUS_CANCELLED);
-        else if (status.equals(TaskStatus.STATUSNAME_CLOSED))
-            criteria.put("statusCode", " = " + TaskStatus.STATUS_COMPLETED + " or task_instance_status = " + TaskStatus.STATUS_CANCELLED);
-        else if (!status.equals(TaskStatus.STATUSNAME_ALL))
-            criteria.put("statusCode", String.valueOf(TaskStatus.getStatusCodeForName(status)));
-
-        criteria.remove("status");
-
-        UserGroupVO[] userGroups = userMgr.getGroupsForUser(cuid);
-        String[] workgroups = new String[userGroups.length];
-        for (int i = 0; i < userGroups.length; i++) {
-            workgroups[i] = userGroups[i].getName();
+            String workgroups = query.getFilter("workgroups");
+            if (workgroups == null || workgroups.equals("[My Workgroups]"))
+              query.setArrayFilter("workgroups", user.getGroupNames());
+            if ("[My Tasks]".equals(query.getFilter("assignee")))
+                query.getFilters().put("assignee", cuid);
+            else if ("[Everyone's Tasks]".equals(query.getFilter("assignee")))
+                query.getFilters().remove("assignee");
+            TaskList taskList = getTaskDAO().getTaskInstances(query);
+            return taskList;
         }
-
-        String orderBy = query.getSort();
-        if (orderBy == null)
-            orderBy = "TASK_INSTANCE_ID";
-        TaskDAO taskDao = new TaskDAO(new DatabaseAccess(null));
-
-        int start = query.getStart();
-        int end = query.getMax() - start;
-        // TODO: variables and indexes (or better way for AdminUI?)
-        List<TaskInstanceVO> tasks = taskDao.queryTaskInstances(criteria, null, null, null, null, null, null, workgroups, orderBy, !query.isDescending(), start, end);
-        TaskList taskList = new TaskList(TaskList.WORKGROUP_TASKS, tasks);
-        taskList.setRetrieveDate(new Date()); // TODO db time
-        taskList.setCount(tasks.size());
-        return taskList;
+        catch (DataAccessException ex) {
+            throw ex;
+        }
+        catch (CachingException ex) {
+            throw new DataAccessException(ex.getMessage(), ex);
+        }
     }
 
     public TaskList getProcessTasks(Long processInstanceId) throws DataAccessException {
         TaskDAO taskDao = new TaskDAO(new DatabaseAccess(null));
         List<TaskInstanceVO> tasks = taskDao.getTaskInstancesForProcessInstance(processInstanceId, true);
         TaskList taskList = new TaskList(TaskList.PROCESS_TASKS, tasks);
-        taskList.setRetrieveDate(new Date()); // TODO db time
+        taskList.setRetrieveDate(DatabaseAccess.getDbDate());
         taskList.setCount(tasks.size());
         return taskList;
     }
@@ -275,10 +226,27 @@ public class TaskServicesImpl implements TaskServices {
         return taskMgr.getTaskInstance(instanceId);
     }
 
+    public TaskRuntimeContext getRuntimeContext(Long instanceId) throws ServiceException {
+        try {
+            TaskManager taskMgr = ServiceLocator.getTaskManager();
+            TaskInstanceVO taskInstance = taskMgr.getTaskInstance(instanceId);
+            if (taskInstance == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
+            return taskMgr.getTaskRuntimeContext(taskInstance);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot get runtime context for task instance: " + instanceId, ex);
+        }
+    }
+
     public Map<String,Value> getValues(Long instanceId) throws ServiceException {
         try {
             TaskManager taskMgr = ServiceLocator.getTaskManager();
-            TaskRuntimeContext runtimeContext = taskMgr.getTaskRuntimeContext(taskMgr.getTaskInstance(instanceId));
+            TaskInstanceVO taskInstance = taskMgr.getTaskInstance(instanceId);
+            if (taskInstance == null) {
+                throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
+            }
+            TaskRuntimeContext runtimeContext = taskMgr.getTaskRuntimeContext(taskInstance);
             if (runtimeContext.getTaskTemplate().isAutoformTask()) {
                 return new AutoFormTaskValuesProvider().collect(runtimeContext);
             }
@@ -286,6 +254,9 @@ public class TaskServicesImpl implements TaskServices {
                 // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
                 return new HashMap<String,Value>();
             }
+        }
+        catch (ServiceException ex) {
+            throw ex;
         }
         catch (DataAccessException ex) {
             throw new ServiceException("Error getting values for task instance: " + instanceId, ex);
@@ -302,8 +273,11 @@ public class TaskServicesImpl implements TaskServices {
                 Map<String,Object> newValues = new HashMap<String,Object>();
                 for (String name : values.keySet()) {
                     if (runtimeContext.isExpression(name)) {
-                        // TODO: more robust
-                        String rootVar = name.substring(2, name.indexOf('.'));
+                        String rootVar;
+                        if (name.indexOf('.') > 0)
+                          rootVar = name.substring(2, name.indexOf('.'));
+                        else
+                          rootVar = name.substring(2, name.indexOf('}'));
                         newValues.put(rootVar, runtimeContext.evaluate("#{" + rootVar + "}"));
                     }
                     else {
@@ -313,6 +287,8 @@ public class TaskServicesImpl implements TaskServices {
                 for (String name : newValues.keySet()) {
                     Object newValue = newValues.get(name);
                     VariableVO var = runtimeContext.getProcess().getVariable(name);
+                    if (var == null)
+                        throw new ServiceException(ServiceException.BAD_REQUEST, "Process Variable not found: " + name);
                     String type = var.getVariableType();
                     if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), type)) {
                         String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), type, newValue);
@@ -339,6 +315,71 @@ public class TaskServicesImpl implements TaskServices {
         catch (DataAccessException ex) {
             throw new ServiceException("Error setting values for task instance: " + instanceId, ex);
         }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+    }
+
+    public void performTaskAction(TaskActionVO taskAction) throws ServiceException {
+        String action = taskAction.getTaskAction();
+        String userCuid = taskAction.getUser();
+        try {
+            UserVO user = UserGroupCache.getUser(userCuid);
+            if (user == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + userCuid);
+            Long assigneeId = null;
+            if (com.centurylink.mdw.model.data.task.TaskAction.ASSIGN.equals(action)
+                    || com.centurylink.mdw.model.data.task.TaskAction.CLAIM.equals(action)) {
+                String assignee = taskAction.getAssignee();
+                if (assignee == null) {
+                    assignee = userCuid;
+                }
+                UserVO assigneeUser = UserGroupCache.getUser(assignee);
+                if (assigneeUser == null)
+                    throw new ServiceException("Assignee user not found: " + assignee);
+                assigneeId = assigneeUser.getId();
+            }
+            String destination = taskAction.getDestination();
+            String comment = taskAction.getComment();
+
+            List<Long> taskInstanceIds;
+            Long taskInstanceId = taskAction.getTaskInstanceId();
+            if (taskInstanceId != null) {
+                taskInstanceIds = new ArrayList<Long>();
+                taskInstanceIds.add(taskInstanceId);
+            }
+            else {
+                taskInstanceIds = taskAction.getTaskInstanceIds();
+                if (taskInstanceIds == null || taskInstanceIds.isEmpty())
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing TaskAction field: 'taskInstanceId' or 'taskInstanceIds'");
+            }
+
+            TaskManager taskMgr = ServiceLocator.getTaskManager();
+            for (Long instanceId : taskInstanceIds) {
+                TaskInstanceVO taskInst = taskMgr.getTaskInstance(instanceId);
+                if (taskInst == null)
+                    throw new TaskValidationException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
+
+                TaskRuntimeContext runtimeContext = taskMgr.getTaskRuntimeContext(taskInst);
+                TaskActionValidator validator = new TaskActionValidator(runtimeContext);
+                validator.validateAction(taskAction);
+
+                taskMgr.performActionOnTaskInstance(action, instanceId, user.getId(), assigneeId, comment,
+                        destination, OwnerType.PROCESS_INSTANCE.equals(taskInst.getOwnerType())
+                                && !TaskManagerAccess.getInstance().isRemoteDetail(), false);
+
+                if (logger.isDebugEnabled())
+                    logger.debug("Performed action: " + action + " on task instance: " + instanceId);
+            }
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            String msg = "Error performing action: " + action + " on task instance(s)";
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, msg, ex);
+        }
+
     }
 
     public TaskList getSubtasks(Long masterTaskInstanceId) throws ServiceException {
@@ -395,6 +436,31 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
+    public List<TaskVO> getTaskTemplates(Query query) throws ServiceException {
+        List<TaskVO> templates;
+        String find = query.getFind();
+        if (find == null) {
+            templates = TaskTemplateCache.getTaskTemplates();
+        }
+        else {
+            templates = new ArrayList<TaskVO>();
+            String findLower = find.toLowerCase();
+            for (TaskVO taskVO : TaskTemplateCache.getTaskTemplates()) {
+                if (taskVO.getName() != null && taskVO.getName().toLowerCase().startsWith(findLower))
+                    templates.add(taskVO);
+                else if (find.indexOf(".") > 0 && taskVO.getPackageName() != null && taskVO.getPackageName().toLowerCase().startsWith(findLower))
+                    templates.add(taskVO);
+            }
+            return templates;
+        }
+        Collections.sort(templates, new Comparator<TaskVO>() {
+            public int compare(TaskVO t1, TaskVO t2) {
+                return t1.getName().compareToIgnoreCase(t2.getName());
+            }
+        });
+        return templates;
+    }
+
     /**
      * Fills in task header info, consulting latest instance comment if necessary.
      */
@@ -430,6 +496,4 @@ public class TaskServicesImpl implements TaskServices {
         }
         return taskCounts;
     }
-
-
 }

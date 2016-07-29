@@ -13,11 +13,14 @@ public class TaskState extends StatusCode {
     public static final Integer STATE_CLOSED = new Integer(4);
     public static final Integer STATE_INVALID = new Integer(5);
 
+    public static final String STATE_NOT_INVALID = "[Not Invalid]";
+
     public static final Integer[] allTaskStateCodes
      = {STATE_OPEN, STATE_ALERT, STATE_JEOPARDY, STATE_CLOSED, STATE_INVALID };
 
     public static final String[] allTaskStateNames
       = {"Open", "Alert", "Jeopardy", "Closed", "Invalid" };
+
 
     public static String getTaskStateName(Integer code) {
         return allTaskStateNames[code - 1];

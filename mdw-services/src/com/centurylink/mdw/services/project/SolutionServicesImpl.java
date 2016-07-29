@@ -3,13 +3,13 @@
  */
 package com.centurylink.mdw.services.project;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.value.project.Solution;
 import com.centurylink.mdw.model.value.project.Solution.MemberType;
 import com.centurylink.mdw.model.value.project.SolutionList;
@@ -26,7 +26,7 @@ public class SolutionServicesImpl implements SolutionServices {
         try {
             List<Solution> solutions = getDAO().getSolutions();
             SolutionList solutionList = new SolutionList(solutions);
-            solutionList.setRetrieveDate(new Date()); // TODO db date
+            solutionList.setRetrieveDate(DatabaseAccess.getDbDate());
             solutionList.setTotal(solutions.size());
             return solutionList;
         }
@@ -85,7 +85,7 @@ public class SolutionServicesImpl implements SolutionServices {
             getDAO().addMember(solution.getSolutionId(), memberType, memberId);
         }
         catch (DataAccessException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            throw new ServiceException(500, ex.getMessage(), ex);
         }
     }
 
@@ -97,7 +97,7 @@ public class SolutionServicesImpl implements SolutionServices {
             getDAO().removeMember(solution.getSolutionId(), memberType, memberId);
         }
         catch (DataAccessException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            throw new ServiceException(500, ex.getMessage(), ex);
         }
     }
 

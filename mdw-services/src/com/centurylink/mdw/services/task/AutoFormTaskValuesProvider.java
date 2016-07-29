@@ -29,7 +29,9 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
         for (Value value : getDefinedValues(runtimeContext)) {
             if (value.getDisplay() != null) {
                 if (value.isExpression()) {
-                    value.setValue(runtimeContext.evaluateToString(value.getName()));
+                    String str = runtimeContext.evaluateToString(value.getName());
+                    if (str != null && !str.isEmpty())
+                      value.setValue(str);
                 }
                 else {
                     VariableVO var = runtimeContext.getProcess().getVariable(value.getName());

@@ -5,6 +5,10 @@ package com.centurylink.mdw.model.value.task;
 
 import static com.centurylink.mdw.common.constant.TaskAttributeConstant.TASK_ACTION_JSONNAME;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,8 +38,17 @@ public class TaskActionVO extends UserActionVO implements Jsonable {
         setTaskAction(action);
         if (action.equals(Action.Assign.toString()))
             setAssignee(json.getString("assignee"));
-        if (json.has("taskInstanceId"))
+        if (json.has("taskInstanceId")) {
             setTaskInstanceId(json.getLong("taskInstanceId"));
+        }
+        else if (json.has("taskInstanceIds")) {
+            List<Long> instanceIds = new ArrayList<Long>();
+            JSONArray idsArray = json.getJSONArray("taskInstanceIds");
+            for (int i = 0; i < idsArray.length(); i++) {
+                instanceIds.add(idsArray.getLong(i));
+            }
+            setTaskInstanceIds(instanceIds);
+        }
         if (json.has("comment"))
             setComment(json.getString("comment"));
     }
@@ -58,8 +71,16 @@ public class TaskActionVO extends UserActionVO implements Jsonable {
         String action = getTaskAction();
         json.put("action", action);
         json.put("user", getUser());
-        if (getTaskInstanceId() != null)
+        if (getTaskInstanceId() != null) {
             json.put("taskInstanceId", getTaskInstanceId());
+        }
+        else if (getTaskInstanceIds() != null) {
+            JSONArray idsArray = new JSONArray();
+            for (Long instanceId : getTaskInstanceIds()) {
+                idsArray.put(instanceId);
+            }
+            json.put("taskInstanceIds", idsArray);
+        }
 
         if (action.equals(Action.Assign.toString()))
             json.put("assignee", getAssignee());
@@ -73,7 +94,7 @@ public class TaskActionVO extends UserActionVO implements Jsonable {
     }
 
     public String getTaskAction() {
-        return getAction().toString();
+        return getAction() == null ? null : getAction().toString();
     }
 
     public void setTaskAction(String action) {
@@ -87,6 +108,10 @@ public class TaskActionVO extends UserActionVO implements Jsonable {
     public void setTaskInstanceId(Long instanceId) {
         setEntityId(instanceId);
     }
+
+    private List<Long> taskInstanceIds;
+    public List<Long> getTaskInstanceIds() { return taskInstanceIds; }
+    public void setTaskInstanceIds(List<Long> instanceIds) { this.taskInstanceIds = instanceIds; }
 
     /**
      * destination is assignee for ASSIGN
@@ -120,6 +145,4 @@ public class TaskActionVO extends UserActionVO implements Jsonable {
     public String getJsonName() {
         return TASK_ACTION_JSONNAME;
     }
-
-
 }

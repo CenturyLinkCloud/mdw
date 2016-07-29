@@ -232,7 +232,10 @@ public class BamInterface {
         for (AttributeT xmlattr : xmlattrlist.getAttributeList()) {
             Attribute attr = new Attribute();
             attr.setAttributeName(xmlattr.getName());
-            attr.setAttributeValue(xmlattr.getValue());
+            String value = xmlattr.getValue();
+            if (value != null)
+                value = value.replaceAll("&amp;", "&").replaceAll("&#39;", "'");
+            attr.setAttributeValue(value);
             attrs.add(attr);
         }
         return attrs;

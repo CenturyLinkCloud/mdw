@@ -166,8 +166,8 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
     @Override
     protected ProcessInstanceVO getProcessInstanceBase0(Long processInstanceId) throws SQLException, DataAccessException {
         String query = "select PROCESS_ID, OWNER, OWNER_ID, MASTER_REQUEST_ID, " +
-            "STATUS_CD, START_DT, END_DT, COMPCODE, COMMENTS\n" +
-            "from PROCESS_INSTANCE where PROCESS_INSTANCE_ID = ?";
+                "STATUS_CD, START_DT, END_DT, COMPCODE, COMMENTS\n" +
+                "from PROCESS_INSTANCE where PROCESS_INSTANCE_ID = ?";
         ResultSet rs = db.runSelect(query, processInstanceId);
         if (!rs.next())
             throw new SQLException("Cannot find process instance ID: " + processInstanceId);
@@ -226,9 +226,9 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
     protected List<ProcessInstanceVO> getProcessInstancesForOwner(String ownerType, Long ownerId) throws SQLException, DataAccessException {
         List<ProcessInstanceVO> instanceList = null;
         String query = "select pi.PROCESS_INSTANCE_ID, pi.PROCESS_ID, pi.MASTER_REQUEST_ID," +
-            " pi.STATUS_CD, pi.START_DT, pi.END_DT, pi.COMPCODE, pi.COMMENTS" +
-            " from PROCESS_INSTANCE pi" +
-            " where pi.OWNER = '" + ownerType + "' and pi.OWNER_ID = ?";
+                " pi.STATUS_CD, pi.START_DT, pi.END_DT, pi.COMPCODE, pi.COMMENTS" +
+                " from PROCESS_INSTANCE pi" +
+                " where pi.OWNER = '" + ownerType + "' and pi.OWNER_ID = ?";
         ResultSet rs = db.runSelect(query, ownerId);
         while (rs.next()) {
             if (instanceList == null)
@@ -254,15 +254,9 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
 
     public ActivityList getActivityInstanceList(Query query) throws DataAccessException {
         try {
-
             Date start = query.getDateFilter("startDate");
-
-            if (start == null) {
-                throw new DataAccessException("Start date is required");
-            }
             StringBuilder sql = new StringBuilder();
             db.openConnection();
-
             sql.append(buildActivityCountQuery(query, start));
             ResultSet rs = db.runSelect(sql.toString(), null);
             Long count;
@@ -300,7 +294,7 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
 
                 mdwActivityInstanceList.add(ai);
             }
-            actList.setRetrieveDate(new Date()); // TODO use db date
+            actList.setRetrieveDate(DatabaseAccess.getDbDate());
             actList.setCount(mdwActivityInstanceList.size());
             actList.setTotal(count);
             return actList;
@@ -330,15 +324,34 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
     protected void buildProcessQueryCommon(StringBuilder sqlBuff, Query query, String orderBy, Date start) {
         sqlBuff.append(" FROM process_instance pi, activity_instance ai ");
         sqlBuff.append(" WHERE pi.process_instance_id = ai.process_instance_id  ");
-        sqlBuff.append(" AND pi.STATUS_CD NOT IN (" +  WorkStatus.STATUS_COMPLETED.intValue() + "," + WorkStatus.STATUS_CANCELLED.intValue() + "," + WorkStatus.STATUS_PURGE.intValue() + ")");
-        sqlBuff.append(" AND ai.STATUS_CD IN (" +  WorkStatus.STATUS_FAILED.intValue() + "," + WorkStatus.STATUS_WAITING.intValue() + "," + WorkStatus.STATUS_IN_PROGRESS.intValue() + "," + WorkStatus.STATUS_HOLD.intValue() + ")");
+        if (query.getFind() != null) {
+            try {
+                // numeric value means instance id
+                long findInstId = Long.parseLong(query.getFind());
+                sqlBuff.append(" and ai.activity_instance_id like '" + findInstId + "%'\n");
+            }
+            catch (NumberFormatException ex) {
+                // otherwise master request id
+                sqlBuff.append(" and pi.master_request_id like '" + query.getFind() + "%'\n");
+            }
+        } else {
+            // actInstId
+            String actInstId = query.getFilter("instanceId");
+            if (actInstId != null) {
+                sqlBuff.append(" and ai.activity_instance_id  = ").append(actInstId).append("\n");
+            }
+            sqlBuff.append(" and pi.STATUS_CD NOT IN (" +  WorkStatus.STATUS_COMPLETED.intValue() + "," + WorkStatus.STATUS_CANCELLED.intValue() + "," + WorkStatus.STATUS_PURGE.intValue() + ")");
+            sqlBuff.append(" and ai.STATUS_CD IN (" +  WorkStatus.STATUS_FAILED.intValue() + "," + WorkStatus.STATUS_WAITING.intValue() + "," + WorkStatus.STATUS_IN_PROGRESS.intValue() + "," + WorkStatus.STATUS_HOLD.intValue() + ")");
+        }
+        if (start != null)
+        {
+            String startStr = new SimpleDateFormat("dd-MMM-yyyy").format(start);
 
-        String startStr = new SimpleDateFormat("dd-MMM-yyyy").format(start);
-        if (db.isMySQL())
-            sqlBuff.append(" and ai.start_dt >= STR_TO_DATE('" + startStr + "','%d-%M-%Y')\n   ");
-        else
-            sqlBuff.append(" and ai.start_dt >= '" + startStr + "'\n   ");
-
+            if (db.isMySQL())
+                sqlBuff.append(" and ai.start_dt >= STR_TO_DATE('" + startStr + "','%d-%M-%Y')\n   ");
+            else
+                sqlBuff.append(" and ai.start_dt >= '" + startStr + "'\n   ");
+        }
         if (orderBy != null)
             sqlBuff.append("\n").append(orderBy);
     }

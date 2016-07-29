@@ -114,6 +114,41 @@
           </t:selectOneListbox>
         </t:panelGroup>
         
+        <!-- regular html select input -->
+        <t:selectManyMenu
+          rendered="#{crit.inputTypeMultiSelect &amp;&amp; !crit.expandable}"
+          sequenceId="#{crit.sequenceId}"
+          value="#{filterEntity.critValue}"
+          styleClass="mdw_filterInput" >
+          <f:selectItems value="#{crit.selectValues}" />
+        </t:selectManyMenu>
+
+        <!-- expandable dropdown list -->
+        <t:panelGroup rendered="#{crit.inputTypeMultiSelect &amp;&amp; crit.expandable}">
+          <!-- this is a dumb (non JSF) HTML select simply to provide look and feel -->
+          <!-- the selectOneListbox below is the component that interacts with the model -->
+          <select
+            name="#{crit.sequenceId}:expandableSelect"
+            class="mdw_filterInput"
+            style="height:18px"
+            onclick="dropdown(this, #{crit.sequenceId});"
+            onkeydown="key(event, #{crit.sequenceId});">
+            <option value="0" selected="selected">#{crit.selectedLabel}</option>
+          </select><br style="background-color:white;" />
+          <t:selectManyListbox
+            id="expandableSelectDropdown"
+            sequenceId="#{crit.sequenceId}"
+            value="#{filterEntity.critValue}"
+            size="10"
+            styleClass="mdw_inputField"
+            style="position:absolute;visibility:hidden;"
+            onclick="selectItem(this, #{crit.sequenceId});"
+            onkeydown="dropdownKey(event, #{crit.sequenceId});"
+            onblur="collapse(this, #{crit.sequenceId});">          
+            <f:selectItems value="#{crit.selectValues}" />
+          </t:selectManyListbox>
+        </t:panelGroup>
+        
         <!-- date criterion -->
         <mdw:date
           rendered="#{crit.inputTypeDate}"

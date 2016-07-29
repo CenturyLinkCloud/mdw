@@ -6,14 +6,12 @@ package com.centurylink.mdw.common.utilities;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
-
-import org.eclipse.jgit.diff.DiffEntry;
 
 import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
 import com.centurylink.mdw.common.utilities.timer.SystemOutProgressMonitor;
+import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 
@@ -126,9 +124,8 @@ public class GitImporter {
             System.exit(-1);
         }
         else if (cmd.equals(CMD_DIFF)) {
-            List<DiffEntry> diffs = vcGit.getDiffs(assetPath);
-            for (DiffEntry diff : diffs)
-                System.out.println(diff);
+            GitDiffs diffs = vcGit.getDiffs(assetPath);
+            System.out.println(diffs.toString());
         }
         else {
             throw new IllegalArgumentException("Unsupported command: " + cmd);

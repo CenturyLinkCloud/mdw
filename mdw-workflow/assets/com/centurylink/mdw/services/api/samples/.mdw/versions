@@ -1,4 +1,4 @@
-#Tue Apr 12 16:59:36 MDT 2016
+#Wed Jul 27 15:01:50 MDT 2016
 Assets_GetContent.json=1
 Assets_GetPackage.json=1
 Assets_GetPackages.json=1
@@ -17,10 +17,13 @@ Solutions_AddTask.json=1
 Solutions_Get.json=1
 Solutions_Get1.json=1
 Solutions_Update.json=1
-Tasks_Create.json=1
-Tasks_PerformAction.json=1
+Tasks_Create.json=2
+Tasks_PerformActionAssign.json=1
+Tasks_PerformActionForward.json=1
+Tasks_PerformActionMultiple.json=2
 Tasks_Update.json=1
-Tasks_UpdateIndexes.json=1
+Tasks_UpdateIndexes.json=2
+Tasks_Values.json=1
 Users_AddRole.json=1
 Users_AddWorkgroup.json=1
 Users_Create.json=1

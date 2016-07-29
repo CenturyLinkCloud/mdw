@@ -50,10 +50,10 @@ process: # 13620
     name: Start
     status: Completed
   activity: # 26 "2016-02-22 12:22:38"
-    name: Script with syntax error
+    name: Throw an Exception
     status: Cancelled
   activity: # 26 "2016-02-22 12:23:08"
-    name: Script with syntax error
+    name: Throw an Exception
     status: Completed
   activity: # 29 "2016-02-22 12:23:28"
     name: Alternate path

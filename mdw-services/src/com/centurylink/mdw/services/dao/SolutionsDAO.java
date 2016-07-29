@@ -150,7 +150,7 @@ public class SolutionsDAO extends VcsEntityDAO {
             Request request = new Request(0l);
             request.setMasterRequestId(rs.getString("member_id"));
             ProcessInstanceVO pi = buildProcessInstance(rs);
-            request.setCreated(rs.getTimestamp("d.create_dt"));
+            request.setCreated(rs.getTimestamp("start_dt"));
             request.setMasterRequestId(pi.getMasterRequestId());
             request.setProcessInstanceId(pi.getId());
             request.setProcessId(pi.getProcessId());
@@ -158,8 +158,8 @@ public class SolutionsDAO extends VcsEntityDAO {
             request.setProcessVersion(pi.getProcessVersion());
             request.setPackageName(pi.getPackageName());
             request.setProcessStatus(WorkStatuses.getName(pi.getStatusCode()));
-            request.setProcessStart(rs.getTimestamp("pi.start_dt"));
-            request.setProcessEnd(rs.getTimestamp("pi.end_dt"));
+            request.setProcessStart(rs.getTimestamp("start_dt"));
+            request.setProcessEnd(rs.getTimestamp("end_dt"));
             members.add(request);
         }
         return members;

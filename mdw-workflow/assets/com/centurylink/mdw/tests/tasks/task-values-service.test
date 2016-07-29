@@ -7,7 +7,7 @@ start process("ManualTaskServices") {
                   docVar: "<full>\n  <document content='xml'/>\n</full>",
                   jaxbVar: '''<TaskJaxb
   attributeOne="attrOneValue"
-  attributeTwo="attrTwoValue">
+  attributeTwo="requiredAttributeValue">
   <elementOne>elementOneValue</elementOne>
   <elementTwo>elementTwoValue</elementTwo>
 </TaskJaxb>''' ]
@@ -19,10 +19,11 @@ def taskInst = action task("AutoForm Task for Service Access") {
 }
 
 // check the values through the REST API
+println "Checking values for task instance: ${taskInst.id} ..."
 def response = get http("services/Tasks/${taskInst.id}/values")
 assert response.code == 200
 response.expected = asset("task-values-json-1.json").text
-verify response
+assert verify(response).success
 
 // update some values through the REST API
 def values = [:]
@@ -42,7 +43,7 @@ assert response.code == 200
 response = get http("services/Tasks/${taskInst.id}/values")
 assert response.code == 200
 response.expected = asset("task-values-json-2.json").text
-verify response
+assert verify(response).success
 
 // try to set a read-only var (nothing should update)
 values = [:]
@@ -62,12 +63,19 @@ response = put http("services/Tasks/${taskInst.id}/values") {
 response = get http("services/Tasks/${taskInst.id}/values")
 assert response.code == 200
 response.expected = asset("task-values-json-2.json").text
-verify response
+assert verify(response).success
 
-action task("AutoForm Task for Service Access") {
-    outcome = "Complete"
-    variables = [unassignedVar: "updated during task completion"]
+// complete the task through REST
+response = post http("services/Tasks/${taskInst.id}/Complete") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = '''{
+      "taskAction" : "Complete",
+      "user": "dxoakes",
+      "taskInstanceId": ''' + taskInst.id + '\n}'
 }
+assert response.code == 200
+assert new groovy.json.JsonSlurper().parseText(response.content).status.code == 0
 
 verify process
 

@@ -16,6 +16,7 @@ import com.centurylink.mdw.bpm.PackageDocument;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.model.value.process.PackageVO;
 
 import io.swagger.annotations.ApiModel;
@@ -24,6 +25,9 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value="Package", description="Asset package", parent=Object.class)
 public class PackageDir extends File {
 
+    public static final String META_DIR = ".mdw";
+    public static final String PACKAGE_XML_PATH = META_DIR + "/package.xml";
+    public static final String VERSIONS_PATH = META_DIR + "/versions";
     public static final String ARCHIVE_SUBDIR = "Archive";
 
     private File storageDir; // main parent for workflow assets
@@ -56,13 +60,14 @@ public class PackageDir extends File {
     private String pkgVersion;
     @ApiModelProperty(name="version")
     public String getPackageVersion() { return pkgVersion; }
+    public void setPackageVersion(String version) { this.pkgVersion = version; }
 
     private long pkgId;
     public long getId() { return pkgId; }
 
     public void parse() throws DataAccessException {
         try {
-            File pkgFile = new File(toString() + "/.mdw/package.xml");
+            File pkgFile = new File(toString() + "/" + PACKAGE_XML_PATH);
             pkgDoc = PackageDocument.Factory.parse(pkgFile);
             pkg = pkgDoc.getPackage();
             pkgName = pkg.getName();
@@ -120,9 +125,10 @@ public class PackageDir extends File {
     /**
      * For placeholder (eg: missing) packages.
      */
-    public PackageDir(File storageDir, String name) {
+    public PackageDir(File storageDir, String name, VersionControl versionControl) {
         super(storageDir + "/" + name);
         this.pkgName = name;
+        this.versionControl = versionControl;
     }
 
     /**
@@ -173,20 +179,8 @@ public class PackageDir extends File {
         return assetFile;
     }
 
-    /**
-     * For asset services.
-     * TODO belongs in com.centurylink.mdw.model.value.asset
-     */
-    private boolean hasVcsDiffs;
+    private DiffType vcsDiffType;
     @ApiModelProperty(hidden=true)
-    public boolean isHasVcsDiffs() { return hasVcsDiffs; }
-    public void setHasVcsDiffs(boolean hasDiffs) { this.hasVcsDiffs = hasDiffs; }
-
-    /**
-     * Means package exists in VCS but local is missing.
-     */
-    private boolean vcsMissing;
-    @ApiModelProperty(hidden=true)
-    public boolean isVcsMissing() { return vcsMissing; }
-    public void setVcsMissing(boolean missing) { this.vcsMissing = missing; }
+    public DiffType getVcsDiffType() { return vcsDiffType; }
+    public void setVcsDiffType(DiffType diffType) { this.vcsDiffType = diffType; }
 }

@@ -14,8 +14,12 @@ task updateDesignerInMdwWeb(type: HttpGet) {
     fromUrl "${archivaUrl}/mdw-designer-core/${mdwDesignerVersion}/mdw-designer-core-${mdwDesignerVersion}.jar"
     into "../mdw-web/web/WEB-INF/lib"
 }
+task updateDesignerInMdwHub(type: HttpGet) {
+    fromUrl "${archivaUrl}/mdw-designer-core/${mdwDesignerVersion}/mdw-designer-core-${mdwDesignerVersion}.jar"
+    into "../mdw-hub/web/WEB-INF/lib"
+}
 task updateDesignerCoreJar {
-    dependsOn(updateDesignerInTestingPkg, updateDesignerInMdwWeb)
+    dependsOn(updateDesignerInTestingPkg, updateDesignerInMdwWeb, updateDesignerInMdwHub)
 }
 
 task updateDesignerReportsJar(type: HttpGet) {

@@ -55,9 +55,23 @@ task deployMdwWar(type: Copy) {
     from "../mdw-framework/deploy/app"
     into "${deployWarDir}"
     include "mdw-${mdwVersion}.war"
-    rename("mdw-${mdwVersion}.war", "mdw.war")
 }
 deployMdwWar.mustRunAfter cleanWars
+
+task addJavadocsToWar(type: Jar) {
+    destinationDir file(deployWarDir)
+    archiveName "mdw.war"
+    from zipTree("${deployWarDir}/mdw-${mdwVersion}.war")
+    from("../mdw-hub/web") {
+        include "javadoc/**"
+    }
+}
+
+task deployJavadocs(type: Delete) {
+    dependsOn addJavadocsToWar
+    delete file("${deployWarDir}/mdw-${mdwVersion}.war")
+}
+deployJavadocs.mustRunAfter deployMdwWar
 
 // doesn't work on windows (blocks build task thread)
 // http://forums.gradle.org/gradle/topics/exec_task_issues_details
@@ -78,8 +92,12 @@ task startTomcat(type: ServerStart) {
       return standardOutput.toString()
     }
 }
-startTomcat.mustRunAfter(stopTomcat, deployAssets, deployMdwWar)
+startTomcat.mustRunAfter(stopTomcat, deployAssets, deployMdwWar, deployJavadocs)
 
-task deployMdw(dependsOn: [stopTomcat, cleanAssets, cleanWars, deployAssets, deployMdwWar, startTomcat]) << {
+// no tomcat or assets
+task deployWarOnly(dependsOn: [cleanWars, deployMdwWar, deployJavadocs]) << {
+}
+
+task deployMdw(dependsOn: [stopTomcat, cleanAssets, cleanWars, deployAssets, deployMdwWar, deployJavadocs, startTomcat]) << {
     println "*** MDW build ${mdwVersion} published to ${deployAssetDir}, ${deployWarDir} ***"
 }

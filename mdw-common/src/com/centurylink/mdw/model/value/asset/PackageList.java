@@ -67,10 +67,8 @@ public class PackageList implements Jsonable {
                 pkg.put("id", pkgDir.getId());
                 pkg.put("name", pkgDir.getPackageName());
                 pkg.put("version", pkgDir.getPackageVersion());
-                if (pkgDir.isHasVcsDiffs())
-                    pkg.put("hasVcsDiffs", true);
-                if (pkgDir.isVcsMissing())
-                    pkg.put("vcsMissing", true);
+                if (pkgDir.getVcsDiffType() != null)
+                    pkg.put("vcsDiff", pkgDir.getVcsDiffType());
                 pkgArray.put(pkg);
             }
         }

@@ -985,7 +985,7 @@ class ProcessExecuterImpl {
 					completeProcessInstance(pi, compcode, noNotify);
 					List<ProcessInstanceVO> subProcessInsts = getDataAccess().getProcessInstances(pi.getProcessId(), OwnerType.MAIN_PROCESS_INSTANCE, pi.getId());
                     for (ProcessInstanceVO subProcessInstanceVO : subProcessInsts) {
-                        if (!subProcessInstanceVO.getStatusCode().equals(WorkStatus.STATUS_COMPLETED) ||
+                        if (!subProcessInstanceVO.getStatusCode().equals(WorkStatus.STATUS_COMPLETED) &&
                                 !subProcessInstanceVO.getStatusCode().equals(WorkStatus.STATUS_CANCELLED))
                         completeProcessInstance(subProcessInstanceVO, compcode, noNotify);
                     }

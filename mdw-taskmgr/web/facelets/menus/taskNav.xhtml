@@ -44,7 +44,7 @@
       <mdw:navLink
         id="subTasksLink"
         label="SubTasks #{detailManager.taskDetail.fullTaskInstance.hasSubTaskInstances ? '*' : ''}"
-        rendered="#{detailManager.taskDetail.fullTaskInstance.masterTask}"
+        rendered="#{!detailManager.taskDetail.fullTaskInstance.subTask}"
         action="go_subTasks"
         title="View SubTask Instances">
         <f:param name="taskInstanceId" value="#{detailManager.taskDetail.instanceId}" />

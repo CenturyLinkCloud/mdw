@@ -6,7 +6,6 @@ package com.centurylink.mdw.service.rest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +18,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.data.common.InstanceNote;
 import com.centurylink.mdw.model.data.common.NotesList;
 import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
@@ -78,7 +78,7 @@ public class Notes extends JsonRestService {
             Collections.sort(notes);
             String name = ownerType.toLowerCase() + "Notes";
             NotesList notesList = new NotesList(name, ownerType, ownerId, notes);
-            notesList.setRetrieveDate(new Date());
+            notesList.setRetrieveDate(DatabaseAccess.getDbDate());
             notesList.setCount(notes.size());
             return notesList.getJson();
         }

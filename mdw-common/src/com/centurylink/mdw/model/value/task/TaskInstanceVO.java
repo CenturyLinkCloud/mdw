@@ -168,6 +168,10 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
                 }
             }
         }
+        if (jsonObj.has("assigneeId"))
+            taskClaimUserCuid = jsonObj.getString("assigneeId");
+        if (jsonObj.has("assignee"))
+            assignee = jsonObj.getString("assignee");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -187,7 +191,6 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
             json.put("dueDate", dueDate);
             json.put("dueInSeconds", (dueDate.getTime() - (System.currentTimeMillis() + db_time_diff))/1000);
         }
-        json.put("assignee", taskClaimUserCuid);
         json.put("instanceUrl", taskInstanceUrl);
         json.put("category", getCategory());
         json.put("priority", priority);
@@ -207,6 +210,10 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
             }
             json.put("workgroups", workGroupsJson);
         }
+        if (taskClaimUserCuid != null)
+            json.put("assigneeId", taskClaimUserCuid);
+        if (assignee != null)
+            json.put("assignee", assignee);
         return json;
     }
 
@@ -385,6 +392,9 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
     public String getAssigneeCuid() {
         return taskClaimUserCuid;
     }
+    public void setAssigneeCuid(String cuid) {
+        taskClaimUserCuid = cuid;
+    }
 
     @ApiModelProperty(hidden=true)
     public Long getTaskClaimUserId(){
@@ -397,6 +407,10 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
     public Long getAssigneeId() {
         return taskClaimUserId;
     }
+
+    private String assignee; // assignee name
+    public String getAssignee() { return assignee; }
+    public void setAssignee(String assignee) { this.assignee = assignee; }
 
     public String getTaskMessage(){
     	return taskMessage;

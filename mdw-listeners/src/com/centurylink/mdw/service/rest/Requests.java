@@ -59,9 +59,9 @@ public class Requests extends JsonRestService implements Exportable {
     throws ServiceException, JSONException {
         RequestServices requestServices = ServiceLocator.getRequestServices();
         try {
+            Query query = getQuery(path, headers);
             String segOne = getSegment(path, 1);
             if (segOne != null) {
-                Query query = getQuery(path, headers);
                 if (segOne.equals("instanceCounts")) {
                     Map<Date,List<RequestCount>> dateMap = requestServices.getRequestBreakdown(query);
                     Map<String,List<RequestCount>> listMap = new HashMap<String,List<RequestCount>>();
@@ -78,7 +78,6 @@ public class Requests extends JsonRestService implements Exportable {
                 }
             }
             else {
-                Query query = getQuery(path, headers);
                 return requestServices.getRequests(query).getJson();
             }
         }

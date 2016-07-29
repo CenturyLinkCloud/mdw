@@ -22,9 +22,14 @@ import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.ProcessExporter;
+import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
+import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.Download;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.value.asset.PackageList;
 import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.services.AssetServices;
+import com.centurylink.mdw.services.asset.AssetServicesImpl;
 
 /**
  * This is an interim solution to be accessed for remote projects for client apps using VCS
@@ -48,7 +53,7 @@ public class Packages implements XmlService, JsonService {
                     topLevelPackages.put(pkg.getName(), pkg);
             }
             ProcessExporter exporter = DataAccess.getProcessExporter(DataAccess.currentSchemaVersion);
-            return exporter.exportPackages(Arrays.asList(topLevelPackages.values().toArray(new PackageVO[0])));
+            return exporter.exportPackages(Arrays.asList(topLevelPackages.values().toArray(new PackageVO[0])), true);
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
@@ -67,8 +72,9 @@ public class Packages implements XmlService, JsonService {
     public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
         boolean archive = "true".equals(parameters.get("archive"));
         boolean topLevel = "true".equals(parameters.get("topLevel"));
-        if (!archive && !topLevel)
-            throw new ServiceException("At least one of 'topLevel' or 'archive' must be true");
+        boolean nonVersioned = "true".equals(parameters.get("nonVersioned"));
+        if (!archive && !topLevel && !nonVersioned)
+            throw new ServiceException("At least one of 'topLevel', 'nonVersioned' or 'archive' must be true");
         if (!ApplicationContext.isFileBasedAssetPersist())
             throw new ServiceException("Only applicable for VCS assets");
 
@@ -83,18 +89,35 @@ public class Packages implements XmlService, JsonService {
             File pkgDir = new File(PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION));
             String rootName = topLevel ? "pkg" : "archive";
             File zipFile = new File(tempDir + "/" + rootName + StringHelper.filenameDateToString(new Date()) + ".zip");
-            List<File> excludes = new ArrayList<File>();
-            excludes.add(new File(".dmignore"));
-            excludes.add(new File(".gitignore"));
-            if (!topLevel || !archive) {
-                for (File file : pkgDir.listFiles()) {
-                    if (!archive && file.getName().equals("Archive"))
-                        excludes.add(file);
-                    else if (!topLevel && !file.getName().equals("Archive"))
-                        excludes.add(file);
+            if (nonVersioned) {
+                List<File> extraPackages = new ArrayList<File>();
+                AssetServices assetServices = new AssetServicesImpl();
+                PackageList packageList = assetServices.getPackages();
+                for (PackageDir packageDir : packageList.getPackageDirs()) {
+                    if (packageDir.getVcsDiffType() == DiffType.EXTRA)
+                        extraPackages.add(packageDir);
                 }
+                if (archive) {
+                    File archiveDir = new File(pkgDir + "/" + PackageDir.ARCHIVE_SUBDIR);
+                    if (archiveDir.isDirectory())
+                      extraPackages.add(archiveDir);
+                }
+                FileHelper.createZipFileWith(pkgDir, zipFile, extraPackages);
             }
-            FileHelper.createZipFile(pkgDir, zipFile, excludes);
+            else {
+                List<File> excludes = new ArrayList<File>();
+                excludes.add(new File(".dmignore"));
+                excludes.add(new File(".gitignore"));
+                if (!topLevel || !archive) {
+                    for (File file : pkgDir.listFiles()) {
+                        if (!archive && file.getName().equals(PackageDir.ARCHIVE_SUBDIR))
+                            excludes.add(file);
+                        else if (!topLevel && !file.getName().equals(PackageDir.ARCHIVE_SUBDIR))
+                            excludes.add(file);
+                    }
+                }
+                FileHelper.createZipFile(pkgDir, zipFile, excludes);
+            }
             String url = "http://" + ApplicationContext.getServerHostPort() + "/" + ApplicationContext.getMdwHubContextRoot() +
                     "/system/download?filepath=" + zipFile.getPath().replace('\\', '/');
             Download download = new Download(url);

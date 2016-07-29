@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.eclipse.jgit.diff.DiffEntry;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -24,6 +23,7 @@ import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.dataaccess.file.CompatibilityBaselineData;
+import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.dataaccess.file.RuntimeDataAccessVcs;
@@ -232,12 +232,10 @@ public class DataAccess {
                                 DesignatedHostSslVerifier.setupSslVerification(gitTrustedHost);
 
                             String assetPath = vcGit.getRelativePath(rootDir);
-                            List<DiffEntry> diffs = vcGit.getDiffs(assetPath);
                             logger.info("Loading assets from path: " + assetPath);
-                            if (diffs.size() > 0) {
-                                String debugMsg = "Differences:\n============\n";
-                                for (DiffEntry diff : diffs)
-                                    debugMsg += "  " + diff + "\n";
+                            GitDiffs diffs = vcGit.getDiffs(assetPath);
+                            if (!diffs.isEmpty()) {
+                                String debugMsg = "Differences:\n============\n" + diffs;
                                 logger.severe("WARNING: Local Git repository is out-of-sync with respect to remote branch: " + branch
                                         + "\n(" + gitLocal.getAbsolutePath() + ")");
                                 if (logger.isDebugEnabled())

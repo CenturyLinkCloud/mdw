@@ -46,9 +46,9 @@ public class ActivityException extends WorkflowException {
         if (actInst == null)
             return super.toString();
 
-        String str = super.toString() + "\n\nActivity Instance:\n";
+        String str = super.toString() + "\n" + actInst.getJsonName() + ":\n";
         try {
-            str += actInst.getJson().toString();
+            str += actInst.getJson().toString(2);
             return str;
         }
         catch (JSONException e) {

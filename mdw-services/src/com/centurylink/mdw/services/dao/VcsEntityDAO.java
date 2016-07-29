@@ -5,6 +5,8 @@ package com.centurylink.mdw.services.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
@@ -108,6 +110,12 @@ public class VcsEntityDAO extends CommonDataAccess {
             logger.severeException(ex.getMessage(),  ex);
         }
         return task;
-   }
+    }
 
+    private static DateFormat dateFormat;
+    protected static DateFormat getDateFormat() {
+        if (dateFormat == null)
+            dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+        return dateFormat;
+    }
 }

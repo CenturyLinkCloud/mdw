@@ -19,15 +19,14 @@ public class TaskStatus extends StatusCode {
     public static final Integer STATUS_CANCELLED = new Integer(5);
     public static final Integer STATUS_IN_PROGRESS = new Integer(6);
 
-    public static final String STATUSNAME_ACTIVE = "Active";
-    public static final String STATUSNAME_CLOSED = "Closed";
-    public static final String STATUSNAME_ALL = "All";
+    public static final String STATUSNAME_ACTIVE = "[Active]";
+    public static final String STATUSNAME_CLOSED = "[Closed]";
 
     public static final String STATUSNAME_OPEN = "Open";
     public static final String STATUSNAME_ASSIGNED = "Assigned";
     public static final String STATUSNAME_COMPLETED = "Completed";
     public static final String STATUSNAME_CANCELLED = "Cancelled";
-    public static final String STATUSNAME_CANCELED = "Cancelled";
+    public static final String STATUSNAME_CANCELED = "Canceled";
     public static final String STATUSNAME_IN_PROGRESS = "In Progress";
 
     // does not include logical statuses
