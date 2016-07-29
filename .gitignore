@@ -1,2 +1,12 @@
-.metadata
-.dmignore
+# ignore everything but project directories
+*
+!mdw-camel/
+!mdw-common/
+!mdw-framework/
+!mdw-hub/
+!mdw-listeners/
+!mdw-schemas/
+!mdw-services/
+!mdw-taskmgr/
+!mdw-web/
+!mdw-workflow/
