@@ -140,7 +140,7 @@ public class TaskDetail extends Detail implements InstanceData
         DocumentVO docvo = taskMgr.getTaskInstanceData(getFullTaskInstance().getTaskInstance());
         FormDataDocument datadoc = new FormDataDocument();
         datadoc.load(docvo.getContent());
-        instanceData = ((TaskManagerBean)taskMgr).constructVariableInstancesFromFormDataDocument(getTaskTemplate(), getProcessInstanceId(), datadoc, taskInstId);
+        instanceData = taskMgr.constructVariableInstancesFromFormDataDocument(getTaskTemplate(), getProcessInstanceId(), datadoc, taskInstId);
       }
       else
       {

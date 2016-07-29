@@ -270,13 +270,7 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
                 return actList;
             }
 
-            String orderBy = "order by st desc\n";
-
-            int max = query.getMax();
-            int startIndex = query.getStart();
-            int endIndex = startIndex + max;
-
-            sql = buildActivityQuery(query, startIndex, endIndex, orderBy, start);
+            sql = buildActivityQuery(query, start);
 
             rs = db.runSelect(sql.toString(), null);
             while (rs.next()) {
@@ -294,7 +288,7 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
 
                 mdwActivityInstanceList.add(ai);
             }
-            actList.setRetrieveDate(DatabaseAccess.getDbDate());
+            actList.setRetrieveDate(new Date()); // TODO use db date
             actList.setCount(mdwActivityInstanceList.size());
             actList.setTotal(count);
             return actList;
@@ -307,21 +301,21 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
         }
     }
 
-    protected StringBuilder buildActivityQuery(Query query,int startIndex, int endIndex, String orderBy, Date start) {
+    protected StringBuilder buildActivityQuery(Query query, Date start) {
         StringBuilder sqlBuff = new StringBuilder();
-        if (startIndex != QueryRequest.ALL_ROWS)
+        if (query.getMax() != -1)
             sqlBuff.append(db.pagingQueryPrefix());
         sqlBuff.append("select pi.process_instance_id, pi.master_request_id, ")
         .append("pi.process_id, pi.comments as process_name, ai.activity_instance_id, ai.activity_id, ")
         .append("ai.status_cd, ai.start_dt as st, ai.end_dt as ed, ai.compcode as cc, ai.status_message as error");
 
-        buildProcessQueryCommon(sqlBuff, query, orderBy, start);
-        if (startIndex != QueryRequest.ALL_ROWS)
-            sqlBuff.append(db.pagingQuerySuffix(startIndex, endIndex-startIndex));
+        buildProcessQueryCommon(sqlBuff, query, start);
+        if (query.getMax() != -1)
+            sqlBuff.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
         return sqlBuff;
     }
 
-    protected void buildProcessQueryCommon(StringBuilder sqlBuff, Query query, String orderBy, Date start) {
+    protected void buildProcessQueryCommon(StringBuilder sqlBuff, Query query, Date start) {
         sqlBuff.append(" FROM process_instance pi, activity_instance ai ");
         sqlBuff.append(" WHERE pi.process_instance_id = ai.process_instance_id  ");
         if (query.getFind() != null) {
@@ -352,6 +346,12 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
             else
                 sqlBuff.append(" and ai.start_dt >= '" + startStr + "'\n   ");
         }
+        // status
+        String status = query.getFilter("status");
+        if (status != null) {
+            sqlBuff.append(" and ai.status_cd = ").append(WorkStatuses.getCode(status)).append("\n");
+        }
+        String orderBy = buildOrderBy(query);
         if (orderBy != null)
             sqlBuff.append("\n").append(orderBy);
     }
@@ -359,8 +359,17 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
     protected String buildActivityCountQuery(Query query, Date start) {
         StringBuilder sqlBuff = new StringBuilder();
         sqlBuff.append("SELECT count(pi.process_instance_id) ");
-        buildProcessQueryCommon(sqlBuff, query, null, start);
+        buildProcessQueryCommon(sqlBuff, query, start);
         return sqlBuff.toString();
     }
+    private String buildOrderBy(Query query) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" order by pi.process_instance_id");
+        if (query.isDescending())
+            sb.append(" desc");
+        sb.append("\n");
+        return sb.toString();
+    }
+
 
 }

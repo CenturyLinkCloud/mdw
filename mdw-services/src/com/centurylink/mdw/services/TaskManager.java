@@ -892,6 +892,7 @@ public interface TaskManager {
    throws DataAccessException;
 
    public List<VariableInstanceVO> constructVariableInstancesFromFormDataDocument(TaskVO taskVO, Long processInstanceId, FormDataDocument datadoc) throws DataAccessException;
+   public List<VariableInstanceVO> constructVariableInstancesFromFormDataDocument(TaskVO taskVO, Long processInstanceId, FormDataDocument datadoc, Long taskInstId) throws DataAccessException;
 
    public List<SubTask> getSubTaskList(TaskRuntimeContext runtimeContext) throws TaskException;
 

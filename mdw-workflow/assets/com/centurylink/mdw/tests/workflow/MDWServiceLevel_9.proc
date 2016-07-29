@@ -12,7 +12,7 @@
       <bpm:Attribute Name="processname" Value="com.centurylink.mdw.tests.workflow/RpcWebService"/>
       <bpm:Attribute Name="processversion" Value="[0.4,1)"/>
       <bpm:Attribute Name="synchronous" Value="FALSE"/>
-      <bpm:Attribute Name="variables" Value="requestDoc=$myvar"/>
+      <bpm:Attribute Name="variables" Value="requestDoc=${myvar}"/>
     </bpm:Activity>
     <bpm:Activity Id="A4" Name="Set document" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
       <bpm:Attribute Name="Output Documents" Value="myvar"/>
