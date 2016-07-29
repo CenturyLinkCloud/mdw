@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring abstract="1" comment="Pull up members from &apos;com.centurylink.mdw.services.task.TaskManagerBean&apos; to &apos;com.centurylink.mdw.services.TaskManager&apos;&#x0D;&#x0A;- Original project: &apos;mdw-services&apos;&#x0D;&#x0A;- Destination type: &apos;com.centurylink.mdw.services.TaskManager&apos;&#x0D;&#x0A;- Use super type where possible" delete="0" description="Pull up members to &apos;TaskManager&apos;" element1="/src&lt;com.centurylink.mdw.services.task{TaskManagerBean.java[TaskManagerBean~getActivityInstanceId~QTaskInstanceVO;~Z" flags="589830" id="org.eclipse.jdt.ui.pull.up" input="/src&lt;com.centurylink.mdw.services{TaskManager.java[TaskManager" instanceof="false" pull="0" replace="true" stamp="1456175294687" stubs="true" version="1.0"/>
-</session>

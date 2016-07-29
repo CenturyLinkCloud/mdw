@@ -1,7 +1,0 @@
-<bpm:package name="com.centurylink.mdw.demo.cool" version="1.0.21" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:ApplicationProperties>
-    <bpm:PropertyGroup Name="dev">
-      <bpm:Property Name="OsgiBundleSymbolicName">com.centurylink.mdwdemo</bpm:Property>
-    </bpm:PropertyGroup>
-  </bpm:ApplicationProperties>
-</bpm:package>

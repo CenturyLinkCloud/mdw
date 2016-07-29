@@ -1,7 +1,0 @@
- println 'verifying Value service '
-
-def getResp = get http("Services/Solutions/test1001/solutions?format=json")
-
-def solutions = new groovy.json.JsonSlurper().parseText(getResp.getContent())
-
-assert solutions.members.solutions[0].id == 'test1002'

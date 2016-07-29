@@ -1,6 +1,0 @@
-eclipse.preferences.version=1
-org.eclipse.wst.jsdt.core.codeComplete.visibilityCheck=enabled
-org.eclipse.wst.jsdt.core.compiler.taskCaseSensitive=enabled
-org.eclipse.wst.jsdt.core.compiler.taskPriorities=NORMAL,HIGH,NORMAL
-org.eclipse.wst.jsdt.core.compiler.taskTags=TODO,FIXME,XXX
-strictOnKeywordUsage=disabled

@@ -1,9 +1,0 @@
- println 'verifying Value service '
-
-def postReq = post http("Services/Solutions/test1002?format=json") {
-  payload = asset('com.centurylink.mdw.testing/NewSolution2.json').text
-}
-
-def solutions = new groovy.json.JsonSlurper().parseText(postReq.getContent())
-
-assert solutions.status.message == "Success"

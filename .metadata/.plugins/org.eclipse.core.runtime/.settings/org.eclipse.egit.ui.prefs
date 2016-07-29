@@ -1,8 +1,0 @@
-BranchProjectTracker__C\:\\workspaces\\mdw55\\DSP\ 5.5\ Fuse\ Dev\ 1\ WF\\.git_master=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<projects branch\="master">\r\n<project>/</project>\r\n</projects>
-CloneWizard_ImportProjects=true
-commit_dialog_history_messages=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<messages>\r\n<message>Added reload to Activities tab</message>\r\n<message>Fixed according to Process tab pattern.</message>\r\n<message>Update to activity dashboard</message>\r\n<message>Activity dashboard \:  Added Retry / Proceed Actions</message>\r\n<message>Updated activity tab\: Added Exception Handle activities</message>\r\n<message>Fixed activity name issue</message>\r\n<message>Updated workflow tab</message>\r\n<message>updated workflow tab</message>\r\n<message>process status fix in workflow</message>\r\n<message>Initial implementation of workflow tab </message>\r\n</messages>
-eclipse.preferences.version=1
-org.eclipse.egit.ui.githistorypage.showallfilter=SHOWALLRESOURCE
-resourcehistory_graph_split=604,395
-resourcehistory_rev_split=700,300
-resourcehistory_show_all_branches=true

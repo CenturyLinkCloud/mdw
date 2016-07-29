@@ -1,9 +1,0 @@
-println 'verifying Value service '
-
-def postMemberReq = post http("Services/Solutions/test1001/solutions/test1002?format=json") {
-  payload = "{}"
-}
-
-def solutions = new groovy.json.JsonSlurper().parseText(postMemberReq.getContent())
-
-assert solutions.status.message == "Success"

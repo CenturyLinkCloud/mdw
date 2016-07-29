@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Delete 3 resources" deleteContents="true" description="Delete 3 resources" element1="/com.centurylink.mdw.designer.core" element2="/com.centurylink.mdw.designer.ui" element3="/mdw-common" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="3" stamp="1454097565654"/>
-</session>

@@ -1,4 +1,0 @@
-<bpm:externalEventHandler xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:EventName>MDWStatusMessage</bpm:EventName>
-  <bpm:EventHandler>NOTIFY_PROCESS?EventName={$CorrelationID}</bpm:EventHandler>
-</bpm:externalEventHandler>

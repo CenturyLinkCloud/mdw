@@ -1,8 +1,0 @@
-<ul class="nav mdw-nav">
-  <li nav-link="masterRequests"><a href="#/masterRequests">Master Requests</a></li>
-  <li nav-link="serviceRequests"><a href="#/serviceRequests">Service Requests</a></li>      
-  <li nav-link="instanceRequests"><a href="#/workflow">Workflow</a></li>
-</ul>
-<ul class="nav mdw-nav">
-  <li nav-link="solutions"><a href="#/solutions">Solutions</a></li>
-</ul>

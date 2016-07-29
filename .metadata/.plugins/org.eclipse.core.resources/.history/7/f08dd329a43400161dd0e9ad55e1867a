@@ -1,3 +1,0 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.tests.DynamicJavaGeneralActivity" Type="com.centurylink.mdw.activity.types.GeneralActivity" Label="Dynamic Java General Activity" IconFile="shape:activity" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription>&lt;PAGELET>&lt;HYPERLINK URL="/MDWWeb/doc/dynamicJava.html">Dynamic Java Help&lt;/HYPERLINK>&lt;/PAGELET></bpm:AttributeDescription>
-</bpm:activityImplementor>
