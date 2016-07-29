@@ -1,0 +1,24 @@
+today = new Date().format("YYYY-MM-dd")
+println 'today: ' + today
+start process("ActivityException") {
+    variables = [processCase: "error handler delegation"]
+}
+sleep 25
+action task("Activity Exception Fallout") {
+    outcome = "Claim"
+} 
+sleep 10
+action task("Activity Exception Fallout") {
+    outcome = "Retry"
+}
+sleep 20
+action task("Activity Exception Fallout[1]") {
+    outcome = "Claim"
+}
+sleep 10
+action task("Activity Exception Fallout[1]") {
+    outcome = "AltAction"
+}
+wait process
+verify processes("com.centurylink.mdw.tests.workflow/ActivityException", 
+                 "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2") 

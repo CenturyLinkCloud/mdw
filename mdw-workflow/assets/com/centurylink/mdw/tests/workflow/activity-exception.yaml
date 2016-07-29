@@ -1,0 +1,76 @@
+process: # 14209
+  name: ActivityException
+  instance: 1
+  activity: # 1 "2016-06-27 17:59:24"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-06-27 17:59:24"
+    name: Which Case?
+    status: Completed
+  activity: # 6 "2016-06-27 18:00:30"
+    name: Invoke Subprocess with Error
+    status: Completed
+  activity: # 2 "2016-06-27 18:00:31"
+    name: Stop
+    status: Completed
+  variable: # 20669
+    name: exception
+    value: |
+      com.centurylink.mdw.activity.ActivityException: Help me, I'm an error
+      ActivityInstance:
+      {
+        "definitionId": "A26",
+        "endDate": "${today} ${~\\d\\d:\\d\\d:\\d\\d}",
+        "id": ${~[0-9]*},
+        "masterRequestId": "${masterRequestId}",
+        "message": "java.lang.RuntimeException: Help me, I'm an error\\ncom.centurylink.mdw.tests.workflow.ThrowanException_Activity26.execute(ThrowanException_Activity26.java:23)\\ncom.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:105)\\ncom.centurylink.mdw.workflow.activity.DefaultActivityImpl.execute(DefaultActivityImpl.java:29)\\ncom.centurylink.mdw.services.process.BaseActivity.execute(BaseActivity.java:218)\\ncom.centurylink.mdw.services.process.BaseActivity.executeTimed(BaseActivity.java:227)\\ncom.centurylink.mdw.services.process.ProcessEngineDriver.executeActivity(ProcessEngineDriver.java:304)\\ncom.centurylink.mdw.services.process.ProcessEngineDriver.processEvent(ProcessEngineDriver.java:537)\\ncom.centurylink.mdw.services.process.ProcessEngineDriver.processEvents(ProcessEngineDriver.java:503)\\ncom.centurylink.mdw.services.process.InternalEventDriver.run(InternalEventDriver.java:25)\\ncom.centurylink.mdw.container.plugins.CommonThreadPool$Work.run(CommonThreadPool.java:257)\\njava.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)\\njava.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)\\njava.lang.Thread.run(Thread.java:745)\\ncom.centurylink.mdw.container.plugins.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:226)",
+        "name": "Throw an Exception",
+        "processName": "MDWTestSubProcess2",
+        "startDate": "${today} ${~\\d\\d:\\d\\d:\\d\\d}",
+        "status": "Failed"
+      }
+  variable: # 20668
+    name: processCase
+    value: error handler delegation
+process: # 14212
+  name: ActivityException Exception Handler
+  instance: 1
+  activity: # 7 "2016-06-27 18:00:00"
+    name: Start
+    status: Completed
+  activity: # 11 "2016-06-27 18:00:30"
+    name: ActivityException Fallout
+    status: Completed
+  activity: # 10 "2016-06-27 18:00:30"
+    name: Stop
+    status: Completed
+process: # 14211
+  name: ActivityException Exception Handler
+  instance: 2
+  activity: # 7 "2016-06-27 17:59:25"
+    name: Start
+    status: Completed
+  activity: # 11 "2016-06-27 18:00:00"
+    name: ActivityException Fallout
+    status: Completed
+  activity: # 10 "2016-06-27 18:00:00"
+    name: Stop
+    status: Completed
+process: # 14210
+  name: MDWTestSubProcess2
+  instance: 1
+  activity: # 30 "2016-06-27 17:59:24"
+    name: Start
+    status: Completed
+  activity: # 26 "2016-06-27 18:00:00"
+    name: Throw an Exception
+    status: Cancelled
+  activity: # 26 "2016-06-27 18:00:30"
+    name: Throw an Exception
+    status: Completed
+  activity: # 29 "2016-06-27 18:00:30"
+    name: Alternate path
+    status: Completed
+  activity: # 28 "2016-06-27 18:00:30"
+    name: Stop
+    status: Completed

@@ -1,0 +1,151 @@
+apply plugin: "osgi"
+
+project.ext {
+  implDir = "../mdw-workflow"
+}
+
+dependencies {
+    compile project(":mdw-schemas")
+    compile project(":mdw-common")
+    compile project(":mdw-services")
+    compile group: "org.apache.velocity", name: "velocity", version: "1.6.4"
+    compile group: "org.apache.velocity", name: "velocity-tools", version: "1.4"
+    compile group: "org.apache.poi", name: "poi-all", version: "3.9"
+    
+	compile group: "org.drools", name: "drools-core", version: "5.6.0.Final"
+	compile group: "org.drools", name: "drools-templates", version: "5.6.0.Final"
+	compile group: "org.drools", name: "drools-decisiontables", version: "5.6.0.Final"
+	compile group: "org.drools", name: "drools-compiler", version: "5.6.0.Final"
+    compile group: "org.drools", name: "knowledge-api", version: "5.6.0.Final"
+	compile group: "org.mvel", name: "mvel2", version: "2.1.8.Final"
+	
+    compile group: "oro", name: "oro", version: "2.0.8"
+    compile group: "javax.connector", name: "connector", version: "1.5"
+    compile group: "junit", name: "junit", version:"4.8.1"
+    
+    // required to work around ServiceMix bug: https://issues.apache.org/jira/browse/SMX4-1089
+    compile group: "org.apache.servicemix.bundles", name: "org.apache.servicemix.bundles.saaj-impl", version:"1.3.9_2"
+    
+    // Salesforce adapter dependencies
+    compile group: "com.force.api", name: "force-wsc", version: "22.0.0"
+    compile group: "com.salesforce", name: "sfa-output", version: "1.6.0"
+    
+    // TODO: proprietary dependencies
+    compile group: "com.qwest.bus", name: "bus-all", version: "2.1.2.1"
+    compile group: "com.ibm", name: "com.ibm.mq", version: "7.0.1.9"
+    compile group: "com.ibm", name: "com.ibm.mq.jmqi", version: "7.0.1.9"
+    
+}
+
+task cleanJar << {
+    delete "../${mdwOutputDir}/mdw-base-${version}.jar"
+}
+
+clean {
+    dependsOn cleanJar
+}
+
+jar {
+    manifest {
+        classesDir = sourceSets.main.output.classesDir
+        symbolicName = "com.centurylink.mdw.workflow"
+        instruction "Bundle-Activator",
+            "com.centurylink.mdw.workflow.bundle.MdwWorkflowBundleActivator"
+        instruction "Bundle-ClassPath",
+            ".",
+            "META-INF/mdw"
+        instruction "Export-Package",
+            "!com.centurylink.mdw.workflow.bundle",
+            "!com.centurylink.mdw.workflow.provider",
+            "com.centurylink.mdw.workflow.*"
+        instruction "Private-Package",
+            "com.centurylink.mdw.workflow.bundle",
+            "com.centurylink.mdw.workflow.provider"
+        instruction "Import-Package",
+            "!com.ibm.mq",
+            "!sun.misc",
+            "!org.apache.axis",
+            "!org.apache.axis.*",
+            "!com.sforce.soap.enterprise",
+            "!com.sforce.soap.enterprise.*",
+            "!com.sforce.ws",
+            "!com.sforce.ws.*",
+            "!org.apache.oltu.oauth2",
+            "!org.apache.oltu.oauth2.*",
+            "com.centurylink.mdw.common.config.service",
+            "com.centurylink.mdw.common.service.types",
+            "com.centurylink.mdw.common.task",
+            "com.centurylink.mdw.jaxb",
+            "com.centurylink.mdw.monitor.impl",
+            "com.centurylink.mdw.services.bam",
+            "com.centurylink.mdw.java",
+            "com.centurylink.mdw.test",
+            "com.centurylink.mdw.common.translator.impl",
+            "com.centurylink.mdw.service.impl",
+            "com.centurylink.mdw.services.rest",
+            "com.centurylink.mdw.workflow.impl",
+            "com.centurylink.mdw.bpm.impl",
+            "com.centurylink.bam.impl",
+            "org.apache.xmlbeans.impl.schema",
+            "org.apache.activemq.camel.component",
+            "org.apache.commons.collections.buffer",
+            "org.apache.commons.io",
+            "org.w3c.dom",
+            "org.xml.sax",
+            "org.springframework.beans.factory",
+            "org.springframework.core.io.support",
+            "org.drools;version='[5.5,6)'",
+            "org.drools.*;version='[5.5,6)'",
+            "org.slf4j",
+            "groovy.lang;version='[1.7,3)'",
+            "groovy.util;version='[1.7,3)'",
+            "groovy.util.slurpersupport;version='[1.7,3)'",
+            "groovy.xml;version='[1.7,3)'",
+            "noNamespace.impl",
+            "javax.net",
+            "javax.net.ssl",
+            "javax.xml.bind",
+            "javax.xml.bind.attachment",
+            "javax.xml.bind.annotation.adapters",
+            "javax.xml.parsers",
+            "javax.xml.xpath",
+            "javax.xml.stream",
+            "javax.xml.validation",
+            "com.centurylink.mdw.common.exception",
+            "com.centurylink.mdw.common.provider",
+            "com.centurylink.mdw.variable",
+            "!com.qwest.artis",
+            "!com.qwest.artis.utilities",
+            "!com.centurylink.mdw.artis",
+            "!com.centurylink.mdw.artis.util",
+            "!org.apache.commons.logging",
+            "*"
+        instruction "DynamicImport-Package",
+            "schemaorg_apache_xmlbeans.*",
+            "com.ibm.mq",
+            "org.springframework.aop",
+            "org.springframework.aop.framework",
+            "org.springframework.aop.target",
+            "com.qwest.artis",
+            "com.qwest.artis.utilities",
+            "com.centurylink.mdw.artis",
+            "com.centurylink.mdw.artis.util",
+            "org.apache.commons.logging",
+            "org.aopalliance.aop"
+    }
+}
+
+task buildBaseJar(type: Jar) {
+	dependsOn compileJava
+  	archiveName = "mdw-base-${version}.jar"
+    manifest.attributes "MDW-Version": "${version}"
+
+  	from("build/classes") { include "com/centurylink/mdw/workflow/provider/*.class" }
+    from("../mdw-common/build/classes") { include "com/centurylink/mdw/translator/*.class" }
+  	from("../mdw-listeners/build/classes") { include "com/centurylink/mdw/listeners/provider/*.class" }
+}
+
+build {
+  dependsOn buildBaseJar
+}
+

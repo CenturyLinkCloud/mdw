@@ -1,0 +1,9 @@
+// POST to services/Tasks/TaskInstanceId/Forward
+{
+  "taskAction" : "Forward",
+  "user": "dxoakes",
+  "destination": "Developers",
+  "taskInstanceId": 11141,
+  "comment": "Needs investigation"
+}
+

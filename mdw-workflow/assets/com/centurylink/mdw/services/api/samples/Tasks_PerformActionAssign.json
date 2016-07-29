@@ -1,0 +1,9 @@
+// POST request to Services/Tasks/TaskInstanceId/{action}
+// e.g http://localhost:8080/mdw/Services/Tasks/22962/Assign
+{
+  "taskAction" : "Assign",
+  "user": "aa70413",
+  "assignee": "dxoakes",
+  "taskInstanceId": 22962
+}
+

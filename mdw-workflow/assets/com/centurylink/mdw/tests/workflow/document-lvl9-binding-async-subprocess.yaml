@@ -1,0 +1,36 @@
+process: # 16460
+  name: MDWTestMainProcess
+  instance: 1
+  activity: # 6 "2016-07-27 17:25:56"
+    name: Process Start
+    status: Completed
+  activity: # 33 "2016-07-27 17:25:56"
+    name: multiple processes ?
+    status: Completed
+  activity: # 34 "2016-07-27 17:25:56"
+    name: Invoke service lvl9 process
+    status: Completed
+  activity: # 11 "2016-07-27 17:25:56"
+    name: Process Finish
+    status: Completed
+  variable: # 26713
+    name: processCase
+    value: DocumentBinding
+process: # 16461
+  name: RpcWebService
+  instance: 1
+  activity: # 1 "2016-07-27 17:25:57"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-07-27 17:25:57"
+    name: |
+      Invoke Employee
+      Service
+    status: Failed
+  variable: # 26714
+    name: requestDoc
+    value: |
+      {"status": {
+        "code": -1,
+        "message": "failed to get document content"
+      }}
