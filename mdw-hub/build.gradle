@@ -25,7 +25,8 @@ dependencies {
     compile(project(":mdw-web")) { transitive = false; }
     compile(project(":mdw-taskmgr")) { transitive = false; }
 
-    compile files("web/WEB-INF/lib/mdwweb-jsf2-${mdwVersion}.jar", "web/WEB-INF/lib/taskmgr-${mdwVersion}.jar", "web/WEB-INF/lib/osrschemas-1.0.4.7.jar")
+    compile files("web/WEB-INF/lib/mdwweb-jsf2-${mdwVersion}.jar", "web/WEB-INF/lib/taskmgr-${mdwVersion}.jar", 
+        "web/WEB-INF/lib/osrschemas-1.0.4.7.jar", "web/WEB-INF/lib/mdw-designer-core-${mdwDesignerVersion}.jar")
     
     compile group: "org.apache.myfaces.core", name: "myfaces-api", version: "2.2.1"
     compile(group: "org.apache.myfaces.core", name: "myfaces-impl", version: "2.2.1") { exclude(module: "commons-digester") }

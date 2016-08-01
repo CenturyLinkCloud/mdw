@@ -316,7 +316,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     protected ActivityList populateActivities(ActivityList activityList, Query query) throws DataAccessException {
         AggregateDataAccessVcs dataAccess = null;
         List<ActivityInstance> aList = activityList.getActivities();
-        ArrayList<ActivityInstance> toRemoveActivities = new ArrayList<ActivityInstance>();
+        ArrayList<ActivityInstance> matchActivities = new ArrayList<ActivityInstance>();
         for (ActivityInstance activityInstance : aList) {
             ProcessVO process = ProcessVOCache.getProcessVO(activityInstance.getProcessId());
             if (process == null) {
@@ -344,22 +344,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 String logicalId = activityInstance.getDefinitionId();
                 ActivityVO actdef = process.getActivityById(logicalId);
                 if (actdef != null) {
-                    String activityName = query.getFilter("activityName");
-                    if (activityName != null) {
-                        try {
-                            String decodedActName = java.net.URLDecoder.decode(activityName, "UTF-8");
-                            if (!actdef.getActivityName().startsWith(decodedActName)) {
-                                toRemoveActivities.add(activityInstance);
-                                continue;
-                            }
-                        }
-                        catch (UnsupportedEncodingException e) {
-                            logger.severe("Unable to decode: " + activityName);
-                        }
-                    }
-                    activityInstance.setName(actdef.getActivityName().replaceAll("\\r", "").replace('\n', ' '));
-                    activityInstance.setProcessName(actdef.getProcessName()); // in case subproc
-                }
+                    activityInstance.setName(actdef.getActivityName().replaceAll("\\r", "").replace('\n', ' '));                }
                 else {
                     activityInstance.setName("Unknown (" + activityInstance.getDefinitionId() + ")");
                 }
@@ -368,12 +353,25 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 activityInstance.setPackageName(process.getPackageName());
             }
         }
-        if (!toRemoveActivities.isEmpty()) {
-            aList.removeAll(toRemoveActivities);
-            activityList.setActivities(aList);
-            activityList.setCount(aList.size());
-            activityList.setTotal(aList.size());
+
+        String activityName = query.getFilter("activityName");
+        if (activityName != null) {
+            for (ActivityInstance activityInstance : aList) {
+                try {
+                    String decodedActName = java.net.URLDecoder.decode(activityName, "UTF-8");
+                    if (activityInstance.getName().startsWith(decodedActName)) {
+                        matchActivities.add(activityInstance);
+                    }
+                }
+                catch (UnsupportedEncodingException e) {
+                    logger.severe("Unable to decode: " + activityName);
+                }
+            }
+            activityList.setActivities(matchActivities);
         }
+
+        activityList.setCount(activityList.getActivities().size());
+        activityList.setTotal(activityList.getActivities().size());
         return activityList;
     }
 

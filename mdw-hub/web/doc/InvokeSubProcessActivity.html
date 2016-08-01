@@ -57,16 +57,21 @@ In general, the binding can be a simple string value,
 a variable, or a <a href="bindingExpressions.html">binding expression</a>n expression. 
 A string without '$' or '#' is treated
 as a static string; otherwise it's treated as an
-expression, with a single variable ('$' or '#' followed by variable
+expression (Java Expression would have ${something} or #{something}), with a single variable ('$' followed by variable
 name) as a special case.
 The following restrictions apply to specific modes:
 <ul>
   <li>For Input mode, the binding cannot be blank</li>
   <li>For Output and Input/Output mode, the binding must
-      be a variable ('$' or '#' without curly braces, followed by variable name), as
+      be a variable ('$' without curly braces, followed by variable name), as
       that variable will receive the returned value.</li>
   <li>For Static mode, any binding is treated as static
       string value, including those containing '$', '#', and quotes.</li>
+  <li>NOTE: For Document type variables, the binding will pass the Document Reference (i.e. 'DOCUMENT:document_id') to the child process.
+      If you need to pass the actual document content, you can use a Java expression to evaluate the variable content instead (i.e. '#{variableName}' ).
+      A good scenario for when you might want to do this is if the parent process is not persisting the Document in the Database (i.e. Service Process 
+      running on performance level 5 or 9 or Non-Service process running on level 9) and the child will execute 
+      in a separate thread (Asynchronous execution) </li>
 </ul>
 See the MDW <a href="bindingExpressions.html">binding expressions</a> documentation for examples of how to 
 pass input variable values.

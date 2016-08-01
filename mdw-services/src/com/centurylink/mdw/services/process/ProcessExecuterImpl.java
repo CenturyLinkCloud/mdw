@@ -1553,7 +1553,7 @@ class ProcessExecuterImpl {
 			ProcessException, DataAccessException {
 		ProcessVO subprocDef = ProcessVOCache.getProcessVO(procId);
 		Map<String, String> params = new HashMap<String, String>();
-		boolean passDocContent = getDataAccess().getPerformanceLevel() >= 5;  // DHO
+		boolean passDocContent = (isInService() && getDataAccess().getPerformanceLevel() >= 5) || getDataAccess().getPerformanceLevel() >= 9 ;  // DHO  (if not serviceProc then lvl9)
 		for (VariableVO var : subprocDef.getVariables()) {
 			if (var.getVariableCategory().intValue() == VariableVO.CAT_OUTPUT
 					|| var.getVariableCategory().intValue() == VariableVO.CAT_INOUT) {

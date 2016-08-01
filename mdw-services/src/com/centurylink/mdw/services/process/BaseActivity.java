@@ -913,11 +913,11 @@ public abstract class BaseActivity implements GeneralActivity {
     /**
      * The method checks if the string is an MagicBox expression, versus a static value.
      * The method uses a simplistic check, i.e. when the string contains a dollar
-     * sign or a colon, so it may not be a valid expression for any language
+     * sign and is not a Java expression, so it may not be a valid expression for any language
      * when the method returns true.
      *
      * The method is primarily used to determine if an attribute has
-     * an expression as its value.
+     * an expression as its value that is not a Java expression.
      *
      * @param v
      * @return
@@ -926,17 +926,18 @@ public abstract class BaseActivity implements GeneralActivity {
     protected boolean valueIsMagicBoxExpression(String v) {
         if (v == null)
             return false;
-        return v.indexOf('$') >= 0;
+        return (v.indexOf('$') >= 0 && !valueIsJavaExpression(v));
     }
 
     /**
-     * TODO match "${" also
+     * Checks if the string contains #{ or ${ with a corresponding closing }
+     * to determine if it is a Java expression
      */
     protected boolean valueIsJavaExpression(String v) {
         if (v == null)
             return false;
-        int start = 0;
-        return (((start = v.indexOf("#{")) != -1) && (start < v.indexOf('}')));
+        int start = v.indexOf("#{") >= 0 ? v.indexOf("#{") : v.indexOf("${");
+        return ((start != -1) && (start < v.indexOf('}')));
     }
 
     private boolean valueIsPlaceHolder(String v) {
@@ -976,7 +977,7 @@ public abstract class BaseActivity implements GeneralActivity {
      */
     protected String translatePlaceHolder(String eventName) {
         // honor java EL expressions
-        if (eventName.indexOf("#{") >= 0) {
+        if (this.valueIsJavaExpression(eventName)) {
             try {
                 Object o = evaluateExpression(getActivityId().toString(), JAVA_EL, eventName);
                 return o == null ? "" : o.toString();

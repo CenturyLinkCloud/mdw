@@ -19,9 +19,9 @@ used to embed dynamic values include:</p>
 <p>
 The preferred syntax for binding expressions in MDW is the standard <a href="http://docs.oracle.com/javaee/7/tutorial/jsf-el.htm#GJDDD">Java
 Expression Language</a>.  Historically MDW supported a proprietary expression language, <a href="magicbox.html">Magic Box</a>, which as of
-MDW 5.5 is still supported for compatibility.  Because this legacy EL used the dollar symbol (<code>$</code>) as a token identifier, this must be avoided
-in standard Java Expressions, and instead the alternative hash symbol (<code>#</code>) syntax should be used.  For example, instead of <code>${myVariable}</code>, use
-<code>#{myVariable}</code>.
+MDW 5.5 is still supported for compatibility purposes only but its use for new development is discouraged.  Because this legacy EL used the dollar symbol (<code>$</code>) as a token identifier, 
+it is a good idea to try to avoid it in standard Java Expressions, and instead use the alternative hash symbol (<code>#</code>).  For example, instead of <code>${myVariable}</code>, use
+<code>#{myVariable}</code>.  Having said that, MDW does allow using the $ token for Java Expressions by recognizing that a curly bracket needs to follow the $ (or #) token for it to be valid.
 </p>
 
 <h3>Evaluation Context</h3>

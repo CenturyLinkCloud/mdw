@@ -17,7 +17,8 @@ The attribute "Events" specifies one or more events the activity instance is wai
 Each event specification contains three entries:
 <ul>
   <li>Event Name. This is an event name that is used to match with event names generated
-      by external event handlers. The event name can contain place holders
+      by external event handlers. The event name can contain place holders or <a href="http://docs.oracle.com/javaee/7/tutorial/jsf-el.htm#GJDDD">Java EL Expressions</a> 
+      (e.g. "#{my_variable_1}" or "${my_variable_1}") 
       for including dynamic contents such as process instance IDs.</li>
   <li>Completion code. This is used to set the completion code after the activity
       instance is waken by an external message. To set a transition event type
@@ -26,8 +27,10 @@ Each event specification contains three entries:
   <li>Recurring. This is a check box. If checked, it indicates the event can occur
       multiple times for the given process instance. A typical example is pending order change.</li> 
 </ul>
-The syntax for place holder is a "$" and a variable name enclosed in braces ("{" and "}"),
-such as <code>{$my_variable_1}</code>. Besides process variables, the following variable names
+The syntax for a place holder is a "$" and a variable name enclosed in braces ("{" and "}"),
+such as <code>{$my_variable_1}</code>. Make sure to note the difference between having the "$" inside versus outside the "{}".  
+Inside the curly brackets ( "{$my_variable_1}" ) means it's a Place Holder, while outside ( "${my_variable_1}" ) means it's a Java expression. 
+Besides process variables, the following variable names
 have predefined meanings:
 <table>
   <tr><td>{$ProcessInstanceID}</td><td>Has the value of the process instance ID</td></tr>
