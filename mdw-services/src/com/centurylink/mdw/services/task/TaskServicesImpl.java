@@ -223,7 +223,9 @@ public class TaskServicesImpl implements TaskServices {
 
     public TaskInstanceVO getInstance(Long instanceId) throws DataAccessException {
         TaskManager taskMgr = ServiceLocator.getTaskManager();
-        return taskMgr.getTaskInstance(instanceId);
+        TaskInstanceVO taskInstance = taskMgr.getTaskInstance(instanceId);
+        taskInstance.setRetrieveDate(DatabaseAccess.getDbDate());
+        return taskInstance;
     }
 
     public TaskRuntimeContext getRuntimeContext(Long instanceId) throws ServiceException {

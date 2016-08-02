@@ -71,6 +71,10 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
     private Integer priority;
     private Boolean inFinalStatus;
 
+    private Date retrieveDate;
+    public Date getRetrieveDate() { return retrieveDate; }
+    public void setRetrieveDate(Date d) { this.retrieveDate = d; }
+
     public TaskInstanceVO(Long pTaskInstId, Long pTaskId, String pTaskName, String pOrderId, Date pStartDate,
             Date pEndDate, Date pDueDate, Integer pStatusCd, Integer pStateCd, String pComments, String pClaimUserCuid,
             String pTaskMessage, String pActivityName, String pCategoryCd, String pOwnerAppName, Long pAssTaskInstId) {
@@ -172,6 +176,8 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
             taskClaimUserCuid = jsonObj.getString("assigneeId");
         if (jsonObj.has("assignee"))
             assignee = jsonObj.getString("assignee");
+        if (jsonObj.has("retrieveDate"))
+            retrieveDate = StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
     }
 
     public JSONObject getJson() throws JSONException {
@@ -214,6 +220,8 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
             json.put("assigneeId", taskClaimUserCuid);
         if (assignee != null)
             json.put("assignee", assignee);
+        if (retrieveDate != null)
+            json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
         return json;
     }
 
