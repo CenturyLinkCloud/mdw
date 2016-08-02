@@ -1,0 +1,55 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/admin-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-checklist">
+          <input type="checkbox" ng-model="selectedState.all" ng-change="toggleAll()" ng-if="authUser.hasRole('Process Execution')"></input>
+          <span class="mdw-checklist-label">Automated Tests</span>
+          <span ng-if="testCaseList.testCases" class="mdw-checklist-sub"> ({{testCaseList.testCases.length}})</span>
+        </div>
+        <div ng-if="testCaseList.packages" class="mdw-heading-summary">
+          <span class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span> = {{passed().length}} 
+          <span class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span> = {{failed().length}} 
+          <span class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span> = {{errored().length}}
+        </div>
+        <div class="mdw-heading-actions">
+          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Site Admin')" ng-click="settings()">
+            <span class="glyphicon glyphicon-cog"></span>
+          </button> 
+          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Execution')" ng-click="runTests()">
+            <span class="glyphicon glyphicon-play"></span> Run
+          </button> 
+        </div>
+      </div>
+      <div class="mdw-sub" ng-repeat="pkg in testCaseList.packages">
+        <div class="panel-heading mdw-sub-heading">
+          <div class="mdw-heading-checklist">
+            <input type="checkbox" ng-model="pkg.selected" ng-change="togglePackage(pkg)" ng-if="authUser.hasRole('Process Execution')"></input>
+            <span class="mdw-checklist-label">{{pkg.name}} v{{pkg.version}}</span>
+            <a href="#/tests" ng-if="!pkg.collapsed" ng-click="pkg.collapsed = true">
+              <span class="glyphicon glyphicon-chevron-up mdw-action-icon button button-primary"></span>
+            </a> 
+            <a href="#/tests" ng-if="pkg.collapsed" ng-click="pkg.collapsed = false">
+              <span class="glyphicon glyphicon-chevron-down mdw-action-icon button button-primary"></span>
+            </a> 
+          </div>
+        </div>
+        <ul class="mdw-checklist" uib-collapse="pkg.collapsed">
+          <li ng-repeat="testCase in pkg.testCases" ng-class="{'mdw-last-item': $last}">
+            <div>
+              <input type="checkbox" ng-model="testCase.selected" ng-change="packageOff(pkg)" ng-if="authUser.hasRole('Process Execution')"></input>
+              <span ng-if="!testCase.status" class="glyphicon glyphicon-ok-sign mdw-test-status" style="visibility:hidden"></span>
+              <span ng-if="testCase.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
+              <span ng-if="testCase.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>
+              <span ng-if="testCase.status == 'Errored'" class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span>
+              <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}">
+                {{testCase.baseName}}
+              </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

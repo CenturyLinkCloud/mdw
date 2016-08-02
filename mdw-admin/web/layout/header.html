@@ -1,0 +1,30 @@
+<div class="mdw_banner"> 
+  <div class="mdw_bannerLeft">
+   <img src="images/mdw.png" alt="MDW" hub-link style="cursor:pointer" />
+   <img src="images/hub.png" alt="Hub" hub-link style="margin-left:1px;cursor:pointer" />
+   <img id="hub_logo" src="images/hub_logo.png" alt="Hub Logo" style="margin-left:1px;" />
+   <img id="hub_loading" src="images/hub_loading.gif" alt="Hub Loading" style="display:none;margin-left:1px;" />
+  </div>
+  <div style="float:left;">
+   <div id="mdwMainMessages" class="mdw-messages">{{mdw.messages}}</div>
+  </div> 
+  <div class="mdw_bannerRight">
+   <img src="images/ctl.gif" alt="CenturyLink(R)" />
+  </div>
+</div>
+<div class="mdw_user mdw-normalize" style="display:table;">
+  <div style="display:table-row;">
+    <div class="mdw-tabs-space" style="display:table-cell;">
+    </div>
+    <div class="mdw_session" style="display:table-cell;width:1px;">
+      <a href="#/users/{{authUser.cuid}}">
+        <!-- no whitespace between img and span -->
+        <img src="images/user.png" alt="{{user.name}}" class="mdw_userIcon" /><span class="mdw_welcomeText" ng-bind="authUser.name"></span>
+      </a>      
+    </div>
+    <div class="mdw_logout" style="display:table-cell;">
+       <a href="" class="mdw_actionLink mdw_welcomeLink" ng-if="authUser.cuid != 'guest'" ng-click="logout()">Logout</a>
+       <a href="" class="mdw_actionLink mdw_welcomeLink" ng-if="authUser.cuid == 'guest'" ng-click="login()">Login</a>
+    </div>
+  </div>
+</div>

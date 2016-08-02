@@ -1,0 +1,143 @@
+<cheatsheet
+  title="MDW Updates">
+  <intro>
+    <description>
+      Workflow projects built on the MDW Framework execute against a particular version of the
+      MDW runtime engine and database schema.  As a workflow developer your interaction with the
+      components of MDW takes place largely through the MDW Eclipse plug-in.  Keeping these various 
+      pieces up-to-date in a controlled and versionable manner is the subject of this cheat sheet.
+      <br/><br/>
+      These steps walk you through the procedures for upgrading the components of MDW.  You 
+      only need to complete the sections that apply to the pieces you're interested in upgrading.
+    </description>
+  </intro>
+  <item 
+    title="Upgrading the DB Schema and Reference Data"
+    href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/MDW%20Database"
+    skip="true">
+    <description>
+      There should be no need for you to update your database schemas unless you are upgrading
+      to a new point release of MDW (eg: from 5.1 to 5.2).  The database DDL scripts for
+      updating your schema are located under the "MDW Database" folder on the home page of the MDW SharePoint site.
+      There are baseline DDL scripts for certain point releases, and then incremental upgrade scripts to move from one point
+      release to another (these are located under the "Upgrade DDLs" folder).  For example, to start with MDW 5.2
+      you'd execute the scripts located under "Base DDLs Version 5.2" (there's a readme in this folder to guide you
+      through the steps).  Then once 5.3 is released you can upgrade your MDW db schema to this version by
+      running the script entitled MDW_DB_Upgrade_5.2_to_5.3.sql to perform the incremental update.
+      <br/><br/>
+      MDW also requires certain reference data to be present once the DDL scripts have been executed.  Under the
+      Base DDLs folder the main reference data script is called baseline_inserts.  Once the schema is in place this
+      script can be run by the app db user (and subsequent reference data updates are covered within the appropriate
+      "Upgrade DDLs" script.  The database also needs to be seeded with users who have privileges to add other users
+      and assign them to groups and roles.  This is accomplished by editing and then executing the script entitled seed_users.sql.
+    </description>
+  </item>
+  <item
+    title="Upgrading to a new MDW Framework Build"
+    href="http://lxdenvmtc144.dev.qintra.com:50000/maven-repo"
+    skip="true">
+    <description>
+      Your workflow project should be tied to a specific version of the MDW framework
+      regardless of which environment it's being deployed in.  If you're targeting an OSGi platform
+      such as Apache ServiceMix, the framework bundles are retrieved from the MDW Maven repository.
+      If you're targeting a JavaEE container such as WebLogic Server, the framework jar files are
+      downloaded from the MDW Releases web site and checked into your project's source code repository.
+      Either way, you control when the project is upgraded, and you should version control the settings
+      file and build scripts so that every developer working on a project uses the same MDW version.
+      <br/><br/>
+      The MDW libraries are identified by Major/Minor/Build constituents (eg: MDW 5.2.09).
+      You can view or change your MDW version by right-clicking on
+      the workflow project in Eclipse Package Explorer and selecting Properties > MDW Workflow. 
+      The MDW Version dropdown is automatically populated with all the versions available
+      for download from the MDW Maven repo or Releases site.  To upgrade to a new build, select it from 
+      the dropdown and click OK.  You'll be prompted to allow the plug-in to download the appropriate
+      libraries, and it's strongly recommended that you allow this to take place.
+      If you're using Maven you should also update the mdw.version property in your pom.xml build file,
+      and delete any obsolete mdw-base jar files that are left over from previous builds in your 
+      src/main/resources directory.  Once you've performed these steps it's a good idea to synchronize with 
+      and check in to your source code repository so that all members of your team will inherit the same upgrade.
+      Don't forget to check in the file .settings/com.centurylink.mdw.plugin.xml which identifies the
+      MDW version for your application to the plug-in.  
+      <br/><br/>
+      The MDW framework source code is included along with the framework libraries.  If you're using the MDW
+      OSGi bundles from the Maven repo, the source code associations are automatically taken care of as long
+      as you have the M2E plug-in installed.  For Eclipse Java EE applications, it is a non-trivial and non-versionable
+      task to associate the source code jar files with the framework libraries.  But the MDW plug-in has a simple
+      mechanism to set up these associations.  To perform this step, right-click on the EAR project in Package Explorer
+      and select MDW Update > Associate Framework Source Code.  Once this association is made, you
+      should be able to click the implementor links in the Designer Properties view to open the framework 
+      source for activities and external events.  You can also use the other mechanisms provided in 
+      Eclipse for viewing source code such as opening supertypes for your custom implementors.
+      <br/><br/>
+      <b>Upgrading the MDW OSGi Bundles in ServiceMix</b>
+      <br/><br/>
+      If a previous version of MDW is installed, before upgrading you should uninstall the old version: 
+      <br/>
+        &gt; features:uninstall mdw<br/>
+        &gt; features:removeUrl mvn:com.centurylink.mdw/mdw/5.X.XX/xml/features
+      <br/><br/>
+      Once any old versions are removed, you can install the latest MDW bundles:
+      <br/>
+        &gt; features:addUrl mvn:com.centurylink.mdw/mdw/5.X.XX/xml/features<br/>
+        &gt; features:install mdw
+    </description>
+  </item>
+  <item
+    title="Updating the MDW Baseline Package"
+    href="http://lxdenvmtc144.dev.qintra.com:50000/Releases/Baseline%20Package"
+    skip="true">
+    <description>
+      The MDW Baseline Package contains the out-of-the-box activity implementors, event handlers
+      and workflow assets that ship with the MDW Framework.  If there is a new baseline package to 
+      accompany an MDW build it will appear in the "Baseline Package" folder on the Releases site.
+      You'll want the latest version that is less than or equal to your MDW build version
+      (not all builds include changes to the baseline package).
+      <br/><br/>
+      If you determine that you need to update the baseline package for your project, download the 
+      appropriate version from the Releases site to a temporary location on your hard-drive.  Then in 
+      Process Explorer view right-click on your workflow project and select Import.  Browse for the 
+      newly-downloaded xml file and click Finish.
+    </description>
+  </item>
+  <item
+    title="Upgrading the MDW Plug-In"
+    href="/org.eclipse.platform.doc.user/tasks/tasks-129.htm"
+    skip="true">
+    <description>
+      The MDW plug-in is separate from the MDW framework and has no dependencies on any specific 
+      version of the MDW libraries described in section 2.  The plug-in has a single latest stable version
+      which is always up-to-date with the most recent framework capabilities.  If your version of 
+      the framework jars doesn't support a particular feature, then it will be unavailable
+      in the plug-in to prevent you from using something that's not yet supported.  So the best
+      practice is to stay up-to-date with the latest stable version of the plug-in via Eclipse
+      Software Updates, regardless of which version of the framework jars your project is using.
+      <br/><br/>
+      To upgrade your MDW plug-in follow these steps from the Eclipse menu:
+      Help > Install New Software. If the MDW Plug-In update site URL does
+      not appear in the dialog, click "Add Site..." and enter the location URL as follows:
+      <br/>
+      http://lxdenvmtc143.dev.qintra.com:6101/MdwPlugin
+      <br/>
+      Expand the location URL and drill down to the "MDW Plug-In" item.  Click the checkbox and 
+      then click "Install...".  Complete the steps in the installation wizard.  Eclipse will confirm
+      that your installation contains the required dependencies, all of which are included in the
+      Eclipse all-in-one package available on the MDW share drive referenced in the startup guide.
+      <br/><br/>
+      Note: If you've previously executed any of the MDW code generation wizards, after the upgrade
+      you may see an error like "Error Generating MDW Code ERROR:org.eclipse.emf.codegen.jet.JETException", or
+      "java.lang.ClassNotFoundException: translated.XxxxEmitter" the next time you attempt to run one of these wizards.
+      In that case you'll need to delete any previously-generated emitters.
+      In Package Explorer view, click on the dropdown menu icon in the toolbar at the top of the view
+      (it looks like an inverted triangle).  From the dropmenu select Filters... and uncheck .* resources.
+      This should enable the .JETEmitters project to be displayed.  Delete this project, and be sure 
+      and check "Delete project contents on disk" (the contents will be regenerated as necessary).
+      Then try running the codegen wizard again.      
+      <br/><br/>
+      For your colleagues who use the standalone Designer RCP application, their upgrade procedure
+      is as simple as selecting Help > Check for Updates from the menu.
+    </description>
+    <onCompletion>
+      You've successfully updated your MDW plug-in.
+    </onCompletion>
+  </item>
+</cheatsheet>

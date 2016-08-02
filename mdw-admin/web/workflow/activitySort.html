@@ -1,0 +1,18 @@
+<ul class="dropdown-menu mdw-popover-menu mdw-check-menu">
+  <li>
+    <div class="mdw-checked" ng-if="model.activityFilter.sort == 'startDate' && !model.activityFilter.descending">
+      <i class="glyphicon glyphicon-ok"></i>
+      <a class="mdw-drop-selected" href="">Oldest First</a>
+    </div>
+    <a href="" ng-if="model.activityFilter.sort != 'startDate' || model.activityFilter.descending" 
+      ng-click="model.activityFilter.sort = 'startDate'; model.activityFilter.descending = false">Oldest First</a>
+  </li>
+  <li>
+    <div class="mdw-checked" ng-if="model.activityFilter.sort == 'startDate' && model.activityFilter.descending">
+      <i class="glyphicon glyphicon-ok"></i>
+      <a class="mdw-drop-selected" href="">Newest First</a>
+    </div>
+    <a href="" ng-if="model.activityFilter.sort != 'startDate' || !model.activityFilter.descending" 
+    ng-click="model.activityFilter.sort = 'startDate'; model.activityFilter.descending = true">Newest First</a>
+  </li>
+</ul>

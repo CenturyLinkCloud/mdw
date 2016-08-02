@@ -1,0 +1,23 @@
+<form name="roleForm" class="form-horizontal mdw-section" ng-submit="save()" role="form">
+  <div class="form-group" ng-class="{'has-error': role.name === undefined}">
+    <label class="control-label col-xs-2 mdw-required" for="roleName">Name:</label>
+    <div class="col-xs-10">
+      <input type="text" id="roleName" name="name" class="form-control" required focus-me ng-model="role.name"
+       ng-blur="role.name === '' ? undefined : role.name">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-xs-2" for="roleDescrip">Description:</label>
+    <div class="col-xs-10">
+      <textarea id="roleDescrip" class="form-control" rows="4" maxlength="1000" ng-model="role.description"></textarea>
+    </div>
+  </div>
+  <div class="mdw-form-footer">
+    <div class="col-xs-2"></div>
+    <div class="mdw-message">{{role.message}}</div>
+    <div class="mdw-buttons">
+      <button class="btn btn-success mdw-btn" type="submit" ng-disabled="!isSaveEnabled()">Save</button>
+      <button class="btn mdw-btn mdw-cancel-btn" type="reset" ng-click="cancel()">Cancel</button>
+    </div>
+  </div>
+</form>

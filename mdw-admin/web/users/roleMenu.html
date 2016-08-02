@@ -1,0 +1,5 @@
+<ul class="dropdown-menu mdw-popover-menu">
+  <li ng-repeat="role in getOtherRoles()">
+    <a href="#/users/{{user.cuid}}" ng-click="addRole(role)">{{role}}</a>
+  </li>
+</ul>

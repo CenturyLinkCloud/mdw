@@ -1,0 +1,32 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.project.model.* com.centurylink.mdw.plugin.preferences.model.*"
+        class="BundleActivatorJavaEmitter52" %>
+<% Map map = (Map) argument;
+   WorkflowProject workflowProject = (WorkflowProject) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+package <%=workflowProject.getDefaultSourceCodePackage()%>.bundle;
+
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+
+import com.qwest.mdw.common.utilities.logger.LoggerUtil;
+import com.qwest.mdw.common.utilities.logger.StandardLogger;
+
+
+public class WorkflowBundleActivator implements BundleActivator
+{
+  private static StandardLogger logger = LoggerUtil.getStandardLogger();
+  
+  public void start(BundleContext bundleContext) throws Exception
+  {
+    if (logger.isInfoEnabled())
+      logger.info("Starting workflow bundle " + bundleContext.getBundle().getSymbolicName());
+  }
+
+  public void stop(BundleContext bundleContext) throws Exception
+  {
+    if (logger.isInfoEnabled())
+      logger.info("Stopping workflow bundle " + bundleContext.getBundle().getSymbolicName());
+  }
+
+}
+   

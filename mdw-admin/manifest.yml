@@ -1,0 +1,30 @@
+applications:
+- name: mdw-admin
+  instances: 1
+  host: mdwadmin
+  path: ../mdw/deploy/app/mdw-admin-6.0.035-SNAPSHOT.war
+  buildpack: java_buildpack
+
+env:
+  GIT_SSL_NO_VERIFY: 1
+  
+  JAVA_OPTS: -DruntimeEnv=dev -Dmdw.property.manager=com.centurylink.mdw.common.config.PaaSPropertyManager 
+  
+  JBP_CONFIG_SPRING_AUTO_RECONFIGURATION: "[enabled: false]"
+  
+  # mdw.admin.hub.url/services.url are fully-qualified for cloud deployment
+  mdw_properties: '{
+  
+    "mdw.admin.hub.url": "https://mdwdemo.useast.appfog.ctl.io/mdw",
+    "mdw.admin.services.url": "https://mdwdemo.useast.appfog.ctl.io/mdw",
+    
+    "mdw.asset.location": "workflow/assets",
+    "mdw.git.local.path": ".",
+    "mdw.git.remote.url": "https://8.22.8.164/mdw/mdwdemo.git",
+    "mdw.git.branch": "master",
+    "mdw.git.user": "mdw",
+    "mdw.git.password": "ldap_0123",
+    
+    "mdw.hub.user": "donald.oakes@centurylink.com"
+    
+  }'

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.5"?>
+<plugin>
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="com.centurylink.mdw.plugin.rcp.MdwApplication">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="RCP Perspective"
+            class="com.centurylink.mdw.plugin.rcp.DesignerRcpPerspective"
+            id="MDWDesignerRCP.perspective">
+      </perspective>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="com.centurylink.mdw.plugin.rcp.application"
+            name="MDW Designer RCP">
+         <property
+               name="windowImages"
+               value="icons/mdw_16.gif,icons/mdw_32.png,icons/mdw_48.png,icons/mdw_64.png,icons/mdw_128.png">
+         </property>
+         <property
+               name="appName"
+               value="MDW Designer RCP">
+         </property>
+         <property
+               name="aboutImage"
+               value="icons/about.gif">
+         </property>
+         <property
+               name="aboutText"
+               value="Model-Driven Workflow&#x0A;Version 8.9.6&#x0A;Copyright (c) 2016 CenturyLink, Inc.&#x0A;All Rights Reserved">
+         </property>
+      </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.splashHandlers">
+      <splashHandlerProductBinding
+            productId="com.centurylink.mdw.plugin.rcp.product"
+            splashId="com.centurylink.mdw.plugin.rcp.SplashHandler">
+      </splashHandlerProductBinding>
+      <splashHandler
+            class="com.centurylink.mdw.plugin.rcp.SplashHandler"
+            id="com.centurylink.mdw.plugin.rcp.SplashHandler">
+      </splashHandler>
+   </extension>
+  <extension point="org.eclipse.ui.actionSets">
+    <actionSet
+        label="Cheat Sheets"
+        visible="true"
+        id="org.eclipse.ui.cheatsheets.actionSet">
+       <action
+          label="Cheat Sheets"
+          class="org.eclipse.ui.cheatsheets.CheatSheetExtensionFactory:helpMenuAction"
+          menubarPath="help/group.tutorials"
+          id="org.eclipse.ui.cheatsheets.actions.CheatSheetHelpMenuAction">
+       </action>
+    </actionSet>
+  </extension>
+  <extension
+    point="org.eclipse.ui.newWizards">
+    <category
+       id="mdw.new.projects.rcp"
+       name="MDW Projects" />    
+    <wizard
+       id="mdw.designer.remote.project.rcp"
+       name="Workflow Project"
+       class="com.centurylink.mdw.plugin.project.RemoteWorkflowProjectWizard"
+       category="mdw.new.projects"
+       icon="icons/remote_project.gif">
+       <description>Set up access to a workflow project.</description>
+    </wizard>     
+  </extension>
+  <extension point="org.eclipse.ui.activities">
+    <activity
+      description="Disable unwanted UI"
+      id="mdw.ui.disable"
+      name="UI Disable">
+    </activity>
+    <activityPatternBinding
+      activityId="mdw.ui.disable"
+      isEqualityPattern="true"
+      pattern="com.centurylink.mdw.plugin/mdw.designer.local.project">
+    </activityPatternBinding>
+    <activityPatternBinding
+      activityId="mdw.ui.disable"
+      isEqualityPattern="true"
+      pattern="com.centurylink.mdw.plugin/mdw.designer.cloud.project">
+    </activityPatternBinding>
+    <activityPatternBinding
+      activityId="mdw.ui.disable"
+      isEqualityPattern="true"
+      pattern="com.centurylink.mdw.plugin/mdw.designer.remote.project">
+    </activityPatternBinding>
+    <activityPatternBinding
+      activityId="mdw.ui.disable"
+      isEqualityPattern="true"
+      pattern="com.centurylink.mdw.plugin/mdw.codegen.general.activity">
+    </activityPatternBinding>
+    <activityPatternBinding
+      activityId="mdw.ui.disable"
+      isEqualityPattern="true"
+      pattern="com.centurylink.mdw.plugin/mdw.codegen.start.activity">
+    </activityPatternBinding>
+    <activityPatternBinding
+      activityId="mdw.ui.disable"
+      isEqualityPattern="true"
+      pattern="com.centurylink.mdw.plugin/mdw.codegen.adapter.activity">
+    </activityPatternBinding>
+    <activityPatternBinding
+      activityId="mdw.ui.disable"
+      isEqualityPattern="true"
+      pattern="com.centurylink.mdw.plugin/mdw.codegen.evaluator.activity">
+    </activityPatternBinding>    
+  </extension>
+</plugin>

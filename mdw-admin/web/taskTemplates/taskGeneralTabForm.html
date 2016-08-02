@@ -1,0 +1,94 @@
+<form name="taskGeneralTabForm" class="form-horizontal mdw-section" ng-submit="save()" role="form">
+  <div class="form-group" >
+    <label class="control-label col-xs-2 mdw-required" for="templtaskName">Task Name:</label>
+    <div class="col-xs-4">
+      <input type="text" id="templtaskName" name="taskName"  class="form-control" ng-model="taskTemplate.name" required maxlength="30">
+    </div>
+   </div>
+   
+  <div class="form-group">
+    <label class="control-label col-xs-2 mdw-required" for="templtaskDescrip">Description:</label>
+    <div class="col-xs-10">
+      <textarea id="templtaskDescrip" class="form-control" rows="2" maxlength="1000" ng-model="taskTemplate.TaskDescription" required></textarea>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <label class="control-label col-xs-2" for="category">Category:</label>
+    <div class="col-xs-4">
+      <select id="category" class="form-control" ng-model="taskTemplate.category">
+        <option ng-repeat="category in getCategoryList().categories" value="{{category.code}}">{{category.code}}-{{category.name}}</option>    
+           
+      </select>
+    </div>
+  </div>
+   
+    <div class="form-group" >
+    <label class="control-label col-xs-2 " for="logicalid">Logical Id:</label>
+    <div class="col-xs-4">
+      <input type="text" id="logicalid" name="logicalid" class="form-control" ng-readonly="true" ng-model="taskTemplate.logicalId" required maxlength="30">
+    </div>
+   </div>
+   
+     <div class="form-group" >   
+    <label class="control-label col-xs-2 " for="intervalDays">Alert Interval:</label>
+    <div class="col-xs-1 mdw-daysHours">
+      <input type="text" id="intervalDays" name="intervalDays" class="form-control mdw-daysHours" ng-model="taskTemplate.alertIntervalDays" required maxlength="3"> </input>     
+     </div>
+    <div  class="col-xs-1 mdw-daysHours">
+    <label class="control-label mdw-inner-content" for="intervalDays">days</label>
+    </div>          
+    <div class="col-xs-1 mdw-daysHours" >
+      <input type="text" id="intervalHours" name="intervalHours" class="form-control mdw-daysHours"  ng-model="taskTemplate.alertIntervalHours" required maxlength="2">
+    </div>
+    <div class="col-xs-1 mdw-daysHours">
+    <label class="control-label mdw-inner-content"  for="intervalHours">hrs</label>
+    </div>   
+   </div>
+   <div class="form-group" >
+      <label class="control-label col-xs-2" for="slaDays">SLA:</label>
+      <div class="col-xs-1 mdw-daysHours">
+        <input type="text" id="slaDays" name="slaDays" class="form-control mdw-daysHours"  ng-model="taskTemplate.slaDays" required maxlength="3">  </input>     
+      </div>
+      <div  class="col-xs-1 mdw-daysHours">
+       <label class="control-label mdw-inner-content" for="slaDays">days</label>
+       </div>
+      <div class="col-xs-1 mdw-daysHours">
+        <input type="text" id="slaHours" name="cuid" class="form-control mdw-daysHours" ng-model="taskTemplate.slaHours" required maxlength="2">    
+      </div>
+      <div  class="col-xs-1 mdw-daysHours">
+      <label class="control-label mdw-inner-content"  for="slaHours">hrs</label>
+      </div>
+   </div>
+     
+   <div class="form-group">
+    <label class="control-label col-xs-2" for="prStrategy">Prioritization Strategy:</label>
+      
+    <div class="col-xs-3">
+      <input type="text" list="prStrategy"  class="form-control" ng-model="taskTemplate.PriorityStrategy" maxlength="30">
+      <datalist id="prStrategy" ng-model="taskTemplate.priorityStrategy">
+        <option ng-repeat="prStrategy in getPrStrategyList()" value="{{prStrategy}}"> </option>     
+      </datalist>
+     </div>
+  </div>
+   
+   <div class="form-group">
+    <label class="control-label col-xs-2" for="subStrategy">SubTask Strategy:</label>
+      
+    <div class="col-xs-3">
+      <input type="text" list="subStrategy"  class="form-control" ng-model="taskTemplate.SubTaskStrategy" maxlength="30">
+      <datalist id="subStrategy" ng-model="taskTemplate.subTaskStrategy">
+        <option ng-repeat="subStrategy in getSubStrategyList()" value="{{subStrategy}}"> </option>     
+      </datalist>
+     </div>
+  </div>
+   
+  <div class="mdw-form-footer">
+    <div class="col-xs-2"></div>
+    <div class="mdw-message">{{status.message}}</div>
+    <div class="mdw-buttons" ng-if="authUser.hasRole('Process Design')">
+      <button class="btn btn-success mdw-btn" type="submit" ng-disabled="!isSaveEnabled()">Save</button>
+      <button class="btn mdw-btn mdw-cancel-btn" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+  </div>
+</form>

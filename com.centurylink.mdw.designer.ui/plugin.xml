@@ -1,0 +1,2476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension point="org.eclipse.ui.startup">
+     <startup class="com.centurylink.mdw.plugin.Startup"/>
+   </extension>
+   <extension
+     point="org.eclipse.help.toc">
+     <toc
+       file="toc.xml"
+       primary="true">
+     </toc>
+     <toc
+       file="help/tocGeneralInformation.xml">
+     </toc>
+     <toc
+       file="help/tocDesigner.xml">
+     </toc>
+     <toc
+       file="help/tocTaskManagement.xml">
+     </toc>
+     <toc
+       file="help/tocCodingAndDevelopment.xml">
+     </toc>
+     <toc
+       file="help/tocMonitoringAndDebugging.xml">
+     </toc>
+   </extension>
+   <extension point="org.eclipse.help.index">
+     <index file="help/index.xml"/>
+   </extension>   
+   <extension
+     point="org.eclipse.help.contexts">
+     <contexts file="help/contexts.xml"/>
+   </extension>
+   <extension
+     point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+     <category
+       id="mdw.cheatsheets.workflow"
+       name="MDW Workflow">
+     </category>
+     <cheatsheet
+       category="mdw.cheatsheets.workflow"
+       composite="false"
+       contentFile="help/cheatSheets/buildAndDeploy.xml"
+       id="mdw.cheatsheets.build.deploy"
+       name="Building and Deploying">
+     </cheatsheet>
+     <cheatsheet
+       category="mdw.cheatsheets.workflow"
+       composite="false"
+       contentFile="help/cheatSheets/importExport.xml"
+       id="mdw.cheatsheets.importExport"
+       name="Importing, Exporting and Versioning">
+     </cheatsheet>
+     <cheatsheet
+       category="mdw.cheatsheets.workflow"
+       composite="false"
+       contentFile="help/cheatSheets/mdwUpdates.xml"
+       id="mdw.cheatsheets.updates"
+       name="MDW Updates">
+     </cheatsheet>
+     <cheatsheet
+       category="mdw.cheatsheets.workflow"
+       composite="false"
+       contentFile="help/cheatSheets/remoteProjects.xml"
+       id="mdw.cheatsheets.remote"
+       name="Remote Projects">
+     </cheatsheet>
+   </extension>   
+   <extension
+         point="org.eclipse.ui.menus">
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="MDW Action Set"
+            visible="false"
+            id="com.centurylink.mdw.plugin.actionset.tools">
+         <action 
+               label="Refresh Cache"
+               style="pulldown"
+               icon="icons/refr_cache.gif"
+               class="com.centurylink.mdw.plugin.actions.RefreshCacheAction"
+               tooltip="Refresh Cache"
+               toolbarPath="mdwGroup1"
+               id="com.centurylink.mdw.plugin.actions.RefreshCacheAction">
+         </action>
+         <action
+               label="Web Tools"
+               style="pulldown"
+               icon="icons/webtools.gif"
+               class="com.centurylink.mdw.plugin.actions.WebToolsAction"
+               tooltip="Web Tools"
+               toolbarPath="mdwGroup1"
+               id="com.centurylink.mdw.plugin.actions.WebToolsAction">
+         </action>
+         <action
+               label="Reports List"
+               style="pulldown"
+               icon="icons/report.gif"
+               class="com.centurylink.mdw.plugin.actions.ReportsListAction"
+               tooltip="Reports List"
+               toolbarPath="mdwGroup1"
+               id="com.centurylink.mdw.plugin.actions.ReportsListAction">
+         </action>
+         <action
+               label="Task Manager"
+               style="pulldown"
+               icon="icons/taskmgr.gif"
+               class="com.centurylink.mdw.plugin.actions.TaskManagerAction"
+               tooltip="Task Manager"
+               toolbarPath="mdwGroup1"
+               id="com.centurylink.mdw.plugin.actions.TaskManagerAction">
+         </action>
+         <action
+               label="MDW Hub"
+               style="pulldown"
+               icon="icons/hub.gif"
+               class="com.centurylink.mdw.plugin.actions.MdwHubAction"
+               tooltip="MDW Hub"
+               toolbarPath="mdwGroup1"
+               id="com.centurylink.mdw.plugin.actions.MdwHubAction">
+         </action>
+       </actionSet>
+      <actionSet
+            label="MDW Dev Action Set"
+            visible="true"
+            id="com.centurylink.mdw.plugin.actionset.dev">
+         <action
+               label="MDW"
+               style="pulldown"
+               icon="icons/mdw.gif"
+               tooltip="MDW Tools"
+               class="com.centurylink.mdw.plugin.actions.ProjectAction"
+               toolbarPath="mdwGroup1"
+               id="com.centurylink.mdw.plugin.actions.MdwAction">
+         </action>         
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.search.searchPages">
+         <page
+             class="com.centurylink.mdw.plugin.search.ProcessSearchPage"
+             showScopeSection="true"
+             canSearchEnclosingProjects="true"
+             label="MDW Process"
+             tabPosition="0"
+             icon="icons/proc_search.gif"
+             id="mdw.search.processSearchPage">
+         </page>
+         <page
+             class="com.centurylink.mdw.plugin.search.AssetSearchPage"
+             showScopeSection="true"
+             canSearchEnclosingProjects="true"
+             label="MDW WF Asset"
+             tabPosition="0"
+             icon="icons/resource_search.gif"
+             id="mdw.search.resourceSearchPage">
+         </page>
+   </extension>
+   <extension
+         point="org.eclipse.search.searchResultViewPages">
+         <viewPage
+             class="com.centurylink.mdw.plugin.search.SearchResultsPage"
+             searchResultClass="com.centurylink.mdw.plugin.search.SearchResults"
+             id="mdw.search.resultsPage">
+          </viewPage>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            properties="mdwWorkflowProject"
+            namespace="com.centurylink.mdw.properties.project"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="com.centurylink.mdw.plugin.project.MdwProjectPropertyTester"
+            id="com.centurylink.mdw.property.tester.MdwProjectTester">
+      </propertyTester>
+      <propertyTester
+            properties="mdwWorkflowLocalProject"
+            namespace="com.centurylink.mdw.properties.project"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="com.centurylink.mdw.plugin.project.MdwProjectPropertyTester"
+            id="com.centurylink.mdw.property.tester.MdwLocalProjectTester">
+      </propertyTester>
+      <propertyTester
+            properties="mdwWorkflowWebProject"
+            namespace="com.centurylink.mdw.properties.project"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="com.centurylink.mdw.plugin.project.MdwProjectPropertyTester"
+            id="com.centurylink.mdw.property.tester.MdwWebProjectTester">
+      </propertyTester>
+      <propertyTester
+            properties="notMdwWorkflowOsgiProject"
+            namespace="com.centurylink.mdw.properties.project"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="com.centurylink.mdw.plugin.project.MdwProjectPropertyTester"
+            id="com.centurylink.mdw.property.tester.NotMdwWorkflowOsgiProjectTester">
+      </propertyTester>
+      <propertyTester
+            properties="mdwProjectVersion"
+            namespace="com.centurylink.mdw.properties.project"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="com.centurylink.mdw.plugin.project.MdwProjectPropertyTester"
+            id="com.centurylink.mdw.property.tester.MdwProjectVersionTester">
+      </propertyTester>
+      <propertyTester
+            properties="mdwProjectVersionLessThan"
+            namespace="com.centurylink.mdw.properties.project"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="com.centurylink.mdw.plugin.project.MdwProjectPropertyTester"
+            id="com.centurylink.mdw.property.tester.MdwProjectVersionLessThanTester">
+      </propertyTester>
+      <propertyTester
+            properties="canLaunchAutomatedTest,canLaunchAutomatedTests,canLaunchCucumberTest,canLaunchCucumberTests"
+            namespace="com.centurylink.mdw.properties.launch"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="com.centurylink.mdw.plugin.launch.AutoTestPropertyTester"
+            id="com.centurylink.mdw.property.tester.LaunchTestPropertyTester">
+      </propertyTester>      
+   </extension>   
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+         id="com.centurylink.mdw.plugin.launch.Process"
+         name="MDW Process Launch"
+         delegate="com.centurylink.mdw.plugin.launch.ProcessLaunchConfiguration"
+         modes="run,debug" />
+      <launchConfigurationType
+         id="com.centurylink.mdw.plugin.launch.Activity"      
+         name="MDW Activity Launch"
+         delegate="com.centurylink.mdw.plugin.launch.ActivityLaunchConfiguration"
+         modes="run,debug" />
+      <launchConfigurationType
+         id="com.centurylink.mdw.plugin.launch.ExternalEvent"      
+         name="MDW External Event Launch"
+         delegate="com.centurylink.mdw.plugin.launch.ExternalEventLaunchConfiguration"
+         modes="run,debug" />
+      <launchConfigurationType
+         id="com.centurylink.mdw.plugin.launch.AutomatedTest"      
+         name="MDW Automated Test"
+         delegate="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchConfiguration"
+         modes="run,debug" />
+      <launchConfigurationType public="false"
+         id="com.centurylink.mdw.plugin.launch.CucumberTestCase"      
+         name="Cucumber Gherkin Feature"
+         delegate="com.centurylink.mdw.plugin.launch.CucumberTestLaunchConfiguration"
+         modes="run,debug" />
+      <launchConfigurationType
+         id="com.centurylink.mdw.plugin.launch.Cucumber"      
+         name="Cucumber Test (MDW)"
+         delegate="com.centurylink.mdw.plugin.launch.CucumberLaunchConfiguration"
+         modes="run,debug" />
+      <launchConfigurationType
+         id="com.centurylink.mdw.plugin.launch.JavaDebug"
+         name="MDW Java Debug"
+         modes="debug"
+         sourceLocatorId="com.centurylink.mdw.plugin.launch.javaSourceLocator"
+         sourcePathComputerId="com.centurylink.mdw.plugin.launch.javaSourcePathComputer" />
+      <launchConfigurationType
+         id="com.centurylink.mdw.plugin.launch.TomcatLaunch"
+         name="MDW Tomcat Launch Config"
+         delegate="org.eclipse.jst.server.tomcat.core.internal.TomcatLaunchConfigurationDelegate"
+         modes="run, debug, profile"
+         sourceLocatorId="com.centurylink.mdw.plugin.launch.javaSourceLocator"
+         sourcePathComputerId="com.centurylink.mdw.plugin.launch.javaSourcePathComputer" />         
+      <!-- the following does nothing and exists only to enable the ServerRunnerLaunchShortcut and the run icon for ServiceMix in Server view -->
+      <launchConfigurationType
+         id="com.centurylink.mdw.plugin.launch.ServerRunner"
+         name="MDW Server Runner"
+         delegate="com.centurylink.mdw.plugin.launch.ServerRunnerLaunchConfiguration"
+         modes="run,debug" />
+   </extension>
+   <extension point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            name="MDW Java Debug"
+            delegate="com.centurylink.mdw.plugin.launch.JavaDebugLaunchConfiguration"
+            type="com.centurylink.mdw.plugin.launch.JavaDebug"
+            id="com.centurylink.mdw.plugin.launch.delegate.JavaDebug">
+         <modeCombination 
+              modes="debug"
+              perspective="org.eclipse.debug.ui.DebugPerspective">
+         </modeCombination>
+      </launchDelegate>
+   </extension>
+   <extension point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            id="com.centurylink.mdw.plugin.launch.javaSourceLocator"
+            name="MDW Java Source Locator"
+            class="com.centurylink.mdw.plugin.launch.JavaSourceLocator" />
+   </extension>
+   <extension point="org.eclipse.debug.core.sourcePathComputers">
+      <sourcePathComputer
+            id="com.centurylink.mdw.plugin.launch.javaSourcePathComputer"
+            class="com.centurylink.mdw.plugin.launch.JavaSourcePathComputer" />
+   </extension>   
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            label="MDW Process Launch"
+            icon="icons/launch.gif"
+            modes="run,debug"
+            class="com.centurylink.mdw.plugin.launch.ProcessLaunchShortcut"
+            helpContextId="process_launch_help"
+            id="com.centurylink.mdw.plugin.launch.shortcut.Process">
+           <configurationType
+              id="com.centurylink.mdw.plugin.launch.Process">
+           </configurationType>      
+      </shortcut>         
+      <shortcut
+            label="MDW Activity Launch"
+            icon="icons/launch.gif"
+            modes="run,debug"
+            class="com.centurylink.mdw.plugin.launch.ActivityLaunchShortcut"
+            helpContextId="process_launch_help"
+            id="com.centurylink.mdw.plugin.launch.shortcut.Activity">
+           <configurationType
+              id="com.centurylink.mdw.plugin.launch.Activity">
+           </configurationType>      
+      </shortcut>         
+      <shortcut
+            label="MDW External Event Launch"
+            icon="icons/extevent.gif"
+            modes="run,debug"
+            class="com.centurylink.mdw.plugin.launch.ExternalEventLaunchShortcut"
+            helpContextId="extevent_launch_help"
+            id="com.centurylink.mdw.plugin.launch.shortcut.ExternalEvent">
+           <configurationType
+              id="com.centurylink.mdw.plugin.launch.ExternalEvent">
+           </configurationType>      
+      </shortcut>
+      <shortcut
+            label="MDW Automated Test..."
+            icon="icons/auto_test.gif"
+            modes="run,debug"
+            class="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchShortcut"
+            helpContextId="automated_tester_help"
+            id="com.centurylink.mdw.plugin.launch.shortcut.AutomatedTest">
+           <contextualLaunch>
+              <enablement>
+                 <with variable="selection">
+                    <count value="1"/>
+                    <iterate>
+                        <and>
+                            <instanceof value="org.eclipse.core.runtime.IAdaptable"/>
+                            <test property="com.centurylink.mdw.properties.launch.canLaunchAutomatedTest" forcePluginActivation="true"/>
+                        </and>
+                    </iterate>
+                 </with>
+               </enablement>
+           </contextualLaunch>
+           <configurationType
+              id="com.centurylink.mdw.plugin.launch.AutomatedTest">
+           </configurationType>      
+      </shortcut>
+      <shortcut
+            label="MDW Automated Tests..."
+            icon="icons/auto_test.gif"
+            modes="run,debug"
+            class="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchShortcut"
+            helpContextId="automated_tester_help"
+            id="com.centurylink.mdw.plugin.launch.shortcut.AutomatedTest">
+           <contextualLaunch>
+              <enablement>
+                 <with variable="selection">
+                    <count value="1"/>
+                    <iterate>
+                        <and>
+                            <instanceof value="org.eclipse.core.runtime.IAdaptable"/>
+                            <test property="com.centurylink.mdw.properties.launch.canLaunchAutomatedTests" forcePluginActivation="true"/>
+                        </and>
+                    </iterate>
+                 </with>
+               </enablement>
+           </contextualLaunch>
+           <configurationType
+              id="com.centurylink.mdw.plugin.launch.AutomatedTest">
+           </configurationType>      
+      </shortcut>
+      <shortcut
+            label="Cucumber Test (MDW)..."
+            icon="icons/cukes.gif"
+            modes="run,debug"
+            class="com.centurylink.mdw.plugin.launch.CucumberLaunchShortcut"
+            id="com.centurylink.mdw.plugin.launch.shortcut.CucumberTest">
+           <contextualLaunch>
+              <enablement>
+                 <with variable="selection">
+                    <count value="1"/>
+                    <iterate>
+                        <and>
+                            <instanceof value="org.eclipse.core.runtime.IAdaptable"/>
+                            <test property="com.centurylink.mdw.properties.launch.canLaunchCucumberTest" forcePluginActivation="true"/>
+                        </and>
+                    </iterate>
+                 </with>
+               </enablement>
+           </contextualLaunch>
+           <configurationType
+              id="com.centurylink.mdw.plugin.launch.Cucumber">
+           </configurationType>      
+      </shortcut>
+      <shortcut
+            label="Cucumber Tests..."
+            icon="icons/cukes.gif"
+            modes="run,debug"
+            class="com.centurylink.mdw.plugin.launch.CucumberLaunchShortcut"
+            id="com.centurylink.mdw.plugin.launch.shortcut.CucumberTest">
+           <contextualLaunch>
+              <enablement>
+                 <with variable="selection">
+                    <count value="1"/>
+                    <iterate>
+                        <and>
+                            <instanceof value="org.eclipse.core.runtime.IAdaptable"/>
+                            <test property="com.centurylink.mdw.properties.launch.canLaunchCucumberTests" forcePluginActivation="true"/>
+                        </and>
+                    </iterate>
+                 </with>
+               </enablement>
+           </contextualLaunch>
+           <configurationType
+              id="com.centurylink.mdw.plugin.launch.Cucumber">
+           </configurationType>      
+      </shortcut>
+      <shortcut
+            label="Start MDW Server Runner"
+            icon="icons/server_started.gif"
+            modes="run,debug"
+            class="com.centurylink.mdw.plugin.launch.ServerRunnerLaunchShortcut"
+            id="com.centurylink.mdw.plugin.launch.shortcut.ServerRunner">
+           <contextualLaunch>
+              <enablement>
+                 <with variable="selection">
+                    <count value="1"/>
+                    <iterate>
+                     <adapt type="org.eclipse.core.resources.IProject">
+                       <test
+                         forcePluginActivation="true"
+                         property="org.eclipse.wst.common.project.facet.core.projectFacet"
+                         value="mdw.workflow" />
+                     </adapt>
+                    </iterate>
+                 </with>
+               </enablement>
+           </contextualLaunch>
+           <configurationType
+              id="com.centurylink.mdw.plugin.launch.ServerRunner">
+           </configurationType>      
+      </shortcut>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/launch.gif"
+            configTypeID="com.centurylink.mdw.plugin.launch.Process"
+            id="com.centurylink.mdw.plugin.launch.image.Process">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/launch.gif"
+            configTypeID="com.centurylink.mdw.plugin.launch.Activity"
+            id="com.centurylink.mdw.plugin.launch.image.Activity">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/extevent.gif"
+            configTypeID="com.centurylink.mdw.plugin.launch.ExternalEvent"
+            id="com.centurylink.mdw.plugin.launch.image.ExternalEvent">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/debug.gif"
+            configTypeID="com.centurylink.mdw.plugin.launch.JavaDebug"
+            id="com.centurylink.mdw.plugin.launch.image.JavaDebug">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/auto_test.gif"
+            configTypeID="com.centurylink.mdw.plugin.launch.AutomatedTest"
+            id="com.centurylink.mdw.plugin.launch.image.AutomatedTest">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/cukes.gif"
+            configTypeID="com.centurylink.mdw.plugin.launch.Cucumber"
+            id="com.centurylink.mdw.plugin.launch.image.CucumberTest">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/server_started.gif"
+            configTypeID="com.centurylink.mdw.plugin.launch.ServerRunner"
+            id="com.centurylink.mdw.plugin.launch.image.ServerRunner">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="com.centurylink.mdw.plugin.launch.Process"
+            class="com.centurylink.mdw.plugin.launch.ProcessLaunchTabGroup"
+            id="com.centurylink.mdw.plugin.launch.tabgroup.ProcessLaunch">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="com.centurylink.mdw.plugin.launch.Activity"
+            class="com.centurylink.mdw.plugin.launch.ActivityLaunchTabGroup"
+            id="com.centurylink.mdw.plugin.launch.tabgroup.ActivityLaunch">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="com.centurylink.mdw.plugin.launch.ExternalEvent"
+            class="com.centurylink.mdw.plugin.launch.ExternalEventLaunchTabGroup"
+            id="com.centurylink.mdw.plugin.launch.tabgroup.ExternalEventLaunch">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="com.centurylink.mdw.plugin.launch.JavaDebug"
+            class="com.centurylink.mdw.plugin.launch.JavaDebugTabGroup"
+            id="com.centurylink.mdw.plugin.launch.tabgroup.JavaDebug">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="com.centurylink.mdw.plugin.launch.AutomatedTest"
+            class="com.centurylink.mdw.plugin.launch.AutomatedTestTabGroup"
+            id="com.centurylink.mdw.plugin.launch.tabgroup.AutomatedTest">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="com.centurylink.mdw.plugin.launch.Cucumber"
+            class="com.centurylink.mdw.plugin.launch.CucumberTabGroup"
+            id="com.centurylink.mdw.plugin.launch.tabgroup.CucumberTest">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="com.centurylink.mdw.plugin.launch.ServerRunner"
+            class="com.centurylink.mdw.plugin.launch.ServerRunnerTabGroup"
+            id="com.centurylink.mdw.plugin.launch.tabgroup.ServerRunner">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="com.centurylink.mdw.plugin.launch.TomcatLaunch"
+            class="com.centurylink.mdw.plugin.server.TomcatLaunchConfigurationTabGroup"
+            id="com.centurylink.mdw.plugin.server.launch.tabgroup.Tomcat">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension point="org.eclipse.debug.ui.launchGroups">
+      <launchGroup
+         id="com.centurylink.mdw.plugin.launch.group.mdw"
+         mode="run"
+         label="Process Launch"
+         title="MDW Process Launch Configuration"
+         image="icons\launch.gif"
+         bannerImage="icons\mdw_wiz.png">
+      </launchGroup>
+      <launchGroup
+         id="com.centurylink.mdw.plugin.launch.group.mdw.debug"
+         mode="debug"
+         label="Process Debug"
+         title="MDW Process Debug Configuration"
+         image="icons\launch.gif"
+         bannerImage="icons\mdw_wiz.png">
+      </launchGroup>
+      <launchGroup
+         id="com.centurylink.mdw.plugin.launch.group.mdw.activity"
+         mode="run"
+         label="Activity Launch"
+         title="MDW Activity Launch Configuration"
+         image="icons\launch.gif"
+         bannerImage="icons\mdw_wiz.png">
+      </launchGroup>
+      <launchGroup
+         id="com.centurylink.mdw.plugin.launch.group.mdw.activity.debug"
+         mode="debug"
+         label="Activity Debug"
+         title="MDW Activity Debug Configuration"
+         image="icons\launch.gif"
+         bannerImage="icons\mdw_wiz.png">
+      </launchGroup>
+      <launchGroup
+         id="com.centurylink.mdw.plugin.launch.group.extevent"
+         mode="run"
+         label="External Event"
+         title="MDW External Event Launch Configuration"
+         image="icons\extevent.gif"
+         bannerImage="icons\mdw_wiz.png">
+      </launchGroup>
+      <launchGroup
+         id="com.centurylink.mdw.plugin.launch.group.extevent.debug"
+         mode="debug"
+         label="External Event"
+         title="MDW External Event Debug Configuration"
+         image="icons\extevent.gif"
+         bannerImage="icons\mdw_wiz.png">
+      </launchGroup>
+      <launchGroup
+         id="com.centurylink.mdw.plugin.launch.group.automated.test"
+         mode="run"
+         label="MDW Test Case"
+         title="MDW Automated Test Launch Configuration"
+         image="icons\auto_test.gif"
+         bannerImage="icons\mdw_wiz.png">
+      </launchGroup>
+      <launchGroup
+         id="com.centurylink.mdw.plugin.launch.group.cucumber.test"
+         mode="run"
+         label="Cucumber Feature"
+         title="Cucumber Gherkin Tests"
+         image="icons\cukes.gif"
+         bannerImage="icons\mdw_wiz.png">
+      </launchGroup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="com.centurylink.mdw.plugin.MessageConsolePageParticipant"
+            id="com.centurylink.mdw.plugin.MessageConsolePageParticipant">
+         <enablement>
+            <instanceof value="com.centurylink.mdw.plugin.MessageConsole"/>
+         </enablement>
+      </consolePageParticipant>
+   </extension>   
+   <extension
+     point="org.eclipse.ui.propertyPages">
+      <page
+         id="mdw.workflow.projectSettingsPropertyPage"
+         name="MDW Workflow"
+         objectClass="org.eclipse.core.resources.IProject"
+         adaptable="true"
+         class="com.centurylink.mdw.plugin.project.ProjectSettingsPropertyPage">
+         <enabledWhen>
+             <adapt type="org.eclipse.core.resources.IProject">
+               <test
+                 forcePluginActivation="true"
+                 property="com.centurylink.mdw.properties.project.mdwWorkflowProject" />
+             </adapt>
+         </enabledWhen>
+      </page>
+      <page
+         id="mdw.workflow.mdwServerConnectionsPropertyPage"
+         name="Container"
+         objectClass="org.eclipse.core.resources.IProject"
+         adaptable="true"
+         class="com.centurylink.mdw.plugin.project.ServerConnectionsPropertyPage"
+         category="mdw.workflow.projectSettingsPropertyPage">
+         <enabledWhen>
+             <adapt type="org.eclipse.core.resources.IProject">
+               <test
+                 forcePluginActivation="true"
+                 property="com.centurylink.mdw.properties.project.mdwWorkflowLocalProject" />
+             </adapt>
+         </enabledWhen>
+      </page>
+      <page
+         id="mdw.workflow.mdwServerPropertyPage"
+         name="Connections"
+         objectClass="org.eclipse.core.resources.IProject"
+         adaptable="true"
+         class="com.centurylink.mdw.plugin.project.ServerPropertyPage"
+         category="mdw.workflow.projectSettingsPropertyPage">
+         <enabledWhen>
+             <adapt type="org.eclipse.core.resources.IProject">
+               <test
+                 forcePluginActivation="true"
+                 property="com.centurylink.mdw.properties.project.mdwWorkflowLocalProject" />
+             </adapt>
+         </enabledWhen>
+      </page>
+      <page
+         id="mdw.workflow.mdwExtensionsPropertyPage"
+         name="Extensions"
+         objectClass="org.eclipse.core.resources.IProject"
+         adaptable="true"
+         class="com.centurylink.mdw.plugin.project.ExtensionModulesPropertyPage"
+         category="mdw.workflow.projectSettingsPropertyPage">
+         <enabledWhen>
+             <adapt type="org.eclipse.core.resources.IProject">
+               <and>
+               <test
+                 forcePluginActivation="true"
+                 property="com.centurylink.mdw.properties.project.mdwWorkflowLocalProject" />
+               <test 
+                 forcePluginActivation="true"
+                 property="com.centurylink.mdw.properties.project.notMdwWorkflowOsgiProject" />
+               <test
+                 forcePluginActivation="true" 
+                 property="com.centurylink.mdw.properties.project.mdwProjectVersion"
+                 args="5,1" />
+               </and>
+             </adapt>
+         </enabledWhen>
+      </page>      
+   </extension>   
+   <extension point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="mdw.workflow.webContribution">
+         <menu  
+               label="MDW Web"
+               path="additions"
+               id="mdw.projectWebMenu">
+            <separator
+               name="projectWebGroup">
+            </separator>
+         </menu>
+         <action
+               id="mdw.workflow.reportsList"
+               label="Reports List"
+               icon="icons/report.gif"
+               class="com.centurylink.mdw.plugin.actions.ReportsListAction"
+               menubarPath="mdw.projectWebMenu/projectWebGroup"
+               enablesFor="1">
+         </action>
+         <action
+               id="mdw.workflow.mdwWeb"
+               label="Web Tools"
+               icon="icons/webtools.gif"
+               class="com.centurylink.mdw.plugin.actions.WebToolsAction"
+               menubarPath="mdw.projectWebMenu/projectWebGroup"
+               enablesFor="1">
+         </action>
+         <action
+               id="mdw.workflow.taskManagerWeb"
+               label="Task Manager"
+               icon="icons/taskmgr.gif"
+               class="com.centurylink.mdw.plugin.actions.TaskManagerAction"
+               menubarPath="mdw.projectWebMenu/projectWebGroup"
+               enablesFor="1">
+         </action>
+         <enablement>
+             <adapt type="org.eclipse.core.resources.IProject">
+               <test
+                 forcePluginActivation="true" 
+                 property="com.centurylink.mdw.properties.project.mdwProjectVersionLessThan"
+                 args="5,5" />
+             </adapt>
+         </enablement>         
+      </objectContribution>         
+   </extension>
+   <extension point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="mdw.workflow.hubContribution">
+         <menu  
+               label="MDW Hub"
+               path="additions"
+               id="mdw.projectHubMenu">
+            <separator
+               name="projectHubGroup">
+            </separator>
+         </menu>
+         <action
+               id="mdw.workflow.reportsList"
+               label="Reports List"
+               icon="icons/report.gif"
+               class="com.centurylink.mdw.plugin.actions.ReportsListAction"
+               menubarPath="mdw.projectHubMenu/projectWebGroup"
+               enablesFor="1">
+         </action>
+         <action
+               id="mdw.workflow.mdwHub"
+               label="MDW Hub"
+               icon="icons/hub.gif"
+               class="com.centurylink.mdw.plugin.actions.MdwHubAction"
+               menubarPath="mdw.projectHubMenu/projectWebGroup"
+               enablesFor="1">
+         </action>         
+         <enablement>
+             <adapt type="org.eclipse.core.resources.IProject">
+               <test
+                 forcePluginActivation="true" 
+                 property="com.centurylink.mdw.properties.project.mdwProjectVersion"
+                 args="5,5" />
+             </adapt>
+         </enablement>         
+      </objectContribution>         
+   </extension>   
+   <extension point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="mdw.workflow.projectUpdateContribution">
+         <menu  
+               label="MDW Update"
+               path="additions"
+               id="mdw.projectUpdateMenu">
+            <separator
+                  name="projectUpdateGroup">
+            </separator>
+         </menu>
+         <action
+               id="mdw.workflow.associateFrameworkSourceCode"
+               label="Associate Framework Source Code"
+               icon="icons/src_attach.gif"
+               class="com.centurylink.mdw.plugin.actions.ProjectUpdateAction"
+               menubarPath="mdw.projectUpdateMenu/projectUpdateGroup"
+               enablesFor="1">
+         </action>
+         <action
+               id="mdw.workflow.updateFrameworkJars"
+               label="Update Framework Libraries"
+               icon="icons/libraries.gif"
+               class="com.centurylink.mdw.plugin.actions.ProjectUpdateAction"
+               menubarPath="mdw.projectUpdateMenu/projectUpdateGroup"
+               enablesFor="1">
+         </action>
+         <enablement>
+  			   <adapt type="org.eclipse.core.resources.IProject">
+				     <test
+				       forcePluginActivation="true"
+					     property="org.eclipse.wst.common.project.facet.core.projectFacet"
+					     value="mdw.workflow" />
+			     </adapt>
+		     </enablement>         
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="mdw.workflow.webUpdateContribution">
+         <menu   
+               label="MDW Update"
+               path="additions"
+               id="mdw.webUpdateMenu">
+            <separator
+                  name="webUpdateGroup">
+            </separator>
+         </menu>
+         <action
+               id="mdw.workflow.associateWebAppSourceCode"
+               label="Associate WebApp Source Code"
+               icon="icons/src_attach.gif"
+               class="com.centurylink.mdw.plugin.actions.WebUpdateAction"
+               menubarPath="mdw.webUpdateMenu/webUpdateGroup"
+               enablesFor="1">
+         </action>
+         <action
+               id="mdw.workflow.updateFrameworkWebJars"
+               label="Update WebApp Jars"
+               icon="icons/libraries.gif"
+               class="com.centurylink.mdw.plugin.actions.WebUpdateAction"
+               menubarPath="mdw.webUpdateMenu/webUpdateGroup"
+               enablesFor="1">
+         </action>
+         <enablement>
+  			   <adapt type="org.eclipse.core.resources.IProject">
+             <test 
+               forcePluginActivation="true"
+               property="com.centurylink.mdw.properties.project.mdwWorkflowWebProject" />
+			     </adapt>
+		     </enablement>
+      </objectContribution>         
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.jdt.core.IJavaProject"
+            adaptable="true"
+            id="mdw.workflow.convertJavaProjectContribution">
+         <action
+               id="mdw.workflow.convertJavaProject"
+               label="Convert to MDW Workflow Project..."
+               icon="icons/cloud_project.gif"
+               class="com.centurylink.mdw.plugin.actions.ConvertProjectAction"
+               menubarPath="org.eclipse.ui.projectConfigure/additions"
+               enablesFor="1">
+         </action>
+         <enablement>
+           <adapt type="org.eclipse.core.resources.IProject">
+             <not>
+               <test
+                 forcePluginActivation="true"
+                 property="org.eclipse.wst.common.project.facet.core.projectFacet"
+                 value="mdw.workflow" />
+             </not>
+           </adapt>
+         </enablement>
+      </objectContribution>         
+   </extension>   
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="mdw.workflow.convertEarProjectContribution">
+         <action
+               id="mdw.workflow.convertEarProject"
+               label="Convert to MDW Workflow Project..."
+               icon="icons/wf_project.gif"
+               class="com.centurylink.mdw.plugin.actions.ConvertProjectAction"
+               menubarPath="org.eclipse.ui.projectConfigure/additions"
+               enablesFor="1">
+         </action>
+         <enablement>
+           <adapt type="org.eclipse.core.resources.IProject">
+             <and>
+               <test
+                 forcePluginActivation="true"
+                 property="org.eclipse.wst.common.project.facet.core.projectFacet"
+                 value="jst.ear" />
+               <not>
+                 <test
+                   forcePluginActivation="true"
+                   property="org.eclipse.wst.common.project.facet.core.projectFacet"
+                   value="mdw.workflow" />
+               </not>
+             </and>
+           </adapt>
+         </enablement>
+      </objectContribution>         
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="mdw.workflow.convertApplicationPropertiesContribution"
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="ApplicationProperties.xml">
+         <menu  
+               label="MDW Update"
+               path="additions"
+               id="mdw.fileUpdateMenu">
+            <separator
+                  name="fileUpdateGroup">
+            </separator>
+         </menu>            
+         <action
+               id="mdw.workflow.convertApplicationProperties"
+               label="Convert to Property File Format..."
+               icon="icons/properties.gif"
+               class="com.centurylink.mdw.plugin.actions.ConvertApplicationProperties"
+               menubarPath="mdw.fileUpdateMenu/fileUpdateGroup"
+               enablesFor="1">
+         </action>
+      </objectContribution>         
+   </extension>   
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+         id="mdw.preferences.MdwPreferencePage"
+         class="com.centurylink.mdw.plugin.preferences.MdwPreferencePage"
+         name="MDW">
+      </page>
+      <page 
+         id="mdw.preferences.ProcessDesignPreferencePage"
+         class="com.centurylink.mdw.plugin.preferences.ProcessDesignPreferencePage"
+         name="Process Design"
+         category="mdw.preferences.MdwPreferencePage" />      
+      <page 
+         id="mdw.preferences.UrlsPreferencePage"
+         class="com.centurylink.mdw.plugin.preferences.UrlsPreferencePage"
+         name="Endpoints"
+         category="mdw.preferences.MdwPreferencePage" />      
+      <page 
+         id="mdw.preferences.ServerConsolePreferencePage"
+         class="com.centurylink.mdw.plugin.preferences.ServerConsolePreferencePage"
+         name="Server Runner"
+         category="mdw.preferences.MdwPreferencePage" />
+   </extension>
+   <extension
+         point="org.eclipse.wst.common.project.facet.core.facets">
+    <project-facet id="mdw.workflow">
+      <label>MDW Workflow</label>
+      <description>
+        Associates Eclipse project artifacts with an MDW workflow.
+      </description>
+    </project-facet>
+    <!-- TODO remove mdw.workflow facet 1.0 after some appropriate interval -->
+    <project-facet-version facet="mdw.workflow" version="1.0">
+      <constraint>
+        <or>
+          <requires facet="jst.ear" version="[1.4-5.0]"/>
+          <requires facet="java" version="[1.5"/>
+        </or>
+      </constraint>
+      <action type="VERSION_CHANGE" id="mdw.workflow.vchange10">
+          <delegate class="com.centurylink.mdw.plugin.project.WorkflowFacetVersionChangeDelegate"/>
+      </action>
+    </project-facet-version>
+    <project-facet-version facet="mdw.workflow" version="1.1">
+      <constraint>
+        <or>
+          <requires facet="jst.ear" version="[1.4-5.0]"/>
+          <requires facet="java" version="[1.5"/>
+        </or>
+      </constraint>
+      <action type="INSTALL" id="mdw.workflow.install11">
+        <config-factory class="com.centurylink.mdw.plugin.project.model.WorkflowProject$Factory" />
+        <delegate class="com.centurylink.mdw.plugin.project.WorkflowFacetInstallDelegate"/>
+      </action>
+      <action type="VERSION_CHANGE" id="mdw.workflow.vchange11">
+          <delegate class="com.centurylink.mdw.plugin.project.WorkflowFacetVersionChangeDelegate"/>
+      </action>
+    </project-facet-version>
+    <project-facet-version facet="mdw.workflow" version="5.1">
+      <constraint>
+        <or>
+          <requires facet="jst.ear" version="[5.0"/>
+          <requires facet="java" version="[1.6"/>
+        </or>
+      </constraint>
+      <action type="INSTALL" id="mdw.workflow.install">
+        <config-factory class="com.centurylink.mdw.plugin.project.model.WorkflowProject$Factory" />
+        <delegate class="com.centurylink.mdw.plugin.project.WorkflowFacetInstallDelegate"/>
+      </action>
+      <action type="VERSION_CHANGE" id="mdw.workflow.vchange51">
+          <delegate class="com.centurylink.mdw.plugin.project.WorkflowFacetVersionChangeDelegate"/>
+      </action>
+      <event-handler type="POST_INSTALL">
+        <delegate class="com.centurylink.mdw.plugin.project.WorkflowFacetPostInstallDelegate"/>
+      </event-handler>
+    </project-facet-version>
+    <template id="mdw.workflow.template">
+      <label>MDW Workflow Project Template</label>
+      <fixed facet="jst.ear" />
+      <fixed facet="mdw.workflow" />
+    </template>
+    <template id="mdw.ejb.template.java5">
+      <label>MDW EJB Project Template</label>
+      <preset id="mdw.ejb.preset.java5" />
+    </template>    
+    <template id="mdw.ejb.template.java6">
+      <label>MDW EJB Project Template</label>
+      <preset id="mdw.ejb.preset.java6" />
+    </template>    
+  </extension>
+  <extension point="org.eclipse.wst.common.project.facet.core.presets">
+   <static-preset id="mdw.ejb.preset.java5">
+      <label>MDW EJB Project</label>
+      <description>EJB Source Code Project for an MDW Workflow</description>
+      <facet id="jst.java" version="5.0" />
+      <facet id="jst.ejb" version="3.0" />
+   </static-preset>
+   <static-preset id="mdw.ejb.preset.java6">
+      <label>MDW EJB Project</label>
+      <description>EJB Source Code Project for an MDW Workflow</description>
+      <facet id="jst.java" version="6.0" />
+      <facet id="jst.ejb" version="3.0" />
+   </static-preset>
+  </extension>  
+  <extension point="org.eclipse.wst.common.project.facet.ui.images">
+    <image facet="mdw.workflow" path="icons/mdw.gif"/>
+  </extension>
+  <extension point="org.eclipse.wst.common.project.facet.ui.wizardPages">
+    <wizard-pages action="mdw.workflow.install">
+      <page class="com.centurylink.mdw.plugin.project.WorkflowProjectPage"/>
+      <page class="com.centurylink.mdw.plugin.project.WebLogicSettingsPage"/>
+      <page class="com.centurylink.mdw.plugin.project.JBossSettingsPage"/>
+      <page class="com.centurylink.mdw.plugin.project.ServiceMixSettingsPage"/>
+      <page class="com.centurylink.mdw.plugin.project.TomcatSettingsPage"/>
+      <page class="com.centurylink.mdw.plugin.project.ExtensionModulesWizardPage"/>      
+      <page class="com.centurylink.mdw.plugin.project.DataSourcePage"/>
+    </wizard-pages>
+  </extension>
+  <extension point="org.eclipse.wst.common.project.facet.core.runtimes">
+    <supported>
+      <runtime-component any="true"/>
+      <facet id="mdw.workflow"/>
+    </supported>
+  </extension>
+  <extension
+    point="org.eclipse.ui.newWizards">
+    <category
+       id="mdw.new.projects"
+       name="MDW Projects" />    
+    <category
+       id="mdw.designer.new"
+       name="MDW Designer" />
+    <category
+       id="mdw.designer.asset"
+       name="MDW Workflow Assets" />
+  	<category
+  	   id="mdw.codegen.activity"
+  	   name="MDW Activities" />
+    <category
+       id="mdw.codegen.event"
+       name="MDW Event Handlers" />
+    <wizard
+       id="mdw.designer.remote.project"
+       name="Remote Workflow Project"
+       class="com.centurylink.mdw.plugin.project.RemoteWorkflowProjectWizard"
+       category="mdw.new.projects"
+       icon="icons/remote_project.gif"
+       project="true"
+       preferredPerspectives="mdw.perspectives.designer">
+       <description>Set up access to a remote workflow project.</description>
+    </wizard>
+    <wizard
+       id="mdw.designer.local.project"
+       name="Local Workflow Project"
+       class="com.centurylink.mdw.plugin.project.NewWorkflowProjectWizard"
+       category="mdw.new.projects"
+       icon="icons/wf_project.gif"
+       project="true"
+       preferredPerspectives="mdw.perspectives.designer">
+       <description>Create a new full-blown workflow project in your workspace.</description>
+    </wizard>
+    <wizard
+       id="mdw.designer.cloud.project"
+       name="Local Cloud Project"
+       class="com.centurylink.mdw.plugin.project.LocalCloudProjectWizard"
+       category="mdw.new.projects"
+       icon="icons/cloud_project.gif"
+       project="true"
+       preferredPerspectives="mdw.perspectives.designer">
+       <description>Create a local cloud-based workflow project.</description>
+    </wizard>     
+    <wizard 
+       id="mdw.codegen.general.activity"
+       name="General Activity"
+       class="com.centurylink.mdw.plugin.codegen.activity.ActivityWizard"
+       category="mdw.codegen.activity"
+       icon="icons/genact_wiz.gif">
+       <description>Implement a general-purpose MDW activity.</description>
+       <selection class="org.eclipse.core.resources.IResource"/>
+    </wizard>
+    <wizard 
+       id="mdw.codegen.start.activity"
+       name="Start Activity"
+       class="com.centurylink.mdw.plugin.codegen.activity.StartActivityWizard"
+       category="mdw.codegen.activity"
+       icon="icons/startact_wiz.gif">
+       <description>Implement a custom process start activity.</description>
+       <selection class="org.eclipse.core.resources.IResource"/>
+    </wizard>    
+   	<wizard 
+  	   id="mdw.codegen.adapter.activity"
+   	   name="Adapter Activity"
+  	   class="com.centurylink.mdw.plugin.codegen.activity.AdapterActivityWizard"
+  	   category="mdw.codegen.activity"
+  	   icon="icons/adaptact_wiz.gif">
+       <description>Implement an MDW adapter activity.</description>
+  	   <selection class="org.eclipse.core.resources.IResource"/>
+  	</wizard>
+    <wizard 
+       id="mdw.codegen.evaluator.activity"
+       name="Evaluator Activity"
+       class="com.centurylink.mdw.plugin.codegen.activity.EvaluatorActivityWizard"
+       category="mdw.codegen.activity"
+       icon="icons/evalact_wiz.gif">
+       <description>Implement an MDW evaluator activity.</description>
+       <selection class="org.eclipse.core.resources.IResource"/>
+    </wizard>
+    <wizard 
+       id="mdw.codegen.event.handler"
+       name="External Event Handler"
+       class="com.centurylink.mdw.plugin.codegen.event.EventHandlerWizard"
+       category="mdw.codegen.event"
+       icon="icons/extevent_wiz.gif">
+       <description>Implement an MDW external event handler.</description>
+       <selection class="org.eclipse.core.resources.IResource"/>
+    </wizard>
+    <wizard 
+       id="mdw.codegen.camel.notify.handler"
+       name="Camel Event Notify Handler"
+       class="com.centurylink.mdw.plugin.codegen.event.CamelNotifyHandlerWizard"
+       category="mdw.codegen.event"
+       icon="icons/camel.gif"> 
+       <description>Notify processes of an event through Camel.</description>
+       <selection class="org.eclipse.core.resources.IResource"/>
+    </wizard>
+    <wizard 
+       id="mdw.codegen.camel.process.handler"
+       name="Camel Process Launch Handler"
+       class="com.centurylink.mdw.plugin.codegen.event.CamelProcessHandlerWizard"
+       category="mdw.codegen.event"
+       icon="icons/camel.gif">
+       <description>Implement a Camel process launch handler.</description>
+       <selection class="org.eclipse.core.resources.IResource"/>
+    </wizard>
+    <wizard
+       id="mdw.designer.new.package"
+       name="MDW Package"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewPackageWizard"
+       category="mdw.designer.new"
+       icon="icons/new_package.gif">
+       <description>Create a new MDW Designer package.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>   
+    <wizard
+       id="mdw.designer.new.process"
+       name="MDW Process"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewProcessWizard"
+       category="mdw.designer.new"
+       icon="icons/new_process.gif">
+       <description>Create a new MDW Designer process definition.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>
+    <wizard
+       id="mdw.designer.new.script"
+       name="Script"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewScriptWizard"
+       category="mdw.designer.asset"
+       icon="icons/script.gif">
+       <description>Create a new script artifact.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>
+    <wizard
+       id="mdw.designer.new.java"
+       name="Java Source"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewJavaWizard"
+       category="mdw.designer.asset"
+       icon="icons/java.gif">
+       <description>Create a new Java Source artifact.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>
+    <wizard 
+       id="mdw.designer.new.rule"
+       name="Rule"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewRuleWizard"
+       category="mdw.designer.asset"
+       icon="icons/drools.gif">
+       <description>Create a new Rules artifact.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>
+    <wizard 
+       id="mdw.designer.new.wordDoc"
+       name="Word Document"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewWordDocWizard"
+       category="mdw.designer.asset"
+       icon="icons/word.gif">
+       <description>Create a new MS Word artifact.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>
+    <wizard 
+       id="mdw.designer.new.camelRoute"
+       name="CamelRoute"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewCamelRouteWizard"
+       category="mdw.designer.asset"
+       icon="icons/camel.gif">
+       <description>Create a new Camel Route artifact.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>    
+    <wizard
+       id="mdw.designer.new.taskTemplate"
+       name="Task Template"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewTaskTemplateWizard"
+       category="mdw.designer.asset"
+       icon="icons/task.gif">
+       <description>Create a new manual task template.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>   
+    <wizard
+       id="mdw.designer.new.page"
+       name="Page"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewPageWizard"
+       category="mdw.designer.asset"
+       icon="icons/page.gif">
+       <description>Create a new custom page.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>   
+    <wizard
+       id="mdw.designer.new.webResource"
+       name="Web Resource"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewWebResourceWizard"
+       category="mdw.designer.asset"
+       icon="icons/webtools.gif">
+       <description>Create a new web resource.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>   
+    <wizard
+       id="mdw.designer.new.template"
+       name="Template"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewTemplateWizard"
+       category="mdw.designer.asset"
+       icon="icons/template.gif">
+       <description>Create a new template.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>
+    <wizard
+       id="mdw.designer.new.report"
+       name="Report"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewReportWizard"
+       category="mdw.designer.asset"
+       icon="icons/report.gif">
+       <description>Create a new report.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>
+    <wizard
+       id="mdw.designer.new.spring.config"
+       name="Configuration"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewSpringConfigWizard"
+       category="mdw.designer.asset"
+       icon="icons/spring.gif">
+       <description>Create a new Spring configuration asset.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>
+    <wizard
+       id="mdw.designer.new.xml"
+       name="XML Document"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewXmlDocWizard"
+       category="mdw.designer.asset"
+       icon="icons/xml.gif">
+       <description>Create a new XML document.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>
+    <wizard
+       id="mdw.designer.new.jar"
+       name="Jar File"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewJarFileWizard"
+       category="mdw.designer.asset"
+       icon="icons/jar.gif">
+       <description>Import a new jar file.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>
+    <wizard
+       id="mdw.designer.new.textResource"
+       name="Text Resource"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewTextResourceWizard"
+       category="mdw.designer.asset"
+       icon="icons/doc.gif">
+       <description>Create a new text artifact.</description>
+       <selection class="com.centurylink.mdw.plugin.designer.model.WorkflowElement"/>
+    </wizard>
+    <wizard
+       id="mdw.designer.new.test.case"
+       name="Test Case"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewTestCaseWizard"
+       category="mdw.designer.asset"
+       icon="icons/auto_test.gif">
+       <description>Create an MDW automated test case.</description>
+    </wizard>
+    <wizard
+       id="mdw.designer.new.yaml"
+       name="YAML"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewYamlWizard"
+       category="mdw.designer.asset"
+       icon="icons/yaml.gif">
+       <description>Create a YAML asset.</description>
+    </wizard>
+    <wizard
+       id="mdw.designer.new.json"
+       name="JSON"
+       class="com.centurylink.mdw.plugin.designer.wizards.NewJsonWizard"
+       category="mdw.designer.asset"
+       icon="icons/javascript.gif">
+       <description>Create a JSON asset.</description>
+    </wizard>
+  </extension>
+  <extension
+     point="org.eclipse.ui.importWizards">
+     <category
+       id="mdw.designer.import"
+       name="MDW Designer Import" />
+     <wizard
+       id="mdw.designer.import.project"
+       name="Workflow Project(s)"
+       icon="icons/remote_project.gif"
+       category="mdw.designer.import"
+       class="com.centurylink.mdw.plugin.designer.wizards.ImportProjectWizard">
+         <description>
+            Import MDW Workflow Projects into your workspace.
+         </description>
+     </wizard>
+     <wizard
+       id="mdw.designer.import.package"
+       name="Workflow Package"
+       icon="icons/package.gif"
+       category="mdw.designer.import"
+       class="com.centurylink.mdw.plugin.designer.wizards.ImportPackageWizard">
+         <description>
+            Import design assets into your workflow project.
+         </description>
+      </wizard>
+   </extension>  
+  <extension
+     point="org.eclipse.ui.exportWizards">
+     <category
+       id="mdw.designer.export"
+       name="MDW Designer Export" />
+     <wizard
+       id="mdw.designer.export.project"
+       name="Workflow Project(s)"
+       icon="icons/remote_project.gif"
+       category="mdw.designer.export"
+       class="com.centurylink.mdw.plugin.designer.wizards.ExportProjectWizard">
+         <description>
+            Export MDW Workflow Projects from your workspace to generate an XML file.
+         </description>
+      </wizard>
+   </extension>
+   <extension
+     point="org.eclipse.ui.views">
+      <category
+        id="mdw.views"
+        name="MDW" />
+      <view
+        id="mdw.views.designer.toolbox"
+        name="Toolbox"
+        icon="icons/toolbox.gif"
+        category="mdw.views"
+        class="com.centurylink.mdw.plugin.designer.views.ToolboxView">
+      </view>
+      <view
+        id="mdw.views.designer.processes"
+        name="Process Explorer"
+        icon="icons/designer.gif"
+        category="mdw.views"
+        class="com.centurylink.mdw.plugin.designer.views.ProcessExplorerView">
+      </view>
+      <view
+        id="mdw.views.designer.processes.hierarchy"
+        name="Process Hierarchy"
+        icon="icons/hierarchy.gif"
+        category="mdw.views"
+        class="com.centurylink.mdw.plugin.designer.views.ProcessHierarchyView">
+      </view>
+      <view
+        id="mdw.views.designer.process.launch"
+        name="Process Launch"
+        icon="icons/launch.gif"
+        category="mdw.views"
+        class="com.centurylink.mdw.plugin.designer.views.ProcessLaunchView">
+      </view>
+      <view
+        id="mdw.views.designer.process.instance.list"
+        name="Process Instances"
+        icon="icons/list.gif"
+        category="mdw.views"
+        class="com.centurylink.mdw.plugin.designer.views.ProcessInstanceListView">
+      </view>
+      <view
+        id="mdw.views.launch.automatedTest"
+        name="Test Exec"
+        icon="icons/auto_test.gif"
+        category="mdw.views"
+        class="com.centurylink.mdw.plugin.designer.views.AutomatedTestView">
+      </view>
+      <view
+        id="com.centurylink.mdw.server.ServerConsole"
+        name="Server Console"
+        icon="icons/console.gif"
+        category="mdw.views"
+        class="com.centurylink.mdw.plugin.server.ServerConsole">
+      </view>
+      <view
+        id="mdw.views.designer.list.myTasks"
+        name="My Tasks"
+        icon="icons/list.gif"
+        category="mdw.views"
+        class="com.centurylink.mdw.plugin.designer.views.MyTasksView">
+      </view>
+   </extension>
+   
+   <extension
+      point="org.eclipse.core.contenttype.contentTypes">
+         <content-type 
+            id="com.centurylink.mdw.workflow.process"
+            name="MDW Workflow"
+            priority="normal"
+            file-extensions="proc">
+         </content-type>
+         <content-type 
+            id="com.centurylink.mdw.workflow.activity.implementor"
+            name="MDW Activity Implementor"
+            priority="normal"
+            base-type="org.eclipse.core.runtime.xml"
+            file-extensions="impl">
+         </content-type>
+         <content-type 
+            id="com.centurylink.mdw.workflow.event.handler"
+            name="MDW External Event Handler"
+            priority="normal"
+            base-type="org.eclipse.core.runtime.xml"
+            file-extensions="evth">
+         </content-type>
+         <content-type 
+            id="com.centurylink.mdw.workflow.task.template"
+            name="MDW Task Template"
+            priority="normal"
+            base-type="org.eclipse.core.runtime.xml"
+            file-extensions="task">
+         </content-type>     
+         <content-type 
+            id="com.centurylink.mdw.view.layout"
+            name="MDW View Layout"
+            priority="normal"
+            base-type="org.eclipse.core.runtime.xml"
+            file-names="MDWTaskView.xml,MDWTaskView.xml.xml,TaskView.xml,TaskView.xml.xml,*TaskView.xml,*TaskView.xml.xml">
+         </content-type>
+   </extension>
+   
+   <extension
+     point="org.eclipse.ui.editors">
+     <editor
+       id="mdw.editors.process"
+       name="Process Editor"
+       icon="icons/process.gif"
+       contributorClass="com.centurylink.mdw.plugin.designer.editors.ProcessEditorActionBarContributor"
+       class="com.centurylink.mdw.plugin.designer.editors.ProcessEditor">
+       <contentTypeBinding
+         contentTypeId="com.centurylink.mdw.workflow.process" />
+     </editor>
+     <editor
+       id="mdw.editors.view.layout"
+       name="MDW View Layout Editor"
+       icon="icons/layout.gif"
+       contributorClass="org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorActionBarContributor"
+       class="com.centurylink.mdw.plugin.designer.editors.ViewLayoutXmlEditor"
+       symbolicFontName="org.eclipse.wst.sse.ui.textfont">
+       <contentTypeBinding
+         contentTypeId="com.centurylink.mdw.view.layout" />
+     </editor>
+     <editor
+       id="mdw.editors.taskTemplate"
+       name="Task Template Editor"
+       icon="icons/task.gif"
+       class="com.centurylink.mdw.plugin.designer.editors.TaskTemplateEditor"
+       symbolicFontName="org.eclipse.wst.sse.ui.textfont">
+       <contentTypeBinding
+         contentTypeId="com.centurylink.mdw.workflow.task.template" />
+     </editor>     
+   </extension>
+   <extension 
+     point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+     <propertyContributor
+       contributorId="mdw.tabbedprops.contributor"
+       labelProvider="com.centurylink.mdw.plugin.designer.properties.PropertiesLabelProvider"
+       tabDescriptorProvider="com.centurylink.mdw.plugin.designer.properties.TabDescriptorProvider">
+       <propertyCategory category="mdw.tabbedprops"/>
+     </propertyContributor>
+   </extension>
+   <extension 
+     point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+     <propertyTabs
+       contributorId="mdw.tabbedprops.contributor">
+       <propertyTab
+         id="mdw.properties.tabs.definition"
+         label="Definition"
+         category="mdw.tabbedprops"/>
+       <propertyTab
+         id="mdw.properties.tabs.vcs"
+         label="VCS"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.definition"/>
+       <propertyTab
+         id="mdw.properties.tabs.instance"
+         label="Instance"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.definition"/>       
+       <propertyTab
+         id="mdw.properties.tabs.subprocesses"
+         label="Subprocess"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.instance"/>  
+       <propertyTab
+         id="mdw.properties.tabs.tasks"
+         label="Task"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.instance"/>  
+       <propertyTab
+         id="mdw.properties.tabs.subtasks"
+         label="SubTasks"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.tasks"/>  
+       <propertyTab
+         id="mdw.properties.tabs.design"
+         label="Design"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.definition"/>
+       <propertyTab
+         id="mdw.properties.tabs.permissions"
+         label="Permissions"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.definition"/>
+       <propertyTab
+         id="mdw.properties.tabs.preferences"
+         label="Preferences"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.permissions"/>
+       <propertyTab
+         id="mdw.properties.tabs.connections"
+         label="Connections"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.preferences"/>
+       <propertyTab
+         id="mdw.properties.tabs.variables"
+         label="Variables"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.design"/>
+       <propertyTab
+         id="mdw.properties.tabs.values"
+         label="Values"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.variables"/>
+       <propertyTab
+         id="mdw.properties.tabs.versions"
+         label="Versions"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.values"/>
+       <propertyTab
+         id="mdw.properties.tabs.locking"
+         label="Locking"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.versions"/>                  
+       <propertyTab
+         id="mdw.properties.tabs.script"
+         label="Script"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.definition"/>
+       <propertyTab
+         id="mdw.properties.tabs.java"
+         label="Java"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.definition"/>
+       <propertyTab
+         id="mdw.properties.tabs.expression"
+         label="Expression"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.definition"/>
+       <propertyTab
+         id="mdw.properties.tabs.transform"
+         label="Transform"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.definition"/>
+       <propertyTab
+         id="mdw.properties.tabs.task.variables"
+         label="Variables"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.design"/>
+       <propertyTab
+         id="mdw.properties.tabs.task.indexes"
+         label="Indexes"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.design"/>
+       <propertyTab
+         id="mdw.properties.tabs.task.workgroups"
+         label="Workgroups"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.variables"/>
+       <propertyTab
+         id="mdw.properties.tabs.task.notices"
+         label="Notices"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.workgroups"/>
+       <propertyTab
+         id="mdw.properties.tabs.task.processes"
+         label="Processes"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.notices"/>
+       <propertyTab
+         id="mdw.properties.tabs.recipients"
+         label="Recipients"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.notices"/>
+       <propertyTab
+         id="mdw.properties.tabs.ccRecipients"
+         label="CC Recipients"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.recipients"/>
+       <propertyTab
+         id="mdw.properties.tabs.events"
+         label="Events"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.ccRecipients"/>
+       <propertyTab
+         id="mdw.properties.tabs.binding"
+         label="Bindings"
+         category="mdw.tabbedprops"
+         afterTab="mdw.properties.tabs.design"/>
+       <propertyTab
+         id="mdw.properties.tabs.custom"
+         label="Custom"
+         afterTab="mdw.properties.tabs.locking"
+         category="mdw.tabbedprops"/>
+       <propertyTab
+         id="mdw.properties.tabs.configuration"
+         label="Configuration"
+         afterTab="mdw.properties.tabs.versions"
+         category="mdw.tabbedprops"/>         
+       <propertyTab
+         id="mdw.properties.tabs.documentation"
+         label="Documentation"
+         afterTab="mdw.properties.tabs.monitoring" 
+         category="mdw.tabbedprops"/>
+       <propertyTab
+         id="mdw.properties.tabs.attributes"
+         label="Attributes"
+         afterTab="mdw.properties.tabs.activity"
+         category="mdw.tabbedprops"/>
+       <propertyTab
+         id="mdw.properties.tabs.testCase"
+         label="Test Case"
+         afterTab="mdw.properties.tabs.attributes"
+         category="mdw.tabbedprops"/>
+       <propertyTab
+         id="mdw.properties.tabs.output"
+         label="Output"
+         afterTab="mdw.properties.tabs.attributes"
+         category="mdw.tabbedprops"/>
+       <propertyTab
+         id="mdw.properties.tabs.bam.override"
+         label="Monitoring"
+         afterTab="mdw.properties.tabs.attributes"
+         category="mdw.tabbedprops"/>
+       <propertyTab
+         id="mdw.properties.tabs.simul.override"
+         label="Simulation"
+         afterTab="mdw.properties.tabs.design"
+         category="mdw.tabbedprops"/>
+     </propertyTabs>
+   </extension>
+   <extension
+     point="org.eclipse.ui.views.properties.tabbed.propertySections">
+       <propertySections
+         contributorId="mdw.tabbedprops.contributor">
+         <propertySection
+           id="mdw.properties.section.project.permissions"
+           class="com.centurylink.mdw.plugin.designer.properties.ProjectPermissionsSection"
+           tab="mdw.properties.tabs.permissions"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ProjectPermissionsSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.preferences"
+           class="com.centurylink.mdw.plugin.designer.properties.PreferencesSection"
+           tab="mdw.properties.tabs.preferences"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.PreferencesSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.project.server"
+           class="com.centurylink.mdw.plugin.designer.properties.ProjectConnectionsSettings"
+           tab="mdw.properties.tabs.connections"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ProjectConnectionsSettings">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.process"
+           class="com.centurylink.mdw.plugin.designer.properties.ProcessSection"
+           tab="mdw.properties.tabs.definition"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ProcessSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.activity"
+           class="com.centurylink.mdw.plugin.designer.properties.ActivitySection"
+           tab="mdw.properties.tabs.definition"
+           enablesFor="1">
+           <input type="com.centurylink.mdw.plugin.designer.model.Activity"/>
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.transition"
+           class="com.centurylink.mdw.plugin.designer.properties.TransitionSection"
+           tab="mdw.properties.tabs.definition"
+           enablesFor="1">
+           <input type="com.centurylink.mdw.plugin.designer.model.Transition"/>
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.activityImpl"
+           class="com.centurylink.mdw.plugin.designer.properties.ActivityImplSection"
+           tab="mdw.properties.tabs.definition"
+           enablesFor="1">
+           <input type="com.centurylink.mdw.plugin.designer.model.ActivityImpl"/>
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.activityImplDesign"
+           class="com.centurylink.mdw.plugin.designer.properties.ActivityImplDesignSection"
+           tab="mdw.properties.tabs.design"
+           enablesFor="1">
+           <input type="com.centurylink.mdw.plugin.designer.model.ActivityImpl"/>
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.taskTemplate"
+           class="com.centurylink.mdw.plugin.designer.properties.TaskTemplateSection"
+           tab="mdw.properties.tabs.definition"
+           enablesFor="1">
+           <input type="com.centurylink.mdw.plugin.designer.model.TaskTemplate"/>
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.embedded.subprocess"
+           class="com.centurylink.mdw.plugin.designer.properties.EmbeddedSubProcessSection"
+           tab="mdw.properties.tabs.definition"
+           enablesFor="1">
+           <input type="com.centurylink.mdw.plugin.designer.model.EmbeddedSubProcess"/>
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.package"
+           class="com.centurylink.mdw.plugin.designer.properties.PackageSection"
+           tab="mdw.properties.tabs.definition"
+           enablesFor="1">
+           <input type="com.centurylink.mdw.plugin.designer.model.WorkflowPackage"/>
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.project"
+           class="com.centurylink.mdw.plugin.designer.properties.ProjectSection"
+           tab="mdw.properties.tabs.definition"
+           enablesFor="1">
+           <input type="com.centurylink.mdw.plugin.project.model.WorkflowProject"/>
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.projectVcs"
+           class="com.centurylink.mdw.plugin.designer.properties.ProjectVcsSection"
+           tab="mdw.properties.tabs.vcs"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ProjectVcsSection">
+           <input type="com.centurylink.mdw.plugin.project.model.WorkflowProject"/>
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.workflowAsset"
+           class="com.centurylink.mdw.plugin.designer.properties.WorkflowAssetSection"
+           tab="mdw.properties.tabs.definition"
+           enablesFor="1">
+           <input type="com.centurylink.mdw.plugin.designer.model.WorkflowAsset"/>
+         </propertySection>         
+         <propertySection
+           id="mdw.properties.section.design"
+           class="com.centurylink.mdw.plugin.designer.properties.DesignSection"
+           tab="mdw.properties.tabs.design"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.DesignSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.process.design"
+           class="com.centurylink.mdw.plugin.designer.properties.ProcessDesignSection"
+           tab="mdw.properties.tabs.design"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ProcessDesignSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.script"
+           class="com.centurylink.mdw.plugin.designer.properties.ScriptSection"
+           tab="mdw.properties.tabs.script"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ScriptSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.prescript"
+           class="com.centurylink.mdw.plugin.designer.properties.PrePostScriptSection"
+           tab="mdw.properties.tabs.script"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.PrePostScriptSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.java"
+           class="com.centurylink.mdw.plugin.designer.properties.JavaSection"
+           tab="mdw.properties.tabs.java"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.JavaSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.osgi.design"
+           class="com.centurylink.mdw.plugin.designer.properties.OsgiAdapterDesignSection"
+           tab="mdw.properties.tabs.design"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.OsgiAdapterDesignSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.expression"
+           class="com.centurylink.mdw.plugin.designer.properties.ExpressionSection"
+           tab="mdw.properties.tabs.expression"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ExpressionSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.transform"
+           class="com.centurylink.mdw.plugin.designer.properties.TransformSection"
+           tab="mdw.properties.tabs.transform"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.TransformSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.startProcessMapping"
+           class="com.centurylink.mdw.plugin.designer.properties.StartProcessMappingSection"
+           tab="mdw.properties.tabs.design"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.StartProcessMappingSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.subProcessMapping"
+           class="com.centurylink.mdw.plugin.designer.properties.SubProcessMappingSection"
+           tab="mdw.properties.tabs.binding"
+           enablesFor="1"
+           afterSection="mdw.properties.section.design"
+           filter="com.centurylink.mdw.plugin.designer.properties.SubProcessMappingSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.bindingsSection"
+           class="com.centurylink.mdw.plugin.designer.properties.BindingsSection"
+           tab="mdw.properties.tabs.binding"
+           enablesFor="1"
+           afterSection="mdw.properties.section.design"
+           filter="com.centurylink.mdw.plugin.designer.properties.BindingsSection">           
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.task.variables"
+           class="com.centurylink.mdw.plugin.designer.properties.TaskVariablesSection"
+           tab="mdw.properties.tabs.task.variables"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.TaskVariablesSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.task.indexes"
+           class="com.centurylink.mdw.plugin.designer.properties.TaskIndexesSection"
+           tab="mdw.properties.tabs.task.indexes"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.TaskIndexesSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.task.workgroups"
+           class="com.centurylink.mdw.plugin.designer.properties.TaskWorkgroupsSection"
+           tab="mdw.properties.tabs.task.workgroups"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.TaskWorkgroupsSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.task.notices"
+           class="com.centurylink.mdw.plugin.designer.properties.TaskNoticesSection"
+           tab="mdw.properties.tabs.task.notices"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.TaskNoticesSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.task.processes"
+           class="com.centurylink.mdw.plugin.designer.properties.ProcessesSection"
+           tab="mdw.properties.tabs.task.processes"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ProcessesSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.events"
+           class="com.centurylink.mdw.plugin.designer.properties.EventsSection"
+           tab="mdw.properties.tabs.events"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.EventsSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.variables"
+           class="com.centurylink.mdw.plugin.designer.properties.VariablesSection"
+           tab="mdw.properties.tabs.variables"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.VariablesSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.recipients"
+           class="com.centurylink.mdw.plugin.designer.properties.RecipientsSection"
+           tab="mdw.properties.tabs.recipients"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.RecipientsSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.ccRecipients"
+           class="com.centurylink.mdw.plugin.designer.properties.CcRecipientsSection"
+           tab="mdw.properties.tabs.ccRecipients"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.CcRecipientsSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.package.versions"
+           class="com.centurylink.mdw.plugin.designer.properties.PackageVersionsSection"
+           tab="mdw.properties.tabs.versions"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.PackageVersionsSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.package.config"
+           class="com.centurylink.mdw.plugin.designer.properties.PackageConfigurationSection"
+           tab="mdw.properties.tabs.configuration"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.PackageConfigurationSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.package.permissions"
+           class="com.centurylink.mdw.plugin.designer.properties.PackagePermissionsSection"
+           tab="mdw.properties.tabs.permissions"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.PackagePermissionsSection">
+         </propertySection>         
+         <propertySection
+           id="mdw.properties.section.process.versions"
+           class="com.centurylink.mdw.plugin.designer.properties.ProcessVersionsSection"
+           tab="mdw.properties.tabs.versions"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ProcessVersionsSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.workflowAsset.versions"
+           class="com.centurylink.mdw.plugin.designer.properties.WorkflowAssetVersionsSection"
+           tab="mdw.properties.tabs.versions"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.WorkflowAssetVersionsSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.process.locking"
+           class="com.centurylink.mdw.plugin.designer.properties.ProcessLockSection"
+           tab="mdw.properties.tabs.locking"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ProcessLockSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.workflowAsset.locking"
+           class="com.centurylink.mdw.plugin.designer.properties.WorkflowAssetLockSection"
+           tab="mdw.properties.tabs.locking"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.WorkflowAssetLockSection">
+         </propertySection>         
+         <propertySection
+           id="mdw.properties.section.workflowAsset.custom"
+           class="com.centurylink.mdw.plugin.designer.properties.WorkflowAssetCustomSection"
+           tab="mdw.properties.tabs.custom"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.WorkflowAssetCustomSection">
+         </propertySection>         
+         <propertySection
+           id="mdw.properties.section.assetActivity.custom"
+           class="com.centurylink.mdw.plugin.designer.properties.AssetDrivenActivityCustomSection"
+           tab="mdw.properties.tabs.custom"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.AssetDrivenActivityCustomSection">
+         </propertySection>         
+         <propertySection
+           id="mdw.properties.section.workflowAsset.attributes"
+           class="com.centurylink.mdw.plugin.designer.properties.WorkflowAssetAttributesSection"
+           tab="mdw.properties.tabs.attributes"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.WorkflowAssetAttributesSection">
+         </propertySection>         
+         <propertySection
+           id="mdw.properties.section.variable.instances"
+           class="com.centurylink.mdw.plugin.designer.properties.VariableInstancesSection"
+           tab="mdw.properties.tabs.values"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.VariableInstancesSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.simulation"
+           class="com.centurylink.mdw.plugin.designer.properties.SimulationSection"
+           tab="mdw.properties.tabs.simul.override"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.SimulationSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.activity.monitoring"
+           class="com.centurylink.mdw.plugin.designer.properties.BamMonitoringSection"
+           tab="mdw.properties.tabs.bam.override"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.BamMonitoringSection">
+         </propertySection>         
+         <propertySection
+           id="mdw.properties.section.project.monitoring"
+           class="com.centurylink.mdw.plugin.designer.properties.ProjectMonitoringSection"
+           tab="mdw.properties.tabs.bam.override"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ProjectMonitoringSection">
+         </propertySection>         
+         <propertySection
+           id="mdw.properties.section.attributes"
+           class="com.centurylink.mdw.plugin.designer.properties.AttributesSection"
+           tab="mdw.properties.tabs.attributes"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.AttributesSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.process.instance"
+           class="com.centurylink.mdw.plugin.designer.properties.ProcessInstanceSection"
+           tab="mdw.properties.tabs.instance"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ProcessInstanceSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.activity.instance"
+           class="com.centurylink.mdw.plugin.designer.properties.ActivityInstanceSection"
+           tab="mdw.properties.tabs.instance"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.ActivityInstanceSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.subprocess.instance"
+           class="com.centurylink.mdw.plugin.designer.properties.SubProcessInstancesSection"
+           tab="mdw.properties.tabs.subprocesses"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.SubProcessInstancesSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.task.instance"
+           class="com.centurylink.mdw.plugin.designer.properties.TaskInstancesSection"
+           tab="mdw.properties.tabs.tasks"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.TaskInstancesSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.subtask.instance"
+           class="com.centurylink.mdw.plugin.designer.properties.SubTaskInstancesSection"
+           tab="mdw.properties.tabs.subtasks"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.SubTaskInstancesSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.transition.instance"
+           class="com.centurylink.mdw.plugin.designer.properties.TransitionInstanceSection"
+           tab="mdw.properties.tabs.instance"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.TransitionInstanceSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.externalEventSection"
+           class="com.centurylink.mdw.plugin.designer.properties.ExternalEventSection"
+           tab="mdw.properties.tabs.definition"
+           enablesFor="1">
+           <input type="com.centurylink.mdw.plugin.designer.model.ExternalEvent"/>
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.testCase"
+           class="com.centurylink.mdw.plugin.designer.properties.TestCaseSection"
+           tab="mdw.properties.tabs.testCase"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.TestCaseSection">
+         </propertySection>         
+         <propertySection
+           id="mdw.properties.section.output"
+           class="com.centurylink.mdw.plugin.designer.properties.OutputSection"
+           tab="mdw.properties.tabs.output"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.OutputSection">
+         </propertySection>
+         <propertySection
+           id="mdw.properties.section.documentation"
+           class="com.centurylink.mdw.plugin.designer.properties.DocumentationSection"
+           tab="mdw.properties.tabs.documentation"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.DocumentationSection">
+         </propertySection>         
+         <propertySection
+           id="mdw.properties.section.note"
+           class="com.centurylink.mdw.plugin.designer.properties.NoteSection"
+           tab="mdw.properties.tabs.documentation"
+           enablesFor="1"
+           filter="com.centurylink.mdw.plugin.designer.properties.NoteSection">
+         </propertySection>         
+      </propertySections>
+   </extension>
+   <extension point="org.eclipse.ui.perspectives">
+      <perspective
+         id="mdw.perspectives.designer"
+         icon="icons/designer.gif"
+         name="MDW Designer"
+         class="com.centurylink.mdw.plugin.designer.DesignerPerspective">
+      </perspective>
+   </extension>
+
+   <extension point="org.eclipse.core.runtime.contentTypes">
+     <content-type
+       id="mdw.config.content"
+       priority="high"
+       name="MDW Config Content Type"
+       base-type="org.eclipse.core.runtime.xml"
+       default-charset="UTF-8">
+      <describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+         <parameter name="element"
+                    value="ApplicationProperties" />
+      </describer>
+    </content-type>
+    
+    <file-association 
+      content-type="mdw.config.content"
+      file-names="ApplicationProperties.xml"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            content="intro/tutorials.xml"
+            configId="org.eclipse.ui.intro.universalConfig">
+      </configExtension>
+   </extension>
+
+   <extension-point id="extensionModules" name="Extension Modules" schema="schema/mdwExtensionModule.exsd"/>
+   
+   <extension point="com.centurylink.mdw.designer.ui.extensionModules">
+     <mdwExtensionModule
+       id="customTaskManager"
+       name="Custom Task Manager"
+       description="JSF Webapp allowing unlimited MDW Task Manager customization."
+       class="com.centurylink.mdw.plugin.project.extensions.CustomTaskManager" />
+     <mdwExtensionModule
+       id="birtReporting"
+       name="BIRT Reporting"
+       version="3.7.2"
+       description="Adds BIRT libraries along with MDW reporting extensions."
+       class="com.centurylink.mdw.plugin.project.extensions.BirtReporting" />
+     <mdwExtensionModule
+       id="saxonLibs"
+       name="Saxon XSLT/XPath Support"
+       version="9"
+       description="Adds the saxon libraries for complex XPath expressions."
+       class="com.centurylink.mdw.plugin.project.extensions.LibExtension" />
+     <mdwExtensionModule
+       id="mdwJavaDocs"
+       name="MDW API JavaDocs"
+       description="Adds the javadocs output to your MDW webapp."
+       class="com.centurylink.mdw.plugin.project.extensions.WebExtension" />
+     <mdwExtensionModule
+       id="springFramework"
+       name="Spring Framework"
+       version="3.1.0"
+       requiredMdwVersion="5.2"
+       description="Spring Framework support."
+       class="com.centurylink.mdw.plugin.project.extensions.LibExtension" />
+     <mdwExtensionModule
+       id="activeMQ"
+       name="ActiveMQ JMS Support"
+       version="5.5.1"
+       requiredMdwVersion="5.2"
+       description="Use Apache ActiveMQ as your JMS provider."
+       class="com.centurylink.mdw.plugin.project.extensions.LibExtension" />
+     <mdwExtensionModule
+       id="mdwBirtReports"
+       name="MDW BIRT Reports"
+       requiredMdwVersion="5.5"
+       description="Adds MDW Reports module with BIRT libraries."
+       class="com.centurylink.mdw.plugin.project.extensions.MdwBirtReports" />
+     <mdwExtensionModule
+       id="adminUiExtension"
+       name="Admin UI"
+       requiredMdwVersion="5.5"
+       description="Adds MDW Admin UI webapp."
+       class="com.centurylink.mdw.plugin.project.extensions.AdminUi" />
+     <mdwExtensionModule
+       id="mdwAdminExtension"
+       name="Admin Classic"
+       requiredMdwVersion="5.5"
+       description="Adds MDW Admin legacy webapp."
+       class="com.centurylink.mdw.plugin.project.extensions.MdwAdmin" />
+   </extension>
+   
+   <extension point="org.eclipse.compare.compareFilters">
+     <filter
+       id="com.centurylink.mdw.hash.comment.filter"
+       extensions="yaml, yml"
+       filter.label="Hash Comment Filter"
+       filter.tooltip="Ignore Hash Comments"
+       filter.description="Hash comment filter"
+       filter.image="icons/hash.gif"
+       class="com.centurylink.mdw.plugin.HashCommentFilter" />
+   </extension>
+   
+   <extension point="org.eclipse.wst.server.core.runtimeTypes">
+     <runtimeType
+       id="com.centurylink.server.runtime.servicemix.4.3"
+       name="ServiceMix 4.3"
+       description="OSGi runtime for ServiceMix"
+       vendor="Apache"
+       version="4.3" 
+       class="com.centurylink.mdw.plugin.server.ServiceMixRuntime">
+       <moduleType
+         types="jst.web"
+         versions="2.4,2.5,3.0" />
+       <moduleType
+         types="jst.utility"
+         versions="1.0" />
+     </runtimeType>
+     <runtimeType
+       id="com.centurylink.server.runtime.servicemix.4.4"
+       name="ServiceMix 4.4"
+       description="OSGi runtime for ServiceMix"
+       vendor="Apache"
+       version="4.4" 
+       class="com.centurylink.mdw.plugin.server.ServiceMixRuntime">
+       <moduleType
+         types="jst.web"
+         versions="2.4,2.5,3.0" />
+       <moduleType
+         types="jst.utility"
+         versions="1.0" />         
+     </runtimeType>
+     <runtimeType
+       id="com.centurylink.server.runtime.servicemix.5.1"
+       name="ServiceMix 5.1"
+       description="OSGi runtime for ServiceMix"
+       vendor="Apache"
+       version="5.1" 
+       class="com.centurylink.mdw.plugin.server.ServiceMixRuntime">
+       <moduleType
+         types="jst.web"
+         versions="2.4,2.5,3.0" />
+       <moduleType
+         types="jst.utility"
+         versions="1.0" />         
+     </runtimeType>
+     <runtimeType
+       id="com.centurylink.server.runtime.jbossfuse.6.1"
+       name="Fuse 6.1"
+       description="OSGi runtime for JBoss Fuse"
+       vendor="JBoss"
+       version="6.1" 
+       class="com.centurylink.mdw.plugin.server.FuseRuntime">
+       <moduleType
+         types="jst.web"
+         versions="2.4,2.5,3.0" />
+       <moduleType
+         types="jst.utility"
+         versions="1.0" />         
+     </runtimeType>
+   </extension>
+  <extension point="org.eclipse.wst.server.core.serverTypes">
+     <serverType
+       id="com.centurylink.server.servicemix.4.3"
+       name="ServiceMix 4.3"
+       description="OSGi server for ServiceMix"
+       supportsRemoteHosts="false"
+       runtime="true"
+       launchModes="run,debug"
+       startTimeout="45000"
+       stopTimeout="15000"
+       initialState="stopped"
+       hasConfiguration="false"  
+       launchConfigId="com.centurylink.mdw.plugin.launch.ServerRunner"
+       runtimeTypeId="com.centurylink.server.runtime.servicemix.4.3"
+       class="com.centurylink.mdw.plugin.server.ServiceMixServer"
+       behaviourClass="com.centurylink.mdw.plugin.server.ServiceMixServerBehavior">
+     </serverType>
+     <serverType
+       id="com.centurylink.server.servicemix.4.4"
+       name="ServiceMix 4.4"
+       description="OSGi server for ServiceMix"
+       supportsRemoteHosts="false"
+       runtime="true"
+       launchModes="run,debug"
+       startTimeout="45000"
+       stopTimeout="15000"
+       initialState="stopped"
+       hasConfiguration="false"  
+       launchConfigId="com.centurylink.mdw.plugin.launch.ServerRunner"
+       runtimeTypeId="com.centurylink.server.runtime.servicemix.4.4"
+       class="com.centurylink.mdw.plugin.server.ServiceMixServer"
+       behaviourClass="com.centurylink.mdw.plugin.server.ServiceMixServerBehavior">
+     </serverType>
+     <serverType
+       id="com.centurylink.server.servicemix.5.1"
+       name="ServiceMix 5.1"
+       description="OSGi server for ServiceMix"
+       supportsRemoteHosts="false"
+       runtime="true"
+       launchModes="run,debug"
+       startTimeout="45000"
+       stopTimeout="15000"
+       initialState="stopped"
+       hasConfiguration="false"  
+       launchConfigId="com.centurylink.mdw.plugin.launch.ServerRunner"
+       runtimeTypeId="com.centurylink.server.runtime.servicemix.5.1"
+       class="com.centurylink.mdw.plugin.server.ServiceMixServer"
+       behaviourClass="com.centurylink.mdw.plugin.server.ServiceMixServerBehavior">
+     </serverType>
+     <serverType
+       id="com.centurylink.server.jbossfuse.6.1"
+       name="Fuse 6.1"
+       description="OSGi server for JBoss Fuse"
+       supportsRemoteHosts="false"
+       runtime="true"
+       launchModes="run,debug"
+       startTimeout="45000"
+       stopTimeout="15000"
+       initialState="stopped"
+       hasConfiguration="false"  
+       launchConfigId="com.centurylink.mdw.plugin.launch.ServerRunner"
+       runtimeTypeId="com.centurylink.server.runtime.jbossfuse.6.1"
+       class="com.centurylink.mdw.plugin.server.FuseServer"
+       behaviourClass="com.centurylink.mdw.plugin.server.FuseServerBehavior">
+     </serverType>
+     <serverType
+       id="com.centurylink.server.tomcat.70"
+       name="Tomcat 7.0 (MDW)"
+       description="Tomcat Server for MDW Cloud-Mode Deployment"
+       supportsRemoteHosts="false"
+       runtime="true"
+       startTimeout="90000"
+       stopTimeout="15000"
+       initialState="stopped"
+       hasConfiguration="true"
+       launchConfigId="com.centurylink.mdw.plugin.launch.TomcatLaunch"
+       runtimeTypeId="org.eclipse.jst.server.tomcat.runtime.70"
+       class="com.centurylink.mdw.plugin.server.TomcatServer"
+       behaviourClass="com.centurylink.mdw.plugin.server.TomcatServerBehavior">
+     </serverType>     
+  </extension>
+  <extension point="org.eclipse.wst.server.ui.serverImages">
+     <image
+       id="com.centurylink.server.servicemix"
+       icon="icons/server.gif"
+       typeIds="com.centurylink.server.runtime.servicemix.4.3,com.centurylink.server.servicemix.4.3,com.centurylink.server.runtime.servicemix.4.4,com.centurylink.server.servicemix.4.4,com.centurylink.server.runtime.servicemix.5.1,com.centurylink.server.servicemix.5.1,com.centurylink.server.runtime.jbossfuse.6.1,com.centurylink.server.jbossfuse.6.1,com.centurylink.server.runtime.tomcat.70,com.centurylink.server.tomcat.70"/>
+  </extension>  
+  <extension point="org.eclipse.wst.server.core.publishTasks">
+     <publishTask
+       id="com.centurylink.server.servicemix.publishTask" 
+       typeIds="com.centurylink.server.servicemix.*"
+       class="com.centurylink.mdw.plugin.server.ServiceMixPublishTask"/>
+     <publishTask
+       id="com.centurylink.server.servicemix.publishTask" 
+       typeIds="com.centurylink.server.jbossfuse.*"
+       class="com.centurylink.mdw.plugin.server.FusePublishTask"/>
+  </extension>
+  <extension point="org.eclipse.wst.server.ui.wizardFragments">
+     <fragment
+       id="com.centurylink.server.servicemix.runtime.wizardPage"
+       typeIds="com.centurylink.server.runtime.servicemix.4.3,com.centurylink.server.runtime.servicemix.4.4,com.centurylink.server.runtime.servicemix.5.1"
+       class="com.centurylink.mdw.plugin.server.ServiceMixRuntimeWizardFragment"/>
+     <fragment
+       id="com.centurylink.server.servicemix.server.wizardPage"
+       typeIds="com.centurylink.server.servicemix.4.3,com.centurylink.server.servicemix.4.4,com.centurylink.server.servicemix.5.1"
+       class="com.centurylink.mdw.plugin.server.ServiceMixServerWizardFragment"/>
+     <fragment
+       id="com.centurylink.server.jbossfuse.runtime.wizardPage"
+       typeIds="com.centurylink.server.runtime.jbossfuse.6.1"
+       class="com.centurylink.mdw.plugin.server.FuseRuntimeWizardFragment"/>
+     <fragment
+       id="com.centurylink.server.jbossfuse.server.wizardPage"
+       typeIds="com.centurylink.server.jbossfuse.6.1"
+       class="com.centurylink.mdw.plugin.server.FuseServerWizardFragment"/>
+  </extension>  
+  <extension point="org.eclipse.wst.server.ui.editorPageSections">
+     <section
+       id="com.centurylink.server.servicemix.mdwServerSection"
+       order="0"
+       insertionId="org.eclipse.wst.server.editor.overview.left"
+       typeIds="com.centurylink.server.servicemix.*"
+       class="com.centurylink.mdw.plugin.server.ServiceMixMdwServerSection"/>
+     <section
+       id="com.centurylink.server.servicemix.mdwBundleEditorSection"
+       order="100"
+       insertionId="org.eclipse.wst.server.editor.overview.right"
+       typeIds="com.centurylink.server.servicemix.*"
+       class="com.centurylink.mdw.plugin.server.ServiceMixMdwBundleSection"/>
+     <section
+       id="com.centurylink.server.servicemix.mdwServerOptionsSection"
+       order="101"
+       insertionId="org.eclipse.wst.server.editor.overview.right"
+       typeIds="com.centurylink.server.servicemix.*"
+       class="com.centurylink.mdw.plugin.server.ServiceMixServerOptionsSection"/>
+     <section
+       id="com.centurylink.server.jbossfuse.mdwServerSection"
+       order="0"
+       insertionId="org.eclipse.wst.server.editor.overview.left"
+       typeIds="com.centurylink.server.jbossfuse.*"
+       class="com.centurylink.mdw.plugin.server.FuseMdwServerSection"/>
+     <section
+       id="com.centurylink.server.jbossfuse.mdwBundleEditorSection"
+       order="100"
+       insertionId="org.eclipse.wst.server.editor.overview.right"
+       typeIds="com.centurylink.server.jbossfuse.*"
+       class="com.centurylink.mdw.plugin.server.FuseMdwBundleSection"/>
+     <section
+       id="com.centurylink.server.jbossfuse.mdwServerOptionsSection"
+       order="101"
+       insertionId="org.eclipse.wst.server.editor.overview.right"
+       typeIds="com.centurylink.server.jbossfuse.*"
+       class="com.centurylink.mdw.plugin.server.FuseServerOptionsSection"/>
+     <section
+       id="org.eclipse.jst.server.tomcat.server.editor.instance"
+       order="0"
+       insertionId="org.eclipse.wst.server.editor.overview.left"
+       typeIds="com.centurylink.server.tomcat.*"
+       class="org.eclipse.jst.server.tomcat.ui.internal.editor.ServerLocationEditorSection"/>
+     <section
+       id="org.eclipse.jst.server.tomcat.server.editor.general"
+       order="5"
+       insertionId="org.eclipse.wst.server.editor.overview.left"
+       typeIds="com.centurylink.server.tomcat.*"
+       class="org.eclipse.jst.server.tomcat.ui.internal.editor.ServerGeneralEditorSection"/>     
+     <section
+       id="org.eclipse.jst.server.tomcat.configuration.editor.port"
+       order="10"
+       insertionId="org.eclipse.wst.server.editor.overview.right"
+       typeIds="com.centurylink.server.tomcat.*"
+       class="org.eclipse.jst.server.tomcat.ui.internal.editor.ConfigurationPortEditorSection">
+       <enablement>
+         <test property="org.eclipse.jst.server.tomcat.ui.hasConfiguration" value="true"/>
+       </enablement>
+     </section>
+     <section
+       id="org.eclipse.jst.server.tomcat.configuration.editor.mime"
+       order="20"
+       insertionId="org.eclipse.wst.server.editor.overview.right"
+       typeIds="com.centurylink.server.tomcat.*"
+       class="org.eclipse.jst.server.tomcat.ui.internal.editor.ConfigurationMimeEditorSection">
+       <enablement>
+         <test property="org.eclipse.jst.server.tomcat.ui.hasConfiguration" value="true"/>
+       </enablement>
+     </section>
+     <section
+       id="com.centurylink.server.tomcat.mdwServerOptionsSection"
+       order="30"
+       insertionId="org.eclipse.wst.server.editor.overview.right"
+       typeIds="com.centurylink.server.tomcat.*"
+       class="com.centurylink.mdw.plugin.server.TomcatServerOptionsSection"/>
+  </extension>  
+  
+</plugin>

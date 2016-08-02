@@ -1,0 +1,59 @@
+
+<div class="row">
+  <div
+    class="col-md-2 mdw-sidebar"
+    ng-include="'layout/workflow-nav.html'"></div>
+  <div class="col-md-10">
+    <div ng-controller="BlvController"  id='mydiv' class="panel-heading mdw-heading">
+      <table colspan="4"
+            width="100%">
+        <tr>
+          <td>{{processDefinition.owner}} / {{processDefinition.name}} /
+            {{processDefinition.version}} / {{processDefinition.description}}</td>
+            <td>&nbsp;</td>
+          <td>&nbsp;</td>
+              <td>
+
+            <button
+              class="btn btn-primary btn-default"
+              popover-placement="bottom-left"
+              popover-template="'blv/mdwBamValues.html'"
+              popover-title="Live Business Data"
+              type="button">
+              <span class="glyphicon glyphicon-user"></span> End-to-End Business data
+            </button>
+            <!--  button
+              id="endtoendbtn" 
+              class="btn btn-primary btn-default"
+              type="button"
+              ng-click='popupOptions.isShow=!popupOptions.isShow'>
+              <span class="glyphicon glyphicon-user"></span> End to End data
+            </button-->
+            <!--  ng-pop-up id='endtoendpopup' option="popupOptions"></ng-pop-up-->
+            <button
+              class="btn btn-primary mdw-btn"
+              popover-title="Refresh"
+              ng-click="refresh()"
+              type="button">
+              <span class="glyphicon glyphicon-refresh"></span> Refresh
+            </button>
+          </td>
+          <td>&nbsp;</td>
+        </tr>
+      </table>
+    </div>
+    <!--  div class="row">
+      <div class="col-sm-4">
+        <uib-progressbar animate="true" max="100" class="progress-striped active" value="progress.percent" type="progress.type"><span style="color:white; white-space:nowrap;">{{progress.percent}} / {{max}}</span></uib-progressbar>    
+      </div>
+    </div-->
+         <div id="container"></div>
+        
+  </div>
+
+  <br />
+
+</div>
+
+
+

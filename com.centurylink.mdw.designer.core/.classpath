@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry including="**/*.java" kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/bpmn-schemas-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.apache.oltu.oauth2.client-1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.apache.oltu.oauth2.common-1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/el-api-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/el-impl-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="classes" sourcepath="/mdw-common"/>
+	<classpathentry exported="true" kind="lib" path="lib/AccessControl-6.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/activation-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bcprov-jdk15-144.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-beanutils-1.8.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-collections-3.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-digester-1.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.3.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ct_runtime_api-6.0.2.49.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/docx4j-2.8.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ejb-3.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/itext-2.1.7.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-xmldsig-core-1.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jms-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jsafeJCE-6.0.2.49.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/json-20090211.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jsr173_1.0_api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mail-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mbeng-7.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/mdw-schemas-5.2.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.29.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ojdbc6-11.2.0.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/serializer-2.7.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/servlet-api-2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/smtp-1.4.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/velocity-1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/velocity-tools-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xalan-2.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/xbean-2.4.0_ctl.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xhtmlrenderer-1.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xmlgraphics-commons-1.4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

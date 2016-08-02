@@ -1,0 +1,10 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/dashboard-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <mdw-dashboard-chart mdw-chart-label="Requests" mdw-chart-breakdowns="requestBreakdowns" 
+        mdw-filters="dashboard/requestFilters.html" mdw-list="#/workflow/requests">
+      </mdw-dashboard-chart>
+    </div>
+  </div>
+</div>

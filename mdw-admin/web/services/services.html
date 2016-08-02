@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/services-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">Service APIs</div>
+      </div>
+      <ul class="mdw-list">
+        <li ng-repeat="(servicePath, serviceApi) in serviceApis">
+          <div>
+            <a class="mdw-item-link" href="#/services{{servicePath}}{{serviceSubPath}}">{{servicePath}}{{serviceSubPath}}</a>
+          </div>
+          <div class="mdw-item-sub">{{serviceApi.description}}</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

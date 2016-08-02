@@ -1,0 +1,69 @@
+// these tasks require that fetchDesignerCoreJar from build.gradle has been run
+
+repositories {
+    maven {
+        url devRepoUrl
+    }
+}
+
+configurations {
+    publish
+}
+
+dependencies {
+    publish files("../${mdwOutputDir}/mdw-common-${mdwVersion}.jar")
+    publish files("../${mdwOutputDir}/mdw-schemas-${mdwVersion}.jar")
+    publish group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
+    publish group: "org.json", name: "json", version: "20090211"
+    publish group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
+}
+
+
+task checkAllowed() << {
+    assert publishUser != null : "Missing property: publishUser"
+    assert publishPassword != null : "Missing property: publishPassword"
+    // disallow non-snapshot archiva/nexus publish except from Jenkins
+    if (publishBaseUrl == archivaUrl || publishBaseUrl == nexusUrl) {
+        assert !mdwVersion.endsWith("SNAPSHOT")
+        assert "true".equalsIgnoreCase(System.getProperty("RUNNING_ON_BUILD_SERVER")): "Must be run from build server"
+    }
+}
+
+task deleteOldFeatures(type: Delete) {
+    delete fileTree("../${mdwOutputDir}") {
+      include "*-features.xml"
+    }
+}
+task buildFeatures(type: Copy) {
+  dependsOn deleteOldFeatures // TODO: needed to avoid erroneous up-to-date
+  from "features"
+  into "../${mdwOutputDir}"
+  rename("mdw-features.xml", "mdw-${mdwVersion}-features.xml")
+  filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: ["mdw.version": "${mdwVersion}".toString()])
+}
+
+task publishBase(type: HttpPut) {
+  dependsOn(checkAllowed, buildFeatures)
+  from "../${mdwOutputDir}/mdw-${mdwVersion}-features.xml"
+  baseUrl "${publishBaseUrl}/mdw/${mdwVersion}"
+  user publishUser
+  password publishPassword
+}
+publishBase.mustRunAfter buildFeatures
+
+task publishAdminWar(type: HttpPut) {
+    dependsOn(checkAllowed)
+    from "../${mdwOutputDir}/mdw-admin-${mdwVersion}.war"
+    baseUrl "${publishBaseUrl}/mdw-admin/${mdwVersion}"
+    user publishUser
+    password publishPassword
+}
+publishAdminWar.mustRunAfter buildFeatures
+
+task publishWars() {
+    dependsOn(publishAdminWar)
+}
+
+task publishBuild(dependsOn: [publishWars, publishBase]) << {
+    println "*** MDW build ${mdwVersion} published to ${publishBaseUrl} ***"
+}

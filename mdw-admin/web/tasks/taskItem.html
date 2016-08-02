@@ -1,0 +1,25 @@
+<div class="mdw-flex-item">
+  <div class="mdw-flex-item-left">
+    <div>
+      <input type="checkbox" ng-model="item.selected" ng-change="listModel.notAllSelected()"></input>
+      <div>
+        <a class="mdw-item-link" href="#/tasks/{{item.id}}">{{item.name}} &nbsp;{{item.id}}</a>
+        <div class="mdw-item-sub">
+          <span ng-if="item.masterRequestId">Master request: <a href="#" class="mdw-link">{{item.masterRequestId}}</a></span>
+        </div>
+        <div class="mdw-item-sub">Created {{item.created}}<span ng-if="item.due">, &nbsp;Due <i class="mdw-item-highlight">{{item.due}}</i></span>
+          <img class="mdw-item-alert" ng-if="item.alert" src="images/alert.png" alt="alert" />
+        </div>
+        <div class="mdw-item-sub" ng-if="item.endDate">{{item.status}} {{item.endDate}}</div>
+      </div>
+    </div>
+  </div>
+  <div class="mdw-flex-item-right" style="min-width: 125px;">
+    <div class="mdw-item">
+      <span ng-if="item.status != 'Open'">{{item.status}}</span>
+    </div>
+    <div ng-if="item.assignee">
+      <img src="images/user.png" alt="user"/> {{item.assignee}}
+    </div>
+  </div>
+</div>

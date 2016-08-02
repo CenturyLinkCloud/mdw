@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-include="'layout/task-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label" ng-if="create">New Subtask for (taskName) &nbsp;{{masterTaskId}}</div>
+        <div class="mdw-heading-label" ng-if="!create">Subtasks for (taskName) &nbsp;{{masterTaskId}}</div>
+        <div class="mdw-heading-actions" ng-if="!create">
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="setCreate(true)">
+            <span class="glyphicon glyphicon-plus"></span> New
+          </button>        
+        </div>
+      </div>
+      <ul class="mdw-checklist" ng-if="!create">
+        <li ng-repeat="task in subtaskList.subtasks">
+          <div ng-include="'tasks/taskItem.html'">
+          </div>
+        </li>
+      </ul>
+      <div ng-if="create" ng-include="'tasks/createSubtask.html'">
+      </div>
+    </div>
+  </div>
+</div>

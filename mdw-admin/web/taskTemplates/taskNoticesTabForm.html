@@ -1,0 +1,106 @@
+<form name="taskNoticeTabForm" class="form-horizontal mdw-section" 	ng-submit="save()" role="form">
+	<div class="row">
+		<div class="panel panel-default">
+			<div class="panel-heading mdw-heading">E-Mail Templates:</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="control-label col-xs-2 " for="open">Open:</label>
+			<div class="col-xs-3">
+				<input type="text" id="open" name="openEmail" class="form-control"
+					ng-model="emailTemplates.open" maxlength="30">
+			</div>
+			<label class="control-label col-xs-2 " for="inProgress">In
+				Progress:</label>
+			<div class="col-xs-3">
+				<input type="text" id="inProgress" name="progress"
+					class="form-control" ng-model="emailTemplates.progress"
+					maxlength="30">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="control-label col-xs-2 " for="assigned">Assigned:</label>
+			<div class="col-xs-3">
+				<input type="text" id="assigned" name="assignedEmail"
+					class="form-control" ng-model="emailTemplates.assigned"
+					maxlength="30">
+			</div>
+			<label class="control-label col-xs-2 " for="alert">Alert:</label>
+			<div class="col-xs-3">
+				<input type="text" id="alert" name="alertEmail" class="form-control"
+					ng-model="emailTemplates.alert" maxlength="30">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="control-label col-xs-2 " for="completed">Completed:</label>
+			<div class="col-xs-3">
+				<input type="text" id="completed" name="completedEmail"
+					class="form-control" ng-model="emailTemplates.completed"
+					maxlength="30">
+			</div>
+			<label class="control-label col-xs-2 " for="jeopardy">Jeopardy:</label>
+			<div class="col-xs-3">
+				<input type="text" id="jeopardy" name="jeopardyEmail"
+					class="form-control" ng-model="emailTemplates.jeopardy"
+					maxlength="30">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="control-label col-xs-2 " for="canceled">Canceled:</label>
+			<div class="col-xs-3">
+				<input type="text" id="canceled" name="canceledEmail"
+					class="form-control" ng-model="emailTemplates.cancelled"
+					maxlength="30">
+			</div>
+			<label class="control-label col-xs-2 " for="forward">Forward:</label>
+			<div class="col-xs-3">
+				<input type="text" id="forward" name="forwardEmail"
+					class="form-control" ng-model="emailTemplates.forward"
+					maxlength="30">
+			</div>
+		</div>
+
+		<div class="col-md-6 mdw-split-left">
+			<div class="panel panel-default mdw-panel">
+				<div class="panel-heading mdw-heading">
+					<div class="mdw-heading-label">Notification Groups</div>
+					<div class="mdw-heading-actions">
+						<button type="button" class="btn btn-primary mdw-btn"
+							uib-popover-template="'taskTemplates/NotifyGroupMenu.html'"
+							popover-placement="left" pop-click ng-if="!edit && !confirm">
+							<span class="glyphicon glyphicon-plus"></span> Add
+						</button>
+					</div>
+				</div>
+				<ul class="mdw-list">
+					<li ng-repeat="noticegroup in getNoticeGroups()"
+						ng-if="noticegroup != 'Common'">
+						<div>
+							<a class="mdw-item-link" href="#/groups/{{noticegroup}}">{{noticegroup}}</a>
+							<div class="mdw-item-action">
+								<a uib-tooltip="Remove {{noticegroup}}" tooltip-placement="left"
+									ng-if="!edit && !confirm"
+									ng-click="removeNotifyWorkgroup(noticegroup)"> <span
+									class="glyphicon glyphicon-remove"></span>
+								</a>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="mdw-form-footer">
+		<div class="col-xs-2"></div>
+		<div class="mdw-message">{{status.message}}</div>
+		<div class="mdw-buttons" ng-if="authUser.hasRole('Process Design')">
+			<button class="btn btn-success mdw-btn" type="submit"
+				ng-disabled="!isSaveEnabled()">Save</button>
+			<button class="btn mdw-btn mdw-cancel-btn" type="button"
+				ng-click="cancel()">Cancel</button>
+		</div>
+	</div>
+</form>

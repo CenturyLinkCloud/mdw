@@ -1,0 +1,5 @@
+<features> 
+  <feature name="mdw-admin" version="@mdw.version@">
+    <bundle start-level="82">mvn:com.centurylink.mdw/mdw-admin/@mdw.version@/war</bundle>
+  </feature>
+</features>

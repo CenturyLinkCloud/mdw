@@ -1,0 +1,22 @@
+<div>
+  <div>
+    <label class="mdw-label">{{selectLabel}}:</label>
+    <ul class="dropdown-menu mdw-popover-menu mdw-check-menu mdw-bordered-menu">
+      <li ng-repeat="top in tops">
+        <div class="mdw-checked" ng-if="isSelected(top[selField])">
+          <i class="glyphicon glyphicon-ok"></i>
+          <a class="mdw-drop-selected" href="" title="{{getTitle(top)}}" ng-click="deselect(top[selField])">
+            {{getLabel(top)}}
+          </a>
+        </div>
+        <a ng-if="!isSelected(top[selField])" href="" title="{{getTitle(top)}}" ng-click="select(top[selField])">
+          {{getLabel(top)}}
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="mdw-vsm-indent">
+    <button type="button" class="btn btn-primary mdw-btn" ng-click="applySelect()">Apply</button>
+    <button type="button" class="btn mdw-btn mdw-cancel-btn mdw-float-right" ng-click="cancelSelect()">Cancel</button>
+  </div>
+</div>

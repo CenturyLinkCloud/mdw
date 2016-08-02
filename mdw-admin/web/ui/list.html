@@ -1,0 +1,8 @@
+<div>
+</div>
+<ul class="{{styleClass}}" infinite-scroll="getNextPage()" infinite-scroll-distance="scrollBuffer"
+  infinite-scroll-disabled="!hasMore()">
+  <li ng-repeat="item in items">
+    <div ng-include="itemTemplate"></div>
+  </li>
+</ul>

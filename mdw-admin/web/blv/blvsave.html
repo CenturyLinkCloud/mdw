@@ -1,0 +1,29 @@
+<h3 class="popover-title">MDW data save</h3>
+<div class="modal-body">
+  <table align='center'>
+    <tr>
+      <td align='left'>
+        <p>
+          <span class="glyphicon glyphicon-thumbs-{{blvupordown}}"></span>
+        </p>
+      </td>
+      <td>&nbsp;</td>
+      <td><p ng-bind-html="bamSpecificMessage"></p></td>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>
+        <p>
+          Process : <b>{{activityNode.activity.processDefinition.name}}</b> <br />Version : <b>{{activityNode.activity.processDefinition.version}}</b>
+          <br />Activity : <b>{{activityNode.activity.name}}</b>
+        </p>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="modal-footer">
+  <button
+    class="btn btn-primary"
+    ng-click="close()">Close</button>
+</div>

@@ -1,0 +1,3 @@
+<input type="text" class="form-control mdw-inline" focus-me placeholder=" find master request" 
+  ng-model="selectedMasterRequest" uib-typeahead="masterRequest as masterRequest.masterRequestId for masterRequest in findMasterRequest($viewValue)" 
+  typeahead-editable="false" typeahead-on-select="addSelectedMasterRequest($item)">

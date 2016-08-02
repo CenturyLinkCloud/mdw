@@ -1,0 +1,16 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.project.model.* com.centurylink.mdw.plugin.preferences.model.*"
+        class="JbossXmlEmitter" %>
+<% Map map = (Map) argument;
+   WorkflowProject workflowProject = (WorkflowProject) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss xmlns="http://www.jboss.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss_5_1.xsd"
+  version="3.0">
+  <enterprise-beans>
+    <session>
+      <ejb-name><%=workflowProject.getSourceProjectName()%>Manager</ejb-name>
+    </session>
+  </enterprise-beans>
+</jboss>

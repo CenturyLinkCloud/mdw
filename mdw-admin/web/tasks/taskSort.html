@@ -1,0 +1,26 @@
+<ul class="dropdown-menu mdw-popover-menu mdw-check-menu">
+  <li>
+    <div class="mdw-checked" ng-if="model.taskFilter.sort == 'startDate' && !model.taskFilter.descending">
+      <i class="glyphicon glyphicon-ok"></i>
+      <a class="mdw-drop-selected" href="">Oldest First</a>
+    </div>
+    <a href="" ng-if="model.taskFilter.sort != 'startDate' || model.taskFilter.descending" 
+      ng-click="model.taskFilter.sort = 'startDate'; model.taskFilter.descending = false">Oldest First</a>
+  </li>
+  <li>
+    <div class="mdw-checked" ng-if="model.taskFilter.sort == 'startDate' && model.taskFilter.descending">
+      <i class="glyphicon glyphicon-ok"></i>
+      <a class="mdw-drop-selected" href="">Newest First</a>
+    </div>
+    <a href="" ng-if="model.taskFilter.sort != 'startDate' || !model.taskFilter.descending" 
+    ng-click="model.taskFilter.sort = 'startDate'; model.taskFilter.descending = true">Newest First</a>
+  </li>
+  <li>
+    <div class="mdw-checked" ng-if="model.taskFilter.sort == 'dueDate'">
+      <i class="glyphicon glyphicon-ok"></i>
+      <a class="mdw-drop-selected" href="">By Due Date</a>
+    </div>
+    <a href="" ng-if="model.taskFilter.sort != 'dueDate'" 
+      ng-click="model.taskFilter.sort = 'dueDate'; model.taskFilter.descending = false">By Due Date</a>
+  </li>
+</ul>

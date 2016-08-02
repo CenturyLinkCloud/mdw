@@ -1,0 +1,217 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.project.model.* com.centurylink.mdw.plugin.preferences.model.*"
+        class="ApplicationPropertiesXmlEmitter" %>
+<% Map map = (Map) argument;
+   WorkflowProject workflowProject = (WorkflowProject) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<?xml version="1.0"?>
+<ApplicationProperties xmlns="http://mdw.qwest.com/XMLSchema">
+  <PropertyGroup Name="MDW">
+    <Property Name="mdw.logging.level">mdw_debug</Property>
+    <Property Name="mdw.logging.publish">false</Property>
+<% if (workflowProject.checkRequiredVersion(5, 1))
+{
+%>
+    <Property Name="mdw.logging.file">@SERVER_ROOT@/logs/mdw.log</Property>
+    <Property Name="mdw.file.dir"></Property>
+    <Property Name="mdw.bam.url"></Property>
+    <Property Name="mdw.engine.message.processing"></Property>
+    <Property Name="mdw.jms.dispatch.strategy"></Property>
+    <Property Name="mdw.taskmanager.remote.authorization"></Property>
+    <Property Name="mdw.taskmanager.remote.summary"></Property>
+    <Property Name="mdw.taskmanager.remote.detail"></Property>
+    <Property Name="mdw.taskmanager.remote.jndi"></Property>
+    <Property Name="mdw.taskmanager.remote.queuename"></Property>
+    <Property Name="mdw.package.classpath">@MDW_PKG_CLASSPATH@</Property>
+    <Property Name="mdw.package.library">@SERVER_ROOT@/mdw/lib</Property>
+    <Property Name="mdw.bus.account">MDW</Property>
+    <Property Name="mdw.bus.uri">@DEFAULT_BUS_URI@</Property>
+    <Property Name="mdw.listener.bus.MDWBusProcessor.topic">@GENERIC_MDW_BUS_TOPIC@</Property>
+    <Property Name="mdw.listener.bus.MDWBusProcessor.uri">@GENERIC_MDW_BUS_URI@</Property>
+    <Property Name="mdw.listener.bus.MDWBusProcessor.queueSize">20</Property>
+    <Property Name="mdw.listener.bus.MDWBusProcessor.minWorker"></Property>
+    <Property Name="mdw.listener.bus.MDWBusProcessor.maxWorker">@GENERIC_MDW_LISTENER_COUNT@</Property>
+    <Property Name="mdw.listener.bus.MDWBusProcessor.dqName">@DQNAME_GENERIC_MDW_BUS_TOPIC@</Property>
+<!--  <Property Name="mdw.listener.file.TestFileListener.ClassName">com.qwest.mdw.listener.file.TestFileListener</Property> -->
+<!--  <Property Name="mdw.listener.file.TestFileListener.Directory">c:/tmp</Property> -->
+<!--  <Property Name="mdw.listener.file.TestFileListener.FilenamePattern">QWEST_FILE_*_DATA.TXT</Property> -->
+<!--  <Property Name="mdw.listener.file.TestFileListener.IntervalMinutes">100</Property> -->
+    <Property Name="mdw.timer.task.TaskMonitor.TimerClass">com.qwest.mdw.timer.task.TaskMonitor</Property>
+    <Property Name="mdw.timer.task.TaskMonitor.RunIntervalMinutes">60</Property>
+    <Property Name="mdw.timer.task.TaskMonitor.RunOnStartup">false</Property>
+    <Property Name="mdw.timer.task.TaskMonitor.RunOnServer">false</Property>
+    <Property Name="mdw.timer.task.ProcessCleanup.TimerClass">com.qwest.mdw.timer.cleanup.ProcessCleanup</Property>
+    <Property Name="mdw.timer.task.ProcessCleanup.FirstRunTime">02:30</Property>  <!-- run daily at 2:30 a.m.  -->
+    <Property Name="mdw.timer.task.ProcessCleanup.RunIntervalMinutes">1440</Property>
+    <Property Name="mdw.timer.task.ProcessCleanup.RunOnServer">false</Property>
+<%
+}
+%>
+  </PropertyGroup>
+  <PropertyGroup Name="MDWFramework.StartupClasses">
+    <Property Name="ApplicationContext">com.qwest.mdw.common.utilities.ApplicationContext</Property>
+    <!--
+    <Property Name="BusListenerRegistration">com.qwest.mdw.listener.bus.BusListenerRegistration</Property>
+    -->
+    <Property Name="TimerTaskRegistration">com.qwest.mdw.timer.startup.TimerTaskRegistration</Property>
+    <Property Name="FileListenerRegistration">com.qwest.mdw.listener.file.FileListenerRegistration</Property>
+    <Property Name="CacheRegistration">com.qwest.mdw.common.cache.CacheRegistration</Property>
+<%
+if (workflowProject.checkRequiredVersion(5, 1))
+{
+%>
+    <Property Name="ConnectionPoolRegistration">com.qwest.mdw.services.pooling.ConnectionPoolRegistration</Property>    
+<%
+}
+else
+{
+%>
+    <Property Name="WebServiceListenerRegistration">com.qwest.mdw.listener.webservice.WebServiceListenerRegistration</Property>
+    <Property Name="HTTPListenerRegistration">com.qwest.mdw.listener.http.HTTPListenerRegistration</Property>
+<%
+}
+%>
+  </PropertyGroup>
+  <PropertyGroup Name="MDWFramework.TaskManagerWeb">
+    <Property Name="task.manager.url">@TASK_MANAGER_URL@</Property>
+    <Property Name="view.ui.definition.file">MDWTaskView.xml</Property>
+    <Property Name="ui.task.actions.file">MDWTaskActions.xml</Property>
+    <Property Name="attachments.storage.location">@ATTACHMENTS_STORAGE_LOCATION@</Property>
+    <Property Name="attachments.download.servlet.url">@ATTACHMENTS_DOWNLOAD_URL@</Property>
+    <Property Name="workflow.snapshot.image.url">@WORKFLOW_SNAPSHOT_IMAGE_URL@</Property>
+    <Property Name="task.export.servlet.url">@TASK_EXPORT_URL@</Property>
+    <Property Name="dev.tm.gui.user"><%=workflowProject.getUser()%></Property>
+    <Property Name="render.error.details">true</Property>
+    <Property Name="tm.pretty.print.response">false</Property>
+    <Property Name="task.notice.email.from.address">mdw@qwest.com</Property>
+  </PropertyGroup>
+  <PropertyGroup Name="MDWFramework.MDWDesigner">
+    <Property Name="designer.url">@DESIGNER_URL@</Property>
+    <Property Name="helpers.url">@HELPERS_URL@</Property>
+    <Property Name="services.url">@SERVICES_URL@</Property>    
+<%
+if (workflowProject.getMdwDataSource().getSchemaOwner() != null)
+{
+%>
+    <Property Name="mdw.schema_owner"><%=workflowProject.getMdwDataSource().getSchemaOwner()%></Property>    
+<%
+}
+%>    
+  </PropertyGroup>
+  <PropertyGroup Name="MDWFramework.MDWServices">
+    <Property Name="dao.db.time.diff">3600000</Property>
+    <Property Name="db.version">@db.version@</Property>
+  </PropertyGroup>
+  <PropertyGroup Name="MDWFramework.WorkflowEngine">
+    <Property Name="ActivityResumeDelay">2</Property>
+    <Property Name="JMS.ConnectionFactory">com.qwest.mdw.jms.ConnectionFactory</Property>    
+    <Property Name="ActivityStatusMessage.ShowStackTrace">true</Property>
+<%
+if (workflowProject.getServerSettings().isWebLogic())
+{
+%>
+    <Property Name="JMS.ConnectionFactory">com.qwest.mdw.jms.ConnectionFactory</Property>    
+<%
+}
+%>
+  </PropertyGroup>
+  <PropertyGroup Name="MDWFramework.ApplicationDetails">
+    <Property Name="ApplicationName"><%=workflowProject.getSourceProjectName()%></Property>
+    <Property Name="EnvironmentName">@ENVIRONMENT@</Property>
+    <Property Name="MALApplicationAcronym">MDW</Property>
+<%
+if (!workflowProject.checkRequiredVersion(5, 1, 2))
+{
+%>    
+    <Property Name="BusAdapter:OverrideInbox">false</Property>
+    <Property Name="BusResponderFile">@SERVER_ROOT@/Qwest/config/BusResponders.xml</Property>
+    <Property Name="BusLogFile">@SERVER_ROOT@/logs/Bus.log</Property>
+<%
+}
+%>
+    <Property Name="BatchSize">30</Property>
+    <Property Name="ConfigDir">@SERVER_APP_SUBDIR@/config</Property>
+    <Property Name="TempDir">@SERVER_APP_SUBDIR@/.temp</Property>
+<%
+if (workflowProject.checkRequiredVersion(5, 2))
+{
+%>    
+    <Property Name="Container">@CONTAINER@</Property>    
+<%
+}
+else
+{
+%>
+    <Property Name="JavaEE.Container">@CONTAINER@</Property>
+<%
+}
+%>
+    <Property Name="AnnotatedAppProps.URL">http://qshare/sites/MDW/Releases/Configurable%20Items/ApplicationProperties.xml</Property>    
+  </PropertyGroup>
+  <PropertyGroup Name="LDAP">
+    <Property Name="Host">@LDAP_HOST@</Property>
+    <Property Name="Port">1636</Property>
+    <Property Name="BaseDN">dc=mnet,dc=qintra,dc=com</Property>
+    <Property Name="AppCUID">mdwapp</Property>
+    <Property Name="AppPassword">ldap_012</Property>
+  </PropertyGroup> 
+  <PropertyGroup Name="MDWFramework.FilePanel">
+    <Property Name="@FILEPANEL_HOST1@">@FILEPANEL_URL1@</Property>
+    <Property Name="@FILEPANEL_HOST2@">@FILEPANEL_URL2@</Property>
+    <Property Name="@FILEPANEL_HOST3@">@FILEPANEL_URL3@</Property>
+  </PropertyGroup>
+  <PropertyGroup Name="MDWFramework.MDWWeb.ExternalLinks">
+    <Property Name="MDW QShare Site">http://qshare/sites/MDW</Property>
+    <Property Name="Online Dev Docs">@HELPERS_URL@/doc/index.html</Property>
+  </PropertyGroup>  
+  <PropertyGroup Name="MDWFramework.ProcessCleanup">
+    <Property Name="ProcessExpirationAgeInDays">180</Property>
+    <Property Name="ExternalEventExpirationAgeInDays">180</Property>
+    <Property Name="MaximumProcessExpiration">50000</Property>
+  </PropertyGroup>
+  <PropertyGroup Name="MDWFramework.ShellScriptExecutor">
+    <Property Name="UserName">@SSH_USERID@</Property>
+    <Property Name="Password">@SSH_PASSWORD@</Property>
+  </PropertyGroup>
+  <PropertyGroup Name="MDWFramework.ScriptChannelConnectionActivity">
+    <Property Name="ConnectionServiceLocation">@CONNECTION_SERVICE_LOCATION@</Property>
+    <Property Name="Hosts">@CHANNEL_HOSTS@</Property>
+  </PropertyGroup>
+  <PropertyGroup Name="MDWFramework.UnixShellConfig">
+    <Property Name="callbackSvcURL">@CONNECTION_SERVICE_LOCATION@</Property>
+    <Property Name="defaultSSHPort">22</Property>
+    <Property Name="defaultTimeout">18000</Property>
+    <Property Name="defaultTelnetPort">23</Property>
+    <Property Name="usePrivateKey">false</Property>
+    <Property Name="defaultConfigFile">./workiQ/isat/test.ksh</Property>
+    <Property Name="UserName">@CHANNEL_SCRIPT_USER_NM@</Property>
+    <Property Name="Password">@CHANNEL_SCRIPT_PASSWORD@</Property>
+  </PropertyGroup>  
+  <PropertyGroup Name="MDWFramework.UnixShellConnectionPool">
+    <Property Name="lifo">true</Property>
+    <Property Name="maxActive">-1</Property>
+    <Property Name="maxIdle">-1</Property>
+    <Property Name="maxWait">-1</Property>
+    <Property Name="minEvictableIdleTimeMillis">30000</Property>
+    <Property Name="numTestsPerEvictionRun">-1</Property>
+    <Property Name="softMinEvictableIdleTimeMillis">-1</Property>
+    <Property Name="minIdle">-1</Property>
+    <Property Name="testOnReturn">false</Property>
+    <Property Name="testOnBorrow">false</Property>
+    <Property Name="testWhileIdle">true</Property>        
+    <Property Name="timeBetweenEvictionRunsMillis">30000</Property>
+  </PropertyGroup>
+  <PropertyGroup Name="MDWFramework.ScriptExecutors">
+    <Property Name="Groovy">com.qwest.mdw.script.GroovyExecutor</Property>
+    <Property Name="JavaScript">com.qwest.mdw.script.JavaScriptExecutor</Property>
+  </PropertyGroup>  
+  <PropertyGroup Name="MDWFramework.MDWWeb">
+    <Property Name="facelets.debug">true</Property>
+    <Property Name="facelets.refresh.interval">2</Property>
+  </PropertyGroup>  
+  <PropertyGroup Name="MDWFramework.JavaMail">
+    <Property Name="smtpHost">mailgate.uswc.uswest.com</Property>
+    <Property Name="smtpPort">25</Property>
+    <Property Name="connectionTimeout">10000</Property>
+    <Property Name="smtpTimeout">10000</Property>
+  </PropertyGroup>  
+</ApplicationProperties>

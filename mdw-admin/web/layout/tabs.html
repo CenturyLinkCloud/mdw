@@ -1,0 +1,17 @@
+<table id="tabPanel" class="mdw_tabpanel" cellpadding="0"> <!-- TODO: remove non-HTML5 cellpadding but same layout -->
+  <tbody>
+    <tr>
+      <td ng-class="tab.classes" ng-repeat-start="tab in authUser.tabs" tab-link="{{tab.url}}">
+        <div class="mdw_tab">
+          <div>
+            <a tabindex="{{tab.index}}" tab-link="{{tab.url}}">{{tab.label}}</a>
+          </div>
+          <img class="mdw_tab_active_image" src="images/tab_sel.png" ng-if="tab.active" alt="Selected">
+        </div>
+      </td>
+      <td ng-repeat-end ng-if="tab.index != authUser.tabs.length">
+        <img src="images/tab_spacer.png" alt="spacer">
+      </td>
+    </tr>
+  </tbody>
+</table>

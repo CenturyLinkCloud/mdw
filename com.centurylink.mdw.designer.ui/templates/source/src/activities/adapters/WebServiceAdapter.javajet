@@ -1,0 +1,62 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.preferences.model.* com.centurylink.mdw.plugin.codegen.meta.*"
+        class="WebServiceAdapterJavaEmitter" %>
+<% Map map = (Map) argument;
+   AdapterActivity adapterActivity = (AdapterActivity) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<%=mdwSettings.getCopyrightNotice()%>
+
+package <%=adapterActivity.getJavaPackage()%>;
+
+import javax.xml.soap.SOAPMessage;
+
+import org.w3c.dom.Node;
+
+import com.centurylink.mdw.connector.adapter.AdapterException;
+import com.centurylink.mdw.activity.ActivityException;
+<%
+if (adapterActivity.isMdwWebService())
+{
+%>
+import com.centurylink.mdw.workflow.adapter.soap.MdwRpcWebServiceAdapter;
+
+
+/**
+ * SOAP Web Service Adapter Activity.
+ */
+public class <%=adapterActivity.getClassName()%> extends MdwRpcWebServiceAdapter
+{
+<%
+}
+else
+{
+%>
+import com.centurylink.mdw.workflow.adapter.soap.SoapWebServiceAdapter;
+
+
+/**
+ * SOAP Web Service Adapter Activity.
+ */
+public class <%=adapterActivity.getClassName()%> extends SoapWebServiceAdapter
+{
+<%
+}
+%>
+
+  /**
+   * Populate the SOAP request message.
+   */
+  protected SOAPMessage createSoapRequest(Object requestObj) throws ActivityException
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * Unwrap the SOAP response into a DOM Node.
+   */
+  protected Node unwrapSoapResponse(SOAPMessage soapResponse) throws ActivityException, AdapterException
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+}

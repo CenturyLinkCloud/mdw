@@ -1,0 +1,59 @@
+version = "${mdwVersion}"
+
+task buildAll(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["build"]
+}
+
+task publishArchiva(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["publishBuild"]
+    startParameter.projectProperties = [publishBaseUrl: archivaUrl, publishUser: archivaUser, publishPassword: archivaPassword ]
+}
+
+task publishNexus(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["publishBuild"]
+    startParameter.projectProperties = [publishBaseUrl: nexusUrl, publishUser: nexusUser, publishPassword: nexusPassword ]
+}
+
+task publishMdw(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["publishBuild"]
+    startParameter.projectProperties = [publishBaseUrl: mdwMavenRepoUrl, publishUser: mdwMavenUser, publishPassword: mdwMavenPassword ]
+}
+
+task publishArchivaSnapshot(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["publishBuild"]
+    startParameter.projectProperties = [publishBaseUrl: archivaSnapshotUrl, publishUser: archivaUser, publishPassword: archivaPassword ]
+}
+
+task publishNexusSnapshot(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["publishBuild"]
+    startParameter.projectProperties = [publishBaseUrl: nexusSnapshotUrl, publishUser: nexusUser, publishPassword: nexusPassword ]
+}
+
+task publishMdwSnapshot(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["publishBuild"]
+    startParameter.projectProperties = [publishBaseUrl: mdwMavenRepoUrl, publishUser: mdwMavenUser, publishPassword: mdwMavenPassword ]
+}
+
+task publishSnapshot {
+    dependsOn(publishArchivaSnapshot, publishNexusSnapshot, publishMdwSnapshot)
+}
+
+task publishFormal {
+    dependsOn( publishArchiva, publishNexus, publishMdw)
+}
+
+// deploy a build for testing on lxdenvmtc143
+task deployTomcatMdwAdminDev(type: GradleBuild) {
+    buildFile = "deploy.gradle"
+    tasks = ["deployMdwAdmin"]
+    startParameter.projectProperties = [deployWarDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw/webapps",
+                                        tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw/bin",
+                                        testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8989/mdw/Services/AppSummary"]
+}

@@ -1,0 +1,23 @@
+<div class="mdw-flex-item">
+  <div class="mdw-flex-item-left">
+    <div>
+      <div>
+        {{item.packageName}}/
+        <a class="mdw-item-link mdw-item-nowrap" href="#/blv-workflow/workflow/{{item.masterRequestId}}">
+          {{item.processName}} v{{item.processVersion}} &nbsp;{{item.id}}</a>
+        <div class="mdw-item-sub">
+          <span>Master request: <a href="#/blv-business/business/{{item.masterRequestId}}" class="mdw-link">{{item.masterRequestId}}</a></span>
+        </div>
+        <div class="mdw-item-sub">Started {{item.startDate}}<span ng-if="item.due">, &nbsp;Due <i class="mdw-item-highlight">{{item.due}}</i></span>
+          <img class="mdw-item-alert" ng-if="item.alert" src="images/alert.png" alt="alert" />
+        </div>
+        <div class="mdw-item-sub" ng-if="item.endDate">{{item.status}} {{item.endDate}}</div>
+      </div>
+    </div>
+  </div>
+  <div class="mdw-flex-item-right">
+    <div class="mdw-item">
+      <span>{{item.status}}</span>
+    </div>
+  </div>
+</div>

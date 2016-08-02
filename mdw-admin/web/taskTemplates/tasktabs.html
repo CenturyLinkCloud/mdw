@@ -1,0 +1,42 @@
+<div class="row">
+	<div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/admin-nav.html'"></div>
+	<div class="col-md-10">
+		<div class="panel panel-default">
+			<div class="panel-heading mdw-heading">
+				Selected Task: <span class="mdw-heading-sub">{{taskName}}</span>
+			</div>
+		</div>
+		<tbody>
+			<section ng-init="main.active.tab='general'">
+				<ul class="nav nav-tabs">
+					<li ng-class="{active: main.active.tab == 'general'}"><a
+						ng-click='main.active.tab = "general"'>General</a></li>
+					<li ng-class="{active: main.active.tab == 'workgroups'}"><a
+						ng-click='main.active.tab = "workgroups"'>WorkGroups</a></li>
+					<li ng-class="{active: main.active.tab == 'notices'}"><a
+						ng-click='main.active.tab = "notices"'>Notices</a></li>
+				</ul>
+			</section>
+			<div class="tab-content">
+				<div ng-switch='main.active.tab'>
+					<div ng-switch-when='general'>
+						<div ng-include="'taskTemplates/taskGeneralTabForm.html'"></div>
+					</div>
+					<div ng-switch-when='workgroups'>
+						<div ng-include="'taskTemplates/taskWorkgroupTabForm.html'"></div>
+					</div>
+					<div ng-switch-when='notices'>
+						<div ng-include="'taskTemplates/taskNoticesTabForm.html'"></div>
+					</div>
+					<div ng-switch-default='general'>
+						<div ng-include="'taskTemplates/taskGeneralTabForm.html'"></div>
+					</div>
+				</div>
+			</div>
+		</tbody>
+	</div>
+</div>
+
+
+
+

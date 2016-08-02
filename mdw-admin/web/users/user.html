@@ -1,0 +1,91 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/admin-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          {{userName}} <span class="mdw-heading-sub"> ({{user.cuid}})</span>
+        </div>
+        <div class="mdw-heading-actions">
+          <button type="button" class="btn btn-primary mdw-btn" ng-if="canEdit(user)" ng-click="setEdit(true)">
+            <span class="glyphicon glyphicon-edit"></span> Edit
+          </button>        
+          <button type="button" class="btn btn-danger mdw-btn" ng-if="canEdit(user)" ng-click="setConfirm(true)">
+            <span class="glyphicon glyphicon-remove"></span> Delete
+          </button>        
+        </div>
+      </div>
+      <div ng-if="!edit && !confirm" class="form-horizontal mdw-section">
+        <div class="form-group mdw-static-group" ng-repeat="(attrName, attrVal) in user.attributes" 
+          ng-if="attrName.indexOf(':') < 0 && attrVal.length > 0">
+          <label class="control-label col-xs-2">{{attrName}}:</label>
+          <div class="col-xs-10">
+            <p class="form-control-static mdw-static">{{attrVal}}</p>
+          </div>
+        </div>
+      </div>      
+      <div ng-if="edit" ng-include="'users/userForm.html'">
+      </div>
+      <div ng-if="confirm" class="mdw-section">
+        <div class="mdw-form-footer">
+          <div class="mdw-message">{{user.message}}</div>
+          <div class="mdw-buttons">
+            <button class="btn btn-danger mdw-btn" type="button" ng-click="deleteUser()">Delete</button>
+            <button class="btn mdw-btn mdw-cancel-btn" type="button" ng-click="cancel()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mdw-split-left">
+      <div class="panel panel-default mdw-panel">
+        <div class="panel-heading mdw-heading">
+          <div class="mdw-heading-label">Workgroups</div>
+          <div class="mdw-heading-actions" ng-if="canEdit()">
+            <button type="button" class="btn btn-primary mdw-btn" uib-popover-template="'users/groupMenu.html'" 
+              popover-placement="left" pop-click>
+              <span class="glyphicon glyphicon-plus"></span> Add
+            </button>
+          </div>
+        </div>
+        <ul class="mdw-list">
+          <li ng-repeat="workgroup in user.workgroups" ng-if="workgroup != 'Common'">
+            <div>
+              <a class="mdw-item-link" href="#/groups/{{workgroup}}">{{workgroup}}</a>
+              <div class="mdw-item-action" ng-if="canEdit()">
+                <a uib-tooltip="Remove {{user.name}} from {{workgroup}}" tooltip-placement="left"
+                   ng-click="removeWorkgroup(workgroup)">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6 mdw-split-right">
+      <div class="panel panel-default mdw-panel">
+        <div class="panel-heading mdw-heading">
+          <div class="mdw-heading-label">Roles</div>
+          <div class="mdw-heading-actions" ng-if="canEdit()">
+            <button type="button" class="btn btn-primary mdw-btn" uib-popover-template="'users/roleMenu.html'" 
+              popover-placement="left" pop-click>
+              <span class="glyphicon glyphicon-plus"></span> Add
+            </button>
+          </div>
+        </div>
+        <ul class="mdw-list">
+          <li ng-repeat="role in user.roles">
+            <div>
+              <a class="mdw-item-link" href="#/roles/{{role}}">{{role}}</a>
+              <div class="mdw-item-action" ng-if="canEdit()">
+                <a uib-tooltip="Remove {{user.name}} from {{role}}" tooltip-placement="left" ng-click="removeRole(role)">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

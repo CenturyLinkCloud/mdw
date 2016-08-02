@@ -1,0 +1,3 @@
+<input type="text" class="form-control mdw-inline" placeholder=" find user" focus-me 
+  ng-model="selectedAssignee" uib-typeahead="user as user.name for user in findTypeaheadAssignees($viewValue)" 
+  typeahead-editable="false" typeahead-on-select="performAssign($item)" popover-stay-open>

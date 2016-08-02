@@ -1,0 +1,33 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-include="'layout/workflow-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label" ng-if="create && authUser.hasRole('Task Execution')">New Solution</div>
+        <div class="mdw-heading-label" ng-if="!create">Solutions <span class="mdw-heading-sub">({{total}})</span></div>
+        <!-- ng-if breaks typeahead https://github.com/angular-ui/bootstrap/issues/2293 -->
+        <div class="mdw-heading-input" ng-show="!create">
+          <input type="text" class="form-control mdw-inline" autofocus placeholder=" find solution" 
+            ng-model="selected" uib-typeahead="solution as solution.name for solution in find($viewValue)" 
+            typeahead-editable="false" typeahead-on-select="select()" ng-change="change()">
+        </div>
+        <div class="mdw-heading-actions" ng-if="!create && authUser.hasRole('Task Execution')">
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="setCreate(true)">
+            <span class="glyphicon glyphicon-plus"></span> New
+          </button>        
+        </div>
+      </div>
+      <ul class="mdw-list" ng-if="!create" infinite-scroll="getNext()" infinite-scroll-distance="1"
+        infinite-scroll-disabled="!hasMore()">
+        <li ng-repeat="solution in solutions">
+          <div>
+            <a class="mdw-item-link" href="#/solutions/{{solution.id}}">{{solution.name}}</a>
+          </div>
+          <div class="mdw-item-sub">{{solution.id}}</div>
+        </li>
+      </ul>
+      <div ng-if="create" ng-include="'solutions/solutionForm.html'">
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<div class="mdw-flex-item">
+  <div class="mdw-flex-item-left">
+    <div>
+      <div>
+        <a class="mdw-item-link mdw-item-nowrap" href="#/workflow/requests/{{request.id}}">
+          {{request.masterRequestId ? request.masterRequestId : request.id}}
+        </a>
+        <div class="mdw-item-sub" ng-if="request.masterRequestId">
+          {{request.packageName}}/<a class="mdw-link mdw-item-nowrap" href="#/blv-workflow/workflow/{{request.masterRequestId}}">
+            {{request.processName}} v{{request.processVersion}} &nbsp;{{request.processInstanceId}}</a>
+        </div>
+        <div class="mdw-item-sub" ng-if="requestType != 'outboundRequests'"><a href="">Received: {{request.created}}</a></div>
+        <div class="mdw-item-sub" ng-if="requestType == 'outboundRequests'"><a href="">Sent: {{request.created}}</a></div>
+        <div class="mdw-item-sub" ng-if="request.responseId"><a href="">Responded: {{request.responded}}</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="mdw-flex-item-right">
+    <div class="mdw-item">
+      <span>{{request.processStatus}}</span>
+    </div>
+  </div>
+</div>

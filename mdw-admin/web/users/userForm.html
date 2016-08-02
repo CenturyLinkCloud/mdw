@@ -1,0 +1,30 @@
+<form name="userForm" class="form-horizontal mdw-section" ng-submit="save()" role="form">
+  <div class="form-group" ng-class="{'has-error': user.cuid === undefined}">
+    <label class="control-label col-xs-2 mdw-required" for="userCuid">ID:</label>
+    <div class="col-xs-4">
+      <input type="text" id="userCuid" name="cuid" class="form-control" ng-model="user.cuid" required maxlength="128"
+        focus-me="create !== undefined" ng-readonly="create === undefined" ng-blur="user.cuid = user.cuid === '' ? undefined : user.cuid">
+    </div>
+  </div>
+  <div class="form-group" ng-class="{'has-error': user.name === undefined}">
+    <label class="control-label col-xs-2 mdw-required" for="userName">Name:</label>
+    <div class="col-xs-10">
+      <input type="text" id="userName" name="name" class="form-control" ng-model="user.name" required focus-me="create === undefined"
+        ng-blur="user.name = user.name === '' ? undefined : user.name">
+    </div>
+  </div>
+  <div class="form-group" ng-repeat="(attrName, attrVal) in user.attributes" ng-if="attrName.indexOf(':') < 0">
+    <label class="control-label col-xs-2" for="{{attrName}}">{{attrName}}:</label>
+    <div class="col-xs-10">
+      <input type="text" ng-attr-id="{{attrName}}" ng-attr-name="{{attrName}}" class="form-control" ng-model="user.attributes[attrName]">
+    </div>
+  </div>
+  <div class="mdw-form-footer">
+    <div class="col-xs-2"></div>
+    <div class="mdw-message">{{user.message}}</div>
+    <div class="mdw-buttons">
+      <button class="btn btn-success mdw-btn" type="submit" ng-disabled="!isSaveEnabled()">Save</button>
+      <button class="btn mdw-btn mdw-cancel-btn" type="reset" ng-click="cancel()">Cancel</button>
+    </div>
+  </div>
+</form>
