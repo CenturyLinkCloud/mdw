@@ -8,6 +8,7 @@ import java.util.List;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.common.constant.FormConstants;
+import com.centurylink.mdw.common.constant.TaskAttributeConstant;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
@@ -79,6 +80,54 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
                                          received.getCompletionCode());
             }
         } catch (Exception e) {
+            throw new ActivityException(-1, e.getMessage(), e);
+        }
+    }
+
+    /**
+     * TODO: Git rid of FormDataDocument.
+     */
+    @Override
+    protected void populateFormDataMetaInfo(FormDataDocument datadoc, boolean subsequentCall, boolean updateActivityInstanceId)
+    throws ActivityException {
+        try {
+            String taskTemplateAttr = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE);
+            if (taskTemplateAttr == null) {
+                // old-style (non-template)
+                super.populateFormDataMetaInfo(datadoc, subsequentCall, updateActivityInstanceId);
+                return;
+            }
+            // else subsequent call no need to set form name
+            if (subsequentCall) {
+                datadoc.setAttribute(FormDataDocument.ATTR_ACTION, FormConstants.ACTION_RESPOND_TASK);
+                if (updateActivityInstanceId || datadoc.getMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID)==null)
+                    datadoc.setMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID, getActivityInstanceId().toString());
+            }
+            else {
+                datadoc.setAttribute(FormDataDocument.ATTR_ACTION, FormConstants.ACTION_CREATE_TASK);
+                datadoc.setMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID, getActivityInstanceId().toString());
+            }
+            datadoc.setAttribute(FormDataDocument.ATTR_NAME, getActivityId().toString());
+            datadoc.setMetaValue(FormDataDocument.META_PROCESS_INSTANCE_ID, getProcessInstanceId().toString());
+            if (!subsequentCall) {
+                // use Task Template for attributes
+                String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
+                AssetVersionSpec spec = new AssetVersionSpec(taskTemplateAttr, templateVersion == null ? "0" : templateVersion);
+                TaskVO template = TaskTemplateCache.getTaskTemplate(spec);
+                if (template == null)
+                    throw new ActivityException("Task template not found: " + spec);
+                String taskLogicalId = template.getLogicalId();
+                datadoc.setMetaValue(FormDataDocument.META_TASK_LOGICAL_ID, taskLogicalId);
+
+                String sla = template.getAttribute(TaskAttributeConstant.TASK_SLA);
+                if (sla != null) // always in seconds for templates
+                  datadoc.setMetaValue(FormDataDocument.META_DUE_IN_SECONDS, Integer.toString(Integer.parseInt(sla)));
+                datadoc.setMetaValue(FormDataDocument.META_TASK_NAME, template.getAttribute(template.getName()));
+                datadoc.setMetaValue(FormDataDocument.META_MASTER_REQUEST_ID, getMasterRequestId());
+                fillInCustomActions(datadoc);
+            }
+        }
+        catch (Exception e) {
             throw new ActivityException(-1, e.getMessage(), e);
         }
     }

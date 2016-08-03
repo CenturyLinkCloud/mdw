@@ -674,7 +674,7 @@ build {
 }
 
 war {
-    // dependsOn ":javadocs"  // build javadocs but do not include in war
+    dependsOn ":javadocs"  // build javadocs but do not include in war
     
     from("web") {
         include "**/*"

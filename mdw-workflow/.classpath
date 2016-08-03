@@ -9,8 +9,8 @@
 	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
-	<classpathentry kind="lib" path="assets/com/centurylink/mdw/db/mariaDB4j-core-2.1.9.jar" sourcepath="/MariaDB4j"/>
+	<classpathentry kind="lib" path="assets/com/centurylink/mdw/db/mariaDB4j-core-2.1.9.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/mdw-camel"/>
-	<classpathentry kind="lib" path="assets/com/centurylink/mdw/testing/mdw-designer-core.jar" sourcepath="/mdw-common"/>
+	<classpathentry kind="lib" path="assets/com/centurylink/mdw/testing/mdw-designer-core.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
