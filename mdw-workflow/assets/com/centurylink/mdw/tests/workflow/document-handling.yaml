@@ -21,12 +21,12 @@ process: # 13593
     name: changedDomDoc
     value: |
       <EightiesMusic>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>Talking Heads</Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>The Clash</Artist>
-        </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
       </EightiesMusic>
   variable: # 20514
     name: changedFormDataDoc
@@ -116,12 +116,12 @@ process: # 13593
     name: unchangedDomDoc
     value: |
       <EightiesMusic>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>Talking Heads</Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>The Clash</Artist>
-        </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
       </EightiesMusic>
   variable: # 20515
     name: unchangedFormDataDoc
@@ -196,7 +196,7 @@ process: # 13593
     name: unchangedXmlBeanWrapper
     value: |
       com.centurylink.mdw.model.ActionRequestXmlBeanWrapper
-      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
         <Action name="beZen">
           <Parameter name="priority">URGENT</Parameter>
         </Action>
@@ -227,15 +227,15 @@ process: # 13592
     name: changedDomDoc
     value: |
       <EightiesMusic>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>Talking Heads</Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>The Clash</Artist>
-        </Album>
-      <Album name="The Head on the Door" year="1985">
-            <Artist>The Cure</Artist>
-         </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
+          <Album name="The Head on the Door" year="1985">
+              <Artist>The Cure</Artist>
+          </Album>
       </EightiesMusic>
   variable: # 20500
     name: changedFormDataDoc
@@ -338,12 +338,12 @@ process: # 13592
     name: unchangedDomDoc
     value: |
       <EightiesMusic>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>Talking Heads</Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>The Clash</Artist>
-        </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
       </EightiesMusic>
   variable: # 20501
     name: unchangedFormDataDoc

@@ -43,7 +43,7 @@ process: # 13792
     status: Completed
   variable: # 21114
     name: mdwSupportUsers
-    value: Donald Oakes~Manoj Agrawal
+    value: Manoj Agrawal~Donald Oakes
   variable: # 21112
     name: userCuid
     value: dxoakes

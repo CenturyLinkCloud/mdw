@@ -311,11 +311,11 @@ public class Tasks extends JsonRestService implements Exportable {
                     long taskInstanceId = Long.parseLong(segOne);
                     String segTwo = getSegment(path, 2);
                     if (segTwo == null)
-                        throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing {action} on request path, should be e.g /Tasks/12345/Claim");
+                        throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing {action} on request path, should be eg: /Tasks/12345/Claim");
                     try {
+                        if (content.has("taskAction") && !content.getString("taskAction").equals(segTwo))
+                            throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (action): '" + content.getString("taskAction") + "' is not: '" + segTwo + "'");
                         TaskActionVO taskAction = new TaskActionVO(content, segTwo);
-                        if (!segTwo.equals(taskAction.getAction().toString()))
-                            throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (action): '" + taskAction.getAction() + "' is not: '" + segTwo + "'");
                         if (taskAction.getTaskInstanceId() == null || taskInstanceId != taskAction.getTaskInstanceId())
                             throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (instanceId): " + taskAction.getTaskInstanceId() + " is not: " + taskInstanceId);
                         taskServices.performTaskAction(taskAction);

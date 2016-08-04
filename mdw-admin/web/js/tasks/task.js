@@ -75,7 +75,7 @@ taskMod.controller('TaskController', ['$scope', '$routeParams', '$location', '$h
   $scope.popups = {};
   $scope.openDueDatePopup = function() {
     $scope.popups.dueDate = true;
-  }
+  };
   
   $scope.$watch('task.dueDate', function(newValue, oldValue) {
     if (newValue !== oldValue) {

@@ -28,9 +28,9 @@ process: # 13552
     name: docFromSubproc
     value: |
       <Result>
-         <n>3</n>
-         <nplus1>4</nplus1>
-         <cube>27</cube>
+          <n>3</n>
+          <nplus1>4</nplus1>
+          <cube>27</cube>
       </Result>
   variable: # 20346
     name: execplan
@@ -148,7 +148,7 @@ process: # 13555
     name: resultdoc
     value: |
       <Result>
-         <n>3</n>
-         <nplus1>4</nplus1>
-         <cube>27</cube>
+          <n>3</n>
+          <nplus1>4</nplus1>
+          <cube>27</cube>
       </Result>

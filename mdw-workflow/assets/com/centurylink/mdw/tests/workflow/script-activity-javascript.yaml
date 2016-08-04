@@ -1,71 +1,71 @@
-process: # 13775
+process: # 17091
   name: ScriptTest
   instance: 1
-  activity: # 3 "2016-02-23 12:43:34"
+  activity: # 3 "2016-08-03 14:51:36"
     name: Start
     status: Completed
-  activity: # 8 "2016-02-23 12:43:34"
+  activity: # 8 "2016-08-03 14:51:36"
     name: Script Flavor?
     status: Completed
-  activity: # 4 "2016-02-23 12:43:34"
+  activity: # 4 "2016-08-03 14:51:36"
     name: JavaScript
     status: Completed
-  activity: # 6 "2016-02-23 12:43:34"
+  activity: # 6 "2016-08-03 14:51:36"
     name: Looking Good?
     status: Completed
-  activity: # 1 "2016-02-23 12:43:34"
+  activity: # 1 "2016-08-03 14:51:37"
     name: Still Okay?
     status: Completed
-  activity: # 2 "2016-02-23 12:43:34"
+  activity: # 2 "2016-08-03 14:51:37"
     name: Stop
     status: Completed
-  variable: # 21056
+  variable: # 28357
     name: bystanderDomDoc
     value: <xml>I won't change</xml>
 
-  variable: # 21059
+  variable: # 28360
     name: bystanderXmlBean
     value: <xml>I won't change</xml>
-  variable: # 21061
+  variable: # 28362
     name: createdDomDoc
     value: |
       <records>
-         <car make="Infiniti" model="G35x" year="2005">
-            <country>Japan</country>
-            <aspect type="Sedan">Not too big</aspect>
-         </car>
+          <car make="Infiniti" model="G35x" year="2005">
+              <country>Japan</country>
+              <aspect type="Sedan">Not too big</aspect>
+          </car>
       </records>
-  variable: # 21062
+  variable: # 28363
     name: createdInt
     value: 8
-  variable: # 21063
+  variable: # 28364
     name: createdString
     value: createdStringValue
-  variable: # 21064
+  variable: # 28365
     name: createdXmlBean
     value: |
       <createdXmlBean>
         <innerElement attr="attrVal"/>
       </createdXmlBean>
-  variable: # 21057
+  variable: # 28358
     name: modifiedDomDoc
     value: |
       <records>
-        <car make="Infiniti" model="G35x" year="2005">
-          <country>Japan</country>
-          <aspect type="Sedan">Not too big</aspect>
-        </car>
-      <newCar shiny="new"/>
+          <car make="Infiniti" model="G35x" year="2005">
+              <country>Japan</country>
+              <aspect type="Sedan">Not too big</aspect>
+          </car>
+          <newCar shiny="new"/>
       </records>
-  variable: # 21055
+  variable: # 28356
     name: modifiedInt
     value: 16
-  variable: # 21060
+  variable: # 28361
     name: modifiedString
     value: MyStringToModify has been modified
-  variable: # 21054
+  variable: # 28355
     name: modifiedXmlBean
     value: <xmlBeanToBeModified>MODIFIED</xmlBeanToBeModified>
-  variable: # 21058
+  variable: # 28359
     name: scriptFlavor
     value: JavaScript

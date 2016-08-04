@@ -31,7 +31,7 @@ process: # 13453
     name: testRequest
     value: |
       <NotifyProcess>
-        <eventName>CamelEvent-2537</eventName>
+          <eventName>CamelEvent-2537</eventName>
       </NotifyProcess>
   variable: # 20110
     name: testResponse

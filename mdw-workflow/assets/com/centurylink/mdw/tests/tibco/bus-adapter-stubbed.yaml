@@ -23,6 +23,6 @@ process: # 10914
     name: ServiceResponse
     value: |
       <xs:MDWStatusMessage xmlns:xs="http://mdw.centurylink.com/XMLSchema">
-        <StatusCode>0</StatusCode>
-        <xs:StatusMessage>SUCCESS</xs:StatusMessage>
+          <StatusCode>0</StatusCode>
+          <xs:StatusMessage>SUCCESS</xs:StatusMessage>
       </xs:MDWStatusMessage>

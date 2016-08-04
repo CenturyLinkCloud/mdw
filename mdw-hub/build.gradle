@@ -462,6 +462,7 @@ task buildMdwReportsOsgi(type: War) {
             "!com.qwest.appsec.actrl.*",
             "!com.centurylink.orderRepository",
             "!com.centurylink.orderRepository.impl",
+            "!com.centurylink.mdw.designer.display",            
             "javax.sql",
             "com.centurylink.mdw.common.service",
             "com.centurylink.mdw.common.exception",
@@ -545,6 +546,7 @@ task buildMdwReportsOsgi(type: War) {
             ".",
             "META-INF/mdw",
             "WEB-INF/classes",
+            "WEB-INF/lib/mdw-designer-core-${mdwDesignerVersion}.jar",
             "WEB-INF/lib/com.centurylink.mdw.reports_${mdwDesignerVersion}.jar",
             "WEB-INF/lib/mdwweb-jsf2-${mdwVersion}.jar",
             "WEB-INF/lib/taskmgr-${mdwVersion}.jar",
@@ -681,6 +683,7 @@ war {
         exclude "WEB-INF/lib/mdwweb-jsf2-*.jar"  // already included as a dependency
         exclude "WEB-INF/lib/taskmgr-*.jar"  // already included as a dependency
         exclude "WEB-INF/lib/osrschemas-*.jar"  // already included as a dependency
+        exclude "WEB-INF/lib/mdw-designer-core-${mdwDesignerVersion}.jar" // already included as a dependency
     }
     from("src") {
         include "META-INF/mdw/**"
@@ -721,6 +724,7 @@ war {
           "!com.qwest.appsec.actrl.*",
           "!com.centurylink.orderRepository",
           "!com.centurylink.orderRepository.impl",
+          "!com.centurylink.mdw.designer.display",
           "com.centurylink.mdw.common.cache.impl",
           "com.centurylink.mdw.common.constant",
           "com.centurylink.mdw.common.exception",
@@ -810,6 +814,7 @@ war {
           ".",
           "META-INF/mdw",
           "WEB-INF/classes",
+          "WEB-INF/lib/mdw-designer-core-${mdwDesignerVersion}.jar",
           "WEB-INF/lib/mdwweb-jsf2-${mdwVersion}.jar",
           "WEB-INF/lib/taskmgr-${mdwVersion}.jar",
           "WEB-INF/lib/mdw-jsf.jar",

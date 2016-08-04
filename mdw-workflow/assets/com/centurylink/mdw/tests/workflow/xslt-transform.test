@@ -8,20 +8,22 @@ send message("REST") {
 sleep 30
 
 verify response {
-    expected = '''<html xmlns="http://www.cramer.com/centurylink/srpf" xmlns:bim="http://www.centurylink.com/XMLSchema/BIM" xmlns:q="http://mdw.centurylink.com/XMLSchema" xmlns:s="http://www.cramer.com/centurylink/srpf">
-<body>
-<h2>SeRT Order
+    expected = '''<html xmlns="http://www.cramer.com/centurylink/srpf"
+    xmlns:bim="http://www.centurylink.com/XMLSchema/BIM"
+    xmlns:q="http://mdw.centurylink.com/XMLSchema" xmlns:s="http://www.cramer.com/centurylink/srpf">
+    <body>
+        <h2>SeRT Order
  SRT</h2>
-<table>
-<tr>
-<th>Field</th>
-            <th>Value</th>
-</tr>
-<tr>
-<td>Customer Name</td>
-            <td>STATE OF OREGON-ETHERNET NORTH</td>
-</tr>
-</table>
-</body>
+        <table>
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Customer Name</td>
+                <td>STATE OF OREGON-ETHERNET NORTH</td>
+            </tr>
+        </table>
+    </body>
 </html>'''
 }

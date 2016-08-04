@@ -123,11 +123,11 @@ task publishMdwSnapshot(type: GradleBuild) {
 }
 
 task publishSnapshot {
-    dependsOn(publishNexusSnapshot, publishMdwSnapshot)
+    dependsOn(publishArchivaSnapshot, publishNexusSnapshot, publishMdwSnapshot)
 }
 
 task publishFormal {
-    dependsOn(publishNexus, publishMdw)
+    dependsOn(publishArchiva, publishNexus, publishMdw)
 }
 
 subprojects {

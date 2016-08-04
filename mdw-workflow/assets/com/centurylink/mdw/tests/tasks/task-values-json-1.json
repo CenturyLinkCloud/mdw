@@ -40,7 +40,7 @@
     "display": "Optional",
     "sequence": 10,
     "type": "org.w3c.dom.Document",
-    "value": "<full>\n  <document content=\"xml\"/>\n<\/full>\n"
+    "value": "<full>\n    <document content=\"xml\"/>\n<\/full>\n"
   },
   "stringVar": {
     "display": "ReadOnly",

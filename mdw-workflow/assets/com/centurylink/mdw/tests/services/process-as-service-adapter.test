@@ -11,10 +11,10 @@ send message {
 }
 verify response {
     expected = '''<GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
-          <sapId>DHO115360</sapId>
-          <workstationId>dxoakes</workstationId>
-          <firstName>Donald</firstName>
-          <lastName>Oakes</lastName>
-        </GetEmployeeResponse>'''
+    <sapId>DHO115360</sapId>
+    <workstationId>dxoakes</workstationId>
+    <firstName>Donald</firstName>
+    <lastName>Oakes</lastName>
+</GetEmployeeResponse>'''
 }
 verify process("com.centurylink.mdw.tests.workflow/MDWTestProcessAsService")

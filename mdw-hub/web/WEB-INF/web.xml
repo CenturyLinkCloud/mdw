@@ -273,7 +273,6 @@
     <servlet-class>com.centurylink.mdw.hub.servlet.WorkflowImageServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
-    
   <servlet-mapping>
     <servlet-name>NoAuthServlet</servlet-name>
     <url-pattern>/noAuth/*</url-pattern>
@@ -378,7 +377,7 @@
     <servlet-name>WorkflowImageServlet</servlet-name>
     <url-pattern>/workflowImage/*</url-pattern>
   </servlet-mapping>
-      
+
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>

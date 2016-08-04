@@ -38,5 +38,5 @@ process: # 13497
     name: xmldata
     value: |
       <ROOT>
-         <MINUTES>2</MINUTES>
+          <MINUTES>2</MINUTES>
       </ROOT>

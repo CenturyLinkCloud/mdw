@@ -19,7 +19,7 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
 
   $scope.getSelectedActivities = function() {
     return $scope.model.activityList.getSelectedItems();
-  }
+  };
   
   $scope.confirmAction = function(action) {
     $scope.action = action;
@@ -44,7 +44,7 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
       });
 
       var errorHandler = function(data, status) {
-        console.log('http: ' + status + ': ' + url);
+        console.log('http: ' + status);
         $scope.model.activityList.reload(function(activityList) {
           $scope.updateOnActionError(data.status.message, instanceIds, activityList);
         });
@@ -58,8 +58,8 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
         else {
           $scope.$close();
           $scope.$parent.model.activityList.reload();
-        };
-      }
+        }
+      };
       var actionSubUrl = '';
       if (!angular.isUndefined($scope.model.completionCode))
       {

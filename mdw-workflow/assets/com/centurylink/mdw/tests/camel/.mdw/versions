@@ -1,9 +1,9 @@
-#Thu Feb 18 15:02:26 MST 2016
+#Wed Aug 03 13:24:59 MDT 2016
 CamelEventWait.proc=1
 MDWTestCamelAdapter.proc=6
 StartNNotifyProcessRoute.camel=1
 camel-adapter-notify-process.test=2
-camel-adapter-notify-process.yaml=1
+camel-adapter-notify-process.yaml=2
 camel-adapter-start-process.test=1
 camel-adapter-start-process.yaml=1
 eventRequest.xml=1 Renamed from e\:\\workspaces\\mdw\\mdw-workflow\\assets\\com\\centurylink\\mdw\\tests\\camel\\eventRequest.arg

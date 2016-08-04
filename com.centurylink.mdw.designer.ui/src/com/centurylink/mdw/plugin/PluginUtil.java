@@ -45,6 +45,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -66,6 +67,7 @@ import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 /**
  * Utilities to help with generating code.
  */
+@SuppressWarnings("restriction")
 public class PluginUtil
 {
   private static final String MAIL_PROTOCOL = "smtp";
@@ -393,7 +395,16 @@ public class PluginUtil
           if (entry.isDirectory())
             PluginUtil.createFoldersAsNeeded(project, project.getFolder(outpath), subMonitor);
           else
-            outfile.create(jar.getInputStream(entry), IFile.FORCE, subMonitor);
+          {
+            try
+            {
+              outfile.create(jar.getInputStream(entry), IFile.FORCE, subMonitor);
+            }
+            catch (ResourceException ex)
+            {
+              PluginMessages.log(ex);
+            }
+          }
         }
         else
         {
@@ -631,7 +642,6 @@ public class PluginUtil
     }
   }
 
-  @SuppressWarnings("restriction")
   public static void sendError(Throwable t, String title, String message, WorkflowProject project, int level)
   {
     Writer charArrayWriter = new CharArrayWriter();

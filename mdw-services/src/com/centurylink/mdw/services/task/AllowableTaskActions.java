@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
 
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.PreloadableCache;
@@ -82,17 +83,21 @@ public class AllowableTaskActions implements PreloadableCache {
                 if (actionsAssetName == null)
                     actionsAssetName = "mdw-hub-actions.xml";
                 File overrideTaskActions = new File(assetLoc + "/" + hubOverridePackage + "/" + actionsAssetName);
+                // allow empty namespace
+                Map<String,String> nsMap = new HashMap<String,String>();
+                nsMap.put("", "http://mdw.centurylink.com/task");
+                XmlOptions options = new XmlOptions().setLoadSubstituteNamespaces(nsMap);
                 if (overrideTaskActions.isFile()) {
-                    taskActions = TaskActionsDocument.Factory.parse(overrideTaskActions).getTaskActions();
+                    taskActions = TaskActionsDocument.Factory.parse(overrideTaskActions, options).getTaskActions();
                 }
                 else {
                     File standardTaskActions = new File(assetLoc + "/com/centurylink/mdw/hub/mdw-hub-actions.xml");
-                    if (standardTaskActions.isFile()) {
+                    if (!standardTaskActions.isFile()) {
                         logger.severe("*** Standard task actions file does not exist: " + standardTaskActions + " ***");
                         taskActions = createEmptyTaskActions();
                     }
                     else {
-                        taskActions = TaskActionsDocument.Factory.parse(standardTaskActions).getTaskActions();
+                        taskActions = TaskActionsDocument.Factory.parse(standardTaskActions, options).getTaskActions();
                     }
                 }
             }

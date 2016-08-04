@@ -35,17 +35,17 @@ process: # 15261
     name: employeeServiceResponse
     value: |
       <GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
-                <sapId>DHO115360</sapId>
-                <workstationId>dxoakes</workstationId>
-                <firstName>Donald</firstName>
-                <lastName>Oakes</lastName>
-              </GetEmployeeResponse>
+          <sapId>DHO115360</sapId>
+          <workstationId>dxoakes</workstationId>
+          <firstName>Donald</firstName>
+          <lastName>Oakes</lastName>
+      </GetEmployeeResponse>
   variable: # 25047
     name: orderDoc
     value: |
       <order>
-        <orderNumber>x12345678</orderNumber>
-        <customerId>DHO115360</customerId>
+          <orderNumber>x12345678</orderNumber>
+          <customerId>DHO115360</customerId>
       </order>
   variable: # 25049
     name: orderNumber
