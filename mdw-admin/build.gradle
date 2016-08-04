@@ -98,3 +98,15 @@ war {
           "WEB-INF/classes"
    }
 }
+
+task copyToFramework(type: Copy) {
+    from(".") {
+        exclude ".git/"
+        exclude ".gradle/"
+        exclude "build/"
+        exclude "dist/"
+        exclude "node_modules/"
+        exclude "notes/"
+    }
+    into "${mdwFrameworkDir}/../mdw-admin"
+}

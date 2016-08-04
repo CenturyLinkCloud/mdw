@@ -57,3 +57,12 @@ task deployTomcatMdwAdminDev(type: GradleBuild) {
                                         tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw/bin",
                                         testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8989/mdw/Services/AppSummary"]
 }
+
+task copyToFramework(type: Copy) {
+    dependsOn ":mdw-admin:copyToFramework"
+    from(".") {
+        exclude ".git/"
+        exclude ".gradle/"
+    }
+    into "${mdwFrameworkDir}/../mdw"
+}
