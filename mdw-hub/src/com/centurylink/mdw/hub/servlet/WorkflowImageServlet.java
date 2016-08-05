@@ -5,6 +5,7 @@ package com.centurylink.mdw.hub.servlet;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.common.constant.OwnerType;
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
@@ -69,6 +71,7 @@ public class WorkflowImageServlet extends HttpServlet {
                     processInstanceId = taskInstance.getOwnerId();
                     if (processInstanceIdParam != null && !String.valueOf(processInstanceId).equals(processInstanceIdParam))
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Task instance " + taskInstanceId + " is not for process instance " + processInstanceIdParam);
+                    // TODO: Figure out selected activity for task.
                 }
                 catch (NumberFormatException ex) {
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Bad taskInstanceId: " + taskInstanceIdParam);
@@ -85,7 +88,6 @@ public class WorkflowImageServlet extends HttpServlet {
                 }
             }
 
-            WorkflowImageHelper helper = new WorkflowImageHelper();
             WorkflowServices services = ServiceLocator.getWorkflowServices();
             ProcessVO process = null;
             ProcessInstanceVO processInstance = null;
@@ -96,6 +98,12 @@ public class WorkflowImageServlet extends HttpServlet {
                 processInstance = services.getProcess(processInstanceId);
                 if (processInstance == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + processInstanceId);
+                if (processInstance.isNewEmbedded()) {
+                    processInstanceId = processInstance.getOwnerId();
+                    processInstance = services.getProcess(processInstanceId);
+                    if (processInstance == null)
+                        throw new ServiceException(ServiceException.NOT_FOUND, "Containing instance not found: " + processInstanceId);
+                }
                 process = ProcessVOCache.getProcessVO(processInstance.getProcessId());
                 if (processId > 0 && processId != process.getId())
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Process instance: " + processInstanceId + " is not for process " + processId);
@@ -108,34 +116,40 @@ public class WorkflowImageServlet extends HttpServlet {
                 throw new ServiceException(ServiceException.NOT_FOUND, msg);
             }
 
-            // TODO: Embedded subprocs
-//            if (graph.subgraphs != null) {
-//                Map<String, String> pMap = new HashMap<String, String>();
-//                pMap.put("owner", OwnerType.MAIN_PROCESS_INSTANCE);
-//                pMap.put("ownerId", processInstance.getId().toString());
-//                pMap.put("processId", procdef.getProcessId().toString());
-//                List<ProcessInstanceVO> childProcessInstances = dao
-//                        .getProcessInstanceList(pMap, 0, QueryRequest.ALL_ROWS, procdef, null)
-//                        .getItems();
-//                for (ProcessInstanceVO childInst : childProcessInstances) {
-//                    ProcessInstanceVO fullChildInfo = dao.getProcessInstanceAll(childInst.getId(), procdef);
-//                    childInst.copyFrom(fullChildInfo);
-//                    Long subprocId = new Long(childInst.getComment());
-//                    for (SubGraph subgraph : graph.subgraphs) {
-//                        if (subgraph.getProcessVO().getProcessId().equals(subprocId)) {
-//                            List<ProcessInstanceVO> insts = subgraph.getInstances();
-//                            if (insts == null) {
-//                                insts = new ArrayList<ProcessInstanceVO>();
-//                                subgraph.setInstances(insts);
-//                            }
-//                            insts.add(childInst);
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
+            WorkflowImageHelper helper = new WorkflowImageHelper(process);
+            if (processInstance != null)
+                helper.setProcessInstance(processInstance);
 
-            BufferedImage image = helper.getProcessImage(process, processInstance);
+            // embedded subprocs
+            List<ProcessInstanceVO> embeddedInstances = null;
+            if (process.getSubProcesses() != null) {
+                Query query = new Query();
+                query.putFilter("owner", OwnerType.MAIN_PROCESS_INSTANCE);
+                query.putFilter("ownerId", String.valueOf(processInstanceId));
+                embeddedInstances = services.getProcesses(query).getProcesses();
+                for (ProcessInstanceVO embeddedInstance : embeddedInstances) {
+                    embeddedInstance.copyFrom(services.getProcess(embeddedInstance.getId()));
+                }
+            }
+            if (embeddedInstances != null)
+                helper.setEmbeddedInstances(embeddedInstances);
+
+            // selection
+            String selectedActivity = request.getParameter("selectedActivity");
+            if (selectedActivity != null)
+                helper.setSelectedActivity(selectedActivity);
+
+            String selectedActivityInstIdParam = request.getParameter("selectedActivityInstanceId");
+            if (selectedActivityInstIdParam != null) {
+                try {
+                    helper.setSelectedActivityInstanceId(Long.parseLong(selectedActivityInstIdParam));
+                }
+                catch (NumberFormatException ex) {
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Bad selectedActivityInstanceId: " + selectedActivityInstIdParam);
+                }
+            }
+
+            BufferedImage image = helper.getProcessImage();
             if ("image/jpeg".equals(request.getHeader("Accept"))) {
                 response.setContentType("image/jpeg");
                 ImageIO.write(image, "jpeg", response.getOutputStream());
@@ -154,4 +168,5 @@ public class WorkflowImageServlet extends HttpServlet {
             throw new ServletException("Cannot create DesignerDataAccess", ex);
         }
     }
+
 }

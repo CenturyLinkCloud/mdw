@@ -10,7 +10,6 @@
       </button>
       <mdw-panel-collapse mdw-collapsed="isSummaryCollapsed"></mdw-panel-collapse>
     </div>
-
   </div>
   <div class="mdw-section" uib-collapse="isSummaryCollapsed">
     <div class="mdw-flex-item">
@@ -41,6 +40,7 @@
         </div>
       </div>
     </div>
+    <hr class="mdw-hr">
     <div ng-if="task.ownerType == 'PROCESS_INSTANCE'">
       <div class="mdw-item">
         <span ng-if="task.ownerId">Process: <a href="#" class="mdw-link">{{task.ownerId}}</a></span>

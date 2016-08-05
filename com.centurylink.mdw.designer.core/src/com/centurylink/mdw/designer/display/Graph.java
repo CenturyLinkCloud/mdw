@@ -1427,4 +1427,26 @@ public class Graph extends GraphCommon implements Selectable {
         }
     }
 
+    @Override
+    public Node getNode(String logicalId) {
+        Node mainProcNode = super.getNode(logicalId);
+        if (mainProcNode == null) {
+            for (SubGraph subgraph : subgraphs) {
+                for (Node subnode : subgraph.nodes) {
+                    if (subnode.getLogicalId().equals(logicalId)) {
+                        return subnode;
+                    }
+                }
+            }
+        }
+        return mainProcNode;
+    }
+
+    public SubGraph getSubGraph(Long subGraphId) {
+        for (SubGraph subgraph : subgraphs) {
+            if (subgraph.getProcessVO().getProcessId().equals(subGraphId))
+                return subgraph;
+        }
+        return null;
+    }
 }

@@ -39,6 +39,17 @@ public class WorkflowImage extends CanvasCommon implements ImageObserver {
 
         super.paintComponent(g);
         draw_graph(g, process, true);
-    }
 
+        // handle selection
+        if (selected_obj != null) {
+            if (selected_obj instanceof Node)
+                drawSelectionBox(g, (Node)selected_obj);
+            else if (selected_obj instanceof Link)
+                drawSelectionBox(g, (Link)selected_obj);
+            else if (selected_obj instanceof SubGraph)
+                drawSelectionBox(g, (SubGraph)selected_obj);
+            else if (selected_obj instanceof Graph)
+                drawSelectionBox(g, (Graph)selected_obj);
+        }
+    }
 }

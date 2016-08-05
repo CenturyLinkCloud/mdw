@@ -85,11 +85,19 @@ public class WorkflowDAO extends VcsEntityDAO {
 
         StringBuilder sb = new StringBuilder();
         sb.append("where 1 = 1 ");
-        // master or not
-        sb.append(" and pi.owner != '").append(OwnerType.MAIN_PROCESS_INSTANCE).append("'\n");
-        if ("true".equals(query.getFilter("master"))) {
-            sb.append(" and pi.owner != '").append(OwnerType.PROCESS_INSTANCE).append("'\n");
+
+        String owner = query.getFilter("owner");
+        if (owner == null) {
+            // default excludes embedded subprocs
+            sb.append(" and pi.owner != '").append(OwnerType.MAIN_PROCESS_INSTANCE).append("'\n");
+            if ("true".equals(query.getFilter("master")))
+                sb.append(" and pi.owner != '").append(OwnerType.PROCESS_INSTANCE).append("'\n");
         }
+        else {
+            String ownerId = query.getFilter("ownerId");
+            sb.append(" and pi.owner = '").append(owner).append("' and pi.owner_id = ").append(ownerId).append("\n");
+        }
+
         // processId
         String processId = query.getFilter("processId");
         if (processId != null) {

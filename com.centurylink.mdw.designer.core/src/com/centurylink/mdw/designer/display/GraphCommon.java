@@ -49,6 +49,15 @@ public abstract class GraphCommon {
         return nodes.get(i);
     }
 
+    public Node getNode(String logicalId) {
+        for (Node node : nodes) {
+            if (node.getLogicalId().equals(logicalId)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
     public Link getLink(int i) {
         return links.get(i);
     }

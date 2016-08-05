@@ -213,25 +213,34 @@ public class ProcessInstanceVO implements Serializable, Jsonable {
     public String getComment() { return comment; }
     public void setComment(String s) { comment = s; }
 
-    // for designer run time information display only
+    // for run time information display only
     @ApiModelProperty(hidden=true)
     private String remoteServer;
     public String getRemoteServer() { return remoteServer; }
     public void setRemoteServer(String s) { remoteServer = s; }
 
-    // for designer run time information display only
+    // for run time information display only
     @ApiModelProperty(hidden=true)
     private List<ActivityInstanceVO> activities;
     public List<ActivityInstanceVO> getActivities() { return activities; }
     public void setActivities(List<ActivityInstanceVO> activities) { this.activities = activities; }
+    public ActivityInstanceVO getActivity(Long instanceId) {
+        if (activities != null) {
+            for (ActivityInstanceVO activity : activities) {
+                if (activity.getId().equals(instanceId))
+                    return activity;
+            }
+        }
+        return null;
+    }
 
-    // for designer run time information display only
+    // for run time information display only
     @ApiModelProperty(hidden=true)
     private List<WorkTransitionInstanceVO> transitions;
     public List<WorkTransitionInstanceVO> getTransitions() { return transitions; }
     public void setTransitions(List<WorkTransitionInstanceVO> t) { this.transitions = t; }
 
-    // for designer run time information display only
+    // for run time information display only
     @ApiModelProperty(hidden=true)
     public boolean isRemote() {
         return remoteServer!=null;

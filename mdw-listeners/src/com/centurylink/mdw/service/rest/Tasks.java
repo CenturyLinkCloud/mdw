@@ -239,6 +239,8 @@ public class Tasks extends JsonRestService implements Exportable {
                         else if (extra.equals("actions")) {
                             // actions for an individual task based on its status and custom outcomes
                             TaskRuntimeContext runtimeContext = taskServices.getRuntimeContext(instanceId);
+                            if (runtimeContext == null)
+                                throw new ServiceException(HTTP_404_NOT_FOUND, "Unable to load runtime context for task instance: " + instanceId);
                             List<TaskAction> taskActions = AllowableTaskActions.getTaskDetailActions(userCuid, runtimeContext);
                             JSONArray jsonTaskActions = new JSONArray();
                             for (TaskAction taskAction : taskActions) {

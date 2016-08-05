@@ -45,8 +45,8 @@ task buildMdwCommon(type: GradleBuild) {
 // gets schemas and common (temporary until they're 6.0)
 task getMdwCommon(type: Copy) {
     dependsOn buildMdwCommon
-    from "../${mdwFrameworkDir}/deploy/app/mdw-schemas-${mdwFrameworkVersion}.jar"
-    from "../${mdwFrameworkDir}/deploy/app/mdw-common-${mdwFrameworkVersion}.jar"
+    from "${mdwFrameworkDir}/deploy/app/mdw-schemas-${mdwFrameworkVersion}.jar"
+    from "${mdwFrameworkDir}/deploy/app/mdw-common-${mdwFrameworkVersion}.jar"
     into "./web/WEB-INF/lib"
 }
 
