@@ -84,6 +84,22 @@ processMod.controller('ProcessesController', ['$scope', '$http', 'mdw', 'util', 
       $scope.processFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.id;
     else
       $scope.processFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.value;
-  }; 
+  };
   
+}]);
+
+processMod.controller('ProcessController', ['$scope', '$routeParams', 'mdw', 'Process',
+                                            function($scope, $routeParams, mdw, Process) {
+    
+   $scope.process = Process.retrieve({instanceId: $routeParams.instanceId}, function() {
+     $scope.process.name = $scope.process.processName;
+     $scope.item = $scope.process; // for processItem template
+   });
+    
+}]);
+
+processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/Services/Processes/:instanceId', mdw.serviceParams(), {
+    retrieve: { method: 'GET', isArray: false }
+  });
 }]);

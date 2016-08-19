@@ -87,8 +87,14 @@ public class FileUploadServlet extends HttpServlet
       String tempFile = "temp" + StringHelper.filenameDateToString(new Date()) + ".tmp";
       File destFile = new File(tempLoc + "/" + tempFile);
       int size = request.getContentLength();
-      if (size > MAX_SIZE)
-        throw new MDWException(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, "Max upload file size exceeded: " + size + " > " + MAX_SIZE);
+
+      int maxSize = MAX_SIZE;
+      String maxSizeProp = PropertyManager.getProperty(PropertyNames.MDW_MAX_UPLOAD_BYTES);
+      if (maxSizeProp != null)
+        maxSize = Integer.parseInt(maxSizeProp);
+
+      if (size > maxSize)
+        throw new MDWException(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, "Max upload file size exceeded: " + size + " > " + maxSize);
 
       InputStream is = null;
       OutputStream os = null;
@@ -102,8 +108,8 @@ public class FileUploadServlet extends HttpServlet
         byte[] bytes = new byte[1024];
         while((read = is.read(bytes)) != -1) {
           tot += read;
-          if (tot > MAX_SIZE)
-            throw new MDWException(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, "Max file size (" + MAX_SIZE + ") exceeded");
+          if (tot > maxSize)
+            throw new MDWException(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, "Max file size (" + maxSize + ") exceeded");
           os.write(bytes, 0, read);
         }
       }

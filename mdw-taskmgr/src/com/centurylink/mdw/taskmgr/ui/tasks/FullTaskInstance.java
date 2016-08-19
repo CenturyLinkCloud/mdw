@@ -256,7 +256,7 @@ public class FullTaskInstance extends ListItem implements ModelWrapper
 
   public String getMessage()
   {
-    return getTaskInstance().getTaskMessage();
+    return getTaskInstance().getActivityMessage();
   }
 
   public String getActivity()

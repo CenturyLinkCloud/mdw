@@ -43,8 +43,8 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
     public static final String DETAILONLY = "@";
     private static Long db_time_diff = 0l;
 
-	private String orderId;
-	private Date dueDate;
+    private String orderId;
+    private Date dueDate;
     private Long taskInstanceId;
     private Long taskId;
     private String taskName;
@@ -56,8 +56,6 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
     private String description;
     private Long taskClaimUserId;
     private String taskClaimUserCuid;
-    private String taskMessage;
-    private String activityName;
     private String ownerApplicationName;
     private Long associatedTaskInstanceId;
     //R2 Changes
@@ -89,7 +87,7 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
         this.comments = pComments;
         this.taskName = pTaskName;
         this.taskClaimUserCuid = pClaimUserCuid;
-        this.taskMessage = pTaskMessage;
+        this.activityMessage = pTaskMessage;
         this.activityName = pActivityName;
         this.categoryCode = pCategoryCd;
         this.ownerApplicationName = pOwnerAppName;
@@ -149,12 +147,15 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
             description = jsonObj.getString("description");
         if (jsonObj.has("comments"))
             comments = jsonObj.getString("comments");
-        if (jsonObj.has("message"))
-            taskMessage = jsonObj.getString("message");
         if (jsonObj.has("ownerApp"))
             ownerApplicationName = jsonObj.getString("ownerApp");
-        if (jsonObj.has("dueInSeconds"))
-            dueDate = new Date(System.currentTimeMillis() + db_time_diff + jsonObj.getInt("dueInSeconds") * 1000);
+        if (jsonObj.has("dueInSeconds")) {
+            int dueInSeconds = jsonObj.getInt("dueInSeconds");
+            if (dueInSeconds == -1)
+                dueDate = null;
+            else
+                dueDate = new Date(System.currentTimeMillis() + db_time_diff + jsonObj.getInt("dueInSeconds") * 1000);
+        }
         if (jsonObj.has("ownerId"))
             ownerId = jsonObj.getLong("ownerId");
         if (jsonObj.has("ownerType"))
@@ -178,6 +179,8 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
             assignee = jsonObj.getString("assignee");
         if (jsonObj.has("retrieveDate"))
             retrieveDate = StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
+        if (jsonObj.has("activityInstanceId"))
+            activityInstanceId = jsonObj.getLong("activityInstanceId");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -203,7 +206,6 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
         json.put("endDate", endDate);
         json.put("description", description);
         json.put("comments", comments);
-        json.put("message", taskMessage);
         json.put("ownerApp", ownerApplicationName);
         json.put("ownerId", ownerId);
         json.put("ownerType", ownerType);
@@ -222,6 +224,8 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
             json.put("assignee", assignee);
         if (retrieveDate != null)
             json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
+        if (activityInstanceId != null)
+            json.put("activityInstanceId", activityInstanceId);
         return json;
     }
 
@@ -251,12 +255,12 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
         setTaskInstanceId(Long.parseLong(instanceId));
     }
 
-	public Date getDueDate() {
-		return dueDate;
-	}
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
-	}
+    public Date getDueDate() {
+        return dueDate;
+    }
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
     @ApiModelProperty(hidden=true)
     public void setDueDate(String dueDateString) {
         this.dueDate = StringHelper.stringToDate(dueDateString);
@@ -273,49 +277,49 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
     public void setMasterRequestId(String id) {
         this.orderId = id;
     }
-	public String getEndDate() {
-		return endDate;
-	}
-	public void setEndDate(String endDate) {
-		this.endDate = endDate;
-	}
+    public String getEndDate() {
+        return endDate;
+    }
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
     @ApiModelProperty(hidden=true)
     public void setEndDate(Date d) {
         this.endDate = StringHelper.dateToString(d);
     }
-	public String getStartDate() {
-		return startDate;
-	}
-	public void setStartDate(String startDate) {
-		this.startDate = startDate;
-	}
+    public String getStartDate() {
+        return startDate;
+    }
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
     @ApiModelProperty(hidden=true)
-	public void setStartDate(Date d) {
-	    this.startDate = StringHelper.dateToString(d);
-	}
+    public void setStartDate(Date d) {
+        this.startDate = StringHelper.dateToString(d);
+    }
     @ApiModelProperty(hidden=true)
-	public Date getStartDateAsDate() {
-	    if (startDate == null)
-	        return null;
-	    return StringHelper.stringToDate(startDate);
-	}
+    public Date getStartDateAsDate() {
+        if (startDate == null)
+            return null;
+        return StringHelper.stringToDate(startDate);
+    }
 
     @ApiModelProperty(hidden=true)
-	public Integer getStateCode() {
-		return stateCode;
-	}
-	public void setStateCode(Integer stateCode) {
-		this.stateCode = stateCode;
-	}
+    public Integer getStateCode() {
+        return stateCode;
+    }
+    public void setStateCode(Integer stateCode) {
+        this.stateCode = stateCode;
+    }
     @ApiModelProperty(hidden=true)
-	public String getAdvisory() {
+    public String getAdvisory() {
         if (TaskState.STATE_ALERT.equals(stateCode))
             return TaskStates.getTaskStates().get(TaskState.STATE_ALERT);
         else if (TaskState.STATE_JEOPARDY.equals(stateCode))
             return TaskStates.getTaskStates().get(TaskState.STATE_JEOPARDY);
         else
             return null;
-	}
+    }
     public void setAdvisory(String advisory) {
         if (TaskState.getTaskStateName(TaskState.STATE_ALERT).equals(advisory))
             this.stateCode = TaskState.STATE_ALERT;
@@ -326,23 +330,23 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
     }
 
     @ApiModelProperty(hidden=true)
-	public Integer getStatusCode() {
-		return statusCode;
-	}
-	public void setStatusCode(Integer statusCode) {
-		this.statusCode = statusCode;
-	}
-	public String getStatus() {
-	    return TaskStatuses.getTaskStatuses().get(statusCode);
-	}
-	public void setStatus(String status) {
-	    for (int i = 0; i < TaskStatus.allStatusNames.length; i++) {
-	        if (TaskStatus.allStatusNames[i].equals(status)) {
-	            statusCode = TaskStatus.allStatusCodes[i];
-	            break;
-	        }
-	    }
-	}
+    public Integer getStatusCode() {
+        return statusCode;
+    }
+    public void setStatusCode(Integer statusCode) {
+        this.statusCode = statusCode;
+    }
+    public String getStatus() {
+        return TaskStatuses.getTaskStatuses().get(statusCode);
+    }
+    public void setStatus(String status) {
+        for (int i = 0; i < TaskStatus.allStatusNames.length; i++) {
+            if (TaskStatus.allStatusNames[i].equals(status)) {
+                statusCode = TaskStatus.allStatusCodes[i];
+                break;
+            }
+        }
+    }
 
     @ApiModelProperty(hidden=true)
     public Long getTaskId() {
@@ -392,10 +396,10 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
 
     @ApiModelProperty(hidden=true)
     public String getTaskClaimUserCuid(){
-    	return taskClaimUserCuid;
+        return taskClaimUserCuid;
     }
     public void setTaskClaimUserCuid(String pCuid){
-    	this.taskClaimUserCuid = pCuid;
+        this.taskClaimUserCuid = pCuid;
     }
     public String getAssigneeCuid() {
         return taskClaimUserCuid;
@@ -406,10 +410,10 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
 
     @ApiModelProperty(hidden=true)
     public Long getTaskClaimUserId(){
-    	return taskClaimUserId;
+        return taskClaimUserId;
     }
     public void setTaskClaimUserId(Long id){
-    	this.taskClaimUserId = id;
+        this.taskClaimUserId = id;
     }
     @ApiModelProperty(hidden=true)
     public Long getAssigneeId() {
@@ -420,26 +424,33 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
     public String getAssignee() { return assignee; }
     public void setAssignee(String assignee) { this.assignee = assignee; }
 
-    public String getTaskMessage(){
-    	return taskMessage;
-    }
-    public void setTaskMessage(String pTaskMessage){
-    	this.taskMessage = pTaskMessage;
-    }
+    public Long activityInstanceId;
+    public Long getActivityInstanceId() { return this.activityInstanceId; }
+    public void setActivityInstanceId(Long id) { this.activityInstanceId = id; }
 
-    public String getActivityName(){
-    	return activityName;
-    }
-    public void setActivityName(String pActivityName){
-    	this.activityName = pActivityName;
-    }
+    private String activityName;
+    /**
+     * Not populated.  Use workflow services for activityInstanceId.
+     */
+    @ApiModelProperty(hidden=true)
+    public String getActivityName() { return activityName; }
+    public void setActivityName(String activityName) { this.activityName = activityName; }
+
+    private String activityMessage;
+    /**
+     * Not populated.  Use workflow services for activityInstanceId.
+     */
+    @ApiModelProperty(hidden=true)
+    public String getActivityMessage() { return activityMessage; }
+    public void setActivityMessage(String message) { this.activityMessage = message; }
+
 
     @ApiModelProperty(hidden=true)
     public String getCategoryCode(){
-    	return categoryCode;
+        return categoryCode;
     }
     public void setCategoryCode(String pCategoryCode){
-    	this.categoryCode = pCategoryCode;
+        this.categoryCode = pCategoryCode;
     }
     private String category;
     public String getCategory() {
@@ -451,18 +462,18 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
 
     @ApiModelProperty(hidden=true)
     public String getOwnerApplicationName(){
-    	return this.ownerApplicationName;
+        return this.ownerApplicationName;
     }
     public void setOwnerApplicationName(String pName){
-    	this.ownerApplicationName = pName;
+        this.ownerApplicationName = pName;
     }
 
     @ApiModelProperty(hidden=true)
     public Long getAssociatedTaskInstanceId(){
-    	return associatedTaskInstanceId;
+        return associatedTaskInstanceId;
     }
     public void setAssociatedTaskInstanceId(Long pId){
-    	this.associatedTaskInstanceId = pId;
+        this.associatedTaskInstanceId = pId;
     }
 
     public String getOwnerType() {
@@ -487,7 +498,7 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
     public String getSecondaryOwnerType() {
         return secondaryOwnerType;
     }
-	public void setSecondaryOwnerType(String secondaryOwnerType) {
+    public void setSecondaryOwnerType(String secondaryOwnerType) {
         this.secondaryOwnerType = secondaryOwnerType;
     }
 
@@ -512,18 +523,18 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
     }
     @ApiModelProperty(hidden=true)
     public List<String> getGroups() {
-		return groups;
-	}
+        return groups;
+    }
 
     public void setWorkgroups(List<String> workgroups) {
         setGroups(workgroups);
     }
-	public void setGroups(List<String> groups) {
-		this.groups = groups;
-	}
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
+    }
 
-	@ApiModelProperty(hidden=true)
-	public String getWorkgroupsString() {
+    @ApiModelProperty(hidden=true)
+    public String getWorkgroupsString() {
         List<String> wrkGrps = getWorkgroups();
         if (null == wrkGrps)
             return "";
@@ -535,15 +546,15 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
         return workGroupList.length() > 0 ? workGroupList.substring(0, workGroupList.length() - 1) : "";
     }
 
-	public void setWorkgroupsFromString(String newGroups) {
-	    List<String> toSet = null;
-	    if (newGroups != null) {
-	        toSet = new ArrayList<String>();
-	        for (String newGroup : newGroups.split(","))
-	            toSet.add(newGroup);
-	    }
-	    groups = toSet;
-	}
+    public void setWorkgroupsFromString(String newGroups) {
+        List<String> toSet = null;
+        if (newGroups != null) {
+            toSet = new ArrayList<String>();
+            for (String newGroup : newGroups.split(","))
+                toSet.add(newGroup);
+        }
+        groups = toSet;
+    }
 
     private String taskInstanceUrl;
     @ApiModelProperty(hidden=true)
@@ -597,13 +608,13 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
 
     @ApiModelProperty(hidden=true)
     public boolean isGeneralTask() {
-    	return OwnerType.DOCUMENT.equals(secondaryOwnerType);
+        return OwnerType.DOCUMENT.equals(secondaryOwnerType);
     }
 
     // only applicable to template based general task
     @ApiModelProperty(hidden=true)
     public boolean isDetailOnly() {
-    	return DETAILONLY.equals(this.ownerApplicationName);
+        return DETAILONLY.equals(this.ownerApplicationName);
     }
 
     @ApiModelProperty(hidden=true)
@@ -622,27 +633,27 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
 
     @ApiModelProperty(hidden=true)
     public boolean isShallow() {
-    	return groups==null && categoryCode==null;
+        return groups==null && categoryCode==null;
     }
 
     // only correct when additional information is loaded
     @ApiModelProperty(hidden=true)
     public boolean isTemplateBased() {
-    	return groups!=null;
+        return groups!=null;
     }
 
     @ApiModelProperty(hidden=true)
     public boolean isLocal() {
-    	if (ownerApplicationName == null || ownerApplicationName.equals(DETAILONLY)) {
-    	    return true;
-    	}
-    	else {
+        if (ownerApplicationName == null || ownerApplicationName.equals(DETAILONLY)) {
+            return true;
+        }
+        else {
             String app = ownerApplicationName;
             int idx = ownerApplicationName.indexOf('@');
             if (idx > 0)
                 app = ownerApplicationName.substring(0, idx);
             return app.equals(ApplicationContext.getApplicationName());
-    	}
+        }
 
     }
 

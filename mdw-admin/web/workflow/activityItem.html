@@ -13,7 +13,7 @@
         <div class="mdw-item-sub" ng-if="item.endDate">Completed: <span class="mdw-item-sub-value">{{item.endDate}}</span></div>
         <div class="mdw-item-sub" ng-if="item.message || item.alert">
           <img class="mdw-item-alert" ng-if="item.alert" src="images/alert.png" alt="alert" />
-          <a href="" uib-popover-template="'workflow/activityMessage.html'" popover-placement="bottom-left" pop-click>
+          <a href="" uib-popover-template="'workflow/activityMessage.html'" popover-placement="bottom-left">
             <i class="mdw-item-highlight">{{item.message | lineLimit: 80}}</i>
           </a>
         </div>

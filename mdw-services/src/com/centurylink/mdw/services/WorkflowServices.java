@@ -10,12 +10,12 @@ import java.util.Map;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.value.activity.ActivityCount;
+import com.centurylink.mdw.model.value.activity.ActivityInstance;
 import com.centurylink.mdw.model.value.activity.ActivityList;
 import com.centurylink.mdw.model.value.process.ProcessCount;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessList;
 import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
 
 public interface WorkflowServices {
 
@@ -118,5 +118,5 @@ public interface WorkflowServices {
 
     public ActivityList getActivityDefinitions(Query query) throws ServiceException;
 
-    public ActivityInstanceVO getActivity(Long instanceId) throws ServiceException;
+    public ActivityInstance getActivity(Long instanceId) throws ServiceException;
 }

@@ -1,48 +1,106 @@
 // Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
-var processMod = angular.module('requests', ['mdw']);
+var requestMod = angular.module('requests', ['mdw']);
 
-processMod.controller('RequestsController', ['$scope', '$location', '$http', 'mdw', 'util', 'EXCEL_DOWNLOAD',
-                                             function($scope, $location, $http, mdw, util, EXCEL_DOWNLOAD) {
-  
-  // TODO: hardcoded
-  var d = new Date();
-  d.setTime(d.getTime() - 7 * util.dayMs);
-  $scope.startDate = util.serviceDate(d);
-  $scope.start = 0;
-  $scope.max = 50;
-  
-  $scope.requestTypes = {
+requestMod.controller('RequestsController', ['$scope', '$http', 'mdw', 'util', 'REQUEST_STATUSES',
+                                             function($scope, $http, mdw, util, REQUEST_STATUSES) {
+
+  // two-way bound to/from directive
+  $scope.requestList = {};
+  $scope.requestFilter = { 
+      master: true,
+      status: '[Active]',
+      sort: 'receivedDate',
+      type: 'masterRequests',
+      descending: true
+  }; 
+
+$scope.requestTypes = {
       masterRequests: 'Master Requests', 
-      inboundRequests: 'Inbound Requests', 
-      outboundRequests: 'Outbound Requests'
+      inboundRequests: 'Inbound', 
+      outboundRequests: 'Outbound'
   };
   
   $scope.requestType = 'masterRequests';
   $scope.setRequestType = function(requestType) {
     $scope.requestType = requestType;
-    $scope.retrieve();
+    if (requestType !== 'masterRequests')
+      $scope.requestFilter.master = false;
+    $scope.requestFilter.type = requestType;
   };
+ 
   
-  $scope.retrieve = function() {
-    $scope.total = 0;
-    $scope.requests = [];
-    $scope.url = mdw.roots.services + '/services/Requests?app=mdw-admin' + '&type=' + $scope.requestType + 
-        '&start=' + $scope.start + '&max=' + $scope.max + '&startDate=' + $scope.startDate;
-    $http.get($scope.url).error(function(data, status) {
-      console.log('HTTP ' + status + ': ' + $scope.url);
-    }).success(function(data, status, headers, config) {
-      $scope.total = data.total;
-      $scope.requests = data.requests;
+  // pseudo-status [Active] means non-final
+  $scope.allStatuses = ['[Active]'].concat(REQUEST_STATUSES);  
+  
+  $scope.$on('page-retrieved', function(event, requestList) {
+    // received date and end date, adjusted for db offset
+    var dbDate = new Date(requestList.retrieveDate);
+    requestList.requests.forEach(function(requestInstances) {
+      requestInstances.receivedDate = util.formatDateTime(util.correctDbDate(new Date(requestInstances.receivedDate), dbDate));
+      if (requestInstances.endDate)
+        requestInstances.endDate = util.formatDateTime(util.correctDbDate(new Date(requestInstances.endDate), dbDate));
+    });
+  });   
+  
+  
+  $scope.typeaheadMatchSelection = null;
+  
+  // instanceId, masterRequestId, processName, packageName
+  $scope.findTypeaheadMatches = function(typed) {
+    return $http.get(mdw.roots.services + '/services/Requests' + '?app=mdw-admin&find=' + typed).then(function(response) {
+      // service matches on instanceId or masterRequestId
+      var procInsts = response.data.requestInstances;
+      if (procInsts.length > 0) {
+        var matches = [];
+        procInsts.forEach(function(procInst) {
+          if (procInst.id.toString().startsWith(typed))
+            matches.push({type: 'instanceId', value: procInst.id.toString()});
+          else
+            matches.push({type: 'masterRequestId', value: procInst.masterRequestId});
+        });
+        return matches;
+      }
+      else {
+        return $http.get(mdw.roots.services + '/services/Requests/definitions' + '?app=mdw-admin&find=' + typed).then(function(response) {
+          // services matches on process or package name
+          if (response.data.length > 0) {
+            var matches2 = [];
+            response.data.forEach(function(procDef) {
+              if (typed.indexOf('.') > 0)
+                matches2.push({type: 'processId', value: procDef.packageName + '/' + procDef.name + ' v' + procDef.version, id: procDef.processId});
+              else
+                matches2.push({type: 'processId', value: procDef.name + ' v' + procDef.version, id: procDef.processId});
+            });
+            return matches2;
+          }
+        });                     
+      }
     });
   };
   
-  $scope.downloadExcel = function() {
-    window.location = $scope.url + '&' + EXCEL_DOWNLOAD;
+  $scope.clearTypeaheadFilters = function() {
+    // check if defined to avoid triggering evaluation
+    if ($scope.requestFilter.instanceId)
+      $scope.requestFilter.instanceId = null;
+    if ($scope.requestFilter.masterRequestId)
+      $scope.requestFilter.masterRequestId = null;
+    if ($scope.requestFilter.processId)
+      $scope.requestFilter.processId = null;
   };
   
-  $scope.retrieve();
-
+  $scope.typeaheadChange = function() {
+    if ($scope.typeaheadMatchSelection === null)
+      $scope.clearTypeaheadFilters();
+  };
   
+  $scope.typeaheadSelect = function() {
+    $scope.clearTypeaheadFilters();
+    if ($scope.typeaheadMatchSelection.id)
+      $scope.requestFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.id;
+    else
+      $scope.requestFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.value;
+  };  
+
 }]);

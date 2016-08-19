@@ -35,7 +35,6 @@ import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.user.UserActionVO.Action;
 import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
-import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -233,16 +232,22 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     @Override
-    public ActivityInstanceVO getActivity(Long instanceId) throws ServiceException {
-        ActivityInstanceVO activityInstance;
+    public ActivityInstance getActivity(Long instanceId) throws ServiceException {
         try {
-            EventManager eventManager = ServiceLocator.getEventManager();
-            activityInstance = eventManager.getActivityInstance(instanceId);
+            Query query = new Query();
+            query.setFilter("activityInstanceId", instanceId);
+            ActivityList list = getRuntimeDataAccess().getActivityInstanceList(query);
+            if (list.getCount() > 0) {
+                list = populateActivities(list, query);
+                return list.getActivities().get(0);
+            }
+            else {
+                return null;
+            }
         }
         catch (Exception ex) {
             throw new ServiceException(500, "Error retrieving activity instance: " + instanceId + ": " + ex.getMessage(), ex);
         }
-        return activityInstance;
     }
 
     public List<ProcessCount> getTopThroughputProcesses(Query query) throws ServiceException {

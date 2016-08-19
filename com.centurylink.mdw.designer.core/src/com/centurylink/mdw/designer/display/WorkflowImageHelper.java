@@ -108,6 +108,19 @@ public class WorkflowImageHelper {
 
             if (selectedActivityInstanceId != null) {
                 ActivityInstanceVO selectedInstance = processInstance.getActivity(selectedActivityInstanceId);
+                if (selectedInstance == null) {
+                    for (SubGraph subgraph : graph.subgraphs) {
+                        if (subgraph.getInstances() != null) {
+                            for (ProcessInstanceVO subinst : subgraph.getInstances()) {
+                                selectedInstance = subinst.getActivity(selectedActivityInstanceId);
+                                if (selectedInstance != null)
+                                    break;
+                            }
+                        }
+                        if (selectedInstance != null)
+                            break;
+                    }
+                }
                 if (selectedInstance != null)
                     selectedNode = graph.getNode("A" + selectedInstance.getDefinitionId());
             }

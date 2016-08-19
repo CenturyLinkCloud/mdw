@@ -90,6 +90,11 @@ routesSvc.factory('routes', function() {
         controller: 'TaskController'
       },
       {
+        path: '/tasks/:taskInstanceId/data',
+        templateUrl: 'tasks/taskData.html',
+        controller: 'TasksController'
+      },
+      {
         path: '/tasks/:taskInstanceId/subtasks',
         templateUrl: 'tasks/subtasks.html',
         controller: 'SubtasksController'
@@ -132,7 +137,7 @@ routesSvc.factory('routes', function() {
         path: '/workflow/processes/:instanceId',
         templateUrl: 'workflow/process.html',
         controller: 'ProcessController'
-      },     
+      },
       {
         path: '/workflow/requests',
         templateUrl: 'workflow/requests.html',

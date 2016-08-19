@@ -32,6 +32,7 @@ public class PropertyNames {
 	// file system
     public static final String MDW_FS_USER = "mdw.file.system.user";
     public static final String MDW_FS_PASSWORD = "mdw.file.system.password";
+    public static final String MDW_MAX_UPLOAD_BYTES = "mdw.max.upload.bytes";
 
 	// task manager
 	public static final String MDW_TASKMANAGER_REMOTE_JNDI = "mdw.taskmanager.remote.jndi";

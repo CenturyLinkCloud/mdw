@@ -1,63 +1,70 @@
 // Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
 'use strict';
-/*global theUser*/
 
 var taskMod = angular.module('task', ['ngResource', 'mdw', 'ui.grid', 'ui.grid.selection', 'ngFileUpload', 'taskTemplates']);
 
-// task detail controller
-taskMod.controller('TaskController', ['$scope', '$routeParams', '$location', '$http', 'mdw', 'util', 'taskUtil', 'Tasks',
-                                      function($scope, $routeParams, $location, $http, mdw, util, taskUtil, Tasks) {
+// task summary
+taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http', 'mdw', 'util', 'TaskUtil', 'Tasks', 'TaskAction',
+                                      function($scope, $route, $routeParams, $http, mdw, util, TaskUtil, Tasks, TaskAction) {
+
   $scope.taskInstanceId = $routeParams.taskInstanceId;
-  $scope.edit = false;
-  $scope.setEdit = function(edit) {
-    $scope.edit = edit;
-    if (edit) // backup original for cancel
-      $scope.uneditedTask = Tasks.shallowCopy({}, $scope.task);
-  };
-  
-  $scope.cancel = function() {
-    if ($scope.edit)
-      $scope.task = Tasks.shallowCopy($scope.task, $scope.uneditedTask);
-    $scope.setEdit(false);
-  };
   
   $scope.save = function() {
-    console.log('saving task: ' + $scope.task.name);
-    Tasks.update({cuid: $scope.uneditedUser.cuid}, Tasks.shallowCopy({}, $scope.task),
+    console.log('saving task: ' + $scope.task.id);
+    Tasks.update({taskInstanceId: $scope.task.id}, $scope.task,
       function(data) {
         if (data.status.code !== 0) {
-          $scope.task.message = data.status.message;
+          mdw.messages = data.status.message;
         }
         else {
-          $scope.taskName = $scope.task.name;
-          $scope.setEdit(false);
+          mdw.messages = null;
+          $scope.task.dirty = false;
         }
       }, 
       function(error) {
-        $scope.task.message = error.data.status.message;
+        mdw.messages = error.data.status.message;
       });
   };
   
-  $scope.task = Tasks.get({taskInstanceId: $routeParams.taskInstanceId},
-    function() {
-      var dbDate = new Date($scope.task.retrieveDate);
-      taskUtil.setTask($scope.task, dbDate);
-      $scope.task.isEditable = true; // TODO $scope.task.endDate && $scope.task.endDate != null; 
+  $scope.retrieve = function() {
+    // retrieve task
+    $scope.task = Tasks.get({taskInstanceId: $routeParams.taskInstanceId}, function() {
+      mdw.messages = null;
+      $scope.task.dirty = false;
+      $scope.dbDate = new Date($scope.task.retrieveDate);
+      TaskUtil.setTask($scope.task, $scope.dbDate);
+      $scope.task.actionable = true; // TODO assigned to user and not in final state
+      $scope.task.editable = true; // TODO assigned to user and not in final state 
     });
+      
+    // retrieve taskActions
+    Tasks.actions({taskInstanceId: $routeParams.taskInstanceId, action: 'actions'}, 
+      function(data) {
+        $scope.taskActions = data;
+      },
+      function(error) {
+        $scope.task.message = error.data.status.message;
+      }
+    );
+  };
+  $scope.retrieve();
   
-  // for taskItem.html template
-  $scope.item = $scope.task;
+  $scope.random = Math.random(); // param to force image reload
   
-  // retrieve taskActions
-  Tasks.actions({taskInstanceId: $routeParams.taskInstanceId, action: 'actions'}, 
-    function(data) {
-      $scope.taskActions = data;
-    },
-    function(error) {
-      $scope.task.message = error.data.status.message;
-    }
-  );
+  $scope.popups = {};
+  $scope.openDueDatePopup = function() {
+    $scope.popups.dueDate = true;
+  };
   
+  $scope.dueDateChanged = function() {
+    $scope.task.dirty = true;
+    TaskUtil.setTask($scope.task, $scope.dbDate);
+    if ($scope.task.dueDate)
+      $scope.task.dueInSeconds = Math.round(($scope.task.dueDate.getTime() - Date.now())/1000);
+    else
+      $scope.task.dueInSeconds = -1;
+  };
+
   $scope.findTypeaheadAssignees = function(typed) {
     return $http.get(mdw.roots.services + '/services/Tasks/assignees' + '?app=mdw-admin&find=' + typed).then(function(response) {
       return response.data.users;
@@ -67,29 +74,40 @@ taskMod.controller('TaskController', ['$scope', '$routeParams', '$location', '$h
   $scope.getAssigneePopPlace = function() {
     return 'left';
   };
-  
+    
   $scope.performAssign = function(assignee) {
-    console.log("TODO: assign to " + assignee.cuid);
+    $scope.performAction('Assign', assignee.cuid);
   };
   
-  $scope.popups = {};
-  $scope.openDueDatePopup = function() {
-    $scope.popups.dueDate = true;
-  };
-  
-  $scope.$watch('task.dueDate', function(newValue, oldValue) {
-    if (newValue !== oldValue) {
-      if (newValue.getTime() >= Date.now()) {
-        $scope.task.due = util.future(newValue);
+  $scope.performAction = function(action, assignee) {
+    mdw.messages = null;
+    $scope.closePopover(); // popover should be closed
+    console.log('Performing action: ' + action + ' on task ' + $scope.task.id);
+    var taskAction = {
+        taskAction: action, 
+        user: $scope.authUser.id, 
+        taskInstanceId: $scope.task.id,
+        assignee: assignee
+    };
+    
+    TaskAction.action({action: action}, taskAction, function(data) {
+      if (data.status.code !== 0) {
+        mdw.messages = data.status.message;
       }
       else {
-        $scope.task.alert = true;
-        $scope.task.due = util.past(newValue);
+        $scope.retrieve();
       }
-    }
-  });
+    }, function(error) {
+      mdw.messages = error.data.status.message;
+    });
+  };
+  
+  $scope.refreshWorkflowImage = function() {
+    $route.reload();
+  };
 }]);
 
+// subtasks
 taskMod.controller('SubtasksController', ['$scope', '$routeParams', '$location', 'Tasks', 'TaskTemplates',
                                            function($scope, $routeParams, $location, Tasks, TaskTemplates) {
   $scope.masterTaskId = $routeParams.taskInstanceId;
@@ -184,7 +202,7 @@ taskMod.controller('TaskNotesController', ['$scope', '$routeParams', '$location'
     $scope.edit = edit;
     $scope.note = note;
     if (edit) // backup original for cancel
-      $scope.uneditedNote = Notes.shallowCopy({}, $scope.note, $scope.taskInstanceId, "TASK_INSTANCE" );
+      $scope.uneditedNote = Notes.shallowCopy({}, $scope.note, $scope.authUser.cuid, $scope.taskInstanceId);
   };
   
   $scope.confirm = false;
@@ -216,7 +234,7 @@ taskMod.controller('TaskNotesController', ['$scope', '$routeParams', '$location'
   };  
   $scope.cancel = function(note) {
     if ($scope.edit)
-      $scope.note = Notes.shallowCopy($scope.note, $scope.uneditedNote, $scope.taskInstanceId, "TASK_INSTANCE");
+      $scope.note = Notes.shallowCopy($scope.note, $scope.uneditedNote, $scope.authUser.cuid, $scope.taskInstanceId);
     $scope.setEdit($scope.note, false);
     $scope.setAdd(false);
     $scope.setConfirm(note, false);
@@ -229,7 +247,7 @@ taskMod.controller('TaskNotesController', ['$scope', '$routeParams', '$location'
   
   $scope.save = function() {
     console.log('saving note: ' + $scope.note.name);
-    Notes.create({noteId: $scope.note.id}, Notes.shallowCopy({}, $scope.note, $scope.taskInstanceId, "TASK_INSTANCE" ),
+    Notes.create({noteId: $scope.note.id}, Notes.shallowCopy({}, $scope.note, $scope.authUser.cuid, $scope.taskInstanceId),
       function(data) {
         if (data.status.code !== 0) {
           $scope.note.message = data.status.message;
@@ -248,7 +266,7 @@ taskMod.controller('TaskNotesController', ['$scope', '$routeParams', '$location'
   };
   $scope.update = function() {
     console.log('updating note: ' + $scope.note.name);
-    Notes.update({noteId: $scope.note.id}, Notes.shallowCopy({}, $scope.note, $scope.taskInstanceId, "TASK_INSTANCE" ),
+    Notes.update({noteId: $scope.note.id}, Notes.shallowCopy({}, $scope.note, $scope.authUser.cuid, $scope.taskInstanceId),
       function(data) {
         if (data.status.code !== 0) {
           $scope.note.message = data.status.message;
@@ -385,7 +403,7 @@ taskMod.controller('TaskAttachmentsController', ['$scope', '$routeParams', '$loc
              
              $scope.save = function() {
                console.log('saving note: ' + $scope.note.name);
-               Attachments.create({noteId: $scope.note.id}, Attachments.shallowCopy({}, $scope.note, $scope.taskInstanceId, "TASK_INSTANCE" ),
+               Attachments.create({noteId: $scope.note.id}, Attachments.shallowCopy({}, $scope.note, $scope.authUser.cuid, $scope.taskInstanceId),
                  function(data) {
                    if (data.status.code !== 0) {
                      $scope.note.message = data.status.message;
@@ -484,7 +502,7 @@ taskMod.factory('Attachments', ['$resource', 'mdw', function($resource, mdw) {
       // Inject OwnerId and OwnerType
       destNote.ownerId = ownerId;
       destNote.ownerType = ownerType;
-      destNote.user = theUser.cuid;
+      destNote.user = $scope.authUser.id;
       */
       return null;
     }
@@ -497,44 +515,26 @@ taskMod.factory('Notes', ['$resource', 'mdw', function($resource, mdw) {
     update: { method: 'PUT' },
     remove: { method: 'DELETE' }
   }), {
-    shallowCopy: function(destNote, srcNote, ownerId, ownerType) {
+    shallowCopy: function(destNote, srcNote, user, taskInstanceId) {
       destNote.id = srcNote.id;
       destNote.name = srcNote.name;
       destNote.user = srcNote.user;
       destNote.date = srcNote.date;
       destNote.details = srcNote.details;
-      // Inject OwnerId and OwnerType
-      destNote.ownerId = ownerId;
-      destNote.ownerType = ownerType;
-      destNote.user = theUser.cuid;
+      destNote.ownerId = taskInstanceId;
+      destNote.ownerType = "TASK_INSTANCE";
+      destNote.user = user;
       return destNote;
     }
   });
 }]);
 
 taskMod.factory('Tasks', ['$resource', 'mdw', function($resource, mdw) {
-  return angular.extend({}, $resource(mdw.roots.services +'/Services/Tasks/:taskInstanceId/:action', mdw.serviceParams(), {
+  return $resource(mdw.roots.services +'/Services/Tasks/:taskInstanceId/:action', mdw.serviceParams(), {
     query: { method: 'GET'},
     actions: { method: 'GET', isArray: true},
     create: { method: 'POST'},
     action: { method: 'POST'},
     update: { method: 'PUT' }
-  }), {
-    shallowCopy: function(destTask, srcTask) {
-      destTask.advisory = srcTask.advisory;
-      destTask.id = srcTask.id;
-      destTask.masterRequestId = srcTask.masterRequestId;
-      destTask.name = srcTask.name;
-      destTask.ownerId = srcTask.ownerId;
-      destTask.ownerType = srcTask.ownerType;
-      destTask.priority = srcTask.priority;
-      destTask.secondaryOwnerId = srcTask.secondaryOwnerId;
-      destTask.secondaryOwnerType = srcTask.secondaryOwnerType;
-      destTask.startDate = srcTask.startDate;
-      destTask.status = srcTask.status;
-      destTask.taskId = srcTask.taskId;
-      
-      return destTask;
-    }
   });
 }]);

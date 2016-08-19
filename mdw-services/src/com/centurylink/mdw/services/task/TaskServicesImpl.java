@@ -16,7 +16,6 @@ import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.types.Task;
 import com.centurylink.mdw.common.task.TaskList;
 import com.centurylink.mdw.common.translator.VariableTranslator;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
@@ -26,6 +25,7 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.data.task.TaskAction;
 import com.centurylink.mdw.model.value.asset.AssetHeader;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.task.TaskActionVO;
@@ -33,6 +33,9 @@ import com.centurylink.mdw.model.value.task.TaskCount;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.value.task.TaskVO;
+import com.centurylink.mdw.model.value.user.UserActionVO;
+import com.centurylink.mdw.model.value.user.UserActionVO.Action;
+import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
 import com.centurylink.mdw.model.value.user.UserVO;
 import com.centurylink.mdw.model.value.variable.DocumentReference;
 import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
@@ -85,16 +88,6 @@ public class TaskServicesImpl implements TaskServices {
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
-    }
-
-    /**
-     * Update a task instance.
-     *
-     * @param task
-     * @param parameters
-     */
-    public void updateTask(Task task, Map<String,Object> parameters) throws ServiceException {
-        throw new UnsupportedOperationException("TODO: implement for AdminUI");
     }
 
     /**
@@ -462,6 +455,68 @@ public class TaskServicesImpl implements TaskServices {
         });
         return templates;
     }
+
+    public void updateTask(String userCuid, TaskInstanceVO taskInstance) throws ServiceException {
+        try {
+            Long instanceId = taskInstance.getTaskInstanceId();
+            TaskManager taskMgr = ServiceLocator.getTaskManager();
+            TaskInstanceVO oldTaskInstance = taskMgr.getTaskInstance(instanceId);
+            if (oldTaskInstance == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
+            if (!userCuid.equals(oldTaskInstance.getAssigneeCuid()))
+                throw new ServiceException(ServiceException.FORBIDDEN, "Task instance " + instanceId + " not assigned to " + userCuid);
+            if (oldTaskInstance.isInFinalStatus())
+                throw new ServiceException(ServiceException.FORBIDDEN, "Updates not allowed for task " + instanceId + " with status " + oldTaskInstance.getStatus());
+
+
+            // due date
+            if (taskInstance.getDueDate() == null) {
+                if (oldTaskInstance.getDueDate() != null)
+                    taskMgr.updateTaskInstanceDueDate(instanceId, null, userCuid, null);
+            }
+            else if (!taskInstance.getDueDate().equals(oldTaskInstance.getDueDate())) {
+                if (taskInstance.getDueDate().compareTo(DatabaseAccess.getDbDate()) < 0)
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Cannot set due date in the past for task instance " + instanceId);
+                taskMgr.updateTaskInstanceDueDate(instanceId, taskInstance.getDueDate(), userCuid, null);
+            }
+
+            // priority
+            if (taskInstance.getPriority() == null) {
+                if (oldTaskInstance.getPriority() != null && oldTaskInstance.getPriority().intValue() != 0)
+                    taskMgr.updateTaskInstancePriority(instanceId, 0);
+            }
+            else if (!taskInstance.getPriority().equals(oldTaskInstance.getPriority()))
+                taskMgr.updateTaskInstancePriority(instanceId, taskInstance.getPriority());
+
+            // comments
+            if (taskInstance.getComments() == null) {
+                if (oldTaskInstance.getComments() != null)
+                    taskMgr.updateTaskInstanceComments(instanceId, null);
+            }
+            else if (!taskInstance.getComments().equals(oldTaskInstance.getComments())) {
+                taskMgr.updateTaskInstanceComments(instanceId, taskInstance.getComments());
+            }
+
+            // workgroups
+            if (taskInstance.getWorkgroups() == null || taskInstance.getWorkgroups().isEmpty()) {
+                if (oldTaskInstance.getWorkgroups() != null && !oldTaskInstance.getWorkgroups().isEmpty())
+                    taskMgr.updateTaskInstanceWorkgroups(instanceId, new ArrayList<String>());
+            }
+            else if (!taskInstance.getWorkgroupsString().equals(oldTaskInstance.getWorkgroupsString())) {
+                taskMgr.updateTaskInstanceWorkgroups(instanceId, taskInstance.getWorkgroups());
+            }
+
+            taskMgr.notifyTaskAction(taskInstance, TaskAction.SAVE, null, null);
+            // audit log
+            UserActionVO userAction = new UserActionVO(userCuid, Action.Change, Entity.TaskInstance, instanceId, "summary");
+            userAction.setSource("Task Services");
+            ServiceLocator.getEventManager().createAuditLog(userAction);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
+
 
     /**
      * Fills in task header info, consulting latest instance comment if necessary.

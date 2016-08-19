@@ -974,7 +974,7 @@ public class FormEventHandler extends ExternalEventHandlerBase {
         taskInst.setOrderId(formdatadoc.getMetaValue(FormDataDocument.META_MASTER_REQUEST_ID));
         taskInst.setSecondaryOwnerType(OwnerType.INTERNAL_EVENT); // indicating
         // shadow task instance for notification only
-        taskInst.setTaskMessage(formdatadoc.format());
+        taskInst.setActivityMessage(formdatadoc.format());
         String logicalId = formdatadoc.getMetaValue(FormDataDocument.META_TASK_LOGICAL_ID);
         int k = logicalId.indexOf(":"); // remove application name prefix added
         // by summary task manager

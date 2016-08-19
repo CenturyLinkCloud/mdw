@@ -41,14 +41,14 @@
       </div>
     </div>
     <hr class="mdw-hr">
-    <div ng-if="task.ownerType == 'PROCESS_INSTANCE'">
+    <div ng-if="task.ownerType == 'PROCESS_INSTANCE'" style="max-width:100%;overflow-x:auto;">
       <div class="mdw-item">
         <span ng-if="task.ownerId">Process: <a href="#" class="mdw-link">{{task.ownerId}}</a></span>
         <button type="button" class="btn mdw-btn btn-default" ng-click="refreshWorkflowImage()" style="margin-left:5px;">
           <i class="glyphicon glyphicon-refresh"></i>
         </button>
       </div>
-      <img ng-src="{{mdw.roots.hub}}/workflowImage?taskInstanceId={{task.id}}" alt="Workflow image" />
+      <img ng-src="{{mdw.roots.hub}}/workflowImage?taskInstanceId={{task.id}}&activityInstanceId={{task.activityInstanceId}}" alt="Workflow image" />
     </div>
   </div>
 </div>

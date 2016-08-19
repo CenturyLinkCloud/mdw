@@ -62,7 +62,7 @@ public class TaskEmailModel implements TemplatedEmail.Model {
         if (taskInstanceJson.has("comments"))
             taskInstance.setComments(taskInstanceJson.getString("comments"));
         if (taskInstanceJson.has("message"))
-            taskInstance.setTaskMessage(taskInstanceJson.getString("message"));
+            taskInstance.setActivityMessage(taskInstanceJson.getString("message"));
         if (taskInstanceJson.has("activityName"))
             taskInstance.setActivityName(taskInstanceJson.getString("activityName"));
         taskInstance.setOwnerType(OwnerType.PROCESS_INSTANCE);
@@ -117,7 +117,7 @@ public class TaskEmailModel implements TemplatedEmail.Model {
     public Integer getStateCode() { return taskInstance.getStateCode(); }
     public String getStatus() { return TaskStatuses.getTaskStatuses().get(getStatusCode()); }
     public String getComments() { return taskInstance.getComments(); }
-    public String getMessage() { return taskInstance.getTaskMessage(); }
+    public String getMessage() { return taskInstance.getActivityMessage(); }
     public String getActivityName() { return taskInstance.getActivityName(); }
     public Long getTaskId() { return taskInstance.getTaskId(); }
 

@@ -27,10 +27,21 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-	  <nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
-	  <nature>org.eclipse.wst.common.project.facet.core.nature</nature>
-	  <nature>org.eclipse.jdt.core.javanature</nature>
-	  <nature>org.eclipse.wst.jsdt.core.jsNature</nature>
-      <nature>org.springsource.ide.eclipse.gradle.core.nature</nature>    
+		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
+		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
+		<nature>org.springsource.ide.eclipse.gradle.core.nature</nature>
 	</natures>
+	<filteredResources>
+		<filter>
+			<id>1470762486485</id>
+			<name>web/WEB-INF/lib</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-true-false-birt</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
 </projectDescription>

@@ -390,11 +390,11 @@ public class TaskManagerBean implements TaskManager {
     /**
      * Returns tasks instance identified by the primary key
      *
-     * @param pId
+     * @param taskInstanceId
      */
-    public TaskInstanceVO getTaskInstance(Long pId)
+    public TaskInstanceVO getTaskInstance(Long taskInstanceId)
     throws DataAccessException {
-        TaskInstanceVO taskInstance = getTaskDAO().getTaskInstance(pId);
+        TaskInstanceVO taskInstance = getTaskDAO().getTaskInstance(taskInstanceId);
         if (taskInstance == null)
             return null;
         if (taskInstance.getAssigneeId() != null && taskInstance.getAssigneeId() != 0 && taskInstance.getAssigneeCuid() == null) {
@@ -408,6 +408,10 @@ public class TaskManagerBean implements TaskManager {
             catch (CachingException ex) {
                 throw new DataAccessException(ex.getMessage(), ex);
             }
+        }
+        Long activityInstanceId = getActivityInstanceId(taskInstance, false);
+        if (activityInstanceId != null) {
+            taskInstance.setActivityInstanceId(activityInstanceId);
         }
         return taskInstance;
     }
@@ -1867,7 +1871,7 @@ public class TaskManagerBean implements TaskManager {
     * @param taskInstance
     */
     // TODO: handle non-standard status changes
-    private void notifyTaskAction(TaskInstanceVO taskInstance, String action, Integer previousStatus, Integer previousState)
+    public void notifyTaskAction(TaskInstanceVO taskInstance, String action, Integer previousStatus, Integer previousState)
     throws TaskException, DataAccessException {
         CodeTimer timer = new CodeTimer("TaskManager.notifyStatusChange()", true);
 
@@ -2384,8 +2388,7 @@ public class TaskManagerBean implements TaskManager {
         }
         else {
             // Master/Sub task
-            if(OwnerType.TASK_INSTANCE.equals(taskInstance.getSecondaryOwnerType()))
-            {
+            if (OwnerType.TASK_INSTANCE.equals(taskInstance.getSecondaryOwnerType())) {
                 taskInst = getTaskDAO().getTaskInstance(taskInstance.getSecondaryOwnerId()); //secondary owner id refers to master task instance id
             }
             if (OwnerType.DOCUMENT.equals(taskInst.getSecondaryOwnerType())) {
@@ -2708,7 +2711,7 @@ public class TaskManagerBean implements TaskManager {
     }
 
   @Override
-  public void updateTaskInstanceData(Map<String, Object> changes, List<String> workGroups, Long autoAssignee, TaskInstanceVO taskInst, String cuid)
+  public void updateTaskInstanceData(Map<String,Object> changes, List<String> workGroups, Long autoAssignee, TaskInstanceVO taskInst, String cuid)
       throws DataAccessException, TaskException
   {
     boolean hasOldSlaInstance;

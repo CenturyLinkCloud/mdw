@@ -955,4 +955,6 @@ public interface TaskManager {
 
   public Long getActivityInstanceId(TaskInstanceVO taskInstance, boolean sourceActInst);
 
+  public void notifyTaskAction(TaskInstanceVO taskInstance, String action, Integer previousStatus, Integer previousState)
+  throws TaskException, DataAccessException;
 }

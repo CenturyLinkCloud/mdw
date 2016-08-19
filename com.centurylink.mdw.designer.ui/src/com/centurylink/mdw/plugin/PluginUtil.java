@@ -60,6 +60,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 
 import com.centurylink.mdw.plugin.preferences.model.MdwSettings;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
@@ -403,6 +405,18 @@ public class PluginUtil
             catch (ResourceException ex)
             {
               PluginMessages.log(ex);
+              final Display display = MdwPlugin.getDisplay();
+              if (display != null)
+              {
+                final String msg = ex.getMessage();
+                display.syncExec(new Runnable()
+                {
+                  public void run()
+                  {
+                    MessageDialog.openError(display.getActiveShell(), "Resource Error", msg);
+                  }
+                });
+              }
             }
           }
         }

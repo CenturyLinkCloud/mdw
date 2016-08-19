@@ -137,7 +137,9 @@ public class UserDataAccessV4 extends CommonDataAccess implements UserDataAccess
 		List<String> sharedRoles = new ArrayList<String>();
 		while (rs.next()) {
 			String role = rs.getString(1);
-			sharedRoles.add(UserRoleVO.toNewName(role));
+			String roleName = UserRoleVO.toNewName(role);
+			if (!sharedRoles.contains(roleName))
+			    sharedRoles.add(roleName);
 		}
 		UserGroupVO sharedGroup = new UserGroupVO(UserGroupVO.COMMON_GROUP_ID, UserGroupVO.COMMON_GROUP, null);
 		sharedGroup.setRoles(sharedRoles);

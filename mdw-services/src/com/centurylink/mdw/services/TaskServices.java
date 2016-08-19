@@ -10,7 +10,6 @@ import java.util.Map;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.types.Task;
 import com.centurylink.mdw.common.task.TaskList;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.Value;
@@ -53,11 +52,6 @@ public interface TaskServices {
      */
     public Long createTask(String userCuid, String logicalId) throws ServiceException;
 
-    /**
-     * Update a task instance.
-     */
-    public void updateTask(Task task, Map<String,Object> parameters) throws ServiceException;
-
     public void createSubTask(String subtaskLogicalId, Long masterTaskInstanceId)
     throws TaskException, DataAccessException;
 
@@ -76,4 +70,8 @@ public interface TaskServices {
 
     public void performTaskAction(TaskActionVO taskAction) throws ServiceException;
 
+    /**
+     * Update a task instance.
+     */
+    public void updateTask(String userCuid, TaskInstanceVO taskInstance) throws ServiceException;
 }

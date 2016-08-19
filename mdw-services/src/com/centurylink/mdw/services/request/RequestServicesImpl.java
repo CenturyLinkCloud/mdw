@@ -29,6 +29,7 @@ public class RequestServicesImpl implements RequestServices {
 
     public RequestList getRequests(Query query) throws ServiceException {
         String requestType = query.getFilters().get("type");
+
         if (requestType == null)
             requestType = RequestList.MASTER_REQUESTS;
         else

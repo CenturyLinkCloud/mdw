@@ -42,7 +42,8 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
                         }
                         else {
                             Object obj = runtimeContext.getVariables().get(value.getName());
-                            value.setValue(vt.toString(obj));
+                            if (obj != null)
+                                value.setValue(vt.toString(obj));
                         }
                     }
                 }

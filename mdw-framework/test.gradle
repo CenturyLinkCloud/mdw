@@ -25,7 +25,7 @@ dependencies {
     test group: "org.json", name: "json", version: "20090211"
     test group: "commons-lang", name: "commons-lang", version: "2.4"
     test group: "commons-codec", name: "commons-codec", version: "1.3"
-    test group: "com.oracle", name: "ojdbc6", version: "11.2.0.3"
+    test group: "com.oracle", name: "ojdbc6", version: "12.1.0.2.0"
     test group: "org.apache.ant", name: "ant", version: "1.8.2"
     test group: "org.apache.ant", name: "ant-junit", version: "1.8.2"
     test group: "javax.jms", name: "jms", version: "1.1.1"
@@ -106,6 +106,7 @@ task remoteFuseTests() << {
         serverUrl: "${fuseTestServerUrl}",
         workflowDir: "../mdw-workflow/assets",
         testResultsDir: "../mdw-workflow/fuseTestResults",
+        testResultsBaseUrl: "${testResultsBaseUrl}",
         testResultsSummaryFile: "../mdw-workflow/testResults/mdw-fuse-test-results.xml",
         threadCount: 5,
         intervalSecs: 2,

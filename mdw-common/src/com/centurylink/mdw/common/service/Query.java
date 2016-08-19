@@ -47,7 +47,7 @@ public class Query {
             if (!"count".equals(key) && !"find".equals(key) && !"start".equals(key) && !"max".equals(key)
                     && !"sort".equals(key) && !"descending".equals(key) && !"ascending".equals(key) && !"app".equals(key)
                     && !"DownloadFormat".equals(key))
-                putFilter(key, parameters.get(key));
+                setFilter(key, parameters.get(key));
         }
     }
 
@@ -85,7 +85,7 @@ public class Query {
     private Map<String,String> filters = new HashMap<String,String>();
     public Map<String,String> getFilters() { return filters; }
     public void setFilters(Map<String,String> filters) { this.filters = filters; }
-    public void putFilter(String key, String value) { filters.put(key, value); }
+    public void setFilter(String key, String value) { filters.put(key, value); }
 
     public String getFilter(String key) {
         return filters.get(key);
@@ -142,19 +142,30 @@ public class Query {
         String value = filters.get(key);
         return "true".equalsIgnoreCase(value);
     }
+    public void setFilter(String key, boolean value) {
+        setFilter(key, String.valueOf(value));
+    }
+
     public int getIntFilter(String key) {
         String value = filters.get(key);
         return value == null ? -1 : Integer.parseInt(value);
     }
+    public void setFilter(String key, int value) {
+        setFilter(key, String.valueOf(value));
+    }
+
     public long getLongFilter(String key) {
         String value = filters.get(key);
         return value == null ? -1 : Long.parseLong(value);
+    }
+    public void setFilter(String key, long value) {
+        setFilter(key, String.valueOf(value));
     }
 
     public Date getDateFilter(String key) throws ParseException {
         return getDate(filters.get(key));
     }
-    public void setDateFilter(String key, Date date) {
+    public void setFilter(String key, Date date) {
         String value = getString(date);
         if (value == null)
             filters.remove(key);

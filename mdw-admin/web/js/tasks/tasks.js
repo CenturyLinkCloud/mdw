@@ -4,8 +4,8 @@
 var tasksMod = angular.module('tasks', ['ngResource', 'mdw']);
 
 // task list controller
-tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location', 'mdw', 'util', 'TaskAction', 'TASK_ADVISORIES',
-                                       function($scope, $window, $http, $location, mdw, util, TaskAction, TASK_ADVISORIES) {
+tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location', 'mdw', 'util', 'TaskAction', 'TaskUtil', 'TASK_ADVISORIES',
+                                       function($scope, $window, $http, $location, mdw, util, TaskAction, TaskUtil, TASK_ADVISORIES) {
   
   // If taskList is a top-level object in $scope, this means child scopes (such as ng-if) can 
   // break two-way binding, so taskList is a field in the top-level model object
@@ -35,20 +35,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     // create date and due date
     var dbDate = new Date(taskList.retrieveDate);
     taskList.tasks.forEach(function(task) {
-      task.startDate = util.correctDbDate(new Date(task.startDate), dbDate);
-      task.created = util.past(task.startDate);
-      if (task.dueDate && !task.endDate) {
-        task.dueDate = util.correctDbDate(new Date(task.dueDate), dbDate);
-        if (task.dueDate.getTime() >= Date.now()) {
-          task.due = util.future(task.dueDate);
-        }
-        else {
-          task.alert = true;
-          task.due = util.past(task.dueDate);
-        }
-      }
-      if (task.endDate)
-        task.endDate = util.past(util.correctDbDate(new Date(task.endDate), dbDate));      
+      TaskUtil.setTask(task, dbDate);
     });
     // retrieve TaskActions
     $http.get(mdw.roots.hub + '/services/Tasks/bulkActions?app=mdw-admin&myTasks=' + ($scope.model.taskFilter.assignee == '[My Tasks]'))
@@ -261,23 +248,30 @@ tasksMod.factory('TaskAction', ['$resource', 'mdw', function($resource, mdw) {
   });
 }]);
 
-tasksMod.factory('taskUtil', ['util', function(util) {
+tasksMod.factory('TaskUtil', ['util', function(util) {
   return {
     setTask: function(task, dbDate) {
       task.startDate = util.correctDbDate(new Date(task.startDate), dbDate);
       task.created = util.past(task.startDate);
-      if (task.dueDate && !task.endDate) {
-        task.dueDate = util.correctDbDate(new Date(task.dueDate), dbDate);
-        if (task.dueDate.getTime() >= Date.now()) {
-          task.due = util.future(task.dueDate);
-        }
-        else {
-          task.alert = true;
-          task.due = util.past(task.dueDate);
+      if (task.dueDate) {
+        if (!task.endDate) {
+          task.dueDate = util.correctDbDate(new Date(task.dueDate), dbDate);
+          if (task.dueDate.getTime() >= Date.now()) {
+            task.alert = false;
+            task.due = util.future(task.dueDate);
+          }
+          else {
+            task.alert = true;
+            task.due = util.past(task.dueDate);
+          }
         }
       }
+      else {
+        task.alert = false;
+        task.due = null;
+      }
       if (task.endDate)
-        task.endDate = util.past(util.correctDbDate(new Date(task.endDate), dbDate));      
+        task.endDate = util.past(util.correctDbDate(new Date(task.endDate), dbDate));          
     }
   };
 }]);

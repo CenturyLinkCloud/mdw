@@ -631,12 +631,25 @@ public class TaskDAO extends CommonDataAccess {
     public TaskInstanceVO getTaskInstance(Long taskInstId) throws DataAccessException {
         try {
             db.openConnection();
-            String query = "select " + TASK_INSTANCE_SELECT_SHALLOW +
-                " from TASK_INSTANCE ti where TASK_INSTANCE_ID=?";
-            ResultSet rs = db.runSelect(query, taskInstId);
-            if (rs.next()) {
-                return getTaskInstanceSub(rs, false);
-            } else return null;
+            StringBuilder query = new StringBuilder();
+            query.append("select ").append(TASK_INSTANCE_SELECT_SHALLOW).append(", GROUP_NAME\n");
+            query.append("from TASK_INSTANCE ti\n");
+            query.append("left join TASK_INST_GRP_MAPP tigm on ti.TASK_INSTANCE_ID = tigm.TASK_INSTANCE_ID\n");
+            query.append("left join USER_GROUP ug on tigm.USER_GROUP_ID = ug.USER_GROUP_ID\n");
+            query.append("where ti.TASK_INSTANCE_ID = ?");
+            ResultSet rs = db.runSelect(query.toString(), taskInstId);
+            TaskInstanceVO ti = null;
+            while (rs.next()) {
+                if (ti == null)
+                    ti = getTaskInstanceSub(rs, false);
+                String groupName = rs.getString("GROUP_NAME");
+                if (groupName != null) {
+                    if (ti.getGroups() == null)
+                        ti.setGroups(new ArrayList<String>());
+                    ti.getGroups().add(groupName);
+                }
+            }
+            return ti;
         } catch (Exception e) {
             throw new DataAccessException(0, "failed to get task instance", e);
         } finally {
@@ -2669,7 +2682,7 @@ public class TaskDAO extends CommonDataAccess {
 	        if (rs.next()) {
 	        	taskInst.setTaskClaimUserCuid(rs.getString(1));
 	        	taskInst.setOrderId(rs.getString(2));
-	        	taskInst.setTaskMessage(rs.getString(3));
+	        	taskInst.setActivityMessage(rs.getString(3));
 	        	taskInst.setActivityName(rs.getString(4));
 
                 if (taskInst.getTaskName() == null) {
@@ -2678,8 +2691,8 @@ public class TaskDAO extends CommonDataAccess {
                     taskInst.setCategoryCode(taskVO.getTaskCategory());
                 }
 
-	            if (taskInst.getTaskMessage() == null)
-	                taskInst.setTaskMessage(taskInst.getComments());
+	            if (taskInst.getActivityMessage() == null)
+	                taskInst.setActivityMessage(taskInst.getComments());
 	        };
 	        if (loadGroups) getTaskInstanceGroups(taskInst);
 	    } catch (Exception e) {

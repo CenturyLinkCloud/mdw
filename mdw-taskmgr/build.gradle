@@ -56,7 +56,7 @@ dependencies {
     providedCompile group: "junit", name: "junit", version:"4.8.1"
     
     // TODO: proprietary dependencies
-    compile group: "com.oracle", name: "ojdbc6", version: "11.2.0.3"
+    compile group: "com.oracle", name: "ojdbc6", version: "12.1.0.2.0"
     compile group: "com.qwest.appsec", name: "AccessControl", version: "6.8"
     compile group: "com.rsa.cleartrust", name: "asn1", version: "6.0.2.49"
     compile group: "com.rsa.cleartrust", name: "certj", version: "6.0.2.49"

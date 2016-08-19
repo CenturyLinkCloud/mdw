@@ -3,7 +3,7 @@
   <feature name="mdw-dependencies" version="@mdw.version@">
     <bundle>wrap:mvn:com.qwest.appsec/AccessControl/6.8</bundle>
     <bundle>wrap:mvn:com.qwest.mbeng/mbeng/7.1.0</bundle>
-    <bundle>mvn:com.oracle/ojdbc6/11.2.0.3</bundle>
+    <bundle>mvn:com.oracle/ojdbc6/12.1.0.2.0</bundle>
     <bundle>wrap:mvn:junit/junit/4.8.1</bundle>
     <bundle>wrap:mvn:commons-beanutils/commons-beanutils/1.8.3</bundle>
     <bundle>wrap:mvn:commons-collections/commons-collections/3.2.1</bundle>    
@@ -29,7 +29,6 @@
     <bundle>wrap:mvn:el-impl/el-impl/1.0</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.4_3</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlbeans/2.4.0_4</bundle>
-    <bundle>mvn:javax.jms/com.springsource.javax.jms/1.1.0</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance/1.0_6</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saaj-impl/1.3.21_1</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/1.7_6</bundle>
@@ -54,8 +53,9 @@
   <feature name="mdw-smx-dependencies" version="@mdw.version@">
     <feature version="@mdw.version@">mdw-dependencies</feature>
     <feature version="@mdw.version@">mdw-smx-drools</feature>
+    <bundle>mvn:javax.jms/com.springsource.javax.jms/1.1.0</bundle>    
     <bundle>wrap:mvn:groovy/groovy-all/1.7.2ctl$DynamicImport-Package=*&amp;Bundle-SymbolicName=groovy.groovy-all&amp;Bundle-Version=1.7.2ctl</bundle>
-    <bundle start-level='10'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/1.9.0</bundle>    
+    <bundle start-level='10'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/1.9.0</bundle>
   </feature>
   
   <feature name="mdw-fuse-dependencies" version="@mdw.version@">

@@ -892,6 +892,12 @@ public class WorkflowProject extends WorkflowElement implements Comparable<Workf
     return getSourceProject().getFolder("/" + getMdwVcsRepository().getLocalPath());
   }
 
+  public IFolder getAssetArchiveFolder()
+  {
+    assert isFilePersist();
+    return getSourceProject().getFolder("/" + getMdwVcsRepository().getLocalPath() + "/Archive");
+  }
+
   public void refreshProject()
   {
     assert isFilePersist();

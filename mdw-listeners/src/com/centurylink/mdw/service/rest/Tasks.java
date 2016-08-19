@@ -3,10 +3,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import static com.centurylink.mdw.common.constant.TaskAttributeConstant.COMMENTS;
-import static com.centurylink.mdw.common.constant.TaskAttributeConstant.DUE_DATE;
 import static com.centurylink.mdw.common.constant.TaskAttributeConstant.LOGICAL_ID;
-import static com.centurylink.mdw.common.constant.TaskAttributeConstant.PRIORITY;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -56,7 +53,6 @@ import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.services.task.AllowableTaskActions;
-import com.centurylink.mdw.services.task.TaskManagerAccess;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -208,7 +204,10 @@ public class Tasks extends JsonRestService implements Exportable {
                         Long instanceId = Long.parseLong(segOne);
                         String extra = getSegment(path, 2);
                         if (extra == null) {
-                            return taskServices.getInstance(instanceId).getJson();
+                            TaskInstanceVO taskInstance = taskServices.getInstance(instanceId);
+                            if (taskInstance == null)
+                                throw new ServiceException(HTTP_404_NOT_FOUND, "Task instance not found: " + instanceId);
+                            return taskInstance.getJson();
                         }
                         else if (extra.equals("values")) {
                             Map<String,Value> values = taskServices.getValues(instanceId);
@@ -309,7 +308,7 @@ public class Tasks extends JsonRestService implements Exportable {
             }
             else {
                 try {
-                    // for compatibility, handle taskInstanceId as segOne and actual action as segTwo
+                    // handle taskInstanceId as segOne and actual action as segTwo
                     long taskInstanceId = Long.parseLong(segOne);
                     String segTwo = getSegment(path, 2);
                     if (segTwo == null)
@@ -352,19 +351,6 @@ public class Tasks extends JsonRestService implements Exportable {
         }
     }
 
-    /**
-     * For update of a task.
-     * <p>
-     * /mdw/Services/Tasks/{taskInstanceId}
-     * e.g /mdw/Services/Tasks/200065
-     * </p>
-     * Also for update of a task's indexes.
-     * <p>
-     * /mdw/Services/Tasks/{taskInstanceId}/indexes
-     * e.g /mdw/Services/Tasks/200065/indexes
-     * </p>
-     *
-     */
     @Override
     @Path("/{taskInstanceId}/{subData}")
     @ApiOperation(value="Update a task instance, or update an instance's index values", response=StatusMessage.class,
@@ -373,7 +359,7 @@ public class Tasks extends JsonRestService implements Exportable {
     @ApiImplicitParams({
         @ApiImplicitParam(name="Task", paramType="body", dataType="com.centurylink.mdw.model.value.task.TaskInstanceVO"),
         @ApiImplicitParam(name="SubData", paramType="body", dataType="java.util.Map")})
-    public JSONObject put(String path, JSONObject content, Map<String, String> headers)
+    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         String id = getSegment(path, 1);
         if (id == null)
@@ -382,7 +368,7 @@ public class Tasks extends JsonRestService implements Exportable {
             Long instanceId = Long.parseLong(id);
             String extra = getSegment(path, 2);
             if (extra == null) {
-                // Update a task
+                // update task summary info
                 TaskInstanceVO taskInstJson = new TaskInstanceVO(content);
                 if (!content.has("id"))
                     throw new ServiceException(HTTP_400_BAD_REQUEST, "Content is missing required field: id");
@@ -390,9 +376,8 @@ public class Tasks extends JsonRestService implements Exportable {
                 if (instanceId != contentInstanceId)
                     throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (instanceId): " + contentInstanceId + " is not: " + instanceId);
 
-                String user = content.getString("user");
-                boolean clearDueDate = content.has("clearDueDate") ? content.getBoolean("clearDueDate") : false;
-                return updateTask(user, taskInstJson, clearDueDate);
+                ServiceLocator.getTaskServices().updateTask(getAuthUser(headers), taskInstJson);
+                return null;
             }
             else if (extra.equals("values")) {
                 Map<String,String> values = JsonUtil.getMap(content);
@@ -400,7 +385,7 @@ public class Tasks extends JsonRestService implements Exportable {
                 taskServices.applyValues(instanceId, values);
             }
             else if (extra.equals("indexes")) {
-                // Update task indexes
+                // update task indexes
                 TaskIndexes taskIndexes = new TaskIndexes(content);
                 if (instanceId != taskIndexes.getTaskInstanceId())
                     throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (instanceId): " + taskIndexes.getTaskInstanceId() + " is not: " + instanceId);
@@ -427,49 +412,6 @@ public class Tasks extends JsonRestService implements Exportable {
         }
         catch (ServiceException ex) {
             throw ex;
-        }
-        catch (Exception ex) {
-            throw new ServiceException(ex.getMessage(), ex);
-        }
-        return null;
-    }
-
-
-    private JSONObject updateTask(String user, TaskInstanceVO taskInstIn, boolean clearDueDate)
-            throws ServiceException {
-        try {
-            Map<String, Object> changes = new HashMap<String, Object>();
-            Long autoAssigneeUserId = null;
-
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            TaskInstanceVO taskInst = taskMgr.getTaskInstance(taskInstIn.getTaskInstanceId());
-
-            String autoAssigneeCuid = taskInstIn.getTaskClaimUserCuid();
-            if (autoAssigneeCuid != null) {
-                UserVO assigneeUser = ServiceLocator.getUserManager().getUser(autoAssigneeCuid);
-                if (assigneeUser == null) {
-                    throw new ServiceException("Assignee user not found: " + autoAssigneeCuid);
-                }
-                autoAssigneeUserId = assigneeUser.getId();
-            }
-            if (taskInstIn.getDueDate() != null || clearDueDate)
-                changes.put(DUE_DATE, taskInstIn.getDueDate());
-            if (taskInstIn.getPriority() != null)
-                changes.put(PRIORITY, taskInstIn.getPriority().intValue());
-            if (taskInstIn.getComments() != null)
-                changes.put(COMMENTS, taskInstIn.getComments());
-
-            if (changes.isEmpty()) {
-                throw new ServiceException("No changes found to update in UpdateTask request");
-            }
-
-            if (!taskInst.isSummaryOnly()) {
-                TaskManagerAccess.getInstance().processTaskInstanceUpdate(changes, taskInst, user);
-            }
-            else {
-                taskMgr.updateTaskInstanceData(changes, taskInstIn.getGroups(), autoAssigneeUserId,
-                        taskInst, user);
-            }
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);

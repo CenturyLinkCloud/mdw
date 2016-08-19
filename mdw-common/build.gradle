@@ -66,7 +66,7 @@ dependencies {
     // TODO: proprietary dependencies
     compile group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"
     compile group: "com.qwest.appsec", name: "AccessControl", version: "6.8"
-    compile group: "com.oracle", name: "ojdbc6", version: "11.2.0.3"
+    compile group: "com.oracle", name: "ojdbc6", version: "12.1.0.2.0"
     compile group: "artis", name: "artis", version: "4.0.1"
 
     compile group: "info.cukes", name: "cucumber-core", version: "1.2.4"  

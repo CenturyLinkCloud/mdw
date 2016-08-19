@@ -15,6 +15,8 @@ import com.centurylink.mdw.common.provider.CacheService;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
@@ -130,8 +132,20 @@ public class ProcessVOCache implements CacheEnabled, CacheService {
             }
             if (match == null) {
                 if (ApplicationContext.isFileBasedAssetPersist()) {
-                    // try falling back to non-smart VO from
-                    return getProcessVO(spec.getName(), RuleSetVO.parseVersion(spec.getVersion()));
+                    // try to match smart versions from db assets
+                    for (ProcessVO process : getNonVcsProcesses()) {
+                        if (spec.getName().equals(process.getName())) {
+                            if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
+                                match = process;
+                        }
+                    }
+                    if (match == null) {
+                        // still null -- try falling back to non-smart VO from db
+                        return getProcessVO(spec.getName(), RuleSetVO.parseVersion(spec.getVersion()));
+                    }
+                    else {
+                        return getProcessVO(match.getId());
+                    }
                 }
                 return null;
             }
@@ -143,6 +157,22 @@ public class ProcessVOCache implements CacheEnabled, CacheService {
             logger.severeException(ex.getMessage(), ex);
             return null;
         }
+    }
+
+    /**
+     * Smart versioning compatibility for VCS assets with in-flight db processes.
+     */
+    private static List<ProcessVO> dbProcesses;
+    private static List<ProcessVO> getNonVcsProcesses() throws DataAccessException {
+        if (dbProcesses == null) {
+            dbProcesses = new ArrayList<ProcessVO>();
+            DatabaseAccess db = new DatabaseAccess(null);
+            if (DataAccess.isUseCompatibilityDatasource(db)) {
+                ProcessLoader dbLoader = DataAccess.getDbProcessLoader();
+                dbProcesses.addAll(dbLoader.getProcessList());
+            }
+        }
+        return dbProcesses;
     }
 
     private ProcessVO getProcessVO0(String procname, int version) {

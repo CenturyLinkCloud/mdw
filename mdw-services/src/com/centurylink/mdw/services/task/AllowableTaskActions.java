@@ -179,7 +179,7 @@ public class AllowableTaskActions implements PreloadableCache {
 
         // return filtered task actions (logic copied from TaskDetail but could stand refactoring)
         List<TaskAction> filteredActions = new ArrayList<TaskAction>();
-        if (!userCuid.equals(runtimeContext.getAssignee())) {
+        if (!userCuid.equalsIgnoreCase(runtimeContext.getAssignee())) {
             // if the task is not assigned to the current user, the only possible actions are Assign, Claim and Release
             for (TaskAction action : taskActions) {
                 if (action.getTaskActionName().equalsIgnoreCase(TaskAction.ASSIGN)
@@ -192,7 +192,7 @@ public class AllowableTaskActions implements PreloadableCache {
         else {
             TaskManager taskManager = ServiceLocator.getTaskManager();
             filteredActions = taskManager.filterStandardTaskActions(runtimeContext.getInstanceId(), taskActions);
-            if (runtimeContext.getTaskInstanceVO().isInFinalStatus()) {
+            if (!runtimeContext.getTaskInstanceVO().isInFinalStatus()) {
                 boolean isWorkActionApplicable = false;
                 for (TaskAction action : taskActions) {
                     if (action.getTaskActionName().equals(TaskAction.WORK)) {
@@ -232,6 +232,7 @@ public class AllowableTaskActions implements PreloadableCache {
                 String taskId /* or name */ = forTask.getDomNode().getFirstChild().getNodeValue().trim();
                 taskActionForTasks.add(taskAction.new ForTask(taskId, forTask.getDestinationList()));
             }
+            taskAction.setForTasks(taskActionForTasks);
         }
         return taskAction;
     }

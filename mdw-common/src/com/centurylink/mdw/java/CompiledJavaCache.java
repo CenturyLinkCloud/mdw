@@ -690,7 +690,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
             if (cl == null) {
                 JavaFileObject jfo = MdwJavaFileManager.getJavaFileObject(name);
                 if (jfo != null) {
-                    if (packageVO != null) {
+                    if (packageVO != null && packageVO.getName() != null) {
                         Package pkg = getPackage(packageVO.getName());
                         if (pkg == null)
                             definePackage(packageVO.getName(), null, null, null, "MDW", packageVO.getVersionString(), "CenturyLink", null);

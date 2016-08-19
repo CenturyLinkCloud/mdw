@@ -4,7 +4,9 @@
 package com.centurylink.mdw.services.dao;
 
 import java.sql.ResultSet;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,8 @@ import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.data.work.WorkStatus;
+import com.centurylink.mdw.model.data.work.WorkStatuses;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.requests.Request;
 import com.centurylink.mdw.model.value.requests.RequestList;
@@ -40,11 +44,17 @@ public class RequestsDAO extends VcsEntityDAO {
             countRs.next();
             total = countRs.getInt(1);
 
+            //If the total count is 0, stop further execution to prevent it from erroring out while running to get the Responses query.
+//          if(total == 0){
+//              return null;  //TODO: This causes a null pointer exception. Need to come up with a better solution.
+//          }
+
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
             q.append("select ").append(PROC_INST_COLS).append(", d.document_id, d.create_dt, d.owner_type\n");
             q.append("from process_instance pi, document d\n");
-            q.append(where);
-            q.append("order by d.document_id desc");
+
+            //String orderBy = buildOrderBy(query);
+            q.append(where).append(buildOrderBy(query));
             q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
 
             List<Request> requests = new ArrayList<Request>();
@@ -73,6 +83,7 @@ public class RequestsDAO extends VcsEntityDAO {
             // This join takes forever on MySQL, so a separate query is used to populate response info:
             // -- left join document d2 on (d2.owner_id = d.document_id)
             if (query.getMax() != Query.MAX_ALL) {
+                //TODO: If the above SQL query returned 0 record, this query will fail because the listenerRequestIds contains no Ids.
                 ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.LISTENER_RESPONSE, listenerRequestIds), null);
                 while (respRs.next()) {
                     Request request = requestMap.get(respRs.getLong("owner_id"));
@@ -97,11 +108,40 @@ public class RequestsDAO extends VcsEntityDAO {
         }
     }
 
-    private String getMasterRequestsWhere(Query query) {
+    private String getMasterRequestsWhere(Query query) throws DataAccessException {
         StringBuilder clause = new StringBuilder();
         clause.append("where pi.owner_id = d.document_id\n");
         clause.append("and pi.owner = 'DOCUMENT'\n");
-        String find = query.getFind();
+
+        // status
+        String status = query.getFilter("status");
+        if (status != null) {
+            if (status.equals(WorkStatus.STATUSNAME_ACTIVE)) {
+                clause.append(" and pi.status_cd not in (")
+                  .append(WorkStatus.STATUS_COMPLETED)
+                  .append(",").append(WorkStatus.STATUS_FAILED)
+                  .append(",").append(WorkStatus.STATUS_CANCELLED)
+                  .append(",").append(WorkStatus.STATUS_PURGE)
+                  .append(")\n");
+            }
+            else {
+                clause.append(" and pi.status_cd = ").append(WorkStatuses.getCode(status)).append("\n");
+            }
+        }
+
+        // receivedDate
+        try {
+            Date receivedDate = query.getDateFilter("receivedDate");
+            if (receivedDate != null) {
+                String formatedReceivedDate = getDateFormat().format(receivedDate);
+                clause.append(" and d.create_dt >= STR_TO_DATE('").append(formatedReceivedDate).append("','%d-%M-%Y')\n");
+            }
+        }
+        catch (ParseException ex) {
+            throw new DataAccessException(ex.getMessage(), ex);
+        }
+
+        String find = query.getFind();  //This returns a null value.
         if (find != null)
             clause.append("and pi.master_request_id like '" + find + "%'\n");
         return clause.toString();
@@ -126,8 +166,12 @@ public class RequestsDAO extends VcsEntityDAO {
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
             q.append("select d.document_id, d.create_dt\n");
             q.append("from document d\n");
-            q.append(where);
-            q.append("order by d.document_id desc");
+
+            q.append(where).append(buildOrderBy(query));
+
+//            q.append(where);
+//            q.append("order by d.document_id desc");
+
             q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
 
             Map<Long,Request> requestMap = new HashMap<Long,Request>();
@@ -194,8 +238,11 @@ public class RequestsDAO extends VcsEntityDAO {
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
             q.append("select d.document_id, d.create_dt, d.owner_id\n");
             q.append("from document d\n");
-            q.append(where);
-            q.append("order by d.document_id desc");
+
+            q.append(where).append(buildOrderBy(query));
+
+//            q.append(where);
+//            q.append("order by d.document_id desc");
             q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
 
             Map<Long,Request> requestMap = new HashMap<Long,Request>();
@@ -257,5 +304,14 @@ public class RequestsDAO extends VcsEntityDAO {
         }
         resp.append(")\n");
         return resp.toString();
+    }
+
+    private String buildOrderBy(Query query) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" order by d.document_id");
+        if (query.isDescending())
+            sb.append(" desc");
+        sb.append("\n");
+        return sb.toString();
     }
 }

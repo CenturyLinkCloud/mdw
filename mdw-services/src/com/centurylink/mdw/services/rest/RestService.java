@@ -273,4 +273,11 @@ public abstract class RestService {
     }
 
     protected abstract void validateResponse(String response) throws ServiceException;
+
+    /**
+     * returns authenticated user cuid
+     */
+    protected String getAuthUser(Map<String,String> headers) {
+        return headers.get(Listener.AUTHENTICATED_USER_HEADER);
+    }
 }

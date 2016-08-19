@@ -244,7 +244,7 @@ public class Importer
         {
           conflicts.add(existingAsset);
           if (project.getDataAccess().getSupportedSchemaVersion() >= DataAccess.schemaVersion52
-              && MdwPlugin.getSettings().isCompareConflictingAssetsDuringImport())
+              && MdwPlugin.getSettings().isCompareConflictingAssetsDuringImport() && !existingAsset.isBinary())
           {
             progressMonitor.subTask("Comparing assets (can be disabled in prefs)");
             // content comparison

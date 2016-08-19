@@ -1,0 +1,144 @@
+// task-action-service
+import com.centurylink.mdw.model.value.task.TaskActionVO
+import com.centurylink.mdw.common.utilities.JsonUtil
+import groovy.json.JsonSlurper
+
+start process("ManualTaskServices") {
+    variables = [ jaxbVar: "<TaskJaxb/>" ] // missing required: #{jaxbVar.attributeTwo}
+}
+
+sleep 10
+
+// get instance id by claiming
+def taskInst = action task("AutoForm Task for Service Access") {
+    outcome = "Claim"
+}
+
+// confirm assignee
+response = get http("services/Tasks/${taskInst.id}")
+def taskInstVO = new JsonSlurper().parseText(response.content)
+assert taskInstVO.assigneeId == 'dxoakes'
+
+// Release
+def taskAction = new TaskActionVO()
+taskAction.taskInstanceId = taskInst.id
+taskAction.taskAction = 'Release' 
+taskAction.user = 'mdwapp'
+response = post http("services/Tasks/${taskInst.id}/Release") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = taskAction.getJson()
+}
+assert response.code == 200
+assert new JsonSlurper().parseText(response.content).status.code == 0
+
+// confirm Release
+response = get http("services/Tasks/${taskInst.id}")
+taskInstVO = new JsonSlurper().parseText(response.content)
+assert taskInstVO.assigneeId == null
+    
+// Claim
+taskAction = new TaskActionVO()
+taskAction.taskInstanceId = taskInst.id
+taskAction.taskAction = 'Claim'
+taskAction.user = 'mdwapp'
+response = post http("services/Tasks/${taskInst.id}/Claim") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = taskAction.getJson()
+}
+assert response.code == 200
+assert new JsonSlurper().parseText(response.content).status.code == 0
+
+// confirm Claim
+response = get http("services/Tasks/${taskInst.id}")
+taskInstVO = new JsonSlurper().parseText(response.content)
+assert taskInstVO.assigneeId == 'mdwapp'
+
+// Forward (without comment)
+taskAction = new TaskActionVO()
+taskAction.taskInstanceId = taskInst.id
+taskAction.taskAction = 'Forward'
+taskAction.user = 'mdwapp'
+taskAction.destination = 'Developers'
+response = post http("services/Tasks/${taskInst.id}/Forward") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = taskAction.getJson()
+}
+assert response.code == 400
+assert new JsonSlurper().parseText(response.content).status.message.startsWith('Comment required')
+
+// Forward (with comment)
+taskAction.comment = 'Forwarding to Developers group'
+response = post http("services/Tasks/${taskInst.id}/Forward") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = taskAction.getJson()
+}
+assert response.code == 200
+
+// confirm Forward
+response = get http("services/Tasks/${taskInst.id}")
+taskInstVO = new JsonSlurper().parseText(response.content)
+assert taskInstVO.assigneeId == null
+assert taskInstVO.workgroups == ['Developers']
+assert taskInstVO.comments == taskAction.comment
+
+// Assign
+taskAction = new TaskActionVO()
+taskAction.taskInstanceId = taskInst.id
+taskAction.taskAction = 'Assign'
+taskAction.user = 'mdwapp'
+taskAction.assignee = 'mdwapp'
+response = post http("services/Tasks/${taskInst.id}/Assign") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = taskAction.getJson()
+}
+assert response.code == 200
+assert new JsonSlurper().parseText(response.content).status.code == 0
+
+// confirm Assign
+response = get http("services/Tasks/${taskInst.id}")
+taskInstVO = new JsonSlurper().parseText(response.content)
+assert taskInstVO.assigneeId == 'mdwapp'
+
+// Complete (without required attributeTwo)
+taskAction = new TaskActionVO()
+taskAction.taskInstanceId = taskInst.id
+taskAction.taskAction = 'Complete'
+taskAction.user = 'mdwapp'
+response = post http("services/Tasks/${taskInst.id}/Complete") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = taskAction.getJson()
+}
+assert response.code == 400
+assert new JsonSlurper().parseText(response.content).status.message == "Missing required value(s): '#{jaxbVar.attributeTwo}'."
+
+// set required value
+def values = [:]
+values["#{jaxbVar.attributeTwo}"] = "RequiredAttrValue"
+def putPayload = JsonUtil.getJson(values);
+println 'PUT request:\n' + putPayload.toString(2)
+response = put http("services/Tasks/${taskInst.id}/values") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = putPayload
+}
+assert response.code == 200
+
+// Complete (should succeed)
+taskAction = new TaskActionVO()
+taskAction.taskInstanceId = taskInst.id
+taskAction.taskAction = 'Complete'
+taskAction.user = 'mdwapp'
+response = post http("services/Tasks/${taskInst.id}/Complete") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = taskAction.getJson()
+}
+assert response.code == 200
+
+verify process

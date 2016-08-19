@@ -968,6 +968,16 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 ProcessVO dbProc = getDbLoader().loadProcess(processId, withSubProcesses);
                 if (dbProc == null)
                     throw new DataAccessException("Process not found: id=" + processId);
+                // find the package name
+                List<PackageVO> packages = getDbLoader().getPackageList(false, null);
+                if (packages != null) {
+                    for (PackageVO pkg : packages) {
+                        if (pkg.containsProcess(dbProc.getId())) {
+                            dbProc.setPackageName(pkg.getName());
+                            dbProc.setPackageVersion(pkg.getVersionString());
+                        }
+                    }
+                }
                 return dbProc;
             }
             else {
@@ -1023,6 +1033,18 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
         if (found == null && compatibilityDataSource != null) {
             found = getDbLoader().getProcessBase(name, version);
+            if (found != null) {
+                // get the package name
+                List<PackageVO> packages = getDbLoader().getPackageList(false, null);
+                if (packages != null) {
+                    for (PackageVO pkg : packages) {
+                        if (pkg.containsProcess(found.getId())) {
+                            found.setPackageName(pkg.getName());
+                            found.setPackageVersion(pkg.getVersionString());
+                        }
+                    }
+                }
+            }
         }
         return found;
     }

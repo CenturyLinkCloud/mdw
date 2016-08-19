@@ -12,12 +12,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.PreloadableCache;
 import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
@@ -207,19 +210,7 @@ public class RuleSetCache implements PreloadableCache {
      * (or myPackage.MyCustomJavaClass for dynamic Java or Script).
      */
     public static RuleSetVO getRuleSet(RuleSetKey key) {
-        int delimIdx = -1;
-        String name = key.getName();
-        if (name != null) {
-          if (RuleSetVO.JAVA.equals(key.getLanguage())) {
-              delimIdx = name.endsWith(".java") ? name.substring(0, name.length() - 6).lastIndexOf('.') : name.lastIndexOf('.');
-          }
-          else if (RuleSetVO.GROOVY.equals(key.getLanguage())) {
-              delimIdx = name.endsWith(".groovy") ? name.substring(0, 8).lastIndexOf('.') : name.lastIndexOf('.');
-          }
-          else {
-            delimIdx = key.getName().indexOf('/');
-          }
-        }
+        int delimIdx = getDelimIndex(key);
         if (delimIdx > 0) {
             // look in package rule sets
             String pkgName = key.getName().substring(0, delimIdx);
@@ -240,7 +231,18 @@ public class RuleSetCache implements PreloadableCache {
             catch (CachingException ex) {
                 logger.severeException(ex.getMessage(), ex);
             }
-            return null;  // not found in package
+            if (ApplicationContext.isFileBasedAssetPersist()) {
+                // try to load (for compatibility case)
+                RuleSetVO ruleSet = loadRuleSet(key);
+                if (ruleSet != null) {
+                    getRuleSetMap();
+                    synchronized(ruleSetMap) {
+                        ruleSetMap.put(new RuleSetKey(ruleSet), ruleSet);
+                    }
+                    return ruleSet;
+                }
+            }
+            return null;  // not found
         }
 
         getRuleSetMap();
@@ -259,6 +261,23 @@ public class RuleSetCache implements PreloadableCache {
             }
         }
         return ruleSet;
+    }
+
+    private static int getDelimIndex(RuleSetKey key) {
+        int delimIdx = -1;
+        String name = key.getName();
+        if (name != null) {
+            if (RuleSetVO.JAVA.equals(key.getLanguage())) {
+                delimIdx = name.endsWith(".java") ? name.substring(0, name.length() - 6).lastIndexOf('.') : name.lastIndexOf('.');
+            }
+            else if (RuleSetVO.GROOVY.equals(key.getLanguage())) {
+                delimIdx = name.endsWith(".groovy") ? name.substring(0, 8).lastIndexOf('.') : name.lastIndexOf('.');
+            }
+            else {
+              delimIdx = key.getName().indexOf('/');
+            }
+        }
+        return delimIdx;
     }
 
     public static List<RuleSetVO> getRuleSets(String language) {
@@ -374,6 +393,22 @@ public class RuleSetCache implements PreloadableCache {
                     return DataAccess.getProcessLoader().getRuleSet(ruleSet.getId());
                 }
             }
+            if (ApplicationContext.isFileBasedAssetPersist()) {
+                DatabaseAccess db = new DatabaseAccess(null);
+                if (DataAccess.isUseCompatibilityDatasource(db)) {
+                    // compatibility check for in-flight db assets
+                    // Note: this retrieves by asset name only (ignoring package) -- requires unique asset names
+                    ProcessLoader dbLoader = DataAccess.getDbProcessLoader();
+                    String ruleSetName;
+                    int delimIdx = getDelimIndex(key);
+                    if (delimIdx > 0)
+                        ruleSetName = key.getName().substring(delimIdx + 1);
+                    else
+                        ruleSetName = key.getName();
+                    return dbLoader.getRuleSet(ruleSetName, key.getLanguage(), key.getVersion());
+                }
+            }
+
             return null;
         }
         catch (Exception ex) {

@@ -587,6 +587,9 @@
 .mdw-diff-ignored {
   color: #9e9e9e;
 }
+.mdw-dirty {
+	font-weight: bolder;
+}
 .mdw-item-heading {
   font-weight: bold;
   padding: 10px 10px 0 10px;  
@@ -616,6 +619,10 @@
   width: 100%;
   overflow: hidden;
   border: none;
+}
+.mdw-image-container {
+	max-width: 100%;
+	overflow-x: auto;
 }
 
 .panel-heading a {

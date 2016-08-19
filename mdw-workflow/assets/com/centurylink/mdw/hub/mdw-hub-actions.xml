@@ -104,18 +104,17 @@
         <navigationOutcome>tasks</navigationOutcome>
         <autosave>true</autosave>
       </allowableAction>
-      <!-- illustrates task forwarding -->
-      <!--
       <allowableAction alias="Transfer" requireComment="true">
         Forward
         <navigationOutcome>tasks</navigationOutcome>
+        <!-- use forTask element to limit forwarding to specific task logicalIds
         <forTask>
-          Routed Task
+          manualAck
+          <destination>Developers</destination>
           <destination>MDW Support</destination>
-          <destination>Fallout Specialists</destination>
         </forTask>
+        -->
       </allowableAction>
-      -->
       <allowableAction>
         Release
         <navigationOutcome>tasks</navigationOutcome>

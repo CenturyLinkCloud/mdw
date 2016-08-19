@@ -54,7 +54,7 @@ dependencies {
         // required to work around ServiceMix bug: https://issues.apache.org/jira/browse/SMX4-1089
     compile group: "org.apache.servicemix.bundles", name: "org.apache.servicemix.bundles.saaj-impl", version:"1.3.9_2"
 
-    compile group: "com.oracle", name: "ojdbc6", version: "11.2.0.3"
+    compile group: "com.oracle", name: "ojdbc6", version: "12.1.0.2.0"
     compile group: "com.qwest.appsec", name: "AccessControl", version: "6.8"
     compile group: "com.rsa.cleartrust", name: "asn1", version: "6.0.2.49"
     compile group: "com.rsa.cleartrust", name: "certj", version: "6.0.2.49"

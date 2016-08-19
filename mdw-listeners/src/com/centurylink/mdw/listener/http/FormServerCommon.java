@@ -63,7 +63,7 @@ public abstract class FormServerCommon {
     		loadDocument(datadoc, taskInst.getSecondaryOwnerId());
     	} else if (OwnerType.USER.equals(taskInst.getOwnerType())) {
     		// owner is USER and secondary owner is null indicates temporary task
-    		datadoc.load(taskInst.getTaskMessage());
+    		datadoc.load(taskInst.getActivityMessage());
     	}
     }
 
@@ -75,7 +75,7 @@ public abstract class FormServerCommon {
 					datadoc.format(), FormDataDocument.class.getName());
 		} else if (OwnerType.USER.equals(taskInst.getOwnerType())) {
     		// owner is USER and secondary owner is null indicates temporary task
-			taskInst.setTaskMessage(datadoc.format());
+			taskInst.setActivityMessage(datadoc.format());
 		}
     }
 

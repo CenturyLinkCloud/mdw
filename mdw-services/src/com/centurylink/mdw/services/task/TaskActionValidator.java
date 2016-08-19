@@ -6,8 +6,11 @@ package com.centurylink.mdw.services.task;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.el.PropertyNotFoundException;
+
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.data.task.TaskAction;
+import com.centurylink.mdw.model.data.task.TaskStatus;
 import com.centurylink.mdw.model.value.task.TaskActionVO;
 import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.value.task.TaskVO;
@@ -31,8 +34,16 @@ public class TaskActionValidator {
         try {
             TaskAction allowableAction = getAllowableAction(action);
             if (allowableAction == null) {
-                throw new TaskValidationException(ServiceException.BAD_REQUEST, "Action: " + action.getTaskAction()
-                        + " not allowed on task instance: " + runtimeContext.getInstanceId() + " with status " + runtimeContext.getStatus());
+                StringBuilder msg = new StringBuilder();
+                msg.append("Action ").append(action.getTaskAction());
+                msg.append(" not allowed by user ").append(action.getUser());
+                msg.append(" on task instance: ").append(runtimeContext.getInstanceId());
+                if (runtimeContext.getAssignee() != null && !runtimeContext.getAssignee().isEmpty())
+                    msg.append(" assigned to ").append(runtimeContext.getAssignee());
+                if (!TaskStatus.STATUSNAME_ASSIGNED.equals(runtimeContext.getStatus()))
+                    msg.append(" with status ").append(runtimeContext.getStatus());
+                msg.append(".");
+                throw new TaskValidationException(ServiceException.BAD_REQUEST, msg.toString());
             }
             if (allowableAction.isRequireComment() && (action.getComment() == null || action.getComment().isEmpty())) {
                 throw new TaskValidationException(ServiceException.BAD_REQUEST, "Comment required for Action: " + action.getTaskAction()
@@ -49,13 +60,19 @@ public class TaskActionValidator {
                     List<String> missingRequired = new ArrayList<String>();
                     for (VariableVO variable : variables) {
                         if (variable.isRequired()) {
-                            Object value = runtimeContext.getValue(variable.getName());
-                            if (value == null || value.toString().isEmpty())
+                            try {
+                                Object value = runtimeContext.getValue(variable.getName());
+                                if (value == null || value.toString().isEmpty())
+                                    missingRequired.add(variable.getName());
+                            }
+                            catch (PropertyNotFoundException ex) {
+                                runtimeContext.logException(ex.getMessage(), ex);
                                 missingRequired.add(variable.getName());
+                            }
                         }
                     }
                     if (!missingRequired.isEmpty()) {
-                        String missing = "Missing required values: ";
+                        String missing = "Missing required value(s): ";
                         for (int i = 0; i < missingRequired.size(); i++) {
                             missing += "'" + missingRequired.get(i) + "'";
                             missing += (i < missingRequired.size() - 1) ? "," : ".";

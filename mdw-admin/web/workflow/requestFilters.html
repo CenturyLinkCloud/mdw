@@ -1,0 +1,31 @@
+<!-- TODO: add more filters when isList (eg: select process, master-only, etc.)-->
+<div>
+  <div>
+    <label class="mdw-label">Received:</label>
+    <div class="mdw-flex-item">
+      <input class="form-control mdw-med-width" type="text" ng-model="requestFilter.receivedDate" 
+        uib-datepicker-popup="yyyy-MMM-dd" is-open="filterCalIsOpen" 
+        datepicker-options="dateOptions" ng-required="true" close-text="OK" />
+      <button type="button" class="btn btn-default" 
+        ng-click="filterCalIsOpen ? filterCalIsOpen = false : filterCalIsOpen = true">
+        <i class="glyphicon glyphicon-calendar"></i>
+      </button>
+    </div>
+  </div>
+  <div class="mdw-med-width mdw-vsm-indent" ng-if="isList || breakdown != 'Status'">
+    <label class="mdw-label">Status:</label>
+    <div class="mdw-inner-addon mdw-right-addon" uib-dropdown dropdown-append-to-body="true">
+      <i class="glyphicon glyphicon-chevron-down"></i>
+      <input type="text" class="form-control mdw-inline mdw-dropfilter" 
+        value="{{requestFilter.status}}" uib-dropdown-toggle readonly>
+      <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+        <li ng-repeat="status in allStatuses">
+          <a href="" ng-click="requestFilter.status = status">{{status}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="mdw-vmed-indent">
+    <button type="button" class="btn btn-primary mdw-btn">Reset</button>
+  </div>
+</div>

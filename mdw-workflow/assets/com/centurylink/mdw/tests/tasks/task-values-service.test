@@ -32,10 +32,12 @@ values["#{jaxbVar.elementOne}"] = "newElementOneValue"
 values["#{objectVar.taskmaster}"] = "dxoakes"
 values["docVar"] = "<empty/>"
 values["unassignedVar"] = "now assigned"
+def json = JsonUtil.getJson(values);
+println "PUT request JSON:\n" + json.toString(2) + "\n"
 response = put http("services/Tasks/${taskInst.id}/values") {
     user = 'mdwapp'
     password = 'ldap_012'
-    payload = JsonUtil.getJson(values)
+    payload = json
 }
 assert response.code == 200
 

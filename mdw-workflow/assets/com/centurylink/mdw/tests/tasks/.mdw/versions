@@ -1,4 +1,4 @@
-#Wed Aug 03 15:29:18 MDT 2016
+#Thu Aug 11 16:11:13 MDT 2016
 AutoAssignTask.task=1
 AutoAssignedFromJaxbAttr.task=1
 AutoAssignedFromJaxbElem.task=1 Renamed from e\:\\workspaces\\dons\\mdwdemo\\workflow\\assets\\com\\centurylink\\mdw\\tests\\tasks\\AutoAssignedThruJaxbElem.task
@@ -35,6 +35,8 @@ subtaskA.task=1
 subtaskB.task=1
 supp-pre-arrived-task-event.test=1
 supp-pre-arrived-task-event.yaml=1
+task-action-service.test=3
+task-action-service.yaml=1
 task-and-event-wait.test=1
 task-and-event-wait.yaml=1
 task-autoassign.test=5
@@ -56,7 +58,7 @@ task-values-json-1.json=5
 task-values-json-2.json=5
 task-values-json-3.json=3
 task-values-json-4.json=1
-task-values-service.test=10
+task-values-service.test=11
 task-values-service.yaml=2
 taskContext.spring=1
 taskJaxb.xsd=1

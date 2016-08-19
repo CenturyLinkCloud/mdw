@@ -71,7 +71,7 @@ dependencies {
     providedCompile group: "org.eclipse.birt", name: "modelapi", version: "2.6.1"
 
     // proprietary dependencies
-    compile group: "com.oracle", name: "ojdbc6", version: "11.2.0.3"  // for reports
+    compile group: "com.oracle", name: "ojdbc6", version: "12.1.0.2.0"  // for reports
     compile group: "com.qwest.appsec", name: "AccessControl", version: "6.8"
     compile group: "com.rsa.cleartrust", name: "asn1", version: "6.0.2.49"
     compile group: "com.rsa.cleartrust", name: "certj", version: "6.0.2.49"

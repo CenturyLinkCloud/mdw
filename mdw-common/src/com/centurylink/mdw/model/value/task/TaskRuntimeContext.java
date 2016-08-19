@@ -108,7 +108,7 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     public Integer getStateCode() { return taskInstanceVO.getStateCode(); }
     public String getStatus() { return TaskStatuses.getTaskStatuses().get(getStatusCode()); }
     public String getComments() { return taskInstanceVO.getComments(); }
-    public String getMessage() { return taskInstanceVO.getTaskMessage(); }
+    public String getMessage() { return taskInstanceVO.getActivityMessage(); }
     public String getActivityName() { return taskInstanceVO.getActivityName(); }
     public Long getTaskId() { return taskInstanceVO.getTaskId(); }
     public String getLogicalId() { return getTaskLogicalId(); }

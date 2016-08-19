@@ -2,9 +2,11 @@
   <div class="mdw-flex-item-left">
     <div>
       <div>
-        {{item.packageName}}/
-        <a class="mdw-item-link mdw-item-nowrap" href="#/blv-workflow/workflow/{{item.masterRequestId}}">
-          {{item.processName}} v{{item.processVersion}} &nbsp;{{item.id}}</a>
+        <div ng-if="!process"> <!-- only for list item -->
+          {{item.packageName}}/
+          <a class="mdw-item-link mdw-item-nowrap" href="#/workflow/processes/{{item.id}}">
+            {{item.processName}} v{{item.processVersion}} &nbsp;{{item.id}}</a>
+        </div>
         <div class="mdw-item-sub">
           <span>Master request: <a href="#/blv-business/business/{{item.masterRequestId}}" class="mdw-link">{{item.masterRequestId}}</a></span>
         </div>

@@ -71,7 +71,6 @@ public class WorkflowImageServlet extends HttpServlet {
                     processInstanceId = taskInstance.getOwnerId();
                     if (processInstanceIdParam != null && !String.valueOf(processInstanceId).equals(processInstanceIdParam))
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Task instance " + taskInstanceId + " is not for process instance " + processInstanceIdParam);
-                    // TODO: Figure out selected activity for task.
                 }
                 catch (NumberFormatException ex) {
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Bad taskInstanceId: " + taskInstanceIdParam);
@@ -124,8 +123,8 @@ public class WorkflowImageServlet extends HttpServlet {
             List<ProcessInstanceVO> embeddedInstances = null;
             if (process.getSubProcesses() != null) {
                 Query query = new Query();
-                query.putFilter("owner", OwnerType.MAIN_PROCESS_INSTANCE);
-                query.putFilter("ownerId", String.valueOf(processInstanceId));
+                query.setFilter("owner", OwnerType.MAIN_PROCESS_INSTANCE);
+                query.setFilter("ownerId", String.valueOf(processInstanceId));
                 embeddedInstances = services.getProcesses(query).getProcesses();
                 for (ProcessInstanceVO embeddedInstance : embeddedInstances) {
                     embeddedInstance.copyFrom(services.getProcess(embeddedInstance.getId()));
@@ -139,13 +138,13 @@ public class WorkflowImageServlet extends HttpServlet {
             if (selectedActivity != null)
                 helper.setSelectedActivity(selectedActivity);
 
-            String selectedActivityInstIdParam = request.getParameter("selectedActivityInstanceId");
-            if (selectedActivityInstIdParam != null) {
+            String activityInstanceIdParam = request.getParameter("activityInstanceId");
+            if (activityInstanceIdParam != null) {
                 try {
-                    helper.setSelectedActivityInstanceId(Long.parseLong(selectedActivityInstIdParam));
+                    helper.setSelectedActivityInstanceId(Long.parseLong(activityInstanceIdParam));
                 }
                 catch (NumberFormatException ex) {
-                    throw new ServiceException(ServiceException.BAD_REQUEST, "Bad selectedActivityInstanceId: " + selectedActivityInstIdParam);
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Bad selectedActivityInstanceId: " + activityInstanceIdParam);
                 }
             }
 
