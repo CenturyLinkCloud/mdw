@@ -2,8 +2,8 @@
 'use strict';
 
 var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ui.bootstrap', 'chart.js', 'authUser', 'mdw', 'util', 'constants', 
-                                           'mdwChart', 'mdwActions', 'mdwList', 'mdwPanel', 'routes', 'users', 'groups', 'roles', 'assets', 'testing', 
-                                           'tasks', 'task', 'taskTemplates', 'processes', 'activities', 'requests', 'services', 'solutions', 'history',
+                                           'mdwChart', 'mdwActions', 'mdwList', 'mdwPanel', 'mdwWorkflow', 'routes', 'users', 'groups', 'roles', 'assets', 
+                                           'testing', 'tasks', 'task', 'taskTemplates', 'processes', 'activities', 'requests', 'services', 'solutions', 'history',
                                            'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities',
                                            'blv', 'ngSanitize','blvProcessSvc', 'blvDrawingSvc', 'blvSharedData', 'blvtypes', 'mdwAttributesSvc']);
 

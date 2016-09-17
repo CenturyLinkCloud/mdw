@@ -91,14 +91,14 @@ processMod.controller('ProcessesController', ['$scope', '$http', 'mdw', 'util', 
 processMod.controller('ProcessController', ['$scope', '$route', '$routeParams', 'mdw', 'Process',
                                             function($scope, $route, $routeParams, mdw, Process) {
     
-   $scope.process = Process.retrieve({instanceId: $routeParams.instanceId}, function() {
-     $scope.process.name = $scope.process.processName;
-     $scope.item = $scope.process; // for processItem template
-   });
+  $scope.process = Process.retrieve({instanceId: $routeParams.instanceId}, function() {
+    $scope.process.name = $scope.process.processName;
+    $scope.item = $scope.process; // for processItem template
+  });
    
-   $scope.refreshWorkflowImage = function() {
-     $route.reload();
-   };   
+  $scope.refreshWorkflowImage = function() {
+    $route.reload();
+  };   
     
 }]);
 
@@ -106,4 +106,14 @@ processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/Services/Processes/:instanceId', mdw.serviceParams(), {
     retrieve: { method: 'GET', isArray: false }
   });
+}]);
+
+processMod.controller('ProcessDefController', ['$scope', '$routeParams', 'mdw',
+                                            function($scope, $routeParams, mdw) {
+    
+  $scope.processDef = { 
+    packageName: $routeParams.packageName,
+    name: $routeParams.processName,
+    version: $routeParams.version
+  };    
 }]);

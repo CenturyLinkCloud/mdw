@@ -1,7 +1,13 @@
 <ul class="nav mdw-nav">
-  <li nav-link="workflow/process"><a href="#/workflow/processes/{{process.id}}">Workflow Image</a></li>
-  <li nav-link="blv/blv-workflow/blv"><a href="#/blv-workflow/workflow/{{process.masterRequestId}}">Workflow Live View</a></li>
-  <li nav-link="blv/blv-business/blv"><a href="#/blv-business/business/{{process.masterRequestId}}">Business Live View</a></li>
+  <li nav-link="workflow/process"><a href="#/workflow/processes/{{process.id}}">
+    Workflow Image</a>
+  </li>
+  <li nav-link="workflow/definition"><a href="#/workflow/definition/{{process.packageName}}/{{process.processName}}/v{{process.processVersion}}">
+    Process Definition</a>
+  </li>
+  <li nav-link="blv/blv-business/blv"><a href="#/blv-business/business/{{process.masterRequestId}}">
+    Business Live View</a>
+  </li>
 </ul>
 <ul class="nav mdw-nav">
   <li nav-link="workflow/processes"><a href="#/workflow/processes">Process List</a></li>  

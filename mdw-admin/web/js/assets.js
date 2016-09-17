@@ -156,6 +156,7 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'Assets
                                        function($scope, $routeParams, mdw, Assets, Asset) {
   
   $scope.packageName = $routeParams.packageName;
+  $scope.assetName = $routeParams.assetName;
 
   $scope.asset = Assets.get({
       packageName: $routeParams.packageName,
@@ -166,8 +167,11 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'Assets
       if (lastDot > 0 && lastDot < $scope.asset.name.length - 2)
         $scope.asset.language = $scope.asset.name.substring(lastDot + 1);
 
-      if ($scope.asset.language == 'proc')
-        $scope.asset.workflowImageUrl = mdw.roots.hub + '/workflowImage?processId=' + $scope.asset.id; 
+      if ($scope.asset.language == 'proc') {
+        // TODO: asset.content becomes backup in case editing is canceled
+        $scope.process = {packageName: $scope.packageName, name: $scope.asset.name.substring(0, lastDot)};
+        // $scope.asset.workflowImageUrl = mdw.roots.hub + '/workflowImage?processId=' + $scope.asset.id;
+      }
       $scope.asset.url = mdw.roots.hub + '/asset/' + $scope.packageName + '/' +  $scope.asset.name;
       $scope.asset.view = 'content';      
       if (!$scope.asset.isBinary && !$scope.asset.isImage) {

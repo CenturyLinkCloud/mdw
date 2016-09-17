@@ -5,7 +5,7 @@
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
           <span class="glyphicon glyphicon-file mdw-item-icon"></span>
-          <a ng-href="#/packages/{{packageName}}">{{packageName}}</a> / {{asset.name}} v{{asset.version}}
+          <a ng-href="#/packages/{{packageName}}">{{packageName}}</a> / {{assetName}} v{{asset.version}}
           <span class="mdw-diff" ng-if="asset.vcsDiff == 'DIFFERENT'">*</span>
           <span class="mdw-diff" ng-if="asset.vcsDiff == 'EXTRA'"><sup>+</sup></span>
           <span class="mdw-diff" ng-if="asset.vcsDiff == 'MISSING'"><sup>-</sup></span>
@@ -23,8 +23,13 @@
           </a>            
         </div>
       </div>
+        <div class="mdw-image-container" ng-if="asset.language == 'proc' && asset.view == 'content' && asset.content">
+          <!-- 
+          <img ng-src="{{asset.workflowImageUrl}}" alt="asset.name" />
+           -->
+          <canvas mdw-workflow="process"></canvas> 
+        </div>
       <div class="mdw-item-content" ng-if="asset.view == 'content' && asset.content">
-        <img ng-if="asset.language == 'proc'" ng-src="{{asset.workflowImageUrl}}" alt="asset.name" />
         <pre ng-if="!asset.isBinary && !asset.isMarkdown && asset.language != 'proc'" class="mdw-line-nums">{{asset.lineNums}}</pre>
         <pre ng-show="!asset.isBinary && !asset.isMarkdown && asset.language != 'proc'" class="mdw-resource-content"><code class="mdw-code" ng-bind-html="asset.content | highlight:asset.language | unsafe"></code></pre>
         <div ng-show="asset.isMarkdown" class="mdw-resource-content"><div ng-bind-html="asset.content | markdown | unsafe"></div></div>

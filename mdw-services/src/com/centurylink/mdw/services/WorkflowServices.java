@@ -121,6 +121,8 @@ public interface WorkflowServices {
 
     public Map<Date,List<ActivityCount>> getActivityInstanceBreakdown(Query query) throws ServiceException;
 
+    public ProcessVO getProcessDefinition(String assetPath, Query query) throws ServiceException;
+
     public List<ProcessVO> getProcessDefinitions(Query query) throws ServiceException;
 
     public ActivityList getActivityDefinitions(Query query) throws ServiceException;

@@ -11,10 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
+import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.utilities.FileHelper;
 import com.centurylink.mdw.common.utilities.TransactionWrapper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
@@ -29,6 +33,7 @@ import com.centurylink.mdw.model.value.activity.ActivityCount;
 import com.centurylink.mdw.model.value.activity.ActivityInstance;
 import com.centurylink.mdw.model.value.activity.ActivityList;
 import com.centurylink.mdw.model.value.activity.ActivityVO;
+import com.centurylink.mdw.model.value.asset.Asset;
 import com.centurylink.mdw.model.value.asset.AssetHeader;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
@@ -525,6 +530,34 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    public ProcessVO getProcessDefinition(String assetPath, Query query) throws ServiceException {
+
+        int lastSlash = assetPath.lastIndexOf('/');
+        if (lastSlash <= 0)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad asset path: " + assetPath);
+        String packageName = assetPath.substring(0, lastSlash);
+        String processName = assetPath.substring(lastSlash + 1);
+        if (assetPath.endsWith(".proc"))
+            processName = processName.substring(0, processName.length() - ".proc".length());
+        else
+            assetPath += ".proc";
+        Asset asset = new Asset(ApplicationContext.getAssetRoot(), assetPath);
+        if (!asset.getFile().isFile())
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath);
+
+        try {
+            String version = query.getFilter("version"); // TODO honor version
+            String json = new String(FileHelper.read(asset.getFile()));
+            ProcessVO process = new ProcessVO(new JSONObject(json));
+            process.setName(processName);
+            process.setPackageName(packageName);
+            return process;
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error reading: " + asset.getFile(), ex);
+        }
+    }
+
     public List<ProcessVO> getProcessDefinitions(Query query) throws ServiceException {
         try {
             String find = query.getFind();
@@ -600,4 +633,5 @@ public class WorkflowServicesImpl implements WorkflowServices {
             throw new ServiceException(500, ex.getMessage(), ex);
         }
     }
+
 }
