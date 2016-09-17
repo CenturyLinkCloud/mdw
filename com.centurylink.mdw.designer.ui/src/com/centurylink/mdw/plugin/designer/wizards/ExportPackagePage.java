@@ -16,17 +16,18 @@ import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
 
 public class ExportPackagePage extends ImportExportPage
 {
+  private Button exportJsonCheckbox;
   private Button includeTaskTemplsCheckbox;
   private Button inferImplsCheckbox;
 
   public ExportPackagePage()
   {
-    super("Export MDW Package(s)", "Export XML file for MDW package(s).");
+    super("Export MDW Package(s)", "Export JSON or XML file for MDW package(s).");
   }
 
   protected String getDefaultFileName()
   {
-    return getPackage().getName() + "-" + getPackage().getVersionString() + ".xml";
+    return getPackage().getName() + "-" + getPackage().getVersionString() + getFileExtension();
   }
 
   @Override
@@ -34,9 +35,36 @@ public class ExportPackagePage extends ImportExportPage
   {
     super.createControls(composite, ncol);
     if (getProject().isFilePersist())
+    {
+      createExportJson(composite, ncol);
       createIncludeTaskTemplates(composite, ncol);
+    }
     else
+    {
       createInferImplementors(composite, ncol);
+    }
+  }
+
+  private void createExportJson(Composite parent, int ncol)
+  {
+    exportJsonCheckbox = new Button(parent, SWT.CHECK | SWT.LEFT);
+    GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
+    gd.horizontalSpan = ncol;
+    gd.verticalIndent = 10;
+    exportJsonCheckbox.setLayoutData(gd);
+    exportJsonCheckbox.setText("Export JSON");
+    exportJsonCheckbox.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
+        boolean checked = exportJsonCheckbox.getSelection();
+        IPreferenceStore prefsStore = MdwPlugin.getDefault().getPreferenceStore();
+        prefsStore.setValue(PreferenceConstants.PREFS_EXPORT_JSON_FORMAT, checked);
+      }
+    });
+    IPreferenceStore prefsStore = MdwPlugin.getDefault().getPreferenceStore();
+    boolean exportJson = prefsStore.getBoolean(PreferenceConstants.PREFS_EXPORT_JSON_FORMAT);
+    exportJsonCheckbox.setSelection(exportJson);
   }
 
   private void createIncludeTaskTemplates(Composite parent, int ncol)
@@ -83,4 +111,8 @@ public class ExportPackagePage extends ImportExportPage
     inferImplsCheckbox.setSelection(inferReferencedImpls);
   }
 
+  protected String getFileExtension()
+  {
+    return MdwPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREFS_EXPORT_JSON_FORMAT) ? ".json" : ".xml";
+  }
 }

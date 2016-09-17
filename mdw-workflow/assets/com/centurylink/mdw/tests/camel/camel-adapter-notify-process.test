@@ -1,4 +1,5 @@
-// camel-adapter-notify-process
+// camel-adapter-notify-process 
+//make sure camel-core bundle is active 
 start process("CamelEventWait") {
 	variables = [eventId: 2537]
 }

@@ -30,6 +30,10 @@ public class NewPackageWizard extends Wizard implements INewWizard
   private WorkflowPackage newPackage;
   public WorkflowPackage getPackage() { return newPackage; }
 
+  private boolean json;
+  public boolean isJson() { return json; }
+  public void setJson(boolean json) { this.json = json; }
+
   public void init(IWorkbench workbench, IStructuredSelection selection)
   {
     setDefaultPageImageDescriptor(MdwPlugin.getImageDescriptor("icons/mdw_wiz.png"));
@@ -65,7 +69,7 @@ public class NewPackageWizard extends Wizard implements INewWizard
   public boolean performFinish()
   {
     DesignerProxy designerProxy = newPackage.getProject().getDesignerProxy();
-    designerProxy.createNewPackage(newPackage);
+    designerProxy.createNewPackage(newPackage, isJson());
     newPackage.addElementChangeListener(newPackage.getProject());
     newPackage.fireElementChangeEvent(ChangeType.ELEMENT_CREATE, newPackage);
     DesignerPerspective.promptForShowPerspective(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), newPackage);

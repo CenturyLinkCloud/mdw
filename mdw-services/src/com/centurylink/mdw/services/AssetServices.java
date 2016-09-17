@@ -48,7 +48,7 @@ public interface AssetServices {
      * Returns the list of workflow packages.  Does not include archived packages.
      * Includes Git information if available.
      */
-    public PackageList getPackages() throws ServiceException;
+    public PackageList getPackages(boolean withVcsInfo) throws ServiceException;
 
 
     /**

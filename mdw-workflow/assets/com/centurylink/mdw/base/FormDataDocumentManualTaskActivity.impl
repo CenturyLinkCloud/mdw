@@ -1,62 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.task.FormDataDocumentManualTaskActivity" Type="com.centurylink.mdw.activity.types.TaskActivity" Label="FormDocument Manual Task" IconFile="task.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET>
-  <TEXT NAME="TaskName" LABEL="Task Name" VW="300"/>
-  <TEXT NAME="TaskLogicalId" LABEL="Task Logical ID" ADVANCED="true" VW="300"/>
-  <DROPDOWN NAME="FormDataVar" LABEL="Form Data Document Variable" LW="190" VX="220" VW="200" SOURCE="Variables"/>
-  <DROPDOWN NAME="FormName" LABEL="Form Name" VW="300" SOURCE="Form" EDITABLE="true" />
-  <TEXT NAME="Task Description" MULTILINE="true" ADVANCED="true"/>
-  <DROPDOWN NAME="Category" SOURCE="TaskCategory" VW="100"/>
-  <DROPDOWN NAME="SubTaskStrategy" LABEL="SubTask Strategy" VX="180" VW="160">
-    <OPTION PARAMETER="SubTask Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
-  </DROPDOWN>
-  <HYPERLINK URL="/MDWWeb/doc/FormDataDocumentManualTaskActivity.html">FormDocument Task Help</HYPERLINK>
-  <SELECT NAME="Wait for Task" DEFAULT="TRUE" ADVANCED="true" SECTION="Events">
-    <OPTION>TRUE</OPTION>
-    <OPTION>FALSE</OPTION>
-  </SELECT>
-  <DATETIME NAME="TaskSLA" LABEL="Task Due In" UNITS="Hours,Days,Minutes,Dynamic" UNITS_ATTR="SLAUnits" DEFAULT="Hours"/>
-  <DATETIME NAME="AlertInterval" LABEL="Alert Interval" UNITS="Hours,Days" UNITS_ATTR="AlertIntervalUnits" DEFAULT="Hours"/>
-  <DROPDOWN NAME="PriorityStrategy" LABEL="Prioritization Strategy" VX="180" VW="160">
-    <OPTION PARAMETER="Priority">Specified</OPTION>
-    <OPTION PARAMETER="Prioritization Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
-  </DROPDOWN>
-  <HYPERLINK URL="/MDWWeb/doc/taskSLA.html">Task SLA/Alert Help</HYPERLINK>
-  <LIST NAME="Groups" SOURCE="UserGroup" SECTION="Workgroups"/>
-  <DROPDOWN NAME="RoutingStrategy" LABEL="Routing Strategy" VX="180" VW="160" SECTION="Workgroups">
-    <OPTION PARAMETER="Routing Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
-  </DROPDOWN>  
-  <DROPDOWN NAME="AutoAssign" LABEL="Auto-Assign Strategy" VX="180" VW="160" SECTION="Workgroups">
-    <OPTION>Round Robin</OPTION>
-    <OPTION>Shortest Queue</OPTION>
-  </DROPDOWN>
-  <TABLE NAME="Notices" MODIFYONLY="true" DEFAULT="$DefaultNotices" SECTION="Notices">
-    <TEXT LABEL="Outcome" READONLY="true" VW="150"/>
-    <DROPDOWN LABEL="Template" SOURCE="RuleSets" TYPE="HTML,FACELET,XML" VW="200"/>
-    <DROPDOWN LABEL="Template Version" SOURCE="AssetVersion"/>
-    <TEXT LABEL="Notifier Class(es)" VW="300"/>
-  </TABLE>
-  <HYPERLINK URL="/MDWWeb/doc/taskNotices.html" SECTION="Notices">Task Notices Help</HYPERLINK>
-  <NOTE SECTION="Recipients" VH="65">Overrides task workgroups for notices.</NOTE>
-  <LIST NAME="NoticeGroups" LABEL="Notice Groups" SOURCE="UserGroup" SECTION="Recipients" ADVANCED="true"/>
-  <TEXT LABEL="Recipient Emails" NAME="RecipientVar" VX="160" VW="410" SECTION="Recipients"/>
-  <TABLE NAME="WAIT_EVENT_NAMES" LABEL="Events" SECTION="Events" ADVANCED="true">
-    <TEXT LABEL="Event Name"/>
-    <TEXT LABEL="Completion Code"/>
-    <BOOLEAN LABEL="Recurring" DEFAULT="true" READONLY="true"/>
-  </TABLE>
-  <DROPDOWN NAME="STATUS_AFTER_EVENT" LABEL="Status after receiving event" DEFAULT="Cancelled" LW="175" VX="200" VW="120" SECTION="Events" ADVANCED="true">
-    <OPTION>Hold</OPTION>
-    <OPTION>Waiting</OPTION>
-    <OPTION>Cancelled</OPTION>
-  </DROPDOWN>
-  <HYPERLINK URL="/MDWWeb/doc/taskWaitingEvents.html" SECTION="Events" ADVANCED="true">Task Events Help</HYPERLINK>
-  <TABLE NAME="Service Processes" ADVANCED="true" SECTION="Processes">
-    <TEXT LABEL="Logical Name"/>
-    <TEXT LABEL="Real Name"/>
-  </TABLE>
-  <TABLE NAME="Indices" SECTION="Indexes">
-    <TEXT LABEL="Index" VW="200"/>
-    <TEXT LABEL="Value Expression" VW="200"/>
-  </TABLE>  
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.TaskActivity",
+  "icon": "task.png",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.task.FormDataDocumentManualTaskActivity",
+  "label": "FormDocument Manual Task",
+  "pagelet": "<PAGELET>\n  <TEXT NAME=\"TaskName\" LABEL=\"Task Name\" VW=\"300\"/>\n  <TEXT NAME=\"TaskLogicalId\" LABEL=\"Task Logical ID\" ADVANCED=\"true\" VW=\"300\"/>\n  <DROPDOWN NAME=\"FormDataVar\" LABEL=\"Form Data Document Variable\" LW=\"190\" VX=\"220\" VW=\"200\" SOURCE=\"Variables\"/>\n  <DROPDOWN NAME=\"FormName\" LABEL=\"Form Name\" VW=\"300\" SOURCE=\"Form\" EDITABLE=\"true\" />\n  <TEXT NAME=\"Task Description\" MULTILINE=\"true\" ADVANCED=\"true\"/>\n  <DROPDOWN NAME=\"Category\" SOURCE=\"TaskCategory\" VW=\"100\"/>\n  <DROPDOWN NAME=\"SubTaskStrategy\" LABEL=\"SubTask Strategy\" VX=\"180\" VW=\"160\">\n    <OPTION PARAMETER=\"SubTask Rules\" SOURCE=\"RuleSets\" TYPE=\"DROOLS,EXCEL_2007\">Rules-Based<\/OPTION>\n  <\/DROPDOWN>\n  <HYPERLINK URL=\"/MDWWeb/doc/FormDataDocumentManualTaskActivity.html\">FormDocument Task Help<\/HYPERLINK>\n  <SELECT NAME=\"Wait for Task\" DEFAULT=\"TRUE\" ADVANCED=\"true\" SECTION=\"Events\">\n    <OPTION>TRUE<\/OPTION>\n    <OPTION>FALSE<\/OPTION>\n  <\/SELECT>\n  <DATETIME NAME=\"TaskSLA\" LABEL=\"Task Due In\" UNITS=\"Hours,Days,Minutes,Dynamic\" UNITS_ATTR=\"SLAUnits\" DEFAULT=\"Hours\"/>\n  <DATETIME NAME=\"AlertInterval\" LABEL=\"Alert Interval\" UNITS=\"Hours,Days\" UNITS_ATTR=\"AlertIntervalUnits\" DEFAULT=\"Hours\"/>\n  <DROPDOWN NAME=\"PriorityStrategy\" LABEL=\"Prioritization Strategy\" VX=\"180\" VW=\"160\">\n    <OPTION PARAMETER=\"Priority\">Specified<\/OPTION>\n    <OPTION PARAMETER=\"Prioritization Rules\" SOURCE=\"RuleSets\" TYPE=\"DROOLS,EXCEL_2007\">Rules-Based<\/OPTION>\n  <\/DROPDOWN>\n  <HYPERLINK URL=\"/MDWWeb/doc/taskSLA.html\">Task SLA/Alert Help<\/HYPERLINK>\n  <LIST NAME=\"Groups\" SOURCE=\"UserGroup\" SECTION=\"Workgroups\"/>\n  <DROPDOWN NAME=\"RoutingStrategy\" LABEL=\"Routing Strategy\" VX=\"180\" VW=\"160\" SECTION=\"Workgroups\">\n    <OPTION PARAMETER=\"Routing Rules\" SOURCE=\"RuleSets\" TYPE=\"DROOLS,EXCEL_2007\">Rules-Based<\/OPTION>\n  <\/DROPDOWN>  \n  <DROPDOWN NAME=\"AutoAssign\" LABEL=\"Auto-Assign Strategy\" VX=\"180\" VW=\"160\" SECTION=\"Workgroups\">\n    <OPTION>Round Robin<\/OPTION>\n    <OPTION>Shortest Queue<\/OPTION>\n  <\/DROPDOWN>\n  <TABLE NAME=\"Notices\" MODIFYONLY=\"true\" DEFAULT=\"$DefaultNotices\" SECTION=\"Notices\">\n    <TEXT LABEL=\"Outcome\" READONLY=\"true\" VW=\"150\"/>\n    <DROPDOWN LABEL=\"Template\" SOURCE=\"RuleSets\" TYPE=\"HTML,FACELET,XML\" VW=\"200\"/>\n    <DROPDOWN LABEL=\"Template Version\" SOURCE=\"AssetVersion\"/>\n    <TEXT LABEL=\"Notifier Class(es)\" VW=\"300\"/>\n  <\/TABLE>\n  <HYPERLINK URL=\"/MDWWeb/doc/taskNotices.html\" SECTION=\"Notices\">Task Notices Help<\/HYPERLINK>\n  <NOTE SECTION=\"Recipients\" VH=\"65\">Overrides task workgroups for notices.<\/NOTE>\n  <LIST NAME=\"NoticeGroups\" LABEL=\"Notice Groups\" SOURCE=\"UserGroup\" SECTION=\"Recipients\" ADVANCED=\"true\"/>\n  <TEXT LABEL=\"Recipient Emails\" NAME=\"RecipientVar\" VX=\"160\" VW=\"410\" SECTION=\"Recipients\"/>\n  <TABLE NAME=\"WAIT_EVENT_NAMES\" LABEL=\"Events\" SECTION=\"Events\" ADVANCED=\"true\">\n    <TEXT LABEL=\"Event Name\"/>\n    <TEXT LABEL=\"Completion Code\"/>\n    <BOOLEAN LABEL=\"Recurring\" DEFAULT=\"true\" READONLY=\"true\"/>\n  <\/TABLE>\n  <DROPDOWN NAME=\"STATUS_AFTER_EVENT\" LABEL=\"Status after receiving event\" DEFAULT=\"Cancelled\" LW=\"175\" VX=\"200\" VW=\"120\" SECTION=\"Events\" ADVANCED=\"true\">\n    <OPTION>Hold<\/OPTION>\n    <OPTION>Waiting<\/OPTION>\n    <OPTION>Cancelled<\/OPTION>\n  <\/DROPDOWN>\n  <HYPERLINK URL=\"/MDWWeb/doc/taskWaitingEvents.html\" SECTION=\"Events\" ADVANCED=\"true\">Task Events Help<\/HYPERLINK>\n  <TABLE NAME=\"Service Processes\" ADVANCED=\"true\" SECTION=\"Processes\">\n    <TEXT LABEL=\"Logical Name\"/>\n    <TEXT LABEL=\"Real Name\"/>\n  <\/TABLE>\n  <TABLE NAME=\"Indices\" SECTION=\"Indexes\">\n    <TEXT LABEL=\"Index\" VW=\"200\"/>\n    <TEXT LABEL=\"Value Expression\" VW=\"200\"/>\n  <\/TABLE>  \n<\/PAGELET>"
+}

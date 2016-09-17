@@ -47,7 +47,7 @@ public class Assets extends JsonRestService {
             String asset = pkg == null ? null : getSegment(path, 2);
 
             if (pkg == null) {
-                return assetServices.getPackages().getJson();
+                return assetServices.getPackages(true).getJson(); // TODO query param for vcs info
             }
             else {
                 if (asset == null) {

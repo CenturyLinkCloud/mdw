@@ -1,4 +1,0 @@
-<bpm:externalEventHandler xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:EventName>MDWEventNotification</bpm:EventName>
-  <bpm:EventHandler>com.centurylink.mdw.listener.ExternalNotifyWaitingActivityEventHandler?EventName={//Name}&amp;EventMessage={//Message}</bpm:EventHandler>
-</bpm:externalEventHandler>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.value.work;
 
@@ -7,13 +7,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.centurylink.mdw.common.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
 import com.centurylink.mdw.common.constant.WorkTransitionAttributeConstant;
+import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.common.utilities.JsonUtil;
 import com.centurylink.mdw.model.data.event.EventType;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 
-public class WorkTransitionVO implements Serializable {
+public class WorkTransitionVO implements Serializable, Jsonable {
 
     public static final String DELAY_UNIT_SECOND = "s";
     public static final String DELAY_UNIT_MINUTE = "m";
@@ -34,7 +39,7 @@ public class WorkTransitionVO implements Serializable {
     private List<Long> dependentTransitionIds;
 
 
-    public WorkTransitionVO(){
+    public WorkTransitionVO() {
     }
 
     public WorkTransitionVO(Long pWorkTransId, Long pFromWorkId, Long pToWorkId,
@@ -228,5 +233,45 @@ public class WorkTransitionVO implements Serializable {
     public boolean isHidden() {
         String logicalId = getLogicalId();
         return logicalId != null && logicalId.startsWith("H");
+    }
+
+    /**
+     * Does not set fromWorkId since JSON transitions are children of activities.
+     */
+    public WorkTransitionVO(JSONObject json) throws JSONException {
+        String logicalId = json.getString("id");
+        if (logicalId.startsWith("Transition"))
+            logicalId = "T" + logicalId.substring(10);
+        workTransitionId = Long.valueOf(logicalId.substring(1));
+        this.toWorkId = Long.parseLong(json.getString("to").substring(1));
+        if (json.has("resultCode"))
+            this.completionCode = json.getString("resultCode");
+        if (json.has("event"))
+            this.eventType = EventType.getEventTypeFromName(json.getString("event"));
+        else
+            this.eventType = EventType.FINISH;
+        if (json.has("attributes"))
+            this.attributes = JsonUtil.getAttributes(json.getJSONObject("attributes"));
+        setAttribute(WorkAttributeConstant.LOGICAL_ID, logicalId);
+    }
+
+    /**
+     * Does not populate from field since JSON transitions are children of activities.
+     */
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("id", getLogicalId());
+        json.put("to", "A" + toWorkId);
+        if (completionCode != null)
+            json.put("resultCode", completionCode);
+        if (eventType != null)
+            json.put("event", EventType.getEventTypeName(eventType));
+        if (attributes != null && ! attributes.isEmpty())
+            json.put("attributes", JsonUtil.getAttributesJson(attributes));
+        return json;
+    }
+
+    public String getJsonName() {
+        return JsonUtil.padLogicalId(getLogicalId());
     }
 }

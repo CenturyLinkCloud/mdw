@@ -4,8 +4,8 @@
 var taskMod = angular.module('task', ['ngResource', 'mdw', 'ui.grid', 'ui.grid.selection', 'ngFileUpload', 'taskTemplates']);
 
 // task summary
-taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http', 'mdw', 'util', 'TaskUtil', 'Tasks', 'TaskAction',
-                                      function($scope, $route, $routeParams, $http, mdw, util, TaskUtil, Tasks, TaskAction) {
+taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http', 'mdw', 'util', 'TaskUtil', 'Tasks', 'Task', 'TaskAction',
+                                      function($scope, $route, $routeParams, $http, mdw, util, TaskUtil, Tasks, Task, TaskAction) {
 
   $scope.taskInstanceId = $routeParams.taskInstanceId;
   
@@ -17,7 +17,6 @@ taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http
           mdw.messages = data.status.message;
         }
         else {
-          mdw.messages = null;
           $scope.task.dirty = false;
         }
       }, 
@@ -26,80 +25,22 @@ taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http
       });
   };
   
-  $scope.retrieve = function() {
-    // retrieve task
-    $scope.task = Tasks.get({taskInstanceId: $routeParams.taskInstanceId}, function() {
-      mdw.messages = null;
-      $scope.task.dirty = false;
-      $scope.dbDate = new Date($scope.task.retrieveDate);
-      TaskUtil.setTask($scope.task, $scope.dbDate);
-      $scope.task.actionable = true; // TODO assigned to user and not in final state
-      $scope.task.editable = true; // TODO assigned to user and not in final state 
-    });
-      
-    // retrieve taskActions
-    Tasks.actions({taskInstanceId: $routeParams.taskInstanceId, action: 'actions'}, 
-      function(data) {
-        $scope.taskActions = data;
-      },
-      function(error) {
-        $scope.task.message = error.data.status.message;
-      }
-    );
-  };
-  $scope.retrieve();
+  $scope.task = Task.retrieveTask($scope, $routeParams.taskInstanceId);
   
   $scope.random = Math.random(); // param to force image reload
   
-  $scope.popups = {};
+  $scope.datePopups = {};
   $scope.openDueDatePopup = function() {
-    $scope.popups.dueDate = true;
+    $scope.datePopups.dueDate = true;
   };
   
   $scope.dueDateChanged = function() {
     $scope.task.dirty = true;
-    TaskUtil.setTask($scope.task, $scope.dbDate);
+    TaskUtil.setTask($scope.task, $scope.task.dbDate);
     if ($scope.task.dueDate)
       $scope.task.dueInSeconds = Math.round(($scope.task.dueDate.getTime() - Date.now())/1000);
     else
       $scope.task.dueInSeconds = -1;
-  };
-
-  $scope.findTypeaheadAssignees = function(typed) {
-    return $http.get(mdw.roots.services + '/services/Tasks/assignees' + '?app=mdw-admin&find=' + typed).then(function(response) {
-      return response.data.users;
-    });
-  };
-  
-  $scope.getAssigneePopPlace = function() {
-    return 'left';
-  };
-    
-  $scope.performAssign = function(assignee) {
-    $scope.performAction('Assign', assignee.cuid);
-  };
-  
-  $scope.performAction = function(action, assignee) {
-    mdw.messages = null;
-    $scope.closePopover(); // popover should be closed
-    console.log('Performing action: ' + action + ' on task ' + $scope.task.id);
-    var taskAction = {
-        taskAction: action, 
-        user: $scope.authUser.id, 
-        taskInstanceId: $scope.task.id,
-        assignee: assignee
-    };
-    
-    TaskAction.action({action: action}, taskAction, function(data) {
-      if (data.status.code !== 0) {
-        mdw.messages = data.status.message;
-      }
-      else {
-        $scope.retrieve();
-      }
-    }, function(error) {
-      mdw.messages = error.data.status.message;
-    });
   };
   
   $scope.refreshWorkflowImage = function() {
@@ -107,12 +48,119 @@ taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http
   };
 }]);
 
+// task values
+taskMod.controller('TaskValuesController', ['$scope', '$route', '$routeParams', 'mdw', 'Tasks', 'Task', 'DOCUMENT_TYPES',
+                                          function($scope, $route, $routeParams, mdw, Tasks, Task, DOCUMENT_TYPES) {
+  mdw.message = null;
+  $scope.task = Task.getTask($scope);
+  if (!$scope.task)
+    $scope.task = Task.retrieveTask($scope, $routeParams.taskInstanceId);
+  
+  // retrieve task values
+  var values = Tasks.get({taskInstanceId: $routeParams.taskInstanceId, extra: 'values'}, function() {
+    // TODO: what happens on nav when dirty?
+    $scope.task.dirty = false;
+    
+    $scope.task.values = [];
+    if (values && typeof values === 'object') {
+      // convert object into sorted array
+      for (var key in values) {
+        if (values.hasOwnProperty(key) && !key.startsWith('$')) {
+          var val = values[key];
+          val.name = key;
+          if (!val.sequence)
+            val.sequence = 0;
+          val.isDocument = val.type && DOCUMENT_TYPES.indexOf(val.type) >= 0;
+          if (val.isDocument) {
+            val.showLines = 8;
+            if (val.value && val.value.lineCount) {
+              var lineCount = val.value.lineCount();
+              if (lineCount > 25)
+                val.showLines = 25;
+              else if (lineCount > 8)
+                val.showLines = lineCount();
+            }
+          }
+          val.editable = $scope.task.editable && val.display !== 'ReadOnly';  
+          $scope.task.values.push(val);
+        }
+      }
+      $scope.task.values.sort(function(val1, val2) {
+        var diff = val1.sequence - val2.sequence;
+        if (diff === 0) {
+          var label1 = val1.label ? val1.label : val1.name;
+          var label2 = val2.label ? val2.label : val2.name;
+          return label1.localeCompare(label2);
+        }
+        else {
+          return diff;
+        }
+      });
+    }
+  });
+  
+  $scope.openDatePopup = function(field) {
+    $scope.datePopups = {};
+    $scope.datePopups[field] = true;
+  };
+  
+  $scope.dirty = function(value) {
+    value.dirty = true;
+    $scope.task.dirty = true;
+  };
+  
+  // save values
+  $scope.save = function() {
+    console.log('saving task values for instance: ' + $scope.task.id);
+    var newValues = {};
+    $scope.task.values.forEach(function(value) {
+      if (value.display && value.display !== 'ReadOnly' && value.value)
+        newValues[value.name] = value.value;
+    });
+    
+    Tasks.update({taskInstanceId: $scope.task.id, extra: 'values'}, newValues,
+      function(data) {
+        if (data.status.code !== 0) {
+          mdw.messages = data.status.message;
+        }
+        else {
+          $route.reload();
+        }
+      }, 
+      function(error) {
+        mdw.messages = error.data.status.message;
+      }
+    );
+  };
+  
+}]);
+
 // subtasks
-taskMod.controller('SubtasksController', ['$scope', '$routeParams', '$location', 'Tasks', 'TaskTemplates',
-                                           function($scope, $routeParams, $location, Tasks, TaskTemplates) {
-  $scope.masterTaskId = $routeParams.taskInstanceId;
-  $scope.task = {id: $scope.masterTaskId}; // for nav routing only
-  $scope.subtaskList = Tasks.get({taskInstanceId: $routeParams.taskInstanceId, action: 'subtasks'});
+taskMod.controller('SubtasksController', ['$scope', '$routeParams', '$location', 'mdw', 'Tasks', 'Task', 'TaskUtil', 'TaskTemplates',
+                                           function($scope, $routeParams, $location, mdw, Tasks, Task, TaskUtil, TaskTemplates) {
+  mdw.message = null;
+  $scope.task = Task.getTask($scope);
+  if (!$scope.task)
+    $scope.task = Task.retrieveTask($scope, $routeParams.taskInstanceId);
+  
+  $scope.subtaskList = Tasks.get({taskInstanceId: $routeParams.taskInstanceId, extra: 'subtasks'},
+    function(data) {
+      if (data.status && data.status.code !== 0) {
+        mdw.messages = data.status.message;
+      }
+      else {
+        if ($scope.subtaskList && $scope.subtaskList.subtasks) {
+          var dbDate = new Date($scope.subtaskList.retrieveDate);
+          $scope.subtaskList.subtasks.forEach(function(subtask) {
+            TaskUtil.setTask(subtask, dbDate);
+          });
+        }
+      }
+    }, 
+    function(error) {
+      mdw.messages = error.data.status.message;
+    }    
+  );
   $scope.create = false;
   $scope.setCreate = function(create) {
     $scope.create = create;
@@ -139,15 +187,15 @@ taskMod.controller('SubtasksController', ['$scope', '$routeParams', '$location',
   $scope.save = function() {
     console.log('creating subtask: ' + $scope.subtask.template.logicalId);
     
-    Tasks.create({}, {logicalId: $scope.subtask.template.logicalId, masterTaskInstanceId: $scope.masterTaskId},
+    Tasks.create({}, {logicalId: $scope.subtask.template.logicalId, masterTaskInstanceId: $scope.task.id},
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status && data.status.code !== 0) {
           $scope.message = data.status.message;
         }
         else {
           $scope.setCreate(false);
-          $scope.subtaskList = Tasks.get({taskInstanceId: $routeParams.taskInstanceId, action: 'subtasks'});  
-          $location.path('/tasks/' + $scope.masterTaskId + '/subtasks');
+          $scope.subtaskList = Tasks.get({taskInstanceId: $routeParams.taskInstanceId, extra: 'subtasks'});  
+          $location.path('/tasks/' + $scope.task.id + '/subtasks');
         }
       }, 
       function(error) {
@@ -465,7 +513,7 @@ taskMod.controller('TaskHistoryController', ['$scope', '$routeParams', '$locatio
              
              function refreshHistoryTable() {
                
-               $scope.history = Tasks.get({taskInstanceId: $routeParams.taskInstanceId, action: 'history'},
+               $scope.history = Tasks.get({taskInstanceId: $routeParams.taskInstanceId, extra: 'history'},
                  function() {
                  if ($scope.history.taskHistory) {
                    $scope.history.taskHistory.forEach(function(part, index, historyArray) {
@@ -530,11 +578,96 @@ taskMod.factory('Notes', ['$resource', 'mdw', function($resource, mdw) {
 }]);
 
 taskMod.factory('Tasks', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services +'/Services/Tasks/:taskInstanceId/:action', mdw.serviceParams(), {
+  return $resource(mdw.roots.services +'/Services/Tasks/:taskInstanceId/:extra', mdw.serviceParams(), {
     query: { method: 'GET'},
     actions: { method: 'GET', isArray: true},
     create: { method: 'POST'},
     action: { method: 'POST'},
     update: { method: 'PUT' }
   });
+}]);
+
+// service for caching task instance
+taskMod.factory('Task', ['$http', '$route', 'mdw', 'TaskUtil', 'Tasks', 'TaskAction', function($http, $route, mdw, TaskUtil, Tasks, TaskAction) {
+  return {
+    getTask: function(scope) {
+      scope.item = this.task; // for taskItem template
+      if (this.task)
+        scope.taskActions = this.task.actions; // for taskActions template
+      this.addActionFunctions(scope);
+      return this.task;
+    },
+    retrieveTask: function(scope, instanceId) {
+      // retrieve task
+      this.task = Tasks.get({taskInstanceId: instanceId});
+      
+      this.task.$promise.then(
+        function(task) {
+          task.dirty = false;
+          task.dbDate = new Date(task.retrieveDate);
+          TaskUtil.setTask(task, task.dbDate);
+          task.actionable = true; // TODO assigned to user and not in final state
+          task.editable = true; // TODO assigned to user and not in final state
+          
+          scope.item = task; // for taskItem template
+          
+          // retrieve taskActions
+          Tasks.actions({taskInstanceId: task.id, extra: 'actions'}, 
+            function(data) {
+              task.actions = data;
+              scope.taskActions = task.actions; // for taskActions template
+            },
+            function(error) {
+              task.message = error.data.status.message;
+            }
+          );
+        },
+        function(error) {
+          mdw.messages = error.statusText;
+        }
+      );
+      
+      this.addActionFunctions(scope);
+      return this.task;
+    },
+    addActionFunctions: function(scope) {
+      scope.findTypeaheadAssignees = function(typed) {
+        return $http.get(mdw.roots.services + '/services/Tasks/assignees' + '?app=mdw-admin&find=' + typed).then(function(response) {
+          return response.data.users;
+        });
+      };
+      
+      scope.getAssigneePopPlace = function() {
+        return 'left';
+      };
+        
+      scope.performAssign = function(assignee) {
+        scope.performAction('Assign', assignee.cuid);
+      };
+      
+      var taskSvc = this;
+      scope.performAction = function(action, assignee) {
+        scope.closePopover(); // popover should be closed
+        console.log('Performing action: ' + action + ' on task ' + scope.task.id);
+        var taskAction = {
+            taskAction: action, 
+            user: scope.authUser.id, 
+            taskInstanceId: scope.task.id,
+            assignee: assignee
+        };
+        
+        TaskAction.action({action: action}, taskAction, function(data) {
+          if (data.status.code !== 0) {
+            mdw.messages = data.status.message;
+          }
+          else {
+            taskSvc.task = null; // force refresh
+            $route.reload();
+          }
+        }, function(error) {
+          mdw.messages = error.data.status.message;
+        });
+      };
+    }
+  };
 }]);

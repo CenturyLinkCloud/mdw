@@ -91,6 +91,7 @@ jar {
     exclude "META-INF/mdw/spring/**"
     
     manifest {
+        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
         classesDir = sourceSets.main.output.classesDir
         symbolicName = "com.centurylink.mdw.common"
         instruction "Export-Package",

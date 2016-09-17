@@ -10,7 +10,9 @@
       <xsd:sequence>
         <xsd:element name="ApplicationName" type="xsd:string"/>
         <xsd:element name="Version" type="xsd:string"/>
+        <xsd:element name="Build" type="xsd:string"/>
         <xsd:element name="MdwVersion" type="xsd:string"/>
+        <xsd:element name="MdwBuild" type="xsd:string"/>
         <xsd:element name="MdwHubUrl" type="xsd:anyURI" minOccurs="0" />
         <xsd:element name="MdwWebUrl" type="xsd:anyURI" minOccurs="0" />
         <xsd:element name="ServicesUrl" type="xsd:anyURI" minOccurs="0" />

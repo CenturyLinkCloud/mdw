@@ -1,22 +1,10 @@
-<task:taskTemplate logicalId="TaskResumeLocal:A5" category="COM" xmlns:task="http://mdw.centurylink.com/task">
-  <task:name>custom task for local resume</task:name>
-  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
-  <task:attribute name="NoticeGroups" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="RecipientVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="CCGroups" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="CCVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="AutoAssign" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="Auto Assign Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="RoutingStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="Routing Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="SubTaskStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="SubTask Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="IndexProvider">com.centurylink.mdw.services.task.CustomTaskIndexProvider</task:attribute>
-  <task:attribute name="AssigneeVar" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="FormName" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="Priority" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="PriorityStrategy" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="Prioritization Rules" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="CustomPage" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-  <task:attribute name="Rendering" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-</task:taskTemplate>
+{
+  "attributes": {
+    "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
+  },
+  "category": "COM",
+  "logicalId": "TaskResumeLocal:A5",
+  "name": "custom task for local resume",
+  "version": "0"
+}

@@ -59,6 +59,11 @@ public class Value implements Jsonable {
         this.name = name;
     }
 
+    public Value(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
     public Value(String name, JSONObject json) throws JSONException {
         this.name = name;
         if (json.has("value"))

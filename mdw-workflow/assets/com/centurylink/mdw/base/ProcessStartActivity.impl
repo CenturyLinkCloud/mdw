@@ -1,8 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity" Type="com.centurylink.mdw.activity.types.StartActivity" Label="Process Start" IconFile="shape:start" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription>&lt;PAGELET>
-  &lt;MAPPING NAME='Parameters' LABEL='Variable Initialization' VX='160'/>
-  &lt;HYPERLINK URL='/MDWWeb/doc/ProcessStartActivity.html'>
-    Process Start Activity Help
-  &lt;/HYPERLINK>
-&lt;/PAGELET></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.StartActivity",
+  "icon": "shape:start",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+  "label": "Process Start",
+  "pagelet": "<PAGELET>\n  <MAPPING NAME='Parameters' LABEL='Variable Initialization' VX='160'/>\n  <HYPERLINK URL='/MDWWeb/doc/ProcessStartActivity.html'>\n    Process Start Activity Help\n  <\/HYPERLINK>\n<\/PAGELET>"
+}

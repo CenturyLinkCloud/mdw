@@ -1,40 +1,56 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="SubprocessForEmbedded" version="0.4" description="">
-    <bpm:Activity Id="Activity88" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=57,y=87,w=60,h=40"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-    </bpm:Activity>
-    <bpm:Activity Id="Activity89" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=477,y=87,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="Activity90" Name="Assign Var Vals" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="print 'value of fromParent: ' + fromParent;&#13;&#10;toParent = 'returnedValue';&#13;&#10;&#13;&#10;return null;"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=245,y=78,w=100,h=60"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="Activity88" To="Activity90" Event="FINISH" Id="Transition68">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=209,ly=67,type=Elbow,xs=121&amp;241,ys=107&amp;107"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="Activity90" To="Activity89" Event="FINISH" Id="Transition69">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=410,ly=107,type=Elbow,xs=349&amp;473,ys=107&amp;107"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="SLA" Value="0"/>
-    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=17,y=18,w=232,h=27"/>
-    <bpm:Attribute Name="START_TRANSITION_ID" Value="2322718"/>
-    <bpm:Variables Name="fromParent" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="toParent" ReferredAs="" Category="OUTPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=57,y=87,w=60,h=40"},
+      "id": "A88",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=209,ly=67,type=Elbow,xs=121&241,ys=107&107"},
+        "event": "FINISH",
+        "id": "T68",
+        "to": "A90"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=477,y=87,w=60,h=40"},
+      "id": "A89",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "print 'value of fromParent: ' + fromParent;\r\ntoParent = 'returnedValue';\r\n\r\nreturn null;",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=245,y=78,w=100,h=60"
+      },
+      "id": "A90",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Assign Var Vals",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=410,ly=107,type=Elbow,xs=349&473,ys=107&107"},
+        "event": "FINISH",
+        "id": "T69",
+        "to": "A89"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "START_TRANSITION_ID": "2322718",
+    "WORK_DISPLAY_INFO": "x=17,y=18,w=232,h=27"
+  },
+  "variables": {
+    "fromParent": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "toParent": {
+      "category": "OUTPUT",
+      "type": "java.lang.String"
+    }
+  },
+  "version": "0.4"
+}

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="MDW Designer RCP" uid="com.centurylink.mdw.designer.rcp" id="com.centurylink.mdw.plugin.rcp.product" application="com.centurylink.mdw.plugin.rcp.application" version="8.9.5" useFeatures="true" includeLaunchers="true">
+<product name="MDW Designer RCP" uid="com.centurylink.mdw.designer.rcp" id="com.centurylink.mdw.plugin.rcp.product" application="com.centurylink.mdw.plugin.rcp.application" version="8.9.7" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/com.centurylink.mdw.plugin.rcp/icons/about.gif"/>
       <text>
          Model-Driven Workflow
-Version 8.9.5
+Version 8.9.7
 Copyright (c) 2016 CenturyLink, Inc.
 All Rights Reserved
       </text>
@@ -43,7 +43,7 @@ All Rights Reserved
    <features>
       <feature id="org.eclipse.rcp" version="4.5.2.v20160212-1500"/>
       <feature id="org.eclipse.equinox.p2.user.ui" version="2.2.102.v20160129-0947"/>
-      <feature id="com.centurylink.mdw.designer.feature" version="8.9.5"/>
+      <feature id="com.centurylink.mdw.designer.feature" version="8.9.7"/>
    </features>
 
 

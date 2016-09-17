@@ -24,6 +24,7 @@ import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
@@ -257,19 +258,21 @@ public class DesignerProxy
                 throw new DataAccessOfflineException("Unable to confirm Git status on server (missing branch)");
               String oldBranch = gitRepo.getBranch();
               if (!branch.equals(oldBranch))
-              {
                 gitRepo.setBranch(branch);
-                WorkflowProjectManager.getInstance().save(project); // save the discovered branch
-              }
               if (progressMonitor != null)
                 progressMonitor.subTask("Updating from branch: " + branch);
-              versionControl.checkoutBranch(branch); // checkout from remote
-              versionControl.pullBranch(branch);
+              versionControl.hardReset();  // Reset any existing files to avoid conflicts and other issues with pulling/changing branch
+              versionControl.checkout(branch); // in case changed
+              versionControl.pull(branch);
               String serverCommit = appSummary.getRepository().getCommit();
               String localCommit = versionControl.getCommit();
               if (localCommit == null || !localCommit.equals(serverCommit))
-                project.setWarning("Server commit: " + serverCommit + " does not match Git repository for branch "
-                    + branch + ": " + versionControl.getCommit() + ".");
+              {
+                project.setWarn(true);
+                PluginMessages.log("Server commit: " + serverCommit + " does not match Git repository for branch "
+                    + branch + ": " + versionControl.getCommit() + ".", IStatus.WARNING);
+              }
+              WorkflowProjectManager.getInstance().save(project); // save the discovered branch
               if (progressMonitor != null)
                 progressMonitor.progress(10);
               if (project.checkRequiredVersion(5, 5, 34))
@@ -281,7 +284,7 @@ public class DesignerProxy
               if (assetDir.exists())
                 PluginUtil.deleteDirectory(assetDir);
               if (!assetDir.mkdirs())
-                throw new IOException("Unable to create asset directory: " + assetDir);
+                throw new DiscoveryException("Unable to create asset directory: " + assetDir);
               pkgDownloadServicePath = "Packages?format=json&topLevel=true";
             }
 
@@ -306,7 +309,7 @@ public class DesignerProxy
           }
           catch (IOException ex)
           {
-            throw new DataAccessOfflineException("Server appears to be offline.", ex);
+            throw new DataAccessOfflineException("Server appears to be offline: " + ex.getMessage(), ex);
           }
         }
       }
@@ -622,7 +625,9 @@ public class DesignerProxy
       implVO.setAttributeDescription("<PAGELET/>");
     }
     implVO.setImplementorClassName(implClass);
-    return new ActivityImpl(implVO, project.getDefaultPackage());
+    ActivityImpl impl = new ActivityImpl(implVO, project.getDefaultPackage());
+    impl.setProject(project);
+    return impl;
   }
 
   public void saveWorkflowAssetWithProgress(final WorkflowAsset asset, final boolean keepLocked)
@@ -843,7 +848,7 @@ public class DesignerProxy
       catch (DataAccessOfflineException ex)
       {
         PluginMessages.log(ex);
-        MessageDialog.openWarning(MdwPlugin.getShell(), "Save Attributes", "Server appears to be offline.");
+        MessageDialog.openWarning(MdwPlugin.getShell(), "Save Attributes", "Server appears to be offline: " + ex.getMessage());
         return false;
       }
       cacheRefresh.fireRefresh(false);
@@ -867,7 +872,7 @@ public class DesignerProxy
       catch (DataAccessOfflineException ex)
       {
         PluginMessages.log(ex);
-        MessageDialog.openWarning(MdwPlugin.getShell(), "Save Attributes", "Server appears to be offline.");
+        MessageDialog.openWarning(MdwPlugin.getShell(), "Save Attributes", "Server appears to be offline: " + ex.getMessage());
         return false;
       }
       cacheRefresh.fireRefresh(false);
@@ -965,7 +970,7 @@ public class DesignerProxy
     designerRunner.run();
   }
 
-  public void createNewPackage(final WorkflowPackage newPackage)
+  public void createNewPackage(final WorkflowPackage newPackage, final boolean isJson)
   {
     String progressMsg = "Creating '" + newPackage.getName() + "'";
     String errorMsg = "Create Package";
@@ -974,7 +979,12 @@ public class DesignerProxy
     {
       public void perform() throws DataAccessException, RemoteException, ValidationException
       {
-        Long id = dataAccess.getDesignerDataAccess().savePackage(newPackage.getPackageVO());
+        com.centurylink.mdw.dataaccess.ProcessPersister.PersistType persistType;
+        if (isJson)
+            persistType = com.centurylink.mdw.dataaccess.ProcessPersister.PersistType.CREATE_JSON;
+        else
+            persistType = com.centurylink.mdw.dataaccess.ProcessPersister.PersistType.NEW_VERSION;
+        Long id = dataAccess.getDesignerDataAccess().savePackage(newPackage.getPackageVO(), persistType);
         newPackage.getPackageVO().setId(id);
         // update the process tree
         newPackage.getProject().addPackage(newPackage);
@@ -1556,7 +1566,8 @@ public class DesignerProxy
     catch (DataAccessOfflineException ex)
     {
       PluginMessages.log(ex);
-      MessageDialog.openWarning(MdwPlugin.getShell(), "Retrieve Process Instances", "Server appears to be offline.");
+      String msg = "Server appears to be offline: " + ex.getMessage();
+      MessageDialog.openWarning(MdwPlugin.getShell(), "Retrieve Process Instances", msg);
       return new ProcessList(ProcessList.PROCESS_INSTANCES, new ArrayList<ProcessInstanceVO>());
     }
     catch (Exception ex)
@@ -2365,7 +2376,8 @@ public class DesignerProxy
           }
           catch (TranslationException ex)
           {
-            PluginMessages.log(ex);
+            if (MdwPlugin.getSettings().isLogConnectErrors())
+                PluginMessages.log(ex);
             try
             {
               String resp = getRestfulServer().invokeResourceService("DocumentValue?format=xml&id=" + docRef.getDocumentId() + "&type=" + varTypeVO.getVariableType());
@@ -2381,7 +2393,6 @@ public class DesignerProxy
             {
               throw new RuntimeException(ex2.getMessage(), ex2);
             }
-
           }
         }
       });

@@ -217,6 +217,8 @@ public class TaskServicesImpl implements TaskServices {
     public TaskInstanceVO getInstance(Long instanceId) throws DataAccessException {
         TaskManager taskMgr = ServiceLocator.getTaskManager();
         TaskInstanceVO taskInstance = taskMgr.getTaskInstance(instanceId);
+        if (taskInstance == null)
+            return null;
         taskInstance.setRetrieveDate(DatabaseAccess.getDbDate());
         return taskInstance;
     }
@@ -381,6 +383,7 @@ public class TaskServicesImpl implements TaskServices {
         try {
             List<TaskInstanceVO> subtasks = getTaskDAO().getSubTaskInstances(masterTaskInstanceId);
             TaskList subtaskList = new TaskList("subtasks", subtasks);
+            subtaskList.setRetrieveDate(DatabaseAccess.getDbDate());
             return subtaskList;
         }
         catch (DataAccessException ex) {

@@ -515,7 +515,7 @@ public class ProcessLoaderPersisterV4 extends CommonDataAccess implements Proces
                     Long packageId = rs.getLong(1);
                     voXMLStr= rs.getString(2);
                     PackageVO packageVO = packageVOs.get(packageId);
-                    packageVO.setVoXML(voXMLStr);
+                    packageVO.setMetaContent(voXMLStr);
                 }
             }
 

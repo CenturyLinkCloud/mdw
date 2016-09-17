@@ -219,6 +219,7 @@ war {
   rootSpec.exclude "**/.metadata/**"
   
   manifest = osgiManifest {
+      attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
       classesDir = sourceSets.main.output.classesDir
       classpath = configurations.runtime
       symbolicName = "com.centurylink.mdw.taskmgr"

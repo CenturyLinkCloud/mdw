@@ -69,7 +69,7 @@ public class VcsArchiver {
         progressMonitor.subTask("Copying packages to temp: " + tempDir.getAbsolutePath());
         tempPkgDirs = new ArrayList<File>(oldPkgDirs.size());
         for (PackageDir oldPkgDir : oldPkgDirs) {
-            if (path == null || path.equals(oldPkgDir.getPackage().getName())) {
+            if (path == null || path.equals(oldPkgDir.getPackageName())) {
                 File tempPkgDir = new File(tempDir + "/" + oldPkgDir.getPackageName() + " v" + oldPkgDir.getPackageVersion());
                 progressMonitor.subTask("  -- " + tempPkgDir.getName());
                 oldLoader.copyPkg(oldPkgDir, tempPkgDir);

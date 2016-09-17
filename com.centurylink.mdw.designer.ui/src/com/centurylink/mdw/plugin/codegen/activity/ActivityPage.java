@@ -127,7 +127,7 @@ public class ActivityPage extends CodeGenWizardPage
 
   private void createBaseClassControls(Composite parent, int ncol)
   {
-    new Label(parent, SWT.NONE).setText("Activity Type:");
+    new Label(parent, SWT.NONE).setText("Activity Category:");
     baseClassComboBox = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
     GridData gd = new GridData(GridData.BEGINNING);
     gd.horizontalSpan = ncol - 1;
@@ -153,7 +153,7 @@ public class ActivityPage extends CodeGenWizardPage
   private void createAttrXmlControls(Composite parent, int ncol)
   {
     Label label = new Label(parent, SWT.NONE);
-    label.setText("Pagelet XML:");
+    label.setText("Pagelet:");
     GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
     label.setLayoutData(gd);
 

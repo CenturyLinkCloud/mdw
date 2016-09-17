@@ -1,89 +1,151 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="FindEmployee" version="0.15" description="">
-    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="Parameters" Value="sapId=xpath:/GetEmployee/sapId;workstationId=xpath:/GetEmployee/workstationId"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=43,y=102,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A5" Name="Real&#13;&#10;Lookup?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
-      <bpm:Attribute Name="Expression" Value="sapId != 'DHO115360' &amp;&amp; workstationId != 'dxoakes'"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=156,y=86,w=78,h=76"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=577,y=180,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A3" Name="Lookup" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Output Documents" Value="response"/>
-      <bpm:Attribute Name="Rule" Value="println 'sapId: ' + sapId;&#13;&#10;println 'workstationId: ' + workstationId;&#13;&#10;&#13;&#10;response = &#13;&#10;     '''&lt;GetEmployeeResponse xmlns=&quot;http://mdw.centurylink.com/serviceTypes&quot;>&#13;&#10;          &lt;sapId>DHO115360&lt;/sapId>&#13;&#10;          &lt;workstationId>dxoakes&lt;/workstationId>&#13;&#10;          &lt;firstName>Donald&lt;/firstName>&#13;&#10;          &lt;lastName>Oakes&lt;/lastName>&#13;&#10;        &lt;/GetEmployeeResponse>''';"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=368,y=166,w=100,h=60"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A6" Name="Populate&#13;&#10;Object" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Output Documents" Value="employee#response"/>
-      <bpm:Attribute Name="Rule" Value="import java.io.ByteArrayOutputStream;&#13;&#10;&#13;&#10;import javax.xml.bind.JAXBContext&#13;&#10;import javax.xml.bind.Marshaller&#13;&#10;&#13;&#10;import com.centurylink.mdw.java.CompiledJavaCache&#13;&#10;&#13;&#10;employee = CompiledJavaCache.getInstance(&quot;com.centurylink.mdw.tests.services.Employee&quot;, JAXBContext.class.getClassLoader(), runtimeContext.getPackage());&#13;&#10;employee.setSapId(sapId);&#13;&#10;employee.setWorkstationId(workstationId)&#13;&#10;employee.setFirstName(firstName);&#13;&#10;employee.setLastName(lastName);&#13;&#10;&#13;&#10;ByteArrayOutputStream baos = new ByteArrayOutputStream();&#13;&#10;JAXBContext jaxbContext = JAXBContext.newInstance(employee.getClass());&#13;&#10;Marshaller marshaller = jaxbContext.createMarshaller();&#13;&#10;marshaller.marshal(employee, baos);&#13;&#10;response = baos.toString();&#13;&#10;"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=553,y=81,w=106,h=67"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A4" Name="LDAP Lookup" Implementation="com.centurylink.mdw.workflow.adapter.ldap.LdapAdapter">
-      <bpm:Attribute Name="AppCuid" Value="prop:LDAP/AppCUID"/>
-      <bpm:Attribute Name="AppPassword" Value="prop:LDAP/AppPassword"/>
-      <bpm:Attribute Name="BaseDn" Value="prop:LDAP/BaseDN"/>
-      <bpm:Attribute Name="Bindings" Value="firstName=givenName;lastName=sn;sapId=saploginid;workstationId=uid"/>
-      <bpm:Attribute Name="LdapHost" Value="prop:LDAP/Host"/>
-      <bpm:Attribute Name="LdapPort" Value="prop:LDAP/Port"/>
-      <bpm:Attribute Name="PostScriptLang" Value="Groovy"/>
-      <bpm:Attribute Name="PreScriptLang" Value="Groovy"/>
-      <bpm:Attribute Name="SearchContext" Value="ou=People"/>
-      <bpm:Attribute Name="SearchFilter" Value="(#{sapId == '' || sapId == null ? 'uid=' : 'saploginId='}#{sapId == '' || sapId == null ? workstationId : sapId})"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=365,y=79,w=100,h=60"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A1" To="A5" Event="FINISH" Id="T1">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=165,ly=129,type=Elbow,xs=107&amp;152,ys=122&amp;122"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=527,ly=201,type=Elbow,xs=472&amp;573,ys=200&amp;200"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A4" To="A6" Event="FINISH" Id="T3">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=539,ly=132,type=Elbow,xs=469&amp;549,ys=110&amp;110"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="true" From="A5" To="A4" Event="FINISH" Id="T4">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=300,ly=112,type=Elbow,xs=238&amp;361,ys=112&amp;112"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="false" From="A5" To="A3" Event="FINISH" Id="T5">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=292,ly=189,type=Elbow,xs=230&amp;265&amp;265&amp;364,ys=143&amp;143&amp;185&amp;185"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A6" To="A2" Event="FINISH" Id="T6">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=607,ly=154,type=Elbow,xs=607&amp;607,ys=152&amp;176"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="SERVICE"/>
-    <bpm:Attribute Name="START_TRANSITION_ID" Value="2346892"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=38,y=31,w=131,h=27"/>
-    <bpm:Attribute Name="PerformanceLevel" Value="3"/>
-    <bpm:Attribute Name="SLA" Value="0"/>
-    <bpm:Attribute Name="SLA_UNIT" Value="Minutes"/>
-    <bpm:Variables Name="employee" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.Object"/>
-    </bpm:Variables>
-    <bpm:Variables Name="firstName" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="lastName" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="requestHeaders" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.util.Map"/>
-    </bpm:Variables>
-    <bpm:Variables Name="response" ReferredAs="" Category="OUTPUT" DisplaySequence="0">
-      <bpm:type Name="com.centurylink.mdw.model.StringDocument"/>
-    </bpm:Variables>
-    <bpm:Variables Name="sapId" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="workstationId" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {
+        "Parameters": "sapId=xpath:/GetEmployee/sapId;workstationId=xpath:/GetEmployee/workstationId",
+        "WORK_DISPLAY_INFO": "x=43,y=102,w=60,h=40"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=165,ly=129,type=Elbow,xs=107&152,ys=122&122"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "sapId != 'DHO115360' && workstationId != 'dxoakes'",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=156,y=86,w=78,h=76"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Real\r\nLookup?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=300,ly=112,type=Elbow,xs=238&361,ys=112&112"},
+          "event": "FINISH",
+          "id": "T4",
+          "resultCode": "true",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=292,ly=189,type=Elbow,xs=230&265&265&364,ys=143&143&185&185"},
+          "event": "FINISH",
+          "id": "T5",
+          "resultCode": "false",
+          "to": "A3"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=577,y=180,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Output Documents": "response",
+        "Rule": "println 'sapId: ' + sapId;\r\nprintln 'workstationId: ' + workstationId;\r\n\r\nresponse = \r\n     '''<GetEmployeeResponse xmlns=\"http://mdw.centurylink.com/serviceTypes\">\r\n          <sapId>DHO115360<\/sapId>\r\n          <workstationId>dxoakes<\/workstationId>\r\n          <firstName>Donald<\/firstName>\r\n          <lastName>Oakes<\/lastName>\r\n        <\/GetEmployeeResponse>''';",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=368,y=166,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Lookup",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=527,ly=201,type=Elbow,xs=472&573,ys=200&200"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "employee#response",
+        "Rule": "import java.io.ByteArrayOutputStream;\r\n\r\nimport javax.xml.bind.JAXBContext\r\nimport javax.xml.bind.Marshaller\r\n\r\nimport com.centurylink.mdw.java.CompiledJavaCache\r\n\r\nemployee = CompiledJavaCache.getInstance(\"com.centurylink.mdw.tests.services.Employee\", JAXBContext.class.getClassLoader(), runtimeContext.getPackage());\r\nemployee.setSapId(sapId);\r\nemployee.setWorkstationId(workstationId)\r\nemployee.setFirstName(firstName);\r\nemployee.setLastName(lastName);\r\n\r\nByteArrayOutputStream baos = new ByteArrayOutputStream();\r\nJAXBContext jaxbContext = JAXBContext.newInstance(employee.getClass());\r\nMarshaller marshaller = jaxbContext.createMarshaller();\r\nmarshaller.marshal(employee, baos);\r\nresponse = baos.toString();\r\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=553,y=81,w=106,h=67"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Populate\r\nObject",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=607,ly=154,type=Elbow,xs=607&607,ys=152&176"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "AppCuid": "prop:LDAP/AppCUID",
+        "AppPassword": "prop:LDAP/AppPassword",
+        "BaseDn": "prop:LDAP/BaseDN",
+        "Bindings": "firstName=givenName;lastName=sn;sapId=saploginid;workstationId=uid",
+        "LdapHost": "prop:LDAP/Host",
+        "LdapPort": "prop:LDAP/Port",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "SearchContext": "ou=People",
+        "SearchFilter": "(#{sapId == '' || sapId == null ? 'uid=' : 'saploginId='}#{sapId == '' || sapId == null ? workstationId : sapId})",
+        "WORK_DISPLAY_INFO": "x=365,y=79,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.adapter.ldap.LdapAdapter",
+      "name": "LDAP Lookup",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=539,ly=132,type=Elbow,xs=469&549,ys=110&110"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A6"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "PerformanceLevel": "3",
+    "START_TRANSITION_ID": "2346892",
+    "WORK_DISPLAY_INFO": "x=38,y=31,w=131,h=27"
+  },
+  "variables": {
+    "employee": {
+      "category": "LOCAL",
+      "type": "java.lang.Object"
+    },
+    "firstName": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "lastName": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "requestHeaders": {
+      "category": "INPUT",
+      "type": "java.util.Map"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    },
+    "sapId": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "workstationId": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  },
+  "version": "0.15"
+}

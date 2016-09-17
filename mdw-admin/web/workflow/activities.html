@@ -8,8 +8,8 @@ FIXME: select, filter, sort, actions, search -- all need to be wired up to real 
 	    <div class="panel-heading mdw-heading">
 	      <div class="mdw-heading-checklist">
 	        <input type="checkbox" ng-model="model.activityList.selectedState.all" ng-change="model.activityList.toggleAll()" ng-if="authUser.hasRole('Process Execution')"></input>
-	        <span class="mdw-checklist-label">Activities</span>
-	        <span class="mdw-checklist-sub">({{model.activityList.total}})</span>
+	        Activities
+	        <span class="mdw-heading-sub">({{model.activityList.total}})</span>
 	      </div>
         
         <div class="mdw-heading-input">

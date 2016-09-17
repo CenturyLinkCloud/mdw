@@ -3,14 +3,18 @@
  */
 package com.centurylink.mdw.common.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,12 +28,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.common.utilities.JsonUtil;
 import com.centurylink.mdw.common.utilities.StringHelper;
 
 /**
  * TODO: other formats (eg: CSV)
  */
 public class JsonExport {
+
+    private static final int ZIP_BUFFER_KB = 16;
 
     private Jsonable jsonable;
     public JsonExport(Jsonable json) {
@@ -47,6 +54,52 @@ public class JsonExport {
 
     public String exportXlsxBase64() throws JSONException, IOException {
         return exportXlsxBase64(null);
+    }
+
+    /**
+     * Default behavior adds zip entries for each property on the first (non-mdw) top-level object.
+     */
+    public String exportZipBase64() throws JSONException, IOException {
+        Map<String,JSONObject> objectMap = JsonUtil.getJsonObjects(jsonable.getJson());
+        JSONObject mdw = null;
+        JSONObject contents = null;
+        for (String name : objectMap.keySet()) {
+            if ("mdw".equals(name))
+                mdw = objectMap.get(name);
+            else if (contents == null)
+                contents = objectMap.get(name);
+        }
+        if (contents == null)
+            throw new IOException("Cannot find expected contents property");
+        else
+            objectMap = JsonUtil.getJsonObjects(contents);
+        if (mdw != null)
+            objectMap.put(".mdw", mdw);
+
+        byte[] buffer = new byte[ZIP_BUFFER_KB * 1024];
+        ZipOutputStream zos = null;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            zos = new ZipOutputStream(outputStream);
+            for (String name : objectMap.keySet()) {
+                JSONObject json = objectMap.get(name);
+                ZipEntry ze = new ZipEntry(name);
+                zos.putNextEntry(ze);
+                InputStream inputStream = new ByteArrayInputStream(json.toString(2).getBytes());
+                int len;
+                while ((len = inputStream.read(buffer)) > 0) {
+                    zos.write(buffer, 0, len);
+                }
+            }
+        }
+        finally {
+            if (zos != null) {
+                zos.closeEntry();
+                zos.close();
+            }
+        }
+        byte[] bytes = outputStream.toByteArray();
+        return new String(Base64.encodeBase64(bytes));
     }
 
     public String exportXlsxBase64(String name) throws JSONException, IOException {
@@ -202,4 +255,6 @@ public class JsonExport {
         workBook.write(bytes);
         return bytes.toByteArray();
     }
+
+
 }

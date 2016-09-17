@@ -1,28 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.adapter.mqseries.MqSeriesAdapter" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="MQ Series Adapter" IconFile="adapter.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET ICON="adapter.png" LABEL="MQ Series Adapter" BASETYPES="com.centurylink.mdw.activity.types.AdapterActivity">
-  <TEXT LABEL="Queue Manager" NAME="QueueManagerName"/>
-  <TEXT LABEL="Queue Name" NAME="QueueName"/>
-  <TEXT LABEL="Reply Queue Name" NAME="ReplyQueueName"/>
-  <TEXT LABEL="Correlation ID" NAME="CorrelationId"/>
-  <TEXT LABEL="Host Name" NAME="HostName"/>
-  <TEXT LABEL="Channel Name" NAME="ChannelName"/>
-  <TEXT LABEL="Port" NAME="Port"/>
-  <HYPERLINK URL="/MDWWeb/doc/MqAdapter.html">MQ Adapter Activity Help</HYPERLINK>
-  <DROPDOWN LABEL="Request Variable" NAME="REQUEST_VARIABLE" SOURCE="Variables" VW="120"/>
-  <DROPDOWN LABEL="Response Variable" NAME="RESPONSE_VARIABLE" SOURCE="Variables" VW="120"/>
-  <SELECT DEFAULT="true" LABEL="Log req/resp" NAME="DO_LOGGING">
-    <OPTION>false</OPTION>
-    <OPTION>true</OPTION>
-  </SELECT>
-  <DROPDOWN DEFAULT="False" LABEL="Wait for response?" NAME="synchronous">
-    <OPTION>True</OPTION>
-    <OPTION>False</OPTION>
-  </DROPDOWN>
-  <TEXT LABEL="Retry Exceptions" NAME="RETRY_EXCEPTIONS"/>
-  <TEXT LABEL="Max tries" NAME="max_tries" VW="60"/>
-  <TEXT LABEL="Retry Interval (sec)" NAME="retry_interval" VW="80"/>
-  <TEXT LABEL="Response Timeout (sec)" NAME="timeout" VW="80"/>
-  <HYPERLINK LABEL="Request XSD" NAME="REQUEST_XSD"/>
-  <HYPERLINK LABEL="Response XSD" NAME="RESPONSE_XSD"/>
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
+  "icon": "adapter.png",
+  "implementorClass": "com.centurylink.mdw.workflow.adapter.mqseries.MqSeriesAdapter",
+  "label": "MQ Series Adapter",
+  "pagelet": "<PAGELET ICON=\"adapter.png\" LABEL=\"MQ Series Adapter\" BASETYPES=\"com.centurylink.mdw.activity.types.AdapterActivity\">\n  <TEXT LABEL=\"Queue Manager\" NAME=\"QueueManagerName\"/>\n  <TEXT LABEL=\"Queue Name\" NAME=\"QueueName\"/>\n  <TEXT LABEL=\"Reply Queue Name\" NAME=\"ReplyQueueName\"/>\n  <TEXT LABEL=\"Correlation ID\" NAME=\"CorrelationId\"/>\n  <TEXT LABEL=\"Host Name\" NAME=\"HostName\"/>\n  <TEXT LABEL=\"Channel Name\" NAME=\"ChannelName\"/>\n  <TEXT LABEL=\"Port\" NAME=\"Port\"/>\n  <HYPERLINK URL=\"/MDWWeb/doc/MqAdapter.html\">MQ Adapter Activity Help<\/HYPERLINK>\n  <DROPDOWN LABEL=\"Request Variable\" NAME=\"REQUEST_VARIABLE\" SOURCE=\"Variables\" VW=\"120\"/>\n  <DROPDOWN LABEL=\"Response Variable\" NAME=\"RESPONSE_VARIABLE\" SOURCE=\"Variables\" VW=\"120\"/>\n  <SELECT DEFAULT=\"true\" LABEL=\"Log req/resp\" NAME=\"DO_LOGGING\">\n    <OPTION>false<\/OPTION>\n    <OPTION>true<\/OPTION>\n  <\/SELECT>\n  <DROPDOWN DEFAULT=\"False\" LABEL=\"Wait for response?\" NAME=\"synchronous\">\n    <OPTION>True<\/OPTION>\n    <OPTION>False<\/OPTION>\n  <\/DROPDOWN>\n  <TEXT LABEL=\"Retry Exceptions\" NAME=\"RETRY_EXCEPTIONS\"/>\n  <TEXT LABEL=\"Max tries\" NAME=\"max_tries\" VW=\"60\"/>\n  <TEXT LABEL=\"Retry Interval (sec)\" NAME=\"retry_interval\" VW=\"80\"/>\n  <TEXT LABEL=\"Response Timeout (sec)\" NAME=\"timeout\" VW=\"80\"/>\n  <HYPERLINK LABEL=\"Request XSD\" NAME=\"REQUEST_XSD\"/>\n  <HYPERLINK LABEL=\"Response XSD\" NAME=\"RESPONSE_XSD\"/>\n<\/PAGELET>"
+}

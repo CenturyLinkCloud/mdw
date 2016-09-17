@@ -661,7 +661,7 @@ public class WorkflowProject extends WorkflowElement implements Comparable<Workf
         {
           PluginMessages.log(ex);
           if (errorDialogOnFailure)
-            MessageDialog.openError(MdwPlugin.getShell(), "Authentication", "Server appears to be offline.");
+            MessageDialog.openError(MdwPlugin.getShell(), "Authentication", "Server appears to be offline: " + ex.getMessage());
         }
         catch (Exception ex)
         {
@@ -2749,7 +2749,8 @@ public class WorkflowProject extends WorkflowElement implements Comparable<Workf
   {
     if (isLoaded())
     {
-      for (WorkflowAsset asset : getAllWorkflowAssets())
+      List<WorkflowAsset> assets = archivedPackageFolder == null ? getTopLevelWorkflowAssets() : getAllWorkflowAssets();
+      for (WorkflowAsset asset : assets)
         WorkflowAssetFactory.deRegisterAsset(asset);
       List<IFile> listenersToRemove = new ArrayList<IFile>();
       if (artifactResourceListeners != null)
@@ -2774,7 +2775,7 @@ public class WorkflowProject extends WorkflowElement implements Comparable<Workf
     shutdownNoticeChecks();
     scriptLibrariesSaved = false;
     pageletTabs = null;
-    warning = null;
+    warn = false;
   }
 
   private boolean scriptLibrariesSaved = false;
@@ -3185,8 +3186,7 @@ public class WorkflowProject extends WorkflowElement implements Comparable<Workf
     return null;
   }
 
-  private String warning;
-  public String getWarning() { return warning; }
-  public void setWarning(String warn) { this.warning = warn; }
-  public boolean isWarn() { return warning != null; }
+  private boolean warn;
+  public void setWarn(boolean warn) { this.warn = warn; }
+  public boolean isWarn() { return warn; }
 }

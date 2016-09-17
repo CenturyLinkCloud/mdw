@@ -33,7 +33,6 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
   };
 
   $scope.performActionOnActivities = function(action) {
-    mdw.messages = null;
     var selectedActivities = $scope.$parent.getSelectedActivities();
     $scope.closePopover(); // popover should be closed
     if (selectedActivities && selectedActivities.length > 0) {
@@ -177,4 +176,24 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
         return base + $scope.selectedActivities.length + ' activities?';
     }
   };
+}]);
+
+activityMod.controller('ActivityController', ['$scope', '$route', '$routeParams', 'mdw', 'Activity',
+                                            function($scope, $route, $routeParams, mdw, Activity) {
+    
+   $scope.activity = Activity.retrieve({instanceId: $routeParams.instanceId}, function() {
+     $scope.activity.name = $scope.activity.name;
+     $scope.item = $scope.activity; // for activityItem template
+   });
+   
+   $scope.refreshWorkflowImage = function() {
+     $route.reload();
+   };   
+    
+}]);
+
+activityMod.factory('Activity', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/Services/Activities/:instanceId', mdw.serviceParams(), {
+    retrieve: { method: 'GET', isArray: false }
+  });
 }]);

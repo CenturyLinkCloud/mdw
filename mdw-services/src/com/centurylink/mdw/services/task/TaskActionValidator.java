@@ -35,8 +35,8 @@ public class TaskActionValidator {
             TaskAction allowableAction = getAllowableAction(action);
             if (allowableAction == null) {
                 StringBuilder msg = new StringBuilder();
-                msg.append("Action ").append(action.getTaskAction());
-                msg.append(" not allowed by user ").append(action.getUser());
+                msg.append("Action '").append(action.getTaskAction());
+                msg.append("' not allowed by user ").append(action.getUser());
                 msg.append(" on task instance: ").append(runtimeContext.getInstanceId());
                 if (runtimeContext.getAssignee() != null && !runtimeContext.getAssignee().isEmpty())
                     msg.append(" assigned to ").append(runtimeContext.getAssignee());

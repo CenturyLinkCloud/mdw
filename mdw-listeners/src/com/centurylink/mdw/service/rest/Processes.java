@@ -15,12 +15,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Exportable;
+import com.centurylink.mdw.common.service.JsonExportable;
 import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.JsonListMap;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.value.process.ProcessCount;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessList;
@@ -35,7 +36,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Path("/Processes")
 @Api("MDW process instances")
-public class Processes extends JsonRestService implements Exportable {
+public class Processes extends JsonRestService implements JsonExportable {
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
@@ -46,9 +47,10 @@ public class Processes extends JsonRestService implements Exportable {
      * Retrieve process instance(s).
      */
     @Override
-    @Path("/{instanceId|special}")
-    @ApiOperation(value="Retrieve a process, query many processes, or perform special queries",
-        notes="If instanceId and special are not present, returns a page of processes that meet query criteria.",
+    @Path("/{instanceId|special}/{subData}/{subId}")
+    @ApiOperation(value="Retrieve a process or process values, query many processes, or perform throughput queries",
+        notes="If instanceId and special are not present, returns a page of processes that meet query criteria."
+          + " Parameter {subData} can currently only be 'values', and then {subId} can be varName or expression",
         response=ProcessInstanceVO.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
@@ -58,7 +60,27 @@ public class Processes extends JsonRestService implements Exportable {
             if (segOne != null) {
                 try {
                     long instanceId = Long.parseLong(segOne);
-                    return workflowServices.getProcess(instanceId).getJson();
+                    String segTwo = getSegment(path, 2);
+                    if ("values".equalsIgnoreCase(segTwo)) {
+                        String varName = getSegment(path, 3);
+                        if (varName != null) {
+                            // individual value
+                            Value value = workflowServices.getProcessValue(instanceId, varName);
+                            return value.getJson();
+                        }
+                        else {
+                            // all values
+                            Map<String,Value> values = workflowServices.getProcessValues(instanceId);
+                            JSONObject valuesJson = new JSONObject();
+                            for (String name : values.keySet()) {
+                                valuesJson.put(name, values.get(name).getJson());
+                            }
+                            return valuesJson;
+                        }
+                    }
+                    else {
+                        return workflowServices.getProcess(instanceId).getJson();
+                    }
                 }
                 catch (NumberFormatException ex) {
                     // path must be special
@@ -131,7 +153,7 @@ public class Processes extends JsonRestService implements Exportable {
             throw ex;
         }
         catch (Exception ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 

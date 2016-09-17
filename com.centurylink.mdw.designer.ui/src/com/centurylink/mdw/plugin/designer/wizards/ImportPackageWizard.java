@@ -131,10 +131,10 @@ public class ImportPackageWizard extends Wizard implements IImportWizard
               httpHelper.setReadTimeout(MdwPlugin.getSettings().getHttpReadTimeout());
               pkgFile.setContent(httpHelper.get());
             }
-            String packageXml = pkgFile.getContent();
+            String pkgFileContent = pkgFile.getContent();
 
             Importer importer = new Importer(designerProxy.getPluginDataAccess(), wfp.isFilePersist() && wfp.isRemote() ? null : getShell());
-            WorkflowPackage importedPackage = importer.importPackage(wfp, packageXml, progressMonitor);
+            WorkflowPackage importedPackage = importer.importPackage(wfp, pkgFileContent, progressMonitor);
             if (importedPackage == null) // canceled
             {
               progressMonitor.done();
@@ -191,11 +191,12 @@ public class ImportPackageWizard extends Wizard implements IImportWizard
 
                   String encryptedPassword = CryptUtil.encrypt(wfp.getMdwDataSource().getDbPassword());
                   HttpHelper httpHelper = new HttpHelper(new URL(uploadUrl), wfp.getMdwDataSource().getDbUser(), encryptedPassword);
-                  httpHelper.postBytes(os.toByteArray());
+                  byte[] resp = httpHelper.postBytes(os.toByteArray());
+                  PluginMessages.log("Asset download respose: " + new String(resp));
                 }
                 finally
                 {
-                    is.close();
+                  is.close();
                 }
               }
             }

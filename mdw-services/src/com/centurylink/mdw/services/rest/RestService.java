@@ -167,7 +167,7 @@ public abstract class RestService {
         return serverUrls;
     }
 
-    protected void auditLog(UserActionVO userAction) throws DataAccessException {
+    protected void auditLog(UserActionVO userAction) {
         try {
             ServiceLocator.getUserServices().auditLog(userAction);
         }
@@ -279,5 +279,22 @@ public abstract class RestService {
      */
     protected String getAuthUser(Map<String,String> headers) {
         return headers.get(Listener.AUTHENTICATED_USER_HEADER);
+    }
+
+    /**
+     * Also audit logs.
+     */
+    protected void authorizeExport(Map<String,String> headers) throws AuthorizationException {
+        String path = headers.get(Listener.METAINFO_REQUEST_PATH);
+        UserVO user = authorize(path, new JSONObject(), headers);
+        Action action = Action.Export;
+        Entity entity = getEntity(path, null, headers);
+        Long entityId = new Long(0);
+        String descrip = path;
+        if (descrip.length() > 1000)
+            descrip = descrip.substring(0, 999);
+        UserActionVO exportAction = new UserActionVO(user.getName(), action, entity, entityId, descrip);
+        exportAction.setSource(getSource());
+        auditLog(exportAction);
     }
 }

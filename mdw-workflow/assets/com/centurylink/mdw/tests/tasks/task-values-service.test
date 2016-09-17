@@ -1,6 +1,6 @@
 import com.centurylink.mdw.common.utilities.JsonUtil
 
-// manual-task-services
+// task-values-service
 start process("ManualTaskServices") {
     variables = [ dateVar: Date.parse("MM-dd-yyyy HH:mm:ss", "04-01-2016 14:36:00"),
                   stringVar: "Hello",
@@ -16,6 +16,18 @@ start process("ManualTaskServices") {
 sleep 10
 def taskInst = action task("AutoForm Task for Service Access") {
     outcome = "Claim"
+}
+
+// assign to mdwapp so that this case succeeds locally
+// when executed by another user
+response = post http("services/Tasks/${taskInst.id}/Assign") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    payload = '''{
+      "taskAction" : "Assign",
+      "user": "mdwapp",
+      "assignee": "mdwapp",
+      "taskInstanceId": ''' + taskInst.id + '\n}'
 }
 
 // check the values through the REST API
@@ -42,7 +54,10 @@ response = put http("services/Tasks/${taskInst.id}/values") {
 assert response.code == 200
 
 // check the values through the REST API
-response = get http("services/Tasks/${taskInst.id}/values")
+response = get http("services/Tasks/${taskInst.id}/values") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+}
 assert response.code == 200
 response.expected = asset("task-values-json-2.json").text
 assert verify(response).success
@@ -73,7 +88,7 @@ response = post http("services/Tasks/${taskInst.id}/Complete") {
     password = 'ldap_012'
     payload = '''{
       "taskAction" : "Complete",
-      "user": "dxoakes",
+      "user": "mdwapp",
       "taskInstanceId": ''' + taskInst.id + '\n}'
 }
 assert response.code == 200
@@ -82,7 +97,10 @@ assert new groovy.json.JsonSlurper().parseText(response.content).status.code == 
 verify process
 
 // check values again
-response = get http("services/Tasks/${taskInst.id}/values")
+response = get http("services/Tasks/${taskInst.id}/values") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+}
 assert response.code == 200
 response.expected = asset("task-values-json-3.json").text
 verify response

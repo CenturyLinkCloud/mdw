@@ -36,6 +36,13 @@ public class PackageList implements Jsonable {
     public String getVcsBranch() { return vcsBranch; }
     public void setVcsBranch(String branch) { this.vcsBranch = branch; }
 
+    /**
+     * In case different from vcsBranch (switch scenario).
+     */
+    private String gitBranch;
+    public String getGitBranch() { return gitBranch; }
+    public void setGitBranch(String branch) { this.gitBranch = branch; }
+
     private String vcsRemoteUrl;
     public String getVcsRemoteUrl() { return vcsRemoteUrl; }
     public void setVcsRemoteUrl(String url) { this.vcsRemoteUrl = url; }
@@ -58,6 +65,8 @@ public class PackageList implements Jsonable {
             pkgs.put("vcsRoot", vcsRoot);
         if (vcsBranch != null)
             pkgs.put("vcsBranch", vcsBranch);
+        if (gitBranch != null)
+            pkgs.put("gitBranch", gitBranch);
         if (vcsRemoteUrl != null)
             pkgs.put("vcsRemoteUrl", vcsRemoteUrl);
         JSONArray pkgArray = new JSONArray();
@@ -69,6 +78,7 @@ public class PackageList implements Jsonable {
                 pkg.put("version", pkgDir.getPackageVersion());
                 if (pkgDir.getVcsDiffType() != null)
                     pkg.put("vcsDiff", pkgDir.getVcsDiffType());
+                pkg.put("format", pkgDir.isJson() ? "json" : "xml");
                 pkgArray.put(pkg);
             }
         }

@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +24,8 @@ import java.util.regex.Pattern;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.bpm.ActivityImplementorDocument;
@@ -240,7 +243,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return null;
     }
 
-    protected PackageDir getTopLevelPackageDir(String name) throws DataAccessException {
+    public PackageDir getTopLevelPackageDir(String name) throws DataAccessException {
         for (PackageDir pkgDir : getPackageDirs()) {
             if (pkgDir.getPackageName().equals(name) && !pkgDir.isArchive())
                 return pkgDir;
@@ -361,25 +364,35 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     // FileSystemAccess methods
 
-    public PackageVO loadPackage(PackageDir pkgDir, boolean deep) throws IOException, XmlException, DataAccessException {
+    public PackageVO loadPackage(PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
         PackageVO packageVO = new PackageVO();
 
-        packageVO.setName(pkgDir.getPackage().getName());
-        packageVO.setVersion(PackageVO.parseVersion(pkgDir.getPackage().getVersion()));
-        packageVO.setGroup(pkgDir.getPackage().getWorkgroup());
+        packageVO.setName(pkgDir.getPackageName());
+        packageVO.setVersion(PackageVO.parseVersion(pkgDir.getPackageVersion()));
         packageVO.setId(versionControl.getId(pkgDir.getLogicalDir()));
         packageVO.setSchemaVersion(DataAccess.currentSchemaVersion);
 
-        if (pkgDir.getPackage().getAttributeList() != null) {
-            List<AttributeVO> attrVOs = new ArrayList<AttributeVO>();
-            for (MDWAttribute attr : pkgDir.getPackage().getAttributeList()) {
-                attrVOs.add(new AttributeVO(attr.getName(), attr.getValue()));
-            }
-            packageVO.setAttributes(attrVOs);
+        if (pkgDir.isJson()) {
+            String pkgJson = new String(read(pkgDir.getMetaFile()));
+            PackageVO jsonPkg = new PackageVO(new JSONObject(pkgJson));
+            packageVO.setGroup(jsonPkg.getGroup());
+            packageVO.setAttributes(jsonPkg.getAttributes());
+            packageVO.setMetaContent(pkgJson);
         }
-
-        if (pkgDir.getPackage().getApplicationProperties() != null && pkgDir.getPackage().getApplicationProperties().getPropertyGroupList() != null) {
-            packageVO.setVoXML(pkgDir.getPackageDoc().xmlText(getXmlOptions()));
+        else {
+            PackageDocument pkgDoc = PackageDocument.Factory.parse(pkgDir.getMetaFile());
+            MDWPackage mdwPkg = pkgDoc.getPackage();
+            packageVO.setGroup(mdwPkg.getWorkgroup());
+            if (mdwPkg.getAttributeList() != null) {
+                List<AttributeVO> attrVOs = new ArrayList<AttributeVO>();
+                for (MDWAttribute attr : mdwPkg.getAttributeList()) {
+                    attrVOs.add(new AttributeVO(attr.getName(), attr.getValue()));
+                }
+                packageVO.setAttributes(attrVOs);
+            }
+            if (mdwPkg.getApplicationProperties() != null && mdwPkg.getApplicationProperties().getPropertyGroupList() != null) {
+                packageVO.setMetaContent(pkgDoc.xmlText(getXmlOptions()));
+            }
         }
 
         packageVO.setProcesses(loadProcesses(pkgDir, deep));
@@ -393,44 +406,50 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return packageVO;
     }
 
-    public long save(PackageVO packageVO, PackageDir pkgDir, boolean deep) throws IOException, XmlException, DataAccessException {
+    public long save(PackageVO packageVO, PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
         File mdwDir = new File(pkgDir + "/.mdw");
         if (!mdwDir.exists()) {
             if (!mdwDir.mkdirs())
                 throw new IOException("Unable to create metadata directory under: " + pkgDir);
         }
 
-        PackageDocument pkgDoc = PackageDocument.Factory.newInstance();
-        MDWPackage pkg = pkgDoc.addNewPackage();
-        pkg.setName(packageVO.getName());
-        pkg.setVersion(PackageVO.formatVersion(packageVO.getVersion()));
-        if (packageVO.getGroup() != null) // calling setter with null adds empty attribute
-          pkg.setWorkgroup(packageVO.getGroup());
-        if (packageVO.getAttributes() != null) {
-            for (AttributeVO attrVO : packageVO.getAttributes()) {
-                MDWAttribute attr = pkg.addNewAttribute();
-                attr.setName(attrVO.getAttributeName());
-                attr.setValue(attrVO.getAttributeValue());
-            }
+        String pkgContent;
+        if (pkgDir.isJson()) {
+            pkgContent = packageVO.getJson(false).toString(2);
         }
-        if (packageVO.getVoXML() != null && packageVO.getVoXML().trim().length() > 0) {
-            if (packageVO.getVoXML().indexOf(":processDefinition") > 0) {
-                // compatibility for imported non-VCS packages
-                ProcessDefinitionDocument procDefDoc = ProcessDefinitionDocument.Factory.parse(packageVO.getVoXML(), Compatibility.namespaceOptions());
-                ApplicationProperties appProps = procDefDoc.getProcessDefinition().getApplicationProperties();
-                if (appProps != null)
-                    pkg.setApplicationProperties(appProps);
+        else {
+            PackageDocument pkgDoc = PackageDocument.Factory.newInstance();
+            MDWPackage pkg = pkgDoc.addNewPackage();
+            pkg.setName(packageVO.getName());
+            pkg.setVersion(PackageVO.formatVersion(packageVO.getVersion()));
+            if (packageVO.getGroup() != null) // calling setter with null adds empty attribute
+              pkg.setWorkgroup(packageVO.getGroup());
+            if (packageVO.getAttributes() != null) {
+                for (AttributeVO attrVO : packageVO.getAttributes()) {
+                    MDWAttribute attr = pkg.addNewAttribute();
+                    attr.setName(attrVO.getAttributeName());
+                    attr.setValue(attrVO.getAttributeValue());
+                }
             }
-            else {
-                PackageDocument pkgDefDoc = PackageDocument.Factory.parse(packageVO.getVoXML());
-                ApplicationProperties props = pkgDefDoc.getPackage().getApplicationProperties();
-                if (props != null)
-                    pkg.setApplicationProperties(props);
+            if (packageVO.getMetaContent() != null && packageVO.getMetaContent().trim().length() > 0) {
+                if (packageVO.getMetaContent().indexOf(":processDefinition") > 0) {
+                    // compatibility for imported non-VCS packages
+                    ProcessDefinitionDocument procDefDoc = ProcessDefinitionDocument.Factory.parse(packageVO.getMetaContent(), Compatibility.namespaceOptions());
+                    ApplicationProperties appProps = procDefDoc.getProcessDefinition().getApplicationProperties();
+                    if (appProps != null)
+                        pkg.setApplicationProperties(appProps);
+                }
+                else {
+                    PackageDocument pkgDefDoc = PackageDocument.Factory.parse(packageVO.getMetaContent());
+                    ApplicationProperties props = pkgDefDoc.getPackage().getApplicationProperties();
+                    if (props != null)
+                        pkg.setApplicationProperties(props);
+                }
             }
+            pkgContent = pkgDoc.xmlText(getXmlOptions());
         }
 
-        File pkgFile = new File(mdwDir + "/package.xml");
-        write(pkgDoc.xmlText(getXmlOptions()).getBytes(), pkgFile);
+        write(pkgContent.getBytes(), pkgDir.getMetaFile());
 
         packageVO.setId(versionControl.getId(pkgDir.getLogicalDir()));
 
@@ -445,14 +464,17 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return packageVO.getPackageId();
     }
 
-    public ProcessVO loadProcess(PackageDir pkgDir, AssetFile assetFile, boolean deep) throws IOException, XmlException, DataAccessException {
-
+    public ProcessVO loadProcess(PackageDir pkgDir, AssetFile assetFile, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
         ProcessVO process;
         if (deep) {
-            ProcessImporter importer = DataAccess.getProcessImporter(DataAccess.currentSchemaVersion);
-            String xml = new String(read(assetFile));
-            process = importer.importProcess(xml);
-            // TODO in importer: process.setProcessDescription(processDesc);
+            String content = new String(read(assetFile));
+            if (content.trim().startsWith("{")) {
+                process = new ProcessVO(new JSONObject(content));
+            }
+            else {
+                ProcessImporter importer = DataAccess.getProcessImporter(DataAccess.currentSchemaVersion);
+                process = importer.importProcess(content);
+            }
             Long loadId = process.getProcessId();
             WorkTransitionVO obsoleteStartTransition = null;
             for (WorkTransitionVO t : process.getTransitions()) {
@@ -484,21 +506,23 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return process;
     }
 
-    public long save(ProcessVO process, PackageDir pkgDir) throws IOException, XmlException, DataAccessException {
+    public long save(ProcessVO process, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
         process.removeEmptyAndOverrideAttributes();
         // save task templates
         List<ActivityImplementorVO> impls = getActivityImplementors();  // TODO maybe cache these
         for (ActivityVO activity : process.getActivities()) {
             for (ActivityImplementorVO impl : impls) {
-                if (activity.getImplementorClassName().equals(impl.getImplementorClassName()) && impl.isManualTask()) {
-                    if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
-                        removeObsoleteTaskActivityAttributes(activity);
-                    }
-                    else {
-                        // create the task template from activity attributes
-                        TaskVO taskVo = getTask(process.getProcessName(), activity);
-                        taskVo.setPackageName(process.getPackageName());
-                        save(taskVo, pkgDir);
+                if (activity.getImplementorClassName().equals(impl.getImplementorClassName())) {
+                    if (impl.isManualTask()) {
+                        if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
+                            removeObsoleteTaskActivityAttributes(activity);
+                        }
+                        else {
+                            // create the task template from activity attributes
+                            TaskVO taskVo = getTask(process.getProcessName(), activity);
+                            taskVo.setPackageName(process.getPackageName());
+                            save(taskVo, pkgDir);
+                        }
                     }
                 }
             }
@@ -507,15 +531,17 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             for (ProcessVO embedded : process.getSubProcesses()) {
                 for (ActivityVO activity : embedded.getActivities()) {
                     for (ActivityImplementorVO impl : impls) {
-                        if (activity.getImplementorClassName().equals(impl.getImplementorClassName()) && impl.isManualTask()) {
-                            if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
-                                removeObsoleteTaskActivityAttributes(activity);
-                            }
-                            else {
-                                // create the task template from activity attributes
-                                TaskVO taskVo = getTask(process.getProcessName(), activity);
-                                taskVo.setPackageName(process.getPackageName());
-                                save(taskVo, pkgDir);
+                        if (activity.getImplementorClassName().equals(impl.getImplementorClassName())) {
+                            if (impl.isManualTask()) {
+                                if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
+                                    removeObsoleteTaskActivityAttributes(activity);
+                                }
+                                else {
+                                    // create the task template from activity attributes
+                                    TaskVO taskVo = getTask(process.getProcessName(), activity);
+                                    taskVo.setPackageName(process.getPackageName());
+                                    save(taskVo, pkgDir);
+                                }
                             }
                         }
                     }
@@ -523,10 +549,16 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             }
         }
 
-        ProcessExporter exporter = DataAccess.getProcessExporter(DataAccess.currentSchemaVersion);
-        String xml = exporter.exportProcess(process, getDatabaseVersion(), null);
+        String content;
+        if (pkgDir.isJson()) {
+            content = process.getJson().toString(2);
+        }
+        else {
+            ProcessExporter exporter = DataAccess.getProcessExporter(DataAccess.currentSchemaVersion);
+            content = exporter.exportProcess(process, getDatabaseVersion(), null);
+        }
         AssetFile assetFile = pkgDir.getAssetFile(getProcessFile(process), getAssetRevision(process));
-        write(xml.getBytes(), assetFile);
+        write(content.getBytes(), assetFile);
         process.setId(versionControl.getId(assetFile.getLogicalFile()));
         process.setVersion(assetFile.getRevision().getVersion());
         process.setModifyingUser(assetFile.getRevision().getModUser());
@@ -573,64 +605,100 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return ruleSet.getId();
     }
 
-    public ActivityImplementorVO loadActivityImplementor(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException {
-        ActivityImplementorDocument doc = ActivityImplementorDocument.Factory.parse(assetFile);
-        MDWActivityImplementor impl = doc.getActivityImplementor();
-        ActivityImplementorVO implVo = new ActivityImplementorVO();
+    public ActivityImplementorVO loadActivityImplementor(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
+        String content = new String(read(assetFile));
+        ActivityImplementorVO implVo;
+        if (content.trim().startsWith("{")) {
+            implVo = new ActivityImplementorVO(new JSONObject(content));
+        }
+        else {
+            ActivityImplementorDocument doc = ActivityImplementorDocument.Factory.parse(content);
+            MDWActivityImplementor impl = doc.getActivityImplementor();
+            implVo = new ActivityImplementorVO();
+            implVo.setImplementorClassName(impl.getImplementation());
+            implVo.setBaseClassName(impl.getType());
+            implVo.setLabel(impl.getLabel());
+            implVo.setIconName(impl.getIconFile());
+            implVo.setAttributeDescription(impl.getAttributeDescription());
+            implVo.setHidden(impl.getHidden());
+            implVo.setShowInToolbox(!impl.getHidden());
+        }
         implVo.setImplementorId(assetFile.getId());
-        implVo.setImplementorClassName(impl.getImplementation());
-        implVo.setBaseClassName(impl.getType());
-        implVo.setLabel(impl.getLabel());
-        implVo.setIconName(impl.getIconFile());
-        implVo.setAttributeDescription(impl.getAttributeDescription());
-        implVo.setHidden(impl.getHidden());
-        implVo.setShowInToolbox(!impl.getHidden());
         implVo.setPackageName(pkgDir.getPackageName());
         return implVo;
     }
 
-    public long save(ActivityImplementorVO implVo, PackageDir pkgDir) throws IOException {
-        ActivityImplementorDocument doc = ActivityImplementorDocument.Factory.newInstance();
-        MDWActivityImplementor impl = doc.addNewActivityImplementor();
-        impl.setImplementation(implVo.getImplementorClassName());
-        impl.setType(implVo.getBaseClassName());
-        impl.setLabel(implVo.getLabel());
-        impl.setIconFile(implVo.getIconName());
-        impl.setAttributeDescription(implVo.getAttributeDescription());
-        if (implVo.isHidden())
-            impl.setHidden(true);
+    public long save(ActivityImplementorVO implVo, PackageDir pkgDir) throws IOException, JSONException {
+        String content;
+        if (pkgDir.isJson()) {
+            content = implVo.getJson().toString(2);
+        }
+        else {
+            ActivityImplementorDocument doc = ActivityImplementorDocument.Factory.newInstance();
+            MDWActivityImplementor impl = doc.addNewActivityImplementor();
+            impl.setImplementation(implVo.getImplementorClassName());
+            impl.setType(implVo.getBaseClassName());
+            impl.setLabel(implVo.getLabel());
+            impl.setIconFile(implVo.getIconName());
+            impl.setAttributeDescription(implVo.getAttributeDescription());
+            if (implVo.isHidden())
+                impl.setHidden(true);
+            content = doc.xmlText(getXmlOptions());
+        }
+
         AssetFile assetFile = pkgDir.getAssetFile(getActivityImplementorFile(implVo), null); // no revs
-        write(doc.xmlText(getXmlOptions()).getBytes(), assetFile);
+        write(content.getBytes(), assetFile);
         implVo.setImplementorId(versionControl.getId(assetFile.getLogicalFile()));
         return implVo.getImplementorId();
     }
 
-    public ExternalEventVO loadExternalEventHandler(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException {
-        ExternalEventHandlerDocument doc = ExternalEventHandlerDocument.Factory.parse(assetFile);
-        MDWExternalEvent evth = doc.getExternalEventHandler();
-        ExternalEventVO evthVo = new ExternalEventVO();
+    public ExternalEventVO loadExternalEventHandler(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
+        String content = new String(read(assetFile));
+        ExternalEventVO evthVo;
+        if (content.trim().startsWith("{")) {
+            evthVo = new ExternalEventVO(new JSONObject(content));
+        }
+        else {
+            ExternalEventHandlerDocument doc = ExternalEventHandlerDocument.Factory.parse(content);
+            MDWExternalEvent evth = doc.getExternalEventHandler();
+            evthVo = new ExternalEventVO();
+            evthVo.setEventHandler(evth.getEventHandler());
+            evthVo.setEventName(evth.getEventName());
+        }
         evthVo.setId(assetFile.getId());
-        evthVo.setEventHandler(evth.getEventHandler());
-        evthVo.setEventName(evth.getEventName());
         evthVo.setPackageName(pkgDir.getPackageName());
         return evthVo;
     }
 
-    public long save(ExternalEventVO evthVo, PackageDir pkgDir) throws IOException {
-        ExternalEventHandlerDocument doc = ExternalEventHandlerDocument.Factory.newInstance();
-        MDWExternalEvent evth = doc.addNewExternalEventHandler();
-        evth.setEventHandler(evthVo.getEventHandler());
-        evth.setEventName(evthVo.getEventName());
+    public long save(ExternalEventVO evthVo, PackageDir pkgDir) throws IOException, JSONException {
+        String content;
+        if (pkgDir.isJson()) {
+            content = evthVo.getJson().toString(2);
+        }
+        else {
+            ExternalEventHandlerDocument doc = ExternalEventHandlerDocument.Factory.newInstance();
+            MDWExternalEvent evth = doc.addNewExternalEventHandler();
+            evth.setEventHandler(evthVo.getEventHandler());
+            evth.setEventName(evthVo.getEventName());
+            content = doc.xmlText(getXmlOptions());
+        }
         AssetFile assetFile = pkgDir.getAssetFile(getExternalEventHandlerFile(evthVo), null); // no revs
-        write(doc.xmlText(getXmlOptions()).getBytes(), assetFile);
+        write(content.getBytes(), assetFile);
         evthVo.setId(versionControl.getId(assetFile.getLogicalFile()));
         return evthVo.getId();
     }
 
-    public TaskVO loadTaskTemplate(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException {
-        TaskTemplateDocument doc = TaskTemplateDocument.Factory.parse(assetFile);
-        TaskTemplate taskTemplate = doc.getTaskTemplate();
-        TaskVO taskVO = new TaskVO(taskTemplate);
+    public TaskVO loadTaskTemplate(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
+        String content = new String(read(assetFile));
+        TaskVO taskVO;
+        if (content.trim().startsWith("{")) {
+            taskVO = new TaskVO(new JSONObject(content));
+        }
+        else {
+            TaskTemplateDocument doc = TaskTemplateDocument.Factory.parse(content);
+            TaskTemplate taskTemplate = doc.getTaskTemplate();
+            taskVO = new TaskVO(taskTemplate);
+        }
         taskVO.setName(assetFile.getName());
         taskVO.setTaskId(assetFile.getId());
         taskVO.setPackageName(pkgDir.getPackageName());
@@ -638,23 +706,30 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return taskVO;
     }
 
-    public long save(TaskVO taskVo, PackageDir pkgDir) throws IOException {
-        TaskTemplateDocument doc = TaskTemplateDocument.Factory.newInstance();
-        doc.setTaskTemplate(taskVo.toTemplate());
+    public long save(TaskVO taskVo, PackageDir pkgDir) throws IOException, JSONException {
+        String content;
+        if (pkgDir.isJson()) {
+            content = taskVo.getJson().toString(2);
+        }
+        else {
+            TaskTemplateDocument doc = TaskTemplateDocument.Factory.newInstance();
+            doc.setTaskTemplate(taskVo.toTemplate());
+            content = doc.xmlText(getXmlOptions());
+        }
         AssetFile assetFile = pkgDir.getAssetFile(getTaskTemplateFile(taskVo), taskVo.getVersion() > 0 ? getAssetRevision(taskVo) : null);
-        write(doc.xmlText(getXmlOptions()).getBytes(), assetFile);
+        write(content.getBytes(), assetFile);
         taskVo.setTaskId(versionControl.getId(assetFile.getLogicalFile()));
         return taskVo.getTaskId();
     }
 
-    public List<ProcessVO> loadProcesses(PackageDir pkgDir, boolean deep) throws IOException, XmlException, DataAccessException {
+    public List<ProcessVO> loadProcesses(PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
         List<ProcessVO> processes = new ArrayList<ProcessVO>();
         for (File procFile : pkgDir.listFiles(procFileFilter))
             processes.add(loadProcess(pkgDir, pkgDir.getAssetFile(procFile), deep));
         return processes;
     }
 
-    public void saveProcesses(PackageVO packageVo, PackageDir pkgDir) throws IOException, XmlException, DataAccessException {
+    public void saveProcesses(PackageVO packageVo, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
         if (packageVo.getProcesses() != null) {
             for (ProcessVO process : packageVo.getProcesses()) {
                 process.setPackageName(packageVo.getName());
@@ -690,14 +765,14 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public List<ActivityImplementorVO> loadActivityImplementors(PackageDir pkgDir) throws IOException, XmlException {
+    public List<ActivityImplementorVO> loadActivityImplementors(PackageDir pkgDir) throws IOException, XmlException, JSONException {
         List<ActivityImplementorVO> impls = new ArrayList<ActivityImplementorVO>();
         for (File implFile : pkgDir.listFiles(implFileFilter))
             impls.add(loadActivityImplementor(pkgDir, pkgDir.getAssetFile(implFile)));
         return impls;
     }
 
-    public void saveActivityImplementors(PackageVO packageVo, PackageDir pkgDir) throws IOException, XmlException, DataAccessException {
+    public void saveActivityImplementors(PackageVO packageVo, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
         if (packageVo.getImplementors() != null && !packageVo.getImplementors().isEmpty()) {
             List<ActivityImplementorVO> existingImpls = new ArrayList<ActivityImplementorVO>();
             for (PackageDir existPkgDir : getPackageDirs()) {
@@ -721,14 +796,14 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public List<ExternalEventVO> loadExternalEventHandlers(PackageDir pkgDir) throws IOException, XmlException {
+    public List<ExternalEventVO> loadExternalEventHandlers(PackageDir pkgDir) throws IOException, XmlException, JSONException {
         List<ExternalEventVO> evtHandlers = new ArrayList<ExternalEventVO>();
         for (File evthFile : pkgDir.listFiles(evthFileFilter))
             evtHandlers.add(loadExternalEventHandler(pkgDir, pkgDir.getAssetFile(evthFile)));
         return evtHandlers;
     }
 
-    public void saveExternalEventHandlers(PackageVO packageVo, PackageDir pkgDir) throws IOException {
+    public void saveExternalEventHandlers(PackageVO packageVo, PackageDir pkgDir) throws IOException, JSONException {
         if (packageVo.getExternalEvents() != null) {
             for (ExternalEventVO evth : packageVo.getExternalEvents()) {
                 evth.setPackageName(pkgDir.getPackageName());
@@ -737,14 +812,14 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public List<TaskVO> loadTaskTemplates(PackageDir pkgDir) throws IOException, XmlException {
+    public List<TaskVO> loadTaskTemplates(PackageDir pkgDir) throws IOException, XmlException, JSONException {
         List<TaskVO> tasks = new ArrayList<TaskVO>();
         for (File taskFile : pkgDir.listFiles(taskFileFilter))
             tasks.add(loadTaskTemplate(pkgDir, pkgDir.getAssetFile(taskFile)));
         return tasks;
     }
 
-    public void saveTaskTemplates(PackageVO packageVo, PackageDir pkgDir) throws IOException {
+    public void saveTaskTemplates(PackageVO packageVo, PackageDir pkgDir) throws IOException, JSONException {
         if (packageVo.getTaskTemplates() != null) {
             for (TaskVO task : packageVo.getTaskTemplates()) {
                 task.setPackageName(pkgDir.getPackageName());
@@ -933,10 +1008,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             try {
                 packages.add(loadPackage(pkgDir, deep));
             }
-            catch (IOException ex) {
-                throw new DataAccessException(ex.getMessage(), ex);
+            catch (DataAccessException ex) {
+                throw ex;
             }
-            catch (XmlException ex) {
+            catch (Exception ex) {
                 throw new DataAccessException(ex.getMessage(), ex);
             }
         }
@@ -952,10 +1027,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             Collections.sort(processes);
             return processes;
         }
-        catch (IOException ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
+        catch (DataAccessException ex) {
+            throw ex;
         }
-        catch (XmlException ex) {
+        catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
     }
@@ -988,10 +1063,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         try {
             return loadProcess(pkgDir, pkgDir.findAssetFile(logicalFile), true);
         }
-        catch (IOException ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
+        catch (DataAccessException ex) {
+            throw ex;
         }
-        catch (XmlException ex) {
+        catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
     }
@@ -1015,10 +1090,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                             return process;
                         }
                     }
-                    catch (IOException ex) {
-                        throw new DataAccessException(ex.getMessage(), ex);
+                    catch (DataAccessException ex) {
+                        throw ex;
                     }
-                    catch (XmlException ex) {
+                    catch (Exception ex) {
                         throw new DataAccessException(ex.getMessage(), ex);
                     }
                 }
@@ -1117,10 +1192,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             PackageDir pkgDir = getPackageDir(ownerId);
             try {
                 PackageVO pkgVO = loadPackage(pkgDir, false);
-                if (pkgVO.getVoXML() != null) {
+                if (pkgVO.getMetaContent() != null) {
                     RuleSetVO ruleSet = new RuleSetVO();
                     ruleSet.setLanguage(RuleSetVO.CONFIG);
-                    ruleSet.setRuleSet(pkgVO.getVoXML());
+                    ruleSet.setRuleSet(pkgVO.getMetaContent());
                     return ruleSet;
                 }
             }
@@ -1208,8 +1283,14 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public List<VariableTypeVO> getVariableTypes() throws DataAccessException {
         List<VariableTypeVO> types = baselineData.getVariableTypes();
-        if (compatibilityDataSource != null)
-            types.addAll(getDbLoader().getVariableTypes());
+        if (compatibilityDataSource != null) {
+            // VariableTypeVO now has equals() and hashCode()
+            // so we can effectively do a union of both vcs and db types using LinkedHashSet
+            // maintaining order
+            Set<VariableTypeVO> setOfTypes = new LinkedHashSet<VariableTypeVO>(types);
+            setOfTypes.addAll(getDbLoader().getVariableTypes());
+            types = new ArrayList<VariableTypeVO>(setOfTypes);
+        }
         return types;
     }
 
@@ -1314,7 +1395,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     public Long persistPackage(PackageVO packageVO, PersistType persistType) throws DataAccessException {
         try {
             PackageDir pkgDir;
-            if (persistType == PersistType.NEW_VERSION) {
+            if (persistType == PersistType.NEW_VERSION || persistType == PersistType.CREATE_JSON) {
                 packageVO.setVersion(packageVO.getVersion() + 1);
                 if (packageVO.getVersion() == 1) {
                     pkgDir = createPackage(packageVO);
@@ -1324,12 +1405,12 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                     // for process version increment, existing package will have been archived when process was saved
                 }
             }
-            else if (persistType == PersistType.IMPORT) {
+            else if (persistType == PersistType.IMPORT || persistType == PersistType.IMPORT_JSON) {
                 PackageDir existingTopLevel = getTopLevelPackageDir(packageVO.getName());
                 if (existingTopLevel != null) {
-                    if (!packageVO.getVersionString().equals(existingTopLevel.getPackage().getVersion())) {
+                    if (!packageVO.getVersionString().equals(existingTopLevel.getPackageVersion())) {
                         // move the existing package to the archive
-                        File archiveDest = new File(archiveDir + "/" + packageVO.getName() + " v" + existingTopLevel.getPackage().getVersion());
+                        File archiveDest = new File(archiveDir + "/" + packageVO.getName() + " v" + existingTopLevel.getPackageVersion());
                         if (archiveDest.exists())
                             deletePkg(archiveDest);
                         copyPkg(existingTopLevel, archiveDest);
@@ -1339,24 +1420,28 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                     versionControl.clearId(existingTopLevel.getLogicalDir());
                 }
                 pkgDir = createPackage(packageVO);
+                if (persistType == PersistType.IMPORT_JSON)
+                    pkgDir.setJson(true);
             }
             else {
                 pkgDir = getTopLevelPackageDir(packageVO.getName());
             }
-            Long id = save(packageVO, pkgDir, persistType == PersistType.IMPORT);
+            if (persistType == PersistType.IMPORT_JSON || persistType == PersistType.CREATE_JSON)
+                pkgDir.setJson(true);
+            Long id = save(packageVO, pkgDir, persistType == PersistType.IMPORT || persistType == PersistType.IMPORT_JSON);
             pkgDir.parse();  // sync
             return id;
         }
-        catch (IOException ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
+        catch (DataAccessException ex) {
+            throw ex;
         }
-        catch (XmlException ex) {
+        catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
     }
 
     private PackageDir archivePackage(PackageDir pkgDir) throws IOException, DataAccessException {
-        File archiveDest = new File(archiveDir + "/" + pkgDir.getPackageName() + " v" + pkgDir.getPackage().getVersion());
+        File archiveDest = new File(archiveDir + "/" + pkgDir.getPackageName() + " v" + pkgDir.getPackageVersion());
         if (archiveDest.exists())
             delete(archiveDest);
         copyPkg(pkgDir, archiveDest);
@@ -1413,7 +1498,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * Saves to top-level package.  Expects process.getPackageName() to be set.
      * This has the side effect of archiving the process's package if a new version is being saved.
      */
-    public Long persistProcess(ProcessVO process, PersistType persistType) throws DataAccessException, XmlException {
+    public Long persistProcess(ProcessVO process, PersistType persistType) throws DataAccessException {
         try {
             PackageDir pkgDir = getTopLevelPackageDir(process.getPackageName());
             if (persistType == PersistType.NEW_VERSION) {
@@ -1430,7 +1515,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             }
             return save(process, pkgDir);
         }
-        catch (IOException ex) {
+        catch (DataAccessException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
     }
@@ -1610,7 +1698,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         try {
             return save(implementor, getTopLevelPackageDir(implementor.getPackageName()));
         }
-        catch (IOException ex) {
+        catch (DataAccessException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
     }
@@ -1673,7 +1764,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         try {
             save(eventHandler, getTopLevelPackageDir(eventHandler.getPackageName()));
         }
-        catch (IOException ex) {
+        catch (DataAccessException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
     }
@@ -1736,7 +1830,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         try {
             save(taskTemplate, getTopLevelPackageDir(taskTemplate.getPackageName()));
         }
-        catch (IOException ex) {
+        catch (DataAccessException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
     }

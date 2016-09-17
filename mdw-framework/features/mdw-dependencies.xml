@@ -3,7 +3,7 @@
   <feature name="mdw-dependencies" version="@mdw.version@">
     <bundle>wrap:mvn:com.qwest.appsec/AccessControl/6.8</bundle>
     <bundle>wrap:mvn:com.qwest.mbeng/mbeng/7.1.0</bundle>
-    <bundle>mvn:com.oracle/ojdbc6/12.1.0.2.0</bundle>
+    <bundle>wrap:mvn:com.oracle/ojdbc6/12.1.0.2.0</bundle>
     <bundle>wrap:mvn:junit/junit/4.8.1</bundle>
     <bundle>wrap:mvn:commons-beanutils/commons-beanutils/1.8.3</bundle>
     <bundle>wrap:mvn:commons-collections/commons-collections/3.2.1</bundle>    

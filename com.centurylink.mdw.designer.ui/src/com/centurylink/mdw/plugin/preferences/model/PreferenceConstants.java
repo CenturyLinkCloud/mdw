@@ -12,17 +12,15 @@ public interface PreferenceConstants
 {
   // TODO: externalize these URLs
   public static final String PREFS_DEFAULT_MDW_RELEASES_URL = "http://archiva.corp.intranet/archiva/repository/mdw";
-  public static final String PREFS_DEFAULT_MDW_MAVEN_REPO_URL = "http://archiva.corp.intranet/archiva/repository/mdw";
+  // TODO: switch above to the following when Archiva becomes unavailable
+  // public static final String PREFS_DEFAULT_MDW_RELEASES_URL = "http://lxdenvmtc143.dev.qintra.com:7021/maven/repository";
   public static final String PREFS_DEFAULT_WORKSPACE_SETUP_URL = "http://lxdenvmtc143.dev.qintra.com:7021/Environment";
-  // this works except automated test suites need to be uploaded
-  // (also this doesn't depend on the database)
   public static final String PREFS_DEFAULT_DISCOVERY_URL = "http://lxdenvmtc143.dev.qintra.com:7021/Discovery";
 
   public static final String PREFS_DEFAULT_COPYRIGHT_NOTICE
   = "/**\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n */";
 
   public static final String PREFS_MDW_RELEASES_URL = "MdwPrefsReleasesUrl";
-  public static final String PREFS_MDW_MAVEN_REPO_URL = "MdwMavenRepoUrl";
   public static final String PREFS_WORKSPACE_SETUP_URL = "MdwPrefsWorkspaceSetupUrl";
   public static final String PREFS_DISCOVERY_URL = "MdwPrefsDiscoveryUrl";
   public static final String PREFS_JDBC_FETCH_SIZE = "JdbcFetchSize";
@@ -120,6 +118,7 @@ public interface PreferenceConstants
   public static final String PREFS_SERVER_WF_PROJECT = "MdwServerWorkflowProject";
   public static final String PREFS_RUNNING_SERVER = "MdwRunningServer";
 
+  public static final String PREFS_EXPORT_JSON_FORMAT = "MdwExportJsonFormat";
   // stored as _SUPPRESS_ so that default is true
   public static final String PREFS_SUPPRESS_TASK_TEMPLATES_IN_PKG_EXPORT = "MdwSuppressTaskTemplatesInPackageExport";
   public static final String PREFS_SUPPRESS_INFER_REFERENCED_IMPLS_DURING_EXPORT = "MdwSuppressInferReferencedImplsDuringExport";

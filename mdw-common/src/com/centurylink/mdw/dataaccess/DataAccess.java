@@ -181,11 +181,12 @@ public class DataAccess {
                             message = "Asset location " + rootDir + " does not exist.";
                         String warning = "\n****************************************\n" +
                                 "** WARNING: " + message + "\n" +
-                                "** Please import the MDW base and hub workflow packages\n" +
+                                "** Please import the MDW base and hub packages\n" +
                                 "******************************************\n";
                         LoggerUtil.getStandardLogger().severe(warning);
                     }
-                    loaderPersisterVcs = myLoaderPersisterVcs = new LoaderPersisterVcs("mdw", rootDir, getAssetVersionControl(rootDir), getBaselineData(), compatDs);
+                    VersionControl vc = getAssetVersionControl(rootDir);
+                    loaderPersisterVcs = myLoaderPersisterVcs = new LoaderPersisterVcs("mdw", rootDir, vc, getBaselineData(), compatDs);
                 }
             }
         }
@@ -218,32 +219,53 @@ public class DataAccess {
                             VersionControlGit vcGit = new VersionControlGit();
                             File gitLocal = new File(gitLocalPath);
                             vcGit.connect(url, user, password, gitLocal);
-                            if (!gitLocal.isDirectory()) {
-                                if (!gitLocal.mkdirs())
-                                    throw new DataAccessException("Git loc " + gitLocalPath + " does not exist and cannot be created.");
-                            }
-                            if (!vcGit.localRepoExists()) {
-                                logger.severe("WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning with no checkout...");
-                                vcGit.cloneNoCheckout(branch);
-                            }
 
                             String gitTrustedHost = PropertyManager.getProperty(PropertyNames.MDW_GIT_TRUSTED_HOST);
                             if (gitTrustedHost != null)
                                 DesignatedHostSslVerifier.setupSslVerification(gitTrustedHost);
 
+                            if (!gitLocal.isDirectory()) {
+                                if (!gitLocal.mkdirs())
+                                    throw new DataAccessException("Git loc " + gitLocalPath + " does not exist and cannot be created.");
+                            }
+                            if (!vcGit.localRepoExists()) {
+                                logger.severe("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning with no checkout...");
+                                vcGit.cloneNoCheckout();
+                            }
+
                             String assetPath = vcGit.getRelativePath(rootDir);
                             logger.info("Loading assets from path: " + assetPath);
-                            GitDiffs diffs = vcGit.getDiffs(assetPath);
-                            if (!diffs.isEmpty()) {
-                                String debugMsg = "Differences:\n============\n" + diffs;
-                                logger.severe("WARNING: Local Git repository is out-of-sync with respect to remote branch: " + branch
-                                        + "\n(" + gitLocal.getAbsolutePath() + ")");
-                                if (logger.isDebugEnabled())
-                                    logger.debug(debugMsg);
+
+                            // sanity checks
+                            String gitBranch = vcGit.getBranch();
+                            if (!branch.equals(gitBranch)) {
+                                String warning = "\n****************************************\n" +
+                                        "** WARNING: Git branch: " + gitBranch + " does not match " + PropertyNames.MDW_GIT_BRANCH + ": " + branch + "\n" +
+                                        "** Please perform an Import to sync with branch " + branch + "\n" +
+                                        "******************************************\n";
+                                LoggerUtil.getStandardLogger().severe(warning);
+                            }
+                            else {
+                                String localCommit = vcGit.getCommit();
+                                if (localCommit != null) {
+                                    String remoteCommit = vcGit.getRemoteCommit(branch);
+                                    if (!localCommit.equals(remoteCommit))
+                                        LoggerUtil.getStandardLogger().severe("**** WARNING: Git commit: " + localCommit + " does not match remote HEAD commit: " + remoteCommit);
+                                }
+
+                                if (logger.isDebugEnabled()) {
+                                    // log actual diffs at debug level
+                                    GitDiffs diffs = vcGit.getDiffs(branch, assetPath);
+                                    if (!diffs.isEmpty()) {
+                                        logger.severe("**** WARNING: Local Git repository is out-of-sync with respect to remote branch: " + branch
+                                                + "\n(" + gitLocal.getAbsolutePath() + ")");
+                                        logger.debug("Differences:\n============\n" + diffs);
+                                    }
+                                }
                             }
                         }
                         else {
-                            logger.severe("WARNING: Not performing local Git repository up-to-date check due to missing credentials.");
+                            logger.severe("**** WARNING: Not verifying local Git repository due to missing credentials.");
                         }
                     }
                 }
@@ -289,20 +311,43 @@ public class DataAccess {
     }
 
     /**
-     * For VCS assets.
+     * For VCS assets.  Not to be called from Designer.
      */
+    public static boolean isUseCompatibilityDatasource() throws DataAccessException {
+        assert ApplicationContext.isFileBasedAssetPersist();
+        return isUseCompatibilityDatasource(null);
+    }
+
+    /**
+     * For VCS assets.  Only check the first time.
+     */
+    private static final Object useCompatibilityDatasourceLock = new Object();
+    private static volatile Boolean useCompatDataSource = null;
     public static boolean isUseCompatibilityDatasource(DatabaseAccess db) throws DataAccessException {
-        if (db.isMySQL() || db.isMariaDB())
-            return false;
-        try {
-            db.openConnection();
-            String query = "select table_name from all_tables where table_name = 'RULE_SET'";
-            return db.runSelect(query, null).next();
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage(), e);
-        } finally {
-            db.closeConnection();
+        Boolean useCompatDataSourceTemp = useCompatDataSource;
+        if (useCompatDataSourceTemp == null) {
+            synchronized(useCompatibilityDatasourceLock) {
+                useCompatDataSourceTemp = useCompatDataSource;
+                if (useCompatDataSourceTemp == null) {
+                    if (db == null)
+                        db = new DatabaseAccess(null);
+                    if (db.isMySQL() || db.isMariaDB())
+                        useCompatDataSource = useCompatDataSourceTemp = false;
+                    else {
+                        try {
+                            db.openConnection();
+                            String query = "select table_name from all_tables where table_name = 'RULE_SET'";
+                            useCompatDataSource = useCompatDataSourceTemp = db.runSelect(query, null).next();
+                        } catch (SQLException e) {
+                            throw new DataAccessException(e.getMessage(), e);
+                        } finally {
+                            db.closeConnection();
+                        }
+                    }
+                }
+            }
         }
+        return useCompatDataSourceTemp;
     }
 
     public static int[] getDatabaseSchemaVersion(DatabaseAccess db) throws DataAccessException {

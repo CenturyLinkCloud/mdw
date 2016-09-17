@@ -1,0 +1,1916 @@
+<ConfigManagerProjects
+  xmlns="http://mdw.centurylink.com/workflow"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://mdw.centurylink.com/workflow ../../mdw-schemas/schemas/Workflow/ConfigManager.xsd">
+  
+  <WorkflowApp
+    name="ACE-VOIP"
+    malAppName="ACE-VOIP"
+    ecomAcronym="ace-voip" 
+    webContextRoot="MDWWeb"
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManagerWeb">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://cshare.ad.qintra.com/sites/mdw</Url>
+    <Url id="anthill3Url" label="5.2 Anthill">http://lxdenvmtc143.dev.qintra.com:7209/anthill</Url>
+    <Url id="archivaRepo" label="MDW Archiva Maven Repo">http://archiva.corp.intranet/archiva/repository/mdw</Url>
+    <Url id="mdwJavaDocs" label="MDW 5.2 JavaDocs">http://lxdenvmtc143.dev.qintra.com:7021/MDWWeb/javadoc/index.html</Url>
+      <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="Dev 1" owner="Greg Walters">
+      <ManagedServer host="lxomavmtc205.dev.qintra.com" port="10028" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc205.dev.qintra.com:10028</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc205.dev.qintra.com:8128</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavdora027.dev.qintra.com:1550:avoip01d" user="acevoip_app" password="BxfuA/xZ55+qKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Test 1" owner="Greg Walters">
+      <ManagedServer host="acevoipsmx.test.intranet" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://acevoipsmx.test.intranet:10001</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://acevoipsmx.test.intranet:20001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@avoip01tdb.dev.qintra.com:1551:avoip01t" user="acevoip_app" password="BxfuA/xZ55+qKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Test 2" owner="Greg Walters">
+      <ManagedServer host="acevoipsmx.test.intranet" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://acevoipsmx.test.intranet:10002</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://acevoipsmx.test.intranet:20002</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@avoip02tdb.dev.qintra.com:1550:avoip02t" user="acevoip_app" password="BxfuA/xZ55+qKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Test3" owner="Shannon Shen">
+      <ManagedServer host="acevoipsmx.test.intranet" port="10004" />
+      <Url id="userAccessBaseUrl" label="User Access">http://acevoipsmx.test.intranet</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://acevoipsmx.test.intranet</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@avoip03tdb.dev.qintra.com:1553:avoip03t" user="ACEVOIP_APP" password="6Az9R3oA4O6qKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="E2E" owner="Greg Walters">
+      <ManagedServer host="acevoipsmx.test.intranet" port="10003" />
+      <Url id="userAccessBaseUrl" label="User Access">http://acevoipsmx.test.intranet:10003</Url>
+    <Url id="consoleUrl" label="Karaf Shell">ssh://acevoipsmx.test.intranet:10003</Url>
+    <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@avoipe2e_db.dev.qintra.com:1567:avoipe2e" user="ACEVOIP_APP" password="6Az9R3oA4O6qKw8V8NcfcaorDxXw1x9x" />
+  </Environment>
+    <Environment name="Production" owner="Greg Walters">
+      <ManagedServer host="acevoipsmx.corp.intranet" port="80" />
+      <Url id="userAccessBaseUrl" label="User Access">http://acevoipsmx.corp.intranet</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://acevoipsmx.corp.intranet</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@avoip01pdb.qintra.com:1534:avoip01p" user="ACEVOIP_APP" password="T2+fJFo0evLmJq+raEf/P6orDxXw1x9x" />
+    </Environment>
+  </WorkflowApp> 
+
+  <WorkflowApp
+    name="BVoIP Workflow"
+    malAppName="BUSINESS VOIP WORKFLOW"
+    ecomAcronym="bvoipwf"
+    webContextRoot="BVoIPWorkflowWeb"
+    designerContextRoot="BVoIPWorkflowDesignerWeb"
+    taskManagerContextRoot="BVoIPWorkflowTaskManager">
+    <Url id="anthillUrl" label="Anthill">http://lxdnd54c.dev.qintra.com:7001/anthill</Url>
+    <Environment name="Integration" owner="vairi">
+      <ManagedServer host="qtomavmdt107.dev.qintra.com" port="7001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://qtomavmdt107.dev.qintra.com:7001</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://qtomavmdt107.dev.qintra.com:7001/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vomwfdevdb.dev.qintra.com:1593:vomwfdev" user="bvoip_app" password="bFMVPhTOOyUDvksY1abga2ucUZh8e4aq" schemaOwner="BVOIP_MDW"/>      
+    </Environment>
+    <Environment name="System Test 1" owner="vairi">
+      <ManagedServer host="ecomt180.dev.qintra.com" port="7329" />
+      <ManagedServer host="ecomt181.dev.qintra.com" port="7329" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v1.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt182.dev.qintra.com:9329/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@suomt102.qwest.net:1528:vomwfst1" user="bvoip_app" password="bFMVPhTOOyU9coaMXxqjJWEndqnwppz+" schemaOwner="BVOIP_MDW"/>
+    </Environment>
+    <Environment name="System Test 2" owner="lsingh">
+      <ManagedServer host="ecomt180.dev.qintra.com" port="7359" />
+      <ManagedServer host="ecomt181.dev.qintra.com" port="7359" />
+      <Url id="userAccessBaseUrl" label="User Access">https://bvoipwf-test2.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt182.dev.qintra.com:9359/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vomwfst2db.dev.qintra.com:1603:vomwfst2" user=" bvoip_app" password="bFMVPhTOOyU9coaMXxqjJbDQjLrtda46" schemaOwner="BVOIP_MDW"/>
+    </Environment>  
+    <Environment name="End-To-End" owner="vairi">
+      <ManagedServer host="ecomt180.dev.qintra.com" port="7539" />
+      <ManagedServer host="ecomt181.dev.qintra.com" port="7539" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v3.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt157.dev.qintra.com:9367/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@151.117.14.115:1549:vomwfe2e" user="bvoip_app" password="bFMVPhTOOyVD3nFn5pfQEGFGZp4EPaEg" schemaOwner="BVOIP_MDW"/>
+    </Environment>  
+    <Environment name="Production" owner="vairi">
+      <ManagedServer host="ecom-ne174.qintra.com" port="7177" />
+      <ManagedServer host="ecom-ne175.qintra.com" port="7177" />
+      <ManagedServer host="ecom-ne176.qintra.com" port="7177" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecom-ne110.qintra.com:50656</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vomwf01pdb.qintra.com:1522:vomwf01p" user="bvoip_app" password="bFMVPhTOOyVprZULawzZT6orDxXw1x9x" schemaOwner="BVOIP_MDW"/>
+    </Environment>  
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="BVoIP Workflow Cloud"
+    malAppName="BUSINESS VOIP WORKFLOW"
+    ecomAcronym="bvoipwf">
+    <Repository provider="Git" />
+    <Environment name="Dev Int" owner="Pradeep Rajashekar">
+      <ManagedServer host="ne1itcdrhfuse06.dev.intranet" port="8001" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itcdrhfuse06.dev.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB34.ne1.savvis.net:1523:vomwfint" user="bvoip_app" password="bFMVPhTOOyUDvksY1abga2ucUZh8e4aq" />   
+    </Environment>
+    <Environment name="Test 2" owner="Naveena Bellamkonda">
+      <ManagedServer host="ne1itctrhfuse11.test.intranet" port="8076" webRoot="MDWHub" />
+      <ManagedServer host="ne1itctrhfuse12.test.intranet" port="8076" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB43.ne1.savvis.net:1555:vomwfst2" user="VOIPWF_APP" password="JKwdVLuFdIyx1l9SHLjKeaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="E2E" owner="Pradeep Rajashekar">
+      <ManagedServer host="ne1itctrhfuse17.test.intranet" port="8078" webRoot="MDWHub" />
+      <ManagedServer host="ne1itctrhfuse18.test.intranet" port="8078" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itctrhfuse17.test.intranet:10078</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB44.ne1.savvis.net:1545:vomwfe2e" user="bvoip_app" password="bFMVPhTOOyVD3nFn5pfQEGFGZp4EPaEg" />   
+    </Environment>
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="Common Content WF"
+    malAppName="COMMON CONTENT WORKFLOW"
+    ecomAcronym="ccwf" 
+    webContextRoot="CCCMDWWeb"
+    servicesContextRoot="CCWFWeb"
+    designerContextRoot="CCWFDesignerWeb"
+    taskManagerContextRoot="CCWFTaskManagerWeb">
+    <Url id="anthillUrl" label="Anthill">http://lxdnd54c.dev.qintra.com:7001/anthill</Url>    
+    <Environment name="Integration" owner="pkhande">
+      <ManagedServer host="lxdenvmtc145.dev.qintra.com" port="6061" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxdenvmtc145.dev.qintra.com:6061</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxdenvmtc145.dev.qintra.com:5061/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ccwfdevdb.dev.qintra.com:1670:ccwfdev" user="ccwf_app" password="g1Wi7Im5xpcw147LSVotGqorDxXw1x9x"/>  
+    </Environment>
+    <Environment name="System Test 1" owner="jrieck">
+      <ManagedServer host="ecomt155.dev.qintra.com" port="7273" />
+      <ManagedServer host="ecomt156.dev.qintra.com" port="7273" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v1.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt165.dev.qintra.com:9273/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ccwfst1db.dev.qintra.com:1672:ccwfst1" user="ccwf_app" password="AvE81eisxjJraRcO+Z/NdKorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="System Test 2" owner="jrieck">
+      <ManagedServer host="ecomt155.dev.qintra.com" port="7344" />
+      <ManagedServer host="ecomt156.dev.qintra.com" port="7344" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v2.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt165.dev.qintra.com:9344/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ccwfst2db.dev.qintra.com:1673:ccwfst2" user="ccwf_app" password="h2yQN9Qq0L9eoU6dCzXZwKorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="End-To-End" owner="">
+      <ManagedServer host="ecomt155.dev.qintra.com" port="7293" />
+      <ManagedServer host="ecomt156.dev.qintra.com" port="7293" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v3.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt165.dev.qintra.com:7293/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ccwfe2edb.dev.qintra.com:1671:ccwfe2e" user="ccwf_app" password="IWXDnfekhVhraRcO+Z/NdKorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Production" owner="">
+      <ManagedServer host="ecom-ne160.qintra.com" port="7237" />
+      <ManagedServer host="ecom-ne161.qintra.com" port="7237" />
+      <ManagedServer host="ecom-ne162.qintra.com" port="7237" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecom2.uswc.uswest.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecom-ne173.qintra.com:5237/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ccwfprddb.qintra.com:1530:ccwfprd" user="ccwf_app" password="3FXncOJuc5iqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="Dispatch Gateway"
+    malAppName="DGW"
+    ecomAcronym="dgw"
+    webContextRoot="MDWWeb"
+    servicesContextRoot="MDWWeb"    
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManagerWeb">
+    <Environment name="Dev 1" owner="Diane Redish">
+      <ManagedServer host="lxomavmtc202.dev.qintra.com" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc202.dev.qintra.com:10002</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc202.dev.qintra.com:8114</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc254.dev.qintra.com:1550:nicdgw1d" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Dev Int 1" owner="Diane Redish">
+      <ManagedServer host="lxomavmtc202.dev.qintra.com" port="10006" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc202.dev.qintra.com:10006</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc202.dev.qintra.com:8116</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc254.dev.qintra.com:1551:dgw002d" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 1" owner="Diane Redish">
+      <ManagedServer host="vddclsmxas201.test.intranet" port="10401" />
+      <ManagedServer host="vddclsmxas202.test.intranet" port="10401" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vddclsmxas201.test.intranet:10401</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://vddclsmxas201.test.intranet:8401</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dgw001tdb.dev.qintra.com:1550:dgw001t" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 2" owner="Diane Redish">
+      <ManagedServer host="dgwsmxtest.test.intranet" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vddclsmxas206.test.intranet:10403</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://vddclsmxas205.test.intranet:8002</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dgw003tdb.dev.qintra.com:1551:dgw003t" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="E2E" owner="Diane Redish">
+      <ManagedServer host="lxomavnat006.dev.qintra.com" port="10401" />
+      <ManagedServer host="lxomavnat007.dev.qintra.com" port="10401" />
+      <ManagedServer host="lxomavnat008.dev.qintra.com" port="10401" />
+      <Url id="userAccessBaseUrl" label="User Access">http://dgwsmxtest-odc.test.intranet:10001</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavnat006.dev.qintra.com:8401</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dgwe2edb.dev.qintra.com:1385:dgwe2e" user="mdw" password="L5AVvl1lhgOqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Breakfix" owner="Diane Redish">
+      <ManagedServer host="dgwsmxtest-odc.test.intranet" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://dgwsmxtest-odc.test.intranet:10002</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dgw004tdb.dev.qintra.com:1552:dgw004t" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Production" owner="Diane Redish">
+      <ManagedServer host="lxomavnap014.qintra.com" port="10401" />
+      <ManagedServer host="lxomavnap015.qintra.com" port="10401" />
+      <ManagedServer host="lxomavnap016.qintra.com" port="10401" />
+      <Url id="userAccessBaseUrl" label="User Access">https://dgwsmx.corp.intranet:443</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dgw001pdb.qintra.com:1535:dgw001p" user="mdw" password="umhSGGpFcYOqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="DGW VCS"
+    malAppName="DGW"
+    ecomAcronym="dgw">
+    <Url id="sharePointSiteUrl" label="DGW SharePoint Site">http://collaboration.ad.qintra.com/bu/it/app/SYSGEN0787307921/default.aspx</Url>
+    <Repository provider="Git" />
+    <Environment name="Dev 1" owner="Diane Redish">
+      <ManagedServer host="lxomavmtc202.dev.qintra.com" port="10002" webRoot="MDWHub" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc202.dev.qintra.com:10002</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc202.dev.qintra.com:8114</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc254.dev.qintra.com:1550:nicdgw1d" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Dev Int 1" owner="Diane Redish">
+      <ManagedServer host="lxomavmtc202.dev.qintra.com" port="10006" webRoot="MDWHub" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc202.dev.qintra.com:10006</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc202.dev.qintra.com:8116</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc254.dev.qintra.com:1551:dgw002d" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 1" owner="Diane Redish">
+      <ManagedServer host="vddclsmxas201.test.intranet" port="10401" webRoot="MDWHub" />
+      <ManagedServer host="vddclsmxas202.test.intranet" port="10401" webRoot="MDWHub" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vddclsmxas201.test.intranet:10401</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://vddclsmxas201.test.intranet:8401</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dgw001tdb.dev.qintra.com:1550:dgw001t" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 2" owner="Diane Redish">
+      <ManagedServer host="dgwsmxtest.test.intranet" port="10002" webRoot="MDWHub" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vddclsmxas206.test.intranet:10403</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://vddclsmxas205.test.intranet:8002</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dgw003tdb.dev.qintra.com:1551:dgw003t" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="E2E" owner="Diane Redish">
+      <ManagedServer host="lxomavnat006.dev.qintra.com" port="10401" webRoot="MDWHub"/>
+      <ManagedServer host="lxomavnat007.dev.qintra.com" port="10401" webRoot="MDWHub"/>
+      <ManagedServer host="lxomavnat008.dev.qintra.com" port="10401" webRoot="MDWHub"/>
+      <Url id="userAccessBaseUrl" label="User Access">http://dgwsmxtest-odc.test.intranet:10001</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavnat006.dev.qintra.com:8401</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dgwe2edb.dev.qintra.com:1385:dgwe2e" user="mdw" password="L5AVvl1lhgOqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Production" owner="Diane Redish">
+      <ManagedServer host="lxomavnap014.qintra.com" port="10401" webRoot="MDWHub"/>
+      <ManagedServer host="lxomavnap015.qintra.com" port="10401" webRoot="MDWHub"/>
+      <ManagedServer host="lxomavnap016.qintra.com" port="10401" webRoot="MDWHub"/>
+      <Url id="userAccessBaseUrl" label="User Access">https://dgwsmx.corp.intranet:443</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dgw001pdb.qintra.com:1535:dgw001p" user="mdw" password="ICfwz2BzkrRIhOzYuisxuqorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Breakfix" owner="Diane Redish">
+      <ManagedServer host="dgwsmxtest-odc.test.intranet" port="10002" webRoot="MDWHub"/>
+      <Url id="userAccessBaseUrl" label="User Access">http://dgwsmxtest-odc.test.intranet:10002</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dgw004tdb.dev.qintra.com:1552:dgw004t" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="DOCSWF"
+    malAppName="DOCS"
+    ecomAcronym="docs">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://collaboration.ad.qintra.com/bu/it/app/SYSGEN0787237786/default.aspx</Url>
+    <Repository provider="Git" />
+     <Environment name="Dev Int" owner="Donald Oakes">
+      <ManagedServer host="vldddews001.dev.intranet" port="13461" webRoot="mdw" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxdenvdora017.dev.qintra.com:1531:LLLD2" user="DOCS_APP" password="o17QY7FLIE0n/vt6WUFxMqorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="DQTools Web"
+    malAppName="DATA QUALITY TOOL WEB SERVICE"
+    ecomAcronym="dqtlsweb">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://collaboration.ad.qintra.com/bu/it/app/SYSGEN0787122752/Shared%20Documents/Forms/AllItems.aspx</Url>
+    <Repository provider="Git" url="http://qvtest.ad.qintra.com:5678/dna/dqtlsweb.git" localPath="src/main/workflow"/>
+    <Environment name="Dev 1" owner="Liping Zhang">
+      <ManagedServer host="ne1itcdrhews04.dev.intranet" port="12141" webRoot="mdw" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ mdwdevdb.dev.qintra.com:1594:mdwdev" user="mdwdemo" password="TFc4HvgPAuSqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+     <Environment name="5.5 EWS Test 1" owner="Liping Zhang">
+        <ManagedServer host="ne1itctrhews01.test.intranet" port="11731" webRoot="mdw" />
+        <ManagedServer host="ne1itctrhews02.test.intranet" port="11731" webRoot="mdw" />
+        <Url id="userAccessBaseUrl" label="User Access">http://ne1itctrhews01.test.intranet:11731</Url>
+        <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB26.ne1.savvis.net:1523:dwdq001s" user="dwbi_etl" password="XCsj/Sr0wrxti6D2NE20GaorDxXw1x9x" />
+    </Environment> 
+    <Environment name="5.5 EWS E2E" owner="Liping Zhang">
+          <ManagedServer host="NE1ITCTRHEWS03.test.intranet" port="11831" webRoot="mdw" />
+          <ManagedServer host="NE1ITCTRHEWS04.test.intranet" port="11831" webRoot="mdw" />
+          <Url id="userAccessBaseUrl" label="User Access">http://NE1ITCTRHEWS03.test.intranet:11831</Url>
+          <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB26.ne1.savvis.net:1524:dwdq001z" user="dwbi_etl" password="XCsj/Sr0wrxti6D2NE20GaorDxXw1x9x" />
+        </Environment>
+     <Environment name="5.5 EWS Prod" owner="Liping Zhang">
+         <ManagedServer host="NE1ITCPRHEWS03.foss.corp.intranet" port="9191" webRoot="mdw" />
+          <ManagedServer host="NE1ITCPRHEWS04.foss.corp.intranet" port="9191" webRoot="mdw" />
+          <Url id="userAccessBaseUrl" label="User Access">http://NE1ITCPRHEWS04.foss.corp.intranet:9191</Url>
+          <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCPRHDB13.ne1.savvis.net:1523:DWDQ001P" user="dwbi_etl" password="domGC+bMdUzmesL7nwUpn6orDxXw1x9x" /> 
+   </Environment>   
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="DSP"
+    malAppName="Data Services Provisioning"
+    ecomAcronym="dsp"
+    webContextRoot="MDWWeb"
+    servicesContextRoot="MDWWeb"    
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManagerWeb">
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="Dev 1" owner="Bhavesh Jain">
+      <ManagedServer host="lxomavmtc204.dev.qintra.com" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc204.dev.qintra.com:10001</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc204.dev.qintra.com:8111</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc255.dev.qintra.com:1521:dspdev1" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Dev Int 1" owner="Bhavesh Jain">
+      <ManagedServer host="lxomavmtc204.dev.qintra.com" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc204.dev.qintra.com:10002</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc204.dev.qintra.com:8116</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@jds002ddb.dev.qintra.com:1552:jds002d" user="mdw" password="whHabwtouLqqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Test 1" owner="Pushkin Gupta">
+      <ManagedServer host="vddclsmxas203.test.intranet" port="10101" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vddclsmxas203.test.intranet:10101</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsptest1db.dev.qintra.com:1551:dsptest1" user="dspadmin" password="+1QI1qPJx8WqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 2" owner="Kiran Shivanandappa">
+      <ManagedServer host="vddclsmxas208.test.intranet" port="10103" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vddclsmxas208.test.intranet:10103</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsptest2db.dev.qintra.com:1552:dsptest2" user="dspadmin" password="+1QI1qPJx8WqKw8V8NcfcaorDxXw1x9x" />    
+    </Environment>
+    <Environment name="Requirements" owner="Gary Sidhu">
+      <ManagedServer host="vddclsmxas203.test.intranet" port="10101" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vddclsmxas203.test.intranet:10101</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc255.dev.qintra.com:1521:dspdev1" user="DSPREQ" password="Fe5Ye3uonsGqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="End-To-End" owner="Pushkin Gupta">
+      <ManagedServer host="lxomavnat003.dev.qintra.com" port="10101" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavnat003.dev.qintra.com:10101</Url>      
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dspe2e1db.dev.qintra.com:1553:dspe2e1" user="dspuser" password="frSps1bQYHWqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Production" owner="Kiran Shivanandappa">
+      <ManagedServer host="lxomavnap005.qintra.com" port="10101" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavnap005.qintra.com:10101</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dspprod1db.qintra.com:1569:dspprod1" user="DSPDESIGNER" password="GiMmc6Hx0UmqKw8V8NcfcaorDxXw1x9x" />    
+    </Environment>
+    <Environment name="Break-Fix" owner="Pushkin Gupta">
+      <ManagedServer host="vlomtnat022.dev.qintra.com" port="10103" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vlomtnat022.dev.qintra.com:10103</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dspbfx1db.dev.qintra.com:1554:dspbfx1" user="DSPADMIN" password="SgUnlitET5pRKlN9Ir5DFKorDxXw1x9x" />    
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="DSP 5.5"
+    malAppName="Data Services Provisioning"
+    ecomAcronym="dsp">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://cshare.ad.qintra.com/sites/mdw</Url>
+    <Url id="jenkinsUrl" label="5.5 Jenkins">http://lxdenvmtc143.dev.qintra.com:8181/jenkins</Url>    
+    <Url id="NexusRepo" label="MDW Nexus Maven Repo">http://lxomavmpc110.qintra.com:8081/nexus/content/repositories/mdw/com/centurylink/mdw</Url>
+    <Url id="NexusSnapshots" label="Nexus Snapshot Repo">http://lxomavmpc110.qintra.com:8081/nexus/content/repositories/snapshots/com/centurylink/mdw</Url>
+    <Repository provider="Git" url="http://ne1itcprhas51.corp.intranet/dsp/dsp.git" localPath="dsp-common/workflow/assets" user="mdw.development" password="InZCe8ZWy5GNS723BlBuGKorDxXw1x9x"/>
+    <Environment name="Fuse Dev 1 Routing" owner="Doug Laures">
+      <ManagedServer host="vlmdcdfus102.dev.intranet" port="8001" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlmdcdfus102.dev.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc255.dev.qintra.com:1531:dsp001d" user="mdw_owner" password="bhCw7DLiY+AIq/OSsmXp8KorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse Dev 1 WF" owner="Doug Laures">
+      <ManagedServer host="vlmdcdfus102.dev.intranet" port="8101" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlmdcdfus102.dev.intranet:10101</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc255.dev.qintra.com:1531:dsp001d" user="mdw_owner" password="bhCw7DLiY+AIq/OSsmXp8KorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse Dev 1 Services" owner="Doug Laures">
+      <ManagedServer host="vlmdcdfus102.dev.intranet" port="8201" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlmdcdfus102.dev.intranet:10201</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc255.dev.qintra.com:1531:dsp001d" user="mdw_owner" password="bhCw7DLiY+AIq/OSsmXp8KorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse Test 1 Route" owner="Doug Laures">
+      <ManagedServer host="vlodctfus200.test.intranet" port="8005" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus201.test.intranet" port="8005" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus200.test.intranet:10005</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001tdb.test.intranet:1532:dsp001t" user="DSPADMIN" password="x7D5pT3sdMoIq/OSsmXp8KorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse Test 1 WF" owner="Doug Laures">
+      <ManagedServer host="vlodctfus204.test.intranet" port="8006" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus205.test.intranet" port="8006" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus204.test.intranet:10006</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001tdb.test.intranet:1532:dsp001t" user="DSPADMIN" password="x7D5pT3sdMoIq/OSsmXp8KorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse Test 1 Services" owner="Doug Laures">
+      <ManagedServer host="vlodctfus204.test.intranet" port="8007" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus205.test.intranet" port="8007" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus204.test.intranet:10007</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001tdb.test.intranet:1532:dsp001t" user="DSPADMIN" password="x7D5pT3sdMoIq/OSsmXp8KorDxXw1x9x"/>
+    </Environment>
+    <Environment name="Fuse Test 2 Route" owner="Doug Laures">
+      <ManagedServer host="vlodctfus200.test.intranet" port="8011" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus201.test.intranet" port="8011" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus200.test.intranet:10011</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp002tdb.test.intranet:1541:dsp002t" user="DSPADMIN" password="x7D5pT3sdMre4LObHhsHIqorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse Test 2 WF" owner="Doug Laures">
+      <ManagedServer host="vlodctfus204.test.intranet" port="8010" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus205.test.intranet" port="8010" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus204.test.intranet:10010</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp002tdb.test.intranet:1541:dsp002t" user="DSPADMIN" password="x7D5pT3sdMre4LObHhsHIqorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse Test 2 Services" owner="Doug Laures">
+      <ManagedServer host="vlodctfus204.test.intranet" port="8009" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus205.test.intranet" port="8009" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus204.test.intranet:10009</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp002tdb.test.intranet:1541:dsp002t" user="DSPADMIN" password="x7D5pT3sdMre4LObHhsHIqorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse E2E Route" owner="Doug Laures">
+      <ManagedServer host="vlodctfus202.test.intranet" port="8018" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus203.test.intranet" port="8018" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus202.test.intranet:10018</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001tdb.test.intranet:1532:dsp001t" user="DSPADMIN" password="x7D5pT3sdMoIq/OSsmXp8KorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse E2E WF" owner="Doug Laures">
+      <ManagedServer host="vlodctfus204.test.intranet" port="8017" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus205.test.intranet" port="8017" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus204.test.intranet:10017</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001tdb.test.intranet:1532:dsp001t" user="DSPADMIN" password="x7D5pT3sdMoIq/OSsmXp8KorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse E2E Services" owner="Doug Laures">
+      <ManagedServer host="vlodctfus204.test.intranet" port="8016" webRoot="MDWHub" />
+      <ManagedServer host="vlodctfus205.test.intranet" port="8016" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@vlodctfus204.test.intranet:10016</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001tdb.test.intranet:1532:dsp001t" user="DSPADMIN" password="x7D5pT3sdMoIq/OSsmXp8KorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse Prod Route" owner="Doug Laures">
+      <ManagedServer host="vlodcpfus503.foss.corp.intranet" port="8006" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001pdb.corp.intranet:1527:dsp001p" user="DSPADMIN" password="lRgzf1t9jnkIq/OSsmXp8KorDxXw1x9x"/>
+    </Environment>
+    <Environment name="Fuse Prod WF" owner="Doug Laures">
+      <ManagedServer host="vlodcpfus501.foss.corp.intranet" port="8003" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001pdb.corp.intranet:1527:dsp001p" user="DSPADMIN" password="lRgzf1t9jnkIq/OSsmXp8KorDxXw1x9x"/>
+    </Environment>
+    <Environment name="Fuse Prod Services" owner="Doug Laures">
+      <ManagedServer host="vlodcpfus501.foss.corp.intranet" port="8005" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dsp001pdb.corp.intranet:1527:dsp001p" user="DSPADMIN" password="lRgzf1t9jnkIq/OSsmXp8KorDxXw1x9x"/>
+    </Environment>
+  </WorkflowApp>
+    
+  <WorkflowApp
+    name="DVAR"
+    malAppName="DVAR"
+    ecomAcronym="dvar"
+    webContextRoot="MDWWeb"
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManagerWeb">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://collaboration.ad.qintra.com/bu/it/app/SYSGEN0787231420</Url> 
+    <Url id="archiveRepoUrl" label="Archiva Repostory">http://10.3.152.123:10007/archiva/repository/releases</Url>    
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="Int 1" owner="Raja Challapalli">
+      <ManagedServer host="vmdclsmxas101.test.intranet" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vmdclsmxas101.test.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@webd.centurytel.com:1521:WEBD" user="dvar_app_st1_52" password="aVTT3Jpr9XXZ5cuK2bDVhaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Int 2" owner="Raja Challapalli">
+      <ManagedServer host="vmdclsmxas101.test.intranet" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vmdclsmxas101.test.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vmdclspas202.corp.intranet:1522:DVARINT" user="dvar_app_st2_52" password="I69xVvz7C5ZdGX3jjGIaZaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Dev 1" owner="Raja Challapalli">
+      <ManagedServer host="vmdclsmxas101.test.intranet" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vmdclsmxas101.test.intranet:10002</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://vmdclsmxas101.test.intranet:8902</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@webd.centurytel.com:1521:WEBD" user="dvar_app_d1_52" password="Jweh65B8qY2XnkBP3jVtaKorDxXw1x9x" />
+    </Environment>
+    <Environment name="Dev 2" owner="Raja Challapalli">
+      <ManagedServer host="vmdclsmxas101.test.intranet" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vmdclsmxas101.test.intranet:10002</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://vmdclsmxas101.test.intranet:8902</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@webd.centurytel.com:1521:WEBD" user="dvar_app_d2_52" password="tQICZ41SOpOXnkBP3jVtaKorDxXw1x9x" />
+    </Environment>     
+    <Environment name="Test 1" owner="nxli"> 
+      <ManagedServer host="dvarqa.corp.intranet" port="10001"/> 
+      <Url id="userAccessBaseUrl" label="User Access">http://dvarqa.corp.intranet:10001</Url> 
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vmdclspas203.corp.intranet:1521:DVARQADB" user="dvar_app_qa1_52" password="kFgZYQvDCnTZ5cuK2bDVhaorDxXw1x9x" /> 
+    </Environment>
+    <Environment name="Test 1 Alt" owner="Raja Challapalli"> 
+      <ManagedServer host="dvarqa.corp.intranet" port="10004" /> 
+      <Url id="userAccessBaseUrl" label="User Access">http://dvarqa.corp.intranet:10004</Url> 
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@webd.centurytel.com:1521:WEBD" user="dvar_app_qa4_52" password="x61QGBJKm1vZ5cuK2bDVhaorDxXw1x9x" /> 
+    </Environment>
+    <Environment name="Test 2" owner="Raja Challapalli"> 
+      <ManagedServer host="dvarqa.corp.intranet" port="10005" /> 
+      <Url id="userAccessBaseUrl" label="User Access">http://dvarqa.corp.intranet:10005</Url> 
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@webd.centurytel.com:1521:WEBD" user="dvar_app_qa5_52" password="fz8lhq6L3zDZ5cuK2bDVhaorDxXw1x9x" /> 
+    </Environment>
+    <Environment name="Test 3" owner="Raja Challapalli"> 
+      <ManagedServer host="dvarqa.corp.intranet" port="10003" /> 
+      <Url id="userAccessBaseUrl" label="User Access">http://dvarqa.corp.intranet:10003</Url> 
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@webd.centurytel.com:1521:WEBD" user="dvar_app_qa3_52" password="i+0+Skl3RRDZ5cuK2bDVhaorDxXw1x9x" /> 
+    </Environment>
+    <Environment name="LP Test" owner="Raja Challapalli"> 
+      <ManagedServer host="dvarpt.corp.intranet" port="10001" /> 
+      <Url id="userAccessBaseUrl" label="User Access">http://dvarpt.corp.intranet:10001</Url> 
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@webd.centurytel.com:1521:WEBD" user="dvar_app_lp1_52" password="zxgXY2bVDFvZ5cuK2bDVhaorDxXw1x9x"  /> 
+    </Environment>
+    <Environment name="E2E Test" owner="Raja Challapalli"> 
+      <ManagedServer host="dvarqa.corp.intranet" port="10002" /> 
+      <Url id="userAccessBaseUrl" label="User Access">http://dvarqa.corp.intranet:10002</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@webd.centurytel.com:1521:WEBD" user="dvar_app_qa2_52" password="0McnifjsiyHZ5cuK2bDVhaorDxXw1x9x" /> 
+    </Environment>
+    <Environment name="Production" owner="Raja Challapalli"> 
+      <ManagedServer host="dvarp.corp.intranet" port="80" /> 
+      <Url id="userAccessBaseUrl" label="User Access">http://dvarp.corp.intranet</Url> 
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dvarp.corp.intranet:1521:DVARP" user="dvar_app_p_52" password="tXBLWZNwj6P4qNAo0MJh36orDxXw1x9x" /> 
+    </Environment>
+  </WorkflowApp>
+    
+  <WorkflowApp
+    name="EOS"
+    malAppName="ENTERPRISE ORDERING SERVICES"
+    ecomAcronym="eos"    
+    webContextRoot="EOSWeb"
+    designerContextRoot="EOSDesignerWeb"
+    taskManagerContextRoot="EOSTaskManager">
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Url id="sharePointSiteUrl" label="OSM SharePoint">http://qshare.ad.qintra.com/sites/OSM</Url>
+    <Environment name="System Test 1" owner="pdevara">
+      <ManagedServer host="qtdenvmdt307.dev.qintra.com" port="9030" />
+      <ManagedServer host="qtdenvmdt307.dev.qintra.com" port="9030" />
+      <Url id="userAccessBaseUrl" label="User Access">http://qtdenvmdt308.dev.qintra.com:9030</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@eosst1db.dev.qintra.com:1532:eosst1" user="eos_app" password="4Jxg5qb3kGGqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="System Test 2" owner="pdevara">
+      <ManagedServer host="qtdenvmdt307.dev.qintra.com" port="9030" />
+      <ManagedServer host="qtdenvmdt307.dev.qintra.com" port="9030" />
+      <Url id="userAccessBaseUrl" label="User Access">http://qtdenvmdt308.dev.qintra.com:9030</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@eosst2db.dev.qintra.com:1533:eosst2" user="eos_app" password="gPTIBE1JKYWqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+  </WorkflowApp>
+    
+  <WorkflowApp
+    name="EP Workflow"
+    malAppName="EPWF"
+    ecomAcronym="epwf"
+    webContextRoot="EPWFWeb"
+    designerContextRoot="EPWFDesignerWeb"
+    taskManagerContextRoot="EPWFTaskManagerWeb">
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="System Test" owner="yxchen2">
+      <ManagedServer host="ecomt199.dev.qintra.com" port="7645" />
+      <ManagedServer host="ecomt200.dev.qintra.com" port="7645" />
+      <Url id="userAccessBaseUrl" label="User Access">https://itv1.qecom.dev.qintra.com</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@epwfst1db.dev.qintra.com:1602:epwfst1" user="epwf_app" password="yYB2vDx1xbAjEr6y38ObMKorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="E2E" owner="yxchen2"> 
+      <ManagedServer host="ecomt199.dev.qintra.com" port="7682" /> 
+      <ManagedServer host="ecomt200.dev.qintra.com" port="7682" /> 
+      <Url id="userAccessBaseUrl" label="User Access">https://e2e.qecom.dev.qintra.com</Url> 
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@epwfe2edb.dev.qintra.com:1605:epwfe2e" user="epwf_app" password="yYB2vDx1xbCxpwumBxBl+KorDxXw1x9x" /> 
+    </Environment> 
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="ESO Workflow"
+    malAppName="ETHERNET SERVICE ORDER WORKFLOW"
+    ecomAcronym="esowf"    
+    webContextRoot="ESOWeb"
+    servicesContextRoot="ESOMDWWeb"
+    designerContextRoot="ESODesignerWeb"
+    taskManagerContextRoot="ESOTaskManagerWeb"
+    bamRelatedApps="Order Repository">
+    <Url id="sharePointSiteUrl" label="ESO Workflow SharePoint">http://collaboration.ad.qintra.com/bu/it/application/SYSGEN0786791281</Url>
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Url id="anthillUrl" label="Anthill">http://lxdenvmtc143.dev.qintra.com:7209/anthill</Url>   
+    <Environment name="Integration" owner="Holloway, Michael">
+      <ManagedServer host="qtdenvmdt144.dev.qintra.com" port="7041" />
+      <Url id="userAccessBaseUrl" label="User Access">http://qtdenvmdt144.dev.qintra.com:7041</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://qtdenvmdt144.dev.qintra.com:6041/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@esowf0trdb.dev.qintra.com:1550:esowf0tr" user="bpms" password="9PGb1ftIAQuqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+  <Environment name="System Test 1" owner="Kandukuri, Kannappa">
+      <ManagedServer host="lxomavtecom39.dev.qintra.com" port="7792" />
+      <ManagedServer host="lxomavtecom40.dev.qintra.com" port="7792" />
+      <Url id="userAccessBaseUrl" label="User Access">https://esowf-itv1.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavtecom39.dev.qintra.com:9792/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@nbpm001tdb.dev.qintra.com:1552:esowf01t" user="bpms" password="9PGb1ftIAQuqKw8V8NcfcaorDxXw1x9x" />   
+  </Environment>
+    <Environment name="System Test 2" owner="Kandukuri, Kannappa">
+      <ManagedServer host="lxomavtecom23.dev.qintra.com" port="7372" />
+      <ManagedServer host="lxomavtecom24.dev.qintra.com" port="7372" />
+      <Url id="userAccessBaseUrl" label="User Access">https://esowf-itv2.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavtecom24.dev.qintra.com:9372/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@gfs_cs32_17.dev.qintra.com:1547:esowf02t" user="bpms" password="9PGb1ftIAQuqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="System Test 3" owner="Kandukuri, Kannappa">
+      <ManagedServer host="lxomavtecom25.dev.qintra.com" port="7603" />
+      <ManagedServer host="lxomavtecom26.dev.qintra.com" port="7603" />
+      <Url id="userAccessBaseUrl" label="User Access">https://esowf-itv3.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavtecom26.dev.qintra.com:9603/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@10.6.49.27:1548:esowf03t" user="bpms" 
+      password="9PGb1ftIAQuqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Enterprise Test" owner="Kandukuri, Kannappa">
+      <ManagedServer host="lxomavtecom25.dev.qintra.com" port="7604" />
+      <ManagedServer host="lxomavtecom26.dev.qintra.com" port="7604" />
+      <Url id="userAccessBaseUrl" label="User Access">https://esowf-e2e.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavtecom26.dev.qintra.com:9604/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@10.6.49.27:1548:esowf03t" user="bpms" password="9PGb1ftIAQuqKw8V8NcfcaorDxXw1x9x" />   
+  </Environment>
+    <Environment name="System Test Training" owner="Kandukuri, Kannappa">
+      <ManagedServer host="lxomavtecom23.dev.qintra.com" port="7599" />
+      <ManagedServer host="lxomavtecom24.dev.qintra.com" port="7599" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v5.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavtecom24.dev.qintra.com:9599/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@10.6.49.29:1550:esowf0tr" user="bpms" password="9PGb1ftIAQuqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Production" owner="Holloway, Michael">
+      <ManagedServer host="lxomavmecom04.qintra.com" port="7155" />
+      <ManagedServer host="lxomavmecom05.qintra.com" port="7157" />
+      <Url id="userAccessBaseUrl" label="User Access">https://esowf.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavmecom04.qintra.com:5155/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@esowfp01db.qintra.com:1565:esowfp01" user="bpms" password="9PGb1ftIAQuqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="FEDORA"
+    malAppName="N/A"
+    ecomAcronym="fedora"    
+    webContextRoot="MDWWeb"
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManager">
+    <Environment name="Dev 1" owner="Sabitha Kandasamy">
+      <ManagedServer host="lxomavmtc204.dev.qintra.com" port="10011" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc204.dev.qintra.com:10011</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc204.dev.qintra.com:8120</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc223.dev.qintra.com:1561:fed001d" user="FED_MDW" password="swv8RQHxkwOqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Dev 2" owner="Sabitha Kandasamy">
+      <ManagedServer host="lxomavmtc204.dev.qintra.com" port="10013" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc204.dev.qintra.com:10013</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc204.dev.qintra.com:8122</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc223.dev.qintra.com:1562:fed002d" user="FED_MDW" password="swv8RQHxkwOqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Test 1" owner="Sabitha Kandasamy">
+      <ManagedServer host="vddclsmxas201.test.intranet" port="10601" />
+      <ManagedServer host="vddclsmxas202.test.intranet" port="10601" />
+      <Url id="userAccessBaseUrl" label="User Access">http://fedorasmxtest.test.intranet:10601</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@fed001tdb.dev.qintra.com:1563:fed001t" user="FED_MDW" password="swv8RQHxkwOqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Test 2" owner="Sabitha Kandasamy">
+      <ManagedServer host="vddclsmxas203.test.intranet" port="10603" />
+      <ManagedServer host="vddclsmxas204.test.intranet" port="10603" />
+      <Url id="userAccessBaseUrl" label="User Access">http://fedorasmxtest.test.intranet:10603</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@fed002tdb.dev.qintra.com:1565:fed002t" user="FED_MDW" password="swv8RQHxkwOqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="End-To-End" owner="Sabitha Kandasamy">
+      <ManagedServer host="lxomavnat009.dev.qintra.com" port="10601" />
+      <ManagedServer host="lxomavnat010.dev.qintra.com" port="10601" />
+      <ManagedServer host="lxomavnat011.dev.qintra.com" port="10601" />
+      <Url id="userAccessBaseUrl" label="User Access">http://fedorasmxtest-odc.test.intranet:10601</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@fede2edb.dev.qintra.com:1564:fede2e" user="FED_MDW" password="swv8RQHxkwOqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Break-Fix" owner="Sabitha Kandasamy">
+      <ManagedServer host="vlomtnat020.dev.qintra.com" port="10603" />
+      <ManagedServer host="vlomtnat021.dev.qintra.com" port="10603" />
+      <Url id="userAccessBaseUrl" label="User Access">http://fedorasmxtest-odc.test.intranet:10603</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@fed001bdb.dev.qintra.com:1569:fed001b" user="FED_MDW" password="swv8RQHxkwOqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Production" owner="Sabitha Kandasamy">
+      <ManagedServer host="lxomavnap005.qintra.com" port="10601" />
+      <ManagedServer host="lxomavnap006.qintra.com" port="10601" />
+      <ManagedServer host="lxomavnap007.qintra.com" port="10601" />
+      <Url id="userAccessBaseUrl" label="User Access">http://fedorasmx.corp.intranet:10601</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@fed001pdb.qintra.com:1564:fed001p" user="FED_MDW" password="F5r/gVxSUeZti6D2NE20GaorDxXw1x9x" />   
+    </Environment>    
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="Fulfillment Workflow"
+    malAppName="FULFILLMENT WORKFLOW"
+    ecomAcronym="ffwf"
+    webContextRoot="FulfillmentWFWeb"
+    servicesContextRoot="FulfillmentWFMDWWeb"
+    designerContextRoot="FulfillmentWFMDWDesignerWeb"
+    taskManagerContextRoot="FulfillmentManagerWeb">
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Url id="sharePointSiteUrl" label="Fulfillment WF SharePoint">http://qshare.ad.qintra.com/sites/voipwf/mass_market_bundling</Url>
+    <Url id="anthillUrl" label="Anthill">http://lxdnd54c.dev.qintra.com:7001/anthill</Url>    
+    <Environment name="Integration" owner="mjhollo">
+      <ManagedServer host="lxdnd693.dev.qintra.com" port="6051" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxdnd693.dev.qintra.com:6051</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxdnd693.dev.qintra.com:5051/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@suomt100.qwest.net:1526:ffwfdev" user="ffwf_app" password="jiljg8yQtTAw147LSVotGqorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="System Test 1" owner="jrieck">
+      <ManagedServer host="ecomt199.dev.qintra.com" port="7622" />
+      <ManagedServer host="ecomt200.dev.qintra.com" port="7622" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v1.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt201.dev.qintra.com:9622/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@suomt102.qwest.net:1528:ffwfst1" user="ffwf_app" password="ZcWkKHorEFJraRcO+Z/NdKorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="System Test 2" owner="jrieck">
+      <ManagedServer host="ecomt199.dev.qintra.com" port="7623" />
+      <ManagedServer host="ecomt200.dev.qintra.com" port="7623" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v2.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt201.dev.qintra.com:9623/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@suomt102.qwest.net:1528:ffwfst2" user="ffwf_app" password="+dprmUDplsBraRcO+Z/NdKorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="End-To-End" owner="jrieck">
+      <ManagedServer host="ecomt199.dev.qintra.com" port="7621" />
+      <ManagedServer host="ecomt200.dev.qintra.com" port="7621" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v3.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt201.dev.qintra.com:9621/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@suomt102.qwest.net:1528:FFWFE2E" user="ffwf_app" password="7gJBPndcMxxraRcO+Z/NdKorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Production" owner="">
+      <ManagedServer host="ecom-ne193.qintra.com" port="7483" />
+      <ManagedServer host="ecom-ne194.qintra.com" port="7483" />
+      <ManagedServer host="ecom-ne195.qintra.com" port="7483" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecom2.uswc.uswest.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecom-ne196.qintra.com:5483/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ffwfprddb.qintra.com:1526:ffwfprd" user="ffwf_app" password="QWgQQlTHZNSqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="Hydra"
+    malAppName="Hydra"
+    ecomAcronym="hyd"
+    webContextRoot="MDWWeb"
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManagerWeb">
+    <Url id="infoSiteUrl" label="SharePoint Site"> http://collaboration.ad.qintra.com/BU/IT/scph/Ensemble/SitePages/Home.aspx</Url> 
+    <Url id="archiveRepoUrl" label="Archiva Repostory">http://10.3.152.123:10007/archiva/repository/releases</Url>    
+    <Environment name="Int 1" owner="Eric Gates">
+      <ManagedServer host="vmdclsmxas101.test.intranet" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vmdclsmxas101.test.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lamare22.cte.net:1521:STA" user="hydra_mdw_1" password="GdIYX1ZE2AywxbBDBO2nYaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Test 1" owner="Eric Gates">
+      <ManagedServer host="dvarqa.corp.intranet" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://dvarqa.corp.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vmdclspas203.corp.intranet:1521:DVARQADB" user="hydra_app_qa1" password="ASdNRFRG+4qfsh5bbVsUf6orDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Production" owner="Ning"> 
+      <ManagedServer host="dvarp.corp.intranet" port="80" /> 
+      <Url id="userAccessBaseUrl" label="User Access">http://dvarp.corp.intranet</Url> 
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dvarp.corp.intranet:1521:DVARP" user="dvar_app_p_52" password="tXBLWZNwj6P4qNAo0MJh36orDxXw1x9x" /> 
+    </Environment>  
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="ICL"
+    malAppName="ICL"
+    ecomAcronym="ICL"    
+    webContextRoot="MDWWeb"
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManagerWeb">
+    <Url id="archivaRepo" label="Archiva Maven Repo">http://archiva.corp.intranet/archiva/repository/development</Url>
+    <Environment name="Dev 1" owner="Barry Wells">
+      <ManagedServer host="lxomavmtc204.dev.qintra.com" port="10003" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc204.dev.qintra.com:10003</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc205.dev.qintra.com:8112</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc250.dev.qintra.com:1532:icl001d" user="ILM_OWNER" password="H69dOrYAyL2qKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Dev 2" owner="Barry Wells">
+      <ManagedServer host="lxomavmtc204.dev.qintra.com" port="10008" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc204.dev.qintra.com:10008</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc204.dev.qintra.com:8115</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc251.dev.qintra.com:1542:ICL002D" user="ILM_OWNER" password="H69dOrYAyL2qKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Test 1" owner="Barry Wells">
+      <ManagedServer host="iclsmxtest.test.intranet" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://iclsmxtest.test.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@icl001tdb.dev.qintra.com:1545:icl001t" user="ilmapp" password="RKRgkrbIiaKqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Test 2" owner="Barry Wells">
+      <ManagedServer host="iclsmxtest.test.intranet" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://iclsmxtest.test.intranet:10002</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@icl002tdb.dev.qintra.com:1555:icl002t" user="ilmapp" password="RKRgkrbIiaKqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="E2E 1" owner="Barry Wells">
+      <ManagedServer host="iclsmxtest-odc.test.intranet" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://iclsmxtest-odc.test.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@icle2e1db.dev.qintra.com:1505:icle2e1" user="ilm_mdw_owner" password="H69dOrYAyL2qKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="E2E 2" owner="Barry Wells">
+      <ManagedServer host="iclsmxtest-odc.test.intranet" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://iclsmxtest-odc.test.intranet:10002</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@icle2e1db.dev.qintra.com:1505:icle2e1" user="ilm_mdw_owner" password="H69dOrYAyL2qKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Production" owner="Barry Wells">
+      <ManagedServer host="http://icl.qintra.com/icl/services" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://icl.qintra.com/icl/services</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@icl001pdb.qintra.com:1525:icl001p" user="ILM_MDW_OWNER" password="H69dOrYAyL2qKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="IOM"
+    malAppName="INTEGRATED ORDER MANAGEMENT"
+    ecomAcronym="iom"    
+    webContextRoot="IOMWeb"
+    servicesContextRoot="IOMMDWWeb"
+    designerContextRoot="IOMDesignerWeb"
+    taskManagerContextRoot="IOMTaskManagerWeb">
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Url id="sharePointSiteUrl" label="IOM SharePoint">http://qshare.ad.qintra.com/sites/iom/default.aspx</Url>
+    <Url id="anthillUrl" label="Anthill">http://lxdnd54c.dev.qintra.com:7001/anthill</Url>    
+    <Environment name="Integration" owner="sxsarka">
+      <ManagedServer host="lxdnd54c.dev.qintra.com" port="6531" />
+      <ManagedServer host="lxdnd54c.dev.qintra.com" port="7531" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxdnd54c.dev.qintra.com:6531</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxdnd54c.dev.qintra.com:5531/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@iomdv10gdb.dev.qintra.com:1675:iomdv10g" user="iom_app" password="Nhbaavt8g/sitI3YZljZ63kh+v9h4OnQ"/>      
+    </Environment>
+    <Environment name="System Test 1" owner="jrieck">
+      <ManagedServer host="ecomt163.dev.qintra.com" port="7464"/>
+      <ManagedServer host="ecomt164.dev.qintra.com" port="7464"/>
+      <ManagedServer host="ecomt163.dev.qintra.com" port="7465"/>
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v1.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt165.dev.qintra.com:9464/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@iomst10gdb.dev.qintra.com:1677:iomst10g" user="iom_app" password="/Y9zz8YR3CEitI3YZljZ63kh+v9h4OnQ"/>      
+    </Environment>
+    <Environment name="System Test 2" owner="jrieck">
+      <ManagedServer host="ecomt163.dev.qintra.com" port="7473"/>
+      <ManagedServer host="ecomt164.dev.qintra.com" port="7473"/>
+      <ManagedServer host="ecomt163.dev.qintra.com" port="7474"/>
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v2.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt165.dev.qintra.com:9473/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@iomst2db.dev.qintra.com:1678:iomst2" user="iom_app" password="UyCCO4zkn5mqKw8V8NcfcaorDxXw1x9x"/>           
+    </Environment>    
+    <Environment name="System Test 3" owner="jreick">
+      <ManagedServer host="ecomt155.dev.qintra.com" port="7370"/>
+      <ManagedServer host="ecomt156.dev.qintra.com" port="7370"/>
+      <ManagedServer host="ecomt155.dev.qintra.com" port="7371"/>
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-151v1.uswc.uswest.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt157.dev.qintra.com:9370/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@iommockdb.dev.qintra.com:1679:iommock" user="iom_app" password="cD0iED58ai+XnkBP3jVtaKorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="End-To-End" owner="jreick">
+      <ManagedServer host="ecomt163.dev.qintra.com" port="7477"/>
+      <ManagedServer host="ecomt164.dev.qintra.com" port="7477"/>
+      <ManagedServer host="ecomt163.dev.qintra.com" port="7478"/>      
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v3.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt165.dev.qintra.com:9477/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@iome2edb.dev.qintra.com:1676:iome2e" user="iom_app" password="lvuiGK4UCnDvCSb+aSmQcqorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Production" owner="">
+      <ManagedServer host="ecom-ne160.qintra.com" port="7293"/>
+      <ManagedServer host="ecom-ne160.qintra.com" port="7295"/>
+      <ManagedServer host="ecom-ne160.qintra.com" port="7297"/>
+      <ManagedServer host="ecom-ne161.qintra.com" port="7293"/>
+      <ManagedServer host="ecom-ne161.qintra.com" port="7295"/>
+      <ManagedServer host="ecom-ne161.qintra.com" port="7297"/>
+      <ManagedServer host="ecom-ne162.qintra.com" port="7293"/>
+      <ManagedServer host="ecom-ne162.qintra.com" port="7295"/>
+      <Url id="userAccessBaseUrl" label="User Access">https://ecom2.uswc.uswest.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecom-ne173.qintra.com:5293/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@iomprddb.qintra.com:1525:IOMPRD" user="iom_app" password="p+WH6/8W7t1ti6D2NE20GaorDxXw1x9x"/>      
+    </Environment>
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="ISAT-CPE"
+    malAppName="CPE-HPNA"
+    ecomAcronym="isatcpe"
+    webContextRoot="CPEMDWWeb"
+    servicesContextRoot="CPEWeb"
+    designerContextRoot="CPEWorkflowDesignerWeb"
+    taskManagerContextRoot="CPEWorkflowWeb">
+    <Url id="anthillUrl" label="Anthill">http://qtdenvmdt317.dev.qintra.com:7209/anthill</Url>    
+    <Environment name="Integration" owner="rxkuma2">
+      <ManagedServer host="qtdenvmdt138.dev.qintra.com" port="9001"/>
+      <Url id="userAccessBaseUrl" label="User Access">http://qtdenvmdt138.dev.qintra.com:9001</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://qtdenvmdt138.dev.qintra.com:9001/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomt71n.dev.qintra.com:1544:isatwf1d" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>    
+    <Environment name="System Test 1" owner="rxkuma2">
+      <ManagedServer host="ecomt189.dev.qintra.com" port="7692"/> 
+      <ManagedServer host="ecomt190.dev.qintra.com" port="7692"/>
+      <Url id="userAccessBaseUrl" label="User Access">https://itv1.qecom.dev.qintra.com/</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt191.dev.qintra.com:9692/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomt71n.dev.qintra.com:1545:isatwf1t" user="mdw2" password="CQMMqux7Ec2qKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>     
+    <Environment name="System Test 2" owner="rxkuma2">
+      <ManagedServer host="ecomt189.dev.qintra.com" port="7693"/> 
+      <ManagedServer host="ecomt190.dev.qintra.com" port="7693"/>
+      <Url id="userAccessBaseUrl" label="User Access">https://itv2.qecom.dev.qintra.com/</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt191.dev.qintra.com:9693/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomt71n.dev.qintra.com:1546:isatwf2t" user="mdw2" password="CQMMqux7Ec2qKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="System Test 3" owner="rxkuma2">
+      <ManagedServer host="ecomt197.dev.qintra.com" port="7694"/> 
+      <ManagedServer host="ecomt198.dev.qintra.com" port="7694"/>
+      <Url id="userAccessBaseUrl" label="User Access">https://itv3.qecom.dev.qintra.com/</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt201.dev.qintra.com:9694/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@isatwf1tdb.dev.qintra.com:1545:isatwf1t" user="mdw" password="NxJXIaKZm7SqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>   
+    <Environment name="End-To-End" owner="rxkuma2">
+      <ManagedServer host="ecomt197.dev.qintra.com" port="7695"/> 
+      <ManagedServer host="ecomt198.dev.qintra.com" port="7695"/>
+      <Url id="userAccessBaseUrl" label="User Access">https://e2e.qecom.dev.qintra.com/</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt201.dev.qintra.com:9695/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@isatwf2tdb.dev.qintra.com:1546:isatwf2t" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Production" owner="rxkuma2">
+      <ManagedServer host="ecom-ne193.qintra.com" port="7545"/> 
+      <ManagedServer host="ecom-ne194.qintra.com" port="7545"/> 
+      <Url id="userAccessBaseUrl" label="User Access">https://ecom2.uswc.uswest.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecom-ne196.qintra.com:5545/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@isatwfordb.qintra.com:1548:isatwfor" user="mdw" password="WuIpyfEWbH2qKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>    
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="ISAT-L2VPN"
+    malAppName="ISAT-L2VPN"
+    ecomAcronym="isatl2vpn"    
+    webContextRoot="isatl2vpnWeb"
+    servicesContextRoot="isatl2vpnWeb"
+    designerContextRoot="isatl2vpnDesignerWeb"
+    taskManagerContextRoot="isatl2vpnTaskManager">
+    <Url id="sharePointSiteUrl" label="iSAT SharePoint">http://collaboration.ad.qintra.com/bu/it/application/SYSGEN0787040063/iSAT-L2VPNWiki/Wiki%20Pages/Home.aspx</Url>
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Url id="anthillUrl" label="Anthill">http://qtdenvmdt317.dev.qintra.com:7209/anthill</Url>    
+    <Environment name="Integration MDT" owner="klakema">
+      <ManagedServer host="qtomavmdt067.dev.qintra.com" port="7001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://qtomavmdt067.dev.qintra.com:7001</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://qtomavmdt067.dev.qintra.com:7001/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@isawfd_db.dev.qintra.com:1545:isatwf_d" user="mdw_trng" password="MAa3fjQ537SqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="System Test 1" owner="djande4">
+      <ManagedServer host="ecomt178.dev.qintra.com" port="7490" />
+      <ManagedServer host="ecomt179.dev.qintra.com" port="7490" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v1.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt182.dev.qintra.com:9490/console</Url>      
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@151.117.55.198:1544:isatwf_t" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="System Test 2" owner="djande4">
+      <ManagedServer host="ecomt178.dev.qintra.com" port="7498" />
+      <ManagedServer host="ecomt179.dev.qintra.com" port="7498" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v2.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt182.dev.qintra.com:9498/console</Url>      
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@10.6.71.199:1544:isatl2t2" user="mdw_trng" password="MAa3fjQ537SqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="System Test 3" owner="djande4">
+      <ManagedServer host="lxomavtecom13.dev.qintra.com" port="7789" />
+      <ManagedServer host="lxomavtecom14.dev.qintra.com" port="7789" />
+      <Url id="userAccessBaseUrl" label="User Access">https://isatl2vpn-itv3.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavtecom13.dev.qintra.com:9789/console</Url>      
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@151.117.55.198:1544:isatwf_t" user="mdwt3" password="Z5v2X/TaPOmqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="End to End Test" owner="djande4">
+      <ManagedServer host="lxomavtecom13.dev.qintra.com" port="7791" />
+      <ManagedServer host="lxomavtecom14.dev.qintra.com" port="7791" />
+      <Url id="userAccessBaseUrl" label="User Access">https://isatl2vpn-e2e.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavtecom13.dev.qintra.com:9791/console</Url>      
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@10.6.71.199:1544:isatl2t2" user="mdwe2e" password="6Ot8m+UvCbSqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Production" owner="syvenka">
+      <ManagedServer host="ecom-ne192.qintra.com" port="7181" />
+      <ManagedServer host="ecom-ne193.qintra.com" port="7181" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecom2-sec.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecom2-sec.qintra.com:9181/console</Url>      
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@isatwfdb.qintra.com:1544:isatwf" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment> 
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="JDS"
+    malAppName="Job Distribution System-DOTNET"
+    ecomAcronym="JDS-DOTNET"
+    webContextRoot="MDWWeb"
+    servicesContextRoot="MDWWeb"    
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManagerWeb">
+   <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="JDS Development" owner="Timothy Vitry">
+      <ManagedServer host="vmdclsmxas102.test.intranet" port="20205" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vmdclsmxas102.test.intranet:20205</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://vmdclsmxas102.test.intranet:8902</Url>
+     <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@jds002ddb.dev.qintra.com:1552:jds002d" user="mdw" password="whHabwtouLqqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="Legacy Workflow"
+    malAppName="LEGACY PRODUCT WORKFLOW"
+    ecomAcronym="lpwf"
+    webContextRoot="LPWFWeb"
+    designerContextRoot="LPWFDesignerWeb"
+    taskManagerContextRoot="LPWFTaskManagerWeb">
+   <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="Integration" owner="vxmenon">
+      <ManagedServer host="suomt70i.dev.qintra.com" port="10501" />
+      <Url id="userAccessBaseUrl" label="User Access">http://suomt70i.dev.qintra.com:10501</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@suomt98j.dev.qintra.com:1528:ftsdev" user="ftsmdw" password="70CtEPiRF51GBpmjsUv65aorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="System Test" owner="vxmenon">
+      <ManagedServer host="suomt68i.dev.qintra.com" port="10801" />
+      <Url id="userAccessBaseUrl" label="User Access">http://suomt68i.dev.qintra.com:10801</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@suomt98j.dev.qintra.com:1528:ftsst1" user="ftsmdw" password="70CtEPiRF51GBpmjsUv65aorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="End-To-End" owner="rharvey">
+      <ManagedServer host="suomt00k.dev.qintra.com" port="10501" />
+      <Url id="userAccessBaseUrl" label="User Access">http://suomt00k.dev.qintra.com:10501</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@suomt00k.dev.qintra.com:1528:ftse2e" user="ftsmdw" password="70CtEPiRF51GBpmjsUv65aorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Production" owner="vxmenon">
+      <ManagedServer host="suomp96j.qintra.com" port="11505" />
+      <Url id="userAccessBaseUrl" label="User Access">http://suomp96j.qintra.com:11505</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ftsdb:1528:fts0001p" user="ftsmdw" password="70CtEPiRF51GBpmjsUv65aorDxXw1x9x"/>      
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="MDW 5.2"
+    malAppName="MDWA"
+    ecomAcronym="mdw">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://cshare.ad.qintra.com/sites/mdw</Url>
+    <Url id="jenkinsUrl" label="5.5 Jenkins">http://lxdenvmtc143.dev.qintra.com:8181/jenkins</Url>    
+    <Url id="anthill3Url" label="5.2 Anthill">http://lxdenvmtc143.dev.qintra.com:7209/anthill</Url>
+    <Url id="anthill2Url" label="5.1 Anthill">http://qtdenvmdt317.dev.qintra.com:7209/anthill</Url>
+    <Url id="anthill1Url" label="4.5 Anthill">http://lxdnd54c.dev.qintra.com:7001/anthill</Url>
+    <Url id="archivaRepo" label="MDW Archiva Maven Repo">http://archiva.corp.intranet/archiva/repository/mdw</Url>
+    <Url id="archivaSnapshots" label="Archiva Snapshot Repo">http://archiva.corp.intranet/archiva/repository/snapshots</Url>
+    <Url id="mdwJavaDocs" label="MDW 5.2 JavaDocs">http://lxdenvmtc143.dev.qintra.com:7021/MDWWeb/javadoc/index.html</Url>
+    <Url id="pluginUpdate" label="Eclipse Plug-In Update">http://lxdenvmtc143.dev.qintra.com:6101/MdwPlugin</Url>
+    <Url id="rcpUpdate" label="Designer RCP Update">http://lxdenvmtc143.dev.qintra.com:6101/MdwRcp</Url>
+    <Url id="discussionBoard" label="MDW Support Forum">http://cshare.ad.qintra.com/sites/MDW/Lists/MDW%20Support/AllItems.aspx</Url> 
+    <Environment name="Sandbox" owner="Donald Oakes">
+      <ManagedServer host="lxomavmtc203.dev.qintra.com" port="10005" webRoot="MDWWeb" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc203.dev.qintra.com:8117</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mdwdevdb.dev.qintra.com:1594:mdwdev" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="MDW Dev"
+    malAppName="MDWA"
+    ecomAcronym="mdw">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://cshare.ad.qintra.com/sites/mdw</Url>
+    <Url id="jenkinsUrl" label="5.5 Jenkins">http://lxdenvmtc143.dev.qintra.com:8181/jenkins</Url>    
+    <Url id="archivaRepo" label="MDW Archiva Maven Repo">http://archiva.corp.intranet/archiva/repository/mdw</Url>
+    <Url id="archivaSnapshots" label="Archiva Snapshot Repo">http://archiva.corp.intranet/archiva/repository/snapshots</Url>
+    <Repository provider="Git" url="https://8.22.8.164/mdw/mdw-workflow.git" localPath="assets" user="mdw" password="6U3PywkxP7WNS723BlBuGKorDxXw1x9x" />
+    <Environment name="5.5 FOSS" owner="Donald Oakes">
+      <ManagedServer host="lxomd12p.dev.qintra.com" port="9341" webRoot="mdw" />
+      <EnvironmentDb jdbcUrl="jdbc:mysql://10.180.11.159:3306/mdw" user="mdwapp" password="dpuWZEGpJ+Vq1jMGpCprtqorDxXw1x9x" />
+    </Environment>
+    <Environment name="5.5 Test Fuse" owner="Manoj Agrawal">
+      <ManagedServer host="lxdenvmtc143.dev.qintra.com" port="8585" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxdenvmtc143.dev.qintra.com:8222</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mdwdevdb.dev.qintra.com:1594:mdwdev" user="mdwdemo" password="TFc4HvgPAuSqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="MDW Dev Int"
+    malAppName="MDWA"
+    ecomAcronym="mdw">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://cshare.ad.qintra.com/sites/mdw</Url>
+    <Url id="jenkinsUrl" label="5.5 Jenkins">http://lxdenvmtc143.dev.qintra.com:8181/jenkins</Url>    
+    <Url id="archivaRepo" label="MDW Archiva Maven Repo">http://archiva.corp.intranet/archiva/repository/mdw</Url>
+    <Url id="archivaSnapshots" label="Archiva Snapshot Repo">http://archiva.corp.intranet/archiva/repository/snapshots</Url>
+      <Repository provider="Git" />
+     <Environment name="5.5 Dev" owner="Donald Oakes">
+      <ManagedServer host="lxdenvmtc143.dev.qintra.com" port="8989" webRoot="mdw" />
+      <EnvironmentDb jdbcUrl="jdbc:mysql://10.180.11.159:3306/mdw" user="mdwapp" password="dpuWZEGpJ+Vq1jMGpCprtqorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="MDW Cloud"
+    malAppName="MDWA"
+    ecomAcronym="mdwdemo">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://cshare.ad.qintra.com/sites/mdw</Url>
+    <Url id="jenkinsUrl" label="5.5 Jenkins">http://lxdenvmtc143.dev.qintra.com:8181/jenkins</Url>    
+    <Url id="NexusRepo" label="MDW Nexus Maven Repo">http://lxomavmpc110.qintra.com:8081/nexus/content/repositories/mdw/com/centurylink/mdw</Url>
+    <Url id="NexusSnapshots" label="Nexus Snapshot Repo">http://lxomavmpc110.qintra.com:8081/nexus/content/repositories/snapshots/com/centurylink/mdw</Url>
+    <Repository provider="Git" url="https://8.22.8.164/mdw/mdwdemo.git" localPath="workflow/assets" user="mdw" password="6U3PywkxP7WNS723BlBuGKorDxXw1x9x" />
+    <Environment name="EWS Dev 1" owner="Manoj Agrawal">
+      <ManagedServer host="ne1itcdrhews10.dev.intranet" port="12081" webRoot="mdw" />
+      <EnvironmentDb jdbcUrl="jdbc:mysql://10.180.11.159:3306/mdw" user="mdwapp" password="dpuWZEGpJ+Vq1jMGpCprtqorDxXw1x9x" />
+    </Environment>
+    <Environment name="Fuse Dev 1" owner="Manoj Agrawal">
+      <ManagedServer host="ne1itcdrhfuse16.dev.intranet" port="8001" webRoot="MDWHub" />
+      <ManagedServer host="ne1itcdrhfuse16.dev.intranet" port="8003" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itcdrhfuse16.dev.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB15.ne1.savvis.net:1550:mdwc" user="mdwf" password="A3ReaczeUiXNtsDmmjDPPKorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="MDW Cloud Non-Git"
+    malAppName="MDWA"
+    ecomAcronym="mdwdemo2">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://cshare.ad.qintra.com/sites/mdw</Url>
+    <Url id="jenkinsUrl" label="5.5 Jenkins">http://lxdenvmtc143.dev.qintra.com:8181/jenkins</Url>    
+    <Url id="NexusRepo" label="MDW Nexus Maven Repo">http://lxomavmpc110.qintra.com:8081/nexus/content/repositories/mdw/com/centurylink/mdw</Url>
+    <Url id="NexusSnapshots" label="Nexus Snapshot Repo">http://lxomavmpc110.qintra.com:8081/nexus/content/repositories/snapshots/com/centurylink/mdw</Url>
+    <Repository provider="Git" />
+    <Environment name="Fuse Dev 2" owner="Manoj Agrawal">
+      <ManagedServer host="ne1itcdrhfuse16.dev.intranet" port="8002" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itcdrhfuse16.ne1.savvis.net:10002</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB15.ne1.savvis.net:1550:mdwc" user="mdwf" password="A3ReaczeUiXNtsDmmjDPPKorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+   
+  <WorkflowApp
+    name="MDW PaaS"
+    malAppName="MDWA"
+    ecomAcronym="mdwdemo">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://cshare.ad.qintra.com/sites/mdw</Url>
+    <Url id="jenkinsUrl" label="5.5 Jenkins">http://lxdenvmtc143.dev.qintra.com:8181/jenkins</Url>    
+    <Url id="buildpackUrl" label="MDW Buildpack GitLab Dashboard">https://8.22.8.164/mdw/mdw-buildpack</Url>
+    <Repository provider="Git" url="https://8.22.8.164/mdw/mdwdemo.git" localPath="workflow/assets" user="mdw" password="6U3PywkxP7WNS723BlBuGKorDxXw1x9x" />
+    <Environment name="PCF Lab Dev 1" owner="Don Oakes">
+      <ManagedServer host="mdwdemo.pcf-lab.test.qintra.com" port="80" webRoot="mdw" />
+      <Url id="consoleUrl" label="Pivotal Dev Console">https://console.pcf-lab.test.qintra.com</Url>
+      <EnvironmentDb jdbcUrl="jdbc:mysql://10.180.11.159:3306/mdw" user="mdwapp" password="dpuWZEGpJ+Vq1jMGpCprtqorDxXw1x9x" />
+    </Environment>
+    <Environment name="AppFog Dev 1" owner="Iain Bisset">
+      <ManagedServer host="mdwdemo.useast.appfog.ctl.io" port="80" webRoot="mdw" />
+      <Url id="consoleUrl" label="AppFog Dev Console">https://control.ctl.io/AppFog</Url>
+      <EnvironmentDb jdbcUrl="jdbc:mysql://66.151.15.159:49166/mdwcloud_dev" user="admin" password="bcMl+z+DaKvWzb+YCREKMKorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="MOB"
+    malAppName="Master Order Broker"
+    ecomAcronym="mob"
+    webContextRoot="MDWWeb"
+    servicesContextRoot="MDWWeb"    
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManagerWeb">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://collaboration.ad.qintra.com/bu/it/app/SYSGEN0787306771/default.aspx</Url>
+    <Environment name="Dev 1" owner="Christine Bohnet">
+      <ManagedServer host="lxomavmtc203.dev.qintra.com" port="30017" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc203.dev.qintra.com:10001</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc203.dev.qintra.com:30017</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc253.dev.qintra.com:1531:mobdev1" user="mob_mdw_user" password="vqzbEcVsTOhIhOzYuisxuqorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Dev 2" owner="Pradeep Chappidi">
+      <ManagedServer host="lxomavmtc203.dev.qintra.com" port="30018" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc203.dev.qintra.com:30018</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc203.dev.qintra.com:8124</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc257.dev.qintra.com:1531:mob002d" user="mob_mdw_user" password="iUxq+hagWTqqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>    
+    <Environment name="Dev Int 1" owner="Vineeta Menon">
+      <ManagedServer host="lxomavmtc203.dev.qintra.com" port="10015" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc202.dev.qintra.com:10002</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc202.dev.qintra.com:8115</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc253.dev.qintra.com:1532:mob001i" user="mob_mdw_user" password="oS4RwBJsR2eqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 1" owner="Vineeta Menon">
+      <ManagedServer host="vgdclsmxas205.test.intranet" port="10201" />
+      <ManagedServer host="vgdclsmxas206.test.intranet" port="10201" />
+      <Url id="userAccessBaseUrl" label="User Access">http://mobsmxtest.test.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob001tdb.dev.qintra.com:1540:mob001t" user="mob_mdw_user" password="jGaLca1LbmmqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 2" owner="Vineeta Menon">
+      <ManagedServer host="vgdclsmxas201.test.intranet" port="10203" />
+      <ManagedServer host="vgdclsmxas202.test.intranet" port="10203" />
+      <Url id="userAccessBaseUrl" label="User Access">http://mobsmxtest.test.intranet:20001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob002tdb.dev.qintra.com:1544:mob002t" user="mob_mdw_user" password="3Vrf6rihnzqqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="E2E" owner="Vineeta Menon">
+      <ManagedServer host="lxomavnat004.dev.qintra.com" port="10201" />
+      <ManagedServer host="lxomavnat005.dev.qintra.com" port="10201" />
+      <ManagedServer host="lxomavnat006.dev.qintra.com" port="10201" />
+      <Url id="userAccessBaseUrl" label="User Access">http://mobsmxtest-odc.test.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mobe2edb.dev.qintra.com:1586:mobe2e" user="mob_mdw_user" password="rGFN82/Ki+EYcziPoLRrVaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Break-Fix" owner="Vineeta Menon">
+      <ManagedServer host="lxomavnat009.dev.qintra.com" port="10203" />
+      <ManagedServer host="lxomavnat010.dev.qintra.com" port="10203" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavnat009.dev.qintra.com:10203</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob001bdb.dev.qintra.com:1542:mob001b" user="mob_mdw_user" password="/i5ztwhTfECqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Production" owner="Vineeta Menon">
+      <ManagedServer host="lxomavnap008.qintra.com" port="10201" />
+      <ManagedServer host="lxomavnap009.qintra.com" port="10201" />
+      <ManagedServer host="lxomavnap010.qintra.com" port="10201" />
+      <Url id="userAccessBaseUrl" label="User Access">http://mobsmx.corp.intranet</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob001pdb.qintra.com:1541:mob001p" user="mob_mdw_user" password="92Q0P7wK2lSqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+  </WorkflowApp>  
+
+  <WorkflowApp
+    name="MOB Fuse"
+    malAppName="Master Order Broker"
+    ecomAcronym="mob"
+    webContextRoot="MDWWeb"
+    servicesContextRoot="MDWWeb"    
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManagerWeb">
+    <Url id="sharePointSiteUrl" label="SharePoint Site">http://collaboration.ad.qintra.com/bu/it/app/SYSGEN0787306771/default.aspx</Url>
+    <Environment name="Dev 1" owner="Vineeta Menon">
+      <ManagedServer host="ne1itcdrhfuse32.dev.intranet" port="8004" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itcdrhfuse32.dev.intranet:10004</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB43.ne1.savvis.net:1526:mob001d" user="mob_mdw_user" password="u2SZ2D1mi4GqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Dev 2" owner="Vineeta Menon">
+      <ManagedServer host="ne1itcdrhfuse32.dev.intranet" port="8006" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itcdrhfuse32.dev.intranet:10004</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB43.ne1.savvis.net:1528:mob002d" user="mob_mdw_user" password="O7DYy+tvI1OqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Dev 3" owner="Vineeta Menon">
+      <ManagedServer host="ne1itcdrhfuse32.dev.intranet" port="8008" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itcdrhfuse32.dev.intranet:8008</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB43.ne1.savvis.net:1530:mob001i" user="mob_mdw_user" password="34HdcRsBDpqqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 1" owner="Vineeta Menon">
+      <ManagedServer host="vlodctfus200.test.intranet" port="8012" />
+      <ManagedServer host="vlodctfus201.test.intranet" port="8012" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob001tdb.dev.qintra.com:1540:mob001t" user="mob_mdw_user" password="jGaLca1LbmmqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 2" owner="Vineeta Menon">
+      <ManagedServer host="vlodctfus200.test.intranet" port="8008" />
+      <ManagedServer host="vlodctfus201.test.intranet" port="8008" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob002tdb.dev.qintra.com:1544:mob002t" user="mob_mdw_user" password="3Vrf6rihnzqqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 3" owner="Vineeta Menon">
+      <ManagedServer host="vlodctfus202.test.intranet" port="8013" />
+      <ManagedServer host="vlodctfus203.test.intranet" port="8013" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavnat009.dev.qintra.com:10203</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob001bdb.dev.qintra.com:1542:mob001b" user="mob_mdw_user" password="/i5ztwhTfECqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>    
+    <Environment name="Test 4" owner="Vineeta Menon">
+      <ManagedServer host="vlodctfus202.test.intranet" port="8014" />
+      <ManagedServer host="vlodctfus203.test.intranet" port="8014" />
+      <Url id="userAccessBaseUrl" label="User Access">http://mobfuse-test4.test.intranet:30238</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob004tdb.dev.qintra.com:1558:mob004t" user="mob_mdw_user" password="assUP7yWo+aqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="E2E" owner="Vineeta Menon">
+      <ManagedServer host="vlodctfus204.test.intranet" port="8015" />
+      <ManagedServer host="vlodctfus205.test.intranet" port="8015" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mobe2edb.dev.qintra.com:1586:mobe2e" user="mob_mdw_user" password="rGFN82/Ki+EYcziPoLRrVaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Prod" owner="Vineeta Menon">
+      <ManagedServer host="vlodcpfus501.corp.intranet" port="8007" />
+      <ManagedServer host="vlodcpfus502.corp.intranet" port="8007" />
+      <ManagedServer host="vlodcpfus503.corp.intranet" port="8007" />
+      <ManagedServer host="vlodcpfus504.corp.intranet" port="8007" />
+      <ManagedServer host="vlodcpfus505.corp.intranet" port="8007" />
+      <ManagedServer host="vlodcpfus506.corp.intranet" port="8007" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mob001pdb.qintra.com:1541:mob001p" user="mob_mdw_user" password="92Q0P7wK2lSqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>    
+  </WorkflowApp>  
+  
+  <WorkflowApp
+    name="NIC-OSR"
+    malAppName="NIC Order Service Repository"
+    ecomAcronym="nic-osr"
+    webContextRoot="MDWWeb"
+    servicesContextRoot="MDWWeb"    
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManagerWeb">
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="Dev 1" owner="Shubham Chaturvedi">
+      <ManagedServer host="lxomavmtc202.dev.qintra.com" port="10007" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc202.dev.qintra.com:10007</Url>
+      <Url id="consoleUrl" label="Karaf Shell"></Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc258.dev.qintra.com:1530:nicosrd1" user="osr_app_user" password="vWmgz6rOAevvmnGyoZFtaKorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Dev 2" owner="Shubham Chaturvedi">
+      <ManagedServer host="lxomavmtc202.dev.qintra.com" port="10009" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc202.dev.qintra.com:10009</Url>
+      <Url id="consoleUrl" label="Karaf Shell"></Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@lxomavmtc265.dev.qintra.com:1522:nicosrd2" user="osr_app_user" password="vWmgz6rOAevvmnGyoZFtaKorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 1" owner="Basavaraj Hungund">
+      <ManagedServer host="vgdclsmxas203.test.intranet" port="10501" />
+      <ManagedServer host="vgdclsmxas204.test.intranet" port="10501" />
+      <Url id="userAccessBaseUrl" label="User Access">http://osrsmxtest.test.intranet:10001</Url>
+      <Url id="consoleUrl" label="Karaf Shell"></Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@nicosrt1db.dev.qintra.com:1533:nicosrt1" user="osr_app_user" password="vWmgz6rOAevvmnGyoZFtaKorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 2" owner="Basavaraj Hungund">
+      <ManagedServer host="vddclsmxas207.test.intranet" port="10503" />
+      <ManagedServer host="vddclsmxas208.test.intranet" port="10503" />
+      <Url id="userAccessBaseUrl" label="User Access">http://osrsmxtest.test.intranet:10002</Url>
+      <Url id="consoleUrl" label="Karaf Shell"></Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@nicosrt2db.dev.qintra.com:1532:nicosrt2" user="osr_app_user" password="vWmgz6rOAevvmnGyoZFtaKorDxXw1x9x" />   
+    </Environment>
+    <Environment name="End-To-End" owner="Basavaraj Hungund">
+      <ManagedServer host="lxomavnat008.dev.qintra.com" port="10501" />
+      <ManagedServer host="lxomavnat009.dev.qintra.com" port="10501" />
+      <ManagedServer host="lxomavnat010.dev.qintra.com" port="10501" />
+      <Url id="userAccessBaseUrl" label="User Access">http://osrsmxtest-odc.test.intranet:10001</Url>      
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@nicosre1db.dev.qintra.com:1534:nicosre1" user="osr_app_user" password="vWmgz6rOAevvmnGyoZFtaKorDxXw1x9x" />  
+    </Environment>
+    <Environment name="Break-Fix" owner="Basavaraj Hungund">
+      <ManagedServer host="vlomtnat020.dev.qintra.com" port="10503" />
+      <ManagedServer host="vlomtnat021.dev.qintra.com" port="10503" />
+      <Url id="userAccessBaseUrl" label="User Access">http://osrsmxtest-odc.test.intranet:10002</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@nicosrb1db.dev.qintra.com:1537:nicosrb1" user="osr_app_user" password="vWmgz6rOAevvmnGyoZFtaKorDxXw1x9x" />  
+    </Environment>
+    <Environment name="Production" owner="Basavaraj Hungund">  
+      <ManagedServer host="lxomavnap002.qintra.com" port="10501" />
+      <ManagedServer host="lxomavnap003.qintra.com" port="10501" />
+      <ManagedServer host="lxomavnap004.qintra.com" port="10501" />
+      <Url id="userAccessBaseUrl" label="User Access">http://osrsmx.corp.intranet</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@nicosrp1db.qintra.com:1540:nicosrp1" user="osr_app_user" password="9Pre5fgYzwmqKw8V8NcfcaorDxXw1x9x" />  
+    </Environment>
+  </WorkflowApp>
+    
+  <WorkflowApp
+    name="Notification WF"
+    malAppName="NOTIFICATION WORKFLOW"
+    ecomAcronym="ntfwf"    
+    webContextRoot="MDWWeb"
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManagerWeb">
+    <Environment name="Dev 1" owner="Vinod Pillai">
+      <ManagedServer host="lxomavmtc306.dev.qintra.com" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc306.dev.qintra.com:10001</Url>        
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntfwfdevdb.dev.qintra.com:1544:ntfwfdev" user="ntfwf_app" password="RTsnj+S5U1aqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Dev 2" owner="Vinod Pillai">
+      <ManagedServer host="lxomavmtc306.dev.qintra.com" port="10101" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc306.dev.qintra.com:10101</Url>        
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntfwfdevdb.dev.qintra.com:1544:ntfwfdev" user="ntfwf_app" password="RTsnj+S5U1aqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Dev 3" owner="Vinod Pillai">
+      <ManagedServer host="lxomavmtc306.dev.qintra.com" port="10201" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc306.dev.qintra.com:10201</Url>        
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntfwfdevdb.dev.qintra.com:1544:ntfwfdev" user="ntfwf_app" password="RTsnj+S5U1aqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>     
+    <Environment name="Test 1" owner="Vinod Pillai">
+      <ManagedServer host="lxomavmtc307.dev.qintra.com" port="10001" />
+      <ManagedServer host="lxomavmtc308.dev.qintra.com" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ntfwf-test1.test.intranet</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntfwfst1db.dev.qintra.com:1545:ntfwfst1" user="ntfwf_app" password="LsGP9JIjYhQ0kaMgIeBtdaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 2" owner="Vinod Pillai">
+      <ManagedServer host="lxomavmtc307.dev.qintra.com" port="10101" />
+      <ManagedServer host="lxomavmtc308.dev.qintra.com" port="10101" />     
+      <Url id="userAccessBaseUrl" label="User Access">https://ntfwf-test2.test.intranet</Url>
+    <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntfwfst2db.dev.qintra.com:1546:ntfwfst2" user="ntfwf_app" password="c2qylefuV8MitI3YZljZ697gs5seGwci" />   
+    </Environment>
+    <Environment name="Test 3" owner="Vinod Pillai">
+      <ManagedServer host="lxomavmtc307.dev.qintra.com" port="10201" />
+      <ManagedServer host="lxomavmtc308.dev.qintra.com" port="10201" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc307.dev.qintra.com:10001</Url>      
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntfwfst3db.dev.qintra.com:1548:ntfwfst3" user="ntfwf_app" password="oU6qb5p4N4sitI3YZljZ697gs5seGwci" />   
+    </Environment>
+    <Environment name="E2E" owner="Vinod Pillai">
+      <ManagedServer host="lxomavmtc307.dev.qintra.com" port="10301" />
+      <ManagedServer host="lxomavmtc308.dev.qintra.com" port="10301" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc307.dev.qintra.com:10301</Url>      
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntfwfe2edb.dev.qintra.com:1547:ntfwfe2e" user="ntfwf_app" password="c2qylefuV8MitI3YZljZ697gs5seGwci" />   
+     </Environment>
+    <Environment name="Production" owner="Vinod Pillai">
+      <ManagedServer host="lxomavnap017.qintra.com" port="10001" />
+      <ManagedServer host="lxomavnap017.qintra.com" port="10101" />
+      <ManagedServer host="lxomavnap018.qintra.com" port="10001" />
+      <ManagedServer host="lxomavnap018.qintra.com" port="10101" />
+      <ManagedServer host="lxomavnap019.qintra.com" port="10001" />
+      <ManagedServer host="lxomavnap019.qintra.com" port="10101" />
+      <ManagedServer host="lxomavnap020.qintra.com" port="10001" />
+      <ManagedServer host="lxomavnap020.qintra.com" port="10101" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ntfwf.foss.corp.intranet</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntfwfprddb.qintra.com:1552:ntfwfprd" user="ntfwf_app" password="LsGP9JIjYhRgTXGYxEJoI6orDxXw1x9x" />   
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="OAS-WF"
+    malAppName="oas-wf"
+    ecomAcronym="oas-wf"    
+    webContextRoot="MDWWeb"
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="MDWTaskManager">
+    <Environment name="DTF1" owner="Gaetan Delahousse">
+      <ManagedServer host="vlomtnat024.dev.qintra.com" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vlomtnat024.dev.qintra.com:10001</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://vlomtnat024.dev.qintra.com:8100</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@oasdtf1db.dev.qintra.com:1538:oas_dtf1" user="mdw" password="KPSUncuE0/CqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="ITV2" owner="Tom Renaud">
+      <ManagedServer host="vlomtnat022.dev.qintra.com" port="10603" />
+      <Url id="userAccessBaseUrl" label="User Access">http://vlomtnat022.dev.qintra.com:10603</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@oasst2db.dev.qintra.com:1530:oas_st2" user="mdwapp" password="2HzHcZICZQ/CCJyj2IO4N6orDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="OmniVUE"
+    malAppName="OmniVUE"
+    ecomAcronym="omnivue"
+    webContextRoot="MDWWeb"
+    servicesContextRoot="MDWWeb"    
+    designerContextRoot="MDWDesignerWeb"
+    taskManagerContextRoot="OMNIVue">
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="Dev 1" owner="Ravi Javvaji">
+      <ManagedServer host="lxomavmtc202.dev.qintra.com" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc202.dev.qintra.com:10001</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc202.dev.qintra.com:8113</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mdwdevdb.dev.qintra.com:1594:mdwdev" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Dev Int 1" owner="Ravi Javvaji">
+      <ManagedServer host="lxomavmtc202.dev.qintra.com" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomavmtc202.dev.qintra.com:10002</Url>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://lxomavmtc202.dev.qintra.com:8115</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@mdwdevdb.dev.qintra.com:1594:mdwdev" user="mdw" password="wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 1" owner="Ravi Javvaji">
+      <ManagedServer host="omnismxtest.test.intranet" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://omnismxtest.test.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@omni001tdb.dev.qintra.com:1565:omni001t" user="omni_mdw_app" password="4LxZ01k3wy4Iq/OSsmXp8KorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Test 2" owner="Amol Zambare">
+      <ManagedServer host="omnismxtest.test.intranet" port="10002" />
+      <Url id="userAccessBaseUrl" label="User Access">http://omnismxtest.test.intranet:10002</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@omni002tdb.dev.qintra.com:1575:omni002t" user="omnivuetst2" password="jn5/XNHurPIRVRT89IwYMqorDxXw1x9x" />   
+    </Environment>
+    <Environment name="E2E" owner="Abhishek Todankar">
+      <ManagedServer host="omnismxtest-odc.test.intranet" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://omnismxtest-odc.test.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@omnie2edb.dev.qintra.com:1485:omnie2e" user="omni_mdw_app" password="enV8hft5tP+qKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Production" owner="Abhishek Todankar">
+      <ManagedServer host="lxomavnap004.qintra.com" port="10001" />
+      <Url id="userAccessBaseUrl" label="User Access">http://omnismx.corp.intranet:80</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@omni001pdb.qintra.com:1567:omni001p" user="omni_mdw_app" password="4LxZ01k3wy4Iq/OSsmXp8KorDxXw1x9x" />   
+    </Environment>    
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="Order Repository"
+    malAppName="NGPOSS"
+    ecomAcronym="osr"
+    webContextRoot="OrderReposWeb"
+    servicesContextRoot="OrderReposMDWWeb"    
+    designerContextRoot="OrderReposDesignerWeb"
+    taskManagerContextRoot="OrderReposTaskManager">
+    <Url id="sharePointSiteUrl" label="NGPOSS SharePoint">http://collaboration.ad.qintra.com/bu/it/application/SYSGEN0786791281</Url>
+    <Url id="anthillUrl" label="Anthill">http://lxdenvmtc143.dev.qintra.com:7209/anthill</Url>
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="Integration" owner="Holloway, Michael">
+      <ManagedServer host="qtdenvmdt145.dev.qintra.com" port="7032" />
+      <Url id="userAccessBaseUrl" label="User Access">http://qtdenvmdt145.dev.qintra.com:7032</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://qtdenvmdt145.dev.qintra.com:6032/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@osrdevdb.dev.qintra.com:1600:osrdev" user="osr_app_user" password="vWmgz6rOAevvmnGyoZFtaKorDxXw1x9x" />   
+    </Environment>
+    <Environment name="System Test 1" owner="Kandukuri, Kannappa">
+      <ManagedServer host="ecomt187.dev.qintra.com" port="7753" />
+      <ManagedServer host="ecomt188.dev.qintra.com" port="7753" />
+      <Url id="userAccessBaseUrl" label="User Access">https://osr-itv1.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt191.dev.qintra.com:9753/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@osrst1db.dev.qintra.com:1610:osrst1" user="osr_app_user" password="vWmgz6rOAev47u+i8vBwIxvFl7lAr06y" />   
+    </Environment>
+    <Environment name="System Test 2" owner="Kandukuri, Kannappa">
+      <ManagedServer host="ecomt189.dev.qintra.com" port="7768" />
+      <ManagedServer host="ecomt190.dev.qintra.com" port="7768" />
+      <Url id="userAccessBaseUrl" label="User Access">https://osr-itv2.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt191.dev.qintra.com:9768/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@osrst2db.dev.qintra.com:1620:osrst2" user="osr_app_user" password="vWmgz6rOAev47u+i8vBwIxFVFPz0jBgy" />   
+    </Environment>
+    <Environment name="System Test 3" owner="Kandukuri, Kannappa">
+      <ManagedServer host="ecomt197.dev.qintra.com" port="7761" />
+      <ManagedServer host="ecomt198.dev.qintra.com" port="7761" />
+      <Url id="userAccessBaseUrl" label="User Access">https://osr-itv3.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt201.dev.qintra.com:9761/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@osrst3db.dev.qintra.com:1630:osrst3" user="osr_app_user" password="vWmgz6rOAev47u+i8vBwI1AZyUJE3KtD" />   
+    </Environment>
+    <Environment name="System Test Training" owner="Kandukuri, Kannappa">
+      <ManagedServer host="ecomt197.dev.qintra.com" port="7765" />
+      <ManagedServer host="ecomt198.dev.qintra.com" port="7765" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v5.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt201.dev.qintra.com:9765/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@gfs-cs35-db18.dev.qintra.com:1603:osrtrn1" user="osr_app_user" password="vWmgz6rOAevvmnGyoZFtaKorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Enterprise Test" owner="Kandukuri, Kannappa">
+      <ManagedServer host="ecomt189.dev.qintra.com" port="7762" />
+      <ManagedServer host="ecomt190.dev.qintra.com" port="7762" />
+      <Url id="userAccessBaseUrl" label="User Access">https://osr-e2e.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt191.dev.qintra.com:9762/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@gfs_cs37_db19.dev.qintra.com:1603:osre2e" user="osr_app_user" password="vWmgz6rOAev47u+i8vBwI1ZEr2WaNtZL" />   
+    </Environment>
+    <Environment name="Production" owner="Holloway, Michael">
+      <ManagedServer host="ecom-ne174.qintra.com" port="7089" />
+      <ManagedServer host="ecom-ne175.qintra.com" port="7089" />
+      <ManagedServer host="ecom-ne176.qintra.com" port="7089" />
+      <ManagedServer host="ecom-ne176.qintra.com" port="7091" />
+      <Url id="userAccessBaseUrl" label="User Access">https://osr.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecom-ne177.qintra.com:5089/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@osrprddb.qintra.com:1543:osrprd" user="osr_app_user" password="pSppHLJJ5ZmqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="PIM Workflow"
+    malAppName="PIMWF"
+    ecomAcronym="pimwf">
+    <Url id="sharePointSiteUrl" label="PIM SharePoint Site">https://knowledgeq.ad.qintra.com/bu/it/application/PIM</Url>
+    <Repository provider="Git" />
+    <Environment name="Dev Int 1" owner="Sangu Kalyani">
+      <ManagedServer host="ne1itcdrhews11.dev.intranet" port="11941" webRoot="mdw" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB24.ne1.savvis.net:1523:pimint1" user="eos_mdw" password="i2dXDVkyMkqqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Test 1" owner="Sangu Kalyani">
+      <ManagedServer host="ne1itctrhews01.test.intranet" port="11051" webRoot="mdw" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB34.ne1.savvis.net:1523:pimitv1" user="eos_mdw" password="i2dXDVkyMkqqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Test 2" owner="Sangu Kalyani">
+      <ManagedServer host="ne1itctrhews03.test.intranet" port="12091" webRoot="mdw" />
+      <ManagedServer host="ne1itctrhews04.test.intranet" port="12091" webRoot="mdw" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB34.ne1.savvis.net:1524:pimitv2" user="eos_mdw" password="i2dXDVkyMkqqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Prod" owner="Sangu Kalyani">
+      <ManagedServer host="ne1itcprhews03.foss.corp.intranet" port="9071" webRoot="mdw" />
+      <ManagedServer host="ne1itcprhews04.foss.corp.intranet " port="9071" webRoot="mdw" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCPRHDB18.ne1.savvis.net:1523:pimprod" user="eos_mdw" password="i2dXDVkyMkqqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+    
+  <WorkflowApp
+    name="PM Workflow"
+    malAppName="NETWORX PM WORKFLOW"
+    ecomAcronym="ntwrxpmwf"
+    webContextRoot="PMWFWeb"
+    designerContextRoot="PMWFDesignerWeb"
+    taskManagerContextRoot="portal/site/qcnetworxQwest">
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Url id="sharePointSiteUrl" label="Networx SharePoint">http://qshare.ad.qintra.com/sites/GSA_Networx_Portal</Url>
+    <Url id="anthillUrl" label="Anthill">http://lxdnd54c.dev.qintra.com:7001/anthill</Url>    
+    <Environment name="Integration 1" owner="vairi">
+      <ManagedServer host="lxomt60e.dev.qintra.com" port="6191" />
+      <Url id="userAccessBaseUrl" label="User Access">https://controlnetworxqwest-int.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomt60e.dev.qintra.com:7001/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntwrxit1db.dev.qintra.com:1638:ntwrxit1" user="ntwrx_app" password="XyHFvld8CAuOp2OYAuK+/6orDxXw1x9x" />
+    </Environment>
+    <Environment name="Integration 2" owner="mmulega">
+      <ManagedServer host="lxomavmtc165.dev.qintra.com" port="2200" />
+      <Url id="userAccessBaseUrl" label="User Access">https://controlnetworxinternal-int2.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavmtc165.dev.qintra.com:2100/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntwrxintdb.dev.qintra.com:1592:ntwrxint" user="ntwrx_app" password="U7JHu4FfOL+qKw8V8NcfcaorDxXw1x9x" />
+    </Environment>    
+    <Environment name="ITV 1" owner="vairi">
+      <ManagedServer host="lxomavtecom31.dev.qintra.com" port="7213" />
+      <ManagedServer host="lxomavtecom32.dev.qintra.com" port="7213" />
+      <Url id="userAccessBaseUrl" label="User Access">https://controlnetworx-itv1.qintra.com</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntwrxst1db.dev.qintra.com:1636:ntwrxst1" user="ntwrx_app" password="XyHFvld8CAs0kaMgIeBtdaorDxXw1x9x" />
+    </Environment>
+    <Environment name="ITV 2" owner="vairi">
+      <ManagedServer host="lxomavtecom31.dev.qintra.com" port="7219" />
+      <ManagedServer host="lxomavtecom32.dev.qintra.com" port="7219" />
+      <Url id="userAccessBaseUrl" label="User Access">https://controlnetworx-itv2.qintra.com</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntwrxst2db.dev.qintra.com:1639:ntwrxst2" user="ntwrx_app" password="xMZ4ynPjJReqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="ITV 3" owner="Khandekar, Kiran">
+      <ManagedServer host="lxomavtecom33.dev.qintra.com" port="7462" />
+      <ManagedServer host="lxomavtecom34.dev.qintra.com" port="7462" />
+      <Url id="userAccessBaseUrl" label="User Access">https://controlnetworx-itv3.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt182.dev.qintra.com:9462/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntwrxst3db.dev.qintra.com:1526:ntwrxst3" user="ntwrx_app" password="jLOagTu44G+EAorPS8+wvKorDxXw1x9x" />
+    </Environment>
+    <Environment name="End-To-End" owner="vairi">
+      <ManagedServer host="lxomavtecom33.dev.qintra.com" port="7214" />
+      <ManagedServer host="lxomavtecom34.dev.qintra.com" port="7214" />
+      <Url id="userAccessBaseUrl" label="User Access">https://controlnetworxqwest-e2e.dev.qintra.com</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntwrxe2edb.dev.qintra.com:1640:ntwrxe2e" user="ntwrx_app" password="xNfHOlpj4+5WRK9lmjbWS6orDxXw1x9x" />
+    </Environment>
+    <Environment name="Training" owner="vairi">
+      <ManagedServer host="lxomavtecom33.dev.qintra.com" port="7410" />
+      <ManagedServer host="lxomavtecom34.dev.qintra.com" port="7410" />
+      <Url id="userAccessBaseUrl" label="User Access">https://controlnetworxqwest-train.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavtecom33.dev.qintra.com:9410/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntwrxtr1db.dev.qintra.com:1528:ntwrxtr1" user="ntwrx_app" password="zX2rLNAH5MGqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment name="Production" owner="Khandekar, Kiran">
+      <ManagedServer host="lxomavmecom09.qintra.com" port="7377" />
+      <ManagedServer host="lxomavmecom10.qintra.com" port="7377" />
+      <ManagedServer host="lxomavmecom06.qintra.com" port="7377" />
+      <ManagedServer host="lxomavmecom23.qintra.com" port="7377" />
+      <Url id="userAccessBaseUrl" label="User Access">https://controlnetworxqwest.qwest.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavmecom09.qintra.com:5377/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@ntwrxprddb.qintra.com:1545:ntwrxprd" user="ntwrx_app" password="mgvR99q9RSDUKeD9DwRbAqorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="RMID Workflow"
+    malAppName="RMIDWF"
+    ecomAcronym="rmidwf"    
+    webContextRoot="RMIDWFWeb"
+    servicesContextRoot="RMIDWFServices"
+    designerContextRoot="RMIDWFDesignerWeb"
+    taskManagerContextRoot="RMIDWF">
+    <Url id="sharePointSiteUrl" label="RM InfoSec KnowledgeQ Site">https://knowledgeq.ad.qintra.com/bu/it/programproject/neoproj0015136</Url>
+    <Url id="anthillUrl" label="Anthill">http://qtdenvmdt317.dev.qintra.com:7209/anthill</Url>    
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="System Test 1" owner="anovak">
+      <ManagedServer host="lxomavtecom11.dev.qintra.com" port="7640"/> 
+      <ManagedServer host="lxomavtecom12.dev.qintra.com" port="7640"/>
+      <ManagedServer host="itv1.qecom.dev.qintra.com" port="80"/> 
+      <ManagedServer host="itv1.qecom.dev.qintra.com" port="-1"/> 
+      <Url id="userAccessBaseUrl" label="User Access">https://itv1.qecom.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavtecom11.dev.qintra.com:9640/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@rmidwf_tdb.dev.qintra.com:1532:rmidwf_t" user="rmidwfo" password="djsolpofkBDvmnGyoZFtaKorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Production" owner="anovak">
+      <ManagedServer host="lxomavmecom11.qintra.com" port="7527"/> 
+      <ManagedServer host="lxomavmecom12.qintra.com" port="7527"/>
+      <ManagedServer host="om.qecom.qintra.com" port="80"/> 
+      <ManagedServer host="om.qecom.qintra.com" port="-1"/> 
+      <Url id="userAccessBaseUrl" label="User Access">https://om.qecom.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomavmecom11.qintra.com:5527/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@rmidwfdb.qintra.com:1549:rmidwf" user="rmidwfo" password="PUi8xH05AEBBSN/yx75GLKorDxXw1x9x"/>      
+    </Environment>
+  </WorkflowApp>
+
+  <WorkflowApp
+    name="ROMS Plus"
+    malAppName="ROMSP"
+    ecomAcronym="romsp"    
+    webContextRoot="RomsWorkflowWeb"
+    servicesContextRoot="RomsWorkflowWeb"
+    designerContextRoot="RomsWorkflowDesignerWeb"
+    taskManagerContextRoot="RomsWorkflowTaskManager">
+    <Environment name="Test" owner="Jayaram.L">
+      <ManagedServer host="lxdnt56b.dev.qintra.com" port="9301"/> 
+      <Url id="userAccessBaseUrl" label="User Access">http://ecomt-v1.dev.qintra.com</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@romssys_db.dev.qintra.com:1528:uromss00" user="RSC" password="OA25yUclXjSqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="VoIPTNM"
+    malAppName="VOIP-TNM"
+    ecomAcronym="voiptnm"    
+    webContextRoot="voiptnm-web"
+    servicesContextRoot="voiptnm-ws"    
+    designerContextRoot="VoIPTNMDesignerWeb"
+    taskManagerContextRoot="voiptnm-taskmanager">
+    <Url id="anthillUrl" label="Anthill">http://qtdenvmdt317.dev.qintra.com:7209/anthill</Url>    
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="Integration" owner="dlaures">
+      <ManagedServer host="qtomavmdt113.dev.qintra.com" port="7744" />
+      <Url id="userAccessBaseUrl" label="User Access">http://qtomavmdt113.dev.qintra.com:7744</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://qtomavmdt113.dev.qintra.com:9744/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vomwfdevdb.dev.qintra.com:1593:vomwfdev" user="voipomwf" password="2afl535bcVOqKw8V8NcfcaorDxXw1x9x" />      
+    </Environment>
+    <Environment name="System Test 1" owner="dlaures">
+      <ManagedServer host="ecomt199.dev.qintra.com" port="7634" />
+      <ManagedServer host="ecomt200.dev.qintra.com" port="7634" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v1.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt201.dev.qintra.com:9634/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vomtnst1db.dev.qintra.com:1601:vomtnst1" user="voiptnm_app" password="ncLsbZG/GyyqKw8V8NcfcaorDxXw1x9x" />      
+    </Environment>
+    <Environment name="System Test 2" owner="dlaures">
+      <ManagedServer host="ecomt199.dev.qintra.com" port="7641" />
+      <ManagedServer host="ecomt200.dev.qintra.com" port="7641" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v2.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt201.dev.qintra.com:9641/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vomtnst2db.dev.qintra.com:1603:vomtnst2" user="voiptnm_app" password="CMmg4SRtt0OqKw8V8NcfcaorDxXw1x9x" />      
+    </Environment>
+    <Environment name="System Test 3" owner="dlaures">
+      <ManagedServer host="ecomt197.dev.qintra.com" port="7656" />
+      <ManagedServer host="ecomt198.dev.qintra.com" port="7656" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v3.dev.qintra.com</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vomtnst3db.dev.qintra.com:1605:vomtnst3" user="voiptnm_app" password="r0hIhKWLME+qKw8V8NcfcaorDxXw1x9x" />      
+    </Environment>
+    <Environment name="Enterprise Test" owner="dlaures">
+      <ManagedServer host="ecomt197.dev.qintra.com" port="7657" />
+      <ManagedServer host="ecomt198.dev.qintra.com" port="7657" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v4.dev.qintra.com</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vomtne2edb.dev.qintra.com:1602:vomtne2e" user="voiptnm_app" password="UQ15onxMAKCqKw8V8NcfcaorDxXw1x9x" />      
+    </Environment>
+    <Environment name="Production" owner="dlaures">
+      <ManagedServer host="ecom-ne192.qintra.com" port="7339" />
+      <ManagedServer host="ecom-ne193.qintra.com" port="7339" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecom2.uswc.uswest.com</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@vomtnprddb.qintra.com:1500:vomtnprd" user="voiptnm_app" password="LgqbWsVZn/6qKw8V8NcfcaorDxXw1x9x" />      
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="VoIPTNM Cloud"
+    malAppName="VOIP-TNM"
+    ecomAcronym="voiptnm">
+    <Repository provider="Git" />
+    <Environment name="Dev 1" owner="Ayyasamy, Thinesh Babu">
+      <ManagedServer host="ne1itcdrhfuse18.dev.intranet" port="8001" webRoot="MDWHub" />
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itcdrhfuse18.dev.intranet:10001</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB35.ne1.savvis.net:1530:vomtnint" user="voiptnm_app" password="aJegv8/E5+CXnkBP3jVtaKorDxXw1x9x" />   
+    </Environment>
+    <Environment name="E2E" owner="Ayyasamy, Thinesh Babu">
+      <ManagedServer host="ne1itctrhfuse05.test.intranet" port="8083" webRoot="MDWHub"/>
+      <ManagedServer host="ne1itctrhfuse06.test.intranet" port="8083" webRoot="MDWHub"/>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itctrhfuse05.test.intranet:10083</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB46.ne1.savvis.net:1570:vomtne2e" user="voiptnm_app" password="UQ15onxMAKCqKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+    <Environment name="Prod" owner="Ayyasamy, Thinesh Babu">
+      <ManagedServer host="ne1itcprhfuse03.foss.corp.intranet" port="8004" webRoot="MDWHub"/>
+      <ManagedServer host="ne1itcprhfuse04.foss.corp.intranet" port="8004" webRoot="MDWHub"/>
+      <Url id="consoleUrl" label="Karaf Shell">ssh://%MDW_CLOUD_USER%@ne1itcprhfuse03.foss.corp.intranet:10080</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCPRHDB38.ne1.savvis.net:1550:vomtnprd" user="voiptnm_app" password="LgqbWsVZn/6qKw8V8NcfcaorDxXw1x9x" />   
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="WFMT Cloud"
+    malAppName="Workflow Management Tool"
+    ecomAcronym="wfmt">
+    <Url id="sharePointSiteUrl" label="WFMT SharePoint Site">http://collaboration.ad.qintra.com/bu/it/app/SYSGEN0787314395/default.aspx</Url>
+    <Environment
+      name="Dev 1" owner="Decai Zhu">
+      <ManagedServer host="ne1itcdrhfuse21.ne1.savvis.net" port="8001" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB16.ne1.savvis.net:1530:wfmtdev1" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="Dev 2" owner="Decai Zhu">
+      <ManagedServer host="ne1itcdrhfuse21.ne1.savvis.net" port="8002" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB16.ne1.savvis.net:1535:wfmtdev2" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="Dev 3" owner="Decai Zhu">
+      <ManagedServer host="ne1itcdrhfuse21.ne1.savvis.net" port="8003" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB16.ne1.savvis.net:1563:wfmtdev3" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="Test 1" owner="Decai Zhu">
+      <ManagedServer host="ne1itctrhfuse07.test.intranet" port="8044" webRoot="MDWHub" />
+      <ManagedServer host="ne1itctrhfuse08.test.intranet" port="8044" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB22.ne1.savvis.net:1530:wfmttst1" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="Test 2" owner="Decai Zhu">
+      <ManagedServer host="NE1ITCTRHFUSE09.ne1.savvis.net" port="8045" webRoot="MDWHub" />
+      <ManagedServer host="NE1ITCTRHFUSE10.ne1.savvis.net" port="8045" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB22.ne1.savvis.net:1630:wfmttst2" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="E2E" owner="Decai Zhu">
+      <ManagedServer host="ne1itctrhfuse11.test.intranet" port="8046" webRoot="MDWHub" />
+      <ManagedServer host="ne1itctrhfuse12.test.intranet" port="8046" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB23.ne1.savvis.net:1591:wfmte2e" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="Prod" owner="Decai Zhu">
+      <ManagedServer host="NE1ITCPRHFUSE01.ne1.savvis.net" port="8001" webRoot="MDWHub" />
+      <ManagedServer host="NE1ITCPRHFUSE02.ne1.savvis.net" port="8001" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCPRHDB07.ne1.savvis.net:1532:wfmtprd" user="wfmt_app" password="yEdEuM3Ms9zgbSbHR9yMhqorDxXw1x9x" />
+    </Environment>    
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="WFMT VCS"
+    malAppName="Workflow Management Tool"
+    ecomAcronym="wfmt">
+    <Url id="sharePointSiteUrl" label="WFMT SharePoint Site">http://collaboration.ad.qintra.com/bu/it/app/SYSGEN0787314395/default.aspx</Url>
+    <Repository provider="Git" />
+    <Environment name="Dev 1" owner="Shridhar Cherukumilli">
+      <ManagedServer host="ne1itcdrhfuse21.ne1.savvis.net" port="8001" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB16.ne1.savvis.net:1530:wfmtdev1" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="Dev 2" owner="Decai Zhu">
+      <ManagedServer host="ne1itcdrhfuse21.ne1.savvis.net" port="8002" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB16.ne1.savvis.net:1535:wfmtdev2" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="Dev 3" owner="Decai Zhu">
+      <ManagedServer host="ne1itcdrhfuse21.ne1.savvis.net" port="8003" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB16.ne1.savvis.net:1563:wfmtdev3" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="Test 1" owner="Decai Zhu">
+      <ManagedServer host="ne1itctrhfuse07.test.intranet" port="8044" webRoot="MDWHub" />
+      <ManagedServer host="ne1itctrhfuse08.test.intranet" port="8044" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB22.ne1.savvis.net:1530:wfmttst1" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>
+  
+  <WorkflowApp
+    name="WFMT VCS Git"
+    malAppName="Workflow Management Tool"
+    ecomAcronym="wfmt">
+    <Url id="sharePointSiteUrl" label="WFMT SharePoint Site">http://collaboration.ad.qintra.com/bu/it/app/SYSGEN0787314395/default.aspx</Url>
+    <Repository provider="Git" url="http://ne1itcprhas51.corp.intranet/wfmt/WFMTHub.git" localPath="workflow/assets" />
+    <Environment name="Dev 1" owner="Shridhar Cherukumilli">
+      <ManagedServer host="ne1itcdrhfuse21.ne1.savvis.net" port="8001" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB16.ne1.savvis.net:1530:wfmtdev1" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="Dev 3" owner="Decai Zhu">
+      <ManagedServer host="ne1itcdrhfuse21.ne1.savvis.net" port="8003" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCDRHDB16.ne1.savvis.net:1563:wfmtdev3" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>    
+    <Environment
+      name="Test 1" owner="Decai Zhu">
+      <ManagedServer host="ne1itctrhfuse07.test.intranet" port="8044" webRoot="MDWHub" />
+      <ManagedServer host="ne1itctrhfuse08.test.intranet" port="8044" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCTRHDB22.ne1.savvis.net:1530:wfmttst1" user="wfmt_app" password="LYhtbsHQV5yqKw8V8NcfcaorDxXw1x9x" />
+    </Environment>
+    <Environment
+      name="Prod" owner="Decai Zhu">
+      <ManagedServer host="NE1ITCPRHFUSE01.ne1.savvis.net" port="8001" webRoot="MDWHub" />
+      <ManagedServer host="NE1ITCPRHFUSE02.ne1.savvis.net" port="8001" webRoot="MDWHub" />
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@NE1ITCPRHDB07.ne1.savvis.net:1532:wfmtprd" user="wfmt_app" password="yEdEuM3Ms9zgbSbHR9yMhqorDxXw1x9x" />
+    </Environment>    
+  </WorkflowApp>  
+  
+  <WorkflowApp
+    name="Wireless Workflow"
+    malAppName="WIRELESS WORKFLOW"
+    ecomAcronym="wwf"
+    webContextRoot="WirelessWFMDWWeb"
+    designerContextRoot="WirelessWFDesignerWeb"
+    taskManagerContextRoot="WirelessWFTaskManagerWeb">
+    <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+    <Environment name="Integration" owner="jbokenk">
+      <ManagedServer host="lxomd16l.dev.qintra.com" port="7521" />
+      <Url id="userAccessBaseUrl" label="User Access">http://lxomd16l.dev.qintra.com:7521</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://lxomd16l.dev.qintra.com:7511/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@wwffwdv1db.dev.qintra.com:1610:wwffwdv1" user="wwffw_app" password="AiaSfqt9ykiqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="System Test 1" owner="">
+      <ManagedServer host="ecomt155.dev.qintra.com" port="7353" />
+      <ManagedServer host="ecomt156.dev.qintra.com" port="7353" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecomt-v1.dev.qintra.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecomt157.dev.qintra.com:9353/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@wwffwst1db.dev.qintra.com:1612:wwffwst1" user="wwffw_app" password="IgEWuE16Q0GqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Production" owner="">
+      <ManagedServer host="ecom-ne161.qintra.com" port="7129" />
+      <ManagedServer host="ecom-ne162.qintra.com" port="7129" />
+      <ManagedServer host="ecom-ne161.qintra.com" port="7139" />
+      <ManagedServer host="ecom-ne162.qintra.com" port="7139" />
+      <Url id="userAccessBaseUrl" label="User Access">https://ecom2.uswc.uswest.com</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://ecom-ne158.qintra.com:5129/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@wwffwprddb.qintra.com:1561:wwffwprd" user="wwffw_app" password="PKrdR4PZYgeqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+  </WorkflowApp>
+  <WorkflowApp name="DTVWF"
+    malAppName="DIRECTV WORK FLOW"
+    ecomAcronym="DTVWF"    
+    webContextRoot="DTVWFWeb"
+    servicesContextRoot="DTVWFMDWWeb"
+    designerContextRoot="DTVWFDesignerWeb"
+    taskManagerContextRoot="DTVWFTaskManagerWeb">
+   <Url id="discussionBoard" label="MDW Discussion Board">http://cshare/sites/MDW/Lists/MDW%20Support</Url> 
+   <Url id="sharePointSiteUrl" label="DTVWF SharePoint">http://collaboration.ad.qintra.com/bu/it/application/SYSGEN0787043407/Pages/default.aspx</Url>
+    <Environment name="System Test 1" owner="">
+      <ManagedServer host="ecomt207.dev.qintra.com" port="7737"/>
+      <ManagedServer host="ecomt208.dev.qintra.com" port="7737"/>
+      <Url id="userAccessBaseUrl" label="User Access">http://151.117.41.128:7737</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://151.117.41.130:9737/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dtvwfst1db.dev.qintra.com:1557:dtvwfst1" user="dtvwf_app" password="dutd5+WvXV5hJ3ap8Kac/qorDxXw1x9x"/>      
+    </Environment>
+   <Environment name="System Test 2" owner="Razdan, Ankur">
+      <ManagedServer host="ecomt207.dev.qintra.com" port="7741"/>
+      <ManagedServer host="ecomt208.dev.qintra.com" port="7741"/>
+      <Url id="userAccessBaseUrl" label="User Access">http://151.117.41.128:7741</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://151.117.41.130:9741/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dtvwfst2db.dev.qintra.com:1558:dtvwfst2" user="dtvwf_app" password="dutd5+WvXV6w0Iy67XWuOqorDxXw1x9x"/>      
+    </Environment>
+   <Environment name="System Test 3" owner="Razdan, Ankur">
+      <ManagedServer host="ecomt207.dev.qintra.com" port="7739"/>
+      <ManagedServer host="ecomt208.dev.qintra.com" port="7739"/>
+      <Url id="userAccessBaseUrl" label="User Access">http://151.117.41.128:7739</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://151.117.41.130:9739/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dtvwfst3db.dev.qintra.com:1556:dtvwfst3" user="dtvwf_app" password="dutd5+WvXV4DtenL1Tj9taorDxXw1x9x"/>      
+    </Environment>
+  <Environment name="E2E" owner="Razdan, Ankur">
+      <ManagedServer host="ecomt207.dev.qintra.com" port="7740"/>
+      <ManagedServer host="ecomt208.dev.qintra.com" port="7740"/>
+      <Url id="userAccessBaseUrl" label="User Access">http://151.117.41.128:7740</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://http://151.117.41.130:9740/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dtvwfe2edb.dev.qintra.com:1557:dtvwfe2e" user="dtvwf_app" password="bV5DDeGaQ+mqKw8V8NcfcaorDxXw1x9x"/>      
+    </Environment>
+    <Environment name="Production" owner="Razdan, Ankur">
+      <ManagedServer host="ecom-ne209.qintra.com" port="7387"/>
+      <ManagedServer host="ecom-ne209.qintra.com" port="7389"/>
+      <ManagedServer host="ecom-ne210.qintra.com" port="7387"/>
+      <ManagedServer host="ecom-ne211.qintra.com" port="7387"/>
+      <Url id="userAccessBaseUrl" label="User Access">http://ecom-ne209.qintra.com:7387</Url>
+      <Url id="consoleUrl" label="WebLogic Console">http://151.117.201.19:5387/console</Url>
+      <EnvironmentDb jdbcUrl="jdbc:oracle:thin:@dtvwfprddb.qintra.com:1542:dtvwfprd" user="dtvwf_app" password="RCEp7SgTvNYeuMsdYqUVMaorDxXw1x9x"/>      
+    </Environment>
+  </WorkflowApp>
+  <WorkflowApp
+    name="MDW Local"
+    malAppName="MDWA"
+    ecomAcronym="mdwdemo">
+    <Repository provider="Git" url="https://8.22.8.164/mdw/mdwdemo.git" localPath="workflow/assets" user="mdw" password="6U3PywkxP7WNS723BlBuGKorDxXw1x9x" />
+    <Environment name="Demo Remote" owner="Don">
+      <ManagedServer host="x1070335.dhcp.intranet" port="8080" webRoot="mdw" />
+      <EnvironmentDb jdbcUrl="jdbc:mysql://10.180.11.159:3306/mdw" user="mdwapp" password="dpuWZEGpJ+Vq1jMGpCprtqorDxXw1x9x" />
+    </Environment>
+  </WorkflowApp>  
+  
+</ConfigManagerProjects>

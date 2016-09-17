@@ -89,13 +89,18 @@ public class RestfulServicesServlet extends HttpServlet {
         if (metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null)
             response.setStatus(Integer.parseInt(metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE)));
 
-        if (Listener.CONTENT_TYPE_EXCEL.equals(metaInfo.get(Listener.METAINFO_DOWNLOAD_FORMAT))) {
-            // TODO: mechanism for very large content (save to temp file and direct to download servlet)
+        String downloadFormat = metaInfo.get(Listener.METAINFO_DOWNLOAD_FORMAT);
+        if (downloadFormat != null) {
             response.setContentType(Listener.CONTENT_TYPE_DOWNLOAD);
-            String fileName = path.substring(0).replace('/', '-') + ".xlsx";
+            String fileName = path.substring(0).replace('/', '-') + "." + downloadFormat;
             response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-            // string response will have been Base64 encoded
-            response.getOutputStream().write(Base64.decodeBase64(responseString.getBytes()));
+            if (downloadFormat.equals(Listener.DOWNLOAD_FORMAT_JSON) || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_XML) || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_TEXT)) {
+                response.getOutputStream().write(responseString.getBytes());
+            }
+            else {
+                // for binary content string response will have been Base64 encoded
+                response.getOutputStream().write(Base64.decodeBase64(responseString.getBytes()));
+            }
         }
         else {
             if (logger.isMdwDebugEnabled()) {

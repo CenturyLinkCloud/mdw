@@ -48,7 +48,7 @@ tabsSvc.factory('tabs', ['mdw', function(mdw) {
         id: 'adminTab',
         label: 'Admin',
         url: '#/users',
-        routes: ['/users', '/groups', '/roles', '/assets', '/asset', '/tests', '/history']
+        routes: ['/users', '/groups', '/roles', '/assets', '/packages', '/asset', '/tests', '/history']
       },
       {
         id: 'systemTab',

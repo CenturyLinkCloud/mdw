@@ -378,7 +378,7 @@ public class PluginDataAccess
     {
       if (workflowProject.isFilePersist()) {
         PluginMessages.log(ex);
-        MessageDialog.openError(MdwPlugin.getShell(), "Retrieve Process Instance", "Server appears to be offline.");
+        MessageDialog.openError(MdwPlugin.getShell(), "Retrieve Process Instance", "Server appears to be offline: " + ex.getMessage());
       }
       else {
         PluginMessages.uiError(ex, "Retrieve Process Instance", workflowProject);

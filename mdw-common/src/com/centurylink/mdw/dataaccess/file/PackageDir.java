@@ -4,12 +4,13 @@
 package com.centurylink.mdw.dataaccess.file;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.xmlbeans.XmlException;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.bpm.MDWPackage;
 import com.centurylink.mdw.bpm.PackageDocument;
@@ -27,12 +28,17 @@ public class PackageDir extends File {
 
     public static final String META_DIR = ".mdw";
     public static final String PACKAGE_XML_PATH = META_DIR + "/package.xml";
+    public static final String PACKAGE_JSON_PATH = META_DIR + "/package.json";
     public static final String VERSIONS_PATH = META_DIR + "/versions";
     public static final String ARCHIVE_SUBDIR = "Archive";
 
     private File storageDir; // main parent for workflow assets
     private File archiveDir;
     private VersionControl versionControl;
+
+    private Boolean json;
+    public boolean isJson() { return json == null ? false : json; }
+    public void setJson(boolean json) { this.json = json; }
 
     /**
      * /com.centurylink.mdw.demo.intro v0.0.17
@@ -44,14 +50,6 @@ public class PackageDir extends File {
     private boolean archive;
     @ApiModelProperty(hidden=true)
     public boolean isArchive() { return archive; }
-
-    private PackageDocument pkgDoc;
-    @ApiModelProperty(hidden=true)
-    public PackageDocument getPackageDoc() { return pkgDoc; }
-
-    private MDWPackage pkg;
-    @ApiModelProperty(hidden=true)
-    public MDWPackage getPackage() { return pkg; }
 
     private String pkgName;
     @ApiModelProperty(name="name")
@@ -65,13 +63,44 @@ public class PackageDir extends File {
     private long pkgId;
     public long getId() { return pkgId; }
 
+    private File metaFile;
+    public File getMetaFile() {
+        metaFile = new File(toString() + "/" + PACKAGE_JSON_PATH);
+        if (!isJson() && !metaFile.exists())
+            metaFile = new File(toString() + "/" + PACKAGE_XML_PATH);
+        return metaFile;
+    }
+
     public void parse() throws DataAccessException {
+        json = new File(toString() + "/" + PACKAGE_JSON_PATH).exists();
+        parse(json);
+    }
+
+    public void parse(boolean json) throws DataAccessException {
         try {
-            File pkgFile = new File(toString() + "/" + PACKAGE_XML_PATH);
-            pkgDoc = PackageDocument.Factory.parse(pkgFile);
-            pkg = pkgDoc.getPackage();
-            pkgName = pkg.getName();
-            pkgVersion = pkg.getVersion();
+            this.json = json;
+            File pkgFile = getMetaFile();
+            if (json) {
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(pkgFile);
+                    byte[] bytes = new byte[(int) pkgFile.length()];
+                    fis.read(bytes);
+                    PackageVO pkgVo = new PackageVO(new JSONObject(new String(bytes)));
+                    pkgName = pkgVo.getName();
+                    pkgVersion = pkgVo.getVersionString();
+                }
+                finally {
+                    if (fis != null)
+                        fis.close();;
+                }
+            }
+            else {
+                PackageDocument pkgDoc = PackageDocument.Factory.parse(pkgFile);
+                MDWPackage pkg = pkgDoc.getPackage();
+                pkgName = pkg.getName();
+                pkgVersion = pkg.getVersion();
+            }
             String archivePath = new File(storageDir.toString() + "/Archive/").toString();
             if (toString().startsWith(archivePath)) {
                 // e:/workspaces/dons/DonsWorkflow/src/main/workflow/Archive/com.centurylink.mdw.demo.intro v0.17
@@ -79,27 +108,26 @@ public class PackageDir extends File {
                 if (spaceV < 0)
                     throw new DataAccessException("Misnamed Archive package node dir (missing version): " + getName());
                 String pkgVerFromDir = toString().substring(spaceV + 2);
-                if (pkgVerFromDir != null && !pkgVerFromDir.equals(pkg.getVersion()))
+                if (pkgVerFromDir != null && !pkgVerFromDir.equals(pkgVersion))
                     throw new DataAccessException("Package version in " + pkgFile + " is not '" + pkgVerFromDir + "'");
                 String pkgNameFromDir = toString().substring(0, spaceV).substring(archiveDir.toString().length() + 1).replace('\\', '/').replace('/', '.');
-                if (!pkgNameFromDir.equals(pkg.getName()))
+                if (!pkgNameFromDir.equals(pkgName))
                     throw new DataAccessException("Package name in " + pkgFile + " is not '" + pkgNameFromDir + "'");
                 archive = true;
             }
             else {
                 // e:/workspaces/dons/DonsWorkflow/src/main/workflow/com/centurylink/mdw/demo/intro
                 String pkgNameFromDir = toString().substring(storageDir.toString().length() + 1).replace('\\', '/').replace('/', '.');
-                if (!pkgNameFromDir.equals(pkg.getName()))
+                if (!pkgNameFromDir.equals(pkgName))
                     throw new DataAccessException("Package name in " + pkgFile + " is not '" + pkgNameFromDir + "'");
-                logicalDir = new File("/" + pkg.getName() + " v" + pkg.getVersion());
             }
-            logicalDir = new File("/" + pkg.getName() + " v" + pkg.getVersion());
+            logicalDir = new File("/" + pkgName + " v" + pkgVersion);
             pkgId = versionControl.getId(logicalDir);
         }
-        catch (IOException ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
+        catch (DataAccessException ex) {
+            throw ex;
         }
-        catch (XmlException ex) {
+        catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
     }

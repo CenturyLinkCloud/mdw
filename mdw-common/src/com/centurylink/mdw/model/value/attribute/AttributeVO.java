@@ -11,6 +11,7 @@ public class AttributeVO implements Serializable, Comparable<AttributeVO> {
     private Long id;
     private String name;
     private String value;
+    private String group;
 
     public AttributeVO(){
     }
@@ -51,6 +52,13 @@ public class AttributeVO implements Serializable, Comparable<AttributeVO> {
         this.value = value;
     }
 
+    public String getAttributeGroup() {
+        return group;
+    }
+
+    public void setAttributeGroup(String group) {
+        this.group = group;
+    }
 
     public static String findAttribute(List<AttributeVO> attrs, String name) {
         if (attrs==null) return null;
@@ -68,7 +76,7 @@ public class AttributeVO implements Serializable, Comparable<AttributeVO> {
      * is created.
      * @param name attribute name
      * @param v value to be set. When it is null, the attribute is removed
-     */    
+     */
     public static void setAttribute(List<AttributeVO> attrs, String name, String v) {
         for (AttributeVO attr : attrs) {
             if (name.equals(attr.getAttributeName())) {

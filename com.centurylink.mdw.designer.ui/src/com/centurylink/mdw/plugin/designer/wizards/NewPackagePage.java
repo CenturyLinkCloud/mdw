@@ -13,20 +13,26 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.centurylink.mdw.model.value.user.UserRoleVO;
 import com.centurylink.mdw.plugin.WizardPage;
-import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
+import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
+import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
+import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 public class NewPackagePage extends WizardPage
 {
   private Text packageNameTextField;
-  private Label mdwVersionLabel;
+  private Group formatRadioGroup;
+  private Button jsonFormatRadio;
+  private Button xmlFormatRadio;
   private Combo groupCombo;
   private Label groupLabel;
 
@@ -54,17 +60,36 @@ public class NewPackagePage extends WizardPage
     composite.setLayout(gl);
 
     createWorkflowProjectControls(composite, ncol);
-    createNameControls(composite, ncol);
-    if (getProject() != null && !getProject().isRemote())
-      createMdwVersionControls(composite, ncol);
-    if (getProject().checkRequiredVersion(5, 5, 8))
+    workflowProjectCombo.addSelectionListener(new SelectionAdapter()
     {
-      createGroupControls(composite, ncol);
-      showGroupControls(true);
-    }
+      public void widgetSelected(SelectionEvent e)
+      {
+        WorkflowProject project = WorkflowProjectManager.getInstance().getWorkflowProject(workflowProjectCombo.getText());
+        initializeControls(project);
+      }
+    });
+
+    createNameControls(composite, ncol);
+    createFormatControls(composite, ncol);
+    createGroupControls(composite, ncol);
+    initializeControls(getProject());
     setControl(composite);
 
     packageNameTextField.forceFocus();
+  }
+
+  @Override
+  protected void handleFieldChanged()
+  {
+    // TODO Auto-generated method stub
+    super.handleFieldChanged();
+  }
+
+  @Override
+  protected void handleFieldChanged(String fieldName)
+  {
+    // TODO Auto-generated method stub
+    super.handleFieldChanged(fieldName);
   }
 
   private void createNameControls(Composite parent, int ncol)
@@ -77,24 +102,46 @@ public class NewPackagePage extends WizardPage
     gd.horizontalSpan = ncol - 1;
     packageNameTextField.setLayoutData(gd);
     packageNameTextField.addModifyListener(new ModifyListener()
+    {
+      public void modifyText(ModifyEvent e)
       {
-        public void modifyText(ModifyEvent e)
-        {
-          getPackage().setName(packageNameTextField.getText().trim());
-          handleFieldChanged();
-        }
-      });
+        getPackage().setName(packageNameTextField.getText().trim());
+        handleFieldChanged();
+      }
+    });
   }
 
-  private void createMdwVersionControls(Composite parent, int ncol)
+  private void createFormatControls(Composite parent, int ncol)
   {
-    new Label(parent, SWT.NONE).setText("MDW Version:");
-    mdwVersionLabel = new Label(parent, SWT.NONE);
-    GridData gd = new GridData(GridData.BEGINNING);
+    new Label(parent, SWT.NONE); // spacer
+    formatRadioGroup = new Group(parent, SWT.NONE);
+    formatRadioGroup.setText("Format");
+    GridLayout gl = new GridLayout();
+    gl.numColumns = 2;
+    formatRadioGroup.setLayout(gl);
+
+    GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
     gd.horizontalSpan = ncol - 1;
-    mdwVersionLabel.setLayoutData(gd);
-    mdwVersionLabel.setText(getProject().getMdwVersion());
-    getPackage().setSchemaVersion(getProject().getMdwSchemaVersion());
+    formatRadioGroup.setLayoutData(gd);
+
+    jsonFormatRadio = new Button(formatRadioGroup, SWT.RADIO | SWT.LEFT);
+    jsonFormatRadio.setText("JSON     ");
+    jsonFormatRadio.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
+        getWizard().setJson(true);
+      }
+    });
+    xmlFormatRadio = new Button(formatRadioGroup, SWT.RADIO | SWT.LEFT);
+    xmlFormatRadio.setText("XML");
+    xmlFormatRadio.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
+        getWizard().setJson(false);
+      }
+    });
   }
 
   private void createGroupControls(Composite parent, int ncol)
@@ -120,15 +167,20 @@ public class NewPackagePage extends WizardPage
     });
   }
 
-  private void showGroupControls(boolean visible)
+  private void initializeControls(WorkflowProject project)
   {
-    if (!visible)
-    {
-      getPackage().setGroup(null);
-      groupCombo.setText("");
-    }
-    groupLabel.setVisible(visible);
-    groupCombo.setVisible(visible);
+    getPackage().setGroup(null);
+    groupCombo.setText("");
+    boolean is558 = project.checkRequiredVersion(5, 5, 8);
+    groupLabel.setVisible(is558);
+    groupCombo.setVisible(is558);
+
+    boolean is5537 = project.checkRequiredVersion(5, 5, 37);
+    getWizard().setJson(is5537);
+    jsonFormatRadio.setSelection(is5537);
+    xmlFormatRadio.setSelection(!is5537);
+    formatRadioGroup.setEnabled(is5537);
+    jsonFormatRadio.setEnabled(is5537);
   }
 
   private void populateGroupCombo()
@@ -141,6 +193,7 @@ public class NewPackagePage extends WizardPage
         groupCombo.add(group);
     }
   }
+
   @Override
   public boolean isPageComplete()
   {
@@ -176,9 +229,14 @@ public class NewPackagePage extends WizardPage
     return is;
   }
 
+  public NewPackageWizard getWizard()
+  {
+    return ((NewPackageWizard)super.getWizard());
+  }
+
   public WorkflowPackage getPackage()
   {
-    return ((NewPackageWizard)getWizard()).getPackage();
+    return getWizard().getPackage();
   }
 
   @Override

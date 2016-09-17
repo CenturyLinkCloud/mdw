@@ -82,6 +82,10 @@ public class FileUploadServlet extends HttpServlet
         response.sendError(HttpServletResponse.SC_FORBIDDEN, "Authentication failed");
         return;
       }
+      else
+      {
+        logger.severe("File upload request from: " + request.getRemoteAddr() + " (user=" + userPw[0] + ").");
+      }
 
       String tempLoc = ApplicationContext.getTempDirectory();
       String tempFile = "temp" + StringHelper.filenameDateToString(new Date()) + ".tmp";

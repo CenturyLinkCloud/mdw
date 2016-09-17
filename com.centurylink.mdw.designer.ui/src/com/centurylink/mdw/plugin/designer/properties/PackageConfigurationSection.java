@@ -39,6 +39,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.bpm.ApplicationPropertiesDocument.ApplicationProperties;
 import com.centurylink.mdw.bpm.PackageDocument;
@@ -47,14 +49,15 @@ import com.centurylink.mdw.bpm.PropertyDocument.Property;
 import com.centurylink.mdw.bpm.PropertyGroupDocument.PropertyGroup;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.designer.DesignerCompatibility;
+import com.centurylink.mdw.model.value.attribute.AttributeVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.designer.DesignerProxy;
 import com.centurylink.mdw.plugin.designer.dialogs.MdwChoiceDialog;
 import com.centurylink.mdw.plugin.designer.dialogs.MdwInputDialog;
-import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
+import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 import com.centurylink.mdw.plugin.designer.properties.editor.ColumnSpec;
 import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
 
@@ -149,12 +152,12 @@ public class PackageConfigurationSection extends PropertySection implements IFil
 
   private List<PropertyGroup> getPropertyGroups()
   {
-    if (workflowPackage.getVoXml() == null &&  !workflowPackage.isDefaultPackage()) // empty string signifies already loaded
+    if (workflowPackage.getMetaContent() == null &&  !workflowPackage.isDefaultPackage()) // empty string signifies already loaded
     {
       try
       {
         PackageVO packageVO = workflowPackage.getProject().getDesignerProxy().getDesignerDataAccess().loadPackage(workflowPackage.getId(), false);
-        workflowPackage.setVoXml(packageVO.getVoXML() == null ? "" : packageVO.getVoXML());
+        workflowPackage.setMetaContent(packageVO.getMetaContent() == null ? "" : packageVO.getMetaContent());
       }
       catch (Exception ex)
       {
@@ -162,7 +165,7 @@ public class PackageConfigurationSection extends PropertySection implements IFil
       }
     }
 
-    if (workflowPackage.getVoXml() == null || workflowPackage.getVoXml().trim().length() == 0)
+    if (workflowPackage.getMetaContent() == null || workflowPackage.getMetaContent().trim().length() == 0)
     {
       return new ArrayList<PropertyGroup>();
     }
@@ -171,14 +174,34 @@ public class PackageConfigurationSection extends PropertySection implements IFil
       ApplicationProperties appProps = null;
       try
       {
-        if (workflowPackage.getVoXml().startsWith("<bpm:package") || workflowPackage.getVoXml().startsWith("<package"))
+        if (workflowPackage.getMetaContent().trim().startsWith("{"))
         {
-          PackageDocument pkgDoc = PackageDocument.Factory.parse(workflowPackage.getVoXml());
+          List<PropertyGroup> propGroups = new ArrayList<PropertyGroup>();
+          PackageVO metaPkg = new PackageVO(new JSONObject(workflowPackage.getMetaContent()));
+          if (metaPkg.getAttributes() != null) {
+              Map<String,List<AttributeVO>> groupedAttrs = metaPkg.getAttributesByGroup();
+              for (String group : groupedAttrs.keySet()) {
+                  PropertyGroup propGroup = PropertyGroup.Factory.newInstance();
+                  if (group != null)
+                      propGroup.setName(group);
+                  for (AttributeVO groupAttr : groupedAttrs.get(group)) {
+                      Property prop = propGroup.addNewProperty();
+                      prop.setName(groupAttr.getAttributeName());
+                      prop.setStringValue(groupAttr.getAttributeValue());
+                  }
+                  propGroups.add(propGroup);
+              }
+          }
+          return propGroups;
+        }
+        else if (workflowPackage.getMetaContent().startsWith("<bpm:package") || workflowPackage.getMetaContent().startsWith("<package"))
+        {
+          PackageDocument pkgDoc = PackageDocument.Factory.parse(workflowPackage.getMetaContent());
           appProps = pkgDoc.getPackage().getApplicationProperties();
         }
         else
         {
-          ProcessDefinitionDocument procDefDoc = ProcessDefinitionDocument.Factory.parse(workflowPackage.getVoXml(), Compatibility.namespaceOptions());
+          ProcessDefinitionDocument procDefDoc = ProcessDefinitionDocument.Factory.parse(workflowPackage.getMetaContent(), Compatibility.namespaceOptions());
           appProps = procDefDoc.getProcessDefinition().getApplicationProperties();
         }
       }
@@ -200,7 +223,7 @@ public class PackageConfigurationSection extends PropertySection implements IFil
     updatePropertyGroups();
     try
     {
-      updatePackageVoXml();
+      updatePackageMetaContent();
       dirty = true;
       saveButton.setEnabled(dirty);
     }
@@ -245,42 +268,66 @@ public class PackageConfigurationSection extends PropertySection implements IFil
     propertyGroups = updatedGroups;
   }
 
-  private void updatePackageVoXml() throws XmlException, IOException
+  private void updatePackageMetaContent() throws XmlException, JSONException, IOException
   {
-    String procDefStr;
     if (!workflowPackage.getProject().isOldNamespaces())
     {
-      PackageDocument pkgDefDoc = null ;
-      if (workflowPackage.getVoXml() == null || workflowPackage.getVoXml().isEmpty())
+      if (workflowPackage.getMetaContent() != null && workflowPackage.getMetaContent().trim().startsWith("{"))
       {
-        pkgDefDoc = PackageDocument.Factory.newInstance();
+        PackageVO metaPkg = new PackageVO(new JSONObject(workflowPackage.getMetaContent()));
+        List<AttributeVO> attributes = null;
+        if (propertyGroups != null)
+        {
+          attributes = new ArrayList<AttributeVO>();
+          for (PropertyGroup propGroup : propertyGroups)
+          {
+            String group = propGroup.getName();
+            for (Property prop : propGroup.getPropertyList())
+            {
+              AttributeVO attribute = new AttributeVO(prop.getName(), prop.getStringValue());
+              attribute.setAttributeGroup(group);
+              attributes.add(attribute);
+            }
+          }
+        }
+        metaPkg.setAttributes(attributes);
+        workflowPackage.setMetaContent(metaPkg.getJson(false).toString(2));
       }
       else
       {
-        if (workflowPackage.getVoXml().startsWith("<bpm:package") || workflowPackage.getVoXml().startsWith("<package"))
-        {
-          pkgDefDoc = PackageDocument.Factory.parse(workflowPackage.getVoXml());
-        }
-        else
+        PackageDocument pkgDefDoc = null ;
+        if (workflowPackage.getMetaContent() == null || workflowPackage.getMetaContent().isEmpty())
         {
           pkgDefDoc = PackageDocument.Factory.newInstance();
         }
-      }
-      if (pkgDefDoc.getPackage() == null)
-        pkgDefDoc.addNewPackage();
-      if (pkgDefDoc.getPackage().getApplicationProperties() == null)
-        pkgDefDoc.getPackage().addNewApplicationProperties();
+        else
+        {
+          if (workflowPackage.getMetaContent().startsWith("<bpm:package") || workflowPackage.getMetaContent().startsWith("<package"))
+          {
+            pkgDefDoc = PackageDocument.Factory.parse(workflowPackage.getMetaContent());
+          }
+          else
+          {
+            pkgDefDoc = PackageDocument.Factory.newInstance();
+          }
+        }
+        if (pkgDefDoc.getPackage() == null)
+          pkgDefDoc.addNewPackage();
+        if (pkgDefDoc.getPackage().getApplicationProperties() == null)
+          pkgDefDoc.getPackage().addNewApplicationProperties();
 
-      pkgDefDoc.getPackage().getApplicationProperties().setPropertyGroupArray(propertyGroups.toArray(new PropertyGroup[0]));
-      procDefStr = pkgDefDoc.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2));
+        pkgDefDoc.getPackage().getApplicationProperties().setPropertyGroupArray(propertyGroups.toArray(new PropertyGroup[0]));
+        String procDefStr = pkgDefDoc.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2));
+        workflowPackage.setMetaContent(procDefStr);
+      }
     }
     else
     {
       ProcessDefinitionDocument procDefDoc;
-      if (workflowPackage.getVoXml() == null || workflowPackage.getVoXml().isEmpty())
+      if (workflowPackage.getMetaContent() == null || workflowPackage.getMetaContent().isEmpty())
         procDefDoc = ProcessDefinitionDocument.Factory.newInstance();
       else
-        procDefDoc = ProcessDefinitionDocument.Factory.parse(workflowPackage.getVoXml(), Compatibility.namespaceOptions());
+        procDefDoc = ProcessDefinitionDocument.Factory.parse(workflowPackage.getMetaContent(), Compatibility.namespaceOptions());
 
       if (procDefDoc.getProcessDefinition() == null)
         procDefDoc.addNewProcessDefinition();
@@ -288,12 +335,12 @@ public class PackageConfigurationSection extends PropertySection implements IFil
         procDefDoc.getProcessDefinition().addNewApplicationProperties();
 
       procDefDoc.getProcessDefinition().getApplicationProperties().setPropertyGroupArray(propertyGroups.toArray(new PropertyGroup[0]));
-      procDefStr = DesignerCompatibility.getInstance().getOldProcessDefinition(procDefDoc);
+      String procDefStr = DesignerCompatibility.getInstance().getOldProcessDefinition(procDefDoc);
+      workflowPackage.setMetaContent(procDefStr);
     }
-    workflowPackage.setVoXml(procDefStr);
   }
 
-  private void saveVoXml()
+  private void saveMetaContent()
   {
     BusyIndicator.showWhile(getShell().getDisplay(), new Runnable()
     {
@@ -537,7 +584,7 @@ public class PackageConfigurationSection extends PropertySection implements IFil
     {
       public void widgetSelected(SelectionEvent e)
       {
-        saveVoXml();
+        saveMetaContent();
       }
     });
   }

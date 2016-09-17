@@ -61,6 +61,12 @@ public interface Listener {
 
     public static final String METAINFO_FORMAT = "Format"; // TODO: just use content-type
     public static final String METAINFO_DOWNLOAD_FORMAT = "DownloadFormat";
+    public static final String DOWNLOAD_FORMAT_EXCEL = "xlsx";
+    public static final String DOWNLOAD_FORMAT_ZIP = "zip";
+    public static final String DOWNLOAD_FORMAT_JSON = "json";
+    public static final String DOWNLOAD_FORMAT_XML = "xml";
+    public static final String DOWNLOAD_FORMAT_TEXT = "text";
+    public static final String METAINFO_ZIP_CONTENT = "ZipContent";
     public static final String METAINFO_CONTENT_TYPE = "ContentType";
     public static final String METAINFO_REQUEST_URL = "RequestURL";
     public static final String METAINFO_REQUEST_QUERY_STRING = "RequestQueryString";
@@ -76,6 +82,7 @@ public interface Listener {
     public static final String CONTENT_TYPE_XML = "text/xml";
     public static final String CONTENT_TYPE_TEXT = "text/plain";
     public static final String CONTENT_TYPE_EXCEL = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    public static final String CONTENT_TYPE_ZIP = "application/zip";
     public static final String CONTENT_TYPE_DOWNLOAD = "application/octet-stream";
 
 }

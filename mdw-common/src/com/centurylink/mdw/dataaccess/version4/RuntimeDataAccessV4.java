@@ -775,6 +775,21 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
         }
     }
 
+    public ProcessInstanceVO getProcessInstance(Long instanceId) throws DataAccessException {
+        try {
+            String q = "select PROCESS_INSTANCE_ID from PROCESS_INSTANCE where PROCESS_INSTANCE_ID=?";
+            db.openConnection();
+            ResultSet rs = db.runSelect(q, instanceId);
+            if (!rs.next())
+                return null;
+            return getProcessInstanceAll(instanceId);
+        } catch (SQLException ex) {
+            throw new DataAccessException(0, "Failed to process instance: " + instanceId, ex);
+        } finally {
+            db.closeConnection();
+        }
+    }
+
     public ProcessInstanceVO getProcessInstanceAll(Long procInstId)
         throws DataAccessException {
         try {

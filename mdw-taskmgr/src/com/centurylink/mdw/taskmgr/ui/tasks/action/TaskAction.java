@@ -11,10 +11,12 @@ import javax.faces.model.SelectItem;
 import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.model.value.user.UserGroupVO;
 import com.centurylink.mdw.model.value.user.UserVO;
 import com.centurylink.mdw.taskmgr.ui.detail.DetailManager;
 import com.centurylink.mdw.taskmgr.ui.tasks.detail.TaskDetail;
 import com.centurylink.mdw.taskmgr.ui.user.Users;
+import com.centurylink.mdw.taskmgr.ui.workgroups.Workgroups;
 import com.centurylink.mdw.web.ui.UIException;
 
 /**
@@ -96,7 +98,14 @@ public class TaskAction
       }
     }
 
-    return null;
+    // no destinations specified -- allow all workgroups
+    List<TaskDestination> destinations = new ArrayList<TaskDestination>();
+    for (UserGroupVO workgroup : Workgroups.getActiveGroups()) {
+      TaskDestination dest = new TaskDestination();
+      dest.setName(workgroup.getName());
+      destinations.add(dest);
+    }
+    return destinations;
   }
 
   private List<SelectItem> destinationSelectItems;

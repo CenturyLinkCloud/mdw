@@ -1,7 +1,7 @@
 Steps for Building and Publishing MDW Designer Plug-In:
 -------------------------------------------------------
 
-Export to HTML from the tutorial docx files in mdw-hub/web/doc/tutorials.
+Export to HTML from the tutorial docx files in mdw-hub/web/doc/tutorials (if changed).
 These should end up under com.centurylink.mdw.designer.ui/help/doc/tutorials so they're available in the plug-in.
 
 Build the latest framework code:

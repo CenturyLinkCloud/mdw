@@ -49,8 +49,8 @@ public class Processes implements XmlService {
                 return exporter.exportPackage(pkg, false);
             }
             else {
-                // TODO return process list
-                return "{ processList: \"TODO\" }";
+                // client probably meant to use new process REST services
+                return "{ \"status\": { \"code\": 415, \"message\": \"HTTP 'Accept' header should be 'application/json'\" } }";
             }
         }
         catch (DataAccessException ex) {

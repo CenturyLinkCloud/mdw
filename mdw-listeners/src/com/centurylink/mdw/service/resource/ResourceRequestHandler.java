@@ -91,10 +91,13 @@ public class ResourceRequestHandler extends ServiceRequestHandler {
             else {
                 if (format == Format.json || (resourceService instanceof JsonService && !(resourceService instanceof XmlService))) {
                     JsonService jsonService = (JsonService) resourceService;
-                    if (Listener.CONTENT_TYPE_EXCEL.equals(metaInfo.get(Listener.METAINFO_DOWNLOAD_FORMAT))) {
+                    String downloadFormat = metaInfo.get(Listener.METAINFO_DOWNLOAD_FORMAT);
+                    if (downloadFormat != null && !(downloadFormat.equals(Listener.DOWNLOAD_FORMAT_JSON)
+                            || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_XML) || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_TEXT))) {
+                        // binary download format requires export
                         if (!(jsonService instanceof JsonRestService))
                             throw new ServiceException(ServiceException.BAD_REQUEST, "Export not supported for " + jsonService.getClass());
-                        return ((JsonRestService)jsonService).getExcel(parameters, metaInfo);
+                        return ((JsonRestService)jsonService).export(downloadFormat, metaInfo);
                     }
                     else {
                         metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_JSON);
@@ -141,5 +144,4 @@ public class ResourceRequestHandler extends ServiceRequestHandler {
         }
         return getServiceInstance(SERVICE_PROVIDER_IMPL_PACKAGE, resource, headers);
     }
-
 }

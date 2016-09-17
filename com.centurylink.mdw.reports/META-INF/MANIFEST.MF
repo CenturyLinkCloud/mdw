@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: MDW Reports
 Bundle-SymbolicName: com.centurylink.mdw.reports;singleton:=true
-Bundle-Version: 8.9.6
+Bundle-Version: 8.9.8
 Bundle-Activator: com.centurylink.mdw.reports.MdwReports
 Require-Bundle: org.eclipse.birt.core;bundle-version="3.7.1";resolution:=optional;visibility:=reexport,
  org.eclipse.birt.report.engine;bundle-version="3.7.1";resolution:=optional;visibility:=reexport,
  org.eclipse.birt.report.model.adapter.oda;bundle-version="3.7.1";resolution:=optional,
  org.eclipse.core.resources;bundle-version="3.7.1";resolution:=optional,
  org.eclipse.birt.data;bundle-version="3.7.1";resolution:=optional,
- com.centurylink.mdw.designer.core;bundle-version="8.9.6"
+ com.centurylink.mdw.designer.core;bundle-version="8.9.8"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .

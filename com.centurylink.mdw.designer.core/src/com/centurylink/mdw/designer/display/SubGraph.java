@@ -383,7 +383,7 @@ public class SubGraph extends GraphCommon implements Selectable {
 
     public int getSequenceId() {
         if (processVO.getSequenceId() == 0)
-            graph.assignSubgraphSequenceIds();
+            graph.assignSequenceIds();
         return processVO.getSequenceId();
     }
 

@@ -34,6 +34,9 @@ insert into VARIABLE_TYPE  values (310,'org.apache.camel.component.cxf.CxfPayloa
 
 insert into task_state values (5,'Invalid');
 
+ALTER TABLE rule_set DROP CONSTRAINT RULESET_LANGUAGE_FK;
+ALTER TABLE rule_set DROP CONSTRAINT RULESET_GROUP_FK;
+
 commit;
 
 spool off;

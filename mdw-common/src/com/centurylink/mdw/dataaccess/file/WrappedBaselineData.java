@@ -32,11 +32,13 @@ public abstract class WrappedBaselineData implements BaselineData {
 
     protected abstract BaselineData getOverrideBaselineData();
 
+    private static boolean reloadedCached = false;
     private BaselineData getBaselineData() {
         if (overrideBaselineData == null) {
             overrideBaselineData = getOverrideBaselineData();
-            if (overrideBaselineData != null) {
+            if (overrideBaselineData != null && !reloadedCached) {
                 try {
+                    reloadedCached = true;
                     VariableTypeCache.reloadCache(overrideBaselineData.getVariableTypes());
                 }
                 catch (DataAccessException ex) {

@@ -38,7 +38,7 @@
          </property>
          <property
                name="aboutText"
-               value="Model-Driven Workflow&#x0A;Version 8.9.6&#x0A;Copyright (c) 2016 CenturyLink, Inc.&#x0A;All Rights Reserved">
+               value="Model-Driven Workflow&#x0A;Version 8.9.8&#x0A;Copyright (c) 2016 CenturyLink, Inc.&#x0A;All Rights Reserved">
          </property>
       </product>
    </extension>

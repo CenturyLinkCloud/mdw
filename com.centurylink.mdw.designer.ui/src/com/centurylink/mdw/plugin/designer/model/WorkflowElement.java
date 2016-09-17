@@ -13,7 +13,12 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
@@ -433,5 +438,21 @@ public abstract class WorkflowElement implements IStructuredSelection, IAdaptabl
   public void clearOverrideAttributesDirty()
   {
     dirtyOverrideAttrPrefixes = null;
+  }
+
+  /**
+   * Offline refresh
+   */
+  protected void scheduleRefresh(final IResource resource) {
+    WorkspaceJob job = new WorkspaceJob("Refreshing " + resource.getName()) {
+      @Override
+      public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+        resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+        return Status.OK_STATUS;
+      }
+    };
+
+    job.setRule(resource.getProject());
+    job.schedule();
   }
 }

@@ -1,5 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator" Type="com.centurylink.mdw.activity.types.GeneralActivity" Label="Expression Evaluator" IconFile="shape:decision" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription>&lt;PAGELET>
-  &lt;RULE NAME='Expression' TYPE='EXPRESSION' LANGUAGES='Groovy,javax.el,JavaScript'/>
-&lt;/PAGELET></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "shape:decision",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+  "label": "Expression Evaluator",
+  "pagelet": "<PAGELET>\n  <RULE NAME='Expression' TYPE='EXPRESSION' LANGUAGES='Groovy,javax.el,JavaScript'/>\n<\/PAGELET>"
+}

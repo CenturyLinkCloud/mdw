@@ -30,8 +30,6 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     });
   
   $scope.$on('page-retrieved', function(event, taskList) {
-    // clear messages
-    mdw.messages = null;
     // create date and due date
     var dbDate = new Date(taskList.retrieveDate);
     taskList.tasks.forEach(function(task) {
@@ -60,7 +58,6 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   };
   
   $scope.performAction = function(action, assignee) {
-    mdw.messages = null;
     $scope.closePopover(); // popover should be closed
     var selectedTasks = $scope.model.taskList.getSelectedItems();
     if (selectedTasks && selectedTasks.length > 0) {

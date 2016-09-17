@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns="http://mdw.centurylink.com/tests/services"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://mdw.centurylink.com/tests/services"
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified">
+  
+  <xsd:element name="ProcessJaxb">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="elementOne" type="xsd:string" />
+        <xsd:element name="elementTwo" type="xsd:string" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="attributeOne" type="xsd:string" use="required" />
+      <xsd:attribute name="attributeTwo" type="xsd:string" />
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>
+ 

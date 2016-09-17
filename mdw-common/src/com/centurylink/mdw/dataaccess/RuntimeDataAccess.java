@@ -31,6 +31,11 @@ public interface RuntimeDataAccess {
     ProcessInstanceVO getProcessInstanceAll(Long procInstId)
     throws DataAccessException;
 
+    /**
+     * Same as getProcessInstanceAll(), except returns null if not found.
+     */
+    ProcessInstanceVO getProcessInstance(Long instanceId) throws DataAccessException;
+
     int deleteProcessInstancesForProcess(Long processId)
     throws DataAccessException;
 

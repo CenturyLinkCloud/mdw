@@ -89,6 +89,7 @@ public class AllowableTaskActions implements PreloadableCache {
                 XmlOptions options = new XmlOptions().setLoadSubstituteNamespaces(nsMap);
                 if (overrideTaskActions.isFile()) {
                     taskActions = TaskActionsDocument.Factory.parse(overrideTaskActions, options).getTaskActions();
+                    logger.info("Hub override task actions loaded from: " + overrideTaskActions);
                 }
                 else {
                     File standardTaskActions = new File(assetLoc + "/com/centurylink/mdw/hub/mdw-hub-actions.xml");
@@ -98,6 +99,7 @@ public class AllowableTaskActions implements PreloadableCache {
                     }
                     else {
                         taskActions = TaskActionsDocument.Factory.parse(standardTaskActions, options).getTaskActions();
+                        logger.info("Hub standard task actions loaded from: " + standardTaskActions);
                     }
                 }
             }
@@ -226,7 +228,7 @@ public class AllowableTaskActions implements PreloadableCache {
         taskAction.setOutcome(allowableAction.getNavigationOutcome());
         taskAction.setAutoSave(allowableAction.getAutosave());
         List<ForTask> forTasks = allowableAction.getForTaskList();
-        if (forTasks != null) {
+        if (forTasks != null && !forTasks.isEmpty()) {
             List<TaskAction.ForTask> taskActionForTasks = new ArrayList<TaskAction.ForTask>();
             for (ForTask forTask : forTasks) {
                 String taskId /* or name */ = forTask.getDomNode().getFirstChild().getNodeValue().trim();

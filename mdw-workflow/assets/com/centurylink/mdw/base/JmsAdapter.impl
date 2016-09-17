@@ -1,24 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.adapter.jms.JmsAdapter" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="JMS Adapter" IconFile="adapter.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET ICON="adapter.png" LABEL="JMS Adapter" BASETYPES="com.centurylink.mdw.activity.types.AdapterActivity">
-  <DROPDOWN NAME="REQUEST_VARIABLE" LABEL="Request Variable" SOURCE="Variables" VW="120"/>
-  <DROPDOWN NAME="RESPONSE_VARIABLE" LABEL="Response Variable" SOURCE="Variables" VW="120"/>
-  <SELECT NAME="DO_LOGGING" LABEL="Log req/resp" DEFAULT="True">
-    <OPTION>True</OPTION>
-    <OPTION>False</OPTION>
-  </SELECT>
-  <SELECT NAME="Wait for response?" DEFAULT="False">
-    <OPTION>True</OPTION>
-    <OPTION>False</OPTION>
-    <OPTION>Certified</OPTION>
-  </SELECT>
-  <TEXT LABEL="Connection Factory" NAME="JNDI Server URL"/>
-  <NOTE VH="65">Refers to a ConnectionFactory OSGi service with a matching name property.</NOTE>
-  <TEXT NAME="Queue Name"/>
-  <NOTE VH="65">For MDW queues, only com.centurylink.mdw.external.event.queue has implemented acknowledgment.</NOTE>
-  <TEXT NAME="Reply Queue Name"/>
-  <TEXT NAME="Correlation ID"/>
-  <TEXT NAME="Time out (sec)"/>
-  <HYPERLINK NAME="REQUEST_XSD" LABEL="Message XSD"/>
-  <HYPERLINK URL="/MDWWeb/doc/JmsAdapter.html">JMS Adapter Activity Help</HYPERLINK>
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
+  "icon": "adapter.png",
+  "implementorClass": "com.centurylink.mdw.workflow.adapter.jms.JmsAdapter",
+  "label": "JMS Adapter",
+  "pagelet": "<PAGELET ICON=\"adapter.png\" LABEL=\"JMS Adapter\" BASETYPES=\"com.centurylink.mdw.activity.types.AdapterActivity\">\n  <DROPDOWN NAME=\"REQUEST_VARIABLE\" LABEL=\"Request Variable\" SOURCE=\"Variables\" VW=\"120\"/>\n  <DROPDOWN NAME=\"RESPONSE_VARIABLE\" LABEL=\"Response Variable\" SOURCE=\"Variables\" VW=\"120\"/>\n  <SELECT NAME=\"DO_LOGGING\" LABEL=\"Log req/resp\" DEFAULT=\"True\">\n    <OPTION>True<\/OPTION>\n    <OPTION>False<\/OPTION>\n  <\/SELECT>\n  <SELECT NAME=\"Wait for response?\" DEFAULT=\"False\">\n    <OPTION>True<\/OPTION>\n    <OPTION>False<\/OPTION>\n    <OPTION>Certified<\/OPTION>\n  <\/SELECT>\n  <TEXT LABEL=\"Connection Factory\" NAME=\"JNDI Server URL\"/>\n  <NOTE VH=\"65\">Refers to a ConnectionFactory OSGi service with a matching name property.<\/NOTE>\n  <TEXT NAME=\"Queue Name\"/>\n  <NOTE VH=\"65\">For MDW queues, only com.centurylink.mdw.external.event.queue has implemented acknowledgment.<\/NOTE>\n  <TEXT NAME=\"Reply Queue Name\"/>\n  <TEXT NAME=\"Correlation ID\"/>\n  <TEXT NAME=\"Time out (sec)\"/>\n  <HYPERLINK NAME=\"REQUEST_XSD\" LABEL=\"Message XSD\"/>\n  <HYPERLINK URL=\"/MDWWeb/doc/JmsAdapter.html\">JMS Adapter Activity Help<\/HYPERLINK>\n<\/PAGELET>"
+}

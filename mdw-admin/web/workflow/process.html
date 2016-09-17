@@ -12,6 +12,13 @@
         </div>
         <hr class="mdw-hr">
         <div class="mdw-image-container">
+          <div class="mdw-item">
+            <div class="mdw-item-right">
+              <button type="button" class="btn mdw-btn btn-default" ng-click="refreshWorkflowImage()">
+                <i class="glyphicon glyphicon-refresh"></i>
+              </button>
+            </div>
+          </div>
           <img ng-src="{{mdw.roots.hub}}/workflowImage?processInstanceId={{process.id}}" alt="Workflow image" />
         </div>
       </div>

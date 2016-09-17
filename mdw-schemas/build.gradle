@@ -36,6 +36,7 @@ clean {
 
 jar {
     manifest {
+        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
         classesDir = sourceSets.main.output.classesDir
         symbolicName = "com.centurylink.mdw.schemas"
         instruction "Export-Package",

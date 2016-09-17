@@ -15,7 +15,6 @@ import javax.swing.ImageIcon;
 import com.centurylink.mdw.designer.icons.Icon;
 import com.centurylink.mdw.designer.icons.IconFactory;
 import com.centurylink.mdw.model.data.common.Changes;
-import com.centurylink.mdw.model.value.activity.ActivityVO;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
 
@@ -266,42 +265,4 @@ public abstract class GraphCommon {
             return sorted;
         }
     }
-
-    public Node getStartNode() {
-        return findNode(processVO.getStartActivity().getActivityId());
-    }
-
-    private int currentSeq;
-    public int assignNodeSequenceIds(int sequenceStart) {
-        for (Node node : nodes)
-            node.setSequenceId(0);  // clear all
-        currentSeq = sequenceStart;
-        Node start = getStartNode();
-        start.setSequenceId(currentSeq);
-        setDownstreamNodeSequenceIds(start);
-        return currentSeq;
-    }
-
-    private void setDownstreamNodeSequenceIds(Node node) {
-        List<Node> downstreamNodes = new ArrayList<Node>();
-        for (ActivityVO activity : processVO.getDownstreamActivities(node.nodet))
-            downstreamNodes.add(findNode(activity.getActivityId()));
-        Collections.sort(downstreamNodes, new Comparator<Node>() {
-            public int compare(Node n1, Node n2) {
-                if (Math.abs(n1.y - n2.y) > 100)
-                    return n1.y - n2.y;
-                // otherwise closest to top-left of canvas
-                return (int)(Math.sqrt(Math.pow(n1.x,2) + Math.pow(n1.y,2)) - Math.sqrt(Math.pow(n2.x,2) + Math.pow(n2.y,2)));
-            }
-        });
-        for (Node downstreamNode : downstreamNodes) {
-            // may have been already set due to converging paths
-            if (downstreamNode.nodet.getSequenceId() == 0) {
-                downstreamNode.setSequenceId(++currentSeq);
-                setDownstreamNodeSequenceIds(downstreamNode);
-            }
-        }
-    }
-
-
 }

@@ -1,4 +1,0 @@
-<bpm:externalEventHandler xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:EventName>CustomEvent</bpm:EventName>
-  <bpm:EventHandler>com.centurylink.mdw.service.action.BamEventHandler?EventRootType=CustomEvent</bpm:EventHandler>
-</bpm:externalEventHandler>

@@ -25,10 +25,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.PlatformUI;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.bpm.MDWProcessDefinition;
 import com.centurylink.mdw.bpm.ProcessDefinitionDocument;
 import com.centurylink.mdw.common.Compatibility;
+import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.WizardPage;
@@ -325,9 +328,21 @@ public class ImportPackageSelectPage extends WizardPage
         {
           try
           {
-            ProcessDefinitionDocument doc = ProcessDefinitionDocument.Factory.parse(content, Compatibility.namespaceOptions());
-            MDWProcessDefinition def = doc.getProcessDefinition();
-            return def.getPackageName() + " v" + def.getPackageVersion() + " (" + def.getSchemaVersion() + ")";
+            if (content.trim().startsWith("{"))
+            {
+              PackageVO pkg = new PackageVO(new JSONObject(content));
+              return pkg.getName() + " v" + pkg.getVersionString();
+            }
+            else
+            {
+              ProcessDefinitionDocument doc = ProcessDefinitionDocument.Factory.parse(content, Compatibility.namespaceOptions());
+              MDWProcessDefinition def = doc.getProcessDefinition();
+              return def.getPackageName() + " v" + def.getPackageVersion() + " (" + def.getSchemaVersion() + ")";
+            }
+          }
+          catch (JSONException ex)
+          {
+            PluginMessages.log(ex);
           }
           catch (XmlException ex)
           {

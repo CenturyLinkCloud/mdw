@@ -6,7 +6,6 @@ package com.centurylink.mdw.service.rest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +22,6 @@ import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.timer.LoggerProgressMonitor;
 import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
 import com.centurylink.mdw.dataaccess.VersionControl;
-import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.listener.Listener;
@@ -68,7 +66,7 @@ public class GitVcs extends JsonRestService {
     /**
      * Authorization is performed based on the MDW user credentials.
      * Parameter is required: gitAction=pull
-     * For pulling all assets, request path must match "*".
+     * For pulling all assets, request path must match "*" (and only this options supports switching branches).
      * Git (read-only) credentials must be known to the server.  TODO: encrypt in prop file
      */
     @Override
@@ -98,38 +96,27 @@ public class GitVcs extends JsonRestService {
             if ("pull".equals(action)) {
                 if (requestPath.equals("*")) {
                     // importing all assets
-                    logger.info("Performing Git checkout: " + vcGit);
+                    logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")");
                     archiver.backup();
-
-                    vcGit.checkoutBranch(branch, assetPath);
-
+                    vcGit.sparseCheckout(branch, assetPath);
                     archiver.archive();
                 }
                 else {
-                    // TODO: smart archiving
                     int lastSlash = requestPath.lastIndexOf('/');
                     if (lastSlash > 0) {
                         String reqPkg = requestPath.substring(0, lastSlash);
                         String reqAsset = requestPath.substring(lastSlash + 1);
                         String pkgPath = assetPath + "/" + reqPkg.replace('.', '/');
-
-                        archiver.backup(requestPath);
-
-                        List<String> paths = new ArrayList<String>();
-                        logger.info("Pulling asset with Git Path: " + pkgPath + "/" + reqAsset);
-                        paths.add(pkgPath + "/" + reqAsset);
-                        paths.add(pkgPath + "/" + PackageDir.PACKAGE_XML_PATH);
-                        paths.add(pkgPath + "/" + PackageDir.VERSIONS_PATH);
-                        vcGit.checkoutBranch(branch, paths);
-
-                        archiver.archive();
+                        throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Cannot pull asset: " + pkgPath + "/" + reqAsset);
+                        // TODO implement pull for specific asset
+                        // archiver.backup(requestPath);
+                        // logger.info("Pulling asset with Git Path: " + pkgPath + "/" + reqAsset);
+                        // vcGit.pull(branch, pkgPath + "/" + reqAsset);
+                        // archiver.archive();
                     }
                     else {
-                        // must be a package
-                        archiver.backup(requestPath);
-                        String pkgPath = requestPath.replace('.', '/');
-                        vcGit.checkoutBranch(branch, assetPath + "/" + pkgPath);
-                        archiver.archive();
+                        // cannot pull packages
+                        throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Not implemented");
                     }
                 }
 

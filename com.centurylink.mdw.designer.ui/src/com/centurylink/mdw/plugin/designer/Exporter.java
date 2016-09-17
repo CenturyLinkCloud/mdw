@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlException;
+import org.json.JSONException;
 
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.exception.DataAccessException;
@@ -18,8 +19,8 @@ import com.centurylink.mdw.designer.DesignerDataAccess;
 import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
+import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 
 public class Exporter
 {
@@ -30,10 +31,10 @@ public class Exporter
     this.designerDataAccess = designerDataAccess;
   }
 
-  public String exportPackages(List<WorkflowPackage> packages, boolean includeTaskTemplates, ProgressMonitor progressMonitor)
-  throws DataAccessException, RemoteException, ActionCancelledException, XmlException
+  public String exportPackages(List<WorkflowPackage> packages, boolean exportJson, boolean includeTaskTemplates, ProgressMonitor progressMonitor)
+  throws DataAccessException, RemoteException, ActionCancelledException, JSONException, XmlException
   {
-    String xml = null;
+    String export = null;
 
     progressMonitor.progress(10);
 
@@ -41,11 +42,11 @@ public class Exporter
     List<PackageVO> pkgVos = new ArrayList<PackageVO>();
     for (WorkflowPackage pv : packages)
       pkgVos.add(pv.getPackageVO());
-    xml = designerDataAccess.exportPackages(pkgVos, schemaVersion, includeTaskTemplates, progressMonitor);
+    export = designerDataAccess.exportPackages(pkgVos, schemaVersion, exportJson, includeTaskTemplates, progressMonitor);
     for (WorkflowPackage pv : packages)
       pv.setExported(true);
 
-    return xml;
+    return export;
   }
 
   public String exportPackage(WorkflowPackage packageVersion, boolean includeTaskTemplates,

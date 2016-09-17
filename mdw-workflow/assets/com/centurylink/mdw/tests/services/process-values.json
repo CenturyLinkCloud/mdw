@@ -1,0 +1,7 @@
+{
+  "dateVar": {"value": "Thu Sep 01 13:52:01 MDT 2016"},
+  "docVar": {"value": "<full>\n    <document content=\"xml\"/>\n<\/full>\n"},
+  "jaxbVar": {"value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ProcessJaxb attributeOne=\"attrOneValue\" attributeTwo=\"requiredAttributeValue\">\n    <elementOne>elementOneValue<\/elementOne>\n    <elementTwo>elementTwoValue<\/elementTwo>\n<\/ProcessJaxb>\n"},
+  "objectVar": {"value": "flowmaster: Manoj"},
+  "stringVar": {"value": "Hello"}
+}

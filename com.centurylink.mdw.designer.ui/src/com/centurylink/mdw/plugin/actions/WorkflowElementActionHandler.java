@@ -748,7 +748,7 @@ public class WorkflowElementActionHandler
         boolean confirmed = MessageDialog.openConfirm(getShell(), "Confirm Delete", "Delete workflow project: " + workflowProject.getName() + "?");
         if (confirmed)
         {
-          WorkflowProjectManager.deleteProject(workflowProject);
+          WorkflowProjectManager.getInstance().deleteProject(workflowProject);
           workflowProject.fireElementChangeEvent(ChangeType.ELEMENT_DELETE, null);
         }
         else

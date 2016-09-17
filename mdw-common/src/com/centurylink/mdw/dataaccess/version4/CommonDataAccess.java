@@ -379,6 +379,20 @@ public class CommonDataAccess {
         }
     }
 
+    /**
+     * Not for update.  Opens a new connection.
+     */
+    public DocumentVO getDocument(Long documentId) throws DataAccessException {
+        try {
+            db.openConnection();
+            return this.getDocument(documentId, false);
+        } catch (SQLException ex) {
+            throw new DataAccessException("Failed to load document: " + documentId, ex);
+        } finally {
+            db.closeConnection();
+        }
+    }
+
     public DocumentVO getDocument(Long documentId, boolean forUpdate) throws SQLException {
         return loadDocument(documentId, forUpdate);
     }

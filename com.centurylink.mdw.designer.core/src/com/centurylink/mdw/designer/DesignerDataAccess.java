@@ -29,6 +29,7 @@ import javax.rmi.PortableRemoteObject;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.json.JSONException;
 
 import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.LdapAuthenticator;
@@ -59,6 +60,7 @@ import com.centurylink.mdw.dataaccess.RemoteAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.UserDataAccess;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.designer.runtime.RuntimeDataAccessRest;
@@ -839,8 +841,8 @@ public class DesignerDataAccess  {
         return loader.loadPackage(packageId, deep);
     }
 
-    public String exportPackages(List<PackageVO> packages, int schemaVersion, boolean includeTaskTemplates, ProgressMonitor monitor)
-    throws RemoteException, DataAccessException, ActionCancelledException, XmlException {
+    public String exportPackages(List<PackageVO> packages, int schemaVersion, boolean exportJson, boolean includeTaskTemplates, ProgressMonitor monitor)
+    throws RemoteException, DataAccessException, ActionCancelledException, JSONException, XmlException {
 
         if (monitor != null)
             monitor.subTask("Loading package(s)...");
@@ -888,8 +890,15 @@ public class DesignerDataAccess  {
         if (monitor != null)
             monitor.subTask("Exporting XML");
 
-        ProcessExporter exporter = DataAccess.getProcessExporter(schemaVersion, oldNamespaces ? DesignerCompatibility.getInstance() : null);
-        String xml = exporter.exportPackages(loadedPackages, includeTaskTemplates);
+        String export;
+        if (exportJson) {
+            ImporterExporterJson exporter = new ImporterExporterJson();
+            export = exporter.exportPackages(loadedPackages);
+        }
+        else {
+            ProcessExporter exporter = DataAccess.getProcessExporter(schemaVersion, oldNamespaces ? DesignerCompatibility.getInstance() : null);
+            export = exporter.exportPackages(loadedPackages, includeTaskTemplates);
+        }
 
         if (monitor != null)
           monitor.progress(25);
@@ -902,7 +911,7 @@ public class DesignerDataAccess  {
         if (monitor != null)
           monitor.progress(15);
 
-        return xml;
+        return export;
     }
 
     public String exportPackage(Long packageId, int schemaVersion, boolean includeTaskTemplates, ProgressMonitor monitor)

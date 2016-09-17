@@ -20,11 +20,15 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 
 import com.centurylink.mdw.common.ApplicationContext;
+import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
+import com.centurylink.mdw.model.value.variable.VariableVO;
 import com.centurylink.mdw.model.value.variable.XPathELResolver;
+import com.centurylink.mdw.variable.VariableTranslator;
 import com.sun.el.ExpressionFactoryImpl;
 import com.sun.el.ValueExpressionLiteral;
 
@@ -293,5 +297,25 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
             return evaluate(key);
         else
             return getVariables().get(key);
+    }
+
+    public String getValueAsString(String key) {
+        if (isExpression(key)) {
+            return evaluateToString(key);
+        }
+        else {
+            Object obj = getVariables().get(key);
+            VariableVO var = getProcess().getVariable(key);
+            if (var == null)
+                throw new IllegalArgumentException("Variable not defined: " + key);
+            VariableTranslator translator = com.centurylink.mdw.common.translator.VariableTranslator
+                    .getTranslator(getPackage(), var.getVariableType());
+            if (translator instanceof JavaObjectTranslator)
+                return obj.toString();
+            if (translator instanceof DocumentReferenceTranslator)
+                return ((DocumentReferenceTranslator)translator).realToString(obj);
+            else
+                return translator.toString(obj);
+        }
     }
 }

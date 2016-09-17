@@ -1,16 +1,19 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.value.event;
 
 import java.io.Serializable;
 
 import org.apache.xmlbeans.XmlException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.utilities.FileHelper;
 import com.centurylink.mdw.xml.XmlPath;
 
-public class ExternalEventVO implements Serializable,Comparable<ExternalEventVO> {
+public class ExternalEventVO implements Serializable, Comparable<ExternalEventVO>, Jsonable {
 
     private Long id;
     private String eventName;
@@ -98,5 +101,24 @@ public class ExternalEventVO implements Serializable,Comparable<ExternalEventVO>
     }
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public ExternalEventVO(JSONObject json) throws JSONException {
+        this.eventName = json.getString("path");
+        this.eventHandler = json.getString("handlerClass");
+    }
+
+    /**
+     * TODO: When/if eventHandlers become full-fledged assets, we can decouple asset name from eventName.
+     */
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("path", eventName);
+        json.put("handlerClass", eventHandler);
+        return json;
+    }
+
+    public String getJsonName() {
+        return this.eventName;
     }
 }

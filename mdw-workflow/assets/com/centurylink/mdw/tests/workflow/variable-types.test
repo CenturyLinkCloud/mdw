@@ -1,0 +1,17 @@
+// variable-types
+start process("VariableTypes") {
+  variables = [
+    inputJsonable: '''{
+  "_type": "com.centurylink.mdw.tests.workflow.Person",
+  "person": {
+    "firstName": "linus",
+    "lastName": "torvalds"
+  }
+}''',
+    inputYaml: '''!!com.centurylink.mdw.tests.workflow.Person
+firstName: isaac
+lastName: richards'''
+  ]
+}
+wait process
+verify process

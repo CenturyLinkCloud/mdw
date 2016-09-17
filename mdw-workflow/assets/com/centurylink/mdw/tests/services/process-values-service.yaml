@@ -1,0 +1,23 @@
+process: # 19154
+  name: ProcessValues
+  instance: 1
+  variable: # 33466
+    name: dateVar
+    value: Thu Sep 01 13:52:01 MDT 2016
+  variable: # 33463
+    name: docVar
+    value: |
+      <full>
+          <document content="xml"/>
+      </full>
+  variable: # 33464
+    name: jaxbVar
+    value: |
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <ProcessJaxb attributeOne="attrOneValue" attributeTwo="requiredAttributeValue">
+          <elementOne>elementOneValue</elementOne>
+          <elementTwo>elementTwoValue</elementTwo>
+      </ProcessJaxb>
+  variable: # 33465
+    name: stringVar
+    value: Hello

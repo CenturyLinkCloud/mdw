@@ -1,3 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.adapter.osgi.OsgiServiceAdapter" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="OSGi Service Adapter" IconFile="adapter.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription>&lt;PAGELET/></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
+  "icon": "adapter.png",
+  "implementorClass": "com.centurylink.mdw.workflow.adapter.osgi.OsgiServiceAdapter",
+  "label": "OSGi Service Adapter",
+  "pagelet": "<PAGELET/>"
+}

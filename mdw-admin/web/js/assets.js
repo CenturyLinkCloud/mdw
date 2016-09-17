@@ -1,18 +1,53 @@
-// Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
+// Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var assetMod = angular.module('assets', ['ngResource', 'mdw']);
 
-assetMod.controller('PackagesController', ['$scope', '$location', 'Assets', 'GitVcs', 'WorkflowCache', 
-                                           function($scope, $location, Assets, GitVcs, WorkflowCache) {
-  $scope.pkgList = Assets.get();
+assetMod.controller('PackagesController', ['$scope', '$location', '$http', 'mdw', 'Assets', 'GitVcs', 'WorkflowCache', 'JSON_DOWNLOAD',
+                                           function($scope, $location, $http, mdw, Assets, GitVcs, WorkflowCache, JSON_DOWNLOAD) {
+  $scope.pkgList = Assets.get({}, 
+    function(data) {
+      if (!$scope.pkgList.packages || $scope.pkgList.packages.length === 0)
+        mdw.messages = 'No packages found in Asset Root: ' + $scope.pkgList.assetRoot;
+      else if ($scope.pkgList.vcsBranch !== $scope.pkgList.gitBranch)
+        mdw.messages = 'VCS branch: "' + $scope.pkgList.vcsBranch + '" does not match Git branch: "' + $scope.pkgList.gitBranch + "'"; 
+      else {
+        $scope.pkgList.selectedState = { all: false };
+        $scope.pkgList.toggleAll = function() {
+          $scope.pkgList.packages.forEach(function(pkg) {
+            pkg.selected = $scope.pkgList.selectedState.all;
+          });
+        };
+        $scope.pkgList.notAllSelected = function() {
+          $scope.pkgList.selectedState.all = false;
+        };
+        $scope.pkgList.getSelected = function() {
+          var selected = [];
+          if ($scope.pkgList.packages) {
+            $scope.pkgList.packages.forEach(function(pkg) {
+              if (pkg.selected)
+                selected.push(pkg);
+            });
+          }
+          return selected;
+        };
+      }      
+    },
+    function(error) {
+      if (error.data.status)
+        mdw.messages = error.data.status.message;
+    }
+  );
   
-  $scope.gitImportMessage = 'Please confirm that you want to perform "git checkout" to update this Asset Root.';
+  $scope.gitImportMessage = 'Do you want to import assets from Git?';
+  $scope.fileImportMessage = 'Select a JSON or ZIP file to import.';
+  $scope.fileImportUploading = false;
+  $scope.packageImportFile = null;
   $scope.distributedImport = true;
   $scope.cacheRefresh = true;
   
   $scope.cancel = function() {
-    $location.path("/packages");
+    $location.path('/packages');
   };
   
   $scope.gitImport = function() {
@@ -33,13 +68,65 @@ assetMod.controller('PackagesController', ['$scope', '$location', 'Assets', 'Git
     });
   };
   
+  $scope.fileImport = function() {
+    if (!$scope.packageImportFile) {
+      $scope.fileImportMessage = 'No file selected for import';
+    }
+    else {
+      console.log("file: " + $scope.packageImportFile.name);
+      $scope.fileImportMessage = 'Importing ' + $scope.packageImportFile.name + '...';
+      $scope.fileImportUploading = true;
+      $http({
+        url: mdw.roots.hub + '/asset/packages?app=mdw-admin',
+        method: 'PUT',
+        headers: {'Content-Type': $scope.packageImportFile.name.endsWith('.zip') ? 'application/zip' : 'application/json'},
+        data: $scope.packageImportFile.content,
+        transformRequest: []
+      }).then(function success(response) {
+          $scope.fileImportUploading = false;
+          console.log('package file uploaded');
+          // leave cache error logging to the server side
+          if ($scope.cacheRefresh)
+            WorkflowCache.refresh({}, { distributed: $scope.distributedImport });
+          $location.path('/packages');
+        }, function error(response) {
+          $scope.fileImportUploading = false;
+          $scope.fileImportMessage = 'Upload failed: ' + response.statusText;
+        }
+      );
+    }
+  };
+  
+  $scope.getExportPackagesParam = function() {
+    var pkgParam = '[';
+    for (var i = 0; i < $scope.pkgList.getSelected().length; i++) {
+      var pkg = $scope.pkgList.getSelected()[i];
+      pkgParam += pkg.name;
+      if (i < $scope.pkgList.getSelected().length - 1)
+        pkgParam += ',';
+    }
+    pkgParam += ']';
+    return pkgParam;
+  };
+  
+  $scope.exportJson = function() {
+    window.location = mdw.roots.services + '/services/Packages?app=mdw-admin&packages=' + 
+        $scope.getExportPackagesParam() + '&' + JSON_DOWNLOAD;
+  };
+
+  $scope.exportZip = function() {
+    window.location = mdw.roots.hub + '/asset/packages?app=mdw-admin&packages=' + 
+        $scope.getExportPackagesParam();
+  };
+
   $scope.refresh = function() {
     WorkflowCache.refresh({}, { distributed: true });
   };  
 }]);
 
-assetMod.controller('PackageController', ['$scope', '$routeParams', 'Assets', 'Asset', 
-                                          function($scope, $routeParams, Assets, Asset) {
+assetMod.controller('PackageController', ['$scope', '$routeParams', 'mdw', 'Assets', 'Asset', 
+                                          function($scope, $routeParams, mdw, Assets, Asset) {
+  mdw.message = null;
   $scope.pkg = Assets.get({
     packageName: $routeParams.packageName},
     function(pkgData) {
@@ -57,7 +144,12 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', 'Assets', 'A
           $scope.pkg.readmeAsset.content = assetData.rawResponse;
         });
       }
-    });
+    },
+    function(error) {
+      if (error.data.status)
+        mdw.messages = error.data.status.message;
+    }    
+  );
 }]);
 
 assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'Assets', 'Asset', 

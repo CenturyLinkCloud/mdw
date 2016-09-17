@@ -7,16 +7,23 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
+import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.common.utilities.JsonUtil;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 
-public class TextNoteVO implements Serializable {
-    
-    private static final long serialVersionUID = 7219461725986143603L;
+public class TextNoteVO implements Serializable, Jsonable {
 
     private String content;
     private String reference;
     private List<AttributeVO> attributes;
+
+    public TextNoteVO() {
+
+    }
 
 	/**
 	 * @return the attributes
@@ -40,7 +47,7 @@ public class TextNoteVO implements Serializable {
     public String getAttribute(String attrname) {
         return AttributeVO.findAttribute(attributes, attrname);
     }
-    
+
     /**
      * Set the value of a process attribute.
      * If the value is null, the attribute is removed.
@@ -69,13 +76,33 @@ public class TextNoteVO implements Serializable {
 	public void setReference(String reference) {
 		this.reference = reference;
 	}
-	
+
     public String getLogicalId() {
     	return getAttribute(WorkAttributeConstant.LOGICAL_ID);
     }
-    
+
     public void setLogicalId(String id) {
     	setAttribute(WorkAttributeConstant.LOGICAL_ID, id);
     }
-    
+
+    public TextNoteVO(JSONObject json) throws JSONException {
+        this.content = json.getString("content");
+        if (json.has("attributes"))
+            this.attributes = JsonUtil.getAttributes(json.getJSONObject("attributes"));
+        setLogicalId(json.getString("id"));
+    }
+
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("id", getLogicalId());
+        json.put("content", content);
+        if (attributes != null && !attributes.isEmpty())
+            json.put("attributes", JsonUtil.getAttributesJson(attributes));
+        return json;
+    }
+
+    public String getJsonName() {
+        return JsonUtil.padLogicalId(getLogicalId());
+    }
+
 }

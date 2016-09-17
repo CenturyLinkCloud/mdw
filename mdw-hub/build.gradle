@@ -352,7 +352,7 @@ task buildMdwWar(type: War) {
     classpath = war.classpath.plus(configurations.tomcat).minus(configurations.tomcatExclude).plus(configurations.tomcatExtra)
     
     manifest {
-        attributes("MDW-Version": mdwVersion)
+        attributes("MDW-Version": mdwVersion, "MDW-Build": new Date().format(mdwBuildTimeFormat))
     }
     
     from("web") {
@@ -435,6 +435,7 @@ task buildMdwReportsOsgi(type: War) {
     rootSpec.exclude "**/.metadata/**"
 
     manifest = osgiManifest {
+        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
         classesDir = sourceSets.main.output.classesDir
         classpath = configurations.runtime
         symbolicName = "com.centurylink.mdw.reports"
@@ -699,6 +700,7 @@ war {
     rootSpec.exclude "WEB-INF/lib/com.centurylink.mdw.reports_*.jar"
  
     manifest = osgiManifest {
+        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
         classesDir = sourceSets.main.output.classesDir
         classpath = configurations.runtime
         symbolicName = "com.centurylink.mdw.hub"
@@ -754,6 +756,7 @@ war {
           "com.centurylink.mdw.model.value.user",
           "com.centurylink.mdw.model.value.variable",
           "com.centurylink.mdw.model.value.activity",
+          "com.centurylink.mdw.model.value.work",
           "com.centurylink.mdw.listener",
           "com.centurylink.mdw.listeners.startup",
           "com.centurylink.mdw.osgi",
@@ -798,6 +801,8 @@ war {
           "javax.net.ssl",
           "javax.servlet",
           "javax.servlet.http",
+          "javax.swing",
+          "javax.swing.text",
           "javax.swing.tree",
           "javax.tools",
           "javax.xml.bind",

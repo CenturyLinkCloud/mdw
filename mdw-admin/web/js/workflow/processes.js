@@ -88,13 +88,17 @@ processMod.controller('ProcessesController', ['$scope', '$http', 'mdw', 'util', 
   
 }]);
 
-processMod.controller('ProcessController', ['$scope', '$routeParams', 'mdw', 'Process',
-                                            function($scope, $routeParams, mdw, Process) {
+processMod.controller('ProcessController', ['$scope', '$route', '$routeParams', 'mdw', 'Process',
+                                            function($scope, $route, $routeParams, mdw, Process) {
     
    $scope.process = Process.retrieve({instanceId: $routeParams.instanceId}, function() {
      $scope.process.name = $scope.process.processName;
      $scope.item = $scope.process; // for processItem template
    });
+   
+   $scope.refreshWorkflowImage = function() {
+     $route.reload();
+   };   
     
 }]);
 

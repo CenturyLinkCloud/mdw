@@ -22,7 +22,7 @@ public class MdwBaselineData implements BaselineData {
     private List<VariableTypeVO> variableTypes;
     public List<VariableTypeVO> getVariableTypes() {
         if (variableTypes == null) {
-            variableTypes = new ArrayList<VariableTypeVO>(16);
+            variableTypes = new ArrayList<VariableTypeVO>(25);
             variableTypes.add(new VariableTypeVO(101L, "java.lang.String","com.centurylink.mdw.common.translator.impl.StringTranslator"));
             variableTypes.add(new VariableTypeVO(102L, "java.lang.Long","com.centurylink.mdw.common.translator.impl.LongTranslator"));
             variableTypes.add(new VariableTypeVO(103L, "java.lang.Integer","com.centurylink.mdw.common.translator.impl.IntegerTranslator"));
@@ -33,6 +33,8 @@ public class MdwBaselineData implements BaselineData {
             variableTypes.add(new VariableTypeVO(108L, "java.lang.Long[]","com.centurylink.mdw.common.translator.impl.LongArrayTranslator"));
             variableTypes.add(new VariableTypeVO(109L, "java.util.Map","com.centurylink.mdw.common.translator.impl.StringMapTranslator"));
             variableTypes.add(new VariableTypeVO(110L, "java.net.URI", "com.centurylink.mdw.common.translator.impl.URITranslator"));
+
+            // collections types
             variableTypes.add(new VariableTypeVO(111L, "java.util.List<String>", "com.centurylink.mdw.common.translator.impl.StringListTranslator"));
             variableTypes.add(new VariableTypeVO(112L, "java.util.List<Integer>", "com.centurylink.mdw.common.translator.impl.IntegerListTranslator"));
             variableTypes.add(new VariableTypeVO(113L, "java.util.List<Long>", "com.centurylink.mdw.common.translator.impl.LongListTranslator"));
@@ -49,6 +51,8 @@ public class MdwBaselineData implements BaselineData {
             variableTypes.add(new VariableTypeVO(208L, "com.centurylink.mdw.model.FormDataDocument", "com.centurylink.mdw.common.translator.impl.FormDataDocumentTranslator"));
             variableTypes.add(new VariableTypeVO(209L, "com.centurylink.mdw.model.HTMLDocument", "com.centurylink.mdw.common.translator.impl.HtmlDocumentTranslator"));
             variableTypes.add(new VariableTypeVO(210L, "javax.xml.bind.JAXBElement", "com.centurylink.mdw.jaxb.JaxbElementTranslator"));
+            variableTypes.add(new VariableTypeVO(211L, "com.centurylink.mdw.common.service.Jsonable", "com.centurylink.mdw.common.translator.impl.JsonableTranslator"));
+            variableTypes.add(new VariableTypeVO(212L, "org.yaml.snakeyaml.Yaml", "com.centurylink.mdw.common.translator.impl.YamlTranslator"));
             // requires the mdw-camel bundle installed
             variableTypes.add(new VariableTypeVO(310L, "org.apache.camel.component.cxf.CxfPayload", "com.centurylink.mdw.camel.cxf.CxfPayloadTranslator"));
         }

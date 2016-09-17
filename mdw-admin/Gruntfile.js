@@ -27,6 +27,7 @@ module.exports = function(grunt) {
           $mdwHubUser: false,
           $mdwServicesRoot: false,
           $mdwVersion: false,
+          $mdwBuild: false,
           $mdwLoginPage: false,
           $mdwTasksUi: false,
           hljs: false,
@@ -45,7 +46,9 @@ module.exports = function(grunt) {
           Kinetic: false,
           X2JS: false,
           DOMParser: false,
-          iFrameResize: false
+          iFrameResize: false,
+          FileReader: false,
+          Uint8Array: false
         }
       }
     },

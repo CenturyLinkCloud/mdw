@@ -121,25 +121,13 @@
 }
 .mdw-heading-checklist {
   float: left;
-  padding-top: 6px;
+  margin-top: 2px;
 }
 .mdw-heading-checklist > input[type="checkbox"] {
   margin-left: -5px;
-  margin-right: 10px;
-}
-.mdw-checklist-label {
-  vertical-align: top;
-}
-.mdw-checklist-sub {
-  font-size: 13px;
-  font-weight: normal;
-  color: #767676;
-  vertical-align: top;
+  margin-right: 5px;
   position: relative;
   top: 2px;
-}
-.mdw-checklist-sub > a {
-  vertical-align: top;
 }
 .mdw-heading-sub {
   font-size: 13px;
@@ -249,7 +237,6 @@
   border-bottom: 1px solid #ddd;
 }
 .mdw-checklist input[type="checkbox"] {
-  transformx: scale(1.2);
   margin-right: 8px;
   margin-top: 2px;
   position: relative;
@@ -279,7 +266,7 @@
 .mdw-heading-summary {
   float: left;
   padding-left: 25px;
-  padding-top: 5px;
+  padding-top: 3px;
 }
 .mdw-heading-summary span {
   padding-left: 15px;
@@ -312,6 +299,12 @@
   float: right;
   white-space: nowrap;
   margin-right: 10px;
+  min-width: 125px;
+}
+.mdw-item-right {
+  float: right;
+  white-space: nowrap;
+  margin-right: 15px;
 }
 .mdw-item-alert {
   position: relative;
@@ -427,6 +420,22 @@
 .mdw-checkbox input[type="checkbox"] {
   margin-top: 3px;
 }
+.mdw-date-input {
+	width: 120px;
+	float: left;
+	margin-right: 10px; 
+}
+.mdw-boolean-input {
+	transform: scale(1.25);
+	margin-top: 3px!important;
+}
+.mdw-document-input {
+  white-space: pre;
+  overflow-x: auto;
+  /* pre font */
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  height: auto;
+}
 .mdw-section {
   padding: 10px;
   border-bottom: 1px solid #ddd;
@@ -469,9 +478,11 @@
 }
 .mdw-messages {
   float: left;
+  position: absolute;
   color: #a94442;
-  padding-top: 25px;
-  padding-left: 25px;
+  padding-top: 20px;
+  padding-left: 15px;
+  padding-right: 250px;
   font-weight: bold;  
 }
 .mdw-test-message {

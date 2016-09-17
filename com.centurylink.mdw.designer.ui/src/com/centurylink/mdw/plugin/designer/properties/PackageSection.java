@@ -30,6 +30,7 @@ public class PackageSection extends PropertySection implements ElementChangeList
   private PropertyEditor schemaVersionPropertyEditor;
   private PropertyEditor lastModifiedPropertyEditor;
   private PropertyEditor exportedPropertyEditor;
+  private PropertyEditor metaFilePropertyEditor;
   private PropertyEditor groupPropertyEditor;
   private PropertyEditor saveGroupEditor;
   boolean dirty;
@@ -54,8 +55,17 @@ public class PackageSection extends PropertySection implements ElementChangeList
     lastModifiedPropertyEditor.setElement(workflowPackage);
     lastModifiedPropertyEditor.setValue(workflowPackage.getModifyDate());
 
-    exportedPropertyEditor.setElement(workflowPackage);
-    exportedPropertyEditor.setValue(String.valueOf(workflowPackage.isExported()));
+    if (metaFilePropertyEditor != null)
+    {
+      metaFilePropertyEditor.setElement(workflowPackage);
+      metaFilePropertyEditor.setValue(workflowPackage.getMetaFolder().getName() + "/" + workflowPackage.getMetaFile().getName());
+    }
+
+    if (exportedPropertyEditor != null)
+    {
+      exportedPropertyEditor.setElement(workflowPackage);
+      exportedPropertyEditor.setValue(String.valueOf(workflowPackage.isExported()));
+    }
 
     groupPropertyEditor.setElement(workflowPackage);
     groupPropertyEditor.setValue(UserGroupVO.COMMON_GROUP.equals(getPackage().getGroup()) ? "" : getPackage().getGroup());
@@ -100,12 +110,24 @@ public class PackageSection extends PropertySection implements ElementChangeList
     lastModifiedPropertyEditor.setValueConverter(new DateConverter());
     lastModifiedPropertyEditor.render(composite);
 
-    // exported text field
-    exportedPropertyEditor = new PropertyEditor(workflowPackage, PropertyEditor.TYPE_TEXT);
-    exportedPropertyEditor.setLabel("Exported");
-    exportedPropertyEditor.setWidth(100);
-    exportedPropertyEditor.setReadOnly(true);
-    exportedPropertyEditor.render(composite);
+    if (workflowPackage.getProject().isFilePersist())
+    {
+      // metafile text field
+      metaFilePropertyEditor = new PropertyEditor(workflowPackage, PropertyEditor.TYPE_TEXT);
+      metaFilePropertyEditor.setLabel("Meta File");
+      metaFilePropertyEditor.setWidth(150);
+      metaFilePropertyEditor.setReadOnly(true);
+      metaFilePropertyEditor.render(composite);
+    }
+    else
+    {
+      // exported text field
+      exportedPropertyEditor = new PropertyEditor(workflowPackage, PropertyEditor.TYPE_TEXT);
+      exportedPropertyEditor.setLabel("Exported");
+      exportedPropertyEditor.setWidth(100);
+      exportedPropertyEditor.setReadOnly(true);
+      exportedPropertyEditor.render(composite);
+    }
 
     groupPropertyEditor = new PropertyEditor(workflowPackage, PropertyEditor.TYPE_COMBO);
     groupPropertyEditor.setLabel("Workgroup");
@@ -175,17 +197,23 @@ public class PackageSection extends PropertySection implements ElementChangeList
       }
       else if (ece.getChangeType().equals(ChangeType.STATUS_CHANGE))
       {
-        Boolean exported = ece.getNewValue().equals(WorkflowPackage.STATUS_EXPORTED);
-        if (!exportedPropertyEditor.getValue().equals(exported.toString()))
-          exportedPropertyEditor.setValue(exported.toString());
-        notifyLabelChange();
+        if (exportedPropertyEditor != null)
+        {
+          Boolean exported = ece.getNewValue().equals(WorkflowPackage.STATUS_EXPORTED);
+          if (!exportedPropertyEditor.getValue().equals(exported.toString()))
+            exportedPropertyEditor.setValue(exported.toString());
+          notifyLabelChange();
+        }
       }
       else if (ece.getChangeType().equals(ChangeType.VERSION_CHANGE))
       {
-        Boolean exported = new Boolean(false);
-        if (exportedPropertyEditor.getValue().equals(exported))
-          exportedPropertyEditor.setValue(exported);
-        notifyLabelChange();
+        if (exportedPropertyEditor != null)
+        {
+          Boolean exported = new Boolean(false);
+          if (exportedPropertyEditor.getValue().equals(exported))
+            exportedPropertyEditor.setValue(exported);
+          notifyLabelChange();
+        }
       }
     }
   }

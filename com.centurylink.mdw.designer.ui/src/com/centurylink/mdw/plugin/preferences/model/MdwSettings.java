@@ -4,6 +4,7 @@
 package com.centurylink.mdw.plugin.preferences.model;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,22 +26,11 @@ import com.centurylink.mdw.plugin.PluginUtil;
  */
 public class MdwSettings implements PreferenceConstants
 {
-  private static final String RELEASE_FORMAT = "[\\d\\.]*?(\\-SNAPSHOT)?";
-  private static final String APACHE_RELEASE_SITE_TOKEN = "<li><a href=\"";
-  private static final String APACHE_RELEASE_SITE_END = "/\">";
-  private static final String SHAREPOINT_RELEASE_SITE_TOKEN = "escapeProperly\\(&quot;/sites/MDW/Releases/";
-  private static final String SHAREPOINT_PREVIEW_SITE_TOKEN = "escapeProperly\\(&quot;/sites/MDW/Releases/Preview/";
-  private static final String SHAREPOINT_RELEASE_SITE_END = "&quot;\\)";
-
   private static final String MDW_COMMON = "com/centurylink/mdw/mdw-common";
 
   private String mdwReleasesUrl;
   public String getMdwReleasesUrl() { return mdwReleasesUrl; }
   public void setMdwReleasesUrl(String s) { mdwReleasesUrl = s; }
-
-  private String mdwMavenRepoUrl;
-  public String getMdwMavenRepoUrl() { return mdwMavenRepoUrl; }
-  public void setMdwMavenRepoUrl(String s) { mdwMavenRepoUrl = s; }
 
   private boolean includePreviewBuilds;
   public boolean isIncludePreviewBuilds() { return includePreviewBuilds; }
@@ -190,9 +180,6 @@ public class MdwSettings implements PreferenceConstants
     setMdwReleasesUrl(relUrl);
     if (getMdwReleasesUrl().length() == 0)
       setMdwReleasesUrl(store.getDefaultString(PREFS_MDW_RELEASES_URL));
-    setMdwMavenRepoUrl(store.getString(PREFS_MDW_MAVEN_REPO_URL));
-    if (getMdwMavenRepoUrl().length() == 0)
-      setMdwMavenRepoUrl(store.getDefaultString(PREFS_MDW_MAVEN_REPO_URL));
     setWorkspaceSetupUrl(store.getString(PREFS_WORKSPACE_SETUP_URL));
     if (getWorkspaceSetupUrl().length() == 0)
       setWorkspaceSetupUrl(store.getDefaultString(PREFS_WORKSPACE_SETUP_URL));
@@ -255,7 +242,6 @@ public class MdwSettings implements PreferenceConstants
   {
     IPreferenceStore store = MdwPlugin.getDefault().getPreferenceStore();
     store.setDefault(PREFS_MDW_RELEASES_URL, PREFS_DEFAULT_MDW_RELEASES_URL);
-    store.setDefault(PREFS_MDW_MAVEN_REPO_URL, PREFS_DEFAULT_MDW_MAVEN_REPO_URL);
     store.setDefault(PREFS_WORKSPACE_SETUP_URL, PREFS_DEFAULT_WORKSPACE_SETUP_URL);
     store.setDefault(PREFS_DISCOVERY_URL, PREFS_DEFAULT_DISCOVERY_URL);
     store.setDefault(PREFS_HTTP_CONNECT_TIMEOUT_MS, Server.DEFAULT_CONNECT_TIMEOUT);
@@ -295,7 +281,7 @@ public class MdwSettings implements PreferenceConstants
       String releasesUrl = getMdwReleasesUrl();
       boolean isArchiva = releasesUrl.toLowerCase().indexOf("archiva") > 0;
       boolean isJavaEe = releasesUrl.toLowerCase().indexOf("javaee") > 0;
-      if (isArchiva && !isJavaEe)
+      if (!isJavaEe)
       {
         if (!releasesUrl.endsWith("/"))
           releasesUrl += "/";
@@ -323,11 +309,14 @@ public class MdwSettings implements PreferenceConstants
         }
       }
 
-      // try Apache dir list format (also works for Archiva)
-      versions = findReleases(releasesPage, APACHE_RELEASE_SITE_TOKEN, APACHE_RELEASE_SITE_END);
+      // try Apache dir list format (works for Archiva)
+      String apacheStart = "<li><a href=\"";
+      String apacheRelease = "[\\d\\.]*?(\\-SNAPSHOT)?";
+      String apacheEnd = "/\">";
+      versions = findReleases(releasesPage, apacheStart, apacheRelease, apacheEnd);
       if (versions.size() > 0 && previewsPage != null)
       {
-        List<String> previewReleases = findReleases(previewsPage, APACHE_RELEASE_SITE_TOKEN, APACHE_RELEASE_SITE_END);
+        List<String> previewReleases = findReleases(previewsPage, apacheStart, apacheRelease, apacheEnd);
         for (String previewRelease : previewReleases)
         {
           if (!versions.contains(previewRelease))
@@ -339,23 +328,39 @@ public class MdwSettings implements PreferenceConstants
       }
       if (versions.isEmpty())
       {
-        // try new sharepoint format
-        versions = findReleases(releasesPage, SHAREPOINT_RELEASE_SITE_TOKEN, SHAREPOINT_RELEASE_SITE_END);
+        // try new Tomcat dir list format
+        String tomcatStart = "<tt>";
+        String tomcatRelease = "[\\d\\.]*(\\-SNAPSHOT)?";
+        String tomcatEnd = "/</tt>";
+        versions = findReleases(releasesPage, tomcatStart, tomcatRelease, tomcatEnd);
         if (versions.size() > 0 && previewsPage != null)
-          versions.addAll(findReleases(previewsPage, SHAREPOINT_PREVIEW_SITE_TOKEN, SHAREPOINT_RELEASE_SITE_END));
+        {
+          List<String> previewReleases = findReleases(previewsPage, tomcatStart, tomcatRelease, tomcatEnd);
+          for (String previewRelease : previewReleases)
+          {
+            if (!versions.contains(previewRelease))
+            {
+              if (!isArchiva || previewRelease.endsWith("SNAPSHOT"))
+                versions.add(previewRelease);
+            }
+          }
+        }
       }
+      if (versions.isEmpty())
+        throw new IOException("Unable to locate any MDW releases at: " + releasesUrl);
+
     }
     catch (Exception ex)
     {
-      PluginMessages.log(ex);
+      PluginMessages.uiError(ex, "Find MDW Releases");
     }
 
     return versions;
   }
 
-  private List<String> findReleases(String page, String token, String endToken)
+  private List<String> findReleases(String page, String token, String releaseFormat, String endToken)
   {
-    Pattern pattern = Pattern.compile(token + RELEASE_FORMAT + endToken);
+    Pattern pattern = Pattern.compile(token + releaseFormat + endToken);
     Matcher matcher = pattern.matcher(page);
 
     List<String> releases = new ArrayList<String>();

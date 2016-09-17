@@ -38,7 +38,9 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
                     if (var != null) {
                         com.centurylink.mdw.variable.VariableTranslator vt = VariableTranslator.getTranslator(runtimeContext.getPackage(), value.getType());
                         if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), value.getType())) {
-                            value.setValue(((DocumentReferenceTranslator)vt).realToString(runtimeContext.getVariables().get(value.getName())));
+                            Object docVal = runtimeContext.getVariables().get(value.getName());
+                            if (docVal != null)
+                              value.setValue(((DocumentReferenceTranslator)vt).realToString(docVal));
                         }
                         else {
                             Object obj = runtimeContext.getVariables().get(value.getName());

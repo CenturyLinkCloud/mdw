@@ -1,15 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.adapter.ldap.LdapAdapter" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="LDAP Adapter" IconFile="adapter.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET>
-  <TEXT NAME='LdapHost' LABEL='LDAP Host' DEFAULT='prop:LDAP/Host'/>
-  <TEXT NAME='LdapPort' LABEL='LDAP Port' DEFAULT='prop:LDAP/Port'/>
-  <TEXT NAME='BaseDn' LABEL='Base DN' DEFAULT='prop:LDAP/BaseDN'/>
-  <TEXT NAME='AppCuid' LABEL='Application CUID' DEFAULT='prop:LDAP/AppCUID'/>
-  <TEXT NAME='AppPassword' LABEL='Application Password' DEFAULT='prop:LDAP/AppPassword'/>
-  <TEXT NAME='SearchContext' LABEL='Search Context' DEFAULT='ou=People' />
-  <TEXT NAME='SearchFilter' LABEL='Search Filter' />
-  <HYPERLINK URL='/MDWWeb/doc/LdapAdapter.html'>
-    LDAP Adapter Activity Help
-  </HYPERLINK>
-  <MAPPING NAME='Bindings' LABEL='LDAP Attribute' SECTION='Bindings' VX='160'/>
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
+  "icon": "adapter.png",
+  "implementorClass": "com.centurylink.mdw.workflow.adapter.ldap.LdapAdapter",
+  "label": "LDAP Adapter",
+  "pagelet": "<PAGELET>\n  <TEXT NAME='LdapHost' LABEL='LDAP Host' DEFAULT='prop:LDAP/Host'/>\n  <TEXT NAME='LdapPort' LABEL='LDAP Port' DEFAULT='prop:LDAP/Port'/>\n  <TEXT NAME='BaseDn' LABEL='Base DN' DEFAULT='prop:LDAP/BaseDN'/>\n  <TEXT NAME='AppCuid' LABEL='Application CUID' DEFAULT='prop:LDAP/AppCUID'/>\n  <TEXT NAME='AppPassword' LABEL='Application Password' DEFAULT='prop:LDAP/AppPassword'/>\n  <TEXT NAME='SearchContext' LABEL='Search Context' DEFAULT='ou=People' />\n  <TEXT NAME='SearchFilter' LABEL='Search Filter' />\n  <HYPERLINK URL='/MDWWeb/doc/LdapAdapter.html'>\n    LDAP Adapter Activity Help\n  <\/HYPERLINK>\n  <MAPPING NAME='Bindings' LABEL='LDAP Attribute' SECTION='Bindings' VX='160'/>\n<\/PAGELET>"
+}

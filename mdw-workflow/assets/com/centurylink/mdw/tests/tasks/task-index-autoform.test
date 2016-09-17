@@ -1,5 +1,11 @@
 // task-index-autoform
-today = new Date()
+import java.text.DateFormat;
+  Date date = new Date ();
+  DateFormat df = DateFormat.getDateTimeInstance();
+  df.setTimeZone(TimeZone.getTimeZone("UTC"));  
+  df.applyPattern("EEE MMM dd HH:mm:ss zzz yyyy")
+    
+today = df.format(date);
 start process("TaskIndexTesting") {
     variables = [ isCustom: false,
                   stringVar: 'before',
@@ -7,7 +13,7 @@ start process("TaskIndexTesting") {
                   dateVar: today ]
 }
 
-sleep 30
+sleep 60
 def taskInst = action task("An AutoForm Task") {
     outcome = "Claim"
 }
@@ -20,7 +26,7 @@ assert indexes.dateVarIndex == today.toString()
 assert indexes.intVarIndex == "101"
 assert indexes.stringVarIndex == "before"
 
-laterToday = new Date()
+laterToday = df.format(date);
 
 action task("An AutoForm Task") {
     outcome = "Complete"

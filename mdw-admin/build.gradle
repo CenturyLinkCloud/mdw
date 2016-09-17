@@ -68,19 +68,25 @@ task buildDist(type: Exec) {
 war {
     dependsOn buildDist
     
+    def buildTime = new Date().format(mdwBuildTimeFormat)
+    
     from("dist") {
       include "**/*"
       exclude "WEB-INF/lib/*.jar"  // already included as compile dependencies
     }
     from("src") {
         include "META-INF/mdw/**"
-        filter{ it.replaceAll('@mdw.version@', mdwVersion) }
+        filter { 
+          def ret = it.replaceAll('@mdw.version@', mdwVersion)
+          ret.replaceAll('@mdw.build@', buildTime)
+        }
     }
 
     webXml = file("web/WEB-INF/web.xml")
     rootSpec.exclude "WEB-INF/web.xml"  // specified above
     
     manifest = osgiManifest {
+        attributes("MDW-Build": buildTime)
         classesDir = sourceSets.main.output.classesDir
         classpath = configurations.runtime
         symbolicName = "com.centurylink.mdw.admin"

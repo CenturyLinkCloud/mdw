@@ -3,7 +3,7 @@
    <description name="MDW Designer" url="lxdenvmtc143.dev.qintra.com:6101/MdwRcp">
       MDW Designer Update Site
    </description>
-   <feature url="features/com.centurylink.mdw.designer.feature_8.9.6.jar" id="com.centurylink.mdw.designer.feature" version="8.9.6">
+   <feature url="features/com.centurylink.mdw.designer.feature_8.9.8.jar" id="com.centurylink.mdw.designer.feature" version="8.9.8">
       <category name="workflowDesign"/>
    </feature>
    <category-def name="workflowDesign" label="Workflow Design">

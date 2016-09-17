@@ -288,9 +288,10 @@ public class ProjectSettingsPropertyPage extends ProjectPropertyPage
         });
         boolean gitSync = getProject().getMdwVcsRepository().isGitProjectSync();
         gitSyncSwitch.setSelection(gitSync);
+        gitSyncSwitch.setEnabled(false);
         originalGitSync = gitSync;
 
-        new Label(composite, SWT.NONE).setText("(Unlock to enable asset editing)");
+        // new Label(composite, SWT.NONE).setText("(Unlock to enable asset editing)");
       }
       // non-git: include archive checkbox
       includeArchiveCheckbox = new Button(composite, SWT.CHECK | SWT.LEFT);

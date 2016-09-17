@@ -1,0 +1,67 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=57,y=140,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=233,ly=184,type=Elbow,xs=121&232,ys=160&160"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=477,y=140,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Output Documents": "inputJsonable#inputYaml#localJsonable#localYaml",
+        "Rule": "import com.centurylink.mdw.tests.workflow.Person\r\n\r\n// assign local variables\r\nlocalJsonable = new Person()\r\nlocalJsonable.firstName = 'donald'\r\nlocalJsonable.lastName = 'oakes'\r\n\r\nlocalYaml = new Person()\r\nlocalYaml.firstName = 'manoj'\r\nlocalYaml.lastName = 'agrawal'\r\n\r\n// update input variables\r\ninputJsonable.lastName = 'Torvalds'\r\ninputYaml.lastName = 'Richards'",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=236,y=134,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Update Vars",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=411,ly=160,type=Elbow,xs=340&473,ys=160&160"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=29,y=27,w=130,h=27"
+  },
+  "variables": {
+    "inputJsonable": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.common.service.Jsonable"
+    },
+    "inputYaml": {
+      "category": "INPUT",
+      "type": "org.yaml.snakeyaml.Yaml"
+    },
+    "localJsonable": {
+      "category": "LOCAL",
+      "type": "com.centurylink.mdw.common.service.Jsonable"
+    },
+    "localYaml": {
+      "category": "LOCAL",
+      "type": "org.yaml.snakeyaml.Yaml"
+    }
+  },
+  "version": "0.5"
+}

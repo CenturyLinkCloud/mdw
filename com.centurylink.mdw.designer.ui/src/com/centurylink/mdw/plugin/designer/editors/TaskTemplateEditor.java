@@ -45,6 +45,7 @@ import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.wst.sse.ui.StructuredTextEditor;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.common.constant.TaskAttributeConstant;
 import com.centurylink.mdw.common.utilities.StringHelper;
@@ -146,9 +147,18 @@ public class TaskTemplateEditor extends MultiPageEditorPart
         Long taskId = taskTemplate.getId();
         int version = taskTemplate.getVersion();
         file.refreshLocal(IResource.DEPTH_ZERO, null);
-        TaskTemplateDocument doc = TaskTemplateDocument.Factory.parse(new String(PluginUtil.readFile(file)));
-        com.centurylink.mdw.task.TaskTemplate fileTemplate = doc.getTaskTemplate();
-        TaskVO taskVO = new TaskVO(fileTemplate);
+        String content = new String(PluginUtil.readFile(file));
+        TaskVO taskVO;
+        if (content.trim().startsWith("{"))
+        {
+          taskVO = new TaskVO(new JSONObject(content));
+        }
+        else
+        {
+          TaskTemplateDocument doc = TaskTemplateDocument.Factory.parse(content);
+          com.centurylink.mdw.task.TaskTemplate fileTemplate = doc.getTaskTemplate();
+          taskVO = new TaskVO(fileTemplate);
+        }
         taskTemplate.setTaskVO(taskVO);
         taskVO.setName(file.getName());
         taskVO.setTaskId(taskId);
@@ -425,8 +435,17 @@ public class TaskTemplateEditor extends MultiPageEditorPart
       if (result == VersionableSaveDialog.CLOSE_WITHOUT_SAVE)
       {
         // refresh from file
-        TaskTemplateDocument docx = TaskTemplateDocument.Factory.parse(new String(PluginUtil.readFile(taskTemplate.getFile())));
-        TaskVO taskVO = new TaskVO(docx.getTaskTemplate());
+        String content = new String(PluginUtil.readFile(taskTemplate.getFile()));
+        TaskVO taskVO;
+        if (content.trim().startsWith("{"))
+        {
+          taskVO = new TaskVO(new JSONObject(content));
+        }
+        else
+        {
+          TaskTemplateDocument docx = TaskTemplateDocument.Factory.parse(content);
+          taskVO = new TaskVO(docx.getTaskTemplate());
+        }
         taskVO.setName(taskTemplate.getName());
         taskVO.setTaskId(taskTemplate.getId());
         taskVO.setPackageName(taskTemplate.getPackage().getName());
@@ -440,11 +459,19 @@ public class TaskTemplateEditor extends MultiPageEditorPart
         taskTemplate.removeAttribute("TaskSLA_UNITS");
         taskTemplate.removeAttribute("ALERT_INTERVAL_UNITS");
         Increment versionIncrement = saveDlg.getVersionIncrement();
-        TaskTemplateDocument doc = TaskTemplateDocument.Factory.newInstance();
-        doc.setTaskTemplate(taskTemplate.getTaskVO().toTemplate());
-        XmlOptions xmlOptions = new XmlOptions().setSaveAggressiveNamespaces();
-        xmlOptions.setSavePrettyPrint().setSavePrettyPrintIndent(2);
-        taskTemplate.setContent(doc.xmlText(xmlOptions));
+        String pkgMeta = taskTemplate.getPackage().getMetaContent();
+        if (pkgMeta != null && pkgMeta.trim().startsWith("{"))
+        {
+          taskTemplate.setContent(taskTemplate.getTaskVO().getJson().toString(2));
+        }
+        else
+        {
+          TaskTemplateDocument doc = TaskTemplateDocument.Factory.newInstance();
+          doc.setTaskTemplate(taskTemplate.getTaskVO().toTemplate());
+          XmlOptions xmlOptions = new XmlOptions().setSaveAggressiveNamespaces();
+          xmlOptions.setSavePrettyPrint().setSavePrettyPrintIndent(2);
+          taskTemplate.setContent(doc.xmlText(xmlOptions));
+        }
         taskTemplate.ensureFileWritable();
         InputStream is = new ByteArrayInputStream(taskTemplate.getContent().getBytes());
         taskTemplate.getAssetFile().setContents(is, true, true, new NullProgressMonitor());

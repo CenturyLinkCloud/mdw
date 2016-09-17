@@ -45,15 +45,15 @@ public class Discoverer
     progressMonitor.worked(10);
     Folder topFolder = new Folder(url.toString());
     CodeTimer timer = new CodeTimer("crawl for assets");
-    crawlForAssetXmls(topFolder);
+    crawlForPackageFiles(topFolder);
     timer.stopAndLog();
     return topFolder;
   }
 
   /**
-   * Crawls to find any asset XML files.
+   * Crawls to find any package XML or JSON files.
    */
-  private void crawlForAssetXmls(Folder parent) throws DiscoveryException, IOException, InterruptedException
+  private void crawlForPackageFiles(Folder parent) throws DiscoveryException, IOException, InterruptedException
   {
     if (progressMonitor.isCanceled())
       throw new InterruptedException();
@@ -107,13 +107,13 @@ public class Discoverer
             progressMonitor.subTask("Scanning " + link);
           Folder child = new Folder(link.substring(0, link.length() - 1));
           parent.addChild(child);
-          crawlForAssetXmls(child);
+          crawlForPackageFiles(child);
           if (!parent.hasParent()) // topLevel
             progressMonitor.worked(80/topLevelFolders);
         }
-        else if (link.endsWith(".xml"))
+        else if (link.endsWith(".xml") || link.endsWith(".json"))
         {
-          // XML file
+          // XML or JSON file
           File child = new File(parent, link);
           parent.addChild(child);
           child.setUrl(new URL(getFullUrl(child)));

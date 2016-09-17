@@ -994,7 +994,7 @@ public class ProjectUpdater implements IRunnableWithProgress
 
   protected URL getRepositoryFileUrl(String subpath, String version) throws IOException
   {
-    String baseUrl = mdwSettings.getMdwMavenRepoUrl();
+    String baseUrl = mdwSettings.getMdwReleasesUrl();
     if (!baseUrl.endsWith("/"))
       baseUrl += "/";
 

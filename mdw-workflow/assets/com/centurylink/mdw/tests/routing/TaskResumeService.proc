@@ -1,68 +1,118 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="TaskResumeService" version="0.3" description="">
-    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=77,y=85,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=492,y=84,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A3" Name="custom" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=195,y=85,w=60,h=40"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="Expression" Value="custom"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A4" Name="autoform task&#13;&#10;for service resume" Implementation="com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity">
-      <bpm:Attribute Name="Category" Value="COM"/>
-      <bpm:Attribute Name="FormName" Value="Autoform"/>
-      <bpm:Attribute Name="Groups" Value="MDW Support"/>
-      <bpm:Attribute Name="IndexProvider" Value="com.centurylink.mdw.services.task.AutoFormTaskIndexProvider"/>
-      <bpm:Attribute Name="Notices" Value="Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"/>
-      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
-      <bpm:Attribute Name="TaskLogicalId" Value="TaskResumeService:A4"/>
-      <bpm:Attribute Name="TaskName" Value="autoform task for service resume"/>
-      <bpm:Attribute Name="Variables" Value="custom,custom,Not Displayed,0,,java.lang.Boolean;inputString,inputString,Optional,0,,java.lang.String;requiredString,requiredString,Required,0,,java.lang.String"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=317,y=78,w=108,h=71"/>
-      <bpm:Attribute Name="Wait for Task" Value="TRUE"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A5" Name="custom task for &#13;&#10;service resume" Implementation="com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity">
-      <bpm:Attribute Name="AlertIntervalUnits" Value="Hours"/>
-      <bpm:Attribute Name="Category" Value="COM"/>
-      <bpm:Attribute Name="IndexProvider" Value="com.centurylink.mdw.services.task.CustomTaskIndexProvider"/>
-      <bpm:Attribute Name="Notices" Value="Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"/>
-      <bpm:Attribute Name="SLAUnits" Value="Hours"/>
-      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
-      <bpm:Attribute Name="TaskLogicalId" Value="TaskResumeService:A5"/>
-      <bpm:Attribute Name="TaskName" Value="custom task for service resume"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=315,y=172,w=109,h=70"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=197,ly=81,type=Elbow,xs=141&amp;191,ys=105&amp;105"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="false" From="A3" To="A4" Event="FINISH" Id="T2">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=269,ly=82,type=Elbow,xs=259&amp;313,ys=105&amp;105"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="true" From="A3" To="A5" Event="FINISH" Id="T3">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=259,ly=151,type=Elbow,xs=259&amp;311,ys=105&amp;207"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A4" To="A2" Event="FINISH" Id="T4">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=460,ly=104,type=Elbow,xs=429&amp;488,ys=104&amp;104"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A5" To="A2" Event="FINISH" Id="T5">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=458,ly=158,type=Elbow,xs=428&amp;488,ys=207&amp;104"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=26,y=22,w=185,h=27"/>
-    <bpm:Variables Name="custom" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.Boolean"/>
-    </bpm:Variables>
-    <bpm:Variables Name="inputString" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="requiredString" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=77,y=85,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=197,ly=81,type=Elbow,xs=141&191,ys=105&105"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=492,y=84,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Expression": "custom",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=195,y=85,w=60,h=40"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "custom",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=269,ly=82,type=Elbow,xs=259&313,ys=105&105"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "false",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=259,ly=151,type=Elbow,xs=259&311,ys=105&207"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "true",
+          "to": "A5"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Category": "COM",
+        "FormName": "Autoform",
+        "Groups": "MDW Support",
+        "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
+        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TaskLogicalId": "TaskResumeService:A4",
+        "TaskName": "autoform task for service resume",
+        "Variables": "custom,custom,Not Displayed,0,,java.lang.Boolean;inputString,inputString,Optional,0,,java.lang.String;requiredString,requiredString,Required,0,,java.lang.String",
+        "WORK_DISPLAY_INFO": "x=317,y=78,w=108,h=71",
+        "Wait for Task": "TRUE"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "autoform task\r\nfor service resume",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=460,ly=104,type=Elbow,xs=429&488,ys=104&104"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "AlertIntervalUnits": "Hours",
+        "Category": "COM",
+        "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+        "SLAUnits": "Hours",
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TaskLogicalId": "TaskResumeService:A5",
+        "TaskName": "custom task for service resume",
+        "WORK_DISPLAY_INFO": "x=315,y=172,w=109,h=70"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+      "name": "custom task for \r\nservice resume",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=458,ly=158,type=Elbow,xs=428&488,ys=207&104"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=26,y=22,w=185,h=27"
+  },
+  "variables": {
+    "custom": {
+      "category": "INPUT",
+      "type": "java.lang.Boolean"
+    },
+    "inputString": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "requiredString": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    }
+  },
+  "version": "0.3"
+}

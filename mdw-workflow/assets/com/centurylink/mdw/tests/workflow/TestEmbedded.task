@@ -1,0 +1,11 @@
+{
+  "attributes": {
+    "CustomPage": "",
+    "CustomPage_assetVersion": "",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
+  },
+  "category": "GEN",
+  "logicalId": "TestEmbeddedTask",
+  "name": "Manual Task",
+  "version": "0.1"
+}

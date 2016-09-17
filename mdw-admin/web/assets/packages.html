@@ -3,7 +3,9 @@
   <div class="col-md-10">
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
-        <div class="mdw-heading-label">Packages
+        <div class="mdw-heading-checklist">
+          <input type="checkbox" ng-if="!create" ng-model="pkgList.selectedState.all" ng-change="pkgList.toggleAll()"></input>
+          Packages
           <span class="mdw-heading-sub" ng-if="pkgList.vcsBranch && pkgList.vcsRemoteUrl">
             (<a href="{{pkgList.vcsRemoteUrl}}">{{pkgList.vcsBranch}}</a>)
           </span>
@@ -11,16 +13,21 @@
         </div>
         <!-- actions currently only supported for Git  -->
         <div class="mdw-heading-actions" ng-if="pkgList.vcsBranch">
-          <a ng-href="#/packages" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Execution')" ng-click="refresh()">
-            <span class="glyphicon glyphicon-refresh"></span>
-          </a>        
-          <a ng-href="#/assets/import" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Design')">
-            <span class="glyphicon glyphicon-import"></span> Import
-          </a>        
+          <button type="button" class="btn btn-primary mdw-btn" ng-disabled="pkgList.getSelected().length <= 0"
+            uib-popover-template="'assets/exportMenu.html'" popover-placement="left" pop-click>
+            <span class="glyphicon glyphicon-download-alt"></span> Export
+          </button>
+          <button type="button" class="btn btn-primary mdw-btn" ng-disabled="pkgList.getSelected().length > 0" ng-if="authUser.hasRole('Process Design')"
+            uib-popover-template="'assets/importMenu.html'" popover-placement="left" pop-click>
+            <span class="glyphicon glyphicon-download-alt" style="transform:rotate(180deg)"></span> Import
+          </button>
         </div>
       </div>
-      <ul class="mdw-list">
+      <ul class="mdw-checklist">
         <li ng-repeat="pkg in pkgList.packages">
+          <div style="float:left;">
+            <input type="checkbox" ng-model="pkg.selected" ng-change="pkgList.notAllSelected()"></input>
+          </div>
           <div>
             <a class="mdw-item-link" href="#/packages/{{pkg.name}}" 
             ng-class="{'mdw-warn': pkg.vcsDiff == 'DIFFERENT', 'mdw-ghost': pkg.vcsDiff == 'MISSING', 'mdw-okay': pkg.vcsDiff == 'EXTRA'}">

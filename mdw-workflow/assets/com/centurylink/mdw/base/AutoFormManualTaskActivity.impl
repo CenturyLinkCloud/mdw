@@ -1,22 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity" Type="com.centurylink.mdw.activity.types.TaskActivity" Label="Auto Form Manual Task" IconFile="task.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET>
-  <DROPDOWN NAME='TASK_TEMPLATE' LABEL='Task Template' SOURCE='TaskTemplates' EDITABLE='TRUE' REFRESH='true' VW='375'/>
-  <HYPERLINK URL="/MDWWeb/doc/taskTemplates.html">Task Template Help</HYPERLINK>
-  <TEXT NAME='TASK_PAGELET' LABEL='Pagelet' DEFAULT='com.centurylink.mdw.base/AutoFormManualTask.pagelet' READONLY='TRUE' VW='320'/>
-  <SELECT NAME="Wait for Task" DEFAULT="TRUE" SECTION="Events">
-    <OPTION>TRUE</OPTION>
-    <OPTION>FALSE</OPTION>
-  </SELECT>
-  <TABLE NAME="WAIT_EVENT_NAMES" LABEL="Events" SECTION="Events">
-    <TEXT LABEL="Event Name"/>
-    <TEXT LABEL="Completion Code"/>
-    <BOOLEAN LABEL="Recurring" DEFAULT="true" READONLY="true"/>
-  </TABLE>
-  <DROPDOWN NAME="STATUS_AFTER_EVENT" LABEL="Status After Event" DEFAULT="Cancelled" LW="175" VX="200" VW="120" SECTION="Events">
-    <OPTION>Hold</OPTION>
-    <OPTION>Waiting</OPTION>
-    <OPTION>Cancelled</OPTION>
-  </DROPDOWN>
-  <HYPERLINK URL="/MDWWeb/doc/taskWaitingEvents.html" SECTION="Events">Task Events Help</HYPERLINK>
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.TaskActivity",
+  "icon": "task.png",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+  "label": "Auto Form Manual Task",
+  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='TASK_TEMPLATE' LABEL='Task Template' SOURCE='TaskTemplates' EDITABLE='TRUE' REFRESH='true' VW='375'/>\n  <HYPERLINK URL=\"/MDWWeb/doc/taskTemplates.html\">Task Template Help<\/HYPERLINK>\n  <TEXT NAME='TASK_PAGELET' LABEL='Pagelet' DEFAULT='com.centurylink.mdw.base/AutoFormManualTask.pagelet' READONLY='TRUE' VW='320'/>\n  <SELECT NAME=\"Wait for Task\" DEFAULT=\"TRUE\" SECTION=\"Events\">\n    <OPTION>TRUE<\/OPTION>\n    <OPTION>FALSE<\/OPTION>\n  <\/SELECT>\n  <TABLE NAME=\"WAIT_EVENT_NAMES\" LABEL=\"Events\" SECTION=\"Events\">\n    <TEXT LABEL=\"Event Name\"/>\n    <TEXT LABEL=\"Completion Code\"/>\n    <BOOLEAN LABEL=\"Recurring\" DEFAULT=\"true\" READONLY=\"true\"/>\n  <\/TABLE>\n  <DROPDOWN NAME=\"STATUS_AFTER_EVENT\" LABEL=\"Status After Event\" DEFAULT=\"Cancelled\" LW=\"175\" VX=\"200\" VW=\"120\" SECTION=\"Events\">\n    <OPTION>Hold<\/OPTION>\n    <OPTION>Waiting<\/OPTION>\n    <OPTION>Cancelled<\/OPTION>\n  <\/DROPDOWN>\n  <HYPERLINK URL=\"/MDWWeb/doc/taskWaitingEvents.html\" SECTION=\"Events\">Task Events Help<\/HYPERLINK>\n<\/PAGELET>"
+}

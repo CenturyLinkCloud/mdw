@@ -1,7 +1,5 @@
 <div class="row">
-  <div
-    class="col-md-2 mdw-sidebar"
-    ng-include="'layout/task-nav.html'"></div>
+  <div class="col-md-2 mdw-sidebar" ng-include="'layout/task-nav.html'"></div>
   <div class="col-md-10">
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
@@ -12,7 +10,7 @@
            TODO: include this wrap calculation in the directive so it's not hard-coded in each usage -->
         <mdw-actions wrap="480px">
           <button type="button" class="btn btn-primary mdw-btn" mdw-action-pop-button uib-popover-template="'tasks/taskActions.html'"
-            ng-disabled="task.dirty || !task.editable">
+            ng-disabled="task.dirty">
             <span class="glyphicon glyphicon-ok"></span> Action
           </button>
           <button type="button" class="btn btn-primary mdw-btn" ng-disabled="!task.dirty || !task.editable" ng-click="save()">
@@ -30,7 +28,7 @@
                 </div>
                 <div class="mdw-item">Created {{task.created}}, <span ng-if="task.due">Due <i class="mdw-item-highlight">{{task.due}}</i></span>
                   <img class="mdw-item-alert" ng-if="task.alert" src="images/alert.png" alt="alert" />
-                  <input type="text" ng-show="false" uib-datepicker-popup is-open="popups.dueDate" ng-model="task.dueDate" ng-change="dueDateChanged()" 
+                  <input type="text" ng-show="false" uib-datepicker-popup is-open="datePopups.dueDate" ng-model="task.dueDate" ng-change="dueDateChanged()" 
                     popup-placement="right-top" />
                   <span ng-if="!task.due && task.editable"><i>No Due Date</i></span>
                   <button type="button" class="btn mdw-btn btn-default" ng-if="task.editable" ng-click="openDueDatePopup()" style="margin-left:5px;">
@@ -38,25 +36,38 @@
                   </button>
                 </div>
                 <div class="mdw-item-sub" ng-if="task.endDate">{{task.status}} {{task.endDate}}</div>
+                <div class="mdw-item">
+                  Workgroups:
+                  <a href="" mdw-route="#/groups/{{workgroup}}" ng-repeat="workgroup in task.workgroups">{{workgroup}}<span ng-if="!$last">,</span></a> 
+                </div>
+                <div class="mdw-item" ng-if="item.secondaryOwnerType == 'TASK_INSTANCE'">
+                  Master Task: <a href="#/tasks/{{item.secondaryOwnerId}}">{{item.secondaryOwnerId}}</a>
+                </div>
               </div>
             </div>
           </div>
-          <div class="mdw-flex-item-right" style="min-width: 125px;">
+          <div class="mdw-flex-item-right">
             <div class="mdw-item">
               <span ng-if="task.status != 'Open'">{{task.status}}</span>
             </div>
             <div ng-if="task.assignee">
               <img src="images/user.png" alt="user"/> {{task.assignee}}
             </div>
+            <div class="mdw-item" style="margin-top:10px;">
+              <a href="" mdw-route="#/taskTemplates/{{task.name}}">Task Template</a>
+            </div>
           </div>
         </div>
         <hr class="mdw-hr">
         <div ng-if="task.ownerType == 'PROCESS_INSTANCE'" class="mdw-image-container">
           <div class="mdw-item">
-            <span ng-if="task.ownerId">Process: <a href="#" class="mdw-link">{{task.ownerId}}</a></span>
-            <button type="button" class="btn mdw-btn btn-default" ng-click="refreshWorkflowImage()" style="margin-left:5px;">
-              <i class="glyphicon glyphicon-refresh"></i>
-            </button>
+            <span ng-if="task.ownerId">Process: <a href="" mdw-route="#/workflow/processes/{{task.ownerId}}" class="mdw-link">{{task.ownerId}}</a></span>
+            <span ng-if="task.activityInstanceId" class="mdw-sm-indent">Activity: <a href="" mdw-route="#/workflow/activities/{{task.activityInstanceId}}" class="mdw-link">{{task.activityInstanceId}}</a></span>
+            <div class="mdw-item-right">
+              <button type="button" class="btn mdw-btn btn-default" ng-click="refreshWorkflowImage()">
+                <i class="glyphicon glyphicon-refresh"></i>
+              </button>
+            </div>
           </div>
           <img ng-src="{{mdw.roots.hub}}/workflowImage?taskInstanceId={{task.id}}&activityInstanceId={{task.activityInstanceId}}&refr={{random}}" 
             alt="Workflow image" />

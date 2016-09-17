@@ -52,9 +52,16 @@ public class DocumentStorage extends WorkflowElement implements IStorage
   public String getName()
   {
     if (name != null)
-      return name + ".xml";
+    {
+      if (contents != null && contents.trim().startsWith("{"))
+        return name + ".json";
+      else
+        return name + ".xml";
+    }
     else
+    {
       return docRef.toString();
+    }
   }
 
   public IPath getFullPath()

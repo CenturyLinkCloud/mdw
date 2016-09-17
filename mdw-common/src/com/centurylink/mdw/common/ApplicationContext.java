@@ -7,12 +7,14 @@ import java.io.File;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -58,6 +60,7 @@ public class ApplicationContext {
     private static String appName;
     private static String appVersion;
     private static String mdwVersion;
+    private static String mdwBuildTimestamp;
     private static String serverHost;
     private static StandardLogger logger;
     private static String proxyServerName=null;
@@ -354,9 +357,10 @@ public class ApplicationContext {
                 JarFile jarFile = new JarFile(new File(jarFilePath));
                 Manifest manifest = jarFile.getManifest();
                 mdwVersion = manifest.getMainAttributes().getValue("Bundle-Version");
+                mdwBuildTimestamp = manifest.getMainAttributes().getValue("MDW-Build");
             }
             else {
-                // local build -- try tomcat deploy structure
+                // try tomcat deploy structure
                 String catalinaBase = System.getProperty("catalina.base");
                 if (catalinaBase != null) {
                     File webInfLib = new File(catalinaBase + "/webapps/mdw/WEB-INF/lib");
@@ -364,6 +368,11 @@ public class ApplicationContext {
                         for (File file : webInfLib.listFiles()) {
                             if (file.getName().startsWith("mdw-common")) {
                                 mdwVersion = file.getName().substring(11, file.getName().length() - 4);
+                                String mfPath = "jar:" + file.toURI() + "!/META-INF/MANIFEST.MF";
+                                Manifest manifest = new Manifest(new URL(mfPath).openStream());
+                                Attributes attrs = manifest.getMainAttributes();
+                                mdwBuildTimestamp = attrs.getValue("MDW-Build");
+                                break;
                             }
                         }
                     }
@@ -383,6 +392,14 @@ public class ApplicationContext {
 
     public static void setMdwVersion(String version) {
         mdwVersion = version;
+    }
+
+    public static String getMdwBuildTimestamp() {
+        return mdwBuildTimestamp == null ? "" : mdwBuildTimestamp;
+    }
+
+    public static void setMdwBuildTimestamp(String timestamp) {
+        mdwBuildTimestamp = timestamp;
     }
 
     /**

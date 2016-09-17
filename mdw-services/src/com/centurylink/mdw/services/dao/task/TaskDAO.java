@@ -643,7 +643,7 @@ public class TaskDAO extends CommonDataAccess {
                 if (ti == null)
                     ti = getTaskInstanceSub(rs, false);
                 String groupName = rs.getString("GROUP_NAME");
-                if (groupName != null) {
+                if (groupName != null && !groupName.isEmpty()) {
                     if (ti.getGroups() == null)
                         ti.setGroups(new ArrayList<String>());
                     ti.getGroups().add(groupName);

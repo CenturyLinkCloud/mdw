@@ -1,36 +1,62 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="DocumentWebService" version="0.6" description="">
-    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=72,y=121,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=487,y=120,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A3" Name="Invoke&#13;&#10;Employee Service" Implementation="com.centurylink.mdw.workflow.adapter.soap.DocumentWebServiceAdapter">
-      <bpm:Attribute Name="DO_LOGGING" Value="True"/>
-      <bpm:Attribute Name="REQUEST_VARIABLE" Value="requestDoc"/>
-      <bpm:Attribute Name="RESPONSE_VARIABLE" Value="responseDoc"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=238,y=112,w=118,h=71"/>
-      <bpm:Attribute Name="WSDL" Value="#{props['mdw.services.url']}/SOAP/Employee.wsdl"/>
-      <bpm:Attribute Name="max_tries" Value="3"/>
-      <bpm:Attribute Name="retry_interval" Value="30"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=193,ly=118,type=Elbow,xs=136&amp;234,ys=141&amp;141"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=422,ly=140,type=Elbow,xs=360&amp;483,ys=140&amp;140"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=30,y=29,w=200,h=27"/>
-    <bpm:Variables Name="requestDoc" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="org.apache.xmlbeans.XmlObject"/>
-    </bpm:Variables>
-    <bpm:Variables Name="responseDoc" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="org.w3c.dom.Document"/>
-    </bpm:Variables>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=72,y=121,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=193,ly=118,type=Elbow,xs=136&234,ys=141&141"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=487,y=120,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "True",
+        "REQUEST_VARIABLE": "requestDoc",
+        "RESPONSE_VARIABLE": "responseDoc",
+        "WORK_DISPLAY_INFO": "x=238,y=112,w=118,h=71",
+        "WSDL": "#{props['mdw.services.url']}/SOAP/Employee.wsdl",
+        "max_tries": "3",
+        "retry_interval": "30"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.adapter.soap.DocumentWebServiceAdapter",
+      "name": "Invoke\r\nEmployee Service",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=422,ly=140,type=Elbow,xs=360&483,ys=140&140"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=30,y=29,w=200,h=27"
+  },
+  "variables": {
+    "requestDoc": {
+      "category": "INPUT",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
+    "responseDoc": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    }
+  },
+  "version": "0.6"
+}

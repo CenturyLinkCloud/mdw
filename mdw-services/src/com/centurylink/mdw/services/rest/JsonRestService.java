@@ -14,16 +14,12 @@ import javax.ws.rs.PUT;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.service.Exportable;
 import com.centurylink.mdw.common.service.JsonExport;
+import com.centurylink.mdw.common.service.JsonExportable;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.user.UserActionVO;
-import com.centurylink.mdw.model.value.user.UserActionVO.Action;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
 import com.centurylink.mdw.model.value.user.UserVO;
 
 import io.swagger.annotations.Api;
@@ -57,9 +53,6 @@ public abstract class JsonRestService extends RestService implements JsonService
         catch (JSONException ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
-        }
     }
 
     protected JSONObject service(String path, JSONObject content, Map<String,String> headers) throws ServiceException, JSONException {
@@ -73,7 +66,7 @@ public abstract class JsonRestService extends RestService implements JsonService
         else if ("DELETE".equals(method))
             return delete(path, content, headers);
         else
-            throw new ServiceException(ServiceException.BAD_REQUEST, method + " not implemented");
+            throw new ServiceException(ServiceException.NOT_ALLOWED, method + " not implemented");
     }
 
     /**
@@ -81,7 +74,7 @@ public abstract class JsonRestService extends RestService implements JsonService
      */
     @GET
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
-        throw new ServiceException(ServiceException.BAD_REQUEST, "GET not implemented");
+        throw new ServiceException(ServiceException.NOT_ALLOWED, "GET not implemented");
     }
 
     /**
@@ -90,7 +83,7 @@ public abstract class JsonRestService extends RestService implements JsonService
      */
     @POST
     public JSONObject post(String path, JSONObject content, Map<String,String> headers) throws ServiceException, JSONException {
-        throw new ServiceException(ServiceException.BAD_REQUEST, "POST not implemented");
+        throw new ServiceException(ServiceException.NOT_ALLOWED, "POST not implemented");
     }
 
     /**
@@ -98,7 +91,7 @@ public abstract class JsonRestService extends RestService implements JsonService
      */
     @PUT
     public JSONObject put(String path, JSONObject content, Map<String,String> headers) throws ServiceException, JSONException {
-        throw new ServiceException(ServiceException.BAD_REQUEST, "PUT not implemented");
+        throw new ServiceException(ServiceException.NOT_ALLOWED, "PUT not implemented");
     }
 
     /**
@@ -106,7 +99,7 @@ public abstract class JsonRestService extends RestService implements JsonService
      */
     @DELETE
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers) throws ServiceException, JSONException {
-        throw new ServiceException(ServiceException.BAD_REQUEST, "DELETE not implemented");
+        throw new ServiceException(ServiceException.NOT_ALLOWED, "DELETE not implemented");
     }
 
     public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
@@ -135,40 +128,38 @@ public abstract class JsonRestService extends RestService implements JsonService
         }
     }
 
-    /**
-     * Base64 encoded for API compatibility.
-     */
-    public String getExcel(Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
-        String path = headers.get(Listener.METAINFO_REQUEST_PATH);
-        try {
-            String method = headers.get(Listener.METAINFO_HTTP_METHOD);
-            if ("GET".equals(method)) {
-                UserVO user = authorize(path, new JSONObject(), headers);
-                if (this instanceof Exportable) {
-                    // audit log
-                    Action action = Action.Export;
-                    Entity entity = getEntity(path, null, headers);
-                    Long entityId = new Long(0);
-                    String descrip = path;
-                    if (descrip.length() > 1000)
-                        descrip = descrip.substring(0, 999);
-                    UserActionVO exportAction = new UserActionVO(user.getName(), action, entity, entityId, descrip);
-                    exportAction.setSource(getSource());
-                    auditLog(exportAction);
-                    // TODO headers.put("max", String.valueOf(Query.MAX_ALL));
-                    JSONObject response = service(path, null, headers);
-                    Jsonable jsonable = ((Exportable)this).toJsonable(getQuery(path, headers), response);
-                    JsonExport exporter = new JsonExport(jsonable);
-                    return exporter.exportXlsxBase64();
-                }
-                else {
-                    throw new ServiceException(HTTP_404_NOT_FOUND, "Service not exportable");
-                }
+    protected JsonExport getExporter(Map<String,String> headers) throws JSONException, ServiceException {
+        String method = headers.get(Listener.METAINFO_HTTP_METHOD);
+        if ("GET".equals(method)) {
+            if (this instanceof JsonExportable) {
+                authorizeExport(headers);
+                // TODO headers.put("max", String.valueOf(Query.MAX_ALL));
+                String path = headers.get(Listener.METAINFO_REQUEST_PATH);
+                JSONObject response = service(path, null, headers);
+                Jsonable jsonable = ((JsonExportable)this).toJsonable(getQuery(path, headers), response);
+                return new JsonExport(jsonable);
             }
             else {
-                throw new ServiceException(HTTP_405_METHOD_NOT_ALLOWED, "Unsupported method: " + method);
+                throw new ServiceException(HTTP_404_NOT_FOUND, "Service not exportable");
             }
+        }
+        else {
+            throw new ServiceException(HTTP_405_METHOD_NOT_ALLOWED, "Unsupported method: " + method);
+        }
+    }
 
+    /**
+     * Binary content must be Base64 encoded for API compatibility.
+     */
+    public String export(String downloadFormat, Map<String,String> headers) throws ServiceException {
+        try {
+            JsonExport exporter = getExporter(headers);
+            if (Listener.DOWNLOAD_FORMAT_EXCEL.equals(downloadFormat))
+                return exporter.exportXlsxBase64();
+            else if (Listener.DOWNLOAD_FORMAT_ZIP.equals(downloadFormat))
+                return exporter.exportZipBase64();
+            else
+                throw new ServiceException(HTTP_400_BAD_REQUEST, "Unsupported download format: " + downloadFormat);
         }
         catch (ServiceException ex) {
             throw ex;

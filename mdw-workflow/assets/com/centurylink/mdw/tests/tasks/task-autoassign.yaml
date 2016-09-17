@@ -23,9 +23,9 @@ process: # 10015
     name: jaxbWithAssignee
     value: |
       <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-      <TaskJaxb attributeOne="aa56486">
-          <elementOne>dxoakes</elementOne>
+      <TaskJaxb attributeOne="dxoakes">
+          <elementOne>aa56486</elementOne>
       </TaskJaxb>
   variable: # 10028
     name: stringAssignee
-    value: aa56486
+    value: dxoakes

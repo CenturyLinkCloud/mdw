@@ -4,6 +4,7 @@
 package com.centurylink.mdw.designer.utils;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -103,9 +104,11 @@ public class RestfulServer extends Server {
                 request = actionRequestDoc.xmlText(getXmlOptions());
             return httpHelper.post(request);
         }
+        catch (SocketTimeoutException ex) {
+            throw new RemoteException("Timeout after " + getReadTimeout() + " ms", ex);
+        }
         catch (IOException ex) {
-            // server is not running
-            throw new RemoteException("Unable to connect to MDW Web on: " + getMdwWebUrl(), ex);
+            throw new RemoteException("Unable to connect to " + getMdwWebUrl(), ex);
         }
     }
 
@@ -240,9 +243,11 @@ public class RestfulServer extends Server {
         catch (RemoteException ex) {
             throw ex;  // don't fall through to IOException catch block
         }
+        catch (SocketTimeoutException ex) {
+            throw new DataAccessOfflineException("Timeout after " + getReadTimeout() + " ms", ex);
+        }
         catch (IOException ex) {
-            // server is not running
-            throw new DataAccessOfflineException("Unable to connect to MDW Web on: " + getMdwWebUrl(), ex);
+            throw new DataAccessOfflineException("Unable to connect to " + getMdwWebUrl(), ex);
         }
         catch (JSONException ex) {
             throw new DataAccessException("Unparsable JSON response:\n" + response);
@@ -275,8 +280,11 @@ public class RestfulServer extends Server {
             httpHelper.setReadTimeout(getReadTimeout());
             response = httpHelper.get();
         }
+        catch (SocketTimeoutException ex) {
+            throw new IOException("Timeout after " + getReadTimeout() + " ms", ex);
+        }
         catch (IOException ex) {
-            throw new IOException("Unable to connect to server at " + getMdwWebUrl() + ": " + ex);
+            throw new IOException("Unable to connect to " + getMdwWebUrl(), ex);
         }
         if (response != null && (response.trim().startsWith("<xs:MDWStatusMessage") || response.trim().startsWith("<bpm:MDWStatusMessage"))) {
             try {
@@ -301,8 +309,11 @@ public class RestfulServer extends Server {
             httpHelper.setReadTimeout(getReadTimeout());
             return httpHelper.get();
         }
+        catch (SocketTimeoutException ex) {
+            throw new IOException("Timeout after " + getReadTimeout() + " ms", ex);
+        }
         catch (IOException ex) {
-            throw new IOException("Unable to connect to server at " + getMdwWebUrl() + ": " + ex);
+            throw new IOException("Unable to connect to " + getMdwWebUrl(), ex);
         }
     }
 }

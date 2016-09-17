@@ -997,7 +997,7 @@ public class DesignerDataModel {
         newPkg.setSchemaVersion(DataAccess.currentSchemaVersion);
         newPkg.setPackageId(getNewId());
         newPkg.setVersion(newversion);
-        newPkg.setVoXML(curPkg.getVoXML());
+        newPkg.setMetaContent(curPkg.getMetaContent());
         List<ProcessVO> processes = new ArrayList<ProcessVO>();
         newPkg.setProcesses(processes);
         if (curPkg.getProcesses()!=null) {

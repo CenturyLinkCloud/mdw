@@ -1,4 +1,4 @@
-<bpm:externalEventHandler xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:EventName>FORMDATA</bpm:EventName>
-  <bpm:EventHandler>com.centurylink.mdw.listener.FormEventHandler</bpm:EventHandler>
-</bpm:externalEventHandler>
+{
+  "handlerClass": "com.centurylink.mdw.listener.FormEventHandler",
+  "path": "FORMDATA"
+}

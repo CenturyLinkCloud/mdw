@@ -207,7 +207,7 @@ public class WebUtil implements Serializable
   {
     StringBuffer sb = new StringBuffer();
     sb.append("System Information:\n------------------------\n");
-
+    sb.append("MDW Build: " + ApplicationContext.getMdwVersion() + " (" + ApplicationContext.getMdwBuildTimestamp() + ")\n");
     sb.append("Server host: " + ApplicationContext.getServerHost() + "\n");
     try {
         sb.append("Server hostname: " + InetAddress.getLocalHost().getHostName() + "\n");

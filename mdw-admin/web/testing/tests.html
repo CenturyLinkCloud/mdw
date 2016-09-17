@@ -5,8 +5,8 @@
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-checklist">
           <input type="checkbox" ng-model="selectedState.all" ng-change="toggleAll()" ng-if="authUser.hasRole('Process Execution')"></input>
-          <span class="mdw-checklist-label">Automated Tests</span>
-          <span ng-if="testCaseList.testCases" class="mdw-checklist-sub"> ({{testCaseList.testCases.length}})</span>
+          Automated Tests
+          <span ng-if="testCaseList.testCases" class="mdw-heading-sub"> ({{testCaseList.testCases.length}})</span>
         </div>
         <div ng-if="testCaseList.packages" class="mdw-heading-summary">
           <span class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span> = {{passed().length}} 
@@ -26,7 +26,7 @@
         <div class="panel-heading mdw-sub-heading">
           <div class="mdw-heading-checklist">
             <input type="checkbox" ng-model="pkg.selected" ng-change="togglePackage(pkg)" ng-if="authUser.hasRole('Process Execution')"></input>
-            <span class="mdw-checklist-label">{{pkg.name}} v{{pkg.version}}</span>
+            {{pkg.name}} v{{pkg.version}}
             <a href="#/tests" ng-if="!pkg.collapsed" ng-click="pkg.collapsed = true">
               <span class="glyphicon glyphicon-chevron-up mdw-action-icon button button-primary"></span>
             </a> 

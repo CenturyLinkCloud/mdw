@@ -21,7 +21,7 @@ public interface RequestServices {
     public RequestList getRequests(Query query) throws ServiceException;
 
 
-    public Request getRequest(String id) throws ServiceException;
+    public Request getRequest(Long id) throws ServiceException;
 
     public Map<Date,List<RequestCount>> getRequestBreakdown(Query query) throws ServiceException;
 

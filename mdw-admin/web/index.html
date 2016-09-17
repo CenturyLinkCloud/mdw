@@ -4,7 +4,7 @@
   <meta http-equiv="x-ua-compatible" content="IE=Edge"/>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <meta name="application-name" content="mdw-admin" data-version="${mdw.version}" />
+  <meta name="application-name" content="mdw-admin" data-version="${mdw.version} ${mdw.build}" />
   <title>MDWHub</title>
   <link rel="stylesheet" href="bower_components/bootstrap-css-only/css/bootstrap.css">
   <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.css">
@@ -79,6 +79,7 @@
     var $mdwHubRoot = '${mdw.hubRoot}';
     var $mdwServicesRoot = '${mdw.servicesRoot}';
     var $mdwVersion = '${mdw.version}';
+    var $mdwBuild = '${mdw.build}';
     var $mdwHubUser = '${mdw.hubUser}';
     var $mdwLoginPage = '${mdw.loginPage}';
     var $mdwTasksUi = '${mdw.tasksUi}';

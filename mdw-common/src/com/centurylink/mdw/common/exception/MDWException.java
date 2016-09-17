@@ -5,7 +5,7 @@ package com.centurylink.mdw.common.exception;
 
 
 public class MDWException extends Exception {
-    private static final long serialVersionUID = 1L;
+
     private int errorCode;
 
     public MDWException(String pMessage){
@@ -26,15 +26,15 @@ public class MDWException extends Exception {
         super(pMessage, pTh);
         this.errorCode = -1;
     }
-    
+
     public int getErrorCode(){
     	return this.errorCode;
     }
-    
+
     public String getStackTraceDetails() {
       return getStackTrace(this);
     }
-    
+
     public static String getStackTrace(Throwable t) {
         StackTraceElement[] elems = t.getStackTrace();
         StringBuffer sb = new StringBuffer();
@@ -56,7 +56,7 @@ public class MDWException extends Exception {
     public Throwable findCause() {
         return findCause(this);
     }
-    
+
     public static Throwable findCause(Throwable t) {
         if (t.getCause() == null)
             return t;

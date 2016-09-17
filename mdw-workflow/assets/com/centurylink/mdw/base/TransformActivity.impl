@@ -1,8 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.transform.TransformActivity" Type="com.centurylink.mdw.activity.types.ScriptActivity" Label="XML Transform" IconFile="xml.jpg" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription>&lt;PAGELET>
-  &lt;RULE NAME='Rule' TYPE='TRANSFORM' LANGUAGES='GPath,XSLT'/>
-  &lt;HYPERLINK URL='/MDWWeb/doc/documentTransform.html'>
-    Transform Activity Help
-  &lt;/HYPERLINK>
-&lt;/PAGELET></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.ScriptActivity",
+  "icon": "xml.jpg",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.transform.TransformActivity",
+  "label": "XML Transform",
+  "pagelet": "<PAGELET>\n  <RULE NAME='Rule' TYPE='TRANSFORM' LANGUAGES='GPath,XSLT'/>\n  <HYPERLINK URL='/MDWWeb/doc/documentTransform.html'>\n    Transform Activity Help\n  <\/HYPERLINK>\n<\/PAGELET>"
+}

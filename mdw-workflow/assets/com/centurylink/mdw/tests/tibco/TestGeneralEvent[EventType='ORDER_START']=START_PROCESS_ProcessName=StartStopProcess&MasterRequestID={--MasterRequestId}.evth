@@ -1,4 +1,0 @@
-<bpm:externalEventHandler xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:EventName>TestGeneralEvent[EventType='ORDER_START']</bpm:EventName>
-  <bpm:EventHandler>START_PROCESS?ProcessName=StartStopProcess&amp;MasterRequestID={//MasterRequestId}</bpm:EventHandler>
-</bpm:externalEventHandler>

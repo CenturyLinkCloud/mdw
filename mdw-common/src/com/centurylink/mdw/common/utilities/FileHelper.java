@@ -20,7 +20,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
@@ -76,27 +75,52 @@ public final class FileHelper {
     }
 
     public static void deleteRecursive(File src) throws IOException {
-        if (!src.exists())
-            throw new IOException("File/directory does not exist: " + src);
-        if (src.isFile()) {
-            if (!src.delete())
-                throw new IOException("Cannot delete file: " + src);
-        }
-        else {
-            for (File srcFile : src.listFiles()) {
-                if (srcFile.isFile()) {
-                    if (!srcFile.delete())
-                        throw new IOException("Cannot delete: " + srcFile);
-                }
-                else if (srcFile.isDirectory()) {
-                    deleteRecursive(srcFile);
-                }
-            }
-            if (!src.delete())
-                throw new IOException("Cannot delete: " + src);
-        }
+        deleteRecursive(src, null);
     }
 
+    public static void deleteRecursive(File src, List<File> excludes) throws IOException {
+        if (!src.exists())
+            throw new IOException("File/directory does not exist: " + src);
+
+        if (excludes == null || !excludes.contains(src)) {
+            if (src.isFile()) {
+                if (!src.delete())
+                    throw new IOException("Cannot delete file: " + src);
+            }
+            else {
+                for (File srcFile : src.listFiles()) {
+                    if (srcFile.isFile()) {
+                        if (excludes == null || !excludes.contains(srcFile)) {
+                            if (!srcFile.delete())
+                                throw new IOException("Cannot delete: " + srcFile);
+                        }
+                    }
+                    else if (srcFile.isDirectory()) {
+                        if (excludes == null || !excludes.contains(srcFile))
+                            deleteRecursive(srcFile, excludes);
+                    }
+                }
+
+                boolean isParentOfExclude = false;
+                if (excludes != null) {
+                    for (File exclude : excludes) {
+                        File parent = exclude.getParentFile();
+                        while (!isParentOfExclude && parent != null) {
+                            isParentOfExclude = parent.equals(src);
+                            parent = parent.getParentFile();
+                        }
+                        if (isParentOfExclude)
+                            break; // don't keep checking
+                    }
+                }
+
+                if (!isParentOfExclude) {
+                    if (!src.delete())
+                        throw new IOException("Cannot delete: " + src);
+                }
+            }
+        }
+    }
 
     /**     * Method that returns the file contents
      * @param pFileName
@@ -178,6 +202,23 @@ public final class FileHelper {
          writer.flush();
          writer.close();
 
+    }
+
+    private static final int FILE_BUFFER_KB = 16;
+    public static void writeToFile(InputStream inputStream, File file) throws IOException {
+        OutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(file);
+            byte[] buffer = new byte[FILE_BUFFER_KB * 1024];
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, len);
+            }
+        }
+        finally {
+            if (outputStream != null)
+                outputStream.close();
+        }
     }
 
     public static String readFromFile(String filePath) throws IOException {
@@ -384,98 +425,24 @@ public final class FileHelper {
     }
 
     public static void createZipFile(File directory, File zipFile, List<File> excludes) throws IOException {
-
-        byte[] buffer = new byte[1024];
         FileOutputStream fos = null;
-        ZipOutputStream zos = null;
         try {
-
             fos = new FileOutputStream(zipFile);
-            zos = new ZipOutputStream(fos);
-
-            for (File file : new FileLister(directory).list()) {
-                boolean exclude = false;
-                if (excludes != null) {
-                    for (File ex : excludes) {
-                        if (file.getPath().startsWith(ex.getPath() + System.getProperty("file.separator")) || file.getPath().equals(ex.getPath())) {
-                            exclude = true;
-                            break;
-                        }
-                    }
-                }
-                if (!exclude) {
-                    String name = file.getPath().substring(directory.getPath().length() + 1).replace('\\', '/');
-                    if (file.isDirectory())
-                        name += '/';
-                    ZipEntry ze = new ZipEntry(name);
-                    zos.putNextEntry(ze);
-
-                    if (file.isFile()) {
-                        FileInputStream in = new FileInputStream(file);
-
-                        int len;
-                        while ((len = in.read(buffer)) > 0)
-                            zos.write(buffer, 0, len);
-
-                        in.close();
-                    }
-                }
-            }
+            ZipHelper.writeZip(directory, fos, excludes);
         }
         finally {
-            if (zos != null) {
-                zos.closeEntry();
-                zos.close();
-            }
             if (fos != null)
                 fos.close();
         }
     }
 
     public static void createZipFileWith(File directory, File zipFile, List<File> includes) throws IOException {
-
-        byte[] buffer = new byte[1024];
         FileOutputStream fos = null;
-        ZipOutputStream zos = null;
         try {
-
             fos = new FileOutputStream(zipFile);
-            zos = new ZipOutputStream(fos);
-
-            for (File file : new FileLister(directory).list()) {
-                boolean include = false;
-                if (includes != null) {
-                    for (File in : includes) {
-                        if (file.getPath().startsWith(in.getPath() + System.getProperty("file.separator")) || file.getPath().equals(in.getPath())) {
-                            include = true;
-                            break;
-                        }
-                    }
-                }
-                if (include) {
-                    String name = file.getPath().substring(directory.getPath().length() + 1).replace('\\', '/');
-                    if (file.isDirectory())
-                        name += '/';
-                    ZipEntry ze = new ZipEntry(name);
-                    zos.putNextEntry(ze);
-
-                    if (file.isFile()) {
-                        FileInputStream in = new FileInputStream(file);
-
-                        int len;
-                        while ((len = in.read(buffer)) > 0)
-                            zos.write(buffer, 0, len);
-
-                        in.close();
-                    }
-                }
-            }
+            ZipHelper.writeZipWith(directory, fos, includes);
         }
         finally {
-            if (zos != null) {
-                zos.closeEntry();
-                zos.close();
-            }
             if (fos != null)
                 fos.close();
         }

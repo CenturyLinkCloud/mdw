@@ -865,7 +865,7 @@ public class ProcessLoaderPersisterV5 extends ProcessLoaderPersisterV4 {
     throws SQLException,DataAccessException {
 		PackageVO pkg = super.loadPackage0(packageId, withProcesses);
 		RuleSetVO pkgXml = this.getRuleSetForOwner0(OwnerType.PACKAGE, packageId);
-		if (pkgXml!=null) pkg.setVoXML(pkgXml.getRuleSet());
+		if (pkgXml!=null) pkg.setMetaContent(pkgXml.getRuleSet());
 		return pkg;
 	}
 
@@ -873,11 +873,11 @@ public class ProcessLoaderPersisterV5 extends ProcessLoaderPersisterV4 {
 	protected Long persistPackageProper(PackageVO packageVO, PersistType persistType)
     throws SQLException, DataAccessException, XmlException {
 		Long pkgId = super.persistPackageProper(packageVO, persistType);
-		if (!StringHelper.isEmpty(packageVO.getVoXML())) {
-		    String pkgDefXml = packageVO.getVoXML();
+		if (!StringHelper.isEmpty(packageVO.getMetaContent())) {
+		    String pkgDefXml = packageVO.getMetaContent();
 		    try {
 		        if (schemaTypeTranslator != null) {
-		            pkgDefXml = schemaTypeTranslator.getOldProcessDefinition(packageVO.getVoXML());
+		            pkgDefXml = schemaTypeTranslator.getOldProcessDefinition(packageVO.getMetaContent());
 		        }
 		    } catch (Exception ex) {
 		    }

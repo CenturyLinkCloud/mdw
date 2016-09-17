@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.centurylink.mdw.bpm.MDWPackage;
 import com.centurylink.mdw.bpm.MDWProcessDefinition;
 import com.centurylink.mdw.bpm.PackageDocument;
@@ -26,7 +28,6 @@ import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.timer.CodeTimer;
 import com.centurylink.mdw.dataaccess.DataAccess;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
@@ -243,27 +244,40 @@ public class PackageVOCache implements PreloadableCache {
             // retrieve to avoid deadlock waiting for RuleSetCache
             RuleSetVO ruleSet = loader.getRuleSetForOwner(OwnerType.PACKAGE, loaded.getPackageId());
             if (ruleSet != null && ruleSet.getRuleSet() != null) {
-                List<PropertyGroup> propertyGrp = null;
-                if (ruleSet.getRuleSet().startsWith("<bpm:package") || ruleSet.getRuleSet().startsWith("<package")) {
-                    PackageDocument pkgDoc = PackageDocument.Factory.parse(ruleSet.getRuleSet());
-                    MDWPackage pkg = pkgDoc.getPackage();
-                    if (pkg.getApplicationProperties() != null && pkg.getApplicationProperties().getPropertyGroupList() != null) {
-                        propertyGrp = pkg.getApplicationProperties().getPropertyGroupList();
+                if (ruleSet.getRuleSet().trim().startsWith("{")) {
+                    PackageVO metaPkg = new PackageVO(new JSONObject(ruleSet.getRuleSet()));
+                    List<AttributeVO> envAttrs = metaPkg.getAttributes(ApplicationContext.getRuntimeEnvironment());
+                    if (envAttrs != null) {
+                        envAttrs.addAll(metaPkg.getAttributes(null)); // non-env-specific
+                        loaded.setAttributes(envAttrs);
                     }
+                    loaded.setGroup(metaPkg.getGroup());
                 }
                 else {
-                    ProcessDefinitionDocument processDefDoc = ProcessDefinitionDocument.Factory.parse(ruleSet.getRuleSet(), Compatibility.namespaceOptions());
-                    MDWProcessDefinition procDef = processDefDoc.getProcessDefinition();
-                    if (procDef != null && procDef.getApplicationProperties() != null && procDef.getApplicationProperties().getPropertyGroupList() != null) {
-                        propertyGrp = processDefDoc.getProcessDefinition().getApplicationProperties().getPropertyGroupList();
+                    List<PropertyGroup> propertyGrp = null;
+                    if (ruleSet.getRuleSet().startsWith("<bpm:package") || ruleSet.getRuleSet().startsWith("<package")) {
+                        PackageDocument pkgDoc = PackageDocument.Factory.parse(ruleSet.getRuleSet());
+                        MDWPackage pkg = pkgDoc.getPackage();
+                        if (pkg.getApplicationProperties() != null && pkg.getApplicationProperties().getPropertyGroupList() != null) {
+                            propertyGrp = pkg.getApplicationProperties().getPropertyGroupList();
+                        }
+                        if (pkg.getWorkgroup() != null && !pkg.getWorkgroup().isEmpty())
+                            loaded.setGroup(pkg.getWorkgroup());
                     }
-                }
-                if (propertyGrp != null) {
-                    for (PropertyGroupDocument.PropertyGroup propGroup : propertyGrp) {
-                        if (propGroup.getName() != null && propGroup.getName().equals(ApplicationContext.getRuntimeEnvironment()) && propGroup.getPropertyList() != null) {
-                            for (Property prop : propGroup.getPropertyList()) {
-                                AttributeVO attr = new AttributeVO(prop.getName(), prop.getStringValue());
-                                loaded.getAttributes().add(attr);
+                    else {
+                        ProcessDefinitionDocument processDefDoc = ProcessDefinitionDocument.Factory.parse(ruleSet.getRuleSet(), Compatibility.namespaceOptions());
+                        MDWProcessDefinition procDef = processDefDoc.getProcessDefinition();
+                        if (procDef != null && procDef.getApplicationProperties() != null && procDef.getApplicationProperties().getPropertyGroupList() != null) {
+                            propertyGrp = processDefDoc.getProcessDefinition().getApplicationProperties().getPropertyGroupList();
+                        }
+                    }
+                    if (propertyGrp != null) {
+                        for (PropertyGroupDocument.PropertyGroup propGroup : propertyGrp) {
+                            if (propGroup.getName() != null && propGroup.getName().equals(ApplicationContext.getRuntimeEnvironment()) && propGroup.getPropertyList() != null) {
+                                for (Property prop : propGroup.getPropertyList()) {
+                                    AttributeVO attr = new AttributeVO(prop.getName(), prop.getStringValue());
+                                    loaded.getAttributes().add(attr);
+                                }
                             }
                         }
                     }
@@ -281,8 +295,7 @@ public class PackageVOCache implements PreloadableCache {
      */
     private static PackageVO getNonVcsPackage(Long processId) throws DataAccessException {
         PackageVO pkg = null;
-        DatabaseAccess db = new DatabaseAccess(null);
-        if (DataAccess.isUseCompatibilityDatasource(db)) {
+        if (DataAccess.isUseCompatibilityDatasource()) {
             ProcessVO dbProc = DataAccess.getProcessLoader().getProcessBase(processId); // will use compatDs
             if (dbProc != null) {
                 ProcessLoader dbLoader = DataAccess.getDbProcessLoader();

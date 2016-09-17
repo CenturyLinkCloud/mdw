@@ -1,18 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.shell.ShellScriptExecutor" Type="com.centurylink.mdw.activity.types.GeneralActivity" Label="Shell Script Executor" IconFile="adapter.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET>
-  <DROPDOWN NAME='Protocol' LABEL='Protocol'   VW='120' VX='170'>
-    <OPTION>ssh</OPTION>
-    <OPTION>Telnet</OPTION>
-  </DROPDOWN>
-  <TEXT NAME='UserName' LABEL='UserName'   VW='420' VX='170'/>
-  <TEXT NAME='Password' LABEL='Password'   VW='420' VX='170'/>
-  <TEXT NAME='HostName' LABEL='HostName'  VW='420' VX='170'/>
-  <TEXT NAME='Port' LABEL='Port'  VW='120' VX='170'/>
-  <TEXT NAME='Timeout' LABEL='Timeout (Seconds)'  VX='170'  VW='120'/>
-  <TEXT NAME='Delay' LABEL='Send Slow (Seconds)'  VX='170'  VW='120'/>
-  <TEXT NAME='Commamd' LABEL='ScriptName'  VX='170'  VW='420'/>
-  <TEXT NAME='Prompt' LABEL='Prompt'  VW='420' VX='170'/>
-  <TEXT NAME='RegularExpression'  VX='170'  LABEL='Regular Expression' VW='420'/>
-  <RULE NAME='Rule'  TYPE='ACTION' VX='170' VH='200'/>
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "adapter.png",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.shell.ShellScriptExecutor",
+  "label": "Shell Script Executor",
+  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='Protocol' LABEL='Protocol'   VW='120' VX='170'>\n    <OPTION>ssh<\/OPTION>\n    <OPTION>Telnet<\/OPTION>\n  <\/DROPDOWN>\n  <TEXT NAME='UserName' LABEL='UserName'   VW='420' VX='170'/>\n  <TEXT NAME='Password' LABEL='Password'   VW='420' VX='170'/>\n  <TEXT NAME='HostName' LABEL='HostName'  VW='420' VX='170'/>\n  <TEXT NAME='Port' LABEL='Port'  VW='120' VX='170'/>\n  <TEXT NAME='Timeout' LABEL='Timeout (Seconds)'  VX='170'  VW='120'/>\n  <TEXT NAME='Delay' LABEL='Send Slow (Seconds)'  VX='170'  VW='120'/>\n  <TEXT NAME='Commamd' LABEL='ScriptName'  VX='170'  VW='420'/>\n  <TEXT NAME='Prompt' LABEL='Prompt'  VW='420' VX='170'/>\n  <TEXT NAME='RegularExpression'  VX='170'  LABEL='Regular Expression' VW='420'/>\n  <RULE NAME='Rule'  TYPE='ACTION' VX='170' VH='200'/>\n<\/PAGELET>"
+}

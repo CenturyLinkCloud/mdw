@@ -8,12 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.common.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
+import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.common.utilities.JsonUtil;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.dataaccess.RemoteAccess;
@@ -32,7 +38,7 @@ import com.centurylink.mdw.model.value.work.WorkTransitionVO;
 /**
  * Value object representing a process definition.
  */
-public class ProcessVO extends RuleSetVO {
+public class ProcessVO extends RuleSetVO implements Jsonable {
 
     public static final String TRANSITION_ON_NULL = "Matches Null Return Code";
     public static final String TRANSITION_ON_DEFAULT = "Acts as Default";
@@ -847,12 +853,14 @@ public class ProcessVO extends RuleSetVO {
 
     public ActivityVO getStartActivity() {
         if (isInRuleSet()) {
-            for (ActivityVO activity : getActivities()) {
-                ActivityImplementorVO impl = getImplementor(activity);
-                if (impl != null && impl.isStart())
-                    return activity;
+            if (implementors != null) {
+                for (ActivityVO activity : getActivities()) {
+                    ActivityImplementorVO impl = getImplementor(activity);
+                    if (impl != null && impl.isStart())
+                        return activity;
+                }
             }
-            // revert to old logic of assuming first activity in ruleset is start
+            // revert to logic of assuming first activity in ruleset is start
             return getActivities().get(0);
         }
         else {
@@ -1046,4 +1054,132 @@ public class ProcessVO extends RuleSetVO {
 
     private boolean overrideAttributesApplied;
     public boolean overrideAttributesApplied() { return overrideAttributesApplied; }
+
+    /**
+     * Only for VCS Assets.
+     */
+    public ProcessVO(JSONObject json) throws JSONException {
+        if (json.has("name"))
+            setName(json.getString("name"));
+        if (json.has("version"))
+            setVersion(parseVersion(json.getString("version")));
+        if (json.has("description"))
+            setProcessDescription(json.getString("description"));
+        isInRuleSet = true;
+        if (json.has("attributes")) {
+            this.attributes = JsonUtil.getAttributes(json.getJSONObject("attributes"));
+        }
+        // many places don't check for null arrays, so we must instantiate
+        this.activities = new ArrayList<ActivityVO>();
+        this.transitions = new ArrayList<WorkTransitionVO>();
+        if (json.has("activities")) {
+            JSONArray activitiesJson = json.getJSONArray("activities");
+            for (int i = 0; i < activitiesJson.length(); i++) {
+                JSONObject activityJson = activitiesJson.getJSONObject(i);
+                ActivityVO activity = new ActivityVO(activityJson);
+                this.activities.add(activity);
+                if (activityJson.has("transitions")) {
+                    JSONArray transitionsJson = activityJson.getJSONArray("transitions");
+                    for (int j = 0; j < transitionsJson.length(); j++) {
+                        WorkTransitionVO transition = new WorkTransitionVO(transitionsJson.getJSONObject(j));
+                        transition.setFromWorkId(activity.getActivityId());
+                        this.transitions.add(transition);
+                    }
+                }
+            }
+        }
+        this.subProcesses = new ArrayList<ProcessVO>();
+        if (json.has("subprocesses")) {
+            JSONArray subprocsJson = json.getJSONArray("subprocesses");
+            for (int i = 0; i < subprocsJson.length(); i++) {
+                JSONObject subprocJson = subprocsJson.getJSONObject(i);
+                ProcessVO subproc = new ProcessVO(subprocJson);
+                String logicalId = subprocJson.getString("id");
+                if (logicalId.startsWith("SubProcess"))
+                    logicalId = "P" + logicalId.substring(10);
+                subproc.setId(Long.valueOf(logicalId.substring(1)));
+                subproc.setAttribute(WorkAttributeConstant.LOGICAL_ID, subprocJson.getString("id"));
+                this.subProcesses.add(subproc);
+            }
+        }
+        this.textNotes = new ArrayList<TextNoteVO>();
+        if (json.has("textNotes")) {
+            JSONArray textNotesJson = json.getJSONArray("textNotes");
+            for (int i = 0; i < textNotesJson.length(); i++)
+                this.textNotes.add(new TextNoteVO(textNotesJson.getJSONObject(i)));
+        }
+        this.variables = new ArrayList<VariableVO>();
+        if (json.has("variables")) {
+            JSONObject variablesJson = json.getJSONObject("variables");
+            Map<String,JSONObject> objects = JsonUtil.getJsonObjects(variablesJson);
+            for (String name : objects.keySet()) {
+                VariableVO variable = new VariableVO(objects.get(name));
+                variable.setVariableName(name);
+                this.variables.add(variable);
+            }
+        }
+    }
+
+    /**
+     * JSON name = getName(), so not included.
+     */
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("version", getVersionString());
+        if (getProcessDescription() != null && !getProcessDescription().isEmpty())
+          json.put("description", getProcessDescription());
+        if (attributes != null && !attributes.isEmpty()) {
+            json.put("attributes", JsonUtil.getAttributesJson(attributes));
+        }
+        if (activities != null && !activities.isEmpty()) {
+            JSONArray activitiesJson = new JSONArray();
+            for (ActivityVO activity : activities) {
+                JSONObject activityJson = activity.getJson();
+                List<WorkTransitionVO> transitions = getAllWorkTransitions(activity.getActivityId());
+                if (transitions != null && !transitions.isEmpty()) {
+                    JSONArray transitionsJson = new JSONArray();
+                    for (WorkTransitionVO transition : transitions) {
+                        JSONObject transitionJson = transition.getJson();
+                        if (transition.getToWorkId() < 0) // newly created
+                            transitionJson.put("to", getActivityVO(transition.getToWorkId()).getLogicalId());
+                        transitionsJson.put(transitionJson);
+                    }
+                    activityJson.put("transitions", transitionsJson);
+                }
+                activitiesJson.put(activityJson);
+            }
+            json.put("activities", activitiesJson);
+        }
+        if (subProcesses != null && !subProcesses.isEmpty()) {
+            JSONArray subprocsJson = new JSONArray();
+            for (ProcessVO subproc : subProcesses) {
+                JSONObject subprocJson = subproc.getJson();
+                String logicalId = subproc.getAttribute(WorkAttributeConstant.LOGICAL_ID);
+                subprocJson.put("id", logicalId);
+                subprocJson.put("name", subproc.getName());
+                if (subprocJson.has("version"))
+                  subprocJson.remove("version");
+                subprocsJson.put(subprocJson);
+            }
+            json.put("subprocesses", subprocsJson);
+        }
+        if (textNotes != null && !textNotes.isEmpty()) {
+            JSONArray textNotesJson = new JSONArray();
+            for (TextNoteVO textNote : textNotes)
+                textNotesJson.put(textNote.getJson());
+            json.put("textNotes", textNotesJson);
+        }
+        if (variables != null && !variables.isEmpty()) {
+            JSONObject variablesJson = new JSONObject();
+            for (VariableVO variable : variables)
+                variablesJson.put(variable.getJsonName(), variable.getJson());
+            json.put("variables", variablesJson);
+        }
+
+        return json;
+    }
+
+    public String getJsonName() {
+        return getName();
+    }
 }

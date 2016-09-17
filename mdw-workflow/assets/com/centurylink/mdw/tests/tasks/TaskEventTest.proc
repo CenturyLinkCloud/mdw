@@ -1,135 +1,253 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="TaskEventTest" version="0.5" description="">
-    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=29,y=209,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=588,y=186,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A3" Name="AutoForm Manual Task &#13;&#10;w Non Recurring Event" Implementation="com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity">
-      <bpm:Attribute Name="Category" Value="COM"/>
-      <bpm:Attribute Name="FormName" Value="Autoform"/>
-      <bpm:Attribute Name="Groups" Value="MDW Support"/>
-      <bpm:Attribute Name="IndexProvider" Value="com.centurylink.mdw.services.task.AutoFormTaskIndexProvider"/>
-      <bpm:Attribute Name="Notices" Value="Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"/>
-      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Hold"/>
-      <bpm:Attribute Name="TaskLogicalId" Value="TaskEventTest:A3"/>
-      <bpm:Attribute Name="TaskName" Value="AutoForm Task with Non-Recurring Event"/>
-      <bpm:Attribute Name="Variables" Value="FormDataVar,,Not Displayed,0,,com.centurylink.mdw.model.FormDataDocument;path,path,Not Displayed,0,,java.lang.String"/>
-      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="C-{$MasterRequestID},CORRECT,true,;A-{$MasterRequestID},ABORT,true,"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=343,y=140,w=132,h=69"/>
-      <bpm:Attribute Name="Wait for Task" Value="TRUE"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A12" Name="Custom Manual Task &#13;&#10;w Recurring Event" Implementation="com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity">
-      <bpm:Attribute Name="AlertIntervalUnits" Value="Hours"/>
-      <bpm:Attribute Name="Category" Value="ORD"/>
-      <bpm:Attribute Name="Groups" Value="MDW Support"/>
-      <bpm:Attribute Name="IndexProvider" Value="com.centurylink.mdw.services.task.CustomTaskIndexProvider"/>
-      <bpm:Attribute Name="Notices" Value="Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLAUnits" Value="Hours"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Hold"/>
-      <bpm:Attribute Name="STATUS_AFTER_TIMEOUT" Value="Hold"/>
-      <bpm:Attribute Name="TaskLogicalId" Value="TaskEventTest:A12"/>
-      <bpm:Attribute Name="TaskName" Value="Custom Manual Task w Recurring Event"/>
-      <bpm:Attribute Name="TaskSLA" Value="48"/>
-      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="NonTaskAction-{$MasterRequestID},NonTaskAction,true"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=338,y=220,w=137,h=66"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A14" Name="Check" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
-      <bpm:Attribute Name="Category" Value="COM"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
-      <bpm:Attribute Name="TIMER_WAIT" Value="5"/>
-      <bpm:Attribute Name="TaskName" Value="New Task for uuu"/>
-      <bpm:Attribute Name="Unit" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=355,y=343,w=100,h=60"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A16" Name="Which Task?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
-      <bpm:Attribute Name="Expression" Value="path"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=136,y=175,w=112,h=85"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=549,ly=191,type=Elbow,xs=479&amp;584,ys=197&amp;197"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="NonTaskAction" From="A12" To="A14" Event="FINISH" Id="T7">
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="-1"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=302,ly=305,type=Elbow,xs=405&amp;405,ys=290&amp;339"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A14" To="A12" Event="FINISH" Id="T8">
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="-1"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=405,ly=323,type=Elbow,xs=405&amp;405,ys=339&amp;290"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A12" To="A2" Event="FINISH" Id="T9">
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="-1"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=566,ly=223,type=Elbow,xs=479&amp;584,ys=223&amp;223"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A1" To="A16" Event="FINISH" Id="T10">
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="-1"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=126,ly=229,type=Elbow,xs=93&amp;132,ys=229&amp;229"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="AutoForm" From="A16" To="A3" Event="FINISH" Id="T11">
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="-1"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=268,ly=168,type=Elbow,xs=252&amp;339,ys=192&amp;192"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="Custom" From="A16" To="A12" Event="FINISH" Id="T12">
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="-1"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=266,ly=217,type=Elbow,xs=252&amp;334,ys=240&amp;240"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="AnotherWay" From="A12" To="A2" Event="FINISH" Id="T13">
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="-1"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=512,ly=262,type=Elbow,xs=475&amp;616&amp;616,ys=265&amp;265&amp;230"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=50,y=50,w=134,h=27"/>
-    <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="-1"/>
-    <bpm:Variables Name="path" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:SubProcess Id="P5" name="TaskEventTest Correction Handler" version="0" description="">
-      <bpm:Activity Id="A6" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=239,y=48,w=60,h=40"/>
-      </bpm:Activity>
-      <bpm:Activity Id="A7" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-        <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=539,y=48,w=60,h=40"/>
-      </bpm:Activity>
-      <bpm:Activity Id="A11" Name="New Timer Wait" Implementation="com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity">
-        <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
-        <bpm:Attribute Name="TIMER_WAIT" Value="2"/>
-        <bpm:Attribute Name="Unit" Value="Seconds"/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=366,y=35,w=100,h=60"/>
-      </bpm:Activity>
-      <bpm:Transition CompletionCode="" From="A6" To="A11" Event="FINISH" Id="T4">
-        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=336,ly=76,type=Elbow,xs=303&amp;362,ys=68&amp;68"/>
-      </bpm:Transition>
-      <bpm:Transition CompletionCode="" From="A11" To="A7" Event="FINISH" Id="T6">
-        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=502,ly=68,type=Elbow,xs=470&amp;535,ys=68&amp;68"/>
-      </bpm:Transition>
-      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
-      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Correction Handler"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=199,y=8,w=440,h=120"/>
-    </bpm:SubProcess>
-    <bpm:SubProcess Id="P8" name="Cancellation Handler" version="0" description="">
-      <bpm:Activity Id="A9" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=697,y=52,w=60,h=40"/>
-      </bpm:Activity>
-      <bpm:Activity Id="A10" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-        <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=997,y=52,w=60,h=40"/>
-      </bpm:Activity>
-      <bpm:Transition CompletionCode="" From="A9" To="A10" Event="FINISH" Id="T5">
-        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=877,ly=72,type=Elbow,xs=761&amp;993,ys=72&amp;72"/>
-      </bpm:Transition>
-      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
-      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Cancellation Handler"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=657,y=12,w=440,h=120"/>
-    </bpm:SubProcess>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=29,y=209,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DISPLAY_INFO": "lx=126,ly=229,type=Elbow,xs=93&132,ys=229&229",
+          "TRANSITION_RETRY_COUNT": "-1"
+        },
+        "event": "FINISH",
+        "id": "T10",
+        "to": "A16"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=588,y=186,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Category": "COM",
+        "FormName": "Autoform",
+        "Groups": "MDW Support",
+        "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
+        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+        "STATUS_AFTER_EVENT": "Hold",
+        "TaskLogicalId": "TaskEventTest:A3",
+        "TaskName": "AutoForm Task with Non-Recurring Event",
+        "Variables": "FormDataVar,,Not Displayed,0,,com.centurylink.mdw.model.FormDataDocument;path,path,Not Displayed,0,,java.lang.String",
+        "WAIT_EVENT_NAMES": "C-{$MasterRequestID},CORRECT,true,;A-{$MasterRequestID},ABORT,true,",
+        "WORK_DISPLAY_INFO": "x=343,y=140,w=132,h=69",
+        "Wait for Task": "TRUE"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "AutoForm Manual Task \r\nw Non Recurring Event",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=549,ly=191,type=Elbow,xs=479&584,ys=197&197"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "AlertIntervalUnits": "Hours",
+        "Category": "ORD",
+        "Groups": "MDW Support",
+        "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+        "SLAUnits": "Hours",
+        "STATUS_AFTER_EVENT": "Hold",
+        "STATUS_AFTER_TIMEOUT": "Hold",
+        "TaskLogicalId": "TaskEventTest:A12",
+        "TaskName": "Custom Manual Task w Recurring Event",
+        "TaskSLA": "48",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},NonTaskAction,true",
+        "WORK_DISPLAY_INFO": "x=338,y=220,w=137,h=66"
+      },
+      "id": "A12",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+      "name": "Custom Manual Task \r\nw Recurring Event",
+      "transitions": [
+        {
+          "attributes": {
+            "TRANSITION_DISPLAY_INFO": "lx=302,ly=305,type=Elbow,xs=405&405,ys=290&339",
+            "TRANSITION_RETRY_COUNT": "-1"
+          },
+          "event": "FINISH",
+          "id": "T7",
+          "resultCode": "NonTaskAction",
+          "to": "A14"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DISPLAY_INFO": "lx=566,ly=223,type=Elbow,xs=479&584,ys=223&223",
+            "TRANSITION_RETRY_COUNT": "-1"
+          },
+          "event": "FINISH",
+          "id": "T9",
+          "to": "A2"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DISPLAY_INFO": "lx=512,ly=262,type=Elbow,xs=475&616&616,ys=265&265&230",
+            "TRANSITION_RETRY_COUNT": "-1"
+          },
+          "event": "FINISH",
+          "id": "T13",
+          "resultCode": "AnotherWay",
+          "to": "A2"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Category": "COM",
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "5",
+        "TaskName": "New Task for uuu",
+        "Unit": "Seconds",
+        "WORK_DISPLAY_INFO": "x=355,y=343,w=100,h=60"
+      },
+      "id": "A14",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Check",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DISPLAY_INFO": "lx=405,ly=323,type=Elbow,xs=405&405,ys=339&290",
+          "TRANSITION_RETRY_COUNT": "-1"
+        },
+        "event": "FINISH",
+        "id": "T8",
+        "to": "A12"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "path",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=136,y=175,w=112,h=85"
+      },
+      "id": "A16",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Which Task?",
+      "transitions": [
+        {
+          "attributes": {
+            "TRANSITION_DISPLAY_INFO": "lx=268,ly=168,type=Elbow,xs=252&339,ys=192&192",
+            "TRANSITION_RETRY_COUNT": "-1"
+          },
+          "event": "FINISH",
+          "id": "T11",
+          "resultCode": "AutoForm",
+          "to": "A3"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DISPLAY_INFO": "lx=266,ly=217,type=Elbow,xs=252&334,ys=240&240",
+            "TRANSITION_RETRY_COUNT": "-1"
+          },
+          "event": "FINISH",
+          "id": "T12",
+          "resultCode": "Custom",
+          "to": "A12"
+        }
+      ]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "TRANSITION_RETRY_COUNT": "-1",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=134,h=27"
+  },
+  "subprocesses": [
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=239,y=48,w=60,h=40"},
+          "id": "A6",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=336,ly=76,type=Elbow,xs=303&362,ys=68&68"},
+            "event": "FINISH",
+            "id": "T4",
+            "to": "A11"
+          }]
+        },
+        {
+          "attributes": {
+            "DoNotNotifyCaller": "false",
+            "WORK_DISPLAY_INFO": "x=539,y=48,w=60,h=40"
+          },
+          "id": "A7",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        },
+        {
+          "attributes": {
+            "STATUS_AFTER_EVENT": "Cancelled",
+            "TIMER_WAIT": "2",
+            "Unit": "Seconds",
+            "WORK_DISPLAY_INFO": "x=366,y=35,w=100,h=60"
+          },
+          "id": "A11",
+          "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+          "name": "New Timer Wait",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=502,ly=68,type=Elbow,xs=470&535,ys=68&68"},
+            "event": "FINISH",
+            "id": "T6",
+            "to": "A7"
+          }]
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Correction Handler",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "WORK_DISPLAY_INFO": "x=199,y=8,w=440,h=120"
+      },
+      "id": "P5",
+      "name": "TaskEventTest Correction Handler"
+    },
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=697,y=52,w=60,h=40"},
+          "id": "A9",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=877,ly=72,type=Elbow,xs=761&993,ys=72&72"},
+            "event": "FINISH",
+            "id": "T5",
+            "to": "A10"
+          }]
+        },
+        {
+          "attributes": {
+            "DoNotNotifyCaller": "false",
+            "WORK_DISPLAY_INFO": "x=997,y=52,w=60,h=40"
+          },
+          "id": "A10",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Cancellation Handler",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "WORK_DISPLAY_INFO": "x=657,y=12,w=440,h=120"
+      },
+      "id": "P8",
+      "name": "Cancellation Handler"
+    }
+  ],
+  "variables": {"path": {
+    "category": "INPUT",
+    "type": "java.lang.String"
+  }},
+  "version": "0.4"
+}

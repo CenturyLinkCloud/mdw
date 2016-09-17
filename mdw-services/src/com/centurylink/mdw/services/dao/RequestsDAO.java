@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.exception.DataAccessException;
+import com.centurylink.mdw.common.query.QueryRequest;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -44,20 +45,22 @@ public class RequestsDAO extends VcsEntityDAO {
             countRs.next();
             total = countRs.getInt(1);
 
+            List<Request> requests = new ArrayList<Request>();
+            RequestList requestList = new RequestList(RequestList.MASTER_REQUESTS, requests);
+
             //If the total count is 0, stop further execution to prevent it from erroring out while running to get the Responses query.
-//          if(total == 0){
-//              return null;  //TODO: This causes a null pointer exception. Need to come up with a better solution.
-//          }
+            if(total == 0){
+              return requestList;
+            }
 
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
             q.append("select ").append(PROC_INST_COLS).append(", d.document_id, d.create_dt, d.owner_type\n");
             q.append("from process_instance pi, document d\n");
 
-            //String orderBy = buildOrderBy(query);
             q.append(where).append(buildOrderBy(query));
-            q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
+            if (query.getMax() != Query.MAX_ALL)
+                q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
 
-            List<Request> requests = new ArrayList<Request>();
             Map<Long,Request> requestMap = new HashMap<Long,Request>();
             List<Long> listenerRequestIds = new ArrayList<Long>();
             ResultSet rs = db.runSelect(q.toString(), null);
@@ -83,7 +86,6 @@ public class RequestsDAO extends VcsEntityDAO {
             // This join takes forever on MySQL, so a separate query is used to populate response info:
             // -- left join document d2 on (d2.owner_id = d.document_id)
             if (query.getMax() != Query.MAX_ALL) {
-                //TODO: If the above SQL query returned 0 record, this query will fail because the listenerRequestIds contains no Ids.
                 ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.LISTENER_RESPONSE, listenerRequestIds), null);
                 while (respRs.next()) {
                     Request request = requestMap.get(respRs.getLong("owner_id"));
@@ -94,7 +96,6 @@ public class RequestsDAO extends VcsEntityDAO {
                 }
             }
 
-            RequestList requestList = new RequestList(RequestList.MASTER_REQUESTS, requests);
             requestList.setTotal(total);
             requestList.setCount(requests.size());
             requestList.setRetrieveDate(DatabaseAccess.getDbDate());
@@ -141,10 +142,47 @@ public class RequestsDAO extends VcsEntityDAO {
             throw new DataAccessException(ex.getMessage(), ex);
         }
 
-        String find = query.getFind();  //This returns a null value.
+        String find = query.getFind();
         if (find != null)
             clause.append("and pi.master_request_id like '" + find + "%'\n");
         return clause.toString();
+    }
+
+    public Request getRequest(Long id) throws DataAccessException {
+        try {
+            db.openConnection();
+            StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
+            q.append("select ").append(PROC_INST_COLS).append(", d.document_id, d.create_dt, d.owner_type\n");
+            q.append("from process_instance pi, document d\n");
+            q.append("where d.owner_type = '" + OwnerType.DOCUMENT + "'\n");
+            q.append(" and pi.owner_id =  '" + id + "'\n"); // TODO:  Is this correct?
+
+            ResultSet rs = db.runSelect(q.toString(), null);
+            Request request = null;
+            while (rs.next()) {
+                ProcessInstanceVO pi = buildProcessInstance(rs);
+                request = new Request(rs.getLong("d.document_id"));
+                request.setCreated(rs.getTimestamp("d.create_dt"));
+                request.setMasterRequestId(pi.getMasterRequestId());
+                request.setProcessInstanceId(pi.getId());
+                request.setProcessId(pi.getProcessId());
+                request.setProcessName(pi.getProcessName());
+                request.setProcessVersion(pi.getProcessVersion());
+                request.setPackageName(pi.getPackageName());
+                request.setProcessStatus(pi.getStatus());
+                request.setProcessStart(rs.getTimestamp("pi.start_dt"));
+                request.setProcessEnd(rs.getTimestamp("pi.end_dt"));
+                request.setResponseId(rs.getLong("document_id"));
+                request.setResponded(rs.getTimestamp("create_dt"));
+            }
+            return request;
+        }
+        catch (Exception ex) {
+            throw new DataAccessException("Failed to retrieve requestId: ", ex);
+        }
+        finally {
+            db.closeConnection();
+        }
     }
 
     public RequestList getInboundRequests(Query query) throws DataAccessException {
@@ -166,12 +204,7 @@ public class RequestsDAO extends VcsEntityDAO {
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
             q.append("select d.document_id, d.create_dt\n");
             q.append("from document d\n");
-
             q.append(where).append(buildOrderBy(query));
-
-//            q.append(where);
-//            q.append("order by d.document_id desc");
-
             q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
 
             Map<Long,Request> requestMap = new HashMap<Long,Request>();
@@ -238,11 +271,7 @@ public class RequestsDAO extends VcsEntityDAO {
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
             q.append("select d.document_id, d.create_dt, d.owner_id\n");
             q.append("from document d\n");
-
             q.append(where).append(buildOrderBy(query));
-
-//            q.append(where);
-//            q.append("order by d.document_id desc");
             q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
 
             Map<Long,Request> requestMap = new HashMap<Long,Request>();

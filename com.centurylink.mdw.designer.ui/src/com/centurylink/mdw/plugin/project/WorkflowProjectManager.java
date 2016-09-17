@@ -437,6 +437,8 @@ public class WorkflowProjectManager implements IResourceChangeListener
     {
       try
       {
+        if (!project.isOpen())
+          project.open(null);
         PluginUtil.createFolder(project, ".settings/", null);
       }
       catch(CoreException ex)
@@ -483,7 +485,30 @@ public class WorkflowProjectManager implements IResourceChangeListener
     }
   }
 
-  public static void deleteProject(WorkflowProject workflowProject)
+  public void deleteProject(IProject project)
+  {
+    WorkflowProject workflowProject = getWorkflowProject(project);
+    if (workflowProject != null)
+    {
+      deleteProject(workflowProject);
+    }
+    else
+    {
+      try
+      {
+        project.delete(true, true, null);
+      }
+      catch (CoreException ex)
+      {
+        if (ex instanceof ResourceException && ex.getMessage().startsWith("Problems encountered while deleting"))
+          MessageDialog.openWarning(MdwPlugin.getShell(), "Problems Deleting", "Not all resources under project '" + project.getName() + "' could be deleted.\nPlease delete the project manually on the file system.");
+        else
+          PluginMessages.uiError(ex, "Delete Project", workflowProject);
+      }
+    }
+  }
+
+  public void deleteProject(WorkflowProject workflowProject)
   {
     if (!workflowProject.isRemote() && !workflowProject.isCloudProject())
       throw new RuntimeException("Can only delete remote or cloud projects");
@@ -500,10 +525,10 @@ public class WorkflowProjectManager implements IResourceChangeListener
       else
         PluginMessages.uiError(ex, "Delete Project", workflowProject);
     }
-    if (getInstance().getWorkflowProjects().contains(workflowProject))
+    if (getWorkflowProjects().contains(workflowProject))
     {
-      getInstance().getWorkflowProjects().remove(workflowProject);
-      getInstance().fireProjectChangeEvent(workflowProject, ChangeType.ELEMENT_DELETE);
+      getWorkflowProjects().remove(workflowProject);
+      fireProjectChangeEvent(workflowProject, ChangeType.ELEMENT_DELETE);
     }
   }
 

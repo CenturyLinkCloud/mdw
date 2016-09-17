@@ -290,4 +290,9 @@ public class RuntimeDataAccessRest extends ServerAccessRest implements RuntimeDa
     public ActivityList getActivityInstanceList(Query query) throws DataAccessException {
         throw new UnsupportedOperationException("Only supported for VCS Assets");
     }
+
+    // not used by designer (TODO: implement this and update calls to handle null return value)
+    public ProcessInstanceVO getProcessInstance(Long instanceId) throws DataAccessException {
+        return null;
+    }
 }

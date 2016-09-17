@@ -1,0 +1,91 @@
+import com.centurylink.mdw.common.utilities.JsonUtil
+import org.json.JSONObject
+
+// process-values-service
+// NOTE: requires Designer 8.9.6 for HTTP headers support
+start process("ProcessValues") {
+    variables = [ dateVar: Date.parse("MM-dd-yyyy HH:mm:ss", "09-01-2016 13:52:01"),
+                  stringVar: "Hello",
+                  docVar: "<full>\n  <document content='xml'/>\n</full>",
+                  jaxbVar: '''<ProcessJaxb
+  attributeOne="attrOneValue"
+  attributeTwo="requiredAttributeValue">
+  <elementOne>elementOneValue</elementOne>
+  <elementTwo>elementTwoValue</elementTwo>
+</ProcessJaxb>''' ]
+}
+
+verify process
+sleep 5 // objectVar takes time to update (TODO: why?) 
+
+// check values through process services
+def procInst = masterProcessInstance
+
+// all values
+response = get http("services/Processes/${procInst.id}/values") {
+  user = 'mdwapp'
+  password = 'ldap_012'
+  headers = [ Accept: "application/json" ]
+}
+assert response.code == 200
+response.expected = asset("process-values.json").text
+verify response
+
+// individual values
+response = get http("services/Processes/${procInst.id}/values/stringVar") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    headers = [ Accept: "application/json" ]
+}
+assert response.code == 200
+def json = new JSONObject(response.actual)
+assert json.getString('value') == 'Hello'
+
+response = get http("services/Processes/${procInst.id}/values/objectVar") {
+  user = 'mdwapp'
+  password = 'ldap_012'
+  headers = [ Accept: "application/json" ]
+}
+assert response.code == 200
+json = new JSONObject(response.actual)
+assert json.getString('value') == 'flowmaster: Manoj'
+
+response = get http("services/Processes/${procInst.id}/values/jaxbVar") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    headers = [ Accept: "application/json" ]
+  }
+assert response.code == 200
+json = new JSONObject(response.actual)
+assert json.getString('value') == '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProcessJaxb attributeOne="attrOneValue" attributeTwo="requiredAttributeValue">
+    <elementOne>elementOneValue</elementOne>
+    <elementTwo>elementTwoValue</elementTwo>
+</ProcessJaxb>
+'''
+// expressions
+response = get http("services/Processes/${procInst.id}/values/\${jaxbVar.elementOne}") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    headers = [ Accept: "application/json" ]
+  }
+assert response.code == 200
+json = new JSONObject(response.actual)
+assert json.getString('value') == 'elementOneValue'
+
+response = get http("services/Processes/${procInst.id}/values/\${objectVar.flowmaster}") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    headers = [ Accept: "application/json" ]
+  }
+assert response.code == 200
+json = new JSONObject(response.actual)
+assert json.getString('value') == 'Manoj'
+
+// bogus variable name
+response = get http("services/Processes/${procInst.id}/values/bogus") {
+    user = 'mdwapp'
+    password = 'ldap_012'
+    headers = [ Accept: "application/json" ]
+  }
+assert response.code == 404

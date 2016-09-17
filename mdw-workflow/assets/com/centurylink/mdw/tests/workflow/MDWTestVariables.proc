@@ -1,36 +1,62 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="MDWTestVariables" version="0.2" description="">
-    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=56,y=133,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=476,y=133,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A3" Name="PopulateVariables" Implementation="com.centurylink.mdw.tests.workflow.PopulateVar">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=214,y=123,w=155,h=55"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=174,ly=153,type=Elbow,xs=120&amp;210,ys=153&amp;153"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=424,ly=153,type=Elbow,xs=373&amp;472,ys=153&amp;153"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=50,y=50,w=169,h=27"/>
-    <bpm:Variables Name="intListVar" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.util.List&lt;Integer>"/>
-    </bpm:Variables>
-    <bpm:Variables Name="longListVar" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.util.List&lt;Long>"/>
-    </bpm:Variables>
-    <bpm:Variables Name="stringListVar" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.util.List&lt;String>"/>
-    </bpm:Variables>
-    <bpm:Variables Name="stringMapVar" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.util.Map&lt;String,String>"/>
-    </bpm:Variables>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=56,y=133,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=174,ly=153,type=Elbow,xs=120&210,ys=153&153"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=476,y=133,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=214,y=123,w=155,h=55"},
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.tests.workflow.PopulateVar",
+      "name": "PopulateVariables",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=424,ly=153,type=Elbow,xs=373&472,ys=153&153"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=169,h=27"
+  },
+  "variables": {
+    "intListVar": {
+      "category": "LOCAL",
+      "type": "java.util.List<Integer>"
+    },
+    "longListVar": {
+      "category": "LOCAL",
+      "type": "java.util.List<Long>"
+    },
+    "stringListVar": {
+      "category": "LOCAL",
+      "type": "java.util.List<String>"
+    },
+    "stringMapVar": {
+      "category": "LOCAL",
+      "type": "java.util.Map<String,String>"
+    }
+  },
+  "version": "0.2"
+}

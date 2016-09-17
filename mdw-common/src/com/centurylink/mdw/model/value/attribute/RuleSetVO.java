@@ -13,9 +13,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.common.utilities.FileHelper;
 import com.centurylink.mdw.common.utilities.MiniEncrypter;
 
-public class RuleSetVO implements Serializable,Comparable<RuleSetVO> {
+public class RuleSetVO implements Serializable, Comparable<RuleSetVO>, Jsonable {
 
     public static final String MILESTONE_REPORT = "MILESTONE_REPORT";
     public static final String GROOVY = "GROOVY";
@@ -729,5 +734,50 @@ public class RuleSetVO implements Serializable,Comparable<RuleSetVO> {
         if (lang == null)
             lang = fileExtension.toUpperCase().substring(1);
         return lang;
+    }
+
+    /**
+     * Only for VCS Assets.
+     */
+    public RuleSetVO(JSONObject json) throws JSONException {
+        if (json.has("name")) {
+            this.name = json.getString("name");
+            this.language = getFormat(name);
+        }
+        if (json.has("version"))
+            this.version = parseVersion(json.getString("version"));
+        if (json.has("content"))
+            this.setRuleSet(json.getString("content"));
+    }
+
+    /**
+     * JSON name = getName(), so not included.
+     */
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("version", getVersionString());
+        if (isBinary()) {
+            if (excludedFromMemoryCache(getName())) {
+                try {
+                    if (getRawFile() != null)
+                      setRawContent(FileHelper.read(getRawFile()));
+                }
+                catch (IOException ex) {
+                    throw new JSONException(ex);
+                }
+            }
+            if (getContent() != null)
+                json.put("content", encode(getContent()));
+        }
+        else {
+            if (getRuleSet() != null)
+                json.put("content", getRuleSet());
+        }
+
+        return json;
+    }
+
+    public String getJsonName() {
+        return getName();
     }
 }

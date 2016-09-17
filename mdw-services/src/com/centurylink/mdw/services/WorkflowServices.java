@@ -9,12 +9,14 @@ import java.util.Map;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.value.activity.ActivityCount;
 import com.centurylink.mdw.model.value.activity.ActivityInstance;
 import com.centurylink.mdw.model.value.activity.ActivityList;
 import com.centurylink.mdw.model.value.process.ProcessCount;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessList;
+import com.centurylink.mdw.model.value.process.ProcessRuntimeContext;
 import com.centurylink.mdw.model.value.process.ProcessVO;
 
 public interface WorkflowServices {
@@ -100,9 +102,14 @@ public interface WorkflowServices {
     public void actionActivity(String activityInstanceId, String action, String completionCode)
             throws ServiceException;
 
-    public ProcessInstanceVO getProcess(Long instanceId) throws ServiceException;
+    ProcessInstanceVO getProcess(Long instanceId) throws ServiceException;
 
-    public ProcessList getProcesses(Query query) throws ServiceException;
+    ProcessRuntimeContext getContext(Long instanceId) throws ServiceException;
+
+    Map<String,Value> getProcessValues(Long instanceId) throws ServiceException;
+    Value getProcessValue(Long instanceId, String name) throws ServiceException;
+
+    ProcessList getProcesses(Query query) throws ServiceException;
 
     public ActivityList getActivities(Query query) throws ServiceException;
 

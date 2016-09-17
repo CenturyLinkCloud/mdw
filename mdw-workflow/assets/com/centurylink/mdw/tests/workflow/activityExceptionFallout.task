@@ -1,8 +1,13 @@
-<task:taskTemplate logicalId="activityExceptionFallout" category="GEN" xmlns:task="http://mdw.centurylink.com/task">
-  <task:name>Activity Exception Fallout</task:name>
-  <task:description>For testing implicit exception variable.</task:description>
-  <task:attribute name="FormName">Autoform</task:attribute>
-  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
-  <task:attribute name="TaskDescription">For testing implicit exception variable.</task:attribute>
-  <task:attribute name="Groups">MDW Support</task:attribute>
-</task:taskTemplate>
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "Groups": "MDW Support",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "TaskDescription": "For testing implicit exception variable."
+  },
+  "category": "GEN",
+  "description": "For testing implicit exception variable.",
+  "logicalId": "activityExceptionFallout",
+  "name": "Activity Exception Fallout",
+  "version": "0.2"
+}

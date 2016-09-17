@@ -1,475 +1,774 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="MDWTestMainProcess" version="3.29" description="">
-    <bpm:Activity Id="A6" Name="Process Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=423,y=163,w=32,h=32"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A9" Name="N = 11" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="N = 11;"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=950,y=535,w=25,h=23"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A11" Name="Process Finish" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=454,y=880,w=32,h=32"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A27" Name="Set Array input arguments" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Output Documents" Value="launcher"/>
-      <bpm:Attribute Name="Rule" Value="table launcher &#10;    with argument, result, retcode&#10;    option key=argument;&#10;variable index;&#10;do $index = 0;&#10;while $index &lt; $N do&#10;    $index = $index + 1&#10;    and new ($index, &quot;&quot;, &quot;START&quot;) in $launcher;"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=70,y=370,w=31,h=31"/>
-      <bpm:Attribute Name="SCRIPT" Value="MagicBox"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A10" Name="Invoke process that errs" Implementation="com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity">
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1372,y=660,w=20,h=20"/>
-      <bpm:Attribute Name="processname" Value="com.centurylink.mdw.tests.workflow/MDWTestSubProcess2"/>
-      <bpm:Attribute Name="processversion" Value="[0.4,1)"/>
-      <bpm:Attribute Name="synchronous" Value="TRUE"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A25" Name="Get orderId" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="OsgiBundleSymbolicName" Value="com.centurylink.mdw.workflow"/>
-      <bpm:Attribute Name="Rule" Value="import org.w3c.dom.Node;&#13;&#10;import org.w3c.dom.NodeList; &#13;&#10;&#13;&#10;NodeList nodes = order.getFirstChild().getChildNodes();   &#13;&#10; Node node = nodes.item(1);&#13;&#10; if (&quot;orderId&quot;.equals(node.getLocalName()))  &#13;&#10;   orderId = node.getFirstChild().getNodeValue();&#13;&#10;&#13;&#10;  "/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=858,y=657,w=25,h=23"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A7" Name="Sum = 121" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="Sum = 121;&#10;"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1092,y=533,w=25,h=23"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A20" Name="Synch both branches" Implementation="com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity">
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="Synced Activities" Value="N = 11#Sum = 121"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1029,y=658,w=24,h=24"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A17" Name="Read order" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="OutputVariables" Value="order"/>
-      <bpm:Attribute Name="ReadOnlyVariables" Value="order#xmldata#launcher"/>
-      <bpm:Attribute Name="Rule" Value="// import com.centurylink.mdw.common.translator.VariableTranslator;&#10;// import com.qwest.mbeng.MbengDocument;&#10;// File orderFile = new File(&quot;C:\\workspaces\\mdw\\MDWDesigner\\myorder.so&quot;);&#10;// order = VariableTranslator.realToObject(MbengDocument.class.getName(), orderFile.getText());&#10;println(&quot;I do not need to load from file any more!&quot;);"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=827,y=366,w=25,h=23"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A8" Name="Another Dummy" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="print(&quot;Hello&quot;);&#10;"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1219,y=367,w=25,h=23"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A26" Name="Display result" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="print(&quot;Returned value is &quot; +Sum);"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=234,y=659,w=30,h=24"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A1" Name="Sum up" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="table launcher;&#10;&#10;do $Sum = 0;&#10;&#10;foreach row in $launcher&#10;if row.retcode == &quot;FINISH&quot;&#10;then $Sum = $Sum + row.result;&#10;"/>
-      <bpm:Attribute Name="SCRIPT" Value="MagicBox"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=67,y=552,w=28,h=33"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A12" Name="Raise ABORT event" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="RETURN_CODE" Value="BTN"/>
-      <bpm:Attribute Name="Rule" Value="BTN = &quot;ABORT:&quot;;&#10;"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1524,y=366,w=24,h=24"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A21" Name="Invoke remote process" Implementation="com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity">
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=420,y=554,w=31,h=29"/>
-      <bpm:Attribute Name="processname" Value="com.centurylink.mdw.tests.workflow/MDWTestSubProcess"/>
-      <bpm:Attribute Name="processversion" Value="[1.7,2)"/>
-      <bpm:Attribute Name="synchronous" Value="TRUE"/>
-      <bpm:Attribute Name="variables" Value="argument=$N;newvar=;testxml=$xmldata;result=$Sum"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A16" Name="Another sync" Implementation="com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity">
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="Sync Expression" Value="A18 || A19"/>
-      <bpm:Attribute Name="Synced Activities" Value="N 13#Sum 169"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1220,y=659,w=24,h=24"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A5" Name="Invoke multiple processes" Implementation="com.centurylink.mdw.workflow.activity.process.InvokeMultipleProcessActivity">
-      <bpm:Attribute Name="DELAY_BETWEEN" Value="5"/>
-      <bpm:Attribute Name="KeyColumn" Value="argument"/>
-      <bpm:Attribute Name="ParameterTable" Value="launcher"/>
-      <bpm:Attribute Name="ReturnCodeColumn" Value="retcode"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=62,y=462,w=41,h=41"/>
-      <bpm:Attribute Name="processname" Value="com.centurylink.mdw.tests/MDWTestSubProcess"/>
-      <bpm:Attribute Name="processversion" Value="1007"/>
-      <bpm:Attribute Name="synchronous" Value="TRUE"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A22" Name="Invoke single process" Implementation="com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity">
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=234,y=499,w=28,h=25"/>
-      <bpm:Attribute Name="processname" Value="com.centurylink.mdw.tests.workflow/MDWTestSubProcess"/>
-      <bpm:Attribute Name="processversion" Value="[1.7,2)"/>
-      <bpm:Attribute Name="synchronous" Value="TRUE"/>
-      <bpm:Attribute Name="variables" Value="argument=$N;testxml=$xmldata;result=$Sum"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A4" Name="Set remote argument" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Output Documents" Value="xmldata"/>
-      <bpm:Attribute Name="Rule" Value="$xmldata.MINUTES = &quot;2&quot;;&#10;&#10;$intarraytest = &quot;1~1~2~3~5~8&quot;;&#10;&#10;$maptest = &quot;R=red~G=green~B=blue&quot;;"/>
-      <bpm:Attribute Name="SCRIPT" Value="MagicBox"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=423,y=410,w=25,h=23"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A24" Name="Dummy Resume B" Implementation="com.centurylink.mdw.workflow.activity.ControlledActivityImpl">
-      <bpm:Attribute Name="Documentation" Value="&lt;html>&#13;&#10;  &lt;head>&#13;&#10;&#13;&#10;  &lt;/head>&#13;&#10;  &lt;body>&#13;&#10;    &lt;p style=&quot;margin-top: 0&quot;>&#13;&#10;      &#13;&#10;    &lt;/p>&#13;&#10;  &lt;/body>&#13;&#10;&lt;/html>&#13;&#10;"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=718,y=664,w=24,h=16"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A19" Name="Sum 169" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="Sum = 169;&#10;"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1256,y=530,w=25,h=23"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A23" Name="Set input argument" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Output Documents" Value="xmldata"/>
-      <bpm:Attribute Name="Rule" Value="xmldata = &quot;&lt;ROOT>\n&quot;;&#10;xmldata = xmldata+&quot;   &lt;MINUTES>2&lt;/MINUTES>\n&quot;;&#10;xmldata = xmldata+&quot;&lt;/ROOT>\n&quot;;&#10;&#10;Integer[] intarraytest = new Integer[6];&#10;        intarraytest[0] = new Integer(1);&#10;        intarraytest[1] = new Integer(1);&#10;        intarraytest[2] = new Integer(2);&#10;        intarraytest[3] = new Integer(3);&#10;        intarraytest[4] = new Integer(5);&#10;        intarraytest[5] = new Integer(8);&#10;&#10;Map&lt;String, String> maptest = new HashMap&lt;String, String>();&#10;            maptest.put(&quot;R&quot;, &quot;red&quot;);&#10;            maptest.put(&quot;G&quot;, &quot;green&quot;);&#10;            maptest.put(&quot;B&quot;, &quot;blue&quot;);&#10;    &#10;&#10;"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=238,y=393,w=29,h=29"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A15" Name="Create argument" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="println(&quot;Hello, world!&quot;)"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1374,y=368,w=24,h=24"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A13" Name="Scripts with syntax error" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="$xmldata.MINUTES = &quot;2&quot;;&#10;&#10;$intarraytest = &quot;1~1~2~3~5~8&quot;;&#10;&#10;$maptest = &quot;R=red~G=green~B=blue&quot;;&#10;&#10;syntax error here"/>
-      <bpm:Attribute Name="SCRIPT" Value="MagicBox"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=680,y=369,w=30,h=28"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Dummy - to fork out" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="print(&quot;Hello!&quot;);"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1022,y=364,w=25,h=23"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A14" Name="Dummy Resume A" Implementation="com.centurylink.mdw.workflow.activity.ControlledActivityImpl">
-      <bpm:Attribute Name="Documentation" Value="&lt;html>&#13;&#10;  &lt;head>&#13;&#10;&#13;&#10;  &lt;/head>&#13;&#10;  &lt;body>&#13;&#10;    &lt;p style=&quot;margin-top: 0&quot;>&#13;&#10;      &#13;&#10;    &lt;/p>&#13;&#10;  &lt;/body>&#13;&#10;&lt;/html>&#13;&#10;"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=615,y=665,w=24,h=16"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A18" Name="N 13" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="N = 13;&#10;"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1175,y=528,w=25,h=23"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A33" Name="multiple processes ?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
-      <bpm:Attribute Name="Expression" Value="processCase"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=406,y=242,w=69,h=25"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A34" Name="Invoke service lvl9 process" Implementation="com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity">
-      <bpm:Attribute Name="processname" Value="com.centurylink.mdw.tests.workflow/MDWServiceLevel_9"/>
-      <bpm:Attribute Name="processversion" Value="[0.1,1)"/>
-      <bpm:Attribute Name="synchronous" Value="TRUE"/>
-      <bpm:Attribute Name="variables" Value="processCase=$processCase"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1480,y=652,w=20,h=20"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A2" To="A9" Event="FINISH" Id="T6">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=966,ly=456,type=Elbow,xs=1034&amp;962,ys=391&amp;531"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A2" To="A7" Event="FINISH" Id="T7">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="5s"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1032,ly=439,type=ElbowV,xs=1032&amp;1032&amp;1102&amp;1102,ys=391&amp;463&amp;463&amp;529"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A9" To="A20" Event="FINISH" Id="T8">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=966,ly=600,type=Elbow,xs=962&amp;1041,ys=562&amp;654"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A20" To="A11" Event="FINISH" Id="T9">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=473,ly=775,type=ElbowV,xs=1041&amp;470,ys=686&amp;876"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A7" To="A20" Event="FINISH" Id="T10">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1045,ly=599,type=Elbow,xs=1104&amp;1041,ys=560&amp;654"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A12" To="A11" Event="FINISH" Id="T12">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=724,ly=552,type=ElbowV,xs=1534&amp;1534&amp;470&amp;470,ys=388&amp;780&amp;780&amp;876"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A8" To="A18" Event="FINISH" Id="T14">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1189,ly=457,type=Elbow,xs=1231&amp;1187,ys=394&amp;524"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A8" To="A19" Event="FINISH" Id="T15">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="5s"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1235,ly=452,type=Elbow,xs=1231&amp;1268,ys=394&amp;526"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A18" To="A16" Event="FINISH" Id="T16">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1191,ly=597,type=Elbow,xs=1187&amp;1232,ys=555&amp;655"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A19" To="A16" Event="FINISH" Id="T17">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1236,ly=598,type=Elbow,xs=1268&amp;1232,ys=557&amp;655"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A16" To="A11" Event="FINISH" Id="T18">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="7s"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=474,ly=774,type=ElbowV,xs=1232&amp;470,ys=687&amp;876"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A15" To="A10" Event="FINISH" Id="T20">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1383,ly=523,type=ElbowV,xs=1383&amp;1383,ys=396&amp;656"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A10" To="A11" Event="FINISH" Id="T21">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=924,ly=778,type=ElbowV,xs=1382&amp;470,ys=684&amp;876"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="B" From="A13" To="A24" Event="RESUME" Id="T22">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=695,ly=516,type=ElbowV,xs=695&amp;730,ys=401&amp;660"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A14" To="A11" Event="FINISH" Id="T23">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=473,ly=774,type=ElbowV,xs=627&amp;470,ys=685&amp;876"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A24" To="A11" Event="FINISH" Id="T24">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=472,ly=772,type=ElbowV,xs=730&amp;470,ys=684&amp;876"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A13" To="A14" Event="FINISH" Id="T25">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=640,ly=517,type=ElbowV,xs=695&amp;627,ys=401&amp;661"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A27" To="A5" Event="FINISH" Id="T28">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=88,ly=441,type=ElbowV,xs=85&amp;85,ys=405&amp;458"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A22" To="A26" Event="FINISH" Id="T30">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=253,ly=591,type=ElbowV,xs=249&amp;249,ys=528&amp;655"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A26" To="A11" Event="FINISH" Id="T31">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=252,ly=774,type=ElbowV,xs=249&amp;470,ys=687&amp;876"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A5" To="A1" Event="FINISH" Id="T32">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=85,ly=527,type=ElbowV,xs=81&amp;81,ys=507&amp;548"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A1" To="A26" Event="FINISH" Id="T33">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=85,ly=614,type=ElbowV,xs=81&amp;249,ys=589&amp;655"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A21" To="A26" Event="FINISH" Id="T34">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=253,ly=613,type=ElbowV,xs=435&amp;249,ys=587&amp;655"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A23" To="A22" Event="FINISH" Id="T35">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=256,ly=461,type=ElbowV,xs=250&amp;250,ys=426&amp;495"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A4" To="A21" Event="FINISH" Id="T37">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=440,ly=493,type=ElbowV,xs=436&amp;436,ys=437&amp;550"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A25" To="A11" Event="FINISH" Id="T2">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=474,ly=774,type=ElbowV,xs=870&amp;470,ys=684&amp;876"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A17" To="A25" Event="FINISH" Id="T3">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=859,ly=528,type=ElbowV,xs=839&amp;870,ys=393&amp;653"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A6" To="A33" Event="FINISH" Id="T41">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=439,ly=218,type=Elbow,xs=439&amp;439,ys=199&amp;238"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="MultipleSubProcess" From="A33" To="A27" Event="FINISH" Id="T42">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=95,ly=298,type=ElbowV,xs=440&amp;85,ys=271&amp;366"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="RemoteSubProcess" From="A33" To="A4" Event="FINISH" Id="T43">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=435,ly=338,type=ElbowV,xs=435&amp;435,ys=271&amp;406"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="DEFAULT" From="A33" To="A13" Event="FINISH" Id="T44">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=633,ly=328,type=ElbowV,xs=440&amp;695,ys=271&amp;365"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="ServiceOrder" From="A33" To="A17" Event="FINISH" Id="T45">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=756,ly=333,type=ElbowV,xs=440&amp;839,ys=271&amp;362"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="Synchronization" From="A33" To="A2" Event="FINISH" Id="T46">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=948,ly=333,type=ElbowV,xs=440&amp;1034,ys=271&amp;360"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="Sync with custom expr" From="A33" To="A8" Event="FINISH" Id="T47">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1092,ly=328,type=ElbowV,xs=440&amp;1231,ys=271&amp;363"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="error handler delegation" From="A33" To="A15" Event="FINISH" Id="T48">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1249,ly=331,type=ElbowV,xs=440&amp;1386,ys=271&amp;364"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="AbortEvent" From="A33" To="A12" Event="FINISH" Id="T49">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=1459,ly=334,type=ElbowV,xs=440&amp;1536,ys=271&amp;362"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="SingleSubProcess" From="A33" To="A23" Event="FINISH" Id="T50">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=304,ly=333,type=ElbowV,xs=440&amp;252,ys=271&amp;389"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="DocumentBinding" From="A33" To="A34" Event="FINISH" Id="T51">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=988,ly=233,type=ElbowV,xs=471&amp;1476&amp;1476,ys=255&amp;255&amp;648"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A34" To="A11" Event="FINISH" Id="T52">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=974,ly=704,type=ElbowV,xs=1490&amp;470,ys=676&amp;876"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="ABORT_TRANSITION_ID" Value="192270"/>
-    <bpm:Attribute Name="ERROR_PROCESS_ID" Value="282656"/>
-    <bpm:Attribute Name="ERROR_TRANSITION_ID" Value="192269"/>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="SLA" Value="0"/>
-    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=50,y=40,w=199,h=27"/>
-    <bpm:Attribute Name="START_TRANSITION_ID" Value="2325977"/>
-    <bpm:Variables Name="BTN" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="intarraytest" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.Integer[]"/>
-    </bpm:Variables>
-    <bpm:Variables Name="launcher" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="com.qwest.mbeng.MbengTableArray"/>
-    </bpm:Variables>
-    <bpm:Variables Name="maptest" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.util.Map"/>
-    </bpm:Variables>
-    <bpm:Variables Name="N" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.Integer"/>
-    </bpm:Variables>
-    <bpm:Variables Name="order" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="org.w3c.dom.Document"/>
-    </bpm:Variables>
-    <bpm:Variables Name="orderId" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="processCase" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="Sum" ReferredAs="" Category="OUTPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.Integer"/>
-    </bpm:Variables>
-    <bpm:Variables Name="xmldata" ReferredAs="" Category="STATIC" DisplaySequence="0">
-      <bpm:type Name="org.w3c.dom.Document"/>
-    </bpm:Variables>
-    <bpm:SubProcess Id="P3" name="Cancellation Handler" version="3.5" description="">
-      <bpm:Activity Id="A31" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-        <bpm:Attribute Name="SLA" Value="0"/>
-        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=770,y=72,w=32,h=32"/>
-      </bpm:Activity>
-      <bpm:Activity Id="A32" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-        <bpm:Attribute Name="SLA" Value="0"/>
-        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=932,y=71,w=32,h=32"/>
-      </bpm:Activity>
-      <bpm:Transition CompletionCode="" From="A31" To="A32" Event="FINISH" Id="T40">
-        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=869,ly=87,type=Elbow,xs=806&amp;928,ys=87&amp;87"/>
-      </bpm:Transition>
-      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Cancellation Handler"/>
-      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=729,y=40,w=281,h=86"/>
-      <bpm:Attribute Name="ENTRY_TRANSITION_ID" Value="2325978"/>
-      <bpm:Attribute Name="START_TRANSITION_ID" Value="2325900"/>
-      <bpm:Variables Name="EmbeddedSubProcessTaskAction" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-        <bpm:type Name="java.lang.String"/>
-      </bpm:Variables>
-    </bpm:SubProcess>
-    <bpm:SubProcess Id="P2" name="Exception Handler" version="3.5" description="">
-      <bpm:Activity Id="A29" Name="Process Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-        <bpm:Attribute Name="SLA" Value="0"/>
-        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=371,y=58,w=32,h=32"/>
-      </bpm:Activity>
-      <bpm:Activity Id="A30" Name="Process Finish" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-        <bpm:Attribute Name="SLA" Value="0"/>
-        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=599,y=59,w=32,h=32"/>
-      </bpm:Activity>
-      <bpm:Activity Id="A28" Name="My fallout task" Implementation="com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity">
-        <bpm:Attribute Name="AlertIntervalUnits" Value="Hours"/>
-        <bpm:Attribute Name="Category" Value="ORD"/>
-        <bpm:Attribute Name="Groups" Value="Fallout Specialists"/>
-        <bpm:Attribute Name="Notices" Value="$DefaultNotices"/>
-        <bpm:Attribute Name="SLA" Value="0"/>
-        <bpm:Attribute Name="SLAUnits" Value="Hours"/>
-        <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-        <bpm:Attribute Name="STATUS_AFTER_EVENT" Value="Cancelled"/>
-        <bpm:Attribute Name="Task Description" Value="Testing variable display and entry."/>
-        <bpm:Attribute Name="Task Name" Value="General Fallout"/>
-        <bpm:Attribute Name="TaskLogicalId" Value="MDWTestMainProcess:A28"/>
-        <bpm:Attribute Name="TaskName" Value="A Task For Testing Variables"/>
-        <bpm:Attribute Name="TaskSLA" Value="24"/>
-        <bpm:Attribute Name="Variables" Value="order,order,Not Displayed,0,,com.qwest.mbeng.MbengDocument;Sum,Sum,Not Displayed,0,,java.lang.Integer;intarraytest,intarraytest,Not Displayed,0,,java.lang.Integer[];maptest,maptest,Not Displayed,0,,java.util.Map;BTN,BTN,Not Displayed,0,,java.lang.String;case,case,Not Displayed,0,,java.lang.String;N,N,Not Displayed,0,,java.lang.Integer;launcher,launcher,Not Displayed,0,,com.qwest.mbeng.MbengTableArray;xmldata,xmldata,Not Displayed,0,,org.w3c.dom.Document"/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=484,y=60,w=30,h=28"/>
-        <bpm:Attribute Name="TASK_PAGELET" Value="com.centurylink.mdw.base/CustomManualTask.pagelet"/>
-      </bpm:Activity>
-      <bpm:Transition CompletionCode="" From="A28" To="A30" Event="FINISH" Id="T38">
-        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=556,ly=74,type=Straight,xs=514&amp;599,ys=74&amp;75"/>
-      </bpm:Transition>
-      <bpm:Transition CompletionCode="" From="A29" To="A28" Event="FINISH" Id="T39">
-        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=443,ly=74,type=Straight,xs=403&amp;484,ys=74&amp;74"/>
-      </bpm:Transition>
-      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="TaskName" Value="A Test Task"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=351,y=33,w=310,h=84"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO_MDWTestFalloutProcess" Value="x=499,y=110,w=31,h=27"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO_MDWTestMainProcess" Value="x=494,y=29,w=24,h=24"/>
-      <bpm:Attribute Name="ENTRY_TRANSITION_ID" Value="2325979"/>
-      <bpm:Attribute Name="START_TRANSITION_ID" Value="2325912"/>
-      <bpm:Variables Name="EmbeddedSubProcessTaskAction" ReferredAs="" Category="OUTPUT" DisplaySequence="0">
-        <bpm:type Name="java.lang.String"/>
-      </bpm:Variables>
-    </bpm:SubProcess>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=423,y=163,w=32,h=32"},
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Process Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=439,ly=218,type=Elbow,xs=439&439,ys=199&238"},
+        "event": "FINISH",
+        "id": "T41",
+        "to": "A33"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "N = 11;",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=950,y=535,w=25,h=23"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "N = 11",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=966,ly=600,type=Elbow,xs=962&1041,ys=562&654"},
+        "event": "FINISH",
+        "id": "T8",
+        "to": "A20"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=454,y=880,w=32,h=32"},
+      "id": "A11",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Process Finish"
+    },
+    {
+      "attributes": {
+        "Output Documents": "launcher",
+        "Rule": "table launcher \n    with argument, result, retcode\n    option key=argument;\nvariable index;\ndo $index = 0;\nwhile $index < $N do\n    $index = $index + 1\n    and new ($index, \"\", \"START\") in $launcher;",
+        "SCRIPT": "MagicBox",
+        "WORK_DISPLAY_INFO": "x=70,y=370,w=31,h=31"
+      },
+      "id": "A27",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set Array input arguments",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=88,ly=441,type=ElbowV,xs=85&85,ys=405&458",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T28",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=1372,y=660,w=20,h=20",
+        "processname": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2",
+        "processversion": "[0.4,1)",
+        "synchronous": "TRUE"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke process that errs",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=924,ly=778,type=ElbowV,xs=1382&470,ys=684&876"},
+        "event": "FINISH",
+        "id": "T21",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "OsgiBundleSymbolicName": "com.centurylink.mdw.workflow",
+        "Rule": "import org.w3c.dom.Node;\r\nimport org.w3c.dom.NodeList; \r\n\r\nNodeList nodes = order.getFirstChild().getChildNodes();   \r\n Node node = nodes.item(1);\r\n if (\"orderId\".equals(node.getLocalName()))  \r\n   orderId = node.getFirstChild().getNodeValue();\r\n\r\n  ",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=858,y=657,w=25,h=23"
+      },
+      "id": "A25",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Get orderId",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=474,ly=774,type=ElbowV,xs=870&470,ys=684&876",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "Sum = 121;\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=1092,y=533,w=25,h=23"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Sum = 121",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1045,ly=599,type=Elbow,xs=1104&1041,ys=560&654"},
+        "event": "FINISH",
+        "id": "T10",
+        "to": "A20"
+      }]
+    },
+    {
+      "attributes": {
+        "Synced Activities": "N = 11#Sum = 121",
+        "WORK_DISPLAY_INFO": "x=1029,y=658,w=24,h=24"
+      },
+      "id": "A20",
+      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
+      "name": "Synch both branches",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=473,ly=775,type=ElbowV,xs=1041&470,ys=686&876",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T9",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "OutputVariables": "order",
+        "ReadOnlyVariables": "order#xmldata#launcher",
+        "Rule": "// import com.centurylink.mdw.common.translator.VariableTranslator;\n// import com.qwest.mbeng.MbengDocument;\n// File orderFile = new File(\"C:\\\\workspaces\\\\mdw\\\\MDWDesigner\\\\myorder.so\");\n// order = VariableTranslator.realToObject(MbengDocument.class.getName(), orderFile.getText());\nprintln(\"I do not need to load from file any more!\");",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=827,y=366,w=25,h=23"
+      },
+      "id": "A17",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Read order",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=859,ly=528,type=ElbowV,xs=839&870,ys=393&653",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A25"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "print(\"Hello\");\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=1219,y=367,w=25,h=23"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Another Dummy",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1189,ly=457,type=Elbow,xs=1231&1187,ys=394&524"},
+          "event": "FINISH",
+          "id": "T14",
+          "to": "A18"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "5s",
+            "TRANSITION_DISPLAY_INFO": "lx=1235,ly=452,type=Elbow,xs=1231&1268,ys=394&526",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "FINISH",
+          "id": "T15",
+          "to": "A19"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Rule": "print(\"Returned value is \" +Sum);",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=234,y=659,w=30,h=24"
+      },
+      "id": "A26",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Display result",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=252,ly=774,type=ElbowV,xs=249&470,ys=687&876",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T31",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "table launcher;\n\ndo $Sum = 0;\n\nforeach row in $launcher\nif row.retcode == \"FINISH\"\nthen $Sum = $Sum + row.result;\n",
+        "SCRIPT": "MagicBox",
+        "WORK_DISPLAY_INFO": "x=67,y=552,w=28,h=33"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Sum up",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=85,ly=614,type=ElbowV,xs=81&249,ys=589&655",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T33",
+        "to": "A26"
+      }]
+    },
+    {
+      "attributes": {
+        "RETURN_CODE": "BTN",
+        "Rule": "BTN = \"ABORT:\";\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=1524,y=366,w=24,h=24"
+      },
+      "id": "A12",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Raise ABORT event",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=724,ly=552,type=ElbowV,xs=1534&1534&470&470,ys=388&780&780&876",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T12",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=420,y=554,w=31,h=29",
+        "processname": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess",
+        "processversion": "[1.7,2)",
+        "synchronous": "TRUE",
+        "variables": "argument=$N;newvar=;testxml=$xmldata;result=$Sum"
+      },
+      "id": "A21",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke remote process",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=253,ly=613,type=ElbowV,xs=435&249,ys=587&655",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T34",
+        "to": "A26"
+      }]
+    },
+    {
+      "attributes": {
+        "Sync Expression": "A18 || A19",
+        "Synced Activities": "N 13#Sum 169",
+        "WORK_DISPLAY_INFO": "x=1220,y=659,w=24,h=24"
+      },
+      "id": "A16",
+      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
+      "name": "Another sync",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "7s",
+          "TRANSITION_DISPLAY_INFO": "lx=474,ly=774,type=ElbowV,xs=1232&470,ys=687&876",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T18",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "DELAY_BETWEEN": "5",
+        "KeyColumn": "argument",
+        "ParameterTable": "launcher",
+        "ReturnCodeColumn": "retcode",
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "WORK_DISPLAY_INFO": "x=62,y=462,w=41,h=41",
+        "processname": "com.centurylink.mdw.tests/MDWTestSubProcess",
+        "processversion": "1007",
+        "synchronous": "TRUE"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeMultipleProcessActivity",
+      "name": "Invoke multiple processes",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=85,ly=527,type=ElbowV,xs=81&81,ys=507&548",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T32",
+        "to": "A1"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=234,y=499,w=28,h=25",
+        "processname": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess",
+        "processversion": "[1.7,2)",
+        "synchronous": "TRUE",
+        "variables": "argument=$N;testxml=$xmldata;result=$Sum"
+      },
+      "id": "A22",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke single process",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=253,ly=591,type=ElbowV,xs=249&249,ys=528&655",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T30",
+        "to": "A26"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "xmldata",
+        "Rule": "$xmldata.MINUTES = \"2\";\n\n$intarraytest = \"1~1~2~3~5~8\";\n\n$maptest = \"R=red~G=green~B=blue\";",
+        "SCRIPT": "MagicBox",
+        "WORK_DISPLAY_INFO": "x=423,y=410,w=25,h=23"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set remote argument",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=440,ly=493,type=ElbowV,xs=436&436,ys=437&550",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T37",
+        "to": "A21"
+      }]
+    },
+    {
+      "attributes": {
+        "Documentation": "<html>\r\n  <head>\r\n\r\n  <\/head>\r\n  <body>\r\n    <p style=\"margin-top: 0\">\r\n      \r\n    <\/p>\r\n  <\/body>\r\n<\/html>\r\n",
+        "WORK_DISPLAY_INFO": "x=718,y=664,w=24,h=16"
+      },
+      "id": "A24",
+      "implementor": "com.centurylink.mdw.workflow.activity.ControlledActivityImpl",
+      "name": "Dummy Resume B",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=472,ly=772,type=ElbowV,xs=730&470,ys=684&876",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T24",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "Sum = 169;\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=1256,y=530,w=25,h=23"
+      },
+      "id": "A19",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Sum 169",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1236,ly=598,type=Elbow,xs=1268&1232,ys=557&655"},
+        "event": "FINISH",
+        "id": "T17",
+        "to": "A16"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "xmldata",
+        "Rule": "xmldata = \"<ROOT>\\n\";\nxmldata = xmldata+\"   <MINUTES>2<\/MINUTES>\\n\";\nxmldata = xmldata+\"<\/ROOT>\\n\";\n\nInteger[] intarraytest = new Integer[6];\n        intarraytest[0] = new Integer(1);\n        intarraytest[1] = new Integer(1);\n        intarraytest[2] = new Integer(2);\n        intarraytest[3] = new Integer(3);\n        intarraytest[4] = new Integer(5);\n        intarraytest[5] = new Integer(8);\n\nMap<String, String> maptest = new HashMap<String, String>();\n            maptest.put(\"R\", \"red\");\n            maptest.put(\"G\", \"green\");\n            maptest.put(\"B\", \"blue\");\n    \n\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=238,y=393,w=29,h=29"
+      },
+      "id": "A23",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set input argument",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=256,ly=461,type=ElbowV,xs=250&250,ys=426&495",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T35",
+        "to": "A22"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "println(\"Hello, world!\")",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=1374,y=368,w=24,h=24"
+      },
+      "id": "A15",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Create argument",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1383,ly=523,type=ElbowV,xs=1383&1383,ys=396&656"},
+        "event": "FINISH",
+        "id": "T20",
+        "to": "A10"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "$xmldata.MINUTES = \"2\";\n\n$intarraytest = \"1~1~2~3~5~8\";\n\n$maptest = \"R=red~G=green~B=blue\";\n\nsyntax error here",
+        "SCRIPT": "MagicBox",
+        "WORK_DISPLAY_INFO": "x=680,y=369,w=30,h=28"
+      },
+      "id": "A13",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Scripts with syntax error",
+      "transitions": [
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=695,ly=516,type=ElbowV,xs=695&730,ys=401&660",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "RESUME",
+          "id": "T22",
+          "resultCode": "B",
+          "to": "A24"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=640,ly=517,type=ElbowV,xs=695&627,ys=401&661",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "FINISH",
+          "id": "T25",
+          "to": "A14"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Rule": "print(\"Hello!\");",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=1022,y=364,w=25,h=23"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Dummy - to fork out",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=966,ly=456,type=Elbow,xs=1034&962,ys=391&531"},
+          "event": "FINISH",
+          "id": "T6",
+          "to": "A9"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "5s",
+            "TRANSITION_DISPLAY_INFO": "lx=1032,ly=439,type=ElbowV,xs=1032&1032&1102&1102,ys=391&463&463&529",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "FINISH",
+          "id": "T7",
+          "to": "A7"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Documentation": "<html>\r\n  <head>\r\n\r\n  <\/head>\r\n  <body>\r\n    <p style=\"margin-top: 0\">\r\n      \r\n    <\/p>\r\n  <\/body>\r\n<\/html>\r\n",
+        "WORK_DISPLAY_INFO": "x=615,y=665,w=24,h=16"
+      },
+      "id": "A14",
+      "implementor": "com.centurylink.mdw.workflow.activity.ControlledActivityImpl",
+      "name": "Dummy Resume A",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=473,ly=774,type=ElbowV,xs=627&470,ys=685&876",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T23",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "N = 13;\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=1175,y=528,w=25,h=23"
+      },
+      "id": "A18",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "N 13",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1191,ly=597,type=Elbow,xs=1187&1232,ys=555&655"},
+        "event": "FINISH",
+        "id": "T16",
+        "to": "A16"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "processCase",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=406,y=242,w=69,h=25"
+      },
+      "id": "A33",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "multiple processes ?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=95,ly=298,type=ElbowV,xs=440&85,ys=271&366"},
+          "event": "FINISH",
+          "id": "T42",
+          "resultCode": "MultipleSubProcess",
+          "to": "A27"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=435,ly=338,type=ElbowV,xs=435&435,ys=271&406"},
+          "event": "FINISH",
+          "id": "T43",
+          "resultCode": "RemoteSubProcess",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=633,ly=328,type=ElbowV,xs=440&695,ys=271&365"},
+          "event": "FINISH",
+          "id": "T44",
+          "resultCode": "DEFAULT",
+          "to": "A13"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=756,ly=333,type=ElbowV,xs=440&839,ys=271&362"},
+          "event": "FINISH",
+          "id": "T45",
+          "resultCode": "ServiceOrder",
+          "to": "A17"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=948,ly=333,type=ElbowV,xs=440&1034,ys=271&360"},
+          "event": "FINISH",
+          "id": "T46",
+          "resultCode": "Synchronization",
+          "to": "A2"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1092,ly=328,type=ElbowV,xs=440&1231,ys=271&363"},
+          "event": "FINISH",
+          "id": "T47",
+          "resultCode": "Sync with custom expr",
+          "to": "A8"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1249,ly=331,type=ElbowV,xs=440&1386,ys=271&364"},
+          "event": "FINISH",
+          "id": "T48",
+          "resultCode": "error handler delegation",
+          "to": "A15"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1459,ly=334,type=ElbowV,xs=440&1536,ys=271&362"},
+          "event": "FINISH",
+          "id": "T49",
+          "resultCode": "AbortEvent",
+          "to": "A12"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=304,ly=333,type=ElbowV,xs=440&252,ys=271&389"},
+          "event": "FINISH",
+          "id": "T50",
+          "resultCode": "SingleSubProcess",
+          "to": "A23"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=988,ly=233,type=ElbowV,xs=471&1476&1476,ys=255&255&648"},
+          "event": "FINISH",
+          "id": "T51",
+          "resultCode": "DocumentBinding",
+          "to": "A34"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=1480,y=652,w=20,h=20",
+        "processname": "com.centurylink.mdw.tests.workflow/MDWServiceLevel_9",
+        "processversion": "[0.2,1)",
+        "synchronous": "TRUE",
+        "variables": "processCase=$processCase"
+      },
+      "id": "A34",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke service lvl9 process",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=974,ly=704,type=ElbowV,xs=1490&470,ys=676&876"},
+        "event": "FINISH",
+        "id": "T52",
+        "to": "A11"
+      }]
+    }
+  ],
+  "attributes": {
+    "ABORT_TRANSITION_ID": "192270",
+    "ERROR_PROCESS_ID": "282656",
+    "ERROR_TRANSITION_ID": "192269",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "START_TRANSITION_ID": "2325977",
+    "WORK_DISPLAY_INFO": "x=50,y=40,w=199,h=27"
+  },
+  "subprocesses": [
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=770,y=72,w=32,h=32"},
+          "id": "A31",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=869,ly=87,type=Elbow,xs=806&928,ys=87&87"},
+            "event": "FINISH",
+            "id": "T40",
+            "to": "A32"
+          }]
+        },
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=932,y=71,w=32,h=32"},
+          "id": "A32",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Cancellation Handler",
+        "ENTRY_TRANSITION_ID": "2325978",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "START_TRANSITION_ID": "2325900",
+        "WORK_DISPLAY_INFO": "x=729,y=40,w=281,h=86"
+      },
+      "id": "P3",
+      "name": "Cancellation Handler",
+      "variables": {"EmbeddedSubProcessTaskAction": {
+        "category": "LOCAL",
+        "type": "java.lang.String"
+      }}
+    },
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=371,y=58,w=32,h=32"},
+          "id": "A29",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Process Start",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=443,ly=74,type=Straight,xs=403&484,ys=74&74"},
+            "event": "FINISH",
+            "id": "T39",
+            "to": "A28"
+          }]
+        },
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=599,y=59,w=32,h=32"},
+          "id": "A30",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Process Finish"
+        },
+        {
+          "attributes": {
+            "AlertIntervalUnits": "Hours",
+            "Category": "ORD",
+            "Groups": "Fallout Specialists",
+            "Notices": "$DefaultNotices",
+            "SLAUnits": "Hours",
+            "STATUS_AFTER_EVENT": "Cancelled",
+            "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+            "Task Description": "Testing variable display and entry.",
+            "Task Name": "General Fallout",
+            "TaskLogicalId": "MDWTestMainProcess:A28",
+            "TaskName": "A Task For Testing Variables",
+            "TaskSLA": "24",
+            "Variables": "order,order,Not Displayed,0,,com.qwest.mbeng.MbengDocument;Sum,Sum,Not Displayed,0,,java.lang.Integer;intarraytest,intarraytest,Not Displayed,0,,java.lang.Integer[];maptest,maptest,Not Displayed,0,,java.util.Map;BTN,BTN,Not Displayed,0,,java.lang.String;case,case,Not Displayed,0,,java.lang.String;N,N,Not Displayed,0,,java.lang.Integer;launcher,launcher,Not Displayed,0,,com.qwest.mbeng.MbengTableArray;xmldata,xmldata,Not Displayed,0,,org.w3c.dom.Document",
+            "WORK_DISPLAY_INFO": "x=484,y=60,w=30,h=28"
+          },
+          "id": "A28",
+          "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+          "name": "My fallout task",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=556,ly=74,type=Straight,xs=514&599,ys=74&75"},
+            "event": "FINISH",
+            "id": "T38",
+            "to": "A30"
+          }]
+        }
+      ],
+      "attributes": {
+        "ENTRY_TRANSITION_ID": "2325979",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "START_TRANSITION_ID": "2325912",
+        "TaskName": "A Test Task",
+        "WORK_DISPLAY_INFO": "x=351,y=33,w=310,h=84",
+        "WORK_DISPLAY_INFO_MDWTestFalloutProcess": "x=499,y=110,w=31,h=27",
+        "WORK_DISPLAY_INFO_MDWTestMainProcess": "x=494,y=29,w=24,h=24"
+      },
+      "id": "P2",
+      "name": "Exception Handler",
+      "variables": {"EmbeddedSubProcessTaskAction": {
+        "category": "OUTPUT",
+        "type": "java.lang.String"
+      }}
+    }
+  ],
+  "variables": {
+    "BTN": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "N": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    },
+    "Sum": {
+      "category": "OUTPUT",
+      "type": "java.lang.Integer"
+    },
+    "intarraytest": {
+      "category": "LOCAL",
+      "type": "java.lang.Integer[]"
+    },
+    "launcher": {
+      "category": "LOCAL",
+      "type": "com.qwest.mbeng.MbengTableArray"
+    },
+    "maptest": {
+      "category": "LOCAL",
+      "type": "java.util.Map"
+    },
+    "order": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    },
+    "orderId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "processCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "xmldata": {
+      "category": "STATIC",
+      "type": "org.w3c.dom.Document"
+    }
+  },
+  "version": "3.29"
+}

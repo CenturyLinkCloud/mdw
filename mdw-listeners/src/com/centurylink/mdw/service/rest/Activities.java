@@ -15,7 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Exportable;
+import com.centurylink.mdw.common.service.JsonExportable;
 import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.JsonListMap;
 import com.centurylink.mdw.common.service.Jsonable;
@@ -36,7 +36,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Path("/Activities")
 @Api("Runtime activity")
-public class Activities extends JsonRestService implements Exportable {
+public class Activities extends JsonRestService implements JsonExportable {
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {

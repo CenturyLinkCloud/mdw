@@ -1,9 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity" Type="com.centurylink.mdw.activity.types.ScriptActivity" Label="Execute Script" IconFile="script.gif" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET>
-  <RULE NAME='Rule' TYPE='ACTION' LANGUAGES='Groovy,JavaScript'/>
-  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/> 
-  <HYPERLINK URL='/MDWWeb/doc/scriptActivity.html'>
-    Script Activity Help
-  </HYPERLINK>
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.ScriptActivity",
+  "icon": "script.gif",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+  "label": "Execute Script",
+  "pagelet": "<PAGELET>\n  <RULE NAME='Rule' TYPE='ACTION' LANGUAGES='Groovy,JavaScript'/>\n  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/> \n  <HYPERLINK URL='/MDWWeb/doc/scriptActivity.html'>\n    Script Activity Help\n  <\/HYPERLINK>\n<\/PAGELET>"
+}

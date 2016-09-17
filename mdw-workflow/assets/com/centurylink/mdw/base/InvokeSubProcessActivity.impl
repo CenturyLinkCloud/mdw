@@ -1,14 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity" Type="com.centurylink.mdw.activity.types.InvokeProcessActivity" Label="Invoke Subprocess" IconFile="process.jpg" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET>
-  <DROPDOWN NAME='processname' LABEL='Subprocess' SOURCE='Process' EDITABLE='TRUE' REFRESH='true' VW='375'/>
-  <DROPDOWN NAME='processversion' LABEL='Version' SOURCE='ProcessVersion' REFRESH='true' VW='150'/>
-  <SELECT NAME='synchronous' DEFAULT='TRUE'>
-    <OPTION>TRUE</OPTION>
-    <OPTION>FALSE</OPTION>
-  </SELECT>
-  <MAPPING NAME='variables' SOURCE='Subprocess' VH='320'/>
-  <HYPERLINK URL='/MDWWeb/doc/InvokeSubProcessActivity.html'>
-    Subprocess Activity Help
-  </HYPERLINK>
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.InvokeProcessActivity",
+  "icon": "process.jpg",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+  "label": "Invoke Subprocess",
+  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='processname' LABEL='Subprocess' SOURCE='Process' EDITABLE='TRUE' REFRESH='true' VW='375'/>\n  <DROPDOWN NAME='processversion' LABEL='Version' SOURCE='ProcessVersion' REFRESH='true' VW='150'/>\n  <SELECT NAME='synchronous' DEFAULT='TRUE'>\n    <OPTION>TRUE<\/OPTION>\n    <OPTION>FALSE<\/OPTION>\n  <\/SELECT>\n  <MAPPING NAME='variables' SOURCE='Subprocess' VH='320'/>\n  <HYPERLINK URL='/MDWWeb/doc/InvokeSubProcessActivity.html'>\n    Subprocess Activity Help\n  <\/HYPERLINK>\n<\/PAGELET>"
+}

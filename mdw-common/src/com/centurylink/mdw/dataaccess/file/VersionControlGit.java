@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.dataaccess.file;
 
@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -24,11 +25,13 @@ import java.util.TreeSet;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
+import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -63,6 +66,7 @@ import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
 
 import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.exception.PropertyException;
+import com.centurylink.mdw.common.utilities.FileHelper;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.VersionControl;
@@ -423,30 +427,70 @@ public class VersionControlGit implements VersionControl {
     }
 
     /**
-     * Checkout a remote branch for tracking.
+     * Get remote HEAD commit.
      */
-    public void checkoutBranch(String branch) throws Exception {
-        createBranchIfNeeded(branch);
-        git.checkout().setName(branch).setStartPoint("origin/" + branch).call();
+    public String getRemoteCommit(String branch) throws Exception {
+        fetch();
+        ObjectId commit = localRepo.resolve("origin/" + branch);
+        if (commit != null)
+            return commit.getName();
+        else
+            return null;
+    }
+
+    public String getBranch() throws IOException {
+        return localRepo.getBranch();
     }
 
     /**
-     * Checkout a path from a remote branch for tracking.
+     * Does not do anything if already on target branch.
      */
-    public void checkoutBranch(String branch, String path) throws Exception {
-        createBranchIfNeeded(branch);
-        git.checkout().setStartPoint("origin/" + branch).addPath(path).call();
+    public void checkout(String branch) throws Exception {
+        if (!branch.equals(getBranch())) {
+            createBranchIfNeeded(branch);
+            git.checkout().setName(branch).setStartPoint("origin/" + branch)
+                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).call();
+            // for some reason jgit needs this when branch is switched
+            git.checkout().setName(branch).call();
+        }
     }
 
     /**
-     * Checkout multiple paths from a remote branch for tracking.
+     * Actually a workaround since JGit does not support sparse checkout:
+     * https://bugs.eclipse.org/bugs/show_bug.cgi?id=383772.
+     * Performs a HARD reset and FORCED checkout then deletes non-path items.
+     * Only to be used on server (not Designer).
      */
-    public void checkoutBranch(String branch, List<String> paths) throws Exception {
-        createBranchIfNeeded(branch);
-        CheckoutCommand checkout = git.checkout().setStartPoint("origin/" + branch);
-        for (String path : paths)
-            checkout.addPath(path);
-        checkout.call();
+    public void sparseCheckout(String branch, String path) throws Exception {
+        fetch(); // in case the branch is not known locally
+        if (!branch.equals(getBranch())) {
+            createBranchIfNeeded(branch);
+            CheckoutCommand checkout = git.checkout().setName(branch).setAllPaths(true).setForce(true);
+            if (localRepo.getRef(branch) == null)
+                checkout.setStartPoint("origin/" + branch).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).setCreateBranch(true);
+            checkout.call();
+        }
+
+        hardReset();
+
+        if (!branch.equals(getBranch())) {
+            // for some reason jgit needs this when branch is switched
+            git.checkout().setName(branch).setForce(true).call();
+            hardReset();
+        }
+
+        pull(branch);  // pull before delete or next pull may add non-path items back
+
+        // delete non-path items
+        List<File> preserveList = new ArrayList<File>();
+        preserveList.add(new File(localDir + "/.git"));
+        preserveList.add(new File(localDir + "/" + path));
+        FileHelper.deleteRecursive(localDir, preserveList);
+    }
+
+    public void hardReset() throws Exception {
+        git.reset().setMode(ResetType.HARD).call();
+        git.clean().call();
     }
 
     /**
@@ -486,7 +530,13 @@ public class VersionControlGit implements VersionControl {
     }
 
     public void cloneRepo() throws Exception {
+        cloneRepo(null);
+    }
+
+    public void cloneRepo(String branch) throws Exception {
         CloneCommand cloneCommand = Git.cloneRepository().setURI(repositoryUrl).setDirectory(localRepo.getDirectory().getParentFile());
+        if (branch != null)
+            cloneCommand.setBranch(branch);
         if (credentialsProvider != null)
             cloneCommand.setCredentialsProvider(credentialsProvider);
         cloneCommand.call();
@@ -520,14 +570,6 @@ public class VersionControlGit implements VersionControl {
         clone.call();
     }
 
-    /**
-     * Clones with no checkout, and then creates a tracking branch.
-     */
-    public void cloneNoCheckout(String branch) throws Exception {
-        cloneNoCheckout();
-        git.branchCreate().setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).setName(branch).setStartPoint("origin/" + branch).call();
-    }
-
     public boolean localRepoExists() {
         return localRepo.getDirectory() != null && localRepo.getDirectory().exists();
     }
@@ -550,13 +592,6 @@ public class VersionControlGit implements VersionControl {
         treeWalk.addTree(new DirCacheIterator(localRepo.readDirCache()));
         treeWalk.setFilter(PathFilterGroup.createFromStrings(Collections.singleton(path)));
         return treeWalk.next();
-    }
-
-    public void pullBranch(String branch) throws Exception {
-        PullCommand pull = git.pull().setRemote("origin").setRemoteBranchName(branch);
-        if (credentialsProvider != null)
-            pull.setCredentialsProvider(credentialsProvider);
-        pull.call();
     }
 
     public void pull(String branch) throws Exception {
@@ -586,12 +621,14 @@ public class VersionControlGit implements VersionControl {
         return file.getAbsolutePath().substring(localPath.length() + 1).replace('\\', '/');
     }
 
-    public GitDiffs getDiffs(String path) throws Exception {
+    public GitDiffs getDiffs(String branch, String path) throws Exception {
         fetch();
         GitDiffs diffs = new GitDiffs();
-        ObjectId fetchHead = localRepo.resolve("FETCH_HEAD^{tree}");
+        ObjectId remoteHead = localRepo.resolve("origin/" + branch + "^{tree}");
+        if (remoteHead == null)
+            throw new IOException("Unable to determine Git Diffs due to missing remote HEAD");
         CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
-        newTreeIter.reset(localRepo.newObjectReader(), fetchHead);
+        newTreeIter.reset(localRepo.newObjectReader(), remoteHead);
         DiffCommand dc = git.diff().setNewTree(newTreeIter);
         if (path != null)
             dc.setPathFilter(PathFilter.create(path));
@@ -663,6 +700,8 @@ public class VersionControlGit implements VersionControl {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             in = getRemoteContentStream(branch, path);
+            if (in == null)
+                return null;
             int read = 0;
             byte[] bytes = new byte[1024];
             while ((read = in.read(bytes)) != -1)

@@ -3,7 +3,7 @@ println 'today: ' + today
 start process("ActivityException") {
     variables = [processCase: "error handler delegation"]
 }
-sleep 25
+sleep 60
 action task("Activity Exception Fallout") {
     outcome = "Claim"
 } 

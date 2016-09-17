@@ -48,7 +48,8 @@ public class RuntimeDataAccessV5 extends RuntimeDataAccessV4 {
                 if (variableType.getVariableTypeId().longValue() == id.longValue())
                     return variableType.getVariableType();
             }
-            return null;
+            // If didn't find the type, look in cache
+            return VariableTypeCache.getTypeName(id);
         }
     }
 

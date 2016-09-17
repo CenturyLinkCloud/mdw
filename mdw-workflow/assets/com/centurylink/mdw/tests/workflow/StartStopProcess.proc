@@ -1,19 +1,34 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="StartStopProcess" version="0.5" description="">
-    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=56,y=97,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=409,y=97,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A1" To="A2" Event="FINISH" Id="T1">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=263,ly=117,type=Elbow,xs=120&amp;405,ys=117&amp;117"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=23,y=18,w=156,h=27"/>
-    <bpm:Variables Name="inputVar" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=56,y=97,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=263,ly=117,type=Elbow,xs=120&405,ys=117&117"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=409,y=97,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "NodeStyle": "BoxIcon",
+    "WORK_DISPLAY_INFO": "x=23,y=18,w=156,h=27"
+  },
+  "variables": {"inputVar": {
+    "category": "INPUT",
+    "type": "java.lang.String"
+  }},
+  "version": "0.5"
+}

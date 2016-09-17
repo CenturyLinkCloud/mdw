@@ -95,7 +95,8 @@ public class GherkinTestCaseRun extends TestCaseRun {
     private void addTestingPkgDirs(File rootDir, List<File> addTo) {
         for (File child : rootDir.listFiles()) {
             if (child.isDirectory()) {
-                if (child.getName().equals("testing") && new File(child + "/" + PackageDir.PACKAGE_XML_PATH).exists())
+                if (child.getName().equals("testing") &&
+                        (new File(child + "/" + PackageDir.PACKAGE_JSON_PATH).exists() || new File(child + "/" + PackageDir.PACKAGE_XML_PATH).exists()))
                     addTo.add(child);
                 addTestingPkgDirs(child, addTo);
             }

@@ -46,8 +46,13 @@ routesSvc.factory('routes', function() {
         controller: 'PackagesController'
       },
       {
-        path: '/assets/import',
+        path: '/assets/gitImport',
         templateUrl: 'assets/gitImport.html',
+        controller: 'PackagesController'
+      },
+      {
+        path: '/assets/fileImport',
+        templateUrl: 'assets/fileImport.html',
         controller: 'PackagesController'
       },
       {
@@ -90,9 +95,9 @@ routesSvc.factory('routes', function() {
         controller: 'TaskController'
       },
       {
-        path: '/tasks/:taskInstanceId/data',
-        templateUrl: 'tasks/taskData.html',
-        controller: 'TasksController'
+        path: '/tasks/:taskInstanceId/values',
+        templateUrl: 'tasks/taskValues.html',
+        controller: 'TaskValuesController'
       },
       {
         path: '/tasks/:taskInstanceId/subtasks',

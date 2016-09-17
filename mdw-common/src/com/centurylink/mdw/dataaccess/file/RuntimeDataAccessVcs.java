@@ -275,7 +275,7 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
             rs = db.runSelect(sql.toString(), null);
             while (rs.next()) {
                 ActivityInstance ai = new ActivityInstance();
-                ai.setId(rs.getLong("activity_instance_id"));
+                ai.setId(rs.getLong("aii"));
                 ai.setDefinitionId("A" + rs.getLong("activity_id"));
                 ai.setMasterRequestId(rs.getString("master_request_id"));
                 ai.setStartDate(rs.getTimestamp("st"));
@@ -285,6 +285,8 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
                 ai.setResult(rs.getString("cc"));
                 ai.setMessage(rs.getString("error"));
                 ai.setStatus(WorkStatuses.getName(rs.getInt("status_cd")));
+                ai.setProcessInstanceId(rs.getLong("pii"));
+                ai.setActivityInstanceId(rs.getLong("aii"));
 
                 mdwActivityInstanceList.add(ai);
             }
@@ -303,14 +305,17 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
 
     protected StringBuilder buildActivityQuery(Query query, Date start) {
         StringBuilder sqlBuff = new StringBuilder();
-        if (query.getMax() != -1)
+        if (query.getMax() != Query.MAX_ALL)
             sqlBuff.append(db.pagingQueryPrefix());
-        sqlBuff.append("select pi.process_instance_id, pi.master_request_id, ")
-        .append("pi.process_id, pi.comments as process_name, ai.activity_instance_id, ai.activity_id, ")
+        sqlBuff.append("select pi.process_instance_id as pii, pi.master_request_id, ")
+        .append("pi.process_id, pi.comments as process_name, ai.activity_instance_id as aii, ai.activity_id, ")
         .append("ai.status_cd, ai.start_dt as st, ai.end_dt as ed, ai.compcode as cc, ai.status_message as error");
 
         buildProcessQueryCommon(sqlBuff, query, start);
-        if (query.getMax() != -1)
+        String orderBy = buildOrderBy(query);
+        if (orderBy != null)
+            sqlBuff.append("\n").append(orderBy);
+        if (query.getMax() != Query.MAX_ALL)
             sqlBuff.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
         return sqlBuff;
     }
@@ -328,14 +333,14 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
                 // otherwise master request id
                 sqlBuff.append(" and pi.master_request_id like '" + query.getFind() + "%'\n");
             }
+            sqlBuff.append(" and pi.STATUS_CD NOT IN (" +  WorkStatus.STATUS_COMPLETED.intValue() + "," + WorkStatus.STATUS_CANCELLED.intValue() + "," + WorkStatus.STATUS_PURGE.intValue() + ")");
+            sqlBuff.append(" and ai.STATUS_CD IN (" +  WorkStatus.STATUS_FAILED.intValue() + "," + WorkStatus.STATUS_WAITING.intValue() + "," + WorkStatus.STATUS_IN_PROGRESS.intValue() + "," + WorkStatus.STATUS_HOLD.intValue() + ")");
         } else {
             // actInstId
             String actInstId = query.getFilter("instanceId");
             if (actInstId != null) {
                 sqlBuff.append(" and ai.activity_instance_id  = ").append(actInstId).append("\n");
             }
-            sqlBuff.append(" and pi.STATUS_CD NOT IN (" +  WorkStatus.STATUS_COMPLETED.intValue() + "," + WorkStatus.STATUS_CANCELLED.intValue() + "," + WorkStatus.STATUS_PURGE.intValue() + ")");
-            sqlBuff.append(" and ai.STATUS_CD IN (" +  WorkStatus.STATUS_FAILED.intValue() + "," + WorkStatus.STATUS_WAITING.intValue() + "," + WorkStatus.STATUS_IN_PROGRESS.intValue() + "," + WorkStatus.STATUS_HOLD.intValue() + ")");
         }
         if (start != null)
         {
@@ -351,9 +356,6 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
         if (status != null) {
             sqlBuff.append(" and ai.status_cd = ").append(WorkStatuses.getCode(status)).append("\n");
         }
-        String orderBy = buildOrderBy(query);
-        if (orderBy != null)
-            sqlBuff.append("\n").append(orderBy);
     }
 
     protected String buildActivityCountQuery(Query query, Date start) {

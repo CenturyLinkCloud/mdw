@@ -1,4 +1,4 @@
-<bpm:externalEventHandler xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:EventName>DefaultEventHandler</bpm:EventName>
-  <bpm:EventHandler>com.centurylink.mdw.listener.DefaultEventHandler</bpm:EventHandler>
-</bpm:externalEventHandler>
+{
+  "handlerClass": "com.centurylink.mdw.listener.DefaultEventHandler",
+  "path": "DefaultEventHandler"
+}

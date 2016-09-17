@@ -36,10 +36,13 @@ the task activity can be left in one of the 3 statuses:
       task completion action and events).</li>
 </ul>
 
-<strong>Note:</strong> Task activities that listen for <i>non-recurring</i> events should never be
+<strong>Note:</strong>
+<br>1.  Task activities that listen for <i>non-recurring</i> events should never be
 placed in HOLD status.  This would cause infinite looping whenever a task instance resumes
 waiting from hold status because non-recurring events that have already arrived
 would always trigger a transition.
+<br>2. When you want to call a Correction Handler or Cancellation handler after an event is received completion code should be set to CORRECT or ABORT respectively. 
+Please notice that you do not put Cancelled:: or Hold:: before the completion status like you do for Event Wait activities.
 <p>
 To provide custom code handling unsolicited events, you will need to override 
 <code>processOtherMessage(String message)</code>. 

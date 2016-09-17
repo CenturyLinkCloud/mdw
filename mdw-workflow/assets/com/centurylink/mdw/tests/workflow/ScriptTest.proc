@@ -1,170 +1,287 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="ScriptTest" version="0.12" description="">
-    <bpm:Activity Id="A3" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=185,y=33,w=32,h=32"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A1" Name="Still Okay?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
-      <bpm:Attribute Name="Expression" Value="&quot;Sure&quot;"/>
-      <bpm:Attribute Name="SCRIPT" Value="MagicBox"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=184,y=474,w=32,h=20"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A7" Name="Groovy" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Output Documents" Value="createdDomDoc#createdXmlBean#modifiedDomDoc#modifiedXmlBean"/>
-      <bpm:Attribute Name="Rule" Value="import javax.xml.parsers.DocumentBuilderFactory;&#13;&#10;import org.apache.xmlbeans.*;&#13;&#10;&#13;&#10;println 'Groovy Started 27';&#13;&#10;&#13;&#10;// create variables&#13;&#10;createdInt = 8;&#13;&#10;createdString = &quot;createdStringValue&quot;;&#13;&#10;createdXmlBean = XmlObject.Factory.parse(&quot;&lt;createdXmlBean>\n  &lt;innerElement attr='attrVal'/>\n&lt;/createdXmlBean>&quot;);&#13;&#10;createdDomDoc = buildDomDoc();&#13;&#10;&#13;&#10;modifiedInt += 10;&#13;&#10;modifiedString += ' has been modified';&#13;&#10;def modCursor = modifiedXmlBean.newCursor();&#13;&#10;modCursor.toFirstChild();&#13;&#10;modCursor.setTextValue(&quot;MODIFIED&quot;);&#13;&#10;def newCar = modifiedDomDoc.createElement('newCar');&#13;&#10;newCar.setAttribute('shiny', 'new');&#13;&#10;modifiedDomDoc.firstChild.appendChild(newCar);&#13;&#10;&#13;&#10;println 'Groovy Done';&#13;&#10;&#13;&#10;return &quot;groovyOutcome&quot;;&#13;&#10;&#13;&#10;&#13;&#10;def buildDomDoc()&#13;&#10;{&#13;&#10;  def builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();&#13;&#10;  def document = builder.newDocument();&#13;&#10;  def root = document.createElement('records');&#13;&#10;  document.appendChild(root);&#13;&#10;  def car = document.createElement('car');&#13;&#10;  car.setAttribute('make', 'Infiniti');&#13;&#10;  car.setAttribute('model', 'G35x');&#13;&#10;  car.setAttribute('year', '2005');&#13;&#10;  root.appendChild(car);&#13;&#10;  def countryNode = document.createElement('country');&#13;&#10;  countryNode.appendChild(document.createTextNode('Japan'));&#13;&#10;  car.appendChild(countryNode);&#13;&#10;  def record = document.createElement('aspect');&#13;&#10;  record.setAttribute('type', 'Sedan');&#13;&#10;  record.appendChild(document.createTextNode(&quot;Not too big&quot;));&#13;&#10;  car.appendChild(record);&#13;&#10;  &#13;&#10;  return document;&#13;&#10;}"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=67,y=202,w=24,h=24"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A9" Name="Access Library" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="import com.centurylink.mdw.tests.workflow.TnValidator;&#13;&#10;&#13;&#10;tnVal = new TnValidator();&#13;&#10;for (tn in telephoneNumbers)&#13;&#10;{&#13;&#10;  if (!tnVal.validate(tn))&#13;&#10;    return 'Invalid';&#13;&#10;}&#13;&#10;&#13;&#10;// closure access&#13;&#10;telephoneNumbers.each(tnVal.registerTn);&#13;&#10;&#13;&#10;return 'Valid';&#13;&#10;&#13;&#10;"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=70,y=306,w=24,h=24"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A4" Name="JavaScript" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Output Documents" Value="createdDomDoc#createdXmlBean#modifiedDomDoc#modifiedXmlBean"/>
-      <bpm:Attribute Name="Rule" Value="importPackage(javax.xml.parsers);&#13;&#10;importPackage(org.apache.xmlbeans);&#13;&#10;&#13;&#10;// create variables&#13;&#10;createdInt = 8;&#13;&#10;createdString = &quot;createdStringValue&quot;;&#13;&#10;createdXmlBean = XmlObject.Factory.parse(&quot;&lt;createdXmlBean>\n  &lt;innerElement attr='attrVal'/>\n&lt;/createdXmlBean>&quot;);&#13;&#10;createdDomDoc = buildDomDoc();&#13;&#10;&#13;&#10;modifiedInt += 10;&#13;&#10;modifiedString += ' has been modified';&#13;&#10;var modCursor = modifiedXmlBean.newCursor();&#13;&#10;modCursor.toFirstChild();&#13;&#10;modCursor.setTextValue(&quot;MODIFIED&quot;);&#13;&#10;var newCar = modifiedDomDoc.createElement('newCar');&#13;&#10;newCar.setAttribute('shiny', 'new');&#13;&#10;modifiedDomDoc.firstChild.appendChild(newCar);&#13;&#10;&#13;&#10;return &quot;javaScriptOutcome&quot;;&#13;&#10;&#13;&#10;&#13;&#10;function buildDomDoc()&#13;&#10;{&#13;&#10;  var builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();&#13;&#10;  var document = builder.newDocument();&#13;&#10;  var root = document.createElement('records');&#13;&#10;  document.appendChild(root);&#13;&#10;  var car = document.createElement('car');&#13;&#10;  car.setAttribute('make', 'Infiniti');&#13;&#10;  car.setAttribute('model', 'G35x');&#13;&#10;  car.setAttribute('year', '2005');&#13;&#10;  root.appendChild(car);&#13;&#10;  var countryNode = document.createElement('country');&#13;&#10;  countryNode.appendChild(document.createTextNode('Japan'));&#13;&#10;  car.appendChild(countryNode);&#13;&#10;  var record = document.createElement('aspect');&#13;&#10;  record.setAttribute('type', 'Sedan');&#13;&#10;  record.appendChild(document.createTextNode(&quot;Not too big&quot;));&#13;&#10;  car.appendChild(record);&#13;&#10;  &#13;&#10;  return document;&#13;&#10;}"/>
-      <bpm:Attribute Name="SCRIPT" Value="JavaScript"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=187,y=217,w=24,h=24"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A5" Name="MagicBox" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="SCRIPT" Value="MagicBox"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=309,y=223,w=24,h=24"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=184,y=549,w=32,h=32"/>
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A6" Name="Looking Good?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
-      <bpm:Attribute Name="Expression" Value="'Yep'"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=184,y=390,w=32,h=20"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A8" Name="Script Flavor?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
-      <bpm:Attribute Name="Expression" Value="scriptFlavor"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="SLA" Value="0"/>
-      <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=182,y=117,w=32,h=20"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A10" Name="Unknown" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=557,y=228,w=24,h=24"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A11" Name="New Process Finish" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=553,y=318,w=32,h=32"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A3" To="A8" Event="FINISH" Id="T1">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=166,ly=76,type=Elbow,xs=199&amp;199,ys=69&amp;113"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="Groovy" From="A8" To="A7" Event="FINISH" Id="T2">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=81,ly=155,type=Elbow,xs=178&amp;78&amp;78,ys=126&amp;126&amp;198"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="JavaScript" From="A8" To="A4" Event="FINISH" Id="T3">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=204,ly=171,type=Elbow,xs=199&amp;199,ys=141&amp;213"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="javaScriptOutcome" From="A4" To="A6" Event="FINISH" Id="T4">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=155,ly=283,type=Elbow,xs=199&amp;199,ys=245&amp;386"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="Valid" From="A9" To="A6" Event="FINISH" Id="T5">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=70,ly=356,type=ElbowV,xs=81&amp;81&amp;180,ys=334&amp;398&amp;398"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="magicOutcome" From="A5" To="A6" Event="FINISH" Id="T6">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=279,ly=321,type=ElbowV,xs=321&amp;321&amp;220,ys=251&amp;398&amp;398"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="Yep" From="A6" To="A1" Event="FINISH" Id="T7">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=200,ly=442,type=Elbow,xs=200&amp;200,ys=414&amp;470"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="Sure" From="A1" To="A2" Event="FINISH" Id="T8">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=200,ly=521,type=Elbow,xs=200&amp;200,ys=498&amp;545"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="groovyOutcome" From="A7" To="A9" Event="FINISH" Id="T9">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=41,ly=251,type=Elbow,xs=80&amp;80,ys=230&amp;302"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="MagicBox" From="A8" To="A5" Event="FINISH" Id="T10">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=328,ly=169,type=ElbowV,xs=218&amp;320&amp;320,ys=126&amp;126&amp;219"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="Unknown" From="A8" To="A10" Event="FINISH" Id="T11">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=410,ly=210,type=Elbow,xs=218&amp;553,ys=127&amp;240"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A10" To="A11" Event="FINISH" Id="T12">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=569,ly=285,type=Elbow,xs=569&amp;569,ys=256&amp;314"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="NodeStyle" Value="Icon"/>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="SLA" Value="0"/>
-    <bpm:Attribute Name="SLA_UNIT" Value="Seconds"/>
-    <bpm:Attribute Name="START_TRANSITION_ID" Value="2334952"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=27,y=20,w=93,h=27"/>
-    <bpm:Variables Name="bystanderDomDoc" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="org.w3c.dom.Document"/>
-    </bpm:Variables>
-    <bpm:Variables Name="bystanderXmlBean" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="org.apache.xmlbeans.XmlObject"/>
-    </bpm:Variables>
-    <bpm:Variables Name="createdDomDoc" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="org.w3c.dom.Document"/>
-    </bpm:Variables>
-    <bpm:Variables Name="createdInt" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="createdString" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="createdXmlBean" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="org.apache.xmlbeans.XmlObject"/>
-    </bpm:Variables>
-    <bpm:Variables Name="modifiedDomDoc" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="org.w3c.dom.Document"/>
-    </bpm:Variables>
-    <bpm:Variables Name="modifiedInt" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.Integer"/>
-    </bpm:Variables>
-    <bpm:Variables Name="modifiedString" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="modifiedXmlBean" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="org.apache.xmlbeans.XmlObject"/>
-    </bpm:Variables>
-    <bpm:Variables Name="printedString" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="scriptFlavor" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="telephoneNumbers" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String[]"/>
-    </bpm:Variables>
-    <bpm:SubProcess Id="P15" name="Exception Handler" version="0" description="">
-      <bpm:Activity Id="A13" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=443,y=50,w=32,h=32"/>
-      </bpm:Activity>
-      <bpm:Activity Id="A14" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-        <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=549,y=50,w=32,h=32"/>
-      </bpm:Activity>
-      <bpm:Transition CompletionCode="" From="A13" To="A14" Event="FINISH" Id="T13">
-        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=512,ly=66,type=Elbow,xs=479&amp;545,ys=66&amp;66"/>
-      </bpm:Transition>
-      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
-      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Exception Handler"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=412,y=31,w=204,h=80"/>
-    </bpm:SubProcess>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=185,y=33,w=32,h=32"},
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=166,ly=76,type=Elbow,xs=199&199,ys=69&113"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "\"Sure\"",
+        "SCRIPT": "MagicBox",
+        "WORK_DISPLAY_INFO": "x=184,y=474,w=32,h=20"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Still Okay?",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=200,ly=521,type=Elbow,xs=200&200,ys=498&545"},
+        "event": "FINISH",
+        "id": "T8",
+        "resultCode": "Sure",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "createdDomDoc#createdXmlBean#modifiedDomDoc#modifiedXmlBean",
+        "Rule": "import javax.xml.parsers.DocumentBuilderFactory;\r\nimport org.apache.xmlbeans.*;\r\n\r\nprintln 'Groovy Started 27';\r\n\r\n// create variables\r\ncreatedInt = 8;\r\ncreatedString = \"createdStringValue\";\r\ncreatedXmlBean = XmlObject.Factory.parse(\"<createdXmlBean>\\n  <innerElement attr='attrVal'/>\\n<\/createdXmlBean>\");\r\ncreatedDomDoc = buildDomDoc();\r\n\r\nmodifiedInt += 10;\r\nmodifiedString += ' has been modified';\r\ndef modCursor = modifiedXmlBean.newCursor();\r\nmodCursor.toFirstChild();\r\nmodCursor.setTextValue(\"MODIFIED\");\r\ndef newCar = modifiedDomDoc.createElement('newCar');\r\nnewCar.setAttribute('shiny', 'new');\r\nmodifiedDomDoc.firstChild.appendChild(newCar);\r\n\r\nprintln 'Groovy Done';\r\n\r\nreturn \"groovyOutcome\";\r\n\r\n\r\ndef buildDomDoc()\r\n{\r\n  def builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();\r\n  def document = builder.newDocument();\r\n  def root = document.createElement('records');\r\n  document.appendChild(root);\r\n  def car = document.createElement('car');\r\n  car.setAttribute('make', 'Infiniti');\r\n  car.setAttribute('model', 'G35x');\r\n  car.setAttribute('year', '2005');\r\n  root.appendChild(car);\r\n  def countryNode = document.createElement('country');\r\n  countryNode.appendChild(document.createTextNode('Japan'));\r\n  car.appendChild(countryNode);\r\n  def record = document.createElement('aspect');\r\n  record.setAttribute('type', 'Sedan');\r\n  record.appendChild(document.createTextNode(\"Not too big\"));\r\n  car.appendChild(record);\r\n  \r\n  return document;\r\n}",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=67,y=202,w=24,h=24"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Groovy",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=41,ly=251,type=Elbow,xs=80&80,ys=230&302"},
+        "event": "FINISH",
+        "id": "T9",
+        "resultCode": "groovyOutcome",
+        "to": "A9"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "import com.centurylink.mdw.tests.workflow.TnValidator;\r\n\r\ntnVal = new TnValidator();\r\nfor (tn in telephoneNumbers)\r\n{\r\n  if (!tnVal.validate(tn))\r\n    return 'Invalid';\r\n}\r\n\r\n// closure access\r\ntelephoneNumbers.each(tnVal.registerTn);\r\n\r\nreturn 'Valid';\r\n\r\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=70,y=306,w=24,h=24"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Access Library",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=70,ly=356,type=ElbowV,xs=81&81&180,ys=334&398&398"},
+        "event": "FINISH",
+        "id": "T5",
+        "resultCode": "Valid",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "createdDomDoc#createdXmlBean#modifiedDomDoc#modifiedXmlBean",
+        "Rule": "importPackage(javax.xml.parsers);\r\nimportPackage(org.apache.xmlbeans);\r\n\r\n// create variables\r\ncreatedInt = 8;\r\ncreatedString = \"createdStringValue\";\r\ncreatedXmlBean = XmlObject.Factory.parse(\"<createdXmlBean>\\n  <innerElement attr='attrVal'/>\\n<\/createdXmlBean>\");\r\ncreatedDomDoc = buildDomDoc();\r\n\r\nmodifiedInt += 10;\r\nmodifiedString += ' has been modified';\r\nvar modCursor = modifiedXmlBean.newCursor();\r\nmodCursor.toFirstChild();\r\nmodCursor.setTextValue(\"MODIFIED\");\r\nvar newCar = modifiedDomDoc.createElement('newCar');\r\nnewCar.setAttribute('shiny', 'new');\r\nmodifiedDomDoc.firstChild.appendChild(newCar);\r\n\r\nreturn \"javaScriptOutcome\";\r\n\r\n\r\nfunction buildDomDoc()\r\n{\r\n  var builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();\r\n  var document = builder.newDocument();\r\n  var root = document.createElement('records');\r\n  document.appendChild(root);\r\n  var car = document.createElement('car');\r\n  car.setAttribute('make', 'Infiniti');\r\n  car.setAttribute('model', 'G35x');\r\n  car.setAttribute('year', '2005');\r\n  root.appendChild(car);\r\n  var countryNode = document.createElement('country');\r\n  countryNode.appendChild(document.createTextNode('Japan'));\r\n  car.appendChild(countryNode);\r\n  var record = document.createElement('aspect');\r\n  record.setAttribute('type', 'Sedan');\r\n  record.appendChild(document.createTextNode(\"Not too big\"));\r\n  car.appendChild(record);\r\n  \r\n  return document;\r\n}",
+        "SCRIPT": "JavaScript",
+        "WORK_DISPLAY_INFO": "x=187,y=217,w=24,h=24"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "JavaScript",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=155,ly=283,type=Elbow,xs=199&199,ys=245&386"},
+        "event": "FINISH",
+        "id": "T4",
+        "resultCode": "javaScriptOutcome",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "SCRIPT": "MagicBox",
+        "WORK_DISPLAY_INFO": "x=309,y=223,w=24,h=24"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "MagicBox",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=279,ly=321,type=ElbowV,xs=321&321&220,ys=251&398&398"},
+        "event": "FINISH",
+        "id": "T6",
+        "resultCode": "magicOutcome",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=184,y=549,w=32,h=32"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Expression": "'Yep'",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=184,y=390,w=32,h=20"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Looking Good?",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=200,ly=442,type=Elbow,xs=200&200,ys=414&470"},
+        "event": "FINISH",
+        "id": "T7",
+        "resultCode": "Yep",
+        "to": "A1"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "scriptFlavor",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=182,y=117,w=32,h=20"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Script Flavor?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=81,ly=155,type=Elbow,xs=178&78&78,ys=126&126&198"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "Groovy",
+          "to": "A7"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=204,ly=171,type=Elbow,xs=199&199,ys=141&213"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "JavaScript",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=328,ly=169,type=ElbowV,xs=218&320&320,ys=126&126&219"},
+          "event": "FINISH",
+          "id": "T10",
+          "resultCode": "MagicBox",
+          "to": "A5"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=410,ly=210,type=Elbow,xs=218&553,ys=127&240"},
+          "event": "FINISH",
+          "id": "T11",
+          "resultCode": "Unknown",
+          "to": "A10"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=557,y=228,w=24,h=24"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Unknown",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=569,ly=285,type=Elbow,xs=569&569,ys=256&314"},
+        "event": "FINISH",
+        "id": "T12",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=553,y=318,w=32,h=32"
+      },
+      "id": "A11",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "New Process Finish"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "Icon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "START_TRANSITION_ID": "2334952",
+    "WORK_DISPLAY_INFO": "x=27,y=20,w=93,h=27"
+  },
+  "subprocesses": [{
+    "activities": [
+      {
+        "attributes": {"WORK_DISPLAY_INFO": "x=443,y=50,w=32,h=32"},
+        "id": "A13",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+        "name": "Start",
+        "transitions": [{
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=512,ly=66,type=Elbow,xs=479&545,ys=66&66"},
+          "event": "FINISH",
+          "id": "T13",
+          "to": "A14"
+        }]
+      },
+      {
+        "attributes": {
+          "CompletionCode": "javaScriptOutcome",
+          "DoNotNotifyCaller": "false",
+          "WORK_DISPLAY_INFO": "x=549,y=50,w=32,h=32"
+        },
+        "id": "A14",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+        "name": "Stop"
+      }
+    ],
+    "attributes": {
+      "EMBEDDED_PROCESS_TYPE": "Exception Handler",
+      "PROCESS_VISIBILITY": "EMBEDDED",
+      "WORK_DISPLAY_INFO": "x=412,y=31,w=204,h=80"
+    },
+    "id": "P15",
+    "name": "Exception Handler"
+  }],
+  "variables": {
+    "bystanderDomDoc": {
+      "category": "INPUT",
+      "type": "org.w3c.dom.Document"
+    },
+    "bystanderXmlBean": {
+      "category": "INPUT",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
+    "createdDomDoc": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    },
+    "createdInt": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "createdString": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "createdXmlBean": {
+      "category": "LOCAL",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
+    "modifiedDomDoc": {
+      "category": "INPUT",
+      "type": "org.w3c.dom.Document"
+    },
+    "modifiedInt": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    },
+    "modifiedString": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "modifiedXmlBean": {
+      "category": "INPUT",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
+    "printedString": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "scriptFlavor": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "telephoneNumbers": {
+      "category": "INPUT",
+      "type": "java.lang.String[]"
+    }
+  },
+  "version": "0.13"
+}

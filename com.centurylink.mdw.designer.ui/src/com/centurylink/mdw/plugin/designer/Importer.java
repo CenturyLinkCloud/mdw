@@ -15,6 +15,8 @@ import org.apache.xmlbeans.XmlException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.bpm.MDWPackage;
 import com.centurylink.mdw.bpm.MDWProcess;
@@ -24,6 +26,7 @@ import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
 import com.centurylink.mdw.common.exception.DataAccessException;
+import com.centurylink.mdw.common.utilities.JsonUtil;
 import com.centurylink.mdw.common.utilities.timer.ActionCancelledException;
 import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
 import com.centurylink.mdw.dataaccess.DataAccess;
@@ -77,8 +80,8 @@ public class Importer
 
   private PackageVO importedPackageVO;
 
-  public WorkflowPackage importPackage(final WorkflowProject project, final String xml, final ProgressMonitor progressMonitor)
-  throws DataAccessException, RemoteException, ActionCancelledException, XmlException
+  public WorkflowPackage importPackage(final WorkflowProject project, final String content, final ProgressMonitor progressMonitor)
+  throws DataAccessException, RemoteException, ActionCancelledException, JSONException, XmlException
   {
     CodeTimer timer = new CodeTimer("importPackage()");
     int preexistingVersion = -1;
@@ -89,7 +92,9 @@ public class Importer
 
     progressMonitor.subTask("Parsing XML");
 
-    importedPackageVO = parsePackageXml(xml);
+    boolean isJson = content.trim().startsWith("{");
+
+    importedPackageVO = parsePackageContent(content);
 
     progressMonitor.subTask("Importing " + importedPackageVO.getLabel());
 
@@ -177,7 +182,7 @@ public class Importer
           if (exporter == null)
             exporter = DataAccess.getProcessExporter(project.getDataAccess().getSchemaVersion(), project.isOldNamespaces() ? DesignerCompatibility.getInstance() : null);
           String existingProcessXml = project.getDataAccess().loadRuleSet(existingProcess.getId()).getRuleSet();
-          String importedProcessXml = exporter.exportProcess(importedProcessVO, project.getDataAccess().getSchemaVersion(), null);
+          String importedProcessXml = isJson ? importedProcessVO.getJson().toString(2) : exporter.exportProcess(importedProcessVO, project.getDataAccess().getSchemaVersion(), null);
           if (project.getDataAccess().getSupportedSchemaVersion() < DataAccess.schemaVersion55)
           {
             // may need to replace old namespace prefix in existing to avoid false positives in 5.2
@@ -395,7 +400,10 @@ public class Importer
     progressMonitor.progress(10);
     progressMonitor.subTask("Saving package");
 
-    Long packageId = dataAccess.getDesignerDataAccess().savePackage(importedPackageVO, ProcessPersister.PersistType.IMPORT);
+    ProcessPersister.PersistType persistType = ProcessPersister.PersistType.IMPORT;
+    if (isJson)
+      persistType = ProcessPersister.PersistType.IMPORT_JSON;
+    Long packageId = dataAccess.getDesignerDataAccess().savePackage(importedPackageVO, persistType);
     if (preexistingVersion > 0)
       importedPackageVO.setVersion(preexistingVersion);  // reset version for overwrite
 
@@ -638,11 +646,14 @@ public class Importer
 
   private NodeMetaInfo syncNodeMetaInfo(NodeMetaInfo existingInfo, PackageVO importedPackageVO)
   {
-    for (ActivityImplementorVO newActImpl : importedPackageVO.getImplementors())
+    if (importedPackageVO.getImplementors() != null)
     {
-      if (newActImpl.getAttributeDescription() == null)
-        newActImpl.setAttributeDescription("");  // so isLoaded() == true
-      existingInfo.complement(newActImpl);
+      for (ActivityImplementorVO newActImpl : importedPackageVO.getImplementors())
+      {
+        if (newActImpl.getAttributeDescription() == null)
+          newActImpl.setAttributeDescription("");  // so isLoaded() == true
+        existingInfo.complement(newActImpl);
+      }
     }
     return existingInfo;
   }
@@ -737,11 +748,22 @@ public class Importer
   }
 
 
-  public PackageVO parsePackageXml(String xml) throws DataAccessException
+  public PackageVO parsePackageContent(String packageContent) throws JSONException, DataAccessException
   {
-    int schemaVersion = dataAccess.getDesignerDataAccess().getDatabaseSchemaVersion();
-    ProcessImporter importer = DataAccess.getProcessImporter(schemaVersion);
-    return importer.importPackage(xml);
+    if (packageContent.trim().startsWith("{"))
+    {
+      Map<String,JSONObject> pkgJsonMap = JsonUtil.getJsonObjects(new JSONObject(packageContent).getJSONObject("packages"));
+      String name = pkgJsonMap.keySet().iterator().next();
+      PackageVO pkgVO = new PackageVO(pkgJsonMap.get(name));
+      pkgVO.setName(name);
+      return pkgVO;
+    }
+    else
+    {
+      int schemaVersion = dataAccess.getDesignerDataAccess().getDatabaseSchemaVersion();
+      ProcessImporter importer = DataAccess.getProcessImporter(schemaVersion);
+      return importer.importPackage(packageContent);
+    }
   }
 
   public void importAttributes(final WorkflowElement element, final String xml, final ProgressMonitor progressMonitor, String attrPrefix)
@@ -761,7 +783,7 @@ public class Importer
 
     for (MDWProcess process : procdef.getProcessDefinition().getProcessList())
     {
-      ProcessVO importedProc = importer.importProcess(process);
+      ProcessVO importedProc = importer.importProcess(process.xmlText());
       if (element instanceof WorkflowProcess && !((WorkflowProcess)element).getName().equals(importedProc.getProcessName()))
         throw new DataAccessException("Expected process: " + ((WorkflowProcess)element).getName() + " in attributes XML but found: " + importedProc.getName());
       ProcessVO proc = dataAccess.getLatestProcess(importedProc.getName());

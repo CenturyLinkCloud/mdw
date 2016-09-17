@@ -1,0 +1,4 @@
+{
+  "handlerClass": "com.centurylink.mdw.service.action.BamEventHandler?EventRootType=CustomEvent",
+  "path": "CustomEvent"
+}

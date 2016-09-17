@@ -6,27 +6,29 @@ package com.centurylink.mdw.model.value.variable;
 import java.io.Serializable;
 
 import org.apache.xmlbeans.XmlObject;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 
+import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.translator.VariableTranslator;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.HtmlDocument;
 import com.centurylink.mdw.model.StringDocument;
+import com.centurylink.mdw.model.Value.Display;
 import com.qwest.mbeng.DomDocument;
 import com.qwest.mbeng.MbengDocument;
 import com.qwest.mbeng.MbengDocumentClass;
 import com.qwest.mbeng.MbengTableArray;
 import com.qwest.mbeng.MbengVariable;
 
-public class VariableVO implements Serializable, Comparable<VariableVO>, MbengVariable {
+public class VariableVO implements Serializable, Comparable<VariableVO>, MbengVariable, Jsonable {
 
     public static final String[] VariableCategories =
         {"Local", "Input", "Output", "Input/Output", "Static"};
     public static final String[] DisplayModes =
     	{"Required", "Optional", "Read Only", "Hidden", "Excluded"};
 
-    public static final long serialVersionUID = 1L;
     public static final int CAT_LOCAL = 0;
     public static final int CAT_INPUT = 1;
     public static final int CAT_OUTPUT = 2;
@@ -326,5 +328,72 @@ public class VariableVO implements Serializable, Comparable<VariableVO>, MbengVa
 
     public boolean isJavaObject() {
         return Object.class.getName().equals(getVariableType());
+    }
+
+    public String getCategory() {
+        int cat = getVariableCategory() == null ? 0 : getVariableCategory();
+        if (cat == CAT_INPUT)
+            return "INPUT";
+        else if (cat == CAT_OUTPUT)
+            return "OUTPUT";
+        else if (cat == CAT_INOUT)
+            return "INOUT";
+        else if (cat == CAT_STATIC)
+            return "STATIC";
+        else
+            return "LOCAL";
+    }
+
+    // for json (instead of old optionality )
+    private Display display;
+    public Display getDisplay() { return display; }
+    public void setDisplay(Display display) { this.display = display; }
+
+    public int getCategoryCode(String category) {
+        if ("INPUT".equals(category))
+            return CAT_INPUT;
+        else if ("OUTPUT".equals(category))
+            return CAT_OUTPUT;
+        else if ("INOUT".equals(category))
+            return CAT_INOUT;
+        else if ("STATIC".equals(category))
+            return CAT_STATIC;
+        else
+            return CAT_LOCAL;
+    }
+
+    public VariableVO(JSONObject json) throws JSONException {
+        if (json.has("name"))
+            this.variableName = json.getString("name");
+        this.variableType = json.getString("type");
+        if (json.has("category"))
+            this.setVariableCategory(getCategoryCode(json.getString("category")));
+        if (json.has("label"))
+            this.variableReferredAs = json.getString("label");
+        if (json.has("sequence"))
+            this.displaySequence = json.getInt("sequence");
+        if (json.has("display"))
+            this.display = Display.valueOf(json.getString("display"));
+        this.setVariableId(0L);
+    }
+
+    /**
+     * Serialized as an object, so name is not included.
+     */
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("type", variableType);
+        json.put("category", getCategory());
+        if (variableReferredAs != null && !variableReferredAs.isEmpty())
+            json.put("label", variableReferredAs);
+        if (displaySequence != null && displaySequence > 0)
+            json.put("sequence", displaySequence);
+        if (display != null)
+            json.put("display", display.toString());
+        return json;
+    }
+
+    public String getJsonName() {
+        return getName();
     }
 }

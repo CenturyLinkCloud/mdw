@@ -1,14 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="JDBC SQL Adapter" IconFile="adapter.png" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET>
-  <TEXT NAME='jdbcDataSource' LABEL='JDBC DataSource' />
-  <DROPDOWN NAME='queryType' LABEL='Query Type' DEFAULT='Select' VW='100'>
-    <OPTION>Select</OPTION>
-    <OPTION>Update</OPTION>
-  </DROPDOWN>
-  <DROPDOWN NAME='parameterVariable' LABEL='Parameter(s) Variable' SOURCE='Variables' VW='150' />
-  <TEXT NAME='sqlQuery' LABEL='SQL Query' SOURCE='Variables' MULTILINE='true' />
-  <HYPERLINK URL='/MDWWeb/doc/sqlAdapter.html'>
-    SQL Adapter Help
-  </HYPERLINK>
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
+  "icon": "adapter.png",
+  "implementorClass": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
+  "label": "JDBC SQL Adapter",
+  "pagelet": "<PAGELET>\n  <TEXT NAME='jdbcDataSource' LABEL='JDBC DataSource' />\n  <DROPDOWN NAME='queryType' LABEL='Query Type' DEFAULT='Select' VW='100'>\n    <OPTION>Select<\/OPTION>\n    <OPTION>Update<\/OPTION>\n  <\/DROPDOWN>\n  <DROPDOWN NAME='parameterVariable' LABEL='Parameter(s) Variable' SOURCE='Variables' VW='150' />\n  <TEXT NAME='sqlQuery' LABEL='SQL Query' SOURCE='Variables' MULTILINE='true' />\n  <HYPERLINK URL='/MDWWeb/doc/sqlAdapter.html'>\n    SQL Adapter Help\n  <\/HYPERLINK>\n<\/PAGELET>"
+}

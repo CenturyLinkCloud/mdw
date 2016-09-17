@@ -1,39 +1,65 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="SynchronousBusAdapter" version="0.2" description="">
-    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=60,y=260,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=480,y=260,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A3" Name="SynchronousBusAdapter" Implementation="com.centurylink.mdw.workflow.adapter.tibco.SynchronousBusAdapter">
-      <bpm:Attribute Name="Bus Topic" Value="Q.MDWTEST.ORDEH.EVENT.UPDA.MIDD50"/>
-      <bpm:Attribute Name="DO_LOGGING" Value="True"/>
-      <bpm:Attribute Name="Override Inbox" Value="False"/>
-      <bpm:Attribute Name="PostScriptLang" Value="Groovy"/>
-      <bpm:Attribute Name="PreScriptLang" Value="Groovy"/>
-      <bpm:Attribute Name="REQUEST_VARIABLE" Value="ServiceRequest"/>
-      <bpm:Attribute Name="RESPONSE_VARIABLE" Value="ServiceResponse"/>
-      <bpm:Attribute Name="Response Timeout (sec)" Value="60"/>
-      <bpm:Attribute Name="Synchronous Response Required" Value="true"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=206,y=245,w=191,h=69"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=300,ly=284,type=Elbow,xs=124&amp;202,ys=280&amp;280"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=439,ly=280,type=Elbow,xs=401&amp;476,ys=280&amp;280"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=50,y=50,w=223,h=27"/>
-    <bpm:Variables Name="ServiceRequest" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="ServiceResponse" ReferredAs="" Category="OUTPUT" DisplaySequence="0">
-      <bpm:type Name="org.w3c.dom.Document"/>
-    </bpm:Variables>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=60,y=260,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=300,ly=284,type=Elbow,xs=124&202,ys=280&280"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=480,y=260,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Bus Topic": "Q.MDWTEST.ORDEH.EVENT.UPDA.MIDD50.DEVINT143",
+        "DO_LOGGING": "True",
+        "Override Inbox": "False",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "REQUEST_VARIABLE": "ServiceRequest",
+        "RESPONSE_VARIABLE": "ServiceResponse",
+        "Response Timeout (sec)": "60",
+        "Synchronous Response Required": "true",
+        "WORK_DISPLAY_INFO": "x=206,y=245,w=191,h=69"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.adapter.tibco.SynchronousBusAdapter",
+      "name": "SynchronousBusAdapter",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=439,ly=280,type=Elbow,xs=401&476,ys=280&280"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=223,h=27"
+  },
+  "variables": {
+    "ServiceRequest": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "ServiceResponse": {
+      "category": "OUTPUT",
+      "type": "org.w3c.dom.Document"
+    }
+  },
+  "version": "0.3"
+}

@@ -1,33 +1,57 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="RuntimeContext" version="0.2" description="">
-    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=52,y=79,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=405,y=82,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A3" Name="Set mrid variable&#13;&#10;from runtimeContext" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="mrid = runtimeContext.getMasterRequestId();"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=197,y=74,w=127,h=74"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=184,ly=98,type=Elbow,xs=116&amp;193,ys=99&amp;99"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=365,ly=102,type=Elbow,xs=328&amp;401,ys=102&amp;102"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=28,y=21,w=147,h=27"/>
-    <bpm:Variables Name="mrid" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:TextNote Content="TODO: Test other runtimeContext access&#13;&#10;besides masterRequestId." Reference="">
-      <bpm:Attribute Name="LOGICAL_ID" Value="N4"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=137,y=191,w=309,h=38"/>
-    </bpm:TextNote>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=52,y=79,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=184,ly=98,type=Elbow,xs=116&193,ys=99&99"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=405,y=82,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "mrid = runtimeContext.getMasterRequestId();",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=197,y=74,w=127,h=74"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set mrid variable\r\nfrom runtimeContext",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=365,ly=102,type=Elbow,xs=328&401,ys=102&102"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=28,y=21,w=147,h=27"
+  },
+  "textNotes": [{
+    "attributes": {"WORK_DISPLAY_INFO": "x=137,y=191,w=309,h=38"},
+    "content": "TODO: Test other runtimeContext access\r\nbesides masterRequestId.",
+    "id": "N4"
+  }],
+  "variables": {"mrid": {
+    "category": "LOCAL",
+    "type": "java.lang.String"
+  }},
+  "version": "0.2"
+}

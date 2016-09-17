@@ -1,0 +1,27 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-include="'layout/process-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          <span class="mdw-ghost">{{activity.packageName}}/</span> {{activity.name}} &nbsp;{{activity.id}}
+        </div>
+      </div>
+      <div class="mdw-section">
+        <div ng-include="'workflow/activityItem.html'">
+        </div>
+        <hr class="mdw-hr">
+        <div class="mdw-image-container">
+          <div class="mdw-item">
+            <div class="mdw-item-right">
+              <button type="button" class="btn mdw-btn btn-default" ng-click="refreshWorkflowImage()">
+                <i class="glyphicon glyphicon-refresh"></i>
+              </button>
+            </div>
+          </div>
+          <img ng-src="{{mdw.roots.hub}}/workflowImage?processInstanceId={{activity.processInstanceId}}&activityInstanceId={{activity.activityInstanceId}}" alt="Workflow image" />
+        </div>
+      </div>
+    </div>  
+  </div>
+</div>

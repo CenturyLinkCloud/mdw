@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.json.JSONException;
 
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.utilities.timer.ActionCancelledException;
@@ -28,10 +29,10 @@ import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.PluginUtil;
 import com.centurylink.mdw.plugin.designer.SwtProgressMonitor;
-import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
-import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.designer.model.WorkflowAsset;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
+import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
+import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 public abstract class ImportExportWizard extends Wizard
@@ -78,7 +79,8 @@ public abstract class ImportExportWizard extends Wizard
   }
 
   abstract ImportExportPage createPage();
-  abstract void performImportExport(ProgressMonitor progressMonitor) throws IOException, XmlException, DataAccessException, ValidationException, ActionCancelledException;
+  abstract void performImportExport(ProgressMonitor progressMonitor)
+  throws IOException, JSONException, XmlException, DataAccessException, ValidationException, ActionCancelledException;
 
   /**
    * Override to reflect import operations in UI.
@@ -130,7 +132,7 @@ public abstract class ImportExportWizard extends Wizard
     catch (InvocationTargetException ex)
     {
       if (ex.getCause() instanceof DataAccessOfflineException)
-        MessageDialog.openError(getShell(), "Export Attributes", "Server appears to be offline.");
+        MessageDialog.openError(getShell(), "Export Attributes", "Server appears to be offline: " + ex.getMessage());
       else
         PluginMessages.uiError(getShell(), ex, page.getTitle(), getProject());
       return false;

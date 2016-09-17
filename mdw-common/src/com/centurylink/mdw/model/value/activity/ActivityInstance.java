@@ -61,6 +61,14 @@ public class ActivityInstance implements Jsonable, Serializable {
     public Long getProcessId() { return processId;}
     public void setProcessId(Long processId) { this.processId = processId; }
 
+    private Long processInstanceId;
+    public Long getProcessInstanceId() { return processInstanceId;}
+    public void setProcessInstanceId(Long processInstanceId) { this.processInstanceId = processInstanceId; }
+
+    private Long activityInstanceId;
+    public Long getactivityInstanceId() { return activityInstanceId;}
+    public void setActivityInstanceId(Long activityInstanceId) { this.activityInstanceId = activityInstanceId; }
+
     private boolean definitionMissing;
     public boolean isDefinitionMissing() { return definitionMissing; }
     public void setDefinitionMissing(boolean defMissing) { this.definitionMissing = defMissing; }
@@ -111,6 +119,10 @@ public class ActivityInstance implements Jsonable, Serializable {
         JSONObject json = new JSONObject();
         if (id != null)
             json.put("id", id);
+        if (processInstanceId != null)
+            json.put("processInstanceId", processInstanceId);
+        if (activityInstanceId != null)
+            json.put("activityInstanceId", activityInstanceId);
         if (name != null)
             json.put("name", name);
         if (definitionId != null)

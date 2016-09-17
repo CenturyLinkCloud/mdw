@@ -1,6 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.event.PublishEventMessage" Type="com.centurylink.mdw.activity.types.GeneralActivity" Label="Publish Event Message" IconFile="send.gif" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription>&lt;PAGELET>
-   &lt;TEXT NAME='Event Name'/>
-   &lt;TEXT NAME='Message' MULTILINE='true' VH='150'/>
-&lt;/PAGELET></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "send.gif",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.event.PublishEventMessage",
+  "label": "Publish Event Message",
+  "pagelet": "<PAGELET>\n   <TEXT NAME='Event Name'/>\n   <TEXT NAME='Message' MULTILINE='true' VH='150'/>\n<\/PAGELET>"
+}

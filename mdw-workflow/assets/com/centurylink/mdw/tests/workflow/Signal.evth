@@ -1,0 +1,4 @@
+{
+  "handlerClass": "NOTIFY_PROCESS?EventName=Signal-{/Signal}",
+  "path": "Signal"
+}

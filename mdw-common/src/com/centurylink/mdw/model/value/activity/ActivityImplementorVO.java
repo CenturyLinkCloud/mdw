@@ -1,10 +1,13 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.value.activity;
 
 import java.io.Serializable;
 import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.activity.types.EvaluatorActivity;
@@ -17,10 +20,10 @@ import com.centurylink.mdw.activity.types.ScriptActivity;
 import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.activity.types.SynchronizationActivity;
 import com.centurylink.mdw.activity.types.TaskActivity;
+import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.model.value.variable.VariableVO;
 
-
-public class ActivityImplementorVO implements Serializable, Comparable<ActivityImplementorVO> {
+public class ActivityImplementorVO implements Serializable, Comparable<ActivityImplementorVO>, Jsonable {
 
     public static Class<?>[] baseClasses = {
         GeneralActivity.class,
@@ -271,6 +274,47 @@ public class ActivityImplementorVO implements Serializable, Comparable<ActivityI
     }
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public ActivityImplementorVO(JSONObject json) throws JSONException {
+        this.implementorClassName = json.getString("implementorClass");
+        this.implementorType = new Integer(1);
+        if (json.has("category"))
+            this.baseClassName = json.getString("category");
+        if (json.has("label"))
+            this.label = json.getString("label");
+        else
+            this.label = this.implementorClassName;
+        if (json.has("icon"))
+            this.iconName = json.getString("icon");
+        if (json.has("pagelet"))
+            this.attributeDescription = json.getString("pagelet");
+        if (json.has("hidden"))
+            this.hidden = json.getBoolean("hidden");
+
+    }
+
+    /**
+     * TODO: When/if implementors become full-fledged assets, we can decouple asset name from implementor class.
+     */
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("implementorClass", implementorClassName);
+        if (baseClassName != null)
+            json.put("category", baseClassName);
+        if (label != null)
+            json.put("label", label);
+        if (iconName != null)
+            json.put("icon", iconName);
+        if (attributeDescription != null)
+            json.put("pagelet", attributeDescription);
+        if (hidden)
+            json.put("hidden", true);
+        return json;
+    }
+
+    public String getJsonName() {
+        return implementorClassName;
     }
 
 }

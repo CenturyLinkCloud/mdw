@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.value.process;
 
@@ -11,13 +11,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlbeans.XmlException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.bpm.ApplicationPropertiesDocument.ApplicationProperties;
+import com.centurylink.mdw.bpm.PackageDocument;
+import com.centurylink.mdw.bpm.ProcessDefinitionDocument;
+import com.centurylink.mdw.bpm.PropertyDocument.Property;
+import com.centurylink.mdw.bpm.PropertyGroupDocument.PropertyGroup;
 import com.centurylink.mdw.cloud.CloudClassLoader;
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
 import com.centurylink.mdw.common.provider.ProviderRegistry;
+import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.spring.SpringAppContext;
+import com.centurylink.mdw.common.utilities.JsonUtil;
 import com.centurylink.mdw.common.utilities.form.FormAction;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.event.ExternalEventHandler;
@@ -34,20 +45,19 @@ import com.centurylink.mdw.model.value.variable.VariableVO;
 import com.centurylink.mdw.osgi.BundleLocator;
 import com.centurylink.mdw.osgi.BundleSpec;
 
-public class PackageVO implements Serializable {
+public class PackageVO implements Serializable, Jsonable {
 
     public static final String DEFAULT_PACKAGE_NAME = "(default package)";
     public static final String BASELINE_PACKAGE_NAME = "MDW Baseline";
     public static final String MDW = "com.centurylink.mdw";
     public static final String MDW_HUB = MDW + ".hub";
 
-
     private static PackageVO defaultPackage = null;
 
     private Long packageId;
     private String packageName;
     private String packageDescription;
-    private String voXML;
+    private String metaContent;
     private List<AttributeVO> attributes;
     private List<ActivityImplementorVO> implementors;
     private List<ExternalEventVO> externalEvents;
@@ -89,6 +99,38 @@ public class PackageVO implements Serializable {
 	 */
 	public List<AttributeVO> getAttributes() {
 		return attributes;
+	}
+
+	public List<AttributeVO> getAttributes(String attributeGroup) {
+	    if (attributes == null)
+	        return null;
+	    List<AttributeVO> groupAttributes = new ArrayList<AttributeVO>();
+	    for (AttributeVO attribute : attributes) {
+	        if (attributeGroup == null) {
+	            if (attribute.getAttributeGroup() == null)
+	                attributes.add(attribute);
+	        }
+	        else if (attributeGroup.equals(attribute.getAttributeGroup())) {
+	            attributes.add(attribute);
+	        }
+	    }
+	    return groupAttributes;
+	}
+
+	public Map<String,List<AttributeVO>> getAttributesByGroup() {
+	    if (attributes == null)
+	        return null;
+	    Map<String,List<AttributeVO>> grouped = new HashMap<String,List<AttributeVO>>();
+	    for (AttributeVO attribute : attributes) {
+	        String group = attribute.getAttributeGroup();
+	        List<AttributeVO> groupAttrs = grouped.get(group);
+	        if (groupAttrs == null) {
+	            groupAttrs = new ArrayList<AttributeVO>();
+	            grouped.put(group, groupAttrs);
+	        }
+	        groupAttrs.add(attribute);
+	    }
+	    return grouped;
 	}
 
 	/**
@@ -362,12 +404,44 @@ public class PackageVO implements Serializable {
         pool.setLanes(participants);
     }
 
-    public String getVoXML() {
-        return voXML;
+    public String getMetaContent() {
+        return metaContent;
     }
 
-    public void setVoXML(String voXML) {
-        this.voXML = voXML;
+    public void setMetaContent(String metaContent) {
+        this.metaContent = metaContent;
+    }
+
+    public List<AttributeVO> getMetaAttributes() throws JSONException, XmlException {
+        if (metaContent == null || metaContent.isEmpty())
+            return null;
+        List<AttributeVO> metaAttributes = new ArrayList<AttributeVO>();
+        if (metaContent.trim().startsWith("{")) {
+            PackageVO metaPkg = new PackageVO(new JSONObject(metaContent));
+            return metaPkg.getAttributes();
+        }
+        else {
+            ApplicationProperties props = null;
+            if (metaContent.startsWith("<bpm:package") || metaContent.startsWith("<package")) {
+                PackageDocument pkgDefDoc = PackageDocument.Factory.parse(metaContent);
+                props = pkgDefDoc.getPackage().getApplicationProperties();
+            }
+            else {
+                // compatibility for imported non-VCS packages
+                ProcessDefinitionDocument procDefDoc = ProcessDefinitionDocument.Factory.parse(getMetaContent(), Compatibility.namespaceOptions());
+                props = procDefDoc.getProcessDefinition().getApplicationProperties();
+            }
+            if (props != null) {
+                for (PropertyGroup group : props.getPropertyGroupList()) {
+                    for (Property prop : group.getPropertyList()) {
+                        AttributeVO metaAttribute = new AttributeVO(prop.getName(), prop.getStringValue());
+                        metaAttribute.setAttributeGroup(group.getName());
+                        metaAttributes.add(metaAttribute);
+                    }
+                }
+            }
+        }
+        return metaAttributes;
     }
 
     public String getVersionString() {
@@ -575,5 +649,120 @@ public class PackageVO implements Serializable {
     @Override
     public String toString() {
         return getLabel();
+    }
+
+    public PackageVO(JSONObject json) throws JSONException {
+        if (json.has("name"))
+            this.setName(json.getString("name"));
+        if (json.has("version"))
+            this.setVersion(parseVersion(json.getString("version")));
+        if (json.has("schemaVersion"))
+            this.setSchemaVersion(RuleSetVO.parseVersion(json.getString("schemaVersion")));
+        if (json.has("workgroup"))
+            this.setGroup(json.getString("workgroup"));
+        if (json.has("attributes")) {
+            this.attributes = JsonUtil.getAttributes(json.getJSONObject("attributes"));
+        }
+        // many places don't check for null arrays, so we must instantiate
+        this.implementors = new ArrayList<ActivityImplementorVO>();
+        if (json.has("activityImplementors")) {
+            JSONObject implementorsJson = json.getJSONObject("activityImplementors");
+            for (JSONObject implementorJson : JsonUtil.getJsonObjects(implementorsJson).values())
+                this.implementors.add(new ActivityImplementorVO(implementorJson));
+        }
+        this.externalEvents = new ArrayList<ExternalEventVO>();
+        if (json.has("eventHandlers")) {
+            JSONObject eventHandlersJson = json.getJSONObject("eventHandlers");
+            for (JSONObject eventHandlerJson : JsonUtil.getJsonObjects(eventHandlersJson).values())
+                this.externalEvents.add(new ExternalEventVO(eventHandlerJson));
+        }
+        this.processes = new ArrayList<ProcessVO>();
+        if (json.has("processes")) {
+            JSONObject processesJson = json.getJSONObject("processes");
+            Map<String,JSONObject> objects = JsonUtil.getJsonObjects(processesJson);
+            for (String name : objects.keySet()) {
+                ProcessVO process = new ProcessVO(objects.get(name));
+                process.setName(name);
+                this.processes.add(process);
+            }
+        }
+        this.rulesets = new ArrayList<RuleSetVO>();
+        if (json.has("assets")) {
+            JSONObject assetsJson = json.getJSONObject("assets");
+            Map<String,JSONObject> objects = JsonUtil.getJsonObjects(assetsJson);
+            for (String name : objects.keySet()) {
+                RuleSetVO ruleset = new RuleSetVO(objects.get(name));
+                ruleset.setName(name);
+                ruleset.setLanguage(RuleSetVO.getFormat(name));
+                this.rulesets.add(ruleset);
+            }
+        }
+        this.taskTemplates = new ArrayList<TaskVO>();
+        if (json.has("taskTemplates")) {
+            JSONObject taskTemplatesJson = json.getJSONObject("taskTemplates");
+            Map<String,JSONObject> objects = JsonUtil.getJsonObjects(taskTemplatesJson);
+            for (String name : objects.keySet()) {
+                TaskVO taskTemplate = new TaskVO(objects.get(name));
+                taskTemplate.setName(name);
+                this.taskTemplates.add(taskTemplate);
+            }
+        }
+    }
+
+    public JSONObject getJson() throws JSONException {
+        return getJson(true);
+    }
+
+    public JSONObject getJson(boolean deep) throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("version", getVersionString());
+        json.put("schemaVersion", RuleSetVO.formatVersion(getSchemaVersion()));
+        if (group != null)
+            json.put("workgroup", group);
+        if (attributes != null && !attributes.isEmpty()) {
+            json.put("attributes", JsonUtil.getAttributesJson(attributes, true));
+        }
+        if (deep) {
+            // name is not included since it's the JSON name.
+            if (implementors != null && !implementors.isEmpty()) {
+                JSONObject implementorsJson = new JSONObject();
+                for (ActivityImplementorVO implementor : implementors)
+                    implementorsJson.put(implementor.getJsonName(), implementor.getJson());
+                json.put("activityImplementors", implementorsJson);
+            }
+            if (externalEvents != null && !externalEvents.isEmpty()) {
+                JSONObject eventHandlersJson = new JSONObject();
+                for (ExternalEventVO eventHandler : externalEvents)
+                    eventHandlersJson.put(eventHandler.getJsonName(), eventHandler.getJson());
+                json.put("eventHandlers", eventHandlersJson);
+            }
+            if (processes != null && !processes.isEmpty()) {
+                JSONObject processesJson = new JSONObject();
+                for (ProcessVO process : processes)
+                    processesJson.put(process.getJsonName(), process.getJson());
+                json.put("processes", processesJson);
+            }
+            if (rulesets != null && !rulesets.isEmpty()) {
+                JSONObject assetsJson = new JSONObject();
+                for (RuleSetVO asset : rulesets)
+                    assetsJson.put(asset.getJsonName(), asset.getJson());
+                json.put("assets", assetsJson);
+            }
+            if (taskTemplates != null && !taskTemplates.isEmpty()) {
+                JSONObject taskTemplatesJson = new JSONObject();
+                for (TaskVO taskTemplate : taskTemplates)
+                    taskTemplatesJson.put(taskTemplate.getJsonName(), taskTemplate.getJson());
+                json.put("taskTemplates", taskTemplatesJson);
+            }
+        }
+        else {
+            json.put("name", getName());
+        }
+
+        return json;
+    }
+
+    public String getJsonName() {
+        return getName();
     }
 }

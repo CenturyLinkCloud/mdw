@@ -1,35 +1,62 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="SmartProcessChild2" version="0.3" description="">
-    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=45,y=108,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=425,y=105,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A3" Name="Set Ver Info" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="procName = runtimeContext.getProcess().getName();&#13;&#10;procVer = runtimeContext.getProcess().getVersionString();"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=217,y=96,w=100,h=60"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A1" To="A3" Event="FINISH" Id="T1">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=185,ly=138,type=Elbow,xs=109&amp;213,ys=128&amp;128"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A3" To="A2" Event="FINISH" Id="T2">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=376,ly=125,type=Elbow,xs=321&amp;421,ys=125&amp;125"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=22,y=27,w=182,h=27"/>
-    <bpm:Variables Name="procName" ReferredAs="" Category="OUTPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="procVer" ReferredAs="" Category="OUTPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="inputVar" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=45,y=108,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=185,ly=138,type=Elbow,xs=109&213,ys=128&128"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=425,y=105,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "procName = runtimeContext.getProcess().getName();\r\nprocVer = runtimeContext.getProcess().getVersionString();",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=217,y=96,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set Ver Info",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=376,ly=125,type=Elbow,xs=321&421,ys=125&125"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=22,y=27,w=182,h=27"
+  },
+  "variables": {
+    "inputVar": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "procName": {
+      "category": "OUTPUT",
+      "type": "java.lang.String"
+    },
+    "procVer": {
+      "category": "OUTPUT",
+      "type": "java.lang.String"
+    }
+  },
+  "version": "0.3"
+}

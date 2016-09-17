@@ -1,49 +1,86 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="JaxbDocument" version="0.7" description="">
-    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=39,y=89,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=550,y=93,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A7" Name="Programmatic&#13;&#10;Access/Create" Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity">
-      <bpm:Attribute Name="Java" Value="/**&#13;&#10; * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.&#13;&#10; */&#13;&#10;package com.centurylink.mdw.tests.cloud;&#13;&#10;&#13;&#10;import java.util.Map;&#13;&#10;import com.centurylink.mdw.tests.cloud.JaxbAsset;&#13;&#10;import com.centurylink.mdw.java.JavaExecutionException;&#13;&#10;import com.centurylink.mdw.java.JavaExecutor;&#13;&#10;import com.centurylink.mdw.java.MdwJavaException;&#13;&#10;import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;&#13;&#10;&#13;&#10;/**&#13;&#10; * create and assign JAXBElement variable&#13;&#10; */&#13;&#10;public class ProgrammaticAccessCreate_A7 implements JavaExecutor {&#13;&#10;&#13;&#10;    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {&#13;&#10;    }&#13;&#10;&#13;&#10;    public Object execute(Map&lt;String, Object> variables) throws JavaExecutionException {&#13;&#10;        JaxbAsset locallyCreatedJaxb = new JaxbAsset();&#13;&#10;        locallyCreatedJaxb.setRequiredElement(&quot;hello&quot;);&#13;&#10;        locallyCreatedJaxb.setOptionalElement(&quot;jaxb&quot;);&#13;&#10;        locallyCreatedJaxb.setRequiredAttribute(&quot;from&quot;);&#13;&#10;        locallyCreatedJaxb.setOptionalAttribute(&quot;mdw&quot;);&#13;&#10;        variables.put(&quot;locallyCreatedJaxb&quot;, locallyCreatedJaxb);&#13;&#10;        JaxbAsset assetDefinedJaxb = (JaxbAsset) variables.get(&quot;assetDefinedJaxb&quot;);&#13;&#10;        variables.put(&quot;requiredElemValue&quot;, assetDefinedJaxb.getRequiredElement());&#13;&#10;        variables.put(&quot;requiredAttrValue&quot;, assetDefinedJaxb.getRequiredAttribute());&#13;&#10;        return null;&#13;&#10;    }&#13;&#10;}&#13;&#10;"/>
-      <bpm:Attribute Name="Output Documents" Value="locallyCreatedJaxb"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=176,y=76,w=113,h=71"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A8" Name="Programmatic&#13;&#10;Update" Implementation="com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity">
-      <bpm:Attribute Name="Java" Value="/**&#13;&#10; * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.&#13;&#10; */&#13;&#10;package com.centurylink.mdw.tests.cloud;&#13;&#10;&#13;&#10;import java.util.Map;&#13;&#10;import com.centurylink.mdw.tests.cloud.JaxbAsset;&#13;&#10;import com.centurylink.mdw.java.JavaExecutionException;&#13;&#10;import com.centurylink.mdw.java.JavaExecutor;&#13;&#10;import com.centurylink.mdw.java.MdwJavaException;&#13;&#10;import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;&#13;&#10;import com.centurylink.mdw.common.service.types.ActionRequest;&#13;&#10;import com.centurylink.mdw.common.service.types.Parameter;&#13;&#10;&#13;&#10;/**&#13;&#10; * Programmatic update.&#13;&#10; */&#13;&#10;public class ProgrammaticUpdate_A8 implements JavaExecutor {&#13;&#10;&#13;&#10;    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {&#13;&#10;    }&#13;&#10;&#13;&#10;    public Object execute(Map&lt;String,Object> variables) throws JavaExecutionException {&#13;&#10;        JaxbAsset assetDefinedJaxb = (JaxbAsset) variables.get(&quot;assetDefinedJaxb&quot;);&#13;&#10;        assetDefinedJaxb.setOptionalElement(&quot;updatedOptionalElem&quot;);&#13;&#10;        assetDefinedJaxb.setOptionalAttribute(&quot;updatedOptionalAttr&quot;);&#13;&#10;&#13;&#10;        ActionRequest actionRequest = (ActionRequest)variables.get(&quot;actionRequest&quot;);&#13;&#10;        actionRequest.getAction().setName(&quot;updatedAction&quot;);&#13;&#10;        Parameter newParam = new Parameter();&#13;&#10;        newParam.setName(&quot;insertedParam&quot;);&#13;&#10;        newParam.setValue(&quot;insertedValue&quot;);&#13;&#10;        actionRequest.getAction().getParameter().add(newParam);&#13;&#10;        return null;&#13;&#10;    }&#13;&#10;}&#13;&#10;"/>
-      <bpm:Attribute Name="Output Documents" Value="actionRequest#assetDefinedJaxb"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=348,y=77,w=118,h=72"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A1" To="A7" Event="FINISH" Id="T1">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=142,ly=109,type=Elbow,xs=103&amp;172,ys=109&amp;109"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A7" To="A8" Event="FINISH" Id="T2">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=319,ly=112,type=Elbow,xs=293&amp;344,ys=112&amp;112"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A8" To="A2" Event="FINISH" Id="T3">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=508,ly=113,type=Elbow,xs=470&amp;546,ys=113&amp;113"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=20,y=21,w=136,h=27"/>
-    <bpm:Variables Name="actionRequest" ReferredAs="" Category="INOUT" DisplaySequence="0">
-      <bpm:type Name="javax.xml.bind.JAXBElement"/>
-    </bpm:Variables>
-    <bpm:Variables Name="assetDefinedJaxb" ReferredAs="" Category="INOUT" DisplaySequence="0">
-      <bpm:type Name="javax.xml.bind.JAXBElement"/>
-    </bpm:Variables>
-    <bpm:Variables Name="locallyCreatedJaxb" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="javax.xml.bind.JAXBElement"/>
-    </bpm:Variables>
-    <bpm:Variables Name="requiredAttrValue" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="requiredElemValue" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=39,y=89,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=142,ly=109,type=Elbow,xs=103&172,ys=109&109"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=550,y=93,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Java": "/**\r\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\r\n */\r\npackage com.centurylink.mdw.tests.cloud;\r\n\r\nimport java.util.Map;\r\nimport com.centurylink.mdw.tests.cloud.JaxbAsset;\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;\r\n\r\n/**\r\n * create and assign JAXBElement variable\r\n */\r\npublic class ProgrammaticAccessCreate_A7 implements JavaExecutor {\r\n\r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\r\n        JaxbAsset locallyCreatedJaxb = new JaxbAsset();\r\n        locallyCreatedJaxb.setRequiredElement(\"hello\");\r\n        locallyCreatedJaxb.setOptionalElement(\"jaxb\");\r\n        locallyCreatedJaxb.setRequiredAttribute(\"from\");\r\n        locallyCreatedJaxb.setOptionalAttribute(\"mdw\");\r\n        variables.put(\"locallyCreatedJaxb\", locallyCreatedJaxb);\r\n        JaxbAsset assetDefinedJaxb = (JaxbAsset) variables.get(\"assetDefinedJaxb\");\r\n        variables.put(\"requiredElemValue\", assetDefinedJaxb.getRequiredElement());\r\n        variables.put(\"requiredAttrValue\", assetDefinedJaxb.getRequiredAttribute());\r\n        return null;\r\n    }\r\n}\r\n",
+        "Output Documents": "locallyCreatedJaxb",
+        "WORK_DISPLAY_INFO": "x=176,y=76,w=113,h=71"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Programmatic\r\nAccess/Create",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=319,ly=112,type=Elbow,xs=293&344,ys=112&112"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {
+        "Java": "/**\r\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\r\n */\r\npackage com.centurylink.mdw.tests.cloud;\r\n\r\nimport java.util.Map;\r\nimport com.centurylink.mdw.tests.cloud.JaxbAsset;\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;\r\nimport com.centurylink.mdw.common.service.types.ActionRequest;\r\nimport com.centurylink.mdw.common.service.types.Parameter;\r\n\r\n/**\r\n * Programmatic update.\r\n */\r\npublic class ProgrammaticUpdate_A8 implements JavaExecutor {\r\n\r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException {\r\n        JaxbAsset assetDefinedJaxb = (JaxbAsset) variables.get(\"assetDefinedJaxb\");\r\n        assetDefinedJaxb.setOptionalElement(\"updatedOptionalElem\");\r\n        assetDefinedJaxb.setOptionalAttribute(\"updatedOptionalAttr\");\r\n\r\n        ActionRequest actionRequest = (ActionRequest)variables.get(\"actionRequest\");\r\n        actionRequest.getAction().setName(\"updatedAction\");\r\n        Parameter newParam = new Parameter();\r\n        newParam.setName(\"insertedParam\");\r\n        newParam.setValue(\"insertedValue\");\r\n        actionRequest.getAction().getParameter().add(newParam);\r\n        return null;\r\n    }\r\n}\r\n",
+        "Output Documents": "actionRequest#assetDefinedJaxb",
+        "WORK_DISPLAY_INFO": "x=348,y=77,w=118,h=72"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Programmatic\r\nUpdate",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=508,ly=113,type=Elbow,xs=470&546,ys=113&113"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=20,y=21,w=136,h=27"
+  },
+  "variables": {
+    "actionRequest": {
+      "category": "INOUT",
+      "type": "javax.xml.bind.JAXBElement"
+    },
+    "assetDefinedJaxb": {
+      "category": "INOUT",
+      "type": "javax.xml.bind.JAXBElement"
+    },
+    "locallyCreatedJaxb": {
+      "category": "LOCAL",
+      "type": "javax.xml.bind.JAXBElement"
+    },
+    "requiredAttrValue": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "requiredElemValue": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    }
+  },
+  "version": "0.7"
+}

@@ -64,6 +64,8 @@ public class AppSummary implements XmlService, JsonService {
         applicationSummary.setApplicationName(ApplicationContext.getApplicationName());
         applicationSummary.setVersion(ApplicationContext.getApplicationVersion());
         applicationSummary.setMdwVersion(ApplicationContext.getMdwVersion());
+        if (ApplicationContext.getMdwBuildTimestamp() != null)
+            applicationSummary.setMdwBuild(ApplicationContext.getMdwBuildTimestamp());
         if (ApplicationContext.getMdwHubUrl() != null)
             applicationSummary.setMdwHubUrl(ApplicationContext.getMdwHubUrl());
         if (ApplicationContext.getMdwWebUrl() != null)

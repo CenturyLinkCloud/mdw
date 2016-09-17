@@ -20,7 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.service.Exportable;
+import com.centurylink.mdw.common.service.JsonExportable;
 import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.JsonListMap;
 import com.centurylink.mdw.common.service.Jsonable;
@@ -64,7 +64,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Path("/Tasks")
 @Api("Task instances")
-public class Tasks extends JsonRestService implements Exportable {
+public class Tasks extends JsonRestService implements JsonExportable {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     @Override

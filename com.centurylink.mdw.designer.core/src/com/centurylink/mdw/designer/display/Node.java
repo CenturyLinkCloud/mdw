@@ -141,7 +141,7 @@ public class Node implements Serializable,Selectable,EditableCanvasText{
 
     public int getSequenceId() {
         if (nodet.getSequenceId() == 0 && graph instanceof Graph)
-            ((Graph)graph).assignNodeSequenceIds();
+            ((Graph)graph).assignSequenceIds();
         return nodet.getSequenceId();
     }
 

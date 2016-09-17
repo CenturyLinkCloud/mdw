@@ -53,10 +53,10 @@ public class WorkflowDAO extends VcsEntityDAO {
 
             String orderBy = buildOrderBy(query);
             StringBuilder sql = new StringBuilder();
-            if (query.getMax() != -1)
+            if (query.getMax() != Query.MAX_ALL)
               sql.append(db.pagingQueryPrefix());
             sql.append("select ").append(PROC_INST_COLS).append(" from process_instance pi\n").append(where).append(orderBy);
-            if (query.getMax() != -1)
+            if (query.getMax() != Query.MAX_ALL)
                 sql.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
             rs = db.runSelect(sql.toString(), null);
             while (rs.next())

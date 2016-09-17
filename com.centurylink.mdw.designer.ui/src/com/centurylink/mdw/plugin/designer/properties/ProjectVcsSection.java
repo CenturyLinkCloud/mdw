@@ -53,15 +53,15 @@ public class ProjectVcsSection extends PropertySection implements IFilter, Eleme
     gitRepoUrlEditor = new PropertyEditor(project, PropertyEditor.TYPE_TEXT);
     gitRepoUrlEditor.setLabel("Git Repository URL");
     gitRepoUrlEditor.addValueChangeListener(new ValueChangeListener()
+    {
+      public void propertyValueChanged(Object newValue)
       {
-        public void propertyValueChanged(Object newValue)
-        {
-          project.getMdwVcsRepository().setRepositoryUrlWithCredentials(((String)newValue).trim());
-          project.getMdwVcsRepository().setEntrySource("projectSection");
-          WorkflowProjectManager.updateProject(project);
-          project.fireElementChangeEvent(ChangeType.SETTINGS_CHANGE, project.getMdwVcsRepository());
-        }
-      });
+        project.getMdwVcsRepository().setRepositoryUrlWithCredentials(((String)newValue).trim());
+        project.getMdwVcsRepository().setEntrySource("projectSection");
+        WorkflowProjectManager.updateProject(project);
+        project.fireElementChangeEvent(ChangeType.SETTINGS_CHANGE, project.getMdwVcsRepository());
+      }
+    });
     gitRepoUrlEditor.render(composite);
     gitRepoUrlEditor.setValue(project.getMdwVcsRepository().getRepositoryUrlWithMaskedCredentials());
     gitRepoUrlEditor.setEditable(!project.isReadOnly());
@@ -71,15 +71,15 @@ public class ProjectVcsSection extends PropertySection implements IFilter, Eleme
     gitBranchEditor.setLabel("Git Branch");
     gitBranchEditor.setWidth(200);
     gitBranchEditor.addValueChangeListener(new ValueChangeListener()
+    {
+      public void propertyValueChanged(Object newValue)
       {
-        public void propertyValueChanged(Object newValue)
-        {
-          project.getMdwVcsRepository().setBranch(((String)newValue).trim());
-          project.getMdwVcsRepository().setEntrySource("projectSection");
-          WorkflowProjectManager.updateProject(project);
-          project.fireElementChangeEvent(ChangeType.SETTINGS_CHANGE, project.getMdwVcsRepository());
-        }
-      });
+        project.getMdwVcsRepository().setBranch(((String)newValue).trim());
+        project.getMdwVcsRepository().setEntrySource("projectSection");
+        WorkflowProjectManager.updateProject(project);
+        project.fireElementChangeEvent(ChangeType.SETTINGS_CHANGE, project.getMdwVcsRepository());
+      }
+    });
     gitBranchEditor.render(composite);
     gitBranchEditor.setValue(project.getMdwVcsRepository().getBranch());
     gitBranchEditor.setEditable(!project.isReadOnly());
@@ -89,15 +89,15 @@ public class ProjectVcsSection extends PropertySection implements IFilter, Eleme
     assetLocalPathEditor.setLabel("Asset Local Path");
     assetLocalPathEditor.setWidth(200);
     assetLocalPathEditor.addValueChangeListener(new ValueChangeListener()
+    {
+      public void propertyValueChanged(Object newValue)
       {
-        public void propertyValueChanged(Object newValue)
-        {
-          project.getMdwVcsRepository().setLocalPath(((String)newValue).trim());
-          project.getMdwVcsRepository().setEntrySource("projectSection");
-          WorkflowProjectManager.updateProject(project);
-          project.fireElementChangeEvent(ChangeType.SETTINGS_CHANGE, project.getMdwVcsRepository());
-        }
-      });
+        project.getMdwVcsRepository().setLocalPath(((String)newValue).trim());
+        project.getMdwVcsRepository().setEntrySource("projectSection");
+        WorkflowProjectManager.updateProject(project);
+        project.fireElementChangeEvent(ChangeType.SETTINGS_CHANGE, project.getMdwVcsRepository());
+      }
+    });
     assetLocalPathEditor.render(composite);
     assetLocalPathEditor.setValue(project.getMdwVcsRepository().getLocalPath());
     assetLocalPathEditor.setEditable(!project.isReadOnly());
@@ -109,7 +109,7 @@ public class ProjectVcsSection extends PropertySection implements IFilter, Eleme
         // for git: sync switch
         gitSyncEditor = new PropertyEditor(project, PropertyEditor.TYPE_SWITCH);
         gitSyncEditor.setLabel("Git Repo Project");
-        gitSyncEditor.setComment("(Unlock to enable asset editing)");
+        //gitSyncEditor.setComment("(Unlock to enable asset editing)");
         gitSyncEditor.addValueChangeListener(new ValueChangeListener()
         {
           public void propertyValueChanged(Object newValue)
@@ -124,7 +124,8 @@ public class ProjectVcsSection extends PropertySection implements IFilter, Eleme
         switchBtn.setTextForSelect("Unlocked");
         switchBtn.setTextForUnselect("Synced");
         gitSyncEditor.setValue(project.getMdwVcsRepository().isGitProjectSync());
-        gitSyncEditor.setEditable(!project.isReadOnly());
+        //gitSyncEditor.setEditable(!project.isReadOnly());
+        gitSyncEditor.setEditable(false);
       }
       // include archive checkbox
       includeArchiveEditor = new PropertyEditor(project, PropertyEditor.TYPE_CHECKBOX);

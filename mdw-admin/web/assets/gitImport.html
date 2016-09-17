@@ -3,7 +3,7 @@
   <div class="col-md-10">
     <div class="panel panel-default">
       <div class="panel-heading mdw-heading">Import from Git</div>
-      <form name="userForm" class="form-horizontal mdw-section" ng-submit="save()" role="form">
+      <form name="importForm" class="form-horizontal mdw-section" role="form">
         <div class="form-group mdw-static-group">
           <label class="control-label col-xs-2">Server Instance:</label>
           <div class="col-xs-10">
@@ -39,10 +39,10 @@
         <div class="mdw-form-footer">
           <div class="mdw-message mdw-form-message">{{gitImportMessage}}</div>
           <div class="mdw-buttons">
-            <button class="btn btn-success mdw-btn" type="submit" ng-click="gitImport()">
-              <span class="glyphicon glyphicon-import"></span> Import
+            <button class="btn btn-success mdw-btn" type="submit" ng-disabled="!authUser.hasRole('Process Design') || !pkgList.assetRoot" ng-click="gitImport()">
+              <span class="glyphicon glyphicon-download-alt" style="transform:rotate(180deg)"></span> Import
             </button>
-            <button class="btn mdw-btn mdw-cancel-btn" type="button" ng-click="cancel()">Cancel</button>                 
+            <button class="btn mdw-btn mdw-cancel-btn" type="button" ng-click="cancel()">Cancel</button>
           </div>
         </div>              
       </form>

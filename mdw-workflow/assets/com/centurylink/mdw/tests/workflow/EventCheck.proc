@@ -1,85 +1,169 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="EventCheck" version="0.4" description="">
-    <bpm:Activity Id="A1" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=21,y=306,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=353,y=320,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A23" Name="Event Check &#10;Activity" Implementation="com.centurylink.mdw.workflow.activity.event.EventCheckActivity">
-      <bpm:Attribute Name="WAIT_EVENT_NAMES" Value="C-{$MasterRequestID},Cancelled::ABORT,false,;M-{$MasterRequestID},FINISH,false,;S-{$MasterRequestID},Completed::CORRECT,false,;H-{$MasterRequestID},Hold::CORRECT,true,"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=178,y=298,w=117,h=75"/>
-      <bpm:Attribute Name="rcvdMsgDocVar" Value="response"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A1" To="A23" Event="FINISH" Id="T23">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=135,ly=325,type=Elbow,xs=85&amp;174,ys=326&amp;326"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A23" To="A2" Event="FINISH" Id="T24">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=324,ly=340,type=Elbow,xs=299&amp;349,ys=340&amp;340"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="ArrowStyle" Value="ArrowEnd"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=50,y=50,w=110,h=27"/>
-    <bpm:Variables Name="CustomerAccountId" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-    </bpm:Variables>
-    <bpm:Variables Name="request" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="org.w3c.dom.Document"/>
-    </bpm:Variables>
-    <bpm:Variables Name="response" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="org.w3c.dom.Document"/>
-    </bpm:Variables>
-    <bpm:SubProcess Id="P6" name="Correction Handler" version="0" description="">
-      <bpm:Activity Id="A7" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=266,y=139,w=60,h=40"/>
-      </bpm:Activity>
-      <bpm:Activity Id="A8" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-        <bpm:Attribute Name="CompletionCode" Value=""/>
-        <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-        <bpm:Attribute Name="TerminationAction" Value=""/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=566,y=139,w=60,h=40"/>
-      </bpm:Activity>
-      <bpm:Transition CompletionCode="" From="A7" To="A8" Event="FINISH" Id="T27">
-        <bpm:Attribute Name="TRANSITION_DELAY" Value="5s"/>
-        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=446,ly=159,type=Elbow,xs=330&amp;562,ys=159&amp;159"/>
-      </bpm:Transition>
-      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
-      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Correction Handler"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=226,y=99,w=440,h=120"/>
-    </bpm:SubProcess>
-    <bpm:SubProcess Id="P13" name="Cancellation Handler" version="0" description="">
-      <bpm:Activity Id="A14" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=733,y=141,w=60,h=40"/>
-      </bpm:Activity>
-      <bpm:Activity Id="A15" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-        <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=1033,y=141,w=60,h=40"/>
-      </bpm:Activity>
-      <bpm:Transition CompletionCode="" From="A14" To="A15" Event="FINISH" Id="T28">
-        <bpm:Attribute Name="TRANSITION_DELAY" Value="10s"/>
-        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=913,ly=161,type=Elbow,xs=797&amp;1029,ys=161&amp;161"/>
-      </bpm:Transition>
-      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
-      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Cancellation Handler"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=693,y=101,w=440,h=120"/>
-    </bpm:SubProcess>
-    <bpm:SubProcess Id="P24" name="Exception Handler" version="0" description="">
-      <bpm:Activity Id="A25" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=471,y=425,w=60,h=40"/>
-      </bpm:Activity>
-      <bpm:Activity Id="A27" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-        <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-        <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=771,y=425,w=60,h=40"/>
-      </bpm:Activity>
-      <bpm:Transition CompletionCode="" From="A25" To="A27" Event="FINISH" Id="T29">
-        <bpm:Attribute Name="TRANSITION_DELAY" Value="10s"/>
-        <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=651,ly=445,type=Elbow,xs=535&amp;767,ys=445&amp;445"/>
-      </bpm:Transition>
-      <bpm:Attribute Name="PROCESS_VISIBILITY" Value="EMBEDDED"/>
-      <bpm:Attribute Name="EMBEDDED_PROCESS_TYPE" Value="Exception Handler"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=431,y=385,w=440,h=120"/>
-    </bpm:SubProcess>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=21,y=306,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=135,ly=325,type=Elbow,xs=85&174,ys=326&326"},
+        "event": "FINISH",
+        "id": "T23",
+        "to": "A23"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=353,y=320,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "WAIT_EVENT_NAMES": "C-{$MasterRequestID},Cancelled::ABORT,false,;M-{$MasterRequestID},FINISH,false,;S-{$MasterRequestID},Completed::CORRECT,false,;H-{$MasterRequestID},Hold::CORRECT,true,",
+        "WORK_DISPLAY_INFO": "x=178,y=298,w=117,h=75",
+        "rcvdMsgDocVar": "response"
+      },
+      "id": "A23",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventCheckActivity",
+      "name": "Event Check \nActivity",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=324,ly=340,type=Elbow,xs=299&349,ys=340&340"},
+        "event": "FINISH",
+        "id": "T24",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=110,h=27"
+  },
+  "subprocesses": [
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=266,y=139,w=60,h=40"},
+          "id": "A7",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {
+              "TRANSITION_DELAY": "5s",
+              "TRANSITION_DISPLAY_INFO": "lx=446,ly=159,type=Elbow,xs=330&562,ys=159&159"
+            },
+            "event": "FINISH",
+            "id": "T27",
+            "to": "A8"
+          }]
+        },
+        {
+          "attributes": {
+            "DoNotNotifyCaller": "false",
+            "WORK_DISPLAY_INFO": "x=566,y=139,w=60,h=40"
+          },
+          "id": "A8",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Correction Handler",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "WORK_DISPLAY_INFO": "x=226,y=99,w=440,h=120"
+      },
+      "id": "P6",
+      "name": "Correction Handler"
+    },
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=733,y=141,w=60,h=40"},
+          "id": "A14",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {
+              "TRANSITION_DELAY": "10s",
+              "TRANSITION_DISPLAY_INFO": "lx=913,ly=161,type=Elbow,xs=797&1029,ys=161&161"
+            },
+            "event": "FINISH",
+            "id": "T28",
+            "to": "A15"
+          }]
+        },
+        {
+          "attributes": {
+            "DoNotNotifyCaller": "false",
+            "WORK_DISPLAY_INFO": "x=1033,y=141,w=60,h=40"
+          },
+          "id": "A15",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Cancellation Handler",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "WORK_DISPLAY_INFO": "x=693,y=101,w=440,h=120"
+      },
+      "id": "P13",
+      "name": "Cancellation Handler"
+    },
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=471,y=425,w=60,h=40"},
+          "id": "A25",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {
+              "TRANSITION_DELAY": "10s",
+              "TRANSITION_DISPLAY_INFO": "lx=651,ly=445,type=Elbow,xs=535&767,ys=445&445"
+            },
+            "event": "FINISH",
+            "id": "T29",
+            "to": "A27"
+          }]
+        },
+        {
+          "attributes": {
+            "DoNotNotifyCaller": "false",
+            "WORK_DISPLAY_INFO": "x=771,y=425,w=60,h=40"
+          },
+          "id": "A27",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Exception Handler",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "WORK_DISPLAY_INFO": "x=431,y=385,w=440,h=120"
+      },
+      "id": "P24",
+      "name": "Exception Handler"
+    }
+  ],
+  "variables": {
+    "CustomerAccountId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "request": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    },
+    "response": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    }
+  },
+  "version": "0.4"
+}

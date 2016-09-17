@@ -41,7 +41,7 @@ public class ActivityImplDesignSection extends PropertySection
 
     // base class combo
     baseClassPropertyEditor = new PropertyEditor(activityImpl, PropertyEditor.TYPE_COMBO);
-    baseClassPropertyEditor.setLabel("Base Class");
+    baseClassPropertyEditor.setLabel("Category");
     baseClassPropertyEditor.setReadOnly(true);
     baseClassPropertyEditor.setWidth(475);
     List<String> implementorBaseClasses = new ArrayList<String>();
@@ -67,7 +67,7 @@ public class ActivityImplDesignSection extends PropertySection
 
     // attr description text area
     attrDescriptionPropertyEditor = new PropertyEditor(activityImpl, PropertyEditor.TYPE_TEXT);
-    attrDescriptionPropertyEditor.setLabel("Description XML");
+    attrDescriptionPropertyEditor.setLabel("Pagelet");
     attrDescriptionPropertyEditor.setMultiLine(true);
     attrDescriptionPropertyEditor.setWidth(475);
     attrDescriptionPropertyEditor.setHeight(150);

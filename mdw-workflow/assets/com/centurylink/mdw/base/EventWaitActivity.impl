@@ -1,20 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.event.EventWaitActivity" Type="com.centurylink.mdw.activity.types.EventWaitActivity" Label="Event Wait Activity" IconFile="receive.gif" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET>
-  <TABLE NAME='WAIT_EVENT_NAMES' LABEL='Events'>
-    <TEXT LABEL='Event Name'/>
-    <TEXT LABEL='Completion Code'/>
-    <BOOLEAN LABEL='Recurring' DEFAULT='false'/>
-  </TABLE>
-  <DATETIME NAME='SLA' LABEL='Timeout' UNITS='Minutes,Hours,Days'/>
-  <DROPDOWN NAME='STATUS_AFTER_TIMEOUT' LABEL='Status after timeout'
-  DEFAULT='Cancelled' VX='160' VW='120'>
-      <OPTION>Cancelled</OPTION>
-      <OPTION>Hold</OPTION>
-      <OPTION>Waiting</OPTION>
-  </DROPDOWN>
-  <DROPDOWN NAME="rcvdMsgDocVar" LABEL="Received Message Variable (Optional)"  SOURCE="DocumentVariables" VX="180" VW="160" />
-  <HYPERLINK URL='/MDWWeb/doc/EventWaitActivity.html'>
-    Event Wait Activity Help
-  </HYPERLINK>
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.EventWaitActivity",
+  "icon": "receive.gif",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+  "label": "Event Wait Activity",
+  "pagelet": "<PAGELET>\n  <TABLE NAME='WAIT_EVENT_NAMES' LABEL='Events'>\n    <TEXT LABEL='Event Name'/>\n    <TEXT LABEL='Completion Code'/>\n    <BOOLEAN LABEL='Recurring' DEFAULT='false'/>\n  <\/TABLE>\n  <DATETIME NAME='SLA' LABEL='Timeout' UNITS='Minutes,Hours,Days'/>\n  <DROPDOWN NAME='STATUS_AFTER_TIMEOUT' LABEL='Status after timeout'\n  DEFAULT='Cancelled' VX='160' VW='120'>\n      <OPTION>Cancelled<\/OPTION>\n      <OPTION>Hold<\/OPTION>\n      <OPTION>Waiting<\/OPTION>\n  <\/DROPDOWN>\n  <DROPDOWN NAME=\"rcvdMsgDocVar\" LABEL=\"Received Message Variable (Optional)\"  SOURCE=\"DocumentVariables\" VX=\"180\" VW=\"160\" />\n  <HYPERLINK URL='/MDWWeb/doc/EventWaitActivity.html'>\n    Event Wait Activity Help\n  <\/HYPERLINK>\n<\/PAGELET>"
+}

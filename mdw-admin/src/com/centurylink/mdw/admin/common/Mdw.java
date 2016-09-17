@@ -13,6 +13,9 @@ public class Mdw {
     private String version;
     public String getVersion() { return version; }
     
+    private String build;
+    public String getBuild() { return build; }
+    
     private String hubRoot;
     public String getHubRoot() { return hubRoot; }
     
@@ -40,8 +43,9 @@ public class Mdw {
     public String getLoginPage() { return loginPage; }
     public void setLoginPage(String page) { this.loginPage = page; }
         
-    Mdw(String version, String hubRoot, String servicesRoot, File assetRoot, String overridePackage) {
+    Mdw(String version, String build, String hubRoot, String servicesRoot, File assetRoot, String overridePackage) {
         this.version = version;
+        this.build = build;
         this.hubRoot = hubRoot;
         this.servicesRoot = servicesRoot;
         this.assetRoot = assetRoot;

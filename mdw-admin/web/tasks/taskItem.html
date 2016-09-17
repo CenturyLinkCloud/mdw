@@ -1,9 +1,9 @@
 <div class="mdw-flex-item">
   <div class="mdw-flex-item-left">
     <div>
-      <input type="checkbox" ng-model="item.selected" ng-change="listModel.notAllSelected()"></input>
+      <input type="checkbox" ng-if="!task" ng-model="item.selected" ng-change="listModel.notAllSelected()"></input>
       <div>
-        <a class="mdw-item-link" href="#/tasks/{{item.id}}">{{item.name}} &nbsp;{{item.id}}</a>
+        <a class="mdw-item-link" href="#/tasks/{{item.id}}" ng-if="!task">{{item.name}} &nbsp;{{item.id}}</a>
         <div class="mdw-item-sub">
           <span ng-if="item.masterRequestId">Master request: <a href="#" class="mdw-link">{{item.masterRequestId}}</a></span>
         </div>
@@ -14,7 +14,7 @@
       </div>
     </div>
   </div>
-  <div class="mdw-flex-item-right" style="min-width: 125px;">
+  <div class="mdw-flex-item-right">
     <div class="mdw-item">
       <span ng-if="item.status != 'Open'">{{item.status}}</span>
     </div>

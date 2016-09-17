@@ -6,6 +6,7 @@ package com.centurylink.mdw.plugin.designer.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,13 +16,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.WizardPage;
 import com.centurylink.mdw.plugin.designer.properties.editor.ColumnSpec;
 import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.TableEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.TableEditor.DefaultRowImpl;
 import com.centurylink.mdw.plugin.designer.properties.editor.TableEditor.TableModelUpdater;
-import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 public class ImportProjectSelectPage extends WizardPage
@@ -29,13 +30,13 @@ public class ImportProjectSelectPage extends WizardPage
   private TableEditor projectTableEditor;
   private Button selectAllButton;
   private Button deselectAllButton;
-  
+
   public ImportProjectSelectPage()
   {
     setTitle("Select Projects to Import");
-    setDescription("Choose which workflow projects to import into your workspace.");    
+    setDescription("Choose which workflow projects to import into your workspace.");
   }
-  
+
   /**
    * Populate the table based on the imported data.
    */
@@ -45,23 +46,27 @@ public class ImportProjectSelectPage extends WizardPage
     List<WorkflowProject> projectsToImport = new ArrayList<WorkflowProject>();
     for (WorkflowProject workflowProject : getProjectList())
     {
-      List<WorkflowProject> remoteProjects = WorkflowProjectManager.getInstance().getRemoteWorkflowProjects();
-      boolean alreadyInWorkspace = remoteProjects.contains(workflowProject);
-      if (!alreadyInWorkspace && workflowProject.getMdwDataSource().getJdbcUrl() != null)
-        projectsToImport.add(workflowProject);
+      IProject existing = MdwPlugin.getWorkspaceRoot().getProject(workflowProject.getName());
       String[] rowData = new String[3];
       rowData[0] = "true";
       rowData[1] = workflowProject.getName();
       rowData[2] = "";
-      if (alreadyInWorkspace)
+      if (existing != null && existing.exists())
       {
         rowData[0] = "false";
-        rowData[2] = "Already exists in workspace";
+        if (existing.isOpen())
+          rowData[2] = "Already exists in workspace";
+        else
+          rowData[2] = "Closed project exists in workspace";
       }
       else if (workflowProject.getMdwDataSource().getJdbcUrl() == null)
       {
         rowData[0] = "false";
         rowData[2] = "Missing JDBC URL";
+      }
+      else
+      {
+        projectsToImport.add(workflowProject);
       }
       DefaultRowImpl row = projectTableEditor.new DefaultRowImpl(rowData);
       tableRows.add(row);
@@ -71,7 +76,7 @@ public class ImportProjectSelectPage extends WizardPage
     setProjectsToImport(projectsToImport);
     handleFieldChanged();
   }
-  
+
   @Override
   public void drawWidgets(Composite parent)
   {
@@ -87,14 +92,14 @@ public class ImportProjectSelectPage extends WizardPage
     createProjectListControls(composite, ncol);
     createSpacer(composite, ncol);
     createSelectButtonControls(composite, ncol);
-    
+
     setControl(composite);
   }
-  
+
   private void createProjectListControls(Composite parent, int ncol)
   {
     projectTableEditor = new TableEditor(null, TableEditor.TYPE_TABLE);
-    
+
     // colspecs
     List<ColumnSpec> projectColSpecs = new ArrayList<ColumnSpec>();
     ColumnSpec selectionColSpec = new ColumnSpec(PropertyEditor.TYPE_CHECKBOX, "Import/Overwrite", "import");
@@ -108,7 +113,7 @@ public class ImportProjectSelectPage extends WizardPage
     noteColSpec.readOnly = true;
     noteColSpec.width = 150;
     projectColSpecs.add(noteColSpec);
-    
+
     projectTableEditor.setColumnSpecs(projectColSpecs);
     projectTableEditor.setFillWidth(true);
     projectTableEditor.setModelUpdater(new TableModelUpdater()
@@ -138,13 +143,13 @@ public class ImportProjectSelectPage extends WizardPage
         handleFieldChanged();
       }
     });
-    
+
     projectTableEditor.render(parent, false);
     GridData gd = new GridData(GridData.FILL_BOTH);
     gd.horizontalSpan = ncol;
-    projectTableEditor.getTable().setLayoutData(gd);    
+    projectTableEditor.getTable().setLayoutData(gd);
   }
-  
+
   private void createSelectButtonControls(Composite parent, int ncol)
   {
     Composite buttonComposite = new Composite(parent, SWT.NONE);
@@ -195,34 +200,34 @@ public class ImportProjectSelectPage extends WizardPage
           handleFieldChanged();
         }
       });
-  }  
-  
+  }
+
   @Override
   public boolean isPageComplete()
   {
     return isPageValid();
   }
-  
+
   boolean isPageValid()
   {
     return getProjectsToImport() != null && getProjectsToImport().size() > 0;
-  }  
-  
+  }
+
   public IStatus[] getStatuses()
   {
     return null;
   }
-  
+
   private List<WorkflowProject> getProjectsToImport()
   {
     return ((ImportProjectWizard)getWizard()).getProjectsToImport();
   }
-  
+
   private void setProjectsToImport(List<WorkflowProject> projects)
   {
     ((ImportProjectWizard)getWizard()).setProjectsToImport(projects);
   }
-  
+
   private List<WorkflowProject> getProjectList()
   {
     return ((ImportProjectWizard)getWizard()).getProjectList();

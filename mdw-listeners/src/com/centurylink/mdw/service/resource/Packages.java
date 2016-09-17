@@ -92,7 +92,7 @@ public class Packages implements XmlService, JsonService {
             if (nonVersioned) {
                 List<File> extraPackages = new ArrayList<File>();
                 AssetServices assetServices = new AssetServicesImpl();
-                PackageList packageList = assetServices.getPackages();
+                PackageList packageList = assetServices.getPackages(false);
                 for (PackageDir packageDir : packageList.getPackageDirs()) {
                     if (packageDir.getVcsDiffType() == DiffType.EXTRA)
                         extraPackages.add(packageDir);

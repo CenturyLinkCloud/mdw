@@ -79,7 +79,7 @@ task exportAssetPackages {
     if (mdwVersion.endsWith("-SNAPSHOT"))
         mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
     println "Exporting asset packages from " + assetRootPath + ":" 
-    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.xml').each { pkgFile ->
+    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.json').each { pkgFile ->
         doLast {
             def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('/','.').replace('\\','.')
             def pkgCat = pkgName.substring(pkgName.lastIndexOf('.') + 1)
@@ -91,26 +91,25 @@ task exportAssetPackages {
                 return false
             }
             println "    " + pkgCat + ": " + pkgName
-            println "        setting package.xml version: ${mdwPkgVer}"
+            println "        setting package.json version: ${mdwPkgVer}"
             pkgFile.setWritable(true)
-            def pkgXml = pkgFile.text
+            def pkgJson = pkgFile.text
             pkgFile.withWriter { w ->
-                w << pkgXml.replaceAll("<bpm:package .*? xmlns:bpm=\"http://mdw\\.centurylink\\.com/bpm\"",
-                    "<bpm:package name=\"${pkgName}\" version=\"${mdwPkgVer}\" xmlns:bpm=\"http://mdw.centurylink.com/bpm\"")
+                w << pkgJson.replaceAll("\\\"version\\\": \\\".*?\\\"", "\"version\": \"${mdwPkgVer}\"");
             }
             if (pkgName.equals("com.centurylink.mdw.db")) {
                 javaexec {
                     maxHeapSize "1280m"
                     classpath configurations.publish
                     main = "com.centurylink.mdw.designer.Exporter"
-                    args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.xml"
+                    args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.json"
                 }
             }
             else {
                 javaexec {
                     classpath configurations.publish
                     main = "com.centurylink.mdw.designer.Exporter"
-                    args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.xml"
+                    args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.json"
                 }
             }
         }

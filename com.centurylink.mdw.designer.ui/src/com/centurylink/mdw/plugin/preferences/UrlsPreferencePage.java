@@ -23,10 +23,9 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
   public static final String PREF_PAGE_ID = "mdw.preferences.UrlsPreferencePage";
 
   private Text mdwReleasesUrlTextField;
-  private Text mdwMavenRepoTextField;
   private Button includePreviewReleasesCheckbox;
-  private Text workspaceSetupUrlTextField;
   private Text discoveryUrlTextField;
+  private Text workspaceSetupUrlTextField;
   private Text httpConnectTimeoutText;
   private Text httpReadTimeoutText;
   private Text smtpHostTextField;
@@ -39,10 +38,10 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
 
   protected Control createContents(Composite parent)
   {
-    // mdw releases url
-    createLabel(parent, "MDW Releases URL:", 1);
-    mdwReleasesUrlTextField = createTextField(parent, 330, 2);
-    mdwReleasesUrlTextField.addModifyListener(new ModifyListener()
+    // discovery url
+    createLabel(parent, "Discovery URL:", 1);
+    discoveryUrlTextField = createTextField(parent, 330, 2);
+    discoveryUrlTextField.addModifyListener(new ModifyListener()
       {
         public void modifyText(ModifyEvent e)
         {
@@ -50,10 +49,10 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
         }
       });
 
-    // maven repo
-    createLabel(parent, "MDW Maven Repository:", 1);
-    mdwMavenRepoTextField = createTextField(parent, 330, 2);
-    mdwMavenRepoTextField.addModifyListener(new ModifyListener()
+    // mdw releases url
+    createLabel(parent, "MDW Releases URL:", 1);
+    mdwReleasesUrlTextField = createTextField(parent, 330, 2);
+    mdwReleasesUrlTextField.addModifyListener(new ModifyListener()
       {
         public void modifyText(ModifyEvent e)
         {
@@ -66,6 +65,7 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
 
     createSpacer(parent);
 
+
     // workspace setup releases url
     createLabel(parent, "Workspace Setup URL:", 1);
     workspaceSetupUrlTextField = createTextField(parent, 330, 2);
@@ -77,21 +77,10 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
         }
       });
 
-    // discovery url
-    createLabel(parent, "Discovery URL:", 1);
-    discoveryUrlTextField = createTextField(parent, 330, 2);
-    discoveryUrlTextField.addModifyListener(new ModifyListener()
-      {
-        public void modifyText(ModifyEvent e)
-        {
-          validate();
-        }
-      });
-
     createSpacer(parent);
 
     // http timeouts
-    createLabel(parent, "HTTP Timeouts (ms):", 3);
+    createLabel(parent, "HTTP Timeouts in Milliseconds (Requires Restart):", 3);
     Composite timeoutSettings = createComposite(parent, 5, 3);
 
     createLabel(timeoutSettings, "Connect:", 1);
@@ -150,7 +139,6 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
     IPreferenceStore store = getPreferenceStore();
 
     store.setValue(PREFS_MDW_RELEASES_URL, mdwReleasesUrlTextField.getText().trim());
-    store.setValue(PREFS_MDW_MAVEN_REPO_URL, mdwMavenRepoTextField.getText().trim());
     store.setValue(PREFS_INCLUDE_PREVIEW_BUILDS, includePreviewReleasesCheckbox.getSelection());
     store.setValue(PREFS_WORKSPACE_SETUP_URL, workspaceSetupUrlTextField.getText().trim());
     store.setValue(PREFS_DISCOVERY_URL, discoveryUrlTextField.getText().trim());
@@ -165,7 +153,6 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
     IPreferenceStore store = getPreferenceStore();
 
     mdwReleasesUrlTextField.setText(store.getString(PREFS_MDW_RELEASES_URL));
-    mdwMavenRepoTextField.setText(store.getString(PREFS_MDW_MAVEN_REPO_URL));
     includePreviewReleasesCheckbox.setSelection(store.getBoolean(PREFS_INCLUDE_PREVIEW_BUILDS));
     workspaceSetupUrlTextField.setText(store.getString(PREFS_WORKSPACE_SETUP_URL));
     discoveryUrlTextField.setText(store.getString(PREFS_DISCOVERY_URL));
@@ -180,7 +167,6 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
     IPreferenceStore store = getPreferenceStore();
 
     mdwReleasesUrlTextField.setText(store.getDefaultString(PREFS_MDW_RELEASES_URL));
-    mdwMavenRepoTextField.setText(store.getDefaultString(PREFS_MDW_MAVEN_REPO_URL));
     workspaceSetupUrlTextField.setText(store.getDefaultString(PREFS_WORKSPACE_SETUP_URL));
     discoveryUrlTextField.setText(store.getDefaultString(PREFS_DISCOVERY_URL));
     httpConnectTimeoutText.setText(String.valueOf(store.getDefaultInt(PREFS_HTTP_CONNECT_TIMEOUT_MS)));
@@ -199,12 +185,6 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
     if (!checkUrl(mdwReleasesUrlTextField.getText().trim()))
     {
       setErrorMessage("Invalid MDW Releases URL.");
-      setValid(false);
-      return false;
-    }
-    if (!checkUrl(mdwMavenRepoTextField.getText().trim()))
-    {
-      setErrorMessage("Invalid MDW Maven Repository.");
       setValid(false);
       return false;
     }

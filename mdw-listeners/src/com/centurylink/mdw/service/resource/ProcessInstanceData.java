@@ -213,7 +213,7 @@ public class ProcessInstanceData implements TextService, XmlService, JsonService
             String dataString = var.getStringValue();
             output.append("<Value>").append(dataString);
             output.append("</Value>");
-            output.append("<Type>").append(var.getType());
+            output.append("<Type>").append("<![CDATA[").append(var.getType()).append("]]>");
             output.append("</Type></Variable>");
         }
         output.append("</Variables>");

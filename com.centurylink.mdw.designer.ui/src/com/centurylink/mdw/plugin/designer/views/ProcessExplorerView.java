@@ -10,7 +10,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -113,19 +112,7 @@ public class ProcessExplorerView extends ViewPart implements ITabbedPropertyShee
                 return;
               }
             }
-            boolean wasLoaded = project.isLoaded();
             super.handleTreeExpand(event);
-            if (!wasLoaded && project.isWarn())
-            {
-              event.item.getDisplay().asyncExec(new Runnable()
-              {
-                public void run()
-                {
-                  treeViewer.refresh(project, true);
-                  MessageDialog.openWarning(treeViewer.getTree().getShell(), "Remote Project", project.getWarning());
-                }
-              });
-            }
             return;
           }
         }

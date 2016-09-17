@@ -1,66 +1,120 @@
-<bpm:processDefinition schemaVersion="5.5" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:Process Id="MainProcess" name="MDWLoadTestRegular" version="0.5" description="">
-    <bpm:Activity Id="A10" Name="Start" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessStartActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=41,y=101,w=60,h=40"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A5" Name="Stop" Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity">
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=694,y=106,w=60,h=40"/>
-      <bpm:Attribute Name="DoNotNotifyCaller" Value="false"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A1" Name="count++" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="count++&#10;println &quot;count: &quot; + count&#10;"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=467,y=277,w=100,h=60"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A2" Name="Count > 100?" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptEvaluator">
-      <bpm:Attribute Name="Expression" Value="count > 100"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=476,y=98,w=90,h=47"/>
-    </bpm:Activity>
-    <bpm:Activity Id="A4" Name="count = 0" Implementation="com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity">
-      <bpm:Attribute Name="Rule" Value="count = 0"/>
-      <bpm:Attribute Name="SCRIPT" Value="Groovy"/>
-      <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=206,y=90,w=100,h=60"/>
-    </bpm:Activity>
-    <bpm:Transition CompletionCode="" From="A4" To="A2" Event="FINISH" Id="T11">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=391,ly=125,type=Elbow,xs=310&amp;472,ys=121&amp;121"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="true" From="A2" To="A5" Event="FINISH" Id="T12">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=599,ly=132,type=ElbowH,xs=570&amp;690,ys=125&amp;125"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="0"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="false" From="A2" To="A1" Event="FINISH" Id="T13">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=483,ly=201,type=Elbow,xs=521&amp;521,ys=149&amp;273"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="200"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A1" To="A2" Event="FINISH" Id="T14">
-      <bpm:Attribute Name="TRANSITION_DELAY" Value="0"/>
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=576,ly=160,type=ElbowH,xs=463&amp;343&amp;343&amp;472,ys=303&amp;303&amp;135&amp;135"/>
-      <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="200"/>
-    </bpm:Transition>
-    <bpm:Transition CompletionCode="" From="A10" To="A4" Event="FINISH" Id="T1">
-      <bpm:Attribute Name="TRANSITION_DISPLAY_INFO" Value="lx=154,ly=121,type=Elbow,xs=105&amp;202,ys=121&amp;121"/>
-    </bpm:Transition>
-    <bpm:Attribute Name="NodeStyle" Value="BoxIcon"/>
-    <bpm:Attribute Name="PROCESS_VISIBILITY" Value="PUBLIC"/>
-    <bpm:Attribute Name="PerformanceLevel" Value="0"/>
-    <bpm:Attribute Name="Response to Invoker" Value="When Terminate"/>
-    <bpm:Attribute Name="START_TRANSITION_ID" Value="2332188"/>
-    <bpm:Attribute Name="TRANSITION_RETRY_COUNT" Value="-1"/>
-    <bpm:Attribute Name="Transition with no Label" Value="Acts as Default"/>
-    <bpm:Attribute Name="WORK_DISPLAY_INFO" Value="x=20,y=24,w=198,h=27"/>
-    <bpm:Variables Name="Color" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-      <bpm:Description>Test data from placeHolderMap.csv</bpm:Description>
-    </bpm:Variables>
-    <bpm:Variables Name="count" ReferredAs="" Category="LOCAL" DisplaySequence="0">
-      <bpm:type Name="java.lang.Integer"/>
-    </bpm:Variables>
-    <bpm:Variables Name="Run" ReferredAs="" Category="INPUT" DisplaySequence="0">
-      <bpm:type Name="java.lang.String"/>
-      <bpm:Description>A number indicates which run among multiple runs during load testing.</bpm:Description>
-    </bpm:Variables>
-  </bpm:Process>
-</bpm:processDefinition>
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=41,y=101,w=60,h=40"},
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=154,ly=121,type=Elbow,xs=105&202,ys=121&121"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=694,y=106,w=60,h=40"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "count++\nprintln \"count: \" + count\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=467,y=277,w=100,h=60"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "count++",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=576,ly=160,type=ElbowH,xs=463&343&343&472,ys=303&303&135&135",
+          "TRANSITION_RETRY_COUNT": "200"
+        },
+        "event": "FINISH",
+        "id": "T14",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "count > 100",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=476,y=98,w=90,h=47"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Count > 100?",
+      "transitions": [
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=599,ly=132,type=ElbowH,xs=570&690,ys=125&125",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "FINISH",
+          "id": "T12",
+          "resultCode": "true",
+          "to": "A5"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=483,ly=201,type=Elbow,xs=521&521,ys=149&273",
+            "TRANSITION_RETRY_COUNT": "200"
+          },
+          "event": "FINISH",
+          "id": "T13",
+          "resultCode": "false",
+          "to": "A1"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Rule": "count = 0",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=206,y=90,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "count = 0",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=391,ly=125,type=Elbow,xs=310&472,ys=121&121"},
+        "event": "FINISH",
+        "id": "T11",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
+    "Response to Invoker": "When Terminate",
+    "START_TRANSITION_ID": "2332188",
+    "TRANSITION_RETRY_COUNT": "-1",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=20,y=24,w=198,h=27"
+  },
+  "variables": {
+    "Color": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "Run": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "count": {
+      "category": "LOCAL",
+      "type": "java.lang.Integer"
+    }
+  },
+  "version": "0.5"
+}

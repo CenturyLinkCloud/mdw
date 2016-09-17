@@ -7,9 +7,11 @@ import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.centurylink.mdw.common.cache.impl.PackageVOCache;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -22,18 +24,24 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
 import com.centurylink.mdw.dataaccess.version4.CommonDataAccess;
+import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.value.activity.ActivityCount;
 import com.centurylink.mdw.model.value.activity.ActivityInstance;
 import com.centurylink.mdw.model.value.activity.ActivityList;
 import com.centurylink.mdw.model.value.activity.ActivityVO;
 import com.centurylink.mdw.model.value.asset.AssetHeader;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.process.ProcessCount;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessList;
+import com.centurylink.mdw.model.value.process.ProcessRuntimeContext;
 import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.user.UserActionVO.Action;
+import com.centurylink.mdw.model.value.variable.DocumentReference;
+import com.centurylink.mdw.model.value.variable.DocumentVO;
+import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
 import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
@@ -214,10 +222,68 @@ public class WorkflowServicesImpl implements WorkflowServices {
     @Override
     public ProcessInstanceVO getProcess(Long instanceId) throws ServiceException {
         try {
-            return getRuntimeDataAccess().getProcessInstanceAll(instanceId);
+            ProcessInstanceVO process = getRuntimeDataAccess().getProcessInstanceAll(instanceId);
+            if (process == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + instanceId);
+            return process;
         }
         catch (DataAccessException ex) {
-            throw new ServiceException(500, "Error retrieving process instance: " + instanceId + ": " + ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error retrieving process instance: " + instanceId + ": " + ex.getMessage(), ex);
+        }
+    }
+
+    public Map<String,Value> getProcessValues(Long instanceId) throws ServiceException {
+        ProcessRuntimeContext runtimeContext = getContext(instanceId);
+        Map<String,Value> values = new HashMap<String,Value>();
+        Map<String,Object> variables = runtimeContext.getVariables();
+        if (variables != null) {
+            for (String key : variables.keySet()) {
+                String stringVal = runtimeContext.getValueAsString(key);
+                if (stringVal != null) {
+                    Value value = new Value(key, stringVal);
+                    values.put(key, value);
+                    // TODO: process labels, etc (like autoform)
+                }
+            }
+        }
+        return values;
+    }
+
+    public Value getProcessValue(Long instanceId, String name) throws ServiceException {
+        ProcessRuntimeContext runtimeContext = getContext(instanceId);
+        if (!runtimeContext.isExpression(name) && runtimeContext.getProcess().getVariable(name) == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "No variable defined: " + name);
+        String stringVal = runtimeContext.getValueAsString(name);
+        if (stringVal == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "No value '" + name + "' found for instance: " + instanceId);
+        Value value = new Value(name, stringVal);
+        // TODO: process labels, etc (like autoform)
+        return value;
+    }
+
+    public ProcessRuntimeContext getContext(Long instanceId) throws ServiceException {
+        ProcessInstanceVO instance = getProcess(instanceId);
+        ProcessVO process = ProcessVOCache.getProcessVO(instance.getProcessId());
+        PackageVO pkg = PackageVOCache.getProcessPackage(instance.getProcessId());
+        if (process == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for id: " + instance.getProcessId());
+
+        Map<String,Object> vars = new HashMap<String,Object>();
+        try {
+            if (instance.getVariables() != null) {
+                for (VariableInstanceInfo var : instance.getVariables()) {
+                    Object value = var.getData();
+                    if (value instanceof DocumentReference) {
+                        DocumentVO docVO = getWorkflowDao().getDocument(((DocumentReference)value).getDocumentId());
+                        value = docVO == null ? null : docVO.getObject(var.getType(), pkg);
+                    }
+                    vars.put(var.getName(), value);
+                }
+            }
+            return new ProcessRuntimeContext(pkg, process, instance, vars);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 
@@ -235,7 +301,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public ActivityInstance getActivity(Long instanceId) throws ServiceException {
         try {
             Query query = new Query();
-            query.setFilter("activityInstanceId", instanceId);
+            query.setFilter("instanceId", instanceId);
+            query.setFind(null);
             ActivityList list = getRuntimeDataAccess().getActivityInstanceList(query);
             if (list.getCount() > 0) {
                 list = populateActivities(list, query);

@@ -52,7 +52,7 @@ public class AutoTestPropertyTester extends PropertyTester
         if (folder != null)
         {
           workflowProject = WorkflowProjectManager.getInstance().getWorkflowProject(folder.getProject());
-          if (workflowProject != null)
+          if (workflowProject != null && workflowProject.isInitialized())
           {
             WorkflowPackage pkg = workflowProject.getPackage(folder);
             if (pkg != null)
@@ -65,8 +65,10 @@ public class AutoTestPropertyTester extends PropertyTester
           if (project != null)
           {
             WorkflowProject proj = WorkflowProjectManager.getInstance().getWorkflowProject(project);
-            if (proj != null)
+            if (proj != null && proj.isInitialized())
+            {
               return !proj.getTestCases().isEmpty();
+            }
           }
         }
       }
@@ -78,7 +80,7 @@ public class AutoTestPropertyTester extends PropertyTester
           if (file != null && "feature".equals(file.getFileExtension()) && file.exists() && !file.isDerived())
           {
             // exclude mdw automated gherkin tests
-            if (workflowProject != null)
+            if (workflowProject != null && workflowProject.isInitialized())
             {
               ResourceWrapper parentWrapper = new ResourceWrapper((IAdaptable)file.getParent());
               IFolder folder = parentWrapper.getFolder();
@@ -96,7 +98,7 @@ public class AutoTestPropertyTester extends PropertyTester
           IFolder folder = resourceWrapper.getFolder();
           if (folder != null)
           {
-            if (workflowProject != null && workflowProject.getPackage(folder) != null)
+            if (workflowProject != null && workflowProject.isInitialized() && workflowProject.getPackage(folder) != null)
               return false;
             List<CucumberTest> tests = new ArrayList<CucumberTest>();
             CucumberTest.findTests(folder, tests);

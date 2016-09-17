@@ -1,0 +1,53 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-include="'layout/task-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          {{task.name}} &nbsp;<a href="#/tasks/{{task.id}}">{{task.id}}</a> <span ng-if="task.dirty" class="mdw-dirty">*</span>
+        </div>
+        <!-- NOTE: wrap attribute must be adjusted if more action buttons are added
+           TODO: include this wrap calculation in the directive so it's not hard-coded in each usage -->
+        <mdw-actions wrap="480px">
+          <button type="button" class="btn btn-primary mdw-btn" mdw-action-pop-button uib-popover-template="'tasks/taskActions.html'"
+            ng-disabled="task.dirty || !task.editable">
+            <span class="glyphicon glyphicon-ok"></span> Action
+          </button>
+          <button type="button" class="btn btn-primary mdw-btn" ng-disabled="!task.dirty || !task.editable" ng-click="save()">
+            <span class="glyphicon glyphicon-floppy-disk"></span> Save
+          </button>
+        </mdw-actions>
+      </div>
+      <div class="mdw-section">
+        <div ng-include="'tasks/taskItem.html'"></div>
+        <hr class="mdw-hr">
+        <form name="userForm" class="form-horizontal" role="form">
+          <div ng-repeat="value in task.values" class="form-group" ng-class="{'has-error': value.error}">
+            <label class="control-label col-xs-2" ng-class="{'mdw-required': value.display == 'Required'}" for="value.name">
+              {{value.label ? value.label : value.name}}:
+            </label>
+            <div ng-class="value.isDocument ? 'col-md-10' : 'col-xs-4'">
+              <!-- TODO: currently unsupported: collections, numbers -->
+              <textarea ng-if="value.isDocument" class="form-control mdw-document-input" rows="{{value.showLines}}"
+                id="{{value.name}}" name="{{value.name}}" ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)"></textarea>
+              <input type="checkbox" ng-if="value.type === 'java.lang.Boolean'" class="checkbox mdw-boolean-input" 
+                id="{{value.name}}" name="{{value.name}}" ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)">
+              <div ng-if="value.type === 'java.util.Date'">
+                <input type="text" class="form-control mdw-date-input"
+                  id="{{value.name}}" name="{{value.name}}" ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)"                
+                  uib-datepicker-popup is-open="datePopups[value.name]">
+                <button type="button" ng-if="value.editable" class="btn mdw-btn btn-default mdw-float-left" 
+                  ng-click="openDatePopup(value.name)" >
+                  <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+              </div>
+              <input type="text" ng-if="!value.isDocument && value.type !== 'java.lang.Boolean' && value.type !== 'java.util.Date'" 
+                class="form-control" 
+                id="{{value.name}}" name="{{value.name}}" ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>  

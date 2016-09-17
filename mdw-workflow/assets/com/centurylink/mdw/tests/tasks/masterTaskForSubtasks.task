@@ -1,11 +1,16 @@
-<task:taskTemplate logicalId="masterTaskForSubtasks" category="GEN" xmlns:task="http://mdw.centurylink.com/task">
-  <task:name>Master Task for Subtasks</task:name>
-  <task:description>Description for master task</task:description>
-  <task:attribute name="TaskDescription">Description for master task</task:attribute>
-  <task:attribute name="FormName">Autoform</task:attribute>
-  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
-  <task:attribute name="SubTaskStrategy">com.centurylink.mdw.tests.tasks.SubtaskStrategy</task:attribute>
-  <task:attribute name="TaskSLA">86400</task:attribute>
-  <task:attribute name="ALERT_INTERVAL">7200</task:attribute>
-  <task:attribute name="SubtasksCompleteMaster">true</task:attribute>
-</task:taskTemplate>
+{
+  "attributes": {
+    "ALERT_INTERVAL": "7200",
+    "FormName": "Autoform",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "SubTaskStrategy": "com.centurylink.mdw.tests.tasks.SubtaskStrategy",
+    "SubtasksCompleteMaster": "true",
+    "TaskDescription": "Description for master task",
+    "TaskSLA": "86400"
+  },
+  "category": "GEN",
+  "description": "Description for master task",
+  "logicalId": "masterTaskForSubtasks",
+  "name": "Master Task for Subtasks",
+  "version": "0.3"
+}

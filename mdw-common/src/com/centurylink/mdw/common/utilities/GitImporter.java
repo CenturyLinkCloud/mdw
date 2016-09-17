@@ -105,7 +105,7 @@ public class GitImporter {
             archiver.backup();
 
             System.out.println("Performing git checkout on branch: " + branch);
-            vcGit.checkoutBranch(branch, assetPath);
+            vcGit.sparseCheckout(branch, assetPath);
 
             archiver.archive();
             progressMonitor.done();
@@ -114,7 +114,7 @@ public class GitImporter {
             System.out.println("Directory: " + localDir + " does not exist.  Cloning...");
             vcGit.cloneNoCheckout();
             System.out.println("Performing git checkout on branch: " + branch);
-            vcGit.checkoutBranch(branch, assetPath);
+            vcGit.sparseCheckout(branch, assetPath);
         }
     }
 
@@ -124,7 +124,7 @@ public class GitImporter {
             System.exit(-1);
         }
         else if (cmd.equals(CMD_DIFF)) {
-            GitDiffs diffs = vcGit.getDiffs(assetPath);
+            GitDiffs diffs = vcGit.getDiffs(branch, assetPath);
             System.out.println(diffs.toString());
         }
         else {

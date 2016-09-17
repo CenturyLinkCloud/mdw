@@ -17,6 +17,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 
+import com.centurylink.mdw.activity.ActivityNodeSequencer;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.constant.ProcessVisibilityConstant;
@@ -591,6 +592,8 @@ public class Graph extends GraphCommon implements Selectable {
         String pDesc = null;
         List<ExternalEventVO> pExtEvents = null;
         ProcessVO subproc = new ProcessVO(pProcessId, subtype, pDesc, pExtEvents);
+        if (getProcessVO() != null && getProcessVO().isInRuleSet())
+            subproc.setInRuleSet(true);
         List<AttributeVO> attributes = new ArrayList<AttributeVO>();
         AttributeVO a = new AttributeVO(null, WorkAttributeConstant.PROCESS_VISIBILITY,
                    ProcessVisibilityConstant.EMBEDDED);
@@ -1365,26 +1368,8 @@ public class Graph extends GraphCommon implements Selectable {
 		nodeIdType = newNodeIdType;
 	}
 
-    public void assignNodeSequenceIds() {
-        int curSeq = assignNodeSequenceIds(1);
-        if (subgraphs != null) {
-            for (SubGraph sub : subgraphs)
-                curSeq = sub.assignNodeSequenceIds(++curSeq);
-        }
-    }
-
-    public void assignSubgraphSequenceIds() {
-        List<SubGraph> subs = new ArrayList<SubGraph>(subgraphs);
-        Collections.sort(subs, new Comparator<SubGraph>() {
-            public int compare(SubGraph sg1, SubGraph sg2) {
-                if (Math.abs(sg1.y - sg2.y) > 100)
-                    return sg1.y - sg2.y;
-                // otherwise closest to top-left of canvas
-                return (int)(Math.sqrt(Math.pow(sg1.x,2) + Math.pow(sg1.y,2)) - Math.sqrt(Math.pow(sg2.x,2) + Math.pow(sg2.y,2)));
-            }
-        });
-        for (int i = 0; i < subs.size(); i++)
-            subs.get(i).setSequenceId(i+1);
+    public void assignSequenceIds() {
+        new ActivityNodeSequencer(getProcessVO()).assignNodeSequenceIds();
     }
 
     public List<SubGraph> getSubgraphs(String sortIdType) {

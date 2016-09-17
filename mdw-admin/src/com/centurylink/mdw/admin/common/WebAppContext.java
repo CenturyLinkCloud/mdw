@@ -43,7 +43,8 @@ public class WebAppContext {
             if (overridePackage == null)
                 overridePackage = "mdw-admin";
 
-            mdw = new Mdw(getMdwVersion(), hubRoot, servicesRoot, assetRoot, overridePackage);
+            initMdwBuildVersion();
+            mdw = new Mdw(mdwVersion, mdwBuild, hubRoot, servicesRoot, assetRoot, overridePackage);
             
             boolean isDev = "dev".equals(System.getProperty("runtimeEnv"));
             if (isDev) {
@@ -89,18 +90,20 @@ public class WebAppContext {
     
     public static final String VERSION_PATH = "META-INF/mdw/version.properties";
     public static final String VERSION_PROP = "mdw.version";
+    public static final String BUILD_PROP = "mdw.build";
     
     private static String mdwVersion;
-    private static String getMdwVersion() throws IOException {
-        // TODO: test in linux OSGi
+    private static String mdwBuild;
+    
+    private static void initMdwBuildVersion() throws IOException {
         if (mdwVersion == null) {
             InputStream is = WebAppContext.class.getClassLoader().getResourceAsStream(VERSION_PATH);
             if (is == null)
                 is = WebAppContext.class.getClassLoader().getResourceAsStream("../../" + VERSION_PATH);
             Properties versionProps = new Properties();
             versionProps.load(is);
-            return versionProps.getProperty(VERSION_PROP);
+            mdwVersion = versionProps.getProperty(VERSION_PROP);
+            mdwBuild = versionProps.getProperty(BUILD_PROP);
         }
-        return mdwVersion;
     }
 }

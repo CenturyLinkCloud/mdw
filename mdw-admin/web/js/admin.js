@@ -24,8 +24,10 @@ adminApp.config(function($httpProvider) {
         return $q.reject(rejection);
       },
       'response': function(response) {
-        if (response.config.url.startsWith(mdw.roots.services))
+        if (response.config.url.startsWith(mdw.roots.services)) {
           mdw.hubLoading(false);
+          mdw.messages = null;
+        }
         return response;
       },
       'responseError': function(rejection) {
@@ -56,8 +58,10 @@ adminApp.config(['$routeProvider', function($routeProvider) {
 adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$timeout', '$location', '$anchorScroll', 'mdw', 'authUser', 'util',
                                         function($rootScope, $scope, $window, $timeout, $location, $anchorScroll, mdw, authUser, util) {
   $scope.mdw = mdw;
+  console.log('mdw ' + mdw.version + ' ' + mdw.build);
+  
   var qs = $location.search();
-  console.log ('access_token=', qs.access_token);
+  console.log('access_token=', qs.access_token);
 
   $scope.authUser = theUser;
   $scope.authUser.setActiveTab($location.url());
@@ -257,6 +261,30 @@ adminApp.directive('focusMe', ['$timeout', function($timeout) {
   };
 }]);
 
+adminApp.directive('fileUpload', [function() {
+  return {
+    restrict: 'A',
+    scope: {
+      fileUpload: '='
+    },
+    link: function(scope, elem, attrs) {
+      elem.bind('change', function(changeEvent) {
+        var fileName = changeEvent.target.files[0].name;
+        var reader = new FileReader();
+        reader.onload = function(loadEvent) {
+          scope.$apply(function() {
+            scope.fileUpload = {
+                content: new Uint8Array(loadEvent.target.result),
+                name: fileName
+            };
+          });
+        };
+        reader.readAsArrayBuffer(changeEvent.target.files[0]);
+      });
+    }
+  };
+}]);
+
 adminApp.filter('highlight', function($sce) {
   return function(input, lang) {
     if (lang === 'test')
@@ -382,6 +410,10 @@ String.prototype.removeCrs = function() {
 // split into lines (removing CRs first)
 String.prototype.getLines = function() {
   return this.removeCrs().split(/\n/);
+};
+// count lines
+String.prototype.lineCount = function() {
+  return this.getLines().length;
 };
 // line numbers
 String.prototype.lineNumbers = function() {

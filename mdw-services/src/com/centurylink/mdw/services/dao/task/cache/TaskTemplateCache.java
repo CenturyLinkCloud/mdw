@@ -85,7 +85,8 @@ public class TaskTemplateCache implements PreloadableCache {
                 taskVo = task;
                 if (taskVo.isShallow()) {
                     taskVo = loadTaskTemplate(taskVo.getTaskId());
-                    idxToReplace = i;
+                    if (taskVo != null)   // Would be null whenever exception occurs trying to pull full version of TaskVO
+                        idxToReplace = i;
                 }
                 break;
             }
@@ -111,7 +112,8 @@ public class TaskTemplateCache implements PreloadableCache {
                 taskVo = task;
                 if (taskVo.isShallow()) {
                     taskVo = loadTaskTemplate(taskVo.getTaskId());
-                    idxToReplace = i;
+                    if (taskVo != null)   // Would be null whenever exception occurs trying to pull full version of TaskVO
+                        idxToReplace = i;
                 }
                 break;
             }
@@ -156,7 +158,8 @@ public class TaskTemplateCache implements PreloadableCache {
                 taskVo = task;
                 if (taskVo.isShallow()) {
                     taskVo = loadTaskTemplate(taskVo.getTaskId());
-                    idxToReplace = i;
+                    if (taskVo != null)    // Would be null whenever exception occurs trying to pull full version of TaskVO
+                        idxToReplace = i;
                 }
                 break;
             }

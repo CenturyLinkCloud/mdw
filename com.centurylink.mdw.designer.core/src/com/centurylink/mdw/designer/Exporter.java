@@ -7,12 +7,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.xmlbeans.XmlException;
+import org.json.JSONException;
 
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.utilities.timer.ActionCancelledException;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.designer.utils.RestfulServer;
 import com.centurylink.mdw.model.value.process.PackageVO;
@@ -28,7 +32,7 @@ public class Exporter {
             System.out.println("java com.centurylink.mdw.designer.Exporter "
                     + "jdbc:oracle:thin:mdwdemo/mdwdemo@mdwdevdb.dev.qintra.com:1594:mdwdev (or /path/to/root/storage) "
                     + "com.centurylink.mdw.tests "
-                    + "/path/to/packageDef.xml");
+                    + "/path/to/packageDef(.xml|.json)");
             System.exit(0);
         }
         if (args.length != 2 && args.length != 3) {
@@ -39,7 +43,7 @@ public class Exporter {
 
         String arg0 = args[0];  // either jdbcUrl or local file path
         String packageName = args[1];
-        String xmlFile = args[2];
+        String outFile = args[2];
 
         try {
             boolean local = !arg0.startsWith("jdbc:");
@@ -57,11 +61,11 @@ public class Exporter {
                 dataAccess = new DesignerDataAccess(restfulServer, null, "export", true);
             }
 
-            System.out.println("Exporting with arguments: " + arg0 + " " + packageName + " " + xmlFile);
+            System.out.println("Exporting with arguments: " + arg0 + " " + packageName + " " + outFile);
             Exporter exporter = new Exporter(dataAccess);
             long before = System.currentTimeMillis();
-            String xml = exporter.exportPackage(packageName, true);
-            File outputFile = new File(xmlFile);
+            String xml = exporter.exportPackage(packageName, true, outFile.endsWith(".json"));
+            File outputFile = new File(outFile);
             if (outputFile.exists()) {
                 System.out.println("Overwriting existing file: " + outputFile);
             }
@@ -106,18 +110,25 @@ public class Exporter {
         return dataAccess.isVcsPersist();
     }
 
-    public String exportPackage(String packageName, boolean includeTaskTemplates)
-    throws DataAccessException, RemoteException, ActionCancelledException, XmlException {
+    public String exportPackage(String packageName, boolean includeTaskTemplates, boolean isJson)
+    throws DataAccessException, RemoteException, ActionCancelledException, XmlException, JSONException {
 
-        PackageVO packageVo = dataAccess.getPackage(packageName);
         int schemaVersion = dataAccess.getDatabaseSchemaVersion();
-        String xml = dataAccess.exportPackage(packageVo.getId(), schemaVersion, includeTaskTemplates, null);
-        if (!isLocal()) {
-          packageVo.setExported(true);
-          dataAccess.savePackage(packageVo);
+        PackageVO packageVo = dataAccess.getPackage(packageName);
+        if (isJson) {
+            List<PackageVO> packages = new ArrayList<PackageVO>();
+            packages.add(dataAccess.loadPackage(packageVo.getId(), true));
+            ImporterExporterJson jsonExporter = new ImporterExporterJson();
+            return jsonExporter.exportPackages(packages);
         }
-
-        return xml;
+        else {
+            String xml = dataAccess.exportPackage(packageVo.getId(), schemaVersion, includeTaskTemplates, null);
+            if (!isLocal()) {
+              packageVo.setExported(true);
+              dataAccess.savePackage(packageVo);
+            }
+            return xml;
+        }
     }
 
     public void writeFile(File file, byte[] contents) throws IOException {

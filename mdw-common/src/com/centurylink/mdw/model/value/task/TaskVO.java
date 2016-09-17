@@ -14,6 +14,7 @@ import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.constant.TaskAttributeConstant;
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
 import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.common.utilities.JsonUtil;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.dataaccess.DataAccess;
@@ -532,44 +533,6 @@ public class TaskVO extends RuleSetVO implements Jsonable {
         return template;
     }
 
-    public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
-        int days, hours;
-        json.put("name", getTaskName());
-        if (getTaskCategory() != null) {
-            json.put("category", getTaskCategory());
-        }
-        if (getLogicalId() != null) {
-            json.put("logicalId", getLogicalId());
-        }
-        days = getAlertIntervalSeconds() / 86400;
-        json.put("alertIntervalDays", days);
-        hours = (getAlertIntervalSeconds() - (days * 86400)) / 3600;
-        json.put("alertIntervalHours", hours);
-        days = getSlaSeconds() / 86400;
-        json.put("slaDays", days);
-        hours = (getSlaSeconds() - (days * 86400)) / 3600;
-        json.put("slaHours", hours);
-        String packageName = this.getPackageName();
-        if (getTaskCategory() != null) {
-            json.put("packageName", packageName);
-        }
-        json.put("taskId", this.getTaskId());
-        List<AttributeVO> attributes = getAttributes();
-        if (attributes != null) {
-            for (AttributeVO attributeVO : attributes) {
-                String attr = attributeVO.getAttributeName();
-                String value = attributeVO.getAttributeValue();
-                json.put(attr, value == null ? "" : value);
-            }
-
-        }
-        if (getVersion() > 0)
-            json.put("version", RuleSetVO.formatVersion(getVersion()));
-
-        return json;
-    }
-
     public Long getId() {
         if (super.getId() == null)
             return getTaskId();
@@ -591,7 +554,46 @@ public class TaskVO extends RuleSetVO implements Jsonable {
             return super.getLabel();
     }
 
+    public TaskVO(JSONObject json) throws JSONException {
+        this.logicalId = json.getString("logicalId");
+        this.taskName = json.getString("name");
+        this.setVersion(RuleSetVO.parseVersion(json.getString("version")));
+        this.setLanguage(RuleSetVO.TASK);
+        this.setTaskTypeId(TaskType.TASK_TYPE_TEMPLATE);
+        if (json.has("category"))
+            this.taskCategory = json.getString("category");
+        if (json.has("description"))
+            this.setComment(json.getString("description"));
+        if (json.has("attributes"))
+            this.setAttributes(JsonUtil.getAttributes(json.getJSONObject("attributes")));
+        String vars = getAttribute(TaskAttributeConstant.VARIABLES);
+        if (vars != null)
+            setVariablesFromString(vars, null);
+        String groups = getAttribute(TaskAttributeConstant.GROUPS);
+        if (groups != null)
+            setUserGroupsFromString(groups);
+    }
+
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put("logicalId", getLogicalId());
+        json.put("name",  getTaskName());
+        json.put("version", formatVersion(getVersion()));
+        if (taskCategory != null)
+            json.put("category", taskCategory);
+        if (getComment() != null)
+            json.put("description", getComment());
+        if (getAttributes() != null)
+            json.put("attributes", JsonUtil.getAttributesJson(getAttributes()));
+
+        return json;
+    }
+
+    /**
+     * Task template asset name (not task name).
+     */
     public String getJsonName() {
-        return "TaskTemplate";
+        return getName();
     }
 }

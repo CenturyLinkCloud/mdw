@@ -4,6 +4,7 @@
 package com.centurylink.mdw.common.bundle;
 
 import java.util.Date;
+import java.util.Dictionary;
 
 import javax.jms.ConnectionFactory;
 
@@ -37,8 +38,22 @@ public class FrameworkBundleActivator implements BundleActivator {
 
         try {
             Version bundleVersion = bundleContext.getBundle().getVersion();
-            ApplicationContext.setMdwVersion(bundleVersion.getMajor() + "." + bundleVersion.getMinor() + "."
-                + (bundleVersion.getMicro() > 9 ? bundleVersion.getMicro() : "0" + bundleVersion.getMicro()));
+            String mdwVersion = bundleVersion.getMajor() + "." + bundleVersion.getMinor() + "."
+                    + (bundleVersion.getMicro() > 9 ? bundleVersion.getMicro() : "0" + bundleVersion.getMicro());
+            String qualifier = bundleVersion.getQualifier();
+            if ("SNAPSHOT".equals(qualifier)) {
+                mdwVersion += "-SNAPSHOT";
+            }
+            ApplicationContext.setMdwVersion(mdwVersion);
+
+            @SuppressWarnings({"rawtypes"})
+            Dictionary bundleDict = bundleContext.getBundle().getHeaders();
+            if (bundleDict != null) {
+                String mdwBuild = (String)bundleDict.get("MDW-Build");
+                if (mdwBuild != null)
+                    ApplicationContext.setMdwBuildTimestamp(mdwBuild);
+            }
+
             ApplicationContext.setOsgiBundleContext(bundleContext);
             PropertyManager.getLocalInstance();  // trigger initialization for OSGi service availability
 

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: MDWDesignerRCP Plug-in
 Bundle-SymbolicName: com.centurylink.mdw.plugin.rcp;singleton:=true
-Bundle-Version: 8.9.6
+Bundle-Version: 8.9.8
 Bundle-Activator: com.centurylink.mdw.plugin.rcp.Activator
 Bundle-Vendor: CenturyLink
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
@@ -98,9 +98,9 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.datatools.connectivity.ui;bundle-version="1.2.4",
  org.eclipse.datatools.connectivity.ui.dse;bundle-version="1.1.5",
  org.eclipse.equinox.launcher;bundle-version="1.3.0",
- com.centurylink.mdw.designer.core;bundle-version="8.9.6",
- com.centurylink.mdw.reports;bundle-version="8.9.6",
- com.centurylink.mdw.designer.ui;bundle-version="8.9.6",
+ com.centurylink.mdw.designer.core;bundle-version="8.9.8",
+ com.centurylink.mdw.reports;bundle-version="8.9.8",
+ com.centurylink.mdw.designer.ui;bundle-version="8.9.8",
  com.centurylink.tools;bundle-version="1.0.0";resolution:=optional,
  org.eclipse.equinox.p2.engine;bundle-version="2.3.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

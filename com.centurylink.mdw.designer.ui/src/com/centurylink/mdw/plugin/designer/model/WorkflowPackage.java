@@ -285,13 +285,13 @@ public class WorkflowPackage extends WorkflowElement implements Versionable, Att
     return topLevelVersion == null;
   }
 
-  public String getVoXml()
+  public String getMetaContent()
   {
-    return packageVO.getVoXML();
+    return packageVO.getMetaContent();
   }
-  public void setVoXml(String voXml)
+  public void setMetaContent(String metaContent)
   {
-    packageVO.setVoXML(voXml);
+    packageVO.setMetaContent(metaContent);
   }
 
   public Date getModifyDate()
@@ -616,6 +616,20 @@ public class WorkflowPackage extends WorkflowElement implements Versionable, Att
     return metaPaths;
   }
 
+  public IFolder getMetaFolder()
+  {
+    assert getProject().isFilePersist();
+    return getFolder(".mdw");
+  }
+
+  public IFile getMetaFile()
+  {
+    IFile metaFile = getMetaFolder().getFile("package.json");
+    if (!metaFile.exists())
+      metaFile = getMetaFolder().getFile("package.xml");
+    return metaFile;
+  }
+
   public String getTags()
   {
     return getAttribute(WorkAttributeConstant.VERSION_TAG);
@@ -816,22 +830,13 @@ public class WorkflowPackage extends WorkflowElement implements Versionable, Att
       PluginMessages.log(ex);
     }
   }
-
+  /**
+   * Updated this to use a WorkspaceJob. See mdw issues 44
+   */
   public void refreshMdwMetaFolder()
   {
-    try
-    {
-      getFolder(".mdw").refreshLocal(IResource.DEPTH_INFINITE, null);
-    }
-    catch (CoreException ex)
-    {
-      if (ex.getClass().getName().equals("org.eclipse.core.internal.resources.ResourceException"))
-        PluginMessages.log("refresh .mdw -> " + ex.getMessage());
-      else
-        PluginMessages.log(ex);
-    }
+    scheduleRefresh(getMetaFolder());
   }
-
 
   @Override
   public void fireElementChangeEvent(ChangeType changeType, Object newValue)

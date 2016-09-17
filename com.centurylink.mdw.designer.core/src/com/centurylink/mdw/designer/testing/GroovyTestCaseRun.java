@@ -359,6 +359,9 @@ public class GroovyTestCaseRun extends TestCaseRun {
             else
                 helper = new HttpHelper(new URL(url));
 
+            if (http.getMessage() != null && http.getMessage().getHeaders() != null)
+                helper.setHeaders(http.getMessage().getHeaders());
+
             if (http.getConnectTimeout() > 0)
                 helper.setConnectTimeout(http.getConnectTimeout());
             if (http.getReadTimeout() > 0)

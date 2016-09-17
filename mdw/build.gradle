@@ -42,11 +42,11 @@ task publishMdwSnapshot(type: GradleBuild) {
 }
 
 task publishSnapshot {
-    dependsOn(publishNexusSnapshot, publishMdwSnapshot)
+    dependsOn(publishNexusSnapshot, publishArchivaSnapshot, publishMdwSnapshot)
 }
 
 task publishFormal {
-    dependsOn(publishNexus, publishMdw)
+    dependsOn(publishNexus, publishArchiva, publishMdw)
 }
 
 // deploy a build for testing on lxdenvmtc143

@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -98,12 +99,11 @@ public class ImportProjectWizard extends Wizard implements IImportWizard
     {
       public void run()
       {
-        List<WorkflowProject> existingProjects = new ArrayList<WorkflowProject>();
-        WorkflowProjectManager projMgr = WorkflowProjectManager.getInstance();
+        List<IProject> existingProjects = new ArrayList<IProject>();
         for (WorkflowProject toImport : projectsToImport)
         {
-          WorkflowProject existing = projMgr.getRemoteWorkflowProject(toImport.getName());
-          if (existing != null)
+          IProject existing = MdwPlugin.getWorkspaceRoot().getProject(toImport.getName());
+          if (existing != null && existing.exists())
             existingProjects.add(existing);
         }
 
@@ -112,7 +112,7 @@ public class ImportProjectWizard extends Wizard implements IImportWizard
           String text = "Please confirm that the following workspace projects should be overwritten:";
           ListSelectionDialog lsd = new ListSelectionDialog(getShell(), existingProjects, new ExistingProjectContentProvider(), new ProjectLabelProvider(), text);
           lsd.setTitle("Existing Workflow Projects");
-          lsd.setInitialSelections(existingProjects.toArray(new WorkflowProject[0]));
+          lsd.setInitialSelections(existingProjects.toArray(new IProject[0]));
           lsd.open();
           Object[] results = (Object[]) lsd.getResult();
           if (results == null)
@@ -121,18 +121,32 @@ public class ImportProjectWizard extends Wizard implements IImportWizard
             return;
           }
 
-          for (WorkflowProject existing : existingProjects)
+          for (IProject existing : existingProjects)
           {
             boolean include = false;
             for (Object included : results)
             {
-              if (existing.getName().equals(((WorkflowProject)included).getName()))
+              if (existing.getName().equals(((IProject)included).getName()))
                 include = true;
             }
             if (include)
-              WorkflowProjectManager.deleteProject(existing);
+            {
+              WorkflowProjectManager.getInstance().deleteProject(existing);
+            }
             else
-              projectsToImport.remove(existing);
+            {
+              WorkflowProject toRemove = null;
+              for (WorkflowProject wfp : projectList)
+              {
+                if (wfp.getName().equals(existing.getName()))
+                {
+                  toRemove = wfp;
+                  break;
+                }
+              }
+              if (toRemove != null)
+                projectsToImport.remove(toRemove);
+            }
           }
         }
       }
@@ -227,8 +241,8 @@ public class ImportProjectWizard extends Wizard implements IImportWizard
     @SuppressWarnings("unchecked")
     public Object[] getElements(Object inputElement)
     {
-      List<WorkflowProject> wfProjects = (List<WorkflowProject>) inputElement;
-      return wfProjects.toArray(new WorkflowProject[0]);
+      List<IProject> wfProjects = (List<IProject>) inputElement;
+      return wfProjects.toArray(new IProject[0]);
     }
 
     public void dispose()
@@ -257,7 +271,12 @@ public class ImportProjectWizard extends Wizard implements IImportWizard
 
     public String getText(Object element)
     {
-      return ((WorkflowProject)element).getName();
+      if (element instanceof WorkflowProject)
+        return ((WorkflowProject)element).getName();
+      else if (element instanceof IProject)
+        return ((IProject)element).getName();
+      else
+        return element.toString();
     }
 
     public void addListener(ILabelProviderListener listener)

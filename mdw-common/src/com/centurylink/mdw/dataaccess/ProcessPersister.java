@@ -22,7 +22,7 @@ import com.centurylink.mdw.model.value.task.TaskVO;
 public interface ProcessPersister {
 
     public static enum PersistType {
-        CREATE, UPDATE, NEW_VERSION, IMPORT, SAVE
+        CREATE, CREATE_JSON, UPDATE, NEW_VERSION, IMPORT, IMPORT_JSON, SAVE
     }
 
     int getDatabaseVersion();

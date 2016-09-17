@@ -173,26 +173,26 @@ public class ProcessImporterExporterV5 extends ProcessImporterExporterV4 {
         packageVO.setCustomAttributes(customAttrs);
     }
 
-	@Override
-	protected void exportConfiguration(MDWProcessDefinition procDefn, PackageVO pkg) throws DataAccessException  {
-		if (pkg.getVoXML()==null || pkg.getVoXML().length()==0) return;
+    @Override
+    protected void exportConfiguration(MDWProcessDefinition procDefn, PackageVO pkg) throws DataAccessException  {
+        if (pkg.getMetaContent()==null || pkg.getMetaContent().length()==0) return;
         try {
             ApplicationProperties props = null;
-            if (pkg.getVoXML().startsWith("<bpm:package") || pkg.getVoXML().startsWith("<package")) {
-                PackageDocument pkgDefDoc = PackageDocument.Factory.parse(pkg.getVoXML());
+            if (pkg.getMetaContent().startsWith("<bpm:package") || pkg.getMetaContent().startsWith("<package")) {
+                PackageDocument pkgDefDoc = PackageDocument.Factory.parse(pkg.getMetaContent());
                 props = pkgDefDoc.getPackage().getApplicationProperties();
             }
             else {
-                ProcessDefinitionDocument oldDefn = ProcessDefinitionDocument.Factory.parse(pkg.getVoXML(), Compatibility.namespaceOptions());
+                ProcessDefinitionDocument oldDefn = ProcessDefinitionDocument.Factory.parse(pkg.getMetaContent(), Compatibility.namespaceOptions());
                 props = oldDefn.getProcessDefinition().getApplicationProperties();
             }
             if (props != null) {
                 procDefn.setApplicationProperties(props);
             }
         } catch (XmlException e) {
-			throw new DataAccessException(-1, e.getMessage(), e);
-		}
-	}
+            throw new DataAccessException(-1, e.getMessage(), e);
+        }
+    }
 
 	@Override
 	protected void importConfiguration(PackageVO packageVO, MDWProcessDefinition def) {
@@ -202,13 +202,13 @@ public class ProcessImporterExporterV5 extends ProcessImporterExporterV4 {
 		        PackageDocument pkgDefDoc = PackageDocument.Factory.newInstance();
 		        MDWPackage pkgDef = pkgDefDoc.addNewPackage();
 		        pkgDef.setApplicationProperties(props);
-		        packageVO.setVoXML(pkgDefDoc.xmlText());
+		        packageVO.setMetaContent(pkgDefDoc.xmlText());
 		    }
 		    else {
 		        ProcessDefinitionDocument defDoc = ProcessDefinitionDocument.Factory.newInstance();
 	            MDWProcessDefinition configDefn = defDoc.addNewProcessDefinition();
 	            configDefn.setApplicationProperties(props);
-	            packageVO.setVoXML(defDoc.xmlText());
+	            packageVO.setMetaContent(defDoc.xmlText());
 		    }
 		}
 	}
@@ -309,11 +309,5 @@ public class ProcessImporterExporterV5 extends ProcessImporterExporterV4 {
             }
         }
 
-    }
-
-    public ProcessVO importProcess(MDWProcess pProcess){
-        ProcessVO processVO = importProcessBase(pProcess);
-        importProcessUsingLogicalId(pProcess, processVO, false);
-        return processVO;
     }
 }

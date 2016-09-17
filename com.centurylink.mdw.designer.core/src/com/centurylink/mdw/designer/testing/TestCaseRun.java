@@ -237,6 +237,9 @@ public class TestCaseRun extends ControlCommandShell implements Threadable {
         }
     }
 
+    /**
+     * Makes sure the message is embeddable in an XML attribute for results parsing.
+     */
     private String firstLine(String msg) {
         if (msg == null)
             return msg;
@@ -244,9 +247,9 @@ public class TestCaseRun extends ControlCommandShell implements Threadable {
         if (newLine == -1)
             newLine = msg.indexOf("\n");
         if (newLine == -1)
-            return msg;
+            return msg.replace("\"", "'");
         else
-            return msg.substring(0, newLine);
+            return msg.substring(0, newLine).replace("\"", "'");
     }
 
     @Override

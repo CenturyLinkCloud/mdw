@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.bpm.MDWActivity;
 import com.centurylink.mdw.bpm.MDWProcess;
@@ -46,6 +47,8 @@ import com.centurylink.mdw.bpm.PackageDocument;
 import com.centurylink.mdw.bpm.ProcessDefinitionDocument;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.utilities.FileHelper;
+import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
+import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.user.UserRoleVO;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
@@ -160,6 +163,7 @@ public class ImportPackagePage extends WizardPage
       public void widgetSelected(SelectionEvent e)
       {
         FileDialog dlg = new FileDialog(getShell());
+        dlg.setFilterExtensions(new String[] { "*.json", "*.xml" });
         String res = dlg.open();
         if (res != null)
           filePathText.setText(res);
@@ -427,56 +431,80 @@ public class ImportPackagePage extends WizardPage
     else
     {
       String filepath = filePathText.getText().trim();
-      String xml = FileHelper.getFileContents(filepath);
+      String contents = FileHelper.getFileContents(filepath);
       folder = new Folder(filepath);
       boolean hasOldImpls = false;
-      try
+      if (contents.trim().startsWith("{"))
       {
-        // try and parse as multiple packages
-        PackageDocument pkgDoc = PackageDocument.Factory.parse(xml);
-        QName docElement = new QName("http://mdw.centurylink.com/bpm", "processDefinition");
-        for (MDWProcessDefinition pkgDef : pkgDoc.getPackage().getProcessDefinitionList())
+        ImporterExporterJson importer = new ImporterExporterJson();
+        List<PackageVO> packages = importer.importPackages(contents);
+        for (PackageVO pkg : packages)
         {
           if (getProject().isRemote() && getProject().isGitVcs())
           {
             for (WorkflowPackage existingVcs : getProject().getTopLevelPackages())
             {
-              if (existingVcs.getName().equals(pkgDef.getPackageName()))
-                getImportPackageWizard().getImportPackageSelectPage().setError("Package already exists in version control: " + pkgDef.getPackageName());
+              if (existingVcs.getName().equals(pkg.getName()))
+                getImportPackageWizard().getImportPackageSelectPage().setError("Package already exists in version control: " + pkg.getName());
             }
           }
-          if (!hasOldImpls && getProject().isFilePersist() && !getProject().isRemote())
-            hasOldImpls = checkForOldImplementors(pkgDef);
-          File aFile = new File(folder, pkgDef.getPackageName() + " v" + pkgDef.getPackageVersion());
-          aFile.setContent(pkgDef.xmlText(new XmlOptions().setSaveOuter().setSaveSyntheticDocumentElement(docElement)));
+          File aFile = new File(folder, pkg.getName() + " v" + pkg.getVersionString());
+          JSONObject pkgJson = pkg.getJson(true);
+          pkgJson.put("name", pkg.getName());
+          aFile.setContent(pkgJson.toString(2));
           folder.addChild(aFile);
         }
         preselected = folder;
       }
-      catch (XmlException ex)
+      else
       {
-        // unparseable -- assume single package
-        if (getProject().isRemote() && getProject().isGitVcs())
+        try
         {
-          MDWProcessDefinition procDef = ProcessDefinitionDocument.Factory.parse(xml, Compatibility.namespaceOptions()).getProcessDefinition();
-          for (WorkflowPackage existingVcs : getProject().getTopLevelPackages())
+          // try and parse as multiple packages
+          PackageDocument pkgDoc = PackageDocument.Factory.parse(contents);
+          QName docElement = new QName("http://mdw.centurylink.com/bpm", "processDefinition");
+          for (MDWProcessDefinition pkgDef : pkgDoc.getPackage().getProcessDefinitionList())
           {
-            if (existingVcs.getName().equals(procDef.getPackageName()))
-              getImportPackageWizard().getImportPackageSelectPage().setError("Package already exists in version control: " + procDef.getPackageName());
+            if (getProject().isRemote() && getProject().isGitVcs())
+            {
+              for (WorkflowPackage existingVcs : getProject().getTopLevelPackages())
+              {
+                if (existingVcs.getName().equals(pkgDef.getPackageName()))
+                  getImportPackageWizard().getImportPackageSelectPage().setError("Package already exists in version control: " + pkgDef.getPackageName());
+              }
+            }
+            if (!hasOldImpls && getProject().isFilePersist() && !getProject().isRemote())
+              hasOldImpls = checkForOldImplementors(pkgDef);
+            File aFile = new File(folder, pkgDef.getPackageName() + " v" + pkgDef.getPackageVersion());
+            aFile.setContent(pkgDef.xmlText(new XmlOptions().setSaveOuter().setSaveSyntheticDocumentElement(docElement)));
+            folder.addChild(aFile);
           }
+          preselected = folder;
         }
-        if (getProject().isFilePersist() && !getProject().isRemote())
-          hasOldImpls = checkForOldImplementors(ProcessDefinitionDocument.Factory.parse(xml, Compatibility.namespaceOptions()).getProcessDefinition());
-        File file = new File(folder, filepath);
-        file.setContent(xml);
-        folder.addChild(file);
-        preselected = file;
+        catch (XmlException ex)
+        {
+          // unparseable -- assume single package
+          if (getProject().isRemote() && getProject().isGitVcs())
+          {
+            MDWProcessDefinition procDef = ProcessDefinitionDocument.Factory.parse(contents, Compatibility.namespaceOptions()).getProcessDefinition();
+            for (WorkflowPackage existingVcs : getProject().getTopLevelPackages())
+            {
+              if (existingVcs.getName().equals(procDef.getPackageName()))
+                getImportPackageWizard().getImportPackageSelectPage().setError("Package already exists in version control: " + procDef.getPackageName());
+            }
+          }
+          if (getProject().isFilePersist() && !getProject().isRemote())
+            hasOldImpls = checkForOldImplementors(ProcessDefinitionDocument.Factory.parse(contents, Compatibility.namespaceOptions()).getProcessDefinition());
+          File file = new File(folder, filepath);
+          file.setContent(contents);
+          folder.addChild(file);
+          preselected = file;
+        }
       }
       getImportPackageWizard().setHasOldImplementors(hasOldImpls);
     }
 
     return folder;
-
   }
 
   private ImportPackageWizard getImportPackageWizard()

@@ -3,8 +3,9 @@
   <div class="col-md-10">
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
-        <div class="mdw-heading-label" ng-if="create">New Subtask for (taskName) &nbsp;{{masterTaskId}}</div>
-        <div class="mdw-heading-label" ng-if="!create">Subtasks for (taskName) &nbsp;{{masterTaskId}}</div>
+        <div class="mdw-heading-label">
+          {{create ? 'New Subtask for:' : 'Subtasks for:'}} "{{task.name}}" &nbsp;<a href="#/tasks/{{task.id}}">{{task.id}}</a>
+        </div>
         <div class="mdw-heading-actions" ng-if="!create">
           <button type="button" class="btn btn-primary mdw-btn" ng-click="setCreate(true)">
             <span class="glyphicon glyphicon-plus"></span> New
@@ -12,7 +13,8 @@
         </div>
       </div>
       <ul class="mdw-checklist" ng-if="!create">
-        <li ng-repeat="task in subtaskList.subtasks">
+        <li ng-repeat="item in subtaskList.subtasks">
+          <a class="mdw-item-link" href="#/tasks/{{item.id}}">{{item.name}} &nbsp;{{item.id}}</a>
           <div ng-include="'tasks/taskItem.html'">
           </div>
         </li>

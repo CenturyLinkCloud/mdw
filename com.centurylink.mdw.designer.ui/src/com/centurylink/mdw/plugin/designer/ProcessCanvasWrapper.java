@@ -715,7 +715,7 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
           if (activity.getLogicalId() == null)
             activity.setLogicalId(process.generateLogicalId("A"));
           if (Node.ID_SEQUENCE.equals(getNodeIdType()) && activity.getSequenceId() == 0)
-            process.assignNodeSequenceIds();
+            process.assignSequenceIds();
         }
         designerCanvasSelection = activity;
       }
@@ -912,8 +912,8 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
     if (!isInstance() && (designerCanvasSelection instanceof WorkflowProcess) && getProcess().isInRuleSet())
     {
       MenuItem defXmlItem = new MenuItem(popupMenu, SWT.PUSH);
-      defXmlItem.setText("Definition XML");
-      ImageDescriptor docsImageDesc = MdwPlugin.getImageDescriptor("icons/xml.gif");
+      defXmlItem.setText("Definition Doc");
+      ImageDescriptor docsImageDesc = MdwPlugin.getImageDescriptor("icons/doc.gif");
       defXmlItem.setImage(docsImageDesc.createImage());
       defXmlItem.addSelectionListener(new SelectionAdapter()
       {
@@ -1509,7 +1509,7 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
           }
           catch (Exception ex)
           {
-            PluginMessages.uiError(ex, "View Definition XML", process.getProject());
+            PluginMessages.uiError(ex, "View Definition", process.getProject());
           }
         }
       });

@@ -1,4 +1,4 @@
-<bpm:externalEventHandler xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:EventName>ActionRequest</bpm:EventName>
-  <bpm:EventHandler>com.centurylink.mdw.service.action.ActionRequestHandler</bpm:EventHandler>
-</bpm:externalEventHandler>
+{
+  "handlerClass": "com.centurylink.mdw.service.action.ActionRequestHandler",
+  "path": "ActionRequest"
+}

@@ -113,7 +113,7 @@ userSvc.factory('authUser', ['$http', 'mdw', 'tabs', function($http, mdw, tabs) 
             tab.active = tab.url == url;
             if (!tab.active && tab.routes) {
               for (var j = 0; j < tab.routes.length; j++) {
-                if (url.startsWith(tab.routes[j]))
+                if (url.startsWith(tab.routes[j]) || url.startsWith('#' + tab.routes[j]))
                   tab.active = true;
               }
             }

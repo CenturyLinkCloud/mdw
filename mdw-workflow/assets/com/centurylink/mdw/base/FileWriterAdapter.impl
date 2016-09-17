@@ -1,10 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.adapter.file.FileWriterAdapter" Type="com.centurylink.mdw.activity.types.AdapterActivity" Label="File Writer" IconFile="writer.jpg" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET>
-  <TEXT NAME='OutputFilepath' LABEL='File Path' />
-  <BOOLEAN NAME='AppendToFile' LABEL='Append' DEFAULT='true' />
-  <TEXT NAME='WriteString' LABEL='Content String' />
-  <HYPERLINK URL='/MDWWeb/doc/FileWriterActivity.html'>
-    File Writer Help
-  </HYPERLINK>
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
+  "icon": "writer.jpg",
+  "implementorClass": "com.centurylink.mdw.workflow.adapter.file.FileWriterAdapter",
+  "label": "File Writer",
+  "pagelet": "<PAGELET>\n  <TEXT NAME='OutputFilepath' LABEL='File Path' />\n  <BOOLEAN NAME='AppendToFile' LABEL='Append' DEFAULT='true' />\n  <TEXT NAME='WriteString' LABEL='Content String' />\n  <HYPERLINK URL='/MDWWeb/doc/FileWriterActivity.html'>\n    File Writer Help\n  <\/HYPERLINK>\n<\/PAGELET>"
+}

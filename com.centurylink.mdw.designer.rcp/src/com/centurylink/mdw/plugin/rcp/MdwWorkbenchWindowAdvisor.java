@@ -155,7 +155,7 @@ public class MdwWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor
 
           WorkflowProject existing = WorkflowProjectManager.getInstance().getRemoteWorkflowProject(projectToImport.getName());
           if (existing != null)
-            WorkflowProjectManager.deleteProject(existing);
+            WorkflowProjectManager.getInstance().deleteProject(existing);
 
           ProgressMonitorDialog progMonDlg = new ProgressMonitorDialog(shell);
           ProjectInflator projectInflator = new ProjectInflator(projectToImport, null);

@@ -1036,9 +1036,4 @@ public class ProcessImporterExporterV4 implements ProcessImporter,ProcessExporte
         // TODO Auto-generated method stub
         return null;
     }
-
-    public ProcessVO importProcess(MDWProcess pProcess){
-        return null;
-    }
-
 }

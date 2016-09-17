@@ -1,14 +1,7 @@
-<bpm:activityImplementor Implementation="com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity" Type="com.centurylink.mdw.activity.types.FinishActivity" Label="Process Finish" IconFile="shape:stop" xmlns:bpm="http://mdw.centurylink.com/bpm">
-  <bpm:AttributeDescription><![CDATA[<PAGELET ICON="shape:stop" LABEL="Process Finish" BASETYPES="com.centurylink.mdw.activity.types.FinishActivity">
-  <HYPERLINK URL="/MDWWeb/doc/ProcessFinishActivity.html">Process Finish Activity Help</HYPERLINK>
-  <DROPDOWN NAME="TerminationAction" LABEL="Termination Action">
-    <OPTION>Complete Process</OPTION>
-    <OPTION>Cancel Process</OPTION>
-  </DROPDOWN>
-  <TEXT NAME="CompletionCode" LABEL="Completion Code"/>
-  <DROPDOWN NAME="DoNotNotifyCaller" LABEL="Do Not Notify Caller" DEFAULT="false">
-    <OPTION>false</OPTION>
-    <OPTION>true</OPTION>
-  </DROPDOWN>
-</PAGELET>]]></bpm:AttributeDescription>
-</bpm:activityImplementor>
+{
+  "category": "com.centurylink.mdw.activity.types.FinishActivity",
+  "icon": "shape:stop",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+  "label": "Process Finish",
+  "pagelet": "<PAGELET ICON=\"shape:stop\" LABEL=\"Process Finish\" BASETYPES=\"com.centurylink.mdw.activity.types.FinishActivity\">\n  <HYPERLINK URL=\"/MDWWeb/doc/ProcessFinishActivity.html\">Process Finish Activity Help<\/HYPERLINK>\n  <DROPDOWN NAME=\"TerminationAction\" LABEL=\"Termination Action\">\n    <OPTION>Complete Process<\/OPTION>\n    <OPTION>Cancel Process<\/OPTION>\n  <\/DROPDOWN>\n  <TEXT NAME=\"CompletionCode\" LABEL=\"Completion Code\"/>\n  <DROPDOWN NAME=\"DoNotNotifyCaller\" LABEL=\"Do Not Notify Caller\" DEFAULT=\"false\">\n    <OPTION>false<\/OPTION>\n    <OPTION>true<\/OPTION>\n  <\/DROPDOWN>\n<\/PAGELET>"
+}

@@ -6,7 +6,6 @@ package com.centurylink.mdw.model.value.activity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONException;
@@ -14,6 +13,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
 import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.common.utilities.JsonUtil;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.model.data.monitor.ServiceLevelAgreement;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
@@ -28,7 +28,7 @@ public class ActivityVO implements Serializable, Comparable<ActivityVO>, Jsonabl
     private List<AttributeVO> attributes;
     private Long[] synchronzingIds;
 
-    public ActivityVO(){
+    public ActivityVO() {
     }
 
     public ActivityVO(Long pActId, String pActName, String pDesc, String pActImplClass, List<AttributeVO> pAttribs){
@@ -215,38 +215,31 @@ public class ActivityVO implements Serializable, Comparable<ActivityVO>, Jsonabl
 
     public ActivityVO(JSONObject json) throws JSONException {
         setActivityName(json.getString("name"));
-        setAttribute(WorkAttributeConstant.LOGICAL_ID, json.getString("logicalId"));
-        setImplementorClassName(json.getString("implementorClass"));
+        String logicalId = json.getString("id");
+        if (logicalId.startsWith("Activity"))
+            logicalId = "A" + logicalId.substring(8);
+        activityId = Long.valueOf(logicalId.substring(1));
+        setImplementorClassName(json.getString("implementor"));
         if (json.has("description"))
             setActivityDescription(json.getString("description"));
-        if (json.has("attributes")) {
-            JSONObject attrsJson = json.getJSONObject("attributes");
-            Iterator<?> keys = attrsJson.keys();
-            while (keys.hasNext()) {
-                String key = keys.next().toString();
-                setAttribute(key, attrsJson.getString(key));
-            }
-        }
+        if (json.has("attributes"))
+            this.attributes = JsonUtil.getAttributes(json.getJSONObject("attributes"));
+        setAttribute(WorkAttributeConstant.LOGICAL_ID, logicalId);
     }
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("name", getActivityName());
-        json.put("logicalId", getLogicalId());
+        json.put("id", getLogicalId());
         json.put("description", getActivityDescription());
-        json.put("implementorClass", getImplementorClassName());
-        List<AttributeVO> attrs = getAttributes();
-        if (attrs != null) {
-            JSONObject attrsJson = new JSONObject();
-            for (AttributeVO attr : attrs)
-                attrsJson.put(attr.getAttributeName(), attr.getAttributeValue());
-            json.put("attributes", attrsJson);
-        }
+        json.put("implementor", getImplementorClassName());
+        if (attributes != null && !attributes.isEmpty())
+            json.put("attributes", JsonUtil.getAttributesJson(attributes));
         return json;
     }
 
     public String getJsonName() {
-        return "Activity";
+        return JsonUtil.padLogicalId(getLogicalId());
     }
 
     // for labeling only
