@@ -635,6 +635,8 @@
 	max-width: 100%;
 	overflow-x: auto;
 }
+.mdw-canvas {
+}
 
 .panel-heading a {
   font-weight: bold;

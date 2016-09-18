@@ -17,11 +17,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
+import com.centurylink.mdw.common.service.JsonArray;
+import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 
 /**
@@ -210,5 +213,13 @@ public class JsonUtil {
             objects.put(key, json.getJSONObject(key));
         }
         return objects;
+    }
+
+    public static JsonArray getJsonArray(List<? extends Jsonable> jsonables) throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        for (Jsonable jsonable : jsonables) {
+            jsonArray.put(jsonable.getJson());
+        }
+        return new JsonArray(jsonArray);
     }
 }

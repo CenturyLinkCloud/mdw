@@ -1,4 +1,4 @@
-#Wed Sep 14 15:10:00 MDT 2016
+#Sat Sep 17 22:16:44 MDT 2016
 AutoFormManualTask.pagelet=3
 BAM.xml=1
 BamTaskTemplate.xml=1
@@ -25,6 +25,7 @@ mdw.wsdl=1
 mdwNotification.html=4
 mdwNotification.xhtml=6
 milestone.gif=2
+multisub.png=1
 notice.gif=1
 process.jpg=2
 receive.gif=1

@@ -114,7 +114,7 @@ public class ActivityNodeSequencer {
     }
 
     /**
-     * We only use x and y (now w and h).
+     * We only use x and y (not w and h).
      */
     private class DisplayInfo {
         int x;

@@ -11,6 +11,7 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.value.activity.ActivityCount;
+import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
 import com.centurylink.mdw.model.value.activity.ActivityInstance;
 import com.centurylink.mdw.model.value.activity.ActivityList;
 import com.centurylink.mdw.model.value.process.ProcessCount;
@@ -121,11 +122,13 @@ public interface WorkflowServices {
 
     public Map<Date,List<ActivityCount>> getActivityInstanceBreakdown(Query query) throws ServiceException;
 
-    public ProcessVO getProcessDefinition(String assetPath, Query query) throws ServiceException;
-
     public List<ProcessVO> getProcessDefinitions(Query query) throws ServiceException;
+    public ProcessVO getProcessDefinition(String assetPath, Query query) throws ServiceException;
 
     public ActivityList getActivityDefinitions(Query query) throws ServiceException;
 
     public ActivityInstance getActivity(Long instanceId) throws ServiceException;
+
+    public List<ActivityImplementorVO> getImplementors() throws ServiceException;
+    public ActivityImplementorVO getImplementor(String className) throws ServiceException;
 }

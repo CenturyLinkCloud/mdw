@@ -60,6 +60,10 @@ public class PackageVOCache implements PreloadableCache {
         return packageListTemp;
     }
 
+    public static List<PackageVO> getPackages() throws CachingException {
+        return getPackageList();
+    }
+
     private static synchronized List<PackageVO> load() throws CachingException {
         try {
             CodeTimer timer = new CodeTimer("PackageVOCache.loadCache()", true);

@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
+import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -30,6 +31,7 @@ import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
 import com.centurylink.mdw.dataaccess.version4.CommonDataAccess;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.value.activity.ActivityCount;
+import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
 import com.centurylink.mdw.model.value.activity.ActivityInstance;
 import com.centurylink.mdw.model.value.activity.ActivityList;
 import com.centurylink.mdw.model.value.activity.ActivityVO;
@@ -632,6 +634,50 @@ public class WorkflowServicesImpl implements WorkflowServices {
         catch (DataAccessException ex) {
             throw new ServiceException(500, ex.getMessage(), ex);
         }
+    }
+
+    /**
+     * TODO: these can be cached
+     */
+    public List<ActivityImplementorVO> getImplementors() throws ServiceException {
+        try {
+            List<ActivityImplementorVO> impls = DataAccess.getProcessLoader().getActivityImplementors();
+            for (ActivityImplementorVO impl : impls) {
+                // qualify the icon location
+                if (impl.getIconName() != null && !impl.getIconName().startsWith("shape:")) {
+                    String icon = impl.getIconName();
+                    for (PackageVO pkg : PackageVOCache.getPackages()) {
+                        for (RuleSetVO ruleSet : pkg.getRuleSets()) {
+                            if (ruleSet.getName().equals(icon)) {
+                                impl.setIconName(pkg.getName() + "/" + icon);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return impls;
+        }
+        catch (CachingException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    public ActivityImplementorVO getImplementor(String className) throws ServiceException {
+        for (ActivityImplementorVO implementor : getImplementors()) {
+            String implClassName = implementor.getImplementorClassName();
+            if (className == null) {
+                if (implClassName == null)
+                    return implementor;
+            }
+            else if (implClassName.equals(className)) {
+                return implementor;
+            }
+        }
+        return null;
     }
 
 }
