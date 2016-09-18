@@ -69,21 +69,28 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
     this.metaColor = 'gray';
     this.boxRoundingRadius = 12;
     
-    this.context = this.canvas.getContext("2d");    
+    this.context = this.canvas.getContext("2d");
   };
   
   Diagram.prototype.draw = function() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    // TODO: grid when diagram is editable
+    // TODO: status info when instance
     var canvasDisplay = this.prepareDisplay();
     this.canvas.width = canvasDisplay.w;
     this.canvas.height = canvasDisplay.h;
 
     this.drawTitle();
-    
+
+    var diagram = this;
     if (this.process.activities) {
-      var diagram = this;
       this.process.activities.forEach(function(activity) {
         diagram.drawActivity(activity);
+      });
+    }
+    if (this.process.transitions) {
+      this.process.transitions.forEach(function(transition) {
+        diagram.drawTransition(transition);
       });
     }
   };
@@ -121,7 +128,6 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
         this.drawRoundedBox(activity.display.x, activity.display.y, activity.display.w, activity.display.h);
         var iconImg = new Image();
         iconImg.src = mdw.roots.hub + '/asset/' + activity.implementor.icon;
-        console.log("IMG SRC: " + iconImg.src);
         var iconx = activity.display.x + activity.display.w / 2 - 12;
         var icony = activity.display.y + 5;
         iconImg.onload = function() {
@@ -148,6 +154,10 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
     this.context.fillStyle = this.defaultColor;
     
   };
+  
+  Diagram.prototype.drawTransition = function(transition) {
+    
+  };  
   
   Diagram.prototype.drawOval = function(x, y, w, h, fill, fadeTo) {
     var kappa = .5522848;
@@ -242,9 +252,9 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
     this.process.title = title;
     this.context.font = this.defaultFont;
     
+    var diagram = this;
     // activities
     if (this.process.activities) {
-      var diagram = this;
       this.process.activities.forEach(function(activity) {
         activity.display = {};
         diagram.setDisplay(activity.display, activity.attributes.WORK_DISPLAY_INFO);
@@ -271,6 +281,14 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
       });
     }
     
+    // transitions
+    if (this.process.transitions) {
+      this.process.transitions.forEach(function(transition) {
+        transition.display = {};
+        diagram.setTransitionDisplay(transition.display, transition.attributes.WORK_DISPLAY_INFO);
+      });
+    }
+    
     canvasDisplay.w += 2; // why
     return canvasDisplay;
   };
@@ -291,30 +309,28 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
     }
   };
 
-  Diagram.prototype.setTransitionDisplay = function(transition) {
-    var displayAttr = transition.attributes.TRANSITION_DISPLAY_INFO;
+  Diagram.prototype.setTransitionDisplay = function(display, displayAttr) {
     if (displayAttr) {
       var vals = displayAttr.split(',');
-      var display = {};
+      display.xs = [];
+      display.ys = [];
       vals.forEach(function(val) {
         if (val.startsWith('lx='))
-          transition.lx = parseInt(val.substring(3));
+          display.lx = parseInt(val.substring(3));
         else if (val.startsWith('ly='))
-          transition.ly = parseInt(val.substring(3));
+          display.ly = parseInt(val.substring(3));
         else if (val.startsWith('xs=')) {
-          transition.xs = [];
           val.substring(3).split('&').forEach(function(x) {
-            transition.xs.push(parseInt(x));
+            display.xs.push(parseInt(x));
           });
         }
         else if (val.startsWith('ys=')) {
-          transition.ys = [];
           val.substring(3).split('&').forEach(function(y) {
-            transition.ys.push(parseInt(y));
+            display.ys.push(parseInt(y));
           });
         }
         else if (val.startsWith('type='))
-          transition.type = val.substring(5);
+          display.type = val.substring(5);
       });
     }
   };
