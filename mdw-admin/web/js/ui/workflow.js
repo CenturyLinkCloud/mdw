@@ -99,31 +99,31 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
   
   Diagram.prototype.drawActivity = function(activity) {
     var diagram = this;
-    var ty = activity.y + activity.h / 2 + activity.title.h / 2 - 2;
+    var ty = activity.display.y + activity.display.h / 2 + activity.title.h / 2 - 2;
     if (activity.implementor.icon) {
       if (activity.implementor.icon.startsWith('shape:')) {
         var shape = activity.implementor.icon.substring(6);
         if ('start' == shape) {
-          this.drawOval(activity.x, activity.y, activity.w, activity.h, 'green', 'white');
+          this.drawOval(activity.display.x, activity.display.y, activity.display.w, activity.display.h, 'green', 'white');
         }
         else if ('stop' == shape) {
-          this.drawOval(activity.x, activity.y, activity.w, activity.h, 'red', 'white');
+          this.drawOval(activity.display.x, activity.display.y, activity.display.w, activity.display.h, 'red', 'white');
         }
         else if ('decision' == shape) {
-          this.drawDiamond(activity.x, activity.y, activity.w, activity.h);
+          this.drawDiamond(activity.display.x, activity.display.y, activity.display.w, activity.display.h);
           ty -= 5; // why?
         }
         else if ('activity' == shape) {
-          this.drawRoundedBox(activity.x, activity.y, activity.w, activity.h);
+          this.drawRoundedBox(activity.display.x, activity.display.y, activity.display.w, activity.display.h);
         }
       }
       else {
-        this.drawRoundedBox(activity.x, activity.y, activity.w, activity.h);
+        this.drawRoundedBox(activity.display.x, activity.display.y, activity.display.w, activity.display.h);
         var iconImg = new Image();
         iconImg.src = mdw.roots.hub + '/asset/' + activity.implementor.icon;
         console.log("IMG SRC: " + iconImg.src);
-        var iconx = activity.x + activity.w / 2 - 12;
-        var icony = activity.y + 5;
+        var iconx = activity.display.x + activity.display.w / 2 - 12;
+        var icony = activity.display.y + 5;
         iconImg.onload = function() {
           diagram.context.drawImage(iconImg, iconx, icony);
         };
@@ -131,20 +131,20 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
       }
     }
     else {
-      this.drawRoundedBox(activity.x, activity.y, activity.w, activity.h);
+      this.drawRoundedBox(activity.display.x, activity.display.y, activity.display.w, activity.display.h);
     }
 
     // title
     activity.title.lines.forEach(function(line) {
       var textMetrics = diagram.context.measureText(line);
-      var tx = activity.x + activity.w / 2 - textMetrics.width / 2;
+      var tx = activity.display.x + activity.display.w / 2 - textMetrics.width / 2;
       diagram.context.fillText(line, tx, ty);
       ty += diagram.defaultFontSize;
     });
     
     // logical id
     this.context.fillStyle = this.metaColor;
-    this.context.fillText(activity.id, activity.x + 2, activity.y - 2);
+    this.context.fillText(activity.id, activity.display.x + 2, activity.display.y - 2);
     this.context.fillStyle = this.defaultColor;
     
   };
@@ -229,11 +229,8 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
     var canvasDisplay = { w: 460, h: 460 };
     
     // process title
-    var title = { 
-        text: this.process.name, 
-        attributes: { WORK_DISPLAY_INFO: this.process.attributes.WORK_DISPLAY_INFO } 
-    };
-    this.setDisplay(title);
+    var title = { text: this.process.name };
+    this.setDisplay(title, this.process.attributes.WORK_DISPLAY_INFO);
     this.context.font = this.titleFont;
     var textMetrics = this.context.measureText(title.text);
     title.w = textMetrics.width;
@@ -249,11 +246,12 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
     if (this.process.activities) {
       var diagram = this;
       this.process.activities.forEach(function(activity) {
-        diagram.setDisplay(activity);
-        if (activity.x + activity.w > canvasDisplay.w)
-          canvasDisplay.w = activity.x + activity.w;
-        if (activity.y + activity.h > canvasDisplay.h)
-          canvasDisplay.h = activity.y + activity.h;
+        activity.display = {};
+        diagram.setDisplay(activity.display, activity.attributes.WORK_DISPLAY_INFO);
+        if (activity.display.x + activity.display.w > canvasDisplay.w)
+          canvasDisplay.w = activity.display.x + activity.display.w;
+        if (activity.display.y + activity.display.h > canvasDisplay.h)
+          canvasDisplay.h = activity.display.y + activity.display.h;
         
         // activity title
         var title = { text: activity.name, lines: activity.name.getLines(), w: 0 };
@@ -277,11 +275,9 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
     return canvasDisplay;
   };
   
-  Diagram.prototype.setDisplay = function(item) {
-    var displayAttr = item.attributes.WORK_DISPLAY_INFO;
+  Diagram.prototype.setDisplay = function(item, displayAttr) {
     if (displayAttr) {
       var vals = displayAttr.split(',');
-      var display = {};
       vals.forEach(function(val) {
         if (val.startsWith('x='))
           item.x = parseInt(val.substring(2));
