@@ -104,7 +104,7 @@ war {
           "WEB-INF/classes"
    }
 }
-
+// temp tasks until we move to GitHub
 task copyToFramework(type: Copy) {
     from(".") {
         exclude ".git/"
@@ -115,4 +115,15 @@ task copyToFramework(type: Copy) {
         exclude "notes/"
     }
     into "${mdwFrameworkDir}/../mdw-admin"
+}
+task copyToMdw6(type: Copy) {
+    from(".") {
+        exclude ".git/"
+        exclude ".gradle/"
+        exclude "build/"
+        exclude "dist/"
+        exclude "node_modules/"
+        exclude "notes/"
+    }
+    into "../../mdw6/mdw-admin"
 }

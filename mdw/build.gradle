@@ -58,6 +58,7 @@ task deployTomcatMdwAdminDev(type: GradleBuild) {
                                         testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8989/mdw/Services/AppSummary"]
 }
 
+// temporary tasks until we move to GitHub
 task copyToFramework(type: Copy) {
     dependsOn ":mdw-admin:copyToFramework"
     from(".") {
@@ -65,4 +66,13 @@ task copyToFramework(type: Copy) {
         exclude ".gradle/"
     }
     into "${mdwFrameworkDir}/../mdw"
+}
+// should be run from MDW workspace (not mdw6)
+task copyToMdw6(type: Copy) {
+    dependsOn ":mdw-admin:copyToMdw6"
+    from(".") {
+        exclude ".git/"
+        exclude ".gradle/"
+    }
+    into "../../mdw6/mdw"
 }

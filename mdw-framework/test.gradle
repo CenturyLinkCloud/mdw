@@ -93,10 +93,10 @@ task cucumberTests() << {
 cucumberTests.mustRunAfter functionTests  // fail these first
 
 def whiteSpaceIssue = ",com/centurylink/mdw/tests/workflow/document-handling.test,com/centurylink/mdw/tests/workflow/xslt-transform.test,"
-+ "com/centurylink/mdw/tests/load/service-proc-perf9.test,camel-adapter-notify-process.test,com/centurylink/mdw/tests/camel/camel-adapter-notify-process.test,"
-+ "com/centurylink/mdw/tests/workflow/document-web-service-adapter.test,com/centurylink/mdw/tests/workflow/pre-post-groovy-script.test," 
-+ "com/centurylink/mdw/tests/workflow/script-activity-groovy.test,com/centurylink/mdw/tests/workflow/remote-process.test,com/centurylink/mdw/tests/services/process-as-service-adapter.test" 
-+ "com/centurylink/mdw/tests/workflow/service-heteroproc-parallel.test,com/centurylink/mdw/tests/workflow/service-heteroproc-sequential.test,com/centurylink/mdw/tests/workflow/rpc-web-service-adapter.test"
+      whiteSpaceIssue = whiteSpaceIssue + "com/centurylink/mdw/tests/load/service-proc-perf9.test,camel-adapter-notify-process.test,com/centurylink/mdw/tests/camel/camel-adapter-notify-process.test,"
+      whiteSpaceIssue = whiteSpaceIssue + "com/centurylink/mdw/tests/workflow/document-web-service-adapter.test,com/centurylink/mdw/tests/workflow/pre-post-groovy-script.test," 
+      whiteSpaceIssue = whiteSpaceIssue + "com/centurylink/mdw/tests/workflow/script-activity-groovy.test,com/centurylink/mdw/tests/workflow/remote-process.test,com/centurylink/mdw/tests/services/process-as-service-adapter.test" 
+      whiteSpaceIssue = whiteSpaceIssue + "com/centurylink/mdw/tests/workflow/service-heteroproc-parallel.test,com/centurylink/mdw/tests/workflow/service-heteroproc-sequential.test,com/centurylink/mdw/tests/workflow/rpc-web-service-adapter.test"
 def javaScriptIssue = ",com/centurylink/mdw/tests/workflow/script-activity-javascript.test,com/centurylink/mdw/tests/workflow/javascript-1.test"
 def jaxbCloudIssue = ",com/centurylink/mdw/tests/tasks/task-index-provider.test,com/centurylink/mdw/tests/services/process-values-service.test,com/centurylink/mdw/tests/tasks/task-autoassign.test,com/centurylink/mdw/tests/tasks/task-action-service.test,com/centurylink/mdw/tests/tasks/task-index-custom.test,com/centurylink/mdw/tests/tasks/task-values-service.test"
 def osgiSpringIssue = ",com/centurylink/mdw/tests/osgi/osgi-service-adapter.test"
