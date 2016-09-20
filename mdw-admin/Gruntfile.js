@@ -48,7 +48,8 @@ module.exports = function(grunt) {
           DOMParser: false,
           iFrameResize: false,
           FileReader: false,
-          Uint8Array: false
+          Uint8Array: false,
+          Image: false
         }
       }
     },

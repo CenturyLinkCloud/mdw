@@ -1,0 +1,196 @@
+// Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
+'use strict';
+
+var stepMod = angular.module('mdwStep', ['mdw']);
+
+stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
+  
+  var Step = function(activity) {
+    this.activity = activity;
+  };
+  
+  Step.DEFAULT_FONT_SIZE = 12;
+  Step.DEFAULT_COLOR = 'black';
+  Step.BOX_BOUNDING_RADIUS = 12;
+  Step.BOX_OUTLINE_COLOR = '#a9a9a9';
+  Step.META_COLOR = 'gray';
+
+  Step.prototype.draw = function(diagram) {
+    var activity = this.activity;
+
+    if (activity.implementor.icon) {
+      var yAdjust = -2;
+      if (activity.implementor.icon.startsWith('shape:')) {
+        var shape = activity.implementor.icon.substring(6);
+        if ('start' == shape) {
+          this.drawOval(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, 'green', 'white');
+        }
+        else if ('stop' == shape) {
+          this.drawOval(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, 'red', 'white');
+        }
+        else if ('decision' == shape) {
+          this.drawDiamond(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h);
+        }
+        else if ('activity' == shape) {
+          this.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h);
+        }
+      }
+      else {
+        this.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h);
+        var iconImg = new Image();
+        iconImg.src = mdw.roots.hub + '/asset/' + activity.implementor.icon;
+        var iconx = this.display.x + this.display.w / 2 - 12;
+        var icony = this.display.y + 5;
+        iconImg.onload = function() {
+          diagram.context.drawImage(iconImg, iconx, icony);
+        };
+        yAdjust = +4; 
+      }
+    }
+    else {
+      this.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h);
+    }
+
+    // title
+    this.title.lines.forEach(function(line) {
+      diagram.context.fillText(line.text, line.x, line.y + yAdjust);
+    });
+    
+    // logical id
+    diagram.context.fillStyle = Step.META_COLOR;
+    diagram.context.fillText(activity.id, this.display.x + 2, this.display.y - 2);
+    diagram.context.fillStyle = Step.DEFAULT_COLOR;
+  };
+  
+  // sets display/title and returns an object with w and h for required size
+  Step.prototype.prepareDisplay = function(diagram) {
+    var maxDisplay = { w: 0, h: 0};
+    var display = this.getDisplay(this.activity.attributes.WORK_DISPLAY_INFO);
+
+    if (display.x + display.w > maxDisplay.w)
+      maxDisplay.w = display.x + display.w;
+    if (display.y + display.h > maxDisplay.h)
+      maxDisplay.h = display.y + display.h;
+    
+    // step title
+    var titleLines = [];
+    this.activity.name.getLines().forEach(function(line) {
+      titleLines.push({ text: line });
+    });
+    var title = { text: this.activity.name, lines: titleLines, w: 0, h:0 };
+    for (var i = 0; i < title.lines.length; i++) {
+      var line = title.lines[i];
+      var textMetrics = diagram.context.measureText(line.text);
+      if (textMetrics.width > title.w)
+        title.w = textMetrics.width;
+      title.h += Step.DEFAULT_FONT_SIZE;
+      line.x = display.x + display.w / 2 - textMetrics.width / 2;
+      line.y = display.y + display.h / 2 + Step.DEFAULT_FONT_SIZE * (i + 0.5);
+      if (line.x + textMetrics.width > maxDisplay.w)
+        maxDisplay.w = line.x + textMetrics.width;
+      if (line.y + Step.DEFAULT_FONT_SIZE > maxDisplay.h)
+        maxDisplay.h = line.y + Step.DEFAULT_FONT_SIZE;
+    }
+
+    this.display = display;
+    this.title = title;    
+    
+    return maxDisplay;
+  };
+  
+  Step.prototype.getDisplay = function(displayAttr) {
+    var display = {};
+    if (displayAttr) {
+      var vals = displayAttr.split(',');
+      vals.forEach(function(val) {
+        if (val.startsWith('x='))
+          display.x = parseInt(val.substring(2));
+        else if (val.startsWith('y='))
+          display.y = parseInt(val.substring(2));
+        else if (val.startsWith('w='))
+          display.w = parseInt(val.substring(2));
+        else if (val.startsWith('h='))
+          display.h = parseInt(val.substring(2));
+      });
+    }
+    return display;
+  };
+  
+  Step.prototype.drawOval = function(context, x, y, w, h, fill, fadeTo) {
+    var kappa = 0.5522848;
+    var ox = (w / 2) * kappa; // control point offset horizontal
+    var oy = (h / 2) * kappa; // control point offset vertical
+    var xe = x + w; // x-end
+    var ye = y + h; // y-end
+    var xm = x + w / 2; // x-middle
+    var ym = y + h / 2; // y-middle
+
+    context.beginPath();
+    context.moveTo(x, ym);
+    context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    context.closePath(); // not used correctly? (use to close off open path)
+    if (typeof fill === 'undefined') {
+      context.stroke();
+    }
+    else {
+      if (typeof fadeTo === 'undefined') {
+        context.fillStyle = fill;
+      }
+      else {
+        var gradient = context.createLinearGradient(x, y, x + w, y + h);
+        gradient.addColorStop(0, fill);
+        gradient.addColorStop(1, 'white');
+        context.fillStyle = gradient;
+      }
+      context.fill();
+      context.stroke();
+    }
+    context.fillStyle = Step.DEFAULT_COLOR;
+  };
+  
+  Step.prototype.drawDiamond = function(context, x, y, w, h) {
+    var xh = x + w / 2;
+    var yh = y + h / 2;
+    context.beginPath();
+    context.moveTo(x, yh);
+    context.lineTo(xh, y);
+    context.lineTo(x + w, yh);
+    context.lineTo(xh, y + h);
+    context.lineTo(x, yh);
+    context.closePath();
+    context.stroke();
+  };
+  
+  Step.prototype.drawRoundedBox = function(context, x, y, w, h) {
+    this.drawBox(context, x, y, w, h, Step.BOX_BOUNDING_RADIUS);
+  };
+  
+  Step.prototype.drawBox = function(context, x, y, w, h, r) {
+    context.fillStyle = Step.BOX_OUTLINE_COLOR;
+    if (typeof r === 'undefined') {
+      context.strokeRect(x, y, w, h);
+    }
+    else {
+      // rounded corners
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.lineTo(x + w - r, y);
+      context.quadraticCurveTo(x + w, y, x + w, y + r);
+      context.lineTo(x + w, y + h - r);
+      context.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      context.lineTo(x + r, y + h);
+      context.quadraticCurveTo(x, y + h, x, y + h - r);
+      context.lineTo(x, y + r);
+      context.quadraticCurveTo(x, y, x + r, y);
+      context.closePath();
+      context.stroke();
+    }
+    context.fillStyle = Step.DEFAULT_COLOR;
+  };
+  
+  return Step;
+    
+}]);

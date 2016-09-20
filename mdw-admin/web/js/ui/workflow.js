@@ -22,7 +22,7 @@ workflowMod.controller('MdwWorkflowController',
     $scope.process = Workflow.retrieve({pkg: packageName, process: $scope.process.name}, function() {
       $scope.process.packageName = packageName;  // not returned in JSON
 
-      if ($scope.implementors == null) {
+      if (!$scope.implementors) {
         $http( {method: 'GET', url: mdw.roots.services + '/services/Implementors' })
           .then(function success(response) {
             $scope.implementors = response.data;
@@ -51,288 +51,126 @@ workflowMod.factory('Workflow', ['$resource', 'mdw', function($resource, mdw) {
   });
 }]);
 
-workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, mdw, util) {
+workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link',
+                                function($document, mdw, util, Step, Link) {
   var Diagram = function(canvas, process, implementors, instance) {
     this.canvas = canvas;
     this.process = process;
     this.implementors = implementors;
     this.instance = instance ? instance : null;
     
-    this.defaultFontSize = 12;
-    this.defaultFont =  this.defaultFontSize + 'px sans-serif';
-    this.titleFontSize = 18;
-    this.titleFont = 'bold ' + this.titleFontSize + 'px sans-serif';
-    
-    this.defaultColor = 'black';
-    this.linkColor = '#1565c0'
-    this.boxOutlineColor = '#a9a9a9';
-    this.metaColor = 'gray';
-    this.boxRoundingRadius = 12;
-    
     this.context = this.canvas.getContext("2d");
   };
+
+  Diagram.DEFAULT_FONT_SIZE = 12;
+  Diagram.DEFAULT_FONT =  Diagram.DEFAULT_FONT_SIZE + 'px sans-serif';
+  Diagram.TITLE_FONT_SIZE = 18;
+  Diagram.TITLE_FONT = 'bold ' + Diagram.TITLE_FONT_SIZE + 'px sans-serif';
+  
+  Diagram.DEFAULT_COLOR = 'black';
+  Diagram.HYPERLINK_COLOR = '#1565c0';
   
   Diagram.prototype.draw = function() {
+
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     // TODO: grid when diagram is editable
     // TODO: status info when instance
     var canvasDisplay = this.prepareDisplay();
+
     this.canvas.width = canvasDisplay.w;
     this.canvas.height = canvasDisplay.h;
 
-    this.drawTitle();
-
     var diagram = this;
-    if (this.process.activities) {
-      this.process.activities.forEach(function(activity) {
-        diagram.drawActivity(activity);
-      });
-    }
-    if (this.process.transitions) {
-      this.process.transitions.forEach(function(transition) {
-        diagram.drawTransition(transition);
-      });
-    }
-  };
-  
-  Diagram.prototype.drawTitle = function() {
-    this.context.font = this.titleFont;
-    this.context.fillStyle = this.titleLinkHover ? this.linkColor : this.defaultColor;
-    this.context.clearRect(this.process.title.x, this.process.title.y, this.process.title.w, this.process.title.h);
-    this.context.fillText(this.process.name, this.process.title.x, this.process.title.y + this.process.title.h);
-    this.context.font = this.defaultFont;
-    this.context.fillStyle = this.defaultColor;
-  }
-  
-  Diagram.prototype.drawActivity = function(activity) {
-    var diagram = this;
-    var ty = activity.display.y + activity.display.h / 2 + activity.title.h / 2 - 2;
-    if (activity.implementor.icon) {
-      if (activity.implementor.icon.startsWith('shape:')) {
-        var shape = activity.implementor.icon.substring(6);
-        if ('start' == shape) {
-          this.drawOval(activity.display.x, activity.display.y, activity.display.w, activity.display.h, 'green', 'white');
-        }
-        else if ('stop' == shape) {
-          this.drawOval(activity.display.x, activity.display.y, activity.display.w, activity.display.h, 'red', 'white');
-        }
-        else if ('decision' == shape) {
-          this.drawDiamond(activity.display.x, activity.display.y, activity.display.w, activity.display.h);
-          ty -= 5; // why?
-        }
-        else if ('activity' == shape) {
-          this.drawRoundedBox(activity.display.x, activity.display.y, activity.display.w, activity.display.h);
-        }
-      }
-      else {
-        this.drawRoundedBox(activity.display.x, activity.display.y, activity.display.w, activity.display.h);
-        var iconImg = new Image();
-        iconImg.src = mdw.roots.hub + '/asset/' + activity.implementor.icon;
-        var iconx = activity.display.x + activity.display.w / 2 - 12;
-        var icony = activity.display.y + 5;
-        iconImg.onload = function() {
-          diagram.context.drawImage(iconImg, iconx, icony);
-        };
-        ty += 9;
-      }
-    }
-    else {
-      this.drawRoundedBox(activity.display.x, activity.display.y, activity.display.w, activity.display.h);
-    }
-
-    // title
-    activity.title.lines.forEach(function(line) {
-      var textMetrics = diagram.context.measureText(line);
-      var tx = activity.display.x + activity.display.w / 2 - textMetrics.width / 2;
-      diagram.context.fillText(line, tx, ty);
-      ty += diagram.defaultFontSize;
+    diagram.drawTitle();
+    diagram.steps.forEach(function(step) {
+      step.draw(diagram);
     });
-    
-    // logical id
-    this.context.fillStyle = this.metaColor;
-    this.context.fillText(activity.id, activity.display.x + 2, activity.display.y - 2);
-    this.context.fillStyle = this.defaultColor;
-    
-  };
-  
-  Diagram.prototype.drawTransition = function(transition) {
-    
-  };  
-  
-  Diagram.prototype.drawOval = function(x, y, w, h, fill, fadeTo) {
-    var kappa = .5522848;
-    var ox = (w / 2) * kappa; // control point offset horizontal
-    var oy = (h / 2) * kappa; // control point offset vertical
-    var xe = x + w; // x-end
-    var ye = y + h; // y-end
-    var xm = x + w / 2; // x-middle
-    var ym = y + h / 2; // y-middle
-
-    this.context.beginPath();
-    this.context.moveTo(x, ym);
-    this.context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-    this.context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-    this.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    this.context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-    this.context.closePath(); // not used correctly? (use to close off open path)
-    if (typeof fill === 'undefined') {
-      this.context.stroke();
-    }
-    else {
-      if (typeof fadeTo === 'undefined') {
-        this.context.fillStyle = fill;
-      }
-      else {
-        var gradient = this.context.createLinearGradient(x, y, x + w, y + h);
-        gradient.addColorStop(0, fill);
-        gradient.addColorStop(1, 'white');
-        this.context.fillStyle = gradient;
-      }
-      this.context.fill();
-      this.context.stroke();
-    }
-    this.context.fillStyle = this.defaultColor;
-  };
-  
-  Diagram.prototype.drawDiamond = function(x, y, w, h) {
-    var xh = x + w / 2;
-    var yh = y + h / 2;
-    this.context.beginPath();
-    this.context.moveTo(x, yh);
-    this.context.lineTo(xh, y);
-    this.context.lineTo(x + w, yh);
-    this.context.lineTo(xh, y + h);
-    this.context.lineTo(x, yh);
-    this.context.closePath();
-    this.context.stroke();
-  };
-  
-  Diagram.prototype.drawRoundedBox = function(x, y, w, h) {
-    this.drawBox(x, y, w, h, this.boxRoundingRadius);
-  };
-  
-  Diagram.prototype.drawBox = function(x, y, w, h, r) {
-    this.context.fillStyle = this.boxOutlineColor;
-    if (typeof r === 'undefined') {
-      this.context.strokeRect(x, y, w, h);
-    }
-    else {
-      // rounded corners
-      this.context.beginPath();
-      this.context.moveTo(x + r, y);
-      this.context.lineTo(x + w - r, y);
-      this.context.quadraticCurveTo(x + w, y, x + w, y + r);
-      this.context.lineTo(x + w, y + h - r);
-      this.context.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      this.context.lineTo(x + r, y + h);
-      this.context.quadraticCurveTo(x, y + h, x, y + h - r);
-      this.context.lineTo(x, y + r);
-      this.context.quadraticCurveTo(x, y, x + r, y);
-      this.context.closePath();
-      this.context.stroke();
-    }
-    this.context.fillStyle = this.defaultColor;
+    diagram.links.forEach(function(link) {
+      link.draw(diagram);
+    });
   };
   
   // sets display fields and returns a display with w and h for canvas size
+  // (for performance reasons, also initializes steps/links arrays and activity impls)
   Diagram.prototype.prepareDisplay = function() {
     var canvasDisplay = { w: 460, h: 460 };
     
     // process title
-    var title = { text: this.process.name };
-    this.setDisplay(title, this.process.attributes.WORK_DISPLAY_INFO);
-    this.context.font = this.titleFont;
+    var display = this.getDisplay(this.process.attributes.WORK_DISPLAY_INFO);
+    var title = { text: this.process.name, x: display.x, y: display.y };
+    this.context.font = Diagram.TITLE_FONT;
     var textMetrics = this.context.measureText(title.text);
     title.w = textMetrics.width;
-    title.h = this.titleFontSize;
+    title.h = Diagram.TITLE_FONT_SIZE;
     if (title.x + title.w > canvasDisplay.w)
       canvasDisplay.w = title.x + title.w;
     if (title.y + title.h > canvasDisplay.h)
       canvasDisplay.h = title.y + title.h;
-    this.process.title = title;
-    this.context.font = this.defaultFont;
+    this.title = title;
+    this.context.font = Diagram.DEFAULT_FONT;
     
     var diagram = this;
-    // activities
+    diagram.steps = [];
     if (this.process.activities) {
       this.process.activities.forEach(function(activity) {
-        activity.display = {};
-        diagram.setDisplay(activity.display, activity.attributes.WORK_DISPLAY_INFO);
-        if (activity.display.x + activity.display.w > canvasDisplay.w)
-          canvasDisplay.w = activity.display.x + activity.display.w;
-        if (activity.display.y + activity.display.h > canvasDisplay.h)
-          canvasDisplay.h = activity.display.y + activity.display.h;
-        
-        // activity title
-        var title = { text: activity.name, lines: activity.name.getLines(), w: 0 };
-        title.lines.forEach(function(line) {
-          var textMetrics = diagram.context.measureText(line);
-          if (textMetrics.width > title.w)
-            title.w = textMetrics.width;
-        });
-        title.h = diagram.defaultFontSize;
-        if (title.x + title.w > canvasDisplay.w)
-          canvasDisplay.w = title.x + title.w;
-        if (title.y + title.lines.length * title.h > canvasDisplay.h)
-          canvasDisplay.h = title.y + title.lines.length * title.h;
-        activity.title = title;    
-        // associate full-blown implementor
+        var step = new Step(activity);
+        var display = step.prepareDisplay(diagram);
+        if (display.w > canvasDisplay.w)
+          canvasDisplay.w = display.w;
+        if (display.h > canvasDisplay.h)
+          canvasDisplay.h = display.h;
+        diagram.steps.push(step);
         activity.implementor = diagram.getImplementor(activity.implementor);
+        
       });
     }
+    diagram.links = [];
+    diagram.steps.forEach(function(step) {
+      if (step.activity.transitions) {
+        step.activity.transitions.forEach(function(transition) {
+          var link = new Link(transition, step, diagram.getStep(transition.to));
+          var display = link.prepareDisplay(diagram);
+          if (display.w > canvasDisplay.w)
+            canvasDisplay.w = display.w;
+          if (display.h > canvasDisplay.h)
+            canvasDisplay.h = display.h;
+          diagram.links.push(link);
+        });
+      }
+    });
     
-    // transitions
-    if (this.process.transitions) {
-      this.process.transitions.forEach(function(transition) {
-        transition.display = {};
-        diagram.setTransitionDisplay(transition.display, transition.attributes.WORK_DISPLAY_INFO);
-      });
-    }
-    
-    canvasDisplay.w += 2; // why
+    canvasDisplay.w += 2; // TODO why?
     return canvasDisplay;
   };
   
-  Diagram.prototype.setDisplay = function(item, displayAttr) {
+  Diagram.prototype.getStep = function(activityId) {
+    for (var i = 0; i < this.steps.length; i++) {
+      if (this.steps[i].id === activityId)
+        return this.steps[i];
+    }
+  };
+  
+  Diagram.prototype.getDisplay = function(displayAttr) {
+    var display = {};
     if (displayAttr) {
       var vals = displayAttr.split(',');
       vals.forEach(function(val) {
         if (val.startsWith('x='))
-          item.x = parseInt(val.substring(2));
+          display.x = parseInt(val.substring(2));
         else if (val.startsWith('y='))
-          item.y = parseInt(val.substring(2));
-        else if (val.startsWith('w='))
-          item.w = parseInt(val.substring(2));
-        else if (val.startsWith('h='))
-          item.h = parseInt(val.substring(2));
+          display.y = parseInt(val.substring(2));
       });
     }
+    return display;
   };
-
-  Diagram.prototype.setTransitionDisplay = function(display, displayAttr) {
-    if (displayAttr) {
-      var vals = displayAttr.split(',');
-      display.xs = [];
-      display.ys = [];
-      vals.forEach(function(val) {
-        if (val.startsWith('lx='))
-          display.lx = parseInt(val.substring(3));
-        else if (val.startsWith('ly='))
-          display.ly = parseInt(val.substring(3));
-        else if (val.startsWith('xs=')) {
-          val.substring(3).split('&').forEach(function(x) {
-            display.xs.push(parseInt(x));
-          });
-        }
-        else if (val.startsWith('ys=')) {
-          val.substring(3).split('&').forEach(function(y) {
-            display.ys.push(parseInt(y));
-          });
-        }
-        else if (val.startsWith('type='))
-          display.type = val.substring(5);
-      });
-    }
+  
+  Diagram.prototype.drawTitle = function() {
+    this.context.font = Diagram.TITLE_FONT;
+    this.context.fillStyle = this.titleLinkHover ? Diagram.HYPERLINK_COLOR : Diagram.DEFAULT_COLOR;
+    this.context.clearRect(this.title.x, this.title.y, this.title.w, this.title.h);
+    this.context.fillText(this.title.text, this.title.x, this.title.y + this.title.h);
+    this.context.font = Diagram.DEFAULT_FONT;
+    this.context.fillStyle = Diagram.DEFAULT_COLOR;
   };
   
   Diagram.prototype.getImplementor = function(className) {
@@ -341,7 +179,7 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
         var implementor = this.implementors[i];
         if (implementor.implementorClass == className)
           return implementor;
-      };
+      }
     }
     // not found -- return placeholder
     return { implementorClass: className };
@@ -354,8 +192,8 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', function($document, 
     
     // title link
     var wasTitleLinkHover = this.titleLinkHover ? this.titleLinkHover : false;
-    if (x > this.process.title.x && x < this.process.title.x + this.process.title.w &&
-          y > this.process.title.y && y < this.process.title.y + this.process.title.h) {
+    if (x > this.title.x && x < this.title.x + this.title.w &&
+          y > this.title.y && y < this.title.y + this.title.h) {
       $document[0].body.style.cursor = 'pointer';
       this.titleLinkHover = true; // to be used in onMouseClick
     }

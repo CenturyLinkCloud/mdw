@@ -1,11 +1,13 @@
 // Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
-var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ui.bootstrap', 'chart.js', 'authUser', 'mdw', 'util', 'constants', 
-                                           'mdwChart', 'mdwActions', 'mdwList', 'mdwPanel', 'mdwWorkflow', 'routes', 'users', 'groups', 'roles', 'assets', 
-                                           'testing', 'tasks', 'task', 'taskTemplates', 'processes', 'activities', 'requests', 'services', 'solutions', 'history',
-                                           'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities',
-                                           'blv', 'ngSanitize','blvProcessSvc', 'blvDrawingSvc', 'blvSharedData', 'blvtypes', 'mdwAttributesSvc']);
+var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ui.bootstrap', 'chart.js', 
+ 'mdwChart', 'mdwActions', 'mdwList', 'mdwPanel', 'mdwWorkflow', 'mdwStep', 'mdwLink', 
+ 'authUser', 'mdw', 'util', 'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'testing',
+ 'tasks', 'task', 'taskTemplates', 'processes', 'activities', 'requests', 'services', 'solutions', 'history',
+ 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities',
+ 'blv', 'ngSanitize','blvProcessSvc', 'blvDrawingSvc', 'blvSharedData', 'blvtypes', 'mdwAttributesSvc'
+]);
 
 adminApp.config(function($httpProvider) {
   $httpProvider.defaults.headers.get = { 'Accept': 'application/json' };
@@ -98,7 +100,8 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   };
   
   $scope.popHide = function(e) {
-    if (e.target && e.target.getAttribute && e.target.getAttribute('popover-stay-open') !== null) // enable popovers to stay open
+    // enable popovers to stay open
+    if (e.target && e.target.getAttribute && e.target.getAttribute('popover-stay-open') !== null)
       return;
     var ignoreTarg = $scope.popElem ? $scope.popElem[0] : null;
     if (ignoreTarg !== null && ignoreTarg.parentElement)
