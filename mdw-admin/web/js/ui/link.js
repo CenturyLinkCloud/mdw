@@ -13,6 +13,7 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
   
   Link.DEFAULT_COLOR = 'black';
   Link.DEFAULT_FONT_SIZE = 12;
+  Link.GAP = 4;
   Link.CR = 8;
   Link.LINK_WIDTH = 3;
 
@@ -39,13 +40,13 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
   Link.prototype.draw = function(diagram) {
     
     diagram.context.strokeStyle = this.getEventColor(this.transition.event);
+    diagram.context.fillStyle = this.getEventColor(this.transition.event);
     this.drawConnector(diagram.context);
-    diagram.context.strokeStyle = Link.DEFAULT_COLOR;
     // todo draw shape
 
     // title
-    diagram.context.fillStyle = this.getEventColor(this.transition.event);
     diagram.context.fillText(this.title.text, this.title.x, this.title.y);
+    diagram.context.strokeStyle = Link.DEFAULT_COLOR;
     diagram.context.fillStyle = Link.DEFAULT_COLOR;
     
   };
@@ -119,7 +120,7 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
           else {
               context.lineTo(xs[i], ys[i] > ys[i - 1] ? ys[i] - Link.CR : ys[i] + Link.CR);
               if ( i <xs.length - 1)
-                context.quadraticCurveTo(xs[i], ys[i], xs[i + 1] > xs[i] ? xs[i] + Link.CR : xs[i] - Link.CR, ys[i]);
+                context.quadraticCurveTo(xs[i], ys[i], xs[i+1] > xs[i] ? xs[i] + Link.CR : xs[i] - Link.CR, ys[i]);
           }
           horizontal = !horizontal;
         }
@@ -146,7 +147,7 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
     }
     context.lineWidth = previousLineWidth;
     
-    // TODO draw arrow
+    this.drawConnectorArrow(context);
   };
   
   Link.prototype.drawAutoElbowConnector = function(context) {
@@ -154,14 +155,14 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
     var ys = this.display.ys;
     var t;
     switch (this.getAutoElbowLinkType()) {
-      case Link.AUTOLINK_V:
-      case Link.AUTOLINK_H:
+      case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V:
+      case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_H:
         context.beginPath();
         context.moveTo(xs[0], ys[0]);
         context.lineTo(xs[1], ys[1]);
         context.stroke();
         break;
-      case Link.AUTOLINK_VHV:
+      case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VHV:
         context.beginPath();
         t = (ys[0] + ys[1]) / 2;
         context.moveTo(xs[0], ys[0]);
@@ -172,7 +173,7 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
         context.lineTo(xs[1], ys[1]);
         context.stroke();
         break;
-      case Link.AUTOLINK_HVH:
+      case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HVH:
         context.beginPath();
         t = (xs[0] + xs[1]) / 2;
         context.moveTo(xs[0], ys[0]);
@@ -183,7 +184,7 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
         context.lineTo(xs[1], ys[1]);
         context.stroke();
         break;
-      case Link.AUTOLINK_HV:
+      case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HV:
         context.beginPath();
         context.moveTo(xs[0], ys[0]);
         context.lineTo(xs[1] > xs[0] ? xs[1] -Link.CR : xs[1] + Link.CR, ys[0]);
@@ -191,7 +192,7 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
         context.lineTo(xs[1], ys[1]);
         context.stroke();
         break;
-      case Link.AUTOLINK_VH:
+      case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VH:
         context.beginPath();
         context.moveTo(xs[0], ys[0]);
         context.lineTo(xs[0], ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
@@ -202,6 +203,79 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
     }
   };
   
+  Link.prototype.drawConnectorArrow = function(context) {
+    var type = this.display.type;
+    var xs = this.display.xs;
+    var ys = this.display.ys;
+    var p = 12;
+    var slope;
+    var x, y;
+    // TODO from Link.java determineArrow() method (only ARROW_STYLE_END)
+    if (type == Link.LINK_TYPES.CURVE) {
+      if (xs.length == 4) {
+        
+      }
+      else if (xs.length == 3) {
+
+      } 
+      else if (this.from !== this.to) {
+      
+      } 
+      else {
+      
+      }
+    }
+    else if (type == Link.LINK_TYPES.STRAIGHT) {
+      var p2 = xs.length - 1;
+      var p1 = p2 - 1;
+      x = xs[p2];
+      y = ys[p2];
+      slope = this.getSlope(xs[p1], ys[p1], xs[p2], ys[p2]);
+    } 
+    else if (xs.length == 2) {  // auto ELBOW/ELBOWH/ELBOWV type
+      switch (this.getAutoElbowLinkType()) {
+        case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V:
+        case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VHV:                   
+        case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HV:
+          x = xs[1];
+          y = ys[1] > ys[0] ? ys[1] + Link.GAP : ys[1] - Link.GAP;
+          slope = ys[1] > ys[0] ? Math.PI/2 : Math.PI*1.5;
+          break;
+        case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_H:
+        case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HVH:
+        case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VH:
+          x = xs[1] > xs[0] ? xs[1] + Link.GAP : xs[1] - Link.GAP;
+          y = ys[1];
+          slope = xs[1] > xs[0] ? 0 : Math.PI;
+          break;
+      }                
+    } 
+    else {  // ELBOW/ELBOWH/ELBOWV, control points > 2
+      var k = xs.length - 1;
+      if (xs[k] == xs[k-1] && (ys[k] != ys[k-1] || ys[k-1] == ys[k-2])) {
+        // verticle arrow
+        x = xs[k];
+        y = ys[k] > ys[k-1] ? ys[k] + Link.GAP : ys[k] - Link.GAP;
+        slope = ys[k] > ys[k-1] ? Math.PI/2 : Math.PI*1.5;              
+      } 
+      else {
+        x = xs[k] > xs[k-1] ? xs[k] + Link.GAP : xs[k] - Link.GAP;
+        y = ys[k];
+        slope = xs[k] > xs[k-1] ? 0 : Math.PI;
+      }
+    }
+    // convert point and slope to polygon
+    var dl = slope - 2.7052;  // 25 degrees
+    var dr = slope + 2.7052;  // 25 degrees
+    
+    context.beginPath();
+    context.moveTo(x, y);
+    context.lineTo(Math.round(Math.cos(dl)*p + x), Math.round(Math.sin(dl)*p + y));
+    context.lineTo(Math.round(Math.cos(dr)*p + x), Math.round(Math.sin(dr)*p + y));
+    context.fill();
+    context.stroke();
+  };
+  
   Link.prototype.getAutoElbowLinkType = function() {
     var type = this.display.type;
     var xs = this.display.xs;
@@ -209,51 +283,66 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
     
     if (type == Link.ELBOWH) {
       if (xs[0] == xs[1]) {
-        return Link.AUTOLINK_V; 
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V; 
       } 
       else if (ys[0] == ys[1]) {
-        return Link.AUTOLINK_H;
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_H;
       } 
       else if (Math.abs(this.to.display.x - this.from.display.x) > Link.ELBOW_VH_THRESHOLD) {
-        return Link.AUTOLINK_HVH;
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HVH;
       }
       else {
-        return Link.AUTOLINK_HV;
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HV;
       }
     } 
     else if (type === Link.ELBOWV) {
       if (xs[0] == xs[1]) {
-        return Link.AUTOLINK_V; 
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V; 
       }
       else if (ys[0] == ys[1]) {
-        return Link.AUTOLINK_H;
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_H;
       }
       else if (Math.abs(this.to.display.y - this.from.display.y) > Link.ELBOW_VH_THRESHOLD) {
-        return Link.AUTOLINK_VHV;
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VHV;
       }
       else {
-        return Link.AUTOLINK_VH;
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VH;
       }
     } 
     else {
       if (xs[0] == xs[1]) {
-        return Link.AUTOLINK_V; 
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V; 
       }
       else if (ys[0] == ys[1]) {
-        return Link.AUTOLINK_H;
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_H;
       } 
       else if (Math.abs(this.to.display.x - this.from.display.x) < Math.abs(this.to.display.y - this.from.display.y) * Link.ELBOW_THRESHOLD) {
-        return Link.AUTOLINK_VHV;
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VHV;
       } 
       else if (Math.abs(this.to.display.y - this.from.display.y) < Math.abs(this.to.display.x - this.from.display.x) * Link.ELBOW_THRESHOLD) {
-        return Link.AUTOLINK_HVH;
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HVH;
       } 
       else {
-        return Link.AUTOLINK_HV;
+        return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HV;
       }
     }
   };
   
+  // in polar degrees
+  Link.prototype.getSlope = function(x1, y1, x2, y2) {
+    var slope;
+    if (x1 == x2) 
+      slope = (y1 < y2) ? Math.PI / 2 : -Math.PI / 2;
+    else
+      slope = Math.atan(y2 - y1)/(x2 - x1);
+    if (x1 > x2) {
+        if (slope > 0)
+          slope -= Math.PI;
+        else 
+          slope += Math.PI;
+    }
+    return slope;
+  };
   
   Link.prototype.getEventColor = function(eventName) {
     if (eventName === 'START' || eventName === 'RESUME')

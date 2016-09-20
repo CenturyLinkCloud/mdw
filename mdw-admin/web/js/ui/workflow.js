@@ -145,7 +145,7 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link',
   
   Diagram.prototype.getStep = function(activityId) {
     for (var i = 0; i < this.steps.length; i++) {
-      if (this.steps[i].id === activityId)
+      if (this.steps[i].activity.id === activityId)
         return this.steps[i];
     }
   };
