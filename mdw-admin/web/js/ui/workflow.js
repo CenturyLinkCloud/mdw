@@ -139,6 +139,8 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link',
       }
     });
     
+    // TODO subprocesses
+    
     canvasDisplay.w += 2; // TODO why?
     return canvasDisplay;
   };
