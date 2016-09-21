@@ -161,6 +161,8 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
                 throw new CachingException(-1, ex.getMessage(), ex);
             }
         }
+        else
+            clearCache();
     }
 
     public synchronized void refreshCache() throws CachingException {

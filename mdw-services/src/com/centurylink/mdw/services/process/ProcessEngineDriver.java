@@ -812,7 +812,7 @@ public class ProcessEngineDriver {
         if (vartype.equals(Map.class.getName())) {
             engine.createVariableInstance(pi, VariableConstants.REQUEST_HEADERS, headers);
         }
-        else if (vartype.equals(Object.class.getName())) {
+        else if (vartype.equals("java.util.Map<String,String>") || vartype.equals(Object.class.getName())) {
             DocumentReference docRef = engine.createDocument(vartype, pi.getId(), OwnerType.VARIABLE_INSTANCE, new Long(0), null, null, headers);
             engine.createVariableInstance(pi, VariableConstants.REQUEST_HEADERS, docRef);
         }

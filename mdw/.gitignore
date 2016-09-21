@@ -1,5 +1,6 @@
-/.git/
-/deploy/
-/build/
-/.gradle/
-/.settings/
+/.git
+/deploy
+/notes
+/build
+/.gradle
+/.settings

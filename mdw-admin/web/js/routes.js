@@ -247,6 +247,11 @@ routesSvc.factory('routes', function() {
         controller: 'ServiceController'
       },
       {
+        path: '/services/:servicePath/:serviceSubPath/:serviceSub2',
+        templateUrl: 'services/swagger.html',
+        controller: 'ServiceController'
+      },
+      {
         path: '/servicesCombined',
         templateUrl: 'services/swagger.html?combined',
         controller: 'CombinedServiceController'

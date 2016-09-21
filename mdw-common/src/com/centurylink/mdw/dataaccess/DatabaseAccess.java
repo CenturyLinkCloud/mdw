@@ -38,6 +38,7 @@ public class DatabaseAccess {
     protected Connection connection;
     protected PreparedStatement ps;
     protected ResultSet rs;
+    protected int queryTimeout;  // Clients can set the timeout if desired.  Default is no timeout.
 
     private boolean isMySQL;  // also true for MariaDB
     private boolean isMariaDB;
@@ -64,6 +65,7 @@ public class DatabaseAccess {
         }
 
         connection = null;
+        queryTimeout = 0;  //Default - 0 means no timeout overwrite, so DBCP implementation's default.  Currently (Apache DBCP-1.4.3), no timeout on queries
 
         if (this.database_name.startsWith("jdbc:oracle"))
             isMySQL = false;
@@ -265,18 +267,24 @@ public class DatabaseAccess {
     }
 
     private ResultSet logExecuteQuery(String query) throws SQLException {
+        if (queryTimeout > 0 && ps != null)
+            ps.setQueryTimeout(queryTimeout);
         if (connection instanceof QueryLogger)
             return ((QueryLogger)connection).executeQuery(ps, query);
         else return ps.executeQuery();
     }
 
     private int logExecuteUpdate(String query) throws SQLException {
+        if (queryTimeout > 0 && ps != null)
+            ps.setQueryTimeout(queryTimeout);
         if (connection instanceof QueryLogger)
             return ((QueryLogger)connection).executeUpdate(ps, query);
         else return ps.executeUpdate();
     }
 
     private int [] logExecuteBatch(String query) throws SQLException {
+        if (queryTimeout > 0 && ps != null)
+            ps.setQueryTimeout(queryTimeout);
         if (connection instanceof QueryLogger)
             return ((QueryLogger)connection).executeBatch(ps, query);
         else return ps.executeBatch();
@@ -485,6 +493,14 @@ public class DatabaseAccess {
             return " limit " + startRow + ", " + rowCount;
         else
             return "\n) allrows where rownum <= " + (startRow+rowCount) + ") where rnum  > " + startRow;
+    }
+
+    public void setQueryTimeout(int seconds) throws SQLException {
+        queryTimeout = seconds;
+    }
+
+    public int getQueryTimeout() throws SQLException {
+        return queryTimeout;
     }
 
     public String toString() {

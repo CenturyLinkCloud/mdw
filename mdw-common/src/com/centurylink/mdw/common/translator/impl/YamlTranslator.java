@@ -6,6 +6,8 @@ package com.centurylink.mdw.common.translator.impl;
 import java.beans.IntrospectionException;
 import java.util.Set;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -13,16 +15,20 @@ import org.yaml.snakeyaml.constructor.ConstructorException;
 import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.representer.Representer;
 
+import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument;
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.exception.TranslationException;
 import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.java.CompiledJavaCache;
+import com.centurylink.mdw.model.ExecutionPlan;
 
 /**
  * By convention, the first line of serialized yaml is a comment that
  * declares the type (class name) of the JavaBean object.
+ * Implements XmlDocumentTranslator only for serializing as ExecutionPlan.
  */
-public class YamlTranslator extends DocumentReferenceTranslator {
+public class YamlTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
     public Object realToObject(String string) throws TranslationException {
         return realToObject(string, ApplicationContext.isOsgi());
@@ -85,6 +91,30 @@ public class YamlTranslator extends DocumentReferenceTranslator {
                 }
             };
             return new Yaml(representer, options).dump(object);
+        }
+        catch (Exception ex) {
+            throw new TranslationException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Document toDomDocument(Object obj) throws TranslationException {
+        try {
+            ExecutionPlan exePlan = (ExecutionPlan) obj;
+            return (Document)exePlan.toDocument().getDomNode();
+        }
+        catch (Exception ex) {
+            throw new TranslationException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Object fromDomNode(Node domNode) throws TranslationException {
+        try {
+            ProcessExecutionPlanDocument exePlanDoc = ProcessExecutionPlanDocument.Factory.parse(domNode);
+            ExecutionPlan exePlan = new ExecutionPlan();
+            exePlan.fromDocument(exePlanDoc);
+            return exePlan;
         }
         catch (Exception ex) {
             throw new TranslationException(ex.getMessage(), ex);

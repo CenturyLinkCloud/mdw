@@ -36,12 +36,17 @@ import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
 
 public abstract class RestService {
 
+    public static final int HTTP_200_OK = 200;
+    public static final int HTTP_201_CREATED = 201;
+    public static final int HTTP_202_ACCEPTED = 202;
+
     public static final int HTTP_400_BAD_REQUEST = 400;
     public static final int HTTP_401_UNAUTHORIZED = 401;
     public static final int HTTP_403_FORBIDDEN = 403;
     public static final int HTTP_404_NOT_FOUND = 404;
     public static final int HTTP_405_METHOD_NOT_ALLOWED = 405;
     public static final int HTTP_409_CONFLICT = 409;
+
     public static final int HTTP_500_INTERNAL_ERROR = 500;
     public static final int HTTP_501_NOT_IMPLEMENTED = 501;
 

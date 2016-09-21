@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.w3c.dom.Document;
+import org.yaml.snakeyaml.Yaml;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.bpm.ParameterDocument.Parameter;
@@ -22,6 +23,7 @@ import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.constant.VariableConstants;
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
+import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.common.translator.VariableTranslator;
 import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.common.utilities.StringHelper;
@@ -97,8 +99,17 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
     	throws ActivityException {
     	String plan_varname = getAttributeValue(EXECUTION_PLAN_VARIABLE);
     	DocumentReference docref = (DocumentReference)getParameterValue(plan_varname);
-    	String xmlstring = process_plan.xmlText();
-    	super.updateDocumentContent(docref, xmlstring, getParameterType(plan_varname));
+    	String varType = getProcessDefinition().getVariable(plan_varname).getVariableType();
+    	String str;
+    	if (Yaml.class.getName().equals(varType))  { // TODO better way that supports other types like JSONObject and Jsonable
+    	    DocumentReferenceTranslator translator = (DocumentReferenceTranslator) VariableTranslator.getTranslator(getPackage(), varType);
+    	    Object obj = ((XmlDocumentTranslator)translator).fromDomNode(process_plan.getDomNode());
+    	    str = translator.realToString(obj);
+    	}
+    	else {
+    	    str = process_plan.xmlText();
+    	}
+    	super.updateDocumentContent(docref, str, getParameterType(plan_varname));
     }
 
     private ProcessVO getSubProcessVO(String logicalProcName) throws Exception {
