@@ -50,14 +50,22 @@ public class RequestServicesImpl implements RequestServices {
         }
     }
 
-    //Retrieve a record for a given request Id.
     public Request getRequest(Long id) throws ServiceException {
         try {
-           return getDAO().getRequest(id);
+           return getDAO().getRequest(id, true, false);
         }
         catch (DataAccessException ex) {
-            throw new ServiceException("Failed to retrieve request Id: " + id, ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Failed to get requestId: " + id, ex);
         }
+    }
+
+    public Request getRequestResponse(Long requestId) throws ServiceException {
+        try {
+            return getDAO().getRequest(requestId, false, true);
+         }
+         catch (DataAccessException ex) {
+             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Failed to get response for requestId: " + requestId, ex);
+         }
     }
 
     public Map<Date,List<RequestCount>> getRequestBreakdown(Query query) throws ServiceException {

@@ -155,8 +155,13 @@ routesSvc.factory('routes', function() {
       },
       {
         path: '/workflow/requests/:requestId',
-        templateUrl: 'requests/request.html',
-        controller: 'RequestController'
+        templateUrl: 'workflow/request.html',
+        controller: 'WorkflowRequestController'
+      },
+      {
+        path: '/workflow/responses/:requestId',
+        templateUrl: 'workflow/response.html',
+        controller: 'WorkflowRequestController'
       },
       {
         path: '/workflow/activities',

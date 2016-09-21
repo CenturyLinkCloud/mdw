@@ -67,6 +67,18 @@ public class Request implements Jsonable {
     public Date getProcessEnd() { return processEnd; }
     public void setProcessEnd(Date end) { this.processEnd = end; }
 
+    private String content;
+    public String getContent() { return content; }
+    public void setContent(String c) { this.content = c; }
+
+    private String responseContent;
+    public String getResponseContent() { return responseContent; }
+    public void setResponseContent(String rc) { this.responseContent = rc; }
+
+    private boolean outbound;
+    public boolean isOutbound() { return outbound; }
+    public void setOutbound(boolean ob) { this.outbound = ob; }
+
     public Request(Long id) {
         this.id = id;
     }
@@ -97,7 +109,12 @@ public class Request implements Jsonable {
             processStart = StringHelper.stringToDate(json.getString("processStart"));
         if (json.has("processEnd"))
             processEnd = StringHelper.stringToDate(json.getString("processEnd"));
-
+        if (json.has("outbound"))
+            outbound = json.getBoolean("outbound");
+        if (json.has("content"))
+            content = json.getString("content");
+        if (json.has("responseContent"))
+            responseContent = json.getString("responseContent");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -127,6 +144,12 @@ public class Request implements Jsonable {
             json.put("processStart", StringHelper.dateToString(processStart));
         if (processEnd != null)
             json.put("processEnd", StringHelper.dateToString(processEnd));
+        if (outbound)
+            json.put("outbound", outbound);
+        if (content != null)
+            json.put("content", content);
+        if (responseContent != null)
+            json.put("responseContent", responseContent);
         return json;
     }
 

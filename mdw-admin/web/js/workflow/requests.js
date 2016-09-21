@@ -101,6 +101,26 @@ $scope.requestTypes = {
       $scope.requestFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.id;
     else
       $scope.requestFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.value;
-  };  
-
+  };
+  
 }]);
+
+requestMod.controller('WorkflowRequestController', ['$scope', '$route', '$routeParams', 'mdw', 'Request',
+                                                    function($scope, $route, $routeParams, mdw, Request) {
+  $scope.request = Request.retrieve({requestId: $routeParams.requestId}, function() {
+    var trimmed = $scope.request.content.trim();
+    if (trimmed.startsWith('{'))
+      $scope.request.format = 'json';
+    else if (trimmed.startsWith('<'))
+      $scope.request.format = 'xml';
+    });
+}]);
+
+requestMod.factory('Request', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/Services/Requests/:requestId', mdw.serviceParams(), {
+    retrieve: { method: 'GET', isArray: false }
+  });
+}]);
+        
+
+

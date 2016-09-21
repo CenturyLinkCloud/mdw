@@ -13,7 +13,6 @@ import java.util.Map;
 
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.query.QueryRequest;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -148,33 +147,47 @@ public class RequestsDAO extends VcsEntityDAO {
         return clause.toString();
     }
 
-    public Request getRequest(Long id) throws DataAccessException {
+    public Request getRequest(Long id, boolean withContent, boolean withResponseContent) throws DataAccessException {
         try {
+            String query = "select create_dt, owner_type, owner_id, process_inst_id";
+            if (withContent)
+                query += ", content";
+            query += " from document where document_id = ?";
             db.openConnection();
-            StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
-            q.append("select ").append(PROC_INST_COLS).append(", d.document_id, d.create_dt, d.owner_type\n");
-            q.append("from process_instance pi, document d\n");
-            q.append("where d.owner_type = '" + OwnerType.DOCUMENT + "'\n");
-            q.append(" and pi.owner_id =  '" + id + "'\n"); // TODO:  Is this correct?
-
-            ResultSet rs = db.runSelect(q.toString(), null);
+            ResultSet rs = db.runSelect(query, id);
             Request request = null;
-            while (rs.next()) {
-                ProcessInstanceVO pi = buildProcessInstance(rs);
-                request = new Request(rs.getLong("d.document_id"));
-                request.setCreated(rs.getTimestamp("d.create_dt"));
-                request.setMasterRequestId(pi.getMasterRequestId());
-                request.setProcessInstanceId(pi.getId());
-                request.setProcessId(pi.getProcessId());
-                request.setProcessName(pi.getProcessName());
-                request.setProcessVersion(pi.getProcessVersion());
-                request.setPackageName(pi.getPackageName());
-                request.setProcessStatus(pi.getStatus());
-                request.setProcessStart(rs.getTimestamp("pi.start_dt"));
-                request.setProcessEnd(rs.getTimestamp("pi.end_dt"));
-                request.setResponseId(rs.getLong("document_id"));
-                request.setResponded(rs.getTimestamp("create_dt"));
+            String ownerType = null;
+            Long ownerId = null;
+            if (rs.next()) {
+                request = new Request(id);
+                request.setCreated(rs.getTimestamp("create_dt"));
+                request.setProcessInstanceId(rs.getLong("process_inst_id"));
+                ownerType = rs.getString("owner_type");
+                ownerId = rs.getLong("owner_id");
+                if (withContent)
+                    request.setContent(rs.getString("content"));
             }
+
+            ResultSet responseRs = null;
+            String responseQuery = "select document_id, create_dt";
+            if (withResponseContent)
+                responseQuery += ", content";
+            if (OwnerType.ADAPTOR_REQUEST.equals(ownerType) && ownerId != null) {
+                request.setOutbound(true);
+                responseQuery += " from document where owner_type='" + OwnerType.ADAPTOR_RESPONSE + "' and owner_id = ?";
+                responseRs = db.runSelect(responseQuery, ownerId);
+            }
+            else if (OwnerType.LISTENER_REQUEST.equals(ownerType) && ownerId != null) {
+                responseQuery += " from document where owner_type='" + OwnerType.LISTENER_RESPONSE + "' and owner_id = ?";
+                responseRs = db.runSelect(responseQuery, ownerId);
+            }
+            if (responseRs != null && responseRs.next()) {
+                request.setResponseId(responseRs.getLong("document_id"));
+                request.setResponded(responseRs.getTimestamp("create_dt"));
+                if (withResponseContent)
+                    request.setResponseContent(responseRs.getString("content"));
+            }
+
             return request;
         }
         catch (Exception ex) {
@@ -282,6 +295,7 @@ public class RequestsDAO extends VcsEntityDAO {
                 Long activityId = rs.getLong("d.owner_id");
                 Request request = new Request(rs.getLong("d.document_id"));
                 request.setCreated(rs.getTimestamp("d.create_dt"));
+                request.setOutbound(true);
                 requestMap.put(activityId, request);
                 requests.add(request);
                 activityIds.add(activityId);

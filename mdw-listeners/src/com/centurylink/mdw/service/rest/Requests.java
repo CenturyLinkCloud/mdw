@@ -88,8 +88,16 @@ public class Requests extends JsonRestService implements JsonExportable {
                     return new JsonListMap<RequestCount>(listMap).getJson();
                 }
                 else {
-                    String requestId = segOne;
-                    return requestServices.getRequest(Long.valueOf(requestId)).getJson();
+                    try {
+                        Long requestId = Long.valueOf(segOne);
+                        if (query.getBooleanFilter("response"))
+                            return requestServices.getRequestResponse(requestId).getJson();
+                        else
+                            return requestServices.getRequest(requestId).getJson();
+                    }
+                    catch (NumberFormatException ex) {
+                        throw new ServiceException(ServiceException.BAD_REQUEST, "Bad requestId: " + segOne);
+                    }
                 }
             }
             else {
@@ -100,7 +108,7 @@ public class Requests extends JsonRestService implements JsonExportable {
             throw ex;
         }
         catch (Exception ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 
