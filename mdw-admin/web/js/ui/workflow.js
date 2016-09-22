@@ -11,10 +11,12 @@ workflowMod.controller('MdwWorkflowController',
     $scope.canvas = canvas;
     $scope.renderProcess();
     $scope.canvas.bind('mousemove', $scope.mouseMove);
+    $scope.canvas.bind('click', $scope.mouseClick);
   };
   
   $scope.dest = function() {
     $scope.canvas.bind('mousemove', $scope.mouseMove);
+    $scope.canvas.bind('click', $scope.mouseClick);
   };
   
   $scope.renderProcess = function() {
@@ -43,6 +45,10 @@ workflowMod.controller('MdwWorkflowController',
     if ($scope.diagram)
       $scope.diagram.onMouseMove(e);
   };
+  $scope.mouseClick = function(e) {
+    if ($scope.diagram)
+      $scope.diagram.onMouseClick(e);
+  };  
 }]);
 
 workflowMod.factory('Workflow', ['$resource', 'mdw', function($resource, mdw) {
@@ -51,8 +57,8 @@ workflowMod.factory('Workflow', ['$resource', 'mdw', function($resource, mdw) {
   });
 }]);
 
-workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link',
-                                function($document, mdw, util, Step, Link) {
+workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Subflow', 'Note',
+                                function($document, mdw, util, Step, Link, Subflow, Note) {
   var Diagram = function(canvas, process, implementors, instance) {
     this.canvas = canvas;
     this.process = process;
@@ -66,9 +72,9 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link',
   Diagram.DEFAULT_FONT =  Diagram.DEFAULT_FONT_SIZE + 'px sans-serif';
   Diagram.TITLE_FONT_SIZE = 18;
   Diagram.TITLE_FONT = 'bold ' + Diagram.TITLE_FONT_SIZE + 'px sans-serif';
-  
   Diagram.DEFAULT_COLOR = 'black';
   Diagram.HYPERLINK_COLOR = '#1565c0';
+  Diagram.BOX_BOUNDING_RADIUS = 12;  
   
   Diagram.prototype.draw = function() {
 
@@ -88,6 +94,12 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link',
     diagram.links.forEach(function(link) {
       link.draw(diagram);
     });
+    diagram.subflows.forEach(function(subflow) {
+      subflow.draw(diagram);
+    });
+    diagram.notes.forEach(function(note) {
+      note.draw(diagram);
+    });
   };
   
   // sets display fields and returns a display with w and h for canvas size
@@ -96,16 +108,13 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link',
     var canvasDisplay = { w: 460, h: 460 };
     
     // process title
-    var display = this.getDisplay(this.process.attributes.WORK_DISPLAY_INFO);
-    var title = { text: this.process.name, x: display.x, y: display.y };
+    this.display = this.getDisplay(this.process.attributes.WORK_DISPLAY_INFO);
+    var title = { text: this.process.name, x: this.display.x, y: this.display.y };
     this.context.font = Diagram.TITLE_FONT;
     var textMetrics = this.context.measureText(title.text);
     title.w = textMetrics.width;
     title.h = Diagram.TITLE_FONT_SIZE;
-    if (title.x + title.w > canvasDisplay.w)
-      canvasDisplay.w = title.x + title.w;
-    if (title.y + title.h > canvasDisplay.h)
-      canvasDisplay.h = title.y + title.h;
+    this.makeRoom(canvasDisplay, title);
     this.title = title;
     this.context.font = Diagram.DEFAULT_FONT;
     
@@ -114,14 +123,9 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link',
     if (this.process.activities) {
       this.process.activities.forEach(function(activity) {
         var step = new Step(activity);
-        var display = step.prepareDisplay(diagram);
-        if (display.w > canvasDisplay.w)
-          canvasDisplay.w = display.w;
-        if (display.h > canvasDisplay.h)
-          canvasDisplay.h = display.h;
+        diagram.makeRoom(canvasDisplay, step.prepareDisplay(diagram));
         diagram.steps.push(step);
         activity.implementor = diagram.getImplementor(activity.implementor);
-        
       });
     }
     diagram.links = [];
@@ -129,22 +133,40 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link',
       if (step.activity.transitions) {
         step.activity.transitions.forEach(function(transition) {
           var link = new Link(transition, step, diagram.getStep(transition.to));
-          var display = link.prepareDisplay(diagram);
-          if (display.w > canvasDisplay.w)
-            canvasDisplay.w = display.w;
-          if (display.h > canvasDisplay.h)
-            canvasDisplay.h = display.h;
+          diagram.makeRoom(canvasDisplay, link.prepareDisplay(diagram));
           diagram.links.push(link);
         });
       }
     });
-    
-    // TODO subprocesses
+    diagram.subflows = [];
+    if (this.process.subprocesses) {
+      this.process.subprocesses.forEach(function(subproc) {
+        var subflow = new Subflow(subproc);
+        diagram.makeRoom(canvasDisplay, subflow.prepareDisplay(diagram));
+        diagram.subflows.push(subflow);
+      });
+    }
+
+    diagram.notes = [];
+    if (this.process.textNotes) {
+      this.process.textNotes.forEach(function(textNote) {
+        var note = new Note(textNote);
+        diagram.makeRoom(canvasDisplay, note.prepareDisplay(diagram));
+        diagram.notes.push(note);
+      });
+    }
     
     canvasDisplay.w += 2; // TODO why?
     canvasDisplay.h += 2;
     
     return canvasDisplay;
+  };
+  
+  Diagram.prototype.makeRoom = function(canvasDisplay, display) {
+    if (display.w > canvasDisplay.w)
+      canvasDisplay.w = display.w;
+    if (display.h > canvasDisplay.h)
+      canvasDisplay.h = display.h;
   };
   
   Diagram.prototype.getStep = function(activityId) {
@@ -163,6 +185,10 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link',
           display.x = parseInt(val.substring(2));
         else if (val.startsWith('y='))
           display.y = parseInt(val.substring(2));
+        else if (val.startsWith('w='))
+          display.w = parseInt(val.substring(2));
+        else if (val.startsWith('h='))
+          display.h = parseInt(val.substring(2));
       });
     }
     return display;
@@ -189,25 +215,130 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link',
     return { implementorClass: className };
   };
   
-  Diagram.prototype.onMouseMove = function(e) {
+  Diagram.prototype.drawRoundedBox = function(context, x, y, w, h, color) {
+    this.drawBox(context, x, y, w, h, color, Diagram.BOX_BOUNDING_RADIUS);
+  };
+  
+  Diagram.prototype.drawBox = function(context, x, y, w, h, color, r) {
+    if (color)
+      context.strokeStyle = color;
+    
+    if (typeof r === 'undefined') {
+      context.strokeRect(x, y, w, h);
+    }
+    else {
+      // rounded corners
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.lineTo(x + w - r, y);
+      context.quadraticCurveTo(x + w, y, x + w, y + r);
+      context.lineTo(x + w, y + h - r);
+      context.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      context.lineTo(x + r, y + h);
+      context.quadraticCurveTo(x, y + h, x, y + h - r);
+      context.lineTo(x, y + r);
+      context.quadraticCurveTo(x, y, x + r, y);
+      context.closePath();
+      context.stroke();
+    }
+    context.strokeStyle = Step.DEFAULT_COLOR;
+  };
+  
+  Diagram.prototype.onMouseClick = function(e) {
     var rect = this.canvas.getBoundingClientRect();
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;
     
-    // title link
-    var wasTitleLinkHover = this.titleLinkHover ? this.titleLinkHover : false;
-    if (x > this.title.x && x < this.title.x + this.title.w &&
-          y > this.title.y && y < this.title.y + this.title.h) {
-      $document[0].body.style.cursor = 'pointer';
-      this.titleLinkHover = true; // to be used in onMouseClick
+    var prevSelect = this.selectObj;
+    if (this.isHover(x, y, this.title)) {
+      this.selectObj = this;
+      if (prevSelect && prevSelect !== this.selectObj)
+        this.unselect(prevSelect);
+      this.select(this.selectObj);
     }
     else {
-      $document[0].body.style.cursor = '';
-      this.titleLinkHover = false;
+      this.selectObj = this.getHoverObj(x, y);
+      if (this.selectObj) {
+        if (prevSelect && prevSelect !== this.selectObj)
+          this.unselect(prevSelect);
+        this.select(this.selectObj);
+      }
+      else {
+        if (prevSelect)
+          this.unselect(prevSelect);
+        this.selectObj = null;
+      }
     }
+  };
+  
+  // TODO better select indication
+  Diagram.prototype.select = function(obj) {
+    var display = obj.display;
+    this.context.fillStyle = 'red';
+    var s = 2;
+    this.context.fillRect(display.x - s, display.y - s, s * 2, s * 2);
+    this.context.fillRect(display.x + display.w - s, display.y - s, s * 2, s * 2);
+    this.context.fillRect(display.x + display.w - 2, display.y + display.h - s, s * 2, s * 2);
+    this.context.fillRect(display.x - 2, display.y + display.h - s, s * 2, s * 2);
+    this.context.fillStyle = Step.DEFAULT_COLOR;
+  };
+
+  Diagram.prototype.unselect = function(obj) {
+    var display = obj.display;
+    var s = 2;
+    this.context.clearRect(display.x - s, display.y - s, s * 2, s * 2);
+    this.context.clearRect(display.x + display.w - s, display.y - s, s * 2, s * 2);
+    this.context.clearRect(display.x + display.w - 2, display.y + display.h - s, s * 2, s * 2);
+    this.context.clearRect(display.x - 2, display.y + display.h - s, s * 2, s * 2);
+  };
+  
+  Diagram.prototype.onMouseMove = function(e) {
+    var rect = this.canvas.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+
+    var wasTitleLinkHover = this.titleLinkHover ? this.titleLinkHover : false;
+    if (this.isHover(x, y, this.title)) {
+      this.hoverObj = this;
+      $document[0].body.style.cursor = 'pointer';
+      this.titleLinkHover = true;
+    }
+    else {
+      this.hoverObj = this.getHoverObj(x, y);
+      if (this.hoverObj) {
+        $document[0].body.style.cursor = 'pointer';
+      }
+      else {
+        $document[0].body.style.cursor = '';
+        this.titleLinkHover = false;
+      }
+    }
+    
     if (this.titleLinkHover != wasTitleLinkHover) {
       this.drawTitle();
     }
+  };
+  
+  Diagram.prototype.getHoverObj = function(x, y) {
+    for (var i = 0; i < this.steps.length; i++) {
+      if (this.isHover(x, y, this.steps[i].display))
+        return this.steps[i];
+    }
+    // TODO: links
+    for (i = 0; i < this.subflows.length; i++) {
+      var subflow = this.subflows[i];
+      if (this.isHover(x, y, subflow.title))
+        return subflow;
+      for (var j = 0; j < subflow.steps.length; j++) {
+        if (this.isHover(x, y, subflow.steps[j].display))
+          return subflow.steps[j];
+      }
+    }
+  };
+  
+  Diagram.prototype.isHover = function(x, y, display) {
+    return x >= display.x && x <= display.x + display.w &&
+        y >= display.y && y <= display.y + display.h;
   };
   
   return Diagram;

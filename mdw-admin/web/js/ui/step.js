@@ -11,8 +11,7 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
   
   Step.DEFAULT_FONT_SIZE = 12;
   Step.DEFAULT_COLOR = 'black';
-  Step.BOX_BOUNDING_RADIUS = 12;
-  Step.BOX_OUTLINE_COLOR = '#a9a9a9';
+  Step.BOX_OUTLINE_COLOR = 'black';
   Step.META_COLOR = 'gray';
 
   Step.prototype.draw = function(diagram) {
@@ -32,11 +31,11 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
           this.drawDiamond(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h);
         }
         else if ('activity' == shape) {
-          this.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h);
+          diagram.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, Step.BOX_OUTLINE_COLOR);
         }
       }
       else {
-        this.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h);
+        diagram.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, Step.BOX_OUTLINE_COLOR);
         var iconImg = new Image();
         iconImg.src = mdw.roots.hub + '/asset/' + activity.implementor.icon;
         var iconx = this.display.x + this.display.w / 2 - 12;
@@ -48,7 +47,7 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
       }
     }
     else {
-      this.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h);
+      diagram.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, Step.BOX_OUTLINE_COLOR);
     }
 
     // title
@@ -65,7 +64,7 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
   // sets display/title and returns an object with w and h for required size
   Step.prototype.prepareDisplay = function(diagram) {
     var maxDisplay = { w: 0, h: 0};
-    var display = this.getDisplay(this.activity.attributes.WORK_DISPLAY_INFO);
+    var display = diagram.getDisplay(this.activity.attributes.WORK_DISPLAY_INFO);
 
     if (display.x + display.w > maxDisplay.w)
       maxDisplay.w = display.x + display.w;
@@ -96,24 +95,6 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
     this.title = title;    
     
     return maxDisplay;
-  };
-  
-  Step.prototype.getDisplay = function(displayAttr) {
-    var display = {};
-    if (displayAttr) {
-      var vals = displayAttr.split(',');
-      vals.forEach(function(val) {
-        if (val.startsWith('x='))
-          display.x = parseInt(val.substring(2));
-        else if (val.startsWith('y='))
-          display.y = parseInt(val.substring(2));
-        else if (val.startsWith('w='))
-          display.w = parseInt(val.substring(2));
-        else if (val.startsWith('h='))
-          display.h = parseInt(val.substring(2));
-      });
-    }
-    return display;
   };
   
   Step.prototype.drawOval = function(context, x, y, w, h, fill, fadeTo) {
@@ -163,34 +144,7 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
     context.closePath();
     context.stroke();
   };
-  
-  Step.prototype.drawRoundedBox = function(context, x, y, w, h) {
-    this.drawBox(context, x, y, w, h, Step.BOX_BOUNDING_RADIUS);
-  };
-  
-  Step.prototype.drawBox = function(context, x, y, w, h, r) {
-    context.fillStyle = Step.BOX_OUTLINE_COLOR;
-    if (typeof r === 'undefined') {
-      context.strokeRect(x, y, w, h);
-    }
-    else {
-      // rounded corners
-      context.beginPath();
-      context.moveTo(x + r, y);
-      context.lineTo(x + w - r, y);
-      context.quadraticCurveTo(x + w, y, x + w, y + r);
-      context.lineTo(x + w, y + h - r);
-      context.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      context.lineTo(x + r, y + h);
-      context.quadraticCurveTo(x, y + h, x, y + h - r);
-      context.lineTo(x, y + r);
-      context.quadraticCurveTo(x, y, x + r, y);
-      context.closePath();
-      context.stroke();
-    }
-    context.fillStyle = Step.DEFAULT_COLOR;
-  };
-  
+    
   return Step;
     
 }]);

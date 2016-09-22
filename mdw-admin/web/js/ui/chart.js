@@ -7,14 +7,10 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
                                              function($scope, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
   $scope.init = function() {
 
-    $scope.spans = ['Week', 'Month']; // TODO hardcoded
+    $scope.spans = ['Week', 'Month'];
     $scope.span = 'Week';
     $scope.days = 7;
 
-    // TODO hardcoded
-    $scope.startDate = new Date();
-    // $scope.startDate.setTime($scope.startDate )
-    
     // TODO hardcoded
     $scope.initialSelect = 5;
     
@@ -36,7 +32,23 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
     }
     if ($scope.showTotal)
       $scope.breakdowns.push('Total');
-    $scope.setBreakdown($scope.breakdowns[0]);
+    if ($scope.breakdownConfig.Status) {
+      $scope.statuses = $scope.breakdownConfig.Status.throughput.slice();
+    }    
+    $scope.setBreakdown($scope.breakdowns[0]);    
+  };
+
+  $scope.resetFilter = function() {
+    $scope.$parent.closePopover();
+    $scope.filter = {
+      ending: new Date()
+    };
+  };
+  $scope.resetFilter();
+  
+  $scope.setStatus = function(status) {
+    $scope.filter.status = status;
+    $scope.updateRange();
   };
   
   $scope.chartOptions = {
@@ -129,8 +141,8 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
     $scope.total = 0;
   };
   $scope.updateDates = function() {
-    // TODO: hardwired start based on span ending today
-    var d = new Date();
+    // ending today unless specified in filter
+    var d = $scope.filter.ending;
     for (var h = 0; h < $scope.days; h++) {
       $scope.labels.unshift(util.monthAndDay(d));
       $scope.dates.unshift(util.serviceDate(d));
@@ -153,6 +165,8 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
       else
         url += '?';
       url += 'app=mdw-admin&max=' + $scope.max + '&startDate=' + $scope.start;
+      if ($scope.filter.status)
+        url += '&status=' + $scope.filter.status;
     
       $http.get(url).error(function(data, status) {
         console.log('HTTP ' + status + ': ' + url);
@@ -299,6 +313,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
       $scope.selectLabel = $scope.breakdownConfig[breakdown].selectLabel;
     }
     $scope.selected = [];
+    $scope.resetFilter();
     $scope.updateRange();
   };
   // current breakdown obj (returns undefined, array or object)
@@ -374,7 +389,6 @@ chartMod.directive('mdwDashboardChart', function() {
     scope: {
       label: '@mdwChartLabel',
       breakdownConfig: '=mdwChartBreakdowns',
-      filterTemplate: '@mdwFilters',
       listRoute: '@mdwList'
     },
     // require: ['label', 'breakdowns'],

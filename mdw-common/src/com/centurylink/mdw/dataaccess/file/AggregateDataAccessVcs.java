@@ -159,6 +159,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             throw new DataAccessException("Parameter startDate is required");
         String startStr = getDateFormat().format(start);
 
+
         StringBuilder where = new StringBuilder();
         if (db.isMySQL())
             where.append("where start_dt >= STR_TO_DATE('" + startStr + "','%d-%M-%Y') ");
@@ -167,7 +168,10 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         where.append("and owner not in ('MAIN_PROCESS_INSTANCE' ");
         if (query.getBooleanFilter("master"))
             where.append(", 'PROCESS_INSTANCE' ");
-        where.append(")");
+        where.append(") ");
+        String status = query.getFilter("status");
+        if (status != null)
+            where.append("and STATUS_CD = " + WorkStatuses.getCode(status));
         return where.toString();
     }
 
