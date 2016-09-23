@@ -144,7 +144,7 @@ routesSvc.factory('routes', function() {
         controller: 'ProcessController'
       },
       {
-        path: '/workflow/definition/:packageName/:processName/:version',
+        path: '/workflow/definition/:packageName/:processName/:version/:instanceId',
         templateUrl: 'workflow/definition.html',
         controller: 'ProcessDefController'
       },

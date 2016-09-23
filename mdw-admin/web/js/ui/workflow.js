@@ -4,10 +4,12 @@
 var workflowMod = angular.module('mdwWorkflow', ['mdw']);
 
 workflowMod.controller('MdwWorkflowController', 
-    ['$scope', '$http', '$routeParams', 'mdw', 'util', 'Workflow', 'Diagram',
-    function($scope, $http, $routeParams, mdw, util, Workflow, Diagram) {
+    ['$scope', '$http', '$routeParams', 'mdw', 'util', 'Diagram', 'Inspector',
+    function($scope, $http, $routeParams, mdw, util, Diagram, Inspector) {
   
   $scope.init = function(canvas) {
+    if ($scope.serviceRoot.endsWith('/'))
+      $scope.serviceRoot = $scope.serviceRoot.substring(0, $scope.serviceRoot.length - 1);
     $scope.canvas = canvas;
     $scope.renderProcess();
     $scope.canvas.bind('mousemove', $scope.mouseMove);
@@ -21,23 +23,29 @@ workflowMod.controller('MdwWorkflowController',
   
   $scope.renderProcess = function() {
     var packageName = $scope.process.packageName;
-    $scope.process = Workflow.retrieve({pkg: packageName, process: $scope.process.name}, function() {
-      $scope.process.packageName = packageName;  // not returned in JSON
-
-      if (!$scope.implementors) {
-        $http( {method: 'GET', url: mdw.roots.services + '/services/Implementors' })
-          .then(function success(response) {
-            $scope.implementors = response.data;
-            $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors);
-            $scope.diagram.draw();
-          }, function error(response) {
-            mdw.messages = response.statusText;
-        });
-      }
-      else {
-        $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors);
-        $scope.diagram.draw();
-      }
+    var processName = $scope.process.name;
+    var processVersion = null; // TODO: version
+    var workflowUrl = $scope.serviceRoot + '/Workflow/' + packageName + '/' + processName;
+    if (processVersion)
+      workflowUrl += '/v' + processVersion;
+    $http({ method: 'GET', url: workflowUrl })
+      .then(function success(response) {
+        $scope.process = response.data;
+        $scope.process.packageName = packageName; // not returned in JSON
+        if (!$scope.implementors) {
+          $http({ method: 'GET', url: $scope.serviceRoot + '/Implementors' })
+            .then(function success(response) {
+              $scope.implementors = response.data;
+              $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors);
+              $scope.diagram.draw();
+            }, function error(response) {
+              mdw.messages = response.statusText;
+          });
+        }
+        else {
+          $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors);
+          $scope.diagram.draw();
+        }
     });
   };
   
@@ -46,15 +54,15 @@ workflowMod.controller('MdwWorkflowController',
       $scope.diagram.onMouseMove(e);
   };
   $scope.mouseClick = function(e) {
-    if ($scope.diagram)
+    if ($scope.diagram) {
+      var prevSelectObj = $scope.diagram.selectObj;
       $scope.diagram.onMouseClick(e);
+      if ($scope.diagram.selectObj && $scope.diagram.selectObj !== prevSelectObj)
+        //console.log("TYPEOF: " + (typeof $scope.diagram.selectObj));
+        var selObj = $scope.diagram.selectObj;
+        Inspector.setObj(selObj.workflowType, selObj[selObj.workflowType]);
+    }
   };  
-}]);
-
-workflowMod.factory('Workflow', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/services/Workflow/:pkg/:process', mdw.serviceParams(), {
-    retrieve: { method: 'GET', isArray: false }
-  });
 }]);
 
 workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Subflow', 'Note',
@@ -64,7 +72,7 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
     this.process = process;
     this.implementors = implementors;
     this.instance = instance ? instance : null;
-    
+    this.workflowType = 'process';
     this.context = this.canvas.getContext("2d");
   };
 
@@ -273,6 +281,7 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
   
   // TODO better select indication
   Diagram.prototype.select = function(obj) {
+    this.selectedObj = obj;
     var display = obj.display;
     this.context.fillStyle = 'red';
     var s = 2;
@@ -290,6 +299,7 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
     this.context.clearRect(display.x + display.w - s, display.y - s, s * 2, s * 2);
     this.context.clearRect(display.x + display.w - 2, display.y + display.h - s, s * 2, s * 2);
     this.context.clearRect(display.x - 2, display.y + display.h - s, s * 2, s * 2);
+    this.selectedObj = null;
   };
   
   Diagram.prototype.onMouseMove = function(e) {
@@ -345,22 +355,25 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
   
 }]);
 
-// packageName and name must be populated on model object
-// version is optional
-workflowMod.directive('mdwWorkflow', function() {
+// attributes
+//   - definition (object): packageName and name must be populated (version is optional)
+//   - instance (object):
+//   - service-root: endpoint base url
+workflowMod.directive('mdwWorkflow', [function() {
   return {
-    restrict: 'A',
-    templateUrl: 'ui/list.html',
+    restrict: 'E',
+    templateUrl: 'ui/workflow.html',
     scope: {
-      process: '=mdwWorkflow'
+      process: '=definition',
+      serviceRoot: '@serviceRoot'
     },
     controller: 'MdwWorkflowController',
     controllerAs: 'mdwWorkflow',
     link: function link(scope, elem, attrs, ctrls) {
-      scope.init(elem);
+      scope.init(angular.element(elem[0].getElementsByClassName('mdw-canvas')[0]));
       scope.$on('$destroy', function() {
         scope.dest();
       });
     }
   };
-});
+}]);

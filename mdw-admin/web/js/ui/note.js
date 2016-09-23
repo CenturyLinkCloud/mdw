@@ -7,6 +7,7 @@ noteMod.factory('Note', ['$document', 'mdw', 'util',
                                 function($document, mdw) {
   var Note = function(textNote) {
     this.textNote = textNote;
+    this.workflowType = 'textNote';
   };
   
   Note.DEFAULT_FONT_SIZE = 12;

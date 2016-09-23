@@ -1,6 +1,6 @@
 <div class="row" style="display:flex;">
   <div class="mdw-sidebar" ng-include="'layout/process-nav.html'"></div>
-  <div>
+  <div style="width:100%;padding-right:15px;">
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
@@ -9,9 +9,8 @@
         </div>
       </div>
       <div class="mdw-section">
-        <div class="mdw-image-container" >
-          <canvas class="mdw-canvas" mdw-workflow="processDef"></canvas> 
-        </div>
+        <mdw-workflow definition="processDef" 
+          service-root="{{mdw.roots.services}}/services"></mdw-workflow>
       </div>
     </div>  
   </div>

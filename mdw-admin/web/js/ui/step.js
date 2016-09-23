@@ -7,6 +7,7 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
   
   var Step = function(activity) {
     this.activity = activity;
+    this.workflowType = 'activity';
   };
   
   Step.DEFAULT_FONT_SIZE = 12;
@@ -15,7 +16,7 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
   Step.META_COLOR = 'gray';
 
   Step.prototype.draw = function(diagram) {
-    var activity = this.activity;
+    var activity = this.workflowObj = this.activity;
 
     if (activity.implementor.icon) {
       var yAdjust = -2;

@@ -3,7 +3,7 @@
 
 var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ui.bootstrap', 'chart.js', 
  'mdwChart', 'mdwActions', 'mdwList', 'mdwPanel', 'mdwWorkflow', 'mdwStep', 'mdwLink', 'mdwSubflow', 'mdwNote', 
- 'authUser', 'mdw', 'util', 'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'testing',
+ 'mdwInspector', 'authUser', 'mdw', 'util', 'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'testing',
  'tasks', 'task', 'taskTemplates', 'processes', 'activities', 'requests', 'services', 'solutions', 'history',
  'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities',
  'blv', 'ngSanitize','blvProcessSvc', 'blvDrawingSvc', 'blvSharedData', 'blvtypes', 'mdwAttributesSvc'

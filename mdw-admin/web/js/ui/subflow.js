@@ -7,6 +7,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Step', 'Link',
                                 function($document, mdw, util, Step, Link) {
   var Subflow = function(subprocess) {
     this.subprocess = subprocess;
+    this.workflowType = 'subprocess';
   };
 
   Subflow.DEFAULT_FONT_SIZE = 12;

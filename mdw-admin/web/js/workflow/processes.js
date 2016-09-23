@@ -110,7 +110,8 @@ processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
 
 processMod.controller('ProcessDefController', ['$scope', '$routeParams', 'mdw',
                                             function($scope, $routeParams, mdw) {
-    
+  
+  $scope.process = { id: $routeParams.instanceId }; // needed for process-nav.html (back to instance)
   $scope.processDef = { 
     packageName: $routeParams.packageName,
     name: $routeParams.processName,

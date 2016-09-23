@@ -9,6 +9,7 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
     this.transition = transition;
     this.from = from;
     this.to = to;
+    this.workflowType = 'transition';
   };
   
   Link.DEFAULT_COLOR = 'black';
@@ -16,6 +17,7 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
   Link.GAP = 4;
   Link.CR = 8;
   Link.LINK_WIDTH = 3;
+  Link.CORR = 3; // offset for link start points (TODO: why?)
 
   Link.LINK_TYPES = {
     STRAIGHT: 'Straight',
@@ -108,6 +110,7 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
         this.drawAutoElbowConnector(context);
       }
       else {
+        // TODO: make use of Link.CORR
         context.beginPath();
         var horizontal = ys[0] == ys[1] && (xs[0] != xs[1] || xs[1] == xs[2]);
         context.moveTo(xs[0], ys[0]);
@@ -154,9 +157,8 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
     var xs = this.display.xs;
     var ys = this.display.ys;
     var t;
-    // start-point correction TODO why?
-    var xcorr = xs[0] < xs[1] ? 3 : -3;
-    var ycorr = ys[0] < ys[1] ? 3 : -3;
+    var xcorr = xs[0] < xs[1] ? Link.CORR : -Link.CORR;
+    var ycorr = ys[0] < ys[1] ? Link.CORR : -Link.CORR;
     switch (this.getAutoElbowLinkType()) {
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_H:
         context.beginPath();
