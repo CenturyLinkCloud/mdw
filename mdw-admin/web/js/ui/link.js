@@ -154,29 +154,26 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
     var xs = this.display.xs;
     var ys = this.display.ys;
     var t;
+    // start-point correction TODO why?
+    var xcorr = xs[0] < xs[1] ? 3 : -3;
+    var ycorr = ys[0] < ys[1] ? 3 : -3;
     switch (this.getAutoElbowLinkType()) {
-      case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V:
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_H:
         context.beginPath();
-        context.moveTo(xs[0], ys[0]);
+        context.moveTo(xs[0] - xcorr, ys[0]);
         context.lineTo(xs[1], ys[1]);
         context.stroke();
         break;
-      case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VHV:
+      case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V:
         context.beginPath();
-        t = (ys[0] + ys[1]) / 2;
-        context.moveTo(xs[0], ys[0]);
-        context.lineTo(xs[0], t > ys[0] ? t - Link.CR : t + Link.CR);
-        context.quadraticCurveTo(xs[0], t, xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, t);
-        context.lineTo(xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, t);
-        context.quadraticCurveTo(xs[1], t, xs[1], ys[1] > t ? t + Link.CR : t-Link.CR);
+        context.moveTo(xs[0], ys[0] - ycorr);
         context.lineTo(xs[1], ys[1]);
         context.stroke();
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HVH:
         context.beginPath();
         t = (xs[0] + xs[1]) / 2;
-        context.moveTo(xs[0], ys[0]);
+        context.moveTo(xs[0] - xcorr, ys[0]);
         context.lineTo(t > xs[0] ? t - Link.CR : t + Link.CR, ys[0]);
         context.quadraticCurveTo(t, ys[0], t, ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR);
         context.lineTo(t, ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
@@ -184,9 +181,20 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
         context.lineTo(xs[1], ys[1]);
         context.stroke();
         break;
+      case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VHV:
+        context.beginPath();
+        t = (ys[0] + ys[1]) / 2;
+        context.moveTo(xs[0], ys[0] - ycorr);
+        context.lineTo(xs[0], t > ys[0] ? t - Link.CR : t + Link.CR);
+        context.quadraticCurveTo(xs[0], t, xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, t);
+        context.lineTo(xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, t);
+        context.quadraticCurveTo(xs[1], t, xs[1], ys[1] > t ? t + Link.CR : t-Link.CR);
+        context.lineTo(xs[1], ys[1]);
+        context.stroke();
+        break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HV:
         context.beginPath();
-        context.moveTo(xs[0], ys[0]);
+        context.moveTo(xs[0] - xcorr, ys[0]);
         context.lineTo(xs[1] > xs[0] ? xs[1] -Link.CR : xs[1] + Link.CR, ys[0]);
         context.quadraticCurveTo(xs[1], ys[0], xs[1], ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR);
         context.lineTo(xs[1], ys[1]);
@@ -194,7 +202,7 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VH:
         context.beginPath();
-        context.moveTo(xs[0], ys[0]);
+        context.moveTo(xs[0], ys[0] - ycorr);
         context.lineTo(xs[0], ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
         context.quadraticCurveTo(xs[0], ys[1], xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, ys[1]);
         context.lineTo(xs[1], ys[1]);

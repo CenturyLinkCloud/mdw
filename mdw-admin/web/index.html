@@ -91,7 +91,7 @@
   </script>
   <div class="mdw-normalize" ng-if="!isMobile" ng-include="'layout/header.html'"></div>
   <div class="mdw-normalize" ng-if="!isMobile" ng-include="'layout/tabs.html'"></div>
-  <div ng-class="{content: true, container: true, 'mdw-content': !isMobile, 'mdw-mobile-content': isMobile}" ng-view></div>
+  <div ng-class="{content: true, container: true, 'mdw-content': !isMobile, 'mdw-mobile-content': isMobile, 'mdw-full-width': isFullWidth}" ng-view></div>
   <div ng-if="!isMobile" ng-include="'layout/footer.html'"></div>
 </body>
 </html>

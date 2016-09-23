@@ -110,6 +110,33 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
       $scope.closePopover();
   };
   
+  // only applies when isFullWidth
+  $scope.getNavMenuWidthStyle = function(min) {
+    if ($scope.isFullWidth) {
+      if ($scope.navMenuWidth)
+        return { width: $scope.navMenuWidth + 'px' };
+      else if (min)
+        return { 'min-width': min + 'px' };    
+    }
+  };
+  
+  $scope.getFullWidthDivStyle = function() {
+    if (isFullWidth)
+      return { width: '100%' };
+    else
+      return { 'overflow-x': 'auto' };    
+  }
+  
+  // implies full width mode
+  $scope.setNavMenuWidth = function(w) {
+    if (w)
+      $scope.navMenuWidth = w;
+  };
+  
+  $scope.setFullWidth = function(fullWidth) {
+    $scope.isFullWidth = fullWidth;
+  }
+  
   $scope.isMobile = util.isMobile() || 'true' === util.urlParams().mdwMobile;
   $scope.isDebug = 'true' === util.urlParams().mdwDebug;
 
@@ -195,7 +222,8 @@ adminApp.directive('tabLink', ['$window', '$location', function($window, $locati
   };
 }]);
 
-adminApp.directive('navLink', ['$route', '$location', function($route, $location) {
+adminApp.directive('navLink', ['$document', '$route', '$location', 
+                               function($document, $route, $location) {
   return {
     restrict: 'A',
     link: function link(scope, elem, attrs) {
@@ -211,8 +239,23 @@ adminApp.directive('navLink', ['$route', '$location', function($route, $location
             active = $route.current.templateUrl === attrs.navLink + '.html';
           }
         }
-        if (active)
+        // scope.setFullWidth(false);
+        if (active) {
           elem.addClass('mdw-active');
+          if (attrs.fullWidth)
+            scope.setFullWidth(true);
+        }
+        elem.bind('click', function() {
+          scope.setNavMenuWidth(); // clear full width
+          if (attrs.fullWidth) {
+            var navMenu = angular.element($document[0].querySelector('#' + attrs.fullWidth));
+            scope.setFullWidth(true);
+            scope.setNavMenuWidth(navMenu[0].offsetWidth);
+          }
+          else {
+            scope.setFullWidth(false);
+          }
+        });
       }
     }
   };

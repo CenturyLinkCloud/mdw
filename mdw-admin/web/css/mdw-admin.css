@@ -38,12 +38,16 @@
   padding-top: 15px;
   min-width: 460px;
 }
+.mdw-full-width {
+	display: table;
+}
 .mdw-tabs-space {
   width: 100%;
   min-width: 720px;
 }
 .mdw-sidebar {
   float: left;
+  padding: 0px 15px;
 }
 @media (max-width: 992px) {
   .mdw-sidebar {
