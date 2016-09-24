@@ -20,6 +20,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', 'mdw', 'util', 'Inspe
   };
   
   $scope.setActiveTab = function(tabName) {
+    $scope.drilledValue = null;
     $scope.activeTabName = tabName;
     $scope.activeTab = $scope.tabs[tabName];
     $scope.activeTabValues = [];
@@ -43,6 +44,8 @@ inspectMod.controller('MdwInspectorController', ['$scope', 'mdw', 'util', 'Inspe
               name: prop,
               value: tabObj[prop]
             };
+            if (val.value.indexOf('\n') >= 0)
+              val.multiline = true;
             if (spec) {
               if (spec.alias)
                 val.name = spec.alias;
@@ -82,6 +85,10 @@ inspectMod.controller('MdwInspectorController', ['$scope', 'mdw', 'util', 'Inspe
         }
       }
     }
+  };
+  
+  $scope.drillIn = function(tabValue) {
+    $scope.drilledValue = tabValue;
   };
   
   

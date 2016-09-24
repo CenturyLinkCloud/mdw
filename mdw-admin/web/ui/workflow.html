@@ -22,11 +22,11 @@
           </li>
         </ul>
         <div class="mdw-inspector-values">
-          <div ng-repeat="tabValue in activeTabValues" style="display:flex">
-            <div class="mdw-inspector-label" ng-if="tabValue.language">
-              <a href="">{{tabValue.name}}</a>:
+          <div ng-repeat="tabValue in activeTabValues" style="display:flex" ng-if="!drilledValue">
+            <div class="mdw-inspector-label" ng-if="tabValue.multiline">
+              <a href="" ng-click="drillIn(tabValue)">{{tabValue.name}}</a>:
             </div>
-            <div class="mdw-inspector-label" ng-if="!tabValue.language">
+            <div class="mdw-inspector-label" ng-if="!tabValue.multiline">
               {{tabValue.name}}:
             </div>
             <div class="mdw-inspector-value" ng-if="tabValue.asset.path && tabValue.asset.url">
@@ -35,6 +35,10 @@
             <div class="mdw-inspector-value" ng-if="!tabValue.asset.path || !tabValue.asset.url">
               {{tabValue.value}}
             </div>
+          </div>
+          <div class="mdw-resource-content" ng-if="drilledValue">
+            <pre><code class="mdw-code" 
+              ng-bind-html="drilledValue.value | highlight:drilledValue.language | unsafe"></code></pre>
           </div>
         </div>
       </div>
