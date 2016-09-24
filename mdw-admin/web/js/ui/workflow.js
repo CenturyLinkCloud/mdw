@@ -57,10 +57,10 @@ workflowMod.controller('MdwWorkflowController',
     if ($scope.diagram) {
       var prevSelectObj = $scope.diagram.selectObj;
       $scope.diagram.onMouseClick(e);
-      if ($scope.diagram.selectObj && $scope.diagram.selectObj !== prevSelectObj)
-        //console.log("TYPEOF: " + (typeof $scope.diagram.selectObj));
+      if ($scope.diagram.selectObj && $scope.diagram.selectObj !== prevSelectObj) {
         var selObj = $scope.diagram.selectObj;
-        Inspector.setObj(selObj.workflowType, selObj[selObj.workflowType]);
+        Inspector.setObj(selObj);
+      }
     }
   };  
 }]);

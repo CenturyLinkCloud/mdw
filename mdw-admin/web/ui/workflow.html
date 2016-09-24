@@ -2,6 +2,20 @@
   <div>
     <canvas class="mdw-canvas"></canvas> 
   </div>
-  <div class="mdw-inspector" mdw-inspector>
+  <div class="mdw-inspector" mdw-inspector style="display:none">
+    <div class="panel panel-default mdw-inspector-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          Inspector
+        </div>
+        <div class="mdw-heading-actions">
+          <a class="btn" ng-click="closeInspector()">
+            <span class="glyphicon glyphicon-remove"></span>
+          </a>            
+        </div>
+      </div>
+      <div style="width:100%;height:150px;background-color:#eeeeee;">
+      </div>
+    </div>
   </div>
 </div>  

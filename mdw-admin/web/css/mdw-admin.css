@@ -641,15 +641,22 @@
 }
 
 .mdw-workflow {
-  
 }
 .mdw-canvas {
 }
+.mdw-panel {
+}
 .mdw-inspector {
-  height: 250px;
-  position: relative;
-  width: 100%;
-  background-color: lightgray;
+  /* display: none is set in style */
+  position: fixed;
+  width: auto;
+  bottom: 15px;
+  right: 50px;
+}
+.mdw-inspector-panel {
+  clear: both;
+  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .panel-heading a {
