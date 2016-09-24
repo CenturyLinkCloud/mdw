@@ -11,17 +11,35 @@ inspectMod.controller('MdwInspectorController', ['$scope', 'mdw', 'util', 'Inspe
     $scope.workflowObject = workflowObj;
     
     $scope.tabs = InspectorTabs.definition[$scope.workflowType];
-    $scope.activeTab = 'Definition';
+    $scope.setActiveTab('Definition');
     
-//    for (var prop in $scope.tabs) {
-//      if ($scope.tabs.hasOwnProperty(prop)) {
-//        console.log("tab: " + prop);
-//      }
-//    }
   };
   
   $scope.setActiveTab = function(tabName) {
-    $scope.activeTab = tabName;
+    $scope.activeTab = $scope.tabs[tabName];
+    $scope.activeTabValues = {};
+    if (typeof $scope.activeTab === 'object') {
+      for (var prop in $scope.activeTab) {
+        if ($scope.activeTab.hasOwnProperty(prop)) {
+          $scope.activeTabValues[prop] = $scope.workflowObject[$scope.activeTab[prop]];
+        }
+      }
+    }
+    else {
+      var tabObj = $scope.workflowObject[$scope.activeTab];
+      for (var prop in tabObj) {
+        if (tabObj.hasOwnProperty(prop)) {
+          if (InspectorTabs.exclusions.indexOf(prop) == -1) {
+            if (prop == 'Rule')
+              $scope.activeTabValues['Script'] = '<link>';
+            else if (prop == 'SCRIPT')
+              $scope.activeTabValues['Language'] = tabObj[prop];
+            else
+              $scope.activeTabValues[prop] = tabObj[prop];
+          }
+        }
+      }
+    }
   };
   
   
@@ -53,8 +71,13 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
     controller: 'MdwInspectorController',
     link: function link(scope, elem, attrs, ctrls) {
       
+      var workflowElem = elem.parent();
+      var canvasElem = angular.element(workflowElem[0].getElementsByClassName('mdw-canvas'));
+      var panelElem = angular.element(elem[0].getElementsByClassName('mdw-inspector-panel'));
+
       scope.closeInspector = function() {
         elem[0].style.display = 'none';
+        workflowElem[0].style.height = canvasElem[0].offsetHeight + 'px';
       };
       
       // show
@@ -63,10 +86,6 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
         scope.setWorkflow(obj.workflowType, obj[obj.workflowType]);
         scope.$apply();
         
-        var workflowElem = elem.parent();
-        var canvasElem = angular.element(workflowElem[0].getElementsByClassName('mdw-canvas'));
-        var panelElem = angular.element(elem[0].getElementsByClassName('mdw-inspector-panel'));
-
         if (elem[0].style.display == 'none') {
           // set inspector left position
           elem[0].style.left = workflowElem[0].getBoundingClientRect().left + 'px';

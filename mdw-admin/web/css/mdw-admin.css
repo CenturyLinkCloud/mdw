@@ -661,8 +661,12 @@
 .mdw-inspector-panel .panel-heading {
   padding: 5px 10px;
 }
-.mdw-inspector-tabs {
+.mdw-inspector-content {
   display: flex;
+  font-size: 13px;
+  height: 168px;
+}
+.mdw-inspector-tabs {
   background-color: #eeeeee;
 }
 .mdw-inspector-tabs ul {
@@ -679,19 +683,36 @@
   padding: 5px 10px;
 }
 .mdw-inspector-tab-active {
-  background-color: white;
+  background-color: #fff;
 }
 .mdw-inspector-tab-active a {
   color: black;
-  background-color: white;
+  background-color: #fff;
 }
 .mdw-inspector-tab-active a:hover, .mdw-inspector-tab-active a:focus {
   color: black !important;
-  background-color: white !important;
+  background-color: #fff !important;
 }
 .mdw-inspector-values {
+  font-family: monospace;
+  font-size: 12px;
   width: 100%;
-  background-color: white;
+  border: 1px inset;
+  border-radius: 4px;
+  margin: 12px;  
+  padding: 8px;
+  overflow-y: auto;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.mdw-inspector-label {
+  margin-right: 10px;
+  white-space: nowrap;  
+}
+.mdw-inspector-value {
+  width: 100%;
+  overflow-x: none;
+  height: 18px;"  
 }
 
 .panel-heading a {

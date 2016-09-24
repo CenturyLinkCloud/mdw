@@ -8,15 +8,14 @@ inspectorTabSvc.factory('InspectorTabs', ['mdw', function(mdw) {
     definition: {
       process: {
         Definition: {
-          ID: 'id',
           Name: 'name',
           Description: 'description',
           Created: 'created' 
         },
         Variables: 'variables',
+        Attributes: 'attributes',
         Versions: {},
         Documentation: {},
-        Attributes: 'attributes',
         Monitoring: {}
       },
       activity: {
@@ -26,8 +25,8 @@ inspectorTabSvc.factory('InspectorTabs', ['mdw', function(mdw) {
           Implementor: 'implementor',
           Description: 'description'
         },
-        Documentation: {},
         Attributes: 'attributes',
+        Documentation: {},
         Monitoring: {},
         Stubbing: {}
       },
@@ -37,9 +36,10 @@ inspectorTabSvc.factory('InspectorTabs', ['mdw', function(mdw) {
           Name: 'name',
           Description: 'description'
         },
-        Documentation: {},
-        Attributes: 'attributes'
+        Attributes: 'attributes',
+        Documentation: {}
       }
-    }
+    },
+    exclusions: ['Documentation']
   }
 }]);

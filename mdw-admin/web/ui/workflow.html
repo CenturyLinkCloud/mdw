@@ -14,13 +14,17 @@
           </a>            
         </div>
       </div>
-      <div class="mdw-inspector-tabs">
-        <ul class="nav">
-          <li ng-repeat="(name, tab) in tabs" ng-class="{'mdw-inspector-tab-active': name == activeTab}">
+      <div class="mdw-inspector-content">
+        <ul class="nav mdw-inspector-tabs">
+          <li ng-repeat="(name, tab) in tabs" ng-class="{'mdw-inspector-tab-active': tab === activeTab}">
             <a href="" ng-click="setActiveTab(name)">{{name}}</a>
           </li>
         </ul>
         <div class="mdw-inspector-values">
+          <div ng-repeat="(name, value) in activeTabValues" style="display:flex">
+            <div class="mdw-inspector-label">{{name}}:</div>
+            <div class="mdw-inspector-value">{{value}}</div>
+          </div>
         </div>
       </div>
     </div>
