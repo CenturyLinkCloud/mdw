@@ -78,6 +78,16 @@ public class Processes extends JsonRestService implements JsonExportable {
                             return valuesJson;
                         }
                     }
+                    else if ("summary".equalsIgnoreCase(segTwo)) {
+                        ProcessInstanceVO process = workflowServices.getProcess(instanceId);
+                        JSONObject summary = new JSONObject();
+                        summary.put("id", process.getId());
+                        summary.put("name", process.getProcessName());
+                        summary.put("packageName", process.getPackageName());
+                        summary.put("version", process.getProcessVersion());
+                        summary.put("masterRequestId", process.getMasterRequestId());
+                        return summary;
+                    }
                     else {
                         return workflowServices.getProcess(instanceId).getJson();
                     }

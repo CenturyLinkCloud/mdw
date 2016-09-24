@@ -88,33 +88,42 @@ processMod.controller('ProcessesController', ['$scope', '$http', 'mdw', 'util', 
   
 }]);
 
-processMod.controller('ProcessController', ['$scope', '$route', '$routeParams', 'mdw', 'Process',
-                                            function($scope, $route, $routeParams, mdw, Process) {
-    
-  $scope.process = Process.retrieve({instanceId: $routeParams.instanceId}, function() {
-    $scope.process.name = $scope.process.processName;
-    $scope.item = $scope.process; // for processItem template
-  });
-   
-  $scope.refreshWorkflowImage = function() {
-    $route.reload();
-  };   
+processMod.controller('ProcessController', ['$scope', '$route', '$routeParams', 'mdw', 'Process', 'ProcessSummary',
+                                            function($scope, $route, $routeParams, mdw, Process, ProcessSummary) {
+  $scope.process = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'summary'}, function() {
+    ProcessSummary.set($scope.process);
+  });  
     
 }]);
 
 processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/Services/Processes/:instanceId', mdw.serviceParams(), {
+  return $resource(mdw.roots.services + '/Services/Processes/:instanceId/:extra', mdw.serviceParams(), {
     retrieve: { method: 'GET', isArray: false }
   });
 }]);
 
-processMod.controller('ProcessDefController', ['$scope', '$routeParams', 'mdw',
-                                            function($scope, $routeParams, mdw) {
-  
-  $scope.process = { id: $routeParams.instanceId }; // needed for process-nav.html (back to instance)
-  $scope.processDef = { 
+processMod.controller('ProcessDefController', ['$scope', '$routeParams', 'mdw', 'ProcessSummary',
+                                            function($scope, $routeParams, mdw, ProcessSummary) {
+  $scope.process = { 
     packageName: $routeParams.packageName,
     name: $routeParams.processName,
     version: $routeParams.version
-  };    
+  };
+  var summary = ProcessSummary.get();
+  if (summary) {
+    $scope.process.id = summary.id;
+    $scope.process.masterRequestId = summary.masterRequestId;
+  }
+}]);
+
+// retains state for nav
+processMod.factory('ProcessSummary', ['mdw', function(mdw) {
+  return {
+    set: function(process) {
+      this.process = process;
+    },
+    get: function() {
+      return this.process;
+    }
+  };
 }]);

@@ -221,6 +221,10 @@
   clear: both;
   border-bottom: none;
 }
+.mdw-panel-full-width {
+  width: 100%;
+  padding-right: 15px;
+}
 .mdw-hr {
   border-top: 1px solid #e0e0e0;
 }

@@ -1,11 +1,11 @@
 <ul id="process-nav" class="nav mdw-nav" ng-style="getNavMenuWidthStyle(165)">
-  <li nav-link="workflow/process">
+  <li nav-link="workflow/process" full-width="process-nav">
     <a href="#/workflow/processes/{{process.id}}">
-      Workflow Image
+      Workflow Process
     </a>
   </li>
   <li nav-link="workflow/definition" full-width="process-nav">
-    <a href="#/workflow/definition/{{process.packageName}}/{{process.processName}}/v{{process.processVersion}}/{{process.id}}">
+    <a href="#/workflow/definition/{{process.packageName}}/{{process.name}}/v{{process.version}}">
       Process Definition
     </a>
   </li>

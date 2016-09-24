@@ -30,6 +30,7 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
         }
         else if ('decision' == shape) {
           this.drawDiamond(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h);
+          yAdjust = -8;
         }
         else if ('activity' == shape) {
           diagram.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, Step.BOX_OUTLINE_COLOR);

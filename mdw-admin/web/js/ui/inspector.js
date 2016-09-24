@@ -64,6 +64,15 @@ inspectMod.controller('MdwInspectorController', ['$scope', 'mdw', 'util', 'Inspe
                   version: 'v' + tabObj[prop]
                 };
               }
+              else if (prop == 'processname') {
+                val.asset = { 
+                  path: val.value + '.proc', 
+                  version: tabObj['processversion']
+                };
+              }
+              else if (prop == 'processmap') {
+                // TODO
+              }
               if (InspectorTabs.assetAttrs.indexOf(prop) != -1) {
                 val.asset = { path: tabObj[prop] };
               }
@@ -71,13 +80,8 @@ inspectMod.controller('MdwInspectorController', ['$scope', 'mdw', 'util', 'Inspe
                 val.value = val.asset.path;
                 if (val.asset.version)
                   val.value += ' ' + val.asset.version;
-                var lastDot = val.asset.path.lastIndexOf('.');
-                if (lastDot > 0 && lastDot < val.asset.path.length - 2)
-                  val.asset.language = val.asset.path.substring(lastDot + 1);
                 val.asset.url = $scope.adminBase + '#/asset/' + val.asset.path;
               }
-              
-              // todo process attrs
             }
             if (!tabObj[prop + "_assetVersion"])
               $scope.activeTabValues.push(val);

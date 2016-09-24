@@ -1,15 +1,15 @@
 <div class="row" style="display:flex;">
   <div class="mdw-sidebar" ng-include="'layout/process-nav.html'"></div>
-  <div style="width:100%;padding-right:15px;">
+  <div class="mdw-panel-full-width">
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
-          <span class="glyphicon glyphicon-file mdw-item-icon"></span>
-          <a ng-href="#/packages/{{processDef.packageName}}">{{processDef.packageName}}</a>/{{processDef.name}} v{{processDef.version}}
+          <a class="mdw-ghost" ng-href="#/packages/{{processDef.packageName}}">
+            {{process.packageName}}</a>/{{process.name}} {{process.version ? ' v' + process.version : ''}}
         </div>
       </div>
       <div class="mdw-section">
-        <mdw-workflow definition="processDef" 
+        <mdw-workflow process="process" 
           service-base="{{mdw.roots.services}}/services"
           hub-base="{{mdw.roots.hub}}">
         </mdw-workflow>

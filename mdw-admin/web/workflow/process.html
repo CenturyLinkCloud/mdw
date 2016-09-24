@@ -1,26 +1,18 @@
-<div class="row">
-  <div class="col-md-2 mdw-sidebar" ng-include="'layout/process-nav.html'"></div>
-  <div class="col-md-10">
+<div class="row" style="display:flex;">
+  <div class="mdw-sidebar" ng-include="'layout/process-nav.html'"></div>
+  <div class="mdw-panel-full-width">
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
-          <span class="mdw-ghost">{{process.packageName}}/</span> {{process.name}} &nbsp;{{process.id}}
+          <a class="mdw-ghost" ng-href="#/packages/{{process.packageName}}">
+            {{process.packageName}}</a>/{{process.name}} &nbsp;{{process.id}}
         </div>
       </div>
       <div class="mdw-section">
-        <div ng-include="'workflow/processItem.html'">
-        </div>
-        <hr class="mdw-hr">
-        <div class="mdw-image-container">
-          <div class="mdw-item">
-            <div class="mdw-item-right">
-              <button type="button" class="btn mdw-btn btn-default" ng-click="refreshWorkflowImage()">
-                <i class="glyphicon glyphicon-refresh"></i>
-              </button>
-            </div>
-          </div>
-          <img ng-src="{{mdw.roots.hub}}/workflowImage?processInstanceId={{process.id}}" alt="Workflow image" />
-        </div>
+        <mdw-workflow process="process"
+          service-base="{{mdw.roots.services}}/services"
+          hub-base="{{mdw.roots.hub}}">
+        </mdw-workflow>
       </div>
     </div>  
   </div>

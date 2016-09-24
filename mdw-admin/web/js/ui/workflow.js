@@ -24,9 +24,22 @@ workflowMod.controller('MdwWorkflowController',
     Inspector.setAdminBase($scope.adminBase); 
     
     $scope.canvas = canvas;
-    $scope.renderProcess();
-    $scope.canvas.bind('mousemove', $scope.mouseMove);
-    $scope.canvas.bind('click', $scope.mouseClick);
+    if ($scope.process.$promise) {
+      // wait until resolved
+      $scope.process.$promise.then(function(data) {
+        $scope.process = data;
+        $scope.renderProcess();
+        $scope.canvas.bind('mousemove', $scope.mouseMove);
+        $scope.canvas.bind('click', $scope.mouseClick);
+      }, function(error) {
+        mdw.messages = error;
+      });
+    }
+    else {
+      $scope.renderProcess();
+      $scope.canvas.bind('mousemove', $scope.mouseMove);
+      $scope.canvas.bind('click', $scope.mouseClick);
+    }
   };
   
   $scope.dest = function() {
@@ -38,6 +51,8 @@ workflowMod.controller('MdwWorkflowController',
     var packageName = $scope.process.packageName;
     var processName = $scope.process.name;
     var processVersion = null; // TODO: version
+    var instanceId = $scope.process.id;
+    var masterRequestId = $scope.process.masterRequestId;
     var workflowUrl = $scope.serviceBase + '/Workflow/' + packageName + '/' + processName;
     if (processVersion)
       workflowUrl += '/v' + processVersion;
@@ -45,6 +60,9 @@ workflowMod.controller('MdwWorkflowController',
       .then(function success(response) {
         $scope.process = response.data;
         $scope.process.packageName = packageName; // not returned in JSON
+        // restore summary instance data
+        $scope.process.id = instanceId;
+        $scope.process.masterRequestId = masterRequestId; 
         if (!$scope.implementors) {
           $http({ method: 'GET', url: $scope.serviceBase + '/Implementors?pageletAsJson=true' })
             .then(function success(response) {
@@ -383,7 +401,7 @@ workflowMod.directive('mdwWorkflow', [function() {
     restrict: 'E',
     templateUrl: 'ui/workflow.html',
     scope: {
-      process: '=definition',
+      process: '=process',
       serviceBase: '@serviceBase',
       hubBase: '@hubBase'
     },
