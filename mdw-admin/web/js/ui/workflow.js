@@ -8,8 +8,21 @@ workflowMod.controller('MdwWorkflowController',
     function($scope, $http, $routeParams, mdw, util, Diagram, Inspector) {
   
   $scope.init = function(canvas) {
-    if ($scope.serviceRoot.endsWith('/'))
-      $scope.serviceRoot = $scope.serviceRoot.substring(0, $scope.serviceRoot.length - 1);
+    if ($scope.serviceBase.endsWith('/'))
+      $scope.serviceBase = $scope.serviceBase.substring(0, $scope.serviceBase.length - 1);
+    if ($scope.hubBase) {
+      if ($scope.hubBase.endsWith('/'))
+        $scope.hubBase = $scope.hubBase.substring(0, $scope.hubBase.length - 1);
+    }
+    else {
+      $scope.hubBase = $scope.serviceBase;
+    }
+    if ($scope.hubBase.endsWith('/MDWHub'))
+      $scope.adminBase = $scope.hubBase.substring(0, $scope.hubBase.length - 7) + '/mdw-admin';
+    else
+      $scope.adminBase = $scope.hubBase.substring(0, $scope.hubBase.length - 4) + '/mdw-admin'; 
+    Inspector.setAdminBase($scope.adminBase); 
+    
     $scope.canvas = canvas;
     $scope.renderProcess();
     $scope.canvas.bind('mousemove', $scope.mouseMove);
@@ -25,7 +38,7 @@ workflowMod.controller('MdwWorkflowController',
     var packageName = $scope.process.packageName;
     var processName = $scope.process.name;
     var processVersion = null; // TODO: version
-    var workflowUrl = $scope.serviceRoot + '/Workflow/' + packageName + '/' + processName;
+    var workflowUrl = $scope.serviceBase + '/Workflow/' + packageName + '/' + processName;
     if (processVersion)
       workflowUrl += '/v' + processVersion;
     $http({ method: 'GET', url: workflowUrl })
@@ -33,7 +46,7 @@ workflowMod.controller('MdwWorkflowController',
         $scope.process = response.data;
         $scope.process.packageName = packageName; // not returned in JSON
         if (!$scope.implementors) {
-          $http({ method: 'GET', url: $scope.serviceRoot + '/Implementors' })
+          $http({ method: 'GET', url: $scope.serviceBase + '/Implementors?pageletAsJson=true' })
             .then(function success(response) {
               $scope.implementors = response.data;
               $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors);
@@ -57,12 +70,15 @@ workflowMod.controller('MdwWorkflowController',
     if ($scope.diagram) {
       var prevSelectObj = $scope.diagram.selectObj;
       $scope.diagram.onMouseClick(e);
-      if ($scope.diagram.selectObj && $scope.diagram.selectObj !== prevSelectObj) {
+      if ($scope.diagram.selectObj !== prevSelectObj) {
         var selObj = $scope.diagram.selectObj;
-        Inspector.setObj(selObj);
+        if (selObj)
+          Inspector.setObj(selObj);
+        else
+          Inspector.setObj($scope.diagram);
       }
     }
-  };  
+  };
 }]);
 
 workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Subflow', 'Note',
@@ -122,7 +138,10 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
     var textMetrics = this.context.measureText(title.text);
     title.w = textMetrics.width;
     title.h = Diagram.TITLE_FONT_SIZE;
-    this.makeRoom(canvasDisplay, title);
+    if (title.x + title.w > canvasDisplay.w)
+      canvasDisplay.w = title.x + title.w;
+    if (title.y + title.h > canvasDisplay.h)
+      canvasDisplay.h = title.y + title.h;    
     this.title = title;
     this.context.font = Diagram.DEFAULT_FONT;
     
@@ -365,7 +384,8 @@ workflowMod.directive('mdwWorkflow', [function() {
     templateUrl: 'ui/workflow.html',
     scope: {
       process: '=definition',
-      serviceRoot: '@serviceRoot'
+      serviceBase: '@serviceBase',
+      hubBase: '@hubBase'
     },
     controller: 'MdwWorkflowController',
     controllerAs: 'mdwWorkflow',

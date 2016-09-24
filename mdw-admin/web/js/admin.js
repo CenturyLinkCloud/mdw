@@ -333,10 +333,18 @@ adminApp.directive('fileUpload', [function() {
 
 adminApp.filter('highlight', function($sce) {
   return function(input, lang) {
-    if (lang === 'test')
+    if (lang === 'test') {
       lang = 'groovy';
-    else if (lang === 'spring' || lang === 'camel' || lang === 'proc' || lang === 'task' || lang === 'impl' || lang === 'evth')
+    }
+    else if (lang === 'spring' || lang === 'camel') {
       lang = 'xml';
+    }
+    else if (lang === 'proc' || lang === 'task' || lang === 'impl' || lang === 'evth' || lang == 'pagelet') {
+      if (input.trim().startsWith('{'))
+        lang = 'json';
+      else
+        lang = 'xml';
+    }
     if (lang && hljs.getLanguage(lang) && input) {
       return hljs.highlight(lang, input.removeCrs()).value;
     }

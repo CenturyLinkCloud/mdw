@@ -90,6 +90,9 @@ utilMod.factory('util', function() {
       while ((match = search.exec(window.location.search.substring(1))) !== null)
        params[decodeURIComponent(match[1])] = decodeURIComponent(match[2]);
       return params;
-    }    
+    },
+    languages: {
+      
+    }
   };
 });

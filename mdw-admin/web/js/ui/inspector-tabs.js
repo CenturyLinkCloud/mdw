@@ -40,6 +40,14 @@ inspectorTabSvc.factory('InspectorTabs', ['mdw', function(mdw) {
         Documentation: {}
       }
     },
-    exclusions: ['Documentation']
+    attributes: {
+      Documentation: { exclude: true },
+      Rule: { alias: 'Script', langAttr: 'SCRIPT'},
+      SCRIPT: { alias: 'Language' }
+    },
+    assetAttrs: [
+      // does not include those identified by _assetVersion
+      'TASK_PAGELET' 
+    ]
   }
 }]);

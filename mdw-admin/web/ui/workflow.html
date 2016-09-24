@@ -6,7 +6,8 @@
     <div class="panel panel-default mdw-inspector-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
-          Inspector
+          Inspector{{workflowObject.name ? ': ' : ''}}
+          <span class="mdw-heading-sub">{{workflowObject.name}}</span>
         </div>
         <div class="mdw-heading-actions">
           <a class="btn" ng-click="closeInspector()">
@@ -21,9 +22,19 @@
           </li>
         </ul>
         <div class="mdw-inspector-values">
-          <div ng-repeat="(name, value) in activeTabValues" style="display:flex">
-            <div class="mdw-inspector-label">{{name}}:</div>
-            <div class="mdw-inspector-value">{{value}}</div>
+          <div ng-repeat="tabValue in activeTabValues" style="display:flex">
+            <div class="mdw-inspector-label" ng-if="tabValue.language">
+              <a href="">{{tabValue.name}}</a>:
+            </div>
+            <div class="mdw-inspector-label" ng-if="!tabValue.language">
+              {{tabValue.name}}:
+            </div>
+            <div class="mdw-inspector-value" ng-if="tabValue.asset.path && tabValue.asset.url">
+              <a href="{{tabValue.asset.url}}">{{tabValue.asset.path}}</a> {{tabValue.asset.version}}
+            </div>
+            <div class="mdw-inspector-value" ng-if="!tabValue.asset.path || !tabValue.asset.url">
+              {{tabValue.value}}
+            </div>
           </div>
         </div>
       </div>
