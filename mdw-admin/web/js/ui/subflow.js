@@ -60,9 +60,9 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Step', 'Link',
     if (this.subprocess.activities) {
       this.subprocess.activities.forEach(function(activity) {
         var step = new Step(activity);
+        step.implementor = diagram.getImplementor(activity.implementor);
         step.prepareDisplay(diagram);
         subflow.steps.push(step);
-        activity.implementor = diagram.getImplementor(activity.implementor);
       });
     }
     subflow.links = [];

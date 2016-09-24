@@ -3,8 +3,28 @@
 
 var inspectMod = angular.module('mdwInspector', ['mdw']);
 
-inspectMod.controller('MdwInspectorController', ['$scope', 'mdw', 'util', 'Inspector',
-                                                 function($scope, mdw, util, Inspector) {
+inspectMod.controller('MdwInspectorController', ['$scope', 'mdw', 'util', 'Inspector', 'InspectorTabs',
+                                                 function($scope, mdw, util, Inspector, InspectorTabs) {
+  
+  $scope.setWorkflow = function(type, workflowObj) {
+    $scope.workflowType = type;
+    $scope.workflowObject = workflowObj;
+    
+    $scope.tabs = InspectorTabs.definition[$scope.workflowType];
+    $scope.activeTab = 'Definition';
+    
+//    for (var prop in $scope.tabs) {
+//      if ($scope.tabs.hasOwnProperty(prop)) {
+//        console.log("tab: " + prop);
+//      }
+//    }
+  };
+  
+  $scope.setActiveTab = function(tabName) {
+    $scope.activeTab = tabName;
+  };
+  
+  
 }]);
 
 inspectMod.factory('Inspector', ['mdw', 'util', function(mdw, util) {
@@ -14,6 +34,9 @@ inspectMod.factory('Inspector', ['mdw', 'util', function(mdw, util) {
       if (this.listener) {
         this.listener(obj);
       }
+    },
+    getObj: function() {
+      return this.obj;
     },
     listen: function(listener) {
       this.listener = listener;
@@ -34,8 +57,12 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
         elem[0].style.display = 'none';
       };
       
-      // value binding
+      // show
       Inspector.listen(function(obj) {
+        var obj = Inspector.getObj();
+        scope.setWorkflow(obj.workflowType, obj[obj.workflowType]);
+        scope.$apply();
+        
         var workflowElem = elem.parent();
         var canvasElem = angular.element(workflowElem[0].getElementsByClassName('mdw-canvas'));
         var panelElem = angular.element(elem[0].getElementsByClassName('mdw-inspector-panel'));
@@ -56,11 +83,6 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
         var inspTopY = elem[0].getBoundingClientRect().top;
         if (objBtmY > inspTopY)
           $window.scrollBy(0, objBtmY - inspTopY + 10);
-        
-        
-        // display details
-        var workflowObject = obj[obj.workflowType];
-        console.log(obj.workflowType + ": " + JSON.stringify(workflowObject));
       });
       
       scope.$on('$destroy', function() {

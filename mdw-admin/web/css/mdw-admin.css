@@ -644,19 +644,54 @@
 }
 .mdw-canvas {
 }
-.mdw-panel {
-}
 .mdw-inspector {
   /* display: none is set in style */
   position: fixed;
   width: auto;
   bottom: 15px;
   right: 50px;
+  border-radius: 4px;
+  box-shadow: 2px 2px 4px #757575; 
 }
 .mdw-inspector-panel {
   clear: both;
   border-bottom: none;
   margin-bottom: 0;
+}
+.mdw-inspector-panel .panel-heading {
+  padding: 5px 10px;
+}
+.mdw-inspector-tabs {
+  display: flex;
+  background-color: #eeeeee;
+}
+.mdw-inspector-tabs ul {
+  padding: 0;
+}
+.mdw-inspector-tabs li {
+  border: 1px solid transparent;
+  border-bottom: 1px solid lightgray;
+  border-radius: 4px;
+  list-style: none;
+  position: relative;
+}
+.mdw-inspector-tabs li > a {
+  padding: 5px 10px;
+}
+.mdw-inspector-tab-active {
+  background-color: white;
+}
+.mdw-inspector-tab-active a {
+  color: black;
+  background-color: white;
+}
+.mdw-inspector-tab-active a:hover, .mdw-inspector-tab-active a:focus {
+  color: black !important;
+  background-color: white !important;
+}
+.mdw-inspector-values {
+  width: 100%;
+  background-color: white;
 }
 
 .panel-heading a {

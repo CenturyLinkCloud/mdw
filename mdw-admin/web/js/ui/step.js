@@ -18,10 +18,10 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
   Step.prototype.draw = function(diagram) {
     var activity = this.workflowObj = this.activity;
 
-    if (activity.implementor.icon) {
+    if (this.implementor.icon) {
       var yAdjust = -2;
-      if (activity.implementor.icon.startsWith('shape:')) {
-        var shape = activity.implementor.icon.substring(6);
+      if (this.implementor.icon.startsWith('shape:')) {
+        var shape = this.implementor.icon.substring(6);
         if ('start' == shape) {
           this.drawOval(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, 'green', 'white');
         }
@@ -38,7 +38,7 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
       else {
         diagram.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, Step.BOX_OUTLINE_COLOR);
         var iconImg = new Image();
-        iconImg.src = mdw.roots.hub + '/asset/' + activity.implementor.icon;
+        iconImg.src = mdw.roots.hub + '/asset/' + this.implementor.icon;
         var iconx = this.display.x + this.display.w / 2 - 12;
         var icony = this.display.y + 5;
         iconImg.onload = function() {

@@ -131,9 +131,9 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
     if (this.process.activities) {
       this.process.activities.forEach(function(activity) {
         var step = new Step(activity);
+        step.implementor = diagram.getImplementor(activity.implementor);
         diagram.makeRoom(canvasDisplay, step.prepareDisplay(diagram));
         diagram.steps.push(step);
-        activity.implementor = diagram.getImplementor(activity.implementor);
       });
     }
     diagram.links = [];
