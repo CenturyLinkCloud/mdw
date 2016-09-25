@@ -1,7 +1,7 @@
 // Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
-var workflowMod = angular.module('mdwWorkflow', ['mdw']);
+var workflowMod = angular.module('mdwWorkflow', ['mdw', 'drawingConstants']);
 
 workflowMod.controller('MdwWorkflowController', 
     ['$scope', '$http', '$routeParams', 'mdw', 'util', 'Diagram', 'Inspector',
@@ -66,7 +66,7 @@ workflowMod.controller('MdwWorkflowController',
         $http({ method: 'GET', url: $scope.serviceBase + '/Implementors?pageletAsJson=true' })
           .then(function success(response) {
             $scope.implementors = response.data;
-            if ($scope.process.id) {
+            if ($scope.renderState && $scope.process.id) {
               $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id })
                 .then(function success(response) {
                   $scope.instance = response.data;
@@ -105,8 +105,9 @@ workflowMod.controller('MdwWorkflowController',
   };
 }]);
 
-workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Subflow', 'Note',
-                                function($document, mdw, util, Step, Link, Subflow, Note) {
+workflowMod.factory('Diagram', 
+    ['$document', 'mdw', 'util', 'DC', 'Step', 'Link', 'Subflow', 'Note',
+     function($document, mdw, util, DC, Step, Link, Subflow, Note) {
   var Diagram = function(canvas, process, implementors, instance) {
     this.canvas = canvas;
     this.process = process;
@@ -116,14 +117,6 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
     this.context = this.canvas.getContext("2d");
   };
 
-  Diagram.DEFAULT_FONT_SIZE = 12;
-  Diagram.DEFAULT_FONT =  Diagram.DEFAULT_FONT_SIZE + 'px sans-serif';
-  Diagram.TITLE_FONT_SIZE = 18;
-  Diagram.TITLE_FONT = 'bold ' + Diagram.TITLE_FONT_SIZE + 'px sans-serif';
-  Diagram.DEFAULT_COLOR = 'black';
-  Diagram.HYPERLINK_COLOR = '#1565c0';
-  Diagram.BOX_BOUNDING_RADIUS = 12;  
-  
   Diagram.prototype.draw = function() {
 
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -158,16 +151,16 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
     // process title
     this.display = this.getDisplay(this.process.attributes.WORK_DISPLAY_INFO);
     var title = { text: this.process.name, x: this.display.x, y: this.display.y };
-    this.context.font = Diagram.TITLE_FONT;
+    this.context.font = DC.TITLE_FONT;
     var textMetrics = this.context.measureText(title.text);
     title.w = textMetrics.width;
-    title.h = Diagram.TITLE_FONT_SIZE;
+    title.h = DC.TITLE_FONT_SIZE;
     if (title.x + title.w > canvasDisplay.w)
       canvasDisplay.w = title.x + title.w;
     if (title.y + title.h > canvasDisplay.h)
       canvasDisplay.h = title.y + title.h;    
     this.title = title;
-    this.context.font = Diagram.DEFAULT_FONT;
+    this.context.font = DC.DEFAULT_FONT;
 
     this.drawBoxes = this.process.attributes.NodeStyle == 'BoxIcon'; // TODO: we should make this the default
     
@@ -189,6 +182,8 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
         step.activity.transitions.forEach(function(transition) {
           var link = new Link(transition, step, diagram.getStep(transition.to));
           diagram.makeRoom(canvasDisplay, link.prepareDisplay(diagram));
+          if (diagram.instance)
+            link.applyState(diagram.getTransitionInstances(link.transition.id));
           diagram.links.push(link);
         });
       }
@@ -213,8 +208,9 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
       });
     }
     
-    canvasDisplay.w += 2; // TODO why?
-    canvasDisplay.h += 2;
+    // allow for external transition instances, etc
+    canvasDisplay.w += 25;
+    canvasDisplay.h += 25;
     
     return canvasDisplay;
   };
@@ -252,12 +248,12 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
   };
   
   Diagram.prototype.drawTitle = function() {
-    this.context.font = Diagram.TITLE_FONT;
-    this.context.fillStyle = this.titleLinkHover ? Diagram.HYPERLINK_COLOR : Diagram.DEFAULT_COLOR;
+    this.context.font = DC.TITLE_FONT;
+    this.context.fillStyle = this.titleLinkHover ? DC.HYPERLINK_COLOR : DC.DEFAULT_COLOR;
     this.context.clearRect(this.title.x, this.title.y, this.title.w, this.title.h);
     this.context.fillText(this.title.text, this.title.x, this.title.y + this.title.h);
-    this.context.font = Diagram.DEFAULT_FONT;
-    this.context.fillStyle = Diagram.DEFAULT_COLOR;
+    this.context.font = DC.DEFAULT_FONT;
+    this.context.fillStyle = DC.DEFAULT_COLOR;
   };
   
   Diagram.prototype.getImplementor = function(className) {
@@ -283,6 +279,17 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
     }
   };
 
+  Diagram.prototype.getTransitionInstances = function(id) {
+    if (this.instance && this.instance.transitions) {
+      var insts = [];
+      this.instance.transitions.forEach(function(transInst) {
+        if ('T' + transInst.transitionId == id)
+          insts.push(transInst);
+      });
+      return insts;
+    }
+  };
+
   Diagram.prototype.getSubflowInstances = function(id) {
     if (this.instance && this.instance.subprocesses) {
       var insts = [];
@@ -294,34 +301,171 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
     }
   };
   
-  Diagram.prototype.drawRoundedBox = function(context, x, y, w, h, color) {
-    this.drawBox(context, x, y, w, h, color, Diagram.BOX_BOUNDING_RADIUS);
+  Diagram.prototype.drawState = function(display, instances, ext, adj) {
+    if (instances) {
+      var count = instances.length > Step.MAX_INSTS ? Step.MAX_INSTS : instances.length;
+      for (var i = 0; i < count; i++) {
+        var instance = instances[i];
+        var rounding = DC.BOX_ROUNDING_RADIUS;
+        if (instance.statusCode) {
+          var status = Step.STATUSES[instance.statusCode];
+          var del = Step.INST_W - Step.OLD_INST_W;
+          if (ext) {
+            var rem = count - i;
+            if (i == 0) {
+              this.rect(
+                  display.x - Step.OLD_INST_W * rem - del, 
+                  display.y - Step.OLD_INST_W * rem - del,
+                  display.w + Step.OLD_INST_W * 2* rem + 2 * del,
+                  display.h + Step.OLD_INST_W * 2 * rem + 2 * del,
+                  status.color, true, rounding);
+            } 
+            else {
+              this.rect(
+                  display.x - Step.OLD_INST_W * rem,
+                  display.y - Step.OLD_INST_W * rem,
+                  display.w + Step.OLD_INST_W * 2 * rem,
+                  display.h + Step.OLD_INST_W * 2 * rem,
+                  status.color, true, 0);
+            }
+            rem--;
+            this.context.clearRect(
+                display.x - Step.OLD_INST_W * rem - 1,
+                display.y - Step.OLD_INST_W * rem - 1,
+                display.w + Step.OLD_INST_W * 2 * rem + 2,
+                display.h + Step.OLD_INST_W * 2 * rem + 2);
+          }
+          else {
+            var x1, y1, w1, h1;
+            if (i == 0) {
+              this.rect(
+                  display.x - adj, 
+                  display.y - adj, 
+                  display.w + 2 * adj, 
+                  display.h + 2* adj, 
+                  status.color, true, rounding);
+              x1 = display.x + del;
+              y1 = display.y + del;
+              w1 = display.w - 2 * del;
+              h1 = display.h - 2 * del;
+            } 
+            else {
+              x1 = display.x + Step.OLD_INST_W * i + del;
+              y1 = display.y + Step.OLD_INST_W * i + del;
+              w1 = display.w - Step.OLD_INST_W * 2 * i - 2 * del;
+              h1 = display.h - Step.OLD_INST_W * 2 * i - 2 * del;
+              if (w1 > 0 && h1 > 0)
+                this.rect(x1, y1, w1, h1, status.color, true);
+            }
+            x1 += Step.OLD_INST_W - 1;
+            y1 += Step.OLD_INST_W - 1;
+            w1 -= 2 * Step.OLD_INST_W - 2;
+            h1 -= 2 * Step.OLD_INST_W - 2;
+            if (w1 > 0 && h1 > 0)
+              this.context.clearRect(x1, y1, w1, h1);
+          }
+        }
+      }
+    }    
   };
   
-  Diagram.prototype.drawBox = function(context, x, y, w, h, color, r) {
-    if (color)
-      context.strokeStyle = color;
-    
-    if (typeof r === 'undefined') {
-      context.strokeRect(x, y, w, h);
+  Diagram.prototype.roundedRect = function(x, y, w, h, color, fill) {
+    this.rect(x, y, w, h, color, fill, DC.BOX_ROUNDING_RADIUS);
+  };
+  
+  Diagram.prototype.rect = function(x, y, w, h, color, fill, r) {
+    if (color) {
+      if (fill)
+        this.context.fillStyle = color;
+      else
+        this.context.strokeStyle = color;
+    }
+    if (!r) {
+      if (fill)
+        this.context.fillRect(x, y, w, h);
+      else
+        this.context.strokeRect(x, y, w, h);
     }
     else {
       // rounded corners
-      context.beginPath();
-      context.moveTo(x + r, y);
-      context.lineTo(x + w - r, y);
-      context.quadraticCurveTo(x + w, y, x + w, y + r);
-      context.lineTo(x + w, y + h - r);
-      context.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      context.lineTo(x + r, y + h);
-      context.quadraticCurveTo(x, y + h, x, y + h - r);
-      context.lineTo(x, y + r);
-      context.quadraticCurveTo(x, y, x + r, y);
-      context.closePath();
-      context.stroke();
+      this.context.beginPath();
+      this.context.moveTo(x + r, y);
+      this.context.lineTo(x + w - r, y);
+      this.context.quadraticCurveTo(x + w, y, x + w, y + r);
+      this.context.lineTo(x + w, y + h - r);
+      this.context.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      this.context.lineTo(x + r, y + h);
+      this.context.quadraticCurveTo(x, y + h, x, y + h - r);
+      this.context.lineTo(x, y + r);
+      this.context.quadraticCurveTo(x, y, x + r, y);
+      this.context.closePath();
+      if (fill)
+        this.context.fill();
+      else
+        this.context.stroke();
     }
-    context.strokeStyle = Step.DEFAULT_COLOR;
+    if (fill)
+      this.context.fillStyle = DC.DEFAULT_COLOR;
+    else
+      this.context.strokeStyle = DC.DEFAULT_COLOR;
   };
+  
+  Diagram.prototype.drawOval = function(x, y, w, h, fill, fadeTo) {
+    var kappa = 0.5522848;
+    var ox = (w / 2) * kappa; // control point offset horizontal
+    var oy = (h / 2) * kappa; // control point offset vertical
+    var xe = x + w; // x-end
+    var ye = y + h; // y-end
+    var xm = x + w / 2; // x-middle
+    var ym = y + h / 2; // y-middle
+
+    this.context.beginPath();
+    this.context.moveTo(x, ym);
+    this.context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    this.context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    this.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    this.context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    this.context.closePath(); // not used correctly? (use to close off open path)
+    if (typeof fill === 'undefined') {
+      this.context.stroke();
+    }
+    else {
+      if (typeof fadeTo === 'undefined') {
+        this.context.fillStyle = fill;
+      }
+      else {
+        var gradient = this.context.createLinearGradient(x, y, x + w, y + h);
+        gradient.addColorStop(0, fill);
+        gradient.addColorStop(1, 'white');
+        this.context.fillStyle = gradient;
+      }
+      this.context.fill();
+      this.context.stroke();
+    }
+    this.context.fillStyle = DC.DEFAULT_COLOR;
+  };
+  
+  Diagram.prototype.drawDiamond = function(x, y, w, h) {
+    var xh = x + w / 2;
+    var yh = y + h / 2;
+    this.context.beginPath();
+    this.context.moveTo(x, yh);
+    this.context.lineTo(xh, y);
+    this.context.lineTo(x + w, yh);
+    this.context.lineTo(xh, y + h);
+    this.context.lineTo(x, yh);
+    this.context.closePath();
+    this.context.stroke();
+  };
+  
+  Diagram.prototype.drawImage = function(src, x, y) {
+    var img = new Image();
+    img.src = src;
+    var context = this.context;
+    img.onload = function() {
+      context.drawImage(img, x, y);
+    };
+  }
   
   Diagram.prototype.onMouseClick = function(e) {
     var rect = this.canvas.getBoundingClientRect();
@@ -360,7 +504,7 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
     this.context.fillRect(display.x + display.w - s, display.y - s, s * 2, s * 2);
     this.context.fillRect(display.x + display.w - 2, display.y + display.h - s, s * 2, s * 2);
     this.context.fillRect(display.x - 2, display.y + display.h - s, s * 2, s * 2);
-    this.context.fillStyle = Step.DEFAULT_COLOR;
+    this.context.fillStyle = DC.DEFAULT_COLOR;
   };
 
   Diagram.prototype.unselect = function(obj) {
@@ -430,7 +574,7 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
 //   - process (object): packageName and name must be populated
 //     optional process fields
 //       - version: for non-latest process version
-//       - id: if populated, then retrieve instance data
+//   - renderState: if true, display runtime overlay
 //   - service-base: endpoint url root
 //   - hub-base: MDWHub url root
 workflowMod.directive('mdwWorkflow', [function() {
@@ -439,6 +583,7 @@ workflowMod.directive('mdwWorkflow', [function() {
     templateUrl: 'ui/workflow.html',
     scope: {
       process: '=process',
+      renderState: '@renderState',
       serviceBase: '@serviceBase',
       hubBase: '@hubBase'
     },

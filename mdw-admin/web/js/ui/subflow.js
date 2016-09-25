@@ -3,23 +3,26 @@
 
 var subflowMod = angular.module('mdwSubflow', ['mdw']);
 
-subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Step', 'Link',
-                                function($document, mdw, util, Step, Link) {
+subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'DC', 'Step', 'Link',
+                                function($document, mdw, util, DC, Step, Link) {
   var Subflow = function(subprocess) {
     this.subprocess = subprocess;
     this.workflowType = 'subprocess';
   };
 
-  Subflow.DEFAULT_FONT_SIZE = 12;
-  Subflow.DEFAULT_COLOR = 'black';
   Subflow.BOX_OUTLINE_COLOR = '#337ab7';
-  Subflow.META_COLOR = 'gray';
   
   Subflow.prototype.draw = function(diagram) {
-    diagram.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, Subflow.BOX_OUTLINE_COLOR);
+
+    // runtime state first
+    if (this.instances) {
+      diagram.drawState(this.display, this.instances, true);
+    }
+    
+    diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, Subflow.BOX_OUTLINE_COLOR);
     diagram.context.clearRect(this.title.x - 1, this.title.y, this.title.w + 2, this.title.h);
 
-    diagram.context.fillText(this.title.text, this.title.x, this.title.y + Subflow.DEFAULT_FONT_SIZE);
+    diagram.context.fillText(this.title.text, this.title.x, this.title.y + DC.DEFAULT_FONT_SIZE);
     this.steps.forEach(function(step) {
       step.draw(diagram);
     });
@@ -28,9 +31,9 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Step', 'Link',
     });
     
     // logical id
-    diagram.context.fillStyle = Subflow.META_COLOR;
+    diagram.context.fillStyle = DC.META_COLOR;
     diagram.context.fillText('[' + this.subprocess.id + ']', this.display.x + 10, this.display.y + this.display.h + 4);
-    diagram.context.fillStyle = Subflow.DEFAULT_COLOR;
+    diagram.context.fillStyle = DC.DEFAULT_COLOR;
   };
   
   Subflow.prototype.prepareDisplay = function(diagram) {
@@ -38,10 +41,10 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Step', 'Link',
     this.display = diagram.getDisplay(this.subprocess.attributes.WORK_DISPLAY_INFO);
     
     // title
-    var title = { text: this.subprocess.name, x: this.display.x + 10, y: this.display.y + 4 - Subflow.DEFAULT_FONT_SIZE };
+    var title = { text: this.subprocess.name, x: this.display.x + 10, y: this.display.y + 4 - DC.DEFAULT_FONT_SIZE };
     var textMetrics = diagram.context.measureText(title.text);
     title.w = textMetrics.width;
-    title.h = Subflow.DEFAULT_FONT_SIZE;
+    title.h = DC.DEFAULT_FONT_SIZE;
     if (title.x + title.w > maxDisplay.w)
       maxDisplay.w = title.x + title.w;
     if (title.y + title.h > maxDisplay.h)

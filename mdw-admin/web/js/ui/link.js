@@ -3,7 +3,8 @@
 
 var linkMod = angular.module('mdwLink', ['mdw']);
 
-linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
+linkMod.factory('Link', ['mdw', 'util', 'DC',
+                         function(mdw, util, DC) {
 
   var Link = function(transition, from, to) {
     this.transition = transition;
@@ -12,13 +13,25 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
     this.workflowType = 'transition';
   };
   
-  Link.DEFAULT_COLOR = 'black';
-  Link.DEFAULT_FONT_SIZE = 12;
+  Link.INITIATED = 'blue';
+  Link.TRAVERSED = 'black';
+  Link.UNTRAVERSED = '#9e9e9e';
   Link.GAP = 4;
   Link.CR = 8;
   Link.LINK_WIDTH = 3;
   Link.CORR = 3; // offset for link start points (TODO: why?)
 
+  Link.EVENTS = {
+    START: {color: 'green'},
+    RESUME: {color: 'green'},
+    DELAY: {color: 'orange'},
+    HOLD: {color: 'orange'},
+    ERROR: {color: 'red'},
+    ABORT: {color: 'red'},
+    CORRECT: {color: 'purple'},
+    FINISH: {color: 'gray'}
+  };
+  
   Link.LINK_TYPES = {
     STRAIGHT: 'Straight',
     ELBOW: 'Elbow',
@@ -40,16 +53,31 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
   Link.ELBOW_VH_THRESHOLD = 60;
   
   Link.prototype.draw = function(diagram) {
-    
-    diagram.context.strokeStyle = this.getEventColor(this.transition.event);
-    diagram.context.fillStyle = this.getEventColor(this.transition.event);
+    var color = Link.EVENTS[this.transition.event].color;
+    if (diagram.instance) {
+      if (this.instances && this.instances.length > 0) {
+        var latest = this.instances[0];
+        if (latest.statusCode == 1)
+          color = Link.INITIATED;
+        else
+          color = Link.TRAVERSED;
+      }
+      else {
+        color = Link.UNTRAVERSED;
+      }
+    }
+      
+    diagram.context.strokeStyle = color;
+    diagram.context.fillStyle = color;
     this.drawConnector(diagram.context);
     // todo draw shape
 
     // title
+    if (diagram.instance && (!this.instances || this.instances.length == 0))
+      diagram.context.fillStyle = Link.UNTRAVERSED;
     diagram.context.fillText(this.title.text, this.title.x, this.title.y);
-    diagram.context.strokeStyle = Link.DEFAULT_COLOR;
-    diagram.context.fillStyle = Link.DEFAULT_COLOR;
+    diagram.context.strokeStyle = DC.DEFAULT_COLOR;
+    diagram.context.fillStyle = DC.DEFAULT_COLOR;
     
   };
   
@@ -65,7 +93,7 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
     this.title = { text: label };
     // TODO title coords
     this.title.x = this.display.lx;
-    this.title.y = this.display.ly + Link.DEFAULT_FONT_SIZE;
+    this.title.y = this.display.ly + DC.DEFAULT_FONT_SIZE;
     
     return maxDisplay;
   };
@@ -96,6 +124,10 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
       });
     }
     return display;
+  };
+  
+  Link.prototype.applyState = function(transitionInstances) {
+    this.instances = transitionInstances;
   };
   
   Link.prototype.drawConnector = function(context) {
@@ -353,18 +385,6 @@ linkMod.factory('Link', ['mdw', 'util', function(mdw, util) {
     }
     return slope;
   };
-  
-  Link.prototype.getEventColor = function(eventName) {
-    if (eventName === 'START' || eventName === 'RESUME')
-      return 'green';
-    else if (eventName === 'DELAY' || eventName === 'HOLD')
-      return 'orange';
-    else if (eventName === 'ERROR' || eventName === 'ABORT')
-      return 'red';
-    else
-      return 'gray';
-  };
-  
+
   return Link;
-    
 }]);

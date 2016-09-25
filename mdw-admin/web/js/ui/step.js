@@ -3,17 +3,14 @@
 
 var stepMod = angular.module('mdwStep', ['mdw']);
 
-stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
+stepMod.factory('Step', ['mdw', 'util', 'DC',
+                         function(mdw, util, DC) {
   
   var Step = function(activity) {
     this.activity = activity;
     this.workflowType = 'activity';
   };
   
-  Step.DEFAULT_FONT_SIZE = 12;
-  Step.DEFAULT_COLOR = 'black';
-  Step.BOX_OUTLINE_COLOR = 'black';
-  Step.META_COLOR = 'gray';
   Step.INST_W = 8;
   Step.OLD_INST_W = 4;
   Step.MAX_INSTS = 10;
@@ -33,42 +30,46 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
     var activity = this.workflowObj = this.activity;
 
     // runtime state first
-    if (this.instances)
-      this.drawState(diagram);
+    if (this.instances) {
+      var adj = 0;
+      if (this.implementor.icon && this.implementor.icon.startsWith('shape:')) {
+        var shape = this.implementor.icon.substring(6);
+        if ('start' == shape || 'stop' == shape)
+          adj = 2;
+      }
+      diagram.drawState(this.display, this.instances, !diagram.drawBoxes, adj);
+    }
     
     if (this.implementor.icon) {
       var yAdjust = -2;
       if (this.implementor.icon.startsWith('shape:')) {
         var shape = this.implementor.icon.substring(6);
         if ('start' == shape) {
-          this.drawOval(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, 'green', 'white');
+          diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, 'green', 'white');
         }
         else if ('stop' == shape) {
-          this.drawOval(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, 'red', 'white');
+          diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, 'red', 'white');
         }
         else if ('decision' == shape) {
-          this.drawDiamond(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h);
+          diagram.drawDiamond(this.display.x, this.display.y, this.display.w, this.display.h);
           yAdjust = -8;
         }
         else if ('activity' == shape) {
-          diagram.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, Step.BOX_OUTLINE_COLOR);
+          diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);
         }
       }
       else {
         if (diagram.drawBoxes)
-          diagram.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, Step.BOX_OUTLINE_COLOR);
-        var iconImg = new Image();
-        iconImg.src = mdw.roots.hub + '/asset/' + this.implementor.icon;
-        var iconx = this.display.x + this.display.w / 2 - 12;
-        var icony = this.display.y + 5;
-        iconImg.onload = function() {
-          diagram.context.drawImage(iconImg, iconx, icony);
-        };
+          diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);
+        var iconSrc = mdw.roots.hub + '/asset/' + this.implementor.icon;
+        var iconX = this.display.x + this.display.w / 2 - 12;
+        var iconY = this.display.y + 5;
+        diagram.drawImage(iconSrc, iconX, iconY);
         yAdjust = +4; 
       }
     }
     else {
-      diagram.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, Step.BOX_OUTLINE_COLOR);
+      diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);
     }
 
     // title
@@ -77,9 +78,9 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
     });
     
     // logical id
-    diagram.context.fillStyle = Step.META_COLOR;
+    diagram.context.fillStyle = DC.META_COLOR;
     diagram.context.fillText(activity.id, this.display.x + 2, this.display.y - 2);
-    diagram.context.fillStyle = Step.DEFAULT_COLOR;
+    diagram.context.fillStyle = DC.DEFAULT_COLOR;
     
   };
   
@@ -104,13 +105,13 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
       var textMetrics = diagram.context.measureText(line.text);
       if (textMetrics.width > title.w)
         title.w = textMetrics.width;
-      title.h += Step.DEFAULT_FONT_SIZE;
+      title.h += DC.DEFAULT_FONT_SIZE;
       line.x = display.x + display.w / 2 - textMetrics.width / 2;
-      line.y = display.y + display.h / 2 + Step.DEFAULT_FONT_SIZE * (i + 0.5);
+      line.y = display.y + display.h / 2 + DC.DEFAULT_FONT_SIZE * (i + 0.5);
       if (line.x + textMetrics.width > maxDisplay.w)
         maxDisplay.w = line.x + textMetrics.width;
-      if (line.y + Step.DEFAULT_FONT_SIZE > maxDisplay.h)
-        maxDisplay.h = line.y + Step.DEFAULT_FONT_SIZE;
+      if (line.y + DC.DEFAULT_FONT_SIZE > maxDisplay.h)
+        maxDisplay.h = line.y + DC.DEFAULT_FONT_SIZE;
     }
 
     this.display = display;
@@ -122,114 +123,7 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
   Step.prototype.applyState = function(activityInstances) {
     this.instances = activityInstances;
   };
-  
-  Step.prototype.drawState = function(diagram) {
-    if (this.instances) {
-      var count = this.instances.length > Step.MAX_INSTS ? Step.MAX_INSTS : this.instances.length;
-      for (var i = 0; i < count; i++) {
-        var instance = this.instances[i];
-        if (instance.statusCode) {
-          var status = Step.STATUSES[instance.statusCode];
-          diagram.context.fillStyle = status.color;
-          var del = Step.INST_W - Step.OLD_INST_W;
-          if (!diagram.drawBoxes) {
-            var rem = count - i;
-            if (i == 0) {
-              diagram.context.fillRect(this.display.x - Step.OLD_INST_W * rem - del, 
-                  this.display.y - Step.OLD_INST_W * rem - del,
-                  this.display.w + Step.OLD_INST_W * 2* rem + 2 * del,
-                  this.display.h + Step.OLD_INST_W * 2 * rem + 2 * del);
-            } 
-            else {
-              diagram.context.fillRect(this.display.x - Step.OLD_INST_W * rem,
-                  this.display.y - Step.OLD_INST_W * rem,
-                  this.display.w + Step.OLD_INST_W * 2 * rem,
-                  this.display.h + Step.OLD_INST_W * 2 * rem);
-            }
-            rem--;
-            diagram.context.clearRect(this.display.x - Step.OLD_INST_W * rem - 1,
-                this.display.y - Step.OLD_INST_W * rem - 1,
-                this.display.w + Step.OLD_INST_W * 2 * rem + 2,
-                this.display.h + Step.OLD_INST_W * 2 * rem + 2);
-          }
-          else {
-            var x1, y1, w1, h1;
-            if (i == 0) {
-              diagram.context.fillRect(this.display.x, this.display.y, this.display.w, this.display.h);
-              x1 = this.display.x + del;
-              y1 = this.display.y + del;
-              w1 = this.display.w - 2 * del;
-              h1 = this.display.h - 2 * del;
-            } 
-            else {
-              x1 = this.display.x + Step.OLD_INST_W * i + del;
-              y1 = this.display.y + Step.OLD_INST_W * i + del;
-              w1 = this.display.w - Step.OLD_INST_W * 2 * i - 2 * del;
-              h1 = this.display.h - Step.OLD_INST_W * 2 * i - 2 * del;
-              if (w1 > 0 && h1 > 0)
-                diagram.context.fillRect(x1, y1, w1, h1);
-            }
-            x1 += Step.OLD_INST_W - 1;
-            y1 += Step.OLD_INST_W - 1;
-            w1 -= 2 * Step.OLD_INST_W - 2;
-            h1 -= 2 * Step.OLD_INST_W - 2;
-            if (w1 > 0 && h1 > 0)
-              diagram.context.clearRect(x1, y1, w1, h1);
-          }
-        }
-      }
-      diagram.context.fillStyle = Step.DEFAULT_COLOR;
-    }    
-  };
-  
-  Step.prototype.drawOval = function(context, x, y, w, h, fill, fadeTo) {
-    var kappa = 0.5522848;
-    var ox = (w / 2) * kappa; // control point offset horizontal
-    var oy = (h / 2) * kappa; // control point offset vertical
-    var xe = x + w; // x-end
-    var ye = y + h; // y-end
-    var xm = x + w / 2; // x-middle
-    var ym = y + h / 2; // y-middle
-
-    context.beginPath();
-    context.moveTo(x, ym);
-    context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-    context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-    context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-    context.closePath(); // not used correctly? (use to close off open path)
-    if (typeof fill === 'undefined') {
-      context.stroke();
-    }
-    else {
-      if (typeof fadeTo === 'undefined') {
-        context.fillStyle = fill;
-      }
-      else {
-        var gradient = context.createLinearGradient(x, y, x + w, y + h);
-        gradient.addColorStop(0, fill);
-        gradient.addColorStop(1, 'white');
-        context.fillStyle = gradient;
-      }
-      context.fill();
-      context.stroke();
-    }
-    context.fillStyle = Step.DEFAULT_COLOR;
-  };
-  
-  Step.prototype.drawDiamond = function(context, x, y, w, h) {
-    var xh = x + w / 2;
-    var yh = y + h / 2;
-    context.beginPath();
-    context.moveTo(x, yh);
-    context.lineTo(xh, y);
-    context.lineTo(x + w, yh);
-    context.lineTo(xh, y + h);
-    context.lineTo(x, yh);
-    context.closePath();
-    context.stroke();
-  };
-    
+      
   return Step;
     
 }]);

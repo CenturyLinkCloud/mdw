@@ -3,14 +3,13 @@
 
 var noteMod = angular.module('mdwNote', ['mdw']);
 
-noteMod.factory('Note', ['$document', 'mdw', 'util',
-                                function($document, mdw) {
+noteMod.factory('Note', ['$document', 'mdw', 'util', 'DC',
+                         function($document, mdw, DC) {
   var Note = function(textNote) {
     this.textNote = textNote;
     this.workflowType = 'textNote';
   };
   
-  Note.DEFAULT_FONT_SIZE = 12;
   Note.BOX_OUTLINE_COLOR = 'yellow';  
 
   Note.prototype.draw = function(diagram) {
@@ -18,7 +17,7 @@ noteMod.factory('Note', ['$document', 'mdw', 'util',
     if (this.textNote.content) {
       var lines = this.textNote.content.getLines();
       for (var i = 0; i < lines.length; i++) {
-        diagram.context.fillText(lines[i], this.display.x + 4, this.display.y + 2 + Note.DEFAULT_FONT_SIZE * (i + 1));
+        diagram.context.fillText(lines[i], this.display.x + 4, this.display.y + 2 + DC.DEFAULT_FONT_SIZE * (i + 1));
       }
     }
   };

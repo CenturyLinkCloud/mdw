@@ -123,7 +123,8 @@ public abstract class CanvasCommon extends JPanel
         g2.setStroke(normal_stroke);
         if (labelOrEventType!=null) {
             conn.label = new Label(g, labelOrEventType);
-            g.setColor(Color.DARK_GRAY);
+            if (conn.color != Color.LIGHT_GRAY)
+              g.setColor(Color.DARK_GRAY);
             conn.label.draw(g, conn.lx, conn.ly);
             g.setColor(conn.color);
         } else conn.label = null;
