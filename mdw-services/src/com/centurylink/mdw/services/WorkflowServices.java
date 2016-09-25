@@ -104,6 +104,7 @@ public interface WorkflowServices {
             throws ServiceException;
 
     ProcessInstanceVO getProcess(Long instanceId) throws ServiceException;
+    ProcessInstanceVO getProcess(Long instanceId, boolean withSubprocs) throws ServiceException;
 
     ProcessRuntimeContext getContext(Long instanceId) throws ServiceException;
 

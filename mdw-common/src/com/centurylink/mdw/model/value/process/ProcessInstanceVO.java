@@ -123,6 +123,12 @@ public class ProcessInstanceVO implements Serializable, Jsonable {
                 variables.add(new VariableInstanceInfo(variablesJson.getJSONObject(i)));
             }
         }
+        if (jsonObj.has("subprocesses")) {
+            JSONArray subprocsJson = jsonObj.getJSONArray("subprocesses");
+            subprocessInstances = new ArrayList<ProcessInstanceVO>();
+            for (int i = 0; i < subprocsJson.length(); i++)
+                subprocessInstances.add(new ProcessInstanceVO(subprocsJson.getJSONObject(i)));
+        }
         if (jsonObj.has("processName"))
             processName = jsonObj.getString("processName");
         if (jsonObj.has("processVersion"))
@@ -370,6 +376,13 @@ public class ProcessInstanceVO implements Serializable, Jsonable {
             }
             json.put("variables", variablesJson);
         }
+        if (subprocessInstances != null) {
+            JSONArray subprocsJson = new JSONArray();
+            for (ProcessInstanceVO subproc : subprocessInstances) {
+                subprocsJson.put(subproc.getJson());
+            }
+            json.put("subprocesses", subprocsJson);
+        }
         return json;
     }
 
@@ -429,10 +442,22 @@ public class ProcessInstanceVO implements Serializable, Jsonable {
             }
             json.put("variables", variablesJson);
         }
+        if (subprocessInstances != null) {
+            JSONArray subprocsJson = new JSONArray();
+            for (ProcessInstanceVO subproc : subprocessInstances) {
+                subprocsJson.put(subproc.getJson());
+            }
+            json.put("subprocesses", subprocsJson);
+        }
         return json;
     }
 
     public String getJsonName() {
         return "ProcessInstance";
     }
+
+    // embedded subprocesses only for new REST API
+    private List<ProcessInstanceVO> subprocessInstances;
+    public List<ProcessInstanceVO> getSubprocessInstances() { return subprocessInstances; }
+    public void setSubprocessInstances(List<ProcessInstanceVO> subinsts) { this.subprocessInstances = subinsts; }
 }

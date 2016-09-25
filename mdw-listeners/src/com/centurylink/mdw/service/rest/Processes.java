@@ -79,7 +79,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         }
                     }
                     else if ("summary".equalsIgnoreCase(segTwo)) {
-                        ProcessInstanceVO process = workflowServices.getProcess(instanceId);
+                        ProcessInstanceVO process = workflowServices.getProcess(instanceId, false);
                         JSONObject summary = new JSONObject();
                         summary.put("id", process.getId());
                         summary.put("name", process.getProcessName());
@@ -89,7 +89,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         return summary;
                     }
                     else {
-                        return workflowServices.getProcess(instanceId).getJson();
+                        return workflowServices.getProcess(instanceId, true).getJson();
                     }
                 }
                 catch (NumberFormatException ex) {

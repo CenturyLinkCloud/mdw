@@ -63,20 +63,26 @@ workflowMod.controller('MdwWorkflowController',
         // restore summary instance data
         $scope.process.id = instanceId;
         $scope.process.masterRequestId = masterRequestId; 
-        if (!$scope.implementors) {
-          $http({ method: 'GET', url: $scope.serviceBase + '/Implementors?pageletAsJson=true' })
-            .then(function success(response) {
-              $scope.implementors = response.data;
+        $http({ method: 'GET', url: $scope.serviceBase + '/Implementors?pageletAsJson=true' })
+          .then(function success(response) {
+            $scope.implementors = response.data;
+            if ($scope.process.id) {
+              $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id })
+                .then(function success(response) {
+                  $scope.instance = response.data;
+                  $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.instance);
+                  $scope.diagram.draw();
+                }, function error(response) {
+                  mdw.messages = response.statusText;
+              });
+            }
+            else {
               $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors);
               $scope.diagram.draw();
-            }, function error(response) {
-              mdw.messages = response.statusText;
-          });
-        }
-        else {
-          $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors);
-          $scope.diagram.draw();
-        }
+            }
+          }, function error(response) {
+            mdw.messages = response.statusText;
+        });
     });
   };
   
@@ -105,7 +111,7 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
     this.canvas = canvas;
     this.process = process;
     this.implementors = implementors;
-    this.instance = instance ? instance : null;
+    this.instance = instance;
     this.workflowType = 'process';
     this.context = this.canvas.getContext("2d");
   };
@@ -162,6 +168,8 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
       canvasDisplay.h = title.y + title.h;    
     this.title = title;
     this.context.font = Diagram.DEFAULT_FONT;
+
+    this.drawBoxes = this.process.attributes.NodeStyle == 'BoxIcon'; // TODO: we should make this the default
     
     var diagram = this;
     diagram.steps = [];
@@ -170,6 +178,8 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
         var step = new Step(activity);
         step.implementor = diagram.getImplementor(activity.implementor);
         diagram.makeRoom(canvasDisplay, step.prepareDisplay(diagram));
+        if (diagram.instance)
+          step.applyState(diagram.getActivityInstances(activity.id));
         diagram.steps.push(step);
       });
     }
@@ -188,6 +198,8 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
       this.process.subprocesses.forEach(function(subproc) {
         var subflow = new Subflow(subproc);
         diagram.makeRoom(canvasDisplay, subflow.prepareDisplay(diagram));
+        if (diagram.instance)
+          subflow.applyState(diagram.getSubflowInstances(subflow.subprocess.id));
         diagram.subflows.push(subflow);
       });
     }
@@ -258,6 +270,28 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
     }
     // not found -- return placeholder
     return { implementorClass: className };
+  };
+  
+  Diagram.prototype.getActivityInstances = function(id) {
+    if (this.instance && this.instance.activities) {
+      var insts = [];
+      this.instance.activities.forEach(function(actInst) {
+        if ('A' + actInst.activityId == id)
+          insts.push(actInst);
+      });
+      return insts;
+    }
+  };
+
+  Diagram.prototype.getSubflowInstances = function(id) {
+    if (this.instance && this.instance.subprocesses) {
+      var insts = [];
+      this.instance.subprocesses.forEach(function(subInst) {
+        if ('P' + subInst.processId == id)
+          insts.push(subInst);
+      });
+      return insts;
+    }
   };
   
   Diagram.prototype.drawRoundedBox = function(context, x, y, w, h, color) {
@@ -393,9 +427,12 @@ workflowMod.factory('Diagram', ['$document', 'mdw', 'util', 'Step', 'Link', 'Sub
 }]);
 
 // attributes
-//   - definition (object): packageName and name must be populated (version is optional)
-//   - instance (object):
-//   - service-root: endpoint base url
+//   - process (object): packageName and name must be populated
+//     optional process fields
+//       - version: for non-latest process version
+//       - id: if populated, then retrieve instance data
+//   - service-base: endpoint url root
+//   - hub-base: MDWHub url root
 workflowMod.directive('mdwWorkflow', [function() {
   return {
     restrict: 'E',

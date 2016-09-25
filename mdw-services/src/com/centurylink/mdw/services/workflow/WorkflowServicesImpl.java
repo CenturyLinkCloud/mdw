@@ -15,8 +15,10 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
+import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
+import com.centurylink.mdw.common.query.QueryRequest;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.utilities.FileHelper;
@@ -226,12 +228,33 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    @Override
     public ProcessInstanceVO getProcess(Long instanceId) throws ServiceException {
+        return getProcess(instanceId, false);
+    }
+
+    public ProcessInstanceVO getProcess(Long instanceId, boolean withSubprocs) throws ServiceException {
         try {
-            ProcessInstanceVO process = getRuntimeDataAccess().getProcessInstanceAll(instanceId);
+            RuntimeDataAccess runtimeDataAccess = getRuntimeDataAccess();
+            ProcessInstanceVO process = runtimeDataAccess.getProcessInstanceAll(instanceId);
             if (process == null)
                 throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + instanceId);
+            if (withSubprocs) {
+                // embedded subprocs
+                Map<String,String> criteria = new HashMap<String,String>();
+                criteria.put("owner", OwnerType.MAIN_PROCESS_INSTANCE);
+                criteria.put("ownerId", process.getId().toString());
+                criteria.put("processId", process.getProcessId().toString());
+                ProcessList subprocList = runtimeDataAccess.getProcessInstanceList(criteria, 0, QueryRequest.ALL_ROWS, "order by process_instance_id");
+                if (subprocList != null && subprocList.getItems() != null && subprocList.getItems().size() > 0) {
+                    List<ProcessInstanceVO> subprocs = new ArrayList<ProcessInstanceVO>();
+                    for (ProcessInstanceVO subproc : subprocList.getItems()) {
+                        ProcessInstanceVO fullsub = runtimeDataAccess.getProcessInstance(subproc.getId());
+                        fullsub.setProcessId(Long.parseLong(subproc.getComment()));
+                        subprocs.add(fullsub);
+                    }
+                    process.setSubprocessInstances(subprocs);
+                }
+            }
             return process;
         }
         catch (DataAccessException ex) {

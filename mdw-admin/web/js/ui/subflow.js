@@ -78,12 +78,39 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Step', 'Link',
     return maxDisplay;
   };
   
+  Subflow.prototype.applyState = function(subprocessInstances) {
+    this.instances = subprocessInstances;
+    if (this.instances) {
+      var subflow = this;
+      this.instances.forEach(function(instance) {
+        subflow.steps.forEach(function(step) {
+          step.applyState(subflow.getActivityInstances(step.activity.id));
+        });
+      });
+    }
+  };
+  
   Subflow.prototype.getStep = function(activityId) {
     for (var i = 0; i < this.steps.length; i++) {
       if (this.steps[i].activity.id === activityId)
         return this.steps[i];
     }
   };
-  
+
+  Subflow.prototype.getActivityInstances = function(id) {
+    if (this.instances) {
+      var actInsts = [];
+      this.instances.forEach(function(inst) {
+        if (inst.activities) {
+          inst.activities.forEach(function(actInst) {
+            if ('A' + actInst.activityId == id)
+              actInsts.push(actInst);
+          });
+        }
+      });
+      return actInsts;
+    }
+  };  
+    
   return Subflow;
 }]);

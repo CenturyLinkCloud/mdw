@@ -14,10 +14,28 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
   Step.DEFAULT_COLOR = 'black';
   Step.BOX_OUTLINE_COLOR = 'black';
   Step.META_COLOR = 'gray';
+  Step.INST_W = 8;
+  Step.OLD_INST_W = 4;
+  Step.MAX_INSTS = 10;
+  
+  Step.STATUSES = [
+    {status: 'Unknown', color: 'transparent'},
+    {status: 'Pending', color: 'blue'},
+    {status: 'In Progress', color: 'green'},
+    {status: 'Failed', color: 'red'},
+    {status: 'Completed', color: 'black'},
+    {status: 'Canceled', color: 'darkgray'},
+    {status: 'Hold', color: 'cyan'},
+    {status: 'Waiting', color: 'yellow'}
+  ];
 
   Step.prototype.draw = function(diagram) {
     var activity = this.workflowObj = this.activity;
 
+    // runtime state first
+    if (this.instances)
+      this.drawState(diagram);
+    
     if (this.implementor.icon) {
       var yAdjust = -2;
       if (this.implementor.icon.startsWith('shape:')) {
@@ -37,7 +55,8 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
         }
       }
       else {
-        diagram.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, Step.BOX_OUTLINE_COLOR);
+        if (diagram.drawBoxes)
+          diagram.drawRoundedBox(diagram.context, this.display.x, this.display.y, this.display.w, this.display.h, Step.BOX_OUTLINE_COLOR);
         var iconImg = new Image();
         iconImg.src = mdw.roots.hub + '/asset/' + this.implementor.icon;
         var iconx = this.display.x + this.display.w / 2 - 12;
@@ -61,6 +80,7 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
     diagram.context.fillStyle = Step.META_COLOR;
     diagram.context.fillText(activity.id, this.display.x + 2, this.display.y - 2);
     diagram.context.fillStyle = Step.DEFAULT_COLOR;
+    
   };
   
   // sets display/title and returns an object with w and h for required size
@@ -97,6 +117,69 @@ stepMod.factory('Step', ['mdw', 'util', function(mdw, util) {
     this.title = title;    
     
     return maxDisplay;
+  };
+  
+  Step.prototype.applyState = function(activityInstances) {
+    this.instances = activityInstances;
+  };
+  
+  Step.prototype.drawState = function(diagram) {
+    if (this.instances) {
+      var count = this.instances.length > Step.MAX_INSTS ? Step.MAX_INSTS : this.instances.length;
+      for (var i = 0; i < count; i++) {
+        var instance = this.instances[i];
+        if (instance.statusCode) {
+          var status = Step.STATUSES[instance.statusCode];
+          diagram.context.fillStyle = status.color;
+          var del = Step.INST_W - Step.OLD_INST_W;
+          if (!diagram.drawBoxes) {
+            var rem = count - i;
+            if (i == 0) {
+              diagram.context.fillRect(this.display.x - Step.OLD_INST_W * rem - del, 
+                  this.display.y - Step.OLD_INST_W * rem - del,
+                  this.display.w + Step.OLD_INST_W * 2* rem + 2 * del,
+                  this.display.h + Step.OLD_INST_W * 2 * rem + 2 * del);
+            } 
+            else {
+              diagram.context.fillRect(this.display.x - Step.OLD_INST_W * rem,
+                  this.display.y - Step.OLD_INST_W * rem,
+                  this.display.w + Step.OLD_INST_W * 2 * rem,
+                  this.display.h + Step.OLD_INST_W * 2 * rem);
+            }
+            rem--;
+            diagram.context.clearRect(this.display.x - Step.OLD_INST_W * rem - 1,
+                this.display.y - Step.OLD_INST_W * rem - 1,
+                this.display.w + Step.OLD_INST_W * 2 * rem + 2,
+                this.display.h + Step.OLD_INST_W * 2 * rem + 2);
+          }
+          else {
+            var x1, y1, w1, h1;
+            if (i == 0) {
+              diagram.context.fillRect(this.display.x, this.display.y, this.display.w, this.display.h);
+              x1 = this.display.x + del;
+              y1 = this.display.y + del;
+              w1 = this.display.w - 2 * del;
+              h1 = this.display.h - 2 * del;
+            } 
+            else {
+              x1 = this.display.x + Step.OLD_INST_W * i + del;
+              y1 = this.display.y + Step.OLD_INST_W * i + del;
+              w1 = this.display.w - Step.OLD_INST_W * 2 * i - 2 * del;
+              h1 = this.display.h - Step.OLD_INST_W * 2 * i - 2 * del;
+              if (w1 > 0 && h1 > 0)
+                diagram.context.fillRect(x1, y1, w1, h1);
+            }
+            x1 += Step.OLD_INST_W - 1;
+            y1 += Step.OLD_INST_W - 1;
+            w1 -= 2 * Step.OLD_INST_W - 2;
+            h1 -= 2 * Step.OLD_INST_W - 2;
+            if (w1 > 0 && h1 > 0)
+              diagram.context.clearRect(x1, y1, w1, h1);
+          }
+        }
+      }
+      diagram.context.fillStyle = Step.DEFAULT_COLOR;
+    }    
   };
   
   Step.prototype.drawOval = function(context, x, y, w, h, fill, fadeTo) {
