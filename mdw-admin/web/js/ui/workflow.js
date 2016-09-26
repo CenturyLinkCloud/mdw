@@ -328,7 +328,7 @@ workflowMod.factory('Diagram',
           var del = Step.INST_W - Step.OLD_INST_W;
           if (ext) {
             var rem = count - i;
-            if (i == 0) {
+            if (i === 0) {
               this.rect(
                   display.x - Step.OLD_INST_W * rem - del, 
                   display.y - Step.OLD_INST_W * rem - del,
@@ -353,7 +353,7 @@ workflowMod.factory('Diagram',
           }
           else {
             var x1, y1, w1, h1;
-            if (i == 0) {
+            if (i === 0) {
               this.rect(
                   display.x - adj, 
                   display.y - adj, 
@@ -481,7 +481,7 @@ workflowMod.factory('Diagram',
     img.onload = function() {
       context.drawImage(img, x, y);
     };
-  }
+  };
   
   Diagram.prototype.onMouseClick = function(e) {
     var rect = this.canvas.getBoundingClientRect();

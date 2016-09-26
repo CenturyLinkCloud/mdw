@@ -120,13 +120,6 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
     }
   };
   
-  $scope.getFullWidthDivStyle = function() {
-    if (isFullWidth)
-      return { width: '100%' };
-    else
-      return { 'overflow-x': 'auto' };    
-  }
-  
   // implies full width mode
   $scope.setNavMenuWidth = function(w) {
     if (w)
@@ -135,7 +128,7 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   
   $scope.setFullWidth = function(fullWidth) {
     $scope.isFullWidth = fullWidth;
-  }
+  };
   
   $scope.isMobile = util.isMobile() || 'true' === util.urlParams().mdwMobile;
   $scope.isDebug = 'true' === util.urlParams().mdwDebug;

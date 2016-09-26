@@ -135,7 +135,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
           if (value.length > colWidths[h])
             colWidths[h] = value.length;
           valueRow.push(value);
-        };
+        }
         values.push(valueRow);
       });
 
@@ -157,7 +157,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
             field.pad = util.padTrailing('', colWidths[j] - values[i][j].length + colSpacing);
           fields.push(field);
         }
-        if (i == 0) // only first element needs names
+        if (i === 0) // only first element needs names
           $scope.activeTabValues.push({names: names, values: fields});
         else
           $scope.activeTabValues.push({values: fields});
@@ -166,11 +166,11 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
     else if (typeof $scope.activeTab === 'object') {
       // evaluate each object prop against tabInfo object
       var tabObj = tabInfo;
-      for (var prop in $scope.activeTab) {
-        if ($scope.activeTab.hasOwnProperty(prop)) {
+      for (var atProp in $scope.activeTab) {
+        if ($scope.activeTab.hasOwnProperty(atProp)) {
           $scope.activeTabValues.push({
-            name: prop,
-            value: tabObj[$scope.activeTab[prop]]
+            name: atProp,
+            value: tabObj[$scope.activeTab[atProp]]
           });
         }
       }
@@ -211,7 +211,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
               else if (prop == 'processname') {
                 val.asset = { 
                   path: val.value + '.proc', 
-                  version: tabInfo['processversion']
+                  version: tabInfo.processversion
                 };
               }
               else if (prop == 'processmap') {
@@ -281,7 +281,6 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
       
       // show
       Inspector.listen(function(obj) {
-        var obj = Inspector.getObj();
         scope.setWorkflow(obj);
         scope.$apply();
         

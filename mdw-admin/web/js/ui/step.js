@@ -28,22 +28,21 @@ stepMod.factory('Step', ['mdw', 'util', 'DC',
 
   Step.prototype.draw = function(diagram) {
     var activity = this.workflowObj = this.activity;
-
+    var shape;
+    if (this.implementor.icon && this.implementor.icon.startsWith('shape:'))
+      shape = this.implementor.icon.substring(6);
+    
     // runtime state first
     if (this.instances) {
       var adj = 0;
-      if (this.implementor.icon && this.implementor.icon.startsWith('shape:')) {
-        var shape = this.implementor.icon.substring(6);
-        if ('start' == shape || 'stop' == shape)
-          adj = 2;
-      }
+      if (shape == 'start' || shape == 'stop')
+        adj = 2;
       diagram.drawState(this.display, this.instances, !diagram.drawBoxes, adj);
     }
     
     if (this.implementor.icon) {
       var yAdjust = -2;
-      if (this.implementor.icon.startsWith('shape:')) {
-        var shape = this.implementor.icon.substring(6);
+      if (shape) {
         if ('start' == shape) {
           diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, 'green', 'white');
         }

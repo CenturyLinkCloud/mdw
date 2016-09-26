@@ -100,5 +100,5 @@ inspectorTabSvc.factory('InspectorTabs', ['mdw', function(mdw) {
       // beyond those identified by _assetVersion
       'TASK_PAGELET' 
     ]
-  }
+  };
 }]);

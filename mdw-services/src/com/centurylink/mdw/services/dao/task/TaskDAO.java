@@ -2890,12 +2890,12 @@ public class TaskDAO extends CommonDataAccess {
     public TaskList getTaskInstances(Query query) throws DataAccessException {
         long start = System.currentTimeMillis();
         StringBuilder sql = new StringBuilder();
+        if (query.getMax() != -1)
+            sql.append(db.pagingQueryPrefix());
+
         sql.append("select ").append(TASK_INSTANCE_SELECT).append("\n");
         StringBuilder countSql = new StringBuilder();
         countSql.append("select count(ti.task_instance_id)\n");
-
-        if (query.getMax() != -1)
-          sql.append(db.pagingQueryPrefix());
 
         if (db.isMySQL()) {
             sql.append("from task_instance ti left join user_info ui on ui.user_info_id = ti.task_claim_user_id\n");

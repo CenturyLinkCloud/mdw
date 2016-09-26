@@ -73,7 +73,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     // todo draw shape
 
     // title
-    if (diagram.instance && (!this.instances || this.instances.length == 0))
+    if (diagram.instance && (!this.instances || this.instances.length === 0))
       diagram.context.fillStyle = Link.UNTRAVERSED;
     diagram.context.fillText(this.title.text, this.title.x, this.title.y);
     diagram.context.strokeStyle = DC.DEFAULT_COLOR;
