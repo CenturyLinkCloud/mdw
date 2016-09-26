@@ -69,11 +69,19 @@ utilMod.factory('util', function() {
       return ret;
     },
     padLeading: function(str, len, ch) {
-      var ret = '' + str; // convert so 
+      var ret = '' + str; // convert if nec.
       if (!ch)
         ch = ' ';
       while (ret.length < len)
         ret = ch + ret;
+      return ret;
+    },
+    padTrailing: function(str, len, ch) {
+      var ret = '' + str; // convert if nec.
+      if (!ch)
+        ch = ' ';
+      while (ret.length < len)
+        ret = ret + ch;
       return ret;
     },
     isMobile: function() {
@@ -91,8 +99,14 @@ utilMod.factory('util', function() {
        params[decodeURIComponent(match[1])] = decodeURIComponent(match[2]);
       return params;
     },
-    languages: {
-      
+    getProperties: function(obj) {
+      var props = [];
+      for (var prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+          props.push(prop);
+        }
+      }
+      return props;
     }
   };
 });

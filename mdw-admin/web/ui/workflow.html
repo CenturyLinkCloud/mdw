@@ -21,22 +21,41 @@
             <a href="" ng-click="setActiveTab(name)">{{name}}</a>
           </li>
         </ul>
-        <div class="mdw-inspector-values">
+        <!-- tab values for object -->
+        <div class="mdw-inspector-values" ng-if="!activeTabValues[0].values && !drilledValue">
           <div ng-repeat="tabValue in activeTabValues" style="display:flex" ng-if="!drilledValue">
-            <div class="mdw-inspector-label" ng-if="tabValue.multiline">
+            <div class="mdw-inspector-label" ng-if="tabValue.name && tabValue.multiline">
               <a href="" ng-click="drillIn(tabValue)">{{tabValue.name}}</a>:
             </div>
-            <div class="mdw-inspector-label" ng-if="!tabValue.multiline">
+            <div class="mdw-inspector-label" ng-if="tabValue.name && !tabValue.multiline">
               {{tabValue.name}}:
             </div>
             <div class="mdw-inspector-value" ng-if="tabValue.asset.path && tabValue.asset.url">
               <a href="{{tabValue.asset.url}}">{{tabValue.asset.path}}</a> {{tabValue.asset.version}}
             </div>
-            <div class="mdw-inspector-value" ng-if="!tabValue.asset.path || !tabValue.asset.url">
+            <div class="mdw-inspector-value" ng-if="tabValue.name && (!tabValue.asset.path || !tabValue.asset.url)">
               {{tabValue.value}}
             </div>
           </div>
+        </div>
+        <!-- tab values for array of object -->
+        <div class="mdw-inspector-values" ng-if="activeTabValues[0].values && !drilledValue">
+          <div ng-repeat="tabValue in activeTabValues" ng-if="!drilledValue">
+            <div class="mdw-inspector-value" ng-if="tabValue.names && $index == 0">
+              <span class="mdw-pre" ng-repeat="name in tabValue.names"><span class="mdw-ul">{{name.name}}</span>{{name.pad}}</span>
+            </div>
+            <div class="mdw-inspector-value" ng-if="tabValue.values">
+              <span class="mdw-pre" ng-repeat="value in tabValue.values">{{value.value}}{{value.pad}}</span>
+            </div>
+          </div>
           <div class="mdw-resource-content" ng-if="drilledValue">
+            <pre><code class="mdw-code" 
+              ng-bind-html="drilledValue.value | highlight:drilledValue.language | unsafe"></code></pre>
+          </div>
+        </div>
+        <!-- temporary drilled-in value -->
+        <div class="mdw-inspector-values" ng-if="drilledValue">
+          <div class="mdw-resource-content">
             <pre><code class="mdw-code" 
               ng-bind-html="drilledValue.value | highlight:drilledValue.language | unsafe"></code></pre>
           </div>

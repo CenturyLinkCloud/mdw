@@ -643,6 +643,12 @@
   max-width: 100%;
   overflow-x: auto;
 }
+.mdw-pre {
+  white-space: pre;
+}
+.mdw-ul {
+  text-decoration: underline;
+}
 
 .mdw-workflow {
 }
@@ -701,7 +707,7 @@
   font-family: monospace;
   font-size: 12px;
   width: 100%;
-  border: 1px inset;
+  border: 1px solid lightgray;
   border-radius: 4px;
   margin: 12px;  
   padding: 8px;

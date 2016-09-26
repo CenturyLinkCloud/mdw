@@ -21,6 +21,8 @@ import com.centurylink.mdw.common.service.JsonListMap;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.utilities.StringHelper;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.value.process.ProcessCount;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
@@ -89,7 +91,9 @@ public class Processes extends JsonRestService implements JsonExportable {
                         return summary;
                     }
                     else {
-                        return workflowServices.getProcess(instanceId, true).getJson();
+                        JSONObject json = workflowServices.getProcess(instanceId, true).getJson();
+                        json.put("retrieveDate", StringHelper.serviceDateToString(DatabaseAccess.getDbDate()));
+                        return json;
                     }
                 }
                 catch (NumberFormatException ex) {

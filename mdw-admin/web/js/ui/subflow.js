@@ -111,6 +111,9 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'DC', 'Step', 'Link',
           });
         }
       });
+      actInsts.sort(function(a1, a2) {
+        return a2.id - a1.id;
+      });
       return actInsts;
     }
   };  

@@ -269,33 +269,48 @@ workflowMod.factory('Diagram',
   };
   
   Diagram.prototype.getActivityInstances = function(id) {
-    if (this.instance && this.instance.activities) {
-      var insts = [];
-      this.instance.activities.forEach(function(actInst) {
-        if ('A' + actInst.activityId == id)
-          insts.push(actInst);
+    if (this.instance) {
+      var insts = [];  // should always return something, even if empty
+      if (this.instance.activities) {
+        this.instance.activities.forEach(function(actInst) {
+          if ('A' + actInst.activityId == id)
+            insts.push(actInst);
+        });
+      }
+      insts.sort(function(a1, a2) {
+        return a2.id - a1.id;
       });
       return insts;
     }
   };
 
   Diagram.prototype.getTransitionInstances = function(id) {
-    if (this.instance && this.instance.transitions) {
-      var insts = [];
-      this.instance.transitions.forEach(function(transInst) {
-        if ('T' + transInst.transitionId == id)
-          insts.push(transInst);
+    if (this.instance) {
+      var insts = [];  // should always return something, even if empty
+      if (this.instance.transitions) {
+        this.instance.transitions.forEach(function(transInst) {
+          if ('T' + transInst.transitionId == id)
+            insts.push(transInst);
+        });
+      }
+      insts.sort(function(t1, t2) {
+        return t2.id - t1.id;
       });
       return insts;
     }
   };
 
   Diagram.prototype.getSubflowInstances = function(id) {
-    if (this.instance && this.instance.subprocesses) {
-      var insts = [];
-      this.instance.subprocesses.forEach(function(subInst) {
-        if ('P' + subInst.processId == id)
-          insts.push(subInst);
+    if (this.instance) {
+      var insts = [];  // should always return something, even if empty
+      if (this.instance.subprocesses) {
+        this.instance.subprocesses.forEach(function(subInst) {
+          if ('P' + subInst.processId == id)
+            insts.push(subInst);
+        });
+      }
+      insts.sort(function(s1, s2) {
+        return s2.id - s1.id;
       });
       return insts;
     }
@@ -309,6 +324,7 @@ workflowMod.factory('Diagram',
         var rounding = DC.BOX_ROUNDING_RADIUS;
         if (instance.statusCode) {
           var status = Step.STATUSES[instance.statusCode];
+          instance.status = status.status;
           var del = Step.INST_W - Step.OLD_INST_W;
           if (ext) {
             var rem = count - i;
