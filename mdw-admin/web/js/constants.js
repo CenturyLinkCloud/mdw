@@ -19,11 +19,13 @@ constantsMod.constant('DOCUMENT_TYPES', {
   'org.w3c.dom.Document': 'xml',
   'org.apache.xmlbeans.XmlObject': 'xml',
   'java.lang.Object': 'java',
-  'org.json.JSONObject': 'text',
-  'groovy.util.Node': 'groovy',
+  'org.json.JSONObject': 'json',
+  'groovy.util.Node': 'xml',
   'com.centurylink.mdw.xml.XmlBeanWrapper': 'xml',
   'com.centurylink.mdw.model.StringDocument': 'text',
   'com.centurylink.mdw.model.HTMLDocument': 'html',
   'javax.xml.bind.JAXBElement': 'xml',
-  'org.apache.camel.component.cxf.CxfPayload': 'xml'
+  'org.apache.camel.component.cxf.CxfPayload': 'xml',
+  'com.centurylink.mdw.common.service.Jsonable': 'json',
+  'org.yaml.snakeyaml.Yaml': 'yaml'
 });

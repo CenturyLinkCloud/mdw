@@ -1,6 +1,6 @@
-<div class="row">
-  <div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/admin-nav.html'"></div>
-  <div class="col-md-10">
+<div class="row" style="display:flex;">
+  <div class="mdw-sidebar" ng-include="'layout/admin-nav.html'"></div>
+  <div class="mdw-panel-full-width">
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
@@ -24,10 +24,7 @@
         </div>
       </div>
         <div class="mdw-image-container" ng-if="asset.language == 'proc' && asset.view == 'content' && asset.content">
-          <!-- 
-          <img ng-src="{{asset.workflowImageUrl}}" alt="asset.name" />
-           -->
-          <canvas mdw-workflow="process"></canvas> 
+          <mdw-workflow process="process" render-state="true" service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}">
         </div>
       <div class="mdw-item-content" ng-if="asset.view == 'content' && asset.content">
         <pre ng-if="!asset.isBinary && !asset.isMarkdown && asset.language != 'proc'" class="mdw-line-nums">{{asset.lineNums}}</pre>

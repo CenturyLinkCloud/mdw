@@ -88,19 +88,22 @@ processMod.controller('ProcessesController', ['$scope', '$http', 'mdw', 'util', 
   
 }]);
 
-processMod.controller('ProcessController', ['$scope', '$route', '$routeParams', 'mdw', 'Process', 'ProcessSummary',
-                                            function($scope, $route, $routeParams, mdw, Process, ProcessSummary) {
+processMod.controller('ProcessController', 
+    ['$scope', '$route', '$routeParams', 'mdw', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES',
+     function($scope, $route, $routeParams, mdw, Process, ProcessSummary, DOCUMENT_TYPES) {
   
   $scope.retrieveProcess = function() {
     $scope.process = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'summary'}, function() {
       ProcessSummary.set($scope.process);
     });    
-  }
+  };
   
   if ($route.current.originalPath.endsWith('/values') || $routeParams.name) {
     if ($routeParams.name) {
       $scope.value = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'values', valueName: $routeParams.name}, function() {
         $scope.value.name = $routeParams.name;
+        if ($scope.value.type)
+          $scope.value.format = DOCUMENT_TYPES[$scope.value.type];
       });
     }
     else {
