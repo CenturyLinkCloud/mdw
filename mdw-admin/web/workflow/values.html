@@ -8,13 +8,11 @@
       <ul class="mdw-list">
         <li ng-repeat="(name, value) in values">
           <div>
-            <a class="mdw-item-link" href="#//workflow/processes/{{process.id}}/values/{{name}}">{{name}}</a>
+            <a class="mdw-item-link" href="#/workflow/processes/{{process.id}}/values/{{name}}">{{name}}</a>
           </div>
-          <div class="mdw-item-sub">{{value.type}}</div>
-          <div class="mdw-item-sub">
-            <i class="mdw-item-highlight">{{value.value | lineLimit: 80}}
-              <span ng-if="value.value.getLines().length > 1">...</span>
-            </i>
+          <div class="mdw-item-sub" style="font-weight:bold">
+            {{value.value | lineLimit: 80}}
+            <span ng-if="value.value.getLines().length > 1">...</span>
           </div>          
         </li>
       </ul>

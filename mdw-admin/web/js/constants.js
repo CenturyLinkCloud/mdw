@@ -15,6 +15,15 @@ constantsMod.constant('EXCEL_DOWNLOAD', 'DownloadFormat=xlsx');
 constantsMod.constant('JSON_DOWNLOAD', 'DownloadFormat=json');
 constantsMod.constant('ZIP_DOWNLOAD', 'DownloadFormat=zip');
 
-constantsMod.constant('DOCUMENT_TYPES', ['org.w3c.dom.Document', 'org.apache.xmlbeans.XmlObject', 'java.lang.Object', 'org.json.JSONObject',
-                                         'groovy.util.Node', 'com.centurylink.mdw.xml.XmlBeanWrapper', 'com.centurylink.mdw.model.StringDocument',
-                                         'com.centurylink.mdw.model.HTMLDocument', 'javax.xml.bind.JAXBElement', 'org.apache.camel.component.cxf.CxfPayload']);
+constantsMod.constant('DOCUMENT_TYPES', {
+  'org.w3c.dom.Document': 'xml',
+  'org.apache.xmlbeans.XmlObject': 'xml',
+  'java.lang.Object': 'java',
+  'org.json.JSONObject': 'text',
+  'groovy.util.Node': 'groovy',
+  'com.centurylink.mdw.xml.XmlBeanWrapper': 'xml',
+  'com.centurylink.mdw.model.StringDocument': 'text',
+  'com.centurylink.mdw.model.HTMLDocument': 'html',
+  'javax.xml.bind.JAXBElement': 'xml',
+  'org.apache.camel.component.cxf.CxfPayload': 'xml'
+});

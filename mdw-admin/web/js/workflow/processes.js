@@ -97,10 +97,18 @@ processMod.controller('ProcessController', ['$scope', '$route', '$routeParams', 
     });    
   }
   
-  if ($route.current.originalPath.endsWith('/values')) {
-    $scope.values = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'values'});
+  if ($route.current.originalPath.endsWith('/values') || $routeParams.name) {
+    if ($routeParams.name) {
+      $scope.value = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'values', valueName: $routeParams.name}, function() {
+        $scope.value.name = $routeParams.name;
+      });
+    }
+    else {
+      $scope.values = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'values'});
+    }
+    
     $scope.process = ProcessSummary.get();
-    if ($scope.process) {
+    if (!$scope.process) {
       $scope.retrieveProcess();
     }
   }
@@ -110,21 +118,7 @@ processMod.controller('ProcessController', ['$scope', '$route', '$routeParams', 
 }]);
 
 processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/Services/Processes/:instanceId/:extra', mdw.serviceParams(), {
-    retrieve: { method: 'GET', isArray: false }
-  });
-}]);
-
-processMod.controller('ProcessValuesController', ['$scope','$route', '$routeParams', 'mdw', 'Process', 'ProcessSummary',
-                                            function($scope, $route, $routeParams, mdw, Process, ProcessSummary) {
-  $scope.process = ProcessValues.retrieve({instanceId: $routeParams.instanceId, extra: 'values'}, function() {
-    ProcessSummary.get($scope.process);
-  });  
-    
-}]);
-
-processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/Services/Processes/:instanceId/:extra', mdw.serviceParams(), {
+  return $resource(mdw.roots.services + '/Services/Processes/:instanceId/:extra/:valueName', mdw.serviceParams(), {
     retrieve: { method: 'GET', isArray: false }
   });
 }]);

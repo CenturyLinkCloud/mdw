@@ -153,6 +153,9 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
         var fields = [];
         for (var j = 0; j < values[i].length; j++) {
           var field = {value: values[i][j] };
+          if (field.value.startsWith('DOCUMENT:')) {
+            field.url = '#/workflow/processes/' + $scope.workflowObject.id + '/values/' + fields[j-1].value;
+          }
           if (j < values[i].length - 1)
             field.pad = util.padTrailing('', colWidths[j] - values[i][j].length + colSpacing);
           fields.push(field);

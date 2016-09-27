@@ -403,6 +403,10 @@
 .mdw-item-action a:visited {
   text-decoration: none;
 }
+.mdw-resource-info {
+  font-size: 13px;
+  margin-bottom: 5px;
+}
 .mdw-resource-content {
   background-color: #f3f3f3;
   padding: 5px;
