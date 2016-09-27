@@ -108,6 +108,7 @@ public interface WorkflowServices {
 
     ProcessRuntimeContext getContext(Long instanceId) throws ServiceException;
 
+    Map<String,Value> getProcessValues(Long instanceId, boolean includeEmpty) throws ServiceException;
     Map<String,Value> getProcessValues(Long instanceId) throws ServiceException;
     Value getProcessValue(Long instanceId, String name) throws ServiceException;
 

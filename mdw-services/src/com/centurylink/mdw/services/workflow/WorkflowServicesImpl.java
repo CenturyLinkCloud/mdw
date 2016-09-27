@@ -51,6 +51,7 @@ import com.centurylink.mdw.model.value.user.UserActionVO.Action;
 import com.centurylink.mdw.model.value.variable.DocumentReference;
 import com.centurylink.mdw.model.value.variable.DocumentVO;
 import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
+import com.centurylink.mdw.model.value.variable.VariableVO;
 import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
@@ -263,20 +264,64 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public Map<String,Value> getProcessValues(Long instanceId) throws ServiceException {
+        return getProcessValues(instanceId, false);
+    }
+
+    public Map<String,Value> getProcessValues(Long instanceId, boolean includeEmpty) throws ServiceException {
         ProcessRuntimeContext runtimeContext = getContext(instanceId);
         Map<String,Value> values = new HashMap<String,Value>();
+        Map<String,VariableVO> varDefs = getVariableDefinitions(runtimeContext.getProcessId());
+
         Map<String,Object> variables = runtimeContext.getVariables();
         if (variables != null) {
             for (String key : variables.keySet()) {
                 String stringVal = runtimeContext.getValueAsString(key);
                 if (stringVal != null) {
-                    Value value = new Value(key, stringVal);
+                    VariableVO varDef = varDefs.get(key);
+                    Value value;
+                    if (varDef != null)
+                        value = toValue(varDef);
+                    else
+                        value = new Value(key);
+                    value.setValue(stringVal);
                     values.put(key, value);
-                    // TODO: process labels, etc (like autoform)
                 }
             }
         }
+        if (includeEmpty) {
+            for (String name : varDefs.keySet()) {
+                if (!values.containsKey(name))
+                    values.put(name, toValue(varDefs.get(name)));
+            }
+        }
         return values;
+    }
+
+    protected Value toValue(VariableVO varDef) {
+        Value value = new Value(varDef.getName());
+        value.setType(varDef.getVariableType());
+        if (varDef.getDisplayMode() != null)
+            value.setDisplay(Value.getDisplay(varDef.getDisplayMode()));
+        if (varDef.getDisplaySequence() != null)
+            value.setSequence(varDef.getDisplaySequence());
+        if (varDef.getVariableReferredAs() != null)
+            value.setLabel(varDef.getVariableReferredAs());
+        return value;
+    }
+
+    /**
+     * @param runtimeContext
+     * @return
+     */
+    protected Map<String,VariableVO> getVariableDefinitions(Long processId) {
+        ProcessVO processVo = ProcessVOCache.getProcessVO(processId);
+        Map<String,VariableVO> varDefs = new HashMap<String,VariableVO>();
+        List<VariableVO> varVos = processVo.getVariables();
+        if (varVos != null) {
+            for (VariableVO var : varVos)
+                varDefs.put(var.getName(), var);
+        }
+        return varDefs;
     }
 
     public Value getProcessValue(Long instanceId, String name) throws ServiceException {
@@ -286,8 +331,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
         String stringVal = runtimeContext.getValueAsString(name);
         if (stringVal == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "No value '" + name + "' found for instance: " + instanceId);
-        Value value = new Value(name, stringVal);
-        // TODO: process labels, etc (like autoform)
+        VariableVO varDef = getVariableDefinitions(runtimeContext.getProcessId()).get(name);
+        Value value;
+        if (varDef != null)
+            value = toValue(varDef);
+        else
+            value = new Value(name);
+        value.setValue(stringVal);
         return value;
     }
 

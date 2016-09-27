@@ -126,4 +126,20 @@ public class Value implements Jsonable {
         else
             return null;
     }
+
+    /**
+     * Maps VariableVO display mode to Display type.
+     */
+    public static Display getDisplay(int mode) {
+        if (mode == 0)
+            return Display.Required;
+        else if (mode == 1)
+            return Display.Optional;
+        else if (mode == 2)
+            return Display.ReadOnly;
+        else if (mode == 3)
+            return Display.Hidden;
+        else
+            return null;
+    }
 }
