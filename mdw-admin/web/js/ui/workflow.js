@@ -272,9 +272,12 @@ workflowMod.factory('Diagram',
     if (this.instance) {
       var insts = [];  // should always return something, even if empty
       if (this.instance.activities) {
+        var procInstId = this.instance.id;
         this.instance.activities.forEach(function(actInst) {
-          if ('A' + actInst.activityId == id)
+          if ('A' + actInst.activityId == id) {
+            actInst.processInstanceId = procInstId; // needed for subprocess instance retrieval
             insts.push(actInst);
+          }
         });
       }
       insts.sort(function(a1, a2) {

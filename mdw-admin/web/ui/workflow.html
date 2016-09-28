@@ -24,10 +24,10 @@
         <!-- tab values for object -->
         <div class="mdw-inspector-values" ng-if="!activeTabValues[0].values && !drilledValue">
           <div ng-repeat="tabValue in activeTabValues" style="display:flex" ng-if="!drilledValue">
-            <div class="mdw-inspector-label" ng-if="tabValue.name && tabValue.multiline">
+            <div class="mdw-inspector-label" ng-if="tabValue.name && tabValue.extended">
               <a href="" ng-click="drillIn(tabValue)">{{tabValue.name}}</a>:
             </div>
-            <div class="mdw-inspector-label" ng-if="tabValue.name && !tabValue.multiline">
+            <div class="mdw-inspector-label" ng-if="tabValue.name && !tabValue.extended">
               {{tabValue.name}}:
             </div>
             <div class="mdw-inspector-value" ng-if="tabValue.asset.path && tabValue.asset.url">
@@ -45,7 +45,7 @@
               <span class="mdw-pre" ng-repeat="name in tabValue.names"><span class="mdw-ul">{{name.name}}</span>{{name.pad}}</span>
             </div>
             <div class="mdw-inspector-value" ng-if="tabValue.values">
-              <span class="mdw-pre" ng-repeat="value in tabValue.values"><a href="{{value.url}}" ng-if="value.url">{{value.value}}</a><span ng-if="!value.url">{{value.value}}</span>{{value.pad}}</span>
+              <span class="mdw-pre" ng-repeat="value in tabValue.values"><a href="{{value.url}}" ng-if="value.url">{{value.value}}</a><a href="" ng-if="value.extended" ng-click="drillIn(value)">{{value.value}}</a><span ng-if="!value.url && !value.extended">{{value.value}}</span>{{value.pad}}</span>
             </div>
           </div>
           <div class="mdw-resource-content" ng-if="drilledValue">
@@ -57,7 +57,7 @@
         <div class="mdw-inspector-values" ng-if="drilledValue">
           <div class="mdw-resource-content">
             <pre><code class="mdw-code" 
-              ng-bind-html="drilledValue.value | highlight:drilledValue.language | unsafe"></code></pre>
+              ng-bind-html="drilledValue.full | highlight:drilledValue.language | unsafe"></code></pre>
           </div>
         </div>
       </div>

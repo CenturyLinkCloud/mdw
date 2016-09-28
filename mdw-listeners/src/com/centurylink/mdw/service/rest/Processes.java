@@ -51,8 +51,9 @@ public class Processes extends JsonRestService implements JsonExportable {
     @Override
     @Path("/{instanceId|special}/{subData}/{subId}")
     @ApiOperation(value="Retrieve a process or process values, query many processes, or perform throughput queries",
-        notes="If instanceId and special are not present, returns a page of processes that meet query criteria."
-          + " Parameter {subData} can currently only be 'values', and then {subId} can be varName or expression",
+        notes="If instanceId and special are not present, returns a page of processes that meet query criteria. "
+          + "If {subData} is 'values', and then {subId} can be varName or expression (otherwise all populated values are returned). "
+          + "If {subData} is 'summary' then a only summary-level process info is returned.",
         response=ProcessInstanceVO.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {

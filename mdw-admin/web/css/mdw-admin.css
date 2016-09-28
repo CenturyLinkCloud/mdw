@@ -682,6 +682,7 @@
 }
 .mdw-inspector-tabs {
   background-color: #eeeeee;
+  width: 132px;
 }
 .mdw-inspector-tabs ul {
   padding: 0;

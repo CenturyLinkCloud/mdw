@@ -25,7 +25,11 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
     var filteredTabs = {};
     util.getProperties($scope.tabs).forEach(function(tabName) {
       var tab = $scope.tabs[tabName];
-      if (!tab.condition || $parse(tab.condition)($scope)) {
+      if (typeof tab == 'function') {
+        if (tab($scope.workflowType, $scope.workflowObject))
+          filteredTabs[tabName] = tab;
+      }
+      else {
         filteredTabs[tabName] = tab;
       }
     });
@@ -55,31 +59,68 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
       // array is runtime obj itself (eg: instance.activity.Instances)
       tabArr = $scope.activeTab;
     }
+    else if (typeof $scope.activeTab == 'function') {
+    }
     else if (typeof $scope.activeTab === 'object') {
       var tabProps = util.getProperties($scope.activeTab);
       if (tabProps[0]) {
         if ($scope.activeTab[tabProps[0]] instanceof Array) {
-          // array is first object property (eg: instance.process.Values)
-          tabArr = $scope.activeTab[tabProps[0]];
-          tabInfo = tabInfo[tabProps[0]];
-          if ($scope.runtimeInfo && $scope.workflowObject[tabProps[0]]) {
-            // special handling in case workflowObj specifies values not in runtime
-            var wfArrObj = $scope.workflowObject[tabProps[0]];
-            var wfArrObjProps = util.getProperties(wfArrObj);
-            wfArrObjProps.forEach(function(wfArrObjProp) {
-              var found;
-              for (var n = 0; n < tabInfo.length; n++) {
-                if (tabInfo[n].name == wfArrObjProp) {
-                  found = true;
-                  break;
-                }
-              }
-              if (!found) {
-                var toAdd = wfArrObj[wfArrObjProp];
-                toAdd.name = wfArrObjProp;
-                tabInfo.push(toAdd);
-              }
+          if (typeof $scope.activeTab[tabProps[1]] == 'function') {
+            // array is first prop, function is second (eg: instance.activities.Subprocesses)
+            var listName = tabProps[0];
+            tabArr = $scope.activeTab[listName];
+            var passedTabArr = [{}]; 
+            var itsObj = $scope.activeTab[tabProps[0]][0];
+            var itsProps = util.getProperties(itsObj);
+            var promise = $scope.activeTab[tabProps[1]]($scope.workflowType, $scope.workflowObject, $scope.runtimeInfo);
+            promise.then(function(resArr) {
+              var tabInfo = [];
+              resArr.forEach(function(result) {
+                result.data[listName].forEach(function(it) {
+                  var item = {};
+                  itsProps.forEach(function(itsProp) {
+                    var itsSpec = itsObj[itsProp];
+                    if (itsSpec.startsWith('${') && itsSpec.endsWith('}')) {
+                      var evalsTo = $parse(itsSpec.substring(2, itsSpec.length - 1))({it: it});
+                      item[itsProp] = evalsTo;
+                      passedTabArr[0][itsProp] = itsProp;
+                    }
+                    else {
+                      // straight prop
+                      item[itsSpec] = it[itsSpec];
+                      passedTabArr[0][itsProp] = itsSpec;
+                    }
+                  });
+                  tabInfo.push(item);
+                });
+              });
+              $scope.applyTabArray(passedTabArr, tabInfo);
             });
+            return;
+          }
+          else {
+            // array is only object property (eg: instance.process.Values)
+            tabArr = $scope.activeTab[tabProps[0]];
+            tabInfo = tabInfo[tabProps[0]];
+            if ($scope.runtimeInfo && $scope.workflowObject[tabProps[0]]) {
+              // special handling in case workflowObj specifies values not in runtime
+              var wfArrObj = $scope.workflowObject[tabProps[0]];
+              var wfArrObjProps = util.getProperties(wfArrObj);
+              wfArrObjProps.forEach(function(wfArrObjProp) {
+                var found;
+                for (var n = 0; n < tabInfo.length; n++) {
+                  if (tabInfo[n].name == wfArrObjProp) {
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  var toAdd = wfArrObj[wfArrObjProp];
+                  toAdd.name = wfArrObjProp;
+                  tabInfo.push(toAdd);
+                }
+              });
+            }
           }
         }
         else if (typeof $scope.activeTab[tabProps[0]] === 'object') {
@@ -110,61 +151,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
     }
     
     if (tabArr) {
-      // indicates columnar display and tabInfo is array
-      var maxColWidth = 50;
-      var colSpacing = 3;
-      var props = util.getProperties(tabArr[0]);
-      
-      var colWidths = [];
-      var labels = [];
-      props.forEach(function(prop) {
-        labels.push(prop);
-        colWidths.push(prop.length);
-      });
-
-      var values = []; // 2d
-      tabInfo.forEach(function(rowObj) {
-        var valueRow = [];
-        for (var h = 0; h < props.length; h++) {
-          var value = rowObj[tabArr[0][props[h]]];
-          if (!value)
-            value = '';
-          value = '' + value; // convert to str
-          if (value.length > maxColWidth)
-            value = value.substring(0, maxColWidth - 5) + '...';
-          if (value.length > colWidths[h])
-            colWidths[h] = value.length;
-          valueRow.push(value);
-        }
-        values.push(valueRow);
-      });
-
-      
-      // column labels
-      var names = [];
-      for (var k = 0; k < labels.length; k++) {
-        var name = { name: labels[k]};
-        if (k < labels.length - 1)
-          name.pad = util.padTrailing('', colWidths[k] - labels[k].length + colSpacing);
-        names.push(name);
-      }
-      // row values
-      for (var i = 0; i < values.length; i++) {
-        var fields = [];
-        for (var j = 0; j < values[i].length; j++) {
-          var field = {value: values[i][j] };
-          if (field.value.startsWith('DOCUMENT:')) {
-            field.url = '#/workflow/processes/' + $scope.workflowObject.id + '/values/' + fields[j-1].value;
-          }
-          if (j < values[i].length - 1)
-            field.pad = util.padTrailing('', colWidths[j] - values[i][j].length + colSpacing);
-          fields.push(field);
-        }
-        if (i === 0) // only first element needs names
-          $scope.activeTabValues.push({names: names, values: fields});
-        else
-          $scope.activeTabValues.push({values: fields});
-      }
+      $scope.applyTabArray(tabArr, tabInfo);
     }
     else if (typeof $scope.activeTab === 'object') {
       // evaluate each object prop against tabInfo object
@@ -191,8 +178,11 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
             };
             if (typeof val.value === 'object')
               val.value = JSON.stringify(val.value);
-            if (val.value.indexOf('\n') >= 0)
-              val.multiline = true;
+            if (val.value.indexOf('\n') >= 0) {
+              val.full = val.value;
+              val.value = val.full.getLines()[0] + ' ...';
+              val.extended = true;
+            }
             if (spec) {
               if (spec.alias)
                 val.name = spec.alias;
@@ -204,7 +194,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
             }
             else {
               // asset attrs
-              if (prop.endsWith("_assetVersion")) {
+              if (prop.endsWith('_assetVersion')) {
                 val.name = prop.substring(0, prop.length - 13);
                 val.asset = { 
                   path: tabInfo[val.name], 
@@ -212,9 +202,10 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
                 };
               }
               else if (prop == 'processname') {
-                val.asset = { 
+                val.name = 'Process';
+                val.asset = {
                   path: val.value + '.proc', 
-                  version: tabInfo.processversion
+                  version: 'v' + tabInfo.processversion
                 };
               }
               else if (prop == 'processmap') {
@@ -230,11 +221,80 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
                 val.asset.url = $scope.adminBase + '#/asset/' + val.asset.path;
               }
             }
-            if (!tabInfo[prop + "_assetVersion"])
+            if (!tabInfo[prop + '_assetVersion'] && prop != 'processversion')
               $scope.activeTabValues.push(val);
           }          
         }
       }
+    }
+  };
+  
+  $scope.applyTabArray = function(tabArr, tabInfo) {
+    // indicates columnar display and tabInfo is array
+    var maxColWidth = 50;
+    var colSpacing = 3;
+    var props = util.getProperties(tabArr[0]);
+    
+    var colWidths = [];
+    var labels = [];
+    props.forEach(function(prop) {
+      labels.push(prop);
+      colWidths.push(prop.length);
+    });
+
+    var values = []; // 2d
+    tabInfo.forEach(function(rowObj) {
+      var valueRow = [];
+      for (var h = 0; h < props.length; h++) {
+        var value = { value: rowObj[tabArr[0][props[h]]] };
+        if (!value.value)
+          value.value = '';
+        value.value = '' + value.value; // convert to str
+        if (value.value.length > maxColWidth) {
+          value.full = value.value;
+          value.value = value.full.substring(0, maxColWidth - 5) + ' ...';
+          value.extended = true;
+        }
+        if (value.value.length > colWidths[h])
+          colWidths[h] = value.value.length;
+        valueRow.push(value);
+      }
+      values.push(valueRow);
+    });
+
+    
+    // column labels
+    var names = [];
+    for (var k = 0; k < labels.length; k++) {
+      if (labels[k] != '_url') {
+        var name = { name: labels[k]};
+        if (k < labels.length - 1)
+          name.pad = util.padTrailing('', colWidths[k] - labels[k].length + colSpacing);
+        names.push(name);
+      }
+    }
+    // row values
+    for (var i = 0; i < values.length; i++) {
+      var fields = [];
+      for (var j = 0; j < values[i].length; j++) {
+        var field = values[i][j];
+        if (field.value.startsWith('DOCUMENT:')) {
+          field.url = '#/workflow/processes/' + $scope.workflowObject.id + '/values/' + fields[j-1].value;
+        }
+        if (labels[j] == '_url') {
+          // applies to previous field
+          fields[j-1].url = field.value;
+        }
+        else {
+          if (j < values[i].length - 1)
+            field.pad = util.padTrailing('', colWidths[j] - field.value.length + colSpacing);
+          fields.push(field);
+        }
+      }
+      if (i === 0) // only first element needs names
+        $scope.activeTabValues.push({names: names, values: fields});
+      else
+        $scope.activeTabValues.push({values: fields});
     }
   };
   

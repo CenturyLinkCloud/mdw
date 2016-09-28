@@ -39,6 +39,7 @@ import com.centurylink.mdw.model.value.activity.ActivityList;
 import com.centurylink.mdw.model.value.activity.ActivityVO;
 import com.centurylink.mdw.model.value.asset.Asset;
 import com.centurylink.mdw.model.value.asset.AssetHeader;
+import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.process.ProcessCount;
@@ -370,6 +371,16 @@ public class WorkflowServicesImpl implements WorkflowServices {
     @Override
     public ProcessList getProcesses(Query query) throws ServiceException {
         try {
+            String procDefSpec = query.getFilter("definition"); // in form of AssetVersionSpec
+            if (procDefSpec != null) {
+                AssetVersionSpec spec = AssetVersionSpec.parse(procDefSpec);
+                if (spec.getName().endsWith(".proc"))
+                    spec = new AssetVersionSpec(spec.getPackageName(), spec.getName().substring(0, spec.getName().length() - 5), spec.getVersion());
+                ProcessVO procDef = ProcessVOCache.getProcessVOSmart(spec);
+                if (procDef == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for spec: " + procDefSpec);
+                query.setFilter("processId", procDef.getId());
+            }
             return getWorkflowDao().getProcessInstances(query);
         }
         catch (DataAccessException ex) {
