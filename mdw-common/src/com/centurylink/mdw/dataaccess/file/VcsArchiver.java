@@ -20,6 +20,7 @@ public class VcsArchiver {
 
     private File assetDir;
     private File tempDir;
+    private File tempArchiveDir;
     private VersionControl versionControl;
 
     private ProgressMonitor progressMonitor;
@@ -27,6 +28,7 @@ public class VcsArchiver {
 
     private File archiveDir;
     private List<File> tempPkgDirs;
+    private List<File> tempPkgArchiveDirs;
 
     public VcsArchiver(File assetDir, File tempDir, VersionControl versionControl, ProgressMonitor progressMonitor) {
         this.assetDir = assetDir;
@@ -57,26 +59,40 @@ public class VcsArchiver {
 
         // copy all packages from the asset dir to the temp dir
         LoaderPersisterVcs oldLoader = new LoaderPersisterVcs("mdw", assetDir, versionControl, new MdwBaselineData());
-        List<PackageDir> oldPkgDirs = oldLoader.getPackageDirs(false);
+        List<PackageDir> oldPkgDirs = oldLoader.getPackageDirs(true);
         progressMonitor.subTask("Backing up existing package(s) in: " + assetDir);
         progressMonitor.progress(10);
+        tempArchiveDir = new File(tempDir + "/ArchiveAssetBackup_" + StringHelper.filenameDateToString(new Date()));
+        if (!tempArchiveDir.exists()) {
+            if (!tempArchiveDir.mkdirs())
+                throw new IOException("Unable to create temp directory: " + tempArchiveDir.getAbsolutePath());
+        }
         tempDir = new File(tempDir + "/AssetBackup_" + StringHelper.filenameDateToString(new Date()));
         if (!tempDir.exists()) {
             if (!tempDir.mkdirs())
                 throw new IOException("Unable to create temp directory: " + tempDir.getAbsolutePath());
         }
         progressMonitor.progress(10);
-        progressMonitor.subTask("Copying packages to temp: " + tempDir.getAbsolutePath());
+        progressMonitor.subTask("Copying packages to temps: " + tempDir.getAbsolutePath() + " and " + tempArchiveDir.getAbsolutePath());
         tempPkgDirs = new ArrayList<File>(oldPkgDirs.size());
+        tempPkgArchiveDirs = new ArrayList<File>(oldPkgDirs.size());
+        File myTempDir;
         for (PackageDir oldPkgDir : oldPkgDirs) {
             if (path == null || path.equals(oldPkgDir.getPackageName())) {
-                File tempPkgDir = new File(tempDir + "/" + oldPkgDir.getPackageName() + " v" + oldPkgDir.getPackageVersion());
+                myTempDir = oldPkgDir.isArchive() ? tempArchiveDir : tempDir;
+                File tempPkgDir = new File(myTempDir + "/" + oldPkgDir.getPackageName() + " v" + oldPkgDir.getPackageVersion());
                 progressMonitor.subTask("  -- " + tempPkgDir.getName());
                 oldLoader.copyPkg(oldPkgDir, tempPkgDir);
-                tempPkgDirs.add(tempPkgDir);
+                if (myTempDir == tempDir)
+                    tempPkgDirs.add(tempPkgDir);
+                else
+                    tempPkgArchiveDirs.add(tempPkgDir);
             }
         }
         progressMonitor.progress(20);
+
+        // copy the Archive folder assets to temp dir to prevent loss due to git hard reset
+
     }
 
     /**
@@ -84,13 +100,23 @@ public class VcsArchiver {
      * Uses 40% of progressMonitor.
      */
     public void archive() throws DataAccessException, IOException {
+        LoaderPersisterVcs newLoader = new LoaderPersisterVcs("mdw", assetDir, versionControl, new MdwBaselineData());
         archiveDir = new File(assetDir + "/" + ARCHIVE);
-        if (!archiveDir.exists())
-            if (!archiveDir.mkdirs())
+        if (!archiveDir.exists()) {
+            if (tempPkgArchiveDirs != null && tempPkgArchiveDirs.size() > 0) {  // The Archive directory got deleted - Restore it here
+                progressMonitor.subTask("Restoring Archive assets: " + archiveDir.getAbsolutePath());
+                for (File tempPkgDir : tempPkgArchiveDirs) {
+                    File archiveDest = new File(archiveDir + "/" + tempPkgDir.getName());
+                    if (archiveDest.exists())
+                        newLoader.deletePkg(archiveDest);
+                    newLoader.copyPkg(tempPkgDir, archiveDest);
+                }
+            }
+            else if (!archiveDir.mkdirs())
                 throw new IOException("Unable to create archive directory: " + archiveDir.getAbsolutePath());
+        }
         progressMonitor.progress(10);
         progressMonitor.subTask("Adding packages to archive: " + archiveDir.getAbsolutePath());
-        LoaderPersisterVcs newLoader = new LoaderPersisterVcs("mdw", assetDir, versionControl, new MdwBaselineData());
         List<PackageDir> newPkgDirs = newLoader.getPackageDirs(false);
         for (File tempPkgDir : tempPkgDirs) {
             boolean found = false;
@@ -110,6 +136,9 @@ public class VcsArchiver {
             }
         }
         progressMonitor.progress(20);
+        // TODO:  Add checkbox in Admin Asset Import screen to retain the assets backup upon completion
+        progressMonitor.subTask("Removing temp: " + tempArchiveDir);
+        newLoader.delete(tempArchiveDir);
         progressMonitor.subTask("Removing temp: " + tempDir);
         newLoader.delete(tempDir);
         progressMonitor.progress(10);

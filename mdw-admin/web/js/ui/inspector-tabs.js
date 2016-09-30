@@ -85,11 +85,11 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
             if (typeof runtimeInfo == 'undefined') {
               // no runtimeInfo means just checking for tab applicability
               return workflowType == 'activity' &&
-                (workflowObject.implementor == 'com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity' 
-                  || workflowObject.implementor == 'com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity');        
+                (workflowObject.implementor == 'com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity' ||
+                   workflowObject.implementor == 'com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity');        
             }
             else {
-              if (runtimeInfo == null || runtimeInfo.length == 0)
+              if (runtimeInfo === null || runtimeInfo.length === 0)
                 return [];
               var subprocs = [];
               if (workflowObject.implementor == 'com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity') {

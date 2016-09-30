@@ -288,7 +288,7 @@ public class DesignerProxy
               pkgDownloadServicePath = "Packages?format=json&topLevel=true";
             }
 
-            if (pkgDownloadServicePath != null)
+            if (pkgDownloadServicePath != null && progressMonitor != null)
             {
               if (gitRepo.isSyncAssetArchive())
                 pkgDownloadServicePath += "&archive=true";

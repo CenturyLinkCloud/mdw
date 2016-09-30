@@ -317,7 +317,7 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
-    public void performTaskAction(TaskActionVO taskAction) throws ServiceException {
+    public void performTaskAction(TaskActionVO taskAction, Query query) throws ServiceException {
         String action = taskAction.getTaskAction();
         String userCuid = taskAction.getUser();
         try {
@@ -363,7 +363,7 @@ public class TaskServicesImpl implements TaskServices {
 
                 taskMgr.performActionOnTaskInstance(action, instanceId, user.getId(), assigneeId, comment,
                         destination, OwnerType.PROCESS_INSTANCE.equals(taskInst.getOwnerType())
-                                && !TaskManagerAccess.getInstance().isRemoteDetail(), false);
+                                && !TaskManagerAccess.getInstance().isRemoteDetail(), !query.getBooleanFilter("disableEndpoint"));
 
                 if (logger.isDebugEnabled())
                     logger.debug("Performed action: " + action + " on task instance: " + instanceId);

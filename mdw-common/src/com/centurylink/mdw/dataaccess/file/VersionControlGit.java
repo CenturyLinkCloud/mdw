@@ -463,22 +463,8 @@ public class VersionControlGit implements VersionControl {
      */
     public void sparseCheckout(String branch, String path) throws Exception {
         fetch(); // in case the branch is not known locally
-        if (!branch.equals(getBranch())) {
-            createBranchIfNeeded(branch);
-            CheckoutCommand checkout = git.checkout().setName(branch).setAllPaths(true).setForce(true);
-            if (localRepo.getRef(branch) == null)
-                checkout.setStartPoint("origin/" + branch).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).setCreateBranch(true);
-            checkout.call();
-        }
-
         hardReset();
-
-        if (!branch.equals(getBranch())) {
-            // for some reason jgit needs this when branch is switched
-            git.checkout().setName(branch).setForce(true).call();
-            hardReset();
-        }
-
+        checkout(branch);
         pull(branch);  // pull before delete or next pull may add non-path items back
 
         // delete non-path items

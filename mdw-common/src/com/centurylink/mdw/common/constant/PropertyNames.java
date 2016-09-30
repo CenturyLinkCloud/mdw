@@ -224,4 +224,10 @@ public class PropertyNames {
     public static final String MDW_MAIL_SMTP_PORT = "mdw.mail.smtp.port";
     public static final String MDW_MAIL_SMTP_USER = "mdw.mail.smtp.user";
     public static final String MDW_MAIL_SMTP_PASS = "mdw.mail.smtp.pass";
+
+    // oauth
+    public static final String MDW_OAUTH_REST_ENDPOINT = "mdw.oauth.rest.endpoint";
+    public static final String MDW_OAUTH_REST_APP_DOMAIN = "mdw.oauth.rest.app.domain";
+    public static final String MDW_OAUTH_REST_USER_DOMAIN = "mdw.oauth.rest.user.domain";
+    public static final String MDW_OAUTH_REST_HEADERS = "mdw.oauth.rest.headers";
 }

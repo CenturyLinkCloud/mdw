@@ -1,13 +1,14 @@
 <div class="mdw-flex-item">
   <div class="mdw-flex-item-left">
     <div>
-      <input type="checkbox" ng-model="item.selected"  ng-change="listModel.notAllSelected()"></input>
+      <input type="checkbox" ng-model="item.selected"  ng-if="!model.singalActivity" ng-change="listModel.notAllSelected()"></input>
       <div>
         {{item.packageName}}/
         <a class="mdw-item-link mdw-item-nowrap" href="#/blv-workflow/workflow/{{item.masterRequestId}}">
-          {{item.processName}} v{{item.processVersion}} &nbsp; {{item.name}}&nbsp; {{item.id}}</a>
+          {{item.processName}} v{{item.processVersion}} &nbsp; {{item.name}}</a>
         <div class="mdw-item-sub">
-          <span>Master request: <a href="#/blv-business/business/{{item.masterRequestId}}" class="mdw-link">{{item.masterRequestId}}</a></span>
+          <span ng-if="!model.singalActivity" >Master Request / Instance ID: {{item.masterRequestId}} &nbsp;/&nbsp; <a  href="#/workflow/activities/{{item.id}}" class="mdw-link">{{item.id}} </a></span>
+          <span ng-if="model.singalActivity" >Master Request / Instance ID: {{item.masterRequestId}} &nbsp;/&nbsp; {{item.id}}</span>
         </div>
         <div class="mdw-item-sub">Started: <span class="mdw-item-sub-value">{{item.startDate}}</span></div>
         <div class="mdw-item-sub" ng-if="item.endDate">Completed: <span class="mdw-item-sub-value">{{item.endDate}}</span></div>

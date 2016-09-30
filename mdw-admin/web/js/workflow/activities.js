@@ -166,6 +166,10 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
     else
       $scope.model.activityFilter[$scope.model.typeaheadMatchSelection.type] = $scope.model.typeaheadMatchSelection.value;
   }; 
+  
+  $scope.cancelAction = function(){ 
+    $scope.$close();
+  };
 
   $scope.getSelectedActivitiesMessage = function() {
     if ($scope.selectedActivities) {
@@ -178,18 +182,69 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
   };
 }]);
 
-activityMod.controller('ActivityController', ['$scope', '$route', '$routeParams', 'mdw', 'Activity',
-                                            function($scope, $route, $routeParams, mdw, Activity) {
-    
-   $scope.activity = Activity.retrieve({instanceId: $routeParams.instanceId}, function() {
-     $scope.activity.name = $scope.activity.name;
-     $scope.item = $scope.activity; // for activityItem template
+activityMod.controller('ActivityController', ['$scope', '$http', '$route', '$uibModal', '$routeParams', 'mdw', 'Activity',
+                                            function($scope, $http, $route, $uibModal, $routeParams, mdw, Activity) {
+  $scope.model = {};
+  $scope.model.singalActivity = true;
+  $scope.activity = Activity.retrieve({instanceId: $routeParams.instanceId}, function() {
+    $scope.activity.name = $scope.activity.name;
+    $scope.item = $scope.activity; // for activityItem template
    });
    
-   $scope.refreshWorkflowImage = function() {
+  $scope.refreshWorkflowImage = function() {
      $route.reload();
-   };   
-    
+  };   
+  $scope.getSelectedActivitiesMessage = function() {
+       return 'Do you want to perform the selected action on this activity?';
+  };
+   
+  $scope.performActionOnActivities = function(action) {
+     $scope.closePopover(); // popover should be closed
+
+       var errorHandler = function(data, status) {
+         console.log('http: ' + status);
+       };
+       var successHandler = function(data, status, headers, config) {
+         if (data.status.code !== 0) {
+         }
+         else {
+           $scope.$close();
+         }
+       };
+       var actionSubUrl = '';
+       if (!angular.isUndefined($scope.model.completionCode))
+       {
+         actionSubUrl = action + "/" + $scope.model.completionCode;
+       }
+       else {
+         actionSubUrl = action;
+       }
+         var request = $http({
+           method : "post",
+           url : mdw.roots.services + '/Services/Activities/' + $scope.activity.id + '/' + actionSubUrl + '?app=mdw-admin',
+           data : {}
+         });
+         $scope.$close();
+         request.error(errorHandler).success(successHandler);
+         $scope.activity = Activity.retrieve($scope.activity.id);
+         $scope.refreshWorkflowImage();
+   };
+   
+   $scope.cancelAction = function(){ 
+     $scope.$close();
+   };
+   
+   $scope.confirmAction = function(action) {
+     $scope.action = action;
+     $scope.closePopover(); // popover should be closed
+     var modalInstance = $uibModal.open({
+       scope: $scope,
+       templateUrl: 'workflow/activityActionConfirm.html',
+       controller: 'ActivityController',
+       size: 'sm'
+     });    
+   };
+   
 }]);
 
 activityMod.factory('Activity', ['$resource', 'mdw', function($resource, mdw) {

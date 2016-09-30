@@ -68,7 +68,7 @@ public interface TaskServices {
 
     public TaskRuntimeContext getRuntimeContext(Long instanceId) throws ServiceException;
 
-    public void performTaskAction(TaskActionVO taskAction) throws ServiceException;
+    public void performTaskAction(TaskActionVO taskAction, Query query) throws ServiceException;
 
     /**
      * Update a task instance.

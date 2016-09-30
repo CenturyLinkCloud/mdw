@@ -1448,7 +1448,8 @@ public class TaskManagerBean implements TaskManager {
         try {
             taskAction.setUser(UserGroupCache.getUser(userId).getCuid());
             taskAction.setComment(comment);
-            HttpHelper helper = new HttpHelper(new URL(taskResumeEndpoint + "/Services/Tasks/" + taskInstanceId + "/" + action));
+            // Send request to new endpoint, while preventing infinte loop with new Query parameter
+            HttpHelper helper = new HttpHelper(new URL(taskResumeEndpoint + "/Services/Tasks/" + taskInstanceId + "/" + action + "?disableEndpoint=true"));
             String response = helper.post(taskAction.getJson().toString(2));
             StatusMessage statusMessage = new StatusMessage(new JSONObject(response));
             if (statusMessage.getCode() != 0)

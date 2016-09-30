@@ -62,9 +62,6 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   $scope.mdw = mdw;
   console.log('mdw ' + mdw.version + ' ' + mdw.build);
   
-  var qs = $location.search();
-  console.log('access_token=', qs.access_token);
-
   $scope.authUser = theUser;
   $scope.authUser.setActiveTab($location.url());
   

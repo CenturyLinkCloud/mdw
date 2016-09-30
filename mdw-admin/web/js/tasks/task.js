@@ -70,7 +70,7 @@ taskMod.controller('TaskValuesController', ['$scope', '$route', '$routeParams', 
           val.name = key;
           if (!val.sequence)
             val.sequence = 0;
-          val.isDocument = val.type && DOCUMENT_TYPES.val.type;
+          val.isDocument = val.type && DOCUMENT_TYPES[val.type];
           if (val.isDocument) {
             val.showLines = 8;
             if (val.value && val.value.lineCount) {
