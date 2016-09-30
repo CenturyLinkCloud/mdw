@@ -186,6 +186,8 @@ activityMod.controller('ActivityController', ['$scope', '$http', '$route', '$uib
                                             function($scope, $http, $route, $uibModal, $routeParams, mdw, Activity) {
   $scope.model = {};
   $scope.model.singalActivity = true;
+  $scope.random = Math.random(); // param to force image reload
+
   $scope.activity = Activity.retrieve({instanceId: $routeParams.instanceId}, function() {
     $scope.activity.name = $scope.activity.name;
     $scope.item = $scope.activity; // for activityItem template
@@ -226,7 +228,6 @@ activityMod.controller('ActivityController', ['$scope', '$http', '$route', '$uib
          });
          $scope.$close();
          request.error(errorHandler).success(successHandler);
-         $scope.activity = Activity.retrieve($scope.activity.id);
          $scope.refreshWorkflowImage();
    };
    

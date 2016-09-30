@@ -284,6 +284,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
         @ApiImplicitParam(name="TaskAction", paramType="body", dataType="com.centurylink.mdw.model.value.task.TaskActionVO")})
     public JSONObject post(String path, JSONObject content, Map<String, String> headers)
             throws ServiceException, JSONException {
+        Query query = getQuery(path, headers);
         String segOne = getSegment(path, 1);
         try {
             TaskServices taskServices = ServiceLocator.getTaskServices();
@@ -319,7 +320,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                         TaskActionVO taskAction = new TaskActionVO(content, segTwo);
                         if (taskAction.getTaskInstanceId() == null || taskInstanceId != taskAction.getTaskInstanceId())
                             throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (instanceId): " + taskAction.getTaskInstanceId() + " is not: " + taskInstanceId);
-                        taskServices.performTaskAction(taskAction);
+                        taskServices.performTaskAction(taskAction, query);
                         return null;
                     }
                     catch (IllegalArgumentException ex2) {
@@ -332,7 +333,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                         TaskActionVO taskAction = new TaskActionVO(content, segOne);
                         if (!segOne.equals(taskAction.getAction().toString()))
                             throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (action): '" + taskAction.getAction() + "' is not: '" + segOne + "'");
-                        taskServices.performTaskAction(taskAction);
+                        taskServices.performTaskAction(taskAction, query);
                         return null;
                     }
                     catch (IllegalArgumentException ex2) {
