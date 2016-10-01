@@ -2,10 +2,10 @@
   <div class="mdw-flex-item-left">
     <div>
       <div>
-        <a class="mdw-item-link mdw-item-nowrap" ng-if="item.masterRequestId" href="#/workflow/masterRequests/{{item.masterRequestId}}">
+        <a class="mdw-item-link mdw-item-nowrap" ng-if="item.masterRequestId" href="#/{{listModel.context}}/masterRequests/{{item.masterRequestId}}">
           {{item.masterRequestId}}
         </a>
-        <a class="mdw-item-link mdw-item-nowrap" ng-if="!item.masterRequestId" href="#/workflow/requests/{{item.id}}">
+        <a class="mdw-item-link mdw-item-nowrap" ng-if="!item.masterRequestId" href="#/{{listModel.context}}/requests/{{item.id}}">
           {{item.id}}
         </a>
         <div class="mdw-item-sub" ng-if="item.masterRequestId">
@@ -13,13 +13,13 @@
             {{item.processName}} v{{item.processVersion}} &nbsp;{{item.processInstanceId}}</a>
         </div>
         <div class="mdw-item-sub" ng-if="!item.outbound">
-          <a href="#/workflow/requests/{{item.id}}">Received: {{item.created}}</a>
+          <a href="#/{{listModel.context}}/requests/{{item.id}}">Received: {{item.created}}</a>
         </div>
         <div class="mdw-item-sub" ng-if="item.outbound">
-          <a href="#/workflow/requests/{{item.id}}">Sent: {{item.created}}</a>
+          <a href="#/{{listModel.context}}/requests/{{item.id}}">Sent: {{item.created}}</a>
         </div>
         <div class="mdw-item-sub" ng-if="item.responseId">
-          <a href="#/workflow/responses/{{item.id}}">Responded: {{item.responded}}</a>
+          <a href="#/{{listModel.context}}/responses/{{item.id}}">Responded: {{item.responded}}</a>
         </div>
       </div>
     </div>

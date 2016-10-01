@@ -35,14 +35,13 @@ tabsSvc.factory('tabs', ['mdw', function(mdw) {
         id: 'workflowTab',
         label: 'Workflow',
         url: '#/workflow/processes',
-        routes: ['/workflow/processes', 'workflow/definition', '/workflow/requests', '/workflow/activities', 
-                 '/solutions', '/blv','/blv/workflow','/blv/business']
+        routes: ['/workflow', '/solutions', '/blv','/blv/workflow','/blv/business']
       },
       {
         id: 'servicesTab',
         label: 'Services',
         url: '#/services',
-        routes: ['/services', 'serviceRequests', '/httpHelper'],
+        routes: ['/services', '/service', '/httpHelper'],
         guestAccess: true
       },
       {

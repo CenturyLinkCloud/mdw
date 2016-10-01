@@ -1,16 +1,16 @@
 <ul class="nav mdw-nav">
   <li nav-link="requests/request">
-    <a ng-if="request.masterRequestId" href="#/workflow/masterRequests/{{request.masterRequestId}}">Request</a>
-    <a ng-if="!request.masterRequestId" href="#/workflow/requests/{{request.id}}">Request</a>
+    <a ng-if="request.masterRequestId" href="#/{{context}}/masterRequests/{{request.masterRequestId}}">Request</a>
+    <a ng-if="!request.masterRequestId" href="#/{{context}}/requests/{{request.id}}">Request</a>
   </li>
   <li nav-link="requests/response" ng-if="request.responseId">
-    <a ng-if="request.masterRequestId" href="#/workflow/masterResponses/{{request.masterRequestId}}">Response</a>
-    <a ng-if="!request.masterRequestId" href="#/workflow/responses/{{request.id}}">Response</a>
+    <a ng-if="request.masterRequestId" href="#/{{context}}/masterResponses/{{request.masterRequestId}}">Response</a>
+    <a ng-if="!request.masterRequestId" href="#/{{context}}/responses/{{request.id}}">Response</a>
   </li>
 </ul>
 <ul class="nav mdw-nav">
-  <li nav-link="workflow/requests">
-    <a href="#/workflow/requests">
+  <li nav-link="{{context}}/requests">
+    <a href="#/{{context}}/requests">
       Request List
     </a>
   </li>  

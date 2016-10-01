@@ -3,23 +3,37 @@
 
 var requestMod = angular.module('requests', ['mdw']);
 
-requestMod.controller('RequestsController', ['$scope', '$http', 'mdw', 'util', 'REQUEST_STATUSES',
-                                             function($scope, $http, mdw, util, REQUEST_STATUSES) {
+requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'mdw', 'util', 'REQUEST_STATUSES',
+                                             function($scope, $http, $location, mdw, util, REQUEST_STATUSES) {
+  
 
+  // is this in the context of the Services tab
+  $scope.context = $location.path().startsWith('/service/') ? 'service' : 'workflow';
+  $scope.defaultType = $scope.context == 'service' ? 'inboundRequests' : 'masterRequests';
+  
   // two-way bound to/from directive
   $scope.requestList = {};
   $scope.requestFilter = { 
       status: '[Active]',
       sort: 'receivedDate',
-      type: 'masterRequests',
+      type: $scope.defaultType,
       descending: true
   }; 
 
-  $scope.requestTypes = {
-    masterRequests: 'Master Requests', 
-    inboundRequests: 'Inbound', 
-    outboundRequests: 'Outbound'
-  };
+  if ($scope.context == 'service') {
+    $scope.requestTypes = {
+        inboundRequests: 'Inbound', 
+        outboundRequests: 'Outbound',
+        masterRequests: 'Master Requests' 
+      };
+  }
+  else {
+    $scope.requestTypes = {
+      masterRequests: 'Master Requests', 
+      inboundRequests: 'Inbound', 
+      outboundRequests: 'Outbound'
+    };
+  }
   
   // pseudo-status [Active] means non-final
   $scope.allStatuses = ['[Active]'].concat(REQUEST_STATUSES);  
@@ -38,6 +52,7 @@ requestMod.controller('RequestsController', ['$scope', '$http', 'mdw', 'util', '
       if (requestInstances.endDate)
         requestInstances.endDate = util.formatDateTime(util.correctDbDate(new Date(requestInstances.endDate), dbDate));
     });
+    requestList.context = $scope.context;
   });   
   
   
@@ -81,8 +96,10 @@ requestMod.controller('RequestsController', ['$scope', '$http', 'mdw', 'util', '
   
 }]);
 
-requestMod.controller('RequestController', ['$scope', '$route', '$routeParams', 'mdw', 'Request',
-                                             function($scope, $route, $routeParams, mdw, Request) {
+requestMod.controller('RequestController', ['$scope', '$location', '$route', '$routeParams', 'mdw', 'Request',
+                                             function($scope, $location, $route, $routeParams, mdw, Request) {
+  $scope.context = $location.path().startsWith('/service/') ? 'service' : 'workflow';
+  
   var response = $route.current.loadedTemplateUrl == 'requests/response.html';
   var master = false;
   var id = $routeParams.requestId;

@@ -248,8 +248,8 @@ routesSvc.factory('routes', function() {
         controller: 'BlvController'
       },
       {
-        path: '/services-nav', 
-        templateUrl: 'layout/services-nav.html'
+        path: '/service-nav', 
+        templateUrl: 'layout/service-nav.html'
       },
       {
         path: '/services',
@@ -275,7 +275,32 @@ routesSvc.factory('routes', function() {
         path: '/servicesCombined',
         templateUrl: 'services/swagger.html?combined',
         controller: 'CombinedServiceController'
-      },      
+      },
+      {
+        path: '/service/requests',
+        templateUrl: 'requests/requests.html',
+        controller: 'RequestsController'
+      },
+      {
+        path: '/service/requests/:requestId',
+        templateUrl: 'requests/request.html',
+        controller: 'RequestController'
+      },
+      {
+        path: '/service/masterRequests/:masterRequestId',
+        templateUrl: 'requests/request.html',
+        controller: 'RequestController'
+      },
+      {
+        path: '/service/responses/:requestId',
+        templateUrl: 'requests/response.html',
+        controller: 'RequestController'
+      },
+      {
+        path: '/service/masterResponses/:masterRequestId',
+        templateUrl: 'requests/response.html',
+        controller: 'RequestController'
+      },
       {
         path: '/httpHelper',
         templateUrl: 'services/httpHelper.html',
