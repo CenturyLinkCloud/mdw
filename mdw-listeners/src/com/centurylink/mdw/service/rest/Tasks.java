@@ -117,7 +117,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
             String segOne = getSegment(path, 1);
             if (segOne == null) {
                 // task list query
-                TaskList tasks = taskServices.getWorkgroupTasks(userCuid, query);
+                TaskList tasks = taskServices.getTasks(query, userCuid);
                 return tasks.getJson();
             }
             else {

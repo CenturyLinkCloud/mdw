@@ -720,48 +720,57 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    private static List<ActivityImplementorVO> activityImplementors;
     /**
-     * TODO: these can be cached
+     * Does not include pagelet.
+     * TODO: cache should be refreshable
      */
     public List<ActivityImplementorVO> getImplementors() throws ServiceException {
-        try {
-            List<ActivityImplementorVO> impls = DataAccess.getProcessLoader().getActivityImplementors();
-            for (ActivityImplementorVO impl : impls) {
-                // qualify the icon location
-                if (impl.getIconName() != null && !impl.getIconName().startsWith("shape:")) {
-                    String icon = impl.getIconName();
-                    for (PackageVO pkg : PackageVOCache.getPackages()) {
-                        for (RuleSetVO ruleSet : pkg.getRuleSets()) {
-                            if (ruleSet.getName().equals(icon)) {
-                                impl.setIconName(pkg.getName() + "/" + icon);
-                                break;
+        if (activityImplementors == null) {
+            try {
+                activityImplementors = DataAccess.getProcessLoader().getActivityImplementors();
+                for (ActivityImplementorVO impl : activityImplementors) {
+                    // qualify the icon location
+                    if (impl.getIconName() != null && !impl.getIconName().startsWith("shape:")) {
+                        String icon = impl.getIconName();
+                        for (PackageVO pkg : PackageVOCache.getPackages()) {
+                            for (RuleSetVO ruleSet : pkg.getRuleSets()) {
+                                if (ruleSet.getName().equals(icon)) {
+                                    impl.setIconName(pkg.getName() + "/" + icon);
+                                    break;
+                                }
                             }
                         }
                     }
+                    impl.setAttributeDescription(null);
                 }
             }
-            return impls;
+            catch (CachingException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+            }
+            catch (DataAccessException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+            }
         }
-        catch (CachingException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        return activityImplementors;
+    }
+
+    public ActivityImplementorVO getImplementor(String className) throws ServiceException {
+        try {
+            for (ActivityImplementorVO implementor : DataAccess.getProcessLoader().getActivityImplementors()) {
+                String implClassName = implementor.getImplementorClassName();
+                if (className == null) {
+                    if (implClassName == null)
+                        return implementor;
+                }
+                else if (implClassName.equals(className)) {
+                    return implementor;
+                }
+            }
+            return null;
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
-
-    public ActivityImplementorVO getImplementor(String className) throws ServiceException {
-        for (ActivityImplementorVO implementor : getImplementors()) {
-            String implClassName = implementor.getImplementorClassName();
-            if (className == null) {
-                if (implClassName == null)
-                    return implementor;
-            }
-            else if (implClassName.equals(className)) {
-                return implementor;
-            }
-        }
-        return null;
-    }
-
 }

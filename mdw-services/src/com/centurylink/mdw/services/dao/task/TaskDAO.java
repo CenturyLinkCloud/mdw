@@ -3104,6 +3104,27 @@ public class TaskDAO extends CommonDataAccess {
             if (catTasksClause != null)
                 where.append(" and ").append(catTasksClause).append("\n");
         }
+        // owner and ownerId
+        String owner = query.getFilter("owner");
+        long ownerId = query.getLongFilter("ownerId");
+        if (owner != null)
+            where.append(" and ti.task_instance_owner = '").append(owner).append("'\n");
+        if (ownerId > 0)
+            where.append(" and ti.task_instance_owner_id = ").append(ownerId).append("\n");
+        if (owner == null && ownerId <= 0) {
+            Long[] processInstanceIds = query.getLongArrayFilter("processInstanceIds");
+            if (processInstanceIds != null && processInstanceIds.length > 0) {
+                where.append(" and ti.task_instance_owner = '").append(OwnerType.PROCESS_INSTANCE ).append("'\n");
+                where.append(" and ti.task_instance_owner_id in (");
+                for (int i = 0; i < processInstanceIds.length; i++) {
+                    where.append(processInstanceIds[i]);
+                    if (i < processInstanceIds.length - 1)
+                        where.append(", ");
+                }
+                where.append(")\n");
+            }
+        }
+
         // if sort by due date, exclude those tasks without
         if ("dueDate".equals(query.getSort()))
             where.append(" and ti.due_date is not null\n");

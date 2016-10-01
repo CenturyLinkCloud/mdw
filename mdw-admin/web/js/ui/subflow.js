@@ -103,11 +103,15 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'DC', 'Step', 'Link',
   Subflow.prototype.getActivityInstances = function(id) {
     if (this.instances) {
       var actInsts = [];
+      var mainProcessInstanceId = this.mainProcessInstanceId;
       this.instances.forEach(function(inst) {
         if (inst.activities) {
+          var procInstId = mainProcessInstanceId;
           inst.activities.forEach(function(actInst) {
-            if ('A' + actInst.activityId == id)
+            if ('A' + actInst.activityId == id) {
               actInsts.push(actInst);
+              actInst.processInstanceId = procInstId; // needed for subprocess & task instance retrieval
+            }
           });
         }
       });

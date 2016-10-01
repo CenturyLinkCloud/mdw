@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -28,6 +27,8 @@ import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.data.task.TaskAction;
 import com.centurylink.mdw.model.value.asset.AssetHeader;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
+import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.centurylink.mdw.model.value.task.TaskActionVO;
 import com.centurylink.mdw.model.value.task.TaskCount;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
@@ -40,15 +41,20 @@ import com.centurylink.mdw.model.value.user.UserVO;
 import com.centurylink.mdw.model.value.variable.DocumentReference;
 import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
 import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
+import com.centurylink.mdw.model.value.work.WorkTransitionInstanceVO;
+import com.centurylink.mdw.model.value.work.WorkTransitionVO;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskException;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.TaskServices;
+import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 import com.centurylink.mdw.services.dao.task.TaskDAO;
 import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
 import com.centurylink.mdw.task.SubTask;
+import com.qwest.mbeng.MbengException;
 
 /**
  * Services related to manual tasks.
@@ -91,31 +97,123 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     /**
-     * Returns tasks associated with the specified user's workgroups.
+     * Retrieve tasks.
      */
-    public TaskList getWorkgroupTasks(String cuid, Query query) throws DataAccessException {
+    public TaskList getTasks(Query query, String cuid) throws ServiceException {
         try {
-            UserVO user = UserGroupCache.getUser(cuid);
-            if (user == null)
-                throw new DataAccessException("Unknown user: " + cuid);
 
             String workgroups = query.getFilter("workgroups");
-            if (workgroups == null || workgroups.equals("[My Workgroups]"))
-              query.setArrayFilter("workgroups", user.getGroupNames());
+            if ("[My Workgroups]".equals(workgroups)) {
+                UserVO user = UserGroupCache.getUser(cuid);
+                if (user == null)
+                    throw new DataAccessException("Unknown user: " + cuid);
+                query.setArrayFilter("workgroups", user.getGroupNames());
+            }
             if ("[My Tasks]".equals(query.getFilter("assignee")))
                 query.getFilters().put("assignee", cuid);
             else if ("[Everyone's Tasks]".equals(query.getFilter("assignee")))
                 query.getFilters().remove("assignee");
+
+            // processInstanceId
+            long processInstanceId = query.getLongFilter("processInstanceId");
+            if (processInstanceId > 0) {
+                List<String> processInstanceIds = new ArrayList<String>();
+                processInstanceIds.add(String.valueOf(processInstanceId));
+                // implies embedded subprocess instances also
+                ProcessInstanceVO processInstance = ServiceLocator.getWorkflowServices().getProcess(processInstanceId, true);
+                if (processInstance.getSubprocessInstances() != null) {
+                    for (ProcessInstanceVO subproc : processInstance.getSubprocessInstances()) {
+                        processInstanceIds.add(String.valueOf(subproc.getId()));
+                    }
+                }
+                query.setArrayFilter("processInstanceIds", processInstanceIds.toArray(new String[]{}));
+
+                // activityInstanceId -- only honored if processInstanceId is also specified
+                Long[] activityInstanceIds = query.getLongArrayFilter("activityInstanceIds");
+                if (activityInstanceIds != null && activityInstanceIds.length > 0) {
+                    // tasks for activity instance -- special logic applied after retrieving
+                    TaskList taskList = getTaskDAO().getTaskInstances(query);
+                    return filterForActivityInstance(taskList, processInstance, activityInstanceIds);
+                }
+            }
+
             TaskList taskList = getTaskDAO().getTaskInstances(query);
             return taskList;
         }
-        catch (DataAccessException ex) {
+        catch (ServiceException ex) {
             throw ex;
         }
-        catch (CachingException ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
+
+    /**
+     * Ugly logic for determining task instances for activity instances.
+     * TODO: Remove this when we get rid of FormDataDocument.
+     */
+    private TaskList filterForActivityInstance(TaskList taskList, ProcessInstanceVO processInstance, Long[] activityInstanceIds)
+    throws DataAccessException {
+        TaskList filteredList = new TaskList();
+        List<TaskInstanceVO> taskInstances = new ArrayList<TaskInstanceVO>();
+        EventManager eventManager = ServiceLocator.getEventManager();
+        for (TaskInstanceVO taskInstance : taskList.getItems()) {
+            String secondaryOwner = taskInstance.getSecondaryOwnerType();
+            if (OwnerType.DOCUMENT.equals(secondaryOwner)) {
+                String formDataString = eventManager.getDocumentVO(taskInstance.getSecondaryOwnerId()).getContent();
+                FormDataDocument formDataDoc = new FormDataDocument();
+                try {
+                    formDataDoc.load(formDataString);
+                    for (Long activityInstanceId : activityInstanceIds) {
+                        if (activityInstanceId.equals(formDataDoc.getActivityInstanceId()))
+                            taskInstances.add(taskInstance);
+                    }
+                }
+                catch (MbengException ex) {
+                    throw new DataAccessException(-1, ex.getMessage(), ex);
+                }
+            }
+            else {
+                // task instance secondary owner is work transition instance
+                ProcessVO process = ProcessVOCache.getProcessVO(processInstance.getProcessId());
+                for (Long activityInstanceId : activityInstanceIds) {
+                    ActivityInstanceVO activityInstance = processInstance.getActivity(activityInstanceId);
+                    if (activityInstance == null && processInstance.getSubprocessInstances() != null) {
+                        for (ProcessInstanceVO subproc : processInstance.getSubprocessInstances()) {
+                            activityInstance = subproc.getActivity(activityInstanceId);
+                            if (activityInstance != null)
+                                break;
+                        }
+                    }
+                    if (activityInstance != null) {
+                        Long activityId = activityInstance.getDefinitionId();
+                        Long workTransInstId = taskInstance.getSecondaryOwnerId();
+                        for (WorkTransitionInstanceVO transitionInstance : processInstance.getTransitions()) {
+                            if (transitionInstance.getTransitionInstanceID().equals(workTransInstId)) {
+                                Long transitionId = transitionInstance.getTransitionID();
+                                WorkTransitionVO workTrans = process.getWorkTransition(transitionId);
+                                if (workTrans == null && process.getSubProcesses() != null) {
+                                    for (ProcessVO subproc : process.getSubProcesses()) {
+                                        workTrans = subproc.getWorkTransition(transitionId);
+                                        if (workTrans != null)
+                                            break;
+                                    }
+                                }
+                                if (workTrans.getToWorkId().equals(activityId))
+                                    taskInstances.add(taskInstance);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        filteredList.setTasks(taskInstances);
+        filteredList.setCount(taskInstances.size());
+        filteredList.setTotal(taskInstances.size());
+        filteredList.setRetrieveDate(taskList.getRetrieveDate());
+        return filteredList;
+    };
 
     public TaskList getProcessTasks(Long processInstanceId) throws DataAccessException {
         TaskDAO taskDao = new TaskDAO(new DatabaseAccess(null));

@@ -11,7 +11,6 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.utilities.JsonUtil;
 import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
@@ -42,30 +41,26 @@ public class Implementors extends JsonRestService {
     throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         try {
-            Query query = new Query(path, headers);
             String implClassName = getSegment(path, 1);
             if (implClassName == null) {
                 List<ActivityImplementorVO> impls = workflowServices.getImplementors();
-                // temporary option until pagelets are saved as json
-                if (query.getBooleanFilter("pageletAsJson")) {
-                    for (ActivityImplementorVO impl : impls) {
-                        String pagelet = impl.getAttributeDescription();
-                        if (pagelet != null && !pagelet.isEmpty() && !pagelet.trim().startsWith("{"))
-                            impl.setAttributeDescription(new Pagelet(pagelet).getJson().toString(2));
-                    }
-                }
                 return JsonUtil.getJsonArray(impls).getJson();
             }
             else {
                 ActivityImplementorVO impl = workflowServices.getImplementor(implClassName);
                 if (impl == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Implementor not found: " + implClassName);
-                if (query.getBooleanFilter("pageletAsJson")) {
-                    String pagelet = impl.getAttributeDescription();
-                    if (pagelet != null && !pagelet.isEmpty() && !pagelet.trim().startsWith("{"))
-                        impl.setAttributeDescription(new Pagelet(pagelet).getJson().toString(2));
+                String pagelet = impl.getAttributeDescription();
+                if (pagelet != null && !pagelet.isEmpty() && !pagelet.trim().startsWith("{")) {
+                    JSONObject pageletJson = new Pagelet(pagelet).getJson();
+                    impl.setAttributeDescription(null);
+                    JSONObject implJson = impl.getJson();
+                    implJson.put("pagelet", pageletJson);
+                    return impl.getJson();
                 }
-                return impl.getJson();
+                else {
+                    return impl.getJson();
+                }
             }
         }
         catch (ServiceException ex) {

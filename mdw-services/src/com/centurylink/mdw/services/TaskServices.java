@@ -23,9 +23,9 @@ import com.centurylink.mdw.task.SubTask;
 public interface TaskServices {
 
     /**
-     * Returns tasks associated with the specified user's workgroups.
+     * Returns tasks (optionally associated with the specified user's workgroups).
      */
-    public TaskList getWorkgroupTasks(String cuid, Query query) throws TaskException, UserException, DataAccessException;
+    public TaskList getTasks(Query query, String cuid) throws ServiceException;
 
     public TaskList getProcessTasks(Long processInstanceId) throws DataAccessException;
 

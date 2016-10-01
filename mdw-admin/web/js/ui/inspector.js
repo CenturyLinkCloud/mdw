@@ -25,9 +25,15 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
     var filteredTabs = {};
     util.getProperties($scope.tabs).forEach(function(tabName) {
       var tab = $scope.tabs[tabName];
-      if (typeof tab == 'function') {
-        if (tab($scope.workflowType, $scope.workflowObject))
+      if (typeof tab === 'object') {
+        var tabProps = util.getProperties(tab);
+        if (tabProps[0] && typeof tab[tabProps[1]] == 'function') {
+          if (tab[tabProps[1]]($scope.diagramObject, $scope.workflowObject))
+            filteredTabs[tabName] = tab;
+        }
+        else {
           filteredTabs[tabName] = tab;
+        }
       }
       else {
         filteredTabs[tabName] = tab;
@@ -72,30 +78,37 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
             var passedTabArr = [{}]; 
             var itsObj = $scope.activeTab[tabProps[0]][0];
             var itsProps = util.getProperties(itsObj);
-            var promise = $scope.activeTab[tabProps[1]]($scope.workflowType, $scope.workflowObject, $scope.runtimeInfo);
-            promise.then(function(resArr) {
-              var tabInfo = [];
-              resArr.forEach(function(result) {
-                result.data[listName].forEach(function(it) {
-                  var item = {};
-                  itsProps.forEach(function(itsProp) {
-                    var itsSpec = itsObj[itsProp];
-                    if (itsSpec.startsWith('${') && itsSpec.endsWith('}')) {
-                      var evalsTo = $parse(itsSpec.substring(2, itsSpec.length - 1))({it: it});
-                      item[itsProp] = evalsTo;
-                      passedTabArr[0][itsProp] = itsProp;
-                    }
-                    else {
-                      // straight prop
-                      item[itsSpec] = it[itsSpec];
-                      passedTabArr[0][itsProp] = itsSpec;
-                    }
+            var promise = $scope.activeTab[tabProps[1]]($scope.diagramObject, $scope.workflowObject, $scope.runtimeInfo);
+            if (promise) {
+              promise.then(function(res) {
+                var resArr;
+                if (res instanceof Array)
+                  resArr = res;
+                else
+                  resArr = [res];
+                var tabInfo = [];
+                resArr.forEach(function(result) {
+                  result.data[listName].forEach(function(it) {
+                    var item = {};
+                    itsProps.forEach(function(itsProp) {
+                      var itsSpec = itsObj[itsProp];
+                      if (itsSpec.startsWith('${') && itsSpec.endsWith('}')) {
+                        var evalsTo = $parse(itsSpec.substring(2, itsSpec.length - 1))({it: it});
+                        item[itsProp] = evalsTo;
+                        passedTabArr[0][itsProp] = itsProp;
+                      }
+                      else {
+                        // straight prop
+                        item[itsSpec] = it[itsSpec];
+                        passedTabArr[0][itsProp] = itsSpec;
+                      }
+                    });
+                    tabInfo.push(item);
                   });
-                  tabInfo.push(item);
                 });
+                $scope.applyTabArray(passedTabArr, tabInfo);
               });
-              $scope.applyTabArray(passedTabArr, tabInfo);
-            });
+            }
             return;
           }
           else {
@@ -125,7 +138,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
         }
         else if (typeof $scope.activeTab[tabProps[0]] === 'object') {
           // named object equates to array (eg: process.definition.Variables)
-          var arrObj = $scope.activeTab[tabProps[0]];
+          var arrObj = angular.copy($scope.activeTab[tabProps[0]]);
           var arrObjProps = util.getProperties(arrObj);
           $scope.idProp = null;
           for (var m = 0; m < arrObjProps.length; m++) {

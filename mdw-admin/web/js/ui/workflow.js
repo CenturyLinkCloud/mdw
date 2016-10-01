@@ -4,8 +4,8 @@
 var workflowMod = angular.module('mdwWorkflow', ['mdw', 'drawingConstants']);
 
 workflowMod.controller('MdwWorkflowController', 
-    ['$scope', '$http', '$routeParams', 'mdw', 'util', 'Diagram', 'Inspector',
-    function($scope, $http, $routeParams, mdw, util, Diagram, Inspector) {
+    ['$scope', '$http', '$routeParams', 'mdw', 'util', 'mdwImplementors', 'Diagram', 'Inspector',
+    function($scope, $http, $routeParams, mdw, util, mdwImplementors, Diagram, Inspector) {
   
   $scope.init = function(canvas) {
     if ($scope.serviceBase.endsWith('/'))
@@ -63,28 +63,39 @@ workflowMod.controller('MdwWorkflowController',
         // restore summary instance data
         $scope.process.id = instanceId;
         $scope.process.masterRequestId = masterRequestId; 
-        $http({ method: 'GET', url: $scope.serviceBase + '/Implementors?pageletAsJson=true' })
+        $scope.implementors = mdwImplementors.get();
+        if ($scope.implementors) {
+          $scope.doRender();
+        }
+        else {
+        $http({ method: 'GET', url: $scope.serviceBase + '/Implementors' })
           .then(function success(response) {
             $scope.implementors = response.data;
-            if ($scope.renderState && $scope.process.id) {
-              $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id })
-                .then(function success(response) {
-                  $scope.instance = response.data;
-                  $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.instance);
-                  $scope.diagram.draw();
-                }, function error(response) {
-                  mdw.messages = response.statusText;
-              });
-            }
-            else {
-              $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors);
-              $scope.diagram.draw();
-            }
+            mdwImplementors.set($scope.implementors);
+            $scope.doRender();
           }, function error(response) {
             mdw.messages = response.statusText;
-        });
+          });
+        }
     });
   };
+  
+  $scope.doRender = function() {
+    if ($scope.renderState && $scope.process.id) {
+      $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id })
+        .then(function success(response) {
+          $scope.instance = response.data;
+          $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.instance);
+          $scope.diagram.draw();
+        }, function error(response) {
+          mdw.messages = response.statusText;
+      });
+    }
+    else {
+      $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors);
+      $scope.diagram.draw();
+    }
+  }
   
   $scope.mouseMove = function(e) {
     if ($scope.diagram)
@@ -190,11 +201,14 @@ workflowMod.factory('Diagram',
     });
     diagram.subflows = [];
     if (this.process.subprocesses) {
+      var processInstanceId = this.instance.id;
       this.process.subprocesses.forEach(function(subproc) {
         var subflow = new Subflow(subproc);
         diagram.makeRoom(canvasDisplay, subflow.prepareDisplay(diagram));
-        if (diagram.instance)
+        if (diagram.instance) {
+          subflow.mainProcessInstanceId = processInstanceId; // needed for subprocess & task instance retrieval          
           subflow.applyState(diagram.getSubflowInstances(subflow.subprocess.id));
+        }
         diagram.subflows.push(subflow);
       });
     }
@@ -260,8 +274,9 @@ workflowMod.factory('Diagram',
     if (this.implementors) {
       for (var i = 0; i < this.implementors.length; i++) {
         var implementor = this.implementors[i];
-        if (implementor.implementorClass == className)
+        if (implementor.implementorClass == className) {
           return implementor;
+        }
       }
     }
     // not found -- return placeholder
@@ -275,7 +290,7 @@ workflowMod.factory('Diagram',
         var procInstId = this.instance.id;
         this.instance.activities.forEach(function(actInst) {
           if ('A' + actInst.activityId == id) {
-            actInst.processInstanceId = procInstId; // needed for subprocess instance retrieval
+            actInst.processInstanceId = procInstId; // needed for subprocess & task instance retrieval
             insts.push(actInst);
           }
         });
@@ -587,6 +602,18 @@ workflowMod.factory('Diagram',
   
   return Diagram;
   
+}]);
+
+// cache implementors
+workflowMod.factory('mdwImplementors', ['mdw', function(mdw) {
+  return {
+    set: function(implementors) {
+      this.implementors = implementors;
+    },
+    get: function() {
+      return this.implementors;
+    }
+  };
 }]);
 
 // attributes
