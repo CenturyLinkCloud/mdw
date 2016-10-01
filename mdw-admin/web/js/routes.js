@@ -1,4 +1,4 @@
-// Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
+// Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var routesSvc = angular.module('routes', []);
@@ -165,18 +165,28 @@ routesSvc.factory('routes', function() {
       },
       {
         path: '/workflow/requests',
-        templateUrl: 'workflow/requests.html',
+        templateUrl: 'requests/requests.html',
         controller: 'RequestsController'
       },
       {
         path: '/workflow/requests/:requestId',
-        templateUrl: 'workflow/request.html',
-        controller: 'WorkflowRequestController'
+        templateUrl: 'requests/request.html',
+        controller: 'RequestController'
+      },
+      {
+        path: '/workflow/masterRequests/:masterRequestId',
+        templateUrl: 'requests/request.html',
+        controller: 'RequestController'
       },
       {
         path: '/workflow/responses/:requestId',
-        templateUrl: 'workflow/response.html',
-        controller: 'WorkflowRequestController'
+        templateUrl: 'requests/response.html',
+        controller: 'RequestController'
+      },
+      {
+        path: '/workflow/masterResponses/:masterRequestId',
+        templateUrl: 'requests/response.html',
+        controller: 'RequestController'
       },
       {
         path: '/workflow/activities',
@@ -211,16 +221,6 @@ routesSvc.factory('routes', function() {
       {
         path: '/exceptions',
         templateUrl: 'dashboard/exceptions.html'
-      },
-      {
-        path: '/serviceRequests',
-        templateUrl: 'services/requests.html',
-        controller: 'RequestsController'
-      },
-      {
-        path: '/serviceRequests/:requestId',
-        templateUrl: 'services/request.html',
-        controller: 'RequestController'
       },
       {
         path: '/solutions',

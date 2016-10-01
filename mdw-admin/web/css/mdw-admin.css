@@ -414,6 +414,9 @@
   border-top-left-radius: 0;   
   border-bottom-left-radius: 0;   
 }
+.mdw-value-name {
+  font-style: italic;
+}
 .mdw-code {
   white-space: pre;
 }

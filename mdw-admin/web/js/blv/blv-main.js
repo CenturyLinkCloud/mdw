@@ -83,7 +83,7 @@ angular.module(
 
         } ])
 
-.controller('RequestController', [ '$scope', '$routeParams',
+.controller('BlvRequestController', [ '$scope', '$routeParams',
     'Requests', function($scope, $routeParams, Requests) {
       $scope.requestId = $routeParams.requestId;
       $scope.request = Requests.get({

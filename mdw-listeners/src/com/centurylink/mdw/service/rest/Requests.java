@@ -11,12 +11,10 @@ import java.util.Map;
 
 import javax.ws.rs.Path;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.JsonExportable;
-import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.JsonListMap;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
@@ -50,7 +48,7 @@ public class Requests extends JsonRestService implements JsonExportable {
     }
 
     /**
-     * Retrieve a request by id, all matching requests, or an aggregated request breakdown.
+     * Retrieve a request by doc id, masterRequestId, all matching requests, or an aggregated request breakdown.
      */
     @Override
     @Path("/{requestId}")
@@ -64,20 +62,7 @@ public class Requests extends JsonRestService implements JsonExportable {
             Query query = getQuery(path, headers);
             String segOne = getSegment(path, 1);
             if (segOne != null) {
-                if (segOne.equals("definitions")) {
-                    RequestList requestList = requestServices.getRequests(query);
-                    JSONArray jsonRequests = new JSONArray();
-                    for (Request request : requestList.getRequests()) {
-                        JSONObject jsonRequest = new JSONObject();
-                        jsonRequest.put("packageName", request.getPackageName());
-                        jsonRequest.put("processId", request.getId());
-                        jsonRequest.put("name", request.getProcessName());
-                        jsonRequest.put("version", request.getProcessVersion());
-                        jsonRequests.put(jsonRequest);
-                    }
-                    return new JsonArray(jsonRequests).getJson();
-                }
-                else if (segOne.equals("instanceCounts")) {
+                if (segOne.equals("instanceCounts")) {
                     Map<Date,List<RequestCount>> dateMap = requestServices.getRequestBreakdown(query);
                     Map<String,List<RequestCount>> listMap = new HashMap<String,List<RequestCount>>();
                     for (Date date : dateMap.keySet()) {
@@ -89,11 +74,20 @@ public class Requests extends JsonRestService implements JsonExportable {
                 }
                 else {
                     try {
-                        Long requestId = Long.valueOf(segOne);
-                        if (query.getBooleanFilter("response"))
-                            return requestServices.getRequestResponse(requestId).getJson();
-                        else
-                            return requestServices.getRequest(requestId).getJson();
+                        if (query.getBooleanFilter("master")) {
+                            String masterRequestId = segOne;
+                            if (query.getBooleanFilter("response"))
+                                return requestServices.getMasterRequestResponse(masterRequestId).getJson();
+                            else
+                                return requestServices.getMasterRequest(masterRequestId).getJson();
+                        }
+                        else {
+                            Long requestId = Long.valueOf(segOne);
+                            if (query.getBooleanFilter("response"))
+                                return requestServices.getRequestResponse(requestId).getJson();
+                            else
+                                return requestServices.getRequest(requestId).getJson();
+                        }
                     }
                     catch (NumberFormatException ex) {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Bad requestId: " + segOne);

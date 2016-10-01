@@ -95,7 +95,7 @@ workflowMod.controller('MdwWorkflowController',
       $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors);
       $scope.diagram.draw();
     }
-  }
+  };
   
   $scope.mouseMove = function(e) {
     if ($scope.diagram)

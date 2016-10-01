@@ -52,19 +52,49 @@ public class RequestServicesImpl implements RequestServices {
 
     public Request getRequest(Long id) throws ServiceException {
         try {
-           return getDAO().getRequest(id, true, false);
+           Request request = getDAO().getRequest(id, true, false);
+           if (request == null)
+               throw new ServiceException(ServiceException.NOT_FOUND, "Request not found: " + id);
+           return request;
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Failed to get requestId: " + id, ex);
         }
     }
 
+    public Request getMasterRequest(String masterRequestId) throws ServiceException {
+        try {
+           Request masterRequest = getDAO().getMasterRequest(masterRequestId, true, false);
+           if (masterRequest == null)
+               throw new ServiceException(ServiceException.NOT_FOUND, "Master request not found: " + masterRequestId);
+           return masterRequest;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Failed to get masterRequestId: " + masterRequestId, ex);
+        }
+    }
+
     public Request getRequestResponse(Long requestId) throws ServiceException {
         try {
-            return getDAO().getRequest(requestId, false, true);
+            Request request = getDAO().getRequest(requestId, false, true);
+            if (request == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Request not found: " + requestId);
+            return request;
          }
          catch (DataAccessException ex) {
              throw new ServiceException(ServiceException.INTERNAL_ERROR, "Failed to get response for requestId: " + requestId, ex);
+         }
+    }
+
+    public Request getMasterRequestResponse(String masterRequestId) throws ServiceException {
+        try {
+            Request request = getDAO().getMasterRequest(masterRequestId, false, true);
+            if (request == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Master request not found: " + masterRequestId);
+            return request;
+         }
+         catch (DataAccessException ex) {
+             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Failed to get response for masterRequestId: " + masterRequestId, ex);
          }
     }
 

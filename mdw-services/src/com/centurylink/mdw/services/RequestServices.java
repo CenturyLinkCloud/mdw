@@ -20,9 +20,11 @@ public interface RequestServices {
      */
     public RequestList getRequests(Query query) throws ServiceException;
 
-
     public Request getRequest(Long id) throws ServiceException;
     public Request getRequestResponse(Long requestId) throws ServiceException;
+
+    public Request getMasterRequest(String masterRequestId) throws ServiceException;
+    public Request getMasterRequestResponse(String masterReqeustId) throws ServiceException;
 
     public Map<Date,List<RequestCount>> getRequestBreakdown(Query query) throws ServiceException;
 

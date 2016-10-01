@@ -4,6 +4,7 @@
 package com.centurylink.mdw.services.dao;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -101,7 +102,7 @@ public class RequestsDAO extends VcsEntityDAO {
             return requestList;
         }
         catch (Exception ex) {
-            throw new DataAccessException("Failed to retrieve master requests: ", ex);
+            throw new DataAccessException("Failed to retrieve master requests: (" + query + ")", ex);
         }
         finally {
             db.closeConnection();
@@ -113,41 +114,84 @@ public class RequestsDAO extends VcsEntityDAO {
         clause.append("where pi.owner_id = d.document_id\n");
         clause.append("and pi.owner = 'DOCUMENT'\n");
 
-        // status
-        String status = query.getFilter("status");
-        if (status != null) {
-            if (status.equals(WorkStatus.STATUSNAME_ACTIVE)) {
-                clause.append(" and pi.status_cd not in (")
-                  .append(WorkStatus.STATUS_COMPLETED)
-                  .append(",").append(WorkStatus.STATUS_FAILED)
-                  .append(",").append(WorkStatus.STATUS_CANCELLED)
-                  .append(",").append(WorkStatus.STATUS_PURGE)
-                  .append(")\n");
-            }
-            else {
-                clause.append(" and pi.status_cd = ").append(WorkStatuses.getCode(status)).append("\n");
-            }
-        }
-
-        // receivedDate
-        try {
-            Date receivedDate = query.getDateFilter("receivedDate");
-            if (receivedDate != null) {
-                String formatedReceivedDate = getDateFormat().format(receivedDate);
-                clause.append(" and d.create_dt >= STR_TO_DATE('").append(formatedReceivedDate).append("','%d-%M-%Y')\n");
-            }
-        }
-        catch (ParseException ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
-        }
-
         String find = query.getFind();
-        if (find != null)
-            clause.append("and pi.master_request_id like '" + find + "%'\n");
+        String masterRequestId = query.getFilter("masterRequestId");
+        if (find != null) {
+            // ignore other criteria
+            clause.append(" and pi.master_request_id like '" + find + "%'\n");
+        }
+        else if (masterRequestId != null) {
+            // ignore other criteria
+            clause.append(" and pi.master_request_id = '" + masterRequestId + "'\n");
+        }
+        else {
+            // status
+            String status = query.getFilter("status");
+            if (status != null) {
+                if (status.equals(WorkStatus.STATUSNAME_ACTIVE)) {
+                    clause.append(" and pi.status_cd not in (")
+                      .append(WorkStatus.STATUS_COMPLETED)
+                      .append(",").append(WorkStatus.STATUS_FAILED)
+                      .append(",").append(WorkStatus.STATUS_CANCELLED)
+                      .append(",").append(WorkStatus.STATUS_PURGE)
+                      .append(")\n");
+                }
+                else {
+                    clause.append(" and pi.status_cd = ").append(WorkStatuses.getCode(status)).append("\n");
+                }
+            }
+
+            // receivedDate
+            try {
+                Date receivedDate = query.getDateFilter("receivedDate");
+                if (receivedDate != null) {
+                    String formatedReceivedDate = getDateFormat().format(receivedDate);
+                    clause.append(" and d.create_dt >= STR_TO_DATE('").append(formatedReceivedDate).append("','%d-%M-%Y')\n");
+                }
+            }
+            catch (ParseException ex) {
+                throw new DataAccessException(ex.getMessage(), ex);
+            }
+
+            // TODO: respond date
+        }
+
         return clause.toString();
     }
 
-    public Request getRequest(Long id, boolean withContent, boolean withResponseContent) throws DataAccessException {
+    public Request getMasterRequest(String masterRequestId, boolean withContent, boolean withResponseContent)
+    throws DataAccessException {
+        StringBuilder query = new StringBuilder();
+        query.append("select document_id, process_instance_id from process_instance pi, document d\n");
+        query.append("where pi.owner_id = d.document_id\n");
+        query.append("and pi.owner = 'DOCUMENT'\n");
+        query.append("and pi.master_request_id = ?");
+        Long requestId = null;
+        Long processInstanceId = null;
+        try {
+            db.openConnection();
+            ResultSet rs = db.runSelect(query.toString(), masterRequestId);
+            if (rs.next()) {
+                requestId = rs.getLong("document_id");
+                processInstanceId = rs.getLong("process_instance_id");
+            }
+            else
+                return null;
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException("Error retrieving masterRequestId: " + masterRequestId, ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+        Request request = getRequest(requestId, withContent, withResponseContent);
+        request.setMasterRequestId(masterRequestId);
+        request.setProcessInstanceId(processInstanceId);
+        return request;
+    }
+
+    public Request getRequest(Long id, boolean withContent, boolean withResponseContent)
+    throws DataAccessException {
         try {
             String query = "select create_dt, owner_type, owner_id, process_inst_id";
             if (withContent)
@@ -167,6 +211,9 @@ public class RequestsDAO extends VcsEntityDAO {
                 if (withContent)
                     request.setContent(rs.getString("content"));
             }
+            else {
+                return null;
+            }
 
             ResultSet responseRs = null;
             String responseQuery = "select document_id, create_dt";
@@ -177,9 +224,9 @@ public class RequestsDAO extends VcsEntityDAO {
                 responseQuery += " from document where owner_type='" + OwnerType.ADAPTOR_RESPONSE + "' and owner_id = ?";
                 responseRs = db.runSelect(responseQuery, ownerId);
             }
-            else if (OwnerType.LISTENER_REQUEST.equals(ownerType) && ownerId != null) {
+            else if (OwnerType.LISTENER_REQUEST.equals(ownerType)) {
                 responseQuery += " from document where owner_type='" + OwnerType.LISTENER_RESPONSE + "' and owner_id = ?";
-                responseRs = db.runSelect(responseQuery, ownerId);
+                responseRs = db.runSelect(responseQuery, id);
             }
             if (responseRs != null && responseRs.next()) {
                 request.setResponseId(responseRs.getLong("document_id"));
@@ -234,7 +281,7 @@ public class RequestsDAO extends VcsEntityDAO {
 
             // This join takes forever on MySQL, so a separate query is used to populate response info:
             // -- left join document d2 on (d2.owner_id = d.document_id)
-            if (query.getMax() != Query.MAX_ALL) {
+            if (query.getMax() != Query.MAX_ALL && !requestIds.isEmpty()) {
                 ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.LISTENER_RESPONSE, requestIds), null);
                 while (respRs.next()) {
                     Request request = requestMap.get(respRs.getLong("owner_id"));
@@ -252,7 +299,7 @@ public class RequestsDAO extends VcsEntityDAO {
             return requestList;
         }
         catch (Exception ex) {
-            throw new DataAccessException("Failed to retrieve master requests: ", ex);
+            throw new DataAccessException("Failed to retrieve inbound requests: (" + query + ")", ex);
         }
         finally {
             db.closeConnection();
@@ -262,6 +309,16 @@ public class RequestsDAO extends VcsEntityDAO {
     private String getInboundRequestsWhere(Query query) {
         StringBuilder clause = new StringBuilder();
         clause.append("where d.owner_type = '" + OwnerType.LISTENER_REQUEST + "'\n");
+
+        String find = query.getFind();
+        Long id = query.getLongFilter("id");
+        if (find != null) {
+            clause.append(" and d.document_id like '" + find + "%'\n");
+        }
+        else if (id != null && id > 0) {
+            clause.append(" and d.document_id = " + id + "\n");
+        }
+
         return clause.toString();
     }
 
@@ -303,7 +360,7 @@ public class RequestsDAO extends VcsEntityDAO {
 
             // This join takes forever on MySQL, so a separate query is used to populate response info:
             // -- left join document d2 on (d2.owner_id = d.document_id)
-            if (query.getMax() != Query.MAX_ALL) {
+            if (query.getMax() != Query.MAX_ALL && !activityIds.isEmpty()) {
                 ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.ADAPTOR_RESPONSE, activityIds), null);
                 while (respRs.next()) {
                     Request request = requestMap.get(respRs.getLong("owner_id"));
@@ -321,7 +378,7 @@ public class RequestsDAO extends VcsEntityDAO {
             return requestList;
         }
         catch (Exception ex) {
-            throw new DataAccessException("Failed to retrieve master requests: ", ex);
+            throw new DataAccessException("Failed to retrieve outbound requests: (" + query + ")", ex);
         }
         finally {
             db.closeConnection();
@@ -331,6 +388,16 @@ public class RequestsDAO extends VcsEntityDAO {
     private String getOutboundRequestsWhere(Query query) {
         StringBuilder clause = new StringBuilder();
         clause.append("where d.owner_type = '" + OwnerType.ADAPTOR_REQUEST + "'\n");
+
+        String find = query.getFind();
+        Long id = query.getLongFilter("id");
+        if (find != null) {
+            clause.append(" and d.document_id like '" + find + "%'\n");
+        }
+        else if (id != null && id > 0) {
+            clause.append(" and d.document_id = " + id + "\n");
+        }
+
         return clause.toString();
     }
 
