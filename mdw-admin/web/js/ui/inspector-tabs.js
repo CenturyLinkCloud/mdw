@@ -69,6 +69,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
       process: {
         Instance: {
           'Master Request': 'masterRequestId',
+          '_url': '${"#/workflow/masterRequests/" + it.masterRequestId}',
           ID: 'id',
           Status: 'status',
           Start: 'startDate',
@@ -86,7 +87,8 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
         }]},
         Source: {
           'Initiated By': 'owner',
-          ID: 'ownerId'
+          ID: 'ownerId',
+          '_url': '${it.owner == "PROCESS_INSTANCE" ? "#/workflow/processes/" + it.ownerId : "#/workflow/requests/" + it.ownerId}'
         }
       },
       activity: {
@@ -96,6 +98,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
          */
         Instances: [{
           ID: 'id',
+          '_url': '${"#/workflow/activities/" + it.id}',
           Status: 'status',
           Start: 'startDate',
           End: 'endDate',
@@ -179,7 +182,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)
                   url += ",";
-              };
+              }
               url += ']&sort=startDate&descending=true';
               return $http.get(url);
             }
@@ -206,7 +209,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)
                   url += ",";
-              };
+              }
               url += ']&descending=true';
               return $http.get(url);
             }
@@ -233,7 +236,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)
                   url += ",";
-              };
+              }
               url += ']&descending=true';
               return $http.get(url);
             }

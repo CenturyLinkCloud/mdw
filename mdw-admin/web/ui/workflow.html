@@ -33,7 +33,10 @@
             <div class="mdw-inspector-value" ng-if="tabValue.asset.path && tabValue.asset.url">
               <a href="{{tabValue.asset.url}}">{{tabValue.asset.path}}</a> {{tabValue.asset.version}}
             </div>
-            <div class="mdw-inspector-value" ng-if="tabValue.name && (!tabValue.asset.path || !tabValue.asset.url)">
+            <div class="mdw-inspector-value" ng-if="tabValue.url">
+              <a href="{{tabValue.url}}">{{tabValue.value}}</a>
+            </div>
+            <div class="mdw-inspector-value" ng-if="tabValue.name && !tabValue.url && (!tabValue.asset.path || !tabValue.asset.url)">
               {{tabValue.value}}
             </div>
           </div>

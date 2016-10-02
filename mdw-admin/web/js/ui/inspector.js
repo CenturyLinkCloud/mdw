@@ -63,7 +63,17 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
     var tabArr;
     if ($scope.activeTab instanceof Array) {
       // array is runtime obj itself (eg: instance.activity.Instances)
-      tabArr = $scope.activeTab;
+      tabArr = angular.copy($scope.activeTab);
+      util.getProperties(tabArr[0]).forEach(function(tabProp) {
+        var v = tabArr[0][tabProp];
+        if (v.startsWith('${') && v.endsWith('}')) {
+          $scope.runtimeInfo.forEach(function(rt) {
+            var evalsTo = $parse(v.substring(2, v.length - 1))({it: rt});
+            rt[tabProp] = evalsTo;
+          });
+          tabArr[0][tabProp] = tabProp;
+        }
+      });
     }
     else if (typeof $scope.activeTab == 'function') {
     }
@@ -169,8 +179,19 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
     else if (typeof $scope.activeTab === 'object') {
       // evaluate each object prop against tabInfo object
       var tabObj = tabInfo;
-      for (var atProp in $scope.activeTab) {
-        if ($scope.activeTab.hasOwnProperty(atProp)) {
+      var atProps = util.getProperties($scope.activeTab);
+      for (var i = 0; i < atProps.length; i++) {
+        var atProp = atProps[i];
+        var v = $scope.activeTab[atProp];
+        if (v.startsWith('${') && v.endsWith('}')) {
+          var evalsTo = $parse(v.substring(2, v.length - 1))({it: tabObj});
+          if (evalsTo !== null)
+            tabObj[$scope.activeTab[atProp]] = evalsTo;
+        }
+        if (atProp == '_url' && tabObj[$scope.activeTab[atProp]]) {
+          $scope.activeTabValues[i-1].url = tabObj[$scope.activeTab[atProp]];
+        }
+        else {
           $scope.activeTabValues.push({
             name: atProp,
             value: tabObj[$scope.activeTab[atProp]]
