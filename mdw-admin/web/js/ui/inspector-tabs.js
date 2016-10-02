@@ -181,7 +181,60 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
                   url += ",";
               };
               url += ']&sort=startDate&descending=true';
-              
+              return $http.get(url);
+            }
+          }
+        },
+        Requests: {
+          'requests': [{
+            ID: 'id',
+            '_url': '${"#/workflow/requests/" + it.id}',
+            Sent: 'created',
+            Responded: 'responded'
+          }],
+          'getRequests': function(diagramObject, workflowObject, runtimeInfo) {
+            if (typeof runtimeInfo == 'undefined') {
+              // no runtimeInfo means just checking for tab applicability
+              return diagramObject.workflowType == 'activity' && 
+                diagramObject.implementor && diagramObject.implementor.category == 'com.centurylink.mdw.activity.types.AdapterActivity';        
+            }
+            else {
+              if (runtimeInfo === null || runtimeInfo.length === 0)
+                return null;
+              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=[';              
+              for (var i = 0; i < runtimeInfo.length; i++) {
+                url += runtimeInfo[i].id;
+                if (i < runtimeInfo.length - 1)
+                  url += ",";
+              };
+              url += ']&descending=true';
+              return $http.get(url);
+            }
+          }
+        },
+        Responses: {
+          'requests': [{
+            ID: 'responseId',
+            '_url': '${"#/workflow/responses/" + it.id}',
+            Sent: 'created',
+            Responded: 'responded'
+          }],
+          'getResponses': function(diagramObject, workflowObject, runtimeInfo) {
+            if (typeof runtimeInfo == 'undefined') {
+              // no runtimeInfo means just checking for tab applicability
+              return diagramObject.workflowType == 'activity' && 
+                diagramObject.implementor && diagramObject.implementor.category == 'com.centurylink.mdw.activity.types.AdapterActivity';        
+            }
+            else {
+              if (runtimeInfo === null || runtimeInfo.length === 0)
+                return null;
+              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=[';              
+              for (var i = 0; i < runtimeInfo.length; i++) {
+                url += runtimeInfo[i].id;
+                if (i < runtimeInfo.length - 1)
+                  url += ",";
+              };
+              url += ']&descending=true';
               return $http.get(url);
             }
           }

@@ -8,7 +8,7 @@
             {{item.processName}} v{{item.processVersion}} &nbsp;{{item.id}}</a>
         </div>
         <div class="mdw-item-sub">
-          <span>Master request: <a href="#/workflow/requests/{{item.masterRequestId}}" class="mdw-link">{{item.masterRequestId}}</a></span>
+          <span>Master request: <a href="#/workflow/masterRequests/{{item.masterRequestId}}" class="mdw-link">{{item.masterRequestId}}</a></span>
         </div>
         <div class="mdw-item-sub">Started {{item.startDate}}<span ng-if="item.due">, &nbsp;Due <i class="mdw-item-highlight">{{item.due}}</i></span>
           <img class="mdw-item-alert" ng-if="item.alert" src="images/alert.png" alt="alert" />

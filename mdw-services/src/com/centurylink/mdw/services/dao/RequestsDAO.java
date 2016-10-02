@@ -164,7 +164,7 @@ public class RequestsDAO extends VcsEntityDAO {
         StringBuilder query = new StringBuilder();
         query.append("select document_id, process_instance_id from process_instance pi, document d\n");
         query.append("where pi.owner_id = d.document_id\n");
-        query.append("and pi.owner = 'DOCUMENT'\n");
+        // query.append("and pi.owner = 'DOCUMENT'\n");  (eg: 'TESTER')
         query.append("and pi.master_request_id = ?");
         Long requestId = null;
         Long processInstanceId = null;
@@ -396,6 +396,18 @@ public class RequestsDAO extends VcsEntityDAO {
         }
         else if (id != null && id > 0) {
             clause.append(" and d.document_id = " + id + "\n");
+        }
+        else {
+            Long[] ownerIds = query.getLongArrayFilter("ownerIds");
+            if (ownerIds != null) {
+                clause.append(" and d.owner_id in (");
+                for (int i = 0; i < ownerIds.length; i++) {
+                    clause.append(ownerIds[i]);
+                    if (i < ownerIds.length - 1)
+                        clause.append(", ");
+                }
+                clause.append(")\n");
+            }
         }
 
         return clause.toString();
