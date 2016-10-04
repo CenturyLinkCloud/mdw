@@ -132,7 +132,8 @@ public class ResourceRequestHandler extends ServiceRequestHandler {
     protected TextService getResourceServiceInstance(String resource, Map<String,String> headers) throws ServiceException {
         if (Listener.METAINFO_PROTOCOL_REST.equals(headers.get(Listener.METAINFO_PROTOCOL))) {
             // try new-style services first (except for certain non-json requests from Designer)
-            if (!OLD_STYLE_SERVICE_CONFLICTS.contains(resource) || "application/json".equals(headers.get("accept")) || headers.containsKey("DownloadFormat")) {
+            if (!OLD_STYLE_SERVICE_CONFLICTS.contains(resource) || "application/json".equals(headers.get("accept"))
+                    || "application/json".equals(headers.get("Accept")) || headers.containsKey("DownloadFormat")) {
                 try {
                     return getServiceInstance(REST_SERVICE_PROVIDER_PACKAGE, resource, headers);
                 }

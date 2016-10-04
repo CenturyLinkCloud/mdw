@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -1463,4 +1465,17 @@ public class StringHelper {
         else
             return row.length() - row.replace(",", "").length();
     }
+
+    private static DateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SSS'Z'");
+    static {
+        isoDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
+    public static String formatIsoDate(Date date) {
+        return isoDateFormat.format(date);
+    }
+    public static Date parseIsoDate(String iso) throws java.text.ParseException {
+        return isoDateFormat.parse(iso);
+    }
+
 }

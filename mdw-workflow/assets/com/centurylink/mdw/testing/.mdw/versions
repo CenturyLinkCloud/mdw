@@ -4,6 +4,6 @@ TestCaseActivityMonitor.java=5
 TestRunner.java=3
 function-test-results.xsl=2
 load-test-results.xsl=1
-mdw-designer-core.jar=8096
+mdw-designer-core.jar=8098
 readme.md=3
 steps.groovy=5

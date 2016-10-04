@@ -156,11 +156,14 @@ public class ViewUI
 
         ViewUI packageInstance = null;
         RuleSetVO loadedViewDef = RuleSetCache.getRuleSet(viewDefRuleSet.getId());
-        String confirmLoaded = (String) loadedViewDef.getCompiledObject();
-        if ("loaded".equals(confirmLoaded))  // flag as loaded
-          packageInstance = _packageInstances.get(packageVO.getPackageName());
-        else
-          loadedViewDef.setCompiledObject("loaded");
+
+        if (loadedViewDef != null) {
+          String confirmLoaded = (String) loadedViewDef.getCompiledObject();
+          if ("loaded".equals(confirmLoaded))  // flag as loaded
+            packageInstance = _packageInstances.get(packageVO.getPackageName());
+          else
+            loadedViewDef.setCompiledObject("loaded");
+        }
 
         if (packageInstance == null)
         {

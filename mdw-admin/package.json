@@ -1,6 +1,6 @@
 {
   "name": "mdw-admin",
-  "version": "6.0.037",
+  "version": "6.0.038",
   "description": "MDW Admin UI",
   "main": "app.js",
   "repository": {

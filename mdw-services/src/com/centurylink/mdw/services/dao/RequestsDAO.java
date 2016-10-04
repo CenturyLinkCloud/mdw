@@ -349,9 +349,9 @@ public class RequestsDAO extends VcsEntityDAO {
             List<Long> activityIds = new ArrayList<Long>();
             ResultSet rs = db.runSelect(q.toString(), null);
             while (rs.next()) {
-                Long activityId = rs.getLong("d.owner_id");
-                Request request = new Request(rs.getLong("d.document_id"));
-                request.setCreated(rs.getTimestamp("d.create_dt"));
+                Long activityId = rs.getLong("owner_id");
+                Request request = new Request(rs.getLong("document_id"));
+                request.setCreated(rs.getTimestamp("create_dt"));
                 request.setOutbound(true);
                 requestMap.put(activityId, request);
                 requests.add(request);

@@ -284,9 +284,9 @@ public class Tasks extends JsonRestService implements JsonExportable {
         @ApiImplicitParam(name="TaskAction", paramType="body", dataType="com.centurylink.mdw.model.value.task.TaskActionVO")})
     public JSONObject post(String path, JSONObject content, Map<String, String> headers)
             throws ServiceException, JSONException {
-        Query query = getQuery(path, headers);
         String segOne = getSegment(path, 1);
         try {
+            Query query = getQuery(path, headers);
             TaskServices taskServices = ServiceLocator.getTaskServices();
             if (segOne == null || segOne.equalsIgnoreCase("create")) {
                 // Create a new task

@@ -201,12 +201,11 @@ workflowMod.factory('Diagram',
     });
     diagram.subflows = [];
     if (this.process.subprocesses) {
-      var processInstanceId = this.instance.id;
       this.process.subprocesses.forEach(function(subproc) {
         var subflow = new Subflow(subproc);
         diagram.makeRoom(canvasDisplay, subflow.prepareDisplay(diagram));
         if (diagram.instance) {
-          subflow.mainProcessInstanceId = processInstanceId; // needed for subprocess & task instance retrieval          
+          subflow.mainProcessInstanceId = diagram.instance.processInstanceId; // needed for subprocess & task instance retrieval          
           subflow.applyState(diagram.getSubflowInstances(subflow.subprocess.id));
         }
         diagram.subflows.push(subflow);

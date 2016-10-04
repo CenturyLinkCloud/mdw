@@ -2,5 +2,5 @@
   "attributes": {"OsgiBundleSymbolicName": {"OsgiBundleSymbolicName": "com.centurylink.mdw.hub"}},
   "name": "com.centurylink.mdw.hub",
   "schemaVersion": "5.5",
-  "version": "5.5.37"
+  "version": "5.5.38"
 }

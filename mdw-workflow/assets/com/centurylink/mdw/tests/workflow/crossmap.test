@@ -1,0 +1,25 @@
+// crossmap
+start process("CrossmapTest") {
+    variables = [jsonInput: """{
+  chess: {
+    board: {
+      shape: 'rect',
+      rows: 8,
+      columns: 8
+    },
+    champion: 'Deep Blue',
+    pieces: [ 
+      {
+        name: 'bishop',
+        movement: 'diagonal'
+      },
+      {
+        name: 'knight',
+        movement: 'two across, one over'
+      }
+    ]
+  }
+}"""]
+}
+//wait process
+//verify process

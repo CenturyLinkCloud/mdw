@@ -2,5 +2,5 @@
   "attributes": {"mdw.task.resume.notify.endpoint": {"mdw.task.resume.notify.endpoint": "http://mdwapp:ldap_012@localhost:8989/mdw"}},
   "name": "com.centurylink.mdw.tests.routing",
   "schemaVersion": "5.5",
-  "version": "5.5.37"
+  "version": "5.5.38"
 }

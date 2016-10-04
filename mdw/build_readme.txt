@@ -2,7 +2,7 @@ Building MDW 6
 ==============
 
 1 - Edit gradle.properties to set the new build numbers.
-    a) Update mdwCommonVersion to set the MDW 5.5 build that this depends on.
+    a) Update mdwFrameworkVersion to set the MDW 5.5 build that this depends on.
     b) Update mdwVersion.  Until we publish a fully-contained 6.0 build, our convention is that 
        the last two digits of the 6.0 build number equate to the MDW 5.5 build that this depends on.
        For example 6.0.025 depends on 5.5.25, and 6.0.036 will depend on 5.5.36.

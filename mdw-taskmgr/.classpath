@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="web/WEB-INF/lib/mdw-jsf.jar"/>
-	<classpathentry exported="true" kind="lib" path="web/WEB-INF/lib/mdwweb-5.5.37-SNAPSHOT.jar" sourcepath="/mdw-web"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="src" path="/mdw-common"/>
 	<classpathentry exported="true" kind="src" path="/mdw-listeners"/>
@@ -14,6 +11,7 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

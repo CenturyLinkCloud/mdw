@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBElement;
 import org.apache.xmlbeans.XmlObject;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
+import org.yaml.snakeyaml.Yaml;
 
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.constant.PropertyNames;
@@ -31,7 +32,6 @@ import com.centurylink.mdw.services.ProcessManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 import com.centurylink.mdw.xml.XmlBeanWrapper;
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.Yaml;
 import com.qwest.mbeng.MbengDocument;
 import com.qwest.mbeng.MbengTableArray;
 
