@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry including="**/*.java" kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/snakeyaml-1.16.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bpmn-schemas-2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.apache.oltu.oauth2.client-1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.apache.oltu.oauth2.common-1.0.1.jar"/>

@@ -387,6 +387,7 @@
     <location>/error.jsf</location>
   </error-page>
   
+  <!-- 
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>Login</web-resource-name>
@@ -398,4 +399,5 @@
       <transport-guarantee>CONFIDENTIAL</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
+   -->
 </web-app>

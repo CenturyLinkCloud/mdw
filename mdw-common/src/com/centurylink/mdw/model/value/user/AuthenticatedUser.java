@@ -6,6 +6,7 @@ package com.centurylink.mdw.model.value.user;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.centurylink.mdw.auth.OAuthAccessToken;
 import com.centurylink.mdw.common.translator.SelfSerializable;
 import com.centurylink.mdw.model.data.task.TaskAction;
 
@@ -244,4 +245,8 @@ public class AuthenticatedUser extends UserVO implements SelfSerializable
     public String getLastName() { return _lastName; }
     public void setLastName(String s) { _lastName = s; }
 
+
+    private OAuthAccessToken oAuthAccessToken;
+    public OAuthAccessToken getOAuthAccessToken() { return oAuthAccessToken; }
+    public void setOAuthAccessToken(OAuthAccessToken token) { this.oAuthAccessToken = token; }
 }

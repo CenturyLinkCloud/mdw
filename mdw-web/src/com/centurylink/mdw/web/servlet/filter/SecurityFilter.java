@@ -21,9 +21,11 @@ import javax.servlet.http.HttpSession;
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.constant.AuthConstants;
 import com.centurylink.mdw.common.constant.MiscConstants;
+import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.utilities.FileHelper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.model.value.user.AuthenticatedUser;
 import com.centurylink.mdw.web.ui.UIError;
 import com.centurylink.mdw.web.util.UrlPatterns;
@@ -59,7 +61,8 @@ public abstract class SecurityFilter implements Filter
   public void init(FilterConfig filterConfig) throws ServletException
   {
     this.filterConfig = filterConfig;
-    if (AuthConstants.getOAuthTokenLocation() != null || AuthConstants.isMdwLdapAuth() || ApplicationContext.isDevelopment())
+    if (AuthConstants.getOAuthTokenLocation() != null || AuthConstants.isMdwLdapAuth() || ApplicationContext.isDevelopment()
+        || PropertyManager.getProperty(PropertyNames.MDW_OAUTH_REST_ENDPOINT) != null)
     {
       // does not use CTAPPFilter.config
       useMdwAuthFilter = true;

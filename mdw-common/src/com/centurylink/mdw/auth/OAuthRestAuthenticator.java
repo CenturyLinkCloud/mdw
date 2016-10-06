@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.auth;
 
@@ -8,17 +8,21 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.utilities.HttpHelper;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 
 public class OAuthRestAuthenticator implements Authenticator {
 
+    private String endpoint;
+
     @Override
     public void authenticate(String user, String password) throws MdwSecurityException {
 
         try {
-            String endpoint = PropertyManager.getProperty(PropertyNames.MDW_OAUTH_REST_ENDPOINT);
+            endpoint = PropertyManager.getProperty(PropertyNames.MDW_OAUTH_REST_ENDPOINT);
             HttpHelper helper = new HttpHelper(new URL(endpoint));
             Map<String,String> headers = new HashMap<String,String>();
             headers.put("Content-Type", "application/x-www-form-urlencoded");
@@ -40,28 +44,30 @@ public class OAuthRestAuthenticator implements Authenticator {
                 + "&password=" + URLEncoder.encode(password, "UTF-8") + "&grant_type=password";
 
             String response = helper.post(body);
-
-//            {
-//                "access_token": "c6bbe1b08be99759ee0e6477fe15a9ae977bb01850892da64b8fec33083e315e",
-//                "token_type": "bearer",
-//                "expires_in": 7200,
-//                "refresh_token": "5e24ec73e02b77cc5ccd33a78e45563557c909ddf3de59570292b7e9fefc5517",
-//                "account_name": "servicedelivery"
-//            }
-
+            JSONObject json = new JSONObject(response);
+            if (json.has("status")) {
+                String msg = json.getString("status");
+                if (json.has("response_message"))
+                    msg += ": " + json.getString("response_message");
+                throw new MdwSecurityException(msg);
+            }
+            else {
+                accessToken = new OAuthAccessToken(json, true);
+            }
+        }
+        catch (MdwSecurityException ex) {
+            throw ex;
         }
         catch (Exception ex) {
-
+            throw new MdwSecurityException(ex.getMessage(), ex);
         }
-
-        // TODO Auto-generated method stub
-
     }
 
-    @Override
     public String getKey() {
-        // TODO Auto-generated method stub
-        return null;
+        return endpoint;
     }
+
+    private OAuthAccessToken accessToken;
+    public OAuthAccessToken getAccessToken() { return accessToken; }
 
 }

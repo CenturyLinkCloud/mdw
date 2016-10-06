@@ -15,10 +15,13 @@ import javax.faces.event.ActionListener;
 import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.LdapAuthenticator;
 import com.centurylink.mdw.auth.OAuthAuthenticator;
+import com.centurylink.mdw.auth.OAuthRestAuthenticator;
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.constant.AuthConstants;
+import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.model.value.user.AuthenticatedUser;
 import com.centurylink.mdw.web.jsf.FacesVariableUtil;
 import com.centurylink.mdw.web.util.RemoteLocator;
@@ -32,7 +35,9 @@ public class LoginController implements ActionListener {
         if (actionEvent.getComponent().getId().equals("loginButton")) {
             try {
                 Authenticator auth;
-                if (AuthConstants.getOAuthTokenLocation() != null)
+                if (PropertyManager.getProperty(PropertyNames.MDW_OAUTH_REST_ENDPOINT) != null)
+                    auth = new OAuthRestAuthenticator();
+                else if (AuthConstants.getOAuthTokenLocation() != null)
                     auth = new OAuthAuthenticator();
                 else // ldap is default
                     auth = new LdapAuthenticator();
@@ -42,6 +47,16 @@ public class LoginController implements ActionListener {
                 AuthenticatedUser user = RemoteLocator.getUserManager().loadUser(login.getUser());
                 if (user == null && AuthConstants.isAllowAnyAuthenticatedUser())
                     user = new AuthenticatedUser(login.getUser());
+                if (auth instanceof OAuthRestAuthenticator) {
+                    if (user == null) {
+                        String msg = "Not authorized for MDW access";
+                        FacesVariableUtil.addMessage(msg);
+                        throw new AbortProcessingException(msg);
+                    }
+                    else {
+                        user.setOAuthAccessToken(((OAuthRestAuthenticator)auth).getAccessToken());
+                    }
+                }
                 FacesVariableUtil.setValue("authenticatedUser", user);
                 logger.info("Authenticated User: " + user.getCuid());
                 logger.mdwDebug("Auth User Details:\n" + user);

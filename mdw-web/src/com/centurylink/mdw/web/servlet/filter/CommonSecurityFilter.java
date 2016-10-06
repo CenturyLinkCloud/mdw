@@ -21,9 +21,11 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.constant.AuthConstants;
+import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.utilities.FileHelper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.common.utilities.property.PropertyManager;
 
 /**
  * Servlet filter for populating the session's "authenticatedUser" with the values passed from
@@ -40,7 +42,7 @@ public class CommonSecurityFilter implements Filter
 
   public void init(FilterConfig filterConfig) throws ServletException
   {
-    if (AuthConstants.getOAuthTokenLocation() != null || AuthConstants.isMdwLdapAuth())
+    if (AuthConstants.getOAuthTokenLocation() != null || AuthConstants.isMdwLdapAuth() || PropertyManager.getProperty(PropertyNames.MDW_OAUTH_REST_ENDPOINT) != null)
     {
       // does not use CTAPPFilter.config
       filter = new MdwAuthFilter();

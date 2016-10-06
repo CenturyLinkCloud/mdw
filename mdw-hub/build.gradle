@@ -116,6 +116,9 @@ dependencies {
     tomcatExclude group: "org.apache.camel", name: "camel-blueprint", version: "2.8.4"
     tomcatExclude group: "org.apache.camel", name: "camel-cxf", version: "2.8.4"
     
+    // conflicting guava jar causes problems in ctl.io env
+    tomcatExclude group: "com.google.guava", name: "guava", version: "18.0"
+    
     // runtime dependencies that need to be added back after the exclusions are subtracted
     tomcatExtra group: "javax.ws.rs", name: "jsr311-api", version: "1.1.1"
     tomcatExtra group: "org.springframework", name: "spring-asm", version: "3.0.5.RELEASE"
