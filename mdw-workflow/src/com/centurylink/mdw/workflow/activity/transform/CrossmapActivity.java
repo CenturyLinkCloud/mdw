@@ -48,6 +48,8 @@ public class CrossmapActivity extends DefaultActivityImpl {
             String mapperVer = getAttributeValueSmart(MAPPER_VERSION);
             AssetVersionSpec spec = new AssetVersionSpec(mapper, mapperVer == null ? "0" : mapperVer);
             RuleSetVO mapperScript = RuleSetCache.getRuleSet(spec);
+            if (mapperScript == null)
+                throw new ActivityException("Cannot load mapping script: " + spec);
             if (!RuleSetVO.GROOVY.equals(mapperScript.getLanguage()))
                 throw new ActivityException("Unsupported mapper language: " + mapperScript.getLanguage());
 

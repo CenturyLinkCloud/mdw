@@ -422,22 +422,28 @@ public class SimulationSection extends PropertySection implements IFilter
       createAttributeValue();
     }
 
-    public void parseAttrValues(String attrValue)
+    public void parseAttrValues(String value)
     {
-      String[] values = attrValue.split(",");
-      if (values.length != 3)
-        return;
-      this.returnCode = values[0];
-      try
+      int firstDelim = value.indexOf(',');
+      int secondDelim = (firstDelim>=0)?value.indexOf(',', firstDelim+1):-1;
+      if (secondDelim > 0)
       {
-        this.chance = Integer.parseInt(values[1]);
+        returnCode = value.substring(0, firstDelim);
+        chance = new Integer(value.substring(firstDelim + 1, secondDelim));
+        response = value.substring(secondDelim + 1);
       }
-      catch (NumberFormatException nfe)
+      else if (firstDelim >= 0)
       {
-        this.chance = 1;
+        returnCode = value.substring(0, firstDelim);
+        chance = new Integer(value.substring(firstDelim + 1));
+        response = "";
       }
-
-      this.response = values[2];
+      else
+      {
+        returnCode = value;
+        chance = 0;
+        response = "";
+      }
     }
 
     private void createAttributeValue()

@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.bpm.MDWPackage;
 import com.centurylink.mdw.bpm.MDWProcess;
+import com.centurylink.mdw.bpm.MDWProcessDefinition;
 import com.centurylink.mdw.bpm.PackageDocument;
 import com.centurylink.mdw.bpm.ProcessDefinitionDocument;
 import com.centurylink.mdw.common.Compatibility;
@@ -783,7 +784,10 @@ public class Importer
 
     for (MDWProcess process : procdef.getProcessDefinition().getProcessList())
     {
-      ProcessVO importedProc = importer.importProcess(process.xmlText());
+      ProcessDefinitionDocument oneProcDef = ProcessDefinitionDocument.Factory.newInstance();
+      MDWProcessDefinition oneProc = oneProcDef.addNewProcessDefinition();
+      oneProc.getProcessList().add(process);
+      ProcessVO importedProc = importer.importProcess(oneProcDef.xmlText());
       if (element instanceof WorkflowProcess && !((WorkflowProcess)element).getName().equals(importedProc.getProcessName()))
         throw new DataAccessException("Expected process: " + ((WorkflowProcess)element).getName() + " in attributes XML but found: " + importedProc.getName());
       ProcessVO proc = dataAccess.getLatestProcess(importedProc.getName());
