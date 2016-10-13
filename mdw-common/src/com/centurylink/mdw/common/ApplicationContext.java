@@ -633,6 +633,10 @@ public class ApplicationContext {
         return "dev".equalsIgnoreCase(getRuntimeEnvironment());
     }
 
+    public static boolean isServiceApiOpen() {
+        return "true".equalsIgnoreCase(System.getProperty("mdw.service.api.open"));
+    }
+
     public static String getDevUser() {
         if (isDevelopment()) {
             String devUser = PropertyManager.getProperty(PropertyNames.MDW_DEV_USER);
@@ -641,6 +645,15 @@ public class ApplicationContext {
             if (devUser == null)
                 devUser = PropertyManager.getProperty("MDWFramework.TaskManagerWeb/dev.tm.gui.user");
             return devUser;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public static String getServiceUser() {
+        if (isServiceApiOpen()) {
+            return PropertyManager.getProperty(PropertyNames.MDW_SERVICE_USER);
         }
         else {
             return null;

@@ -297,6 +297,7 @@ public class RestfulServicesServlet extends HttpServlet {
             if (user != null)
                 headers.put(Listener.AUTHENTICATED_USER_HEADER, user.getCuid());
         }
+
         if (ApplicationContext.isDevelopment() && headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
             // auth failed or not provided but allow dev override
             if (ApplicationContext.getDevUser() != null) {
@@ -305,6 +306,15 @@ public class RestfulServicesServlet extends HttpServlet {
                     headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
                 error = null;
             }
+        }
+        else if (ApplicationContext.isServiceApiOpen() && headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
+          // auth failed or not provided but allow service user override
+          if (ApplicationContext.getServiceUser() != null) {
+              headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getServiceUser());
+              if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
+                  headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
+              error = null;
+          }
         }
         return error;
     }

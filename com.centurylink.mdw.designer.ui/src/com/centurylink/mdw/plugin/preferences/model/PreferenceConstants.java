@@ -11,9 +11,7 @@ import com.centurylink.mdw.plugin.PluginMessages;
 public interface PreferenceConstants
 {
   // TODO: externalize these URLs
-  public static final String PREFS_DEFAULT_MDW_RELEASES_URL = "http://archiva.corp.intranet/archiva/repository/mdw";
-  // TODO: switch above to the following when Archiva becomes unavailable
-  // public static final String PREFS_DEFAULT_MDW_RELEASES_URL = "http://lxdenvmtc143.dev.qintra.com:7021/maven/repository";
+  public static final String PREFS_DEFAULT_MDW_RELEASES_URL = "http://lxdenvmtc143.dev.qintra.com:7021/maven/repository";
   public static final String PREFS_DEFAULT_WORKSPACE_SETUP_URL = "http://lxdenvmtc143.dev.qintra.com:7021/Environment";
   public static final String PREFS_DEFAULT_DISCOVERY_URL = "http://lxdenvmtc143.dev.qintra.com:7021/Discovery";
 
