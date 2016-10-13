@@ -1,6 +1,0 @@
--Dmdw.host=lxdnd696.dev.qintra.com -Dmdw.port=6011 -Dmdw.context.root=MDWExampleWeb 
--Dmdw.preselect.type=processInstance -Dmdw.preselect.id=1240515
-
-(General LDAP Auth -- Leave <USER> as placeholder)
--Dmdw.ldap.url=ldap://ldapt.dev.qintra.com:1636/dc=mnet,dc=qintra,dc=com
--Dmdw.ldap.principal=uid=<USER>,ou=people,dc=mnet,dc=qintra,dc=com
