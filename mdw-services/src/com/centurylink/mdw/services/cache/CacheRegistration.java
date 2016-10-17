@@ -35,7 +35,6 @@ import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.common.utilities.startup.StartupClass;
-import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.services.bundle.CacheRegistry;
@@ -188,17 +187,12 @@ public class CacheRegistration implements StartupClass {
             refreshCache(propmgr);
             if (ApplicationContext.isFileBasedAssetPersist())
                 DataAccess.getProcessLoader().getPackageList(false, null); // prime the ids
-            if (ApplicationContext.getContainerName().equals(NamingProvider.OSGI)) {
-                CacheRegistry.getInstance().refreshAll(excludedFormats);
-            }
-            else {
-                if (excludedFormats == null || !excludedFormats.contains(RuleSetVO.JAVA))
-                    CacheRegistry.getInstance().clearDynamicServices();
-                synchronized (allCaches) {
-                    for (String cacheName : allCaches.keySet()) {
-                        if (!cacheName.equals(propmgr))
-                            refreshCache(cacheName, excludedFormats);
-                    }
+            if (excludedFormats == null || !excludedFormats.contains(RuleSetVO.JAVA))
+                CacheRegistry.getInstance().clearDynamicServices();
+            synchronized (allCaches) {
+                for (String cacheName : allCaches.keySet()) {
+                    if (!cacheName.equals(propmgr))
+                        refreshCache(cacheName, excludedFormats);
                 }
             }
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
@@ -288,13 +282,9 @@ public class CacheRegistration implements StartupClass {
 
     public void registerCache(String name, CacheEnabled cache) {
         logger.info("Register cache " + name);
-        if (ApplicationContext.getContainerName().equals(NamingProvider.OSGI)) {
-            if (cache instanceof CacheService)
-                CacheRegistry.getInstance().register(name, (CacheService)cache);
-        } else
-            synchronized(allCaches) {
-                allCaches.put(name, cache);
-            }
+        synchronized(allCaches) {
+            allCaches.put(name, cache);
+        }
     }
 
     public static void broadcastRefresh(String cacheNames, InternalMessenger messenger) {

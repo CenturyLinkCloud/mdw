@@ -758,9 +758,6 @@ class ProcessExecuterImpl {
                     ar.startCase = ActivityRuntimeVO.STARTCASE_ERROR_IN_PREPARE;
                 } else {
                     ar.startCase = ActivityRuntimeVO.STARTCASE_NORMAL;
-                    // send message to BAM when configured (OSGi is handled through monitors)
-                    /*if (!ApplicationContext.isOsgi())
-                        ar.activity.sendMessageToBam(WorkAttributeConstant.BAM_START_MSGDEF);*/
                     // notify registered monitors
                     ar.activity.notifyMonitors(WorkStatus.LOGMSG_START);
                 }
@@ -972,9 +969,6 @@ class ProcessExecuterImpl {
             // Step 3c. otherwise, activity is successful and complete it
             else {
                 completeActivityInstance(ai, origCompCode, pi, logtag);
-                // send message to BAM when configured (OSGi is handled through monitors)
-               /* if (!ApplicationContext.isOsgi())
-                    activity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);*/
                 // notify registered monitors
                 activity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
 
@@ -1164,10 +1158,7 @@ class ProcessExecuterImpl {
                     handleResumeOnHold(cntrActivity, actInst, parentInst);
                 } else if (actInst.getStatusCode()==WorkStatus.STATUS_FAILED) {
                     completeActivityInstance(actInst, compCode, parentInst, logtag);
-                    // send message to BAM when configured (OSGi is handled through monitors)
-                    /*if (!ApplicationContext.isOsgi())
-                        cntrActivity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);*/
-                    // notify registered monitors - (both OSGi and Cloud mode)
+                    // notify registered monitors
                     cntrActivity.notifyMonitors(WorkStatus.LOGMSG_FAILED);
 
                     InternalEventVO jmsmsg = InternalEventVO.createActivityNotifyMessage(actInst,
@@ -1493,9 +1484,6 @@ class ProcessExecuterImpl {
                 failActivityInstance(actinst, "Failed upon resume", procinst, logtag, activity.getReturnMessage());
             } else {    // status is null or Completed
                 completeActivityInstance(actinst, completionCode.toString(), procinst, logtag);
-                // send message to BAM when configured (OSGi is handled through monitors)
-                /*if (!ApplicationContext.isOsgi())
-                    activity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);*/
                 // notify registered monitors
                 activity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
             }

@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseConfiguration;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderFactory;
@@ -21,7 +20,6 @@ import org.drools.builder.ResourceType;
 import org.drools.compiler.PackageBuilderConfiguration;
 import org.drools.io.ResourceFactory;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.common.cache.PreloadableCache;
@@ -29,7 +27,6 @@ import com.centurylink.mdw.common.cache.impl.RuleSetCache;
 import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.workflow.drools.DecisionTableProvider;
@@ -179,13 +176,7 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
         }
 
         PackageBuilderConfiguration pbConfig = null;
-        ClassLoader loader = key.loader == null ? getDefaultClassLoader() : key.loader;
-        if (ApplicationContext.getContainerName().equals(NamingProvider.OSGI)) {
-            pbConfig = new PackageBuilderConfiguration(loader);
-        }
-        else {
-            pbConfig = new PackageBuilderConfiguration();
-        }
+        pbConfig = new PackageBuilderConfiguration();
         pbConfig.setProperty("drools.dialect.java.compiler", "JANINO");
 
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(pbConfig);
@@ -230,14 +221,7 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
             throw new CachingException("Error parsing knowledge base from rules for " + ruleSet.getDescription() + "\n" + kbuilder.getErrors());
         }
         else {
-            KnowledgeBase knowledgeBase = null;
-            if (ApplicationContext.getContainerName().equals(NamingProvider.OSGI)) {
-                KnowledgeBaseConfiguration kbConfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration(null, loader);
-                knowledgeBase = KnowledgeBaseFactory.newKnowledgeBase(kbConfig);
-            }
-            else {
-                knowledgeBase = KnowledgeBaseFactory.newKnowledgeBase();
-            }
+            KnowledgeBase knowledgeBase = KnowledgeBaseFactory.newKnowledgeBase();
             knowledgeBase.addKnowledgePackages(kbuilder.getKnowledgePackages());
             logger.info("Loaded KnowledgeBase from RuleSet: " + ruleSet.getLabel());
             return new KnowledgeBaseRuleSet(knowledgeBase, ruleSet);

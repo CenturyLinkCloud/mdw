@@ -23,14 +23,10 @@ import javax.management.ObjectName;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-
 import com.centurylink.mdw.common.constant.ApplicationConstants;
 import com.centurylink.mdw.common.constant.PaaSConstants;
 import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.exception.StartupException;
-import com.centurylink.mdw.common.service.AwaitingStartupException;
 import com.centurylink.mdw.common.utilities.ClasspathUtil;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
@@ -140,19 +136,6 @@ public class ApplicationContext {
             if (StringHelper.isEmpty(jms))
                 jms = JmsProvider.ACTIVEMQ;
             else if (JmsProvider.ACTIVEMQ.equals(jms)) {
-                if (containerContext instanceof BundleContext) {
-                    try {
-                        BundleContext bundleContext = (BundleContext) containerContext;
-                        ServiceReference sr = bundleContext.getServiceReference(JmsProvider.class.getName());
-                        if (sr != null) {
-                            jmsProvider = (JmsProvider)bundleContext.getService(sr);
-                            logger.debug("Injected JmsProvider: " + jmsProvider.getClass());
-                        }
-                    }
-                    catch (Exception ex) {
-                        logger.severeException("Error injecting JmsProvider (" + ex.toString() + "); instantiating directly", ex);
-                    }
-                }
                 if (jmsProvider == null) {
                     // use below to avoid build time dependency
                     jmsProvider = Class.forName("com.centurylink.mdw.container.plugins.activemq.ActiveMqJms").asSubclass(JmsProvider.class).newInstance();
@@ -337,7 +320,6 @@ public class ApplicationContext {
 
     /**
      * Returns the MDW version read from mdw-common.jar's manifest file
-     * (In OSGi it will have been set by the common bundle activator.
      */
     public static String getMdwVersion() {
         if (mdwVersion != null)
@@ -567,14 +549,6 @@ public class ApplicationContext {
             }
         }
         return completeServerList;
-    }
-
-    private static BundleContext osgiBundleContext;
-    public static BundleContext getOsgiBundleContext() { return osgiBundleContext; }
-    public static void setOsgiBundleContext(BundleContext bundleContext) throws AwaitingStartupException {
-        if (!"com.centurylink.mdw.common".equals(bundleContext.getBundle().getSymbolicName()) && !startedUp)
-            throw new AwaitingStartupException(bundleContext.getBundle().getSymbolicName() + " is waiting for MDW ApplicationContext...");
-        osgiBundleContext = bundleContext;
     }
 
     public static String getProxyServerName() {

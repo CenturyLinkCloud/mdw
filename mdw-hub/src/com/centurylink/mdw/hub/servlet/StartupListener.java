@@ -63,25 +63,16 @@ public class StartupListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent contextEvent) {
-        // for OSGI see StartupBundleActivator
-        if (ApplicationContext.getContainerName().equals(NamingProvider.OSGI))
-            return;
         onStartup(contextEvent.getServletContext());
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent contextEvent) {
-        if (ApplicationContext.getContainerName().equals(NamingProvider.OSGI))
-            return;
         onShutdown(contextEvent.getServletContext().getContextPath());
     }
 
     public void onStartup(ServletContext servletContext) {
-        System.out.println("MDW Startup Listener: WebApp = " +
-                (servletContext==null?"OSGi":servletContext.getServletContextName()));
-
-        // needed for EL impl in tomcat until we get rid of TaskMgr support
-        System.setProperty("org.apache.el.parser.SKIP_IDENTIFIER_CHECK", "true");
+        System.out.println("MDW Startup Listener: WebApp = " + servletContext.getServletContextName());
 
         StandardLogger logger = null;
 

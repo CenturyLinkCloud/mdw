@@ -16,7 +16,6 @@ public interface JmsProvider {
 
 	String JBOSS = "JBoss";
 	String ACTIVEMQ = "ActiveMQ";
-	String OSGI = "OSGi";
 	String NONE = "none";
 
     public QueueConnectionFactory getQueueConnectionFactory(NamingProvider namingProvider, String contextUrl)

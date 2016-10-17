@@ -17,7 +17,6 @@ import com.centurylink.mdw.common.exception.PropertyException;
 import com.centurylink.mdw.common.exception.StartupException;
 import com.centurylink.mdw.common.utilities.property.impl.PropertyManagerDatabase;
 import com.centurylink.mdw.common.utilities.property.impl.PropertyManagerUnitTest;
-import com.centurylink.mdw.container.NamingProvider;
 
 /**
  */
@@ -151,8 +150,6 @@ public abstract class PropertyManager implements CacheEnabled {
 
     public synchronized static PropertyManager initializeContainerPropertyManager(String containerName,
         String servletRealPath) throws StartupException {
-        if (containerName.equals(NamingProvider.OSGI))
-            return getInstance();  // use the service
 
         String pmname = System.getProperty(MDW_PROPERTY_MANAGER);
         if (pmname == null)
@@ -182,11 +179,8 @@ public abstract class PropertyManager implements CacheEnabled {
         sources.put(propname, src);
     }
 
-    /**
-     * TODO: Currently not honored except for OSGi.
-     */
     public boolean isDbConfigEnabled() {
-        return true;  // overridden via system property for OSGi
+        return true;
     }
 
     final protected void loadFromStream(Properties properties, InputStream stream, String source)

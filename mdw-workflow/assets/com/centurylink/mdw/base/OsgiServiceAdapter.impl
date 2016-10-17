@@ -1,7 +1,0 @@
-{
-  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
-  "icon": "adapter.png",
-  "implementorClass": "com.centurylink.mdw.workflow.adapter.osgi.OsgiServiceAdapter",
-  "label": "OSGi Service Adapter",
-  "pagelet": "<PAGELET/>"
-}

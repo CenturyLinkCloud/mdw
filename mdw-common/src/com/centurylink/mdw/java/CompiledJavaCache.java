@@ -47,7 +47,7 @@ import com.centurylink.mdw.model.value.process.PackageVO;
 
 /**
  * Compiles and caches java asset classes, and provides a class-loading mechanism to allow these assets
- * to reference OSGi bundle or Jar classes as well.
+ * to reference Jar classes as well.
  */
 public class CompiledJavaCache implements PreloadableCache, AssetCache {
 

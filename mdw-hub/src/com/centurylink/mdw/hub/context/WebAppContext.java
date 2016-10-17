@@ -30,16 +30,7 @@ public class WebAppContext {
     public static Mdw getMdw() throws IOException {
         if (mdw == null) {
 
-            String hubRoot = PropertyManager.getProperty("mdw.admin.hub.url");
-            if (hubRoot == null) {
-                // user relative url root
-                String container = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_DATASOURCE_PROVIDER);
-                if ("OSGi".equals(container))
-                    hubRoot = "/MDWHub";
-                else
-                    hubRoot = "/mdw";
-            }
-
+            String hubRoot = "/mdw";  // TODO overridable
             String servicesRoot = PropertyManager.getProperty("mdw.admin.services.url");
             if (servicesRoot == null)
                 servicesRoot = hubRoot;
@@ -49,9 +40,9 @@ public class WebAppContext {
             if (assetLoc != null)
                 assetRoot = new File(assetLoc);
 
-            String overridePackage = PropertyManager.getProperty(PropertyNames.MDW_ADMIN_OVERRIDE_PACKAGE);
+            String overridePackage = PropertyManager.getProperty(PropertyNames.MDW_HUB_OVERRIDE_PACKAGE);
             if (overridePackage == null)
-                overridePackage = "mdw-admin";
+                overridePackage = "mdw-hub";
 
             initMdwBuildVersion();
             mdw = new Mdw(mdwVersion, mdwBuild, hubRoot, servicesRoot, assetRoot, overridePackage);

@@ -11,12 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
-import org.osgi.framework.ServiceReference;
-
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.java.CompiledJavaCache;
@@ -28,7 +22,6 @@ public class ProviderRegistry {
     public static final List<String> providerServices = new ArrayList<String>(Arrays.asList(new String[] {ActivityProvider.class.getName(),
             EventHandlerProvider.class.getName(), VariableTranslatorProvider.class.getName()}));
     private Map<String,List<Provider<?>>> providers = new HashMap<String,List<Provider<?>>>();
-    private Map<String,ServiceListener> serviceListeners = new HashMap<String,ServiceListener>();
     private Map<String,Set<String>> dynamicProviders = new HashMap<String,Set<String>>();
 
     @SuppressWarnings("unchecked")
@@ -72,95 +65,6 @@ public class ProviderRegistry {
             instance.providers.put(VariableTranslatorProvider.class.getName(), new ArrayList<Provider<?>>());
         }
         return instance;
-    }
-
-    public void startup(final BundleContext bundleContext) throws InvalidSyntaxException, ProviderException {
-        serviceListeners.put(ActivityProvider.class.getName(), register(bundleContext, ActivityProvider.class));
-        serviceListeners.put(EventHandlerProvider.class.getName(), register(bundleContext, EventHandlerProvider.class));
-        serviceListeners.put(VariableTranslatorProvider.class.getName(), register(bundleContext, VariableTranslatorProvider.class));
-    }
-
-    /**
-     * @param bundleContext
-     * @throws InvalidSyntaxException
-     */
-    public void shutdown(final BundleContext bundleContext) throws InvalidSyntaxException {
-        List<String> toRemove = new ArrayList<String>();
-        for (String providerClass : serviceListeners.keySet()) {
-            unregister(bundleContext, serviceListeners.get(providerClass), providerClass);
-            toRemove.add(providerClass);
-        }
-        for (String remove : toRemove)
-          serviceListeners.remove(remove);
-        dynamicProviders.clear();
-    }
-
-    protected <T> ServiceListener register(final BundleContext bundleContext, final T providerType)
-    throws InvalidSyntaxException {
-        final String providerClass = ((Class<?>)providerType).getName();
-
-        // provider services
-        ServiceListener serviceListener = new ServiceListener() {
-            @SuppressWarnings("unchecked")
-            public void serviceChanged(ServiceEvent ev) {
-                ServiceReference serviceRef = ev.getServiceReference();
-                Provider<T> provider = (Provider<T>)bundleContext.getService(serviceRef);
-                for (String key : serviceRef.getPropertyKeys()) {
-                    Object value = serviceRef.getProperty(key);
-                    if (value != null)
-                      provider.setProperty(key, value.toString());
-                }
-                String alias = provider.getAlias();
-                boolean registered = false;
-                for (Provider<?> existProvider : providers.get(providerClass)) {
-                    if (alias.equals(existProvider.getAlias())) {
-                        registered = true;
-                        break;
-                    }
-                }
-
-                switch (ev.getType()) {
-                    case ServiceEvent.REGISTERED: {
-                        if (!registered) {
-                            logger.info("Registering " + providerClass + " with unique alias '" + alias + "' from bundle " + provider.getBundleContext().getBundle().getSymbolicName());
-                            providers.get(providerClass).add(provider);
-                        }
-                    }
-                    break;
-                    case ServiceEvent.UNREGISTERING: {
-                        if (registered) {
-                            logger.info("Unregistering " + providerClass + " with unique alias '" + alias + "'");
-                            providers.get(providerClass).remove(provider);
-                        }
-                    }
-                    break;
-                }
-            }
-        };
-
-        String filter = "(objectclass=" + providerClass + ")";
-        // notify previously started services
-        ServiceReference[] serviceRefs = bundleContext.getServiceReferences(null, filter);
-        if (serviceRefs != null) {
-            for (ServiceReference serviceRef : serviceRefs) {
-                serviceListener.serviceChanged(new ServiceEvent(ServiceEvent.REGISTERED, serviceRef));
-            }
-        }
-        bundleContext.addServiceListener(serviceListener, filter);
-
-        return serviceListener;
-    }
-
-    protected <T> void unregister(final BundleContext bundleContext, final ServiceListener serviceListener, final String providerClass)
-    throws InvalidSyntaxException {
-        if (serviceListener != null) {
-            ServiceReference[] serviceRefs = bundleContext.getServiceReferences(null, "(objectclass=" + providerClass + ")");
-            if (serviceRefs != null) {
-                for (ServiceReference serviceRef : serviceRefs) {
-                    serviceListener.serviceChanged(new ServiceEvent(ServiceEvent.UNREGISTERING, serviceRef));
-                }
-            }
-        }
     }
 
         /**

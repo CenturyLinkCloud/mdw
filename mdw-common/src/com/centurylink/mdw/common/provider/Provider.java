@@ -3,15 +3,11 @@
  */
 package com.centurylink.mdw.common.provider;
 
-import org.osgi.framework.BundleContext;
-
 import com.centurylink.mdw.common.service.RegisteredService;
-
-
 
 /**
  * MDW provider interface used by the runtime engine to obtain instances
- * provided dynamically by separate OSGi bundles.
+ * provided dynamically.
  *
  * @param <T> the runtime type to be provided
  */
@@ -24,15 +20,13 @@ public interface Provider<T> extends RegisteredService {
      */
     public T getInstance(String type)
     throws ClassNotFoundException, IllegalAccessException, InstantiationException;
-    
+
     /**
      * @return unique alias to identify this provider of the service
      * (displayed on successful registration)
      */
     public String getAlias() throws ProviderException;
-    
-    public BundleContext getBundleContext();
-    
+
     /**
      * Property value associated when the service is registered.
      */
@@ -41,7 +35,7 @@ public interface Provider<T> extends RegisteredService {
      * Property value associated when the service is registered.
      */
     public void setProperty(String name, String value);
-    
+
 }
 
 

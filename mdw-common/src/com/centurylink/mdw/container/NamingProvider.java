@@ -16,9 +16,7 @@ public interface NamingProvider {
     public static final String TRANSACTION_MANAGER_SYSTEM_PROPERTY = "com.centurylink.mdw.transaction.manager";
 
 	// container names
-	String JBOSS = "JBoss";
 	String TOMCAT = "Tomcat";
-	String OSGI = "OSGi";
 
 	// standard J2EE resource names
 	String JAVA_TRANSACTION_MANAGER = "javax.transaction.TransactionManager";

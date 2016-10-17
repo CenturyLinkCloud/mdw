@@ -84,9 +84,9 @@ public class TaskServiceRegistry extends ServiceRegistry {
     public TaskIndexProvider getIndexProvider(PackageVO packageVO, String className) {
         TaskIndexProvider provider = getDynamicService(packageVO, TaskIndexProvider.class, className);
         if (provider == null) {
-            for (TaskIndexProvider osgiProvider : getServices(TaskIndexProvider.class)) {
-                if (className.equals(osgiProvider.getClass().getName())) {
-                    return osgiProvider;
+            for (TaskIndexProvider otherProvider : getServices(TaskIndexProvider.class)) {
+                if (className.equals(otherProvider.getClass().getName())) {
+                    return otherProvider;
                 }
             }
         }

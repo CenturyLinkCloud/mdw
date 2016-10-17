@@ -1248,9 +1248,6 @@ public abstract class BaseActivity implements GeneralActivity {
         return RuleSetCache.getLatestRuleSet(name, language, attributeValues);
     }
 
-    /**
-     * Not called for OSGi (see BamProcessMonitor and BamActivityMonitor).
-     */
     void sendMessageToBam(String bamAttributeName) {
         String msgdef = AttributeVO.findAttribute(attributes, bamAttributeName);
         if (msgdef==null || msgdef.length()==0) return;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Not used for OSGi (see mdw-services/src/META-INF/spring/bundle-context.xml -->
+<!-- TODO better way to handle this -->
 <ApplicationCache xmlns="http://mdw.qwest.com/XMLSchema">
   <Cache Name="TaskCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache</Property>

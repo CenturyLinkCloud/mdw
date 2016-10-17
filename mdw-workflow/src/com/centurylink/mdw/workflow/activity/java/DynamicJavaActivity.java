@@ -38,11 +38,6 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
     protected JavaExecutor executorInstance;
 
     private ClassLoader executorClassLoader;
-    /**
-     * If workflow package configs OsgiBundleSymbolicName and/or OsgiBundleVersion are specified,
-     * these are used to look up the classloader.  Otherwise it will have been set to that of the providing
-     * bundle in ActivityProviderBean.
-     */
     public ClassLoader getExecutorClassLoader() {
 
         if (executorClassLoader == null)

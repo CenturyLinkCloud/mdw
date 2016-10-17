@@ -10,7 +10,6 @@ public interface DataSourceProvider {
 
 	String MDW = "MDW";
 	String JBOSS = "JBoss";
-    String OSGI = "OSGi";
     String TOMCAT = "Tomcat";
 
 	public DataSource getDataSource(String dataSourceName)

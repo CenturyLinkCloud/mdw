@@ -10,16 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
-import org.osgi.framework.ServiceReference;
-
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.java.CompiledJavaCache;
-import com.centurylink.mdw.java.JavaNaming;
 import com.centurylink.mdw.model.value.process.PackageVO;
 
 public class ServiceRegistry {
@@ -27,14 +20,10 @@ public class ServiceRegistry {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private Map<String,List<RegisteredService>> services = new HashMap<String,List<RegisteredService>>();
-    private Map<String,ServiceListener> serviceListeners = new HashMap<String,ServiceListener>();
     private Map<String,Set<String>> dynamicServices = new HashMap<String,Set<String>>(); // Dynamic java Registered services
     private Map<String,String> pathToDynamicServiceClass = new HashMap<String,String>(); // resource paths
 
-    private List<Class<? extends RegisteredService>> serviceInterfaces;
-
     protected ServiceRegistry(List<Class<? extends RegisteredService>> serviceInterfaces) {
-        this.serviceInterfaces = serviceInterfaces;
         for (Class<? extends RegisteredService> serviceInterface : serviceInterfaces) {
             services.put(serviceInterface.getName(), new ArrayList<RegisteredService>());
         }
@@ -182,113 +171,6 @@ public class ServiceRegistry {
         pathToDynamicServiceClass.clear();
     }
 
-    public void startup(final BundleContext bundleContext) throws InvalidSyntaxException {
-        for (Class<? extends RegisteredService> serviceInterface : serviceInterfaces) {
-            serviceListeners.put(serviceInterface.getName(), register(bundleContext, serviceInterface));
-        }
-    }
-
-    /**
-     * @param bundleContext
-     * @throws InvalidSyntaxException
-     */
-    public void shutdown(final BundleContext bundleContext) throws InvalidSyntaxException {
-        List<String> toRemove = new ArrayList<String>();
-        for (String serviceInterface : serviceListeners.keySet()) {
-            unregister(bundleContext, serviceListeners.get(serviceInterface), serviceInterface);
-            toRemove.add(serviceInterface);
-        }
-        for (String remove : toRemove)
-          serviceListeners.remove(remove);
-    }
-
-    /**
-     * To register dynamic services (Cache Services and Startup Services)
-     * @param bundleContext
-     */
-    public void startupDynamicServices(final BundleContext bundleContext) {
-        for (Class<? extends RegisteredService> serviceInterface : serviceInterfaces) {
-            for (RegisteredService dynamicService : getDynamicServices(serviceInterface)) {
-                registerDynamicServices(bundleContext, JavaNaming.getClassName(dynamicService.getClass().getName()), dynamicService);
-            }
-        }
-    }
-
-    public void shutdownDynamicServices(final BundleContext bundleContext) {
-        for (Class<? extends RegisteredService> serviceInterface : serviceInterfaces) {
-            for (RegisteredService dynamicService : getDynamicServices(serviceInterface)) {
-                unregisterDynamicServices(bundleContext, JavaNaming.getClassName(dynamicService.getClass().getName()), dynamicService);
-            }
-        }
-        clearDynamicServices();
-    }
-
-    protected ServiceListener register(final BundleContext bundleContext, final Class<? extends RegisteredService> serviceInterface)
-    throws InvalidSyntaxException {
-
-        // registered services
-        ServiceListener serviceListener = new ServiceListener() {
-            public void serviceChanged(ServiceEvent ev) {
-                ServiceReference serviceRef = ev.getServiceReference();
-                RegisteredService service = (RegisteredService)bundleContext.getService(serviceRef);
-                Map<String,String> serviceProps = new HashMap<String,String>();
-                for (String key : serviceRef.getPropertyKeys()) {
-                    Object value = serviceRef.getProperty(key);
-                    if (value != null)
-                      serviceProps.put(key, value.toString());
-                }
-                switch (ev.getType()) {
-                    case ServiceEvent.REGISTERED: {
-                        try {
-                            if (onRegister(bundleContext, service, serviceProps))
-                                services.get(serviceInterface.getName()).add(service);
-                        }
-                        catch (Exception ex) {
-                            logger.severeException("Unable to register service: " + service.getClass().getName(), ex);
-                        }
-                    }
-                    break;
-                    case ServiceEvent.UNREGISTERING: {
-                        if (service != null) {
-                            try {
-                                onUnregister(bundleContext, service, serviceProps);
-                            }
-                            catch (Exception ex) {
-                                logger.severeException("Error unregistering service: " + service.getClass().getName(), ex);
-                            }
-                            services.get(serviceInterface.getName()).remove(service);
-                        }
-                    }
-                    break;
-                }
-            }
-        };
-
-        String filter = "(objectclass=" + serviceInterface.getName() + ")";
-        // notify previously started services
-        ServiceReference[] serviceRefs = bundleContext.getServiceReferences(null, filter);
-        if (serviceRefs != null) {
-            for (ServiceReference serviceRef : serviceRefs) {
-                serviceListener.serviceChanged(new ServiceEvent(ServiceEvent.REGISTERED, serviceRef));
-            }
-        }
-        bundleContext.addServiceListener(serviceListener, filter);
-
-        return serviceListener;
-    }
-
-    protected void unregister(final BundleContext bundleContext, final ServiceListener serviceListener, final String serviceInterfaceName)
-    throws InvalidSyntaxException {
-        if (serviceListener != null) {
-            ServiceReference[] serviceRefs = bundleContext.getServiceReferences(null, "(objectclass=" + serviceInterfaceName + ")");
-            if (serviceRefs != null) {
-                for (ServiceReference serviceRef : serviceRefs) {
-                    serviceListener.serviceChanged(new ServiceEvent(ServiceEvent.UNREGISTERING, serviceRef));
-                }
-            }
-        }
-    }
-
     /**
      * Default is true
      */
@@ -296,33 +178,4 @@ public class ServiceRegistry {
         return true;
     }
 
-    protected boolean onRegister(BundleContext bundleContext, RegisteredService service, Map<String,String> serviceProps) throws ServiceRegistryException {
-        boolean enabled = isEnabled(service);
-        if (enabled)
-            logger.info("Registering " + service.getClass().getName() + " from bundle " + bundleContext.getBundle().getSymbolicName());
-        else
-            logger.debug("Disabling service " + service.getClass().getName() + " from bundle " + bundleContext.getBundle().getSymbolicName());
-        return enabled;
-    }
-
-    protected void onUnregister(BundleContext bundleContext, RegisteredService service, Map<String,String> serviceProps) throws ServiceRegistryException {
-        logger.info("Unregistering " + service.getClass().getName());
-    }
-
-    /**
-     * @param name
-     * @param dynamicService
-     */
-    protected void registerDynamicServices(BundleContext bundleContext, String name, RegisteredService dynamicService) {
-        logger.info("Registering Dynamic services " + name);
-    }
-
-    /**
-     * @param bundleContext
-     * @param name
-     * @param dynamicService
-     */
-    protected void unregisterDynamicServices(BundleContext bundleContext, String name, RegisteredService dynamicService) {
-        logger.info("Unregistering Dynamic services " + dynamicService.getClass().getName());
-    }
 }

@@ -221,7 +221,7 @@ adminApp.directive('navLink', ['$document', '$route', '$location',
         if (!active) {
           if (attrs.navLink.endsWith('*') && $route.current.loadedTemplateUrl.indexOf('?') == -1) {
             // wildcard (except urls with params)
-            active = $route.current.templateUrl.startsWith(attrs.navLink.substring(0, attrs.navLink.length - 2));
+            active = $route.current.templateUrl.startsWith(attrs.navLink.substring(0, attrs.navLink.length - 1));
           }
           else {
             // logical template

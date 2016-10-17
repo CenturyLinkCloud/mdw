@@ -107,22 +107,12 @@ public class WorkAttributeConstant  {
      public static final String POST_SCRIPT = "PostScript";
      public static final String POST_SCRIPT_LANGUAGE = "PostScriptLang";
 
-     public static final String OSGI_BSN = "OsgiBundleSymbolicName";
-     public static final String OSGI_BUNDLE_VERSION = "OsgiBundleVersion";
-
      public static final String VERSION_TAG = "VersionTag";
 
      public static final String RENDERING_ENGINE = "Rendering"; // for custom pages
 
      public static final String HTML5_RENDERING = "HTML5";
      public static final String COMPATIBILITY_RENDERING = "Compatibility";
-
-     // OSGi Service Adapter
-     public static final String SERVICE_INTERFACE = "ServiceInterface" ;
-     public static final String SERVICE_METHOD = "ServiceMethod";
-     public static final String SERVICE_PARAMETERS = "ServiceParameters";
-     public static final String SERVICE_RESULT = "ServiceResult";
-
 
      // Override Attributes
      public static final String SIMULATION_ATTR_PREFIX = "SIMUL";

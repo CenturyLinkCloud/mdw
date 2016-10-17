@@ -16,8 +16,6 @@ import javax.naming.NamingException;
 
 import org.apache.activemq.ScheduledMessage;
 import org.apache.activemq.command.ActiveMQTopic;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.connection.DelegatingConnectionFactory;
@@ -25,7 +23,6 @@ import org.springframework.jms.connection.DelegatingConnectionFactory;
 import com.centurylink.mdw.common.spring.SpringAppContext;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.container.ContainerContextAware;
 import com.centurylink.mdw.container.JmsProvider;
 import com.centurylink.mdw.container.NamingProvider;
@@ -82,48 +79,12 @@ public class ActiveMqJms implements JmsProvider, ContainerContextAware {
      * Pooling and remote queues are configured via Spring in broker config XML.
      */
     protected ConnectionFactory retrieveConnectionFactory(String name) throws JMSException {
-        if (name == null && defaultConnectionFactory != null)
+        if (name == null && defaultConnectionFactory != null) {
             return defaultConnectionFactory; // injected
-
-        if (bundleContext != null) {
-            ConnectionFactory factory = null;
-            try {
-                if (name != null) {
-                  String filter = "(name=" + name + ")";
-                  ServiceReference[] srs = bundleContext.getServiceReferences(ConnectionFactory.class.getName(), filter);
-                  if (srs != null && srs.length > 0) {
-                      factory = (ConnectionFactory)bundleContext.getService(srs[0]);
-                  }
-                }
-                else {
-                    String connectionFactoryName = PropertyManager.getProperty("mdw.activemq.connection.factory");
-                    if (connectionFactoryName != null) {
-                        String filter = "(name=" + connectionFactoryName + ")";
-                        ServiceReference[] srs = bundleContext.getServiceReferences(ConnectionFactory.class.getName(), filter);
-                        if (srs != null && srs.length > 0)
-                            factory = (ConnectionFactory)bundleContext.getService(srs[0]);
-                        else
-                            throw new JMSException("No service reference found: " + connectionFactoryName);
-                    }
-                    else {
-                        ServiceReference sr = bundleContext.getServiceReference(ConnectionFactory.class.getName());
-                        if (sr != null)
-                            factory = (ConnectionFactory)bundleContext.getService(sr);
-                    }
-                }
-            }
-            catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
-                throw new JMSException("Error injecting JMS Connection Factory");
-            }
-            if (factory == null)
-                throw new JMSException("Unable to obtain ConnectionFactory service reference");
-
-            return factory;
         }
         else {
             try {
-                // not OSGi and autowiring did not occur
+                // autowiring did not occur
                 return (ConnectionFactory)SpringAppContext.getInstance().getBean(name);
             }
             catch (Exception ex) {
@@ -133,9 +94,8 @@ public class ActiveMqJms implements JmsProvider, ContainerContextAware {
         }
     }
 
-    private BundleContext bundleContext;
+    private Object containerContext; // not used since osgi support retired
     public void setContainerContext(Object context) {
-        if (context instanceof BundleContext)
-            this.bundleContext = (BundleContext) context;
+        this.containerContext = context;
     }
 }

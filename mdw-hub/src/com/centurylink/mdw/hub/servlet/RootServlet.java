@@ -40,7 +40,7 @@ public class RootServlet extends HttpServlet {
                 String realPath = request.getSession().getServletContext().getRealPath("/index.html");
                 try {
                     String contents;
-                    if (realPath == null)  // osgi -- read from classpath
+                    if (realPath == null)  // read from classpath
                         contents = new String(FileHelper.readFromResourceStream(getClass().getClassLoader().getResourceAsStream("index.html")));
                     else
                         contents = FileHelper.readFromFile(realPath);
