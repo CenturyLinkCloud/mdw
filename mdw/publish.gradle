@@ -1,5 +1,5 @@
-// these tasks require that fetchDesignerCoreJar from build.gradle has been run
-
+// publishes build output to a maven repository
+// eg: mdw repo or nexus
 repositories {
     maven {
         url devRepoUrl
@@ -12,54 +12,122 @@ configurations {
 
 dependencies {
     publish files("../${mdwOutputDir}/mdw-common-${mdwVersion}.jar")
-    publish files("../${mdwOutputDir}/mdw-schemas-${mdwVersion}.jar")
+    publish group: "com.centurylink.mdw", name: "mdw-designer-core", version: "${mdwDesignerVersion}"
     publish group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
     publish group: "org.json", name: "json", version: "20090211"
     publish group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
+    publish group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"
 }
 
+task buildBaseConfigs() << {
+    def appConfigXml = file("../mdw-common/src/META-INF/mdw/spring/application-context.xml")
+    file("../${mdwOutputDir}/application-context-${mdwVersion}.xml").bytes = appConfigXml.bytes;
+}
+
+task cleanPackages(type: Delete) {
+    delete fileTree(dir: "../${mdwAssetOutputDir}")
+}
+
+// export all the packages in the mdw-workflow/assets directory
+task exportAssetPackages {
+    description = "Export Asset Packages"
+
+    // superCats are categorized as the parent package 
+    // (eg com.centurylink.mdw.tests.camel is category "tests" instead of "camel")
+    def superCats = ["services", "tests"]
+    
+    def assetRootPath = file("../${mdwAssetRoot}").toString()
+    def mdwPkgVer = mdwVersion;
+    if (mdwVersion.endsWith("-SNAPSHOT"))
+        mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
+    println "Exporting asset packages from " + assetRootPath + ":" 
+    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.json').each { pkgFile ->
+        doLast {
+            def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('/','.').replace('\\','.')
+            def pkgCat = pkgName.substring(pkgName.lastIndexOf('.') + 1)
+            superCats.find { 
+                if (pkgName.endsWith(it + "." + pkgCat)) {
+                    pkgCat = it
+                    return true
+                }
+                return false
+            }
+            println "    " + pkgCat + ": " + pkgName
+            println "        setting package.json version: ${mdwPkgVer}"
+            pkgFile.setWritable(true)
+            def pkgJson = pkgFile.text
+            pkgFile.withWriter { w ->
+                w << pkgJson.replaceAll("\\\"version\\\": \\\".*?\\\"", "\"version\": \"${mdwPkgVer}\"");
+            }
+            if (pkgName.equals("com.centurylink.mdw.db")) {
+                javaexec {
+                    maxHeapSize "1280m"
+                    classpath configurations.publish
+                    main = "com.centurylink.mdw.designer.Exporter"
+                    args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.json"
+                }
+            }
+            else {
+                javaexec {
+                    classpath configurations.publish
+                    main = "com.centurylink.mdw.designer.Exporter"
+                    args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.json"
+                }
+            }
+        }
+    }
+}
+exportAssetPackages.mustRunAfter cleanPackages
+
+task buildPackages(type: Copy) {
+    dependsOn(cleanPackages, exportAssetPackages)
+}
 
 task checkAllowed() << {
     assert publishUser != null : "Missing property: publishUser"
     assert publishPassword != null : "Missing property: publishPassword"
-    // TODO: disallow non-snapshot publish except from Jenkins
-}
-
-task deleteOldFeatures(type: Delete) {
-    delete fileTree("../${mdwOutputDir}") {
-      include "*-features.xml"
-    }
-}
-task buildFeatures(type: Copy) {
-  dependsOn deleteOldFeatures // TODO: needed to avoid erroneous up-to-date
-  from "features"
-  into "../${mdwOutputDir}"
-  rename("mdw-features.xml", "mdw-${mdwVersion}-features.xml")
-  filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: ["mdw.version": "${mdwVersion}".toString()])
+    // TODO disallow non-snapshot publish except from Jenkins
 }
 
 task publishBase(type: HttpPut) {
-  dependsOn(checkAllowed, buildFeatures)
-  from "../${mdwOutputDir}/mdw-${mdwVersion}-features.xml"
-  baseUrl "${publishBaseUrl}/mdw/${mdwVersion}"
-  user publishUser
-  password publishPassword
-}
-publishBase.mustRunAfter buildFeatures
-
-task publishAdminWar(type: HttpPut) {
-    dependsOn(checkAllowed)
-    from "../${mdwOutputDir}/mdw-admin-${mdwVersion}.war"
-    baseUrl "${publishBaseUrl}/mdw-admin/${mdwVersion}"
+    dependsOn(checkAllowed, buildBaseConfigs)
+    from "../${mdwOutputDir}/application-context-${mdwVersion}.xml"
+    baseUrl "${publishBaseUrl}/mdw/${mdwVersion}"
     user publishUser
     password publishPassword
 }
-publishAdminWar.mustRunAfter buildFeatures
 
-task publishWars() {
-    dependsOn(publishAdminWar)
+task publishWar(type: HttpPut) {
+    dependsOn checkAllowed
+    from "../${mdwOutputDir}/mdw-${mdwVersion}.war"
+    baseUrl "${publishBaseUrl}/mdw/${mdwVersion}"
+    withSources true
+    user publishUser
+    password publishPassword
 }
 
-task publishBuild(dependsOn: [publishWars, publishBase]) << {
+// must be run after build.gradle target buildAll
+task publishJars(type: HttpPut) {
+    dependsOn(checkAllowed)
+    from "../${mdwOutputDir}/mdw-common-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-services-${mdwVersion}.jar"
+    from "../${mdwOutputDir}/mdw-workflow-${mdwVersion}.jar"
+    groupUrl "${publishBaseUrl}"
+    withSources true
+    user publishUser
+    password publishPassword
+}
+
+// TODO: consider using standard Maven repository structure
+// (especially if we end up rehosting asset discovery to a different repo)
+task publishAssets(type: HttpPut) {
+    dependsOn(checkAllowed, buildPackages)
+    from "../${mdwAssetOutputDir}"
+    assetsUrl "${publishBaseUrl}/assets"
+    user publishUser
+    password publishPassword
+}
+
+task publishBuild(dependsOn: [publishBase, publishJars, publishWar, publishAssets]) << {
     println "*** MDW build ${mdwVersion} published to ${publishBaseUrl} ***"
 }
