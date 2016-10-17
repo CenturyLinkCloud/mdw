@@ -18,7 +18,7 @@
      - https://tomcat.apache.org/download-70.cgi
 2. Get the Source Code
  - Command-line Git:  
-   `git clone http://ne1itcprhas51.corp.intranet/mdw/mdw6.git`
+   `git clone https://github.com/CenturyLinkCloud/MDW.git`
  - Or in Eclipse:  
    Right-click in Git Repositories View and select "Paste Repository Path or URI" with the repo URL in your clipboard buffer.
  - Import the project into your Eclipse workspace:  
