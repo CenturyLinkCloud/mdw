@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
 import com.centurylink.mdw.common.constant.TaskAttributeConstant;
 import com.centurylink.mdw.common.exception.ObserverException;
@@ -184,17 +183,7 @@ public class TaskInstanceNotifierFactory {
             // Cloud mode
             TaskNotifier notifier = registry.getDynamicNotifier(packageVO, notifierClassName);
             if (notifier == null) {
-                if (ApplicationContext.isOsgi()) {
-                    if (packageVO != null && packageVO.getBundleSpec() != null)
-                        notifier = registry.getNotifier(notifierClassName, packageVO.getBundleSpec());
-                    if (notifier == null)
-                        notifier = registry.getNotifier(notifierClassName); //For compatibility
-                    if (notifier != null)  // Get new instance since OSGi service always returns same instance of class. TemplatedNotifier is NOT thread-safe
-                        notifier = notifier.getClass().newInstance();
-                }
-                else {
-                    return packageVO.getClassLoader().loadClass(notifierClassName).asSubclass(TaskNotifier.class).newInstance();
-                }
+                return packageVO.getClassLoader().loadClass(notifierClassName).asSubclass(TaskNotifier.class).newInstance();
             }
             return notifier;
         }

@@ -1,2 +1,6 @@
 build/
 deploy/
+node_modules/
+dist/
+.tmp/
+.grunt

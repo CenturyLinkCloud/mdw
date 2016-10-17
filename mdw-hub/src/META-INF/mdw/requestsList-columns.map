@@ -1,7 +1,0 @@
-requestId=DOCUMENT_ID
- orderId=MASTER_REQUEST_ID
- receivedDate=CREATE_DT
- searchKey1=SEARCH_KEY1
- searchKey2=SEARCH_KEY2
- processStatus=STATUS_CD
- processInstanceId=PROCESS_INST_ID

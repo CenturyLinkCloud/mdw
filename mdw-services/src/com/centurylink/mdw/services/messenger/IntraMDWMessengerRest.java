@@ -14,11 +14,8 @@ import com.centurylink.mdw.services.ProcessException;
 
 public class IntraMDWMessengerRest extends IntraMDWMessenger {
 
-    private String serviceContext;
-    
 	protected IntraMDWMessengerRest(String destination, String serviceContext) {
 		super(destination);
-    	this.serviceContext = serviceContext;
 	}
 
 	/**

@@ -87,14 +87,7 @@ public abstract class RulesBasedStrategy extends ParameterizedStrategy {
         if (pkgVO == null)
             throw new StrategyException("Unable to get package name from strategy: " + kbAttributeName +" value="+kbNameStr);
         // return the cloud class loader by default, unless the bundle spec is set
-        if (pkgVO.getBundleSpec() == null) {
-            return pkgVO.getCloudClassLoader();
-        } else {
-            return pkgVO.getClassLoader();
-        }
-
-
-
+        return pkgVO.getClassLoader();
     }
 
     protected abstract String getKnowledgeBaseAttributeName();

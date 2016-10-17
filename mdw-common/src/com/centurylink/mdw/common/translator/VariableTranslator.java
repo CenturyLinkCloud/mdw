@@ -3,7 +3,6 @@
  */
 package com.centurylink.mdw.common.translator;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.common.exception.TranslationException;
@@ -54,22 +53,13 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
                 return null;
 
             // try dynamic java first (preferred in case patch override is needed)
-            if (ApplicationContext.isOsgi() || ApplicationContext.isCloud()) {
-                ClassLoader parentLoader = packageVO == null ? VariableTranslator.class.getClassLoader() : packageVO.getClassLoader();
-                if (ApplicationContext.isOsgi())
-                    parentLoader = ProviderRegistry.getInstance().getMdwVariableTranslatorProvider().getClass().getClassLoader();
-                trans = ProviderRegistry.getInstance().getDynamicVariableTranslator(vo.getTranslatorClass(), parentLoader);
-            }
+            ClassLoader parentLoader = packageVO == null ? VariableTranslator.class.getClassLoader() : packageVO.getClassLoader();
+            trans = ProviderRegistry.getInstance().getDynamicVariableTranslator(vo.getTranslatorClass(), parentLoader);
             if (trans == null) {
-                if (ApplicationContext.isOsgi()) {
-                    trans = ProviderRegistry.getInstance().getVariableTranslator(packageVO, vo.getTranslatorClass());
-                }
-                else if (ApplicationContext.isCloud()) {
-                    com.centurylink.mdw.variable.VariableTranslator injected
-                        = SpringAppContext.getInstance().getVariableTranslator(vo.getTranslatorClass(), packageVO);
-                    if (injected != null)
-                        trans = injected;
-                }
+                com.centurylink.mdw.variable.VariableTranslator injected
+                    = SpringAppContext.getInstance().getVariableTranslator(vo.getTranslatorClass(), packageVO);
+                if (injected != null)
+                    trans = injected;
                 if (trans == null) {
                     Class<?> cl = Class.forName(vo.getTranslatorClass());
                     trans = (VariableTranslator)cl.newInstance();

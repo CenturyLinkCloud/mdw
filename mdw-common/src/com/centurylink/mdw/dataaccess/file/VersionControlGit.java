@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 
-import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;

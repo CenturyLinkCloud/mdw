@@ -1,8 +1,0 @@
-date=CREATE_DT
-action=EVENT_NAME
-entity=EVENT_LOG_OWNER
-entityId=EVENT_LOG_OWNER_ID
-description=COMMENTS
-user=CREATE_USR
-source=EVENT_SOURCE
-id=EVENT_LOG_ID

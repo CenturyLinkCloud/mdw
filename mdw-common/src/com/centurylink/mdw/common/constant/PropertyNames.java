@@ -136,9 +136,6 @@ public class PropertyNames {
 	public static final String MDW_TIMER_CHECK_INTERVAL = "mdw.timer.CheckInterval";	// interval between checks in seconds
 	public static final String MDW_TIMER_THRESHOLD_FOR_DELAY = "mdw.timer.ThresholdForDelay";	// (minutes) threshold for using timer for delayed JMS messages
 
-	public static final String MDW_APPLICATION_STATUS_CHECK_INTERVAL = "mdw.application_status.CheckInterval";  //interval between checks in seconds
-	public static final String MDW_APPLICATION_STATUS_MONITOR = "mdw.application_status.monitor"; // to enable/disable the global application monitoring
-
 	public static final String MDW_CERTIFIED_MESSAGE_INITIAL_DELAY = "mdw.certified_message.InitialDelay";	// delay of first check in seconds
 	public static final String MDW_CERTIFIED_MESSAGE_CHECK_INTERVAL = "mdw.certified_message.CheckInterval";	// interval between checks in seconds
 	public static final String MDW_CERTIFIED_MESSAGE_ACK_TIMEOUT = "mdw.certified_message.AcknowlegmentTimeout";	// default ack timeout in seconds
@@ -148,11 +145,7 @@ public class PropertyNames {
 	// this is a group, contains <name>.Adapter and pool specific properties
 	public static final String MDW_CONNECTION_POOL = "mdw.connection.pool";	// prefix for connection pool properties
 
-	// Email Listener
-	public static final String MDW_EMAIL_LISTENER = "mdw.listener.email";	// prefix for Email Listener properties
 	public static final String MDW_SERVER_PROXY = "mdw.server.proxy";
-
-	public static final String MDW_REPORTS_URL = "mdw.reports.url";
 
     public static final String MDW_HUB_URL = "mdw.hub.url";
     public static final String MDW_DEV_USER = "mdw.dev.user";

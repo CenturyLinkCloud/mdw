@@ -1,12 +1,16 @@
-apply plugin: "osgi"
+apply plugin: "java"
 
 dependencies {
-    compile project(":mdw-schemas")
     compile project(":mdw-common")
     compile group: "javax.xml", name: "jaxrpc-api", version: "1.1"
+    compile group: "javax.connector", name: "connector", version: "1.5"
     compile group: "expect4j", name: "expect4j", version: "1.1.0"
     compile group: "commons-pool", name: "commons-pool", version: "1.5.4"
-    compile group: "junit", name: "junit", version: "4.8.1"
+    compile group: "junit", name: "junit", version: "4.8.1"    
+    compile group: "com.qwest.bus", name: "bus-all", version: "2.1.2.1"
+    compile group: "com.ibm", name: "com.ibm.mq", version: "7.0.1.9"
+    compile group: "com.ibm", name: "com.ibm.mq.jmqi", version: "7.0.1.9"
+
 }
 
 clean {
@@ -15,34 +19,7 @@ clean {
 
 jar {
     manifest {
+        attributes("MDW-Version": mdwVersion)
         attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
-        classesDir = sourceSets.main.output.classesDir
-        symbolicName = "com.centurylink.mdw.services"
-        instruction "Bundle-Activator",
-            "com.centurylink.mdw.services.bundle.ServicesBundleActivator"
-        instruction "Bundle-ClassPath",
-            ".",
-            "META-INF/mdw"
-        instruction "Export-Package",
-            "!com.centurylink.mdw.services.bundle",
-            "com.centurylink.mdw.services.*"
-        instruction "Private-Package",
-            "com.centurylink.mdw.services.bundle"
-        instruction "Import-Package",
-            "com.centurylink.mdw.common.config.service",
-            "com.centurylink.mdw.java",
-            "com.centurylink.mdw.task",
-            "com.centurylink.mdw.task.impl",              
-            "com.centurylink.bam.impl",
-            "com.centurylink.mdw.service.impl",
-            "com.centurylink.mdw.workflow.impl",
-            "com.centurylink.mdw.bpm.impl",
-            "org.apache.xmlbeans.impl.schema",
-            "groovy.util;version='[1.7,3)'",
-            "noNamespace.impl",
-            "*"
-        instruction "DynamicImport-Package",
-            "schemaorg_apache_xmlbeans.*",
-            "com.centurylink.mdw.workflow.task.notifier"
     }
 }

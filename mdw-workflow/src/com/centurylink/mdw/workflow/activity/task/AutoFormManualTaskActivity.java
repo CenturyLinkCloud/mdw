@@ -11,7 +11,6 @@ import com.centurylink.mdw.common.constant.FormConstants;
 import com.centurylink.mdw.common.constant.TaskAttributeConstant;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.common.utilities.timer.Tracked;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.data.event.EventType;
@@ -23,7 +22,6 @@ import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
-import com.centurylink.mdw.services.task.TaskManagerAccess;
 import com.qwest.mbeng.MbengException;
 
 @Tracked(LogLevel.TRACE)
@@ -44,27 +42,20 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
             FormDataDocument formdata = this.createFormData();
             populateFormDataMetaInfo(formdata, false, false);
 
-            Long taskInstanceId;
-            if ("true".equalsIgnoreCase(PropertyManager.getProperty("mdw.create.autoform.task.thru.event"))) { // non-standard prop
-                // create task through old event mechanism
-                taskInstanceId = TaskManagerAccess.getInstance().createGeneralTaskInstance(formdata);
+            String taskLogicalId = getAttributeValue(ATTRIBUTE_TASK_LOGICAL_ID); // old task activity attribute
+            String taskTemplate = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE);
+            if (taskTemplate != null) {
+                // new-style task templates
+                String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
+                AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
+                TaskVO template = TaskTemplateCache.getTaskTemplate(spec);
+                if (template == null)
+                    throw new ActivityException("Task template not found: " + spec);
+                taskLogicalId = template.getLogicalId();
             }
-            else {
-                String taskLogicalId = getAttributeValue(ATTRIBUTE_TASK_LOGICAL_ID); // old task activity attribute
-                String taskTemplate = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE);
-                if (taskTemplate != null) {
-                    // new-style task templates
-                    String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
-                    AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
-                    TaskVO template = TaskTemplateCache.getTaskTemplate(spec);
-                    if (template == null)
-                        throw new ActivityException("Task template not found: " + spec);
-                    taskLogicalId = template.getLogicalId();
-                }
-                TaskServices taskServices = ServiceLocator.getTaskServices();
-                taskInstanceId = taskServices.createAutoFormTaskInstance(taskLogicalId,
-                        getMasterRequestId(), getProcessInstanceId(), getActivityInstanceId(), formdata).getTaskInstanceId();
-            }
+            TaskServices taskServices = ServiceLocator.getTaskServices();
+            Long taskInstanceId = taskServices.createAutoFormTaskInstance(taskLogicalId,
+                    getMasterRequestId(), getProcessInstanceId(), getActivityInstanceId(), formdata).getTaskInstanceId();
 
             String taskInstCorrelationId = FormConstants.TASK_CORRELATION_ID_PREFIX + taskInstanceId.toString();
             formdata.setAttribute(FormDataDocument.ATTR_ID, taskInstCorrelationId);

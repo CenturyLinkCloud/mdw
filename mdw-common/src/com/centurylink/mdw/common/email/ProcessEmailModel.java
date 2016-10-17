@@ -6,7 +6,6 @@ package com.centurylink.mdw.common.email;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 
 public class ProcessEmailModel extends HashMap<String,Object> implements TemplatedEmail.Model  {
@@ -41,10 +40,6 @@ public class ProcessEmailModel extends HashMap<String,Object> implements Templat
             return processInstance.getProcessName();
         else if ("processInstance".equals(key))
             return processInstance;
-        else if ("mdwWebUrl".equals(key))
-            return ApplicationContext.getMdwWebUrl();
-        else if ("mdwTaskManagerUrl".equals(key))
-            return ApplicationContext.getTaskManagerUrl();
         else if ("variables".equals(key))
             return variables;
         else

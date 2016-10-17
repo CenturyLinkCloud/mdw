@@ -15,7 +15,6 @@ import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
 import com.centurylink.mdw.common.utilities.timer.Tracked;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.value.attribute.AttributeDefinition;
 import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
 import com.ibm.mq.MQGetMessageOptions;
 import com.ibm.mq.MQMessage;
@@ -33,7 +32,6 @@ import com.ibm.mq.constants.MQConstants;
  */
 @Tracked(LogLevel.TRACE)
 public class MqSeriesAdapter extends PoolableAdapterBase {
-    private static final long serialVersionUID = 1L;
 
     public static final String PROP_QUEUE_MANAGER_NAME = "QueueManagerName";
     public static final String PROP_REQUEST_QUEUE_NAME = "QueueName";

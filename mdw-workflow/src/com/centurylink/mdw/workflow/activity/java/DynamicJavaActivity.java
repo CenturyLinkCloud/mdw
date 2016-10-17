@@ -7,11 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.osgi.framework.BundleContext;
-import org.springframework.osgi.context.BundleContextAware;
-
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
@@ -27,12 +23,10 @@ import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.centurylink.mdw.model.value.variable.VariableVO;
-import com.centurylink.mdw.osgi.BundleLocator;
-import com.centurylink.mdw.osgi.BundleSpec;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 @Tracked(LogLevel.TRACE)
-public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJavaImplementor, BundleContextAware {
+public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJavaImplementor {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -51,16 +45,8 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
      */
     public ClassLoader getExecutorClassLoader() {
 
-        if (bundleContext != null && getPackage() != null && getPackage().getBundleSpec() != null) {
-            // honor package BundleSpec
-            BundleSpec bundleSpec = getPackage().getBundleSpec();
-            executorClassLoader = new BundleLocator(bundleContext).getClassLoader(bundleSpec);
-        }
-        else {
-            if (executorClassLoader == null)
-                executorClassLoader = getClass().getClassLoader();  // fallback in case not set by activity provider
-        }
-
+        if (executorClassLoader == null)
+            executorClassLoader = getClass().getClassLoader();  // fallback in case not set by activity provider
         if (isLogDebugEnabled())
             logdebug("Dynamic Java ClassLoader: " + executorClassLoader);
 
@@ -128,13 +114,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
         if (executorInstance == null) {
             try {
                 String className = getClassName();
-                Class<?> clazz;
-                if (ApplicationContext.isOsgi()) {
-                    clazz = CompiledJavaCache.getClass(getExecutorClassLoader(), getPackage(), className, javaCode);
-                }
-                else {
-                    clazz = CompiledJavaCache.getClass(getPackage(), className, javaCode);
-                }
+                Class<?> clazz = CompiledJavaCache.getClass(getPackage(), className, javaCode);
                 if (clazz == null)
                     throw new ClassNotFoundException(className);
 
@@ -165,9 +145,5 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
             return JavaNaming.getValidPackageName(pkg.getPackageName() + ".");
     }
 
-    private BundleContext bundleContext;
-    public void setBundleContext(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
-    }
 }
 

@@ -13,7 +13,6 @@ import javax.xml.bind.Unmarshaller;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.exception.TranslationException;
 import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
@@ -37,16 +36,8 @@ public class JaxbElementTranslator extends DocumentReferenceTranslator implement
         return realToString(jaxbObject);
     }
 
-    public Object realToObject(String string) throws TranslationException {
-        return realToObject(string, ApplicationContext.isOsgi());
-    }
-
-    @Override
-    protected Object realToObject(String str, boolean tryProviders) throws TranslationException {
+    public Object realToObject(String str) throws TranslationException {
         try {
-            if (tryProviders)
-                return providerDeserialize(str);
-
             ByteArrayInputStream in = new ByteArrayInputStream(str.getBytes());
             return unmarshaller.unmarshal(in);
         } catch (JAXBException ex) {
@@ -55,15 +46,7 @@ public class JaxbElementTranslator extends DocumentReferenceTranslator implement
     }
 
     public String realToString(Object obj) throws TranslationException {
-        return realToString(obj, ApplicationContext.isOsgi());
-    }
-
-    @Override
-    public String realToString(Object obj, boolean tryProviders) throws TranslationException {
         try {
-            if (tryProviders)
-                return providerSerialize(obj);
-
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.marshal(obj, out);
@@ -75,14 +58,7 @@ public class JaxbElementTranslator extends DocumentReferenceTranslator implement
     }
 
     public Document toDomDocument(Object obj) throws TranslationException {
-        return toDomDocument(obj, ApplicationContext.isOsgi());
-    }
-
-    public Document toDomDocument(Object obj, boolean tryProviders) throws TranslationException {
         try {
-            if (tryProviders)
-                return providerToDomDoc(obj);
-
             // TODO: use JAXB Binder to avoid reparse
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             marshaller.marshal(obj, out);
@@ -94,14 +70,7 @@ public class JaxbElementTranslator extends DocumentReferenceTranslator implement
     }
 
     public Object fromDomNode(Node domNode) throws TranslationException {
-        return fromDomNode(domNode, ApplicationContext.isOsgi());
-    }
-
-    public Object fromDomNode(Node domNode, boolean tryProviders) throws TranslationException {
         try {
-            if (tryProviders)
-                return providerFromDomNode(domNode);
-
             return unmarshaller.unmarshal(domNode);
         }
         catch (JAXBException ex) {

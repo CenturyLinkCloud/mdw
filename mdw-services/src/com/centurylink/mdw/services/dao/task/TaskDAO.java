@@ -2885,7 +2885,7 @@ public class TaskDAO extends CommonDataAccess {
     }
 
     /**
-     * Only for 5.5 VCS Assets.
+     * Only for 5.5+ VCS Assets.
      */
     public TaskList getTaskInstances(Query query) throws DataAccessException {
         long start = System.currentTimeMillis();

@@ -3,7 +3,6 @@
  */
 package com.centurylink.mdw.services.task.factory;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
 import com.centurylink.mdw.common.exception.StrategyException;
 import com.centurylink.mdw.common.service.RegisteredService;
@@ -147,17 +146,7 @@ public class TaskInstanceStrategyFactory {
             // cloud mode
             Object strategy = registry.getDynamicStrategy(packageVO, strategyInterface, strategyClassName);
             if (strategy == null) {
-                if (ApplicationContext.isOsgi()) {
-                    if (packageVO != null && packageVO.getBundleSpec() != null)
-                        strategy = registry.getStrategy(strategyInterface, strategyClassName, packageVO.getBundleSpec());
-                    if (strategy == null)
-                        strategy = registry.getStrategy(strategyInterface, strategyClassName); // For Compatibility
-                    if (strategy != null)  // Get new instance since OSGi service always returns same instance of class.
-                        strategy = strategy.getClass().newInstance();
-                }
-                else {
-                    strategy = packageVO.getClassLoader().loadClass(strategyClassName).newInstance();
-                }
+                strategy = packageVO.getClassLoader().loadClass(strategyClassName).newInstance();
             }
             return strategy;
         }

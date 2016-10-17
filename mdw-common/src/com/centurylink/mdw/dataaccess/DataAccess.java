@@ -9,9 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.SchemaTypeTranslator;
 import com.centurylink.mdw.common.constant.ApplicationConstants;
@@ -22,7 +19,6 @@ import com.centurylink.mdw.common.utilities.DesignatedHostSslVerifier;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.dataaccess.file.CompatibilityBaselineData;
 import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
@@ -288,22 +284,11 @@ public class DataAccess {
 
     public static BaselineData getBaselineData() throws DataAccessException {
         try {
-            if (ApplicationContext.isOsgi()) {
-                return new WrappedBaselineData(new CompatibilityBaselineData()) {
-                    protected BaselineData getOverrideBaselineData() {
-                        BundleContext bundleContext = ApplicationContext.getOsgiBundleContext();
-                        ServiceReference sr = bundleContext.getServiceReference(BaselineData.class.getName());
-                        return sr == null ? null : (BaselineData)bundleContext.getService(sr);
-                    }
-                };
-            }
-            else {
-                return new WrappedBaselineData(new MdwBaselineData()) {
-                    protected BaselineData getOverrideBaselineData() {
-                        return SpringAppContext.getInstance().getBaselineData();
-                    }
-                };
-            }
+            return new WrappedBaselineData(new MdwBaselineData()) {
+                protected BaselineData getOverrideBaselineData() {
+                    return SpringAppContext.getInstance().getBaselineData();
+                }
+            };
         }
         catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
@@ -368,6 +353,7 @@ public class DataAccess {
             } else {
             	query = "select table_name from all_tables " +
             		"where table_name in  ('DOCUMENT','PACKAGE_RULESETS')";
+                rs.close();
             	rs = db.runSelect(query, null);
             	version = schemaVersion3;
             	while (rs.next()) {

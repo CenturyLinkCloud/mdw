@@ -3,34 +3,25 @@
  */
 package com.centurylink.mdw.common.translator.impl;
 
-import groovy.util.Node;
-import groovy.util.XmlNodePrinter;
-import groovy.util.XmlParser;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.w3c.dom.Document;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.exception.TranslationException;
 import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.xml.DomHelper;
 
+import groovy.util.Node;
+import groovy.util.XmlNodePrinter;
+import groovy.util.XmlParser;
+
 public class GroovyNodeTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
-    public Object realToObject(String string) throws TranslationException {
-        return realToObject(string, ApplicationContext.isOsgi());
-    }
-
-    @Override
-    protected Object realToObject(String str, boolean tryProviders) throws TranslationException {
+    public Object realToObject(String str) throws TranslationException {
         try {
-            if (tryProviders)
-                return providerDeserialize(str);
-            
             return new XmlParser().parseText(str);
         } catch (Exception e) {
             throw new TranslationException(e.getMessage(), e);
@@ -65,7 +56,7 @@ public class GroovyNodeTranslator extends DocumentReferenceTranslator implements
             throw new TranslationException(ex.getMessage(), ex);
         }
     }
-    
+
     public Object fromDomNode(org.w3c.dom.Node domNode) throws TranslationException {
         try {
             return realToObject(DomHelper.toXml(domNode));
@@ -74,5 +65,5 @@ public class GroovyNodeTranslator extends DocumentReferenceTranslator implements
             throw new TranslationException(ex.getMessage(), ex);
         }
     }
-    
+
 }

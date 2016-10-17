@@ -1,4 +1,4 @@
-#Wed Sep 14 15:10:38 MDT 2016
+#Fri Oct 14 15:56:42 MDT 2016
 AutoAssignTask.task=1
 AutoAssignedFromJaxbAttr.task=1
 AutoAssignedFromJaxbElem.task=1
@@ -6,7 +6,6 @@ AutoAssignedThroughJaxb.task=1
 AutoAssignedThruJaxbElem.task=1 Renamed from e\:\\workspaces\\dons\\mdwdemo\\workflow\\assets\\com\\centurylink\\mdw\\tests\\tasks\\AutoAssignedThroughJaxb.task
 AutoForm\ Task\ for\ Service\ Access.task=2
 FalloutTaskTest.proc=1
-MDWTestGeneralManualTask.proc=12
 MDWTestTaskAndEvent.proc=3
 ManualTaskServices.proc=5
 MyTaskIndexProvider.java=4
@@ -22,10 +21,6 @@ fallout-task-b.test=1
 fallout-task-b.yaml=1
 fallout-task-default.test=1
 fallout-task-default.yaml=1
-general-manual-task-jsf.test=1
-general-manual-task-jsf.yaml=1
-general-manual-task.test=2
-general-manual-task.yaml=1
 manual-task-fallout.test=1
 manual-task-fallout.yaml=1
 manual-task-services.test=2

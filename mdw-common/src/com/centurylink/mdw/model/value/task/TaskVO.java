@@ -244,10 +244,6 @@ public class TaskVO extends RuleSetVO implements Jsonable {
         return rendering;
     }
 
-    public boolean isCompatibilityRendering() {
-        return TaskAttributeConstant.COMPATIBILITY_RENDERING.equals(getRenderingEngine());
-    }
-
     public String getFormName() {
     	return getAttribute(TaskAttributeConstant.FORM_NAME);
     }

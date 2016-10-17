@@ -73,8 +73,7 @@ public class CacheRegistration implements StartupClass {
             if (ApplicationContext.isFileBasedAssetPersist())
                 DataAccess.getProcessLoader().getPackageList(false, null); // prime the ids
             this.preloadCache();
-            if (ApplicationContext.isCloud())
-                SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
+            SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
             this.preloadDynamicCache();
             performInitialRequest();
         } catch(Exception ex){
@@ -202,8 +201,7 @@ public class CacheRegistration implements StartupClass {
                     }
                 }
             }
-            if (ApplicationContext.isCloud())
-                SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
+            SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
 
             performInitialRequest();
 
@@ -223,22 +221,17 @@ public class CacheRegistration implements StartupClass {
      * @param name the cache to refresh
      */
     public void refreshCache(String cacheName, List<String> excludedFormats) {
-        if (ApplicationContext.isOsgi()) {
-            CacheRegistry.getInstance().refresh(cacheName, excludedFormats);
-        }
-        else {
-            CacheEnabled cache = allCaches.get(cacheName);
-            if (cache != null) {
-                if (excludedFormats != null && cache instanceof AssetCache && excludedFormats.contains(((AssetCache)cache).getFormat())) {
-                    logger.debug(" - omitting cache " + cacheName);
-                }
-                else {
-                    logger.info(" - refresh cache " + cacheName);
-                    try {
-                        cache.refreshCache();
-                    } catch (Exception e) {
-                        logger.severeException("failed to refresh cache", e);
-                    }
+        CacheEnabled cache = allCaches.get(cacheName);
+        if (cache != null) {
+            if (excludedFormats != null && cache instanceof AssetCache && excludedFormats.contains(((AssetCache)cache).getFormat())) {
+                logger.debug(" - omitting cache " + cacheName);
+            }
+            else {
+                logger.info(" - refresh cache " + cacheName);
+                try {
+                    cache.refreshCache();
+                } catch (Exception e) {
+                    logger.severeException("failed to refresh cache", e);
                 }
             }
         }

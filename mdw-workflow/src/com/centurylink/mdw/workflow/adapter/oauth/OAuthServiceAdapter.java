@@ -3,8 +3,6 @@
  */
 package com.centurylink.mdw.workflow.adapter.oauth;
 
-import java.util.Map;
-
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -17,7 +15,6 @@ import com.centurylink.mdw.auth.OAuthAuthenticator;
 import com.centurylink.mdw.common.exception.MDWException;
 import com.centurylink.mdw.common.exception.PropertyException;
 import com.centurylink.mdw.common.utilities.ExpressionUtil;
-import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
@@ -42,8 +39,6 @@ public class OAuthServiceAdapter extends AdapterActivityBase {
     public static final String BINDINGS = "Bindings";
     public static final String HTTP_METHOD = "HttpMethod";
     public static final String ENDPOINT_URI = "EndpointUri";  // includes the resource path
-
-    private String oauthResults;
 
     @Override
     public final boolean isSynchronous() {

@@ -23,7 +23,6 @@ import javax.xml.transform.TransformerException;
 import org.w3c.dom.Node;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.exception.PropertyException;
 import com.centurylink.mdw.common.translator.VariableTranslator;
 import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
@@ -335,35 +334,12 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
                 messageFactory = MessageFactory.newInstance();
             }
             else {
-                if (ApplicationContext.isOsgi() && System.getProperty("javax.xml.soap.MetaFactory") == null && System.getProperty("javax.xml.soap.MessageFactory") == null) {
-                    try {
-                        if (localMetaFactory == null) {
-                            localMetaFactory = new LocalMetaFactory();
-                        }
-                        messageFactory = localMetaFactory.newMessageFactory(soapVersion);
-                        return messageFactory;
-                    }
-                    catch (Throwable t) {
-                        logger.severeException(t.getMessage(), t);
-                    }
-                }
                 messageFactory = MessageFactory.newInstance(soapVersion);
             }
         }
         return messageFactory;
     }
 
-
-    private LocalMetaFactory localMetaFactory;
-    /**
-     * workaround ServiceMix bug: https://issues.apache.org/jira/browse/SMX4-1089
-     */
-    private class LocalMetaFactory extends com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl {
-        @Override
-        public MessageFactory newMessageFactory(String protocol) throws SOAPException {
-            return super.newMessageFactory(protocol);
-        }
-    }
 
     private SOAPFactory soapFactory;
     protected SOAPFactory getSoapFactory() throws SOAPException {

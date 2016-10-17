@@ -3,13 +3,20 @@
  */
 package com.centurylink.mdw.soccom;
 
-import java.net.*;
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.StringTokenizer;
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
 
 public class SoccomServer extends ServerSocket {
 
@@ -156,15 +163,6 @@ public class SoccomServer extends ServerSocket {
 		shutdown_proc();
 		// need to kill all active thread
 		shutdown_threads();
-	}
-
-	private static void printUsage() {
-		System.err
-				.println("Usage: java com.qwest.magic.soccom.SoccomServer [options] port");
-		System.err.println("   -l log: log file name, default stdout");
-		System.err.println("   -t n: max number of threads, default 3");
-		System.err.println("      when n is 0, no thread control applies");
-		System.err.println("      when n is 1, use single thread model");
 	}
 
 	protected boolean connect_proc(Socket socket) {
@@ -365,45 +363,4 @@ public class SoccomServer extends ServerSocket {
 		}
 		return hangup;
 	}
-
-	public static void main(String argv[]) throws Exception {
-		int i;
-		String port = null;
-		String logname = null;
-		int max_threads = 3;
-		for (i = 0; i < argv.length; i++) {
-			if (argv[i].charAt(0) == '-') {
-				switch (argv[i].charAt(1)) {
-				case 'l':
-					i++;
-					logname = argv[i];
-					break;
-				case 't':
-					i++;
-					max_threads = Integer.parseInt(argv[i]);
-					break;
-				default:
-					printUsage();
-					System.exit(1);
-				}
-			} else if (port == null) {
-				port = argv[i];
-			} else {
-				printUsage();
-				System.exit(1);
-			}
-		}
-		if (port == null) {
-			printUsage();
-			System.exit(1);
-		}
-		SoccomServer server;
-		if (logname != null)
-			server = new SoccomServer(port, logname);
-		else
-			server = new SoccomServer(port, System.out);
-		server.max_threads = max_threads;
-		server.start(false);
-	}
-
 }

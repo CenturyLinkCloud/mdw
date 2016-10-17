@@ -16,8 +16,6 @@ import com.centurylink.mdw.observer.task.RoutingStrategy;
 import com.centurylink.mdw.observer.task.SubTaskStrategy;
 import com.centurylink.mdw.observer.task.TaskIndexProvider;
 import com.centurylink.mdw.observer.task.TaskNotifier;
-import com.centurylink.mdw.osgi.BundleSpec;
-import com.centurylink.mdw.osgi.ServiceLocator;
 
 public class TaskServiceRegistry extends ServiceRegistry {
 
@@ -53,25 +51,6 @@ public class TaskServiceRegistry extends ServiceRegistry {
     }
 
     /**
-     * Get strategy based on the strategy class and bundle spec
-     * @param strategyInterface
-     * @param className
-     * @param bundleSpec
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends RegisteredService> T getStrategy(Class<T> strategyInterface, String className, BundleSpec bundleSpec) {
-        List<T> matchStrategies = null;
-        for (T strategy : super.getServices(strategyInterface)) {
-            if (className.equals(strategy.getClass().getName())) {
-                if (matchStrategies == null) matchStrategies = new ArrayList<T>();
-                matchStrategies.add(strategy);
-            }
-        }
-        return (T) (matchStrategies == null ? null : new ServiceLocator<T>(matchStrategies).getLatestMatchService(bundleSpec));
-    }
-
-    /**
      * Cloud mode
      * @param packageVO
      * @param strategyInterface
@@ -90,22 +69,6 @@ public class TaskServiceRegistry extends ServiceRegistry {
         return null;
     }
 
-    /**
-     * Get latest TaskNotifier based on class and bundle spec
-     * @param notifierClassName
-     * @param bundleSpec
-     * @return
-     */
-    public TaskNotifier getNotifier(String className, BundleSpec bundleSpec) {
-        List<TaskNotifier> matchNotifiers = null;
-        for (TaskNotifier notifier : super.getServices(TaskNotifier.class)) {
-            if (className.equals(notifier.getClass().getName())) {
-                if (matchNotifiers == null) matchNotifiers = new ArrayList<TaskNotifier>();
-                matchNotifiers.add(notifier);
-            }
-        }
-        return (TaskNotifier) (matchNotifiers == null ? null : new ServiceLocator<TaskNotifier>(matchNotifiers).getLatestMatchService(bundleSpec));
-    }
 
     /**
      * Cloud mode

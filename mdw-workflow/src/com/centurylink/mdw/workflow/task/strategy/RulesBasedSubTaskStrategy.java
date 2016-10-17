@@ -60,7 +60,7 @@ public class RulesBasedSubTaskStrategy extends RulesBasedStrategy implements Sub
 
     public String marshalJaxb(Object jaxbObject) throws Exception {
         DocumentReferenceTranslator translator = (DocumentReferenceTranslator)
-                ProviderRegistry.getInstance().getVariableTranslator("com.centurylink.mdw.jaxb.JaxbElementTranslator");
+                ProviderRegistry.getInstance().getDynamicVariableTranslator("com.centurylink.mdw.jaxb.JaxbElementTranslator", null);
         return translator.realToString(jaxbObject);
   }
 

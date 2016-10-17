@@ -1,7 +1,8 @@
-apply plugin: "osgi"
+apply plugin: "java"
 
 dependencies {
-    compile project(":mdw-schemas")
+    compile group: "com.centurylink.mdw", name: "mdw-schemas", version: "5.5.38-SNAPSHOT"
+    compile group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
     compile group: "javax.el", name: "el-api", version: "1.0"
     compile group: "javax.jms", name: "jms", version: "1.1.1"
     compile group: "javax.mail", name: "mail", version: "1.4.5"
@@ -17,12 +18,7 @@ dependencies {
     compile group: "org.springframework", name: "spring-jms", version: "3.0.5.RELEASE"
     compile group: "org.springframework", name: "spring-aop", version: "3.0.5.RELEASE"
     compile group: "aopalliance", name: "aopalliance", version: "1.0"
-    compile(group: "org.springframework.osgi", name: "spring-osgi-core", version: "1.2.1") { exclude(group: "org.springframework") }
-    runtime(group: "org.springframework.osgi", name: "spring-osgi-io", version: "1.2.1") { exclude(group: "org.springframework") }
-    runtime(group: "org.springframework.osgi", name: "spring-osgi-extender", version: "1.2.1") { exclude(group: "org.springframework") }
-    runtime(group: "org.springframework.osgi", name: "spring-osgi-annotation", version: "1.2.1") { exclude(group: "org.springframework") }
-    compile group: "org.apache.servicemix.bundles", name: "org.apache.servicemix.bundles.commons-dbcp", version: "1.4_3"
-    compile group: "org.codehaus.groovy", name: "groovy-all", version: "2.1.8"
+    compile(group: "org.codehaus.groovy", name: "groovy-all", version: "2.1.8") { exclude(module: "servlet-api") }
     compile group: "org.json", name: "json", version: "20090211"
     compile group: "org.apache.activemq", name: "activemq-core", version: "5.5.1"
     compile group: "org.apache.ant", name: "ant-junit", version: "1.8.2"
@@ -38,7 +34,8 @@ dependencies {
     compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri") }
     compile group: "com.sun.el", name: "el-impl", version: "1.0"
     compile group: "junit", name: "junit", version: "4.8.1"
-    compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r" 
+    compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
+    compile group: "com.jcraft", name: "jsch", version: "0.1.51" // for jgit
     compile group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "1.2.2"
     
     // swagger
@@ -55,7 +52,7 @@ dependencies {
     compile group: "org.apache.commons", name: "commons-lang3", version: "3.2.1"
     compile group: "com.google.guava", name: "guava", version: "18.0"
 
-    // Rabbit and AMQP related
+    // rabbitmq
     compile group: "com.rabbitmq", name: "amqp-client", version: "3.5.1"
     compile group: "org.springframework.amqp", name: "spring-amqp", version: "1.4.4.RELEASE"
     compile group: "org.springframework.amqp", name: "spring-rabbit", version: "1.4.4.RELEASE"
@@ -63,23 +60,24 @@ dependencies {
     compile group: "org.apache.jackrabbit", name: "jackrabbit-webdav", version: "2.4.1"
     compile group: "org.apache.commons", name: "com.springsource.org.apache.commons.dbcp", version: "1.2.2"
 
+    // cucumber
+    compile group: "info.cukes", name: "cucumber-core", version: "1.2.4"  
+    
+    // oauth
+    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.common", version: "1.0.1"
+    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.client", version: "1.0.1"
+    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.resourceserver", version: "1.0.1"
+    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.authzserver", version: "1.0.1"
+    
+    // bpmn
+    compile group: "org.omg.spec.bpmn", name: "bpmn-schemas", version: "2.0"
+               
     // TODO: proprietary dependencies
     compile group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"
     compile group: "com.qwest.appsec", name: "AccessControl", version: "6.8"
     compile group: "com.oracle", name: "ojdbc6", version: "12.1.0.2.0"
     compile group: "artis", name: "artis", version: "4.0.1"
 
-    compile group: "info.cukes", name: "cucumber-core", version: "1.2.4"  
-    
-    //For Cloud Oauth
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.common", version: "1.0.1"
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.client", version: "1.0.1"
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.resourceserver", version: "1.0.1"
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.authzserver", version: "1.0.1"
-    
-    // BPMN export support
-    compile group: "org.omg.spec.bpmn", name: "bpmn-schemas", version: "2.0"
-                
 }
 
 clean {
@@ -91,60 +89,7 @@ jar {
     exclude "META-INF/mdw/spring/**"
     
     manifest {
+        attributes("MDW-Version": mdwVersion)
         attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
-        classesDir = sourceSets.main.output.classesDir
-        symbolicName = "com.centurylink.mdw.common"
-        instruction "Export-Package",
-            "!com.centurylink.mdw.common.bundle",
-            "!com.centurylink.mdw.common.config",
-            "!com.centurylink.mdw.container.plugins.weblogic",
-            "com.centurylink.mdw.common.order",
-            "com.centurylink.mdw.artis",
-            "com.centurylink.mdw.artis.util",
-            "com.centurylink.mdw.model.value.asset",
-            "com.centurylink.mdw.*"
-        instruction "Bundle-Activator",
-            "com.centurylink.mdw.common.bundle.FrameworkBundleActivator"
-        instruction "Bundle-ClassPath",
-            ".",
-            "META-INF/mdw"
-        instruction "Private-Package",
-            "com.centurylink.mdw.common.bundle",
-            "com.centurylink.mdw.common.config"
-        instruction "Import-Package",
-            "!org.apache.jackrabbit.*",
-            "!org.springframework.amqp.*",
-            "!org.springframework.retry.*",
-            "!com.rabbitmq.*",
-            "!org.apache.oltu.oauth2.*",
-            "!org.omg.spec.bpmn.*",
-            "!org.omg.spec.dd.*",
-            "com.centurylink.bam.impl",
-            "com.centurylink.mdw.service.impl",
-            "com.centurylink.mdw.workflow.impl",
-            "com.centurylink.mdw.bpm.impl",
-            "org.springframework.jmx.export",
-            "org.apache.xmlbeans.impl.schema",
-            "org.apache.commons.dbcp",
-            "groovy.lang;version='[1.7,3)'",
-            "groovy.util;version='[1.7,3)'",
-            "groovy.util.slurpersupport;version='[1.7,3)'",
-            "noNamespace.impl",
-            "javax.xml.xpath",
-            "!com.qwest.artis",
-            "!com.qwest.artis.utilities",
-            "!microsoft.sql",
-            "!cucumber.api.cli",
-            "!org.mariadb.jdbc",
-            "*"
-        instruction "DynamicImport-Package",
-            "schemaorg_apache_xmlbeans.*",
-            "oracle.jdbc",
-            "oracle.jdbc.driver",
-            "com.qwest.artis",
-            "microsoft.sql",
-            "com.qwest.artis.utilities",
-            "com.mysql.jdbc",
-            "org.mariadb.jdbc"
-     }
+    }
 }

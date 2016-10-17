@@ -1,5 +1,0 @@
-<PAGELET APPLIES_TO="Process,Activity">
-   <BOOLEAN NAME="ARTIS@Use" LABEL="Use Artis" />
-   <TEXT NAME="ARTIS@ServiceName" LABEL="Service Name" />
-   <TEXT NAME="ARTIS@FunctionLabel" LABEL="Function Label" />
-</PAGELET>

@@ -1,0 +1,35 @@
+{
+  "name": "mdw-admin",
+  "version": "6.0.038",
+  "description": "MDW Admin Web App",
+  "license": "Centurylink",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "1.4.7",
+    "angular-animate": "1.4.7",
+    "angular-route": "1.4.7",
+    "angular-touch": "1.4.7",
+    "angular-bootstrap": "0.14.3",
+    "angular-resource": "1.4.7",
+    "angular-sanitize": "1.4.7",
+    "bootstrap-css-only": "~3.3.4",
+    "angular-ui-grid": "3.0.7",
+    "angular-websocket": "1.0.14",
+    "highlightjs": "~9.3.0",
+    "iframe-resizer": "~3.5.3",
+    "jsdiff": "~2.2.0",
+    "diff2html": "~1.1.3",
+    "jasmine": "~2.3.4",
+    "angular-mocks": "1.4.7",
+    "Chart.js": "~2.1.4"
+  },
+  "keywords": [
+    "mdw"
+  ]
+}

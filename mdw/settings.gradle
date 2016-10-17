@@ -1,1 +1,4 @@
-includeFlat "mdw-admin"
+includeFlat "mdw-common"
+includeFlat "mdw-hub"
+includeFlat "mdw-services"
+includeFlat "mdw-workflow"

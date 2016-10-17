@@ -1,0 +1,77 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/service-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          /{{serviceFullPath}}        
+        </div>
+      </div>
+      <div class="mdw-tabbed-section">
+        <uib-tabset>
+          <uib-tab heading="JSON">
+            <div class="mdw-inner-content">
+              <div class="mdw-resource-heading">
+                <a href="{{serviceApi.apiBase}}/{{serviceFullPath}}.json">
+                  {{serviceApi.apiBase}}/{{serviceFullPath}}.json
+                </a>
+              </div>
+              <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="serviceApi.jsonContent | highlight:'json' | unsafe"></code></pre>
+            </div>
+          </uib-tab>
+          <uib-tab heading="YAML">
+            <div class="mdw-inner-content">
+              <div class="mdw-resource-heading">
+                <a href="{{serviceApi.apiBase}}/{{serviceFullPath}}.yaml">
+                  {{serviceApi.apiBase}}/{{serviceFullPath}}.yaml
+                </a>
+              </div>
+              <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="serviceApi.yamlContent | highlight:'yaml' | unsafe"></code></pre>
+            </div>
+          </uib-tab>
+          <uib-tab heading="Swagger">
+            <div class="mdw-inner-content">
+              <!-- src is blank until delayed load in js once yaml has been retrieved for local storage -->
+              <in-frame class="mdw-frame" src="blank.html" api="{{servicePath}}"></in-frame>
+            </div>
+          </uib-tab>
+          <uib-tab heading="Samples" select="selectSample(null)">
+            <div class="mdw-inner-content">
+              <div ng-if="!serviceApi.selectedSample" class="mdw-resource-heading" style="height:36px">
+                <span class="glyphicon glyphicon-folder-open mdw-item-icon"></span>{{serviceApi.samplePackageName}}
+              </div>
+              <div ng-if="serviceApi.selectedSample" class="mdw-resource-heading" style="height:36px">
+                <div style="float:left">
+                  <a href="#/service/{{serviceFullPath}}" ng-click="selectSample(null)">
+                    <span class="glyphicon glyphicon-level-up mdw-item-icon mdw-item-link"></span>{{serviceApi.samplePackageName}}
+                  </a>
+                  / {{serviceApi.selectedSampleName}}
+                </div>
+                <div class="mdw-inner-heading-actions">
+                  <a ng-href="#/service/{{serviceFullPath}}" class="btn btn-success mdw-btn">GET</a>        
+                  <a ng-href="#/service/{{serviceFullPath}}" class="btn btn-primary mdw-btn">POST</a>        
+                  <a ng-href="#/service/{{serviceFullPath}}" class="btn btn-warning mdw-btn">PUT</a>        
+                  <a ng-href="#/service/{{serviceFullPath}}" class="btn btn-danger mdw-btn">DELETE</a>        
+                </div>
+              </div>
+              <ul ng-if="!serviceApi.selectedSample" class="mdw-list mdw-inner-panel">
+                <li ng-repeat="sampleAsset in serviceApi.sampleAssets">
+                  <div>
+                    <a class="mdw-item-link" href="#/service/{{serviceFullPath}}" ng-click="selectSample(sampleAsset.name)">
+                      <span class="glyphicon glyphicon-file mdw-item-icon"></span>{{sampleAsset.name}}
+                    </a>
+                  </div>            
+                </li>
+              </ul>
+              <pre ng-if="serviceApi.selectedSample" class="mdw-resource-content" style="clear:both"><code class="mdw-code" ng-bind-html="serviceApi.selectedSample.rawResponse | highlight:serviceApi.selectedSampleLang | unsafe"></code></pre>
+            </div>
+          </uib-tab>
+          <uib-tab heading="Errors">
+            <div class="mdw-inner-content" style="min-height:250px;">
+            </div>
+          </uib-tab>
+        </uib-tabset>      
+      </div>
+    </div>
+  </div>
+</div>

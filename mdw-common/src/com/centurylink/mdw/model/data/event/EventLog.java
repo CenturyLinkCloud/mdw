@@ -7,7 +7,6 @@ package com.centurylink.mdw.model.data.event;
 
 import java.io.Serializable;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

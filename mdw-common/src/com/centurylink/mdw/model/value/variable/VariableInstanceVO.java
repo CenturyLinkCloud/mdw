@@ -23,10 +23,10 @@ public class VariableInstanceVO extends VariableInstanceInfo implements Comparab
     public static final long serialVersionUID = 1L;
 
     private boolean isRequired;
-    private boolean isEditable; 
+    private boolean isEditable;
     private String variableReferredName;
     private Long processInstanceId;
-    private List<AttributeVO> attributes;    
+    private List<AttributeVO> attributes;
     private String documentContent;		// for supporting document vars in auto-form tasks
     private Object documentObject;		// for supporting document vars in auto-form tasks
 
@@ -36,10 +36,10 @@ public class VariableInstanceVO extends VariableInstanceInfo implements Comparab
      * and uses VariableInstanceInfo instead. The class contains additional
      * info for displaying purposes.
      */
-    
+
     public VariableInstanceVO(){
     }
-    
+
     public VariableInstanceVO(VariableVO varVO) {
         setName(varVO.getVariableName());
         setVariableId(varVO.getVariableId());
@@ -125,30 +125,30 @@ public class VariableInstanceVO extends VariableInstanceInfo implements Comparab
       buffer.append("]");
       return buffer.toString();
     }
-  
+
     public boolean isSelect()
     {
       return getAttribute("SELECT_VALUES") != null;
     }
-  
+
     public String[] getSelectValues()
     {
       String selectValues = getAttribute("SELECT_VALUES");
       if (selectValues == null)
         return null;
-  
+
       return selectValues.split(",");
     }
-  
+
     public boolean allowArrayResize()
     {
       String attrValue = getAttribute("ALLOW_ARRAY_RESIZE");
       if (attrValue != null && attrValue.equalsIgnoreCase("false"))
         return false;
-  
+
       return true;
     }
-    
+
     public List<AttributeVO> getAttributes()
     {
       return attributes;
@@ -158,18 +158,18 @@ public class VariableInstanceVO extends VariableInstanceInfo implements Comparab
     {
       this.attributes = attributes;
     }
-    
+
     public String getAttribute(String name)
     {
       if (name == null || attributes == null)
         return null;
-      
+
       for (int i = 0; i < attributes.size(); i++)
       {
         if (name.equals(attributes.get(i).getAttributeName()))
           return attributes.get(i).getAttributeValue();
       }
-      
+
       return null;
     }
 
@@ -182,10 +182,10 @@ public class VariableInstanceVO extends VariableInstanceInfo implements Comparab
         VariableInstanceVO otherVO = (VariableInstanceVO) other;
         otherLabel = StringHelper.isEmpty(otherVO.getVariableReferredName()) ? otherVO.getName() : otherVO.getVariableReferredName();
       }
-      
+
       return thisLabel.compareTo(otherLabel);
     }
-    
+
     /**
      * This is for backward compatibility. Use getStringValue() or getData() instead.
      * @return
@@ -194,7 +194,7 @@ public class VariableInstanceVO extends VariableInstanceInfo implements Comparab
     public Object getVariableData() {
     	return getData();
     }
-    
+
     /**
      * This is for backward compatibility. Use getName() instead
      * @return
@@ -218,15 +218,5 @@ public class VariableInstanceVO extends VariableInstanceInfo implements Comparab
 		}
 		return documentObject;
 	}
-	
-	public String getRealStringValue() {
-		if (VariableTranslator.isDocumentReferenceVariable(getType())) {
-			documentObject = getData();
-			if (documentObject==null) documentContent = null;
-			else documentContent = VariableTranslator.realToString(getType(), documentObject);
-			super.setData(new DocumentReference(0L, null));
-			return documentContent;
-		} else return getStringValue();
-	}
-	
+
 }

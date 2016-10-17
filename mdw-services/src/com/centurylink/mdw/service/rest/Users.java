@@ -1,0 +1,186 @@
+/**
+ * Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
+ */
+package com.centurylink.mdw.service.rest;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.Path;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.centurylink.mdw.common.exception.DataAccessException;
+import com.centurylink.mdw.common.service.Query;
+import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
+import com.centurylink.mdw.model.value.user.UserRoleVO;
+import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.UserServices;
+import com.centurylink.mdw.services.rest.JsonRestService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
+@Path("/Users")
+@Api("MDW users")
+public class Users extends JsonRestService {
+
+    @Override
+    public List<String> getRoles(String path) {
+        List<String> roles = super.getRoles(path);
+        roles.add(UserRoleVO.USER_ADMIN);
+        return roles;
+    }
+
+
+    @Override
+    protected Entity getEntity(String path, Object content, Map<String,String> headers) {
+        return Entity.User;
+    }
+
+    /**
+     * Retrieve a specific user or a page of users.
+     */
+    @Override
+    @Path("/{cuid}")
+    @ApiOperation(value="Retrieve a specific user or a page of users",
+        notes="If cuid is not present, returns a page of users; if Find is present, searches by pattern.",
+        response=UserVO.class, responseContainer="List")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="find", paramType="query", dataType="string")})
+    public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
+        Map<String,String> parameters = getParameters(headers);
+        UserServices userServices = ServiceLocator.getUserServices();
+        try {
+            String userId = parameters.get("id");
+            if (userId == null)
+                userId = parameters.get("cuid");
+            if (userId == null) // use request path
+                userId = getSegment(path, 1);
+            if (userId != null) {
+                boolean oldStyle = "true".equals(parameters.get("withRoles")); // compatibility for old-style common roles
+                return userServices.getUser(userId).getJsonWithRoles(oldStyle);
+            }
+            else {
+                Query query = getQuery(path, headers);
+                if (query.getFind() != null)
+                    return userServices.findUsers(query.getFind()).getJson();
+                else
+                    return userServices.getUsers(query.getStart(), query.getMax()).getJson();
+            }
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
+
+
+    /**
+     * For create (creating a new user, or creating a new user/workgroup or user/role relationship).
+     */
+    @Override
+    @Path("/{cuid}/rel/{relId}")
+    @ApiOperation(value="Create a user or add existing user to a workgroup or role",
+        notes="If rel/{relId} is present, user is added to workgroup or role.", response=StatusMessage.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="Workgroup", paramType="body", dataType="com.centurylink.mdw.model.value.user.UserVO")})
+    public JSONObject post(String path, JSONObject content, Map<String, String> headers)
+    throws ServiceException, JSONException {
+        String cuid = getSegment(path, 1);
+        String rel = getSegment(path, 2);
+
+        UserServices userServices = ServiceLocator.getUserServices();
+        try {
+            if (rel == null) {
+                UserVO existing = userServices.getUsers().get(cuid);
+                if (existing != null)
+                    throw new ServiceException(HTTP_409_CONFLICT, "User ID already exists: " + cuid);
+                UserVO user = new UserVO(content);
+                userServices.createUser(user);
+            }
+            else if (rel.equals("workgroups")) {
+                String group = getSegment(path, 3);
+                userServices.addUserToWorkgroup(cuid, group);
+            }
+            else if (rel.equals("roles")) {
+                String role = getSegment(path, 3);
+                userServices.addUserToRole(cuid, role);
+            }
+            else {
+                String msg = "Unsupported relationship for user " + cuid + ": " + rel;
+                throw new ServiceException(HTTP_400_BAD_REQUEST, msg);
+            }
+            return null;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(HTTP_500_INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * For update.
+     */
+    @Override
+    @Path("/{cuid}")
+    @ApiOperation(value="Update a user", response=StatusMessage.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="User", paramType="body", required=true, dataType="com.centurylink.mdw.model.value.user.UserVO")})
+    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
+    throws ServiceException, JSONException {
+
+        UserServices userServices = ServiceLocator.getUserServices();
+        UserVO user = new UserVO(content);
+        String cuid = getSegment(path, 1);
+        if (cuid == null)
+            throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing path segment: {cuid}");
+        try {
+            UserVO existing = userServices.getUser(cuid);
+            if (existing == null)
+                throw new ServiceException(HTTP_404_NOT_FOUND, "User not found: " + cuid);
+            // update
+            user.setId(existing.getId());
+            userServices.updateUser(user);
+            return null;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(HTTP_500_INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Delete a user or a user/group, user/role relationship.
+     */
+    @Path("/{cuid}/rel/{relId}")
+    @ApiOperation(value="Delete a user or remove a user from a workgroup or role",
+        notes="If rel/{relId} is present, user is removed from workgroup or role.", response=StatusMessage.class)
+    public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
+    throws ServiceException, JSONException {
+        String cuid = getSegment(path, 1);
+        String rel = getSegment(path, 2);
+
+        UserServices userServices = ServiceLocator.getUserServices();
+        try {
+            if (rel == null) {
+                userServices.deleteUser(cuid);
+            }
+            else if (rel.equals("workgroups")) {
+                String group = getSegment(path, 3);
+                userServices.removeUserFromWorkgroup(cuid, group);
+            }
+            else if (rel.equals("roles")) {
+                String role = getSegment(path, 3);
+                userServices.removeUserFromRole(cuid, role);
+            }
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(HTTP_500_INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+        return null;
+    }
+}

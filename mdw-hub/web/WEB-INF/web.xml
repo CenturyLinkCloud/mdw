@@ -1,220 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <display-name>MDW</display-name>
+
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
   <listener>
-    <listener-class>com.centurylink.mdw.listeners.startup.StartupListener</listener-class>
+    <listener-class>com.centurylink.mdw.hub.servlet.StartupListener</listener-class>
   </listener>
-  <listener>
-    <listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
-  </listener>
-  <context-param>
-    <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
-    <param-value>client</param-value>
-  </context-param>
-  <context-param>
-    <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
-    <param-value>.xhtml</param-value>
-  </context-param>
-  <context-param>
-    <param-name>javax.faces.FACELETS_VIEW_MAPPINGS</param-name>
-    <param-value>.xhtml</param-value>
-  </context-param>
-  <context-param>
-    <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <context-param>
-    <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <!-- avoid PrimeFaces bug: https://code.google.com/p/primefaces/issues/detail?id=6889 -->
-  <context-param>
-    <param-name>javax.faces.VALIDATE_EMPTY_FIELDS</param-name>
-    <param-value>false</param-value>
-  </context-param>  
-  <context-param>
-    <param-name>javax.faces.FACELETS_RESOURCE_RESOLVER</param-name>
-    <param-value>com.centurylink.mdw.hub.jsf.WorkflowAssetResourceResolver</param-value>
-  </context-param>
-  <context-param>
-    <param-name>javax.faces.CONFIG_FILES</param-name>
-    <param-value>/WEB-INF/faces-config.xml,/WEB-INF/mdwtools-faces-config.xml</param-value>
-  </context-param>
-  <context-param>
-    <param-name>javax.faces.FACELETS_LIBRARIES</param-name>
-    <param-value>/WEB-INF/hub.taglib.xml;/WEB-INF/mdw-tm.taglib.xml;/WEB-INF/mdw.taglib.xml;/WEB-INF/mdwtools.taglib.xml;/WEB-INF/dojo.taglib.xml;/WEB-INF/tomahawk.taglib.xml;/WEB-INF/osgi/rich.taglib.xml;/WEB-INF/osgi/a4j.taglib.xml</param-value>
-  </context-param>
-  <context-param>
-    <param-name>org.apache.myfaces.COMPRESS_STATE_IN_CLIENT</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <context-param>
-    <param-name>org.apache.myfaces.ALLOW_JAVASCRIPT</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <context-param>
-    <param-name>org.apache.myfaces.DETECT_JAVASCRIPT</param-name>
-    <param-value>false</param-value>
-  </context-param>
-  <context-param>
-    <param-name>org.apache.myfaces.PRETTY_HTML</param-name>
-    <param-value>false</param-value>
-  </context-param>
-  <context-param>
-    <param-name>org.apache.myfaces.AUTO_SCROLL</param-name>
-    <param-value>false</param-value>
-  </context-param>
-  <context-param>
-    <param-name>org.apache.myfaces.USE_ENCRYPTION</param-name>
-    <param-value>false</param-value>
-  </context-param>
-  <!-- disable this for debugging RichFaces javascript
-       Note: disabling also disables compressionStages and packagingStages
-       Important: disabling provides a big client-side performance boost (but see richfaces-js-includes.xhtml) -->
-  <context-param>
-    <param-name>org.richfaces.resourceOptimization.enabled</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <!-- ZIP JavaScript Resources -->
-  <context-param>
-    <param-name>org.richfaces.resourceOptimization.compressionStages</param-name>
-    <param-value>All</param-value>
-  </context-param>
-  <!-- Pack JavaScript Resources -->
-  <context-param>
-    <param-name>org.richfaces.resourceOptimization.packagingStages</param-name>
-    <param-value>All</param-value>
-  </context-param>
-  <context-param>
-    <param-name>org.richfaces.skin</param-name>
-    <param-value>#{mdw.skin}</param-value>
-  </context-param>
-  <context-param>
-    <param-name>org.richfaces.enableControlSkinning</param-name>
-    <param-value>false</param-value>
-  </context-param>
-  <context-param>
-    <param-name>primefaces.THEME</param-name>
-    <param-value>#{mdw.primefacesTheme}</param-value>
-  </context-param>  
     
   <filter>
-    <filter-name>AccessControlFilter</filter-name>
-    <filter-class>com.centurylink.mdw.web.servlet.filter.AccessControlFilter</filter-class>
-    <init-param>
-      <param-name>applicationName</param-name>
-      <param-value>MDWHub</param-value>
-    </init-param>
-    <init-param>
-      <param-name>logLevel</param-name>
-      <param-value>FINE</param-value>
-    </init-param>
+    <filter-name>CustomContentFilter</filter-name>
+    <filter-class>com.centurylink.mdw.hub.servlet.CustomContentFilter</filter-class>
   </filter>
-  <filter>
-    <filter-name>MDWCommonSecurityFilter</filter-name>
-    <filter-class>com.centurylink.mdw.web.servlet.filter.CommonSecurityFilter</filter-class>
-    <init-param>
-      <param-name>CtAppConfigFile</param-name>
-      <param-value>CTAPPFilter.config</param-value>
-    </init-param>
-    <init-param>
-      <param-name>CtExcludeUrlsProperty</param-name>
-      <param-value>MDWHub.excludedURLs</param-value>
-    </init-param>
-  </filter>
-  <filter>
-    <filter-name>MyFacesExtensionsFilter</filter-name>
-    <filter-class>org.apache.myfaces.webapp.filter.ExtensionsFilter</filter-class>
-  </filter>
-  <filter>
-    <filter-name>HubContentFilter</filter-name>
-    <filter-class>com.centurylink.mdw.hub.servlet.HubContentFilter</filter-class>
-  </filter>
-  <filter>
-    <filter-name>RedirectFilter</filter-name>
-    <filter-class>com.centurylink.mdw.hub.servlet.RedirectFilter</filter-class>
-  </filter>
-    
+
   <filter-mapping>
-    <filter-name>AccessControlFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MDWCommonSecurityFilter</filter-name>
-    <url-pattern>*.jsf</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MDWCommonSecurityFilter</filter-name>
-    <url-pattern>/taskDetail/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MDWCommonSecurityFilter</filter-name>
-    <url-pattern>/taskList/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MDWCommonSecurityFilter</filter-name>
-    <url-pattern>/page/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MDWCommonSecurityFilter</filter-name>
-    <url-pattern>/tasks/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MDWCommonSecurityFilter</filter-name>
-    <url-pattern>/tools/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MyFacesExtensionsFilter</filter-name>
-    <servlet-name>Faces Servlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MyFacesExtensionsFilter</filter-name>
-    <url-pattern>/taskDetail/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MyFacesExtensionsFilter</filter-name>
-    <url-pattern>/taskList/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MyFacesExtensionsFilter</filter-name>
-    <url-pattern>/page/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MyFacesExtensionsFilter</filter-name>
-    <url-pattern>/tasks/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MyFacesExtensionsFilter</filter-name>
-    <url-pattern>/tools/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>MyFacesExtensionsFilter</filter-name>
-    <url-pattern>/faces/myFacesExtensionResource/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>HubContentFilter</filter-name>
+    <filter-name>CustomContentFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>  
-  <filter-mapping>
-    <filter-name>RedirectFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>  
-  
+      
   <servlet>
-    <servlet-name>CachingDispatchServlet</servlet-name>
-    <servlet-class>com.centurylink.mdw.hub.servlet.CachingDispatchServlet</servlet-class>
+    <servlet-name>RootServlet</servlet-name>
+    <servlet-class>com.centurylink.mdw.hub.servlet.RootServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet>
-    <servlet-name>NoAuthServlet</servlet-name>
-    <servlet-class>com.centurylink.mdw.hub.servlet.NoAuthServlet</servlet-class>
+    <servlet-name>CustomContentServlet</servlet-name>
+    <servlet-class>com.centurylink.mdw.hub.servlet.CustomContentServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
-  </servlet>  
-  <servlet>
-    <servlet-name>HubContentServlet</servlet-name>
-    <servlet-class>com.centurylink.mdw.hub.servlet.HubContentServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>  
+  </servlet>
   <servlet>
     <servlet-name>AssetContentServlet</servlet-name>
     <servlet-class>com.centurylink.mdw.hub.servlet.AssetContentServlet</servlet-class>
@@ -231,41 +46,13 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet>
-    <servlet-name>Faces Servlet</servlet-name>
-    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet>
-    <servlet-name>RichFaces Resource Servlet</servlet-name>
-    <servlet-class>org.richfaces.webapp.ResourceServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet>
-    <servlet-name>Web Resource Servlet</servlet-name>
-    <servlet-class>com.centurylink.mdw.web.servlet.WebResourceServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet>
-    <servlet-name>Attachment Download Servlet</servlet-name>
-    <servlet-class>com.centurylink.mdw.taskmgr.servlet.AttachmentDownload</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet>
-    <servlet-name>Download Servlet</servlet-name>
-    <servlet-class>com.centurylink.mdw.web.servlet.FileDownloadServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>Upload Servlet</servlet-name>
-    <servlet-class>com.centurylink.mdw.web.servlet.FileUploadServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>RestfulServicesServlet</servlet-name>
-    <servlet-class>com.centurylink.mdw.web.servlet.RestfulServicesServlet</servlet-class>
+    <servlet-name>RestServlet</servlet-name>
+    <servlet-class>com.centurylink.mdw.hub.servlet.RestServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet>
     <servlet-name>SoapServlet</servlet-name>
-    <servlet-class>com.centurylink.mdw.web.servlet.SoapListenerServlet</servlet-class>
+    <servlet-class>com.centurylink.mdw.hub.servlet.SoapServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet>
@@ -273,13 +60,18 @@
     <servlet-class>com.centurylink.mdw.hub.servlet.WorkflowImageServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
+
   <servlet-mapping>
-    <servlet-name>NoAuthServlet</servlet-name>
-    <url-pattern>/noAuth/*</url-pattern>
+    <servlet-name>RootServlet</servlet-name>
+    <url-pattern>/index.html</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>HubContentServlet</servlet-name>
-    <url-pattern>/hubContent/*</url-pattern>
+    <servlet-name>RootServlet</servlet-name>
+    <url-pattern>/root.js</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CustomContentServlet</servlet-name>
+    <url-pattern>/customContent/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>AssetContentServlet</servlet-name>
@@ -298,75 +90,15 @@
     <url-pattern>/api/*</url-pattern>
   </servlet-mapping>  
   <servlet-mapping>
-    <servlet-name>CachingDispatchServlet</servlet-name>
-    <url-pattern>/mdw.appcache</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>CachingDispatchServlet</servlet-name>
-    <url-pattern>/taskDetail/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>CachingDispatchServlet</servlet-name>
-    <url-pattern>/taskList/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>CachingDispatchServlet</servlet-name>
-    <url-pattern>/page/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>CachingDispatchServlet</servlet-name>
-    <url-pattern>/login</url-pattern>
-  </servlet-mapping>  
-  <servlet-mapping>
-    <servlet-name>CachingDispatchServlet</servlet-name>
-    <url-pattern>/loginError</url-pattern>
-  </servlet-mapping>  
-  <servlet-mapping>
-    <servlet-name>Faces Servlet</servlet-name>
-    <url-pattern>*.jsf</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>Faces Servlet</servlet-name>
-    <url-pattern>/system/faces/*</url-pattern>
-  </servlet-mapping>  
-  <servlet-mapping>
-    <servlet-name>Faces Servlet</servlet-name>
-    <url-pattern>/system/filepanel/</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>Faces Servlet</servlet-name>
-    <url-pattern>/system/configManager/</url-pattern>
-  </servlet-mapping>  
-  <servlet-mapping>
-    <servlet-name>RichFaces Resource Servlet</servlet-name>
-    <url-pattern>/org.richfaces.resources/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>Web Resource Servlet</servlet-name>
-    <url-pattern>/resources/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>Attachment Download Servlet</servlet-name>
-    <url-pattern>/AttachmentDownload</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>Download Servlet</servlet-name>
-    <url-pattern>/system/download</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>Upload Servlet</servlet-name>
-    <url-pattern>/upload</url-pattern>
-  </servlet-mapping>  
-  <servlet-mapping>
-    <servlet-name>RestfulServicesServlet</servlet-name>
+    <servlet-name>RestServlet</servlet-name>
     <url-pattern>/Services/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>RestfulServicesServlet</servlet-name>
+    <servlet-name>RestServlet</servlet-name>
     <url-pattern>/services/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>RestfulServicesServlet</servlet-name>
+    <servlet-name>RestServlet</servlet-name>
     <url-pattern>/REST/*</url-pattern>
   </servlet-mapping>  
   <servlet-mapping>
@@ -378,13 +110,9 @@
     <url-pattern>/workflowImage/*</url-pattern>
   </servlet-mapping>
 
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-  </welcome-file-list>
-  
   <error-page>
     <error-code>500</error-code>
-    <location>/error.jsf</location>
+    <location>/error.html</location>
   </error-page>
   
   <security-constraint>

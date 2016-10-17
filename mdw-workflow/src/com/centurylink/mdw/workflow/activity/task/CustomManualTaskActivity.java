@@ -13,7 +13,6 @@ import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.model.data.event.EventType;
 import com.centurylink.mdw.model.data.task.TaskAction;
 import com.centurylink.mdw.model.data.work.WorkStatus;
@@ -49,28 +48,19 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
             String taskLogicalId = getAttributeValue(ATTRIBUTE_TASK_LOGICAL_ID);
             getEngine().createEventWaitInstance(getActivityInstanceId(), "TaskAction-" + getActivityInstanceId(), null, true, true);
 
-            TaskManagerAccess taskMgrAccess = TaskManagerAccess.getInstance();
-            if (taskMgrAccess.isRemoteDetail() || taskMgrAccess.isRemoteSummary() ||
-                    "true".equalsIgnoreCase(PropertyManager.getProperty("mdw.create.custom.task.thru.event"))) { // non-standard prop
-                // create task through old event mechanism
-                TaskManagerAccess.getInstance().createClassicTaskInstance(taskLogicalId, getProcessInstanceId(),
-                        getActivityInstanceId(), secondaryOwnerId, getMasterRequestId(), getReturnMessage());
+            String taskTemplate = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE);
+            if (taskTemplate != null) {
+                // new-style task templates
+                String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
+                AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
+                TaskVO template = TaskTemplateCache.getTaskTemplate(spec);
+                if (template == null)
+                    throw new ActivityException("Task template not found: " + spec);
+                taskLogicalId = template.getLogicalId();
             }
-            else {
-                String taskTemplate = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE);
-                if (taskTemplate != null) {
-                    // new-style task templates
-                    String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
-                    AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
-                    TaskVO template = TaskTemplateCache.getTaskTemplate(spec);
-                    if (template == null)
-                        throw new ActivityException("Task template not found: " + spec);
-                    taskLogicalId = template.getLogicalId();
-                }
-                TaskServices taskServices = ServiceLocator.getTaskServices();
-                taskServices.createCustomTaskInstance(taskLogicalId, getMasterRequestId(), getProcessInstanceId(),
-                        getActivityInstanceId(), secondaryOwnerId);
-            }
+            TaskServices taskServices = ServiceLocator.getTaskServices();
+            taskServices.createCustomTaskInstance(taskLogicalId, getMasterRequestId(), getProcessInstanceId(),
+                    getActivityInstanceId(), secondaryOwnerId);
 
             EventWaitInstanceVO received = registerWaitEvents(false,true);
             if (received!=null)

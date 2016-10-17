@@ -1,7 +1,0 @@
-<xb:config xmlns:xb="http://xml.apache.org/xmlbeans/2004/02/xbean/config">
-  <!-- so as not to conflict with packages exported by mdw-services -->
-  <xb:namespace uri="http://mdw.centurylink.com/services">
-    <xb:package>com.centurylink.mdw.service</xb:package>
-  </xb:namespace>
-  
-</xb:config>

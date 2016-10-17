@@ -35,9 +35,7 @@ public interface RuntimeContext {
 
     public boolean isLogDebugEnabled();
 
-    public String getTaskManagerUrl();
-
-    public String getMdwWebUrl();
+    public String getMdwHubUrl();
 
     public String getMdwVersion();
 

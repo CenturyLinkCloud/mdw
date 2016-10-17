@@ -460,8 +460,7 @@ public class TaskServicesImpl implements TaskServices {
                 validator.validateAction(taskAction);
 
                 taskMgr.performActionOnTaskInstance(action, instanceId, user.getId(), assigneeId, comment,
-                        destination, OwnerType.PROCESS_INSTANCE.equals(taskInst.getOwnerType())
-                                && !TaskManagerAccess.getInstance().isRemoteDetail(), !query.getBooleanFilter("disableEndpoint"));
+                        destination, false, !query.getBooleanFilter("disableEndpoint"));
 
                 if (logger.isDebugEnabled())
                     logger.debug("Performed action: " + action + " on task instance: " + instanceId);

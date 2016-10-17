@@ -11,7 +11,6 @@ import org.apache.xmlbeans.XmlOptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.exception.TranslationException;
 import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
@@ -32,7 +31,7 @@ public class XmlBeanTranslator extends DocumentReferenceTranslator implements Xm
      * @return XmlOptions
      */
     private static XmlOptions getXmlOptions() {
-        if (System.getProperty("runtimeEnv") == null)
+        if (System.getProperty("runtimeEnv") == null && System.getProperty("mdw.runtime.env") == null)
             return new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2); // avoid errors when running in Designer
 
         String[] xmlOptionsProperties = new String[] { PropertyNames.MDW_TRANSLATOR_XMLBEANS_LOAD_OPTIONS,
@@ -101,16 +100,8 @@ public class XmlBeanTranslator extends DocumentReferenceTranslator implements Xm
 
     }
 
-    public Object realToObject(String string) throws TranslationException {
-        return realToObject(string, ApplicationContext.isOsgi());
-    }
-
-    @Override
-    protected Object realToObject(String str, boolean tryProviders) throws TranslationException {
+    public Object realToObject(String str) throws TranslationException {
         try {
-            if (tryProviders)
-                return providerDeserialize(str);
-
             XmlObject xmlBean = XmlObject.Factory.parse(str, xmlOptions);
             return xmlBean;
         }

@@ -1,7 +1,0 @@
-build
-.gradle
-/node_modules/
-/dist/
-.tmp/
-.grunt
-notes/

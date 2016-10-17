@@ -3,5 +3,5 @@
   "icon": "crossmap.png",
   "implementorClass": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
   "label": "Crossmap",
-  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='Mapper' SOURCE='RuleSets' TYPE='GROOVY' />\n  <DROPDOWN NAME='Input' SOURCE='DocumentVariables' VW='200'/>\n  <DROPDOWN NAME='Output' SOURCE='DocumentVariables' VW='200'/>\n  <HYPERLINK URL='/MDWWeb/doc/CrossmapActivity.html'>   Crossmap Activity Help<\/HYPERLINK>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='Mapper' SOURCE='RuleSets' TYPE='GROOVY' />\n  <DROPDOWN NAME='Input' SOURCE='DocumentVariables' VW='200'/>\n  <DROPDOWN NAME='Output' SOURCE='DocumentVariables' VW='200'/>\n  <HYPERLINK URL='/MDWWeb/doc/crossmap.html'>   Crossmap Activity Help<\/HYPERLINK>\n<\/PAGELET>"
 }

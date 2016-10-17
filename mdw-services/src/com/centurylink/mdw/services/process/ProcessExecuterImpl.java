@@ -23,7 +23,6 @@ import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.activity.types.InvokeProcessActivity;
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
 import com.centurylink.mdw.activity.types.SynchronizationActivity;
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.constant.ProcessVisibilityConstant;
@@ -91,52 +90,52 @@ class ProcessExecuterImpl {
     private InternalMessenger internalMessenger;
     private final boolean inService;
 
-    protected Map<String,DocumentVO> remoteDocumentCache;		// for remote document
+    protected Map<String,DocumentVO> remoteDocumentCache;        // for remote document
 
-	ProcessExecuterImpl(EngineDataAccess edao,
-			InternalMessenger internalMessenger, boolean forServiceProcess) {
-		logger = LoggerUtil.getStandardLogger();
-	    remoteDocumentCache = null;
-	    this.edao = edao;
-		inService = forServiceProcess;
-		this.internalMessenger = internalMessenger;
-	}
+    ProcessExecuterImpl(EngineDataAccess edao,
+            InternalMessenger internalMessenger, boolean forServiceProcess) {
+        logger = LoggerUtil.getStandardLogger();
+        remoteDocumentCache = null;
+        this.edao = edao;
+        inService = forServiceProcess;
+        this.internalMessenger = internalMessenger;
+    }
 
     private String logtag(Long procId, Long procInstId, Long actId, Long actInstId) {
-    	StringBuffer sb = new StringBuffer();
-    	sb.append("p");
-    	sb.append(procId);
-    	sb.append(".");
-    	sb.append(procInstId);
-    	sb.append(" a");
-    	sb.append(actId);
-    	sb.append(".");
-    	sb.append(actInstId);
-    	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append("p");
+        sb.append(procId);
+        sb.append(".");
+        sb.append(procInstId);
+        sb.append(" a");
+        sb.append(actId);
+        sb.append(".");
+        sb.append(actInstId);
+        return sb.toString();
     }
 
     private String logtag(Long procId, Long procInstId, String masterRequestId) {
-    	StringBuffer sb = new StringBuffer();
-    	sb.append("p");
-    	sb.append(procId);
-    	sb.append(".");
-    	sb.append(procInstId);
-    	sb.append(" m.");
-    	sb.append(masterRequestId);
-    	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append("p");
+        sb.append(procId);
+        sb.append(".");
+        sb.append(procInstId);
+        sb.append(" m.");
+        sb.append(masterRequestId);
+        return sb.toString();
     }
 
     private String logtag(Long procId, Long procInstId, WorkTransitionInstanceVO transInst) {
-	    StringBuffer sb = new StringBuffer();
-	    sb.append("p");
-	    sb.append(procId);
-	    sb.append(".");
-	    sb.append(procInstId);
-	    sb.append(" t");
-	    sb.append(transInst.getTransitionID());
-	    sb.append(".");
-	    sb.append(transInst.getTransitionInstanceID());
-	    return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append("p");
+        sb.append(procId);
+        sb.append(".");
+        sb.append(procInstId);
+        sb.append(" t");
+        sb.append(transInst.getTransitionID());
+        sb.append(".");
+        sb.append(transInst.getTransitionInstanceID());
+        return sb.toString();
     }
 
     final EngineDataAccess getDataAccess() {
@@ -149,34 +148,34 @@ class ProcessExecuterImpl {
 
     ActivityInstanceVO createActivityInstance(Long pActivityId, Long procInstId)
     throws ProcessException, SQLException, DataAccessException {
-    	ActivityInstanceVO ai = new ActivityInstanceVO();
-    	ai.setDefinitionId(pActivityId);
-    	ai.setOwnerId(procInstId);
-    	ai.setStatusCode(WorkStatus.STATUS_IN_PROGRESS);
-    	edao.createActivityInstance(ai);
-    	return ai;
+        ActivityInstanceVO ai = new ActivityInstanceVO();
+        ai.setDefinitionId(pActivityId);
+        ai.setOwnerId(procInstId);
+        ai.setStatusCode(WorkStatus.STATUS_IN_PROGRESS);
+        edao.createActivityInstance(ai);
+        return ai;
     }
 
     WorkTransitionInstanceVO createTransitionInstance(
-    		WorkTransitionVO transition, Long processInstId)
-	    throws DataAccessException {
-		try {
-			WorkTransitionInstanceVO transInst = new WorkTransitionInstanceVO();
-			transInst.setTransitionID(transition.getWorkTransitionId());
-			transInst.setProcessInstanceID(processInstId);
-			transInst.setStatusCode(WorkTransitionStatus.STATUS_INITIATED);
-			transInst.setDestinationID(transition.getToWorkId());
-			edao.createTransitionInstance(transInst);
-			return transInst;
-		} catch (SQLException e) {
+            WorkTransitionVO transition, Long processInstId)
+        throws DataAccessException {
+        try {
+            WorkTransitionInstanceVO transInst = new WorkTransitionInstanceVO();
+            transInst.setTransitionID(transition.getWorkTransitionId());
+            transInst.setProcessInstanceID(processInstId);
+            transInst.setStatusCode(WorkTransitionStatus.STATUS_INITIATED);
+            transInst.setDestinationID(transition.getToWorkId());
+            edao.createTransitionInstance(transInst);
+            return transInst;
+        } catch (SQLException e) {
             throw new DataAccessException(0, e.getMessage(), e);
         }
-	}
+    }
 
     VariableInstanceInfo createVariableInstance(ProcessInstanceVO pi,
-    		String varname, Object value)
+            String varname, Object value)
     throws SQLException,DataAccessException {
-    	ProcessVO processVO = this.getMainProcessDefinition(pi);
+        ProcessVO processVO = this.getMainProcessDefinition(pi);
         VariableVO variableVO = processVO.getVariable(varname);
         if (variableVO==null) {
             throw new DataAccessException("Variable "
@@ -191,7 +190,7 @@ class ProcessExecuterImpl {
         // this no longer supports variable locator
         // see createProcessVariableInstances in WorkManager for old impl
         if (pi.isNewEmbedded() || !pi.getProcessId().equals(processVO.getProcessId()))
-        	edao.createVariableInstance(var, pi.getOwnerId());
+            edao.createVariableInstance(var, pi.getOwnerId());
         else edao.createVariableInstance(var, pi.getId());
         return var;
     }
@@ -218,32 +217,32 @@ class ProcessExecuterImpl {
     }
 
     DocumentVO getDocument(DocumentReference docref, boolean forUpdate)
-    	throws DataAccessException {
-    	if (docref.getServer()!=null) {
-    		if (forUpdate) throw new DataAccessException("Cannot update remote document");
-        	String key = docref.getDocumentId().toString() + "@" + docref.getServer();
+        throws DataAccessException {
+        if (docref.getServer()!=null) {
+            if (forUpdate) throw new DataAccessException("Cannot update remote document");
+            String key = docref.getDocumentId().toString() + "@" + docref.getServer();
             if (remoteDocumentCache==null) remoteDocumentCache = new HashMap<String,DocumentVO>();
             DocumentVO docvo = remoteDocumentCache.get(key);
             if (docvo==null) {
-            	try {
-					EngineAccess engineAccess = new EngineAccess();
-					String dbinfo = engineAccess.getDatabaseCredential(docref.getServer());
-					RemoteAccess rao = new RemoteAccess(docref.getServer(), dbinfo);
-					RuntimeDataAccess rtinfo = rao.getRuntimeDataAccess();
-					docvo = rtinfo.getDocument(docref.getDocumentId());
-					if (docvo!=null) remoteDocumentCache.put(key, docvo);
-				} catch (Exception e) {
-					throw new DataAccessException(-1, "Failed to get remote document " + docref.toString(), e);
-				}
+                try {
+                    EngineAccess engineAccess = new EngineAccess();
+                    String dbinfo = engineAccess.getDatabaseCredential(docref.getServer());
+                    RemoteAccess rao = new RemoteAccess(docref.getServer(), dbinfo);
+                    RuntimeDataAccess rtinfo = rao.getRuntimeDataAccess();
+                    docvo = rtinfo.getDocument(docref.getDocumentId());
+                    if (docvo!=null) remoteDocumentCache.put(key, docvo);
+                } catch (Exception e) {
+                    throw new DataAccessException(-1, "Failed to get remote document " + docref.toString(), e);
+                }
             }
             return docvo;
-    	} else {
-    		try {
-				return edao.getDocument(docref.getDocumentId(), forUpdate);
-			} catch (SQLException e) {
-				throw new DataAccessException(-1, e.getMessage(), e);
-			}
-    	}
+        } else {
+            try {
+                return edao.getDocument(docref.getDocumentId(), forUpdate);
+            } catch (SQLException e) {
+                throw new DataAccessException(-1, e.getMessage(), e);
+            }
+        }
     }
 
     /**
@@ -281,10 +280,10 @@ class ProcessExecuterImpl {
         for (String varname : eventParams.keySet()) {
             VariableVO variableVO = processVO.getVariable(varname);
             if (variableVO==null) {
-            	String msg = "there is no variable named " + varname
-                	+ " in process with ID " + processVO.getProcessId()
-                	+ " for parameter binding";
-            	throw new ProcessException(msg);
+                String msg = "there is no variable named " + varname
+                    + " in process with ID " + processVO.getProcessId()
+                    + " for parameter binding";
+                throw new ProcessException(msg);
             }
             VariableInstanceInfo var = new VariableInstanceInfo();
             var.setName(variableVO.getVariableName());
@@ -292,17 +291,17 @@ class ProcessExecuterImpl {
             var.setType(variableVO.getVariableType());
             String value = eventParams.get(varname);
             if (value!=null && value.length()>0) {
-            	if (VariableTranslator.isDocumentReferenceVariable(var.getType())) {
-            		if (value.startsWith("DOCUMENT:")) var.setStringValue(value);
-            		else {
-            			DocumentReference docref = this.createDocument(var.getType(),
-            					procInstId, OwnerType.PROCESS_INSTANCE, procInstId, null, null, value);
-            			var.setData(docref);
-            		}
-            	} else var.setStringValue(value);
-            	vars.add(var);	// only create variable instances when value is not null
+                if (VariableTranslator.isDocumentReferenceVariable(var.getType())) {
+                    if (value.startsWith("DOCUMENT:")) var.setStringValue(value);
+                    else {
+                        DocumentReference docref = this.createDocument(var.getType(),
+                                procInstId, OwnerType.PROCESS_INSTANCE, procInstId, null, null, value);
+                        var.setData(docref);
+                    }
+                } else var.setStringValue(value);
+                vars.add(var);    // only create variable instances when value is not null
             }
-            // vars.add(var);	// if we put here, we create variables regardless if value is null
+            // vars.add(var);    // if we put here, we create variables regardless if value is null
         }
 
         return vars;
@@ -321,93 +320,93 @@ class ProcessExecuterImpl {
             String masterRequestId, Map<String,String> parameters, String label)
     throws ProcessException, DataAccessException
     {
-		ProcessInstanceVO pi;
-		try {
-			ProcessVO processVO;
-	    	if (ownerType.equals(OwnerType.MAIN_PROCESS_INSTANCE)) {
-	    		ProcessInstanceVO parentPi = getDataAccess().getProcessInstance(ownerId);
-	    		ProcessVO parentProcdef = ProcessVOCache.getProcessVO(parentPi.getProcessId());
-	    		processVO = parentProcdef.getSubProcessVO(processId);
-	    		pi = new ProcessInstanceVO(parentPi.getProcessId(), processVO.getProcessName());
-	    		pi.setComment(processId.toString());
-	    	} else {
-	    		processVO = ProcessVOCache.getProcessVO(processId);
-	    		pi = new ProcessInstanceVO(processId, processVO.getProcessName());
-	    	}
-	    	pi.setOwner(ownerType);
-	    	pi.setOwnerId(ownerId);
-	    	pi.setSecondaryOwner(secondaryOwnerType);
-	    	pi.setSecondaryOwnerId(secondaryOwnerId);
-	    	pi.setMasterRequestId(masterRequestId);
-	    	pi.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS);
-	    	if (label != null)
-	    	    pi.setComment(label);
-	    	edao.createProcessInstance(pi);
-//			if (parameters!=null)	// do not check this, as below will initialize variables array
-	    	createVariableInstancesFromEventMessage(pi, parameters);
-		} catch (SQLException e) {
-			throw new DataAccessException(-1, e.getMessage(), e);
-		}
+        ProcessInstanceVO pi;
+        try {
+            ProcessVO processVO;
+            if (ownerType.equals(OwnerType.MAIN_PROCESS_INSTANCE)) {
+                ProcessInstanceVO parentPi = getDataAccess().getProcessInstance(ownerId);
+                ProcessVO parentProcdef = ProcessVOCache.getProcessVO(parentPi.getProcessId());
+                processVO = parentProcdef.getSubProcessVO(processId);
+                pi = new ProcessInstanceVO(parentPi.getProcessId(), processVO.getProcessName());
+                pi.setComment(processId.toString());
+            } else {
+                processVO = ProcessVOCache.getProcessVO(processId);
+                pi = new ProcessInstanceVO(processId, processVO.getProcessName());
+            }
+            pi.setOwner(ownerType);
+            pi.setOwnerId(ownerId);
+            pi.setSecondaryOwner(secondaryOwnerType);
+            pi.setSecondaryOwnerId(secondaryOwnerId);
+            pi.setMasterRequestId(masterRequestId);
+            pi.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS);
+            if (label != null)
+                pi.setComment(label);
+            edao.createProcessInstance(pi);
+//            if (parameters!=null)    // do not check this, as below will initialize variables array
+            createVariableInstancesFromEventMessage(pi, parameters);
+        } catch (SQLException e) {
+            throw new DataAccessException(-1, e.getMessage(), e);
+        }
         return pi;
     }
 
     private void createVariableInstancesFromEventMessage(ProcessInstanceVO pi,
-    		Map<String,String> parameters) throws ProcessException, DataAccessException, SQLException {
-    	ProcessVO processVO = getProcessDefinition(pi);
-    	pi.setVariables(convertParameters(parameters, processVO, pi.getId()));
-    	for (VariableInstanceInfo var : pi.getVariables()) {
-    		edao.createVariableInstance(var, pi.getId());
-    	}
+            Map<String,String> parameters) throws ProcessException, DataAccessException, SQLException {
+        ProcessVO processVO = getProcessDefinition(pi);
+        pi.setVariables(convertParameters(parameters, processVO, pi.getId()));
+        for (VariableInstanceInfo var : pi.getVariables()) {
+            edao.createVariableInstance(var, pi.getId());
+        }
     }
 
     void updateDocumentInfo(
-    		DocumentReference docref, Long processInstId, String documentType, String ownerType, Long ownerId,
+            DocumentReference docref, Long processInstId, String documentType, String ownerType, Long ownerId,
             String searchKey1, String searchKey2) throws DataAccessException {
-    	if (docref.getServer()!=null) {
+        if (docref.getServer()!=null) {
             throw new DataAccessException("Cannot update remote document " + docref.toString());
         }
-    	try {
-			DocumentVO docvo = edao.getDocument(docref.getDocumentId(), false);
-			if (documentType!=null) docvo.setDocumentType(documentType);
-			if (ownerType!=null) docvo.setOwnerType(ownerType);
-			if (ownerId!=null) docvo.setOwnerId(ownerId);
-			if (processInstId!=null) docvo.setProcessInstanceId(processInstId);
-			if (searchKey1!=null) docvo.setSearchKey1(searchKey1);
-			if (searchKey2!=null) docvo.setSearchKey2(searchKey2);
-			edao.updateDocumentInfo(docvo);
-		} catch (SQLException e) {
-			throw new DataAccessException(-1, e.getMessage(), e);
-		}
+        try {
+            DocumentVO docvo = edao.getDocument(docref.getDocumentId(), false);
+            if (documentType!=null) docvo.setDocumentType(documentType);
+            if (ownerType!=null) docvo.setOwnerType(ownerType);
+            if (ownerId!=null) docvo.setOwnerId(ownerId);
+            if (processInstId!=null) docvo.setProcessInstanceId(processInstId);
+            if (searchKey1!=null) docvo.setSearchKey1(searchKey1);
+            if (searchKey2!=null) docvo.setSearchKey2(searchKey2);
+            edao.updateDocumentInfo(docvo);
+        } catch (SQLException e) {
+            throw new DataAccessException(-1, e.getMessage(), e);
+        }
     }
 
     void cancelEventWaitInstances(Long activityInstanceId)
-	throws DataAccessException {
-		try {
-			getDataAccess().removeEventWaitForActivityInstance(activityInstanceId, "Cancel due to timeout");
-		} catch (Exception e) {
-			throw new DataAccessException(0, "Failed to cancel event waits", e);
-		}
+    throws DataAccessException {
+        try {
+            getDataAccess().removeEventWaitForActivityInstance(activityInstanceId, "Cancel due to timeout");
+        } catch (Exception e) {
+            throw new DataAccessException(0, "Failed to cancel event waits", e);
+        }
     }
 
     String getServiceProcessResponse(Long procInstId, String varname)
-    	throws DataAccessException {
-    	try {
-    		VariableInstanceInfo varinst;
-    		if (varname==null) {
-    			varinst = getDataAccess().getVariableInstance(procInstId, VariableConstants.RESPONSE);
-    			if (varinst==null) varinst = getDataAccess().getVariableInstance(procInstId, VariableConstants.MASTER_DOCUMENT);
-    			if (varinst==null) varinst = getDataAccess().getVariableInstance(procInstId, VariableConstants.REQUEST);
-    		} else {
-    			varinst = getDataAccess().getVariableInstance(procInstId, varname);
-    		}
-			if (varinst==null) return null;
-			if (varinst.isDocument()) {
-				DocumentVO docvo = getDocument((DocumentReference)varinst.getData(), false);
-				return docvo.getContent();
-			} else return varinst.getStringValue();
-		} catch (SQLException e) {
-	        throw new DataAccessException(0, "Failed to get value for variable " + varname, e);
-		}
+        throws DataAccessException {
+        try {
+            VariableInstanceInfo varinst;
+            if (varname==null) {
+                varinst = getDataAccess().getVariableInstance(procInstId, VariableConstants.RESPONSE);
+                if (varinst==null) varinst = getDataAccess().getVariableInstance(procInstId, VariableConstants.MASTER_DOCUMENT);
+                if (varinst==null) varinst = getDataAccess().getVariableInstance(procInstId, VariableConstants.REQUEST);
+            } else {
+                varinst = getDataAccess().getVariableInstance(procInstId, varname);
+            }
+            if (varinst==null) return null;
+            if (varinst.isDocument()) {
+                DocumentVO docvo = getDocument((DocumentReference)varinst.getData(), false);
+                return docvo.getContent();
+            } else return varinst.getStringValue();
+        } catch (SQLException e) {
+            throw new DataAccessException(0, "Failed to get value for variable " + varname, e);
+        }
     }
 
     void updateProcessInstanceStatus(Long pProcInstId, Integer status)
@@ -425,35 +424,35 @@ class ProcessExecuterImpl {
     }
 
     protected ProcessVO getProcessDefinition(ProcessInstanceVO procinst) {
-    	ProcessVO procdef = ProcessVOCache.getProcessVO(procinst.getProcessId());
-    	if (procinst.isNewEmbedded())
-    		procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
-    	return procdef;
+        ProcessVO procdef = ProcessVOCache.getProcessVO(procinst.getProcessId());
+        if (procinst.isNewEmbedded())
+            procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
+        return procdef;
     }
 
     protected ProcessVO getMainProcessDefinition(ProcessInstanceVO procinst)
-    	throws DataAccessException, SQLException {
-    	ProcessVO procdef = ProcessVOCache.getProcessVO(procinst.getProcessId());
-    	if (procinst.isNewEmbedded() || procdef.isEmbeddedProcess()) {
-    		procinst = edao.getProcessInstance(procinst.getOwnerId());
+        throws DataAccessException, SQLException {
+        ProcessVO procdef = ProcessVOCache.getProcessVO(procinst.getProcessId());
+        if (procinst.isNewEmbedded() || procdef.isEmbeddedProcess()) {
+            procinst = edao.getProcessInstance(procinst.getOwnerId());
             procdef = ProcessVOCache.getProcessVO(procinst.getProcessId());
         }
-    	return procdef;
+        return procdef;
     }
 
     boolean deleteInternalEvent(String eventName)
     throws DataAccessException {
-    	try {
-			int count = getDataAccess().deleteEventInstance(eventName);
-			return count>0;
-		} catch (SQLException e) {
-	        throw new DataAccessException(0, "Failed to delete internal event" + eventName, e);
+        try {
+            int count = getDataAccess().deleteEventInstance(eventName);
+            return count>0;
+        } catch (SQLException e) {
+            throw new DataAccessException(0, "Failed to delete internal event" + eventName, e);
         }
     }
 
     InternalMessenger getInternalMessenger() {
-		return internalMessenger;
-	}
+        return internalMessenger;
+    }
 
     ///////////// create process instance
 
@@ -465,34 +464,34 @@ class ProcessExecuterImpl {
      * @param eventMessageDoc
      */
     void createTransitionInstances(ProcessInstanceVO processInstanceVO,
-    		List<WorkTransitionVO> transitions, Long fromActInstId)
+            List<WorkTransitionVO> transitions, Long fromActInstId)
            throws ProcessException,DataAccessException {
         WorkTransitionInstanceVO transInst;
         for (WorkTransitionVO transition : transitions) {
             try {
-            	if (tooManyMaxTransitionInstances(transition, processInstanceVO.getId())) {
-            		// Look for a error transition at this time
+                if (tooManyMaxTransitionInstances(transition, processInstanceVO.getId())) {
+                    // Look for a error transition at this time
                     // In case we find it, raise the error event
                     // Otherwise do not do anything
-                	handleWorkTransitionError(processInstanceVO, transition.getWorkTransitionId(), fromActInstId);
-            	} else {
-            		transInst = createTransitionInstance(transition, processInstanceVO.getId());
-            		String tag = logtag(processInstanceVO.getProcessId(),
-                			processInstanceVO.getId(), transInst);
+                    handleWorkTransitionError(processInstanceVO, transition.getWorkTransitionId(), fromActInstId);
+                } else {
+                    transInst = createTransitionInstance(transition, processInstanceVO.getId());
+                    String tag = logtag(processInstanceVO.getProcessId(),
+                            processInstanceVO.getId(), transInst);
                     logger.info(tag, "Transition initiated from " + transition.getFromWorkId() + " to " + transition.getToWorkId());
 
                     InternalEventVO jmsmsg;
-    	    		int delay = 0;
-    	    		jmsmsg = InternalEventVO.createActivityStartMessage(
-    	    				transition.getToWorkId(), processInstanceVO.getId(),
-    	    				transInst.getTransitionInstanceID(), processInstanceVO.getMasterRequestId(),
-    	    				transition.getLabel());
-    	    		delay = transition.getTransitionDelay();
-    	    		String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + processInstanceVO.getId()
-    	    				+ "start" + transition.getToWorkId() + "by" + transInst.getTransitionInstanceID();
-    	    		if (delay>0) this.sendDelayedInternalEvent(jmsmsg, delay, msgid, false);
-    	    		else sendInternalEvent(jmsmsg);
-            	}
+                    int delay = 0;
+                    jmsmsg = InternalEventVO.createActivityStartMessage(
+                            transition.getToWorkId(), processInstanceVO.getId(),
+                            transInst.getTransitionInstanceID(), processInstanceVO.getMasterRequestId(),
+                            transition.getLabel());
+                    delay = transition.getTransitionDelay();
+                    String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + processInstanceVO.getId()
+                            + "start" + transition.getToWorkId() + "by" + transInst.getTransitionInstanceID();
+                    if (delay>0) this.sendDelayedInternalEvent(jmsmsg, delay, msgid, false);
+                    else sendInternalEvent(jmsmsg);
+                }
             } catch (SQLException ex) {
                 throw new ProcessException(-1, ex.getMessage(), ex);
             } catch (MDWException ex) {
@@ -502,53 +501,53 @@ class ProcessExecuterImpl {
     }
 
     private boolean tooManyMaxTransitionInstances(WorkTransitionVO trans, Long pProcessInstId)
-    	throws SQLException {
-    	if (inService) return false;
-    	String retryAttribVal = trans.getAttribute(WorkTransitionAttributeConstant.TRANSITION_RETRY_COUNT);
-    	int retryCount = retryAttribVal==null?-1:Integer.parseInt(retryAttribVal);
-    	if (retryCount<0) return false;
-    	int count = edao.countTransitionInstances(pProcessInstId, trans.getWorkTransitionId());
-    	if (count>0 && count >= retryCount) {
-    		String msg = "Transition " + trans.getWorkTransitionId()
-    		+ " not made - exceeded allowed retry count of " + retryCount;
-    		// log as exception since this message is often overlooked
-    		logger.severeException(msg, new ProcessException(msg));
-    		return true;
-    	} else return false;
+        throws SQLException {
+        if (inService) return false;
+        String retryAttribVal = trans.getAttribute(WorkTransitionAttributeConstant.TRANSITION_RETRY_COUNT);
+        int retryCount = retryAttribVal==null?-1:Integer.parseInt(retryAttribVal);
+        if (retryCount<0) return false;
+        int count = edao.countTransitionInstances(pProcessInstId, trans.getWorkTransitionId());
+        if (count>0 && count >= retryCount) {
+            String msg = "Transition " + trans.getWorkTransitionId()
+            + " not made - exceeded allowed retry count of " + retryCount;
+            // log as exception since this message is often overlooked
+            logger.severeException(msg, new ProcessException(msg));
+            return true;
+        } else return false;
     }
 
     private void handleWorkTransitionError(ProcessInstanceVO processInstVO, Long workTransitionId,
-    		Long fromActInstId) throws ProcessException, DataAccessException, SQLException
+            Long fromActInstId) throws ProcessException, DataAccessException, SQLException
     {
-    	edao.setProcessInstanceStatus(processInstVO.getId(), WorkStatus.STATUS_WAITING);
-    	ProcessVO processVO = getMainProcessDefinition(processInstVO);
-    	ProcessVO embeddedProcdef = processVO.findEmbeddedProcess(EventType.ERROR, null);
-    	while (embeddedProcdef==null && processInstVO.getOwner().equals(OwnerType.PROCESS_INSTANCE)) {
-    		processInstVO = edao.getProcessInstance(processInstVO.getOwnerId());
-    		processVO = getMainProcessDefinition(processInstVO);
-    		embeddedProcdef = processVO.findEmbeddedProcess(EventType.ERROR, null);
-    	}
-    	if (embeddedProcdef == null) {
-    		logger.warn("Error subprocess does not exist. Transition failed. TransitionId-->"
-    				+ workTransitionId + " ProcessInstanceId-->" + processInstVO.getId());
-    		return;
-    	}
-    	String tag = logtag(processInstVO.getProcessId(),processInstVO.getId(),processInstVO.getMasterRequestId());
-    	logger.info(tag, "Transition to error subprocess " + embeddedProcdef.getProcessName());
-    	String secondaryOwnerType;
-    	Long secondaryOwnerId;
-    	if (fromActInstId==null || fromActInstId.longValue()==0L) {
-    		secondaryOwnerType = OwnerType.WORK_TRANSITION;
-    		secondaryOwnerId = workTransitionId;
-    	} else {
-    		secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
-    		secondaryOwnerId = fromActInstId;
-    	}
-    	String ownerType = processVO.isInRuleSet()?OwnerType.MAIN_PROCESS_INSTANCE:OwnerType.PROCESS_INSTANCE;
-    	ProcessInstanceVO procInst = createProcessInstance(embeddedProcdef.getProcessId(),
-    			ownerType, processInstVO.getId(), secondaryOwnerType, secondaryOwnerId,
-    			processInstVO.getMasterRequestId(), null, null);
-    	startProcessInstance(procInst, 0);
+        edao.setProcessInstanceStatus(processInstVO.getId(), WorkStatus.STATUS_WAITING);
+        ProcessVO processVO = getMainProcessDefinition(processInstVO);
+        ProcessVO embeddedProcdef = processVO.findEmbeddedProcess(EventType.ERROR, null);
+        while (embeddedProcdef==null && processInstVO.getOwner().equals(OwnerType.PROCESS_INSTANCE)) {
+            processInstVO = edao.getProcessInstance(processInstVO.getOwnerId());
+            processVO = getMainProcessDefinition(processInstVO);
+            embeddedProcdef = processVO.findEmbeddedProcess(EventType.ERROR, null);
+        }
+        if (embeddedProcdef == null) {
+            logger.warn("Error subprocess does not exist. Transition failed. TransitionId-->"
+                    + workTransitionId + " ProcessInstanceId-->" + processInstVO.getId());
+            return;
+        }
+        String tag = logtag(processInstVO.getProcessId(),processInstVO.getId(),processInstVO.getMasterRequestId());
+        logger.info(tag, "Transition to error subprocess " + embeddedProcdef.getProcessName());
+        String secondaryOwnerType;
+        Long secondaryOwnerId;
+        if (fromActInstId==null || fromActInstId.longValue()==0L) {
+            secondaryOwnerType = OwnerType.WORK_TRANSITION;
+            secondaryOwnerId = workTransitionId;
+        } else {
+            secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
+            secondaryOwnerId = fromActInstId;
+        }
+        String ownerType = processVO.isInRuleSet()?OwnerType.MAIN_PROCESS_INSTANCE:OwnerType.PROCESS_INSTANCE;
+        ProcessInstanceVO procInst = createProcessInstance(embeddedProcdef.getProcessId(),
+                ownerType, processInstVO.getId(), secondaryOwnerType, secondaryOwnerId,
+                processInstVO.getMasterRequestId(), null, null);
+        startProcessInstance(procInst, 0);
     }
 
     /**
@@ -562,38 +561,38 @@ class ProcessExecuterImpl {
       throws ProcessException {
 
         try {
-        	ProcessVO processVO = getProcessDefinition(processInstanceVO);
+            ProcessVO processVO = getProcessDefinition(processInstanceVO);
             edao.setProcessInstanceStatus(processInstanceVO.getId(), WorkStatus.STATUS_PENDING_PROCESS);
             // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
             if (logger.isInfoEnabled()) {
-            	logger.info(logtag(processInstanceVO.getProcessId(), processInstanceVO.getId(),
-            			processInstanceVO.getMasterRequestId()),
-            			WorkStatus.LOGMSG_PROC_START + " - " + processVO.getProcessName()
-            			+ (processInstanceVO.isNewEmbedded() ?
-            					(" (embedded process " + processVO.getProcessId() + ")") :
-            					("/" + processVO.getVersionString())));
+                logger.info(logtag(processInstanceVO.getProcessId(), processInstanceVO.getId(),
+                        processInstanceVO.getMasterRequestId()),
+                        WorkStatus.LOGMSG_PROC_START + " - " + processVO.getProcessName()
+                        + (processInstanceVO.isNewEmbedded() ?
+                                (" (embedded process " + processVO.getProcessId() + ")") :
+                                ("/" + processVO.getVersionString())));
             }
             notifyMonitors(processInstanceVO, WorkStatus.LOGMSG_PROC_START);
             // get start activity ID
-        	Long startActivityId;
+            Long startActivityId;
             if (processVO.isInRuleSet() || processInstanceVO.isNewEmbedded()) {
-	            edao.setProcessInstanceStatus(processInstanceVO.getId(), WorkStatus.STATUS_PENDING_PROCESS);
-	            startActivityId = processVO.getStartActivity().getActivityId();
-        	} else {
-	        	ActivityVO startActivity = processVO.getStartActivity();
-	            if (startActivity == null) {
-	                throw new ProcessException("WorkTransition has not been defined for START event! ProcessID = " + processVO.getProcessId());
-	            }
-	            startActivityId = startActivity.getActivityId();
-        	}
+                edao.setProcessInstanceStatus(processInstanceVO.getId(), WorkStatus.STATUS_PENDING_PROCESS);
+                startActivityId = processVO.getStartActivity().getActivityId();
+            } else {
+                ActivityVO startActivity = processVO.getStartActivity();
+                if (startActivity == null) {
+                    throw new ProcessException("WorkTransition has not been defined for START event! ProcessID = " + processVO.getProcessId());
+                }
+                startActivityId = startActivity.getActivityId();
+            }
             InternalEventVO event = InternalEventVO.createActivityStartMessage(
-          		  startActivityId, processInstanceVO.getId(),
-          		  null, processInstanceVO.getMasterRequestId(),
-          		  EventType.EVENTNAME_START + ":");
+                    startActivityId, processInstanceVO.getId(),
+                    null, processInstanceVO.getMasterRequestId(),
+                    EventType.EVENTNAME_START + ":");
             if (delay>0) {
-	    		String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + processInstanceVO.getId()
-					+ "start" + startActivityId;
-            	this.sendDelayedInternalEvent(event, delay, msgid, false);
+                String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + processInstanceVO.getId()
+                    + "start" + startActivityId;
+                this.sendDelayedInternalEvent(event, delay, msgid, false);
             } else sendInternalEvent(event);
         }
         catch (Exception ex) {
@@ -602,69 +601,69 @@ class ProcessExecuterImpl {
         }
     }
 
-	///// execute activity
+    ///// execute activity
 
-	/**
+    /**
      * determine if activity needs to wait (such as synchronous
      * process invocation, wait activity, synchronization)
-	 *
-	 * @param activity
-	 * @param activityInstanceId
-	 * @param eventMessageDoc
-	 * @return whether to wait
-	 */
-	private boolean activityNeedsWait(GeneralActivity activity)
-			throws ActivityException {
-		if (activity instanceof SuspendibleActivity)
-			return ((SuspendibleActivity) activity).needSuspend();
-		return false;
-	}
+     *
+     * @param activity
+     * @param activityInstanceId
+     * @param eventMessageDoc
+     * @return whether to wait
+     */
+    private boolean activityNeedsWait(GeneralActivity activity)
+            throws ActivityException {
+        if (activity instanceof SuspendibleActivity)
+            return ((SuspendibleActivity) activity).needSuspend();
+        return false;
+    }
 
-	/**
-	 * Reports the error status of the activity instance to the activity manager
-	 *
-	 * @param eventMessageDoc
-	 * @param activityInstId
-	 * @param processInstId
-	 * @param activity
-	 * @param cause
-	 */
-	void failActivityInstance(InternalEventVO event,
-    		ProcessInstanceVO processInst, Long activityId, Long activityInstId,
+    /**
+     * Reports the error status of the activity instance to the activity manager
+     *
+     * @param eventMessageDoc
+     * @param activityInstId
+     * @param processInstId
+     * @param activity
+     * @param cause
+     */
+    void failActivityInstance(InternalEventVO event,
+            ProcessInstanceVO processInst, Long activityId, Long activityInstId,
             BaseActivity activity, Throwable cause) {
 
-		String tag = logtag(processInst.getProcessId(), processInst.getId(), activityId, activityInstId);
+        String tag = logtag(processInst.getProcessId(), processInst.getId(), activityId, activityInstId);
         logger.severeException("Failed to execute activity - " + cause.getClass().getName(), cause);
-		String compCode = null;
-		String statusMsg = buildStatusMessage(cause);
-		try {
-		    ActivityInstanceVO actInstVO = null;
-			if (activity != null && activityInstId != null) {
-				activity.setReturnMessage(statusMsg);
-				actInstVO = edao.getActivityInstance(activityInstId);
+        String compCode = null;
+        String statusMsg = buildStatusMessage(cause);
+        try {
+            ActivityInstanceVO actInstVO = null;
+            if (activity != null && activityInstId != null) {
+                activity.setReturnMessage(statusMsg);
+                actInstVO = edao.getActivityInstance(activityInstId);
                 failActivityInstance(actInstVO, statusMsg, processInst, tag, cause.getClass().getName());
-				compCode = activity.getReturnCode();
-			}
+                compCode = activity.getReturnCode();
+            }
             if (!AdapterActivity.COMPCODE_AUTO_RETRY.equals(compCode)) {
                 DocumentReference docRef = CreateActivityExceptionDocument(processInst, actInstVO, activity, cause);
-            	InternalEventVO outgoingMsg =
-            		InternalEventVO.createActivityErrorMessage(activityId, activityInstId, processInst.getId(), compCode,
-            			event.getMasterRequestId(), statusMsg.length() > 2000 ? statusMsg.substring(0, 1999) : statusMsg, docRef.getDocumentId());  // avoid overflowing data col
-            	sendInternalEvent(outgoingMsg);
+                InternalEventVO outgoingMsg =
+                    InternalEventVO.createActivityErrorMessage(activityId, activityInstId, processInst.getId(), compCode,
+                        event.getMasterRequestId(), statusMsg.length() > 2000 ? statusMsg.substring(0, 1999) : statusMsg, docRef.getDocumentId());  // avoid overflowing data col
+                sendInternalEvent(outgoingMsg);
             }
         }
         catch (Exception ex) {
-			logger.severeException("Exception thrown during failActivityInstance", ex);
-		}
-	}
+            logger.severeException("Exception thrown during failActivityInstance", ex);
+        }
+    }
 
-	private String buildStatusMessage(Throwable t) {
-		if (t == null)
-			return "";
+    private String buildStatusMessage(Throwable t) {
+        if (t == null)
+            return "";
         StringBuffer message = new StringBuffer(t.toString());
         String v = PropertyManager.getProperty("MDWFramework.WorkflowEngine/ActivityStatusMessage.ShowStackTrace");
-		boolean includeStackTrace = !"false".equalsIgnoreCase(v);
-		if (includeStackTrace) {
+        boolean includeStackTrace = !"false".equalsIgnoreCase(v);
+        if (includeStackTrace) {
             // get the root cause
             Throwable cause = t;
             while (cause.getCause() != null)
@@ -674,253 +673,253 @@ class ProcessExecuterImpl {
             for (StackTraceElement element : cause.getStackTrace()) {
                 message.append("\n").append(element.toString());
             }
-		}
+        }
 
-		if (message.length() > 4000) {
-			return message.toString().substring(0, 3998);
-		}
+        if (message.length() > 4000) {
+            return message.toString().substring(0, 3998);
+        }
 
-		return message.toString();
-	}
-
-	void cancelActivityInstance(ActivityInstanceVO actInst,
-			ProcessInstanceVO procinst, String statusMsg) {
-		String logtag = this.logtag(procinst.getProcessId(), procinst.getId(), actInst.getDefinitionId(), actInst.getId());
-		try {
-			this.cancelActivityInstance(actInst, statusMsg, procinst, logtag);
-		} catch (Exception e) {
-			logger.severeException("Exception thrown during canceActivityInstance", e);
-		}
-	}
-
-	void holdActivityInstance(ActivityInstanceVO actInst, Long procId) {
-		String logtag = this.logtag(procId, actInst.getOwnerId(), actInst.getDefinitionId(), actInst.getId());
-		try {
-			this.holdActivityInstance(actInst, logtag);
-		} catch (Exception e) {
-			logger.severeException("Exception thrown during canceActivityInstance", e);
-		}
-	}
-
-    private ActivityInstanceVO waitForActivityDone(ActivityInstanceVO actInst)
-		throws DataAccessException, InterruptedException, SQLException {
-    	int max_retry = 10;
-    	int retry_interval = 2;
-    	int count = 0;
-    	while (count<max_retry && actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue()) {
-    		logger.debug("wait for synch activity to finish: " + actInst.getId());
-    		Thread.sleep(retry_interval*1000);
-    		actInst = getDataAccess().getActivityInstance(actInst.getId());
-    		count++;
-    	}
-    	return actInst;
+        return message.toString();
     }
 
-	ActivityRuntimeVO prepareActivityInstance(InternalEventVO event, ProcessInstanceVO procInst)
-			throws DataAccessException, ProcessException, ServiceLocatorException {
-		try {
-			// for asynch engine, procInst is always null
-			ActivityRuntimeVO ar = new ActivityRuntimeVO();
-			Long activityId = event.getWorkId();
-			Long workTransInstanceId = event.getTransitionInstanceId();
+    void cancelActivityInstance(ActivityInstanceVO actInst,
+            ProcessInstanceVO procinst, String statusMsg) {
+        String logtag = this.logtag(procinst.getProcessId(), procinst.getId(), actInst.getDefinitionId(), actInst.getId());
+        try {
+            this.cancelActivityInstance(actInst, statusMsg, procinst, logtag);
+        } catch (Exception e) {
+            logger.severeException("Exception thrown during canceActivityInstance", e);
+        }
+    }
 
-			// check if process instance is still alive
-			ar.procinst = procInst;
-			if (WorkStatus.STATUS_CANCELLED.equals(ar.procinst.getStatusCode())
-					|| WorkStatus.STATUS_COMPLETED.equals(ar.procinst.getStatusCode())) {
-				ar.startCase = ActivityRuntimeVO.STARTCASE_PROCESS_TERMINATED;
-				return ar;
-			}
+    void holdActivityInstance(ActivityInstanceVO actInst, Long procId) {
+        String logtag = this.logtag(procId, actInst.getOwnerId(), actInst.getDefinitionId(), actInst.getId());
+        try {
+            this.holdActivityInstance(actInst, logtag);
+        } catch (Exception e) {
+            logger.severeException("Exception thrown during canceActivityInstance", e);
+        }
+    }
 
-			ProcessVO processVO = getProcessDefinition(ar.procinst);
-			ActivityVO actVO = processVO.getActivityVO(activityId);
-			PackageVO pkg = PackageVOCache.getProcessPackage(getMainProcessDefinition(procInst).getId());
-        	try {
-				GeneralActivity activity = pkg.getActivityImplementor(actVO);
-				ar.activity = (BaseActivity)activity;
-			} catch (Throwable e) {
-				String logtag = this.logtag(procInst.getProcessId(), procInst.getId(), activityId, 0L);
-				logger.exception(logtag, "Failed to create activity implementor instance", e);
-				ar.activity = null;
-			}
-			boolean isSynchActivity = ar.activity!=null && ar.activity instanceof SynchronizationActivity;
-			if (isSynchActivity) getDataAccess().lockProcessInstance(procInst.getId());
+    private ActivityInstanceVO waitForActivityDone(ActivityInstanceVO actInst)
+        throws DataAccessException, InterruptedException, SQLException {
+        int max_retry = 10;
+        int retry_interval = 2;
+        int count = 0;
+        while (count<max_retry && actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue()) {
+            logger.debug("wait for synch activity to finish: " + actInst.getId());
+            Thread.sleep(retry_interval*1000);
+            actInst = getDataAccess().getActivityInstance(actInst.getId());
+            count++;
+        }
+        return actInst;
+    }
 
-			List<ActivityInstanceVO> actInsts;
-			if (this.inService) actInsts = null;
-			else actInsts = getDataAccess().getActivityInstances(activityId, procInst.getId(), true, isSynchActivity);
-			if (actInsts==null || actInsts.isEmpty()) {
-				// create activity instance and prepare it
-				ar.actinst = createActivityInstance(activityId, procInst.getId());
-				prepareActivitySub(processVO, actVO, ar.procinst, ar.actinst,
-						workTransInstanceId, event, ar.activity);
-				if (ar.activity==null) {
-					logger.severe("Failed to load the implementor class or create instance: " + actVO.getImplementorClassName());
-					ar.startCase = ActivityRuntimeVO.STARTCASE_ERROR_IN_PREPARE;
-				} else {
-					ar.startCase = ActivityRuntimeVO.STARTCASE_NORMAL;
-					// send message to BAM when configured (OSGi is handled through monitors)
-					/*if (!ApplicationContext.isOsgi())
-			            ar.activity.sendMessageToBam(WorkAttributeConstant.BAM_START_MSGDEF);*/
-			        // notify registered monitors
-			        ar.activity.notifyMonitors(WorkStatus.LOGMSG_START);
-				}
-			} else if (isSynchActivity) {
-				ar.actinst = actInsts.get(0);
-       			if (ar.actinst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue())
-    				ar.actinst = waitForActivityDone(ar.actinst);
-				if (ar.actinst.getStatusCode()==WorkStatus.STATUS_WAITING.intValue()) {
-					if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
-						getDataAccess().completeTransitionInstance(workTransInstanceId, ar.actinst.getId());
-					}
-					ar.startCase = ActivityRuntimeVO.STARTCASE_SYNCH_WAITING;
-				} else if (ar.actinst.getStatusCode()==WorkStatus.STATUS_HOLD.intValue()) {
-					if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
-						getDataAccess().completeTransitionInstance(workTransInstanceId, ar.actinst.getId());
-					}
-					ar.startCase = ActivityRuntimeVO.STARTCASE_SYNCH_WAITING;
-				} else {	// completed - possible when there are OR conditions
-					if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
-						getDataAccess().completeTransitionInstance(workTransInstanceId, ar.actinst.getId());
-					}
-					ar.startCase = ActivityRuntimeVO.STARTCASE_SYNCH_COMPLETE;
-				}
-			} else {
-				ActivityInstanceVO onHoldActInst = null;
-				for (ActivityInstanceVO actInst : actInsts) {
-					if (actInst.getStatusCode()==WorkStatus.STATUS_HOLD.intValue()) {
-						onHoldActInst = actInst;
-						break;
-					}
-				}
-				if (onHoldActInst!=null) {
-					if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
-						getDataAccess().completeTransitionInstance(workTransInstanceId, onHoldActInst.getId());
-					}
-					ar.startCase = ActivityRuntimeVO.STARTCASE_RESUME_WAITING;
-					ar.actinst = onHoldActInst;
-				} else {	// WAITING or IN_PROGRESS
-					ar.startCase = ActivityRuntimeVO.STARTCASE_INSTANCE_EXIST;
-				}
-			}
-			return ar;
-		} catch (SQLException e) {
-			throw new ProcessException(-1, e.getMessage(), e);
-		} catch (NamingException e) {
-			throw new ProcessException(-1, e.getMessage(), e);
-		} catch (InterruptedException e) {
-			throw new ProcessException(-1, e.getMessage(), e);
-		} catch (MDWException e) {
-			throw new ProcessException(-1, e.getMessage(), e);
-		}
-	}
+    ActivityRuntimeVO prepareActivityInstance(InternalEventVO event, ProcessInstanceVO procInst)
+            throws DataAccessException, ProcessException, ServiceLocatorException {
+        try {
+            // for asynch engine, procInst is always null
+            ActivityRuntimeVO ar = new ActivityRuntimeVO();
+            Long activityId = event.getWorkId();
+            Long workTransInstanceId = event.getTransitionInstanceId();
 
-	private void prepareActivitySub(ProcessVO processVO, ActivityVO actVO,
-			ProcessInstanceVO pi, ActivityInstanceVO ai, Long pWorkTransInstId,
-			InternalEventVO event, BaseActivity activity)
-	throws DataAccessException, SQLException, NamingException, MDWException, ServiceLocatorException {
+            // check if process instance is still alive
+            ar.procinst = procInst;
+            if (WorkStatus.STATUS_CANCELLED.equals(ar.procinst.getStatusCode())
+                    || WorkStatus.STATUS_COMPLETED.equals(ar.procinst.getStatusCode())) {
+                ar.startCase = ActivityRuntimeVO.STARTCASE_PROCESS_TERMINATED;
+                return ar;
+            }
+
+            ProcessVO processVO = getProcessDefinition(ar.procinst);
+            ActivityVO actVO = processVO.getActivityVO(activityId);
+            PackageVO pkg = PackageVOCache.getProcessPackage(getMainProcessDefinition(procInst).getId());
+            try {
+                GeneralActivity activity = pkg.getActivityImplementor(actVO);
+                ar.activity = (BaseActivity)activity;
+            } catch (Throwable e) {
+                String logtag = this.logtag(procInst.getProcessId(), procInst.getId(), activityId, 0L);
+                logger.exception(logtag, "Failed to create activity implementor instance", e);
+                ar.activity = null;
+            }
+            boolean isSynchActivity = ar.activity!=null && ar.activity instanceof SynchronizationActivity;
+            if (isSynchActivity) getDataAccess().lockProcessInstance(procInst.getId());
+
+            List<ActivityInstanceVO> actInsts;
+            if (this.inService) actInsts = null;
+            else actInsts = getDataAccess().getActivityInstances(activityId, procInst.getId(), true, isSynchActivity);
+            if (actInsts==null || actInsts.isEmpty()) {
+                // create activity instance and prepare it
+                ar.actinst = createActivityInstance(activityId, procInst.getId());
+                prepareActivitySub(processVO, actVO, ar.procinst, ar.actinst,
+                        workTransInstanceId, event, ar.activity);
+                if (ar.activity==null) {
+                    logger.severe("Failed to load the implementor class or create instance: " + actVO.getImplementorClassName());
+                    ar.startCase = ActivityRuntimeVO.STARTCASE_ERROR_IN_PREPARE;
+                } else {
+                    ar.startCase = ActivityRuntimeVO.STARTCASE_NORMAL;
+                    // send message to BAM when configured (OSGi is handled through monitors)
+                    /*if (!ApplicationContext.isOsgi())
+                        ar.activity.sendMessageToBam(WorkAttributeConstant.BAM_START_MSGDEF);*/
+                    // notify registered monitors
+                    ar.activity.notifyMonitors(WorkStatus.LOGMSG_START);
+                }
+            } else if (isSynchActivity) {
+                ar.actinst = actInsts.get(0);
+                   if (ar.actinst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue())
+                    ar.actinst = waitForActivityDone(ar.actinst);
+                if (ar.actinst.getStatusCode()==WorkStatus.STATUS_WAITING.intValue()) {
+                    if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
+                        getDataAccess().completeTransitionInstance(workTransInstanceId, ar.actinst.getId());
+                    }
+                    ar.startCase = ActivityRuntimeVO.STARTCASE_SYNCH_WAITING;
+                } else if (ar.actinst.getStatusCode()==WorkStatus.STATUS_HOLD.intValue()) {
+                    if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
+                        getDataAccess().completeTransitionInstance(workTransInstanceId, ar.actinst.getId());
+                    }
+                    ar.startCase = ActivityRuntimeVO.STARTCASE_SYNCH_WAITING;
+                } else {    // completed - possible when there are OR conditions
+                    if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
+                        getDataAccess().completeTransitionInstance(workTransInstanceId, ar.actinst.getId());
+                    }
+                    ar.startCase = ActivityRuntimeVO.STARTCASE_SYNCH_COMPLETE;
+                }
+            } else {
+                ActivityInstanceVO onHoldActInst = null;
+                for (ActivityInstanceVO actInst : actInsts) {
+                    if (actInst.getStatusCode()==WorkStatus.STATUS_HOLD.intValue()) {
+                        onHoldActInst = actInst;
+                        break;
+                    }
+                }
+                if (onHoldActInst!=null) {
+                    if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
+                        getDataAccess().completeTransitionInstance(workTransInstanceId, onHoldActInst.getId());
+                    }
+                    ar.startCase = ActivityRuntimeVO.STARTCASE_RESUME_WAITING;
+                    ar.actinst = onHoldActInst;
+                } else {    // WAITING or IN_PROGRESS
+                    ar.startCase = ActivityRuntimeVO.STARTCASE_INSTANCE_EXIST;
+                }
+            }
+            return ar;
+        } catch (SQLException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        } catch (NamingException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        } catch (InterruptedException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        } catch (MDWException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        }
+    }
+
+    private void prepareActivitySub(ProcessVO processVO, ActivityVO actVO,
+            ProcessInstanceVO pi, ActivityInstanceVO ai, Long pWorkTransInstId,
+            InternalEventVO event, BaseActivity activity)
+    throws DataAccessException, SQLException, NamingException, MDWException, ServiceLocatorException {
 
 
-		if (logger.isInfoEnabled())
-			logger.info(logtag(pi.getProcessId(), pi.getId(), ai.getDefinitionId(), ai.getId()),
-					WorkStatus.LOGMSG_START + " - " + actVO.getActivityName());
+        if (logger.isInfoEnabled())
+            logger.info(logtag(pi.getProcessId(), pi.getId(), ai.getDefinitionId(), ai.getId()),
+                    WorkStatus.LOGMSG_START + " - " + actVO.getActivityName());
 
-		if (pWorkTransInstId!=null && pWorkTransInstId.longValue()!=0)
-			edao.completeTransitionInstance(pWorkTransInstId, ai.getId());
+        if (pWorkTransInstId!=null && pWorkTransInstId.longValue()!=0)
+            edao.completeTransitionInstance(pWorkTransInstId, ai.getId());
 
-		if (activity==null) {
+        if (activity==null) {
             edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_FAILED, "Failed to instantiate activity implementor");
             return;
             // note cannot throw exception here, as when implementor is not defined,
             // the error handling itself will throw exception. We failed the activity outright here.
-		}
-		Class<?> implClass = activity.getClass();
-		TrackingTimer activityTimer = null;
-		Tracked t = implClass.getAnnotation(Tracked.class);
-		if (t != null) {
-			String logTag = logtag(pi.getProcessId(), pi.getId(), ai.getDefinitionId(), ai.getId());
-			activityTimer = new TrackingTimer(logTag, actVO.getImplementorClassName(), t.value());
-		}
+        }
+        Class<?> implClass = activity.getClass();
+        TrackingTimer activityTimer = null;
+        Tracked t = implClass.getAnnotation(Tracked.class);
+        if (t != null) {
+            String logTag = logtag(pi.getProcessId(), pi.getId(), ai.getDefinitionId(), ai.getId());
+            activityTimer = new TrackingTimer(logTag, actVO.getImplementorClassName(), t.value());
+        }
 
-		List<VariableInstanceInfo> vars;
-		if (processVO.isEmbeddedProcess())
-			vars = edao.getProcessInstanceVariables(pi.getOwnerId());
-		else
-		    vars = edao.getProcessInstanceVariables(pi.getId());
+        List<VariableInstanceInfo> vars;
+        if (processVO.isEmbeddedProcess())
+            vars = edao.getProcessInstanceVariables(pi.getOwnerId());
+        else
+            vars = edao.getProcessInstanceVariables(pi.getId());
 
         event.setWorkInstanceId(ai.getId());
 
         activity.prepare(actVO, pi, ai, vars, pWorkTransInstId,
-        		event.getCompletionCode(), activityTimer, new ProcessExecuter(this));
-    		// prepare Activity to update SLA Instance
+                event.getCompletionCode(), activityTimer, new ProcessExecuter(this));
+            // prepare Activity to update SLA Instance
             // now moved to EventWaitActivity
-		return;
+        return;
     }
 
-	private void removeActivitySLA(ActivityInstanceVO ai, ProcessInstanceVO procInst) {
-		ProcessVO procdef = getProcessDefinition(procInst);
-		ActivityVO actVO = procdef.getActivityVO(ai.getDefinitionId());
-		int sla_seconds = actVO==null?0:actVO.getSlaSeconds();
-		if (sla_seconds > 0) {
-			ScheduledEventQueue eventQueue = ScheduledEventQueue.getSingleton();
-			try {
-				eventQueue.unscheduleEvent(ScheduledEvent.INTERNAL_EVENT_PREFIX+ai.getId());
-			} catch (Exception e) {
-				if (logger.isDebugEnabled()) logger.debugException("Failed to unschedule SLA", e);
-			}
-		}
-	}
+    private void removeActivitySLA(ActivityInstanceVO ai, ProcessInstanceVO procInst) {
+        ProcessVO procdef = getProcessDefinition(procInst);
+        ActivityVO actVO = procdef.getActivityVO(ai.getDefinitionId());
+        int sla_seconds = actVO==null?0:actVO.getSlaSeconds();
+        if (sla_seconds > 0) {
+            ScheduledEventQueue eventQueue = ScheduledEventQueue.getSingleton();
+            try {
+                eventQueue.unscheduleEvent(ScheduledEvent.INTERNAL_EVENT_PREFIX+ai.getId());
+            } catch (Exception e) {
+                if (logger.isDebugEnabled()) logger.debugException("Failed to unschedule SLA", e);
+            }
+        }
+    }
 
-	private void failActivityInstance(ActivityInstanceVO ai, String statusMsg,
-			ProcessInstanceVO procinst, String logtag, String abbrStatusMsg)
-	throws DataAccessException, SQLException {
-		edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_FAILED, statusMsg);
-		removeActivitySLA(ai, procinst);
-		if (logger.isInfoEnabled())
-			logger.info(logtag, WorkStatus.LOGMSG_FAILED + " - " + abbrStatusMsg);
-	}
+    private void failActivityInstance(ActivityInstanceVO ai, String statusMsg,
+            ProcessInstanceVO procinst, String logtag, String abbrStatusMsg)
+    throws DataAccessException, SQLException {
+        edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_FAILED, statusMsg);
+        removeActivitySLA(ai, procinst);
+        if (logger.isInfoEnabled())
+            logger.info(logtag, WorkStatus.LOGMSG_FAILED + " - " + abbrStatusMsg);
+    }
 
-	private void completeActivityInstance(ActivityInstanceVO ai, String compcode,
-			ProcessInstanceVO procInst, String logtag)
-	throws DataAccessException, SQLException {
-		edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_COMPLETED, compcode);
-		removeActivitySLA(ai, procInst);
-		if (logger.isInfoEnabled())
-			logger.info(logtag, WorkStatus.LOGMSG_COMPLETE + " - completion code "
-					+ (compcode==null?"null":("'"+compcode+"'")));
+    private void completeActivityInstance(ActivityInstanceVO ai, String compcode,
+            ProcessInstanceVO procInst, String logtag)
+    throws DataAccessException, SQLException {
+        edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_COMPLETED, compcode);
+        removeActivitySLA(ai, procInst);
+        if (logger.isInfoEnabled())
+            logger.info(logtag, WorkStatus.LOGMSG_COMPLETE + " - completion code "
+                    + (compcode==null?"null":("'"+compcode+"'")));
 
-	}
+    }
 
-	private void cancelActivityInstance(ActivityInstanceVO ai, String statusMsg,
-			ProcessInstanceVO procInst, String logtag)
-	throws DataAccessException, SQLException {
-		edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_CANCELLED, statusMsg);
-		removeActivitySLA(ai, procInst);
-		if (logger.isInfoEnabled())
-			logger.info(logtag, WorkStatus.LOGMSG_CANCELLED + " - " + statusMsg);
-	}
+    private void cancelActivityInstance(ActivityInstanceVO ai, String statusMsg,
+            ProcessInstanceVO procInst, String logtag)
+    throws DataAccessException, SQLException {
+        edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_CANCELLED, statusMsg);
+        removeActivitySLA(ai, procInst);
+        if (logger.isInfoEnabled())
+            logger.info(logtag, WorkStatus.LOGMSG_CANCELLED + " - " + statusMsg);
+    }
 
-	private void holdActivityInstance(ActivityInstanceVO ai, String logtag)
-	throws DataAccessException, SQLException {
-		edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_HOLD, null);
-		if (logger.isInfoEnabled()) logger.info(logtag, WorkStatus.LOGMSG_HOLD);
-	}
+    private void holdActivityInstance(ActivityInstanceVO ai, String logtag)
+    throws DataAccessException, SQLException {
+        edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_HOLD, null);
+        if (logger.isInfoEnabled()) logger.info(logtag, WorkStatus.LOGMSG_HOLD);
+    }
 
-	private void suspendActivityInstance(ActivityInstanceVO ai, String logtag, String additionalMsg)
-	throws DataAccessException, SQLException {
-		edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_WAITING, null);
-		if (logger.isInfoEnabled()) {
-			if (additionalMsg!=null) logger.info(logtag, WorkStatus.LOGMSG_SUSPEND + " - " + additionalMsg);
-			else logger.info(logtag, WorkStatus.LOGMSG_SUSPEND);
-		}
-	}
+    private void suspendActivityInstance(ActivityInstanceVO ai, String logtag, String additionalMsg)
+    throws DataAccessException, SQLException {
+        edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_WAITING, null);
+        if (logger.isInfoEnabled()) {
+            if (additionalMsg!=null) logger.info(logtag, WorkStatus.LOGMSG_SUSPEND + " - " + additionalMsg);
+            else logger.info(logtag, WorkStatus.LOGMSG_SUSPEND);
+        }
+    }
 
-	CompletionCode finishActivityInstance(BaseActivity activity,
-			ProcessInstanceVO pi, ActivityInstanceVO ai, InternalEventVO event, boolean bypassWait)
-			throws DataAccessException, ProcessException, ActivityException, ServiceLocatorException {
-		try {
-			if (activity.getTimer() != null)
-				activity.getTimer().start("Finish Activity");
+    CompletionCode finishActivityInstance(BaseActivity activity,
+            ProcessInstanceVO pi, ActivityInstanceVO ai, InternalEventVO event, boolean bypassWait)
+            throws DataAccessException, ProcessException, ActivityException, ServiceLocatorException {
+        try {
+            if (activity.getTimer() != null)
+                activity.getTimer().start("Finish Activity");
 
             // Step 3  get and parse completion code
             boolean mayNeedWait = !bypassWait && activityNeedsWait(activity);
@@ -933,31 +932,31 @@ class ProcessExecuterImpl {
 
             // Step 3a if activity not successful
             if (compCode.getEventType().equals(EventType.ERROR)) {
-				failActivityInstance(ai, activity.getReturnMessage(),
-						pi, logtag, activity.getReturnMessage());
+                failActivityInstance(ai, activity.getReturnMessage(),
+                        pi, logtag, activity.getReturnMessage());
                 if (!AdapterActivity.COMPCODE_AUTO_RETRY.equals(compCode.getCompletionCode())) {
                     DocumentReference docRef = CreateActivityExceptionDocument(pi, ai, activity, null);
-                	InternalEventVO outmsg = InternalEventVO.createActivityErrorMessage(ai.getDefinitionId(),
-                		ai.getId(), pi.getId(), compCode.getCompletionCode(),
-            			event.getMasterRequestId(), activity.getReturnMessage(), docRef.getDocumentId());
-                	sendInternalEvent(outmsg);
+                    InternalEventVO outmsg = InternalEventVO.createActivityErrorMessage(ai.getDefinitionId(),
+                        ai.getId(), pi.getId(), compCode.getCompletionCode(),
+                        event.getMasterRequestId(), activity.getReturnMessage(), docRef.getDocumentId());
+                    sendInternalEvent(outmsg);
                 }
             }
 
-			// Step 3b if activity needs to wait
+            // Step 3b if activity needs to wait
             else if (mayNeedWait && actInstStatus!=null && !actInstStatus.equals(WorkStatus.STATUS_COMPLETED)) {
                 if (actInstStatus.equals(WorkStatus.STATUS_HOLD)) {
-                	holdActivityInstance(ai, logtag);
-    				InternalEventVO outmsg = InternalEventVO.createActivityNotifyMessage(ai, compCode.getEventType(),
-    						pi.getMasterRequestId(), compCode.getCompletionCode());
-    				sendInternalEvent(outmsg);
+                    holdActivityInstance(ai, logtag);
+                    InternalEventVO outmsg = InternalEventVO.createActivityNotifyMessage(ai, compCode.getEventType(),
+                            pi.getMasterRequestId(), compCode.getCompletionCode());
+                    sendInternalEvent(outmsg);
                 } else if (actInstStatus.equals(WorkStatus.STATUS_WAITING) &&
-                		(compCode.getEventType().equals(EventType.ABORT) || compCode.getEventType().equals(EventType.CORRECT)
-                				|| compCode.getEventType().equals(EventType.ERROR))) {
-                	suspendActivityInstance(ai, logtag, null);
-    				InternalEventVO outmsg =  InternalEventVO.createActivityNotifyMessage(ai, compCode.getEventType(),
-    						pi.getMasterRequestId(), compCode.getCompletionCode());
-    				sendInternalEvent(outmsg);
+                        (compCode.getEventType().equals(EventType.ABORT) || compCode.getEventType().equals(EventType.CORRECT)
+                                || compCode.getEventType().equals(EventType.ERROR))) {
+                    suspendActivityInstance(ai, logtag, null);
+                    InternalEventVO outmsg =  InternalEventVO.createActivityNotifyMessage(ai, compCode.getEventType(),
+                            pi.getMasterRequestId(), compCode.getCompletionCode());
+                    sendInternalEvent(outmsg);
                 }
                 else if (actInstStatus.equals(WorkStatus.STATUS_CANCELLED)) {
                     cancelActivityInstance(ai, compCode.getCompletionCode(), pi,  logtag);
@@ -966,305 +965,303 @@ class ProcessExecuterImpl {
                     sendInternalEvent(outmsg);
                 }
                 else {
-                	suspendActivityInstance(ai, logtag, null);
+                    suspendActivityInstance(ai, logtag, null);
                 }
             }
 
-			// Step 3c. otherwise, activity is successful and complete it
-			else {
-				completeActivityInstance(ai, origCompCode, pi, logtag);
+            // Step 3c. otherwise, activity is successful and complete it
+            else {
+                completeActivityInstance(ai, origCompCode, pi, logtag);
                 // send message to BAM when configured (OSGi is handled through monitors)
                /* if (!ApplicationContext.isOsgi())
-				    activity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);*/
+                    activity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);*/
                 // notify registered monitors
                 activity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
 
-				if (activity instanceof FinishActivity) {
-					String compcode = ((FinishActivity)activity).getProcessCompletionCode();
-                	boolean noNotify = ((FinishActivity)activity).doNotNotifyCaller();
-					completeProcessInstance(pi, compcode, noNotify);
-					List<ProcessInstanceVO> subProcessInsts = getDataAccess().getProcessInstances(pi.getProcessId(), OwnerType.MAIN_PROCESS_INSTANCE, pi.getId());
+                if (activity instanceof FinishActivity) {
+                    String compcode = ((FinishActivity)activity).getProcessCompletionCode();
+                    boolean noNotify = ((FinishActivity)activity).doNotNotifyCaller();
+                    completeProcessInstance(pi, compcode, noNotify);
+                    List<ProcessInstanceVO> subProcessInsts = getDataAccess().getProcessInstances(pi.getProcessId(), OwnerType.MAIN_PROCESS_INSTANCE, pi.getId());
                     for (ProcessInstanceVO subProcessInstanceVO : subProcessInsts) {
                         if (!subProcessInstanceVO.getStatusCode().equals(WorkStatus.STATUS_COMPLETED) &&
                                 !subProcessInstanceVO.getStatusCode().equals(WorkStatus.STATUS_CANCELLED))
                         completeProcessInstance(subProcessInstanceVO, compcode, noNotify);
                     }
-				} else {
-					InternalEventVO outmsg = InternalEventVO.createActivityNotifyMessage(ai,
-							compCode.getEventType(), event.getMasterRequestId(), compCode.getCompletionCode());
-					sendInternalEvent(outmsg);
-				}
-			}
-            return compCode;	// not used by asynch engine
-		} catch (Exception e) {
-			throw new ProcessException(-1, e.getMessage(), e);
-		} finally {
-			if (activity.getTimer() != null)
-				activity.getTimer().stopAndLogTiming();
-		}
-	}
-
-	///////////// process finish
-
-	void handleProcessFinish(InternalEventVO event) throws ProcessException
-	{
-		try {
-			String ownerType = event.getOwnerType();
-			String secondaryOwnerType = event.getSecondaryOwnerType();
-			if (!OwnerType.ACTIVITY_INSTANCE.equals(secondaryOwnerType)) {
-			    // top level processes (non-remote) or ABORT embedded processes
-			    ProcessInstanceVO pi = edao.getProcessInstance(event.getWorkInstanceId());
-			    ProcessVO subProcVO = getProcessDefinition(pi);
-			    if (pi.isNewEmbedded() || subProcVO.isEmbeddedProcess()) {
-			    	if (pi.isNewEmbedded()) subProcVO.getSubProcessVO(event.getWorkId());
-			        String embeddedProcType = subProcVO.getAttribute(WorkAttributeConstant.EMBEDDED_PROCESS_TYPE);
-			        if (ProcessVisibilityConstant.EMBEDDED_ABORT_PROCESS.equals(embeddedProcType)) {
-			            Long parentProcInstId = event.getOwnerId();
-			        	pi = edao.getProcessInstance(parentProcInstId);
-			            this.cancelProcessInstanceTree(pi);
-		        		if (logger.isInfoEnabled()) {
-		            		logger.info(logtag(pi.getProcessId(), pi.getId(), pi.getMasterRequestId()),
-		            				"Process cancelled");
-		            	}
-		        		InternalEventVO procFinishMsg = InternalEventVO.createProcessFinishMessage(pi);
-	                	if (OwnerType.ACTIVITY_INSTANCE.equals(pi.getSecondaryOwner())) {
-	                		procFinishMsg.setSecondaryOwnerType(pi.getSecondaryOwner());
-	                		procFinishMsg.setSecondaryOwnerId(pi.getSecondaryOwnerId());
-	                	}
-	                	this.sendInternalEvent(procFinishMsg);
-			        }
-			    }
-			} else if (ownerType.equals(OwnerType.PROCESS_INSTANCE)
-					|| ownerType.equals(OwnerType.MAIN_PROCESS_INSTANCE)) {
-			    // local process call or call to error/correction/delay handler
-			    Long activityInstId = event.getSecondaryOwnerId();
-			    ActivityInstanceVO actInst = edao.getActivityInstance(activityInstId);
-			    ProcessInstanceVO procInst = edao.getProcessInstance(actInst.getOwnerId());
-			    BaseActivity cntrActivity = prepareActivityForResume(event,procInst, actInst);
-			    if (cntrActivity!=null) {
-			    	resumeProcessInstanceForSecondaryOwner(event, cntrActivity);
-			    }	// else the process is completed/cancelled
-			} else {	// remote process call - forward the finish message to the remote caller
-				event.setOwnerType(OwnerType.PROCESS_INSTANCE);
-				logger.info("*********Reply to remote process invoker*********");
-				// remote reference will be converted by the caller
-				ProcessVO processVO = ProcessVOCache.getProcessVO(event.getWorkId());
-				Long procInstId = event.getWorkInstanceId();
-	        	List<VariableVO> variables = processVO.getVariables();
-	        	Map<String,String> params = null;
-	        	for (VariableVO var : variables) {
-	        		if (var.getVariableCategory().intValue()==VariableVO.CAT_OUTPUT
-	        				|| var.getVariableCategory().intValue()==VariableVO.CAT_INOUT) {
-	        			VariableInstanceInfo vio = edao.getVariableInstance(procInstId,var.getVariableName());
-	        			if (vio!=null) {
-	        				if (params==null) {
-	        					params = new HashMap<String,String>();
-	        					event.setParameters(params);
-	        				}
-	        				params.put(var.getVariableName(), vio.getStringValue());
-	        			}
-	        		}
-	        	}
-                DomDocument domdoc = new DomDocument();
-            	FormatDom fmter = new FormatDom();
-            	domdoc.getRootNode().setName("_mdw_remote_process");
-            	MbengNode node = domdoc.newNode("direction", "return", "", ' ');
-            	domdoc.getRootNode().appendChild(node);
-            	node = domdoc.newNode("message", event.toXml(), "", ' ');
-            	domdoc.getRootNode().appendChild(node);
-            	String msg = fmter.format(domdoc);
-				DocumentReference docref = this.createDocument(XmlObject.class.getName(),
-						event.getWorkInstanceId(), OwnerType.PROCESS_INSTANCE, event.getWorkInstanceId(),
-						null, null, msg);
-				CertifiedMessageManager manager = CertifiedMessageManager.getSingleton();
-				Map<String,String> props = new HashMap<String,String>();
-				props.put(CertifiedMessage.PROP_PROTOCOL, CertifiedMessage.PROTOCOL_MDW2MDW);
-				props.put(CertifiedMessage.PROP_JNDI_URL, ownerType);
-				manager.sendTextMessage(props, msg, docref.getDocumentId(), "procinst." + event.getWorkInstanceId());
-			}
-		} catch (Exception e) {
-			throw new ProcessException(-1, e.getMessage(), e);
-		}
-	}
-
-    private void handleResumeOnHold(GeneralActivity cntrActivity, ActivityInstanceVO actInst,
-    		ProcessInstanceVO procInst)
-    	throws DataAccessException, MDWException {
-    	try {
-    		InternalEventVO event = InternalEventVO.createActivityNotifyMessage(actInst,
-    				EventType.RESUME, procInst.getMasterRequestId(), actInst.getStatusCode()==WorkStatus.STATUS_COMPLETED? "Completed" : null);
-    		boolean finished = ((SuspendibleActivity)cntrActivity).resumeWaiting(event);
-			this.resumeActivityFinishSub(actInst, (BaseActivity)cntrActivity, procInst,
-					finished, true);
-    	} catch (Exception e) {
-//          throw new ProcessException(-1, e.getMessage(), e);
-    		logger.severeException("Resume failed", e);
-    		String statusMsg = "activity failed during resume";
-    		try {
-    	    	String logtag = logtag(procInst.getProcessId(), procInst.getId(),
-    	    			actInst.getDefinitionId(), actInst.getId());
-				failActivityInstance(actInst, statusMsg, procInst, logtag, statusMsg);
-			} catch (SQLException e1) {
-				throw new DataAccessException(-1, e1.getMessage(), e1);
-			}
-    		DocumentReference docRef = CreateActivityExceptionDocument(procInst, actInst, (BaseActivity)cntrActivity, e);
-			InternalEventVO event = InternalEventVO.createActivityErrorMessage(
-    	    		actInst.getDefinitionId(), actInst.getId(), procInst.getId(), null,
-    	    		procInst.getMasterRequestId(), statusMsg, docRef.getDocumentId());
-			this.sendInternalEvent(event);
-    	}
+                } else {
+                    InternalEventVO outmsg = InternalEventVO.createActivityNotifyMessage(ai,
+                            compCode.getEventType(), event.getMasterRequestId(), compCode.getCompletionCode());
+                    sendInternalEvent(outmsg);
+                }
+            }
+            return compCode;    // not used by asynch engine
+        } catch (Exception e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        } finally {
+            if (activity.getTimer() != null)
+                activity.getTimer().stopAndLogTiming();
+        }
     }
 
-	 /**
+    ///////////// process finish
+
+    void handleProcessFinish(InternalEventVO event) throws ProcessException
+    {
+        try {
+            String ownerType = event.getOwnerType();
+            String secondaryOwnerType = event.getSecondaryOwnerType();
+            if (!OwnerType.ACTIVITY_INSTANCE.equals(secondaryOwnerType)) {
+                // top level processes (non-remote) or ABORT embedded processes
+                ProcessInstanceVO pi = edao.getProcessInstance(event.getWorkInstanceId());
+                ProcessVO subProcVO = getProcessDefinition(pi);
+                if (pi.isNewEmbedded() || subProcVO.isEmbeddedProcess()) {
+                    if (pi.isNewEmbedded()) subProcVO.getSubProcessVO(event.getWorkId());
+                    String embeddedProcType = subProcVO.getAttribute(WorkAttributeConstant.EMBEDDED_PROCESS_TYPE);
+                    if (ProcessVisibilityConstant.EMBEDDED_ABORT_PROCESS.equals(embeddedProcType)) {
+                        Long parentProcInstId = event.getOwnerId();
+                        pi = edao.getProcessInstance(parentProcInstId);
+                        this.cancelProcessInstanceTree(pi);
+                        if (logger.isInfoEnabled()) {
+                            logger.info(logtag(pi.getProcessId(), pi.getId(), pi.getMasterRequestId()),
+                                    "Process cancelled");
+                        }
+                        InternalEventVO procFinishMsg = InternalEventVO.createProcessFinishMessage(pi);
+                        if (OwnerType.ACTIVITY_INSTANCE.equals(pi.getSecondaryOwner())) {
+                            procFinishMsg.setSecondaryOwnerType(pi.getSecondaryOwner());
+                            procFinishMsg.setSecondaryOwnerId(pi.getSecondaryOwnerId());
+                        }
+                        this.sendInternalEvent(procFinishMsg);
+                    }
+                }
+            } else if (ownerType.equals(OwnerType.PROCESS_INSTANCE)
+                    || ownerType.equals(OwnerType.MAIN_PROCESS_INSTANCE)) {
+                // local process call or call to error/correction/delay handler
+                Long activityInstId = event.getSecondaryOwnerId();
+                ActivityInstanceVO actInst = edao.getActivityInstance(activityInstId);
+                ProcessInstanceVO procInst = edao.getProcessInstance(actInst.getOwnerId());
+                BaseActivity cntrActivity = prepareActivityForResume(event,procInst, actInst);
+                if (cntrActivity!=null) {
+                    resumeProcessInstanceForSecondaryOwner(event, cntrActivity);
+                }    // else the process is completed/cancelled
+            } else {    // remote process call - forward the finish message to the remote caller
+                event.setOwnerType(OwnerType.PROCESS_INSTANCE);
+                logger.info("*********Reply to remote process invoker*********");
+                // remote reference will be converted by the caller
+                ProcessVO processVO = ProcessVOCache.getProcessVO(event.getWorkId());
+                Long procInstId = event.getWorkInstanceId();
+                List<VariableVO> variables = processVO.getVariables();
+                Map<String,String> params = null;
+                for (VariableVO var : variables) {
+                    if (var.getVariableCategory().intValue()==VariableVO.CAT_OUTPUT
+                            || var.getVariableCategory().intValue()==VariableVO.CAT_INOUT) {
+                        VariableInstanceInfo vio = edao.getVariableInstance(procInstId,var.getVariableName());
+                        if (vio!=null) {
+                            if (params==null) {
+                                params = new HashMap<String,String>();
+                                event.setParameters(params);
+                            }
+                            params.put(var.getVariableName(), vio.getStringValue());
+                        }
+                    }
+                }
+                DomDocument domdoc = new DomDocument();
+                FormatDom fmter = new FormatDom();
+                domdoc.getRootNode().setName("_mdw_remote_process");
+                MbengNode node = domdoc.newNode("direction", "return", "", ' ');
+                domdoc.getRootNode().appendChild(node);
+                node = domdoc.newNode("message", event.toXml(), "", ' ');
+                domdoc.getRootNode().appendChild(node);
+                String msg = fmter.format(domdoc);
+                DocumentReference docref = this.createDocument(XmlObject.class.getName(),
+                        event.getWorkInstanceId(), OwnerType.PROCESS_INSTANCE, event.getWorkInstanceId(),
+                        null, null, msg);
+                CertifiedMessageManager manager = CertifiedMessageManager.getSingleton();
+                Map<String,String> props = new HashMap<String,String>();
+                props.put(CertifiedMessage.PROP_PROTOCOL, CertifiedMessage.PROTOCOL_MDW2MDW);
+                props.put(CertifiedMessage.PROP_JNDI_URL, ownerType);
+                manager.sendTextMessage(props, msg, docref.getDocumentId(), "procinst." + event.getWorkInstanceId());
+            }
+        } catch (Exception e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        }
+    }
+
+    private void handleResumeOnHold(GeneralActivity cntrActivity, ActivityInstanceVO actInst,
+            ProcessInstanceVO procInst)
+        throws DataAccessException, MDWException {
+        try {
+            InternalEventVO event = InternalEventVO.createActivityNotifyMessage(actInst,
+                    EventType.RESUME, procInst.getMasterRequestId(), actInst.getStatusCode()==WorkStatus.STATUS_COMPLETED? "Completed" : null);
+            boolean finished = ((SuspendibleActivity)cntrActivity).resumeWaiting(event);
+            this.resumeActivityFinishSub(actInst, (BaseActivity)cntrActivity, procInst,
+                    finished, true);
+        } catch (Exception e) {
+//          throw new ProcessException(-1, e.getMessage(), e);
+            logger.severeException("Resume failed", e);
+            String statusMsg = "activity failed during resume";
+            try {
+                String logtag = logtag(procInst.getProcessId(), procInst.getId(),
+                        actInst.getDefinitionId(), actInst.getId());
+                failActivityInstance(actInst, statusMsg, procInst, logtag, statusMsg);
+            } catch (SQLException e1) {
+                throw new DataAccessException(-1, e1.getMessage(), e1);
+            }
+            DocumentReference docRef = CreateActivityExceptionDocument(procInst, actInst, (BaseActivity)cntrActivity, e);
+            InternalEventVO event = InternalEventVO.createActivityErrorMessage(
+                    actInst.getDefinitionId(), actInst.getId(), procInst.getId(), null,
+                    procInst.getMasterRequestId(), statusMsg, docRef.getDocumentId());
+            this.sendInternalEvent(event);
+        }
+    }
+
+     /**
      * Resumes the process instance for the secondary owner
      *
      * @param childInst child process instance
      * @param masterReqId
-	 * @throws DataAccessException
-	 * @throws ProcessException
-	 * @throws JMSException
-	 * @throws NamingException
-	 * @throws MbengException
-	 * @throws ServiceLocatorException
+     * @throws DataAccessException
+     * @throws ProcessException
+     * @throws JMSException
+     * @throws NamingException
+     * @throws MbengException
+     * @throws ServiceLocatorException
      */
     private void resumeProcessInstanceForSecondaryOwner(InternalEventVO event,
-    		BaseActivity cntrActivity) throws Exception {
-    	Long actInstId = event.getSecondaryOwnerId();
-    	ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
-    	String masterRequestId = event.getMasterRequestId();
+            BaseActivity cntrActivity) throws Exception {
+        Long actInstId = event.getSecondaryOwnerId();
+        ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
+        String masterRequestId = event.getMasterRequestId();
 //            Long parentInstId = eventMessageDoc.getEventMessage().getWorkOwnerId();
-    	Long parentInstId = actInst.getOwnerId();
-    	ProcessInstanceVO parentInst = edao.getProcessInstance(parentInstId);
-    	String logtag = logtag(parentInst.getProcessId(), parentInstId, actInst.getDefinitionId(), actInstId);
-    	boolean isEmbeddedProcess;
-    	if (event.getOwnerType().equals(OwnerType.MAIN_PROCESS_INSTANCE)) isEmbeddedProcess = true;
-    	else if (event.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
-    		try {
-    			ProcessVO subprocdef = ProcessVOCache.getProcessVO(event.getWorkId());
-    			isEmbeddedProcess = subprocdef.isEmbeddedProcess();
-    		} catch (Exception e1) {
-    			// can happen when the subprocess is remote
-    			logger.info(logtag,
-    					"subprocess definition cannot be found - treat it as a remote process - id "
-    					+ event.getWorkId());
-    			isEmbeddedProcess = false;
-    		}
-    	} else isEmbeddedProcess = false;	// including the case the subprocess is remote
-    	String compCode = event.getCompletionCode();
+        Long parentInstId = actInst.getOwnerId();
+        ProcessInstanceVO parentInst = edao.getProcessInstance(parentInstId);
+        String logtag = logtag(parentInst.getProcessId(), parentInstId, actInst.getDefinitionId(), actInstId);
+        boolean isEmbeddedProcess;
+        if (event.getOwnerType().equals(OwnerType.MAIN_PROCESS_INSTANCE)) isEmbeddedProcess = true;
+        else if (event.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
+            try {
+                ProcessVO subprocdef = ProcessVOCache.getProcessVO(event.getWorkId());
+                isEmbeddedProcess = subprocdef.isEmbeddedProcess();
+            } catch (Exception e1) {
+                // can happen when the subprocess is remote
+                logger.info(logtag,
+                        "subprocess definition cannot be found - treat it as a remote process - id "
+                        + event.getWorkId());
+                isEmbeddedProcess = false;
+            }
+        } else isEmbeddedProcess = false;    // including the case the subprocess is remote
+        String compCode = event.getCompletionCode();
         if (isEmbeddedProcess) {
-			// mark parent process instance in progress
-			edao.setProcessInstanceStatus(parentInst.getId(), WorkStatus.STATUS_IN_PROGRESS);
-    		if (logger.isInfoEnabled())
-    			logger.info(logtag,	"Activity resumed from embedded subprocess, which returns completion code " + compCode);
+            // mark parent process instance in progress
+            edao.setProcessInstanceStatus(parentInst.getId(), WorkStatus.STATUS_IN_PROGRESS);
+            if (logger.isInfoEnabled())
+                logger.info(logtag,    "Activity resumed from embedded subprocess, which returns completion code " + compCode);
             CompletionCode parsedCompCode = new CompletionCode();
             parsedCompCode.parse(event.getCompletionCode());
             WorkTransitionVO outgoingWorkTransVO = null;
-            if (compCode==null || parsedCompCode.getEventType().equals(EventType.RESUME)) {		// default behavior
-            	if (actInst.getStatusCode()==WorkStatus.STATUS_HOLD ||
-            	        actInst.getStatusCode()==WorkStatus.STATUS_COMPLETED) {
-            		handleResumeOnHold(cntrActivity, actInst, parentInst);
-            	} else if (actInst.getStatusCode()==WorkStatus.STATUS_FAILED) {
-        			completeActivityInstance(actInst, compCode, parentInst, logtag);
+            if (compCode==null || parsedCompCode.getEventType().equals(EventType.RESUME)) {        // default behavior
+                if (actInst.getStatusCode()==WorkStatus.STATUS_HOLD ||
+                        actInst.getStatusCode()==WorkStatus.STATUS_COMPLETED) {
+                    handleResumeOnHold(cntrActivity, actInst, parentInst);
+                } else if (actInst.getStatusCode()==WorkStatus.STATUS_FAILED) {
+                    completeActivityInstance(actInst, compCode, parentInst, logtag);
                     // send message to BAM when configured (OSGi is handled through monitors)
                     /*if (!ApplicationContext.isOsgi())
-    				    cntrActivity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);*/
+                        cntrActivity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);*/
                     // notify registered monitors - (both OSGi and Cloud mode)
                     cntrActivity.notifyMonitors(WorkStatus.LOGMSG_FAILED);
 
-    				InternalEventVO jmsmsg = InternalEventVO.createActivityNotifyMessage(actInst,
-    		    			EventType.FINISH, masterRequestId, null);
-    				sendInternalEvent(jmsmsg);
-            	} else {
-            		// other status simply ignore
-            	}
-            } else if (parsedCompCode.getEventType().equals(EventType.ABORT)) {	// TaskAction.ABORT and TaskAction.CANCEL
-            	String comment = actInst.getStatusMessage() + "  \nException handler returns " + compCode;
-            	if (actInst.getStatusCode()!=WorkStatus.STATUS_COMPLETED) {
-            		cancelActivityInstance(actInst, comment, parentInst, logtag);
-            	}
-           	 	if (parsedCompCode.getCompletionCode()!=null && parsedCompCode.getCompletionCode().startsWith("process"))	{// TaskAction.ABORT
-           	 		boolean invoke_abort_handler = true;
-           	 		if (invoke_abort_handler) {
-           	 			InternalEventVO outgoingMsg = InternalEventVO.createActivityNotifyMessage(actInst,
-           	 					EventType.ABORT, parentInst.getMasterRequestId(), null);
-           	 			sendInternalEvent(outgoingMsg);
-           	 		} else {
-           	 			completeProcessInstance(parentInst, EventType.EVENTNAME_ABORT, false);
-           	 		}
-           	 	}
-            } else if (parsedCompCode.getEventType().equals(EventType.START)) {		// TaskAction.RETRY
-            	String comment = actInst.getStatusMessage() +
-            		"  \nException handler returns " + compCode;
-            	if (actInst.getStatusCode()!=WorkStatus.STATUS_COMPLETED) {
-            		cancelActivityInstance(actInst, comment, parentInst, logtag);
-            	}
-            	retryActivity(parentInst, actInst.getDefinitionId(), null, masterRequestId);
-            } else {	// event type must be FINISH
-            	if (parsedCompCode.getCompletionCode()!=null)
-            		outgoingWorkTransVO = findTaskActionWorkTransition(parentInst, actInst, parsedCompCode.getCompletionCode());
-            	if (actInst.getStatusCode()!=WorkStatus.STATUS_COMPLETED) {
-        			completeActivityInstance(actInst, compCode, parentInst, logtag);
-        			if (!ApplicationContext.isOsgi())
-        			    cntrActivity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);
+                    InternalEventVO jmsmsg = InternalEventVO.createActivityNotifyMessage(actInst,
+                            EventType.FINISH, masterRequestId, null);
+                    sendInternalEvent(jmsmsg);
+                } else {
+                    // other status simply ignore
+                }
+            } else if (parsedCompCode.getEventType().equals(EventType.ABORT)) {    // TaskAction.ABORT and TaskAction.CANCEL
+                String comment = actInst.getStatusMessage() + "  \nException handler returns " + compCode;
+                if (actInst.getStatusCode()!=WorkStatus.STATUS_COMPLETED) {
+                    cancelActivityInstance(actInst, comment, parentInst, logtag);
+                }
+                    if (parsedCompCode.getCompletionCode()!=null && parsedCompCode.getCompletionCode().startsWith("process"))    {// TaskAction.ABORT
+                        boolean invoke_abort_handler = true;
+                        if (invoke_abort_handler) {
+                            InternalEventVO outgoingMsg = InternalEventVO.createActivityNotifyMessage(actInst,
+                                    EventType.ABORT, parentInst.getMasterRequestId(), null);
+                            sendInternalEvent(outgoingMsg);
+                        } else {
+                            completeProcessInstance(parentInst, EventType.EVENTNAME_ABORT, false);
+                        }
+                    }
+            } else if (parsedCompCode.getEventType().equals(EventType.START)) {        // TaskAction.RETRY
+                String comment = actInst.getStatusMessage() +
+                    "  \nException handler returns " + compCode;
+                if (actInst.getStatusCode()!=WorkStatus.STATUS_COMPLETED) {
+                    cancelActivityInstance(actInst, comment, parentInst, logtag);
+                }
+                retryActivity(parentInst, actInst.getDefinitionId(), null, masterRequestId);
+            } else {    // event type must be FINISH
+                if (parsedCompCode.getCompletionCode()!=null)
+                    outgoingWorkTransVO = findTaskActionWorkTransition(parentInst, actInst, parsedCompCode.getCompletionCode());
+                if (actInst.getStatusCode()!=WorkStatus.STATUS_COMPLETED) {
+                    completeActivityInstance(actInst, compCode, parentInst, logtag);
+                      cntrActivity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);
                     cntrActivity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
-            	}
-            	InternalEventVO jmsmsg;
-            	int delay = 0;
-            	if (outgoingWorkTransVO != null) {
-            		// is custom action (RESUME), transition accordingly
-    				WorkTransitionInstanceVO workTransInst = createTransitionInstance(outgoingWorkTransVO, parentInstId);
-    		        jmsmsg = InternalEventVO.createActivityStartMessage(
-    		        		outgoingWorkTransVO.getToWorkId(), parentInstId,
-    		        		  workTransInst.getTransitionInstanceID(), masterRequestId,
-    		        		  outgoingWorkTransVO.getLabel());
-    		        delay = outgoingWorkTransVO.getTransitionDelay();
-            	} else {
-            		jmsmsg = InternalEventVO.createActivityNotifyMessage(actInst,
-    		    			EventType.FINISH, masterRequestId, null);
-            	}
-            	if (delay>0) {
-    	    		String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + parentInstId
-    					+ "start" + outgoingWorkTransVO.getToWorkId();
-            		sendDelayedInternalEvent(jmsmsg, delay, msgid, false);
-            	} else sendInternalEvent(jmsmsg);
+                }
+                InternalEventVO jmsmsg;
+                int delay = 0;
+                if (outgoingWorkTransVO != null) {
+                    // is custom action (RESUME), transition accordingly
+                    WorkTransitionInstanceVO workTransInst = createTransitionInstance(outgoingWorkTransVO, parentInstId);
+                    jmsmsg = InternalEventVO.createActivityStartMessage(
+                            outgoingWorkTransVO.getToWorkId(), parentInstId,
+                              workTransInst.getTransitionInstanceID(), masterRequestId,
+                              outgoingWorkTransVO.getLabel());
+                    delay = outgoingWorkTransVO.getTransitionDelay();
+                } else {
+                    jmsmsg = InternalEventVO.createActivityNotifyMessage(actInst,
+                            EventType.FINISH, masterRequestId, null);
+                }
+                if (delay>0) {
+                    String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + parentInstId
+                        + "start" + outgoingWorkTransVO.getToWorkId();
+                    sendDelayedInternalEvent(jmsmsg, delay, msgid, false);
+                } else sendInternalEvent(jmsmsg);
             }
-        } else {	// must be InvokeProcessActivity
-        	if (actInst.getStatusCode()==WorkStatus.STATUS_WAITING || actInst.getStatusCode()==WorkStatus.STATUS_HOLD) {
-        		boolean isSynchronized = ((InvokeProcessActivity)cntrActivity).resume(event);
-        		if (isSynchronized) {   // all subprocess instances terminated
-        			// mark parent process instance in progress
-        			edao.setProcessInstanceStatus(parentInst.getId(), WorkStatus.STATUS_IN_PROGRESS);
-        			// complete the activity and send activity FINISH message
+        } else {    // must be InvokeProcessActivity
+            if (actInst.getStatusCode()==WorkStatus.STATUS_WAITING || actInst.getStatusCode()==WorkStatus.STATUS_HOLD) {
+                boolean isSynchronized = ((InvokeProcessActivity)cntrActivity).resume(event);
+                if (isSynchronized) {   // all subprocess instances terminated
+                    // mark parent process instance in progress
+                    edao.setProcessInstanceStatus(parentInst.getId(), WorkStatus.STATUS_IN_PROGRESS);
+                    // complete the activity and send activity FINISH message
                     CompletionCode parsedCompCode = new CompletionCode();
                     parsedCompCode.parse(event.getCompletionCode());
-        			if (parsedCompCode.getEventType().equals(EventType.ABORT)) {
-	        			cancelActivityInstance(actInst, "Subprocess is cancelled", parentInst, logtag);
-        			} else {
-	        			completeActivityInstance(actInst, compCode, parentInst, logtag);
-	        			if (!ApplicationContext.isOsgi())
-	        			    cntrActivity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);
-	                    cntrActivity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
-        			}
-        			InternalEventVO jmsmsg = InternalEventVO.createActivityNotifyMessage(actInst,
-    		    			EventType.FINISH, masterRequestId, compCode);
-        			sendInternalEvent(jmsmsg);
-        		}  else {
-        			// multiple instances and not all terminated - do nothing
-        			logger.info(logtag, "Activity continue suspend - not all child processes have completed");
-        		}
-        	} else {  // status is COMPLETED or others
-        		// do nothing - asynchronous subprocess call
-        		logger.info(logtag, "Activity not waiting for subprocess - asynchronous subprocess call");
-        	}
+                    if (parsedCompCode.getEventType().equals(EventType.ABORT)) {
+                        cancelActivityInstance(actInst, "Subprocess is cancelled", parentInst, logtag);
+                    } else {
+                        completeActivityInstance(actInst, compCode, parentInst, logtag);
+                        cntrActivity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);
+                        cntrActivity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
+                    }
+                    InternalEventVO jmsmsg = InternalEventVO.createActivityNotifyMessage(actInst,
+                            EventType.FINISH, masterRequestId, compCode);
+                    sendInternalEvent(jmsmsg);
+                }  else {
+                    // multiple instances and not all terminated - do nothing
+                    logger.info(logtag, "Activity continue suspend - not all child processes have completed");
+                }
+            } else {  // status is COMPLETED or others
+                // do nothing - asynchronous subprocess call
+                logger.info(logtag, "Activity not waiting for subprocess - asynchronous subprocess call");
+            }
         }
     }
 
     private void completeProcessInstance(ProcessInstanceVO procInst) throws Exception {
-    	edao.setProcessInstanceStatus(procInst.getId(), WorkStatus.STATUS_COMPLETED);
-    	if (!inService) {
-    		edao.removeEventWaitForProcessInstance(procInst.getId());
-    		this.cancelTasksOfProcessInstance(procInst);
-    	}
+        edao.setProcessInstanceStatus(procInst.getId(), WorkStatus.STATUS_COMPLETED);
+        if (!inService) {
+            edao.removeEventWaitForProcessInstance(procInst.getId());
+            this.cancelTasksOfProcessInstance(procInst);
+        }
     }
 
     /**
@@ -1283,45 +1280,45 @@ class ProcessExecuterImpl {
     private void completeProcessInstance(ProcessInstanceVO processInst, String completionCode, boolean noNotify)
     throws Exception {
 
-    	ProcessVO processVO = getProcessDefinition(processInst);
+        ProcessVO processVO = getProcessDefinition(processInst);
         InternalEventVO retMsg = InternalEventVO.createProcessFinishMessage(processInst);
 
         if (OwnerType.ACTIVITY_INSTANCE.equals(processInst.getSecondaryOwner())) {
-        	retMsg.setSecondaryOwnerType(processInst.getSecondaryOwner());
-        	retMsg.setSecondaryOwnerId(processInst.getSecondaryOwnerId());
+            retMsg.setSecondaryOwnerType(processInst.getSecondaryOwner());
+            retMsg.setSecondaryOwnerId(processInst.getSecondaryOwnerId());
         }
 
-    	if (completionCode==null) completionCode = processInst.getCompletionCode();
-    	if (completionCode!=null) retMsg.setCompletionCode(completionCode);
+        if (completionCode==null) completionCode = processInst.getCompletionCode();
+        if (completionCode!=null) retMsg.setCompletionCode(completionCode);
 
-    	boolean isCancelled = false;
+        boolean isCancelled = false;
         if (completionCode==null) {
-        	completeProcessInstance(processInst);
+            completeProcessInstance(processInst);
         } else if (processVO.isEmbeddedProcess()) {
-         	completeProcessInstance(processInst);
+             completeProcessInstance(processInst);
             retMsg.setCompletionCode(completionCode);
         } else {
-        	CompletionCode parsedCompCode = new CompletionCode();
-        	parsedCompCode.parse(completionCode);
-        	if (parsedCompCode.getEventType().equals(EventType.ABORT)) {
-        		this.cancelProcessInstanceTree(processInst);
-        		isCancelled = true;
-        	} else if (parsedCompCode.getEventType().equals(EventType.FINISH)) {
-            	completeProcessInstance(processInst);
-        		if (parsedCompCode.getCompletionCode()!=null) {
-        			completionCode = parsedCompCode.getCompletionCode();
-        			retMsg.setCompletionCode(completionCode);
-        		} else completionCode = null;
-        	} else {
-            	completeProcessInstance(processInst);
-        		retMsg.setCompletionCode(completionCode);
-        	}
+            CompletionCode parsedCompCode = new CompletionCode();
+            parsedCompCode.parse(completionCode);
+            if (parsedCompCode.getEventType().equals(EventType.ABORT)) {
+                this.cancelProcessInstanceTree(processInst);
+                isCancelled = true;
+            } else if (parsedCompCode.getEventType().equals(EventType.FINISH)) {
+                completeProcessInstance(processInst);
+                if (parsedCompCode.getCompletionCode()!=null) {
+                    completionCode = parsedCompCode.getCompletionCode();
+                    retMsg.setCompletionCode(completionCode);
+                } else completionCode = null;
+            } else {
+                completeProcessInstance(processInst);
+                retMsg.setCompletionCode(completionCode);
+            }
         }
         if (!noNotify) sendInternalEvent(retMsg);
         if (logger.isInfoEnabled()) {
-    		logger.info(logtag(processVO.getProcessId(), processInst.getId(), processInst.getMasterRequestId()),
-    				(isCancelled?WorkStatus.LOGMSG_PROC_CANCEL:WorkStatus.LOGMSG_PROC_COMPLETE) + " - " + processVO.getProcessName()
-    				+ (isCancelled?"":completionCode==null?" completion code is null":(" completion code = "+completionCode)));
+            logger.info(logtag(processVO.getProcessId(), processInst.getId(), processInst.getMasterRequestId()),
+                    (isCancelled?WorkStatus.LOGMSG_PROC_CANCEL:WorkStatus.LOGMSG_PROC_COMPLETE) + " - " + processVO.getProcessName()
+                    + (isCancelled?"":completionCode==null?" completion code is null":(" completion code = "+completionCode)));
         }
         notifyMonitors(processInst, WorkStatus.LOGMSG_PROC_COMPLETE);
     }
@@ -1353,25 +1350,25 @@ class ProcessExecuterImpl {
     private void retryActivity(ProcessInstanceVO procInst, Long actId,
             String completionCode, String masterRequestId)
             throws DataAccessException, SQLException, MDWException {
-    	// make sure any other activity instances are closed
-    	List<ActivityInstanceVO> activityInstances = edao.getActivityInstances(actId, procInst.getId(),
-    			true, false);
-    	for (ActivityInstanceVO actInst :  activityInstances) {
-    		if (actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue()
+        // make sure any other activity instances are closed
+        List<ActivityInstanceVO> activityInstances = edao.getActivityInstances(actId, procInst.getId(),
+                true, false);
+        for (ActivityInstanceVO actInst :  activityInstances) {
+            if (actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue()
                         || actInst.getStatusCode()==WorkStatus.STATUS_PENDING_PROCESS.intValue()) {
-    			String logtag = logtag(procInst.getProcessId(), procInst.getId(),
-    					actId, actInst.getId());
-    			failActivityInstance(actInst, "Retry Activity Action",
-    					procInst, logtag, "Retry Activity Action");
-    		}
-    	}
-    	// start activity again
-    	InternalEventVO event = InternalEventVO.createActivityStartMessage(actId,
-    			procInst.getId(), null, masterRequestId, EventType.EVENTNAME_START);
-    	sendInternalEvent(event);
+                String logtag = logtag(procInst.getProcessId(), procInst.getId(),
+                        actId, actInst.getId());
+                failActivityInstance(actInst, "Retry Activity Action",
+                        procInst, logtag, "Retry Activity Action");
+            }
+        }
+        // start activity again
+        InternalEventVO event = InternalEventVO.createActivityStartMessage(actId,
+                procInst.getId(), null, masterRequestId, EventType.EVENTNAME_START);
+        sendInternalEvent(event);
     }
 
-	/////////////// activity resume
+    /////////////// activity resume
 
     private boolean validateProcessInstance(ProcessInstanceVO processInst) {
         Integer status = processInst.getStatusCode();
@@ -1386,53 +1383,53 @@ class ProcessExecuterImpl {
 
 
     private BaseActivity prepareActivityForResume(InternalEventVO event,
-	    		ProcessInstanceVO procInst, ActivityInstanceVO actInst)
+                ProcessInstanceVO procInst, ActivityInstanceVO actInst)
     throws DataAccessException, SQLException
     {
-    	Long actId = actInst.getDefinitionId();
-    	Long procInstId = actInst.getOwnerId();
+        Long actId = actInst.getDefinitionId();
+        Long procInstId = actInst.getOwnerId();
 
-    	if (!validateProcessInstance(procInst)) {
-    		if (logger.isInfoEnabled())
-    			logger.info(logtag(procInst.getProcessId(), procInstId, actId, actInst.getId()),
-    				"Activity would resume, but process is no longer alive");
-    		return null;
-    	}
-    	if (logger.isInfoEnabled())
-    		logger.info(logtag(procInst.getProcessId(), procInstId, actId, actInst.getId()), "Activity to resume");
+        if (!validateProcessInstance(procInst)) {
+            if (logger.isInfoEnabled())
+                logger.info(logtag(procInst.getProcessId(), procInstId, actId, actInst.getId()),
+                    "Activity would resume, but process is no longer alive");
+            return null;
+        }
+        if (logger.isInfoEnabled())
+            logger.info(logtag(procInst.getProcessId(), procInstId, actId, actInst.getId()), "Activity to resume");
 
-    	ProcessVO processVO = getProcessDefinition(procInst);
-    	ActivityVO actVO = processVO.getActivityVO(actId);
+        ProcessVO processVO = getProcessDefinition(procInst);
+        ActivityVO actVO = processVO.getActivityVO(actId);
 
-		TrackingTimer activityTimer = null;
-    	try {
+        TrackingTimer activityTimer = null;
+        try {
             // use design-time package
             PackageVO pkg = PackageVOCache.getProcessPackage(getMainProcessDefinition(procInst).getId());
 
-			BaseActivity cntrActivity = (BaseActivity)pkg.getActivityImplementor(actVO);
-	    	Tracked t = cntrActivity.getClass().getAnnotation(Tracked.class);
-	    	if (t != null) {
-	    		String logTag = logtag(procInst.getProcessId(), procInst.getId(), actId, actInst.getId());
-	    		activityTimer = new TrackingTimer(logTag, cntrActivity.getClass().getName(), t.value());
-	    		activityTimer.start("Prepare Activity for Resume");
-	    	}
-    		List<VariableInstanceInfo> vars = processVO.isEmbeddedProcess()?
-    				edao.getProcessInstanceVariables(procInst.getOwnerId()):
-    					edao.getProcessInstanceVariables(procInstId);
-    		// procInst.setVariables(vars);	 set inside edac method
-    		Long workTransitionInstId = event.getTransitionInstanceId();
-    		cntrActivity.prepare(actVO, procInst, actInst, vars, workTransitionInstId,
-    				event.getCompletionCode(), activityTimer, new ProcessExecuter(this));
-    		return cntrActivity;
-    	} catch (Exception e) {
-			logger.severeException("Unable to instantiate implementer " + actVO.getImplementorClassName(), e);
-			return null;
-		}
-    	finally {
-    		if (activityTimer != null) {
-    			activityTimer.stopAndLogTiming();
-    		}
-    	}
+            BaseActivity cntrActivity = (BaseActivity)pkg.getActivityImplementor(actVO);
+            Tracked t = cntrActivity.getClass().getAnnotation(Tracked.class);
+            if (t != null) {
+                String logTag = logtag(procInst.getProcessId(), procInst.getId(), actId, actInst.getId());
+                activityTimer = new TrackingTimer(logTag, cntrActivity.getClass().getName(), t.value());
+                activityTimer.start("Prepare Activity for Resume");
+            }
+            List<VariableInstanceInfo> vars = processVO.isEmbeddedProcess()?
+                    edao.getProcessInstanceVariables(procInst.getOwnerId()):
+                        edao.getProcessInstanceVariables(procInstId);
+            // procInst.setVariables(vars);     set inside edac method
+            Long workTransitionInstId = event.getTransitionInstanceId();
+            cntrActivity.prepare(actVO, procInst, actInst, vars, workTransitionInstId,
+                    event.getCompletionCode(), activityTimer, new ProcessExecuter(this));
+            return cntrActivity;
+        } catch (Exception e) {
+            logger.severeException("Unable to instantiate implementer " + actVO.getImplementorClassName(), e);
+            return null;
+        }
+        finally {
+            if (activityTimer != null) {
+                activityTimer.stopAndLogTiming();
+            }
+        }
     }
 
     private boolean isProcessInstanceResumable(ProcessInstanceVO pInstance) {
@@ -1446,154 +1443,154 @@ class ProcessExecuterImpl {
     }
 
     ActivityRuntimeVO resumeActivityPrepare(ProcessInstanceVO procInst,
-    		InternalEventVO event, boolean resumeOnHold)
-    		throws ProcessException, DataAccessException {
-    	Long actInstId = event.getWorkInstanceId();
-    	try {
-    		ActivityRuntimeVO ar = new ActivityRuntimeVO();
-    		ar.startCase = ActivityRuntimeVO.RESUMECASE_NORMAL;
-    		ar.actinst = edao.getActivityInstance(actInstId);
-    		ar.procinst = procInst;
+            InternalEventVO event, boolean resumeOnHold)
+            throws ProcessException, DataAccessException {
+        Long actInstId = event.getWorkInstanceId();
+        try {
+            ActivityRuntimeVO ar = new ActivityRuntimeVO();
+            ar.startCase = ActivityRuntimeVO.RESUMECASE_NORMAL;
+            ar.actinst = edao.getActivityInstance(actInstId);
+            ar.procinst = procInst;
             if (!this.isProcessInstanceResumable(ar.procinst)) {
-            	ar.startCase = ActivityRuntimeVO.RESUMECASE_PROCESS_TERMINATED;
+                ar.startCase = ActivityRuntimeVO.RESUMECASE_PROCESS_TERMINATED;
                 logger.info(logtag(ar.procinst.getProcessId(), ar.procinst.getId(),
-                			ar.actinst.getDefinitionId(), actInstId),
-                		"Cannot resume activity instance as the process is completed/canceled");
+                            ar.actinst.getDefinitionId(), actInstId),
+                        "Cannot resume activity instance as the process is completed/canceled");
                 return ar;
             }
             if (!resumeOnHold && ar.actinst.getStatusCode()!=WorkStatus.STATUS_WAITING.intValue()) {
-            	logger.info(logtag(ar.procinst.getProcessId(), ar.procinst.getId(),
-            			ar.actinst.getDefinitionId(), actInstId),
-            		"Cannot resume activity instance as it is not waiting any more");
-            	ar.startCase = ActivityRuntimeVO.RESUMECASE_ACTIVITY_NOT_WAITING;
-            	return ar;
+                logger.info(logtag(ar.procinst.getProcessId(), ar.procinst.getId(),
+                        ar.actinst.getDefinitionId(), actInstId),
+                    "Cannot resume activity instance as it is not waiting any more");
+                ar.startCase = ActivityRuntimeVO.RESUMECASE_ACTIVITY_NOT_WAITING;
+                return ar;
             }
             ar.activity = prepareActivityForResume(event, ar.procinst, ar.actinst);
-        	if (resumeOnHold) event.setEventType(EventType.RESUME);
-        	else event.setEventType(EventType.FINISH);
+            if (resumeOnHold) event.setEventType(EventType.RESUME);
+            else event.setEventType(EventType.FINISH);
             return ar;
-    	} catch (SQLException e) {
-    		throw new ProcessException(-1, e.getMessage(), e);
-    	}
+        } catch (SQLException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        }
     }
 
     private void resumeActivityFinishSub(ActivityInstanceVO actinst,
-    		BaseActivity activity, ProcessInstanceVO procinst,
-    		boolean finished, boolean resumeOnHold)
-    	throws DataAccessException, SQLException, MDWException {
-		String logtag = logtag(procinst.getProcessId(),procinst.getId(),
-				actinst.getDefinitionId(),actinst.getId());
-    	if (finished) {
-			CompletionCode completionCode = new CompletionCode();
-			completionCode.parse(activity.getReturnCode());
-	    	if (WorkStatus.STATUS_HOLD.equals(completionCode.getActivityInstanceStatus())) {
-				holdActivityInstance(actinst, logtag);
-			} else if (WorkStatus.STATUS_WAITING.equals(completionCode.getActivityInstanceStatus())) {
-				suspendActivityInstance(actinst, logtag, "continue suspend");
-			} else if (WorkStatus.STATUS_CANCELLED.equals(completionCode.getActivityInstanceStatus())) {
-				cancelActivityInstance(actinst, "Cancelled upon resume", procinst, logtag);
-			} else if (WorkStatus.STATUS_FAILED.equals(completionCode.getActivityInstanceStatus())) {
-				failActivityInstance(actinst, "Failed upon resume", procinst, logtag, activity.getReturnMessage());
-			} else {	// status is null or Completed
-				completeActivityInstance(actinst, completionCode.toString(), procinst, logtag);
+            BaseActivity activity, ProcessInstanceVO procinst,
+            boolean finished, boolean resumeOnHold)
+        throws DataAccessException, SQLException, MDWException {
+        String logtag = logtag(procinst.getProcessId(),procinst.getId(),
+                actinst.getDefinitionId(),actinst.getId());
+        if (finished) {
+            CompletionCode completionCode = new CompletionCode();
+            completionCode.parse(activity.getReturnCode());
+            if (WorkStatus.STATUS_HOLD.equals(completionCode.getActivityInstanceStatus())) {
+                holdActivityInstance(actinst, logtag);
+            } else if (WorkStatus.STATUS_WAITING.equals(completionCode.getActivityInstanceStatus())) {
+                suspendActivityInstance(actinst, logtag, "continue suspend");
+            } else if (WorkStatus.STATUS_CANCELLED.equals(completionCode.getActivityInstanceStatus())) {
+                cancelActivityInstance(actinst, "Cancelled upon resume", procinst, logtag);
+            } else if (WorkStatus.STATUS_FAILED.equals(completionCode.getActivityInstanceStatus())) {
+                failActivityInstance(actinst, "Failed upon resume", procinst, logtag, activity.getReturnMessage());
+            } else {    // status is null or Completed
+                completeActivityInstance(actinst, completionCode.toString(), procinst, logtag);
                 // send message to BAM when configured (OSGi is handled through monitors)
                 /*if (!ApplicationContext.isOsgi())
-				    activity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);*/
+                    activity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);*/
                 // notify registered monitors
                 activity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
-			}
-	    	InternalEventVO event = InternalEventVO.createActivityNotifyMessage(actinst,
-					completionCode.getEventType(), procinst.getMasterRequestId(),
-					completionCode.getCompletionCode());
-	    	sendInternalEvent(event);
-    	} else {
-    		if (resumeOnHold) {
-        		suspendActivityInstance(actinst, logtag, "resume waiting after hold");
-        	} else {
-				if (logger.isInfoEnabled()) logger.info(logtag, "continue suspend");
-			}
-    	}
+            }
+            InternalEventVO event = InternalEventVO.createActivityNotifyMessage(actinst,
+                    completionCode.getEventType(), procinst.getMasterRequestId(),
+                    completionCode.getCompletionCode());
+            sendInternalEvent(event);
+        } else {
+            if (resumeOnHold) {
+                suspendActivityInstance(actinst, logtag, "resume waiting after hold");
+            } else {
+                if (logger.isInfoEnabled()) logger.info(logtag, "continue suspend");
+            }
+        }
     }
 
     void resumeActivityFinish(ActivityRuntimeVO ar,
-    		boolean finished, InternalEventVO event, boolean resumeOnHold)
-    		throws DataAccessException, ProcessException {
-    	try {
+            boolean finished, InternalEventVO event, boolean resumeOnHold)
+            throws DataAccessException, ProcessException {
+        try {
             if (ar.activity.getTimer() != null)
-            	ar.activity.getTimer().start("Resume Activity Finish");
-			this.resumeActivityFinishSub(ar.actinst, ar.activity, ar.procinst,
-					finished, resumeOnHold);
-    	} catch (SQLException e) {
-			throw new ProcessException(-1, e.getMessage(), e);
-    	} catch (MDWException e) {
-			throw new ProcessException(-1, e.getMessage(), e);
-		} finally {
-			if (ar.activity.getTimer() != null)
-				ar.activity.getTimer().stopAndLogTiming();
-		}
+                ar.activity.getTimer().start("Resume Activity Finish");
+            this.resumeActivityFinishSub(ar.actinst, ar.activity, ar.procinst,
+                    finished, resumeOnHold);
+        } catch (SQLException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        } catch (MDWException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        } finally {
+            if (ar.activity.getTimer() != null)
+                ar.activity.getTimer().stopAndLogTiming();
+        }
     }
 
     boolean resumeActivityExecute(ActivityRuntimeVO ar,
-    		InternalEventVO event, boolean resumeOnHold) throws ActivityException {
-    	boolean finished;
-    	try {
-    		if (ar.activity.getTimer() != null)
-    			ar.activity.getTimer().start("Resume Activity");
-    		if (resumeOnHold) finished = ((SuspendibleActivity)ar.activity).resumeWaiting(event);
-    		else finished = ((SuspendibleActivity)ar.activity).resume(event);
-    	}
-    	finally {
-    		if (ar.activity.getTimer() != null)
-    			ar.activity.getTimer().stopAndLogTiming();
-    	}
-    	return finished;
+            InternalEventVO event, boolean resumeOnHold) throws ActivityException {
+        boolean finished;
+        try {
+            if (ar.activity.getTimer() != null)
+                ar.activity.getTimer().start("Resume Activity");
+            if (resumeOnHold) finished = ((SuspendibleActivity)ar.activity).resumeWaiting(event);
+            else finished = ((SuspendibleActivity)ar.activity).resume(event);
+        }
+        finally {
+            if (ar.activity.getTimer() != null)
+                ar.activity.getTimer().stopAndLogTiming();
+        }
+        return finished;
     }
 
-	Map<String, String> getOutputParameters(Long procInstId, Long procId) throws SQLException,
-			ProcessException, DataAccessException {
-		ProcessVO subprocDef = ProcessVOCache.getProcessVO(procId);
-		Map<String, String> params = new HashMap<String, String>();
-		boolean passDocContent = (isInService() && getDataAccess().getPerformanceLevel() >= 5) || getDataAccess().getPerformanceLevel() >= 9 ;  // DHO  (if not serviceProc then lvl9)
-		for (VariableVO var : subprocDef.getVariables()) {
-			if (var.getVariableCategory().intValue() == VariableVO.CAT_OUTPUT
-					|| var.getVariableCategory().intValue() == VariableVO.CAT_INOUT) {
-				VariableInstanceInfo vio = getDataAccess()
-						.getVariableInstance(procInstId,
-								var.getVariableName());
-				if (vio != null) {
-					if (passDocContent && vio.isDocument()) {
-						DocumentVO docvo = getDocument((DocumentReference)vio.getData(), false);
-						if (docvo!=null) params.put(var.getVariableName(), docvo.getContent());
-					} else {
-						params.put(var.getVariableName(), vio.getStringValue());
-					}
-				}
-			}
-		}
-		return params;
-	}
+    Map<String, String> getOutputParameters(Long procInstId, Long procId) throws SQLException,
+            ProcessException, DataAccessException {
+        ProcessVO subprocDef = ProcessVOCache.getProcessVO(procId);
+        Map<String, String> params = new HashMap<String, String>();
+        boolean passDocContent = (isInService() && getDataAccess().getPerformanceLevel() >= 5) || getDataAccess().getPerformanceLevel() >= 9 ;  // DHO  (if not serviceProc then lvl9)
+        for (VariableVO var : subprocDef.getVariables()) {
+            if (var.getVariableCategory().intValue() == VariableVO.CAT_OUTPUT
+                    || var.getVariableCategory().intValue() == VariableVO.CAT_INOUT) {
+                VariableInstanceInfo vio = getDataAccess()
+                        .getVariableInstance(procInstId,
+                                var.getVariableName());
+                if (vio != null) {
+                    if (passDocContent && vio.isDocument()) {
+                        DocumentVO docvo = getDocument((DocumentReference)vio.getData(), false);
+                        if (docvo!=null) params.put(var.getVariableName(), docvo.getContent());
+                    } else {
+                        params.put(var.getVariableName(), vio.getStringValue());
+                    }
+                }
+            }
+        }
+        return params;
+    }
 
     void resumeActivityException(
-    		ProcessInstanceVO procInst,
-    		Long actInstId, BaseActivity activity, Throwable cause) {
+            ProcessInstanceVO procInst,
+            Long actInstId, BaseActivity activity, Throwable cause) {
         String compCode = null;
         try {
-			String statusMsg = buildStatusMessage(cause);
-			ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
-			String logtag = logtag(procInst.getProcessId(), procInst.getId(),
-					actInst.getDefinitionId(), actInst.getId());
-			failActivityInstance(actInst, statusMsg, procInst, logtag, "Exception in resume");
+            String statusMsg = buildStatusMessage(cause);
+            ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
+            String logtag = logtag(procInst.getProcessId(), procInst.getId(),
+                    actInst.getDefinitionId(), actInst.getId());
+            failActivityInstance(actInst, statusMsg, procInst, logtag, "Exception in resume");
             if (activity==null || !AdapterActivity.COMPCODE_AUTO_RETRY.equals(activity.getReturnCode())) {
                 DocumentReference docRef = CreateActivityExceptionDocument(procInst, actInst, activity, cause);
-				InternalEventVO outgoingMsg = InternalEventVO.createActivityErrorMessage(
-							actInst.getDefinitionId(), actInst.getId(),
-							procInst.getId(), compCode, procInst.getMasterRequestId(),
-							statusMsg, docRef.getDocumentId());
-				sendInternalEvent(outgoingMsg);
+                InternalEventVO outgoingMsg = InternalEventVO.createActivityErrorMessage(
+                            actInst.getDefinitionId(), actInst.getId(),
+                            procInst.getId(), compCode, procInst.getMasterRequestId(),
+                            statusMsg, docRef.getDocumentId());
+                sendInternalEvent(outgoingMsg);
             }
-		} catch (Exception e) {
-			logger.severeException("\n\n*****Failed in handleResumeException*****\n", e);
-		}
+        } catch (Exception e) {
+            logger.severeException("\n\n*****Failed in handleResumeException*****\n", e);
+        }
     }
 
     //////// handle process abort
@@ -1616,24 +1613,24 @@ class ProcessExecuterImpl {
         Long processOwnerId = event.getOwnerId();
         Long processInstId = event.getWorkInstanceId();
         try {
-        	if (processInstId!=null && processInstId.longValue()!=0L) {
-	        	ProcessInstanceVO pi = edao.getProcessInstance(processInstId);
-        		cancelProcessInstanceTree(pi);
-        		if (logger.isInfoEnabled()) {
-            		logger.info(logtag(pi.getProcessId(), pi.getId(), pi.getMasterRequestId()),
-            				"Process cancelled");
-            	}
-        	} else {
-	            List<ProcessInstanceVO> coll = edao.getProcessInstances(processId, processOwner, processOwnerId);
-	            if (CollectionUtil.isEmpty(coll)) {
-	                logger.info("No Process Instances for the Process and Owner");
-	                return;
-	            }
-	            for (ProcessInstanceVO pi : coll) {
-	                // there really should have only one
-	                cancelProcessInstanceTree(pi);
-	            }
-        	}
+            if (processInstId!=null && processInstId.longValue()!=0L) {
+                ProcessInstanceVO pi = edao.getProcessInstance(processInstId);
+                cancelProcessInstanceTree(pi);
+                if (logger.isInfoEnabled()) {
+                    logger.info(logtag(pi.getProcessId(), pi.getId(), pi.getMasterRequestId()),
+                            "Process cancelled");
+                }
+            } else {
+                List<ProcessInstanceVO> coll = edao.getProcessInstances(processId, processOwner, processOwnerId);
+                if (CollectionUtil.isEmpty(coll)) {
+                    logger.info("No Process Instances for the Process and Owner");
+                    return;
+                }
+                for (ProcessInstanceVO pi : coll) {
+                    // there really should have only one
+                    cancelProcessInstanceTree(pi);
+                }
+            }
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -1653,21 +1650,21 @@ class ProcessExecuterImpl {
      */
     private void cancelProcessInstanceTree(ProcessInstanceVO pi)
     throws Exception {
-    	if (pi.getStatusCode().equals(WorkStatus.STATUS_COMPLETED) ||
-    			pi.getStatusCode().equals(WorkStatus.STATUS_CANCELLED)) {
-    		throw new ProcessException("ProcessInstance is not in a cancellable state");
-    	}
-    	List<ProcessInstanceVO> childInstances = edao.getChildProcessInstances(pi.getId());
-    	for (ProcessInstanceVO child : childInstances) {
-    		if (!child.getStatusCode().equals(WorkStatus.STATUS_COMPLETED)
-    				&& !child.getStatusCode().equals(WorkStatus.STATUS_CANCELLED)) {
-    			this.cancelProcessInstanceTree(child);
-    		} else {
-    			logger.info("Descendent ProcessInstance in not in a cancellable state. ProcessInstanceId="
+        if (pi.getStatusCode().equals(WorkStatus.STATUS_COMPLETED) ||
+                pi.getStatusCode().equals(WorkStatus.STATUS_CANCELLED)) {
+            throw new ProcessException("ProcessInstance is not in a cancellable state");
+        }
+        List<ProcessInstanceVO> childInstances = edao.getChildProcessInstances(pi.getId());
+        for (ProcessInstanceVO child : childInstances) {
+            if (!child.getStatusCode().equals(WorkStatus.STATUS_COMPLETED)
+                    && !child.getStatusCode().equals(WorkStatus.STATUS_CANCELLED)) {
+                this.cancelProcessInstanceTree(child);
+            } else {
+                logger.info("Descendent ProcessInstance in not in a cancellable state. ProcessInstanceId="
                     + child.getId());
-    		}
-    	}
-    	this.cancelProcessInstance(pi);
+            }
+        }
+        this.cancelProcessInstance(pi);
     }
 
     /**
@@ -1686,70 +1683,70 @@ class ProcessExecuterImpl {
                 "ProcessInstance has been cancelled.", null);
         edao.setProcessInstanceStatus(pProcessInst.getId(), WorkStatus.STATUS_CANCELLED);
         edao.removeEventWaitForProcessInstance(pProcessInst.getId());
-		this.cancelTasksOfProcessInstance(pProcessInst);
+        this.cancelTasksOfProcessInstance(pProcessInst);
     }
 
     /////////////////////// other
 
     private void cancelTasksOfProcessInstance(ProcessInstanceVO procInst)
-    	throws NamingException, JMSException, MbengException,
-    			SQLException, ServiceLocatorException, MDWException {
-    	List<ProcessInstanceVO> processInstanceList =
-    		edao.getChildProcessInstances(procInst.getId());
-		List<Long> procInstIds = new ArrayList<Long>();
-		procInstIds.add(procInst.getId());
-		for (ProcessInstanceVO pi : processInstanceList) {
-			ProcessVO pidef = getProcessDefinition(pi);
-			if (pidef.isEmbeddedProcess()) procInstIds.add(pi.getId());
-		}
-		TaskManagerAccess.getInstance().cancelTasksOfProcessInstances(procInstIds);
+        throws NamingException, JMSException, MbengException,
+                SQLException, ServiceLocatorException, MDWException {
+        List<ProcessInstanceVO> processInstanceList =
+            edao.getChildProcessInstances(procInst.getId());
+        List<Long> procInstIds = new ArrayList<Long>();
+        procInstIds.add(procInst.getId());
+        for (ProcessInstanceVO pi : processInstanceList) {
+            ProcessVO pidef = getProcessDefinition(pi);
+            if (pidef.isEmbeddedProcess()) procInstIds.add(pi.getId());
+        }
+        TaskManagerAccess.getInstance().cancelTasksOfProcessInstances(procInstIds);
     }
 
     EventWaitInstanceVO createEventWaitInstance(
-    		Long actInstId, String pEventName, String compCode,
-    		boolean pRecurring, boolean notifyIfArrived)
+            Long actInstId, String pEventName, String compCode,
+            boolean pRecurring, boolean notifyIfArrived)
     throws DataAccessException, ProcessException {
-    	try {
-    		String FINISH = EventType.getEventTypeName(EventType.FINISH);
-    		if (compCode==null||compCode.length()==0) compCode = FINISH;
-    		EventWaitInstanceVO ret = null;
-    		Long documentId = edao.recordEventWait(pEventName,
-    				!pRecurring,
-    				3600,       // TODO set this value in designer!
-    				actInstId, compCode);
-    		if (logger.isInfoEnabled()) {
-    			logger.info("registered event wait event='"
-    					+ pEventName + "' actInst=" + actInstId
-    					+ (pRecurring?" as recurring":"as non-recurring"));
-    		}
-    		if (documentId!=null) {
-    			if (logger.isInfoEnabled()) {
-    				logger.info((notifyIfArrived?"notify":"return") +
-    						" event before registration: event='"
-    						+ pEventName + "' actInst=" + actInstId);
-    			}
-    			if (notifyIfArrived) {
-    				if (compCode.equals(FINISH)) compCode = null;
-    				ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
-    				resumeActivityInstance(actInst, compCode, documentId, null, 0);
-        			edao.removeEventWaitForActivityInstance(actInstId, "activity notified");
-    			} else {
-        			edao.removeEventWaitForActivityInstance(actInstId, "activity to notify is returned");
-    			}
-    			ret = new EventWaitInstanceVO();
-    			ret.setMessageDocumentId(documentId);
-    			ret.setCompletionCode(compCode);
-    			ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
-    			DocumentVO docvo = edao.getDocument(documentId, true);
-    			docvo.setProcessInstanceId(actInst.getOwnerId());
-    			edao.updateDocumentInfo(docvo);
-    		}
-    		return ret;
-    	} catch (MDWException e) {
-    		throw new ProcessException(-1, e.getMessage(), e);
-    	} catch (SQLException e) {
-    		throw new ProcessException(-1, e.getMessage(), e);
-    	}
+        try {
+            String FINISH = EventType.getEventTypeName(EventType.FINISH);
+            if (compCode==null||compCode.length()==0) compCode = FINISH;
+            EventWaitInstanceVO ret = null;
+            Long documentId = edao.recordEventWait(pEventName,
+                    !pRecurring,
+                    3600,       // TODO set this value in designer!
+                    actInstId, compCode);
+            if (logger.isInfoEnabled()) {
+                logger.info("registered event wait event='"
+                        + pEventName + "' actInst=" + actInstId
+                        + (pRecurring?" as recurring":"as non-recurring"));
+            }
+            if (documentId!=null) {
+                if (logger.isInfoEnabled()) {
+                    logger.info((notifyIfArrived?"notify":"return") +
+                            " event before registration: event='"
+                            + pEventName + "' actInst=" + actInstId);
+                }
+                if (notifyIfArrived) {
+                    if (compCode.equals(FINISH)) compCode = null;
+                    ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
+                    resumeActivityInstance(actInst, compCode, documentId, null, 0);
+                    edao.removeEventWaitForActivityInstance(actInstId, "activity notified");
+                } else {
+                    edao.removeEventWaitForActivityInstance(actInstId, "activity to notify is returned");
+                }
+                ret = new EventWaitInstanceVO();
+                ret.setMessageDocumentId(documentId);
+                ret.setCompletionCode(compCode);
+                ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
+                DocumentVO docvo = edao.getDocument(documentId, true);
+                docvo.setProcessInstanceId(actInst.getOwnerId());
+                edao.updateDocumentInfo(docvo);
+            }
+            return ret;
+        } catch (MDWException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        } catch (SQLException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        }
 
     }
 
@@ -1769,11 +1766,11 @@ class ProcessExecuterImpl {
      * @throws ProcessException
      */
     EventWaitInstanceVO createEventWaitInstances(Long actInstId,
-    		String[] pEventNames, String[] pWakeUpEventTypes,
-    		boolean[] pEventOccurances, boolean notifyIfArrived)
+            String[] pEventNames, String[] pWakeUpEventTypes,
+            boolean[] pEventOccurances, boolean notifyIfArrived)
     throws DataAccessException, ProcessException {
 
-    	try {
+        try {
             EventWaitInstanceVO ret = null;
             Long documentId = null;
             String pCompCode = null;
@@ -1785,25 +1782,25 @@ class ProcessExecuterImpl {
                         3600,       // TODO set this value in designer!
                         actInstId, pWakeUpEventTypes[i]);
                 if (logger.isInfoEnabled()) {
-        			logger.info("registered event wait event='"
-        					+ pEventNames[i] + "' actInst=" + actInstId
-        					+ (pEventOccurances[i]?" as recurring":"as non-recurring"));
-        		}
-               	if (documentId!=null) break;
+                    logger.info("registered event wait event='"
+                            + pEventNames[i] + "' actInst=" + actInstId
+                            + (pEventOccurances[i]?" as recurring":"as non-recurring"));
+                }
+                   if (documentId!=null) break;
             }
             if (documentId!=null) {
-            	if (logger.isInfoEnabled()) {
-    				logger.info((notifyIfArrived?"notify":"return") +
-    						" event before registration: event='"
-    						+ pEventNames[i] + "' actInst=" + actInstId);
-    			}
+                if (logger.isInfoEnabled()) {
+                    logger.info((notifyIfArrived?"notify":"return") +
+                            " event before registration: event='"
+                            + pEventNames[i] + "' actInst=" + actInstId);
+                }
                 if (pCompCode!=null && pCompCode.length()==0) pCompCode = null;
                 if (notifyIfArrived) {
-                	ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
-	                resumeActivityInstance(actInst, pCompCode, documentId, null, 0);
-        			edao.removeEventWaitForActivityInstance(actInstId, "activity notified");
+                    ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
+                    resumeActivityInstance(actInst, pCompCode, documentId, null, 0);
+                    edao.removeEventWaitForActivityInstance(actInstId, "activity notified");
                 } else {
-        			edao.removeEventWaitForActivityInstance(actInstId, "activity to notify is returned");
+                    edao.removeEventWaitForActivityInstance(actInstId, "activity to notify is returned");
                 }
                 ret = new EventWaitInstanceVO();
                 ret.setMessageDocumentId(documentId);
@@ -1814,53 +1811,53 @@ class ProcessExecuterImpl {
                 edao.updateDocumentInfo(docvo);
             }
             return ret;
-    	} catch (SQLException e) {
-    		throw new ProcessException(-1, e.getMessage(), e);
-       	} catch (MDWException e) {
-    		throw new ProcessException(-1, e.getMessage(), e);
-    	}
+        } catch (SQLException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+           } catch (MDWException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        }
     }
 
     Integer notifyProcess(String pEventName, Long pEventInstId,
-    		String message, int delay)
+            String message, int delay)
     throws DataAccessException, EventException, SQLException {
-    	List<EventWaitInstanceVO> waiters = edao.recordEventArrive(pEventName, pEventInstId);
-    	if (waiters!=null) {
-    		boolean hasFailures = false;
-    		try {
-    			for (EventWaitInstanceVO inst : waiters) {
-    				String pCompCode = inst.getCompletionCode();
-    				if (pCompCode!=null && pCompCode.length()==0) pCompCode = null;
-    				if (logger.isInfoEnabled()) {
-    					logger.info("notify event after registration: event='"
-    							+ pEventName + "' actInst=" + inst.getActivityInstanceId());
-    				}
-    				ActivityInstanceVO actInst = edao.getActivityInstance(inst.getActivityInstanceId());
-    				if (actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue()) {
-    					// assuming it is a service process waiting for message
-    					JSONObject json = new JSONObject();
-    			    	json.put("ACTION", "NOTIFY");
-    			    	json.put("CORRELATION_ID", pEventName);
-    			    	json.put("MESSAGE", message);
-    			    	internalMessenger.broadcastMessage(json.toString());
-    				} else {
-    					resumeActivityInstance(actInst, pCompCode, pEventInstId, message, delay);
-    				}
-	                // deregister wait instances
-	                edao.removeEventWaitForActivityInstance(inst.getActivityInstanceId(), "activity notified");
-	                if (pEventInstId!=null && pEventInstId.longValue()>0) {
-	                	DocumentVO docvo = edao.getDocument(pEventInstId, true);
-	                	docvo.setProcessInstanceId(actInst.getOwnerId());
-	                	edao.updateDocumentInfo(docvo);
-	                }
-    			}
-    		} catch (Exception ex) {
-    			logger.severeException(ex.getMessage(), ex);
-    			throw new EventException(ex.getMessage());
-    		}
-    		if (hasFailures) return EventInstanceVO.RESUME_STATUS_PARTIAL_SUCCESS;
-    		else return EventInstanceVO.RESUME_STATUS_SUCCESS;
-    	} else return EventInstanceVO.RESUME_STATUS_NO_WAITERS;
+        List<EventWaitInstanceVO> waiters = edao.recordEventArrive(pEventName, pEventInstId);
+        if (waiters!=null) {
+            boolean hasFailures = false;
+            try {
+                for (EventWaitInstanceVO inst : waiters) {
+                    String pCompCode = inst.getCompletionCode();
+                    if (pCompCode!=null && pCompCode.length()==0) pCompCode = null;
+                    if (logger.isInfoEnabled()) {
+                        logger.info("notify event after registration: event='"
+                                + pEventName + "' actInst=" + inst.getActivityInstanceId());
+                    }
+                    ActivityInstanceVO actInst = edao.getActivityInstance(inst.getActivityInstanceId());
+                    if (actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue()) {
+                        // assuming it is a service process waiting for message
+                        JSONObject json = new JSONObject();
+                        json.put("ACTION", "NOTIFY");
+                        json.put("CORRELATION_ID", pEventName);
+                        json.put("MESSAGE", message);
+                        internalMessenger.broadcastMessage(json.toString());
+                    } else {
+                        resumeActivityInstance(actInst, pCompCode, pEventInstId, message, delay);
+                    }
+                    // deregister wait instances
+                    edao.removeEventWaitForActivityInstance(inst.getActivityInstanceId(), "activity notified");
+                    if (pEventInstId!=null && pEventInstId.longValue()>0) {
+                        DocumentVO docvo = edao.getDocument(pEventInstId, true);
+                        docvo.setProcessInstanceId(actInst.getOwnerId());
+                        edao.updateDocumentInfo(docvo);
+                    }
+                }
+            } catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
+                throw new EventException(ex.getMessage());
+            }
+            if (hasFailures) return EventInstanceVO.RESUME_STATUS_PARTIAL_SUCCESS;
+            else return EventInstanceVO.RESUME_STATUS_SUCCESS;
+        } else return EventInstanceVO.RESUME_STATUS_NO_WAITERS;
     }
 
 
@@ -1882,9 +1879,9 @@ class ProcessExecuterImpl {
      *
      * This may be called in the following cases:
      *   1) received an external event (including the case the message is received before registration)
-     *   	In this case, the argument message is populated.
+     *       In this case, the argument message is populated.
      *   2) when register even wait instance, and the even has already arrived. In this case
-     *   	the argument message null.
+     *       the argument message null.
      *
      * @param pProcessInstId
      * @param pCompletionCode
@@ -1897,40 +1894,40 @@ class ProcessExecuterImpl {
             logger.info("ProcessInstance in NOT resumable. ProcessInstanceId:" + pi.getId());
         }
         InternalEventVO outgoingMsg = InternalEventVO.
-        	createActivityNotifyMessage(actInst, EventType.RESUME,
-        			pi.getMasterRequestId(), pCompletionCode);
-        if (documentId!=null) {		// should be always true
-        	outgoingMsg.setSecondaryOwnerType(OwnerType.DOCUMENT);
-        	outgoingMsg.setSecondaryOwnerId(documentId);
+            createActivityNotifyMessage(actInst, EventType.RESUME,
+                    pi.getMasterRequestId(), pCompletionCode);
+        if (documentId!=null) {        // should be always true
+            outgoingMsg.setSecondaryOwnerType(OwnerType.DOCUMENT);
+            outgoingMsg.setSecondaryOwnerId(documentId);
         }
         if (message!=null && message.length()<2500) {
-        	outgoingMsg.addParameter("ExternalEventMessage", message);
-    	}
+            outgoingMsg.addParameter("ExternalEventMessage", message);
+        }
         if (this.isProcessInstanceProgressable(pi)) {
             edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
         }
         if (delay>0) this.sendDelayedInternalEvent(outgoingMsg, delay,
-        		ScheduledEvent.INTERNAL_EVENT_PREFIX+actInst.getId(), false);
+                ScheduledEvent.INTERNAL_EVENT_PREFIX+actInst.getId(), false);
         else this.sendInternalEvent(outgoingMsg);
     }
 
     void sendInternalEvent(InternalEventVO event) throws MDWException {
-    	internalMessenger.sendMessage(event, edao);
+        internalMessenger.sendMessage(event, edao);
     }
 
     void sendDelayedInternalEvent(InternalEventVO event, int delaySeconds, String msgid, boolean isUpdate)
-    	throws MDWException {
-    	internalMessenger.sendDelayedMessage(event, delaySeconds, msgid, isUpdate, edao);
+        throws MDWException {
+        internalMessenger.sendDelayedMessage(event, delaySeconds, msgid, isUpdate, edao);
     }
 
     boolean isInService() {
-    	return inService;
+        return inService;
     }
 
     boolean isInMemory() {
-    	if (null != edao && edao.getPerformanceLevel() >= 9)
-    		return true;
-    	return false;
+        if (null != edao && edao.getPerformanceLevel() >= 9)
+            return true;
+        return false;
     }
 
     /**

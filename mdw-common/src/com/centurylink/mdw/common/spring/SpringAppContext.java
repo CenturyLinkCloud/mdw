@@ -36,7 +36,6 @@ import com.centurylink.mdw.variable.VariableTranslator;
 public class SpringAppContext implements CacheEnabled, CacheService {
 
     public static final String SPRING_CONTEXT_FILE = "spring/application-context.xml";
-    public static final String SPRING_CONTEXT_FILE_SLIM = "spring/application-context-slim.xml";
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -63,9 +62,7 @@ public class SpringAppContext implements CacheEnabled, CacheService {
     public synchronized ApplicationContext getApplicationContext() throws IOException {
         if (springAppContext == null) {
             String springContextFile = SPRING_CONTEXT_FILE;
-            if (isSlimConfiguration())
-                springContextFile = SPRING_CONTEXT_FILE_SLIM;
-            Resource resource = new ByteArrayResource(FileHelper.getConfigFile(springContextFile, !isSlimConfiguration()).getBytes());
+            Resource resource = new ByteArrayResource(FileHelper.getConfigFile(springContextFile, true).getBytes());
             springAppContext = new GenericXmlApplicationContext();
             springAppContext.load(resource);
             springAppContext.refresh();
@@ -73,18 +70,12 @@ public class SpringAppContext implements CacheEnabled, CacheService {
         return springAppContext;
     }
 
-    private boolean isSlimConfiguration() {
-       String contextPath = com.centurylink.mdw.common.ApplicationContext.getContextPath();
-       return contextPath.equals("/" + com.centurylink.mdw.common.ApplicationContext.getTaskManagerContextRoot())
-               && !contextPath.equals("/" + com.centurylink.mdw.common.ApplicationContext.getMdwHubContextRoot());
-    }
-
     private static Map<String,MdwCloudAppContext> packageContexts;
 
     public ApplicationContext getApplicationContext(PackageVO pkg) throws IOException {
         ApplicationContext appContext = getApplicationContext();
         if (pkg != null) {
-            if (packageContexts == null && !isSlimConfiguration()) {
+            if (packageContexts == null) {
                 packageContexts = loadPackageContexts(appContext);
             }
             MdwCloudAppContext pkgContext = packageContexts.get(pkg.getName());
@@ -176,8 +167,6 @@ public class SpringAppContext implements CacheEnabled, CacheService {
      * Prefers any non-MDW BaselineData implementation.
      */
     public BaselineData getBaselineData() {
-        if (isSlimConfiguration())
-            return new MdwBaselineData();
         try {
             List<BaselineData> baselineDatas = new ArrayList<BaselineData>();
             Map<String,? extends BaselineData> beans = getApplicationContext().getBeansOfType(BaselineData.class);

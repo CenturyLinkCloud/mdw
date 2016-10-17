@@ -22,11 +22,7 @@ dependencies {
 task checkAllowed() << {
     assert publishUser != null : "Missing property: publishUser"
     assert publishPassword != null : "Missing property: publishPassword"
-    // disallow non-snapshot archiva/nexus publish except from Jenkins
-    if (publishBaseUrl == archivaUrl || publishBaseUrl == nexusUrl) {
-        assert !mdwVersion.endsWith("SNAPSHOT")
-        assert "true".equalsIgnoreCase(System.getProperty("RUNNING_ON_BUILD_SERVER")): "Must be run from build server"
-    }
+    // TODO: disallow non-snapshot publish except from Jenkins
 }
 
 task deleteOldFeatures(type: Delete) {

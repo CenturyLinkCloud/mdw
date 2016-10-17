@@ -28,7 +28,6 @@ import org.osgi.framework.ServiceReference;
 
 import com.centurylink.mdw.common.constant.ApplicationConstants;
 import com.centurylink.mdw.common.constant.PaaSConstants;
-import com.centurylink.mdw.common.constant.PropertyGroups;
 import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.exception.StartupException;
 import com.centurylink.mdw.common.service.AwaitingStartupException;
@@ -358,6 +357,7 @@ public class ApplicationContext {
                 Manifest manifest = jarFile.getManifest();
                 mdwVersion = manifest.getMainAttributes().getValue("Bundle-Version");
                 mdwBuildTimestamp = manifest.getMainAttributes().getValue("MDW-Build");
+                jarFile.close();
             }
             else {
                 // try tomcat deploy structure
@@ -403,41 +403,10 @@ public class ApplicationContext {
     }
 
     /**
-     * Returns the MDW web app URL
-     */
-    public static String getMdwWebUrl() {
-        String url = PropertyManager.getProperty(PropertyNames.MDW_WEB_URL);
-        if (url == null)
-            url = PropertyManager.getProperty(PropertyNames.MDW_WEB_URL_OLD);
-        if (url == null) {
-            String thisServer = getServerHostPort();
-            if (isWar()) {
-                url = getMdwHubUrl();
-                if (url == null)
-                    url = "http://" + thisServer + "/mdw";
-            }
-            else
-                url = "http://" + thisServer + "/MDWWeb";
-        }
-        else if (url.endsWith("/tools")) {
-            url = url.substring(0, url.length() - 6) + getMdwWebWelcomePath();
-        }
-        if (url.endsWith("/"))
-            url = url.substring(1);
-        return url;
-    }
-
-    public static String getMdwWebWelcomePath() {
-        return "/system/systemInformation.jsf";
-    }
-
-    /**
      * Returns the web services URL
      */
     public static String getServicesUrl() {
         String servicesUrl = PropertyManager.getProperty(PropertyNames.MDW_SERVICES_URL);
-        if (servicesUrl == null)
-            servicesUrl = PropertyManager.getProperty(PropertyNames.MDW_SERVICES_URL_OLD);
         if (servicesUrl == null) {
             servicesUrl = getMdwHubUrl();
         }
@@ -450,124 +419,15 @@ public class ApplicationContext {
         return "http://" + getServerHostPort() + "/" + getServicesContextRoot();
     }
 
-    /**
-     * Returns the Task Manager URL
-     */
-    public static String getTaskManagerUrl() {
-        String url = PropertyManager.getProperty(PropertyNames.TASK_MANAGER_URL);
-        if (url == null)
-            url = PropertyManager.getProperty(PropertyNames.TASK_MANAGER_URL_OLD);
-        if (url == null) {
-            url = getMdwHubUrl();  // default to MDWHub url
-            if (url == null) {
-                String thisServer = getServerHostPort();
-                if (isWar()) {
-                    if (url == null)
-                        url = "http://" + thisServer + "/mdw";
-                }
-                else
-                    url = "http://" + thisServer + "/MDWTaskManagerWeb";
-            }
-        }
-        else if (url.endsWith("/tasks")) {
-            url = url.substring(0, url.length() - 6) + getTaskWelcomePath();
-        }
-        if (url.endsWith("/"))
-            url = url.substring(1);
-        return url;
-    }
-
     public static String getMdwHubUrl() {
         String url = PropertyManager.getProperty(PropertyNames.MDW_HUB_URL);
         if (StringHelper.isEmpty(url) || url.startsWith("@")) {
             String thisServer = getServerHostPort();
-            if (isWar())
-                url = "http://" + thisServer + "/mdw";
-            else
-                url = "http://" + thisServer + "/MDWHub";
+            url = "http://" + thisServer + "/mdw";
         }
         if (url.endsWith("/"))
             url = url.substring(1);
         return url;
-    }
-
-    /**
-     * Returns null unless Admin UI is used.
-     */
-    public static String getAdminUrl() {
-        return PropertyManager.getProperty(PropertyNames.MDW_ADMIN_URL);
-    }
-
-    public static String getAdminContextRoot() {
-        return getContextRoot(getAdminUrl());
-    }
-
-    /**
-     * mdw-hub or mdw-admin
-     */
-    public static String getTasksUi() {
-        String tasksUi = PropertyManager.getProperty(PropertyNames.MDW_TASKS_UI);
-        return tasksUi == null ? "mdw-hub" : tasksUi; // TODO: will be mdw-admin
-    }
-
-    public static String getReportsUrl() {
-        String reportsUrl = PropertyManager.getProperty(PropertyNames.MDW_REPORTS_URL);
-        if (reportsUrl == null) {
-            if (isOsgi()) {
-                String thisServer = getServerHostPort();
-                reportsUrl = "http://" + thisServer + "/MDWReports";
-            }
-            else {
-                reportsUrl = getMdwWebUrl() + "/reports/reportsList.jsf";
-            }
-        }
-        if (reportsUrl.endsWith("/"))
-            reportsUrl = reportsUrl.substring(1);
-
-        return reportsUrl;
-    }
-
-    /**
-     * Returns null unless mdw.dashboard.url property is set.
-     */
-    public static String getDashboardUrl() {
-        return PropertyManager.getProperty(PropertyNames.MDW_DASHBOARD_URL);
-    }
-
-    /**
-     * Returns null unless mdw.solutions.url property is set.
-     */
-    public static String getSolutionsUrl() {
-        return PropertyManager.getProperty(PropertyNames.MDW_SOLUTIONS_URL);
-    }
-
-    public static String getDesignerUrl() {
-        String designerRcpUrl = "Unknown";
-        try {
-            String sharePointUrl = PropertyManager.getProperty("MDWFramework.MDWWeb.ExternalLinks/MDW_SharePoint_Site");
-            if (sharePointUrl == null)
-                sharePointUrl =  PropertyManager.getProperty("MDWFramework.MDWWeb.ExternalLinks/MDW_QShare_Site"); // compatibility
-            if (sharePointUrl == null)
-                sharePointUrl = "http://cshare.ad.qintra.com/sites/MDW";
-            designerRcpUrl =  sharePointUrl + "/Developer%20Resources/Designer%20Install%20Guide.html";
-        }
-        catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-        }
-        return designerRcpUrl;
-    }
-
-    public static String getTaskWelcomePath() {
-        String path = PropertyManager.getProperty(PropertyNames.TASK_MANAGER_WELCOME_PATH);
-        if (path == null)
-            return "/facelets/tasks/myTasks.jsf";
-        else
-          return path;
-    }
-
-    public static String getHubWelcomePath() {
-        // index.html containing this redirect is wired as welcome page in mdw-hub/web.xml
-        return "/taskList/myTasks";
     }
 
     private static String getContextRoot(String url) {
@@ -577,18 +437,6 @@ public class ApplicationContext {
         if (k2<0) return "Unknown";
         int k3 = url.indexOf("/", k2+1);
         return (k3>0)?url.substring(k2+1,k3):url.substring(k2+1);
-    }
-
-    public static String getTaskManagerContextRoot() {
-        return getContextRoot(getTaskManagerUrl());
-    }
-
-    public static String getReportsContextRoot() {
-        return getContextRoot(getReportsUrl());
-    }
-
-    public static String getMdwWebContextRoot() {
-        return getContextRoot(getMdwWebUrl());
     }
 
     public static String getMdwHubContextRoot() {
@@ -613,16 +461,13 @@ public class ApplicationContext {
 
     public static String getTempDirectory() {
         String tempDir = PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR);
-        if (tempDir == null) // fall back to old property name
-            tempDir = PropertyManager.getProperty(PropertyGroups.APPLICATION_DETAILS + "/TempDir");
         if (tempDir == null)
-            tempDir = "mdw/.temp";  // backward compatibility
-
+            tempDir = "mdw/.temp";
         return tempDir;
     }
 
     public static String getRuntimeEnvironment() {
-        return System.getProperty("runtimeEnv");
+        return System.getProperty("mdw.runtime.env");
     }
 
     public static boolean isProduction() {
@@ -642,8 +487,6 @@ public class ApplicationContext {
             String devUser = PropertyManager.getProperty(PropertyNames.MDW_DEV_USER);
             if (devUser == null) // compatibility fallback
                 devUser = PropertyManager.getProperty("mdw.hub.user");
-            if (devUser == null)
-                devUser = PropertyManager.getProperty("MDWFramework.TaskManagerWeb/dev.tm.gui.user");
             return devUser;
         }
         else {
@@ -660,17 +503,8 @@ public class ApplicationContext {
         }
     }
 
-    public static boolean isOsgi() {
-        return NamingProvider.OSGI.equals(getContainerName());
-    }
-
     public static boolean isWar() {
         return NamingProvider.TOMCAT.equals(getContainerName());
-    }
-
-    public static boolean isCloud() {
-        // TODO option for cloud mode in ServiceMix
-        return isWar();
     }
 
     public static boolean isPaaS() {
@@ -785,18 +619,9 @@ public class ApplicationContext {
     private static String hubOverridePackage;
     public static String getHubOverridePackage() {
         if (hubOverridePackage == null) {
-            File assetRoot = getAssetRoot();
-            if (assetRoot == null) {
-                hubOverridePackage = "MDWHub"; // compatibility for non-vcs
-            }
-            else {
-                hubOverridePackage = PropertyManager.getProperty(PropertyNames.MDW_HUB_OVERRIDE_PACKAGE);
-                if (hubOverridePackage == null)
-                    hubOverridePackage = "mdw-hub";
-                File hubOverrideRoot = new File(assetRoot + "/" + hubOverridePackage.replace('.', '/'));
-                if (!hubOverrideRoot.exists())
-                    hubOverridePackage = "MDWHub"; // compatibility for older projects non using mdw-hub convention
-            }
+            hubOverridePackage = PropertyManager.getProperty(PropertyNames.MDW_HUB_OVERRIDE_PACKAGE);
+            if (hubOverridePackage == null)
+                hubOverridePackage = "mdw-hub";
         }
         return hubOverridePackage;
     }

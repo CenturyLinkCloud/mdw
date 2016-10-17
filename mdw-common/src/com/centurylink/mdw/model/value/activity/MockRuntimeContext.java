@@ -157,17 +157,7 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
     }
 
     @Override
-    public String getTaskManagerUrl() {
-        return null;
-    }
-
-    @Override
-    public String getMdwWebUrl() {
-        return null;
-    }
-
-    @Override
     public String getMdwVersion() {
-        return "5.5";
+        return "6.0";
     }
 }

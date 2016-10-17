@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.jar.JarFile;
 
 /**
  * Contains utility methods for validating the CLASSPATH of a runtime environment
@@ -57,48 +56,6 @@ public class ClasspathUtil
   public static String getPath()
   {
     return environmentVariable("PATH");
-  }
-
-  /**
-   * Validates the system classpath and returns directories/jars that are not found.
-   *
-   * @return invalid classpath entries
-   */
-  public static String[] validateSystemClasspath()
-  {
-    List<String> badCps = new ArrayList<String>();
-
-    String[] classlist = parseSystemClasspath();
-
-    for (int i = 0; i < classlist.length; i++)
-    {
-      if (classlist[i].trim().length() == 0)
-        continue;
-
-      File f = new File(classlist[i]);
-      if (f.isDirectory())  // valid directory
-      {
-        continue;
-      }
-      else if (f.isFile()) // valid file
-      {
-         try
-         {
-           new JarFile(f);  // valid jar file
-         }
-         catch (IOException e)
-         {
-           badCps.add(classlist[i] + " - Bad JAR or ZIP file");
-         }
-      }
-      else
-      {
-        badCps.add(classlist[i]);
-      }
-    }
-
-    String[] rtTypeAr = new String[0];
-    return badCps.toArray(rtTypeAr);
   }
 
   /**

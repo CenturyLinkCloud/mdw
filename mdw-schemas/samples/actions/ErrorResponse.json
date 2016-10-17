@@ -1,7 +1,0 @@
-{
-  status: {
-    requestId: '12345678',
-    code: 'ERR01',
-    message: 'Missing parameter: something'
-  }
-}

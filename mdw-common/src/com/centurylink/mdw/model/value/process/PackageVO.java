@@ -22,10 +22,7 @@ import com.centurylink.mdw.bpm.ProcessDefinitionDocument;
 import com.centurylink.mdw.bpm.PropertyDocument.Property;
 import com.centurylink.mdw.bpm.PropertyGroupDocument.PropertyGroup;
 import com.centurylink.mdw.cloud.CloudClassLoader;
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.Compatibility;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.provider.ProviderRegistry;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.spring.SpringAppContext;
 import com.centurylink.mdw.common.utilities.JsonUtil;
@@ -42,8 +39,6 @@ import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.event.ExternalEventVO;
 import com.centurylink.mdw.model.value.task.TaskVO;
 import com.centurylink.mdw.model.value.variable.VariableVO;
-import com.centurylink.mdw.osgi.BundleLocator;
-import com.centurylink.mdw.osgi.BundleSpec;
 
 public class PackageVO implements Serializable, Jsonable {
 
@@ -517,16 +512,7 @@ public class PackageVO implements Serializable, Jsonable {
      */
     public ClassLoader getClassLoader() {
     	if (classloader == null) {
-    	    if (ApplicationContext.isOsgi()) {
-                BundleSpec bundleSpec = getBundleSpec();
-                if (bundleSpec != null)
-        	        classloader = new BundleLocator(ApplicationContext.getOsgiBundleContext()).getClassLoader(bundleSpec);
-                if (classloader == null) {
-                    classloader = new BundleLocator(ApplicationContext.getOsgiBundleContext()).getMDWWorkflowClassLoader();
-                }
-    	    }
-            if (classloader == null)
-                classloader = getClass().getClassLoader();
+            classloader = getClass().getClassLoader();
     	}
     	return classloader;
     }
@@ -548,25 +534,17 @@ public class PackageVO implements Serializable, Jsonable {
         // try dynamic java first (preferred in case patch override is needed)
         try {
             ClassLoader parentLoader = getCloudClassLoader();
-            if (ApplicationContext.isOsgi())
-                parentLoader = ProviderRegistry.getInstance().getMdwActivityProvider().getClass().getClassLoader();
             return (GeneralActivity) CompiledJavaCache.getInstance(activity.getImplementorClassName(), parentLoader, this);
         }
         catch (ClassNotFoundException ex) {
             // not located as dynamic java
         }
         String implClass = Compatibility.getActivityImplementor(activity.getImplementorClassName());
-        if (ApplicationContext.isOsgi()) {
-            String bsn = activity.getAttribute(WorkAttributeConstant.OSGI_BSN);
-            return  ProviderRegistry.getInstance().getActivityInstance(this, implClass, bsn);
-        }
-        else if (ApplicationContext.isCloud()) {
-            GeneralActivity injected = SpringAppContext.getInstance().getActivityImplementor(implClass, this);
-            if (injected != null)
-                return injected;
-            if (getCloudClassLoader().hasClass(implClass))
-              return getCloudClassLoader().loadClass(implClass).asSubclass(GeneralActivity.class).newInstance();
-        }
+        GeneralActivity injected = SpringAppContext.getInstance().getActivityImplementor(implClass, this);
+        if (injected != null)
+            return injected;
+        if (getCloudClassLoader().hasClass(implClass))
+          return getCloudClassLoader().loadClass(implClass).asSubclass(GeneralActivity.class).newInstance();
         return getClassLoader().loadClass(implClass).asSubclass(GeneralActivity.class).newInstance();
     }
 
@@ -575,24 +553,17 @@ public class PackageVO implements Serializable, Jsonable {
         // try dynamic java first (preferred in case patch override is needed)
         try {
             ClassLoader parentLoader = getCloudClassLoader();
-            if (ApplicationContext.isOsgi())
-                parentLoader = ProviderRegistry.getInstance().getMdwEventHandlerProvider().getClass().getClassLoader();
             return (ExternalEventHandler) CompiledJavaCache.getInstance(classname, parentLoader, this);
         }
         catch (ClassNotFoundException ex) {
             // not located as dynamic java
         }
         String handlerClass = Compatibility.getEventHandler(classname);
-        if (ApplicationContext.isOsgi()) {
-            return ProviderRegistry.getInstance().getExternalEventHandlerInstance(handlerClass, content, metaInfo);
-        }
-        else if (ApplicationContext.isCloud()) {
-            ExternalEventHandler injected = SpringAppContext.getInstance().getEventHandler(handlerClass, this);
-            if (injected != null)
-                return injected;
-            if (getCloudClassLoader().hasClass(handlerClass))
-              return getCloudClassLoader().loadClass(handlerClass).asSubclass(ExternalEventHandler.class).newInstance();
-        }
+        ExternalEventHandler injected = SpringAppContext.getInstance().getEventHandler(handlerClass, this);
+        if (injected != null)
+            return injected;
+        if (getCloudClassLoader().hasClass(handlerClass))
+          return getCloudClassLoader().loadClass(handlerClass).asSubclass(ExternalEventHandler.class).newInstance();
     	return getClassLoader().loadClass(handlerClass).asSubclass(ExternalEventHandler.class).newInstance();
     }
 
@@ -631,19 +602,6 @@ public class PackageVO implements Serializable, Jsonable {
             minor = Integer.parseInt(versionString);
         }
         return major*1000 + minor;
-    }
-
-    private BundleSpec bundleSpec;
-    /**
-     * Return null if no BSN package config.
-     */
-    public BundleSpec getBundleSpec() {
-        if (bundleSpec == null && ApplicationContext.isOsgi()) {
-            String bsn = getProperty(WorkAttributeConstant.OSGI_BSN);
-            if (bsn != null)
-              bundleSpec = new BundleSpec(bsn, getProperty(WorkAttributeConstant.OSGI_BUNDLE_VERSION));
-        }
-        return bundleSpec;
     }
 
     @Override

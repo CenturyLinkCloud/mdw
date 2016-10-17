@@ -4,11 +4,9 @@
 package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.exception.ObserverException;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.model.data.work.WorkStatus;
 import com.centurylink.mdw.model.value.process.RuntimeContext;

@@ -56,14 +56,12 @@ public class JMSServices {
         queueCache = new Hashtable<String,Queue>();
         queueConnFactoryCache = new Hashtable<String,QueueConnectionFactory>();
         topicConnFactoryCache = new Hashtable<String,TopicConnectionFactory>();
-        if (ApplicationContext.isCloud()) {
-            try {
-                mdwMessageProducer = (MessageProducer) SpringAppContext.getInstance().getBean(
-                        SpringConstants.MDW_SPRING_MESSAGE_PRODUCER);
-            }
-            catch (Exception e) {
-                logger.info("Unable to get Spring bean 'messageProducer' " +e.getMessage());
-            }
+        try {
+            mdwMessageProducer = (MessageProducer) SpringAppContext.getInstance().getBean(
+                    SpringConstants.MDW_SPRING_MESSAGE_PRODUCER);
+        }
+        catch (Exception e) {
+            logger.info("Unable to get Spring bean 'messageProducer' " +e.getMessage());
         }
     }
 

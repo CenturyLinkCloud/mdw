@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.common.service.ServiceRegistry;
 
@@ -35,8 +34,6 @@ public class EventHandlerRegistry extends ServiceRegistry {
     public List<DefaultExternalEventHandler> getDefaultEventHandlers() {
         List<DefaultExternalEventHandler> eventHandlers = new ArrayList<DefaultExternalEventHandler>();
         eventHandlers.addAll(super.getDynamicServices(DefaultExternalEventHandler.class));
-        if (ApplicationContext.isOsgi())
-            eventHandlers.addAll(super.getServices(DefaultExternalEventHandler.class));
         return eventHandlers;
     }
 }

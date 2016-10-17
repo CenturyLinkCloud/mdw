@@ -3,8 +3,6 @@
  */
 package com.centurylink.mdw.services.process;
 
-import java.io.IOException;
-
 import javax.jms.JMSException;
 
 import com.centurylink.mdw.common.ApplicationContext;
@@ -30,15 +28,13 @@ public class EventServices {
     private MessageProducer mdwMessageProducer;
 
     private EventServices() {
-        if (ApplicationContext.isCloud()) {
-            try {
-                // Grab this from the context...should probably inject
-                mdwMessageProducer = (MessageProducer) SpringAppContext.getInstance().getBean(
-                        SpringConstants.MDW_SPRING_MESSAGE_PRODUCER);
-            }
-            catch (Exception e) {
-                logger.debug("Unable to get Spring bean 'messageProducer'", e.getMessage());
-            }
+        try {
+            // Grab this from the context...should probably inject
+            mdwMessageProducer = (MessageProducer) SpringAppContext.getInstance().getBean(
+                    SpringConstants.MDW_SPRING_MESSAGE_PRODUCER);
+        }
+        catch (Exception e) {
+            logger.debug("Unable to get Spring bean 'messageProducer'", e.getMessage());
         }
     }
 

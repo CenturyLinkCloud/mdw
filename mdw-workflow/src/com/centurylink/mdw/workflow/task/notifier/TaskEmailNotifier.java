@@ -3,7 +3,6 @@
  */
 package com.centurylink.mdw.workflow.task.notifier;
 
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,16 +134,11 @@ public class TaskEmailNotifier extends TemplatedNotifier {
 
             if (templatedEmail.getTemplateBody().contains("${taskActionUrl}") || templatedEmail.getTemplateBody().contains("#{taskActionUrl}")) {
 
-                // set the one-click action url
-                String oneClickTaskManagerUrl = TaskManagerAccess.getInstance().findOneClickTaskManagerUrl()
-                    + "/facelets/tasks/taskAction.jsf?taskInstanceId=" + taskInstance.getTaskInstanceId();
-
                 // send individual e-mails (not stored)
                 for (Address recip : recipients) {
                     String cuid = recip.toString().substring(0, recip.toString().indexOf('@'));
                     String userIdentifier = CryptUtil.encrypt(cuid);
                     taskInstance.setUserIdentifier(userIdentifier);
-                    emailModel.setTaskActionUrl(oneClickTaskManagerUrl + "&mdw.UserId=" + URLEncoder.encode(userIdentifier, "UTF-8"));
                     templatedEmail.setRecipients(new Address[]{recip});
                     templatedEmail.setCcRecipients(new Address[0]);
                     try {
@@ -159,7 +153,6 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                         String cuid = ccRecip.toString().substring(0, ccRecip.toString().indexOf('@'));
                         String userIdentifier = CryptUtil.encrypt(cuid);
                         taskInstance.setUserIdentifier(userIdentifier);
-                        emailModel.setTaskActionUrl(oneClickTaskManagerUrl + "&mdw.UserId=" + URLEncoder.encode(userIdentifier, "UTF-8"));
                         templatedEmail.setRecipients(new Address[0]);
                         templatedEmail.setCcRecipients(new Address[]{ccRecip});
                         try {

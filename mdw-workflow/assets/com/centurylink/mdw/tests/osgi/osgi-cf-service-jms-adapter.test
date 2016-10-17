@@ -1,7 +1,0 @@
-// osgi-cf-service-jms-adapter
-start process("JMS Adapter OSGi service") {
-    variables = [ synchronous: true,
-                  syncRequest: asset("jms_request.xml").text ]
-}    
-wait process
-verify process

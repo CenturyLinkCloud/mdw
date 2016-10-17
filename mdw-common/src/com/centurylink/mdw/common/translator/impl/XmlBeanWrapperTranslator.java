@@ -8,7 +8,6 @@ import java.lang.reflect.Constructor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.exception.TranslationException;
 import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
@@ -17,16 +16,8 @@ import com.centurylink.mdw.xml.XmlBeanWrapper;
 
 public class XmlBeanWrapperTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
-    public Object realToObject(String string) throws TranslationException {
-        return realToObject(string, ApplicationContext.isOsgi());
-    }
-
-    @Override
-    protected Object realToObject(String str, boolean tryProviders) throws TranslationException {
+    public Object realToObject(String str) throws TranslationException {
         try {
-            if (tryProviders)
-                return providerDeserialize(str);
-
             int xmlIdx = str.indexOf('<');
             String type = str.substring(0, xmlIdx).trim();
             if (Compatibility.hasCodeSubstitutions())

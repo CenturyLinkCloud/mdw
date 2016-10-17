@@ -9,7 +9,6 @@ import java.util.Iterator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.exception.TranslationException;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
@@ -20,16 +19,8 @@ public class JsonableTranslator extends DocumentReferenceTranslator implements J
 
     public static final String TYPE = "_type";
 
-    public Object realToObject(String string) throws TranslationException {
-        return realToObject(string, ApplicationContext.isOsgi());
-    }
-
-    @Override
-    protected Object realToObject(String str, boolean tryProviders) throws TranslationException {
+    public Object realToObject(String str) throws TranslationException {
         try {
-            if (tryProviders)
-                return providerDeserialize(str);
-
             JSONObject json = new JSONObject(str);
             return createJsonable(json);
         }
@@ -77,14 +68,9 @@ public class JsonableTranslator extends DocumentReferenceTranslator implements J
 
         }
         catch (ClassNotFoundException cnfe) {
-            if (ApplicationContext.isCloud()) {
-                clazz = CompiledJavaCache
-                        .getResourceClass(type, getClass().getClassLoader(), getPackage())
-                        .asSubclass(Jsonable.class);
-            }
-            else {
-                throw cnfe;
-            }
+            clazz = CompiledJavaCache
+                    .getResourceClass(type, getClass().getClassLoader(), getPackage())
+                    .asSubclass(Jsonable.class);
         }
         Constructor<? extends Jsonable> ctor = clazz.getConstructor(JSONObject.class);
         Iterator<?> keys = json.keys();

@@ -230,8 +230,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
             valueExpressionMap = new HashMap<String,ValueExpression>();
             valueExpressionMap.put("context", new ValueExpressionLiteral(this, Object.class));
             valueExpressionMap.put("masterRequestId", new ValueExpressionLiteral(getMasterRequestId(), String.class));
-            valueExpressionMap.put("mdwWebUrl", new ValueExpressionLiteral(ApplicationContext.getMdwWebUrl(), String.class));
-            valueExpressionMap.put("mdwTaskManagerUrl", new ValueExpressionLiteral(ApplicationContext.getTaskManagerUrl(), String.class));
+            valueExpressionMap.put("mdwHubUrl", new ValueExpressionLiteral(ApplicationContext.getMdwHubUrl(), String.class));
             valueExpressionMap.put("processInstanceId", new ValueExpressionLiteral(this.getProcessInstanceId(), String.class));
             valueExpressionMap.put("processName", new ValueExpressionLiteral(this.processVO.getProcessName(), String.class));
             valueExpressionMap.put("process", new ValueExpressionLiteral(this.processInstanceVO, Object.class));
@@ -261,20 +260,8 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
         return ApplicationContext.getMdwHubUrl();
     }
 
-    public String getAdminUrl() {
-        return ApplicationContext.getAdminUrl();
-    }
-
     public String getServicesUrl() {
         return ApplicationContext.getServicesUrl();
-    }
-
-    public String getTaskManagerUrl() {
-        return ApplicationContext.getTaskManagerUrl();
-    }
-
-    public String getMdwWebUrl() {
-        return ApplicationContext.getMdwWebUrl();
     }
 
     public String getMdwVersion() {

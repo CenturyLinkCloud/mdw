@@ -1,6 +1,0 @@
-{
-  "attributes": {"OsgiBundleSymbolicName": {"OsgiBundleSymbolicName": "com.centurylink.mdw.workflow"}},
-  "name": "com.centurylink.mdw.bam",
-  "schemaVersion": "5.5",
-  "version": "5.5.38"
-}

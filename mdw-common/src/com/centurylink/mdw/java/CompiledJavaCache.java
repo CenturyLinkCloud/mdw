@@ -39,14 +39,11 @@ import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.DynamicJavaServiceRegistry;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.XmlService;
-import com.centurylink.mdw.common.utilities.ClasspathUtil;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.osgi.BundleSpec;
-import com.centurylink.mdw.osgi.OsgiClasspath;
 
 /**
  * Compiles and caches java asset classes, and provides a class-loading mechanism to allow these assets
@@ -190,7 +187,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
 
     public static Class<?> getClass(ClassLoader parentLoader, PackageVO currentPackage, String className, String javaCode, boolean cache)
     throws ClassNotFoundException, IOException, MdwJavaException {
-        ClassCacheKey key = new ClassCacheKey(className, parentLoader, currentPackage == null ? null : currentPackage.getBundleSpec());
+        ClassCacheKey key = new ClassCacheKey(className, parentLoader);
         Class<?> clazz = cache ? compiledCache.get(key) : null;
         if (clazz == null) {
             try {
@@ -239,7 +236,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
             List<Class<?>> classes = compileJava(parentLoader, currentPackage, javaSources, cache);
             if (cache) {
                 for (Class<?> clazz : classes) {
-                    ClassCacheKey key = new ClassCacheKey(clazz.getName(), parentLoader, currentPackage == null ? null : currentPackage.getBundleSpec());
+                    ClassCacheKey key = new ClassCacheKey(clazz.getName(), parentLoader);
                     key.compiled = new Date();
                     synchronized (compiledCache) {
                         compiledCache.remove(key); // needs to be removed since it may have been added by the classloader
@@ -271,7 +268,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
             // inner class -- check previously loaded
             synchronized (compiledCache) {
                 for (ClassCacheKey key : compiledCache.keySet()) {
-                    if (key.equals(new ClassCacheKey(className, parentLoader, currentPackage == null ? null : currentPackage.getBundleSpec()))) {
+                    if (key.equals(new ClassCacheKey(className, parentLoader))) {
                         Class<?> clazz = compiledCache.get(key);
                         try {
                             return clazz.getClassLoader().loadClass(className);
@@ -513,26 +510,15 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
 
     private static volatile Map<CompilerClasspathKey,String> compilerClasspaths = Collections.synchronizedMap(new HashMap<CompilerClasspathKey,String>());
     public static String getJavaCompilerClasspath(ClassLoader parentLoader, PackageVO packageVO) throws IOException {
-        BundleSpec bundleSpec = packageVO.getBundleSpec();
-        CompilerClasspathKey key = new CompilerClasspathKey(parentLoader, bundleSpec);
+        CompilerClasspathKey key = new CompilerClasspathKey(parentLoader);
         String classpath = compilerClasspaths.get(key);
         if (classpath == null) {
             synchronized(compilerClasspaths) {
                 classpath = compilerClasspaths.get(key);
                 if (classpath == null) {
-                    if (ApplicationContext.isOsgi()) {
-                        OsgiClasspath osgiCp = new OsgiClasspath(parentLoader, bundleSpec, packageVO == null ? null : packageVO.getCloudClassLoader());
-                        osgiCp.read();
-                        classpath = osgiCp.toString();
-                    }
-                    else if (ApplicationContext.isCloud()) {
-                        CloudClasspath cloudClsPath = new CloudClasspath(packageVO == null ? null : packageVO.getCloudClassLoader());
-                        cloudClsPath.read();
-                        classpath = cloudClsPath.toString();
-                    }
-                    else {
-                        classpath = ClasspathUtil.getCompilerClasspath(parentLoader);
-                    }
+                    CloudClasspath cloudClsPath = new CloudClasspath(packageVO == null ? null : packageVO.getCloudClassLoader());
+                    cloudClsPath.read();
+                    classpath = cloudClsPath.toString();
                     compilerClasspaths.put(key, classpath);
                 }
             }
@@ -620,18 +606,16 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
         private String className;
         private ClassLoader parentLoader;
         public ClassLoader getParentLoader() { return parentLoader; }
-        private BundleSpec bundleSpec;
         private Date compiled;
         public Date getCompiled() { return compiled; }
 
-        public ClassCacheKey(String className, ClassLoader parentLoader, BundleSpec bundleSpec) {
+        public ClassCacheKey(String className, ClassLoader parentLoader) {
             this.className = className;
             this.parentLoader = parentLoader;
-            this.bundleSpec = bundleSpec;
         }
 
         public String toString() {
-            return className + " w/parentLoader: " + parentLoader + " (" + bundleSpec + ")";
+            return className + " w/parentLoader: " + parentLoader;
         }
 
         public boolean equals(Object other) {
@@ -647,15 +631,13 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
 
     static class CompilerClasspathKey {
         private ClassLoader parentLoader;
-        private BundleSpec bundleSpec;
 
-        CompilerClasspathKey(ClassLoader parentLoader, BundleSpec bundleSpec) {
+        CompilerClasspathKey(ClassLoader parentLoader) {
             this.parentLoader = parentLoader;
-            this.bundleSpec = bundleSpec;
         }
 
         public String toString() {
-            return "parentLoader: " + parentLoader + " (" + bundleSpec + ")";
+            return "parentLoader: " + parentLoader;
         }
 
         public boolean equals(Object other) {
@@ -685,7 +667,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
                 logger.mdwDebug("findClass(): " + name);
             Class<?> cl = null;
             // check the cache first
-            ClassCacheKey key = new ClassCacheKey(name, this.getParent(), packageVO == null ? null : packageVO.getBundleSpec());
+            ClassCacheKey key = new ClassCacheKey(name, this.getParent());
             cl = compiledCache.get(key);
             if (cl == null) {
                 JavaFileObject jfo = MdwJavaFileManager.getJavaFileObject(name);
@@ -730,14 +712,14 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
         private String cnfeMsg(String className) {
             String msg = className + " with Parent ClassLoader: " + getParent();
             if (packageVO != null)
-                msg += "\nand Workflow Package: " + packageVO.getLabel() + " (BundleSpec: " + packageVO.getBundleSpec() + ", ClassLoader: " + packageVO.getClassLoader() + ")";
+                msg += "\nand Workflow Package: " + packageVO.getLabel() + " (ClassLoader: " + packageVO.getClassLoader() + ")";
             return msg;
         }
 
         public String toString() {
             String str = getClass().getName() + " with parent " + getParent();
             if (packageVO != null)
-                str += "\nand Workflow Package: " + packageVO.getLabel() + " (BundleSpec: " + packageVO.getBundleSpec() + ", ClassLoader: " + packageVO.getClassLoader() + ")";
+                str += "\nand Workflow Package: " + packageVO.getLabel() + " (ClassLoader: " + packageVO.getClassLoader() + ")";
             return str;
         }
 

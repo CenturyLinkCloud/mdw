@@ -8,11 +8,9 @@ import javax.naming.NamingException;
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.constant.ApplicationConstants;
 import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.container.NamingProvider;
 
 public class MessengerFactory {
 
@@ -86,30 +84,7 @@ public class MessengerFactory {
      * For Tomcat: rmi://host:port
      */
 	public static String getEngineUrl() throws NamingException {
-		String containerName = ApplicationContext.getContainerName();
-
-		if (ApplicationContext.isOsgi() || ApplicationContext.isCloud())
-		    return ApplicationContext.getMdwWebUrl() + "/Services/REST";
-
-		String url;
-		if (internalMessenger.equals(JMS)) {
-			url = "t3://" + ApplicationContext.getServerHostPort();
-			// TODO for ActiveMQ
-		} else if (internalMessenger.equals(RMI)) {
-			if (NamingProvider.TOMCAT.equals(containerName)) {
-				url = "rmi://" + ApplicationContext.getServerHostPort();
-			} else {
-				throw new NamingException("getEngineUrl is not implemented for " + containerName);
-				// TODO for JBoss
-			}
-		} else {	// for both HTTP and SAME_SERVER
-			String hostport = ApplicationContext.getServerHostPort();
-			if (ApplicationContext.getMdwWebContextRoot().equals(serviceContext))
-			    url = "http://" + hostport + serviceContext;
-			else
-			    url = "http://" + hostport + serviceContext + "/listener";
-		}
-		return url;
+		return ApplicationContext.getMdwHubUrl() + "/services";
 	}
 
 	/**

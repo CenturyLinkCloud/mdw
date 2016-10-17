@@ -55,19 +55,4 @@ public class TaskAttributeConstant  {
      public static final String TASK_JSONNAME = "Task";
      public static final String LOGICAL_ID = "logicalId";
      public static final String TASK_LOGICAL_ID = "TaskLogicalId";
-
-     public static final String HTML5_RENDERING = "HTML5";
-     public static final String COMPATIBILITY_RENDERING = "Compatibility";
-
-     public static final String TASK_INSTANCE_ID_PARAM = "taskInstanceId";
-     public static final String TASK_DETAIL_PATH = "taskDetail/";
-     public static final String TASK_DETAIL_COMPATIBILITY_PATH = "facelets/tasks/taskDetail.jsf?" + TASK_INSTANCE_ID_PARAM + "=";
-     public static final String MY_TASKS_PATH = "tasks/myTasks.jsf"; // TODO just plain myTasks
-     public static final String MY_TASKS_PATH_COMPATIBILITY = "facelets/tasks/myTasks.jsf";
-     public static final String TABBED_PAGE_PARAM = "tmTabbedPage";
-     public static final String MY_TASKS_TAB = TABBED_PAGE_PARAM + "=myTasksTab";
-     public static final String WORKGROUP_TASKS_TAB = TABBED_PAGE_PARAM + "=workgroupTasksTab";
-     public static final String PAGE_PARAM = "pageName";
-     public static final String PAGE_PATH = "page/";
-     public static final String PAGE_COMPATIBILITY_PATH = "page.jsf?" + PAGE_PARAM + "=";
 }

@@ -1,1 +1,0 @@
-Files here are copied during the build from MDWWeb.

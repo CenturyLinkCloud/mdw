@@ -2,12 +2,13 @@
 <projectDescription>
 	<name>mdw</name>
 	<comment></comment>
-  <projects>
-    <project>mdw-admin</project>
-  </projects>
-	<buildSpec>
-	</buildSpec>
-  <natures>
-    <nature>org.springsource.ide.eclipse.gradle.core.nature</nature>
-  </natures>
+	<projects>
+		<project>mdw-common</project>
+		<project>mdw-services</project>
+		<project>mdw-workflow</project>
+		<project>mdw-hub</project>
+	</projects>
+	<natures>
+		<nature>org.springsource.ide.eclipse.gradle.core.nature</nature>
+	</natures>
 </projectDescription>

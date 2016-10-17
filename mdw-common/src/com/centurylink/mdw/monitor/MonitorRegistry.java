@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.common.service.ServiceRegistry;
 
@@ -39,24 +38,18 @@ public class MonitorRegistry extends ServiceRegistry {
     public List<ProcessMonitor> getProcessMonitors() {
         List<ProcessMonitor> processMonitors = new ArrayList<ProcessMonitor>();
         processMonitors.addAll(super.getDynamicServices(ProcessMonitor.class));
-        if (ApplicationContext.isOsgi())
-            processMonitors.addAll(super.getServices(ProcessMonitor.class));
         return processMonitors;
     }
 
     public List<ActivityMonitor> getActivityMonitors() {
         List<ActivityMonitor> activityMonitors = new ArrayList<ActivityMonitor>();
         activityMonitors.addAll(super.getDynamicServices(ActivityMonitor.class));
-        if (ApplicationContext.isOsgi())
-            activityMonitors.addAll(super.getServices(ActivityMonitor.class));
         return activityMonitors;
     }
 
     public List<AdapterMonitor> getAdapterMonitors() {
         List<AdapterMonitor> adapterMonitors =  new ArrayList<AdapterMonitor>();
         adapterMonitors.addAll(super.getDynamicServices(AdapterMonitor.class));
-        if (ApplicationContext.isOsgi())
-            adapterMonitors.addAll(super.getServices(AdapterMonitor.class));
         return adapterMonitors;
     }
 
@@ -66,8 +59,6 @@ public class MonitorRegistry extends ServiceRegistry {
     public List<ServiceMonitor> getServiceMonitors() {
         List<ServiceMonitor> serviceMonitors = new ArrayList<ServiceMonitor>();
         serviceMonitors.addAll(getDynamicServices(ServiceMonitor.class));
-        if (ApplicationContext.isOsgi())
-            serviceMonitors.addAll(getServices(ServiceMonitor.class));
         return serviceMonitors;
     }
 }

@@ -40,7 +40,7 @@ public class ClearTrustAuthenticator implements Authenticator {
                     appName = ApplicationContext.getApplicationName();
                 String applmode = appProp.getStringProperty(PropertyGroups.APPLICATION_DETAILS, "EnvironmentName");
                 if (applmode == null)
-                  applmode = System.getProperty("runtimeEnv");
+                  applmode = ApplicationContext.getRuntimeEnvironment();
                 if (applmode.equals("dev") || applmode.equals("prod"))
                     ctMode = applmode;
                 else

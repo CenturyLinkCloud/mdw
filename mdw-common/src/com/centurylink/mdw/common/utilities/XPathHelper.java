@@ -19,34 +19,38 @@ import org.w3c.dom.NodeList;
 
 import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.common.translator.impl.DomDocumentTranslator;
+import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.variable.DocumentVO;
 import com.centurylink.mdw.xml.DomHelper;
 
 /**
- * Facilitates xpath-based reads and updates of a document variable
- * via expressions within JSF facelet pages.  For java.lang.Object type
- * documents, the de-serialized content is simply stored in memory;
+ * Facilitates xpath-based reads and updates of a document variable via
+ * expressions. For java.lang.Object type documents,
+ * the de-serialized content is simply stored in memory;
  */
-public class XPathHelper
-{
+public class XPathHelper {
+
+    private PackageVO pkg;
+
+    public XPathHelper(PackageVO pkg) {
+        this.pkg = pkg;
+    }
+
     private DocumentVO documentVO;
-    public String getType()
-    {
+
+    public String getType() {
         return documentVO.getDocumentType();
     }
 
-    public Object getObject()
-    {
-        return documentVO.getObject(getType());
+    public Object getObject() {
+        return documentVO.getObject(getType(), pkg);
     }
 
-    public XPathHelper(DocumentVO documentVO)
-    {
+    public XPathHelper(DocumentVO documentVO) {
         this.documentVO = documentVO;
     }
 
-    public XPathHelper(DocumentVO documentVO, XPathHelper parent)
-    {
+    public XPathHelper(DocumentVO documentVO, XPathHelper parent) {
         this(documentVO);
         this.parent = parent;
     }
@@ -56,66 +60,61 @@ public class XPathHelper
     }
 
     private XPathHelper parent;
-    public XPathHelper getParent() { return parent; }
 
-    public boolean isJavaObject()
-    {
+    public XPathHelper getParent() {
+        return parent;
+    }
+
+    public boolean isJavaObject() {
         return documentVO.getDocumentType().equals(Object.class.getName());
     }
 
-    public boolean isJaxbElement()
-    {
+    public boolean isJaxbElement() {
         return documentVO.getDocumentType().equals("javax.xml.bind.JAXBElement");
     }
 
-    public boolean isXml()
-    {
-        return DocumentReferenceTranslator.isXmlDocumentTranslator(getType());
+    public boolean isXml() {
+        return DocumentReferenceTranslator.isXmlDocumentTranslator(pkg, getType());
     }
 
-    public boolean isDomDocument()
-    {
+    public boolean isDomDocument() {
         return documentVO.getDocumentType().equals(Document.class.getName());
     }
 
-    public boolean isXmlBean()
-    {
+    public boolean isXmlBean() {
         return documentVO.getDocumentType().equals(XmlObject.class.getName());
     }
 
-
-
     /**
-     * Retrieves the value of a document element or attribute as a String.
-     * If multiple matches are found or the match has children, will return a List<XPathHelper>.
-     * @param xpath the expression indicating the document location
-     * @return a String, List<XPathHelper>, or null depending on how many matches are found
+     * Retrieves the value of a document element or attribute as a String. If
+     * multiple matches are found or the match has children, will return a List
+     * <XPathHelper>.
+     *
+     * @param xpath
+     *            the expression indicating the document location
+     * @return a String, List<XPathHelper>, or null depending on how many
+     *         matches are found
      */
 
-    public Object peekDom(Document doc, String xpathExpr) throws Exception
-    {
+    public Object peekDom(Document doc, String xpathExpr) throws Exception {
         XPathFactory xPathfactory = XPathFactory.newInstance();
         XPath xpath = xPathfactory.newXPath();
         xpath.setNamespaceContext(new UniversalNamespaceCache(doc, false));
         XPathExpression expr = xpath.compile(xpathExpr);
-        NodeList nodeList = (NodeList)expr.evaluate(doc, XPathConstants.NODESET);
-        if (nodeList == null || nodeList.getLength() == 0)
-        {
+        NodeList nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        if (nodeList == null || nodeList.getLength() == 0) {
             return null;
         }
-        else if (nodeList.getLength() == 1)
-        {
+        else if (nodeList.getLength() == 1) {
             Node node = nodeList.item(0);
             if (node instanceof Attr)
-                return ((Attr)node).getValue();
+                return ((Attr) node).getValue();
             else
                 return node.getChildNodes().item(0).getNodeValue();
         }
-        else
-        {
+        else {
             List<XPathHelper> childDocs = new ArrayList<XPathHelper>();
-            for (int i = 0; i < nodeList.getLength(); i++)
-            {
+            for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
                 DocumentVO docVO = new DocumentVO();
                 docVO.setObject(DomHelper.toDomDocument(node));
@@ -127,13 +126,10 @@ public class XPathHelper
     }
 
     @Override
-    public boolean equals(Object other)
-    {
-        if (other instanceof XPathHelper)
-        {
-            XPathHelper otherDoc = (XPathHelper)other;
-            if (otherDoc.getType().equals(this.getType()))
-            {
+    public boolean equals(Object other) {
+        if (other instanceof XPathHelper) {
+            XPathHelper otherDoc = (XPathHelper) other;
+            if (otherDoc.getType().equals(this.getType())) {
                 if (otherDoc.isJavaObject())
                     return otherDoc.getObject().equals(getObject());
                 else
@@ -144,10 +140,9 @@ public class XPathHelper
         return false;
     }
 
-    public String toString()
-    {
+    public String toString() {
         if (isXmlBean())
-            return ((XmlObject)getObject()).xmlText();
+            return ((XmlObject) getObject()).xmlText();
         else if (isDomDocument())
             return new DomDocumentTranslator().realToString(getObject());
         else
@@ -157,8 +152,7 @@ public class XPathHelper
     /**
      * Backward compatibility.
      */
-    public String getXmlText()
-    {
+    public String getXmlText() {
         return toString();
     }
 }

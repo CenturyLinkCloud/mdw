@@ -1,38 +1,22 @@
-version = "${mdwVersion}"
-
 task buildAll(type: GradleBuild) {
     buildFile = "build.gradle"
     tasks = ["build"]
 }
 
-task publishArchiva(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["publishBuild"]
-    startParameter.projectProperties = [publishBaseUrl: archivaUrl, publishUser: archivaUser, publishPassword: archivaPassword ]
+task cleanAll(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["clean"]
 }
 
-task publishNexus(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["publishBuild"]
-    startParameter.projectProperties = [publishBaseUrl: nexusUrl, publishUser: nexusUser, publishPassword: nexusPassword ]
+task packageSourcesAll(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["sourcesJar"]
 }
 
 task publishMdw(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["publishBuild"]
     startParameter.projectProperties = [publishBaseUrl: mdwMavenRepoUrl, publishUser: mdwMavenUser, publishPassword: mdwMavenPassword ]
-}
-
-task publishArchivaSnapshot(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["publishBuild"]
-    startParameter.projectProperties = [publishBaseUrl: archivaSnapshotUrl, publishUser: archivaUser, publishPassword: archivaPassword ]
-}
-
-task publishNexusSnapshot(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["publishBuild"]
-    startParameter.projectProperties = [publishBaseUrl: nexusSnapshotUrl, publishUser: nexusUser, publishPassword: nexusPassword ]
 }
 
 task publishMdwSnapshot(type: GradleBuild) {
@@ -42,37 +26,78 @@ task publishMdwSnapshot(type: GradleBuild) {
 }
 
 task publishSnapshot {
-    dependsOn(publishNexusSnapshot, publishArchivaSnapshot, publishMdwSnapshot)
+    dependsOn(publishMdwSnapshot)
 }
 
 task publishFormal {
-    dependsOn(publishNexus, publishArchiva, publishMdw)
+    dependsOn(publishMdw)
 }
 
-// deploy a build for testing on lxdenvmtc143
-task deployTomcatMdwAdminDev(type: GradleBuild) {
-    buildFile = "deploy.gradle"
-    tasks = ["deployMdwAdmin"]
-    startParameter.projectProperties = [deployWarDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw/webapps",
-                                        tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw/bin",
-                                        testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8989/mdw/Services/AppSummary"]
+subprojects {
+    apply plugin: "java"
+    
+    sourceCompatibility = 1.7
+    version = "${mdwVersion}"
+
+    libsDirName = "../../${mdwOutputDir}"
+
+    sourceSets {
+        main {
+            java {
+                srcDir "src"
+            }
+            output.classesDir = "build/classes"
+        }
+    }
+    
+    repositories {
+        maven {
+            url devRepoUrl
+        }
+    }
+    
+    // copy into output dir rather than including directly in jar
+    // this works better in local development where deployment happens from build/classes
+    task copyMeta(type: Copy) {
+        from("src") {
+            include "META-INF/mdw/**"
+            include "META-INF/spring/**"
+            exclude "META-INF/**/.metadata"
+            exclude "META-INF/**/.*ignore"
+        }
+        into sourceSets.main.output.classesDir
+    }
+    
+    processResources {
+        dependsOn copyMeta
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = "sources"
+        from sourceSets.main.allSource
+        exclude "META-INF"
+        exclude "**/.metadata/"
+        exclude "**/.*ignore"
+    }    
 }
 
-// temporary tasks until we move to GitHub
-task copyToFramework(type: Copy) {
-    dependsOn ":mdw-admin:copyToFramework"
-    from(".") {
-        exclude ".git/"
-        exclude ".gradle/"
-    }
-    into "${mdwFrameworkDir}/../mdw"
+task cleanJavadocs(type: Delete) {
+    delete "../mdw-hub/web/javadoc"
 }
-// should be run from MDW workspace (not mdw6)
-task copyToMdw6(type: Copy) {
-    dependsOn ":mdw-admin:copyToMdw6"
-    from(".") {
-        exclude ".git/"
-        exclude ".gradle/"
-    }
-    into "../../mdw6/mdw"
+
+task javadocs(type: Javadoc) {
+    dependsOn "cleanJavadocs"
+    source subprojects.collect {project -> project.sourceSets.main.java }
+    classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath})
+    title = "MDW 6 API JavaDocs"
+    maxMemory = "256m"
+    options.links "http://docs.oracle.com/javase/7/docs/api/"
+    options.bottom "<i>Copyright &#169; 2016 CenturyLink, Inc.</i>"
+    destinationDir = file('../mdw-hub/web/javadoc')
+}
+
+task versions << {
+    println "Java Version: " + System.getProperty("java.version")
+    println GradleVersion.current().prettyPrint()
+    println "MDW Version: ${mdwVersion}"
 }

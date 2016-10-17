@@ -13,7 +13,6 @@ import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.exception.TranslationException;
 import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.java.CompiledJavaCache;
@@ -21,16 +20,7 @@ import com.centurylink.mdw.java.MdwJavaException;
 
 public class JavaObjectTranslator extends DocumentReferenceTranslator {
 
-    public Object realToObject(String string) throws TranslationException {
-        return realToObject(string, ApplicationContext.isOsgi());
-    }
-
-    @Override
-    protected Object realToObject(String str, boolean tryProviders) throws TranslationException {
-
-        if (tryProviders)
-            return providerDeserialize(str);
-
+    public Object realToObject(String str) throws TranslationException {
         ObjectInputStream ois = null;
         try {
             byte[] decoded = decodeBase64(str);
@@ -40,25 +30,20 @@ public class JavaObjectTranslator extends DocumentReferenceTranslator {
                 return ois.readObject();
             }
             catch (ClassNotFoundException ex) {
-                if (ApplicationContext.isCloud()) {
-                    ois.close();
-                    bais = new ByteArrayInputStream(decoded);
-                    ois = new ObjectInputStream(bais) {
-                        @Override
-                        protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-                            try {
-                                return CompiledJavaCache.getResourceClass(desc.getName(), getClass().getClassLoader(), getPackage());
-                            }
-                            catch (MdwJavaException ex) {
-                                throw new ClassNotFoundException(desc.getName(), ex);
-                            }
+                ois.close();
+                bais = new ByteArrayInputStream(decoded);
+                ois = new ObjectInputStream(bais) {
+                    @Override
+                    protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+                        try {
+                            return CompiledJavaCache.getResourceClass(desc.getName(), getClass().getClassLoader(), getPackage());
                         }
-                    };
-                    return ois.readObject();
-                }
-                else {
-                    throw ex;
-                }
+                        catch (MdwJavaException ex) {
+                            throw new ClassNotFoundException(desc.getName(), ex);
+                        }
+                    }
+                };
+                return ois.readObject();
             }
         }
         catch (Throwable t) {  // including NoClassDefFoundError

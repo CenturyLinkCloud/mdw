@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.model.data.monitor.ScheduledJob;
 
 public class MdwServiceRegistry extends ServiceRegistry {
@@ -83,8 +82,6 @@ public class MdwServiceRegistry extends ServiceRegistry {
     public List<RequestRoutingStrategy> getRequestRoutingStrategies() {
         List<RequestRoutingStrategy> requestRoutingStrategies = new ArrayList<RequestRoutingStrategy>();
         requestRoutingStrategies.addAll(getDynamicServices(RequestRoutingStrategy.class));
-        if (ApplicationContext.isOsgi())
-            requestRoutingStrategies.addAll(getServices(RequestRoutingStrategy.class));
 
         // Now sort them based on strategy's priority - Strategies with lower Priority values get used first
         List<RequestRoutingStrategy> requestRoutingStrategiesPrioritized = new ArrayList<RequestRoutingStrategy>();

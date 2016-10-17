@@ -328,8 +328,6 @@ public final class FileHelper {
             file = new File(configDir + filepath);
         else
             file = new File(configDir + "/" + filepath);
-        if (!file.exists() && ApplicationContext.isOsgi())  // for OSGi try etc directory before classpath
-            file = new File("etc/" + filepath);
         if (file.exists()) {
             logger.info("Located configuration file: " + file.getAbsolutePath());
             return new FileInputStream(file);
@@ -457,47 +455,53 @@ public final class FileHelper {
             throw new IOException("Destination directory does not exist: " + destDir);
 
         ZipFile zip = new ZipFile(zipFile);
-        if (baseLoc != null && !baseLoc.endsWith("/"))
-            baseLoc += "/";
+        try {
+            if (baseLoc != null && !baseLoc.endsWith("/"))
+                baseLoc += "/";
 
-        Enumeration<? extends ZipEntry> entries = zip.entries();
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
+            Enumeration<? extends ZipEntry> entries = zip.entries();
 
-            if ((baseLoc == null || (entry.getName().startsWith(baseLoc) && !entry.getName().equals(baseLoc)))
-                    && (excludes == null || !excludes.contains(entry.getName()))) {
-                // write the file
-                String outpath = destDir + "/";
-                if (baseLoc == null)
-                    outpath += entry.getName();
-                else
-                    outpath += entry.getName().substring(baseLoc.length());
-                File outfile = new File(outpath);
-                if (outfile.exists() && !overwrite)
-                    throw new IOException("Output file already exists: " + outfile);
-                if (entry.isDirectory()) {
-                    if (!outfile.exists() && !outfile.mkdirs())
-                        throw new IOException("Unable to create directory: " + outfile);
-                }
-                else {
-                    InputStream is = null;
-                    OutputStream os = null;
-                    try {
-                        is = zip.getInputStream(entry);
-                        os = new FileOutputStream(outfile);
-                        int read = 0;
-                        byte[] bytes = new byte[1024];
-                        while((read = is.read(bytes)) != -1)
-                            os.write(bytes, 0, read);
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+
+                if ((baseLoc == null || (entry.getName().startsWith(baseLoc) && !entry.getName().equals(baseLoc)))
+                        && (excludes == null || !excludes.contains(entry.getName()))) {
+                    // write the file
+                    String outpath = destDir + "/";
+                    if (baseLoc == null)
+                        outpath += entry.getName();
+                    else
+                        outpath += entry.getName().substring(baseLoc.length());
+                    File outfile = new File(outpath);
+                    if (outfile.exists() && !overwrite)
+                        throw new IOException("Output file already exists: " + outfile);
+                    if (entry.isDirectory()) {
+                        if (!outfile.exists() && !outfile.mkdirs())
+                            throw new IOException("Unable to create directory: " + outfile);
                     }
-                    finally {
-                        if (is != null)
-                            is.close();
-                        if (os != null)
-                          os.close();
+                    else {
+                        InputStream is = null;
+                        OutputStream os = null;
+                        try {
+                            is = zip.getInputStream(entry);
+                            os = new FileOutputStream(outfile);
+                            int read = 0;
+                            byte[] bytes = new byte[1024];
+                            while((read = is.read(bytes)) != -1)
+                                os.write(bytes, 0, read);
+                        }
+                        finally {
+                            if (is != null)
+                                is.close();
+                            if (os != null)
+                              os.close();
+                        }
                     }
                 }
             }
+        }
+        finally {
+            zip.close();
         }
     }
 

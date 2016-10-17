@@ -11,21 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
-import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.event.ExternalEventHandler;
 import com.centurylink.mdw.java.CompiledJavaCache;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.osgi.BundleSpec;
-import com.centurylink.mdw.osgi.ProviderLocator;
 import com.centurylink.mdw.variable.VariableTranslator;
 
 public class ProviderRegistry {
@@ -169,182 +163,7 @@ public class ProviderRegistry {
         }
     }
 
-    public Provider<GeneralActivity> getMdwActivityProvider() {
-        List<Provider<GeneralActivity>> providers = getProviders(ActivityProvider.class);
-        for (Provider<GeneralActivity> activityProvider : providers) {
-            if ("mdwActivities".equals(activityProvider.getAlias()))
-                return activityProvider;
-        }
-        return null;
-    }
-
-    public GeneralActivity getActivityInstance(PackageVO packageVO, String className, String activityBsn)
-    throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        BundleSpec bundleSpec = packageVO == null ? null : packageVO.getBundleSpec();
-        if (bundleSpec == null && activityBsn != null)
-            bundleSpec = new BundleSpec(activityBsn);
-        GeneralActivity found = getActivityInstance0(packageVO, className, bundleSpec);
-        if (found == null && bundleSpec != null) {
-            // activity BSN can fallback to any available
-            logger.warn("No activity found for '" + className + "' with bundleSpec=" + bundleSpec + ".  Using any available.");
-            found = getActivityInstance0(packageVO, className, null);
-        }
-        return found;
-    }
-
-    private GeneralActivity getActivityInstance0(PackageVO packageVO, String className, BundleSpec bundleSpec)
-    throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        List<Provider<GeneralActivity>> providers = getProviders(ActivityProvider.class);
-        GeneralActivity pkgAwareActivity = null;
-        GeneralActivity activity = null;
-        String latestMatchingVer = bundleSpec == null ? null : new ProviderLocator<GeneralActivity>(providers).getLatestMatchingBundleVersion(bundleSpec);
-
-        for (Provider<GeneralActivity> provider : providers) {
-            Bundle bundle = provider.getBundleContext().getBundle();
-            if (bundleSpec == null || "com.centurylink.mdw.workflow".equals(bundle.getSymbolicName()) || (bundleSpec.meetsSpec(bundle) && bundle.getVersion().toString().equals(latestMatchingVer))) {
-                try {
-                    if (provider instanceof PackageAwareProvider) {
-                        if (pkgAwareActivity == null)
-                            pkgAwareActivity = ((PackageAwareProvider<GeneralActivity>)provider).getInstance(packageVO, className);
-                    }
-                    else {
-                        if (activity == null)
-                            activity = provider.getInstance(className);
-                    }
-                }
-                catch (ClassNotFoundException ex) {
-                    // not located by this provider
-                }
-            }
-        }
-
-        // prefer PackageAware
-        if (pkgAwareActivity != null) {
-            if (logger.isMdwDebugEnabled())
-                logger.mdwDebug("Activity: " + className + " provided by ClassLoader: " + pkgAwareActivity.getClass().getClassLoader());
-            return pkgAwareActivity;
-        }
-
-        if (activity != null && logger.isMdwDebugEnabled())
-            logger.mdwDebug("Activity: " + className + " provided by ClassLoader: " + activity.getClass().getClassLoader());
-
-        return activity;
-    }
-
-    public Provider<ExternalEventHandler> getMdwEventHandlerProvider() {
-        List<Provider<ExternalEventHandler>> providers = getProviders(EventHandlerProvider.class);
-        for (Provider<ExternalEventHandler> eventHandlerProvider : providers) {
-            if ("mdwEventHandlers".equals(eventHandlerProvider.getAlias()))
-                return eventHandlerProvider;
-        }
-        return null;
-    }
-
-    public ExternalEventHandler getExternalEventHandlerInstance(String className, Object content, Map<String,String> metaInfo)
-    throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        List<Provider<ExternalEventHandler>> providers = getProviders(EventHandlerProvider.class);
-        ExternalEventHandler contentAwareHandler = null;
-        ExternalEventHandler handler = null;
-        for (Provider<ExternalEventHandler> provider : providers) {
-            try {
-                if (provider instanceof ContentAwareProvider) {
-                    if (contentAwareHandler == null) {
-                        contentAwareHandler = ((ContentAwareProvider<ExternalEventHandler>)provider).getInstance(metaInfo, content, className);
-                        if (contentAwareHandler != null) {
-                            String bundleLabel = provider.getBundleContext() == null ? "null" : provider.getBundleContext().getBundle().getSymbolicName();
-                            logger.debug("EventHandler: " + className + " provided by ContentAware Bundle: " + bundleLabel);
-                        }
-                    }
-                }
-                else {
-                    if (handler == null)
-                        handler = provider.getInstance(className);
-                }
-            }
-            catch (ClassNotFoundException ex) {
-                // not located by this provider
-            }
-        }
-        // prefer ContentAware
-        if (contentAwareHandler != null) {
-            if (logger.isMdwDebugEnabled())
-                logger.mdwDebug("EventHandler: " + className + " provided by ContentAware ClassLoader: " + contentAwareHandler.getClass().getClassLoader());
-            return contentAwareHandler;
-        }
-
-        if (handler != null && logger.isMdwDebugEnabled())
-            logger.mdwDebug("EventHandler: " + className + " provided by ClassLoader: " + handler.getClass().getClassLoader());
-
-        return handler;
-    }
-
-    public Provider<VariableTranslator> getMdwVariableTranslatorProvider() {
-        List<Provider<VariableTranslator>> providers = getProviders(VariableTranslatorProvider.class);
-        for (Provider<VariableTranslator> variableTranslatorProvider : providers) {
-            if ("mdwVariableTranslators".equals(variableTranslatorProvider.getAlias()))
-                return variableTranslatorProvider;
-        }
-        return null;
-    }
-
-    /**
-     * Does not support VersionAware.
-     */
-    public VariableTranslator getVariableTranslator(String className)
-    throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        return getVariableTranslator(null, className);
-    }
-
-    public VariableTranslator getVariableTranslator(PackageVO packageVO, String className)
-    throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        BundleSpec bundleSpec = packageVO == null ? null : packageVO.getBundleSpec();
-        VariableTranslator found = getVariableTranslator0(packageVO, className, bundleSpec);
-        if (found == null && bundleSpec != null) {
-            logger.mdwDebug("No variable translator found for '" + className + "' with bundleSpec=" + bundleSpec + ".  Using any available.");
-            found = getVariableTranslator0(packageVO, className, null);
-        }
-        return found;
-    }
-
-    private VariableTranslator getVariableTranslator0(PackageVO packageVO, String className, BundleSpec bundleSpec)
-    throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        VariableTranslator pkgAwareTranslator = null;
-        VariableTranslator translator = null;
-        List<Provider<VariableTranslator>> providers = getProviders(VariableTranslatorProvider.class);
-
-        String latestMatchingVer = bundleSpec == null ? null : new ProviderLocator<VariableTranslator>(providers).getLatestMatchingBundleVersion(bundleSpec);
-        for (Provider<VariableTranslator> provider : providers) {
-            Bundle bundle = provider.getBundleContext().getBundle();
-            if (bundleSpec == null || "com.centurylink.mdw.workflow".equals(bundle.getSymbolicName()) || (bundleSpec.meetsSpec(bundle) && bundle.getVersion().toString().equals(latestMatchingVer))) {
-                try {
-                    if (provider instanceof PackageAwareProvider) {
-                        if (pkgAwareTranslator == null)
-                            pkgAwareTranslator = ((PackageAwareProvider<VariableTranslator>)provider).getInstance(packageVO, className);
-                    }
-                    else {
-                        if (translator == null)
-                            translator = provider.getInstance(className);
-                    }
-                }
-                catch (ClassNotFoundException ex) {
-                    // not located by this provider
-                }
-            }
-        }
-        // prefer PackageAware
-        if (pkgAwareTranslator != null) {
-            if (logger.isMdwDebugEnabled())
-                logger.mdwDebug("VariableTranslator: " + className + " provided by ClassLoader: " + pkgAwareTranslator.getClass().getClassLoader());
-            return pkgAwareTranslator;
-        }
-
-        if (translator != null && logger.isMdwDebugEnabled())
-            logger.mdwDebug("VariableTranslator: " + className + " provided by ClassLoader: " + translator.getClass().getClassLoader());
-
-        return translator;
-    }
-
-    /**
+        /**
      * @param serviceInterface
      * @param className
      */
@@ -390,6 +209,7 @@ public class ProviderRegistry {
         }
         return list;
     }
+
     /**
      * To get dynamic java variable translator
      * @param translatorClass

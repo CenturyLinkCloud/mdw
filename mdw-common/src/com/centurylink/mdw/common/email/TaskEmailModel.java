@@ -13,7 +13,6 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.model.data.task.TaskState;
 import com.centurylink.mdw.model.data.task.TaskStates;
@@ -39,12 +38,10 @@ public class TaskEmailModel implements TemplatedEmail.Model {
         this.taskInstance = new TaskInstanceVO();
         taskInstance.setTaskName(taskInstanceJson.getString("taskName"));
         taskInstance.setTaskInstanceId(taskInstanceJson.getLong("taskInstanceId"));
-        boolean compatRenderer = taskInstanceJson.has("renderer") && TaskAttributeConstant.COMPATIBILITY_RENDERING.equals(taskInstanceJson.getString("renderer"));
-        String baseUrl = (compatRenderer ? ApplicationContext.getTaskManagerUrl() : ApplicationContext.getMdwHubUrl());
+        String baseUrl = ApplicationContext.getMdwHubUrl();
         if (!baseUrl.endsWith("/"))
           baseUrl += "/";
-        String tdPath = compatRenderer ? TaskAttributeConstant.TASK_DETAIL_COMPATIBILITY_PATH : TaskAttributeConstant.TASK_DETAIL_PATH;
-        String taskInstUrl = baseUrl + tdPath + taskInstance.getTaskInstanceId() + (compatRenderer ? "&" : "?");
+        String taskInstUrl = baseUrl + "#/tasks/" + taskInstance.getTaskInstanceId();
         taskInstance.setTaskInstanceUrl(taskInstUrl);
         taskInstance.setMasterRequestId(taskInstanceJson.getString("masterRequestId"));
         if (taskInstanceJson.has("startDate"))

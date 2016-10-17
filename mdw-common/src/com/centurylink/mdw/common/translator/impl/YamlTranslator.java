@@ -16,7 +16,6 @@ import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.representer.Representer;
 
 import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument;
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.exception.TranslationException;
 import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
@@ -30,37 +29,25 @@ import com.centurylink.mdw.model.ExecutionPlan;
  */
 public class YamlTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
-    public Object realToObject(String string) throws TranslationException {
-        return realToObject(string, ApplicationContext.isOsgi());
-    }
-
-    protected Object realToObject(String str, boolean tryProviders) throws TranslationException {
+    public Object realToObject(String str) throws TranslationException {
         try {
-            if (tryProviders)
-                return providerDeserialize(str);
-
             Representer representer = new Representer();
             representer.getPropertyUtils().setSkipMissingProperties(true);
             try {
                 return new Yaml(representer).load(str);
             }
             catch (ConstructorException ex) {
-                if (ApplicationContext.isCloud()) {
-                    Yaml yaml = new Yaml(new Constructor() {
-                        protected Class<?> getClassForName(String name) throws ClassNotFoundException {
-                            try {
-                                return CompiledJavaCache.getResourceClass(name, getClass().getClassLoader(), getPackage());
-                            }
-                            catch (Exception ex) {
-                                throw new ClassNotFoundException(name, ex);
-                            }
+                Yaml yaml = new Yaml(new Constructor() {
+                    protected Class<?> getClassForName(String name) throws ClassNotFoundException {
+                        try {
+                            return CompiledJavaCache.getResourceClass(name, getClass().getClassLoader(), getPackage());
                         }
-                    }, representer);
-                    return yaml.load(str);
-                }
-                else {
-                    throw ex;
-                }
+                        catch (Exception ex) {
+                            throw new ClassNotFoundException(name, ex);
+                        }
+                    }
+                }, representer);
+                return yaml.load(str);
             }
         }
         catch (Exception e) {
