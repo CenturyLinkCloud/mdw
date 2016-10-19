@@ -337,7 +337,7 @@ public class ApplicationContext {
                     jarFilePath = "/" + jarFilePath;
                 JarFile jarFile = new JarFile(new File(jarFilePath));
                 Manifest manifest = jarFile.getManifest();
-                mdwVersion = manifest.getMainAttributes().getValue("Bundle-Version");
+                mdwVersion = manifest.getMainAttributes().getValue("MDW-Version");
                 mdwBuildTimestamp = manifest.getMainAttributes().getValue("MDW-Build");
                 jarFile.close();
             }
