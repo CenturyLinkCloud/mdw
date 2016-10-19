@@ -89,7 +89,6 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
      * To load all the dynamic java Registered services classes
      * @param string
      */
-    @SuppressWarnings("deprecation")
     private void loadDynamicJavaRegisteredServices() {
         Map<PackageVO,Map<String,String>> packagedJava = new HashMap<PackageVO,Map<String,String>>();
         try {
@@ -125,29 +124,17 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
                     for (Class<?> clazz : classes) {
                         RegisteredService registeredService = clazz.getAnnotation(RegisteredService.class);
                         if (registeredService == null) {
-                            // compatibility for deprecated RegisteredService interface
-                            com.centurylink.mdw.common.service.utilities.RegisteredService oldRegisteredService =
-                                    clazz.getAnnotation(com.centurylink.mdw.common.service.utilities.RegisteredService.class);
-                            if (oldRegisteredService != null) {
-                                for (int i = 0; i < oldRegisteredService.value().length; i++) {
-                                    String serviceName = oldRegisteredService.value()[i].getName();
-                                    logger.warn("Deprecated @RegisteredService (use com.centurylink.mdw.annotations.RegisteredService): " + serviceName + " Class: " + clazz);
-                                    DynamicJavaServiceRegistry.addRegisteredService(serviceName, clazz.getName());
+                            // jax-rs services, and swagger Apis
+                            Path pathAnnotation = clazz.getAnnotation(Path.class);
+                            if (pathAnnotation != null) {
+                                String resourcePath = pathAnnotation.value() == null ? clazz.getPackage().getName() + "/" + clazz.getSimpleName() : pathAnnotation.value();
+                                if (JsonService.class.isAssignableFrom(clazz)) {
+                                    logger.info("Dynamic Java JAX-RS JSON Service: " + clazz);
+                                    DynamicJavaServiceRegistry.addRegisteredService(JsonService.class.getName(), clazz.getName(), resourcePath);
                                 }
-                            }
-                            else {
-                                // jax-rs services, and swagger Apis
-                                Path pathAnnotation = clazz.getAnnotation(Path.class);
-                                if (pathAnnotation != null) {
-                                    String resourcePath = pathAnnotation.value() == null ? clazz.getPackage().getName() + "/" + clazz.getSimpleName() : pathAnnotation.value();
-                                    if (JsonService.class.isAssignableFrom(clazz)) {
-                                        logger.info("Dynamic Java JAX-RS JSON Service: " + clazz);
-                                        DynamicJavaServiceRegistry.addRegisteredService(JsonService.class.getName(), clazz.getName(), resourcePath);
-                                    }
-                                    else if (XmlService.class.isAssignableFrom(clazz)) {
-                                        logger.info("Dynamic Java JAX-RS XML Service: " + clazz);
-                                        DynamicJavaServiceRegistry.addRegisteredService(XmlService.class.getName(), clazz.getName(), resourcePath);
-                                    }
+                                else if (XmlService.class.isAssignableFrom(clazz)) {
+                                    logger.info("Dynamic Java JAX-RS XML Service: " + clazz);
+                                    DynamicJavaServiceRegistry.addRegisteredService(XmlService.class.getName(), clazz.getName(), resourcePath);
                                 }
                             }
                         }

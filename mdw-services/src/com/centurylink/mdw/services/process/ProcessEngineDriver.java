@@ -726,7 +726,8 @@ public class ProcessEngineDriver {
             String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
     	ProcessVO procdef = getProcessDefinition(processId);
     	Long startActivityId = procdef.getStartActivity().getActivityId();
-        if (masterRequestId==null) masterRequestId = Long.toString(System.currentTimeMillis());
+        if (masterRequestId == null)
+            masterRequestId = genMasterRequestId();
         ProcessInstanceVO mainProcessInst = engine.createProcessInstance(
         		processId, ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
     			masterRequestId, parameters);
@@ -856,7 +857,8 @@ public class ProcessEngineDriver {
     	EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
 		InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
 		// do not set internal messenger with cache options, as this engine does not process it directly
-        if (masterRequestId==null) masterRequestId = Long.toString(System.currentTimeMillis());
+        if (masterRequestId == null)
+            masterRequestId = genMasterRequestId();
         ProcessExecuter engine = new ProcessExecuter(edao, msgBroker, false);
         ProcessInstanceVO processInst = engine.createProcessInstance(processId,
         		ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
@@ -896,7 +898,8 @@ public class ProcessEngineDriver {
     	EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
 		InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         Long procInstId;
-        if (masterRequestId==null) masterRequestId = Long.toString(System.currentTimeMillis());
+        if (masterRequestId == null)
+            masterRequestId = genMasterRequestId();
         ProcessExecuter engine = new ProcessExecuter(edao, msgBroker, false);
         ProcessInstanceVO processInst = engine.createProcessInstance(
         		procdef.getProcessId(), ownerType, ownerId, null, null,
@@ -973,5 +976,9 @@ public class ProcessEngineDriver {
     	if (procinst.isNewEmbedded())
     		procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
     	return procdef;
+    }
+
+    private String genMasterRequestId() {
+        return Long.toHexString(System.nanoTime());
     }
 }

@@ -64,10 +64,7 @@ public class RequestServicesImpl implements RequestServices {
 
     public Request getMasterRequest(String masterRequestId) throws ServiceException {
         try {
-           Request masterRequest = getDAO().getMasterRequest(masterRequestId, true, false);
-           if (masterRequest == null)
-               throw new ServiceException(ServiceException.NOT_FOUND, "Master request not found: " + masterRequestId);
-           return masterRequest;
+           return getDAO().getMasterRequest(masterRequestId, true, false);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Failed to get masterRequestId: " + masterRequestId, ex);

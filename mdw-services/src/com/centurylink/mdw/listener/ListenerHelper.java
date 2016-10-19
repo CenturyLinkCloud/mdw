@@ -22,6 +22,8 @@ import com.centurylink.mdw.common.cache.impl.PackageVOCache;
 import com.centurylink.mdw.common.constant.FormConstants;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.exception.MDWException;
+import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
@@ -263,6 +265,9 @@ public class ListenerHelper {
                 return response;
             }
         }
+        catch (ServiceException ex) {
+              return createServiceResponse(ex, metaInfo);
+        }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
@@ -348,6 +353,9 @@ public class ListenerHelper {
                 createResponseDocument(altResponse == null ? response: altResponse, eeid, procInstId);
             }
             return response;
+        }
+        catch (ServiceException ex) {
+            return createServiceResponse(ex, metaInfo);
         }
         catch (Exception e) {
             logger.severeException("Exception in ListenerHelper.processEvent()", e);
@@ -520,6 +528,18 @@ public class ListenerHelper {
         if (msg == null)
             msg = e.getClass().getName();
         return createStandardResponse(code, msg, requestId);
+    }
+
+    public String createServiceResponse(ServiceException ex, Map<String,String> headers) {
+        String contentType = headers.get(Listener.METAINFO_CONTENT_TYPE);
+        if (contentType == null)
+            contentType = headers.get(Listener.METAINFO_CONTENT_TYPE.toLowerCase());
+        StatusMessage statusMsg = new StatusMessage(ex.getErrorCode(), ex.getMessage());
+        headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getErrorCode()));
+        if (Listener.CONTENT_TYPE_XML.equals(contentType))
+            return statusMsg.toXml();
+        else
+            return statusMsg.toJson();
     }
 
     /**
