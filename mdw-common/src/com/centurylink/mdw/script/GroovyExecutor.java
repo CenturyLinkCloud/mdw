@@ -157,7 +157,10 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
                 initializeScriptLibraries();
                 initializeDynamicJavaAssets();
                 String[] rootDirs = new String[] { getRootDir() };
-                scriptEngine = new GroovyScriptEngine(rootDirs);
+                if (ApplicationContext.isWar() && PackageVOCache.getPackage(PackageVO.MDW + ".base").getCloudClassLoader() != null)
+                    scriptEngine = new GroovyScriptEngine(rootDirs, PackageVOCache.getPackage(PackageVO.MDW + ".base").getCloudClassLoader());
+                else
+                    scriptEngine = new GroovyScriptEngine(rootDirs);
                 // clear the cached library versions
                 scriptEngine.getGroovyClassLoader().clearCache();
                 timer.stopAndLogTiming("");
