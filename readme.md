@@ -23,6 +23,11 @@
    Right-click in Git Repositories View and select "Paste Repository Path or URI" with the repo URL in your clipboard buffer.
  - Import the project into your Eclipse workspace:  
    File > Import > General > Existing Projects into Workspace
+2b. Install NPM and BOWER (One-time step)
+ - Open cmd prompt
+ - cd to mdw-hub project directory
+ - type npm install
+ - type bower install
 3. Build the Project
  - Window > Show View > Other > Gradle (STS) > Gradle Tasks
    Select the mdw project and double-click the "buildAll" task
