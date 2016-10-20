@@ -165,6 +165,13 @@ public class RestServlet extends HttpServlet {
         if (metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null)
             response.setStatus(Integer.parseInt(metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE)));
 
+        // TODO: more general way to handle response headers
+        // tomcat changes all header keys to lower case
+        if (metaInfo.containsKey(Listener.METAINFO_MASTER_REQUEST_ID))
+            response.setHeader(Listener.METAINFO_MASTER_REQUEST_ID, metaInfo.get(Listener.METAINFO_MASTER_REQUEST_ID));
+        if (metaInfo.containsKey(Listener.METAINFO_CORRELATION_ID))
+            response.setHeader(Listener.METAINFO_CORRELATION_ID, metaInfo.get(Listener.METAINFO_CORRELATION_ID));
+
         response.getOutputStream().print(responseString);
         timer.stopAndLogTiming("");
     }

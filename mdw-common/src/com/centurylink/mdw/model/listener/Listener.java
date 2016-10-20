@@ -21,8 +21,7 @@ public interface Listener {
     public static final String METAINFO_EVENT_MESSAGE = "EventMessage";
     public static final String METAINFO_EVENT_ID = "EventID";
     public static final String METAINFO_DOCUMENT_ID = "DocumentID";
-//    public static final String METAINFO_EVENT_INSTANCE_ID = METAINFO_DOCUMENT_ID;
-    public static final String METAINFO_CORRELATION_ID = "CorrelationID";
+    public static final String METAINFO_CORRELATION_ID = "CorrelationId";
     public static final String METAINFO_HEX_CORRELATION_ID = "HexadecimalCorrelationID";
     public static final String METAINFO_MASTER_REQUEST_ID = "MasterRequestID";
     public static final String METAINFO_REQUEST_CATEGORY = "RequestCategory";

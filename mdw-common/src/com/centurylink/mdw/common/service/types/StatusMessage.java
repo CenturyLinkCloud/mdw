@@ -32,6 +32,12 @@ public class StatusMessage extends XmlBeanWrapper implements Jsonable {
         fromXml(statusXml);
     }
 
+    public StatusMessage(int code, String message) {
+        super(MDWStatusMessageDocument.Factory.newInstance());
+        setCode(code);
+        setMessage(message);
+    }
+
     public StatusMessage(JSONObject jsonObj) throws JSONException, XmlException {
         this();
         JSONObject status = jsonObj.getJSONObject("status");
@@ -134,5 +140,13 @@ public class StatusMessage extends XmlBeanWrapper implements Jsonable {
 
     @ApiModelProperty(hidden=true)
     public String getJsonName() { return "status"; }
+
+    public String toXml() {
+        return getXml();
+    }
+
+    public String toJson() {
+        return "{\n  \"status\": {\n    \"code\": " + getCode() + ",\n    \"message\": \"" + getMessage() + "\"\n  }\n}";
+    }
 
 }

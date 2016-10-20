@@ -1,0 +1,19 @@
+authExclusions:
+  - /login.html
+  - /error.html
+  - /offline.html
+  - /sysInfo.html
+  - /images/
+  - /css/
+  - /doc/
+  - /javadoc/
+  - /filepanel/
+  - /services/
+  - /Services/
+  - /api/
+headers:
+  - X-UA-Compatible=IE=Edge
+options:
+  - timedResponses=true
+  - showHeaders=true
+  - showParameters=true

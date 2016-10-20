@@ -8,11 +8,6 @@ task cleanAll(type: GradleBuild) {
     tasks = ["clean"]
 }
 
-task packageSourcesAll(type: GradleBuild) {
-    buildFile = "build.gradle"
-    tasks = ["sourcesJar"]
-}
-
 task publishMdw(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["publishBuild"]
@@ -83,6 +78,11 @@ subprojects {
 
 task cleanJavadocs(type: Delete) {
     delete "../mdw-hub/web/javadoc"
+}
+
+task packageSources(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["sourcesJar"]
 }
 
 task javadocs(type: Javadoc) {

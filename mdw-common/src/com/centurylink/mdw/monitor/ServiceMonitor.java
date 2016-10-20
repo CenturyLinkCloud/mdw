@@ -6,6 +6,7 @@ package com.centurylink.mdw.monitor;
 import java.util.Map;
 
 import com.centurylink.mdw.common.service.RegisteredService;
+import com.centurylink.mdw.common.service.ServiceException;
 
 /**
  * ServiceMonitors can be registered through @RegisteredService annotations to intercept
@@ -23,7 +24,7 @@ public interface ServiceMonitor extends RegisteredService {
      * @param headers Incoming protocol header values.  May be modified by the monitor.
      * @return null, or an alternative request that should be passed on instead of the incoming request
      */
-    public Object onRequest(Object request, Map<String,String> headers);
+    public Object onRequest(Object request, Map<String,String> headers) throws ServiceException;
 
     /**
      * Called after onRequest(), but before the appropriate handler is determined.
@@ -34,7 +35,7 @@ public interface ServiceMonitor extends RegisteredService {
      * @param headers protocol headers
      * @return null, or an alternative response to send back to the service consumer
      */
-    public Object onHandle(Object request, Map<String,String> headers);
+    public Object onHandle(Object request, Map<String,String> headers) throws ServiceException;
 
     /**
      * Called before the response is sent out from the MDW event handler or camel route.
@@ -44,7 +45,7 @@ public interface ServiceMonitor extends RegisteredService {
      * @param headers Outbound protocol header values.  May be modified by the monitor.
      * @return null, or an alternative response to send back to the service consumer.
      */
-    public Object onResponse(Object response, Map<String,String> headers);
+    public Object onResponse(Object response, Map<String,String> headers) throws ServiceException;
 
     /**
      * @param t Throwable error that was encountered
