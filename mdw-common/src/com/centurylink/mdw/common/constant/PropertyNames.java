@@ -5,73 +5,73 @@ package com.centurylink.mdw.common.constant;
 
 public class PropertyNames {
 
-	// logging
-	public static final String MDW_LOGGING_LEVEL = "mdw.logging.level";
-	public static final String MDW_LOGGING_FILE = "mdw.logging.file";
-	public static final String MDW_LOGGING_DIR = "mdw.logging.dir";
-	public static final String MDW_LOGGING_WATCHER = "mdw.logging.watcher";	// used internally, set by regression tester "<host>:<port>:<timeout>";
-	// container service providers
-	public static final String MDW_CONTAINER_DATASOURCE_PROVIDER= "mdw.container.datasource_provider";
-	public static final String MDW_CONTAINER_JMS_PROVIDER= "mdw.container.jms_provider";
-	public static final String MDW_CONTAINER_MESSENGER= "mdw.container.messenger";	// jms or rmi
-	public static final String MDW_CONTAINER_THREADPOOL_PROVIDER= "mdw.container.threadpool_provider";
-	// database
-	public static final String MDW_DB_URL = "mdw.database.url";
-	public static final String MDW_DB_USERNAME = "mdw.database.username";
-	public static final String MDW_DB_PASSWORD = "mdw.database.password";
-	public static final String MDW_DB_VERSION = "mdw.database.version";
-	public static final String MDW_DB_VERSION_SUPPORTED = "mdw.database.version.supported";		// lowest version supported
-	public static final String MDW_DB_POOLSIZE = "mdw.database.poolsize";
-	public static final String MDW_DB_BORROW_TIMEOUT = "mdw.database.borrow.timeout";	// seconds; 0 - block indefinitely, -1 - fail right away
-	public static final String MDW_DB_TRACE = "mdw.database.trace";		// none, query, timing
-	// for embedded db
-	public static final String MDW_DB_BASE_LOC = "mdw.db.base.location";
-	public static final String MDW_DB_DATA_LOC = "mdw.db.data.location";
-	public static final String MDW_DB_EMBEDDED_HOST_PORT = "mdw.db.embedded.server";
+    // logging
+    public static final String MDW_LOGGING_LEVEL = "mdw.logging.level";
+    public static final String MDW_LOGGING_FILE = "mdw.logging.file";
+    public static final String MDW_LOGGING_DIR = "mdw.logging.dir";
+    public static final String MDW_LOGGING_WATCHER = "mdw.logging.watcher"; // used internally, set by regression tester "<host>:<port>:<timeout>";
+    // container service providers
+    public static final String MDW_CONTAINER_DATASOURCE_PROVIDER= "mdw.container.datasource_provider";
+    public static final String MDW_CONTAINER_JMS_PROVIDER= "mdw.container.jms_provider";
+    public static final String MDW_CONTAINER_MESSENGER= "mdw.container.messenger";  // jms or rmi
+    public static final String MDW_CONTAINER_THREADPOOL_PROVIDER= "mdw.container.threadpool_provider";
+    // database
+    public static final String MDW_DB_URL = "mdw.database.url";
+    public static final String MDW_DB_USERNAME = "mdw.database.username";
+    public static final String MDW_DB_PASSWORD = "mdw.database.password";
+    public static final String MDW_DB_VERSION = "mdw.database.version";
+    public static final String MDW_DB_VERSION_SUPPORTED = "mdw.database.version.supported";     // lowest version supported
+    public static final String MDW_DB_POOLSIZE = "mdw.database.poolsize";
+    public static final String MDW_DB_BORROW_TIMEOUT = "mdw.database.borrow.timeout";   // seconds; 0 - block indefinitely, -1 - fail right away
+    public static final String MDW_DB_TRACE = "mdw.database.trace";     // none, query, timing
+    // for embedded db
+    public static final String MDW_DB_BASE_LOC = "mdw.db.base.location";
+    public static final String MDW_DB_DATA_LOC = "mdw.db.data.location";
+    public static final String MDW_DB_EMBEDDED_HOST_PORT = "mdw.db.embedded.server";
 
-	// file system
+    // file system
     public static final String MDW_FS_USER = "mdw.file.system.user";
     public static final String MDW_FS_PASSWORD = "mdw.file.system.password";
     public static final String MDW_MAX_UPLOAD_BYTES = "mdw.max.upload.bytes";
 
-	// task manager
-	public static final String MDW_TASKMANAGER_REMOTE_JNDI = "mdw.taskmanager.remote.jndi";
-	public static final String MDW_TASKMANAGER_REMOTE_QUEUENAME = "mdw.taskmanager.remote.queuename";
-	public static final String MDW_TASKMANAGER_REMOTE_AUTH = "mdw.taskmanager.remote.authorization";
-	public static final String MDW_TASKMANAGER_REMOTE_SUMMARY = "mdw.taskmanager.remote.summary";
+    // task manager
+    public static final String MDW_TASKMANAGER_REMOTE_JNDI = "mdw.taskmanager.remote.jndi";
+    public static final String MDW_TASKMANAGER_REMOTE_QUEUENAME = "mdw.taskmanager.remote.queuename";
+    public static final String MDW_TASKMANAGER_REMOTE_AUTH = "mdw.taskmanager.remote.authorization";
+    public static final String MDW_TASKMANAGER_REMOTE_SUMMARY = "mdw.taskmanager.remote.summary";
     public static final String MDW_TASKMANAGER_REMOTE_DETAIL = "mdw.taskmanager.remote.detail";
     public static final String MDW_TASKMANAGER_INCLUDED_REQUEST_PARAMS = "mdw.taskmanager.included.request.params";
     public static final String MDW_WELCOME_PAGE = "mdw.welcome.page";
-	// form
-	public static final String MDW_FORM_USE_MDWWEB = "mdw.form.use.mdwweb";
-	public static final String MDW_FORM_USE_INTERNAL_RESOURCE_ONLY = "mdw.form.use.internal_resource_only";
-	public static final String MDW_FORM_ACTION_PACKAGE = "mdw.form.action.package";	// java package name of all form actions
-	public static final String MDW_FORM_TEMPLATE_CLASSIC_TASK = "mdw.form.template.classic_task";
-	public static final String MDW_FORM_SERVER = "mdw.form.server";
-	// thread pool
-	public static final String MDW_THREADPOOL_CORE_THREADS = "mdw.threadpool.core_threads";
-	public static final String MDW_THREADPOOL_MAX_THREADS = "mdw.threadpool.max_threads";
-	public static final String MDW_THREADPOOL_QUEUE_SIZE = "mdw.threadpool.queue_size";
-	public static final String MDW_THREADPOOL_KEEP_ALIVE = "mdw.threadpool.keep_alive";
-	public static final String MDW_THREADPOOL_TERMINATION_TIMEOUT = "mdw.threadpool.termination_timeout";
-	public static final String MDW_THREADPOOL_WORKER = "mdw.threadpool.worker";	// prefix, add <worker_name>.min_threads/max_threads
-	// jms listener
-	public static final String MDW_JMS_LISTENER_POLL_INTERVAL = "mdw.jms.listener.poll.interval";
-	public static final String MDW_JMS_LISTENER_RECEIVE_TIMEOUT = "mdw.jms.listener.receive.timeout";
-	public static final int MDW_JMS_LISTENER_POLL_INTERVAL_DEFAULT = 5;
+    // form
+    public static final String MDW_FORM_USE_MDWWEB = "mdw.form.use.mdwweb";
+    public static final String MDW_FORM_USE_INTERNAL_RESOURCE_ONLY = "mdw.form.use.internal_resource_only";
+    public static final String MDW_FORM_ACTION_PACKAGE = "mdw.form.action.package"; // java package name of all form actions
+    public static final String MDW_FORM_TEMPLATE_CLASSIC_TASK = "mdw.form.template.classic_task";
+    public static final String MDW_FORM_SERVER = "mdw.form.server";
+    // thread pool
+    public static final String MDW_THREADPOOL_CORE_THREADS = "mdw.threadpool.core_threads";
+    public static final String MDW_THREADPOOL_MAX_THREADS = "mdw.threadpool.max_threads";
+    public static final String MDW_THREADPOOL_QUEUE_SIZE = "mdw.threadpool.queue_size";
+    public static final String MDW_THREADPOOL_KEEP_ALIVE = "mdw.threadpool.keep_alive";
+    public static final String MDW_THREADPOOL_TERMINATION_TIMEOUT = "mdw.threadpool.termination_timeout";
+    public static final String MDW_THREADPOOL_WORKER = "mdw.threadpool.worker"; // prefix, add <worker_name>.min_threads/max_threads
+    // jms listener
+    public static final String MDW_JMS_LISTENER_POLL_INTERVAL = "mdw.jms.listener.poll.interval";
+    public static final String MDW_JMS_LISTENER_RECEIVE_TIMEOUT = "mdw.jms.listener.receive.timeout";
+    public static final int MDW_JMS_LISTENER_POLL_INTERVAL_DEFAULT = 5;
 
-	// misc
-	public static final String MDW_SERVER_LIST = "mdw.server.list";	// host1:port1,host2:port2,...  Represents MDW worker instances
-	public static final String MDW_FILE_DIR = "mdw.file.dir";
-	public static final String MDW_REMOTE_SERVER = "mdw.remote.server";
-	public static final String MDW_ACTIVITY_ACTIVE_MAX_RETRY = "mdw.activity.active.max.retry";
-	public static final String MDW_WEB_SESSION_TIMEOUT = "mdw.web.session.timeout";
-	public static final String MDW_PERFORMANCE_LEVEL_SERVICE = "mdw.performance.level.service";
-	public static final String MDW_PERFORMANCE_LEVEL_REGULAR = "mdw.performance.level.regular";
-	public static final String MDW_ENGINE_MESSAGE_PROCESSING = "mdw.engine.message.processing";	// for backward compatibility
-	public static final String MDW_ENGINE_USE_TRANSACTION = "mdw.engine.use.transaction";
-	public static final String MDW_STUB_SERVER = "mdw.stub.server";	// used internally, set by regression tester "<host>:<port>:<timeout>";
-	public static final String MDW_TASKMGR_CALLENGINE_METHOD = "mdw.taskmanager.callengine.method";
+    // misc
+    public static final String MDW_SERVER_LIST = "mdw.server.list"; // host1:port1,host2:port2,...  Represents MDW worker instances
+    public static final String MDW_FILE_DIR = "mdw.file.dir";
+    public static final String MDW_REMOTE_SERVER = "mdw.remote.server";
+    public static final String MDW_ACTIVITY_ACTIVE_MAX_RETRY = "mdw.activity.active.max.retry";
+    public static final String MDW_WEB_SESSION_TIMEOUT = "mdw.web.session.timeout";
+    public static final String MDW_PERFORMANCE_LEVEL_SERVICE = "mdw.performance.level.service";
+    public static final String MDW_PERFORMANCE_LEVEL_REGULAR = "mdw.performance.level.regular";
+    public static final String MDW_ENGINE_MESSAGE_PROCESSING = "mdw.engine.message.processing"; // for backward compatibility
+    public static final String MDW_ENGINE_USE_TRANSACTION = "mdw.engine.use.transaction";
+    public static final String MDW_STUB_SERVER = "mdw.stub.server"; // used internally, set by regression tester "<host>:<port>:<timeout>";
+    public static final String MDW_TASKMGR_CALLENGINE_METHOD = "mdw.taskmanager.callengine.method";
     public static final String FILEPANEL_ROOT_DIRS = "mdw.filepanel.root.dirs";
     public static final String FILEPANEL_CONFIG_DIRS = "mdw.filepanel.config.dirs";
     public static final String FILEPANEL_EXCLUDE_PATTERNS = "mdw.filepanel.exclude.patterns";
@@ -82,17 +82,17 @@ public class PropertyNames {
     public static final String MDW_INTERNAL_EVENT_DEV_CLEANUP = "mdw.internal.event.dev.cleanup";
     public static final String MDW_TEMP_DIR = "mdw.temp.dir";
 
-	public static final String APPLICATION_NAME = "mdw.application.name";
-	public static final String TASK_MANAGER_URL_OLD = "MDWFramework.TaskManagerWeb/task.manager.url";
+    public static final String APPLICATION_NAME = "mdw.application.name";
+    public static final String TASK_MANAGER_URL_OLD = "MDWFramework.TaskManagerWeb/task.manager.url";
     public static final String TASK_MANAGER_URL = "mdw.task.manager.url";
-	public static final String TASK_MANAGER_WELCOME_PATH = "MDWFramework.TaskManagerWeb/task.manager.welcome.path";
-	public static final String MDW_WEB_URL_OLD = "MDWFramework.MDWDesigner/helpers.url";
+    public static final String TASK_MANAGER_WELCOME_PATH = "MDWFramework.TaskManagerWeb/task.manager.welcome.path";
+    public static final String MDW_WEB_URL_OLD = "MDWFramework.MDWDesigner/helpers.url";
     public static final String MDW_WEB_URL = "mdw.web.url";
-	public static final String MDW_SERVICES_URL_OLD = "MDWFramework.MDWDesigner/services.url";
-	public static final String MDW_SERVICES_URL = "mdw.services.url";
-	public static final String ACTIVITY_RESUME_DELAY = "MDWFramework.WorkflowEngine/ActivityResumeDelay";
+    public static final String MDW_SERVICES_URL_OLD = "MDWFramework.MDWDesigner/services.url";
+    public static final String MDW_SERVICES_URL = "mdw.services.url";
+    public static final String ACTIVITY_RESUME_DELAY = "MDWFramework.WorkflowEngine/ActivityResumeDelay";
     public static final String PROP_DO_PARTIAL_DB_LOGGING = "MDWFramework.ProcessInvocationAttributes/doPartialDBLogging";
-	public static final String MDW_CONFIG_DIRECOTRY = "MDWFramework.ApplicationDetails/ConfigDir";
+    public static final String MDW_CONFIG_DIRECOTRY = "MDWFramework.ApplicationDetails/ConfigDir";
     public static final String TASK_MANAGER_UI_DEF_FILE = "MDWFramework.TaskManagerWeb/view.ui.definition.file";
     public static final String TASK_MANAGER_ACTIONS_FILE = "MDWFramework.TaskManagerWeb/ui.task.actions.file";
     public static final String ATTACHMENTS_STORAGE_LOCATION = "MDWFramework.TaskManagerWeb/attachments.storage.location";
@@ -107,20 +107,20 @@ public class PropertyNames {
     public static final String MDW_COMPILER_CLASSPATH = "mdw.compiler.classpath";
     public static final String MDW_CLASSPATH = "mdw.classpath";
 
-	public static final String MDW_BUS_ACCOUNT = "mdw.bus.account";
-	public static final String MDW_BUS_URI = "mdw.bus.uri";
+    public static final String MDW_BUS_ACCOUNT = "mdw.bus.account";
+    public static final String MDW_BUS_URI = "mdw.bus.uri";
 
-	// this is a group, contains <name>.topic/uri/queueSize/minWorker/maxWorker/dqName
-	public static final String MDW_LISTENER_BUS = "mdw.listener.bus";	// prefix for bus listener properties
+    // this is a group, contains <name>.topic/uri/queueSize/minWorker/maxWorker/dqName
+    public static final String MDW_LISTENER_BUS = "mdw.listener.bus";   // prefix for bus listener properties
 
-	// this is a group, contains <name>.ClassName/Directory/FilenamePattern/IntervalMinutes/DelayMinutes
-	public static final String MDW_LISTENER_FILE = "mdw.listener.file";	// prefix for file listener properties
+    // this is a group, contains <name>.ClassName/Directory/FilenamePattern/IntervalMinutes/DelayMinutes
+    public static final String MDW_LISTENER_FILE = "mdw.listener.file"; // prefix for file listener properties
 
-	// this is a group, for multiple MQ listeners
-	public static final String MDW_LISTENER_MQ = "mdw.listener.mq";
+    // this is a group, for multiple MQ listeners
+    public static final String MDW_LISTENER_MQ = "mdw.listener.mq";
 
-	// this is a group, contains <name>.TimerClass/Schedule
-	public static final String MDW_TIMER_TASK = "mdw.timer.task";	// prefix for timer task properties
+    // this is a group, contains <name>.TimerClass/Schedule
+    public static final String MDW_TIMER_TASK = "mdw.timer.task";   // prefix for timer task properties
 
     public static final String UNSCHEDULED_EVENTS_CHECK_DELAY = "mdw.unscheduled.events.check.delay"; // seconds
     public static final String UNSCHEDULED_EVENTS_CHECK_INTERVAL = "mdw.unscheduled.events.check.interval"; // seconds
@@ -130,20 +130,20 @@ public class PropertyNames {
     public static final String SCHEDULED_EVENTS_BATCH_SIZE = "mdw.scheduled.events.max.batch.size";
     public static final String SCHEDULED_EVENTS_MEMORY_RANGE = "mdw.scheduled.events.memory.range";  // seconds
 
-	public static final String MDW_TIMER_INITIAL_DELAY = "mdw.timer.InitialDelay";	// delay of first check in seconds
-	public static final String MDW_TIMER_CHECK_INTERVAL = "mdw.timer.CheckInterval";	// interval between checks in seconds
-	public static final String MDW_TIMER_THRESHOLD_FOR_DELAY = "mdw.timer.ThresholdForDelay";	// (minutes) threshold for using timer for delayed JMS messages
+    public static final String MDW_TIMER_INITIAL_DELAY = "mdw.timer.InitialDelay";  // delay of first check in seconds
+    public static final String MDW_TIMER_CHECK_INTERVAL = "mdw.timer.CheckInterval";    // interval between checks in seconds
+    public static final String MDW_TIMER_THRESHOLD_FOR_DELAY = "mdw.timer.ThresholdForDelay";   // (minutes) threshold for using timer for delayed JMS messages
 
-	public static final String MDW_CERTIFIED_MESSAGE_INITIAL_DELAY = "mdw.certified_message.InitialDelay";	// delay of first check in seconds
-	public static final String MDW_CERTIFIED_MESSAGE_CHECK_INTERVAL = "mdw.certified_message.CheckInterval";	// interval between checks in seconds
-	public static final String MDW_CERTIFIED_MESSAGE_ACK_TIMEOUT = "mdw.certified_message.AcknowlegmentTimeout";	// default ack timeout in seconds
-	public static final String MDW_CERTIFIED_MESSAGE_RETRY_INTERVAL = "mdw.certified_message.RetryInterval";	// default interval for next retry in seconds
-	public static final String MDW_CERTIFIED_MESSAGE_MAX_TRIES = "mdw.certified_message.MaxTries";	// default max tries
+    public static final String MDW_CERTIFIED_MESSAGE_INITIAL_DELAY = "mdw.certified_message.InitialDelay";  // delay of first check in seconds
+    public static final String MDW_CERTIFIED_MESSAGE_CHECK_INTERVAL = "mdw.certified_message.CheckInterval";    // interval between checks in seconds
+    public static final String MDW_CERTIFIED_MESSAGE_ACK_TIMEOUT = "mdw.certified_message.AcknowlegmentTimeout";    // default ack timeout in seconds
+    public static final String MDW_CERTIFIED_MESSAGE_RETRY_INTERVAL = "mdw.certified_message.RetryInterval";    // default interval for next retry in seconds
+    public static final String MDW_CERTIFIED_MESSAGE_MAX_TRIES = "mdw.certified_message.MaxTries";  // default max tries
 
-	// this is a group, contains <name>.Adapter and pool specific properties
-	public static final String MDW_CONNECTION_POOL = "mdw.connection.pool";	// prefix for connection pool properties
+    // this is a group, contains <name>.Adapter and pool specific properties
+    public static final String MDW_CONNECTION_POOL = "mdw.connection.pool"; // prefix for connection pool properties
 
-	public static final String MDW_SERVER_PROXY = "mdw.server.proxy";
+    public static final String MDW_SERVER_PROXY = "mdw.server.proxy";
 
     public static final String MDW_HUB_URL = "mdw.hub.url";
     public static final String MDW_DEV_USER = "mdw.dev.user";
