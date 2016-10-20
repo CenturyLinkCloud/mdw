@@ -29,9 +29,11 @@
  - cd to mdw-hub project directory
  - type npm install
  - type bower install
+ 
 3. Build the Project
  - Window > Show View > Other > Gradle (STS) > Gradle Tasks
    Select the mdw project and double-click the "buildAll" task
+   
 4. Run on Tomcat in Eclipse
  - Edit mdw.properties to suit your environment.
  - In Eclipse Servers view, right-click and select New > Server  
@@ -47,6 +49,7 @@
  - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
  - Check MDWHub access:  
    http://localhost:8080/mdw
+   
 5. MySQL Setup  
    **Note**: on Linux it's required to set the MySQL system variable lower_case_table_names to 1:  
    http://dev.mysql.com/doc/refman/5.0/en/server-system-variables.html#sysvar_lower_case_table_names
@@ -56,8 +59,10 @@ create_indexes.sql
 add_fkeys.sql
 baseline_inserts.sql``` (This script inserts a basic set of reference data into some of the tables created above.)```
 seed_users.sql``` **Note**: Edit seed_users.sql to add yourself as a user.
+
 6. Chrome and Postman
  - Install Chrome and the Postman Chrome App for REST service testing
+ 
 7. Code Format
  - Java, Groovy, Javascript and JSON:
    The Eclipse code formatters are version-controlled in .settings/org.eclipse.jdt.core.prefs, so as long as you're up-to-date with Git you should automatically have the correct settings. If you want to use them for another project, you can download and import them from these formatter files:  
