@@ -266,7 +266,8 @@ public class ListenerHelper {
             }
         }
         catch (ServiceException ex) {
-              return createServiceResponse(ex, metaInfo);
+            logger.severeException(ex.getMessage(), ex);
+            return createServiceResponse(ex, metaInfo);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -355,6 +356,7 @@ public class ListenerHelper {
             return response;
         }
         catch (ServiceException ex) {
+            logger.severeException(ex.getMessage(), ex);
             return createServiceResponse(ex, metaInfo);
         }
         catch (Exception e) {
