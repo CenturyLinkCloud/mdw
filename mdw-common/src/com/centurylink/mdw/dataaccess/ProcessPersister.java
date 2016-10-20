@@ -9,7 +9,6 @@ import org.apache.xmlbeans.XmlException;
 
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
-import com.centurylink.mdw.model.value.attribute.CustomAttributeVO;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.event.ExternalEventVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
@@ -61,9 +60,6 @@ public interface ProcessPersister {
     throws DataAccessException;
 
     void deleteActivityImplementor(Long implementorId)
-    throws DataAccessException;
-
-    void deleteActivitiesForImplementor(ActivityImplementorVO vo)
     throws DataAccessException;
 
     void updateActivityImplementor(ActivityImplementorVO vo)
@@ -120,18 +116,9 @@ public interface ProcessPersister {
     void deleteRuleSet(Long ruleSetId)
     throws DataAccessException;
 
-    String lockUnlockProcess(Long processId, String cuid, boolean lock)
-	throws DataAccessException;
-
-    String lockUnlockRuleSet(Long ruleSetId, String cuid, boolean lock)
-	throws DataAccessException;
-
     Long setAttribute(String ownerType, Long ownerId, String attrname, String attrvalue)
     throws DataAccessException;
 
     void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes)
-    throws DataAccessException;
-
-    Long setCustomAttribute(CustomAttributeVO customAttrVO)
     throws DataAccessException;
 }

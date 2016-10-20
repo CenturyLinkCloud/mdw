@@ -28,7 +28,6 @@ public class EventLog implements Serializable, Jsonable {
 
     public static final long serialVersionUID = 1L;
 
-    public static final String CATEGORY_BAM = "BAM";
     public static final String CATEGORY_AUDIT = "AUDIT";
     public static final String CATEGORY_EVENT_HISTORY = "EVENT_HISTORY";
     public static final String CATEGORY_SCHEDULED_JOB_HISTORY = "SCHEDULED_JOB_HISTORY";

@@ -21,7 +21,6 @@ import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.constant.TaskAttributeConstant;
 import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.PropertyException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.task.TaskList;
 import com.centurylink.mdw.common.utilities.CollectionUtil;
@@ -31,7 +30,6 @@ import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.ProcessPersister;
-import com.centurylink.mdw.dataaccess.SqlQueries;
 import com.centurylink.mdw.dataaccess.version4.CommonDataAccess;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.data.common.Attachment;
@@ -43,17 +41,10 @@ import com.centurylink.mdw.model.data.task.TaskCategory;
 import com.centurylink.mdw.model.data.task.TaskState;
 import com.centurylink.mdw.model.data.task.TaskStatus;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.task.TaskVO;
 import com.centurylink.mdw.model.value.user.UserGroupVO;
 import com.centurylink.mdw.model.value.user.UserVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
-import com.centurylink.mdw.model.value.variable.VariableInstanceVO;
-import com.centurylink.mdw.model.value.variable.VariableVO;
-import com.centurylink.mdw.services.EventManager;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 import com.centurylink.mdw.services.dao.task.cache.TaskCategoryCache;
 import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
@@ -296,7 +287,19 @@ public class TaskDAO extends CommonDataAccess {
             db.openConnection();
 
             ResultSet rs = null;
-            String q = SqlQueries.getQuery(SqlQueries.GET_TEMPLATE_TASKS_FOR_WORKGROUP_SQL);
+            String q = "        SELECT   DISTINCT\r\n" +
+                    "         t.TASK_ID,\r\n" +
+                    "          t.TASK_NAME,\r\n" +
+                    "          t.TASK_TYPE_ID,\r\n" +
+                    "          t.TASK_CATEGORY_ID,\r\n" +
+                    "          t.LOGICAL_ID,\r\n" +
+                    "          t.CREATE_USR,\r\n" +
+                    "          t.COMMENTS\r\n" +
+                    "            FROM   TASK_INST_GRP_MAPP tigm, TASK_INSTANCE ti, USER_GROUP ug, TASK t\r\n" +
+                    "            WHERE       tigm.TASK_INSTANCE_ID = ti.TASK_INSTANCE_ID\r\n" +
+                    "         AND ug.GROUP_NAME = ?\r\n" +
+                    "         AND ug.USER_GROUP_ID = tigm.USER_GROUP_ID\r\n" +
+                    "         AND ti.TASK_ID = t.TASK_ID       \r\n";
             if (UserGroupVO.SITE_ADMIN_GROUP.equals(groupName)) {
                 rs = db.runSelect(q.replace("AND ug.GROUP_NAME = ?", ""), null);
             } else {
@@ -438,23 +441,8 @@ public class TaskDAO extends CommonDataAccess {
             throws DataAccessException {
         try {
             db.openConnection();
-            String query = null;
-            if (getSupportedVersion() < DataAccess.schemaVersion52)
-            {
-                //  delete SLA
-                query = "delete SLA where SLA_OWNER='" + OwnerType.TASK + "' and SLA_OWNER_ID=?";
-                db.runUpdate(query, taskId);
-                // delete task-group mapping
-                query = "delete TASK_USR_GRP_MAPP where TASK_ID=?";
-                db.runUpdate(query, taskId);
-                // delete task-variable mapping
-                query = "delete from VARIABLE_MAPPING where MAPPING_OWNER='" + OwnerType.TASK
-                    + "' and MAPPING_OWNER_ID=?";
-                db.runUpdate(query, taskId);
-            }
-
             // delete attributes
-            query = "delete from ATTRIBUTE where ATTRIBUTE_OWNER='" + OwnerType.TASK
+            String query = "delete from ATTRIBUTE where ATTRIBUTE_OWNER='" + OwnerType.TASK
                 + "' and ATTRIBUTE_OWNER_ID=?";
             db.runUpdate(query, taskId);
             // delete task itself
@@ -1476,12 +1464,7 @@ public class TaskDAO extends CommonDataAccess {
         try {
             db.openConnection();
             List<TaskInstanceVO> taskInstances = new ArrayList<TaskInstanceVO>();
-            String query;
-            if (this.getSupportedVersion() >= DataAccess.schemaVersion52)
-                query = "select * from task_instance where master_request_id = ?";
-            else
-                query = SqlQueries.getQuery(SqlQueries.READ_ALL_TASK_INSTANCE_VO_BY_MASTER_OWNER_ID_SQL);
-
+            String query = "select * from task_instance where master_request_id = ?";
             ResultSet rs = db.runSelect(query, masterRequestId);
             while (rs.next()) {
                 TaskInstanceVO taskInst = getTaskInstanceSub(rs, false);
@@ -1772,27 +1755,10 @@ public class TaskDAO extends CommonDataAccess {
 
     public TaskAction getTaskAction(String action)
         throws DataAccessException {
-    	if (getSupportedVersion()>=DataAccess.schemaVersion52) {
-            TaskAction one = new TaskAction();
-            one.setTaskActionId(0L);
-            one.setTaskActionName(action);
-            return one;
-    	}
-        try {
-            db.openConnection();
-            String query = "select TASK_ACTION_ID,COMMENTS from TASK_ACTION where TASK_ACTION_NAME=?";
-            ResultSet rs = db.runSelect(query, action);
-            if (rs.next()) {
-                TaskAction one = new TaskAction();
-                one.setTaskActionId(rs.getLong(1));
-                one.setTaskActionName(action);
-                return one;
-            } else return null;
-        } catch (Exception e) {
-            throw new DataAccessException(0, "failed to get task action", e);
-        } finally {
-            db.closeConnection();
-        }
+        TaskAction one = new TaskAction();
+        one.setTaskActionId(0L);
+        one.setTaskActionName(action);
+        return one;
     }
 
     public List<TaskStatus> getAllTaskStatuses() throws DataAccessException {
@@ -2273,22 +2239,14 @@ public class TaskDAO extends CommonDataAccess {
                 }
 
                 buff.append(",\n");
-                if (getSupportedVersion() < DataAccess.schemaVersion52) {
-                    buff.append("(select vi.variable_value from variable v, variable_instance vi "
+                buff.append("(select vi.variable_value from variable_instance vi "
                         + " where pi.process_instance_id= vi.process_inst_id "
-                        + " and v.variable_name = '" + name + "' "
-                        + " and vi.variable_id = v.variable_id and rownum < 2) " + name);
-                }
-                else {
-                    buff.append("(select vi.variable_value from variable_instance vi "
-                            + " where pi.process_instance_id= vi.process_inst_id "
-                            + " and vi.variable_name = '" + name + "' ");
-                   if (db.isMySQL())
-                       buff.append(" limit 1) ");
-                   else
-                       buff.append(" and rownum < 2) ");
-                   buff.append(name);
-                }
+                        + " and vi.variable_name = '" + name + "' ");
+               if (db.isMySQL())
+                   buff.append(" limit 1) ");
+               else
+                   buff.append(" and rownum < 2) ");
+               buff.append(name);
             }
         }
         return buff.toString();
@@ -2759,87 +2717,6 @@ public class TaskDAO extends CommonDataAccess {
 			db.closeConnection();
 		}
 	}
-
-    public List<VariableInstanceVO> getTaskInstanceVariables(Long taskInstId)
-		    throws DataAccessException {
-        TaskInstanceVO taskInst = this.getTaskInstance(taskInstId);
-        TaskVO task = TaskTemplateCache.getTaskTemplate(taskInst.getTaskId());
-		try {
-			if (task.isTemplate()) {
-			    List<VariableInstanceVO> variableDataList = new ArrayList<VariableInstanceVO>();
-			    if (task.getVariables() == null) return variableDataList;
-				EventManager eventManager = ServiceLocator.getEventManager();
-				ProcessInstanceVO procInst = eventManager.getProcessInstance(taskInst.getOwnerId());
-				Long procInstId = procInst.getId();
-				if (procInst.isNewEmbedded() || ProcessVOCache.getProcessVO(procInst.getProcessId()).isEmbeddedProcess())
-				    procInstId = procInst.getOwnerId();
-				List<VariableInstanceInfo> varinstList = eventManager.getProcessInstanceVariables(procInstId);
-				for (VariableInstanceInfo varinst : varinstList) {
-					VariableVO var = null;
-					for (VariableVO v : task.getVariables()) {
-						if (v.getVariableName().equals(varinst.getName())) {
-							var = v;
-							break;
-						}
-					}
-					if (var!=null) {
-						VariableInstanceVO data = new VariableInstanceVO();
-					    data.setInstanceId(varinst.getInstanceId());
-					    data.setType(varinst.getType());
-					    data.setStringValue(varinst.getStringValue());
-					    data.setName(varinst.getName());
-					    data.setVariableReferredName(var.getVariableReferredAs());
-					    data.setProcessInstanceId(procInstId);
-					    data.setVariableId(varinst.getVariableId());
-					    data.setRequired(var.getDisplayMode().equals(VariableVO.DATA_REQUIRED));
-					    data.setEditable(var.getDisplayMode().equals(VariableVO.DATA_REQUIRED)
-					    		|| var.getDisplayMode().equals(VariableVO.DATA_OPTIONAL));
-					    variableDataList.add(data);
-					}
-				}
-				return variableDataList;
-			}
-			db.openConnection();
-			List<VariableInstanceVO> variableDataList = new ArrayList<VariableInstanceVO>();
-			String query;
-			try {
-				query = SqlQueries.getQuery(SqlQueries.GET_TASK_INSTANCE_VARIABLES);
-			} catch (PropertyException e) {
-			    throw new SQLException("Failed to get query ", SqlQueries.GET_TASK_INSTANCE_VARIABLES);
-			}
-			Object[] args = new Object[2];
-			args[0] = taskInstId;
-			args[1] = taskInstId;
-			ResultSet rs = db.runSelect(query, args);
-			while (rs.next()) {
-			    VariableInstanceVO data = new VariableInstanceVO();
-			    data.setInstanceId(new Long(rs.getLong(7)));
-			    data.setType(rs.getString(8));
-			    data.setStringValue(rs.getString(2));
-			    data.setName(rs.getString(1));
-			    data.setVariableReferredName(rs.getString(9));
-			    data.setProcessInstanceId(rs.getLong(6));
-			    data.setVariableId(rs.getLong(10));
-			    data.setRequired(rs.getBoolean(4));
-			    String dataOwner = rs.getString(3);
-			    boolean isEditable = false;
-			    if("task_user".equalsIgnoreCase(dataOwner)){
-			        isEditable = true;
-			    }
-			    data.setEditable(isEditable);
-			    variableDataList.add(data);
-			}
-			for (VariableInstanceVO var : variableDataList) {
-				List<AttributeVO> attributes = super.getAttributes0("VARIABLE", var.getVariableId());
-	    		if (attributes != null) var.setAttributes(attributes);
-			}
-			return variableDataList;
-		} catch(Exception ex){
-			throw new DataAccessException(-1, "Failed to get task instance variables", ex);
-		} finally {
-			db.closeConnection();
-		}
-    }
 
     /**
      * This is for task manager; may retire the task manager function later

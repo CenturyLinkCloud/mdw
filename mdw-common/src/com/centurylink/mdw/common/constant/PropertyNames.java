@@ -66,8 +66,6 @@ public class PropertyNames {
 	public static final String MDW_REMOTE_SERVER = "mdw.remote.server";
 	public static final String MDW_ACTIVITY_ACTIVE_MAX_RETRY = "mdw.activity.active.max.retry";
 	public static final String MDW_WEB_SESSION_TIMEOUT = "mdw.web.session.timeout";
-	public static final String MDW_BAM_URL = "mdw.bam.url";
-    public static final String MDW_BAM_REALM = "mdw.bam.realm";
 	public static final String MDW_PERFORMANCE_LEVEL_SERVICE = "mdw.performance.level.service";
 	public static final String MDW_PERFORMANCE_LEVEL_REGULAR = "mdw.performance.level.regular";
 	public static final String MDW_ENGINE_MESSAGE_PROCESSING = "mdw.engine.message.processing";	// for backward compatibility
@@ -195,12 +193,6 @@ public class PropertyNames {
 
     // Authentication
     public static final String HTTP_BASIC_AUTH_MODE = "mdw.services.http.basic.auth";
-
-    //Artis
-    public static final String MDW_ARTIS_KEY = "mdw.artis.key";
-    public static final String MDW_ARTIS_CONF_LOCATION = "mdw.artis.config.location";
-    public static final String MDW_ARTIS_FORCEALL = "mdw.artis.forceall";
-    public static final String MDW_ARTIS_FORCE_WITH_CONFIG = "mdw.artis.forceallwithconfig";
 
     // Request Routing
     public static final String MDW_ROUTING_REQUESTS_ENABLED = "mdw.requestrouting.enabled";

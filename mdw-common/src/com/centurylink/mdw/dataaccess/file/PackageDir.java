@@ -12,8 +12,6 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import com.centurylink.mdw.bpm.MDWPackage;
-import com.centurylink.mdw.bpm.PackageDocument;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.VersionControl;
@@ -27,7 +25,6 @@ import io.swagger.annotations.ApiModelProperty;
 public class PackageDir extends File {
 
     public static final String META_DIR = ".mdw";
-    public static final String PACKAGE_XML_PATH = META_DIR + "/package.xml";
     public static final String PACKAGE_JSON_PATH = META_DIR + "/package.json";
     public static final String VERSIONS_PATH = META_DIR + "/versions";
     public static final String ARCHIVE_SUBDIR = "Archive";
@@ -35,10 +32,6 @@ public class PackageDir extends File {
     private File storageDir; // main parent for workflow assets
     private File archiveDir;
     private VersionControl versionControl;
-
-    private Boolean json;
-    public boolean isJson() { return json == null ? false : json; }
-    public void setJson(boolean json) { this.json = json; }
 
     /**
      * /com.centurylink.mdw.demo.intro v0.0.17
@@ -66,40 +59,24 @@ public class PackageDir extends File {
     private File metaFile;
     public File getMetaFile() {
         metaFile = new File(toString() + "/" + PACKAGE_JSON_PATH);
-        if (!isJson() && !metaFile.exists())
-            metaFile = new File(toString() + "/" + PACKAGE_XML_PATH);
         return metaFile;
     }
 
     public void parse() throws DataAccessException {
-        json = new File(toString() + "/" + PACKAGE_JSON_PATH).exists();
-        parse(json);
-    }
-
-    public void parse(boolean json) throws DataAccessException {
         try {
-            this.json = json;
             File pkgFile = getMetaFile();
-            if (json) {
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(pkgFile);
-                    byte[] bytes = new byte[(int) pkgFile.length()];
-                    fis.read(bytes);
-                    PackageVO pkgVo = new PackageVO(new JSONObject(new String(bytes)));
-                    pkgName = pkgVo.getName();
-                    pkgVersion = pkgVo.getVersionString();
-                }
-                finally {
-                    if (fis != null)
-                        fis.close();;
-                }
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(pkgFile);
+                byte[] bytes = new byte[(int) pkgFile.length()];
+                fis.read(bytes);
+                PackageVO pkgVo = new PackageVO(new JSONObject(new String(bytes)));
+                pkgName = pkgVo.getName();
+                pkgVersion = pkgVo.getVersionString();
             }
-            else {
-                PackageDocument pkgDoc = PackageDocument.Factory.parse(pkgFile);
-                MDWPackage pkg = pkgDoc.getPackage();
-                pkgName = pkg.getName();
-                pkgVersion = pkg.getVersion();
+            finally {
+                if (fis != null)
+                    fis.close();;
             }
             String archivePath = new File(storageDir.toString() + "/Archive/").toString();
             if (toString().startsWith(archivePath)) {

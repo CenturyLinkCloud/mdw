@@ -1,2 +1,2 @@
-// GET request to: asset/com.centurylink.mdw.artis/readme.txt?app=appId
+// GET request to: asset/com.centurylink.mdw.mypackage/readme.md
 (Returns raw asset text or binary content.  Add download=true parameter to trigger browser download.)

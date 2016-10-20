@@ -37,7 +37,6 @@ import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
 import com.centurylink.mdw.model.value.activity.ActivityVO;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.event.BamMessageDefinition;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
@@ -57,10 +56,7 @@ import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.services.dao.process.EngineDataAccess;
 import com.centurylink.mdw.services.dao.process.EngineDataAccessCache;
 import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
-import com.centurylink.mdw.services.event.StubHelper;
 import com.centurylink.mdw.services.mbeng.MbengMDWRuntime;
-import com.centurylink.mdw.services.messenger.IntraMDWMessenger;
-import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.qwest.mbeng.MbengDocument;
 import com.qwest.mbeng.MbengException;
 import com.qwest.mbeng.MbengRuleSet;
@@ -85,8 +81,6 @@ public abstract class BaseActivity implements GeneralActivity {
     public static final String MAGIC_BOX = "MagicBox";
     public static final String JAVA_EL = "javax.el";
     public static final String OUTPUTDOCS = "Output Documents";
-
-    private static String BAM_URL = null;
 
     private Long workTransitionInstanceId;
     private String returnCode;
@@ -1246,39 +1240,6 @@ public abstract class BaseActivity implements GeneralActivity {
      */
     public RuleSetVO getLatestRuleSet(String name, String language, Map<String,String> attributeValues) {
         return RuleSetCache.getLatestRuleSet(name, language, attributeValues);
-    }
-
-    void sendMessageToBam(String bamAttributeName) {
-        String msgdef = AttributeVO.findAttribute(attributes, bamAttributeName);
-        if (msgdef==null || msgdef.length()==0) return;
-        if ((new StubHelper()).isStubbing()) return;
-    	if (BAM_URL==null) {
-    		String bamurl = getProperty(PropertyNames.MDW_BAM_URL);
-    		if (bamurl==null) bamurl = "";
-    		else if (!bamurl.startsWith("t3:")) {
-    			int k = bamurl.indexOf("://");
-    			if (k>0) bamurl = "t3" + bamurl.substring(k);
-    		}
-    		BAM_URL = bamurl;
-    	}
-    	String msg = null;
-    	try {
-        	msgdef = translatePlaceHolder(msgdef);
-			BamMessageDefinition bammsg = new BamMessageDefinition(msgdef);
-			msg = bammsg.getMessageInstance(getMasterRequestId());
-			if (BAM_URL.length()==0) throw new Exception("mdw.bam.url is not specified");
-			if ("log".equals(BAM_URL)) {
-			    loginfo("BAM Message:\n" + msg);
-			}
-			else {
-    			IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(BAM_URL);
-    			msgbroker.sendMessage(msg);
-			}
-		} catch (Exception e) {
-			StandardLogger bamlogger = LoggerUtil.getStandardLogger("com.centurylink.mdw.common.AnyClass");
-			bamlogger.warn("Failed to send BAM message - " + e.getMessage());
-			if (msg!=null) bamlogger.warn("MESSAGE: " + msg);
-		}
     }
 
     /**

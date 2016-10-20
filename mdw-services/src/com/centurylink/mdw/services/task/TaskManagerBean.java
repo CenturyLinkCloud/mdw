@@ -10,7 +10,6 @@ import static com.centurylink.mdw.common.constant.TaskAttributeConstant.PRIORITY
 
 import java.io.Serializable;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +36,6 @@ import com.centurylink.mdw.common.constant.TaskAttributeConstant;
 import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.exception.ObserverException;
-import com.centurylink.mdw.common.exception.PropertyException;
 import com.centurylink.mdw.common.exception.StrategyException;
 import com.centurylink.mdw.common.query.PaginatedResponse;
 import com.centurylink.mdw.common.query.QueryRequest;
@@ -45,7 +43,6 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.common.task.TaskServiceRegistry;
 import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.CollectionUtil;
 import com.centurylink.mdw.common.utilities.HttpHelper;
 import com.centurylink.mdw.common.utilities.StringArrayHelper;
 import com.centurylink.mdw.common.utilities.StringHelper;
@@ -57,8 +54,6 @@ import com.centurylink.mdw.common.utilities.timer.CodeTimer;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.ProcessPersister;
-import com.centurylink.mdw.dataaccess.SqlQueries;
-import com.centurylink.mdw.dataaccess.version5.ProcessLoaderPersisterV5;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.data.common.Attachment;
 import com.centurylink.mdw.model.data.common.InstanceNote;
@@ -79,7 +74,6 @@ import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.centurylink.mdw.model.value.task.TaskActionVO;
-import com.centurylink.mdw.model.value.task.TaskInstanceReportVO;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.value.task.TaskVO;
@@ -115,7 +109,6 @@ import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 import com.centurylink.mdw.services.dao.task.TaskDAO;
-import com.centurylink.mdw.services.dao.task.TaskDAO.TaskInstanceReportItem;
 import com.centurylink.mdw.services.dao.task.TaskDAOException;
 import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 import com.centurylink.mdw.services.dao.user.UserDAO;
@@ -202,19 +195,11 @@ public class TaskManagerBean implements TaskManager {
             if (task.getAttribute(TaskActivity.ATTRIBUTE_TASK_VARIABLES) != null) {
                 task.setVariablesFromAttribute();
             }
-            else if (!task.isGeneralTask() && !task.isNeoClassicTask()) {
-                // backward compatibility for classic tasks (templated or not)
-                task.setVariables(getVariablesForTask(task.getTaskId()));
-            }
             if (!task.isTemplate() && task.getAttribute(TaskActivity.ATTRIBUTE_TASK_SLA)==null) {
                 // for MDW 3 and early versions of MDW 4 tasks
                 ServiceLevelAgreement sla = getTaskDAO().getServiceLevelAgreement(taskId);
                 if (sla != null)
                     task.setSlaSeconds(Math.round(sla.getSLAInHours().floatValue() * 3600));
-            }
-            if (!(task.isTemplate() && (task.isGeneralTask() || task.isNeoClassicTask())) && task.getAttribute(TaskActivity.ATTRIBUTE_TASK_GROUPS) == null) {
-                // backward compatibility for MDW 4.* and 5.0 tasks
-                task.setUserGroups(getTaskDAO().getGroupsForTask(taskId));
             }
             if (null != task.getAttribute(TaskActivity.ATTRIBUTE_TASK_DESC)) {
               task.setComment(task.getAttribute(TaskActivity.ATTRIBUTE_TASK_DESC));
@@ -423,7 +408,7 @@ public class TaskManagerBean implements TaskManager {
     public void getTaskInstanceAdditionalInfo(TaskInstanceVO taskInst)
     throws DataAccessException, TaskException {
         TaskVO taskVO = TaskTemplateCache.getTaskTemplate(taskInst.getTaskId());
-        if ((taskVO.isTemplate() && (taskVO.isGeneralTask() || taskVO.isNeoClassicTask())) || taskInst.isSummaryOnly())
+        if (taskVO.isTemplate())
             getTaskDAO().getTaskInstanceAdditionalInfoGeneral(taskInst);
         else {
             getTaskDAO().getTaskInstanceAdditionalInfoClassic(taskInst, taskVO.isTemplate());
@@ -1658,51 +1643,6 @@ public class TaskManagerBean implements TaskManager {
      *
      * @param pRportType
      */
-    public TaskInstanceReportVO[] getTaskInstanceReportVOs(String pReportType)
-    throws TaskException, DataAccessException {
-        Collection<TaskInstanceReportItem> daoResults = null;
-        CodeTimer timer = new CodeTimer("TaskManager.getTaskInstanceReportVOs()", true);
-        try {
-            if (TaskInstanceReportVO.REPORT_TYPE_TASK_NAME.equals(pReportType)) {
-                String query = SqlQueries.getQuery(SqlQueries.REPORT_BY_TASK_NAME_SQL);
-                daoResults = getTaskDAO().getTaskInstanceReport(query);
-            }
-            else if (TaskInstanceReportVO.REPORT_TYPE_USER_ID.equals(pReportType)) {
-                String query = SqlQueries.getQuery(SqlQueries.REPORT_BY_USER_ID_SQL);
-                daoResults = getTaskDAO().getTaskInstanceReport(query);
-            }
-            else if (TaskInstanceReportVO.REPORT_TYPE_TASK_CATEGORY.equals(pReportType)) {
-                String query = SqlQueries.getQuery(SqlQueries.REPORT_BY_TASK_CATEGORY_SQL);
-                daoResults = getTaskDAO().getTaskInstanceReport(query);
-            }
-        } catch (PropertyException e) {
-            throw new DataAccessException(-1, "failed to get query string", e);
-        }
-
-        if (CollectionUtil.isEmpty(daoResults)) {
-            timer.stopAndLogTiming("InvalidReportParam");
-            return new TaskInstanceReportVO[0];
-        }
-
-        Map<String,TaskInstanceReportVO> tmpMap = new HashMap<String,TaskInstanceReportVO>();
-
-        for (TaskInstanceReportItem aResult : daoResults) {
-            TaskInstanceReportVO aVO = null;
-            aVO = (TaskInstanceReportVO) tmpMap.get(aResult.entityName);
-            if (aVO == null) {
-                aVO = new TaskInstanceReportVO(aResult.entityName);
-            }
-            aVO.addTaskInstanceReportItem(aResult.state, aResult.count);
-            tmpMap.put(aResult.entityName, aVO);
-
-        }
-        Collection<TaskInstanceReportVO> ret = tmpMap.values();
-        timer.stopAndLogTiming("");
-
-        return ret.toArray(new TaskInstanceReportVO[ret.size()]);
-
-    }
-
     /**
      * Updates the Task state as jeopardy
      *
@@ -2037,19 +1977,12 @@ public class TaskManagerBean implements TaskManager {
                 strategy.setParameter(varInst.getName(), varVal);
             }
         }
-        else if (taskTemplate.isNeoClassicTask()) {
+        else {
             for (VariableInstanceVO varInst : getProcessInstanceVariables(processInstId)) {
                 Object varVal = varInst.getData();
                 if (varInst.isDocument())
                     varVal = eventManager.getDocumentVO(((DocumentReference)varVal).getDocumentId()).getObject(varInst.getType(), pkg);
                 strategy.setParameter(varInst.getName(), varVal);
-            }
-        }
-        else {//handle indices for general manual tasks
-            if (indices != null && indices.size() > 0) {
-                for (String key : indices.keySet()) {
-                    strategy.setParameter(key, indices.get(key));
-                }
             }
         }
     }
@@ -2429,126 +2362,6 @@ public class TaskManagerBean implements TaskManager {
         return eventManager.getDocumentVO(taskInst.getSecondaryOwnerId());
     }
 
-    /**
-     * Method that returns all the variables that are mapped to a given task.
-     * For backward compatibility of classic tasks
-     * @param pTaskId
-     * @return VariableVO
-     */
-    public List<VariableVO> getVariablesForTask(Long pTaskId)
-    throws DataAccessException {
-        CodeTimer timer = new CodeTimer("VariableManager.getVariablesForTask()", true);
-        DatabaseAccess db = new DatabaseAccess(null);
-        try {
-            db.openConnection();
-            ProcessLoaderPersisterV5 dao = new ProcessLoaderPersisterV5(db,
-                    DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion, null);
-            return dao.getVariablesForTask(pTaskId);
-        } catch (SQLException e) {
-            throw new DataAccessException(-1, "failed to create variable mapping", e);
-        } finally {
-            db.closeConnection();
-            timer.stopAndLogTiming("");
-        }
-    }
-
-    /**
-     * Method that creates the VariableMapping identified by the passed in
-     * MappingOwnerID, MappingOwnerName, variableID and variableRefAs
-     *
-     * @param pMappingOwnerID
-     * @param pMappingOwnerName
-     * @param variableID
-     * @param variableRefAs
-     * @param pOptInd
-     * @param pSrc
-     * @param pSeq
-     * @return VariableMapping
-     */
-    public void createVariableMapping(Long pMappingOwnerID, String pMappingOwnerName,
-        Long pVariableId, String pVariableRefAs, Integer pDisplayMode, Integer pSeq)
-    throws DataAccessException {
-        DatabaseAccess db = new DatabaseAccess(null);
-        try {
-            db.openConnection();
-            ProcessLoaderPersisterV5 dao = new ProcessLoaderPersisterV5(db,
-                    DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion, null);
-            VariableVO vo = new VariableVO();
-            vo.setVariableReferredAs(pVariableRefAs);
-            vo.setDisplayMode(pDisplayMode);
-            vo.setDisplaySequence(pSeq);
-            vo.setVariableId(pVariableId);
-            dao.createVariableMapping(pMappingOwnerID,
-                    pMappingOwnerName, pVariableId, vo);
-        } catch (SQLException e) {
-            throw new DataAccessException(-1, "failed to create variable mapping", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    /**
-     * Method that deletes the variable mapping
-     *
-     * @param pMappingOwnerID
-     * @param pMappingOwnerName
-     * @param variableID
-     * @return VariableMapping
-     */
-    public void deleteVariableMapping(Long pMappingOwnerID, String pMappingOwnerName, Long pVariableId)
-    throws DataAccessException {
-        try {
-            getTaskDAO().deleteVariableMapping(pMappingOwnerName, pMappingOwnerID, pVariableId);
-        } catch (SQLException e) {
-            throw new DataAccessException(-1, "failed to delete variable mapping", e);
-        }
-    }
-
-    /**
-     * Method that updates the variable mapping
-     *
-     * @param pMappingOwnerID
-     * @param pMappingOwnerName
-     * @param variableID
-     * @param pVarRefAs
-     * @param pOpt
-     * @param pSrc
-     * @param pSeq
-     * @return VariableMapping
-     */
-    public void updateVariableMapping(Long pMappingOwnerID, String pMappingOwnerName,
-        Long pVariableId, String pVarRefAs, Integer pDisplayMode, Integer pSeq)
-    throws DataAccessException {
-        DatabaseAccess db = new DatabaseAccess(null);
-        try {
-            db.openConnection();
-            ProcessLoaderPersisterV5 dao = new ProcessLoaderPersisterV5(db,
-                    DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion, null);
-            VariableVO vo = new VariableVO();
-            vo.setVariableReferredAs(pVarRefAs);
-            vo.setDisplayMode(pDisplayMode);
-            vo.setDisplaySequence(pSeq);
-            vo.setVariableId(pVariableId);
-            dao.updateVariableMapping(pMappingOwnerName, pMappingOwnerID, pVariableId,
-                    vo);
-        } catch (SQLException e) {
-            throw new DataAccessException(-1, "failed to create variable mapping", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    /**
-     * Returns the array of variable Instance VO
-     *
-     * @param pTaskInstId
-     * @return Array of VariableInstanceVO
-     */
-    public List<VariableInstanceVO> getVariableInstanceVOsForTaskInstance(Long pTaskInstId)
-    throws DataAccessException {
-        return getTaskDAO().getTaskInstanceVariables(pTaskInstId);
-    }
-
     public VariableInstanceVO[] getProcessInstanceVariables(Long procInstId)
     throws DataAccessException {
         try {
@@ -2574,10 +2387,6 @@ public class TaskManagerBean implements TaskManager {
         } catch (ProcessException e) {
             throw new DataAccessException(-1, "failed to get task variable instances", e);
         }
-    }
-
-    public String buildFromWhereClause(Map<String,String> criteria) {
-        return getTaskDAO().buildFromWhereClause(criteria);
     }
 
     // see TaskManager.java for javadoc

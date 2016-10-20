@@ -31,20 +31,6 @@ If you elect to "Generate Blank" the wizard will create an example from a templa
 <br/><br/>
 <img src="images/knowledgeBaseAsset.jpg" />
 <br/><br/><br/>
-<h3>Runtime Filtering Based on Custom Attributes</h3>
-A frequent requirement is the ability to control which version of the rules asset is in effect.
-For most common use cases this can be controlled by specifying the <a href='customAttributes.html'>Custom Attribute</a> values that must be matched on the Custom tab of the activity properties.
-<br/><br/>
-<img src="images/activityCustomTab.jpg" />
-<br/><br/>
-In the example above the activity is configured to find rules whose custom attributes match Certified="true" and Code="Secret Value".
-Note that this tab fulfills a different purpose from the Custom tab for the rules asset itself.
-The Custom tab on the rules asset properties view is used to specify which custom attributes are available for all DROOLS type assets.
-By contrast, the custom tab for the activity specifies the values that must be matched at runtime in order for this version to be in effect.
-When multiple versions of a given rules asset have matching attributes, then the latest matching version is used.
-If no matching versions are found, a runtime ActivityException is thrown.
-When a workflow asset is saved, and the version is incremented, the new version is initialized with an empty set of custom attribute values. 
-<br/><br/>
 <h3>Cache Preloading</h3>
 The Rules Assets can be configured to preload by inserting newline-separated parameters such as the following in your bundle-context.xml or ApplicationCache.xml:
 <pre>

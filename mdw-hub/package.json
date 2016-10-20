@@ -1,11 +1,11 @@
 {
-  "name": "mdw-admin",
+  "name": "mdw-hub",
   "version": "6.0.038",
   "description": "MDW Admin UI",
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "https://8.22.8.164/mdw/mdw-admin.git"
+    "url": "https://github.com/CenturyLinkCloud/MDW.git"
   },
   "devDependencies": {
     "grunt": "~0.4.5",

@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
 
-public class MDWMessageProducer implements MessageProducer{
+public class MDWMessageProducer implements MessageProducer {
     public MDWMessageProducer() {
         super();
     }
@@ -32,12 +32,7 @@ public class MDWMessageProducer implements MessageProducer{
     private RabbitTemplate rabbitTemplate;
 
     @Autowired(required = false)
-    @Qualifier("bamTopicTemplate")
     private JmsTemplate jmsTopicTemplate;
-
-    @Autowired(required = false)
-    @Qualifier("bamTopicRabbitTemplate")
-    private RabbitTemplate jmsTopicRabbitTemplate;
 
     /**
      * Send a message to a queue with corrId, delay and potential replyQueue
@@ -121,17 +116,6 @@ public class MDWMessageProducer implements MessageProducer{
     public void sendMessage(final String requestMessage, final String correlationId,
             final Queue replyQueue) throws JMSException {
         sendMessage(requestMessage, null, correlationId, replyQueue);
-    }
-
-    /**
-     * Send a message to the BAM topic
-     *
-     * @param requestMessage
-     * @param deliveryMode
-     */
-    public void sendBamMessageToTopic(String requestMessage, int deliveryMode) {
-        jmsTopicTemplate.setDeliveryMode(deliveryMode);
-        jmsTopicTemplate.send(new MDWMessageCreator(requestMessage));
     }
 
     /**

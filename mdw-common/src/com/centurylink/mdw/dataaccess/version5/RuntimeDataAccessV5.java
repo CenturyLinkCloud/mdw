@@ -14,7 +14,6 @@ import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.query.QueryRequest;
 import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.version4.RuntimeDataAccessV4;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
@@ -107,133 +106,90 @@ public class RuntimeDataAccessV5 extends RuntimeDataAccessV4 {
     @Override
     public ProcessInstanceVO getProcessInstanceAll(Long procInstId)
     throws DataAccessException {
-	    try {
-	        db.openConnection();
-	        ProcessInstanceVO procInstInfo = this.getProcessInstanceBase0(procInstId);
-	        List<ActivityInstanceVO> actInstList = new ArrayList<ActivityInstanceVO>();
-	        String query = "select ACTIVITY_INSTANCE_ID,STATUS_CD,START_DT,END_DT," +
-	        	"    STATUS_MESSAGE,ACTIVITY_ID,COMPCODE" +
-	            " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?" +
-	            " order by ACTIVITY_INSTANCE_ID desc";
-	        ResultSet rs = db.runSelect(query, procInstId);
-	        ActivityInstanceVO actInst;
-	        while (rs.next()) {
-	            actInst = new ActivityInstanceVO();
-	            actInst.setId(new Long(rs.getLong(1)));
-	            actInst.setStatusCode(rs.getInt(2));
-	            actInst.setStartDate(StringHelper.dateToString(rs.getTimestamp(3)));
-	            actInst.setEndDate(StringHelper.dateToString(rs.getTimestamp(4)));
-	            actInst.setStatusMessage(rs.getString(5));
-	            actInst.setDefinitionId(new Long(rs.getLong(6)));
-	            actInst.setCompletionCode(rs.getString(7));
-	            actInstList.add(actInst);
-	        }
-	        procInstInfo.setActivities(actInstList);
-	        List<WorkTransitionInstanceVO> workTransInstanceList
-	            = new ArrayList<WorkTransitionInstanceVO>();
-	        query = "select WORK_TRANS_INST_ID,STATUS_CD,START_DT,END_DT,WORK_TRANS_ID" +
-	            " from WORK_TRANSITION_INSTANCE" +
-	            " where PROCESS_INST_ID=? order by WORK_TRANS_INST_ID desc";
-	        rs = db.runSelect(query, procInstId);
-	        WorkTransitionInstanceVO workTransInstance;
-	        while (rs.next()) {
-	            workTransInstance = new WorkTransitionInstanceVO();
-	            workTransInstance.setTransitionInstanceID(new Long(rs.getLong(1)));
-	            workTransInstance.setProcessInstanceID(procInstId);
-	            workTransInstance.setStatusCode(rs.getInt(2));
-	            workTransInstance.setStartDate(StringHelper.dateToString(rs.getTimestamp(3)));
-	            workTransInstance.setEndDate(StringHelper.dateToString(rs.getTimestamp(4)));
-	            workTransInstance.setTransitionID(new Long(rs.getLong(5)));
-	            workTransInstanceList.add(workTransInstance);
-	        }
-	        procInstInfo.setTransitions(workTransInstanceList);
-	        List<VariableInstanceInfo> variableDataList = new ArrayList<VariableInstanceInfo>();
-	        if (this.getDatabaseVersion()>=DataAccess.schemaVersion52) {
-	        	query = "select VARIABLE_INST_ID, VARIABLE_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID " +
-	    			"from VARIABLE_INSTANCE where PROCESS_INST_ID=? order by lower(VARIABLE_NAME)";
-	        } else {
-	        	query = "select vi.VARIABLE_INST_ID, vi.VARIABLE_ID, vi.VARIABLE_VALUE, v.VARIABLE_NAME," +
-	                "  vt.VARIABLE_TYPE_NAME" +
-	                " from VARIABLE_INSTANCE vi, VARIABLE v, VARIABLE_TYPE vt" +
-	                " where vi.PROCESS_INST_ID = ? and vi.VARIABLE_ID = v.VARIABLE_ID" +
-	                "   and v.VARIABLE_TYPE_ID = vt.VARIABLE_TYPE_ID" +
-	                " order by v.VARIABLE_NAME";
-	        }
-	        rs = db.runSelect(query, procInstId);
-	        boolean hasOldVariableInstances = false;
-	        while (rs.next()) {
-	            VariableInstanceInfo data = new VariableInstanceInfo();
-	            data.setInstanceId(new Long(rs.getLong(1)));
-	            data.setVariableId(new Long(rs.getLong(2)));
-	            data.setStringValue(rs.getString(3));
-	            data.setName(rs.getString(4));
-	            if (data.getName()==null) hasOldVariableInstances = true;
-		        if (this.getDatabaseVersion()>=DataAccess.schemaVersion52) {
-		        	data.setType(getVariableType(rs.getLong(5)));
-		        } else {
-		        	data.setType(rs.getString(5));
-		        }
-	            variableDataList.add(data);
-	        }
-	        if (hasOldVariableInstances&&getDatabaseVersion()>=DataAccess.schemaVersion52
-	        			&& this.getSupportedVersion()<DataAccess.schemaVersion52) {
-	        	// backward compatibility code to load variabe names for variable instances created earlier
-	        	query = "select vi.VARIABLE_INST_ID, v.VARIABLE_NAME, v.VARIABLE_TYPE_ID " +
-	        		" from VARIABLE_INSTANCE vi, VARIABLE v " +
-                    " where vi.PROCESS_INST_ID = ? and vi.VARIABLE_ID = v.VARIABLE_ID";
-	        	rs = db.runSelect(query, procInstId);
-	        	while (rs.next()) {
-	        		String varname = rs.getString(2);
-	        		Long varinstId = rs.getLong(1);
-	        		for (VariableInstanceInfo vi : variableDataList) {
-	        			if (vi.getInstanceId().equals(varinstId)) {
-	        				if (vi.getName()==null) vi.setName(varname);
-	        				if (vi.getType()== null) vi.setType(getVariableType(rs.getLong(3)));
-	        				break;
-	        			}
-	        		}
-	        	}
-	        }
-	        procInstInfo.setVariables(variableDataList);
-	        return procInstInfo;
-	    } catch (Exception e) {
-	        throw new DataAccessException(0,"failed to load process instance runtime info", e);
-	    } finally {
-	        db.closeConnection();
-	    }
-	}
+        try {
+            db.openConnection();
+            ProcessInstanceVO procInstInfo = this.getProcessInstanceBase0(procInstId);
+            List<ActivityInstanceVO> actInstList = new ArrayList<ActivityInstanceVO>();
+            String query = "select ACTIVITY_INSTANCE_ID,STATUS_CD,START_DT,END_DT," +
+                "    STATUS_MESSAGE,ACTIVITY_ID,COMPCODE" +
+                " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?" +
+                " order by ACTIVITY_INSTANCE_ID desc";
+            ResultSet rs = db.runSelect(query, procInstId);
+            ActivityInstanceVO actInst;
+            while (rs.next()) {
+                actInst = new ActivityInstanceVO();
+                actInst.setId(new Long(rs.getLong(1)));
+                actInst.setStatusCode(rs.getInt(2));
+                actInst.setStartDate(StringHelper.dateToString(rs.getTimestamp(3)));
+                actInst.setEndDate(StringHelper.dateToString(rs.getTimestamp(4)));
+                actInst.setStatusMessage(rs.getString(5));
+                actInst.setDefinitionId(new Long(rs.getLong(6)));
+                actInst.setCompletionCode(rs.getString(7));
+                actInstList.add(actInst);
+            }
+            procInstInfo.setActivities(actInstList);
+            List<WorkTransitionInstanceVO> workTransInstanceList
+                = new ArrayList<WorkTransitionInstanceVO>();
+            query = "select WORK_TRANS_INST_ID,STATUS_CD,START_DT,END_DT,WORK_TRANS_ID" +
+                " from WORK_TRANSITION_INSTANCE" +
+                " where PROCESS_INST_ID=? order by WORK_TRANS_INST_ID desc";
+            rs = db.runSelect(query, procInstId);
+            WorkTransitionInstanceVO workTransInstance;
+            while (rs.next()) {
+                workTransInstance = new WorkTransitionInstanceVO();
+                workTransInstance.setTransitionInstanceID(new Long(rs.getLong(1)));
+                workTransInstance.setProcessInstanceID(procInstId);
+                workTransInstance.setStatusCode(rs.getInt(2));
+                workTransInstance.setStartDate(StringHelper.dateToString(rs.getTimestamp(3)));
+                workTransInstance.setEndDate(StringHelper.dateToString(rs.getTimestamp(4)));
+                workTransInstance.setTransitionID(new Long(rs.getLong(5)));
+                workTransInstanceList.add(workTransInstance);
+            }
+            procInstInfo.setTransitions(workTransInstanceList);
+            List<VariableInstanceInfo> variableDataList = new ArrayList<VariableInstanceInfo>();
+            query = "select VARIABLE_INST_ID, VARIABLE_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID " +
+                "from VARIABLE_INSTANCE where PROCESS_INST_ID=? order by lower(VARIABLE_NAME)";
+            rs = db.runSelect(query, procInstId);
+            while (rs.next()) {
+                VariableInstanceInfo data = new VariableInstanceInfo();
+                data.setInstanceId(new Long(rs.getLong(1)));
+                data.setVariableId(new Long(rs.getLong(2)));
+                data.setStringValue(rs.getString(3));
+                data.setName(rs.getString(4));
+                data.setType(getVariableType(rs.getLong(5)));
+                variableDataList.add(data);
+            }
+            procInstInfo.setVariables(variableDataList);
+            return procInstInfo;
+        } catch (Exception e) {
+            throw new DataAccessException(0,"failed to load process instance runtime info", e);
+        } finally {
+            db.closeConnection();
+        }
+    }
 
     /**
      * Different from V4: add completion code field
      */
     @Override
     protected ProcessInstanceVO getProcessInstanceBase0(Long procInstId) throws SQLException, DataAccessException {
-    	String query;
-    	if (getSupportedVersion()>=DataAccess.schemaVersion52) {
-    		query = "select pi.PROCESS_ID,pi.OWNER,pi.OWNER_ID,pi.MASTER_REQUEST_ID," +
+        String query = "select pi.PROCESS_ID,pi.OWNER,pi.OWNER_ID,pi.MASTER_REQUEST_ID," +
             " pi.STATUS_CD,pi.START_DT,pi.END_DT,r.RULE_SET_NAME,pi.COMPCODE,pi.COMMENTS,r.VERSION_NO" +
             " from PROCESS_INSTANCE pi, RULE_SET r" +
             " where pi.PROCESS_INSTANCE_ID=? and pi.PROCESS_ID=r.RULE_SET_ID";
-    	} else {
-    		query = "select pi.PROCESS_ID,pi.OWNER,pi.OWNER_ID,pi.MASTER_REQUEST_ID," +
-            	" pi.STATUS_CD,pi.START_DT,pi.END_DT,w.WORK_NAME,pi.COMPCODE,pi.COMMENTS" +
-            	" from PROCESS_INSTANCE pi, WORK w" +
-            	" where pi.PROCESS_INSTANCE_ID=? and pi.PROCESS_ID=w.WORK_ID";
-    	}
         ResultSet rs = db.runSelect(query, procInstId);
         if (!rs.next()) throw new SQLException("failed to load process instance " + procInstId);
         ProcessInstanceVO pi = new ProcessInstanceVO(rs.getLong(1), rs.getString(8));
-    	pi.setOwner(rs.getString(2));
-    	pi.setOwnerId(rs.getLong(3));
-    	pi.setMasterRequestId(rs.getString(4));
-    	pi.setStatusCode(rs.getInt(5));
-    	pi.setStartDate(StringHelper.dateToString(rs.getTimestamp(6)));
-    	pi.setId(procInstId);
+        pi.setOwner(rs.getString(2));
+        pi.setOwnerId(rs.getLong(3));
+        pi.setMasterRequestId(rs.getString(4));
+        pi.setStatusCode(rs.getInt(5));
+        pi.setStartDate(StringHelper.dateToString(rs.getTimestamp(6)));
+        pi.setId(procInstId);
         pi.setCompletionCode(rs.getString(9));
         pi.setComment(rs.getString(10));
         pi.setEndDate(StringHelper.dateToString(rs.getTimestamp(7)));
-        if (getSupportedVersion()>=DataAccess.schemaVersion52)
-            pi.setProcessVersion(RuleSetVO.formatVersion(rs.getInt("VERSION_NO")));
+        pi.setProcessVersion(RuleSetVO.formatVersion(rs.getInt("VERSION_NO")));
         return pi;
     }
 
@@ -242,8 +198,6 @@ public class RuntimeDataAccessV5 extends RuntimeDataAccessV4 {
      */
     @Override
     protected String buildQuery(Map<String,String> pMap, int startIndex, int endIndex, String orderBy) {
-    	if (getSupportedVersion()<DataAccess.schemaVersion52)
-    		return super.buildQuery(pMap, startIndex, endIndex, orderBy);
         StringBuffer sqlBuff = new StringBuffer();
         if (startIndex!=QueryRequest.ALL_ROWS) sqlBuff.append(db.pagingQueryPrefix());
         sqlBuff.append("SELECT ");
@@ -253,7 +207,7 @@ public class RuntimeDataAccessV5 extends RuntimeDataAccessV4 {
         sqlBuff.append("FROM process_instance pi, rule_set r ");
         sqlBuff.append("WHERE pi.PROCESS_ID=r.RULE_SET_ID ");
         if (!OwnerType.MAIN_PROCESS_INSTANCE.equals(pMap.get("owner"))) {
-        	sqlBuff.append(" and pi.OWNER!='" + OwnerType.MAIN_PROCESS_INSTANCE +"' ");
+            sqlBuff.append(" and pi.OWNER!='" + OwnerType.MAIN_PROCESS_INSTANCE +"' ");
         }
         buildQueryCommon(sqlBuff, pMap, orderBy);
         if (startIndex!=QueryRequest.ALL_ROWS) sqlBuff.append(db.pagingQuerySuffix(startIndex, endIndex-startIndex));
@@ -262,15 +216,13 @@ public class RuntimeDataAccessV5 extends RuntimeDataAccessV4 {
 
     @Override
     protected String buildQuery(Map<String,String> criteria, List<String> variables, Map<String,String> variableCriteria, int startIndex, int endIndex, String orderBy) {
-    	if (getSupportedVersion()<DataAccess.schemaVersion52)
-    		return super.buildQuery(criteria, variables, variableCriteria, startIndex, endIndex, orderBy);
-    	StringBuffer sqlBuff = new StringBuffer();
+        StringBuffer sqlBuff = new StringBuffer();
         if (startIndex!=QueryRequest.ALL_ROWS) sqlBuff.append(db.pagingQueryPrefix());
         sqlBuff.append("SELECT pis.PROCESS_INSTANCE_ID, pis.MASTER_REQUEST_ID, pis.STATUS_CD, pis.START_DT, pis.END_DT, pis.OWNER, pis.OWNER_ID, pis.PROCESS_ID, pis.PROCESS_NAME, pis.COMMENTS");
         if (variables != null && variables.size() > 0) {
-        	for (String varName : variables) {
-        		sqlBuff.append(", ").append(varName.startsWith("DATE:") ? varName.substring(5) : varName);
-        	}
+            for (String varName : variables) {
+                sqlBuff.append(", ").append(varName.startsWith("DATE:") ? varName.substring(5) : varName);
+            }
         }
         sqlBuff.append("\n    FROM (\n");
         sqlBuff.append("  SELECT pi.*, r.rule_set_name as process_name");
@@ -278,9 +230,9 @@ public class RuntimeDataAccessV5 extends RuntimeDataAccessV4 {
         sqlBuff.append(buildVariablesClause(criteria, variables, variableCriteria));
         sqlBuff.append(") pis\n");
         if (orderBy != null)
-        	sqlBuff.append("\n").append(orderBy);
+            sqlBuff.append("\n").append(orderBy);
         if (startIndex!=QueryRequest.ALL_ROWS)
-        	sqlBuff.append(db.pagingQuerySuffix(startIndex, endIndex-startIndex));
+            sqlBuff.append(db.pagingQuerySuffix(startIndex, endIndex-startIndex));
         return sqlBuff.toString();
     }
 
@@ -291,8 +243,6 @@ public class RuntimeDataAccessV5 extends RuntimeDataAccessV4 {
 
     @Override
     public String buildVariablesSelect(List<String> variables) {
-    	if (getSupportedVersion()<DataAccess.schemaVersion52)
-    		return super.buildVariablesSelect(variables);
         StringBuffer buff = new StringBuffer();
         if (variables != null && variables.size() > 0) {
             for (String varName : variables) {
@@ -308,11 +258,9 @@ public class RuntimeDataAccessV5 extends RuntimeDataAccessV4 {
 
     @Override
     protected String buildVariablesClause(Map<String,String> criteria, List<String> variables, Map<String,String> variableCriteria) {
-    	if (getSupportedVersion()<DataAccess.schemaVersion52)
-    		return super.buildVariablesClause(criteria, variables, variableCriteria);
-    	StringBuffer sqlBuff = new StringBuffer();
+        StringBuffer sqlBuff = new StringBuffer();
         if (variableCriteria != null && !variableCriteria.isEmpty()) {
-        	int i = variableCriteria.keySet().size();
+            int i = variableCriteria.keySet().size();
             for (String varName : variableCriteria.keySet()) {
                 sqlBuff.append(" \nFROM process_instance pi, variable_instance vi, rule_set r\n");
                 sqlBuff.append("  WHERE pi.process_instance_id = vi.process_inst_id\n");
@@ -394,18 +342,10 @@ public class RuntimeDataAccessV5 extends RuntimeDataAccessV4 {
      */
     protected List<ProcessInstanceVO> getProcessInstancesForOwner(String ownerType, Long ownerId) throws SQLException, DataAccessException {
         List<ProcessInstanceVO> instanceList = null;
-        String query;
-        if (getSupportedVersion() >= DataAccess.schemaVersion52) {
-            query = "select pi.PROCESS_INSTANCE_ID, pi.PROCESS_ID, pi.MASTER_REQUEST_ID," +
+        String query = "select pi.PROCESS_INSTANCE_ID, pi.PROCESS_ID, pi.MASTER_REQUEST_ID," +
             " pi.STATUS_CD, pi.START_DT, pi.END_DT, r.RULE_SET_NAME as NAME, pi.COMPCODE, pi.COMMENTS, r.VERSION_NO" +
             " from PROCESS_INSTANCE pi, RULE_SET r" +
             " where pi.OWNER = '" + ownerType + "' and pi.OWNER_ID = ? and pi.PROCESS_ID = r.RULE_SET_ID";
-        } else {
-            query = "select pi.PROCESS_INSTANCE_ID, pi.PROCESS_ID, pi.MASTER_REQUEST_ID," +
-                " pi.STATUS_CD, pi.START_DT, pi.END_DT, w.WORK_NAME as NAME, pi.COMPCODE, pi.COMMENTS, p.VERSION_NO" +
-                " from PROCESS_INSTANCE pi, WORK w, PROCESS p" +
-                " where pi.OWNER = '" + ownerType + "' and pi.OWNER_ID = ? and pi.PROCESS_ID = w.WORK_ID and p.PROCESS_ID = w.WORK_ID";
-        }
         ResultSet rs = db.runSelect(query, ownerId);
         while (rs.next()) {
             if (instanceList == null)

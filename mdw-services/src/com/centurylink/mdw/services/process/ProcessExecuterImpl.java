@@ -1194,7 +1194,6 @@ class ProcessExecuterImpl {
                     outgoingWorkTransVO = findTaskActionWorkTransition(parentInst, actInst, parsedCompCode.getCompletionCode());
                 if (actInst.getStatusCode()!=WorkStatus.STATUS_COMPLETED) {
                     completeActivityInstance(actInst, compCode, parentInst, logtag);
-                      cntrActivity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);
                     cntrActivity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
                 }
                 InternalEventVO jmsmsg;
@@ -1230,7 +1229,6 @@ class ProcessExecuterImpl {
                         cancelActivityInstance(actInst, "Subprocess is cancelled", parentInst, logtag);
                     } else {
                         completeActivityInstance(actInst, compCode, parentInst, logtag);
-                        cntrActivity.sendMessageToBam(WorkAttributeConstant.BAM_FINISH_MSGDEF);
                         cntrActivity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
                     }
                     InternalEventVO jmsmsg = InternalEventVO.createActivityNotifyMessage(actInst,

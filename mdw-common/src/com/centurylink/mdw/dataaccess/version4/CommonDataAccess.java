@@ -422,27 +422,12 @@ public class CommonDataAccess {
     public ProcessVO getProcessBase0(String processName, int version)
             throws SQLException,DataAccessException {
         String query;
-        boolean isInRuleSet;
-        if (getSupportedVersion()>=DataAccess.schemaVersion52) {
-            if (version>0) {
-                query = "select RULE_SET_ID, COMMENTS, VERSION_NO, MOD_DT, MOD_USR" +
-                    " from RULE_SET where RULE_SET_NAME=? and LANGUAGE='"+RuleSetVO.PROCESS+"' and VERSION_NO=" + version;
-            } else {
-                query = "select RULE_SET_ID, COMMENTS, VERSION_NO, MOD_DT, MOD_USR" +
-                    " from RULE_SET where RULE_SET_NAME=? and LANGUAGE='"+RuleSetVO.PROCESS+"' order by VERSION_NO desc";
-            }
-            isInRuleSet = true;
+        if (version>0) {
+            query = "select RULE_SET_ID, COMMENTS, VERSION_NO, MOD_DT, MOD_USR" +
+                " from RULE_SET where RULE_SET_NAME=? and LANGUAGE='"+RuleSetVO.PROCESS+"' and VERSION_NO=" + version;
         } else {
-            if (version>0) {
-                query = "select w.WORK_ID, w.COMMENTS, p.VERSION_NO, w.MOD_DT, w.MOD_USR" +
-                    " from PROCESS p, WORK w" +
-                    " where p.PROCESS_ID=w.WORK_ID and w.WORK_NAME=? and p.VERSION_NO=" + version;
-            } else {
-                query = "select w.WORK_ID, w.COMMENTS, p.VERSION_NO, w.MOD_DT, w.MOD_USR" +
-                    " from PROCESS p, WORK w" +
-                    " where p.PROCESS_ID=w.WORK_ID and w.WORK_NAME=? order by p.VERSION_NO desc";
-            }
-            isInRuleSet = false;
+            query = "select RULE_SET_ID, COMMENTS, VERSION_NO, MOD_DT, MOD_USR" +
+                " from RULE_SET where RULE_SET_NAME=? and LANGUAGE='"+RuleSetVO.PROCESS+"' order by VERSION_NO desc";
         }
         ResultSet rs = db.runSelect(query, processName);
         String processComment;
@@ -456,7 +441,7 @@ public class CommonDataAccess {
         retVO.setVersion(version);
         retVO.setModifyDate(rs.getTimestamp(4));
         retVO.setModifyingUser(rs.getString(5));
-        retVO.setInRuleSet(isInRuleSet);
+        retVO.setInRuleSet(true);
         return retVO;
     }
 

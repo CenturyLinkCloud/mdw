@@ -6,14 +6,6 @@
   "vcsRemoteUrl": "https://8.22.8.164/mdw/mdw-workflow.git",
   "packages": [
     {
-      "name": "com.centurylink.mdw.artis",
-      "version": "5.5.25"
-    },
-    {
-      "name": "com.centurylink.mdw.bam",
-      "version": "5.5.25"
-    },
-    {
       "name": "com.centurylink.mdw.base",
       "version": "5.5.25"
     },

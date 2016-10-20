@@ -70,12 +70,12 @@ dependencies {
     // bpmn
     compile group: "org.omg.spec.bpmn", name: "bpmn-schemas", version: "2.0"
                
+    // doc store
+    compile group: "org.mongodb", name: "mongodb-driver", version: "3.3.0"
+    
     // TODO: proprietary dependencies
     compile group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"
-    compile group: "com.qwest.appsec", name: "AccessControl", version: "6.8"
     compile group: "com.oracle", name: "ojdbc6", version: "12.1.0.2.0"
-    compile group: "artis", name: "artis", version: "4.0.1"
-
 }
 
 clean {

@@ -25,10 +25,6 @@ public class RabbitMessageProducer implements MessageProducer {
     @Qualifier("rabbitTemplate")
     private RabbitTemplate rabbitTemplate;
 
-    @Autowired(required = false)
-    @Qualifier("bamTopicRabbitTemplate")
-    private RabbitTemplate jmsTopicRabbitTemplate;
-
     /**
      * Send a message to a queue with corrId, delay and potential replyQueue
      *
@@ -87,17 +83,6 @@ public class RabbitMessageProducer implements MessageProducer {
     public void sendMessage(final String requestMessage, final String correlationId,
             final Queue replyQueue) throws JMSException {
         sendMessage(requestMessage, null, correlationId, replyQueue);
-    }
-
-    /**
-     * Send a message to the BAM topic
-     *
-     * @param requestMessage
-     * @param deliveryMode
-     */
-    public void sendBamMessageToTopic(String requestMessage, int deliveryMode) {
-        // jmsTopicRabbitTemplate.setDeliveryMode(deliveryMode);
-        // jmsTopicRabbitTemplate.send(new MDWMessageCreator(requestMessage));
     }
 
     /**

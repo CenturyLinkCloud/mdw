@@ -17,9 +17,7 @@ import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.query.QueryRequest;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.dataaccess.BaselineData;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.version5.RuntimeDataAccessV5;
 import com.centurylink.mdw.model.data.work.WorkStatus;
@@ -29,7 +27,6 @@ import com.centurylink.mdw.model.value.activity.ActivityList;
 import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessList;
-import com.centurylink.mdw.model.value.process.ProcessVO;
 
 /**
  * Used for VCS-based assets in the runtime container (not Designer).
@@ -190,20 +187,7 @@ public class RuntimeDataAccessVcs extends RuntimeDataAccessV5 {
      * Also sets status name from code.
      */
     protected void populateNameVersionStatus(ProcessInstanceVO processInstance) throws DataAccessException {
-        if (processInstance.getComment() == null) {
-            // try retrieving process def from db for compatibility
-            try {
-                ProcessVO process = DataAccess.getDbProcessLoader().getProcessBase(processInstance.getProcessId());
-                processInstance.setProcessName(process.getName());
-                processInstance.setProcessVersion(process.getVersionString());
-            }
-            catch (DataAccessException ex) {
-                // Most likely due to old VCS instances without comment.
-                // This is a transient condition until folks upgrade to MDW 5.5.12+ and age off previous instances.
-                LoggerUtil.getStandardLogger().debugException("No compatibility definition for process instance " + processInstance.getId(), ex);
-            }
-        }
-        else {
+        if (processInstance.getComment() != null) {
             AssetVersionSpec spec = AssetVersionSpec.parse(processInstance.getComment());
             processInstance.setProcessName(spec.getName());
             processInstance.setProcessVersion(spec.getVersion());

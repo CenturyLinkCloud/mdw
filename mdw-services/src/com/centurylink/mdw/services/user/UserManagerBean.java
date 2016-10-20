@@ -4,7 +4,6 @@
 package com.centurylink.mdw.services.user;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +11,7 @@ import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.timer.CodeTimer;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.data.task.TaskAction;
 import com.centurylink.mdw.model.value.user.AuthenticatedUser;
 import com.centurylink.mdw.model.value.user.UserGroupVO;
 import com.centurylink.mdw.model.value.user.UserRoleVO;
@@ -432,32 +429,6 @@ public class UserManagerBean implements UserManager {
     	getUserDAO().deleteRole(pUserRoleId);
     }
 
-    private TaskAction[] getTaskActionsForUserAndUserGroup(String userId)
-    throws DataAccessException {
-        TaskAction[] retActions = null;
-        CodeTimer timer = new CodeTimer("TaskManager.getTaskActionsForUserAndUserGroup()", true);
-        List<TaskAction> userActions = getUserDAO().getTaskActionsForUser(userId);
-        List<TaskAction> userGroupActions = getUserDAO().getTaskActionsForUserGroups(userId);
-        Map<Long,TaskAction> tempMap = new HashMap<Long,TaskAction>();
-        List<TaskAction> uniqueList = new ArrayList<TaskAction>();
-        for (TaskAction ta : userActions) {
-        	 if (!tempMap.containsKey(ta.getTaskActionId())) {
-                 tempMap.put(ta.getTaskActionId(), ta);
-                 uniqueList.add(ta);
-             }
-        }
-        for (TaskAction ta : userGroupActions) {
-        	if (!tempMap.containsKey(ta.getTaskActionId())) {
-        		tempMap.put(ta.getTaskActionId(), ta);
-                uniqueList.add(ta);
-            }
-        }
-        retActions = uniqueList.toArray(new TaskAction[uniqueList.size()]);
-        timer.stopAndLogTiming("");
-        return retActions;
-
-    }
-
     /**
      * Load an Authenticated user from the database.
      * @param cuid the user to be loaded
@@ -475,17 +446,6 @@ public class UserManagerBean implements UserManager {
         authUser.setId(user.getId());
         authUser.setName(user.getName());
         authUser.setWorkgroups(user.getWorkgroups());
-
-        // load allowable actions
-        if (DataAccess.supportedSchemaVersion<DataAccess.schemaVersion51) {
-        	try {
-        		TaskAction[] actions = getTaskActionsForUserAndUserGroup(cuid);
-        		authUser.setAllowableActions(actions);
-        	}
-        	catch (Exception ex) {
-        		throw new UserException(ex.getMessage(), ex);
-        	}
-        }
 
         // load preferences
         authUser.setAttributes(getUserPreferences(user.getId()));

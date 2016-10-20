@@ -94,6 +94,7 @@ public class ActiveMqJms implements JmsProvider, ContainerContextAware {
         }
     }
 
+    @SuppressWarnings("unused")
     private Object containerContext; // not used since osgi support retired
     public void setContainerContext(Object context) {
         this.containerContext = context;

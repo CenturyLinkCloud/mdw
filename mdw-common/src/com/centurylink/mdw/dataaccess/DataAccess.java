@@ -5,13 +5,9 @@ package com.centurylink.mdw.dataaccess;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.SchemaTypeTranslator;
-import com.centurylink.mdw.common.constant.ApplicationConstants;
 import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.spring.SpringAppContext;
@@ -25,34 +21,22 @@ import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.dataaccess.file.RuntimeDataAccessVcs;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.dataaccess.file.WrappedBaselineData;
-import com.centurylink.mdw.dataaccess.version4.ProcessImporterExporterV4;
-import com.centurylink.mdw.dataaccess.version4.ProcessLoaderPersisterV4;
-import com.centurylink.mdw.dataaccess.version4.RuntimeDataAccessV4;
 import com.centurylink.mdw.dataaccess.version4.UserDataAccessV4;
-import com.centurylink.mdw.dataaccess.version5.ProcessImporterExporterV5;
-import com.centurylink.mdw.dataaccess.version5.ProcessLoaderPersisterV5;
 import com.centurylink.mdw.dataaccess.version5.RuntimeDataAccessV5;
 import com.centurylink.mdw.model.value.variable.VariableTypeVO;
 
 public class DataAccess {
 
-    public final static int schemaVersion3 = 3000;
-    public final static int schemaVersion4 = 4001;
-    public final static int schemaVersion5 = 5000;
-    public final static int schemaVersion51 = 5001;
-    public final static int schemaVersion52 = 5002;
     public final static int schemaVersion55 = 5005;
     public final static int currentSchemaVersion = schemaVersion55;
     public static int supportedSchemaVersion = currentSchemaVersion;
-    public static boolean isPackageLevelAuthorization = false;
+    public static boolean isPackageLevelAuthorization = true;
 
     public static RuntimeDataAccess getRuntimeDataAccess(int version, int supportedVersion, DatabaseAccess db) {
-        if (version<=schemaVersion4) return new RuntimeDataAccessV4(db, version, supportedVersion);
         return new RuntimeDataAccessV5(db, version, supportedVersion);
     }
 
     public static RuntimeDataAccess getRuntimeDataAccess(int version, int supportedVersion, DatabaseAccess db, List<VariableTypeVO> variableTypes) {
-        if (version<=schemaVersion4) return new RuntimeDataAccessV4(db, version, supportedVersion);
         return new RuntimeDataAccessV5(db, version, supportedVersion, variableTypes);
     }
 
@@ -74,18 +58,8 @@ public class DataAccess {
             throws DataAccessException {
         if (fileBasedAssetLoc != null)
             return (ProcessPersister) getVcsProcessLoader(new File(fileBasedAssetLoc), db);
-        if (version <= schemaVersion4)
-            return new ProcessLoaderPersisterV4(db, version, supportedVersion, stt);
         else
-            return new ProcessLoaderPersisterV5(db, version, supportedVersion, stt);
-    }
-
-    public static ProcessPersister getDbProcessPersister() throws DataAccessException {
-        return getDbProcessPersister(null);
-    }
-
-    public static ProcessPersister getDbProcessPersister(String source) throws DataAccessException {
-        return new ProcessLoaderPersisterV5(new DatabaseAccess(source), currentSchemaVersion, supportedSchemaVersion, null);
+            throw new UnsupportedOperationException("Only VCS assets are supported");
     }
 
     /**
@@ -100,10 +74,8 @@ public class DataAccess {
             String fileBasedAssetLoc) throws DataAccessException {
         if (fileBasedAssetLoc != null)
             return getVcsProcessLoader(new File(fileBasedAssetLoc), db);
-
-        if (version <= schemaVersion4)
-            return new ProcessLoaderPersisterV4(db, version, supportedVersion, null);
-        return new ProcessLoaderPersisterV5(db, version, supportedVersion, null);
+        else
+            throw new UnsupportedOperationException("Only VCS assets are supported");
     }
 
     public static ProcessLoader getProcessLoader(DatabaseAccess db) throws DataAccessException {
@@ -112,14 +84,6 @@ public class DataAccess {
 
     public static ProcessLoader getProcessLoader() throws DataAccessException {
         return getProcessLoader(currentSchemaVersion, supportedSchemaVersion, new DatabaseAccess(null));
-    }
-
-    public static ProcessLoader getDbProcessLoader() throws DataAccessException {
-        return getDbProcessLoader(null);
-    }
-
-    public static ProcessLoader getDbProcessLoader(String source) throws DataAccessException {
-        return new ProcessLoaderPersisterV5(new DatabaseAccess(source), currentSchemaVersion, supportedSchemaVersion, null);
     }
 
     /**
@@ -135,21 +99,6 @@ public class DataAccess {
             return getVcsRuntimeDataAccess(db, new File(fileBasedAssetLoc));
 
     	return getRuntimeDataAccess(currentSchemaVersion, supportedSchemaVersion, db);
-    }
-
-    public static ProcessImporter getProcessImporter(int version) {
-        if (version<=schemaVersion4) return new ProcessImporterExporterV4();
-        return new ProcessImporterExporterV5();
-    }
-
-    public static ProcessExporter getProcessExporter(int version) {
-        if (version<=schemaVersion4) return new ProcessImporterExporterV4();
-        return new ProcessImporterExporterV5();
-    }
-
-    public static ProcessExporter getProcessExporter(int version, SchemaTypeTranslator stt) {
-        if (version<=schemaVersion4) return new ProcessImporterExporterV4(stt);
-        return new ProcessImporterExporterV5(stt);
     }
 
     public static UserDataAccess getUserDataAccess(DatabaseAccess db) throws DataAccessException {
@@ -168,7 +117,6 @@ public class DataAccess {
             synchronized(loaderPersisterLock) {
                 myLoaderPersisterVcs = loaderPersisterVcs;
                 if (myLoaderPersisterVcs == null) {
-                    String compatDs = isUseCompatibilityDatasource(db) ? ApplicationConstants.MDW_FRAMEWORK_DATA_SOURCE_NAME : null;
                     if (!rootDir.exists() || rootDir.list().length == 0) { // initial environment startup scenario
                         String message;
                         if (rootDir.isDirectory())
@@ -182,7 +130,7 @@ public class DataAccess {
                         LoggerUtil.getStandardLogger().severe(warning);
                     }
                     VersionControl vc = getAssetVersionControl(rootDir);
-                    loaderPersisterVcs = myLoaderPersisterVcs = new LoaderPersisterVcs("mdw", rootDir, vc, getBaselineData(), compatDs);
+                    loaderPersisterVcs = myLoaderPersisterVcs = new LoaderPersisterVcs("mdw", rootDir, vc, getBaselineData());
                 }
             }
         }
@@ -296,102 +244,10 @@ public class DataAccess {
     }
 
     /**
-     * For VCS assets.  Not to be called from Designer.
+     * TODO differentiate version 6
      */
-    public static boolean isUseCompatibilityDatasource() throws DataAccessException {
-        assert ApplicationContext.isFileBasedAssetPersist();
-        return isUseCompatibilityDatasource(null);
-    }
-
-    /**
-     * For VCS assets.  Only check the first time.
-     */
-    private static final Object useCompatibilityDatasourceLock = new Object();
-    private static volatile Boolean useCompatDataSource = null;
-    public static boolean isUseCompatibilityDatasource(DatabaseAccess db) throws DataAccessException {
-        Boolean useCompatDataSourceTemp = useCompatDataSource;
-        if (useCompatDataSourceTemp == null) {
-            synchronized(useCompatibilityDatasourceLock) {
-                useCompatDataSourceTemp = useCompatDataSource;
-                if (useCompatDataSourceTemp == null) {
-                    if (db == null)
-                        db = new DatabaseAccess(null);
-                    if (db.isMySQL() || db.isMariaDB())
-                        useCompatDataSource = useCompatDataSourceTemp = false;
-                    else {
-                        try {
-                            db.openConnection();
-                            String query = "select table_name from all_tables where table_name = 'RULE_SET'";
-                            useCompatDataSource = useCompatDataSourceTemp = db.runSelect(query, null).next();
-                        } catch (SQLException e) {
-                            throw new DataAccessException(e.getMessage(), e);
-                        } finally {
-                            db.closeConnection();
-                        }
-                    }
-                }
-            }
-        }
-        return useCompatDataSourceTemp;
-    }
-
     public static int[] getDatabaseSchemaVersion(DatabaseAccess db) throws DataAccessException {
-        int version;
-        int supportedVersion=-1;
-        try {
-            db.openConnection();
-            isPackageLevelAuthorization = false;
-            String query = "select ATTRIBUTE_VALUE from ATTRIBUTE where ATTRIBUTE_OWNER='SYSTEM' and ATTRIBUTE_NAME='"
-            	+ PropertyNames.MDW_DB_VERSION + "'";
-            ResultSet rs = db.runSelect(query, null);
-            if (rs.next()) {
-            	version = Integer.parseInt(rs.getString(1));
-            	query = "select ATTRIBUTE_VALUE from ATTRIBUTE where ATTRIBUTE_OWNER='SYSTEM' and ATTRIBUTE_NAME='"
-                	+ PropertyNames.MDW_DB_VERSION_SUPPORTED + "'";
-            	rs = db.runSelect(query, null);
-            	if (rs.next()) supportedVersion = Integer.parseInt(rs.getString(1));
-            } else {
-            	query = "select table_name from all_tables " +
-            		"where table_name in  ('DOCUMENT','PACKAGE_RULESETS')";
-                rs.close();
-            	rs = db.runSelect(query, null);
-            	version = schemaVersion3;
-            	while (rs.next()) {
-            		String table = rs.getString(1);
-            		if (table.equalsIgnoreCase("PACKAGE_RULESETS")) version = schemaVersion5;
-            		else if (version<schemaVersion4 && table.equalsIgnoreCase("DOCUMENT"))
-            			version = schemaVersion4;
-            	}
-            	query = "select table_name from all_tables where table_name = 'RESOURCE_TYPE'";
-            	rs = db.runSelect(query, null);
-            	if (rs.next()) {
-            	    query = "select variable_type_id from variable_type where variable_type_name = 'com.centurylink.mdw.model.StringDocument'";
-            	    rs = db.runSelect(query, null);
-            	    if (rs.next()) {
-            	        version = schemaVersion55;
-            	        query = "select column_name from all_tab_columns where table_name='PACKAGE' AND column_name='GROUP_NAME'";
-            	        rs = db.runSelect(query, null);
-                        if (rs.next())
-                            isPackageLevelAuthorization = true;
-                        else
-                            isPackageLevelAuthorization = false;
-            	    }
-            	    else
-            	        version = schemaVersion52;
-            	}
-            }
-            if (supportedVersion<0) {
-            	if (version>=schemaVersion52) supportedVersion = version;
-            	else supportedVersion = schemaVersion4;
-            }
-            if (supportedVersion >= schemaVersion55 && db.isMySQL())
-                isPackageLevelAuthorization = true;
-            return new int[]{version,supportedVersion};
-        } catch (SQLException e) {
-            throw new DataAccessException(123, "Cannot connect to database", e);
-        } finally {
-            db.closeConnection();
-        }
+        return new int[] {schemaVersion55, schemaVersion55};
     }
 
 }

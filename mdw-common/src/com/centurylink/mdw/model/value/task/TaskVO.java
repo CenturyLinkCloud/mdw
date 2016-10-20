@@ -17,7 +17,6 @@ import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.utilities.JsonUtil;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.model.data.task.TaskAction;
 import com.centurylink.mdw.model.data.task.TaskState;
 import com.centurylink.mdw.model.data.task.TaskStates;
@@ -260,7 +259,7 @@ public class TaskVO extends RuleSetVO implements Jsonable {
 
     public boolean isUsingIndices() {
     	// uses TASK_INST_INDEX and TASK_INST_GRP_MAPP tables
-    	return isTemplate() && (isGeneralTask() || isNeoClassicTask());
+    	return isTemplate();
     }
 
     public boolean isGeneralTask() {
@@ -272,13 +271,6 @@ public class TaskVO extends RuleSetVO implements Jsonable {
           return false;
     	String formName = getAttribute(TaskAttributeConstant.FORM_NAME);
     	return AUTOFORM.equalsIgnoreCase(formName);
-    }
-
-    /**
-     * Revived classic task for post-5.2 custom pages.
-     */
-    public boolean isNeoClassicTask() {
-        return !isGeneralTask() && DataAccess.supportedSchemaVersion >= DataAccess.schemaVersion52;
     }
 
     /**

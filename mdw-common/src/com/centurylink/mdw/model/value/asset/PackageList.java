@@ -78,7 +78,7 @@ public class PackageList implements Jsonable {
                 pkg.put("version", pkgDir.getPackageVersion());
                 if (pkgDir.getVcsDiffType() != null)
                     pkg.put("vcsDiff", pkgDir.getVcsDiffType());
-                pkg.put("format", pkgDir.isJson() ? "json" : "xml");
+                pkg.put("format", "json");
                 pkgArray.put(pkg);
             }
         }

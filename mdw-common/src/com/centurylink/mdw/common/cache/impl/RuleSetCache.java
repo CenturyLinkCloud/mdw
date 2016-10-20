@@ -19,7 +19,6 @@ import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DataAccess;
-import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
@@ -392,21 +391,6 @@ public class RuleSetCache implements PreloadableCache {
                     return DataAccess.getProcessLoader().getRuleSet(ruleSet.getId());
                 }
             }
-            if (ApplicationContext.isFileBasedAssetPersist()) {
-                if (DataAccess.isUseCompatibilityDatasource()) {
-                    // compatibility check for in-flight db assets
-                    // Note: this retrieves by asset name only (ignoring package) -- requires unique asset names
-                    ProcessLoader dbLoader = DataAccess.getDbProcessLoader();
-                    String ruleSetName;
-                    int delimIdx = getDelimIndex(key);
-                    if (delimIdx > 0)
-                        ruleSetName = key.getName().substring(delimIdx + 1);
-                    else
-                        ruleSetName = key.getName();
-                    return dbLoader.getRuleSet(ruleSetName, key.getLanguage(), key.getVersion());
-                }
-            }
-
             return null;
         }
         catch (Exception ex) {

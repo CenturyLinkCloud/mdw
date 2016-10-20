@@ -346,8 +346,7 @@ public class AssetServicesImpl implements AssetServices {
                         String pkgVcPath = versionControl.getRelativePath(pkgDir);
                         // check for extra packages
                         for (String extraPath : diffs.getDiffs(DiffType.EXTRA)) {
-                            if ((pkgDir.isJson() && extraPath.equals(pkgVcPath + "/" + PackageDir.PACKAGE_JSON_PATH))
-                                    || extraPath.equals(pkgVcPath + "/" + PackageDir.PACKAGE_XML_PATH)) {
+                            if (extraPath.equals(pkgVcPath + "/" + PackageDir.PACKAGE_JSON_PATH)) {
                                 pkgDir.setVcsDiffType(DiffType.EXTRA);
                                 break;
                             }
@@ -369,8 +368,8 @@ public class AssetServicesImpl implements AssetServices {
 
                     // check for missing packages
                     for (String missingDiff : diffs.getDiffs(DiffType.MISSING)) {
-                        if (missingDiff.endsWith(PackageDir.PACKAGE_XML_PATH) || missingDiff.endsWith(PackageDir.PACKAGE_JSON_PATH)) {
-                            int trim = missingDiff.endsWith(PackageDir.PACKAGE_XML_PATH) ? PackageDir.PACKAGE_XML_PATH.length() : PackageDir.PACKAGE_JSON_PATH.length();
+                        if (missingDiff.endsWith(PackageDir.PACKAGE_JSON_PATH)) {
+                            int trim = PackageDir.PACKAGE_JSON_PATH.length();
                             // add a ghost package
                             String pkgName = missingDiff.substring(assetPath.length() + 1, missingDiff.length() - trim - 1).replace('/', '.');
                             PackageDir pkgDir = getGhostPackage(pkgName);
@@ -497,10 +496,6 @@ public class AssetServicesImpl implements AssetServices {
         if (gitVc != null) {
             String pkgMetaFilePath = assetPath + "/" + pkgPath + "/" + PackageDir.PACKAGE_JSON_PATH;
             GitDiffs diffs = gitVc.getDiffs(gitBranch, pkgMetaFilePath);
-            if (!DiffType.MISSING.equals(diffs.getDiffType(pkgMetaFilePath))) {
-                pkgMetaFilePath = assetPath + "/" + pkgPath + "/" + PackageDir.PACKAGE_XML_PATH;
-                diffs = gitVc.getDiffs(gitBranch, pkgMetaFilePath);
-            }
             if (DiffType.MISSING.equals(diffs.getDiffType(pkgMetaFilePath))) {
                 VersionControl vc = null;
                 String versionFilePath = assetPath + "/" + pkgPath + "/" + PackageDir.VERSIONS_PATH;

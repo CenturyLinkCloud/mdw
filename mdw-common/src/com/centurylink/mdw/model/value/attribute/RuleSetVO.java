@@ -723,9 +723,6 @@ public class RuleSetVO implements Serializable, Comparable<RuleSetVO>, Jsonable 
      * Takes into account special rules due to multiple languages per extension.
      */
     public static String getFormat(String fileName) {
-        if (fileName.equals("BAM.xml"))
-            return PAGELET;
-
         return getLanguage(fileName.substring(fileName.lastIndexOf('.')));
     }
 

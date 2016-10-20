@@ -34,7 +34,6 @@ import com.centurylink.mdw.java.MdwJavaException;
 import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
 import com.centurylink.mdw.model.value.activity.ActivityVO;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
-import com.centurylink.mdw.model.value.attribute.CustomAttributeVO;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.event.ExternalEventVO;
 import com.centurylink.mdw.model.value.task.TaskVO;
@@ -65,7 +64,6 @@ public class PackageVO implements Serializable, Jsonable {
     private int version;
     private boolean exported;
     private Date modifyDate;
-    private List<CustomAttributeVO> customAttributes;
     // runtime information
     private Map<String,String> properties;
     private ClassLoader classloader;
@@ -453,14 +451,6 @@ public class PackageVO implements Serializable, Jsonable {
     public String getNewVersionString(boolean major) {
         int version = getNewVersion(major);
         return version/1000 + "." + version%1000;
-    }
-
-    public List<CustomAttributeVO> getCustomAttributes() {
-        return customAttributes;
-    }
-
-    public void setCustomAttributes(List<CustomAttributeVO> customAttrs) {
-        this.customAttributes = customAttrs;
     }
 
     public String getLabel() {

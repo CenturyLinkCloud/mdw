@@ -34,14 +34,6 @@ public interface MessageProducer {
             final Queue replyQueue) throws JMSException;
 
     /**
-     * Send a message to the BAM topic
-     *
-     * @param requestMessage
-     * @param deliveryMode
-     */
-    public void sendBamMessageToTopic(String requestMessage, int deliveryMode);
-
-    /**
      * Broadcast a message to a specific topic
      *
      * @param dest

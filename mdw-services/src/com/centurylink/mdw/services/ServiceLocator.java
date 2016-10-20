@@ -7,7 +7,6 @@ import com.centurylink.mdw.services.asset.AssetServicesImpl;
 import com.centurylink.mdw.services.asset.TestingServicesImpl;
 import com.centurylink.mdw.services.event.EventManagerBean;
 import com.centurylink.mdw.services.history.HistoryServicesImpl;
-import com.centurylink.mdw.services.order.OrderServicesImpl;
 import com.centurylink.mdw.services.process.ProcessManagerBean;
 import com.centurylink.mdw.services.project.SolutionServicesImpl;
 import com.centurylink.mdw.services.request.RequestServicesImpl;
@@ -82,10 +81,6 @@ public class ServiceLocator {
 
     public static HistoryServices getHistoryServices() {
         return new HistoryServicesImpl();
-    }
-
-    public static OrderServices getOrderServices() {
-        return new OrderServicesImpl(); // TODO use ServiceRegistry
     }
 
     public static WorkflowServices getWorkflowServices() {

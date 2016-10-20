@@ -10,7 +10,6 @@ import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
 import com.centurylink.mdw.model.data.task.TaskCategory;
 import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
-import com.centurylink.mdw.model.value.attribute.CustomAttributeVO;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.event.ExternalEventVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
@@ -88,8 +87,4 @@ public interface ProcessLoader {
 
     public Map<String,String> getAttributes(String ownerType, Long ownerId)
     throws DataAccessException;
-
-    public CustomAttributeVO getCustomAttribute(String ownerType, String categorizer)
-    throws DataAccessException;
-
 }

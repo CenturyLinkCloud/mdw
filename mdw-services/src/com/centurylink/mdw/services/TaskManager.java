@@ -22,14 +22,12 @@ import com.centurylink.mdw.model.data.task.TaskState;
 import com.centurylink.mdw.model.data.task.TaskStatus;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.task.TaskInstanceReportVO;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.value.task.TaskVO;
 import com.centurylink.mdw.model.value.variable.DocumentVO;
 import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
 import com.centurylink.mdw.model.value.variable.VariableInstanceVO;
-import com.centurylink.mdw.model.value.variable.VariableVO;
 import com.centurylink.mdw.services.dao.task.TaskDAOException;
 import com.centurylink.mdw.task.SubTask;
 import com.centurylink.mdw.task.SubTaskPlanDocument.SubTaskPlan;
@@ -473,14 +471,6 @@ public interface TaskManager {
    throws TaskException, DataAccessException;
 
    /**
-    * Returns the TaskInstanceReport based on the requested report type
-    *
-    * @param pRportType
-    */
-   public TaskInstanceReportVO[] getTaskInstanceReportVOs(String pReportType)
-   throws TaskException, DataAccessException;
-
-   /**
     * Updates a bache of task instances to Jeopardy state as appropriate.
     *
     */
@@ -704,73 +694,6 @@ public interface TaskManager {
    public DocumentVO getTaskInstanceData(TaskInstanceVO taskInst)
    throws DataAccessException;
 
-   /**
-    * Method that returns all the variables that are mapped to a given task
-    * @param pTaskId
-    * @return VariableVO
-    */
-   public List<VariableVO> getVariablesForTask(Long pTaskId)
-   throws DataAccessException;
-
-   /**
-    * Returns the array of variable Instance VO
-    *
-    * @param pTaskInstId
-    * @return Array of VariableInstanceVO
-    */
-   public List<VariableInstanceVO> getVariableInstanceVOsForTaskInstance(Long pTaskInstId)
-   throws DataAccessException;
-
-   /**
-    * Method that creates the VariableMapping identified by the passed in
-    * MappingOwnerID, MappingOwnerName, variableID and variableRefAs
-    *
-    * @param pMappingOwnerID
-    * @param pMappingOwnerName
-    * @param variableID
-    * @param variableRefAs
-    * @param pOptInd
-    * @param pSrc
-    * @param pSeq
-    * @return VariableMapping
-    */
-   public void createVariableMapping(Long pMappingOwnerID, String pMappingOwnerName,
-       Long pVariableId, String pVariableRefAs, Integer pDisplayMode, Integer pSeq)
-   throws DataAccessException;
-
-   /**
-    * Method that deletes the variable mapping
-    *
-    * @param pMappingOwnerID
-    * @param pMappingOwnerName
-    * @param variableID
-    * @return VariableMapping
-    */
-   public void deleteVariableMapping(Long pMappingOwnerID, String pMappingOwnerName, Long pVariableId)
-   throws DataAccessException;
-
-   /**
-    * Method that updates the variable mapping
-    *
-    * @param pMappingOwnerID
-    * @param pMappingOwnerName
-    * @param variableID
-    * @param pVarRefAs
-    * @param pOpt
-    * @param pSrc
-    * @param pSeq
-    * @return VariableMapping
-    */
-   public void updateVariableMapping(Long pMappingOwnerID, String pMappingOwnerName,
-       Long pVariableId, String pVarRefAs, Integer pDisplayMode, Integer pSeq)
-   throws DataAccessException;
-
-   /**
-    * Used by ESOWF task manager only - not used by MDW
-    * @param procInstId
-    * @return
-    * @throws DataAccessException
-    */
    public VariableInstanceVO[] getProcessInstanceVariables(Long procInstId)
    throws DataAccessException;
 
@@ -810,27 +733,6 @@ public interface TaskManager {
     */
    public Long saveAsset(String workflowPackage, RuleSetVO asset, String user)
    throws DataAccessException, TaskException;
-
-   /**
-    * This method is used to build a where clause
-    * for the given search criteria when querying for task instances.
-    * The criteria a hash map containing potentially multiple
-    *     conditions (with conjunction semantics).
-    * Each condition is a key-value pair that will be translated
-    *     into SQL where clause condition as key=value.
-    * The keys can be:
-    * <ul>
-    *   <li>A column name in TASK_INSTANCE table prefixed by <code>ti_</code></li>
-    *   <li>"<code>cuid</code>", and the value is the CUID of a user</li>
-    *   <li>"<code>groups</code>", and the value must be a list of group names
-    *       delimited by commas</li>
-    *   <li>A task index key name (values in the INDEX_KEY column of the table TASK_INST_INEX)
-    *     prefixed by <code>ix_</code></li>
-    * </ul>
-    * @param criteria see above
-    * @return
-    */
-   public String buildFromWhereClause(Map<String,String> criteria);
 
    /**
     * Count the total number of task instances satisfying the

@@ -21,7 +21,6 @@ import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.query.QueryRequest;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.model.data.event.EventLog;
@@ -352,10 +351,7 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
         StringBuffer sqlBuff = new StringBuffer();
         sqlBuff.append("SELECT COUNT(pis.process_instance_id)\n");
         sqlBuff.append("FROM (\n");
-        if (getSupportedVersion() < DataAccess.schemaVersion52)
-            sqlBuff.append("  SELECT pi.*, work_name as process_name\n");
-        else
-            sqlBuff.append("  SELECT pi.*, r.RULE_SET_NAME as process_name\n");
+        sqlBuff.append("  SELECT pi.*, r.RULE_SET_NAME as process_name\n");
         sqlBuff.append(buildVariablesClause(criteria, null, variablesCriteria));
         sqlBuff.append(") pis");
         return sqlBuff.toString();
@@ -641,10 +637,8 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
                 }
                 ret.add(vo);
             }
-            if (getSupportedVersion() > DataAccess.schemaVersion5) {
-                for (TaskInstanceVO vo : ret) {
-                    vo.setWorkgroups(getTaskInstanceWorkgroups(vo));
-                }
+            for (TaskInstanceVO vo : ret) {
+                vo.setWorkgroups(getTaskInstanceWorkgroups(vo));
             }
             return ret;
         } catch (Exception e) {
@@ -732,13 +726,6 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
                 if (rs.next()) {
                     String groupsAttr = rs.getString("attribute_value");
                     workgroups = Arrays.asList(groupsAttr.split(","));
-                }
-            }
-            if (workgroups.isEmpty() && getSupportedVersion() < DataAccess.schemaVersion52) {
-                query = "select group_name from task_usr_grp_mapp tugm, user_group ug where tugm.user_group_id = ug.user_group_id and tugm.task_id = ?";
-                rs = db.runSelect(query, vo.getTaskId());
-                while (rs.next()) {
-                    workgroups.add(rs.getString("group_name"));
                 }
             }
             return workgroups;
@@ -922,27 +909,18 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
         query = "delete from VARIABLE_INSTANCE where PROCESS_INST_ID=?";
         n = db.runUpdate(query, processInstanceId);
         count += n;
-        if (getSupportedVersion()<DataAccess.schemaVersion52) {
-        	query = "delete from SLA_INSTANCE where SLA_INST_OWNER='"+
-        		OwnerType.PROCESS_INSTANCE + "' and SLA_INST_OWNER_ID=?";
-        	n = db.runUpdate(query, processInstanceId);
-        	count += n;
-        }
-
-        if (getSupportedVersion()>=DataAccess.schemaVersion51) {
-        	query = "delete from TASK_INST_INDEX where TASK_INSTANCE_ID in " +
-        		" (select TASK_INSTANCE_ID from TASK_INSTANCE " +
-        		"  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-        		"'   and TASK_INSTANCE_OWNER_ID=?)";
-        	n = db.runUpdate(query, processInstanceId);
-        	count += n;
-        	query = "delete from TASK_INST_GRP_MAPP where TASK_INSTANCE_ID in " +
-	    		" (select TASK_INSTANCE_ID from TASK_INSTANCE " +
-	    		"  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-	    		"'   and TASK_INSTANCE_OWNER_ID=?)";
-	    	n = db.runUpdate(query, processInstanceId);
-	    	count += n;
-		}
+    	query = "delete from TASK_INST_INDEX where TASK_INSTANCE_ID in " +
+    		" (select TASK_INSTANCE_ID from TASK_INSTANCE " +
+    		"  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
+    		"'   and TASK_INSTANCE_OWNER_ID=?)";
+    	n = db.runUpdate(query, processInstanceId);
+    	count += n;
+    	query = "delete from TASK_INST_GRP_MAPP where TASK_INSTANCE_ID in " +
+    		" (select TASK_INSTANCE_ID from TASK_INSTANCE " +
+    		"  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
+    		"'   and TASK_INSTANCE_OWNER_ID=?)";
+    	n = db.runUpdate(query, processInstanceId);
+    	count += n;
 
         // delete task instances and related
         query = "delete from INSTANCE_NOTE where INSTANCE_NOTE_OWNER='"+
@@ -960,15 +938,6 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
         n = db.runUpdate(query, processInstanceId);
         count += n;
 
-        if (getSupportedVersion()<DataAccess.schemaVersion52) {
-        	query = "delete from SLA_INSTANCE where SLA_INST_OWNER='"+
-        		OwnerType.TASK_INSTANCE + "' and SLA_INST_OWNER_ID in " +
-                " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
-                "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-                "'   and TASK_INSTANCE_OWNER_ID=?)";
-        	n = db.runUpdate(query, processInstanceId);
-        	count += n;
-        }
         query = "delete from TASK_INSTANCE " +
                 "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
                 "'   and TASK_INSTANCE_OWNER_ID=?";
@@ -1004,21 +973,8 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
     public int deleteProcessInstancesForProcess(Long processId) throws DataAccessException {
         try {
             db.openConnection();
-            String query;
-            ResultSet rs;
-            if (getSupportedVersion()<DataAccess.schemaVersion52) {
-                // included embedded process below
-            	query = "select PROCESS_INSTANCE_ID from PROCESS_INSTANCE where PROCESS_ID=?" +
-                    " or PROCESS_ID in (select p.PROCESS_ID from PROCESS p, WORK_TRANSITION t " +
-                    "where p.PROCESS_ID=t.TO_WORK_ID and t.PROCESS_ID=?)";
-                Object[] args = new Object[2];
-                args[0] = processId;
-                args[1] = processId;
-                rs = db.runSelect(query, args);
-            } else {
-            	query = "select PROCESS_INSTANCE_ID from PROCESS_INSTANCE where PROCESS_ID=?";
-            	rs = db.runSelect(query, processId);
-            }
+        	String query = "select PROCESS_INSTANCE_ID from PROCESS_INSTANCE where PROCESS_ID=?";
+        	ResultSet rs = db.runSelect(query, processId);
             List<String> procInstIdList = new ArrayList<String>();
             while (rs.next()) {
                 procInstIdList.add(rs.getString(1));
@@ -1234,9 +1190,6 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
 
     public List<TaskActionVO> getUserTaskActions(String[] groups, Date startDate) throws DataAccessException {
 
-        boolean compatible = getSupportedVersion() < DataAccess.schemaVersion52;
-        boolean post51 = getDatabaseVersion() >= DataAccess.schemaVersion51;
-
         StringBuffer grps = new StringBuffer("(");
         for (int i = 0; i < groups.length; i++) {
             grps.append("'" + groups[i].replaceAll("'", "''") + "'");
@@ -1246,30 +1199,16 @@ public class RuntimeDataAccessV4 extends CommonDataAccess implements RuntimeData
         grps.append(")");
 
         StringBuffer sql = new StringBuffer("select sysdate, el.*\n"
-            + "from event_log el, task_instance ti" + (post51 ? ", task_inst_grp_mapp tigm\n" :"\n")
+            + "from event_log el, task_instance ti, task_inst_grp_mapp tigm\n"
             + "where el.create_dt > ?\n"
             + "and el.event_log_owner = 'TaskInstance'\n"
             + "and el.event_log_owner_id = ti.task_instance_id\n");
-        if (post51)
-            sql.append("and tigm.task_instance_id = ti.task_instance_id\n");
+        sql.append("and tigm.task_instance_id = ti.task_instance_id\n");
         sql.append("and (\n");
-        if (compatible) {
-            sql.append("(ti.task_id in\n"
-              + "  (select distinct t.task_id\n"
-              + "   from task t, task_usr_grp_mapp tugm, user_group ug\n"
-              + "   where t.task_id = tugm.task_id\n"
-              + "   and ug.user_group_id = tugm.user_group_id\n"
-              + "   and ug.group_name in " + grps + "))\n");
-            if (post51) {
-                sql.append("or ");
-            }
-        }
-        if (post51) {
-            sql.append("(ti.task_instance_id = tigm.task_instance_id\n"
-              + "and tigm.user_group_id in\n"
-              + "  (select ug.user_group_id from user_group ug\n"
-              + "   where ug.group_name in " + grps + "))\n");
-        }
+        sql.append("(ti.task_instance_id = tigm.task_instance_id\n"
+          + "and tigm.user_group_id in\n"
+          + "  (select ug.user_group_id from user_group ug\n"
+          + "   where ug.group_name in " + grps + "))\n");
         sql.append("\n)\n");
         sql.append("order by el.event_log_id, el.event_name, el.comments\n");
 

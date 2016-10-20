@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPHeader;
@@ -41,11 +40,6 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
     public static final String SOAP_VERSION_11 = "SOAP 1.1 Protocol";
     public static final String SOAP_VERSION_12 = "SOAP 1.2 Protocol";
     public static final String SOAP_ACTION = "SOAPAction";
-
-
-    protected static final String ARTIS_NAMESPACE = "http://www.qwest.com/artis";
-    private static final String ARTIS_NS_PREFIX = "artis";
-    private static final String ARTIS_LOCAL_NAME = "ArtisSoapHeader";
 
     private SOAPMessage soapRequest;
     private SOAPMessage soapResponse;
@@ -129,19 +123,6 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
     throws ConnectionException, AdapterException {
         HttpHelper httpHelper = null;
         try {
-            if (headers != null) {
-                for (String key : headers.keySet()) {
-                    if (key.startsWith("Artis")) {
-                        request = addArtisSoapHeader(request, headers);
-                        if (requestDocId != null) {
-                            DocumentReference requestDocRef = new DocumentReference(requestDocId, null);
-                            updateDocumentContent(requestDocRef, request, String.class.getName());
-                        }
-                        break;
-                    }
-                }
-            }
-
             // invoke service over http
             // allow users to override
             httpHelper = getHttpHelper(connection);
@@ -155,23 +136,7 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
                 httpHelper.setReadTimeout(readTimeout);
 
             httpHelper.setHeaders(headers);
-            String response = httpHelper.post(request);
-            if (response.indexOf(ARTIS_NAMESPACE) > 0) {
-                try {
-                    String artisHeader = extractArtisHeaders(response);
-                    if (artisHeader != null) {
-                        Name artisName = soapRequest.getSOAPPart().getEnvelope().createName(ARTIS_LOCAL_NAME, ARTIS_NS_PREFIX, ARTIS_NAMESPACE);
-                        if (getSoapResponseHeaders() == null)
-                            setSoapResponseHeaders(new HashMap<Name,String>());
-                        getSoapResponseHeaders().put(artisName, artisHeader);
-                    }
-                }
-                catch (Exception ex) {
-                    // don't interfere with response logging
-                    logger.severeException(ex.getMessage(), ex);
-                }
-            }
-            return response;
+            return httpHelper.post(request);
         }
         catch (IOException ex) {
             if (httpHelper != null && httpHelper.getResponse() != null)
@@ -240,16 +205,6 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
         return this.getAttributeValueSmart(PROP_WSDL);
     }
 
-    private Long requestDocId;
-
-    @Override
-    protected Long logMessage(String message, boolean isResponse) {
-        // store the request doc id so it can be updated if necessary with Artis headers
-        Long docId = super.logMessage(message, isResponse);
-        if (!isResponse)
-            requestDocId = docId;
-        return docId;
-    }
 
     /**
      * Override to populate soap request header values
@@ -272,28 +227,6 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
         setSoapResponseHeaders(soapHeaders);
     }
 
-    protected String extractArtisHeaders(String response) throws IOException, SOAPException, TransformerException {
-
-        SOAPHeader soapHeader = getSoapResponse(response).getSOAPHeader();
-        if (soapHeader != null) {
-            Iterator<?> iter = soapHeader.examineAllHeaderElements();
-            while (iter.hasNext()) {
-                SOAPHeaderElement headerElem = (SOAPHeaderElement) iter.next();
-                if (ARTIS_NAMESPACE.equals(headerElem.getNamespaceURI()) && ARTIS_LOCAL_NAME.equals(headerElem.getLocalName())) {
-                    if (getResponseHeaders() == null)
-                        setResponseHeaders(new HashMap<String,String>());
-                    for (Iterator<?> iter2 = headerElem.getChildElements(); iter2.hasNext(); ) {
-                        Node child = (Node) iter2.next();
-                        if (child.getNodeType() == Node.ELEMENT_NODE)
-                            getResponseHeaders().put(child.getLocalName(), child.getTextContent());
-                    }
-                    return DomHelper.toXml(headerElem);
-                }
-            }
-        }
-        return null;
-    }
-
     protected SOAPMessage getSoapRequest(String request) throws IOException, SOAPException {
         if (soapRequest == null) {
             soapRequest = getSoapMessageFactory().createMessage(null, new ByteArrayInputStream(request.getBytes()));
@@ -306,24 +239,6 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
             soapResponse = getSoapMessageFactory().createMessage(null, new ByteArrayInputStream(response.getBytes()));
         }
         return soapResponse;
-    }
-
-    protected String addArtisSoapHeader(String request, Map<String,String> headers) throws IOException, SOAPException, TransformerException {
-
-        SOAPMessage soapRequest = getSoapRequest(request);
-        Name artisName = soapRequest.getSOAPPart().getEnvelope().createName(ARTIS_LOCAL_NAME, ARTIS_NS_PREFIX, ARTIS_NAMESPACE);
-        // extract soap response headers
-        SOAPHeader header = soapRequest.getSOAPHeader();
-        SOAPHeaderElement element = header.addHeaderElement(artisName);
-        element.setMustUnderstand(false);
-        for (String key : headers.keySet()) {
-            if (key.startsWith("Artis")) {
-                SOAPElement child = element.addChildElement(key, ARTIS_NS_PREFIX, ARTIS_NAMESPACE);
-                child.addTextNode(headers.get(key));
-            }
-        }
-
-        return DomHelper.toXml(soapRequest.getSOAPPart().getDocumentElement());
     }
 
     private MessageFactory messageFactory;

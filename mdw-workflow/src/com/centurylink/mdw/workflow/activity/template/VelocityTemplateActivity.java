@@ -31,7 +31,6 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
 
     // attribute name constants
     private static final String VELOCITY_TEMPLATE_NAME = "Template Name";
-    private static final String CUSTOM_ATTRIBUTES = "CustomAttributes";
     private static final String VELOCITY_OUTPUT = "velocityOutput";
     private static final String VELOCITY_TOOLBOX_FILE = "velocityToolboxFile";
 
@@ -124,21 +123,11 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
     }
 
     protected RuleSetVO getTemplate(String name) throws ActivityException {
-        Map<String,String> customAttrs = null;
-        String customAttrString = getAttributeValue(CUSTOM_ATTRIBUTES);
-        if (!StringHelper.isEmpty(customAttrString)) {
-            customAttrs = StringHelper.parseMap(customAttrString);
-        }
-
         RuleSetVO template = null;
 
-        if (customAttrs == null)
-            template = RuleSetCache.getRuleSet(name, RuleSetVO.VELOCITY);
-        else
-            template = RuleSetCache.getLatestRuleSet(name, RuleSetVO.VELOCITY, customAttrs);
-
+        template = RuleSetCache.getRuleSet(name, RuleSetVO.VELOCITY);
         if (template == null)
-          throw new ActivityException("Unable to load velocity template '" + name + "' " + customAttrs);
+          throw new ActivityException("Unable to load velocity template '" + name + "'");
         else
           return template;
     }

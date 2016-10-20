@@ -372,8 +372,6 @@ public class SoapServlet extends HttpServlet {
         return metaInfo;
     }
 
-    protected static final String ARTIS_NAMESPACE = "http://www.qwest.com/artis";
-
     protected Map<String, String> addMetaInfo(Map<String, String> metaInfo, SOAPMessage soapMessage)
             throws SOAPException {
         SOAPHeader soapHeader = soapMessage.getSOAPHeader();
@@ -386,17 +384,8 @@ public class SoapServlet extends HttpServlet {
             Iterator<?> iter = soapHeader.examineAllHeaderElements();
             while (iter.hasNext()) {
                 SOAPHeaderElement headerElem = (SOAPHeaderElement) iter.next();
-                if (ARTIS_NAMESPACE.equals(headerElem.getNamespaceURI())) {
-                    for (Iterator<?> iter2 = headerElem.getChildElements(); iter2.hasNext();) {
-                        Node child = (Node) iter2.next();
-                        if (child.getNodeType() == Node.ELEMENT_NODE)
-                            newMetaInfo.put(child.getLocalName(), child.getTextContent());
-                    }
-                }
-                else {
-                    if (!Listener.AUTHENTICATED_USER_HEADER.equals(headerElem.getNodeName()))
-                        newMetaInfo.put(headerElem.getNodeName(), headerElem.getTextContent());
-                }
+                if (!Listener.AUTHENTICATED_USER_HEADER.equals(headerElem.getNodeName()))
+                    newMetaInfo.put(headerElem.getNodeName(), headerElem.getTextContent());
             }
             return newMetaInfo;
         }

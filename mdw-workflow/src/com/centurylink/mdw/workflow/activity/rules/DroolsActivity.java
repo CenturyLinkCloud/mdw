@@ -34,7 +34,6 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
 
     public static final String KNOWLEDGE_BASE = "KnowledgeBase";
     public static final String KNOWLEDGE_BASE_ASSET_VERSION = "KnowledgeBase_assetVersion";
-    public static final String CUSTOM_ATTRIBUTES = "CustomAttributes";
     public static final String RULE_VERSION_VAR = "RuleVersionVar";
 
 
@@ -94,48 +93,13 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
         return getKnowledgeBase(name, version, null);
     }
 
-
-    /**
-     * Returns the latest version whose attributes match the custom attribute
-     * criteria specified via "CustomAttributes".
-     * Override to apply additional or non-standard conditions.
-     */
-   /* protected KnowledgeBase getKnowledgeBase(String name, String modifier) throws ActivityException {
-        Map<String,String> customAttrs = null;
-        String customAttrString = getAttributeValue(CUSTOM_ATTRIBUTES);
-        if (!StringHelper.isEmpty(customAttrString)) {
-            customAttrs = StringHelper.parseMap(customAttrString);
-        }
-
-        KnowledgeBaseRuleSet kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseRuleSet(name, modifier, customAttrs);
-
-        if (kbrs == null) {
-            return null;
-        }
-        else {
-            super.loginfo("Using Knowledge Base: " + kbrs.getRuleSet().getLabel());
-
-            String versionLabelVarName = getAttributeValue(RULE_VERSION_VAR);
-            if (versionLabelVarName != null)
-                setParameterValue(versionLabelVarName, kbrs.getRuleSet().getLabel());
-            return kbrs.getKnowledgeBase();
-        }
-    }*/
-
     /**
      * Returns the asset based on specified version/range whose attributes match the custom attribute
-     * Returns the latest version whose attributes match the custom attribute when you dont specify version/range
-     * criteria specified via "CustomAttributes".
      * Override to apply additional or non-standard conditions.
      */
     protected KnowledgeBase getKnowledgeBase(String name, String assetVersion, String modifier) throws ActivityException {
         Map<String,String> customAttrs = null;
         KnowledgeBaseRuleSet kbrs;
-        String customAttrString = getAttributeValue(CUSTOM_ATTRIBUTES);
-        if (!StringHelper.isEmpty(customAttrString)) {
-            customAttrs = StringHelper.parseMap(customAttrString);
-        }
-
         if (assetVersion == null)
             kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseRuleSet(name, modifier, customAttrs, getClassLoader());
         else

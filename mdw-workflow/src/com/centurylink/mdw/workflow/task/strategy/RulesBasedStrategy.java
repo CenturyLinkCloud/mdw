@@ -3,13 +3,10 @@
  */
 package com.centurylink.mdw.workflow.task.strategy;
 
-import java.util.Map;
-
 import org.drools.KnowledgeBase;
 
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
 import com.centurylink.mdw.common.exception.StrategyException;
-import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.observer.task.ParameterizedStrategy;
 import com.centurylink.mdw.workflow.drools.cache.DroolsKnowledgeBaseCache;
@@ -17,7 +14,6 @@ import com.centurylink.mdw.workflow.drools.cache.KnowledgeBaseRuleSet;
 
 public abstract class RulesBasedStrategy extends ParameterizedStrategy {
 
-    public static final String CUSTOM_ATTRIBUTES = "CustomAttributes";
     public static final String DECISION_TABLE_SHEET = "Decision Table Sheet";
 
     protected KnowledgeBase getKnowledgeBase() throws StrategyException {
@@ -37,22 +33,15 @@ public abstract class RulesBasedStrategy extends ParameterizedStrategy {
     }
 
     /**
-     * Returns the latest version whose attributes match any custom attribute
-     * criteria specified via "CustomAttributes".
+     * Returns the latest version.
      *
      * Modifier is sheet name.
      *
-     * Override to apply additional or non-standard conditions.
+     * Override to apply additional or non-standard attribute conditions.
      * @throws StrategyException
      */
     protected KnowledgeBase getKnowledgeBase(String name, String modifier) throws StrategyException {
-        Map<String,String> customAttrs = null;
-        Object customAttr = getParameter(CUSTOM_ATTRIBUTES);
-        if (customAttr != null) {
-            customAttrs = StringHelper.parseMap(customAttr.toString());
-        }
-
-        KnowledgeBaseRuleSet kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseRuleSet(name, modifier, customAttrs, getClassLoader());
+        KnowledgeBaseRuleSet kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseRuleSet(name, modifier, null, getClassLoader());
 
         if (kbrs == null) {
             return null;

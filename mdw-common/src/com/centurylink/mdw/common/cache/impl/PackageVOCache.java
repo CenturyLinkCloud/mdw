@@ -32,7 +32,6 @@ import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
 
 public class PackageVOCache implements PreloadableCache {
 
@@ -110,18 +109,8 @@ public class PackageVOCache implements PreloadableCache {
                   if (packageVO.containsProcess(processId))
                       return packageVO;
                 }
-                if (ApplicationContext.isFileBasedAssetPersist()) {
-                    // check for db compatibility package
-                    PackageVO dbPkg = getNonVcsPackage(processId);
-                    if (dbPkg != null)
-                        return dbPkg;
-                }
             }
             return PackageVO.getDefaultPackage();
-        }
-        catch (DataAccessException ex) {
-            logger.severeException(ex.getMessage(), ex);
-            return null;
         }
         catch (CachingException ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -292,20 +281,5 @@ public class PackageVOCache implements PreloadableCache {
         catch (Exception ex) {
             throw new CachingException(-1, ex.getMessage(), ex);
         }
-    }
-
-    /**
-     * Retrieve a non-vcs package for in-flight compatibility.
-     */
-    private static PackageVO getNonVcsPackage(Long processId) throws DataAccessException {
-        PackageVO pkg = null;
-        if (DataAccess.isUseCompatibilityDatasource()) {
-            ProcessVO dbProc = DataAccess.getProcessLoader().getProcessBase(processId); // will use compatDs
-            if (dbProc != null) {
-                ProcessLoader dbLoader = DataAccess.getDbProcessLoader();
-                pkg = dbLoader.getPackage(dbProc.getPackageName());
-            }
-        }
-        return pkg;
     }
 }

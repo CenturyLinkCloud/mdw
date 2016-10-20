@@ -15,9 +15,7 @@ import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.SqlQueries;
 import com.centurylink.mdw.dataaccess.version4.UserDataAccessV4;
-import com.centurylink.mdw.model.data.task.TaskAction;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 import com.centurylink.mdw.model.value.user.UserGroupVO;
 import com.centurylink.mdw.model.value.user.UserRoleVO;
@@ -471,11 +469,6 @@ public class UserDAO extends UserDataAccessV4 {
 		try {
 			db.openConnection();
 			String query = "";
-			if (getSupportedVersion() < DataAccess.schemaVersion52) {
-    			// delete task-group mapping
-    			query = "delete TASK_USR_GRP_MAPP where USER_GROUP_ID=?";
-    			db.runUpdate(query, groupId);
-			}
 			// delete user-group to role mapping
 			query = "delete from USER_ROLE_MAPPING where USER_ROLE_MAPPING_OWNER='"
 				+ OwnerType.USER_GROUP_MAP + "'"
@@ -507,11 +500,6 @@ public class UserDAO extends UserDataAccessV4 {
 			// delete user-role and group-role mapping
 			String query = "delete from USER_ROLE_MAPPING where USER_ROLE_ID=?";
 			db.runUpdate(query, roleId);
-            if (getSupportedVersion() < DataAccess.schemaVersion52) {
-    			// delete taskAction-role mapping
-    			query = "delete from TASK_ACTN_USR_ROLE_MAPP where USER_ROLE_ID=?";
-    			db.runUpdate(query, roleId);
-            }
 			// delete the role itself
 			query = "delete from USER_ROLE where USER_ROLE_ID=?";
 			db.runUpdate(query, roleId);
@@ -929,48 +917,6 @@ public class UserDAO extends UserDataAccessV4 {
                 db.closeConnection();
             }
         }
-
-    public List<TaskAction> getTaskActionsForUser(String cuid)
-		    throws DataAccessException {
-		try {
-		db.openConnection();
-		    List<TaskAction> actions = new ArrayList<TaskAction>();
-		    String query = SqlQueries.getQuery(SqlQueries.READ_ALL_BY_USER_ID_SQL);
-		    ResultSet rs = db.runSelect(query, cuid);
-		    while (rs.next()) {
-		        TaskAction one = new TaskAction();
-		        one.setTaskActionId(rs.getLong(1));
-		        one.setTaskActionName(rs.getString(2));
-		        actions.add(one);
-		    }
-		    return actions;
-		} catch (Exception e) {
-		    throw new DataAccessException(0, "failed to get task actions", e);
-		} finally {
-		    db.closeConnection();
-		}
-    }
-
-    public List<TaskAction> getTaskActionsForUserGroups(String cuid)
-    throws DataAccessException {
-		try {
-			db.openConnection();
-		    List<TaskAction> actions = new ArrayList<TaskAction>();
-		    String query = SqlQueries.getQuery(SqlQueries.READ_ALL_BY_USER_GROUPS_SQL);
-		    ResultSet rs = db.runSelect(query, cuid);
-		    while (rs.next()) {
-		        TaskAction one = new TaskAction();
-		        one.setTaskActionId(rs.getLong(1));
-		        one.setTaskActionName(rs.getString(2));
-		        actions.add(one);
-		    }
-		    return actions;
-		} catch (Exception e) {
-		    throw new DataAccessException(0, "failed to get task actions", e);
-		} finally {
-		    db.closeConnection();
-		}
-    }
 
     public List<String> getPublicUserAttributeNames()
     throws DataAccessException {

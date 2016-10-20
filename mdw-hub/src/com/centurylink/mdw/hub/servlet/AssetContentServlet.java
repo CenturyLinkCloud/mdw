@@ -182,9 +182,8 @@ public class AssetContentServlet extends HttpServlet {
                             // new pkg
                             pkgDir = new PackageDir(persisterVcs.getStorageDir(), pkg, persisterVcs.getVersionControl());
                         }
-                        pkgDir.setJson(true);
                         persisterVcs.save(pkg, pkgDir, true);
-                        pkgDir.parse(true); // sync
+                        pkgDir.parse(); // sync
                     }
                 }
                 archiver.archive();

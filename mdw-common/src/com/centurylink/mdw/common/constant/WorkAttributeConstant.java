@@ -120,10 +120,6 @@ public class WorkAttributeConstant  {
      public static final String SIMULATION_RESPONSE = SIMULATION_ATTR_PREFIX + "@RESPONSE";
      public static final String MILESTONE_NAME = "MILESTONE@NAME";
 
-     public static final String BAM_ATTR_PREFIX = "BAM";
-     public static final String BAM_START_MSGDEF = BAM_ATTR_PREFIX + "@START_MSGDEF";
-     public static final String BAM_FINISH_MSGDEF = BAM_ATTR_PREFIX + "@FINISH_MSGDEF";
-
      public static boolean isOverrideAttribute(String attrName) {
          return attrName != null && attrName.indexOf('@') >= 0;
      }

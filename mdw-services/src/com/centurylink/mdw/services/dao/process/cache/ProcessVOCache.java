@@ -8,16 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.CacheEnabled;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.provider.CacheService;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DataAccess;
-import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -130,22 +127,6 @@ public class ProcessVOCache implements CacheEnabled, CacheService {
                 }
             }
             if (match == null) {
-                if (ApplicationContext.isFileBasedAssetPersist()) {
-                    // try to match smart versions from db assets
-                    for (ProcessVO process : getNonVcsProcesses()) {
-                        if (spec.getName().equals(process.getName())) {
-                            if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
-                                match = process;
-                        }
-                    }
-                    if (match == null) {
-                        // still null -- try falling back to non-smart VO from db
-                        return getProcessVO(spec.getName(), RuleSetVO.parseVersion(spec.getVersion()));
-                    }
-                    else {
-                        return getProcessVO(match.getId());
-                    }
-                }
                 return null;
             }
             else {
@@ -156,21 +137,6 @@ public class ProcessVOCache implements CacheEnabled, CacheService {
             logger.severeException(ex.getMessage(), ex);
             return null;
         }
-    }
-
-    /**
-     * Smart versioning compatibility for VCS assets with in-flight db processes.
-     */
-    private static List<ProcessVO> dbProcesses;
-    private static List<ProcessVO> getNonVcsProcesses() throws DataAccessException {
-        if (dbProcesses == null) {
-            dbProcesses = new ArrayList<ProcessVO>();
-            if (DataAccess.isUseCompatibilityDatasource()) {
-                ProcessLoader dbLoader = DataAccess.getDbProcessLoader();
-                dbProcesses.addAll(dbLoader.getProcessList());
-            }
-        }
-        return dbProcesses;
     }
 
     private ProcessVO getProcessVO0(String procname, int version) {

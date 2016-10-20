@@ -151,22 +151,8 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 		     var.setName(varname);
 		     var.setType(VariableTypeCache.getTypeName(rs.getLong(3)));
 		     return var;
-	     } else if (getSupportedVersion() >= DataAccess.schemaVersion52) {
+	     } else {
 	         return null;
-	     } else {		// backward compatibility
-	    	 query = "select vi.VARIABLE_ID, vi.VARIABLE_INST_ID, vi.VARIABLE_VALUE, vt.VARIABLE_TYPE_NAME " +
-	    	 	" from VARIABLE_INSTANCE vi, VARIABLE v, VARIABLE_TYPE vt" +
-	    	 	" where PROCESS_INST_ID=? and vi.VARIABLE_ID=v.VARIABLE_ID and v.VARIABLE_NAME=? and v.VARIABLE_TYPE_ID = vt.VARIABLE_TYPE_ID";
-	    	 args[1] = varname;
-	    	 rs = db.runSelect(query, args);
-	    	 if (!rs.next()) return null;
-	    	 VariableInstanceInfo var = new VariableInstanceInfo();
-	    	 var.setVariableId(rs.getLong(1));
-	    	 var.setInstanceId(rs.getLong(2));
-	    	 var.setStringValue(rs.getString(3));
-	    	 var.setName(varname);
-	    	 var.setType(rs.getString(4));
-	    	 return var;
 	     }
     }
 
