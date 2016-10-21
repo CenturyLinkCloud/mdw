@@ -16,7 +16,6 @@ import com.centurylink.mdw.services.task.TaskServicesImpl;
 import com.centurylink.mdw.services.task.TaskTemplateServicesImpl;
 import com.centurylink.mdw.services.user.UserManagerBean;
 import com.centurylink.mdw.services.user.UserServicesImpl;
-import com.centurylink.mdw.services.workflow.ExternalMessageServicesImpl;
 import com.centurylink.mdw.services.workflow.ProcessServicesImpl;
 import com.centurylink.mdw.services.workflow.WorkflowServicesImpl;
 
@@ -53,10 +52,6 @@ public class ServiceLocator {
 
     public static ProcessServices getProcessServices() {
         return new ProcessServicesImpl(); // TODO use ServiceRegistry
-    }
-
-    public static ExternalMessageServices getExternalMessageServices() {
-        return new ExternalMessageServicesImpl(); // TODO use ServiceRegistry
     }
 
     public static UserServices getUserServices() {

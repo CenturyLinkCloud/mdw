@@ -223,7 +223,7 @@ public class DefaultEventHandler implements ExternalEventHandler {
     						Long docid = eventMgr.createDocument(vardef.getVariableType(), procInst.getId(),
                                     OwnerType.PROCESS_INSTANCE, procInst.getId(), null, null, varValue);
     						varinst = eventMgr.setVariableInstance(procInst.getId(), varName,
-    								new DocumentReference(docid,null));
+    								new DocumentReference(docid));
             	    	    response = "OK:" + varinst.getInstanceId().toString() + ":" + docid.toString();
     					} else {
     						varinst = eventMgr.setVariableInstance(procInst.getId(), varName, varValue);

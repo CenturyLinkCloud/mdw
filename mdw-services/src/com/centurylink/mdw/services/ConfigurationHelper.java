@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.Serializable;
 
 import com.centurylink.mdw.bpm.ApplicationCacheDocument;
-import com.centurylink.mdw.bpm.ApplicationPropertiesDocument;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
@@ -17,36 +16,31 @@ import com.centurylink.mdw.services.cache.CacheRegistration;
 
 public class ConfigurationHelper implements Serializable{
 
-    private static final String APPLICATION_PROPERTIES = "ApplicationProperties.xml";
-    private static final String APPLICATION_CACHE = "ApplicationCache.xml";
+    private static final String APPLICATION_CACHE = "application-cache.xml";
 
     private ConfigurationHelper() {
     }
 
-    public static boolean applyConfigChange(String pFileName, String pContents, boolean pReact)
+    public static boolean applyConfigChange(String fileName, String contents, boolean react)
     throws Exception {
      boolean validContents = true;
-     if (APPLICATION_PROPERTIES.equals(pFileName)) {
-        ApplicationPropertiesDocument.Factory.parse(pContents, Compatibility.namespaceOptions());
-
-     } else if (APPLICATION_CACHE.equals(pFileName)) {
-        ApplicationCacheDocument.Factory.parse(pContents, Compatibility.namespaceOptions());
-
+     if (APPLICATION_CACHE.equals(fileName)) {
+        ApplicationCacheDocument.Factory.parse(contents, Compatibility.namespaceOptions());
      }
      if (!validContents) {
        return false;
      }
 
-     String filepath = PropertyManager.getProperty(PropertyNames.MDW_CONFIG_DIRECOTRY) + "/" + pFileName;
+     String filepath = PropertyManager.getProperty(PropertyNames.MDW_CONFIG_DIRECOTRY) + "/" + fileName;
 
      FileWriter wr = new FileWriter(new File(filepath));
-     wr.write(pContents);
+     wr.write(contents);
      wr.flush();
      wr.close();
-     if (!pReact)
+     if (!react)
        return true;
      else
-       return reactToConfigChange(pFileName, pContents);
+       return reactToConfigChange(fileName, contents);
     }
 
     public static boolean reactToConfigChange(String pFileName, String pContents)

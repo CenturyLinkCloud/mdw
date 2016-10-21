@@ -406,7 +406,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         			else {
         				DocumentReference docref = super.createDocument(var.getVariableType(),
         						value, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId(), null, null);
-            			value0 = new DocumentReference(docref.getDocumentId(), null);
+            			value0 = new DocumentReference(docref.getDocumentId());
         			}
         		} else {
             		value0 = VariableTranslator.toObject(var.getVariableType(), value);

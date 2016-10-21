@@ -26,7 +26,6 @@ import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.value.task.TaskVO;
 import com.centurylink.mdw.model.value.variable.DocumentVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
 import com.centurylink.mdw.model.value.variable.VariableInstanceVO;
 import com.centurylink.mdw.services.dao.task.TaskDAOException;
 import com.centurylink.mdw.task.SubTask;
@@ -300,17 +299,6 @@ public interface TaskManager {
    throws TaskException, DataAccessException;
 
    /**
-    * Creates the Task Instance Data
-    *
-    * @param taskInstanceId
-    * @param variableInstanceVO
-    * @param value
-    * @param userId
-    */
-   public VariableInstanceInfo createTaskInstanceData(Long taskInstanceId, VariableInstanceVO variableInstanceVO, Serializable value, Long userId)
-   throws TaskException, DataAccessException;
-
-   /**
     * Returns the available notes for the given owner type and ID
     *
     * @param owner the owner type
@@ -551,15 +539,6 @@ public interface TaskManager {
     * @throws DataAccessException
     */
    public Attachment getAttachment(Long pAttachmentId) throws DataAccessException;
-
-   /**
-    * Return the attachment document
-    * @param attachment
-    * @return
-    * @throws DataAccessException
-    */
-   public DocumentVO getAttachmentDocument(Attachment attachment)
-  throws DataAccessException;
 
    /**
     * get the task instance for the activity instance.

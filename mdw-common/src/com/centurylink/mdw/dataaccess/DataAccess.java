@@ -5,7 +5,6 @@ package com.centurylink.mdw.dataaccess;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import com.centurylink.mdw.common.SchemaTypeTranslator;
 import com.centurylink.mdw.common.constant.PropertyNames;
@@ -15,15 +14,13 @@ import com.centurylink.mdw.common.utilities.DesignatedHostSslVerifier;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.dataaccess.db.UserDataAccessDb;
 import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.dataaccess.file.RuntimeDataAccessVcs;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.dataaccess.file.WrappedBaselineData;
-import com.centurylink.mdw.dataaccess.version4.UserDataAccessV4;
-import com.centurylink.mdw.dataaccess.version5.RuntimeDataAccessV5;
-import com.centurylink.mdw.model.value.variable.VariableTypeVO;
 
 public class DataAccess {
 
@@ -31,14 +28,6 @@ public class DataAccess {
     public final static int currentSchemaVersion = schemaVersion55;
     public static int supportedSchemaVersion = currentSchemaVersion;
     public static boolean isPackageLevelAuthorization = true;
-
-    public static RuntimeDataAccess getRuntimeDataAccess(int version, int supportedVersion, DatabaseAccess db) {
-        return new RuntimeDataAccessV5(db, version, supportedVersion);
-    }
-
-    public static RuntimeDataAccess getRuntimeDataAccess(int version, int supportedVersion, DatabaseAccess db, List<VariableTypeVO> variableTypes) {
-        return new RuntimeDataAccessV5(db, version, supportedVersion, variableTypes);
-    }
 
     public static ProcessPersister getProcessPersister() throws DataAccessException {
         return getProcessPersister(currentSchemaVersion, supportedSchemaVersion, new DatabaseAccess(null),null);
@@ -97,8 +86,8 @@ public class DataAccess {
     public static RuntimeDataAccess getRuntimeDataAccess(DatabaseAccess db, String fileBasedAssetLoc) throws DataAccessException {
         if (fileBasedAssetLoc != null)
             return getVcsRuntimeDataAccess(db, new File(fileBasedAssetLoc));
-
-    	return getRuntimeDataAccess(currentSchemaVersion, supportedSchemaVersion, db);
+        else
+            throw new UnsupportedOperationException("Only VCS assets are supported");
     }
 
     public static UserDataAccess getUserDataAccess(DatabaseAccess db) throws DataAccessException {
@@ -106,7 +95,7 @@ public class DataAccess {
     }
 
     public static UserDataAccess getUserDataAccess(int version, int supportedVersion, DatabaseAccess db) {
-    	return new UserDataAccessV4(db, version, supportedVersion);
+    	return new UserDataAccessDb(db, version, supportedVersion);
     }
 
     private static volatile ProcessLoader loaderPersisterVcs;

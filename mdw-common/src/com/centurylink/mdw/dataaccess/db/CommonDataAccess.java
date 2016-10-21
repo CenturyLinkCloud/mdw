@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
  */
-package com.centurylink.mdw.dataaccess.version4;
+package com.centurylink.mdw.dataaccess.db;
 
 import java.net.ConnectException;
 import java.sql.ResultSet;

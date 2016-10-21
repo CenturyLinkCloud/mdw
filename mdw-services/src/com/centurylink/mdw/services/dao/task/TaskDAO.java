@@ -30,7 +30,7 @@ import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.ProcessPersister;
-import com.centurylink.mdw.dataaccess.version4.CommonDataAccess;
+import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.data.common.Attachment;
 import com.centurylink.mdw.model.data.common.InstanceNote;
@@ -3055,6 +3055,32 @@ public class TaskDAO extends CommonDataAccess {
             }
         }
         return null;
+    }
+
+    public List<Long> findTaskInstance(Long taskId, String masterRequestId)
+            throws DataAccessException {
+        try {
+            db.openConnection();
+            String query = "select ti.TASK_INSTANCE_ID" +
+                " from TASK_INSTANCE ti, PROCESS_INSTANCE pi" +
+                " where ti.TASK_INSTANCE_OWNER_ID = pi.PROCESS_INSTANCE_ID and" +
+                "   pi.MASTER_REQUEST_ID = ? and" +
+                "   ti.TASK_ID = ?" +
+                " order by ti.TASK_INSTANCE_ID desc";
+            Object[] args = new Object[2];
+            args[0] = masterRequestId;
+            args[1] = taskId;
+            ResultSet rs = db.runSelect(query, args);
+            List<Long> ret = new ArrayList<Long>();
+            while (rs.next()) {
+                ret.add(rs.getLong(1));
+            }
+            return ret;
+        } catch (Exception e) {
+            throw new DataAccessException(0,"failed to find task instance", e);
+        } finally {
+            db.closeConnection();
+        }
     }
 
     private static DateFormat dateFormat;

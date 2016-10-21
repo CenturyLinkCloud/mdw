@@ -47,7 +47,7 @@ import com.centurylink.mdw.services.messenger.InternalMessenger;
 
 public class CacheRegistration implements StartupClass {
 
-    private static final String APPLICATION_CACHE_FILE_NAME = "ApplicationCache.xml";
+    private static final String APPLICATION_CACHE_FILE_NAME = "application-cache.xml";
     // following 2 lines cannot be initialized in onStartup() - too late
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static Map<String,CacheEnabled> allCaches

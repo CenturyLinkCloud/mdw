@@ -8,24 +8,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.xmlbeans.XmlObject;
-
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.constant.JMSDestinationNames;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.constant.ProcessVisibilityConstant;
-import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.constant.VariableConstants;
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.JMSServices;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.TransactionWrapper;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
 import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.dataaccess.RemoteAccess;
-import com.centurylink.mdw.model.data.monitor.CertifiedMessage;
 import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.value.event.InternalEventVO;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
@@ -35,15 +28,8 @@ import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
 import com.centurylink.mdw.model.value.variable.VariableVO;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.dao.process.EngineDataAccessDB;
-import com.centurylink.mdw.services.event.CertifiedMessageManager;
-import com.centurylink.mdw.services.messenger.IntraMDWMessenger;
-import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.process.ProcessExecuter;
-import com.centurylink.mdw.services.task.EngineAccess;
-import com.qwest.mbeng.DomDocument;
-import com.qwest.mbeng.FormatDom;
-import com.qwest.mbeng.MbengNode;
 
 /**
  * This activity implementor implements invocation of subprocesses.
@@ -80,8 +66,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
      * @return a map (name-value pairs) of variable bindings
      * @throws Exception various types of exceptions
      */
-    protected Map<String,String> createVariableBinding(List<VariableVO> childVars,
-            RemoteAccess rao, String myAppName)
+    protected Map<String,String> createVariableBinding(List<VariableVO> childVars)
             throws Exception {
         Map<String,String> validParams = new HashMap<String,String>();
         String map = getAttributeValue(VARIABLES);
@@ -97,63 +82,24 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             } else if (vn.equals(VariableConstants.MASTER_DOCUMENT)) {
                 VariableInstanceInfo varinst = getVariableInstance(VariableConstants.MASTER_DOCUMENT);
                 v = varinst==null?null:varinst.getStringValue();
-            } else if (rao==null) {
+            } else {
                 v = evaluateBindingValue(childVar, v);
-            } else if (childVar.getVariableCategory().intValue()!=VariableVO.CAT_STATIC
-                    && valueIsVariable(v)) {
-                String varName = v.substring(1);
-                VariableInstanceInfo varinst = getVariableInstance(varName);
-                if (varinst==null) {
-                    v = null;
-                } else if (varinst.isDocument()) {
-                    DocumentReference docref = (DocumentReference)varinst.getData();
-                    String server = docref.getServer();
-                    if (server==null) server = myAppName;
-                    else if (server.equals(rao.getLogicalServerName())) server = null;
-                    docref = new DocumentReference(docref.getDocumentId(), server);
-                    v = docref.toString();
-                } else {
-                    v = varinst.getStringValue();
-                }
-            } else v = evaluateBindingValue(childVar, v);
-            if (v!=null && v.length()>0) validParams.put(vn, v);
+            }
+            if (v != null && v.length() > 0)
+                validParams.put(vn, v);
         }
         return validParams;
     }
 
     public void execute() throws ActivityException{
         try{
-            String procname = this.getAttributeValue(WorkAttributeConstant.PROCESS_NAME);
-            String myAppName=null;
-            RemoteAccess rao;
-            int k = procname.indexOf(RemoteAccess.REMOTE_NAME_DELIMITER);
-            String logicalServerName;
-            if (k>0) {
-                logicalServerName = procname.substring(k+1);
-                EngineAccess engineAccess = new EngineAccess();
-                String dbinfo = engineAccess.getDatabaseCredential(logicalServerName);
-                rao = new RemoteAccess(logicalServerName, dbinfo);
-                myAppName = getProperty(PropertyNames.APPLICATION_NAME);
-            } else {
-                rao = null;
-                logicalServerName = null;
-            }
-            ProcessVO subprocdef = rao == null ? getSubProcessVO() : getRemoteSubProcessVO(rao);
+            ProcessVO subprocdef = getSubProcessVO();
             if (isLogDebugEnabled())
               logdebug("Invoking subprocess: " + subprocdef.getLabel());
             subprocIsService = subprocdef.getProcessType().equals(ProcessVisibilityConstant.SERVICE);
             List<VariableVO> childVars = subprocdef.getVariables();
-            Map<String,String> validParams = createVariableBinding(childVars, rao, myAppName);
-            String ownerType;
-            if (rao==null) ownerType = OwnerType.PROCESS_INSTANCE;
-            else {
-                String engineUrl = MessengerFactory.getEngineUrl();
-                if (engineUrl.contains("/localhost:")) {
-                    String ipaddr = java.net.InetAddress.getLocalHost().getHostAddress();
-                    engineUrl = engineUrl.replace("localhost", ipaddr);
-                }
-                ownerType = myAppName + "@" + engineUrl;
-            }
+            Map<String,String> validParams = createVariableBinding(childVars);
+            String ownerType = OwnerType.PROCESS_INSTANCE;
             String secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
             Long secondaryOwnerId = getActivityInstanceId();
             Long ownerId = this.getProcessInstanceId();
@@ -174,81 +120,38 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                     subprocdef.getProcessId(), ownerType,
                     ownerId, getMasterRequestId(), null,
                     secondaryOwnerType, secondaryOwnerId);
-            if (rao!=null) {
-                logger.info("Invoke remote process " + procname);
-                boolean useCertifiedMessage = true;
-                boolean useInternalMessageQueue = false;
-                evMsg.setParameters(validParams);
-                if (useCertifiedMessage) {
-                    DomDocument domdoc = new DomDocument();
-                    FormatDom fmter = new FormatDom();
-                    domdoc.getRootNode().setName("_mdw_remote_process");
-                    MbengNode node = domdoc.newNode("direction", "invoke", "", ' ');
-                    domdoc.getRootNode().appendChild(node);
-                    node = domdoc.newNode("message", evMsg.toXml(), "", ' ');
-                    domdoc.getRootNode().appendChild(node);
-                    String msg = fmter.format(domdoc);
-                    DocumentReference docref = this.createDocument(XmlObject.class.getName(), msg,
-                            OwnerType.ADAPTOR_REQUEST, this.getActivityInstanceId(), null, null);
-                    CertifiedMessageManager manager = CertifiedMessageManager.getSingleton();
-                    Map<String,String> props = new HashMap<String,String>();
-                    props.put(CertifiedMessage.PROP_PROTOCOL, CertifiedMessage.PROTOCOL_MDW2MDW);
-                    props.put(CertifiedMessage.PROP_JNDI_URL, logicalServerName);
-                    manager.sendTextMessage(props, msg, docref.getDocumentId(), logtag());
-                } else if (useInternalMessageQueue) {
-                    try {
-                        String contextUrl = MessengerFactory.getEngineUrl(logicalServerName);
-                        JMSServices.getInstance().sendTextMessage(contextUrl,
-                                JMSDestinationNames.PROCESS_HANDLER_QUEUE, evMsg.toXml(), 0, null);
-                    } catch (Exception e) {
-                        throw new ProcessException(-1, "Failed to send internal event", e);
-                    }
-                } else {
-                    DomDocument domdoc = new DomDocument();
-                    FormatDom fmter = new FormatDom();
-                    domdoc.getRootNode().setName("_mdw_remote_process");
-                    MbengNode node = domdoc.newNode("direction", "invoke", "", ' ');
-                    domdoc.getRootNode().appendChild(node);
-                    node = domdoc.newNode("message", evMsg.toXml(), "", ' ');
-                    domdoc.getRootNode().appendChild(node);
-                    String msg = fmter.format(domdoc);
-                    IntraMDWMessenger messenger = MessengerFactory.newIntraMDWMessenger(logicalServerName);
-                    messenger.sendMessage(msg);
+            ProcessExecuter engine = getEngine();
+            if (engine.isInService()) {
+                if (subprocIsService) {        // call directly
+                    ProcessInstanceVO pi = getEngine().createProcessInstance(
+                            subprocdef.getProcessId(), OwnerType.PROCESS_INSTANCE,
+                            getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
+                            getMasterRequestId(), validParams);
+                    engine.startProcessInstance(pi, 0);
+                } else {                    // call externally
+                    String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + secondaryOwnerId + "startproc" + subprocdef.getProcessId();
+                    evMsg.setParameters(validParams);    // TODO this can be large!
+                    engine.sendDelayedInternalEvent(evMsg, 0, msgid, false);
                 }
             } else {
-                ProcessExecuter engine = getEngine();
-                if (engine.isInService()) {
-                    if (subprocIsService) {        // call directly
+                if (subprocIsService) {
+                    ProcessEngineDriver engineDriver = new ProcessEngineDriver();
+                    Map<String,String> params =  engineDriver.invokeServiceAsSubprocess(subprocdef.getProcessId(), ownerId, getMasterRequestId(),
+                            validParams, subprocdef.getPerformanceLevel());
+                    this.bindVariables(params, true);        // last arg should be true only when perf_level>=9 (DHO:actually 5), but this works
+                } else {
+                    int perfLevel = subprocdef.getPerformanceLevel();
+                    if (perfLevel==0 || perfLevel==engine.getPerformanceLevel()) {
                         ProcessInstanceVO pi = getEngine().createProcessInstance(
                                 subprocdef.getProcessId(), OwnerType.PROCESS_INSTANCE,
                                 getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
                                 getMasterRequestId(), validParams);
                         engine.startProcessInstance(pi, 0);
-                    } else {                    // call externally
-                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + secondaryOwnerId + "startproc" + subprocdef.getProcessId();
+                    } else {
+                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + secondaryOwnerId
+                            + "startproc" + subprocdef.getProcessId();
                         evMsg.setParameters(validParams);    // TODO this can be large!
                         engine.sendDelayedInternalEvent(evMsg, 0, msgid, false);
-                    }
-                } else {
-                    if (subprocIsService) {
-                        ProcessEngineDriver engineDriver = new ProcessEngineDriver();
-                        Map<String,String> params =  engineDriver.invokeServiceAsSubprocess(subprocdef.getProcessId(), ownerId, getMasterRequestId(),
-                                validParams, subprocdef.getPerformanceLevel());
-                        this.bindVariables(null, params, true);        // last arg should be true only when perf_level>=9 (DHO:actually 5), but this works
-                    } else {
-                        int perfLevel = subprocdef.getPerformanceLevel();
-                        if (perfLevel==0 || perfLevel==engine.getPerformanceLevel()) {
-                            ProcessInstanceVO pi = getEngine().createProcessInstance(
-                                    subprocdef.getProcessId(), OwnerType.PROCESS_INSTANCE,
-                                    getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
-                                    getMasterRequestId(), validParams);
-                            engine.startProcessInstance(pi, 0);
-                        } else {
-                            String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + secondaryOwnerId
-                                + "startproc" + subprocdef.getProcessId();
-                            evMsg.setParameters(validParams);    // TODO this can be large!
-                            engine.sendDelayedInternalEvent(evMsg, 0, msgid, false);
-                        }
                     }
                 }
             }
@@ -264,21 +167,9 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
     boolean resume_on_process_finish(InternalEventVO msg, Integer status)
         throws ActivityException {
         try{
-            String procname = this.getAttributeValue(WorkAttributeConstant.PROCESS_NAME);
-            String remoteName=null;
-            Map<String,String> params;
-            int k = procname.indexOf(RemoteAccess.REMOTE_NAME_DELIMITER);
-            if (k>0) {
-                logger.info("*********Got reply from the remote process*********");
-                this.createDocument(XmlObject.class.getName(), msg.toXml(),
-                        OwnerType.ADAPTOR_RESPONSE, this.getActivityInstanceId(), null, null);
-                remoteName = procname.substring(k+1);
-                params = msg.getParameters();
-            } else {
-                Long subprocInstId = msg.getWorkInstanceId();
-                params = super.getOutputParameters(subprocInstId, msg.getWorkId());
-            }
-            this.bindVariables(remoteName, params, false);
+            Long subprocInstId = msg.getWorkInstanceId();
+            Map<String,String> params = super.getOutputParameters(subprocInstId, msg.getWorkId());
+            this.bindVariables(params, false);
 
             String compcode = msg.getCompletionCode();
             if (compcode!=null && compcode.length()>0) this.setReturnCode(compcode);
@@ -292,9 +183,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
 
     }
 
-    private void bindVariables(String remoteName, Map<String, String> params,
-            boolean passDocContent) throws ActivityException {
-        String myName = getProperty(PropertyNames.APPLICATION_NAME);
+    private void bindVariables(Map<String,String> params, boolean passDocContent) throws ActivityException {
         String map = getAttributeValue(VARIABLES);
         if (map==null) map = "";
         if (params!=null) {
@@ -313,17 +202,10 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                     else {
                         DocumentReference docref = super.createDocument(var.getVariableType(),
                                 varvalue, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId(), null, null);
-                        value = new DocumentReference(docref.getDocumentId(), null);
+                        value = new DocumentReference(docref.getDocumentId());
                     }
                 } else {
                     value = VariableTranslator.toObject(var.getVariableType(), varvalue);
-                }
-                if (remoteName!=null && value instanceof DocumentReference) {
-                    DocumentReference docref = (DocumentReference)value;
-                    String server = docref.getServer();
-                    if (server==null) server = remoteName;
-                    else if (server.equals(myName)) server = null;
-                    value = new DocumentReference(docref.getDocumentId(), server);
                 }
                 this.setParameterValue(para, value);
             }
@@ -403,25 +285,11 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         }
     }
 
-    /**
-     * Does not support Smart Subprocess Versioning (except special case of zero).
-     */
-    protected ProcessVO getRemoteSubProcessVO(RemoteAccess rao) throws Exception {
-        String procname = getAttributeValue(WorkAttributeConstant.PROCESS_NAME);
-        int k = procname.indexOf(RemoteAccess.REMOTE_NAME_DELIMITER);
-        String properProcname = procname.substring(0,k);
-        String subproc_version = this.getAttributeValue(WorkAttributeConstant.PROCESS_VERSION);
-        ProcessVO subprocdef = rao.getLoader().getProcessBase(properProcname, (subproc_version==null?0:Integer.parseInt(subproc_version)));
-        return rao.getLoader().loadProcess(subprocdef.getProcessId(), false);
-    }
-
     protected ProcessVO getSubProcessVO() throws DataAccessException {
 
         String name = getAttributeValue(WorkAttributeConstant.PROCESS_NAME);
         String verSpec = getAttributeValue(WorkAttributeConstant.PROCESS_VERSION);
         return getSubProcessVO(name, verSpec);
     }
-
-
 
 }

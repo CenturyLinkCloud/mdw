@@ -41,8 +41,6 @@ import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.common.utilities.timer.Tracked;
 import com.centurylink.mdw.common.utilities.timer.TrackingTimer;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.RemoteAccess;
-import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.model.data.event.EventType;
 import com.centurylink.mdw.model.data.monitor.CertifiedMessage;
 import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
@@ -75,7 +73,6 @@ import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 import com.centurylink.mdw.services.event.CertifiedMessageManager;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
-import com.centurylink.mdw.services.task.EngineAccess;
 import com.centurylink.mdw.services.task.TaskManagerAccess;
 import com.qwest.mbeng.DomDocument;
 import com.qwest.mbeng.FormatDom;
@@ -90,12 +87,9 @@ class ProcessExecuterImpl {
     private InternalMessenger internalMessenger;
     private final boolean inService;
 
-    protected Map<String,DocumentVO> remoteDocumentCache;        // for remote document
-
     ProcessExecuterImpl(EngineDataAccess edao,
             InternalMessenger internalMessenger, boolean forServiceProcess) {
         logger = LoggerUtil.getStandardLogger();
-        remoteDocumentCache = null;
         this.edao = edao;
         inService = forServiceProcess;
         this.internalMessenger = internalMessenger;
@@ -209,39 +203,18 @@ class ProcessExecuterImpl {
             docvo.setSearchKey1(searchKey1);
             docvo.setSearchKey2(searchKey2);
             edao.createDocument(docvo);
-            docref = new DocumentReference(docvo.getDocumentId(), null);
+            docref = new DocumentReference(docvo.getDocumentId());
         } catch (Exception e) {
             throw new DataAccessException(0, e.getMessage(), e);
         }
         return docref;
     }
 
-    DocumentVO getDocument(DocumentReference docref, boolean forUpdate)
-        throws DataAccessException {
-        if (docref.getServer()!=null) {
-            if (forUpdate) throw new DataAccessException("Cannot update remote document");
-            String key = docref.getDocumentId().toString() + "@" + docref.getServer();
-            if (remoteDocumentCache==null) remoteDocumentCache = new HashMap<String,DocumentVO>();
-            DocumentVO docvo = remoteDocumentCache.get(key);
-            if (docvo==null) {
-                try {
-                    EngineAccess engineAccess = new EngineAccess();
-                    String dbinfo = engineAccess.getDatabaseCredential(docref.getServer());
-                    RemoteAccess rao = new RemoteAccess(docref.getServer(), dbinfo);
-                    RuntimeDataAccess rtinfo = rao.getRuntimeDataAccess();
-                    docvo = rtinfo.getDocument(docref.getDocumentId());
-                    if (docvo!=null) remoteDocumentCache.put(key, docvo);
-                } catch (Exception e) {
-                    throw new DataAccessException(-1, "Failed to get remote document " + docref.toString(), e);
-                }
-            }
-            return docvo;
-        } else {
-            try {
-                return edao.getDocument(docref.getDocumentId(), forUpdate);
-            } catch (SQLException e) {
-                throw new DataAccessException(-1, e.getMessage(), e);
-            }
+    DocumentVO getDocument(DocumentReference docref, boolean forUpdate) throws DataAccessException {
+        try {
+            return edao.getDocument(docref.getDocumentId(), forUpdate);
+        } catch (SQLException e) {
+            throw new DataAccessException(-1, e.getMessage(), e);
         }
     }
 
@@ -258,9 +231,6 @@ class ProcessExecuterImpl {
     }
 
     void updateDocumentContent(DocumentReference docref, Object doc, String type) throws DataAccessException {
-        if (docref.getServer()!=null) {
-            throw new DataAccessException("Cannot update remote document " + docref.toString());
-        }
         try {
             DocumentVO docvo = edao.getDocument(docref.getDocumentId(), false);
             if (doc instanceof String) docvo.setContent((String)doc);
@@ -362,9 +332,6 @@ class ProcessExecuterImpl {
     void updateDocumentInfo(
             DocumentReference docref, Long processInstId, String documentType, String ownerType, Long ownerId,
             String searchKey1, String searchKey2) throws DataAccessException {
-        if (docref.getServer()!=null) {
-            throw new DataAccessException("Cannot update remote document " + docref.toString());
-        }
         try {
             DocumentVO docvo = edao.getDocument(docref.getDocumentId(), false);
             if (documentType!=null) docvo.setDocumentType(documentType);

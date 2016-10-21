@@ -24,9 +24,7 @@ import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.common.translator.VariableTranslator;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.listener.ExternalEventHandlerBase;
 import com.centurylink.mdw.model.data.work.WorkStatus;
@@ -44,6 +42,7 @@ import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.UserManager;
+import com.centurylink.mdw.services.dao.task.TaskDAO;
 import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 
@@ -158,8 +157,6 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                     String taskName = getActionParam(action, "mdw.TaskName", true);
                     String masterRequestId = getActionParam(action, "mdw.MasterRequestId", true);
                     String dbUrl = getActionParam(action, "mdw.DbUrl", true);
-                    DatabaseAccess db = new DatabaseAccess(dbUrl);
-                    RuntimeDataAccess rtInfo = DataAccess.getRuntimeDataAccess(db);
                     int n = taskName.length();
                     int k = 0;
                     if (n > 3 && taskName.charAt(n - 3) == '[' &&
@@ -171,7 +168,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                     TaskVO taskVo = TaskTemplateCache.getTaskTemplate(taskName);
                     if (taskVo == null)
                         return createErrorResponse("Task definition not found for: '" + taskName + "'");
-                    List<Long> tiList = rtInfo.findTaskInstance(taskVo.getTaskId(), masterRequestId);
+                    List<Long> tiList = new TaskDAO(new DatabaseAccess(null)).findTaskInstance(taskVo.getTaskId(), masterRequestId);
                     if (tiList.size() < k + 1)
                         return createErrorResponse("Cannot find the task instance for masterRequestId: " + masterRequestId + " and name: '" + taskName + "'");
                     taskInstanceId = tiList.get(k);
@@ -240,7 +237,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
         EventManager eventMgr = ServiceLocator.getEventManager();
         String docType = requestDocType == null ? XmlObject.class.getName() : requestDocType;
         Long docid = eventMgr.createDocument(docType, new Long(0), ownerType, ownerId, null, null, xmlBean.xmlText());
-        return new DocumentReference(docid, null);
+        return new DocumentReference(docid);
     }
 
     private static List<String> standardParams = new ArrayList<String>();

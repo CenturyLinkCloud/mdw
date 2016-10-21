@@ -205,7 +205,7 @@ public class VariableInstanceVO extends VariableInstanceInfo implements Comparab
     }
 
 	public void setRealStringValue(String documentContent) {
-		super.setData(new DocumentReference(0L, null));
+		super.setData(new DocumentReference(0L));
 		if (documentContent==null) documentContent = "";
 		this.documentContent = documentContent;
 		documentObject = null;

@@ -359,7 +359,7 @@ public class FormEventHandler extends ExternalEventHandlerBase {
             else
                 params = new HashMap<String, String>();
             if (ownerType.equals(OwnerType.TASK_INSTANCE)) {
-                params.put(VariableConstants.REQUEST, (new DocumentReference(documentId, null)).toString());
+                params.put(VariableConstants.REQUEST, (new DocumentReference(documentId)).toString());
                 // engine only binds request automatically when owner is DOCUMENT
             }
             isServiceProcess = procVO.getProcessType().equals(ProcessVisibilityConstant.SERVICE);
@@ -578,7 +578,7 @@ public class FormEventHandler extends ExternalEventHandlerBase {
             }
             String correlationId = FormConstants.TASK_CORRELATION_ID_PREFIX + instance.getTaskInstanceId().toString();
             formdatadoc.setAttribute(FormDataDocument.ATTR_ID, correlationId);
-            DocumentReference docref = new DocumentReference(documentId, null);
+            DocumentReference docref = new DocumentReference(documentId);
             super.updateDocumentContent(docref, formdatadoc.format(), FormDataDocument.class.toString());
             String message = TaskActivity.TASK_CREATE_RESPONSE_ID_PREFIX + instance.getTaskInstanceId()
                     + ", act inst id=" + activityInstanceId + ", document id=" + documentId.toString();

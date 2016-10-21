@@ -9,10 +9,7 @@ import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.InvokeProcessActivity;
-import com.centurylink.mdw.common.constant.VariableConstants;
 import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.TransactionWrapper;
 import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
 import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
@@ -144,11 +141,7 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
 					v = varinst==null?null:varinst.getStringValue();
 				} else {
 					try {
-					    if (valueIsMagicBoxExpression(v)) {
-						    Object obj = evaluateExpression(getActivityId().toString(), MAGIC_BOX, v);
-						    v = obj == null ? null : obj.toString();
-					    }
-					    else if (valueIsJavaExpression(v)) {
+					    if (valueIsJavaExpression(v)) {
                             Object obj = evaluateExpression(getActivityId().toString(), JAVA_EL, v);
                             v = obj == null ? null : obj.toString();
 					    }
@@ -178,23 +171,6 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
     	}
     	return params;
     }
-
-    @SuppressWarnings("unchecked")
-	protected void addInternalVariable(Map<String, String> params, String key,
-			String value) {
-		Map<String, String> mdwUtilMap = null;
-		if (StringHelper.isEmpty(value) || StringHelper.isEmpty(key))
-			return;
-		String mdwUtilMapString = params.get(VariableConstants.MDW_UTIL_MAP);
-		if (!StringHelper.isEmpty(mdwUtilMapString))
-			mdwUtilMap = (Map<String, String>) VariableTranslator.toObject(
-					"java.util.Map", mdwUtilMapString);
-		else
-			mdwUtilMap = new HashMap<String, String>();
-		mdwUtilMap.put(key, value);
-		params.put(VariableConstants.MDW_UTIL_MAP,
-				VariableTranslator.toString("java.util.Map", mdwUtilMap));
-	}
 
     /**
      * TODO: Smart subprocess versioning for federated workflow.

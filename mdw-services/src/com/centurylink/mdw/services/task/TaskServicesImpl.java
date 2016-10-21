@@ -391,7 +391,7 @@ public class TaskServicesImpl implements TaskServices {
                         if (varInst == null) {
                             Long procInstId = runtimeContext.getProcessInstanceId();
                             Long docId = eventMgr.createDocument(type, procInstId, OwnerType.PROCESS_INSTANCE, procInstId, null, null, stringValue);
-                            eventMgr.setVariableInstance(procInstId, name, new DocumentReference(docId, null));
+                            eventMgr.setVariableInstance(procInstId, name, new DocumentReference(docId));
                         }
                         else {
                             DocumentReference docRef = (DocumentReference) varInst.getData();

@@ -100,7 +100,7 @@ To access this functionality from a script activity, you might include the follo
 <br/>
 Script library artifacts are cached in the MDW runtime engine.  They are compiled on-demand by the GroovyScriptEngine.
 The first time any Groovy script is accessed, all script libraries are loaded and initialized.  So the first execution may be slow, but subsequent executions should be very fast since the code has been pre-loaded and pre-compiled.
-Note: with MDW 5.x there is a mechanism for specifying that the Groovy script libraries be preinitialized (see the example in bundle-context.xml and/or ApplicationCache.xml).
+Note: with MDW 5.x there is a mechanism for specifying that the Groovy script libraries be preinitialized (see the example in application-cache.xml).
 If you change a script or library and save it in Eclipse, the cache is automatically reloaded, and the next access will re-initialize the libraries.
 
 <br/>

@@ -30,10 +30,6 @@ import com.centurylink.mdw.services.event.WorkflowHandler;
 
 public interface EventManager {
 
-    ////////////////////////////////////////////
-    // access event log
-    ////////////////////////////////////////////
-
     public void createAuditLog(UserActionVO userAction)
     throws DataAccessException, EventException;
 
@@ -145,26 +141,6 @@ public interface EventManager {
         Long pProcessOwnerId, String pSecondaryOwner, Long pSecondaryOwnerId, String pMasterRequestId)
     throws ProcessException, DataAccessException;
 
-    /**
-     * Launch a process instance.  If launching from an external event handler, the preferred
-     * method is through ExternalEventHandlerBase.launchProcess().
-     *
-     * @param processId
-     * @param masterRequestId
-     * @param owner
-     * @param ownerId now should always be document ID of the incoming request
-     * @param secondaryOwner
-     * @param secondaryOwnerId
-     * @param processVariables
-     *
-     * @deprecated use {@link com.centurylink.mdw.services.ProcessManager}.
-     */
-    @Deprecated
-    public void launchProcess(Long processId, String masterRequestId, String owner, Long ownerId,
-        String secondaryOwner, Long secondaryOwnerId, Map<String,Object> processVariables)
-    throws DataAccessException, ProcessException;
-
-
     ////////////////////////////////////////////
     // get/set variable instances and documents
     ////////////////////////////////////////////
@@ -218,45 +194,12 @@ public interface EventManager {
     public DocumentVO getDocumentVO(Long documentId)
     throws DataAccessException;
 
-    @Deprecated
-    public void updateDocumentContent(Long docid, Object doc)
-    throws DataAccessException;
-
     public void updateDocumentContent(Long docid, Object doc, String type)
     throws DataAccessException;
 
     public void updateDocumentInfo(Long docid,
     		Long processInstId, String documentType, String ownerType, Long ownerId,
             String searchKey1, String searchKey2)
-    throws DataAccessException;
-
-    /**
-     * @param procInstId
-     * @param type
-     * @param searchKey1
-     * @param searchKey2
-     * @param ownerType
-     * @param ownerId
-     * @return list of shallow document VOs (content is not populated)
-     */
-    public List<DocumentVO> findDocuments(Long procInstId, String type, String searchKey1, String searchKey2,
-            String ownerType, Long ownerId)
-    throws DataAccessException;
-
-    /**
-     * @param procInstId
-     * @param type
-     * @param searchKey1
-     * @param searchKey2
-     * @param ownerType
-     * @param ownerId
-     * @param createDateStart
-     * @param createDateEnd
-     * @param orderBy
-     * @return list of shallow document VOs (content is not populated)
-     */
-    public List<DocumentVO> findDocuments(Long procInstId, String type, String searchKey1, String searchKey2,
-            String ownerType, Long ownerId, Date createDateStart, Date createDateEnd, String orderBy)
     throws DataAccessException;
 
     public Long createDocument(String type, Long procInstId, String ownerType,

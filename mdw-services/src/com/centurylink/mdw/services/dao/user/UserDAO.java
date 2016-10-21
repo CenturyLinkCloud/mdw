@@ -15,13 +15,13 @@ import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.version4.UserDataAccessV4;
+import com.centurylink.mdw.dataaccess.db.UserDataAccessDb;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 import com.centurylink.mdw.model.value.user.UserGroupVO;
 import com.centurylink.mdw.model.value.user.UserRoleVO;
 import com.centurylink.mdw.model.value.user.UserVO;
 
-public class UserDAO extends UserDataAccessV4 {
+public class UserDAO extends UserDataAccessDb {
 
     public UserDAO(DatabaseAccess db) {
         super(db, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);

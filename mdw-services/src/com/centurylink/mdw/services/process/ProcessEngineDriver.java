@@ -147,7 +147,7 @@ public class ProcessEngineDriver {
                         if (processVO.getVariable("exception") != null && messageDoc.getSecondaryOwnerId() > 0) {
                             VariableInstanceInfo exceptionVar = processInstVO.getVariable("exception");
                             if (exceptionVar == null)
-                                engine.createVariableInstance(processInstVO, "exception", new DocumentReference(messageDoc.getSecondaryOwnerId(), null));
+                                engine.createVariableInstance(processInstVO, "exception", new DocumentReference(messageDoc.getSecondaryOwnerId()));
                             else
                                 engine.updateVariableInstance(exceptionVar);
                         }
@@ -766,7 +766,7 @@ public class ProcessEngineDriver {
     	// update document's process instance id attribute
     	try {
     		if (msgDocId.longValue()!=0L)
-    			engine.updateDocumentInfo(new DocumentReference(msgDocId,null),
+    			engine.updateDocumentInfo(new DocumentReference(msgDocId),
     					procInstId, null, null, null, masterRequestId, null);
     	} catch (Exception e) {
     		// this is possible for race condition - document was just created
@@ -789,7 +789,7 @@ public class ProcessEngineDriver {
         		if (vi.getName().equals(VariableConstants.REQUEST)) return;
         	}
         }
-        DocumentReference docref = new DocumentReference(reqdocId, null);
+        DocumentReference docref = new DocumentReference(reqdocId);
         engine.createVariableInstance(pi, VariableConstants.REQUEST, docref);
 	}
 

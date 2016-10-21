@@ -768,45 +768,6 @@ public class TaskManagerBean implements TaskManager {
     }
 
     /**
-     * Creates the Task Instance Data
-     *
-     * @param taskInstanceId
-     * @param pName
-     * @param pValue
-     */
-    public VariableInstanceInfo createTaskInstanceData(Long taskInstanceId, VariableInstanceVO variableInstanceVO, Serializable value, Long userId)
-    throws TaskException, DataAccessException {
-        CodeTimer timer = new CodeTimer("TaskManager.createTaskInstanceData()", true);
-        VariableInstanceInfo vi = null;
-        try {
-            TaskInstanceVO ti = getTaskDAO().getTaskInstance(taskInstanceId);
-            EventManager eventManager = ServiceLocator.getEventManager();
-            String varName = variableInstanceVO.getName();
-            ProcessInstanceVO pi = eventManager.getProcessInstance(ti.getOwnerId());
-            ProcessVO procdef = ProcessVOCache.getProcessVO(pi.getProcessId());
-            Long pid = (pi.isNewEmbedded()||procdef.isEmbeddedProcess())?pi.getOwnerId():pi.getId();
-            if (VariableTranslator.isDocumentReferenceVariable(variableInstanceVO.getType())) {
-                Long docid = eventManager.createDocument(variableInstanceVO.getType(), pid,
-                                                                 OwnerType.PROCESS_INSTANCE, pid, null, null, value);
-                vi = eventManager.setVariableInstance(pid, varName, new DocumentReference(docid,null));
-            }
-            else {
-                vi = eventManager.setVariableInstance(pid, varName, value);
-            }
-            if(vi != null)
-            {
-              auditLogActionPerformed(UserActionVO.Action.Create.toString(), userId, Entity.VariableInstance, vi.getInstanceId(), null, variableInstanceVO.getName());
-            }
-        }
-        catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            throw new TaskException(ex.getMessage(), ex);
-        }
-        timer.stopAndLogTiming("");
-        return vi;
-    }
-
-    /**
      * Returns the available notes for the given id
      *
      * @param instanceId
@@ -865,7 +826,7 @@ public class TaskManagerBean implements TaskManager {
                                 if (varInst == null) {
                                     Long procInstId = runtimeContext.getProcessInstanceId();
                                     Long docId = eventMgr.createDocument(doc.getVariableType(), procInstId, OwnerType.PROCESS_INSTANCE, procInstId, null, null, stringValue);
-                                    eventMgr.setVariableInstance(procInstId, rootVar, new DocumentReference(docId, null));
+                                    eventMgr.setVariableInstance(procInstId, rootVar, new DocumentReference(docId));
                                 }
                                 else {
                                     DocumentReference docRef = (DocumentReference) varInst.getData();
@@ -920,7 +881,7 @@ public class TaskManagerBean implements TaskManager {
                         if (varInst == null) {
                             Long procInstId = runtimeContext.getProcessInstanceId();
                             Long docId = eventMgr.createDocument(doc.getVariableType(), procInstId, OwnerType.PROCESS_INSTANCE, procInstId, null, null, stringValue);
-                            eventMgr.setVariableInstance(procInstId, rootVar, new DocumentReference(docId, null));
+                            eventMgr.setVariableInstance(procInstId, rootVar, new DocumentReference(docId));
                         }
                         else {
                             DocumentReference docRef = (DocumentReference) varInst.getData();
@@ -1785,25 +1746,6 @@ public class TaskManagerBean implements TaskManager {
         }
         timer.stopAndLogTiming("");
         return att;
-    }
-
-    public DocumentVO getAttachmentDocument(Attachment attachment)
-            throws DataAccessException {
-        DocumentVO documentVO = null;
-        EventManager eventManager = ServiceLocator.getEventManager();
-        if (OwnerType.DOCUMENT.equals(attachment.getOwnerType())) {
-            documentVO = eventManager.getDocumentVO(attachment.getOwnerId());
-        } else if (OwnerType.TASK_INSTANCE.equals(attachment.getOwnerType())){
-            TaskInstanceVO taskInstanceVO = getTaskInstance(attachment.getOwnerId());
-            List<DocumentVO> documentVOList = eventManager.findDocuments(taskInstanceVO.getOwnerId(),null,"TASK_ATTACHMENT",null,
-                    OwnerType.TASK_INSTANCE,attachment.getOwnerId());
-            for (DocumentVO doc : documentVOList) {
-                documentVO = doc;
-                break;
-            }
-            documentVO = eventManager.getDocumentVO(documentVO.getDocumentId());
-        }
-        return documentVO;
     }
 
    /**

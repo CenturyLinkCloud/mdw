@@ -1,7 +1,7 @@
 // Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
-var taskMod = angular.module('task', ['ngResource', 'mdw', 'ui.grid', 'ui.grid.selection', 'ngFileUpload', 'taskTemplates']);
+var taskMod = angular.module('task', ['ngResource', 'mdw', 'ui.grid', 'ui.grid.selection', 'taskTemplates']);
 
 // task summary
 taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http', 'mdw', 'util', 'TaskUtil', 'Tasks', 'Task', 'TaskAction',

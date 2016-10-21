@@ -692,7 +692,7 @@ public class ListenerHelper {
                 processInstanceId = new Long(0);
             Long docid = eventMgr.createDocument(docType, processInstanceId, ownerType, ownerId,
                     searchKey1, searchKey2, document, pkg);
-            return new DocumentReference(docid, null);
+            return new DocumentReference(docid);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

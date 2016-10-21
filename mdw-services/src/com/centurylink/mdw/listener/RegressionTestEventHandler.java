@@ -22,9 +22,7 @@ import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.SimpleLogger;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.listener.Listener;
@@ -44,6 +42,7 @@ import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.UserManager;
+import com.centurylink.mdw.services.dao.task.TaskDAO;
 import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
@@ -273,11 +272,10 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
             k = Integer.parseInt(taskName.substring(n - 2, n - 1));
             taskName = taskName.substring(0, n - 3);
         }
-        RuntimeDataAccess rtInfo = DataAccess.getRuntimeDataAccess(new DatabaseAccess(null));
         TaskVO taskVo = TaskTemplateCache.getTaskTemplate(taskName);
         if (taskVo == null)
             throw new Exception("No task found for name: '" + taskName + "'");
-        List<Long> tiList = rtInfo.findTaskInstance(taskVo.getTaskId(), masterRequestId);
+        List<Long> tiList = new TaskDAO(new DatabaseAccess(null)).findTaskInstance(taskVo.getTaskId(), masterRequestId);
         if (tiList.size() < k + 1)
             throw new Exception("Cannot find the task instance with request: " + masterRequestId + " and name: '" + taskName + "'");
         Long taskInstId;
@@ -328,7 +326,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
                             if (vardef.isDocument()) {
                                 Long docid = eventManager.createDocument(vardef.getVariableType(), procInstId,
                                     OwnerType.PROCESS_INSTANCE, procInstId, null, null, param.getStringValue());
-                                eventManager.setVariableInstance(procInstId, varname, new DocumentReference(docid,null));
+                                eventManager.setVariableInstance(procInstId, varname, new DocumentReference(docid));
                             } else {
                                 eventManager.setVariableInstance(procInstId, varname, param.getStringValue());
                             }

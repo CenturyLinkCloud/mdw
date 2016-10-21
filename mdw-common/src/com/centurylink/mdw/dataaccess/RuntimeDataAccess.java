@@ -3,7 +3,6 @@
  */
 package com.centurylink.mdw.dataaccess;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -11,14 +10,10 @@ import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.model.data.event.EventLog;
 import com.centurylink.mdw.model.value.activity.ActivityList;
-import com.centurylink.mdw.model.value.event.ExternalMessageVO;
 import com.centurylink.mdw.model.value.process.LinkedProcessInstance;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessList;
-import com.centurylink.mdw.model.value.task.TaskActionVO;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.variable.DocumentVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
 
 public interface RuntimeDataAccess {
 
@@ -60,44 +55,10 @@ public interface RuntimeDataAccess {
     List<ProcessInstanceVO> getProcessInstanceList(String owner, String secondaryOwner, Long secondaryOwnerId, String orderBy)
     throws DataAccessException;
 
-    ProcessInstanceVO getProcessInstanceForSecondary(String pSecOwner, Long pSecOwnerId)
-    throws DataAccessException;
-
-    ExternalMessageVO getExternalMessage(Long activityId, Long activityInstId, Long eventInstId)
-    throws DataAccessException;
-
-    public String getExternalEventDetails(Long externalEventId)
-    throws DataAccessException;
-
-    List<TaskInstanceVO> getTaskInstancesForProcessInstance(Long processInstId)
-    throws DataAccessException;
-
-    ProcessInstanceVO getCauseForTaskInstance(Long pTaskInstanceId)
-    throws DataAccessException;
-
     DocumentVO getDocument(Long documentId)
     throws DataAccessException;
 
-    public List<DocumentVO> findDocuments(Long procInstId, String type, String searchKey1, String searchKey2,
-            String ownerType, Long ownerId, Date createDateStart, Date createDateEnd, String orderByClause)
-    throws DataAccessException;
-
-    public void updateVariableInstance(VariableInstanceInfo var)
-    throws DataAccessException;
-
-    public void updateDocumentContent(Long documentId, String content)
-    throws DataAccessException;
-
-    public List<Long> findTaskInstance(Long taskId, String masterRequestId)
-    throws DataAccessException;
-
     public List<EventLog> getEventLogs(String pEventName, String pEventSource, String pEventOwner, Long pEventOwnerId)
-    throws DataAccessException;
-
-    public List<TaskActionVO> getUserTaskActions(String[] groups, Date startDate)
-    throws DataAccessException;
-
-    public ProcessInstanceVO getProcessInstanceForCalling(Long procInstId)
     throws DataAccessException;
 
     /**

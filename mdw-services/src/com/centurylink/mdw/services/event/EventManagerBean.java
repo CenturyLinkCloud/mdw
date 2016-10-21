@@ -108,15 +108,15 @@ public class EventManagerBean implements EventManager {
     public Long createEventLog(String pEventName, String pEventCategory, String pEventSubCat, String pEventSource,
         String pEventOwner, Long pEventOwnerId, String user, String modUser, String comments)
     throws DataAccessException, EventException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             Long id = edao.recordEventLog(pEventName, pEventCategory, pEventSubCat,
                     pEventSource, pEventOwner, pEventOwnerId, user, modUser, comments);
             return id;
         } catch (SQLException e) {
-        	edao.rollbackTransaction(transaction);
+            edao.rollbackTransaction(transaction);
             throw new EventException("Failed to create event log", e);
         } finally {
             edao.stopTransaction(transaction);
@@ -124,12 +124,12 @@ public class EventManagerBean implements EventManager {
     }
 
     public Integer notifyProcess(String pEventName, Long pEventInstId,
-    		String message, int delay)
+            String message, int delay)
     throws DataAccessException, EventException {
-		EngineDataAccess edao = new EngineDataAccessDB();
-		InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
-    	ProcessExecuter engine = new ProcessExecuter(edao, msgBroker, false);
-    	return engine.notifyProcess(pEventName, pEventInstId, message, delay);
+        EngineDataAccess edao = new EngineDataAccessDB();
+        InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
+        ProcessExecuter engine = new ProcessExecuter(edao, msgBroker, false);
+        return engine.notifyProcess(pEventName, pEventInstId, message, delay);
     }
 
     /**
@@ -152,9 +152,9 @@ public class EventManagerBean implements EventManager {
         List<UserActionVO> userActions = null;
         int totalRowsCount = 0;
 
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
+        try {
             transaction = edao.startTransaction();
             if (queryRequest.getPageSize() == QueryRequest.ALL_ROWS) {
                 userActions = edao.getAuditLogs(queryRequest.getOrderBy(), queryRequest.isAscendingOrder(),
@@ -173,7 +173,7 @@ public class EventManagerBean implements EventManager {
             throw new EventException("Failed to retrieve audit log events", e);
         }
         finally {
-        	edao.stopTransaction(transaction);
+            edao.stopTransaction(transaction);
         }
 
         PaginatedResponse response = new PaginatedResponse(userActions.toArray(new UserActionVO[0]), totalRowsCount,
@@ -190,10 +190,10 @@ public class EventManagerBean implements EventManager {
      */
     public String[] getDistinctEventLogEventNames()
     throws DataAccessException, EventException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getDistinctEventLogEventNames();
         } catch (SQLException e) {
             throw new EventException("Failed to notify events", e);
@@ -209,10 +209,10 @@ public class EventManagerBean implements EventManager {
      */
     public String[] getDistinctEventLogEventSources()
     throws DataAccessException, EventException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getDistinctEventLogEventSources();
         } catch (SQLException e) {
             throw new EventException("Failed to notify events", e);
@@ -241,8 +241,8 @@ public class EventManagerBean implements EventManager {
             if (OwnerType.DOCUMENT.equals(pOwner)) {
                 TransactionWrapper transaction = null;
                 EngineDataAccessDB edao = new EngineDataAccessDB();
-            	try {
-                	transaction = edao.startTransaction();
+                try {
+                    transaction = edao.startTransaction();
                     vo = edao.getExternalMessage(pOwnerId);
                     if (vo!=null && vo.getProcessId()!=null) {
                         ProcessVO procdef = ProcessVOCache.getProcessVO(vo.getProcessId());
@@ -277,10 +277,10 @@ public class EventManagerBean implements EventManager {
         List<QueryRequest.Restriction> restrictions = pRequest.getRestrictionList();
         ExternalEventInstanceVO[] extEventArr = null;
         int total;
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             total = edao.countExternalMessages(restrictions);
             if (total == 0) {
                 extEventArr = new ExternalEventInstanceVO[0];
@@ -312,11 +312,11 @@ public class EventManagerBean implements EventManager {
     }
 
     public String processExternalEvent(String clsname, String request, Map<String,String> metainfo)
-    	throws Exception {
-    	String packageName = metainfo.get(Listener.METAINFO_PACKAGE_NAME);
-    	PackageVO pkg = PackageVOCache.getPackage(packageName);
+        throws Exception {
+        String packageName = metainfo.get(Listener.METAINFO_PACKAGE_NAME);
+        PackageVO pkg = PackageVOCache.getPackage(packageName);
         ExternalEventHandler handler = pkg.getEventHandler(clsname, request, metainfo);
-    	XmlObject xmlBean = XmlObject.Factory.parse(request);
+        XmlObject xmlBean = XmlObject.Factory.parse(request);
         return handler.handleEventMessage(request, xmlBean, metainfo);
     }
 
@@ -335,24 +335,24 @@ public class EventManagerBean implements EventManager {
         Long pProcessOwnerId, String pSecondaryOwner, Long pSecondaryOwnerId,
         String pMasterRequestId)
     throws ProcessException, DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
-        	ProcessVO processVO = ProcessVOCache.getProcessVO(pProcessId);
-        	ProcessInstanceVO pi = new ProcessInstanceVO(pProcessId, processVO.getProcessName());
-        	pi.setOwner(pProcessOwner);
-        	pi.setOwnerId(pProcessOwnerId);
-        	pi.setSecondaryOwner(pSecondaryOwner);
-        	pi.setSecondaryOwnerId(pSecondaryOwnerId);
-        	pi.setMasterRequestId(pMasterRequestId);
-        	pi.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS);
-        	edao.createProcessInstance(pi);
-        	return pi;
+        try {
+            transaction = edao.startTransaction();
+            ProcessVO processVO = ProcessVOCache.getProcessVO(pProcessId);
+            ProcessInstanceVO pi = new ProcessInstanceVO(pProcessId, processVO.getProcessName());
+            pi.setOwner(pProcessOwner);
+            pi.setOwnerId(pProcessOwnerId);
+            pi.setSecondaryOwner(pSecondaryOwner);
+            pi.setSecondaryOwnerId(pSecondaryOwnerId);
+            pi.setMasterRequestId(pMasterRequestId);
+            pi.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS);
+            edao.createProcessInstance(pi);
+            return pi;
         } catch (Exception e) {
-			throw new ProcessException(-1, e.getMessage(), e);
+            throw new ProcessException(-1, e.getMessage(), e);
         } finally {
-        	edao.stopTransaction(transaction);
+            edao.stopTransaction(transaction);
         }
 
     }
@@ -363,32 +363,32 @@ public class EventManagerBean implements EventManager {
      *
      * @param pVarInstId
      * @param pVariableData data to be updated. If the variable is a document variable,
-     * 		this should be the actual content
+     *         this should be the actual content
      * @throws com.centurylink.mdw.common.exception.DataAccessException
      */
     public void updateVariableInstance(Long pVarInstanceId, Object pVariableData)
     throws ProcessException, com.centurylink.mdw.common.exception.DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
-    		VariableInstanceInfo varInst = edao.getVariableInstance(pVarInstanceId);
-    		// do we need to check if this also looks for variables defined in ancestor processes?
-    		if (VariableTranslator.isDocumentReferenceVariable(varInst.getType())) {
-    			DocumentReference docref = (DocumentReference)varInst.getData();
-    			DocumentVO docvo = edao.getDocument(docref.getDocumentId(), false);
-    			if (pVariableData instanceof String) docvo.setContent((String)pVariableData);
-    			else docvo.setObject(pVariableData, varInst.getType());
-    			edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent());
-    		} else {
-    			if (pVariableData instanceof String) varInst.setStringValue((String)pVariableData);
-    			else varInst.setData(pVariableData);
-    			edao.updateVariableInstance(varInst);
-    		}
+        try {
+            transaction = edao.startTransaction();
+            VariableInstanceInfo varInst = edao.getVariableInstance(pVarInstanceId);
+            // do we need to check if this also looks for variables defined in ancestor processes?
+            if (VariableTranslator.isDocumentReferenceVariable(varInst.getType())) {
+                DocumentReference docref = (DocumentReference)varInst.getData();
+                DocumentVO docvo = edao.getDocument(docref.getDocumentId(), false);
+                if (pVariableData instanceof String) docvo.setContent((String)pVariableData);
+                else docvo.setObject(pVariableData, varInst.getType());
+                edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent());
+            } else {
+                if (pVariableData instanceof String) varInst.setStringValue((String)pVariableData);
+                else varInst.setData(pVariableData);
+                edao.updateVariableInstance(varInst);
+            }
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update document content", e);
         } finally {
-        	edao.stopTransaction(transaction);
+            edao.stopTransaction(transaction);
         }
     }
 
@@ -401,15 +401,15 @@ public class EventManagerBean implements EventManager {
     throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             VariableInstanceInfo varInst = edao.getVariableInstance(procInstId, name);
             if (varInst != null) {
-            	if (value instanceof String) varInst.setStringValue((String)value);
-    			else varInst.setData(value);
-            	edao.updateVariableInstance(varInst);
+                if (value instanceof String) varInst.setStringValue((String)value);
+                else varInst.setData(value);
+                edao.updateVariableInstance(varInst);
             } else {
-            	if (value != null) {
+                if (value != null) {
                     ProcessVO processVO = ProcessVOCache.getProcessVO(edao.getProcessInstance(procInstId).getProcessId());
                     VariableVO variableVO = processVO.getVariable(name);
                     if (variableVO==null) {
@@ -423,23 +423,23 @@ public class EventManagerBean implements EventManager {
                     if (value instanceof String) varInst.setStringValue((String)value);
                     else varInst.setData(value);
 
-            		edao.createVariableInstance(varInst, procInstId);
-            	} else varInst = null;
+                    edao.createVariableInstance(varInst, procInstId);
+                } else varInst = null;
             }
-        	return varInst;
+            return varInst;
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to set variable value", e);
         } finally {
-        	edao.stopTransaction(transaction);
+            edao.stopTransaction(transaction);
         }
     }
 
     public VariableInstanceInfo getVariableInstance(Long varInstId)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getVariableInstance(varInstId);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Fail to get variable instance", e);
@@ -450,10 +450,10 @@ public class EventManagerBean implements EventManager {
 
     public VariableInstanceInfo getVariableInstance(Long procInstId, String name)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getVariableInstance(procInstId, name);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Fail to get variable instance", e);
@@ -463,11 +463,11 @@ public class EventManagerBean implements EventManager {
     }
 
     public List<VariableInstanceInfo> getProcessInstanceVariables(Long procInstId)
-    	throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        throws DataAccessException {
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getProcessInstanceVariables(procInstId);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to get process instance variables", e);
@@ -478,10 +478,10 @@ public class EventManagerBean implements EventManager {
 
     public void updateProcessInstanceStatus(Long pProcInstId, Integer status)
     throws ProcessException, com.centurylink.mdw.common.exception.DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             edao.setProcessInstanceStatus(pProcInstId, status);
             if (status.equals(WorkStatus.STATUS_COMPLETED) ||
                 status.equals(WorkStatus.STATUS_CANCELLED) ||
@@ -491,82 +491,7 @@ public class EventManagerBean implements EventManager {
         } catch (SQLException e) {
             throw new ProcessException(0, "Failed to update process instance status", e);
         } finally {
-        	edao.stopTransaction(transaction);
-        }
-    }
-
-
-    private Map<String,String> validateParameters(Long processId, Map<String,Object> pParams, Long requestDocumentId) {
-        Map<String, String> retMap = new HashMap<String, String>();
-        if (pParams == null || pParams.isEmpty()) {
-            return retMap;
-        }
-        ProcessVO processVO = ProcessVOCache.getProcessVO(processId);
-        for (String key : pParams.keySet()) {
-            Object val = pParams.get(key);
-            VariableVO vo = processVO.getVariable(key);
-            if (vo == null) {
-                logger.warn("Passed in param is not available in the cache. "
-                        + "If this is a new Variable, please refresh the cache. VariableName:"
-                        + key);
-                continue;
-            }
-            String paramType = vo.getVariableType();
-            if (VariableTranslator.isDocumentReferenceVariable(paramType)
-            		&& val instanceof String && !((String)val).startsWith("DOCUMENT")) {
-            	try {
-					Long docid = this.createDocument(paramType,
-								new Long(0), OwnerType.DOCUMENT, requestDocumentId, null, null, val);
-					val = new DocumentReference(docid, null);
-				} catch (DataAccessException e) {
-					logger.warn("Failed to translate document variable " + vo.getVariableName());
-				}
-            }
-            String translatedVal = VariableTranslator.toString(vo.getVariableType(), val);
-            retMap.put(key, translatedVal);
-        }
-        return retMap;
-    }
-
-    /**
-     * Launch a process instance.  If launching from an external event handler, the preferred
-     * method is through ExternalEventHandlerBase.launchProcess().
-     *
-     * @param processId
-     * @param masterRequestId
-     * @param owner now should always be DOCUMENT
-     * @param ownerId now should always be document ID of the incoming request
-     * @param secondaryOwner
-     * @param secondaryOwnerId
-     * @param processVariables
-     *
-     * @deprecated use {@link com.centurylink.mdw.services.ProcessManager}.
-     */
-    @Deprecated
-    public void launchProcess(Long processId, String masterRequestId, String owner, Long ownerId,
-        String secondaryOwner, Long secondaryOwnerId, Map<String,Object> processVariables)
-    throws DataAccessException, ProcessException {
-
-        if (processId == null) {
-            throw new ProcessException("Cannot launch process with missing processId");
-        }
-        TransactionWrapper transaction = null;
-        EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
-            Map<String,String> validParams = validateParameters(processId, processVariables, ownerId);
-            InternalEventVO event =
-            	InternalEventVO.createProcessStartMessage(processId,
-            			owner, ownerId, masterRequestId, null,
-            			secondaryOwner, secondaryOwnerId);
-            event.setParameters(validParams);
-            this.sendInternalEvent(event, edao);
-        }
-        catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            throw new ProcessException(ex.getMessage());
-        } finally {
-        	edao.stopTransaction(transaction);
+            edao.stopTransaction(transaction);
         }
     }
 
@@ -575,26 +500,26 @@ public class EventManagerBean implements EventManager {
      * @param masterRequestId
      */
     public void sendDelayEventsToWaitActivities(String masterRequestId)
-    		throws DataAccessException, ProcessException {
-    	TransactionWrapper transaction = null;
+            throws DataAccessException, ProcessException {
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             List<ProcessInstanceVO> procInsts = edao.getProcessInstancesByMasterRequestId(masterRequestId, null);
-	    	for (ProcessInstanceVO pi : procInsts) {
-	    		List<ActivityInstanceVO> actInsts = edao.getActivityInstancesForProcessInstance(pi.getId());
-	    		for (ActivityInstanceVO ai : actInsts) {
-	    			if (ai.getStatusCode()==WorkStatus.STATUS_WAITING.intValue()) {
-	    				InternalEventVO event = InternalEventVO.createActivityDelayMessage(ai,
-	    						masterRequestId);
-	    				this.sendInternalEvent(event, edao);
-	    			}
-	    		}
-	    	}
+            for (ProcessInstanceVO pi : procInsts) {
+                List<ActivityInstanceVO> actInsts = edao.getActivityInstancesForProcessInstance(pi.getId());
+                for (ActivityInstanceVO ai : actInsts) {
+                    if (ai.getStatusCode()==WorkStatus.STATUS_WAITING.intValue()) {
+                        InternalEventVO event = InternalEventVO.createActivityDelayMessage(ai,
+                                masterRequestId);
+                        this.sendInternalEvent(event, edao);
+                    }
+                }
+            }
         } catch (SQLException e) {
             throw new ProcessException(0, "Failed to send delay event wait activities runtime", e);
         } finally {
-        	edao.stopTransaction(transaction);
+            edao.stopTransaction(transaction);
         }
     }
 
@@ -609,19 +534,19 @@ public class EventManagerBean implements EventManager {
     public void sendInternalEvent(String message) throws ProcessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             this.sendInternalEvent(new InternalEventVO(message), edao);
         } catch (DataAccessException e) {
-			throw new ProcessException(0, "Failed to send internal message", e);
-		} catch (XmlException e) {
-			throw new ProcessException(0, "Failed to send internal message", e);
-		} finally {
-        	try {
-				edao.stopTransaction(transaction);
-			} catch (DataAccessException e) {
-				throw new ProcessException(0, "Failed to send internal message", e);
-			}
+            throw new ProcessException(0, "Failed to send internal message", e);
+        } catch (XmlException e) {
+            throw new ProcessException(0, "Failed to send internal message", e);
+        } finally {
+            try {
+                edao.stopTransaction(transaction);
+            } catch (DataAccessException e) {
+                throw new ProcessException(0, "Failed to send internal message", e);
+            }
         }
     }
 
@@ -635,8 +560,8 @@ public class EventManagerBean implements EventManager {
         CodeTimer timer = new CodeTimer("WorkManager.retryActivity", true);
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             ActivityInstanceVO ai = edao.getActivityInstance(activityInstId);
             Long procInstId = ai.getOwnerId();
             ProcessInstanceVO pi = edao.getProcessInstance(procInstId);
@@ -646,7 +571,7 @@ public class EventManagerBean implements EventManager {
                 throw new ProcessException("The process instance is not resumable");
             }
             InternalEventVO outgoingMsg = InternalEventVO.createActivityStartMessage(
-            		activityId, procInstId, null, pi.getMasterRequestId(), ActivityResultCodeConstant.RESULT_RETRY);
+                    activityId, procInstId, null, pi.getMasterRequestId(), ActivityResultCodeConstant.RESULT_RETRY);
             edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
             this.sendInternalEvent(outgoingMsg, edao);
         } catch (SQLException e) {
@@ -664,8 +589,8 @@ public class EventManagerBean implements EventManager {
         CodeTimer timer = new CodeTimer("WorkManager.skipActivity", true);
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             ActivityInstanceVO ai = edao.getActivityInstance(activityInstId);
             Long procInstId = ai.getOwnerId();
             ProcessInstanceVO pi = edao.getProcessInstance(procInstId);
@@ -677,29 +602,29 @@ public class EventManagerBean implements EventManager {
 
             Integer eventType;
             if (completionCode!=null) {
-        		int k = completionCode.indexOf(':');
-        		if (k<0) {
-        			eventType = EventType.getEventTypeFromName(completionCode);
-        			if (eventType!=null) completionCode = null;
-        			else {
-        				if (completionCode.length()==0) completionCode = null;
-        				eventType = EventType.FINISH;
-        			}
-        		} else {
-        			String eventName = completionCode.substring(0,k);
-        			eventType = EventType.getEventTypeFromName(eventName);
-        			if (eventType!=null) {
-        				completionCode = completionCode.substring(k+1);
-        				if (completionCode.length()==0) completionCode = null;
-        			} else eventType = EventType.FINISH;
-        		}
+                int k = completionCode.indexOf(':');
+                if (k<0) {
+                    eventType = EventType.getEventTypeFromName(completionCode);
+                    if (eventType!=null) completionCode = null;
+                    else {
+                        if (completionCode.length()==0) completionCode = null;
+                        eventType = EventType.FINISH;
+                    }
+                } else {
+                    String eventName = completionCode.substring(0,k);
+                    eventType = EventType.getEventTypeFromName(eventName);
+                    if (eventType!=null) {
+                        completionCode = completionCode.substring(k+1);
+                        if (completionCode.length()==0) completionCode = null;
+                    } else eventType = EventType.FINISH;
+                }
             } else {
-            	eventType = EventType.FINISH;
+                eventType = EventType.FINISH;
             }
 
             InternalEventVO outgoingMsg = InternalEventVO.
-            	createActivityNotifyMessage(ai, eventType,
-            			pi.getMasterRequestId(), completionCode);
+                createActivityNotifyMessage(ai, eventType,
+                        pi.getMasterRequestId(), completionCode);
             this.sendInternalEvent(outgoingMsg, edao);
             edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
         } catch (SQLException e) {
@@ -737,10 +662,10 @@ public class EventManagerBean implements EventManager {
      */
     public ProcessInstanceVO getProcessInstance(Long procInstId)
     throws ProcessException, DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getProcessInstance(procInstId);
 
         } catch (SQLException e) {
@@ -774,21 +699,21 @@ public class EventManagerBean implements EventManager {
      * @param processName
      * @param masterRequestId
      * @return the list of process instances. If the process definition is not found, null
-     * 		is returned; if process definition is found but no process instances are found,
-     * 		an empty list is returned.
+     *         is returned; if process definition is found but no process instances are found,
+     *         an empty list is returned.
      * @throws ProcessException
      * @throws DataAccessException
      */
     public List<ProcessInstanceVO> getProcessInstances(String masterRequestId, String processName)
     throws ProcessException, DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-    		ProcessVO procdef = ProcessVOCache.getProcessVO(processName, 0);
-    		if (procdef==null) return null;
-        	transaction = edao.startTransaction();
+        try {
+            ProcessVO procdef = ProcessVOCache.getProcessVO(processName, 0);
+            if (procdef==null) return null;
+            transaction = edao.startTransaction();
             return edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getProcessId());
-    	} catch (SQLException e) {
+        } catch (SQLException e) {
             throw new ProcessException(0, "Failed to remove event waits", e);
         } finally {
             edao.stopTransaction(transaction);
@@ -802,30 +727,30 @@ public class EventManagerBean implements EventManager {
      * @param activityLogicalId
      * @param masterRequestId
      * @return the list of activity instances. If the process definition or the activity
-     * 		with the given logical ID is not found, null
-     * 		is returned; if process definition is found but no process instances are found,
-     * 		or no such activity instances are found, an empty list is returned.
+     *         with the given logical ID is not found, null
+     *         is returned; if process definition is found but no process instances are found,
+     *         or no such activity instances are found, an empty list is returned.
      * @throws ProcessException
      * @throws DataAccessException
      */
     public List<ActivityInstanceVO> getActivityInstances(String masterRequestId, String processName, String activityLogicalId)
     throws ProcessException, DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-    		ProcessVO procdef = ProcessVOCache.getProcessVO(processName, 0);
-    		if (procdef==null) return null;
-    		ActivityVO actdef = procdef.getActivityByLogicalId(activityLogicalId);
-    		if (actdef==null) return null;
-        	transaction = edao.startTransaction();
-        	List<ActivityInstanceVO> actInstList = new ArrayList<ActivityInstanceVO>();
+        try {
+            ProcessVO procdef = ProcessVOCache.getProcessVO(processName, 0);
+            if (procdef==null) return null;
+            ActivityVO actdef = procdef.getActivityByLogicalId(activityLogicalId);
+            if (actdef==null) return null;
+            transaction = edao.startTransaction();
+            List<ActivityInstanceVO> actInstList = new ArrayList<ActivityInstanceVO>();
             List<ProcessInstanceVO> procInstList =
-            	edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getProcessId());
+                edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getProcessId());
             if (procInstList.size()==0) return actInstList;
             for (ProcessInstanceVO pi : procInstList) {
                 List<ActivityInstanceVO> actInsts = edao.getActivityInstances(actdef.getActivityId(), pi.getId(), false, false);
                 for (ActivityInstanceVO ai : actInsts) {
-                	actInstList.add(ai);
+                    actInstList.add(ai);
                 }
             }
             return actInstList;
@@ -847,8 +772,8 @@ public class EventManagerBean implements EventManager {
         ActivityInstanceVO ai;
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             ai = edao.getActivityInstance(pActivityInstId);
         } catch (SQLException e) {
             throw new ProcessException(0, "Failed to get activity instance", e);
@@ -868,10 +793,10 @@ public class EventManagerBean implements EventManager {
      */
     public List<ProcessInstanceVO> getProcessInstances(Long pProcessId, String pOwner, Long pOwnerId)
     throws ProcessException, DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getProcessInstances(pProcessId, pOwner, pOwnerId);
         } catch (SQLException e) {
             throw new ProcessException(0, "Failed to remove event waits", e);
@@ -891,8 +816,8 @@ public class EventManagerBean implements EventManager {
         WorkTransitionInstanceVO wti;
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             wti = edao.getWorkTransitionInstance(pId);
         } catch (SQLException e) {
             throw new ProcessException(0, "Failed to get work transition instance", e);
@@ -902,65 +827,12 @@ public class EventManagerBean implements EventManager {
         return wti;
     }
 
-    /**
-     * @param procInstId
-     * @param type
-     * @param searchKey1
-     * @param searchKey2
-     * @param ownerType
-     * @param ownerId
-     * @return list of shallow document VOs (content is not populated)
-     */
-    public List<DocumentVO> findDocuments(Long procInstId, String type, String searchKey1, String searchKey2,
-            String ownerType, Long ownerId)
-    throws DataAccessException {
-        try {
-        	// TODO - need to look at cache as well
-    		DatabaseAccess db = new DatabaseAccess(null);
-            RuntimeDataAccess da = DataAccess.getRuntimeDataAccess(db);
-            return da.findDocuments(procInstId, type, searchKey1, searchKey2, ownerType, ownerId, null, null, null);
-        } catch (Exception ex) {
-            throw new DataAccessException(-1, ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * @param procInstId
-     * @param type
-     * @param searchKey1
-     * @param searchKey2
-     * @param ownerType
-     * @param ownerId
-     * @param createDateStart
-     * @param createDateEnd
-     * @param orderBy
-     * @return list of shallow document VOs (content is not populated)
-     */
-    public List<DocumentVO> findDocuments(Long procInstId, String type, String searchKey1, String searchKey2,
-            String ownerType, Long ownerId, Date createDateStart, Date createDateEnd, String orderBy)
-    throws DataAccessException {
-        try {
-        	// TODO - need to look at cache as well
-    		DatabaseAccess db = new DatabaseAccess(null);
-            RuntimeDataAccess da = DataAccess.getRuntimeDataAccess(db);
-            return da.findDocuments(procInstId, type, searchKey1, searchKey2, ownerType, ownerId, createDateStart, createDateEnd, orderBy);
-        } catch (Exception ex) {
-            throw new DataAccessException(-1, ex.getMessage(), ex);
-        }
-    }
-
-    @Deprecated
-    public void updateDocumentContent(Long docid, Object doc)
-    throws DataAccessException {
-    	updateDocumentContent(docid, doc, null);
-    }
-
     public void updateDocumentContent(Long docid, Object doc, String type)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             DocumentVO docvo = edao.getDocument(docid, false);
             if (doc instanceof String) docvo.setContent((String)doc);
             else docvo.setObject(doc, type);
@@ -973,19 +845,19 @@ public class EventManagerBean implements EventManager {
     }
 
     public void updateDocumentInfo(Long docid,
-    		Long processInstId, String documentType, String ownerType, Long ownerId,
+            Long processInstId, String documentType, String ownerType, Long ownerId,
             String searchKey1, String searchKey2) throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             DocumentVO docvo = edao.getDocument(docid, false);
-			if (documentType!=null) docvo.setDocumentType(documentType);
-			if (ownerType!=null) docvo.setOwnerType(ownerType);
-			if (ownerId!=null) docvo.setOwnerId(ownerId);
-			if (processInstId!=null) docvo.setProcessInstanceId(processInstId);
-			if (searchKey1!=null) docvo.setSearchKey1(searchKey1);
-			if (searchKey2!=null) docvo.setSearchKey2(searchKey2);
+            if (documentType!=null) docvo.setDocumentType(documentType);
+            if (ownerType!=null) docvo.setOwnerType(ownerType);
+            if (ownerId!=null) docvo.setOwnerId(ownerId);
+            if (processInstId!=null) docvo.setProcessInstanceId(processInstId);
+            if (searchKey1!=null) docvo.setSearchKey1(searchKey1);
+            if (searchKey2!=null) docvo.setSearchKey2(searchKey2);
             edao.updateDocumentInfo(docvo);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update document content", e);
@@ -1003,10 +875,10 @@ public class EventManagerBean implements EventManager {
     public Long createDocument(String type, Long procInstId, String ownerType,
             Long ownerId, String searchKey1, String searchKey2, Object doc, PackageVO pkg)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             DocumentVO docvo = new DocumentVO();
             if (doc instanceof String) docvo.setContent((String)doc);
             else docvo.setObject(doc, type);
@@ -1027,8 +899,8 @@ public class EventManagerBean implements EventManager {
 
     public DocumentVO getDocumentVO(Long docid)
     throws DataAccessException {
-    	try {
-    		DatabaseAccess db = new DatabaseAccess(null);
+        try {
+            DatabaseAccess db = new DatabaseAccess(null);
             RuntimeDataAccess da = DataAccess.getRuntimeDataAccess(db);
             return da.getDocument(docid);
         } catch (Exception ex) {
@@ -1082,9 +954,9 @@ public class EventManagerBean implements EventManager {
     }
 
     public List<EventLog> getEventLogs(String pEventName, String pEventSource,
-    	    String pEventOwner, Long pEventOwnerId) throws DataAccessException {
-    	try {
-    		DatabaseAccess db = new DatabaseAccess(null);
+            String pEventOwner, Long pEventOwnerId) throws DataAccessException {
+        try {
+            DatabaseAccess db = new DatabaseAccess(null);
             RuntimeDataAccess da = DataAccess.getRuntimeDataAccess(db);
             return da.getEventLogs(pEventName, pEventSource, pEventOwner, pEventOwnerId);
         } catch (Exception ex) {
@@ -1093,10 +965,10 @@ public class EventManagerBean implements EventManager {
     }
 
     public EventInstanceVO getEventInstance(String eventName) throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getEventInstance(eventName);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to get event instance", e);
@@ -1106,10 +978,10 @@ public class EventManagerBean implements EventManager {
     }
 
     public List<ScheduledEvent> getScheduledEventList(Date cutoffTime) throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getScheduledEventList(cutoffTime);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to get scheduled event list", e);
@@ -1133,24 +1005,24 @@ public class EventManagerBean implements EventManager {
 
     public void offerScheduledEvent(ScheduledEvent event)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             edao.offerScheduledEvent(event);
-    	} catch (SQLIntegrityConstraintViolationException e) {
-    		throw new DataAccessException(23000, "The event is already scheduled", e);
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new DataAccessException(23000, "The event is already scheduled", e);
         } catch (SQLException e) {
-        	if (e.getSQLState().equals("23000")) {
-        		throw new DataAccessException(23000, "The event is already scheduled", e);
-        		// for unknown reason (may be because of different Oracle driver - ojdbc14),
-        		// when running under Tomcat, contraint violation does not throw SQLIntegrityConstraintViolationException
-        		// 23000 is ANSI/SQL standard SQL State for constraint violation
-        		// Alternatively, we can use e.getErrorCode()==1 for Oracle (ORA-00001)
-        		// or e.getErrorCode()==1062 for MySQL
-        	} else {
-        		throw new DataAccessException(-1, "Failed to create scheduled event", e);
-        	}
+            if (e.getSQLState().equals("23000")) {
+                throw new DataAccessException(23000, "The event is already scheduled", e);
+                // for unknown reason (may be because of different Oracle driver - ojdbc14),
+                // when running under Tomcat, contraint violation does not throw SQLIntegrityConstraintViolationException
+                // 23000 is ANSI/SQL standard SQL State for constraint violation
+                // Alternatively, we can use e.getErrorCode()==1 for Oracle (ORA-00001)
+                // or e.getErrorCode()==1062 for MySQL
+            } else {
+                throw new DataAccessException(-1, "Failed to create scheduled event", e);
+            }
         } finally {
             edao.stopTransaction(transaction);
         }
@@ -1158,23 +1030,23 @@ public class EventManagerBean implements EventManager {
 
     public void processScheduledEvent(String eventName, Date now)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             ScheduledEvent event = edao.lockScheduledEvent(eventName);
             Date currentScheduledTime = event==null?null:event.getScheduledTime();
             ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
             boolean processed = queue.processEventInEjb(eventName, event, now, edao);
             if (processed)  {
-            	if (event.isScheduledJob()) {
-            		edao.recordScheduledJobHistory(event.getName(), currentScheduledTime,
-                			ApplicationContext.getServerHostPort());
-            	}
-            	if (event.getScheduledTime()==null) edao.deleteEventInstance(event.getName());
-            	else edao.updateEventInstance(event.getName(), null, null,
-            			event.getScheduledTime(), null, null, 0, null);
-            } 	// else do nothing - may be processed by another server
+                if (event.isScheduledJob()) {
+                    edao.recordScheduledJobHistory(event.getName(), currentScheduledTime,
+                            ApplicationContext.getServerHostPort());
+                }
+                if (event.getScheduledTime()==null) edao.deleteEventInstance(event.getName());
+                else edao.updateEventInstance(event.getName(), null, null,
+                        event.getScheduledTime(), null, null, 0, null);
+            }     // else do nothing - may be processed by another server
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to process scheduled event", e);
         } finally {
@@ -1183,65 +1055,65 @@ public class EventManagerBean implements EventManager {
     }
 
     public boolean processUnscheduledEvent(String eventName) {
-    	TransactionWrapper transaction = null;
-		boolean processed = false;
+        TransactionWrapper transaction = null;
+        boolean processed = false;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
-			ScheduledEvent event = edao.lockScheduledEvent(eventName);
-			if (event!=null) {
-				ThreadPoolProvider thread_pool = ApplicationContext.getThreadPoolProvider();
-				InternalEventDriver command = new InternalEventDriver(null, event.getMessage());
-				if (thread_pool.execute(ThreadPoolProvider.WORKER_SCHEDULER, event.getName(), command)) {
-				    String query = "delete from EVENT_INSTANCE where EVENT_NAME=?";
-				    transaction.getDatabaseAccess().runUpdate(query, event.getName());
-				    processed = true;
-				}
+        try {
+            transaction = edao.startTransaction();
+            ScheduledEvent event = edao.lockScheduledEvent(eventName);
+            if (event!=null) {
+                ThreadPoolProvider thread_pool = ApplicationContext.getThreadPoolProvider();
+                InternalEventDriver command = new InternalEventDriver(null, event.getMessage());
+                if (thread_pool.execute(ThreadPoolProvider.WORKER_SCHEDULER, event.getName(), command)) {
+                    String query = "delete from EVENT_INSTANCE where EVENT_NAME=?";
+                    transaction.getDatabaseAccess().runUpdate(query, event.getName());
+                    processed = true;
+                }
             }
         } catch (Exception e) {
-			logger.severeException("Failed to process unscheduled event " + eventName, e);
-			// do not rollback - that may cause the event being processed again and again
-			processed = false;
+            logger.severeException("Failed to process unscheduled event " + eventName, e);
+            // do not rollback - that may cause the event being processed again and again
+            processed = false;
         } finally {
             try {
-				edao.stopTransaction(transaction);
-			} catch (DataAccessException e) {
-				logger.severeException("Failed to process unscheduled event " + eventName, e);
-				// do not rollback - that may cause the event being processed again and again
-				processed = false;
-			}
+                edao.stopTransaction(transaction);
+            } catch (DataAccessException e) {
+                logger.severeException("Failed to process unscheduled event " + eventName, e);
+                // do not rollback - that may cause the event being processed again and again
+                processed = false;
+            }
         }
         return processed;
         // return true when the message is successfully sent; when false, release reserved connection
     }
 
     public List<UnscheduledEvent> processInternalEvents(List<UnscheduledEvent> eventList) {
-    	List<UnscheduledEvent> returnList = new ArrayList<UnscheduledEvent>();
-		ThreadPoolProvider thread_pool = ApplicationContext.getThreadPoolProvider();
-    	for (UnscheduledEvent one : eventList) {
-    		if (EventInstanceVO.ACTIVE_INTERNAL_EVENT.equals(one.getReference())) {
-    			InternalEventDriver command = new InternalEventDriver(one.getName(), one.getMessage());
-    			if (!thread_pool.execute(ThreadPoolProvider.WORKER_SCHEDULER, one.getName(), command)) {
-    			    String msg = ThreadPoolProvider.WORKER_SCHEDULER + " has no thread available for Unscheduled event: " + one.getName() + " message:\n" + one.getMessage();
-    			    // make this stand out
-    			    logger.warnException(msg, new Exception(msg));
-    			    logger.info(thread_pool.currentStatus());
-    			    returnList.add(one);
-    			}
-    		}
-    		else
-    		    returnList.add(one);
-    	}
-    	return returnList;
+        List<UnscheduledEvent> returnList = new ArrayList<UnscheduledEvent>();
+        ThreadPoolProvider thread_pool = ApplicationContext.getThreadPoolProvider();
+        for (UnscheduledEvent one : eventList) {
+            if (EventInstanceVO.ACTIVE_INTERNAL_EVENT.equals(one.getReference())) {
+                InternalEventDriver command = new InternalEventDriver(one.getName(), one.getMessage());
+                if (!thread_pool.execute(ThreadPoolProvider.WORKER_SCHEDULER, one.getName(), command)) {
+                    String msg = ThreadPoolProvider.WORKER_SCHEDULER + " has no thread available for Unscheduled event: " + one.getName() + " message:\n" + one.getMessage();
+                    // make this stand out
+                    logger.warnException(msg, new Exception(msg));
+                    logger.info(thread_pool.currentStatus());
+                    returnList.add(one);
+                }
+            }
+            else
+                returnList.add(one);
+        }
+        return returnList;
     }
 
 
     public List<CertifiedMessage> getCertifiedMessageList()
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getCertifiedMessageList();
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update document content", e);
@@ -1252,10 +1124,10 @@ public class EventManagerBean implements EventManager {
 
     public void recordCertifiedMessage(CertifiedMessage message)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             edao.recordCertifiedMessage(message);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to process delayed event", e);
@@ -1274,156 +1146,156 @@ public class EventManagerBean implements EventManager {
      * @throws DataAccessException
      */
     public boolean deliverCertifiedMessage(CertifiedMessage message, int ackTimeout, int maxTries,
-    		int retryInterval) {
-    	TransactionWrapper transaction = null;
+            int retryInterval) {
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             // 1. lock the certified message
-			CertifiedMessage refreshed;
-			try {
-				refreshed = edao.lockCertifiedMessage(message.getId());
-			} catch (SQLException e) {
-				logger.severe("Failed to lock certified message " + message.getId() + ", retry again");
-	    		message.setNextTryTime(new Date(DatabaseAccess.getCurrentTime()+1000*retryInterval));
-	            return true;
-			}
-			// 2. handle the case when the message has been deleted (only possible to delete from admin
+            CertifiedMessage refreshed;
+            try {
+                refreshed = edao.lockCertifiedMessage(message.getId());
+            } catch (SQLException e) {
+                logger.severe("Failed to lock certified message " + message.getId() + ", retry again");
+                message.setNextTryTime(new Date(DatabaseAccess.getCurrentTime()+1000*retryInterval));
+                return true;
+            }
+            // 2. handle the case when the message has been deleted (only possible to delete from admin
             if (refreshed==null) {
-            	// only possible when the message is deleted from admin
-            	message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_CANCEL);
-            	return false;
+                // only possible when the message is deleted from admin
+                message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_CANCEL);
+                return false;
             }
             // 3. handle the case when the message has been processed by another managed server
             int count = refreshed.getTryCount();
             if (!refreshed.getStatus().equals(EventInstanceVO.STATUS_CERTIFIED_MESSAGE)) return false;
             if (count!=message.getTryCount()) {
-            	// the message has been retried by some other server, successful or failed
-            	message.setTryCount(count);
-            	if (refreshed.getNextTryTime()!=null) {
-            		message.setNextTryTime(refreshed.getNextTryTime());
-            		return true;
-            	} else return false;
+                // the message has been retried by some other server, successful or failed
+                message.setTryCount(count);
+                if (refreshed.getNextTryTime()!=null) {
+                    message.setNextTryTime(refreshed.getNextTryTime());
+                    return true;
+                } else return false;
             }
             // 4. load message content if not already in memory
-    		if (message.getContent()==null) {
-    			try {
-					DocumentVO docvo = this.getDocumentVO(message.getDocumentId());
-					message.setContent(docvo.getContent());
-				} catch (DataAccessException e) {
-					message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_HOLD);
-    				logger.severeException(LoggerUtil.getStandardLogger().getSentryMark()+
-    						"Failed to load certified message content: " + message.getId(), e);
-    				updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
-    						new Date(DatabaseAccess.getCurrentTime()));
-    				return false;
-				}
-    		}
-			int exceptionCode = 0;
-    		String protocol = message.getProperty(CertifiedMessage.PROP_PROTOCOL);
-			PooledAdapterConnection conn = null;
-    		try {
-        		if (CertifiedMessage.PROTOCOL_POOL.equals(protocol)) {
-        			// 5a. handle connection pool based certified messages
-        			String pool_name = message.getProperty(CertifiedMessage.PROP_POOL_NAME);
-        			if (pool_name==null) throw new AdapterException("Pool name is not specified");
-        			AdapterConnectionPool pool = ConnectionPoolRegistration.getPool(pool_name);
-        			if (pool==null) throw new AdapterException("Connection pool is not configured: " + pool_name);
-        			conn = pool.getConnection("Certified Message Manager", null);
-        			conn.invoke(message.getContent(), ackTimeout, message.getProperties());
-        		} else {
-        			// 5b. handle JMS based certified messages
-        			String jndi = message.getProperty(CertifiedMessage.PROP_JNDI_URL);
-        			IntraMDWMessenger messenger = MessengerFactory.newIntraMDWMessenger(jndi);
-        			messenger.sendCertifiedMessage(message.getContent(), message.getId(), ackTimeout);
-        		}
-        		// 6a. mark message delivered
-        		message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_DELIVERED);
-        		updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
-        				new Date(DatabaseAccess.getCurrentTime()));
-        		return false;
-    		} catch (AdapterException e1) {
-    			// 6b. handle non-retriable errors
-				exceptionCode = ((AdapterException)e1).getErrorCode();
-    			message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_HOLD);
-    			logger.severeException(LoggerUtil.getStandardLogger().getSentryMark()+ "Certified message hits unretriable error: "
-            				+ message.getId(), e1);
-    			updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
-    					new Date(DatabaseAccess.getCurrentTime()));
-    			return false;
-    		} catch (Exception e1) {
-    			// 6c. handle retriable errors
-    			// this includes the case for NoSuchElementException - pool connections are exhausted
-    			String exceptionName = e1.getClass().getName();
-    			if (e1 instanceof ConnectionException) {
-    				exceptionCode = ((ConnectionException)e1).getCode();
-    				exceptionName += ":" + exceptionCode;
-    			}
-    			if (count>0) {
-    				logger.severe("Failed to deliver certified message " + message.getId()
-    						+ ", exception " + exceptionName
-    						+ " - retry " + count);
-    			} else {
-    				logger.severeException("Failed to deliver certified message " + message.getId(), e1);
-    			}
-    			if (exceptionCode==ConnectionException.POOL_DISABLED) {
-    				logger.severe("Pool is disabled - indefinite wait for certified message " + message.getId());
-    				updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0, null);
-    				return false;
-    			} else if (count>=maxTries) {
-    				// 7a. when exceeding max retry limit
-    				message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_HOLD);
-    				logger.severe(LoggerUtil.getStandardLogger().getSentryMark() +
-    						"Certified message failed to deliver after max tries: " + message.getId());
-    				updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
-    						new Date(DatabaseAccess.getCurrentTime()));
-    				return false;
-    			} else {
-    				// 7b. when retry count is within limit, really retrying
-    				message.setTryCount(count+1);
-    				message.setNextTryTime(new Date(DatabaseAccess.getCurrentTime()+1000*retryInterval));
-    				updateCertifiedMessageStatus(edao, message.getId(),
-    						EventInstanceVO.STATUS_CERTIFIED_MESSAGE, message.getTryCount(), message.getNextTryTime());
-    				return true;
-    			}
-    		} finally {
-    			if (exceptionCode==0) exceptionCode = -1;
-    			if (conn!=null) conn.returnConnection(exceptionCode);
-    		}
-    	} catch (DataAccessException e) {
-			logger.severe("Failed to start transaction for delivering certified message " + message.getId() + ", retry again");
-    		message.setNextTryTime(new Date(DatabaseAccess.getCurrentTime()+1000*retryInterval));
+            if (message.getContent()==null) {
+                try {
+                    DocumentVO docvo = this.getDocumentVO(message.getDocumentId());
+                    message.setContent(docvo.getContent());
+                } catch (DataAccessException e) {
+                    message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_HOLD);
+                    logger.severeException(LoggerUtil.getStandardLogger().getSentryMark()+
+                            "Failed to load certified message content: " + message.getId(), e);
+                    updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
+                            new Date(DatabaseAccess.getCurrentTime()));
+                    return false;
+                }
+            }
+            int exceptionCode = 0;
+            String protocol = message.getProperty(CertifiedMessage.PROP_PROTOCOL);
+            PooledAdapterConnection conn = null;
+            try {
+                if (CertifiedMessage.PROTOCOL_POOL.equals(protocol)) {
+                    // 5a. handle connection pool based certified messages
+                    String pool_name = message.getProperty(CertifiedMessage.PROP_POOL_NAME);
+                    if (pool_name==null) throw new AdapterException("Pool name is not specified");
+                    AdapterConnectionPool pool = ConnectionPoolRegistration.getPool(pool_name);
+                    if (pool==null) throw new AdapterException("Connection pool is not configured: " + pool_name);
+                    conn = pool.getConnection("Certified Message Manager", null);
+                    conn.invoke(message.getContent(), ackTimeout, message.getProperties());
+                } else {
+                    // 5b. handle JMS based certified messages
+                    String jndi = message.getProperty(CertifiedMessage.PROP_JNDI_URL);
+                    IntraMDWMessenger messenger = MessengerFactory.newIntraMDWMessenger(jndi);
+                    messenger.sendCertifiedMessage(message.getContent(), message.getId(), ackTimeout);
+                }
+                // 6a. mark message delivered
+                message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_DELIVERED);
+                updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
+                        new Date(DatabaseAccess.getCurrentTime()));
+                return false;
+            } catch (AdapterException e1) {
+                // 6b. handle non-retriable errors
+                exceptionCode = ((AdapterException)e1).getErrorCode();
+                message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_HOLD);
+                logger.severeException(LoggerUtil.getStandardLogger().getSentryMark()+ "Certified message hits unretriable error: "
+                            + message.getId(), e1);
+                updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
+                        new Date(DatabaseAccess.getCurrentTime()));
+                return false;
+            } catch (Exception e1) {
+                // 6c. handle retriable errors
+                // this includes the case for NoSuchElementException - pool connections are exhausted
+                String exceptionName = e1.getClass().getName();
+                if (e1 instanceof ConnectionException) {
+                    exceptionCode = ((ConnectionException)e1).getCode();
+                    exceptionName += ":" + exceptionCode;
+                }
+                if (count>0) {
+                    logger.severe("Failed to deliver certified message " + message.getId()
+                            + ", exception " + exceptionName
+                            + " - retry " + count);
+                } else {
+                    logger.severeException("Failed to deliver certified message " + message.getId(), e1);
+                }
+                if (exceptionCode==ConnectionException.POOL_DISABLED) {
+                    logger.severe("Pool is disabled - indefinite wait for certified message " + message.getId());
+                    updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0, null);
+                    return false;
+                } else if (count>=maxTries) {
+                    // 7a. when exceeding max retry limit
+                    message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_HOLD);
+                    logger.severe(LoggerUtil.getStandardLogger().getSentryMark() +
+                            "Certified message failed to deliver after max tries: " + message.getId());
+                    updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
+                            new Date(DatabaseAccess.getCurrentTime()));
+                    return false;
+                } else {
+                    // 7b. when retry count is within limit, really retrying
+                    message.setTryCount(count+1);
+                    message.setNextTryTime(new Date(DatabaseAccess.getCurrentTime()+1000*retryInterval));
+                    updateCertifiedMessageStatus(edao, message.getId(),
+                            EventInstanceVO.STATUS_CERTIFIED_MESSAGE, message.getTryCount(), message.getNextTryTime());
+                    return true;
+                }
+            } finally {
+                if (exceptionCode==0) exceptionCode = -1;
+                if (conn!=null) conn.returnConnection(exceptionCode);
+            }
+        } catch (DataAccessException e) {
+            logger.severe("Failed to start transaction for delivering certified message " + message.getId() + ", retry again");
+            message.setNextTryTime(new Date(DatabaseAccess.getCurrentTime()+1000*retryInterval));
             return true;
         } finally {
-        	try {
-				edao.stopTransaction(transaction);
-			} catch (DataAccessException e) {
-				logger.severeException("Fail to commit transaction", e);
-			}
+            try {
+                edao.stopTransaction(transaction);
+            } catch (DataAccessException e) {
+                logger.severeException("Fail to commit transaction", e);
+            }
         }
     }
 
     private void updateCertifiedMessageStatus(EngineDataAccessDB edao, String msgid,
-    		Integer status, int tryCount, Date consumeTime) {
-    	try {
-			edao.updateCertifiedMessageStatus(msgid, status, tryCount, consumeTime);
-		} catch (SQLException e) {
-			logger.severeException("Failed to update certified message status in database", e);
-		}
+            Integer status, int tryCount, Date consumeTime) {
+        try {
+            edao.updateCertifiedMessageStatus(msgid, status, tryCount, consumeTime);
+        } catch (SQLException e) {
+            logger.severeException("Failed to update certified message status in database", e);
+        }
     }
 
     public boolean consumeCertifiedMessage(String messageId)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             edao.consumeCertifiedMessage(messageId);
             return true;
-    	} catch (SQLIntegrityConstraintViolationException e) {
-    		return false;
+        } catch (SQLIntegrityConstraintViolationException e) {
+            return false;
         } catch (SQLException e) {
-        	if (e.getSQLState().equals("23000")) return false;
+            if (e.getSQLState().equals("23000")) return false;
             throw new DataAccessException(-1, "Failed to consume certified message", e);
         } finally {
             edao.stopTransaction(transaction);
@@ -1432,12 +1304,12 @@ public class EventManagerBean implements EventManager {
 
     public void updateCertifiedMessageStatus(String msgid, Integer status)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             edao.updateCertifiedMessageStatus(msgid, status, 0,
-            		new Date(DatabaseAccess.getCurrentTime()));
+                    new Date(DatabaseAccess.getCurrentTime()));
         } catch (Exception e) {
             throw new DataAccessException(-1, e.getMessage(), e);
         } finally {
@@ -1446,10 +1318,10 @@ public class EventManagerBean implements EventManager {
     }
 
     public int getTableRowCount(String tableName, String whereClause) throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getTableRowCount(tableName, whereClause);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to obtain event instance count", e);
@@ -1459,12 +1331,12 @@ public class EventManagerBean implements EventManager {
     }
 
     public List<String[]> getTableRowList(String tableName, Class<?>[] types, String[] fields,
-    		String whereClause, String orderby, boolean descending, int startRow, int rowCount)
+            String whereClause, String orderby, boolean descending, int startRow, int rowCount)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.getTableRowList(tableName, types, fields, whereClause, orderby, descending, startRow, rowCount);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to retrieve event instance list", e);
@@ -1474,10 +1346,10 @@ public class EventManagerBean implements EventManager {
     }
 
     public int deleteTableRow(String tableName, String fieldName, Object fieldValue) throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.deleteTableRow(tableName, fieldName, fieldValue);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to delete " + fieldValue.toString() + " from " + tableName, e);
@@ -1489,17 +1361,17 @@ public class EventManagerBean implements EventManager {
     public void createEventInstance(String eventName,
             Long documentId, Integer status, Date consumeDate, String auxdata, String reference, int preserveSeconds)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             edao.createEventInstance(eventName, documentId, status, consumeDate, auxdata, reference, preserveSeconds);
-    	} catch (SQLIntegrityConstraintViolationException e) {
-    		throw new DataAccessException(23000, "The event instance already exists", e);
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new DataAccessException(23000, "The event instance already exists", e);
         } catch (SQLException e) {
-        	if (e.getSQLState().equals("23000"))
-        		throw new DataAccessException(23000, "The event is already scheduled", e);
-        	else throw new DataAccessException(-1, "Failed to retrieve event instance list", e);
+            if (e.getSQLState().equals("23000"))
+                throw new DataAccessException(23000, "The event is already scheduled", e);
+            else throw new DataAccessException(-1, "Failed to retrieve event instance list", e);
         } finally {
             edao.stopTransaction(transaction);
         }
@@ -1514,10 +1386,10 @@ public class EventManagerBean implements EventManager {
     public void updateEventInstance(String eventName,
             Long documentId, Integer status, Date consumeDate, String auxdata, String reference, int preserveSeconds, String comments)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             edao.updateEventInstance(eventName, documentId, status, consumeDate, auxdata, reference, preserveSeconds, comments);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to retrieve event instance list", e);
@@ -1529,12 +1401,12 @@ public class EventManagerBean implements EventManager {
     public void createEventWaitInstance(String eventName,
             Long actInstId,  String compCode)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             edao.createEventWaitInstance(actInstId, eventName, compCode);
-    	} catch (SQLException e) {
+        } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to create event wait instance", e);
         } finally {
             edao.stopTransaction(transaction);
@@ -1542,13 +1414,13 @@ public class EventManagerBean implements EventManager {
     }
 
     public void createTableRow(String tableName, String[] fieldNames, Object[] fieldValues)
-    	throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        throws DataAccessException {
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             edao.createTableRow(tableName, fieldNames, fieldValues);
-    	} catch (SQLException e) {
+        } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to create entry in " + tableName, e);
         } finally {
             edao.stopTransaction(transaction);
@@ -1556,13 +1428,13 @@ public class EventManagerBean implements EventManager {
     }
 
     public int updateTableRow(String tableName, String keyName, Object keyValue,
-    		String[] fieldNames, Object[] fieldValues)  throws DataAccessException {
-    	TransactionWrapper transaction = null;
+            String[] fieldNames, Object[] fieldValues)  throws DataAccessException {
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             return edao.updateTableRow(tableName, keyName, keyValue, fieldNames, fieldValues);
-    	} catch (SQLException e) {
+        } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update " + keyName + " of " + tableName, e);
         } finally {
             edao.stopTransaction(transaction);
@@ -1571,10 +1443,10 @@ public class EventManagerBean implements EventManager {
 
     public void setAttribute(String ownerType, Long ownerId, String attrname, String attrvalue)
     throws DataAccessException {
-    	TransactionWrapper transaction = null;
+        TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
-    	try {
-        	transaction = edao.startTransaction();
+        try {
+            transaction = edao.startTransaction();
             edao.setAttribute(ownerType, ownerId, attrname, attrvalue);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to set attribute for " + ownerType + ": " + ownerId, e);

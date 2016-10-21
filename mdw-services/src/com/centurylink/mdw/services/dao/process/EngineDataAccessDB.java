@@ -20,7 +20,7 @@ import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.TableSequenceName;
-import com.centurylink.mdw.dataaccess.version4.CommonDataAccess;
+import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.data.event.EventLog;
 import com.centurylink.mdw.model.data.event.EventType;
 import com.centurylink.mdw.model.data.monitor.CertifiedMessage;

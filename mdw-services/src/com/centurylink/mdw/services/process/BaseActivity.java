@@ -56,12 +56,7 @@ import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.services.dao.process.EngineDataAccess;
 import com.centurylink.mdw.services.dao.process.EngineDataAccessCache;
 import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
-import com.centurylink.mdw.services.mbeng.MbengMDWRuntime;
 import com.qwest.mbeng.MbengDocument;
-import com.qwest.mbeng.MbengException;
-import com.qwest.mbeng.MbengRuleSet;
-import com.qwest.mbeng.MbengRuntime;
-import com.qwest.mbeng.MbengVariable;
 
 /**
  * Base class that implements the Controlled Activity.
@@ -587,8 +582,7 @@ public abstract class BaseActivity implements GeneralActivity {
             Long varInstId = this.setParameterValue(name, docref);
             this.updateDocumentInfo(docref, null, null, null, varInstId, null, null);
         } else {
-            if (docref.getServer()==null) updateDocumentContent(docref, value, varType);
-            else throw new ActivityException("Cannot update remote document reference");
+            updateDocumentContent(docref, value, varType);
         }
         return docref;
     }
@@ -601,7 +595,7 @@ public abstract class BaseActivity implements GeneralActivity {
      */
     protected String getExternalEventInstanceDetails(Long externalEventInstId)
       throws ActivityException {
-        DocumentReference docref = new DocumentReference(externalEventInstId, null);
+        DocumentReference docref = new DocumentReference(externalEventInstId);
         DocumentVO docvo;
         try {
         	docvo = engine.getDocument(docref, false);
@@ -716,15 +710,6 @@ public abstract class BaseActivity implements GeneralActivity {
             catch (ExecutionException ex) {
                 throw new PropertyException(-1, ex.getMessage(), ex);
             }
-        } else if (valueIsMagicBoxExpression(value)) {
-            try {
-                Object obj = evaluateExpression(getActivityId().toString()+":"+tag, MAGIC_BOX, value);
-                value = obj == null ? null : obj.toString();
-            } catch (ExecutionException ex) {
-            	logwarn("getValueSmart fails to evaluate expression - return expression as value");
-                // fall through instead of throwing errors, to handle things
-                // such as "http://..."
-            }
         }
         return value == null ? null : value.trim();
     }
@@ -757,23 +742,19 @@ public abstract class BaseActivity implements GeneralActivity {
                 return _runtimeContext.evaluate(expression);
             }
             ScriptEvaluator evaluator = getScriptEvaluator(name, language);
-            if (evaluator instanceof MagicRulesEvaluator) {
-                return evaluator.evaluate(expression, null);
-            } else {
-                ProcessVO processVO = getMainProcessDefinition();
-                List<VariableVO> varVOs = processVO.getVariables();
-            	Map<String,Object> bindings = new HashMap<String,Object>();
-                for (VariableVO varVO: varVOs) {
-                    Object value = getParameterValue(varVO.getVariableName());
-                    if (value instanceof DocumentReference) {
-                        DocumentReference docref = (DocumentReference) value;
-                        value = getDocument(docref, varVO.getVariableType());
-                    }
-                    bindings.put(varVO.getVariableName(), value);
+            ProcessVO processVO = getMainProcessDefinition();
+            List<VariableVO> varVOs = processVO.getVariables();
+        	Map<String,Object> bindings = new HashMap<String,Object>();
+            for (VariableVO varVO: varVOs) {
+                Object value = getParameterValue(varVO.getVariableName());
+                if (value instanceof DocumentReference) {
+                    DocumentReference docref = (DocumentReference) value;
+                    value = getDocument(docref, varVO.getVariableType());
                 }
-                bindings.put(VariableVO.MASTER_REQUEST_ID, getMasterRequestId());
-                return evaluator.evaluate(expression, bindings);
+                bindings.put(varVO.getVariableName(), value);
             }
+            bindings.put(VariableVO.MASTER_REQUEST_ID, getMasterRequestId());
+            return evaluator.evaluate(expression, bindings);
         }
         catch (PropertyException ex) {
             throw new ExecutionException(ex.getMessage(), ex);
@@ -794,22 +775,18 @@ public abstract class BaseActivity implements GeneralActivity {
 
         try {
             ScriptEvaluator evaluator = getScriptEvaluator(name, language);
-            if (evaluator instanceof MagicRulesEvaluator) {
-                return evaluator.evaluate(expression, null);
-            } else {
-                ProcessVO processVO = getMainProcessDefinition();
-                List<VariableVO> varVOs = processVO.getVariables();
-                for (VariableVO varVO: varVOs) {
-                    Object value = getParameterValue(varVO.getVariableName());
-                    if (value instanceof DocumentReference) {
-                        DocumentReference docref = (DocumentReference) value;
-                        value = getDocument(docref, varVO.getVariableType());
-                    }
-                    addlBinding.put(varVO.getVariableName(), value);
+            ProcessVO processVO = getMainProcessDefinition();
+            List<VariableVO> varVOs = processVO.getVariables();
+            for (VariableVO varVO: varVOs) {
+                Object value = getParameterValue(varVO.getVariableName());
+                if (value instanceof DocumentReference) {
+                    DocumentReference docref = (DocumentReference) value;
+                    value = getDocument(docref, varVO.getVariableType());
                 }
-                addlBinding.put(VariableVO.MASTER_REQUEST_ID, getMasterRequestId());
-                return evaluator.evaluate(expression, addlBinding);
+                addlBinding.put(varVO.getVariableName(), value);
             }
+            addlBinding.put(VariableVO.MASTER_REQUEST_ID, getMasterRequestId());
+            return evaluator.evaluate(expression, addlBinding);
         }
         catch (PropertyException ex) {
             throw new ExecutionException(ex.getMessage(), ex);
@@ -824,59 +801,20 @@ public abstract class BaseActivity implements GeneralActivity {
             throw new NullPointerException("Missing script evaluator language");
 
         ScriptEvaluator evalImpl = null;
-        if ("Magic".equals(language) || "MagicBox".equals(language)) {
-            evalImpl = new MagicRulesEvaluator(); // compatibility
-        }
-        else {
-            String propName = PropertyNames.MDW_SCRIPT_EXECUTOR + "." + language.toLowerCase();
-            String evalImplClassName = getProperty(propName);
-            if (evalImplClassName == null)
-                evalImplClassName = getProperty("MDWFramework.ScriptExecutors/" + language); // compatibility
-            if (evalImplClassName == null) {
-                if ("Groovy".equals(language))
-                    evalImpl = new GroovyExecutor();  // don't require property for default language
-                else
-                    throw new PropertyException("No script executor property value found: " + propName);
-            }
+        String propName = PropertyNames.MDW_SCRIPT_EXECUTOR + "." + language.toLowerCase();
+        String evalImplClassName = getProperty(propName);
+        if (evalImplClassName == null)
+            evalImplClassName = getProperty("MDWFramework.ScriptExecutors/" + language); // compatibility
+        if (evalImplClassName == null) {
+            if ("Groovy".equals(language))
+                evalImpl = new GroovyExecutor();  // don't require property for default language
             else
-                evalImpl = (ScriptEvaluator) ApplicationContext.getClassInstance(evalImplClassName);
-
+                throw new PropertyException("No script executor property value found: " + propName);
         }
+        else
+            evalImpl = (ScriptEvaluator) ApplicationContext.getClassInstance(evalImplClassName);
         evalImpl.setName(name);
         return evalImpl;
-    }
-
-    /**
-     * evaluate a condition in MagicBox rule language
-     * @param name
-     * @param cond
-     * @param vs
-     * @return
-     * @throws MbengException
-     */
-    protected boolean evaluateCondition(String name, String cond,
-            List<VariableVO> vs) throws MbengException {
-        MbengMDWRuntime runtime = new MbengMDWRuntime(name, cond,
-        		MbengRuleSet.RULESET_COND, vs, engine, logger) {
-        	protected Object getParameterValue(MbengVariable var) {
-        		return BaseActivity.this.getParameterValue(var.getName());
-        	}
-        	protected String getParameterString(MbengVariable var) {
-        		return BaseActivity.this.getParameterStringValue(var.getName());
-        	}
-        	protected void setParameterString(String varname, String v) throws ActivityException {
-        		BaseActivity.this.setParameterValue(varname, v);
-        	}
-        	protected void setParameterDocument(String varname, String vartype, Object v) throws ActivityException {
-        		BaseActivity.this.setParameterValueAsDocument(varname, vartype, v);
-        	}
-			protected String getPseudoVariableValue(String varname) {
-				if (varname.equals(VariableVO.MASTER_REQUEST_ID)) return getMasterRequestId();
-				else return null;
-			}
-        };
-//        runtime.bind(VariableVO.MASTER_REQUEST_ID, this.getMasterRequestId());
-        return runtime.verify();
     }
 
     /**
@@ -894,33 +832,6 @@ public abstract class BaseActivity implements GeneralActivity {
             if (!Character.isLetterOrDigit(ch) && ch!='_') return false;
         }
         return true;
-    }
-
-    /**
-     * @deprecated - Use valueIsMagicBoxExpression or valueIsJavaExpression.
-     */
-    @Deprecated
-    protected boolean valueIsExpression(String v) {
-      return valueIsMagicBoxExpression(v);
-    }
-
-    /**
-     * The method checks if the string is an MagicBox expression, versus a static value.
-     * The method uses a simplistic check, i.e. when the string contains a dollar
-     * sign and is not a Java expression, so it may not be a valid expression for any language
-     * when the method returns true.
-     *
-     * The method is primarily used to determine if an attribute has
-     * an expression as its value that is not a Java expression.
-     *
-     * @param v
-     * @return
-     */
-
-    protected boolean valueIsMagicBoxExpression(String v) {
-        if (v == null)
-            return false;
-        return (v.indexOf('$') >= 0 && !valueIsJavaExpression(v));
     }
 
     /**
@@ -1447,23 +1358,18 @@ public abstract class BaseActivity implements GeneralActivity {
             throw new NullPointerException("Missing script executor language");
 
         ScriptExecutor exeImpl = null;
-        if ("Magic".equals(language) || "MagicBox".equals(language)) {
-            exeImpl = new MagicRulesExecutor(); // compatibility
-        }
-        else {
-            String propName = PropertyNames.MDW_SCRIPT_EXECUTOR + "." + language.toLowerCase();
-            String exeImplClassName = getProperty(propName);
-            if (exeImplClassName == null)
-                exeImplClassName = getProperty("MDWFramework.ScriptExecutors/" + language); // compatibility
-            if (exeImplClassName == null) {
-                if ("Groovy".equals(language))
-                    exeImpl = new GroovyExecutor();  // don't require property for default language
-                else
-                    throw new PropertyException("No script executor property value found: " + propName);
-            }
+        String propName = PropertyNames.MDW_SCRIPT_EXECUTOR + "." + language.toLowerCase();
+        String exeImplClassName = getProperty(propName);
+        if (exeImplClassName == null)
+            exeImplClassName = getProperty("MDWFramework.ScriptExecutors/" + language); // compatibility
+        if (exeImplClassName == null) {
+            if ("Groovy".equals(language))
+                exeImpl = new GroovyExecutor();  // don't require property for default language
             else
-                exeImpl = (ScriptExecutor) ApplicationContext.getClassInstance(exeImplClassName);
+                throw new PropertyException("No script executor property value found: " + propName);
         }
+        else
+            exeImpl = (ScriptExecutor) ApplicationContext.getClassInstance(exeImplClassName);
         String name = GroovyNaming.getValidClassName(getProcessDefinition().getLabel() + "_" + getActivityName() + "_" + getActivityId());
         exeImpl.setName(name);
         return exeImpl;
@@ -1596,104 +1502,6 @@ public abstract class BaseActivity implements GeneralActivity {
         oldString = VariableTranslator.realToString(getPackage(), docVO.getDocumentType(), oldObject);
         String newString = VariableTranslator.realToString(getPackage(), docVO.getDocumentType(), newValue);
         return !oldString.equals(newString);
-    }
-
-    /**
-     * evaluate an expression in MagicBox rule language or XPath
-     * TODO cache compiled version
-     */
-    class MagicRulesEvaluator implements ScriptEvaluator {
-
-        private String name;
-        public String getName() { return name; }
-        /**
-         * @param name a name for the expression. Needs to be unique
-         *      among all expressions for caching purpose.
-         *      suggest to use activity ID unless there are more
-         *      than one expressions used by an activity.
-         */
-        public void setName(String name) { this.name = name; }
-
-        public Object evaluate(String expression, Map<String,Object> bindings) throws ExecutionException {
-            try {
-                ProcessVO procVO = BaseActivity.this.getMainProcessDefinition();
-                MbengMDWRuntime runtime = new MbengMDWRuntime(name, expression,
-                        MbengRuleSet.RULESET_EXPR, procVO.getVariables(), engine, logger) {
-                	protected Object getParameterValue(MbengVariable var) {
-                		return BaseActivity.this.getParameterValue(var.getName());
-                	}
-                	protected String getParameterString(MbengVariable var) {
-                		return BaseActivity.this.getParameterStringValue(var.getName());
-                	}
-                	protected void setParameterString(String varname, String v) throws ActivityException {
-                		BaseActivity.this.setParameterValue(varname, v);
-                	}
-                	protected void setParameterDocument(String varname, String vartype, Object v) throws ActivityException {
-                		BaseActivity.this.setParameterValueAsDocument(varname, vartype, v);
-                	}
-					protected String getPseudoVariableValue(String varname) {
-						if (varname.equals(VariableVO.MASTER_REQUEST_ID)) return getMasterRequestId();
-						else return null;
-					}
-                };
-                return runtime.evaluate();
-            }
-            catch (MbengException ex) {
-                throw new ExecutionException("Error evaluating Magic Rule: " + ex.getMessage(), ex);
-            } catch (ActivityException e) {
-                throw new ExecutionException("Error evaluating Magic Rule - failed to get parent process ID", e);
-			}
-        }
-    }
-
-    /**
-     * This is implemented as an inner class since it has dependencies on
-     * mdw-services and activityId.
-     */
-    class MagicRulesExecutor implements ScriptExecutor {
-
-        private String name;
-        public String getName() { return name; }
-        public void setName(String name)  { this.name = name; }
-
-        public Object execute(String script, Map<String,Object> bindings) throws ExecutionException {
-
-            try {
-                ProcessVO processVO = getMainProcessDefinition();
-            	MbengMDWRuntime runtime = new MbengMDWRuntime(getProcessId().toString()+"."+getActivityId().toString(),
-                    script, MbengRuleSet.RULESET_RULE, processVO.getVariables(), getEngine(), logger) {
-                	protected Object getParameterValue(MbengVariable var) {
-                		return BaseActivity.this.getParameterValue(var.getName());
-                	}
-                	protected String getParameterString(MbengVariable var) {
-                		return BaseActivity.this.getParameterStringValue(var.getName());
-                	}
-                	protected void setParameterString(String varname, String v) throws ActivityException {
-                		BaseActivity.this.setParameterValue(varname, v);
-                	}
-                	protected void setParameterDocument(String varname, String vartype, Object v) throws ActivityException {
-                		BaseActivity.this.setParameterValueAsDocument(varname, vartype, v);
-                	}
-					protected String getPseudoVariableValue(String varname) {
-						if (varname.equals(VariableVO.MASTER_REQUEST_ID)) return getMasterRequestId();
-						else return null;
-					}
-                };
-                int retcode = runtime.run();
-                if (retcode != MbengRuntime.EXECSTATUS_OK) {
-                	if (retcode == MbengRuntime.EXECSTATUS_EXCEPTION)
-                		throw new ExecutionException("RULE EXEC ERROR: " + runtime.getErrorMsg(), runtime.getException());
-                	else throw new ExecutionException("RULE EXEC ERROR: " + runtime.getErrorMsg());
-                }
-                runtime.saveDocuments();
-                return runtime.getErrorMsg();
-            }
-            catch (MbengException ex) {
-                throw new ExecutionException("Error executing Magic Rule: " + ex.getMessage(), ex);
-            } catch (ActivityException e) {
-                throw new ExecutionException("Error executing Magic Rule - failed to get parent process ID", e);
-			}
-        }
     }
 
     /**

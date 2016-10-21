@@ -13,10 +13,6 @@
   <Cache Name="TaskCategoryCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.services.dao.task.cache.TaskCategoryCache</Property>
   </Cache>
-  <Cache Name="RuleCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.services.mbeng.RuleCache</Property>
-    <Property Name="CacheCapacity">64</Property>
-  </Cache>
   <Cache Name="TemplateCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.common.cache.impl.TemplateCache</Property>
   </Cache>

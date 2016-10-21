@@ -17,7 +17,7 @@ import java.util.Map;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
-import com.centurylink.mdw.dataaccess.version4.CommonDataAccess;
+import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.data.task.TaskStatuses;
 import com.centurylink.mdw.model.data.work.WorkStatus;
 import com.centurylink.mdw.model.data.work.WorkStatuses;

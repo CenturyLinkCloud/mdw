@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
  */
-package com.centurylink.mdw.dataaccess.version4;
+package com.centurylink.mdw.dataaccess.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,11 +25,11 @@ import com.centurylink.mdw.model.value.user.UserGroupVO;
 import com.centurylink.mdw.model.value.user.UserRoleVO;
 import com.centurylink.mdw.model.value.user.UserVO;
 
-public class UserDataAccessV4 extends CommonDataAccess implements UserDataAccess {
+public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess {
 
     protected String USER_SELECT_FIELDS = "u.USER_INFO_ID, u.CUID, u.NAME, u.END_DATE, u.COMMENTS";
 
-    public UserDataAccessV4(DatabaseAccess db, int databaseVersion, int supportedVersion) {
+    public UserDataAccessDb(DatabaseAccess db, int databaseVersion, int supportedVersion) {
         super(db, databaseVersion, supportedVersion);
     }
 

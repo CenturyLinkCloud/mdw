@@ -12,9 +12,7 @@ import com.centurylink.mdw.model.value.variable.DocumentReference;
 public abstract class DocumentReferenceTranslator extends VariableTranslator {
 
     public final Object toObject(String str) throws TranslationException {
-        int k = str.indexOf('@');
-        if (k<0) return new DocumentReference(new Long(str.substring(9)), null);
-        else return new DocumentReference(new Long(str.substring(9,k)), str.substring(k+1));
+        return new DocumentReference(new Long(str.substring(9)));
     }
 
     public final String toString(Object object) throws TranslationException {

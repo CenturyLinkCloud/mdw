@@ -12,7 +12,7 @@ import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.version4.CommonDataAccess;
+import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.data.work.WorkStatuses;
 import com.centurylink.mdw.model.value.asset.AssetHeader;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
