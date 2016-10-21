@@ -117,7 +117,7 @@ requestMod.controller('WorkflowRequestController', ['$scope', '$route', '$routeP
 }]);
 
 requestMod.factory('Request', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/Services/Requests/:requestId', mdw.serviceParams(), {
+  return $resource(mdw.roots.services + '/services/Requests/:requestId', mdw.serviceParams(), {
     retrieve: { method: 'GET', isArray: false }
   });
 }]);
