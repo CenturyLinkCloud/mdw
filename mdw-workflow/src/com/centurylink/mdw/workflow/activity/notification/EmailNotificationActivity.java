@@ -23,6 +23,7 @@ import com.centurylink.mdw.common.constant.WorkAttributeConstant;
 import com.centurylink.mdw.common.email.ProcessEmailModel;
 import com.centurylink.mdw.common.email.TemplatedEmail;
 import com.centurylink.mdw.common.exception.CachingException;
+import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.exception.MDWException;
 import com.centurylink.mdw.common.exception.PropertyException;
 import com.centurylink.mdw.common.utilities.StringHelper;
@@ -33,8 +34,10 @@ import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
 import com.centurylink.mdw.common.utilities.timer.Tracked;
 import com.centurylink.mdw.model.value.user.UserGroupVO;
 import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.UserException;
+import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
-import com.centurylink.mdw.services.task.TaskManagerAccess;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 /**
@@ -93,7 +96,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
                 templatedEmail.setRuntimeContext(this.getRuntimeContext());
 
                 JSONObject emailJson = templatedEmail.buildEmailJson();
-                createDocument(JSONObject.class.getName(), emailJson, OwnerType.ACTIVITY_INSTANCE_REQUEST, getActivityInstanceId(), null, null);
+                createDocument(JSONObject.class.getName(), emailJson, OwnerType.ACTIVITY_INSTANCE_REQUEST, getActivityInstanceId());
                 templatedEmail.sendEmail(emailJson);
             }
             catch (MessagingException ex) {
@@ -185,12 +188,17 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
     protected Address[] getGroupEmailAddresses(String[] groups)
     throws ActivityException, AddressException {
         try {
-            return toMailAddresses(TaskManagerAccess.getInstance().getGroupEmailAddresses(groups));
+            return toMailAddresses(getGroupEmails(groups));
         }
         catch (MDWException e) {
             logger.severeException(e.getMessage(), e);
             throw new ActivityException(-1, e.getMessage(), e);
         }
+    }
+
+    public List<String> getGroupEmails(String[] groups) throws UserException, DataAccessException {
+        UserManager userManager = ServiceLocator.getUserManager();
+        return userManager.getEmailAddressesForGroups(groups);
     }
 
     /**

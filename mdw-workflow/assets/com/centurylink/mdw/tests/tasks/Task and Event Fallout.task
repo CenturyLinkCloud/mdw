@@ -2,10 +2,10 @@
   "attributes": {
     "FormName": "Autoform",
     "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
-    "Notices": "$DefaultNotices"
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
   },
   "category": "COM",
-  "logicalId": "MDWTestTaskAndEvent:Activity43",
+  "logicalId": "testTaskAndEventFallout",
   "name": "Task and Event Fallout",
   "version": "0"
 }

@@ -167,7 +167,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
         String vartype = this.getParameterType(varname);
         if (VariableTranslator.isDocumentReferenceVariable(vartype) && !(pResponse instanceof DocumentReference)) {
             if (pResponse instanceof String) {
-                Object doc = VariableTranslator.realToObject(vartype, (String)pResponse);
+                Object doc = VariableTranslator.realToObject(getPackage(), vartype, (String)pResponse);
                 setParameterValueAsDocument(varname, vartype, doc);
             }
             else {
@@ -290,7 +290,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
             		isResponse?OwnerType.ADAPTOR_RESPONSE:OwnerType.ADAPTOR_REQUEST,
-                    this.getActivityInstanceId(), null, null);
+                    this.getActivityInstanceId());
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

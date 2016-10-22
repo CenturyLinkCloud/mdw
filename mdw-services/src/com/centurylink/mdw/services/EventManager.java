@@ -8,14 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.query.PaginatedResponse;
-import com.centurylink.mdw.common.query.QueryRequest;
 import com.centurylink.mdw.model.data.event.EventLog;
 import com.centurylink.mdw.model.data.monitor.CertifiedMessage;
 import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.data.monitor.UnscheduledEvent;
 import com.centurylink.mdw.model.value.event.EventInstanceVO;
-import com.centurylink.mdw.model.value.event.ExternalEventInstanceVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
@@ -31,12 +28,6 @@ import com.centurylink.mdw.services.event.WorkflowHandler;
 public interface EventManager {
 
     public void createAuditLog(UserActionVO userAction)
-    throws DataAccessException, EventException;
-
-    public PaginatedResponse getAuditLogs(QueryRequest queryRequest)
-    throws DataAccessException, EventException;
-
-    public PaginatedResponse getAuditLogs(QueryRequest queryRequest, List<String> searchDBClmns, Object object)
     throws DataAccessException, EventException;
 
     /**
@@ -57,44 +48,6 @@ public interface EventManager {
     public List<EventLog> getEventLogs(String pEventName, String pEventSource,
     	    String pEventOwner, Long pEventOwnerId) throws DataAccessException;
 
-
-    /**
-     * Method that returns distinct event log event names
-     *
-     * @return String[]
-     */
-    public String[] getDistinctEventLogEventNames()
-    throws DataAccessException, EventException;
-
-    /**
-     * Method that returns distinct event log sources
-     *
-     * @return String[]
-     */
-    public String[] getDistinctEventLogEventSources()
-    throws DataAccessException, EventException;
-
-    ////////////////////////////////////////////
-    // external event instance - TODO retire????
-    ////////////////////////////////////////////
-
-    /**
-     * Returns an external event instance value object
-     *
-     * @param pOwner
-     * @param pOwnerId
-     */
-    public ExternalEventInstanceVO getExternalEventInstanceVO(String pOwner, Long pOwnerId)
-    throws DataAccessException, EventException;
-
-    /**
-     * Returns all the external instances for the passed in query
-     *
-     * @param pRequest
-     * @return PaginatedResponse
-     */
-    public PaginatedResponse getExternalEventInstanceVOs(QueryRequest pRequest)
-    throws EventException, DataAccessException;
 
     /**
      * This method is helping ListenerHelper and external event handler to get
@@ -197,17 +150,14 @@ public interface EventManager {
     public void updateDocumentContent(Long docid, Object doc, String type)
     throws DataAccessException;
 
-    public void updateDocumentInfo(Long docid,
-    		Long processInstId, String documentType, String ownerType, Long ownerId,
-            String searchKey1, String searchKey2)
+    public void updateDocumentInfo(Long docid, String documentType, String ownerType, Long ownerId)
     throws DataAccessException;
 
-    public Long createDocument(String type, Long procInstId, String ownerType,
-            Long ownerId, String searchKey1, String searchKey2, Object doc)
+    @Deprecated
+    public Long createDocument(String type, String ownerType, Long ownerId, Object doc)
     throws DataAccessException;
 
-    public Long createDocument(String type, Long procInstId, String ownerType,
-            Long ownerId, String searchKey1, String searchKey2, Object doc, PackageVO pkg)
+    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, PackageVO pkg)
     throws DataAccessException;
 
     ////////////////////////////////////////////
@@ -485,10 +435,6 @@ public interface EventManager {
 
     public WorkflowHandler getWorkflowHandler(String asset, Map<String,String> parameters)
     throws EventException;
-
-    public PaginatedResponse getProcessInstances(String[] groups, QueryRequest queryRequest,
-            List<String> specialColumns, Map<String, String> specialCriteria)
-    throws ProcessException, DataAccessException;
 
     public ProcessVO findProcessByProcessInstanceId(Long processInstanceId)
     throws DataAccessException, ProcessException;

@@ -20,8 +20,6 @@ import com.centurylink.mdw.common.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.query.PaginatedResponse;
-import com.centurylink.mdw.common.query.QueryRequest;
 import com.centurylink.mdw.common.translator.VariableTranslator;
 import com.centurylink.mdw.common.utilities.TransactionWrapper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
@@ -45,7 +43,6 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.value.activity.ActivityVO;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 import com.centurylink.mdw.model.value.event.EventInstanceVO;
-import com.centurylink.mdw.model.value.event.ExternalEventInstanceVO;
 import com.centurylink.mdw.model.value.event.InternalEventVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
@@ -63,7 +60,6 @@ import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.dao.process.EngineDataAccess;
 import com.centurylink.mdw.services.dao.process.EngineDataAccessDB;
-import com.centurylink.mdw.services.dao.process.ProcessDAO;
 import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.IntraMDWMessenger;
@@ -77,11 +73,6 @@ import com.centurylink.mdw.services.process.ProcessExecuter;
 public class EventManagerBean implements EventManager {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-
-    private ProcessDAO getProcessDAO() {
-        DatabaseAccess db = new DatabaseAccess(null);
-        return new ProcessDAO(db);
-    }
 
     public void createAuditLog(UserActionVO userAction) throws DataAccessException, EventException {
         String name = userAction.getAction().equals(Action.Other) ? userAction.getExtendedAction() : userAction.getAction().toString();
@@ -133,76 +124,6 @@ public class EventManagerBean implements EventManager {
     }
 
     /**
-     * Get audit log events.  Query criteria are ignored at present.
-     *
-     * @param queryRequest
-     * @return paginated response
-     */
-    public PaginatedResponse getAuditLogs(QueryRequest queryRequest)
-    throws DataAccessException, EventException {
-        return getAuditLogs(queryRequest, null, null);
-    }
-
-    @Override
-    public PaginatedResponse getAuditLogs(QueryRequest queryRequest, List<String> searchDBClmns, Object searchKey)
-            throws DataAccessException, EventException {
-
-        CodeTimer timer = new CodeTimer("EventManager.getAuditLogEvents()", true);
-
-        List<UserActionVO> userActions = null;
-        int totalRowsCount = 0;
-
-        TransactionWrapper transaction = null;
-        EngineDataAccessDB edao = new EngineDataAccessDB();
-        try {
-            transaction = edao.startTransaction();
-            if (queryRequest.getPageSize() == QueryRequest.ALL_ROWS) {
-                userActions = edao.getAuditLogs(queryRequest.getOrderBy(), queryRequest.isAscendingOrder(),
-                        searchDBClmns, searchKey, 0, queryRequest.getShowAllDisplayRows(), true);
-                totalRowsCount = edao.countAuditLogs(searchDBClmns, searchKey);
-            }
-            else {
-                int startIndex = ((queryRequest.getPageIndex()) * queryRequest.getPageSize());
-                int endIndex = startIndex + queryRequest.getPageSize();
-                totalRowsCount = edao.countAuditLogs(searchDBClmns, searchKey);
-                userActions = edao.getAuditLogs(queryRequest.getOrderBy(), queryRequest.isAscendingOrder(),
-                        searchDBClmns, searchKey, startIndex, endIndex, false);
-            }
-        }
-        catch (SQLException e) {
-            throw new EventException("Failed to retrieve audit log events", e);
-        }
-        finally {
-            edao.stopTransaction(transaction);
-        }
-
-        PaginatedResponse response = new PaginatedResponse(userActions.toArray(new UserActionVO[0]), totalRowsCount,
-                userActions.size(), queryRequest.getPageSize(), queryRequest.getPageIndex(),queryRequest.getShowAllDisplayRows());
-
-        timer.stopAndLogTiming("");
-        return response;
-    }
-
-    /**
-     * Method that returns distinct event log event names
-     *
-     * @return String[]
-     */
-    public String[] getDistinctEventLogEventNames()
-    throws DataAccessException, EventException {
-        TransactionWrapper transaction = null;
-        EngineDataAccessDB edao = new EngineDataAccessDB();
-        try {
-            transaction = edao.startTransaction();
-            return edao.getDistinctEventLogEventNames();
-        } catch (SQLException e) {
-            throw new EventException("Failed to notify events", e);
-        } finally {
-            edao.stopTransaction(transaction);
-        }
-    }
-
-    /**
      * Method that returns distinct event log sources
      *
      * @return String[]
@@ -219,96 +140,6 @@ public class EventManagerBean implements EventManager {
         } finally {
             edao.stopTransaction(transaction);
         }
-    }
-
-    /**
-     * Returns an external event instance value object
-     *
-     * @param pOwner
-     * @param pOwnerId
-     */
-    public ExternalEventInstanceVO getExternalEventInstanceVO(String pOwner, Long pOwnerId)
-    throws DataAccessException, EventException {
-
-        ExternalEventInstanceVO vo = null;
-        try {
-            // jxxu 5/1/2009: this method used to handle owner types
-            //      as process instance, task instance, and process instance as secondary owner,
-            //      it finds the root process instance, then finds the external event instance
-            //      starting the process instance, and return these info in ExternalEventInstanceVO.
-            //      Now we think the owner is always passed down as document,
-            //      do not think the owner can be anything else now, so delete those code.
-            if (OwnerType.DOCUMENT.equals(pOwner)) {
-                TransactionWrapper transaction = null;
-                EngineDataAccessDB edao = new EngineDataAccessDB();
-                try {
-                    transaction = edao.startTransaction();
-                    vo = edao.getExternalMessage(pOwnerId);
-                    if (vo!=null && vo.getProcessId()!=null) {
-                        ProcessVO procdef = ProcessVOCache.getProcessVO(vo.getProcessId());
-                        vo.setProcessName(procdef.getProcessName());
-                    }
-                } catch (Exception e) {
-                    throw new DataAccessException(0, "Failed to load external messages", e);
-                } finally {
-                    edao.stopTransaction(transaction);
-                }
-            }
-        } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            throw new EventException(ex.getMessage());
-        }
-        return vo;
-
-    }
-
-    /**
-     * Returns all the external instances for the passed in query
-     *
-     * @param pRequest
-     * @return PaginatedResponse
-     */
-    public PaginatedResponse getExternalEventInstanceVOs(QueryRequest pRequest)
-    throws EventException, DataAccessException {
-        PaginatedResponse resp = null;
-
-        int startIndex = ((pRequest.getPageIndex()) * pRequest.getPageSize());
-        int endIndex = startIndex + pRequest.getPageSize();
-        List<QueryRequest.Restriction> restrictions = pRequest.getRestrictionList();
-        ExternalEventInstanceVO[] extEventArr = null;
-        int total;
-        TransactionWrapper transaction = null;
-        EngineDataAccessDB edao = new EngineDataAccessDB();
-        try {
-            transaction = edao.startTransaction();
-            total = edao.countExternalMessages(restrictions);
-            if (total == 0) {
-                extEventArr = new ExternalEventInstanceVO[0];
-            } else {
-                List<ExternalEventInstanceVO> retList =
-                    edao.queryExternalMessages(restrictions, pRequest.getOrderBy(),
-                            pRequest.isAscendingOrder(), startIndex, endIndex);
-                extEventArr = retList.toArray(new ExternalEventInstanceVO[retList.size()]);
-                for (int i=0; i<extEventArr.length; i++) {
-                    Long procId = extEventArr[i].getProcessId();
-                    if (procId!=null && procId.longValue()!=0) {
-                        ProcessVO procvo = ProcessVOCache.getProcessVO(procId);
-                        if(procvo != null)
-                        extEventArr[i].setProcessName(procvo.getProcessName());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new DataAccessException(0, "Failed to load external messages", e);
-        } finally {
-            edao.stopTransaction(transaction);
-        }
-
-
-        resp = new PaginatedResponse(extEventArr, total, extEventArr.length,
-                pRequest.getPageSize(), pRequest.getPageIndex());
-
-        return resp;
     }
 
     public String processExternalEvent(String clsname, String request, Map<String,String> metainfo)
@@ -844,36 +675,35 @@ public class EventManagerBean implements EventManager {
         }
     }
 
-    public void updateDocumentInfo(Long docid,
-            Long processInstId, String documentType, String ownerType, Long ownerId,
-            String searchKey1, String searchKey2) throws DataAccessException {
+    public void updateDocumentInfo(Long docid, String documentType,
+            String ownerType, Long ownerId) throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
             DocumentVO docvo = edao.getDocument(docid, false);
-            if (documentType!=null) docvo.setDocumentType(documentType);
-            if (ownerType!=null) docvo.setOwnerType(ownerType);
-            if (ownerId!=null) docvo.setOwnerId(ownerId);
-            if (processInstId!=null) docvo.setProcessInstanceId(processInstId);
-            if (searchKey1!=null) docvo.setSearchKey1(searchKey1);
-            if (searchKey2!=null) docvo.setSearchKey2(searchKey2);
+            if (documentType != null)
+                docvo.setDocumentType(documentType);
+            if (ownerType != null)
+                docvo.setOwnerType(ownerType);
+            if (ownerId != null)
+                docvo.setOwnerId(ownerId);
             edao.updateDocumentInfo(docvo);
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update document content", e);
-        } finally {
+        }
+        finally {
             edao.stopTransaction(transaction);
         }
     }
 
-    public Long createDocument(String type, Long procInstId, String ownerType,
-            Long ownerId, String searchKey1, String searchKey2, Object doc)
+    public Long createDocument(String type, String ownerType, Long ownerId, Object doc)
     throws DataAccessException {
-        return createDocument(type, procInstId, ownerType, ownerId, searchKey1, searchKey2, doc, null);
+        return createDocument(type, ownerType, ownerId, doc, null);
     }
 
-    public Long createDocument(String type, Long procInstId, String ownerType,
-            Long ownerId, String searchKey1, String searchKey2, Object doc, PackageVO pkg)
+    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, PackageVO pkg)
     throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -885,9 +715,6 @@ public class EventManagerBean implements EventManager {
             docvo.setDocumentType(type);
             docvo.setOwnerType(ownerType);
             docvo.setOwnerId(ownerId);
-            docvo.setProcessInstanceId(procInstId);
-            docvo.setSearchKey1(searchKey1);
-            docvo.setSearchKey2(searchKey2);
             Long docid = edao.createDocument(docvo, pkg);
             return docid;
         } catch (SQLException e) {
@@ -1567,69 +1394,6 @@ public class EventManagerBean implements EventManager {
         }
     }
 
-    /**
-     * Returns the process instances by process name and master request ID.
-     *
-     * @param processName
-     * @param masterRequestId
-     * @return the list of process instances. If the process definition is not
-     *         found, null is returned; if process definition is found but no
-     *         process instances are found, an empty list is returned.
-     * @throws ProcessException
-     * @throws DataAccessException
-     */
-    public PaginatedResponse getProcessInstances(String[] groups, QueryRequest queryRequest,
-            List<String> specialColumns, Map<String, String> specialCriteria)
-            throws ProcessException, DataAccessException {
-        ProcessInstanceVO[] instArr = null;
-        PaginatedResponse response = null;
-        Map<String, String> criteria = queryRequest.getRestrictions();
-        CodeTimer timer = new CodeTimer("EventManagerBean.getProcessInstances()", true);
-        TransactionWrapper transaction = null;
-        ProcessDAO pdao = getProcessDAO();
-        try {
-            transaction = pdao.startTransaction();
-            List<ProcessInstanceVO> daoResults = null;
-            int totalRowsCount = 0;
-            Map<String, String> countRestrictions = new HashMap<String, String>(criteria);
-            if (queryRequest.getPageSize() == QueryRequest.ALL_ROWS) {
-                int maxRows = queryRequest.getShowAllDisplayRows();
-                   if(maxRows==0){
-                     totalRowsCount = pdao.queryProcessInstancesCount(countRestrictions);
-                     maxRows=totalRowsCount;
-                   }else{
-                     totalRowsCount = pdao.queryProcessInstancesCount(countRestrictions);
-                   }
-                daoResults = pdao.getProcessInstancesByCriteria(criteria, queryRequest.getOrderBy(),
-                        queryRequest.isAscendingOrder(), 0, maxRows);
-            }else{
-            int startIndex = ((queryRequest.getPageIndex()) * queryRequest.getPageSize());
-            int endIndex = startIndex + queryRequest.getPageSize();
-            daoResults = pdao.getProcessInstancesByCriteria(criteria, queryRequest.getOrderBy(),
-                    queryRequest.isAscendingOrder(), startIndex, endIndex);
-            totalRowsCount = pdao.queryProcessInstancesCount(countRestrictions);
-            }
-
-            instArr = daoResults.toArray(new ProcessInstanceVO[daoResults.size()]);
-            int returnedRows = instArr.length;
-
-            response = new PaginatedResponse(instArr, totalRowsCount, returnedRows,
-                    queryRequest.getPageSize(), queryRequest.getPageIndex(),
-                    queryRequest.getShowAllDisplayRows());
-            timer.stopAndLogTiming("EventManagerBean.getProcessInstances()");
-        }
-        catch (DataAccessException e) {
-            throw new ProcessException(0, "Failed to get process instances", e);
-        }
-        finally {
-            pdao.stopTransaction(transaction);
-        }
-        return response;
-    }
-
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.services.EventManager#findProcessByProcessInstanceId(java.lang.Long)
-     */
     @Override
     public ProcessVO findProcessByProcessInstanceId(Long processInstanceId) throws DataAccessException,
             ProcessException {

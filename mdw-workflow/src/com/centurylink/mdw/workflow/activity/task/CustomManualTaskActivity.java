@@ -20,16 +20,13 @@ import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
 import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
 import com.centurylink.mdw.model.value.event.InternalEventVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.task.TaskVO;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
-import com.centurylink.mdw.services.task.TaskManagerAccess;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
 
 public class CustomManualTaskActivity extends AbstractWait implements TaskActivity, SuspendibleActivity {
@@ -41,26 +38,17 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
      * @throws ActivityException
      */
     public void execute() throws ActivityException {
-        String taskName = getTaskName();
-        logger.info("Task will be created:" + taskName);
         try {
-            Long secondaryOwnerId = super.getWorkTransitionInstanceId();
-            String taskLogicalId = getAttributeValue(ATTRIBUTE_TASK_LOGICAL_ID);
             getEngine().createEventWaitInstance(getActivityInstanceId(), "TaskAction-" + getActivityInstanceId(), null, true, true);
 
             String taskTemplate = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE);
-            if (taskTemplate != null) {
-                // new-style task templates
-                String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
-                AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
-                TaskVO template = TaskTemplateCache.getTaskTemplate(spec);
-                if (template == null)
-                    throw new ActivityException("Task template not found: " + spec);
-                taskLogicalId = template.getLogicalId();
-            }
+            if (taskTemplate == null)
+                throw new ActivityException("Missing attribute: " + ATTRIBUTE_TASK_TEMPLATE);
+            String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
+            AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
             TaskServices taskServices = ServiceLocator.getTaskServices();
-            taskServices.createCustomTaskInstance(taskLogicalId, getMasterRequestId(), getProcessInstanceId(),
-                    getActivityInstanceId(), secondaryOwnerId);
+            taskServices.createCustomTaskInstance(spec, getMasterRequestId(), getProcessInstanceId(),
+                    getActivityInstanceId(), getWorkTransitionInstanceId());
 
             EventWaitInstanceVO received = registerWaitEvents(false,true);
             if (received!=null)
@@ -69,10 +57,6 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
-    }
-
-    public String getTaskName(){
-        return getAttributeValue(ATTRIBUTE_TASK_NAME);
     }
 
     public boolean needSuspend() {
@@ -186,7 +170,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
 
             if (actInstStatus.equals(WorkStatus.STATUS_CANCELLED)) {
                 try {
-                    TaskManagerAccess.getInstance()
+                    ServiceLocator.getTaskManager()
                             .cancelTasksOfActivityInstance(this.getActivityInstanceId(), null);
                 }
                 catch (Exception e) {

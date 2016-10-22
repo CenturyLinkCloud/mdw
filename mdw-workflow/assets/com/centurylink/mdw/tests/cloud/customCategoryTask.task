@@ -6,7 +6,7 @@
     "Variables": "inputFloat,inputFloat,Not Displayed,0,,java.lang.Float;localFloat,localFloat,Not Displayed,0,,java.lang.Float"
   },
   "category": "PLN",
-  "logicalId": "CustomBaseData:A4",
+  "logicalId": "customCategoryTask",
   "name": "Custom Category Task",
   "version": "0"
 }

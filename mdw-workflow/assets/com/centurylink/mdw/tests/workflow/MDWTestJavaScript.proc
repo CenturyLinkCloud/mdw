@@ -26,7 +26,7 @@
     },
     {
       "attributes": {
-        "Rule": "localString = inputString + \" added string\";\r\nlocalInt = inputInt + 8;\r\nif (inputString != null)\r\n  return \"OutcomeY\";\r\nelse\r\n  return;",
+        "Rule": "localString = inputString + \" added string\";\r\nlocalInt = inputInt + 8;\r\nif (inputString != null)\r\n  \"OutcomeY\";",
         "SCRIPT": "JavaScript",
         "WORK_DISPLAY_INFO": "x=137,y=213,w=100,h=60"
       },
@@ -83,5 +83,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.2"
+  "version": "0.3"
 }

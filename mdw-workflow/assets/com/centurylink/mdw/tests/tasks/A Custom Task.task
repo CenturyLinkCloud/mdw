@@ -8,9 +8,9 @@
     "TaskDescription": "For testing custom task features.",
     "TaskSLA": "28800"
   },
-  "category": "ORD",
+  "category": "GEN",
   "description": "For testing custom task features.",
-  "logicalId": "TaskIndexTesting:A3",
+  "logicalId": "aCustomTask",
   "name": "A Custom Task",
   "version": "0"
 }

@@ -92,7 +92,7 @@
     {
       "attributes": {
         "DO_LOGGING": "True",
-        "EndpointUri": "#{props['mdw.services.url']}/resources/com.centurylink.mdw.base/copyright.txt",
+        "EndpointUri": "#{props['mdw.services.url']}/services/AppSummary",
         "HeadersVariable": "headersMap",
         "HttpMethod": "GET",
         "RESPONSE_VARIABLE": "responseDoc",
@@ -167,5 +167,5 @@
       "type": "com.centurylink.mdw.model.StringDocument"
     }
   },
-  "version": "0.18"
+  "version": "0.19"
 }

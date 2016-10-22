@@ -51,7 +51,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
 
-    private static Map<String, String> _ExternalEventInstanceQueryMap = new HashMap<String, String>();
+    private static Map<String,String> _ExternalEventInstanceQueryMap = new HashMap<String, String>();
 
     static {
         _ExternalEventInstanceQueryMap.put("eventName", "d.OWNER_TYPE");
@@ -112,7 +112,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     }
 
     public VariableInstanceInfo getVariableInstance(Long varInstId) throws SQLException {
-    	String query = "select VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID " +
+    	String query = "select VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID, PROCESS_INST_ID " +
             		"from VARIABLE_INSTANCE vi " +
             		"where VARIABLE_INST_ID=?";
     	ResultSet rs = db.runSelect(query, varInstId);
@@ -122,17 +122,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     	var.setStringValue(rs.getString(1));
     	var.setName(rs.getString(2));
         var.setType(VariableTypeCache.getTypeName(rs.getLong(3)));
-    	if (var.getName()==null) {	// backward compatibility
-    		query = "select v.VARIABLE_NAME, vt.VARIABLE_TYPE_NAME " +
-        		"from VARIABLE_INSTANCE vi, VARIABLE v, VARIABLE_TYPE vt " +
-        		"where vi.VARIABLE_INST_ID=? and vi.VARIABLE_ID=v.VARIABLE_ID" +
-        		"    and v.VARIABLE_TYPE_ID = vt.VARIABLE_TYPE_ID";
-    		rs = db.runSelect(query, varInstId);
-    		if (rs.next()) {
-    			var.setName(rs.getString(1));
-    			var.setType(rs.getString(2));
-    		}
-    	}
+        var.setProcessInstanceId(rs.getLong(4));
     	return var;
     }
 
@@ -150,6 +140,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 		     var.setStringValue(rs.getString(2));
 		     var.setName(varname);
 		     var.setType(VariableTypeCache.getTypeName(rs.getLong(3)));
+		     var.setProcessInstanceId(procInstId);
 		     return var;
 	     } else {
 	         return null;
@@ -288,59 +279,65 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         db.runUpdate(query, args);
     }
 
-    public Long createDocument(DocumentVO docvo) throws SQLException {
-        return createDocument(docvo, null);
+    public Long createDocument(DocumentVO doc) throws SQLException {
+        return createDocument(doc, null);
     }
 
-    public Long createDocument(DocumentVO docvo, PackageVO pkg) throws SQLException {
-        Long documentId = db.isMySQL()?null:this.getNextId("MDW_COMMON_INST_ID_SEQ");
+    public Long createDocument(DocumentVO doc, PackageVO pkg) throws SQLException {
+        Long docId = db.isMySQL() ? null : getNextId("MDW_COMMON_INST_ID_SEQ");
         String query = "insert into DOCUMENT " +
-            "(DOCUMENT_ID, PROCESS_INST_ID, CREATE_DT, DOCUMENT_TYPE, " +
-            "SEARCH_KEY1, SEARCH_KEY2, OWNER_TYPE, OWNER_ID, CONTENT) " +
-            "values (?, ?, "+now()+", ?, ?, ?, ?, ?, ?)";
-        Object[] args = new Object[8];
-        args[0] = documentId;
-        args[1] = docvo.getProcessInstanceId();
-        args[2] = docvo.getDocumentType();
-        args[3] = docvo.getSearchKey1();
-        args[4] = docvo.getSearchKey2();
-        args[5] = docvo.getOwnerType();
-        args[6] = docvo.getOwnerId();
-        args[7] = docvo.getContent(pkg);
-        if (db.isMySQL()) documentId = db.runInsertReturnId(query, args);
-        else db.runUpdate(query, args);
-        docvo.setDocumentId(documentId);
-        return documentId;
+            "(DOCUMENT_ID, CREATE_DT, DOCUMENT_TYPE, OWNER_TYPE, OWNER_ID) " +
+            "values (?, " + now() + ", ?, ?, ?)";
+        Object[] args = new Object[4];
+        args[0] = docId;
+        args[1] = doc.getDocumentType();
+        args[2] = doc.getOwnerType();
+        args[3] = doc.getOwnerId();
+        if (db.isMySQL())
+            docId = db.runInsertReturnId(query, args);
+        else
+            db.runUpdate(query, args);
+        doc.setDocumentId(docId);
+        if (hasMongo()) {
+            // TODO
+        }
+        else {
+            // store in DOCUMENT_CONTENT
+            query = "insert into DOCUMENT_CONTENT (DOCUMENT_ID, CONTENT) values (?, ?)";
+            args = new Object[2];
+            args[0] = docId;
+            args[1] = doc.getContent(pkg);
+            db.runUpdate(query, args);
+        }
+        return docId;
     }
 
     public void updateDocumentContent(Long documentId, String content) throws SQLException {
-        String query = "update DOCUMENT set CONTENT=?, MODIFY_DT="+now()+" where DOCUMENT_ID=?";
-        Object[] args = new Object[2];
-        args[0] = content;
-        args[1] = documentId;
-        db.runUpdate(query, args);
+        String query = "update DOCUMENT set MODIFY_DT = " + now() + " where DOCUMENT_ID = ?";
+        db.runUpdate(query, documentId);
+        boolean inMongo = hasMongo();
+        if (hasMongo()) {
+            // TODO
+            inMongo = false;  // not found (compatibility)
+        }
+
+        if (!inMongo) {
+            query = "update DOCUMENT_CONTENT set CONTENT = ? where DOCUMENT_ID = ?";
+            Object[] args = new Object[2];
+            args[0] = content;
+            args[1] = documentId;
+            db.runUpdate(query, args);
+        }
     }
 
     public void updateDocumentInfo(DocumentVO docvo) throws SQLException {
-
-        String query = "update DOCUMENT set PROCESS_INST_ID=?, DOCUMENT_TYPE=?, OWNER_TYPE=?," +
-                    " OWNER_ID=?, SEARCH_KEY1=?, SEARCH_KEY2=?" +
-                    " where DOCUMENT_ID=?";
-        Object[] args = new Object[7];
-        args[0] = docvo.getProcessInstanceId();
-        args[1] = docvo.getDocumentType();
-        args[2] = docvo.getOwnerType();
-        args[3] = docvo.getOwnerId();
-        args[4] = docvo.getSearchKey1();
-        args[5] = docvo.getSearchKey2();
-        args[6] = docvo.getDocumentId();
+        String query = "update DOCUMENT set DOCUMENT_TYPE=?, OWNER_TYPE=?, OWNER_ID=? where DOCUMENT_ID=?";
+        Object[] args = new Object[4];
+        args[0] = docvo.getDocumentType();
+        args[1] = docvo.getOwnerType();
+        args[2] = docvo.getOwnerId();
+        args[3] = docvo.getDocumentId();
         db.runUpdate(query, args);
-    }
-
-    public void removeDocument(Long documentId) throws SQLException
-    {
-        String query = "delete from DOCUMENT where DOCUMENT_ID=?";
-        db.runUpdate(query, documentId);
     }
 
     public void createEventInstance(String eventName,
@@ -1305,15 +1302,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     }
 
     public DocumentVO getDocument(DocumentReference docref, boolean forUpdate) throws SQLException {
-    	// does not support remote database
         return super.getDocument(docref.getDocumentId(), forUpdate);
-    }
-
-    public List<DocumentVO> findDocuments(Long procInstId, String type, String searchKey1, String searchKey2,
-            String ownerType, Long ownerId, Date createDateStart, Date createDateEnd, String orderByClause)
-            throws SQLException {
-    	return super.findDocuments0(procInstId, type, searchKey1, searchKey2, ownerType,
-    			ownerId, createDateStart, createDateEnd, orderByClause);
     }
 
     public Integer lockActivityInstance(Long actInstId) throws SQLException {

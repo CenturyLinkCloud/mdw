@@ -34,20 +34,6 @@ public class PropertyNames {
     public static final String MDW_FS_PASSWORD = "mdw.file.system.password";
     public static final String MDW_MAX_UPLOAD_BYTES = "mdw.max.upload.bytes";
 
-    // task manager
-    public static final String MDW_TASKMANAGER_REMOTE_JNDI = "mdw.taskmanager.remote.jndi";
-    public static final String MDW_TASKMANAGER_REMOTE_QUEUENAME = "mdw.taskmanager.remote.queuename";
-    public static final String MDW_TASKMANAGER_REMOTE_AUTH = "mdw.taskmanager.remote.authorization";
-    public static final String MDW_TASKMANAGER_REMOTE_SUMMARY = "mdw.taskmanager.remote.summary";
-    public static final String MDW_TASKMANAGER_REMOTE_DETAIL = "mdw.taskmanager.remote.detail";
-    public static final String MDW_TASKMANAGER_INCLUDED_REQUEST_PARAMS = "mdw.taskmanager.included.request.params";
-    public static final String MDW_WELCOME_PAGE = "mdw.welcome.page";
-    // form
-    public static final String MDW_FORM_USE_MDWWEB = "mdw.form.use.mdwweb";
-    public static final String MDW_FORM_USE_INTERNAL_RESOURCE_ONLY = "mdw.form.use.internal_resource_only";
-    public static final String MDW_FORM_ACTION_PACKAGE = "mdw.form.action.package"; // java package name of all form actions
-    public static final String MDW_FORM_TEMPLATE_CLASSIC_TASK = "mdw.form.template.classic_task";
-    public static final String MDW_FORM_SERVER = "mdw.form.server";
     // thread pool
     public static final String MDW_THREADPOOL_CORE_THREADS = "mdw.threadpool.core_threads";
     public static final String MDW_THREADPOOL_MAX_THREADS = "mdw.threadpool.max_threads";

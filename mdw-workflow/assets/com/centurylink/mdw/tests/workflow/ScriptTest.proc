@@ -6,7 +6,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=166,ly=76,type=Elbow,xs=199&199,ys=69&113"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=167,ly=76,type=Elbow,xs=199&199,ys=69&112"},
         "event": "FINISH",
         "id": "T1",
         "to": "A8"
@@ -15,14 +15,14 @@
     {
       "attributes": {
         "Expression": "\"Sure\"",
-        "SCRIPT": "MagicBox",
-        "WORK_DISPLAY_INFO": "x=184,y=474,w=32,h=20"
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=184,y=472,w=32,h=20"
       },
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
       "name": "Still Okay?",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=200,ly=521,type=Elbow,xs=200&200,ys=498&545"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=200,ly=519,type=Elbow,xs=200&200,ys=496&545"},
         "event": "FINISH",
         "id": "T8",
         "resultCode": "Sure",
@@ -67,7 +67,7 @@
     {
       "attributes": {
         "Output Documents": "createdDomDoc#createdXmlBean#modifiedDomDoc#modifiedXmlBean",
-        "Rule": "importPackage(javax.xml.parsers);\r\nimportPackage(org.apache.xmlbeans);\r\n\r\n// create variables\r\ncreatedInt = 8;\r\ncreatedString = \"createdStringValue\";\r\ncreatedXmlBean = XmlObject.Factory.parse(\"<createdXmlBean>\\n  <innerElement attr='attrVal'/>\\n<\/createdXmlBean>\");\r\ncreatedDomDoc = buildDomDoc();\r\n\r\nmodifiedInt += 10;\r\nmodifiedString += ' has been modified';\r\nvar modCursor = modifiedXmlBean.newCursor();\r\nmodCursor.toFirstChild();\r\nmodCursor.setTextValue(\"MODIFIED\");\r\nvar newCar = modifiedDomDoc.createElement('newCar');\r\nnewCar.setAttribute('shiny', 'new');\r\nmodifiedDomDoc.firstChild.appendChild(newCar);\r\n\r\nreturn \"javaScriptOutcome\";\r\n\r\n\r\nfunction buildDomDoc()\r\n{\r\n  var builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();\r\n  var document = builder.newDocument();\r\n  var root = document.createElement('records');\r\n  document.appendChild(root);\r\n  var car = document.createElement('car');\r\n  car.setAttribute('make', 'Infiniti');\r\n  car.setAttribute('model', 'G35x');\r\n  car.setAttribute('year', '2005');\r\n  root.appendChild(car);\r\n  var countryNode = document.createElement('country');\r\n  countryNode.appendChild(document.createTextNode('Japan'));\r\n  car.appendChild(countryNode);\r\n  var record = document.createElement('aspect');\r\n  record.setAttribute('type', 'Sedan');\r\n  record.appendChild(document.createTextNode(\"Not too big\"));\r\n  car.appendChild(record);\r\n  \r\n  return document;\r\n}",
+        "Rule": "load(\"nashorn:mozilla_compat.js\");\r\nimportPackage(javax.xml.parsers);\r\nimportPackage(org.apache.xmlbeans);\r\n\r\n// create variables\r\ncreatedInt = 8;\r\ncreatedString = \"createdStringValue\";\r\ncreatedXmlBean = XmlObject.Factory.parse(\"<createdXmlBean>\\n  <innerElement attr='attrVal'/>\\n<\/createdXmlBean>\");\r\ncreatedDomDoc = buildDomDoc();\r\n\r\nmodifiedInt += 10;\r\nmodifiedString += ' has been modified';\r\nvar modCursor = modifiedXmlBean.newCursor();\r\nmodCursor.toFirstChild();\r\nmodCursor.setTextValue(\"MODIFIED\");\r\nvar newCar = modifiedDomDoc.createElement('newCar');\r\nnewCar.setAttribute('shiny', 'new');\r\nmodifiedDomDoc.firstChild.appendChild(newCar);\r\n\r\n\"javaScriptOutcome\";\r\n\r\n\r\nfunction buildDomDoc()\r\n{\r\n  var builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();\r\n  var document = builder.newDocument();\r\n  var root = document.createElement('records');\r\n  document.appendChild(root);\r\n  var car = document.createElement('car');\r\n  car.setAttribute('make', 'Infiniti');\r\n  car.setAttribute('model', 'G35x');\r\n  car.setAttribute('year', '2005');\r\n  root.appendChild(car);\r\n  var countryNode = document.createElement('country');\r\n  countryNode.appendChild(document.createTextNode('Japan'));\r\n  car.appendChild(countryNode);\r\n  var record = document.createElement('aspect');\r\n  record.setAttribute('type', 'Sedan');\r\n  record.appendChild(document.createTextNode(\"Not too big\"));\r\n  car.appendChild(record);\r\n  \r\n  return document;\r\n}",
         "SCRIPT": "JavaScript",
         "WORK_DISPLAY_INFO": "x=187,y=217,w=24,h=24"
       },
@@ -79,22 +79,6 @@
         "event": "FINISH",
         "id": "T4",
         "resultCode": "javaScriptOutcome",
-        "to": "A6"
-      }]
-    },
-    {
-      "attributes": {
-        "SCRIPT": "MagicBox",
-        "WORK_DISPLAY_INFO": "x=309,y=223,w=24,h=24"
-      },
-      "id": "A5",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "MagicBox",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=279,ly=321,type=ElbowV,xs=321&321&220,ys=251&398&398"},
-        "event": "FINISH",
-        "id": "T6",
-        "resultCode": "magicOutcome",
         "to": "A6"
       }]
     },
@@ -117,7 +101,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
       "name": "Looking Good?",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=200,ly=442,type=Elbow,xs=200&200,ys=414&470"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=200,ly=441,type=Elbow,xs=200&200,ys=414&468"},
         "event": "FINISH",
         "id": "T7",
         "resultCode": "Yep",
@@ -128,7 +112,7 @@
       "attributes": {
         "Expression": "scriptFlavor",
         "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=182,y=117,w=32,h=20"
+        "WORK_DISPLAY_INFO": "x=182,y=116,w=32,h=20"
       },
       "id": "A8",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
@@ -142,21 +126,14 @@
           "to": "A7"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=204,ly=171,type=Elbow,xs=199&199,ys=141&213"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=204,ly=170,type=Elbow,xs=199&199,ys=140&213"},
           "event": "FINISH",
           "id": "T3",
           "resultCode": "JavaScript",
           "to": "A4"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=328,ly=169,type=ElbowV,xs=218&320&320,ys=126&126&219"},
-          "event": "FINISH",
-          "id": "T10",
-          "resultCode": "MagicBox",
-          "to": "A5"
-        },
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=410,ly=210,type=Elbow,xs=218&553,ys=127&240"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=410,ly=210,type=Elbow,xs=218&553,ys=126&240"},
           "event": "FINISH",
           "id": "T11",
           "resultCode": "Unknown",
@@ -283,5 +260,5 @@
       "type": "java.lang.String[]"
     }
   },
-  "version": "0.13"
+  "version": "0.18"
 }

@@ -5,7 +5,7 @@
     "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
     "Variables": "dateVar,Date Var,Optional,0,dateVarIndex,java.util.Date;intVar,Int Var,Required,0,intVarIndex,java.lang.Integer;isCustom,isCustom,Not Displayed,0,,java.lang.Boolean;jaxbVar,JAXB Var,Read Only,0,,javax.xml.bind.JAXBElement;stringListVar,String List Var,Not Displayed,0,,java.util.List<String>;stringVar,String Var,Required,0,stringVarIndex,java.lang.String"
   },
-  "category": "COM",
+  "category": "ORD",
   "logicalId": "TaskIndexTesting:A4",
   "name": "An AutoForm Task",
   "version": "0"

@@ -6,9 +6,7 @@ package com.centurylink.mdw.dataaccess.db;
 import java.net.ConnectException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +36,7 @@ public class CommonDataAccess {
     private int databaseVersion;
     private int supportedVersion;
 
+    private boolean hasMongo;
 
     public CommonDataAccess() {
         this(null, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
@@ -55,6 +54,10 @@ public class CommonDataAccess {
 
     public int getSupportedVersion() {
         return supportedVersion;
+    }
+
+    public boolean hasMongo() {
+        return hasMongo;
     }
 
     /**
@@ -399,24 +402,33 @@ public class CommonDataAccess {
 
     public DocumentVO loadDocument(Long documentId, boolean forUpdate)
             throws SQLException {
-        String query = "select PROCESS_INST_ID, CREATE_DT, MODIFY_DT, DOCUMENT_TYPE, " +
-            "SEARCH_KEY1, SEARCH_KEY2, OWNER_TYPE, OWNER_ID, CONTENT " +
-            "from DOCUMENT where DOCUMENT_ID=?" + (forUpdate?" for update":"");
+        String query = "select CREATE_DT, MODIFY_DT, DOCUMENT_TYPE, OWNER_TYPE, OWNER_ID " +
+            "from DOCUMENT where DOCUMENT_ID = ?" + (forUpdate ? " for update" : "");
         ResultSet rs = db.runSelect(query, documentId);
         if (rs.next()) {
             DocumentVO vo = new DocumentVO();
             vo.setDocumentId(documentId);
-            vo.setProcessInstanceId(rs.getLong(1));
-            vo.setCreateDate(rs.getTimestamp(2));
-            vo.setModifyDate(rs.getTimestamp(3));
-            vo.setDocumentType(rs.getString(4));
-            vo.setSearchKey1(rs.getString(5));
-            vo.setSearchKey2(rs.getString(6));
-            vo.setOwnerType(rs.getString(7));
-            vo.setOwnerId(rs.getLong(8));
-            vo.setContent(rs.getString(9));
+            vo.setCreateDate(rs.getTimestamp("CREATE_DT"));
+            vo.setModifyDate(rs.getTimestamp("MODIFY_DT"));
+            vo.setDocumentType(rs.getString("DOCUMENT_TYPE"));
+            vo.setOwnerType(rs.getString("OWNER_TYPE"));
+            vo.setOwnerId(rs.getLong("OWNER_ID"));
+            boolean inMongo = hasMongo();
+            if (hasMongo()) {
+                // TODO
+                inMongo = false;
+            }
+            if (!inMongo) {
+                query = "select CONTENT from DOCUMENT_CONTENT where DOCUMENT_ID = ?";
+                rs = db.runSelect(query, documentId);
+                if (rs.next())
+                    vo.setContent(rs.getString("CONTENT"));
+            }
             return vo;
-        } else throw new SQLException("Document with ID " + documentId + " does not exist");
+        }
+        else {
+            throw new SQLException("Document with ID " + documentId + " does not exist");
+        }
     }
 
     public ProcessVO getProcessBase0(String processName, int version)
@@ -444,99 +456,6 @@ public class CommonDataAccess {
         retVO.setInRuleSet(true);
         return retVO;
     }
-
-    public List<DocumentVO> findDocuments0(Long procInstId, String type, String searchKey1, String searchKey2,
-            String ownerType, Long ownerId, Date createDateStart, Date createDateEnd, String orderByClause)
-            throws SQLException {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-                List<DocumentVO> documentVOs = new ArrayList<DocumentVO>();
-                StringBuffer query = new StringBuffer();
-                List<Object> arglist = new ArrayList<Object>();
-                boolean first = true;
-                query.append("select DOCUMENT_ID, PROCESS_INST_ID, CREATE_DT, MODIFY_DT, DOCUMENT_TYPE, " +
-                    "SEARCH_KEY1, SEARCH_KEY2, OWNER_TYPE, OWNER_ID from DOCUMENT where ");
-                if (procInstId != null) {
-                    first = false;
-                    query.append("PROCESS_INST_ID=?");
-                    arglist.add(procInstId);
-                }
-                if (type != null) {
-                    if (first)
-                        first = false;
-                    else
-                        query.append(" and ");
-                    query.append("DOCUMENT_TYPE=?");
-                    arglist.add(type);
-                }
-                if (searchKey1 != null) {
-                    if (first)
-                        first = false;
-                    else
-                        query.append(" and ");
-                    query.append("SEARCH_KEY1=?");
-                    arglist.add(searchKey1);
-                }
-                if (searchKey2 != null) {
-                    if (first)
-                        first = false;
-                    else
-                        query.append(" and ");
-                    query.append("SEARCH_KEY2=?");
-                    arglist.add(searchKey2);
-                }
-                if (ownerType != null) {
-                    if (first)
-                        first = false;
-                    else
-                        query.append(" and ");
-                    query.append("OWNER_TYPE=?");
-                    arglist.add(ownerType);
-                }
-                if (ownerId != null) {
-                    if (first)
-                        first = false;
-                    else
-                        query.append(" and ");
-                    query.append("OWNER_ID=?");
-                    arglist.add(ownerId);
-                }
-                if (createDateStart != null) {
-                    if (first)
-                        first = false;
-                    else
-                        query.append(" and ");
-                    if (db.isMySQL())
-                        query.append("CREATE_DT >= str_to_date('" + dateFormat.format(createDateStart) + "', '%m/%d/%Y')");
-                    else query.append("CREATE_DT >= to_date('" + dateFormat.format(createDateStart) + "', 'MM/DD/YYYY')");
-                }
-                if (createDateEnd != null) {
-                    if (first)
-                        first = false;
-                    else
-                        query.append(" and ");
-                    if (db.isMySQL())
-                        query.append("CREATE_DT <= str_to_date('" + dateFormat.format(createDateEnd) + "', '%m/%d/%Y')");
-                    else query.append("CREATE_DT <= to_date('" + dateFormat.format(createDateEnd) + "', 'MM/DD/YYYY')");
-                }
-                if (orderByClause != null)
-                    query.append(" ").append(orderByClause);
-                ResultSet rs = db.runSelect(query.toString(), arglist.toArray());
-                while (rs.next()) {
-                    DocumentVO vo = new DocumentVO();
-                    vo.setDocumentId(rs.getLong(1));
-                    vo.setProcessInstanceId(rs.getLong(2));
-                    vo.setCreateDate(rs.getTimestamp(3));
-                    vo.setModifyDate(rs.getTimestamp(4));
-                    vo.setDocumentType(rs.getString(5));
-                    vo.setSearchKey1(rs.getString(6));
-                    vo.setSearchKey2(rs.getString(7));
-                    vo.setOwnerType(rs.getString(8));
-                    vo.setOwnerId(rs.getLong(9));
-                    documentVOs.add(vo);
-                }
-                return documentVOs;
-
-        }
 
     protected int countRows(String tableName, String keyElement, String whereCondition)
     throws SQLException {

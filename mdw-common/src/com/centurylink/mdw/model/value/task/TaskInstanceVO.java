@@ -17,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.service.Instance;
 import com.centurylink.mdw.common.service.Jsonable;
@@ -40,7 +39,6 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value="Task", description="MDW task instance")
 public class TaskInstanceVO implements Serializable, Jsonable, Instance {
 
-    public static final String DETAILONLY = "@";
     private static Long db_time_diff = 0l;
 
     private String orderId;
@@ -460,22 +458,6 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
         this.category = category;
     }
 
-    @ApiModelProperty(hidden=true)
-    public String getOwnerApplicationName(){
-        return this.ownerApplicationName;
-    }
-    public void setOwnerApplicationName(String pName){
-        this.ownerApplicationName = pName;
-    }
-
-    @ApiModelProperty(hidden=true)
-    public Long getAssociatedTaskInstanceId(){
-        return associatedTaskInstanceId;
-    }
-    public void setAssociatedTaskInstanceId(Long pId){
-        this.associatedTaskInstanceId = pId;
-    }
-
     public String getOwnerType() {
         return ownerType;
     }
@@ -611,26 +593,6 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
         return OwnerType.DOCUMENT.equals(secondaryOwnerType);
     }
 
-    // only applicable to template based general task
-    @ApiModelProperty(hidden=true)
-    public boolean isDetailOnly() {
-        return DETAILONLY.equals(this.ownerApplicationName);
-    }
-
-    @ApiModelProperty(hidden=true)
-    public boolean isSummaryOnly() {
-        if (ownerApplicationName == null || ownerApplicationName.equals(DETAILONLY)) {
-            return false;
-        }
-        else {
-            String app = ownerApplicationName;
-            int idx = ownerApplicationName.indexOf('@');
-            if (idx > 0)
-                app = ownerApplicationName.substring(0, idx);
-            return !app.equals(ApplicationContext.getApplicationName());
-        }
-    }
-
     @ApiModelProperty(hidden=true)
     public boolean isShallow() {
         return groups==null && categoryCode==null;
@@ -640,21 +602,6 @@ public class TaskInstanceVO implements Serializable, Jsonable, Instance {
     @ApiModelProperty(hidden=true)
     public boolean isTemplateBased() {
         return groups!=null;
-    }
-
-    @ApiModelProperty(hidden=true)
-    public boolean isLocal() {
-        if (ownerApplicationName == null || ownerApplicationName.equals(DETAILONLY)) {
-            return true;
-        }
-        else {
-            String app = ownerApplicationName;
-            int idx = ownerApplicationName.indexOf('@');
-            if (idx > 0)
-                app = ownerApplicationName.substring(0, idx);
-            return app.equals(ApplicationContext.getApplicationName());
-        }
-
     }
 
     @ApiModelProperty(hidden=true)

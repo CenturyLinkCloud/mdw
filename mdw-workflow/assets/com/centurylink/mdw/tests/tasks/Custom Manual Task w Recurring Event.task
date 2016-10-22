@@ -5,7 +5,7 @@
     "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
     "TaskSLA": "172800"
   },
-  "category": "ORD",
+  "category": "GEN",
   "logicalId": "TaskEventTest:A12",
   "name": "Custom Manual Task w Recurring Event",
   "version": "0"

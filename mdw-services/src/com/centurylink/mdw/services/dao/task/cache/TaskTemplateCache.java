@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.cache.PreloadableCache;
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
 import com.centurylink.mdw.common.exception.CachingException;
@@ -18,7 +17,6 @@ import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.model.data.task.TaskCategory;
 import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
 import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.task.TaskVO;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
@@ -76,7 +74,7 @@ public class TaskTemplateCache implements PreloadableCache {
     /**
      * Return the latest task for the given name.
      */
-    public static TaskVO getTaskTemplate(String taskName) {
+    public static TaskVO getTemplateForName(String taskName) {
         TaskVO taskVo = null;
         int idxToReplace = -1;
         for (int i = 0; i < taskVoCache.size(); i++) {
@@ -140,16 +138,7 @@ public class TaskTemplateCache implements PreloadableCache {
     /**
      * Return the latest task id for the given logical ID
      */
-    public static TaskVO getTaskTemplate(String sourceAppName, String logicalId) {
-        if (sourceAppName!=null && !sourceAppName.equals(TaskInstanceVO.DETAILONLY) && !sourceAppName.equals(ApplicationContext.getApplicationName())) {
-        	int k = sourceAppName.indexOf('@');
-        	if (k > 0) {
-        	  String app = sourceAppName.substring(0, k);
-        	  if (!app.equals(ApplicationContext.getApplicationName()))
-                  logicalId = app + ":" + logicalId;
-        	}
-        	else logicalId = sourceAppName + ":" + logicalId;
-        }
+    public static TaskVO getTaskTemplate(String logicalId) {
         TaskVO taskVo = null;
         int idxToReplace = -1;
         for (int i = 0; i < taskVoCache.size(); i++) {

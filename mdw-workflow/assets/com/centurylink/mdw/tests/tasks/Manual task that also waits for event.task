@@ -6,7 +6,7 @@
     "TaskSLA": "172800"
   },
   "category": "ORD",
-  "logicalId": "MDWTestTaskAndEvent:Activity40",
+  "logicalId": "manualTaskThatAlsoWaitsForEvents",
   "name": "Manual task that also waits for event",
   "version": "0"
 }

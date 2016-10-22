@@ -574,8 +574,7 @@ public class ProcessEngineDriver {
     	if (content!=null) {
     		if (docid.longValue()==0L) {
     			try {
-					engine.createDocument(type, 0L,
-							OwnerType.LISTENER_REQUEST, 0L, null, null, content);
+					engine.createDocument(type, OwnerType.LISTENER_REQUEST, 0L, content);
 				} catch (DataAccessException e) {
 					// should never happen, as this is cache only
 				}
@@ -767,7 +766,7 @@ public class ProcessEngineDriver {
     	try {
     		if (msgDocId.longValue()!=0L)
     			engine.updateDocumentInfo(new DocumentReference(msgDocId),
-    					procInstId, null, null, null, masterRequestId, null);
+    					null, masterRequestId, null);
     	} catch (Exception e) {
     		// this is possible for race condition - document was just created
     		logger.warn("Failed to update document for process instance id");
@@ -814,7 +813,7 @@ public class ProcessEngineDriver {
             engine.createVariableInstance(pi, VariableConstants.REQUEST_HEADERS, headers);
         }
         else if (vartype.equals("java.util.Map<String,String>") || vartype.equals(Object.class.getName())) {
-            DocumentReference docRef = engine.createDocument(vartype, pi.getId(), OwnerType.VARIABLE_INSTANCE, new Long(0), null, null, headers);
+            DocumentReference docRef = engine.createDocument(vartype, OwnerType.VARIABLE_INSTANCE, new Long(0), headers);
             engine.createVariableInstance(pi, VariableConstants.REQUEST_HEADERS, docRef);
         }
         else {

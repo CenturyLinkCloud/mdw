@@ -138,41 +138,6 @@ public class FormConstants {
     public static final String URLARG_COMMENT = "comment";
     public static final String URLARG_PROMPT_INPUT = "prompt_input";
 
-    public static final String SPECIAL_ACTION_PREFIX = "@";
-    public static final String ACTION_MENU = "@MENU";
-    public static final String ACTION_DIALOG = "@DIALOG";
-    public static final String ACTION_PAGE = "@PAGE";
-    public static final String ACTION_OK = "@OK";
-    public static final String ACTION_CANCEL = "@CANCEL";
-    public static final String ACTION_WINDOW = "@WINDOW";
-    public static final String ACTION_REPAINT = "@REPAINT";
-    public static final String ACTION_TEST = "@TEST";		// test action
-    public static final String ACTION_SKIN = "@SKIN";
-    public static final String ACTION_PROMPT = "@PROMPT";
-    public static final String ACTION_LIST_PICK = "@LIST_PICK";
-    public static final String ACTION_LOGON = "@LOGON";
-    public static final String ACTION_LOGOFF = "@LOGOFF";
-    public static final String ACTION_ACT_AS = "@ACT_AS";
-
-    // Following actions are for communication between engine, detail and summary task manager
-    // when only local or full remote task manager is used, detail/summary refers to that task manager
-    // except the message between them are not needed.
-    public static final String ACTION_CREATE_TASK = "@CREATE_TASK";		// create task instance: engine->detail; detail->summary
-    public static final String ACTION_START_PROCESS = "@START_PROCESS";	// start process: detail->engine
-    public static final String ACTION_GET_TASK_TEMPLATE = "@GET_TASK_TEPMPLATE";	// get task template: full->engine
-    public static final String ACTION_CANCEL_TASKS = "@CANCEL_TASKS";		// cancel tasks: engine->detail; detail->summary
-    public static final String ACTION_RESPOND_TASK = "@RESPOND_TASK";		// async response to engine call: engine->detail
-    public static final String ACTION_COMPLETE_TASK = "@COMPLETE_TASK";		// complete task: detail->engine; detail->summary???
-    public static final String ACTION_CHANGE_DUEDATE_TASK = "@CHANGE_DUEDATE_TASK";		// due date change task: detail->summary
-    public static final String ACTION_SAVE_TASK = "@SAVE_TASK";			// detail only
-    public static final String ACTION_ASSIGN_TASK = "@ASSIGN_TASK";		// task assignment: detail->summary
-    public static final String ACTION_CANCEL_TASK = "@CANCEL_TASK";		// cancel task: detail->engine
-    public static final String ACTION_GET_ASYNC_RESPONSE = "@GET_ASYNC_RESPONSE";	// browser asks detail for async responses
-    public static final String ACTION_AUTHORIZE = "@AUTHORIZE";			// get authorization: detail->summary
-    public static final String ACTION_GET_TASK = "@GET_TASK";		// get summary task instance: detail->summary
-    public static final String ACTION_TASK_NOTIFICATION = "@TASK_NOTIFICATION";		// remote taskmgr -> engine
-    public static final String ACTION_GET_EMAILS = "@GET_EMAILS";		// engine -> remote task manager
-
     public static final String TASK_CORRELATION_ID_PREFIX = "TaskInstance:";
     public static final String TABLE_ROW_DIALOG_PREFIX = "TableRowDialog";
 

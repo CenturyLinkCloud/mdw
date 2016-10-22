@@ -201,7 +201,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                         value = VariableTranslator.toObject(var.getVariableType(), varvalue);
                     else {
                         DocumentReference docref = super.createDocument(var.getVariableType(),
-                                varvalue, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId(), null, null);
+                                varvalue, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId());
                         value = new DocumentReference(docref.getDocumentId());
                     }
                 } else {

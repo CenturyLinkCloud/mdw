@@ -306,14 +306,6 @@ public class VariableVO implements Serializable, Comparable<VariableVO>, MbengVa
 		return null;
 	}
 
-	public boolean isDocument() {
-	    return VariableTranslator.isDocumentReferenceVariable(getVariableType());
-	}
-
-	public boolean isXmlDocument() {
-	    return VariableTranslator.isXmlDocumentTranslator(getVariableType());
-	}
-
     public boolean isInput() {
         return getVariableCategory() == CAT_INPUT || getVariableCategory() == CAT_INOUT;
     }
@@ -396,4 +388,15 @@ public class VariableVO implements Serializable, Comparable<VariableVO>, MbengVa
     public String getJsonName() {
         return getName();
     }
+
+    @Deprecated
+    public boolean isDocument() {
+        return VariableTranslator.isDocumentReferenceVariable(getVariableType());
+    }
+
+    @Deprecated
+    public boolean isXmlDocument() {
+        return VariableTranslator.isXmlDocumentTranslator(getVariableType());
+    }
+
 }

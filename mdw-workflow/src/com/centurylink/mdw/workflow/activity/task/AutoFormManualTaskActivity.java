@@ -42,19 +42,17 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
             FormDataDocument formdata = this.createFormData();
             populateFormDataMetaInfo(formdata, false, false);
 
-            String taskLogicalId = getAttributeValue(ATTRIBUTE_TASK_LOGICAL_ID); // old task activity attribute
             String taskTemplate = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE);
-            if (taskTemplate != null) {
-                // new-style task templates
-                String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
-                AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
-                TaskVO template = TaskTemplateCache.getTaskTemplate(spec);
-                if (template == null)
-                    throw new ActivityException("Task template not found: " + spec);
-                taskLogicalId = template.getLogicalId();
-            }
+            if (taskTemplate == null)
+                throw new ActivityException("Missing attribute: " + ATTRIBUTE_TASK_TEMPLATE);
+            // new-style task templates
+            String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
+            AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
+            TaskVO template = TaskTemplateCache.getTaskTemplate(spec);
+            if (template == null)
+                throw new ActivityException("Task template not found: " + spec);
             TaskServices taskServices = ServiceLocator.getTaskServices();
-            Long taskInstanceId = taskServices.createAutoFormTaskInstance(taskLogicalId,
+            Long taskInstanceId = taskServices.createAutoFormTaskInstance(spec,
                     getMasterRequestId(), getProcessInstanceId(), getActivityInstanceId(), formdata).getTaskInstanceId();
 
             String taskInstCorrelationId = FormConstants.TASK_CORRELATION_ID_PREFIX + taskInstanceId.toString();
@@ -78,24 +76,20 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
     /**
      * TODO: Git rid of FormDataDocument.
      */
-    @Override
     protected void populateFormDataMetaInfo(FormDataDocument datadoc, boolean subsequentCall, boolean updateActivityInstanceId)
     throws ActivityException {
         try {
             String taskTemplateAttr = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE);
-            if (taskTemplateAttr == null) {
-                // old-style (non-template)
-                super.populateFormDataMetaInfo(datadoc, subsequentCall, updateActivityInstanceId);
-                return;
-            }
             // else subsequent call no need to set form name
             if (subsequentCall) {
-                datadoc.setAttribute(FormDataDocument.ATTR_ACTION, FormConstants.ACTION_RESPOND_TASK);
+                // FIXME Autoform
+                // datadoc.setAttribute(FormDataDocument.ATTR_ACTION, FormConstants.ACTION_RESPOND_TASK);
                 if (updateActivityInstanceId || datadoc.getMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID)==null)
                     datadoc.setMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID, getActivityInstanceId().toString());
             }
             else {
-                datadoc.setAttribute(FormDataDocument.ATTR_ACTION, FormConstants.ACTION_CREATE_TASK);
+                // FIXME Autoform
+                // datadoc.setAttribute(FormDataDocument.ATTR_ACTION, FormConstants.ACTION_CREATE_TASK);
                 datadoc.setMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID, getActivityInstanceId().toString());
             }
             datadoc.setAttribute(FormDataDocument.ATTR_NAME, getActivityId().toString());

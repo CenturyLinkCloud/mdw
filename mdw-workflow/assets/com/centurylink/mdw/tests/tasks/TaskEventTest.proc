@@ -26,15 +26,10 @@
     },
     {
       "attributes": {
-        "Category": "COM",
-        "FormName": "Autoform",
-        "Groups": "MDW Support",
-        "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
-        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
         "STATUS_AFTER_EVENT": "Hold",
-        "TaskLogicalId": "TaskEventTest:A3",
-        "TaskName": "AutoForm Task with Non-Recurring Event",
-        "Variables": "FormDataVar,,Not Displayed,0,,com.centurylink.mdw.model.FormDataDocument;path,path,Not Displayed,0,,java.lang.String",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/AutoForm Task with Non-Recurring Event.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WAIT_EVENT_NAMES": "C-{$MasterRequestID},CORRECT,true,;A-{$MasterRequestID},ABORT,true,",
         "WORK_DISPLAY_INFO": "x=343,y=140,w=132,h=69",
         "Wait for Task": "TRUE"
@@ -51,17 +46,11 @@
     },
     {
       "attributes": {
-        "AlertIntervalUnits": "Hours",
-        "Category": "ORD",
-        "Groups": "MDW Support",
-        "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
-        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
-        "SLAUnits": "Hours",
         "STATUS_AFTER_EVENT": "Hold",
         "STATUS_AFTER_TIMEOUT": "Hold",
-        "TaskLogicalId": "TaskEventTest:A12",
-        "TaskName": "Custom Manual Task w Recurring Event",
-        "TaskSLA": "48",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/Custom Manual Task w Recurring Event.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},NonTaskAction,true",
         "WORK_DISPLAY_INFO": "x=338,y=220,w=137,h=66"
       },
@@ -249,5 +238,5 @@
     "category": "INPUT",
     "type": "java.lang.String"
   }},
-  "version": "0.4"
+  "version": "0.5"
 }

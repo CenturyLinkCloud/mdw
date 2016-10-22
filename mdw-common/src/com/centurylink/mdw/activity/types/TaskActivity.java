@@ -100,6 +100,4 @@ public interface TaskActivity extends GeneralActivity {
             ATTRIBUTE_PRIORITIZATION_RULES,
             ATTRIBUTE_SERVICE_PROCESSES
     };
-
-	String getTaskName();
 }

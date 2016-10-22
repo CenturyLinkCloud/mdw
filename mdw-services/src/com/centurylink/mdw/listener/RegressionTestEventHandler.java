@@ -153,8 +153,8 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         String msgContent = getParameter(xmlbean, "Message", true);
         EventManager eventMgr = ServiceLocator.getEventManager();
         eventName = translatePlaceHolder(eventName, xmlbean, eventMgr);
-        Long docid = eventMgr.createDocument(StringDocument.class.getName(), 0L, OwnerType.DOCUMENT,
-                new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID)), null, null, msgContent);
+        Long docid = eventMgr.createDocument(StringDocument.class.getName(), OwnerType.DOCUMENT,
+                new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID)), msgContent);
         logger.debug("Regression tester notify process with event '" + eventName + "'");
         super.notifyProcesses(eventName, docid, msgContent, 0);
         return createSuccessResponse(null);
@@ -272,7 +272,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
             k = Integer.parseInt(taskName.substring(n - 2, n - 1));
             taskName = taskName.substring(0, n - 3);
         }
-        TaskVO taskVo = TaskTemplateCache.getTaskTemplate(taskName);
+        TaskVO taskVo = TaskTemplateCache.getTemplateForName(taskName);
         if (taskVo == null)
             throw new Exception("No task found for name: '" + taskName + "'");
         List<Long> tiList = new TaskDAO(new DatabaseAccess(null)).findTaskInstance(taskVo.getTaskId(), masterRequestId);
@@ -324,8 +324,8 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
                             VariableVO vardef = procdef.getVariable(varname);
                             if (vardef==null) throw new Exception("The variable is not defined: " + varname);
                             if (vardef.isDocument()) {
-                                Long docid = eventManager.createDocument(vardef.getVariableType(), procInstId,
-                                    OwnerType.PROCESS_INSTANCE, procInstId, null, null, param.getStringValue());
+                                Long docid = eventManager.createDocument(vardef.getVariableType(),
+                                    OwnerType.PROCESS_INSTANCE, procInstId, param.getStringValue());
                                 eventManager.setVariableInstance(procInstId, varname, new DocumentReference(docid));
                             } else {
                                 eventManager.setVariableInstance(procInstId, varname, param.getStringValue());

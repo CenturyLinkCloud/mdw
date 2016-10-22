@@ -47,10 +47,11 @@ import com.centurylink.mdw.observer.task.TemplatedNotifier;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
+import com.centurylink.mdw.services.UserException;
+import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
-import com.centurylink.mdw.services.task.TaskManagerAccess;
 
 public class TaskEmailNotifier extends TemplatedNotifier {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -102,7 +103,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         JSONObject emailJson = templatedEmail.buildEmailJson();
 		EventManager eventManager = ServiceLocator.getEventManager();
         Long procInstId = taskInstance.getOwnerId();
-        eventManager.createDocument(JSONObject.class.getName(), procInstId, OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), null, null, emailJson);
+        eventManager.createDocument(JSONObject.class.getName(), OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), emailJson);
         return emailJson;
     }
 
@@ -414,8 +415,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         if (noticeGroups == null)
             return null;
         try {
-        	return toMailAddresses(TaskManagerAccess.getInstance()
-        			.getGroupEmailAddresses(noticeGroups.split("#")));
+        	return toMailAddresses(getGroupEmails(noticeGroups.split("#")));
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -435,8 +435,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
             List<String> groups;
             if (taskInstanceVO.isTemplateBased()) groups = taskInstanceVO.getGroups();
             else groups = taskManager.getGroupsForTaskInstance(taskInstanceVO);
-            return toMailAddresses(TaskManagerAccess.getInstance()
-            		.getGroupEmailAddresses(groups.toArray(new String[groups.size()])));
+            return toMailAddresses(getGroupEmails(groups.toArray(new String[groups.size()])));
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -455,12 +454,17 @@ public class TaskEmailNotifier extends TemplatedNotifier {
      */
     protected Address[] getGroupEmailAddresses(String[] groups) throws ObserverException, AddressException {
         try {
-        	return toMailAddresses(TaskManagerAccess.getInstance().getGroupEmailAddresses(groups));
+        	return toMailAddresses(getGroupEmails(groups));
         }
         catch (MDWException e) {
             logger.severeException(e.getMessage(), e);
             throw new ObserverException(-1, e.getMessage(), e);
         }
+    }
+
+    public List<String> getGroupEmails(String[] groups) throws UserException, DataAccessException {
+        UserManager userManager = ServiceLocator.getUserManager();
+        return userManager.getEmailAddressesForGroups(groups);
     }
 
     protected class VariablesModel extends HashMap<String,Object> {

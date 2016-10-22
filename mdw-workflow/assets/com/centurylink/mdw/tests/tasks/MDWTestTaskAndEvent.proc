@@ -41,17 +41,11 @@
     },
     {
       "attributes": {
-        "AlertIntervalUnits": "Hours",
-        "Category": "ORD",
-        "Groups": "Fallout#MDW Support",
-        "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
-        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
-        "SLAUnits": "Hours",
         "STATUS_AFTER_EVENT": "Hold",
         "STATUS_AFTER_TIMEOUT": "Hold",
-        "TaskLogicalId": "MDWTestTaskAndEvent:Activity40",
-        "TaskName": "Manual task that also waits for event",
-        "TaskSLA": "48",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/Manual task that also waits for event.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},NonTaskAction,true",
         "WORK_DISPLAY_INFO": "x=256,y=200,w=100,h=60"
       },
@@ -110,14 +104,11 @@
       },
       {
         "attributes": {
-          "Category": "COM",
-          "FormName": "Autoform",
-          "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
-          "Notices": "$DefaultNotices",
           "STATUS_AFTER_EVENT": "Cancelled",
-          "TaskLogicalId": "MDWTestTaskAndEvent:Activity43",
-          "TaskName": "Task and Event Fallout",
-          "WORK_DISPLAY_INFO": "x=460,y=62,w=100,h=60",
+          "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+          "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/Task and Event Fallout.task",
+          "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+          "WORK_DISPLAY_INFO": "x=460,y=61,w=100,h=60",
           "Wait for Task": "TRUE"
         },
         "id": "A43",
@@ -144,5 +135,5 @@
       "type": "java.lang.String"
     }}
   }],
-  "version": "0.3"
+  "version": "0.5"
 }

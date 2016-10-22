@@ -139,17 +139,6 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
     }
 
     /**
-     * @deprecated use realToObject(PackageVO, String, String)
-     */
-     @Deprecated
-    public static Object realToObject(String type, String value) {
-        com.centurylink.mdw.variable.VariableTranslator trans = getTranslator(type);
-        if (trans instanceof DocumentReferenceTranslator)
-            return ((DocumentReferenceTranslator)trans).realToObject(value);
-        else return trans.toObject(value);
-    }
-
-    /**
      * Deserializes variable string values to runtime objects.
      *
      * @param pkg workflow package
@@ -165,9 +154,6 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
             return trans.toObject(value);
     }
 
-    /**
-     * @deprecated use isDocumentReferenceVariable(PackageVO, String)
-     */
     @Deprecated
     public static boolean isDocumentReferenceVariable(String type) {
         return isDocumentReferenceVariable(null, type);
@@ -181,14 +167,10 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
         return (trans instanceof DocumentReferenceTranslator);
     }
 
-    /**
-     * @deprecated use isXmlDocumentTranslator(PackageVO, String)
-     */
     @Deprecated
     public static boolean isXmlDocumentTranslator(String type) {
         return isXmlDocumentTranslator(null, type);
     }
-
 
     /**
      * If pkg is null then will use any available bundle to provide the translator.

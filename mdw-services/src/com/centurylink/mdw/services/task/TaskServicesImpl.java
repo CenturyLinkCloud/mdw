@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.common.constant.OwnerType;
+import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -26,6 +27,7 @@ import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.data.task.TaskAction;
 import com.centurylink.mdw.model.value.asset.AssetHeader;
+import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
@@ -76,7 +78,7 @@ public class TaskServicesImpl implements TaskServices {
 
         try {
             TaskManager taskManager = ServiceLocator.getTaskManager();
-            TaskVO template = TaskTemplateCache.getTaskTemplate(null, logicalId);
+            TaskVO template = TaskTemplateCache.getTaskTemplate(logicalId);
             if (template == null)
                 throw new ServiceException(ServiceException.NOT_FOUND, "Task Template '" + logicalId + "' not found");
 
@@ -228,13 +230,14 @@ public class TaskServicesImpl implements TaskServices {
 
     }
 
-    public TaskInstanceVO createCustomTaskInstance(String logicalId, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, Long transitionId) throws TaskException, DataAccessException {
-        TaskManager taskManager = ServiceLocator.getTaskManager();
-        TaskVO taskVO = TaskTemplateCache.getTaskTemplate(null, logicalId);
-        if (taskVO == null)
-            throw new DataAccessException("Task template '" + logicalId + "' is not defined");
+    public TaskInstanceVO createCustomTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
+            Long activityInstanceId, Long transitionId) throws TaskException, DataAccessException, CachingException {
 
+        TaskVO taskVO = TaskTemplateCache.getTaskTemplate(spec);
+        if (taskVO == null)
+            throw new DataAccessException("Task template not found: " + spec);
+
+        TaskManager taskManager = ServiceLocator.getTaskManager();
         TaskInstanceVO instance = taskManager.createTaskInstance(taskVO.getTaskId(), masterRequestId, processInstanceId,
                 OwnerType.WORK_TRANSITION_INSTANCE, transitionId);
 
@@ -251,18 +254,17 @@ public class TaskServicesImpl implements TaskServices {
         return instance;
     }
 
-    public TaskInstanceVO createAutoFormTaskInstance(String logicalId, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, FormDataDocument formDoc) throws TaskException, DataAccessException {
+    public TaskInstanceVO createAutoFormTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
+            Long activityInstanceId, FormDataDocument formDoc) throws TaskException, DataAccessException, CachingException {
 
-        TaskManager taskManager = ServiceLocator.getTaskManager();
-        TaskVO taskVO = TaskTemplateCache.getTaskTemplate(null, logicalId);
+        TaskVO taskVO = TaskTemplateCache.getTaskTemplate(spec);
         if (taskVO == null)
-            throw new DataAccessException("Task template '" + logicalId + "' is not defined");
+            throw new DataAccessException("Task template not found: " + spec);
 
         EventManager eventManager = ServiceLocator.getEventManager();
-        Long documentId = eventManager.createDocument(FormDataDocument.class.getName(), 0L, OwnerType.LISTENER_REQUEST, // ugh
-                1L, null, null, formDoc.format());
+        Long documentId = eventManager.createDocument(FormDataDocument.class.getName(), OwnerType.LISTENER_REQUEST, 1L, formDoc.format());
 
+        TaskManager taskManager = ServiceLocator.getTaskManager();
         TaskInstanceVO instance = taskManager.createTaskInstance(taskVO.getTaskId(), masterRequestId, processInstanceId,
                 OwnerType.DOCUMENT, documentId);
 
@@ -286,7 +288,7 @@ public class TaskServicesImpl implements TaskServices {
     public void createSubTask(String subtaskLogicalId, Long masterTaskInstanceId)
             throws TaskException, DataAccessException {
         TaskManager taskManager = ServiceLocator.getTaskManager();
-        TaskVO subTaskVo = TaskTemplateCache.getTaskTemplate(null, subtaskLogicalId);
+        TaskVO subTaskVo = TaskTemplateCache.getTaskTemplate(subtaskLogicalId);
         if (subTaskVo == null)
             throw new TaskException("Task Template '" + subtaskLogicalId + "' does not exist");
 
@@ -301,7 +303,7 @@ public class TaskServicesImpl implements TaskServices {
             throws TaskException, DataAccessException {
         TaskManager taskManager = ServiceLocator.getTaskManager();
         for (SubTask subTask : subTaskList) {
-            TaskVO subTaskVo = TaskTemplateCache.getTaskTemplate(null, subTask.getLogicalId());
+            TaskVO subTaskVo = TaskTemplateCache.getTaskTemplate(subTask.getLogicalId());
             if (subTaskVo == null)
                 throw new TaskException("Task Template '" + subTask.getLogicalId() + "' does not exist");
 
@@ -390,7 +392,7 @@ public class TaskServicesImpl implements TaskServices {
                         VariableInstanceInfo varInst = runtimeContext.getProcessInstance().getVariable(name);
                         if (varInst == null) {
                             Long procInstId = runtimeContext.getProcessInstanceId();
-                            Long docId = eventMgr.createDocument(type, procInstId, OwnerType.PROCESS_INSTANCE, procInstId, null, null, stringValue);
+                            Long docId = eventMgr.createDocument(type, OwnerType.PROCESS_INSTANCE, procInstId, stringValue);
                             eventMgr.setVariableInstance(procInstId, name, new DocumentReference(docId));
                         }
                         else {

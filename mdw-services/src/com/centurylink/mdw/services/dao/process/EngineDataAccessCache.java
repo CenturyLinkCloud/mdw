@@ -155,7 +155,6 @@ public class EngineDataAccessCache implements EngineDataAccess {
     		docvo0.setDocumentType(docvo.getDocumentType());
     		docvo0.setOwnerId(docvo.getOwnerId());
     		docvo0.setOwnerType(docvo.getOwnerType());
-    		docvo0.setProcessInstanceId(docvo.getProcessInstanceId());
         } else {
     		edadb.updateDocumentInfo(docvo);
     		DocumentVO docvo0 = documentCache.get(docvo.getDocumentId());
@@ -163,7 +162,6 @@ public class EngineDataAccessCache implements EngineDataAccess {
     			docvo0.setDocumentType(docvo.getDocumentType());
         		docvo0.setOwnerId(docvo.getOwnerId());
         		docvo0.setOwnerType(docvo.getOwnerType());
-        		docvo0.setProcessInstanceId(docvo.getProcessInstanceId());
     		}
         }
     }
@@ -362,15 +360,6 @@ public class EngineDataAccessCache implements EngineDataAccess {
     	} else {
     		edadb.determineCompletedTransitions(pProcInstId, transitions);
     	}
-	}
-
-	public synchronized List<DocumentVO> findDocuments(Long procInstId, String type,
-			String searchKey1, String searchKey2, String ownerType,
-			Long ownerId, Date createDateStart, Date createDateEnd,
-			String orderByClause) throws SQLException {
-		return edadb.findDocuments(procInstId, type, searchKey1, searchKey2,
-				ownerType, ownerId, createDateStart, createDateEnd, orderByClause);
-		// TODO handle CACHE_ON and CACHE_ONLY
 	}
 
 	public synchronized ActivityInstanceVO getActivityInstance(Long actInstId)

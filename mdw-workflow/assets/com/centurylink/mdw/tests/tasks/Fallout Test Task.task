@@ -4,7 +4,7 @@
     "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
   },
   "category": "COM",
-  "logicalId": "FalloutTaskTest:A4",
+  "logicalId": "falloutTestTask",
   "name": "Fallout Test Task",
   "version": "0"
 }

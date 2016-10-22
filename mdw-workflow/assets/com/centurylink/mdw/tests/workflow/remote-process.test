@@ -1,8 +1,0 @@
-// remote-process
-start process("MDWTestMainProcess") {
-	variables = [processCase: "RemoteSubProcess", N: 123]
-}
-wait process("MDWTestMainProcess") {
-    timeout = 180
-}
-verify process

@@ -5,7 +5,7 @@
     "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
     "Variables": "dateVar,dateVar,Not Displayed,0,,java.util.Date;intVar,intVar,Not Displayed,0,,java.lang.Integer;isCustom,isCustom,Not Displayed,0,,java.lang.Boolean;isIndexProvider,isIndexProvider,Not Displayed,0,,java.lang.Boolean;jaxbVar,jaxbVar,Not Displayed,0,,javax.xml.bind.JAXBElement;stringListVar,stringListVar,Not Displayed,0,,java.util.List<String>;stringVar,stringVar,Not Displayed,0,,java.lang.String"
   },
-  "category": "ORD",
+  "category": "TST",
   "logicalId": "TaskIndexTesting:A7",
   "name": "Another Custom Task",
   "version": "0"

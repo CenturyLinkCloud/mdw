@@ -104,7 +104,7 @@ process: # 13593
     name: changedXmlBeanWrapper
     value: |
       com.centurylink.mdw.model.ActionRequestXmlBeanWrapper
-      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
         <Action name="beZen">
           <Parameter name="priority">URGENT</Parameter>
         </Action>
@@ -196,7 +196,7 @@ process: # 13593
     name: unchangedXmlBeanWrapper
     value: |
       com.centurylink.mdw.model.ActionRequestXmlBeanWrapper
-      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
         <Action name="beZen">
           <Parameter name="priority">URGENT</Parameter>
         </Action>
@@ -267,7 +267,7 @@ process: # 13592
             The Clash
           </Artist>
         </Album>
-        <Album name="Sound Affects" year="1980">
+        <Album year="1980" name="Sound Affects">
           <Artist>
             The Jam
           </Artist>
@@ -325,7 +325,7 @@ process: # 13592
     name: changedXmlBeanWrapper
     value: |
       com.centurylink.mdw.model.ActionRequestXmlBeanWrapper
-      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
         <Action name="beZen">
           <Parameter name="priority">URGENT</Parameter>
           <Parameter name="frequency" type="java.lang.String">EVERYDAY</Parameter>
@@ -418,7 +418,7 @@ process: # 13592
     name: unchangedXmlBeanWrapper
     value: |
       com.centurylink.mdw.model.ActionRequestXmlBeanWrapper
-      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
         <Action name="beZen">
           <Parameter name="priority">URGENT</Parameter>
         </Action>

@@ -7,12 +7,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.centurylink.mdw.common.exception.CachingException;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.task.TaskList;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
 import com.centurylink.mdw.model.value.task.TaskActionVO;
 import com.centurylink.mdw.model.value.task.TaskCount;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
@@ -31,11 +33,11 @@ public interface TaskServices {
 
     public Map<String,String> getIndexes(Long taskInstanceId) throws DataAccessException;
 
-    public TaskInstanceVO createCustomTaskInstance(String logicalId, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, Long transitionId) throws TaskException, DataAccessException;
+    public TaskInstanceVO createCustomTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
+            Long activityInstanceId, Long transitionId) throws TaskException, DataAccessException, CachingException;
 
-    public TaskInstanceVO createAutoFormTaskInstance(String logicalId, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, FormDataDocument formDoc) throws TaskException, DataAccessException;
+    public TaskInstanceVO createAutoFormTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
+            Long activityInstanceId, FormDataDocument formDoc) throws TaskException, DataAccessException, CachingException;
 
     public TaskInstanceVO getInstance(Long instanceId) throws DataAccessException;
 

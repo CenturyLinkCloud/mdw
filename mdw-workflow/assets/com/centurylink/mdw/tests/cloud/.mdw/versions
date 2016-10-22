@@ -1,6 +1,7 @@
-#Wed Sep 14 15:10:05 MDT 2016
+#Fri Oct 21 17:21:32 MDT 2016
 Acknowledger.java=5
-CustomBaseData.proc=3
+Custom\ Category\ Task.task=1
+CustomBaseData.proc=5
 DynamicActivityImpl.proc=2
 DynamicJavaGeneralActivity.java=2
 JaxbAsset.java=4
@@ -17,6 +18,7 @@ cloud-activity-impls.test=0
 cloud-activity-impls.yaml=1
 custom-base-data.test=5
 custom-base-data.yaml=2
+customCategoryTask.task=1
 dynamic-activity-impl.test=1
 dynamic-activity-impl.yaml=1
 escalate.xml=2

@@ -6,7 +6,6 @@ package com.centurylink.mdw.services.process;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +72,6 @@ public abstract class BaseActivity implements GeneralActivity {
 
     public static final String JAVASCRIPT = "JavaScript";
     public static final String GROOVY = "Groovy";
-    public static final String MAGIC_BOX = "MagicBox";
     public static final String JAVA_EL = "javax.el";
     public static final String OUTPUTDOCS = "Output Documents";
 
@@ -89,7 +87,7 @@ public abstract class BaseActivity implements GeneralActivity {
     private ActivityVO activityDef;
     private ProcessInstanceVO processInst;
     private ActivityInstanceVO activityInst;
-	private ActivityRuntimeContext _runtimeContext;
+    private ActivityRuntimeContext _runtimeContext;
     private PackageVO pkg;
 
     /**
@@ -108,7 +106,7 @@ public abstract class BaseActivity implements GeneralActivity {
      *    or of the parent process instance when this is in an embedded process
      */
     void prepare(ActivityVO actVO, ProcessInstanceVO pi, ActivityInstanceVO ai,
-    		List<VariableInstanceInfo> parameters,
+            List<VariableInstanceInfo> parameters,
             Long transInstId, String entryCode, TrackingTimer timer, ProcessExecuter engine) {
         try {
             if (timer != null)
@@ -243,7 +241,7 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     protected ActivityInstanceVO getActivityInstance() {
-    	return activityInst;
+        return activityInst;
     }
 
     /**
@@ -325,7 +323,7 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     protected final String getEntryCode() {
-    	return entryCode;
+        return entryCode;
     }
 
     /**
@@ -352,15 +350,15 @@ public abstract class BaseActivity implements GeneralActivity {
     protected void setProcessInstanceCompletionCode(String code)
             throws ActivityException {
         try {
-        	if (code!=null) {
-            	if (code.equals(TaskAction.CANCEL)) code = EventType.EVENTNAME_ABORT;
-            	else if (code.equals(TaskAction.ABORT))
-            		code = EventType.EVENTNAME_ABORT + ":process";
-            	else if (code.equals(TaskAction.COMPLETE)) code = EventType.EVENTNAME_FINISH;
-            	else if (code.equals(TaskAction.RETRY )) code = EventType.EVENTNAME_START;
-            	else code = EventType.EVENTNAME_FINISH + ":" + code;
+            if (code!=null) {
+                if (code.equals(TaskAction.CANCEL)) code = EventType.EVENTNAME_ABORT;
+                else if (code.equals(TaskAction.ABORT))
+                    code = EventType.EVENTNAME_ABORT + ":process";
+                else if (code.equals(TaskAction.COMPLETE)) code = EventType.EVENTNAME_FINISH;
+                else if (code.equals(TaskAction.RETRY )) code = EventType.EVENTNAME_START;
+                else code = EventType.EVENTNAME_FINISH + ":" + code;
             }
-        	engine.setProcessInstanceCompletionCode(getProcessInstanceId(), code);
+            engine.setProcessInstanceCompletionCode(getProcessInstanceId(), code);
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(0, ex.getMessage(),ex);
@@ -368,40 +366,40 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     protected Long getParentProcessId() throws ActivityException {
-    	try {
-    		Long parentProcInstId = this.getProcessInstanceOwnerId();
-    		ProcessInstanceVO parentProcInst = this.getEngine().getProcessInstance(parentProcInstId);
-    		return parentProcInst.getProcessId();
+        try {
+            Long parentProcInstId = this.getProcessInstanceOwnerId();
+            ProcessInstanceVO parentProcInst = this.getEngine().getProcessInstance(parentProcInstId);
+            return parentProcInst.getProcessId();
         } catch (Exception ex) {
             throw new ActivityException(0, ex.getMessage(),ex);
         }
     }
 
     protected ProcessInstanceVO getProcessInstance() {
-    	return this.processInst;
+        return this.processInst;
     }
 
     private ProcessVO procDef;
     protected ProcessVO getProcessDefinition() {
         if (procDef == null) {
-        	procDef = ProcessVOCache.getProcessVO(processInst.getProcessId());
-        	if (processInst.isNewEmbedded())
-        		procDef = procDef.getSubProcessVO(new Long(processInst.getComment()));
+            procDef = ProcessVOCache.getProcessVO(processInst.getProcessId());
+            if (processInst.isNewEmbedded())
+                procDef = procDef.getSubProcessVO(new Long(processInst.getComment()));
         }
-    	return procDef;
+        return procDef;
     }
 
     private ProcessVO mainProcDef;
     protected ProcessVO getMainProcessDefinition() throws ActivityException {
         if (mainProcDef == null) {
-        	ProcessVO procdef = ProcessVOCache.getProcessVO(processInst.getProcessId());
-        	mainProcDef = procdef;
-        	if (processInst.isNewEmbedded() || procdef.isEmbeddedProcess()) {
+            ProcessVO procdef = ProcessVOCache.getProcessVO(processInst.getProcessId());
+            mainProcDef = procdef;
+            if (processInst.isNewEmbedded() || procdef.isEmbeddedProcess()) {
                 Long parentOwnerID = getParentProcessId();
                 mainProcDef = ProcessVOCache.getProcessVO(parentOwnerID);
             }
         }
-    	return mainProcDef;
+        return mainProcDef;
     }
 
     /**
@@ -412,8 +410,8 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return the variable value
      */
     protected Object getParameterValue(String name) {
-    	VariableInstanceInfo var = this.getVariableInstance(name);
-    	return var==null?null:var.getData();
+        VariableInstanceInfo var = this.getVariableInstance(name);
+        return var==null?null:var.getData();
     }
 
     /**
@@ -429,15 +427,15 @@ public abstract class BaseActivity implements GeneralActivity {
      * @throws ActivityException
      */
     protected Object getParameterValue(Long processInstId, String name)
-    	throws DataAccessException {
-    	VariableInstanceInfo varInst = engine.getVariableInstance(processInstId, name);
-    	return varInst==null?null:varInst.getData();
+        throws DataAccessException {
+        VariableInstanceInfo varInst = engine.getVariableInstance(processInstId, name);
+        return varInst==null?null:varInst.getData();
 
     }
 
     protected String getParameterStringValue(String name) {
-    	VariableInstanceInfo var = this.getVariableInstance(name);
-    	return var==null?null:var.getStringValue();
+        VariableInstanceInfo var = this.getVariableInstance(name);
+        return var==null?null:var.getStringValue();
     }
 
     /**
@@ -464,10 +462,10 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return the variable instance ID
      */
     protected String getParameterType(String name) throws ActivityException {
-    	for (VariableInstanceInfo varinst : parameters) {
-    		if (varinst.getName().equals(name)) return varinst.getType();
-    	}
-    	ProcessVO procdef = getMainProcessDefinition();
+        for (VariableInstanceInfo varinst : parameters) {
+            if (varinst.getName().equals(name)) return varinst.getType();
+        }
+        ProcessVO procdef = getMainProcessDefinition();
         List<VariableVO> vs = procdef.getVariables();
         String varName;
         for (int i=0; i<vs.size(); i++) {
@@ -511,13 +509,13 @@ public abstract class BaseActivity implements GeneralActivity {
         try {
             VariableInstanceInfo varInst = this.getVariableInstance(name);
             if (varInst != null) {
-            	varInstId = varInst.getInstanceId();
-            	varInst.setData(value);
-            	engine.updateVariableInstance(varInst);
+                varInstId = varInst.getInstanceId();
+                varInst.setData(value);
+                engine.updateVariableInstance(varInst);
             } else {
-            	varInst = engine.createVariableInstance(processInst, name, value);
-            	varInstId = varInst.getInstanceId();
-            	parameters.add(varInst);	// This adds to ProcessInstanceVO as well
+                varInst = engine.createVariableInstance(processInst, name, value);
+                varInstId = varInst.getInstanceId();
+                parameters.add(varInst);    // This adds to ProcessInstanceVO as well
             }
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -542,25 +540,25 @@ public abstract class BaseActivity implements GeneralActivity {
      * @throws ActivityException
      */
     protected Long setParameterValue(Long processInstId, String name, Object value)
-    	throws ActivityException {
-    	Long varInstId;
-    	try {
-    		VariableInstanceInfo varInst = engine.getVariableInstance(processInstId, name);
-    		if (varInst != null) {
-    			varInstId = varInst.getInstanceId();
-    			if (value instanceof String) varInst.setStringValue((String)value);
-    			else varInst.setData(value);
-              	engine.updateVariableInstance(varInst);
-    		} else {
+        throws ActivityException {
+        Long varInstId;
+        try {
+            VariableInstanceInfo varInst = engine.getVariableInstance(processInstId, name);
+            if (varInst != null) {
+                varInstId = varInst.getInstanceId();
+                if (value instanceof String) varInst.setStringValue((String)value);
+                else varInst.setData(value);
+                  engine.updateVariableInstance(varInst);
+            } else {
                 ProcessInstanceVO procInst = engine.getProcessInstance(processInstId);
-    			varInst = engine.createVariableInstance(procInst, name, value);
-              	varInstId = varInst.getInstanceId();
-    		}
-    	} catch (Exception ex) {
-    		logger.severeException(ex.getMessage(), ex);
-    		throw new ActivityException(0, ex.getMessage(),ex);
-    	}
-    	return varInstId;
+                varInst = engine.createVariableInstance(procInst, name, value);
+                  varInstId = varInst.getInstanceId();
+            }
+        } catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            throw new ActivityException(0, ex.getMessage(),ex);
+        }
+        return varInstId;
     }
 
     /**
@@ -578,9 +576,9 @@ public abstract class BaseActivity implements GeneralActivity {
     throws ActivityException {
         DocumentReference docref = (DocumentReference)this.getParameterValue(name);
         if (docref==null) {
-            docref = createDocument(varType, value, OwnerType.VARIABLE_INSTANCE, new Long(0), null, null);
+            docref = createDocument(varType, value, OwnerType.VARIABLE_INSTANCE, new Long(0));
             Long varInstId = this.setParameterValue(name, docref);
-            this.updateDocumentInfo(docref, null, null, null, varInstId, null, null);
+            this.updateDocumentInfo(docref, null, OwnerType.VARIABLE_INSTANCE, varInstId);
         } else {
             updateDocumentContent(docref, value, varType);
         }
@@ -598,12 +596,12 @@ public abstract class BaseActivity implements GeneralActivity {
         DocumentReference docref = new DocumentReference(externalEventInstId);
         DocumentVO docvo;
         try {
-        	docvo = engine.getDocument(docref, false);
+            docvo = engine.getDocument(docref, false);
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
-        return docvo==null?null:docvo.getContent();
+        return docvo==null?null:docvo.getContent(getPackage());
     }
 
     /**
@@ -625,7 +623,7 @@ public abstract class BaseActivity implements GeneralActivity {
 
 
     protected String getVariableValueSmart(String name) throws PropertyException {
-    	return getValueSmart(name,name);
+        return getValueSmart(name,name);
     }
 
     /**
@@ -677,20 +675,12 @@ public abstract class BaseActivity implements GeneralActivity {
 
         if (value==null) return null;
         if (value.startsWith("prop:")) {
-        	value = this.getProperty(value.substring(5));
+            value = this.getProperty(value.substring(5));
         } else if (valueIsVariable(value)) {
             Object valueObj = this.getParameterValue(value.substring(1).trim());
             value = valueObj == null ? null : valueObj.toString();
         } else if (value.startsWith("string:")) {
             value = value.substring(7);
-        } else if (value.startsWith("magic:")) {
-            try {
-                Object obj = evaluateExpression(getActivityId().toString()+":"+tag, MAGIC_BOX, value.substring(6));
-                value = obj == null ? null : obj.toString();
-            } catch (ExecutionException ex) {
-                logger.severeException(ex.getMessage(), ex);
-                throw new PropertyException(-1, ex.getMessage(), ex);
-            }
         } else if (value.startsWith("groovy:") || value.startsWith("g:") || value.startsWith("javascript:") || value.startsWith("js:")) {
             String name = GroovyNaming.getValidClassName(getActivityName() + "_" + getActivityId() + "_" + tag);
             try {
@@ -744,7 +734,7 @@ public abstract class BaseActivity implements GeneralActivity {
             ScriptEvaluator evaluator = getScriptEvaluator(name, language);
             ProcessVO processVO = getMainProcessDefinition();
             List<VariableVO> varVOs = processVO.getVariables();
-        	Map<String,Object> bindings = new HashMap<String,Object>();
+            Map<String,Object> bindings = new HashMap<String,Object>();
             for (VariableVO varVO: varVOs) {
                 Object value = getParameterValue(varVO.getVariableName());
                 if (value instanceof DocumentReference) {
@@ -766,12 +756,12 @@ public abstract class BaseActivity implements GeneralActivity {
 
     /**
      * General-purpose expression evaluation.
-     * Language is one of MagicBox, Groovy or JavaScript.
+     * Language is one of Groovy or JavaScript.
      * Variables for this activity instance are bound.
      * Overridden this method to keep backward compatibility
      */
     protected Object evaluateExpression(String name, String language, String expression,
-    		Map<String,Object> addlBinding) throws ExecutionException {
+            Map<String,Object> addlBinding) throws ExecutionException {
 
         try {
             ScriptEvaluator evaluator = getScriptEvaluator(name, language);
@@ -919,9 +909,9 @@ public abstract class BaseActivity implements GeneralActivity {
                         }
                     } else {
                          try {
-                        	 value = (String)evaluateExpression(getActivityId().toString()+":"+expression, MAGIC_BOX, expression);
+                             value = (String)evaluateExpression(getActivityId().toString()+":"+expression, GROOVY, expression);
                          } catch (ExecutionException ex) {
-                        	 logwarn("Exception in evaluating expression " + expression + ": " + ex.getMessage());
+                             logwarn("Exception in evaluating expression " + expression + ": " + ex.getMessage());
                              value = "";
                          }
                     }
@@ -929,8 +919,8 @@ public abstract class BaseActivity implements GeneralActivity {
                 } // else  '{' without '}' - ignore string after '{'
                 i = k;
             } else if (ch == '\\' ) {
-            	++i;
-            	sb.append(eventName.charAt(i));
+                ++i;
+                sb.append(eventName.charAt(i));
 
             } else sb.append(ch);
         }
@@ -947,7 +937,7 @@ public abstract class BaseActivity implements GeneralActivity {
     protected Object getDocument(DocumentReference docref, String type) throws ActivityException {
         DocumentVO docvo;
         try {
-        	docvo = engine.getDocument(docref, false);
+            docvo = engine.getDocument(docref, false);
             // deserialize here to support package aware translator providers
             docvo.setObject(VariableTranslator.realToObject(getPackage(), type, docvo.getContent(getPackage())));
         } catch (Exception ex) {
@@ -958,9 +948,9 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     protected String getDocumentContent(DocumentReference docref) throws ActivityException {
-    	 DocumentVO docvo;
+         DocumentVO docvo;
          try {
-         	docvo = engine.getDocument(docref, false);
+             docvo = engine.getDocument(docref, false);
          } catch (Exception ex) {
              logger.severeException(ex.getMessage(), ex);
              throw new ActivityException("Failed to get document", ex);
@@ -977,12 +967,12 @@ public abstract class BaseActivity implements GeneralActivity {
      * @throws ActivityException
      */
     protected Object getDocumentForUpdate(DocumentReference docref, String type)
-    		throws ActivityException {
+            throws ActivityException {
         DocumentVO docvo;
         try {
-        	docvo = engine.getDocument(docref, true);
-        	// deserialize here to support package aware translator providers
-        	docvo.setObject(VariableTranslator.realToObject(getPackage(), type, docvo.getContent()));
+            docvo = engine.getDocument(docref, true);
+            // deserialize here to support package aware translator providers
+            docvo.setObject(VariableTranslator.realToObject(getPackage(), type, docvo.getContent(getPackage())));
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException("Failed to lock document for update", ex);
@@ -1000,13 +990,10 @@ public abstract class BaseActivity implements GeneralActivity {
      *      other possible types are LISTENER_REQUEST, LISTENER_RESPONSE,
      *      ADAPTOR_REQUEST, ADAPTOR_RESPONSE
      * @param ownerId ID of the owner, dependent on owner type.
-     * @param searchKey1 optional search key
-     * @param searchKey2 optional additional search key
      * @return document reference object
      * @throws ActivityException
      */
-    protected DocumentReference createDocument(String docType, Object document, String ownerType, Long ownerId,
-                    String searchKey1, String searchKey2)
+    protected DocumentReference createDocument(String docType, Object document, String ownerType, Long ownerId)
             throws ActivityException {
         DocumentReference docref;
         try {
@@ -1015,8 +1002,7 @@ public abstract class BaseActivity implements GeneralActivity {
                 document = VariableTranslator.realToString(getPackage(), docType, document);
             }
 
-        	docref = engine.createDocument(docType, this.getProcessInstanceId(),
-        			ownerType, ownerId, searchKey1, searchKey2, document);
+            docref = engine.createDocument(docType, ownerType, ownerId, document);
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
@@ -1032,13 +1018,13 @@ public abstract class BaseActivity implements GeneralActivity {
      * @throws ActivityException
      */
     protected void updateDocumentContent(DocumentReference docref, Object document, String type)
-    	throws ActivityException {
+        throws ActivityException {
         try {
             if (!(document instanceof String)) {
                 // serialize here to support package aware translator providers
                 document = VariableTranslator.realToString(getPackage(), type, document);
             }
-        	engine.updateDocumentContent(docref, document, type);
+            engine.updateDocumentContent(docref, document, type);
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
@@ -1049,44 +1035,16 @@ public abstract class BaseActivity implements GeneralActivity {
      * Update document information (everything but document content itself).
      * The method will update only the arguments that have non-null values.
      * @param docref
-     * @param processInstId
      * @param documentType
      * @param ownerType
      * @param ownerId
-     * @param searchKey1
-     * @param searchKey2
      * @throws ActivityException
      */
-    protected void updateDocumentInfo(DocumentReference docref, Long processInstId, String documentType, String ownerType, Long ownerId,
-            String searchKey1, String searchKey2) throws ActivityException {
+    protected void updateDocumentInfo(DocumentReference docref, String documentType,
+            String ownerType, Long ownerId) throws ActivityException {
         try {
-        	engine.updateDocumentInfo(docref, processInstId, documentType, ownerType, ownerId, searchKey1, searchKey2);
+            engine.updateDocumentInfo(docref, documentType, ownerType, ownerId);
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            throw new ActivityException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * Find documents matching the specified criteria.
-     * @param procInstId null if to be excluded from criteria
-     * @param type the runtime type of the document variable
-     * @param searchKey1 null if to be excluded
-     * @param searchKey2 null if to be excluded
-     * @param ownerType null if to be excluded
-     * @param ownerId null if to be excluded
-     * @param createDateStart null if to be excluded
-     * @param createDateEnd null if to be excluded
-     * @param orderBy null if none
-     * @return the IDs of matching documents
-     */
-    protected List<DocumentVO> findDocuments(Long procInstId, String type, String searchKey1, String searchKey2,
-            String ownerType, Long ownerId, Date createDateStart, Date createDateEnd, String orderBy) throws ActivityException {
-        try {
-            return engine.findDocuments(procInstId, type, searchKey1,
-            		searchKey2, ownerType, ownerId, createDateStart, createDateEnd, orderBy);
-        }
-        catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
@@ -1197,61 +1155,61 @@ public abstract class BaseActivity implements GeneralActivity {
         return null;
     }
 
-	protected String logtag() {
-		StringBuffer sb = new StringBuffer();
-    	sb.append("p");
-    	sb.append(this.getProcessId());
-    	sb.append(".");
-    	sb.append(this.getProcessInstanceId());
-    	sb.append(" a");
-    	sb.append(this.getActivityId());
-    	sb.append(".");
-    	sb.append(this.getActivityInstanceId());
-    	return sb.toString();
-	}
+    protected String logtag() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("p");
+        sb.append(this.getProcessId());
+        sb.append(".");
+        sb.append(this.getProcessInstanceId());
+        sb.append(" a");
+        sb.append(this.getActivityId());
+        sb.append(".");
+        sb.append(this.getActivityInstanceId());
+        return sb.toString();
+    }
 
     public void loginfo(String message) {
-    	logger.info(logtag(), message);
+        logger.info(logtag(), message);
     }
 
     public void logdebug(String message) {
-    	logger.debug(logtag(), message);
+        logger.debug(logtag(), message);
     }
 
     public void logwarn(String message) {
-    	logger.warn(logtag(), message);
+        logger.warn(logtag(), message);
     }
 
     public void logsevere(String message) {
-    	logger.severe(logtag(), message);
+        logger.severe(logtag(), message);
     }
 
     public void logexception(String msg, Exception e) {
-    	logger.exception(logtag(), msg, e);
+        logger.exception(logtag(), msg, e);
     }
 
     public boolean isLogInfoEnabled() {
-    	return logger.isInfoEnabled();
+        return logger.isInfoEnabled();
     }
 
     public boolean isLogDebugEnabled() {
-    	return logger.isDebugEnabled();
+        return logger.isDebugEnabled();
     }
 
     protected Integer lockActivityInstance() throws ActivityException {
-    	try {
-			return engine.lockActivityInstance(this.getActivityInstanceId());
-		} catch (Exception e) {
-			throw new ActivityException(-1, "Failed to lock activity instance", e);
-		}
+        try {
+            return engine.lockActivityInstance(this.getActivityInstanceId());
+        } catch (Exception e) {
+            throw new ActivityException(-1, "Failed to lock activity instance", e);
+        }
     }
 
     protected Integer lockProcessInstance() throws ActivityException {
-    	try {
-			return engine.lockProcessInstance(this.getProcessInstanceId());
-		} catch (Exception e) {
-			throw new ActivityException(-1, "Failed to lock process instance", e);
-		}
+        try {
+            return engine.lockProcessInstance(this.getProcessInstanceId());
+        } catch (Exception e) {
+            throw new ActivityException(-1, "Failed to lock process instance", e);
+        }
     }
 
     TrackingTimer getTimer() {
@@ -1275,7 +1233,7 @@ public abstract class BaseActivity implements GeneralActivity {
 //    }
 
     protected ProcessExecuter getEngine() {
-    	return engine;
+        return engine;
     }
 
     /**
@@ -1290,7 +1248,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @param language - built-in support for MagicBox, Groovy, and JavaScript (default is MagicBox)
      */
     protected Object executeScript(String script, String language) throws ActivityException {
-    	return executeScript(script, language, null);
+        return executeScript(script, language, null);
     }
 
     /**
@@ -1492,7 +1450,7 @@ public abstract class BaseActivity implements GeneralActivity {
         if (newValue == null)
             return true;  // we already know old value is not null
 
-        String oldString = docVO.getContent();
+        String oldString = docVO.getContent(getPackage());
         Object oldObject = VariableTranslator.realToObject(getPackage(), docVO.getDocumentType(), oldString);
 
         if (docVO.getDocumentType().equals(Object.class.getName()))
@@ -1516,31 +1474,31 @@ public abstract class BaseActivity implements GeneralActivity {
      * @throws ActivityException
      */
     protected boolean recordEventFlag(String eventName, int preserveInterval)
-    	throws ActivityException {
-    	try {
-			return true; // engine.getDataAccess().recordEventFlag(eventName, preserveInterval);
-		} catch (Exception ex) {
+        throws ActivityException {
+        try {
+            return true; // engine.getDataAccess().recordEventFlag(eventName, preserveInterval);
+        } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(0, ex.getMessage(),ex);
-		}
+        }
     }
 
     public TransactionWrapper startTransaction()
     throws ActivityException {
-    	try {
-    		return engine.startTransaction();
-    	} catch (DataAccessException e) {
-			throw new ActivityException(0, e.getMessage(), e);
-    	}
+        try {
+            return engine.startTransaction();
+        } catch (DataAccessException e) {
+            throw new ActivityException(0, e.getMessage(), e);
+        }
     }
 
     public void stopTransaction(TransactionWrapper transaction)
     throws ActivityException {
-    	try {
-			engine.stopTransaction(transaction);
-		} catch (DataAccessException e) {
-			throw new ActivityException(0, e.getMessage(), e);
-		}
+        try {
+            engine.stopTransaction(transaction);
+        } catch (DataAccessException e) {
+            throw new ActivityException(0, e.getMessage(), e);
+        }
     }
 
    protected String doCompatibilityCodeSubstitutions(String in) throws IOException {

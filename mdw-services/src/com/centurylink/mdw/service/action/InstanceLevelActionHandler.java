@@ -165,7 +165,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                         k = Integer.parseInt(taskName.substring(n - 2, n - 1));
                         taskName = taskName.substring(0, n - 3);
                     }
-                    TaskVO taskVo = TaskTemplateCache.getTaskTemplate(taskName);
+                    TaskVO taskVo = TaskTemplateCache.getTemplateForName(taskName);
                     if (taskVo == null)
                         return createErrorResponse("Task definition not found for: '" + taskName + "'");
                     List<Long> tiList = new TaskDAO(new DatabaseAccess(null)).findTaskInstance(taskVo.getTaskId(), masterRequestId);
@@ -236,7 +236,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
     throws DataAccessException {
         EventManager eventMgr = ServiceLocator.getEventManager();
         String docType = requestDocType == null ? XmlObject.class.getName() : requestDocType;
-        Long docid = eventMgr.createDocument(docType, new Long(0), ownerType, ownerId, null, null, xmlBean.xmlText());
+        Long docid = eventMgr.createDocument(docType, ownerType, ownerId, xmlBean.xmlText());
         return new DocumentReference(docid);
     }
 

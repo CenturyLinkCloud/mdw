@@ -105,7 +105,7 @@ public class DocumentValue implements TextService, XmlService, JsonService {
     private PackageVO getPackageVO(DocumentVO docVO) throws ServiceException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
-            ProcessInstanceVO procInstVO = eventMgr.getProcessInstance(docVO.getProcessInstanceId());
+            ProcessInstanceVO procInstVO = eventMgr.getProcessInstance(docVO.getOwnerId());
             return PackageVOCache.getProcessPackage(procInstVO.getProcessId());
         }
         catch (Exception ex) {

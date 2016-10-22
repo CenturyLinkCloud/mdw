@@ -685,19 +685,11 @@
         },
         {
           "attributes": {
-            "AlertIntervalUnits": "Hours",
-            "Category": "ORD",
-            "Groups": "Fallout Specialists",
-            "Notices": "$DefaultNotices",
-            "SLAUnits": "Hours",
             "STATUS_AFTER_EVENT": "Cancelled",
             "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
-            "Task Description": "Testing variable display and entry.",
+            "TASK_TEMPLATE": "com.centurylink.mdw.tests.workflow/A Task For Testing Variables.task",
+            "TASK_TEMPLATE_assetVersion": "[0.2,1)",
             "Task Name": "General Fallout",
-            "TaskLogicalId": "MDWTestMainProcess:A28",
-            "TaskName": "A Task For Testing Variables",
-            "TaskSLA": "24",
-            "Variables": "order,order,Not Displayed,0,,com.qwest.mbeng.MbengDocument;Sum,Sum,Not Displayed,0,,java.lang.Integer;intarraytest,intarraytest,Not Displayed,0,,java.lang.Integer[];maptest,maptest,Not Displayed,0,,java.util.Map;BTN,BTN,Not Displayed,0,,java.lang.String;case,case,Not Displayed,0,,java.lang.String;N,N,Not Displayed,0,,java.lang.Integer;launcher,launcher,Not Displayed,0,,com.qwest.mbeng.MbengTableArray;xmldata,xmldata,Not Displayed,0,,org.w3c.dom.Document",
             "WORK_DISPLAY_INFO": "x=484,y=60,w=30,h=28"
           },
           "id": "A28",
@@ -770,5 +762,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "3.29"
+  "version": "3.30"
 }

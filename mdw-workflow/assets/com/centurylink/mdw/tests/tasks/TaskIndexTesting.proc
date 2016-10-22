@@ -23,19 +23,10 @@
     },
     {
       "attributes": {
-        "AlertInterval": "2",
-        "AlertIntervalUnits": "Hours",
-        "Category": "ORD",
-        "Groups": "MDW Support",
-        "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
-        "Indices": "intIndex,#{intVar},;stringIndex,#{stringVar},;constantIndex,'constIdxVal',;jaxbAttrOneIndex,#{jaxbVar.attributeOne},;jaxbElemTwoIndex,#{jaxbVar.elementTwo},;dateIndex,#{dateVar},;nonExistentIndex,#{nonExistentVar},;stringListItemIndex,#{stringListVar[0]},",
-        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
-        "SLAUnits": "Hours",
         "STATUS_AFTER_EVENT": "Cancelled",
-        "Task Description": "For testing custom task features.",
-        "TaskLogicalId": "TaskIndexTesting:A3",
-        "TaskName": "A Custom Task",
-        "TaskSLA": "8",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/A Custom Task.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WORK_DISPLAY_INFO": "x=389,y=172,w=123,h=64",
         "taskIndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider"
       },
@@ -51,14 +42,10 @@
     },
     {
       "attributes": {
-        "Category": "COM",
-        "FormName": "Autoform",
-        "Groups": "MDW Support",
-        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
         "STATUS_AFTER_EVENT": "Cancelled",
-        "TaskLogicalId": "TaskIndexTesting:A4",
-        "TaskName": "An AutoForm Task",
-        "Variables": "dateVar,Date Var,Optional,0,dateVarIndex,java.util.Date;intVar,Int Var,Required,0,intVarIndex,java.lang.Integer;isCustom,isCustom,Not Displayed,0,,java.lang.Boolean;jaxbVar,JAXB Var,Read Only,0,,javax.xml.bind.JAXBElement;stringListVar,String List Var,Not Displayed,0,,java.util.List<String>;stringVar,String Var,Required,0,stringVarIndex,java.lang.String",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/An AutoForm Task.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WORK_DISPLAY_INFO": "x=310,y=71,w=122,h=66",
         "Wait for Task": "TRUE",
         "taskIndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider"
@@ -127,16 +114,10 @@
     },
     {
       "attributes": {
-        "AlertIntervalUnits": "Hours",
-        "Category": "ORD",
-        "Groups": "MDW Support",
-        "IndexProvider": "com.centurylink.mdw.tests.tasks.MyTaskIndexProvider",
-        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
-        "SLAUnits": "Hours",
         "STATUS_AFTER_EVENT": "Cancelled",
-        "TaskLogicalId": "TaskIndexTesting:A7",
-        "TaskName": "Another Custom Task",
-        "Variables": "dateVar,dateVar,Not Displayed,0,,java.util.Date;intVar,intVar,Not Displayed,0,,java.lang.Integer;isCustom,isCustom,Not Displayed,0,,java.lang.Boolean;isIndexProvider,isIndexProvider,Not Displayed,0,,java.lang.Boolean;jaxbVar,jaxbVar,Not Displayed,0,,javax.xml.bind.JAXBElement;stringListVar,stringListVar,Not Displayed,0,,java.util.List<String>;stringVar,stringVar,Not Displayed,0,,java.lang.String",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/Another Custom Task.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WORK_DISPLAY_INFO": "x=268,y=306,w=144,h=65",
         "taskIndexProvider": "com.centurylink.mdw.tests.tasks.MyTaskIndexProvider"
       },
@@ -187,5 +168,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.8"
+  "version": "0.9"
 }

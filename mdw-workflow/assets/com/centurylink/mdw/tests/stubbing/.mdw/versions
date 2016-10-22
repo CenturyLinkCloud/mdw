@@ -27,4 +27,4 @@ adapter-stubbing-xpath.yaml=1
 employeeRequest.json=1
 employeeResponse.json=1
 notify-event-file-substitution.test=2
-notify-event-file-substitution.yaml=7 Auto-created
+notify-event-file-substitution.yaml=7

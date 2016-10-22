@@ -15,7 +15,7 @@
     {
       "attributes": {
         "STATUS_AFTER_EVENT": "Cancelled",
-        "TIMER_WAIT": "( [exist $testxml] $testxml.MINUTES ; [$argument>3] 1; $argument )",
+        "TIMER_WAIT": "1",
         "Unit": "Minutes",
         "WORK_DISPLAY_INFO": "x=384,y=94,w=100,h=60"
       },
@@ -79,5 +79,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "1.7"
+  "version": "1.8"
 }

@@ -404,14 +404,12 @@ public class ProcessExecuter {
 	// methods about variable instances and documents
 	///////////////////////////////////////
 
-    public void updateDocumentInfo(DocumentReference docref, Long processInstId,
-    		String documentType, String ownerType, Long ownerId,
-            String searchKey1, String searchKey2) throws DataAccessException {
+    public void updateDocumentInfo(DocumentReference docref,
+    		String documentType, String ownerType, Long ownerId ) throws DataAccessException {
     	TransactionWrapper transaction=null;
 		try {
 			transaction = startTransaction();
-			engineImpl.updateDocumentInfo(docref, processInstId, documentType, ownerType, ownerId,
-					searchKey1, searchKey2);
+			engineImpl.updateDocumentInfo(docref, documentType, ownerType, ownerId);
 	    } finally {
 	    	stopTransaction(transaction);
 	    }
@@ -482,13 +480,12 @@ public class ProcessExecuter {
         }
 	}
 
-	public DocumentReference createDocument(String type, Long procInstId, String ownerType,
-            Long ownerId, String searchKey1, String searchKey2, Object doc)
+	public DocumentReference createDocument(String type, String ownerType, Long ownerId, Object doc)
  	throws DataAccessException {
 		TransactionWrapper transaction=null;
 		try {
 			transaction = startTransaction();
-			return engineImpl.createDocument(type, procInstId, ownerType, ownerId, searchKey1, searchKey2, doc);
+			return engineImpl.createDocument(type, ownerType, ownerId, doc);
 		} finally {
 			stopTransaction(transaction);
 		}
@@ -500,21 +497,6 @@ public class ProcessExecuter {
 		try {
 			transaction = startTransaction();
 			engineImpl.updateDocumentContent(docref, doc, type);
-		} finally {
-			stopTransaction(transaction);
-		}
-	}
-
-	public List<DocumentVO> findDocuments(Long procInstId, String type, String searchKey1, String searchKey2,
-            String ownerType, Long ownerId, Date createDateStart, Date createDateEnd, String orderByClause)
- 	throws DataAccessException {
-		TransactionWrapper transaction=null;
-		try {
-			transaction = startTransaction();
-			return engineImpl.getDataAccess().findDocuments(procInstId, type,
-					searchKey1, searchKey2, ownerType, ownerId, createDateStart, createDateEnd, orderByClause);
-		} catch (SQLException e) {
-			throw new DataAccessException(0, "Failed to find documents", e);
 		} finally {
 			stopTransaction(transaction);
 		}

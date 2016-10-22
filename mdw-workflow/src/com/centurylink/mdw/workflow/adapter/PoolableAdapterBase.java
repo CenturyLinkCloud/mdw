@@ -462,7 +462,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
             		isResponse?OwnerType.ADAPTOR_RESPONSE:OwnerType.ADAPTOR_REQUEST,
-                    this.getActivityInstanceId(), null, null);
+                    this.getActivityInstanceId());
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

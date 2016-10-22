@@ -28,6 +28,7 @@ public class VariableInstanceInfo implements Jsonable, Serializable, Comparable<
     private String type;
     private Long instanceId;
     private Long variableId;
+    private Long processInstanceId;
 
     public VariableInstanceInfo() {
     }
@@ -64,8 +65,10 @@ public class VariableInstanceInfo implements Jsonable, Serializable, Comparable<
     }
 
     public String getStringValue(){
-        if (value!=null) return this.value;
-        if (data==null) return null;
+        if (value != null)
+            return this.value;
+        if (data == null)
+            return null;
         value = VariableTranslator.toString(type, data);
         return value;
     }
@@ -103,6 +106,14 @@ public class VariableInstanceInfo implements Jsonable, Serializable, Comparable<
 
     public Long getVariableId(){
         return this.variableId;
+    }
+
+    public Long getProcessInstanceId() {
+        return this.processInstanceId;
+    }
+
+    public void setProcessInstanceId(Long processInstanceId) {
+        this.processInstanceId = processInstanceId;
     }
 
     public String toString(){

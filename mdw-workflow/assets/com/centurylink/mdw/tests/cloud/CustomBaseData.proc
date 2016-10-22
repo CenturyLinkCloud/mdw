@@ -38,16 +38,10 @@
     },
     {
       "attributes": {
-        "AlertIntervalUnits": "Hours",
-        "Category": "PLN",
-        "Groups": "MDW Support",
-        "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
-        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
-        "SLAUnits": "Hours",
         "STATUS_AFTER_EVENT": "Cancelled",
-        "TaskLogicalId": "CustomBaseData:A4",
-        "TaskName": "Custom Category Task",
-        "Variables": "inputFloat,inputFloat,Not Displayed,0,,java.lang.Float;localFloat,localFloat,Not Displayed,0,,java.lang.Float",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.cloud/customCategoryTask.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WORK_DISPLAY_INFO": "x=397,y=106,w=99,h=72"
       },
       "id": "A4",
@@ -81,5 +75,5 @@
       "type": "java.lang.Float"
     }
   },
-  "version": "0.3"
+  "version": "0.5"
 }

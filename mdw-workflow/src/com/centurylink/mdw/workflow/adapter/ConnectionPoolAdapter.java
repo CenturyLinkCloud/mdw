@@ -76,7 +76,7 @@ public class ConnectionPoolAdapter extends PoolableAdapterBase implements Suspen
         		if (requestLoggingId==null) {
         			DocumentReference docref = super.createDocument(XmlObject.class.getName(),
         					requestData, OwnerType.ACTIVITY_INSTANCE_REQUEST,
-        					this.getActivityInstanceId(), null, null);
+        					this.getActivityInstanceId());
         			docid = docref.getDocumentId();
         		} else docid = requestLoggingId;
 				CertifiedMessageManager queue = CertifiedMessageManager.getSingleton();

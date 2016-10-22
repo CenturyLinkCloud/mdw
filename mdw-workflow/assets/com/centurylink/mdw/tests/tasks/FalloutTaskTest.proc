@@ -59,14 +59,10 @@
       },
       {
         "attributes": {
-          "AlertIntervalUnits": "Hours",
-          "Category": "COM",
-          "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
-          "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
-          "SLAUnits": "Hours",
           "STATUS_AFTER_EVENT": "Cancelled",
-          "TaskLogicalId": "FalloutTaskTest:A4",
-          "TaskName": "Fallout Test Task",
+          "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+          "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/Fallout Test Task.task",
+          "TASK_TEMPLATE_assetVersion": "[0.1,1)",
           "WORK_DISPLAY_INFO": "x=421,y=70,w=111,h=62"
         },
         "id": "A4",
@@ -102,5 +98,5 @@
     "content": "TODO: Test all features.",
     "id": "N5"
   }],
-  "version": "0.1"
+  "version": "0.2"
 }

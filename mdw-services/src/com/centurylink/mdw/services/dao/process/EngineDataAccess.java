@@ -126,10 +126,6 @@ public interface EngineDataAccess {
 	void updateDocumentInfo(DocumentVO docvo)
 	throws SQLException;
 
-	List<DocumentVO> findDocuments(Long procInstId, String type, String searchKey1, String searchKey2,
-            String ownerType, Long ownerId, Date createDateStart, Date createDateEnd, String orderByClause)
-    throws SQLException;
-
 	/////// events
 
 	void removeEventWaitForActivityInstance(Long activityInstanceId, String reason)

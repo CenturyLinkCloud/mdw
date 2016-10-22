@@ -19,7 +19,6 @@ import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.constant.FormConstants;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.exception.MDWException;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -41,7 +40,6 @@ import com.centurylink.mdw.model.value.event.InternalEventVO;
 import com.centurylink.mdw.model.value.process.PackageAware;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.DocumentVO;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.ServiceMonitor;
 import com.centurylink.mdw.service.action.ActionRequestHandler;
@@ -240,7 +238,7 @@ public class ListenerHelper {
                 timer.stopAndLogTiming("");
                 if (altResponse != null) {
                     if (persistMessage(metaInfo))
-                        createResponseDocument(altResponse, eeid, 0L);
+                        createResponseDocument(altResponse, eeid);
                     return altResponse;
                 }
             }
@@ -258,8 +256,7 @@ public class ListenerHelper {
                 String response = responseObj == null ? null : responseObj.toString();
 
                 if (persistMessage(metaInfo) && !StringHelper.isEmpty(response)) {
-                    Long procInstId = getDocumentProcessInstanceId(eeid);
-                    createResponseDocument(response, eeid, procInstId);
+                    createResponseDocument(response, eeid);
                 }
 
                 return response;
@@ -315,9 +312,6 @@ public class ListenerHelper {
             else if (clsname.equals(NOTIFY_PROCESS_HANDLER)) {
                 clsname = NotifyWaitingActivityEventHandler.class.getName();
             }
-            else if (clsname.startsWith(FormConstants.SPECIAL_ACTION_PREFIX)) {
-                clsname = FormEventHandler.class.getName();
-            }
 
             if (clsname.equals(DefaultEventHandler.class.getName())) {
                 handler = new DefaultEventHandler();
@@ -350,8 +344,7 @@ public class ListenerHelper {
             }
 
             if (persistMessage(metaInfo) && !StringHelper.isEmpty(response)) {
-                Long procInstId = getDocumentProcessInstanceId(eeid);
-                createResponseDocument(altResponse == null ? response: altResponse, eeid, procInstId);
+                createResponseDocument(altResponse == null ? response: altResponse, eeid);
             }
             return response;
         }
@@ -384,12 +377,12 @@ public class ListenerHelper {
 
     private Long createRequestDocument(String request, Long handlerId) throws EventHandlerException {
         String docType = isJson(request) ? JSONObject.class.getName() : XmlObject.class.getName();
-        return createDocument(docType, request, OwnerType.LISTENER_REQUEST, handlerId, null, null, null).getDocumentId();
+        return createDocument(docType, request, OwnerType.LISTENER_REQUEST, handlerId).getDocumentId();
     }
 
-    private Long createResponseDocument(String response, Long ownerId, Long procInstId) throws EventHandlerException {
+    private Long createResponseDocument(String response, Long ownerId) throws EventHandlerException {
         String docType = String.class.getName();
-        return createDocument(docType, response, OwnerType.LISTENER_RESPONSE, ownerId, procInstId, null, null).getDocumentId();
+        return createDocument(docType, response, OwnerType.LISTENER_RESPONSE, ownerId).getDocumentId();
     }
 
     /**
@@ -507,18 +500,6 @@ public class ListenerHelper {
             }
         }
         return null;
-    }
-
-    private Long getDocumentProcessInstanceId(Long documentId) {
-        try {
-            EventManager eventMgr = ServiceLocator.getEventManager();
-            DocumentVO docvo = eventMgr.getDocumentVO(documentId);
-            return docvo.getProcessInstanceId();
-        }
-        catch (Exception ex) {
-            logger.severeException("Failed to get request document process instance ID", ex);
-            return null;
-        }
     }
 
     public String createStandardResponse(Exception e, String requestId) {
@@ -641,11 +622,9 @@ public class ListenerHelper {
         }
     }
 
-    public DocumentReference createDocument(String docType, Object document, String ownerType,
-            Long ownerId, Long processInstanceId, String searchKey1, String searchKey2)
+    public DocumentReference createDocument(String docType, Object document, String ownerType, Long ownerId)
                     throws EventHandlerException {
-        return createDocument(docType, document, null, ownerType, ownerId, processInstanceId,
-                searchKey1, searchKey2);
+        return createDocument(docType, document, null, ownerType, ownerId);
     }
 
     /**
@@ -684,14 +663,10 @@ public class ListenerHelper {
      * @throws EventHandlerException
      */
     public DocumentReference createDocument(String docType, Object document, PackageVO pkg,
-            String ownerType, Long ownerId, Long processInstanceId, String searchKey1,
-            String searchKey2) throws EventHandlerException {
+            String ownerType, Long ownerId) throws EventHandlerException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
-            if (processInstanceId == null)
-                processInstanceId = new Long(0);
-            Long docid = eventMgr.createDocument(docType, processInstanceId, ownerType, ownerId,
-                    searchKey1, searchKey2, document, pkg);
+            Long docid = eventMgr.createDocument(docType, ownerType, ownerId, document, pkg);
             return new DocumentReference(docid);
         }
         catch (Exception ex) {

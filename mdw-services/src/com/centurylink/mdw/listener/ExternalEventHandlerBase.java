@@ -348,8 +348,7 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
             String ownerType, Long ownerId, Long processInstanceId, String searchKey1, String searchKey2)
     throws EventHandlerException {
         ListenerHelper helper = new ListenerHelper();
-        return helper.createDocument(docType, document, getPackage(), ownerType,
-                ownerId, processInstanceId, searchKey1, searchKey2);
+        return helper.createDocument(docType, document, getPackage(), ownerType, ownerId);
     }
 
     protected void updateDocumentContent(DocumentReference docref, Object doc, String type)

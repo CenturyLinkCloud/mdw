@@ -9,37 +9,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.constant.FormConstants;
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.utilities.HttpHelper;
-import com.centurylink.mdw.common.utilities.MiniEncrypter;
-import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
 import com.centurylink.mdw.model.FormDataDocument;
-import com.centurylink.mdw.model.data.task.TaskType;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
-import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.observer.task.RemoteNotifier;
 import com.centurylink.mdw.observer.task.TaskNotifier;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 import com.centurylink.mdw.services.messenger.IntraMDWMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.task.factory.TaskInstanceNotifierFactory;
-import com.qwest.mbeng.MbengNode;
 
 /**
  * This class provides (summary/detail) task manager access to engine.
@@ -60,9 +47,8 @@ public class EngineAccess {
     		}
     		if (call_engine_method==1 || call_engine_method==2) {
 				EventManager eventManager = ServiceLocator.getEventManager();
-				Long docid = eventManager.createDocument(FormDataDocument.class
-						.getName(), 0L, OwnerType.TASK_INSTANCE, taskInstId, null,
-						null, message);
+				Long docid = eventManager.createDocument(FormDataDocument.class.getName(),
+						OwnerType.TASK_INSTANCE, taskInstId, message);
 				eventManager.notifyProcess(eventName, docid, message, 0);
     		} else {
     			IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(null);
@@ -175,144 +161,24 @@ public class EngineAccess {
         	if (notifierSpecs == null || notifierSpecs.isEmpty()) return;
 			TaskManager taskManager = ServiceLocator.getTaskManager();
 			taskManager.getTaskInstanceAdditionalInfo(taskInst);
-			if (taskInst.isLocal()) {
-                TaskRuntimeContext taskRuntime = taskManager.getTaskRuntimeContext(taskInst);
-                for (String notifierSpec : notifierSpecs) {
-                    try {
-                        TaskNotifier notifier =notifierFactory.getNotifier(notifierSpec, processInstId);
-                        if (notifier != null && !(notifier instanceof RemoteNotifier)) {
-                            notifier.sendNotice(taskRuntime, action, outcome);
-                        }
+            TaskRuntimeContext taskRuntime = taskManager.getTaskRuntimeContext(taskInst);
+            for (String notifierSpec : notifierSpecs) {
+                try {
+                    TaskNotifier notifier =notifierFactory.getNotifier(notifierSpec, processInstId);
+                    if (notifier != null) {
+                        notifier.sendNotice(taskRuntime, action, outcome);
                     }
-				    catch (Exception ex) {
-				        // don't let one notifier failure prevent others from processing
-				        logger.severeException(ex.getMessage(), ex);
-				    }
-				}
-        	} else {
-        		FormDataDocument msgdoc = new FormDataDocument();
-        		msgdoc.setMetaValue(FormDataDocument.META_ACTION, FormConstants.ACTION_TASK_NOTIFICATION);
-        		if (taskInst.getAssociatedTaskInstanceId()!=null)
-            		msgdoc.setMetaValue(FormDataDocument.META_TASK_INSTANCE_ID, taskInst.getAssociatedTaskInstanceId().toString());
-        		else msgdoc.setMetaValue(FormDataDocument.META_TASK_INSTANCE_ID, taskInst.getTaskInstanceId().toString());
-        		msgdoc.setValue("Outcome", outcome);
-        		MbengNode notifierTable = msgdoc.setTable("Notifiers");
-        		for (String notifierSpec : notifierSpecs) {
-        			msgdoc.addEntry(notifierTable, notifierSpec);
-        		}
-        		// populate task instance data that may be needed in notification
-        		msgdoc.setMetaValue(FormDataDocument.META_TASK_NAME, taskInst.getTaskName());
-        		msgdoc.setMetaValue(FormDataDocument.META_TASK_ASSIGNEE, taskInst.getTaskClaimUserCuid());
-        		msgdoc.setMetaValue(FormDataDocument.META_TASK_DUE_DATE, StringHelper.dateToString(taskInst.getDueDate()));
-        		msgdoc.setMetaValue(FormDataDocument.META_PROCESS_INSTANCE_ID, taskInst.getOwnerId().toString());
-        		msgdoc.setMetaValue(FormDataDocument.META_MASTER_REQUEST_ID, taskInst.getOrderId());
-        		msgdoc.setValue("TaskInstanceUrl", taskInst.getTaskInstanceUrl());
-        		TaskVO task = TaskTemplateCache.getTaskTemplate(taskInst.getTaskId());
-        		msgdoc.setMetaValue(FormDataDocument.META_TASK_LOGICAL_ID, task.getLogicalId());
-        		MbengNode groupTable = msgdoc.setTable("Groups");
-        		for (String group : taskInst.getGroups()) {
-        			msgdoc.addEntry(groupTable, group);
-        		}
-        		// send message
-        		IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(taskInst.getOwnerApplicationName());
-        		msgbroker.sendMessage(msgdoc.format());
-        	}
+                }
+			    catch (Exception ex) {
+			        // don't let one notifier failure prevent others from processing
+			        logger.severeException(ex.getMessage(), ex);
+			    }
+			}
 		} catch (Exception e) {
 			logger.severeException("Failed to send email notification for task instance "
 					+ taskInst.getTaskInstanceId(), e);
 		}
     }
-
-	/**
-	 * Import a task template from engine.
-	 *
-	 * @param ownerApplication engine logical name, optionally with engine URL
-	 * @param logicalId logical ID of the task template to be imported.
-	 * @return newly imported task template.
-	 * @throws Exception
-	 */
-	public TaskVO importTask(String ownerApplication, String logicalId) throws Exception {
-		String applName;
-		int k = ownerApplication.indexOf('@');
-		if (k>0) applName = ownerApplication.substring(0,k);
-		else applName = ownerApplication;
-		FormDataDocument calldoc = new FormDataDocument();
-		calldoc.setMetaValue(FormDataDocument.META_ACTION, FormConstants.ACTION_GET_TASK_TEMPLATE);
-		calldoc.setMetaValue(FormDataDocument.META_TASK_LOGICAL_ID, logicalId);
-		int timeoutSeconds = 30;
-		IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(ownerApplication);
-		String response = msgbroker.invoke(calldoc.format(), timeoutSeconds);
-		calldoc.load(response);
-		if (calldoc.hasErrors()) throw new DataAccessException(calldoc.getErrors().get(0));
-		TaskVO task = new TaskVO();
-		task.setLogicalId(applName + ":" + logicalId);
-		task.setTaskName(calldoc.getValue(TaskActivity.ATTRIBUTE_TASK_NAME));
-		task.setComment(calldoc.getValue(TaskAttributeConstant.DESCRIPTION));
-		task.setTaskCategory(calldoc.getValue(TaskActivity.ATTRIBUTE_TASK_CATEGORY));
-		task.setFormName(calldoc.getValue(TaskAttributeConstant.FORM_NAME));
-		task.setTaskTypeId(TaskType.TASK_TYPE_TEMPLATE);
-		task.setAttribute(TaskAttributeConstant.NOTICES, calldoc.getValue(TaskAttributeConstant.NOTICES));
-		task.setAttribute(TaskAttributeConstant.ALERT_INTERVAL, calldoc.getValue(TaskAttributeConstant.ALERT_INTERVAL));
-		task.setAttribute(TaskAttributeConstant.AUTO_ASSIGN, calldoc.getValue(TaskAttributeConstant.AUTO_ASSIGN));
-		task.setAttribute(TaskAttributeConstant.TASK_SLA, calldoc.getValue(TaskAttributeConstant.TASK_SLA));
-		task.setAttribute(TaskAttributeConstant.NOTICE_GROUPS, calldoc.getValue(TaskAttributeConstant.NOTICE_GROUPS));
-		task.setAttribute(TaskAttributeConstant.RECIPIENT_EMAILS, calldoc.getValue(TaskAttributeConstant.RECIPIENT_EMAILS));
-		task.setAttribute(TaskAttributeConstant.CC_GROUPS, calldoc.getValue(TaskAttributeConstant.CC_GROUPS));
-		task.setAttribute(TaskAttributeConstant.CC_EMAILS, calldoc.getValue(TaskAttributeConstant.CC_EMAILS));
-		task.setAttribute(TaskAttributeConstant.INDICES, calldoc.getValue(TaskAttributeConstant.INDICES));
-		task.setAttribute(TaskAttributeConstant.SERVICE_PROCESSES, calldoc.getValue(TaskAttributeConstant.SERVICE_PROCESSES));
-		task.setUserGroupsFromString(calldoc.getValue(TaskActivity.ATTRIBUTE_TASK_GROUPS));
-		task.setTaskCategory(calldoc.getValue(TaskActivity.ATTRIBUTE_TASK_CATEGORY));
-		TaskManager taskManager = ServiceLocator.getTaskManager();
-		Long taskId = taskManager.createTask(task, true);
-		task.setTaskId(taskId);
-		return task;
-	}
-
-	/**
-	 * Import a resource from engine.
-	 *
-	 * @param ownerApplication
-	 * @param resourceName
-	 * @param resourceLanguage
-	 * @param version
-	 * @return
-	 * @throws Exception
-	 */
-	public RuleSetVO importResource(String ownerApplication, String resourceName, String resourceLanguage,
-			int version) throws Exception {
-		RuleSetVO resource = RuleSetCache.getRuleSet(resourceName, resourceLanguage, version);
-		StringBuffer request = new StringBuffer();
-		request.append("<_mdw_get_resource>");
-		request.append("<name>").append(resourceName).append("</name>");
-		request.append("<language>").append(resourceLanguage).append("</language>");
-		if (version>0) request.append("<version>").append(version).append("</version>");
-		request.append("</_mdw_get_resource>");
-		IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(ownerApplication);
-		String response = msgbroker.invoke(request.toString(), 30);
-		if (response==null) throw new DataAccessException("Null response received");
-		if (response.startsWith("ERROR:")) throw new DataAccessException(response.substring(6));
-		if (resource==null) {
-			resource = new RuleSetVO();
-			resource.setName(resourceName);
-			resource.setLanguage(resourceLanguage);
-			resource.setId(0L);
-			resource.setVersion(version>0?version:1);
-		} else if (version==0) {
-			version = resource.getVersion()+1;
-			resource = new RuleSetVO();
-			resource.setName(resourceName);
-			resource.setLanguage(resourceLanguage);
-			resource.setId(0L);
-			resource.setVersion(version);
-		} // else simply override existing version
-		resource.setRuleSet(response);
-		TaskManager taskManager = ServiceLocator.getTaskManager();
-    	Long id = taskManager.saveResource(resource);
-		resource.setId(id);
-		(new RuleSetCache()).clearCache();
-		return resource;
-	}
 
 	public String getRemoteProperty(String serverSpec, String propertyName) throws Exception {
 		StringBuffer calldoc = new StringBuffer();
@@ -323,14 +189,4 @@ public class EngineAccess {
 		IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(serverSpec);
 		return msgbroker.invoke(calldoc.toString(), timeout);
 	}
-
-    public String getDatabaseCredential(String serverSpec) throws Exception {
-		IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(serverSpec);
-		String dbinfo = msgbroker.invoke("<_mdw_database_credential>encrypted</_mdw_database_credential>", 30);
-		if (dbinfo==null) throw new Exception("Faield to find database info");
-		if (dbinfo.startsWith("###")) dbinfo = MiniEncrypter.decrypt(dbinfo.substring(3));
-		if (!dbinfo.startsWith("jdbc:")) throw new Exception("Faield to find database info");
-		return dbinfo;
-    }
-
 }

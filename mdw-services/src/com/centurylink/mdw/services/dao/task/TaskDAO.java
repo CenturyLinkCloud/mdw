@@ -76,8 +76,6 @@ public class TaskDAO extends CommonDataAccess {
         " ti.TASK_END_DT," +
         " ti.COMMENTS," +
         " ti.TASK_INSTANCE_STATE," +
-        " ti.OWNER_APP_NAME," +
-        " ti.ASSOCIATED_TASK_INST_ID," +
         " ti.TASK_INSTANCE_REFERRED_AS, " +
         " ti.DUE_DATE," +
         " ti.PRIORITY," +
@@ -567,8 +565,6 @@ public class TaskDAO extends CommonDataAccess {
         task.setEndDate(StringHelper.dateToString(rs.getTimestamp("TASK_END_DT")));
         task.setComments(rs.getString("COMMENTS"));
         task.setStateCode(rs.getInt("TASK_INSTANCE_STATE"));
-        task.setOwnerApplicationName(rs.getString("OWNER_APP_NAME"));
-        task.setAssociatedTaskInstanceId(rs.getLong("ASSOCIATED_TASK_INST_ID"));
         task.setDueDate(rs.getTimestamp("DUE_DATE"));
         task.setPriority(rs.getInt("PRIORITY"));
         task.setMasterRequestId(rs.getString("MASTER_REQUEST_ID"));
@@ -697,14 +693,14 @@ public class TaskDAO extends CommonDataAccess {
             db.openConnection();
             Long id = db.isMySQL()?null:this.getNextId("MDW_COMMON_INST_ID_SEQ");
             String query = "insert into TASK_INSTANCE " +
-                "(TASK_INSTANCE_ID,TASK_ID,TASK_INSTANCE_STATUS, " +
-                " TASK_INSTANCE_OWNER,TASK_INSTANCE_OWNER_ID,TASK_CLAIM_USER_ID,COMMENTS," +
-                " TASK_START_DT,TASK_END_DT,TASK_INSTANCE_STATE," +
-                " TASK_INST_SECONDARY_OWNER,TASK_INST_SECONDARY_OWNER_ID,OWNER_APP_NAME," +
-                " ASSOCIATED_TASK_INST_ID,TASK_INSTANCE_REFERRED_AS,DUE_DATE,PRIORITY,MASTER_REQUEST_ID," +
-                " CREATE_DT,CREATE_USR) " +
-                "values (?,?,?,?,?,?,?,"+now()+",?,?,?,?,?,?,?,?,?,?,"+now()+",'TaskManager')";
-            Object[] args = new Object[17];
+                "(TASK_INSTANCE_ID, TASK_ID, TASK_INSTANCE_STATUS, " +
+                " TASK_INSTANCE_OWNER, TASK_INSTANCE_OWNER_ID, TASK_CLAIM_USER_ID, COMMENTS, " +
+                " TASK_START_DT, TASK_END_DT, TASK_INSTANCE_STATE, " +
+                " TASK_INST_SECONDARY_OWNER, TASK_INST_SECONDARY_OWNER_ID, " +
+                " TASK_INSTANCE_REFERRED_AS, DUE_DATE, PRIORITY, MASTER_REQUEST_ID, " +
+                " CREATE_DT, CREATE_USR) " +
+                "values (?, ?, ?, ?, ?, ?, ?, " + now() + ", ?, ?, ?, ?, ?, ?, ?, ?, " + now() + ",'TaskManager')";
+            Object[] args = new Object[15];
             args[0] = id;
             args[1] = taskInst.getTaskId();
             args[2] = taskInst.getStatusCode();
@@ -712,18 +708,17 @@ public class TaskDAO extends CommonDataAccess {
             args[4] = taskInst.getOwnerId();
             args[5] = null;
             String comments = taskInst.getComments();
-            if (comments != null && comments.length() > 1000) comments = comments.substring(0, 999);
+            if (comments != null && comments.length() > 1000)
+                comments = comments.substring(0, 999);
             args[6] = comments;
             args[7] = null;
             args[8] = taskInst.getStateCode();
             args[9] = taskInst.getSecondaryOwnerType();
             args[10] = taskInst.getSecondaryOwnerId();
-            args[11] = taskInst.getOwnerApplicationName();
-            args[12] = taskInst.getAssociatedTaskInstanceId();
-            args[13] = taskInst.getTaskName();
-            args[14] = dueDate;
-            args[15] = taskInst.getPriority() == null ? 0 : taskInst.getPriority();
-            args[16] = taskInst.getMasterRequestId();
+            args[11] = taskInst.getTaskName();
+            args[12] = dueDate;
+            args[13] = taskInst.getPriority() == null ? 0 : taskInst.getPriority();
+            args[14] = taskInst.getMasterRequestId();
             if (db.isMySQL()) id = db.runInsertReturnId(query, args);
             else db.runUpdate(query, args);
             db.commit();
@@ -838,10 +833,6 @@ public class TaskDAO extends CommonDataAccess {
                 buff.append(" and ti.task_inst_secondary_owner " + value);
             } else if (key.equals("taskClaimUserId")) {
                 buff.append(" and ti.task_claim_user_id " + value);
-            } else if (key.equals("associatedTaskInstanceId")) {
-                buff.append(" and ti.assocated_task_inst_id " + value);
-            } else if (key.equals("ownerApplicationName")) {
-                buff.append(" and ti.owner_app_name " + value);
             } else if (key.equals("startDate")) {
             	if (db.isMySQL()) value = dateConditionToMySQL(value);
                 buff.append(" and ti.task_start_dt " + value);
@@ -1671,35 +1662,6 @@ public class TaskDAO extends CommonDataAccess {
             } else return null;
         } catch (Exception e) {
             throw new DataAccessException(0, "failed to get task instance", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    /**
-     * Method that updates the Associated Task Instance Id for the Task Instance Id
-     * @param pTaskInstId
-     * @param pAction
-     * @return boolean
-     * @throws  DataAccessException
-     * @throws TaskDAOException
-     *
-     */
-    public void updateAssociatedTaskInstance(Long pTaskInstId, String pOwnerApp, Long pAssTaskInstId)
-            throws DataAccessException {
-        try {
-            db.openConnection();
-            String query = "update TASK_INSTANCE set ASSOCIATED_TASK_INST_ID = ?, MOD_DT = "+now()+"," +
-                " OWNER_APP_NAME = ? where TASK_INSTANCE_ID = ?";
-            Object[] args = new Object[3];
-            args[0] = pAssTaskInstId;
-            args[1] = pOwnerApp;
-            args[2] = pTaskInstId;
-            db.runUpdate(query, args);
-            db.commit();
-        } catch (Exception e) {
-            db.rollback();
-            throw new DataAccessException(0,"failed to update associated task instance", e);
         } finally {
             db.closeConnection();
         }

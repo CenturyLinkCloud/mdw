@@ -12,14 +12,12 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.common.constant.FormConstants;
 import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.exception.PropertyException;
 import com.centurylink.mdw.common.translator.VariableTranslator;
 import com.centurylink.mdw.common.utilities.form.CallURL;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.monitor.ServiceLevelAgreement;
 import com.centurylink.mdw.model.data.task.TaskAction;
 import com.centurylink.mdw.model.data.work.WorkStatus;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
@@ -27,12 +25,11 @@ import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
 import com.centurylink.mdw.model.value.event.InternalEventVO;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.task.TaskVO;
 import com.centurylink.mdw.model.value.variable.DocumentReference;
 import com.centurylink.mdw.model.value.variable.VariableVO;
 import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
 import com.centurylink.mdw.model.value.work.WorkTransitionVO;
-import com.centurylink.mdw.services.task.TaskManagerAccess;
+import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
 import com.qwest.mbeng.DomDocument;
 import com.qwest.mbeng.FormatDom;
@@ -67,52 +64,6 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
             throw new ActivityException(-1, "Cannot load ruleset " + formname, e);
         }
         return formdoc;
-    }
-
-    protected void populateFormDataMetaInfo(FormDataDocument datadoc, boolean subsequentCall,
-    		boolean updateActivityInstanceId)
-    throws ActivityException {
-        try {
-//          String taskName = this.getAttributeValue(TaskActivity.ATTRIBUTE_TASK_NAME);
-            // taskName is taken from TaskVO - should consider retire that and take it from here
-            String formName = this.getAttributeValue(TaskActivity.ATTRIBUTE_FORM_NAME);
-			if (formName!=null && formName.length()>0) {
-				datadoc.setAttribute(FormDataDocument.ATTR_FORM, formName);
-	            String formVersion = this.getAttributeValue(TaskActivity.ATTRIBUTE_FORM_VERSION);
-	            datadoc.setMetaValue(FormDataDocument.META_FORM_VERSION, formVersion==null?"0":formVersion);
-			}
-			// else subsequent call no need to set form name
-			if (subsequentCall) {
-	    		datadoc.setAttribute(FormDataDocument.ATTR_ACTION, FormConstants.ACTION_RESPOND_TASK);
-	    		if (updateActivityInstanceId || datadoc.getMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID)==null)
-	    			datadoc.setMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID,
-		    				this.getActivityInstanceId().toString());
-			} else {
-				datadoc.setAttribute(FormDataDocument.ATTR_ACTION, FormConstants.ACTION_CREATE_TASK);
-	    		datadoc.setMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID,
-	    				this.getActivityInstanceId().toString());
-			}
-            datadoc.setAttribute(FormDataDocument.ATTR_NAME, this.getActivityId().toString());
-            datadoc.setMetaValue(FormDataDocument.META_PROCESS_INSTANCE_ID, getProcessInstanceId().toString());
-			if (!subsequentCall) {
-				String sla = getAttributeValueSmart(TaskActivity.ATTRIBUTE_TASK_SLA);
-				String slaUnits = this.getAttributeValue(TaskActivity.ATTRIBUTE_TASK_SLA_UNITS);
-				if (slaUnits==null) slaUnits = ServiceLevelAgreement.INTERVAL_HOURS;
-				datadoc.setMetaValue(FormDataDocument.META_DUE_IN_SECONDS,
-						Integer.toString(ServiceLevelAgreement.unitsToSeconds(sla,slaUnits)));
-				datadoc.setMetaValue(FormDataDocument.META_TASK_NAME, this.getAttributeValue(TaskActivity.ATTRIBUTE_TASK_NAME));
-				// task name is not used by MDW task manager currently, but set for foreign task manager
-				String taskLogicalId = this.getAttributeValue(TaskActivity.ATTRIBUTE_TASK_LOGICAL_ID);
-				if (taskLogicalId==null) {		// MDW 4.*/5.0 in-flight order compatibility code
-	          	  	taskLogicalId = TaskVO.MDW4_TASK_LOGICAL_ID_PREFIX + this.getActivityId().toString();
-	            }
-	            datadoc.setMetaValue(FormDataDocument.META_TASK_LOGICAL_ID, taskLogicalId);
-	            datadoc.setMetaValue(FormDataDocument.META_MASTER_REQUEST_ID, getMasterRequestId());
-	            this.fillInCustomActions(datadoc);
-			}
-        } catch (PropertyException e) {
-            throw new ActivityException(-1, e.getMessage(), e);
-        }
     }
 
     /**
@@ -177,7 +128,7 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
             Integer actInstStatus = super.handleEventCompletionCode();
             if (actInstStatus.equals(WorkStatus.STATUS_CANCELLED)) {
                 try {
-                	TaskManagerAccess.getInstance().
+                	ServiceLocator.getTaskManager().
                         cancelTasksOfActivityInstance(getActivityInstanceId(), getProcessInstanceId());
                 } catch (Exception e) {
                     logger.severeException("Failed to cancel task instance - process moves on", e);
@@ -206,7 +157,7 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
 	    		JSONObject meta = jsonobj.has("META")?jsonobj.getJSONObject("META"):null;
 	    		if (meta==null || !meta.has(FormDataDocument.META_ACTION)) return false;
 	    		String action = meta.getString(FormDataDocument.META_ACTION);
-	    		return action!=null && action.startsWith(FormConstants.SPECIAL_ACTION_PREFIX);
+	    		return action!=null && action.startsWith("@");
 	    	} catch (JSONException e) {
 				throw new ActivityException(0, "Failed to parse JSON message", e);
 			}
@@ -233,7 +184,7 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
             if (this.getProcessInstance().isNewEmbedded() || procdef.isEmbeddedExceptionHandler()) {
             	if (subaction==null)
             		subaction = compCode;
-                if (action.equals(FormConstants.ACTION_CANCEL_TASK)) {
+                if (action.equals("@CANCEL_TASK")) {
                 	if (TaskAction.ABORT.equalsIgnoreCase(subaction))
                 		compCode = EventType.EVENTNAME_ABORT + ":process";
                 	else compCode = EventType.EVENTNAME_ABORT;
@@ -246,7 +197,7 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
                 	this.setProcessInstanceCompletionCode(compCode);
                 	setReturnCode(null);
             } else {
-                if (action.equals(FormConstants.ACTION_CANCEL_TASK)) {
+                if (action.equals("@CANCEL_TASK")) {
                     if (TaskAction.ABORT.equalsIgnoreCase(subaction))
                     	compCode = WorkStatus.STATUSNAME_CANCELLED + "::" + EventType.EVENTNAME_ABORT;
                     else compCode = WorkStatus.STATUSNAME_CANCELLED + "::";
@@ -507,7 +458,7 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
         if (datadocref == null) {
             datadoc = new FormDataDocument();  // starting with blank
             datadoc.setMetaValue(FormDataDocument.META_FORM_DATA_VARIABLE_NAME, formDataVar);
-            DocumentReference docRef = createDocument(FormDataDocument.class.getName(), datadoc, OwnerType.PROCESS_INSTANCE, getProcessInstanceId(), null, null);
+            DocumentReference docRef = createDocument(FormDataDocument.class.getName(), datadoc, OwnerType.PROCESS_INSTANCE, getProcessInstanceId());
             setParameterValue(formDataVar, docRef);
         }
         else {
@@ -519,13 +470,6 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
             datadoc.load(datadocContent);
         }
         return datadoc;
-    }
-
-    /**
-     * Returns the task Name attribute
-     */
-    public String getTaskName(){
-        return super.getAttributeValue(ATTRIBUTE_TASK_NAME);
     }
 
 }

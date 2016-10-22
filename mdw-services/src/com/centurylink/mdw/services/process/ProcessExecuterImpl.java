@@ -68,12 +68,12 @@ import com.centurylink.mdw.monitor.ProcessMonitor;
 import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.services.ProcessException;
+import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.dao.process.EngineDataAccess;
 import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 import com.centurylink.mdw.services.event.CertifiedMessageManager;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
-import com.centurylink.mdw.services.task.TaskManagerAccess;
 import com.qwest.mbeng.DomDocument;
 import com.qwest.mbeng.FormatDom;
 import com.qwest.mbeng.MbengException;
@@ -189,8 +189,7 @@ class ProcessExecuterImpl {
         return var;
     }
 
-    DocumentReference createDocument(String type, Long procInstId, String ownerType,
-            Long ownerId, String searchKey1, String searchKey2, Object doc) throws DataAccessException {
+    DocumentReference createDocument(String type, String ownerType, Long ownerId, Object doc) throws DataAccessException {
         DocumentReference docref = null;
         try {
             DocumentVO docvo = new DocumentVO();
@@ -199,9 +198,6 @@ class ProcessExecuterImpl {
             docvo.setDocumentType(type);
             docvo.setOwnerType(ownerType);
             docvo.setOwnerId(ownerId);
-            docvo.setProcessInstanceId(procInstId);
-            docvo.setSearchKey1(searchKey1);
-            docvo.setSearchKey2(searchKey2);
             edao.createDocument(docvo);
             docref = new DocumentReference(docvo.getDocumentId());
         } catch (Exception e) {
@@ -265,7 +261,7 @@ class ProcessExecuterImpl {
                     if (value.startsWith("DOCUMENT:")) var.setStringValue(value);
                     else {
                         DocumentReference docref = this.createDocument(var.getType(),
-                                procInstId, OwnerType.PROCESS_INSTANCE, procInstId, null, null, value);
+                                OwnerType.PROCESS_INSTANCE, procInstId, value);
                         var.setData(docref);
                     }
                 } else var.setStringValue(value);
@@ -329,17 +325,13 @@ class ProcessExecuterImpl {
         }
     }
 
-    void updateDocumentInfo(
-            DocumentReference docref, Long processInstId, String documentType, String ownerType, Long ownerId,
-            String searchKey1, String searchKey2) throws DataAccessException {
+    void updateDocumentInfo(DocumentReference docref, String documentType, String ownerType,
+            Long ownerId) throws DataAccessException {
         try {
             DocumentVO docvo = edao.getDocument(docref.getDocumentId(), false);
             if (documentType!=null) docvo.setDocumentType(documentType);
             if (ownerType!=null) docvo.setOwnerType(ownerType);
             if (ownerId!=null) docvo.setOwnerId(ownerId);
-            if (processInstId!=null) docvo.setProcessInstanceId(processInstId);
-            if (searchKey1!=null) docvo.setSearchKey1(searchKey1);
-            if (searchKey2!=null) docvo.setSearchKey2(searchKey2);
             edao.updateDocumentInfo(docvo);
         } catch (SQLException e) {
             throw new DataAccessException(-1, e.getMessage(), e);
@@ -1034,8 +1026,7 @@ class ProcessExecuterImpl {
                 domdoc.getRootNode().appendChild(node);
                 String msg = fmter.format(domdoc);
                 DocumentReference docref = this.createDocument(XmlObject.class.getName(),
-                        event.getWorkInstanceId(), OwnerType.PROCESS_INSTANCE, event.getWorkInstanceId(),
-                        null, null, msg);
+                        OwnerType.PROCESS_INSTANCE, event.getWorkInstanceId(), msg);
                 CertifiedMessageManager manager = CertifiedMessageManager.getSingleton();
                 Map<String,String> props = new HashMap<String,String>();
                 props.put(CertifiedMessage.PROP_PROTOCOL, CertifiedMessage.PROTOCOL_MDW2MDW);
@@ -1652,7 +1643,7 @@ class ProcessExecuterImpl {
             ProcessVO pidef = getProcessDefinition(pi);
             if (pidef.isEmbeddedProcess()) procInstIds.add(pi.getId());
         }
-        TaskManagerAccess.getInstance().cancelTasksOfProcessInstances(procInstIds);
+        ServiceLocator.getTaskManager().cancelTasksOfProcessInstances(procInstIds);
     }
 
     EventWaitInstanceVO createEventWaitInstance(
@@ -1691,7 +1682,6 @@ class ProcessExecuterImpl {
                 ret.setCompletionCode(compCode);
                 ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
                 DocumentVO docvo = edao.getDocument(documentId, true);
-                docvo.setProcessInstanceId(actInst.getOwnerId());
                 edao.updateDocumentInfo(docvo);
             }
             return ret;
@@ -1760,7 +1750,6 @@ class ProcessExecuterImpl {
                 ret.setCompletionCode(pCompCode);
                 ActivityInstanceVO actInst = edao.getActivityInstance(actInstId);
                 DocumentVO docvo = edao.getDocument(documentId, true);
-                docvo.setProcessInstanceId(actInst.getOwnerId());
                 edao.updateDocumentInfo(docvo);
             }
             return ret;
@@ -1800,7 +1789,6 @@ class ProcessExecuterImpl {
                     edao.removeEventWaitForActivityInstance(inst.getActivityInstanceId(), "activity notified");
                     if (pEventInstId!=null && pEventInstId.longValue()>0) {
                         DocumentVO docvo = edao.getDocument(pEventInstId, true);
-                        docvo.setProcessInstanceId(actInst.getOwnerId());
                         edao.updateDocumentInfo(docvo);
                     }
                 }
@@ -1930,7 +1918,7 @@ class ProcessExecuterImpl {
                                     if (processInstance.getVariable(varName) != null)
                                         throw new ProcessException("Process '" + processVO.getLabel() + "' input variable already populated: " + varName);
                                     if (varVO.isDocument()) {
-                                        DocumentReference docRef = createDocument(varVO.getVariableType(), processInstance.getId(), OwnerType.VARIABLE_INSTANCE, new Long(0), null, null, updated.get(varName));
+                                        DocumentReference docRef = createDocument(varVO.getVariableType(), OwnerType.VARIABLE_INSTANCE, new Long(0), updated.get(varName));
                                         VariableInstanceInfo varInst = createVariableInstance(processInstance, varName, docRef);
                                         processInstance.getVariables().add(varInst);
                                     }
@@ -1980,7 +1968,7 @@ class ProcessExecuterImpl {
             }
             actEx.setActivityInstance(actInst);
         }
-        DocumentReference docRef = createDocument("java.lang.Object", processInst.getId(), OwnerType.DOCUMENT, actInstVO.getId(), null, null, actEx);
+        DocumentReference docRef = createDocument("java.lang.Object", OwnerType.DOCUMENT, actInstVO.getId(), actEx);
         return docRef;
     }
 }

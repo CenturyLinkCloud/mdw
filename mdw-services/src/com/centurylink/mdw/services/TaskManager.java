@@ -9,7 +9,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.NamingException;
+
 import com.centurylink.mdw.common.exception.DataAccessException;
+import com.centurylink.mdw.common.exception.MDWException;
 import com.centurylink.mdw.common.query.PaginatedResponse;
 import com.centurylink.mdw.common.query.QueryRequest;
 import com.centurylink.mdw.model.FormDataDocument;
@@ -269,9 +272,6 @@ public interface TaskManager {
       String comment, Date dueDate, Long userId, Long documentId)
    throws TaskException, DataAccessException;
 
-   public TaskInstanceVO createSubTaskInstance(Long masterTaskInstanceId, String subTaskName)
-   throws TaskException, DataAccessException;
-
    /**
     * Returns the available task statuses from reference data.
     *
@@ -331,8 +331,14 @@ public interface TaskManager {
     *
     * @param pProcessInstance
     */
-   public void cancelTaskInstancesForProcessInstance(Long pProcessInstId, String ownerApplName)
+   public void cancelTaskInstancesForProcessInstance(Long pProcessInstId)
    throws TaskException, DataAccessException;
+
+   public void cancelTasksOfActivityInstance(Long actInstId, Long procInstId)
+           throws NamingException, MDWException;
+
+   public void cancelTasksOfProcessInstances(List<Long> procInstIds) throws TaskException, DataAccessException;
+
 
    public TaskInstanceVO performActionOnTaskInstance(String action, Long taskInstanceId,
            Long userId, Long assigneeId, String comment, String destination, boolean notifyEngine)
@@ -481,18 +487,6 @@ public interface TaskManager {
     * @throws DataAccessException
     */
    public void updateTaskInstanceState(Long taskInstId, boolean isAlert)
-   throws TaskException, DataAccessException;
-
-   /**
-    * Used to set cross references between task instances in summary and detail task manager
-    * @param taskInstId  the ID of the task instance to be updated (in the current database,
-    *     which may be detail or summary task manager).
-    * @param ownerApplName the remote task manager logical name
-    * @param associatedTaskInstId the corresponding task instance ID in the remote task manager
-    * @throws TaskException
-    * @throws DataAccessException
-    */
-   public void updateAssociatedTaskInstance(Long taskInstId, String ownerApplName, Long associatedTaskInstId)
    throws TaskException, DataAccessException;
 
    /**
@@ -772,9 +766,6 @@ public interface TaskManager {
    public List<TaskVO> queryTasks(String whereCondition, int startIndex, int endIndex, String sortOn)
    throws DataAccessException;
 
-   public List<VariableInstanceVO> constructVariableInstancesFromFormDataDocument(TaskVO taskVO, Long processInstanceId, FormDataDocument datadoc) throws DataAccessException;
-   public List<VariableInstanceVO> constructVariableInstancesFromFormDataDocument(TaskVO taskVO, Long processInstanceId, FormDataDocument datadoc, Long taskInstId) throws DataAccessException;
-
    public List<SubTask> getSubTaskList(TaskRuntimeContext runtimeContext) throws TaskException;
 
    /**
@@ -838,4 +829,5 @@ public interface TaskManager {
 
   public void notifyTaskAction(TaskInstanceVO taskInstance, String action, Integer previousStatus, Integer previousState)
   throws TaskException, DataAccessException;
+
 }

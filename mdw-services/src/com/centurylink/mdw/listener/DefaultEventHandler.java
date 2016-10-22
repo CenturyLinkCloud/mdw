@@ -3,10 +3,6 @@
  */
 package com.centurylink.mdw.listener;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
@@ -18,38 +14,26 @@ import javax.naming.InitialContext;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.common.ApplicationContext;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
 import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.MDWException;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.SelfSerializable;
 import com.centurylink.mdw.common.translator.VariableTranslator;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
-import com.centurylink.mdw.common.utilities.AuthUtils;
-import com.centurylink.mdw.common.utilities.HttpHelper;
-import com.centurylink.mdw.common.utilities.MiniEncrypter;
 import com.centurylink.mdw.common.utilities.form.CallURL;
 import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.dataaccess.DataAccess;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.ExternalEventHandler;
 import com.centurylink.mdw.model.data.monitor.LoadBalancedScheduledJob;
 import com.centurylink.mdw.model.data.monitor.ScheduledJob;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
@@ -62,7 +46,6 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
-import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.pooling.AdapterConnectionPool;
 import com.centurylink.mdw.services.pooling.ConnectionPoolRegistration;
@@ -130,22 +113,12 @@ public class DefaultEventHandler implements ExternalEventHandler {
         return resp;
     }
 
-	private void setPropertyGlobally(String name, String value)
-		throws MDWException, JSONException {
-		JSONObject json = new JSONObject();
-		json.put("ACTION", "REFRESH_PROPERTY");
-		json.put("NAME", name);
-		json.put("VALUE", value==null?"":value);
-		InternalMessenger messenger = MessengerFactory.newInternalMessenger();
-		messenger.broadcastMessage(json.toString());
-	}
-
 	private String translateJavaObjectValue(EventManager eventMgr, String varValue,
-			VariableInstanceInfo varinst) throws DataAccessException {
+			VariableInstanceInfo varinst, PackageVO pkg) throws DataAccessException {
 		DocumentReference docref = (DocumentReference)varinst.getData();
 		DocumentVO docvo = eventMgr.getDocumentVO(docref.getDocumentId());
 		JavaObjectTranslator translator = new JavaObjectTranslator();
-		Object obj = translator.realToObject(docvo.getContent());
+		Object obj = translator.realToObject(docvo.getContent(pkg));
 		if (obj instanceof SelfSerializable) {
 			((SelfSerializable)obj).fromString(varValue);
 			varValue = translator.realToString(obj);
@@ -161,51 +134,12 @@ public class DefaultEventHandler implements ExternalEventHandler {
     		String propname = XmlPath.getRootNodeValue(msgdoc);
     		response = PropertyManager.getProperty(propname);
     		if (response==null) response = "";
-    	} else if (rootNodeName.equals("_mdw_database_credential")) {
-	    	DatabaseAccess db = new DatabaseAccess(null);
-	    	try {
-				Connection connection = db.openConnection();
-				String url = connection.getMetaData().getURL();
-				String user = connection.getMetaData().getUserName();
-				int m = user.indexOf('@');
-				if (m>0) user = user.substring(0,m);	// case for MySQL
-				String pass = PropertyManager.getProperty(PropertyNames.MDW_DB_PASSWORD);
-				if (pass==null) pass = "unknown";
-				else if (pass.startsWith("###")) pass = MiniEncrypter.decrypt(pass.substring(3));
-				// else pass = CryptUtil.decrypt(pass);
-				// now assume clear text password
-				if (url.startsWith("jdbc:mysql")) {
-					response = "###" + MiniEncrypter.encrypt(url + "?user=" + user + "&password=" + pass);
-				} else {
-					int k = "jdbc:oracle:thin:".length();
-					response = url.substring(0,k) + user + "/" + pass + url.substring(k);
-					String encrypted = XmlPath.getRootNodeValue(msgdoc);
-					if ("encrypted".equals(encrypted)) response = MiniEncrypter.encrypt(response);
-				}
-			} catch (Exception e) {
-				response = "ERROR: [" + e.getClass().getName() + "] " + e.getMessage();
-			} finally {
-				db.closeConnection();
-			}
-    	} else if (rootNodeName.equals("_mdw_set_database_password")) {
-    		String pass = XmlPath.getRootNodeValue(msgdoc);
-	    	try {
-				EventManager eventMgr = ServiceLocator.getEventManager();
-				String encrypted = "###" + MiniEncrypter.encrypt(pass);
-				eventMgr.setAttribute(OwnerType.SYSTEM, 0L, PropertyNames.MDW_DB_PASSWORD, encrypted);
-				setPropertyGlobally(PropertyNames.MDW_DB_PASSWORD, encrypted);
-				response = "OK";
-	    	    logger.info("database password is recorded");
-			} catch (Exception e) {
-				response = "ERROR: [" + e.getClass().getName() + "] " + e.getMessage();
-	    		logger.severeException("Falield to record database password", e);
-			}
     	} else if (rootNodeName.equals("_mdw_update_variable")) {
     		String varInstId = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_inst_id");
     		String varValue = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_value");
+            String procInstId = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/proc_inst_id");
     		if (varInstId==null || varValue==null) {
         		String varName = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_name");
-        		String procInstId = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/proc_inst_id");
         		if (varName==null || procInstId==null) {
         			response = "ERROR: var_inst_id or var_value is null";
         		} else {
@@ -213,15 +147,17 @@ public class DefaultEventHandler implements ExternalEventHandler {
     					EventManager eventMgr = ServiceLocator.getEventManager();
     					ProcessInstanceVO procInst = eventMgr.getProcessInstance(new Long(procInstId));
     					VariableInstanceInfo varinst = eventMgr.getVariableInstance(procInst.getId(), varName);
-    					if (varinst!=null) throw new Exception("Variable instance is already defined");
+    					if (varinst != null)
+    					    throw new Exception("Variable instance is already defined");
     					ProcessVO procdef = ProcessVOCache.getProcessVO(procInst.getProcessId());
+    					PackageVO pkg = PackageVOCache.getProcessPackage(procdef.getId());
     					VariableVO vardef = procdef.getVariable(varName);
     					if (vardef==null) throw new Exception("Variable is not defined for the process");
     					if (vardef.getVariableType().equals(Object.class.getName()))
-    						varValue = translateJavaObjectValue(eventMgr, varValue, varinst);
-    					if (VariableTranslator.isDocumentReferenceVariable(vardef.getVariableType())) {
-    						Long docid = eventMgr.createDocument(vardef.getVariableType(), procInst.getId(),
-                                    OwnerType.PROCESS_INSTANCE, procInst.getId(), null, null, varValue);
+    						varValue = translateJavaObjectValue(eventMgr, varValue, varinst, pkg);
+    					if (VariableTranslator.isDocumentReferenceVariable(pkg, vardef.getVariableType())) {
+    						Long docid = eventMgr.createDocument(vardef.getVariableType(),
+                                    OwnerType.PROCESS_INSTANCE, procInst.getId(), varValue, pkg);
     						varinst = eventMgr.setVariableInstance(procInst.getId(), varName,
     								new DocumentReference(docid));
             	    	    response = "OK:" + varinst.getInstanceId().toString() + ":" + docid.toString();
@@ -237,47 +173,20 @@ public class DefaultEventHandler implements ExternalEventHandler {
     			try {
 					EventManager eventMgr = ServiceLocator.getEventManager();
 					VariableInstanceInfo varinst = eventMgr.getVariableInstance(new Long(varInstId));
-					if (varinst==null) throw new Exception("Variable instance does not exist");
-					if (varinst.getType().equals(Object.class.getName()))
-						varValue = translateJavaObjectValue(eventMgr, varValue, varinst);
+					if (varinst==null)
+					    throw new Exception("Variable instance does not exist");
+					if (varinst.getType().equals(Object.class.getName())) {
+                        ProcessInstanceVO procInst = eventMgr.getProcessInstance(new Long(procInstId));
+                        ProcessVO procdef = ProcessVOCache.getProcessVO(procInst.getProcessId());
+                        PackageVO pkg = PackageVOCache.getProcessPackage(procdef.getId());
+						varValue = translateJavaObjectValue(eventMgr, varValue, varinst, pkg);
+					}
 					eventMgr.updateVariableInstance(varinst.getInstanceId(), varValue);
     	    	    response = "OK";
     	    	} catch (Exception e) {
 					response = "ERROR: [" + e.getClass().getName() + "] " + e.getMessage();
 				}
     		}
-    	} else if (rootNodeName.equals("_mdw_authenticate")) {
-    		String user = XmlPath.evaluate(msgdoc, "/_mdw_authenticate/user");
-    		String pass = XmlPath.evaluate(msgdoc, "/_mdw_authenticate/pass");
-    		try {
-    			if (pass.startsWith("###")) pass = MiniEncrypter.decrypt(pass.substring(3));
-    			AuthUtils.ldapAuthenticate(user, pass);
-    			response = "OK";
-    		} catch (Exception e) {
-    			if (e instanceof MdwSecurityException) response = e.getMessage();
-    			else response = "ERROR: [" + e.getClass().getName() + "] " + e.getMessage();
-    		}
-    	} else if (rootNodeName.equals("_mdw_get_resource")) {
-    		String name = XmlPath.evaluate(msgdoc, "/_mdw_get_resource/name");
-    		String language = XmlPath.evaluate(msgdoc, "/_mdw_get_resource/language");
-    		String version = XmlPath.evaluate(msgdoc, "/_mdw_get_resource/version");
-    		try {
-				RuleSetVO resource = RuleSetCache.getRuleSet(name, language, version==null?0:Integer.parseInt(version));
-				response = resource==null?null:resource.getRuleSet();
-				if (response==null) {
-					// cache covers database and local override; now try to load internal ones from task manager
-					URL url = new URL(ApplicationContext.getServicesUrl()
-							+ "/listener/resource?name=" + name + "&language=" + language
-							+ (version==null?"":("&version="+version)));
-					HttpHelper httpHelper = new HttpHelper(url);
-					response = httpHelper.get();
-					int responseCode = httpHelper.getResponseCode();
-					if (responseCode!=200) response = "ERROR: HTTP Response Code = " + responseCode;
-				}
-				if (response==null) response = "ERROR: cannot find the resource";
-			} catch (Exception e) {
-				response = "ERROR: Exception " + e.getMessage();
-			}
     	} else if (rootNodeName.equals("_mdw_version")) {
     		response = ApplicationContext.getMdwVersion();
     	} else if (rootNodeName.equals("_mdw_run_job")) {
@@ -332,9 +241,6 @@ public class DefaultEventHandler implements ExternalEventHandler {
     			response = "ERROR: " + e.getMessage();
 			}
     		response = "OK";
-    	} else if (rootNodeName.equals("_mdw_dbschema_version")) {
-    		response = Integer.toString(DataAccess.currentSchemaVersion)
-    			+ "," + Integer.toString(DataAccess.supportedSchemaVersion);
     	} else if (rootNodeName.equals("_mdw_peer_server_list")) {
     		List<String> servers = ApplicationContext.getRoutingServerList().isEmpty() ? ApplicationContext.getManagedServerList() : ApplicationContext.getRoutingServerList();
     		StringBuffer sb = new StringBuffer();
@@ -343,36 +249,6 @@ public class DefaultEventHandler implements ExternalEventHandler {
     			sb.append(server);
     		}
     		response = sb.toString();
-    	} else if (rootNodeName.equals("_mdw_remote_process")) {
-    		String message = XmlPath.evaluate(msgdoc, "/_mdw_remote_process/message");
-    		try {
-				EventManager eventMgr = ServiceLocator.getEventManager();
-				eventMgr.sendInternalEvent(message);
-    			response = "OK";
-    		} catch (MDWException e) {
-    			logger.severeException("Failed to forward remote process message: " + message, e);
-        		response = "ERROR: failed to forward remote process message";
-    		}
-    	} else if (rootNodeName.equals("_mdw_load_class")) {
-    		String classname = XmlPath.getRootNodeValue(msgdoc);
-        	String path = classname.replace('.', '/') + ".class";
-        	logger.debug("getClass(" + classname + ") is called");
-        	try {
-        	    InputStream is;
-        	    ClassLoader loader = PackageVO.getDefaultPackage().getClassLoader();
-        	    is = loader.getResourceAsStream(path);
-        	    if (is != null) {
-	        		int length = is.available();
-	        		byte buffer[] = new byte[length];
-	        		is.read(buffer);
-	        		is.close();
-	        		response = MiniEncrypter.encodeAlpha(buffer);
-        	    } else response = "ERROR: class not found";
-        	} catch (IOException e) {
-        	    // throw RemoteException will cause the stateful bean deleted
-        	    // throw new RemoteException(e.getMessage());
-        	    response = "ERROR: IOException " + e.getMessage();
-        	}
     	} else if (rootNodeName.equals("_mdw_document_content")) {
     		String documentId = XmlPath.evaluate(msgdoc, "/_mdw_document_content/document_id");
     		String type = XmlPath.evaluate(msgdoc, "/_mdw_document_content/type");
@@ -380,10 +256,11 @@ public class DefaultEventHandler implements ExternalEventHandler {
     			EventManager eventMgr = ServiceLocator.getEventManager();
     			DocumentVO docvo = eventMgr.getDocumentVO(new Long(documentId));
     			if (type.equals(Object.class.getName())) {
-    			    Object obj = VariableTranslator.realToObject(getPackageVO(docvo), "java.lang.Object", docvo.getContent());
+    			    Object obj = VariableTranslator.realToObject(getPackageVO(docvo), "java.lang.Object", docvo.getContent(getPackageVO(docvo)));
 	    			response = obj.toString();
-    			} else response = docvo.getContent();
+    			} else response = docvo.getContent(getPackageVO(docvo));
     		} catch (Exception e) {
+    		    logger.severeException(e.getMessage(), e);
     			response = "ERROR: " + e.getClass().getName() + " - " + e.getMessage();
     		}
     	} else {
@@ -427,7 +304,17 @@ public class DefaultEventHandler implements ExternalEventHandler {
     private PackageVO getPackageVO(DocumentVO docVO) throws ServiceException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
-            ProcessInstanceVO procInstVO = eventMgr.getProcessInstance(docVO.getProcessInstanceId());
+            Long procInstId = null;
+            if (docVO.getOwnerType().equals(OwnerType.VARIABLE_INSTANCE)) {
+                VariableInstanceInfo varInstInf = eventMgr.getVariableInstance(docVO.getOwnerId());
+                procInstId = varInstInf.getProcessInstanceId();
+            }
+            else if (docVO.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
+                procInstId = docVO.getOwnerId();
+            }
+            if (procInstId == null)
+                return null;
+            ProcessInstanceVO procInstVO = eventMgr.getProcessInstance(procInstId);
             return PackageVOCache.getProcessPackage(procInstVO.getProcessId());
         }
         catch (Exception ex) {

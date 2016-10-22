@@ -61,7 +61,7 @@ public class PublishEventMessage extends DefaultActivityImpl {
 
 	protected final void signal(String eventName, String eventMessage, int delay) throws Exception {
         DocumentReference docref = this.createDocument(String.class.getName(),
-        		eventMessage, OwnerType.INTERNAL_EVENT, this.getActivityInstanceId(), null, null);
+        		eventMessage, OwnerType.INTERNAL_EVENT, this.getActivityInstanceId());
         super.loginfo("Publish message, event=" + eventName +
         		", id=" + docref.getDocumentId() + ", message=" + eventMessage);
         getEngine().notifyProcess(eventName, docref.getDocumentId(), eventMessage, delay);
