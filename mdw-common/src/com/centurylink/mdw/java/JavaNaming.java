@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.java;
 
-import com.centurylink.mdw.common.utilities.FileHelper;
+import com.centurylink.mdw.util.file.FileHelper;
 
 public class JavaNaming {
 

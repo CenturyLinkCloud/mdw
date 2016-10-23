@@ -10,13 +10,13 @@ import java.util.List;
 import org.apache.oro.text.regex.MalformedPatternException;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 import expect4j.Closure;
@@ -48,7 +48,6 @@ public class ShellScriptExecutor extends DefaultActivityImpl  {
     private String expression;
     private String language;
     private String protocol;
-    private static final String RETURNCODE = "vReturnCode";
     private static final String VRESPONSE = "response";
 
     private List<String> response ;
@@ -256,9 +255,9 @@ public class ShellScriptExecutor extends DefaultActivityImpl  {
             Script script = shell.parse(this.expression);
 
             Binding binding = new Binding();
-            List<VariableVO> vos = getProcessDefinition().getVariables();
+            List<Variable> vos = getProcessDefinition().getVariables();
 
-            for (VariableVO variableVO: vos) {
+            for (Variable variableVO: vos) {
               String variableName = variableVO.getVariableName();
               Object variableValue = getParameterValue(variableName);
               binding.setVariable(variableName, variableValue);
@@ -281,13 +280,7 @@ public class ShellScriptExecutor extends DefaultActivityImpl  {
 
             if (returnCodeAttrValue != null ) {
               super.setReturnCode((String)binding.getVariable(returnCodeAttrValue));
-            } else {
-               Object object = binding.getVariable(RETURNCODE);
-               if ( object != null) {
-                  super.setReturnCode(object.toString());
-               }
             }
-
         }catch(Exception ex){
           logger.severeException(ex.getMessage(), ex);
           throw new ActivityException(ex.getMessage());

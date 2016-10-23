@@ -14,33 +14,33 @@ import org.w3c.dom.Document;
 import org.yaml.snakeyaml.Yaml;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ParameterDocument.Parameter;
 import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument;
 import com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance;
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.Compatibility;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.constant.VariableConstants;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.constant.VariableConstants;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.container.ThreadPoolProvider;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
-import com.centurylink.mdw.services.process.ProcessExecuter;
+import com.centurylink.mdw.services.process.ProcessExecutor;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 
 /**
  * This activity implementor implements invocation of sub processes.
@@ -88,7 +88,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         } else if (binding instanceof XmlObject) {
         	return (ProcessExecutionPlanDocument)((XmlObject)binding).changeType(ProcessExecutionPlanDocument.type);
         } else {
-            VariableVO docVar = getProcessDefinition().getVariable(plan_varname);
+            Variable docVar = getProcessDefinition().getVariable(plan_varname);
             XmlDocumentTranslator docRefTrans = (XmlDocumentTranslator)VariableTranslator.getTranslator(getPackage(), docVar.getVariableType());
             Document doc = docRefTrans.toDomDocument(binding);
         	return ProcessExecutionPlanDocument.Factory.parse(doc, Compatibility.namespaceOptions());
@@ -112,7 +112,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
     	super.updateDocumentContent(docref, str, getParameterType(plan_varname));
     }
 
-    private ProcessVO getSubProcessVO(String logicalProcName) throws Exception {
+    private Process getSubProcessVO(String logicalProcName) throws Exception {
     	String map = getAttributeValue(WorkAttributeConstant.PROCESS_MAP);
     	List<String[]> procmap;
     	if (map==null) procmap = new ArrayList<String[]>();
@@ -133,7 +133,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             ProcessExecutionPlanDocument process_plan = getProcessExecutionPlan();
             String delayStr = getAttributeValue(DELAY_BETWEEN);
             int pDelay = (delayStr==null)?0:Integer.parseInt(delayStr);
-            ProcessExecuter engine = getEngine();
+            ProcessExecutor engine = getEngine();
             String v = getAttributeValue(SYNCHRONOUS);
             synchronous = StringHelper.isEmpty(v) || v.equalsIgnoreCase("true");
             forceParallel = "true".equalsIgnoreCase(getAttributeValue(FORCE_PARALLEL));
@@ -143,7 +143,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             	if (!emptyPlan) execute_service_subprocess_in_parallel(process_plan);
             } else {
                 int i = 0;
-	            List<ProcessInstanceVO> procInstList = new ArrayList<ProcessInstanceVO>();
+	            List<ProcessInstance> procInstList = new ArrayList<ProcessInstance>();
 	            for (SubprocessInstance piplan : process_plan.getProcessExecutionPlan().getSubprocessInstanceList()) {
 	        		if (piplan.getStatusCode()!=WorkStatus.STATUS_PENDING_PROCESS) continue;
 	        		procInstList.add(createProcessInstance(piplan));
@@ -152,7 +152,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
 	            if (i==0) emptyPlan = true;
 	            this.updateExecutionPlan(process_plan);
 	            if (!engine.isInService()) {
-	            	EventWaitInstanceVO received = registerWaitEvents(false, true);
+	            	EventWaitInstance received = registerWaitEvents(false, true);
 	            	if (received!=null)
 	            		resume_on_other_event(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
 	            }
@@ -173,20 +173,20 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         }
     }
 
-    private ProcessInstanceVO createProcessInstance(SubprocessInstance piplan)
+    private ProcessInstance createProcessInstance(SubprocessInstance piplan)
     		throws Exception {
     	try {
     		// prepare variable bindings
-    		ProcessVO processVO = getSubProcessVO(piplan.getLogicalProcessName());
+    		Process processVO = getSubProcessVO(piplan.getLogicalProcessName());
             if (processVO==null) throw new Exception(
             		"Cannot find process with logical name " + piplan.getLogicalProcessName());
-            List<VariableVO> childVars = processVO.getVariables();
+            List<Variable> childVars = processVO.getVariables();
             Map<String,String> parameters = createVariableBinding(childVars, piplan, false);
         	// create ProcessInstance and its variable instances
 //            InternalEventVO procStartEvent = InternalEventVO.createProcessStartMessage(processVO.getProcessId(),
 //            		OwnerType.PROCESS_INSTANCE, getProcessInstanceId(), getMasterRequestId(), null,
 //            		OwnerType.ACTIVITY_INSTANCE, getActivityInstanceId());
-    		ProcessInstanceVO pi = getEngine().createProcessInstance(
+    		ProcessInstance pi = getEngine().createProcessInstance(
     				processVO.getProcessId(), OwnerType.PROCESS_INSTANCE,
     				getProcessInstanceId(), OwnerType.ACTIVITY_INSTANCE, getActivityInstanceId(),
     				getMasterRequestId(), parameters);
@@ -221,21 +221,21 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
      * @return a map (name-value pairs) of variable bindings
      * @throws Exception various types of exceptions
      */
-    private Map<String,String> createVariableBinding(List<VariableVO> childVars, SubprocessInstance piplan,
+    private Map<String,String> createVariableBinding(List<Variable> childVars, SubprocessInstance piplan,
     		boolean passDocumentContent)
     		throws Exception {
     	Map<String,String> parameters = new HashMap<String,String>();
 
         String vn, v;
         for (int k=0; k<childVars.size(); k++) {
-        	VariableVO childVar = childVars.get(k);
+        	Variable childVar = childVars.get(k);
         	if (!allowInput(childVar)) continue;
         	vn = childVar.getVariableName();
         	if (vn.equals(VariableConstants.REQUEST)) {
-        		VariableInstanceInfo varinst = getVariableInstance(VariableConstants.REQUEST);
+        		VariableInstance varinst = getVariableInstance(VariableConstants.REQUEST);
         		v = varinst==null?null:varinst.getStringValue();
         	} else if (vn.equals(VariableConstants.MASTER_DOCUMENT)) {
-        		VariableInstanceInfo varinst = getVariableInstance(VariableConstants.MASTER_DOCUMENT);
+        		VariableInstance varinst = getVariableInstance(VariableConstants.MASTER_DOCUMENT);
         		v = varinst==null?null:varinst.getStringValue();
         	} else {
         		Parameter p = this.getParameterBinding(piplan, vn);
@@ -254,7 +254,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         return parameters;
     }
 
-    boolean resume_on_process_finish(InternalEventVO msg, Integer status)
+    boolean resume_on_process_finish(InternalEvent msg, Integer status)
     		throws ActivityException {
     	boolean done;
     	try {
@@ -365,10 +365,10 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         	String logicalProcName = piplan.getLogicalProcessName();
 			try {
 	            logger.info("New thread for executing service subprocess in parallel - " + logicalProcName);
-				ProcessVO processVO = getSubProcessVO(logicalProcName);
+				Process processVO = getSubProcessVO(logicalProcName);
 				if (processVO==null) throw new Exception("Cannot find process with logical name " + logicalProcName);
 				engineDriver = new ProcessEngineDriver();
-	            List<VariableVO> childVars = processVO.getVariables();
+	            List<Variable> childVars = processVO.getVariables();
 	            int perfLevel = getEngine().getPerformanceLevel();
 	            Map<String,String> parameters = createVariableBinding(childVars, piplan, perfLevel >= 5); // DHO
 	            outParameters = engineDriver.invokeServiceAsSubprocess(processVO.getProcessId(),
@@ -389,14 +389,14 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
     }
 
     private void bindVariable(Parameter param, String value, boolean passDocContent) throws ActivityException {
-    	ProcessVO procdef = getMainProcessDefinition();
+    	Process procdef = getMainProcessDefinition();
     	String binding = param.getStringValue();
     	if (StringHelper.isEmpty(binding)) return;
     	if (binding.equals("$")) {
     		param.setStringValue(value);
     	} else if (binding.startsWith("$")) {
     		String varname = binding.substring(1).trim();
-    		VariableVO var = procdef.getVariable(varname);
+    		Variable var = procdef.getVariable(varname);
     		if (var!=null) {
     			Object value0;
         		if (passDocContent && VariableTranslator.isDocumentReferenceVariable(var.getVariableType())) {

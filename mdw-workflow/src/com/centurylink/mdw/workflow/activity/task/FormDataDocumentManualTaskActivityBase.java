@@ -10,26 +10,26 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.common.constant.FormConstants;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.form.CallURL;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.constant.FormConstants;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.FormDataDocument;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.task.TaskAction;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.VariableVO;
-import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
-import com.centurylink.mdw.model.value.work.WorkTransitionVO;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.task.TaskAction;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.Transition;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.CallURL;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
 import com.qwest.mbeng.DomDocument;
 import com.qwest.mbeng.FormatDom;
@@ -54,14 +54,14 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
         String formVersion = this.getAttributeValue(TaskActivity.ATTRIBUTE_FORM_VERSION);
         int version = (formVersion==null)?0:Integer.parseInt(formVersion);
         try {
-            RuleSetVO ruleset = super.getRuleSet(formname, RuleSetVO.FORM, version);
-            if (ruleset==null) throw new
-                ActivityException("Failed to load the ruleset " + formname);
+            Asset asset = super.getAsset(formname, Asset.FORM, version);
+            if (asset==null) throw new
+                ActivityException("Failed to load the asset " + formname);
             FormatDom fmter = new FormatDom();
             formdoc = new DomDocument();
-            fmter.load(formdoc, ruleset.getRuleSet());
+            fmter.load(formdoc, asset.getStringContent());
         } catch (Exception e) {
-            throw new ActivityException(-1, "Cannot load ruleset " + formname, e);
+            throw new ActivityException(-1, "Cannot load asset " + formname, e);
         }
         return formdoc;
     }
@@ -111,7 +111,7 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
         throws ActivityException {
     }
 
-    public final boolean resume(InternalEventVO event)
+    public final boolean resume(InternalEvent event)
             throws ActivityException {
         // secondary owner type must be OwnerType.EXTERNAL_EVENT_INSTANCE
         String messageString = super.getMessageFromEventMessage(event);
@@ -176,12 +176,11 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
             String action = datadoc.getAttribute(FormDataDocument.ATTR_ACTION);
             CallURL callurl = new CallURL(action);
             action = callurl.getAction();
-            ProcessVO procdef = getProcessDefinition();
             if (compCode==null) compCode = datadoc.getMetaValue(FormConstants.URLARG_COMPLETION_CODE);
             if (compCode==null) compCode = callurl.getParameter(FormConstants.URLARG_COMPLETION_CODE);
         	String subaction = datadoc.getMetaValue(FormConstants.URLARG_ACTION);
         	if (subaction==null) subaction = callurl.getParameter(FormConstants.URLARG_ACTION);
-            if (this.getProcessInstance().isNewEmbedded() || procdef.isEmbeddedExceptionHandler()) {
+            if (this.getProcessInstance().isEmbedded()) {
             	if (subaction==null)
             		subaction = compCode;
                 if (action.equals("@CANCEL_TASK")) {
@@ -213,9 +212,9 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
         }
     }
 
-    public final boolean resumeWaiting(InternalEventVO event) throws ActivityException {
+    public final boolean resumeWaiting(InternalEvent event) throws ActivityException {
         boolean done;
-        EventWaitInstanceVO received;
+        EventWaitInstance received;
         try {
         	// re-register wait events
             FormDataDocument formdata = this.getFormDataDocumentFromVariable();
@@ -245,11 +244,11 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
 
     protected final void fillInCustomActions(FormDataDocument formdatadoc)
             throws ActivityException {
-        ProcessVO procdef = getProcessDefinition();
-        ActivityInstanceVO actInst = null;
+        Process procdef = getProcessDefinition();
+        ActivityInstance actInst = null;
         if (procdef.isEmbeddedExceptionHandler()) {
             try {
-                ProcessInstanceVO procInst = getEngine().getProcessInstance(getProcessInstanceId());
+                ProcessInstance procInst = getEngine().getProcessInstance(getProcessInstanceId());
                 actInst = getEngine().getActivityInstance(procInst.getSecondaryOwnerId());
             } catch (Exception e) {
                 throw new ActivityException(-1, "Failed to get request data", e);
@@ -343,10 +342,10 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
      * @param actInst when the task is in exception handler, this is the activity instance
      *      throwing the exception; null if not in exception handler.
      */
-    protected List<String> getCustomActions(ActivityInstanceVO actInst)
+    protected List<String> getCustomActions(ActivityInstance actInst)
             throws ActivityException {
         List<String> actions = new ArrayList<String>();
-        ProcessVO procdef;
+        Process procdef;
         Long activityId;
 
         try {
@@ -362,9 +361,9 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
 
             // if the activity has an out transition w/o completion code, add Complete/Cancel
             // if the activity has transitions with completion code, add them
-            List<WorkTransitionVO> outTrans = procdef.getAllWorkTransitions(activityId);
+            List<Transition> outTrans = procdef.getAllWorkTransitions(activityId);
             boolean foundNullResultCode = false;
-            for (WorkTransitionVO workTransVO : outTrans) {
+            for (Transition workTransVO : outTrans) {
                 Integer eventType = workTransVO.getEventType();
                 if (eventType.equals(EventType.FINISH) || eventType.equals(EventType.RESUME)) {
                     String resultCode = workTransVO.getCompletionCode();
@@ -441,8 +440,8 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
      * where no
      */
     protected void extractDataToProcessVariables(FormDataDocument formDataDoc) throws ActivityException {
-        ProcessVO processVO = getProcessDefinition();
-        for (VariableVO variable : processVO.getVariables()) {
+        Process processVO = getProcessDefinition();
+        for (Variable variable : processVO.getVariables()) {
             String value = formDataDoc.getValue(variable.getVariableName());
             if (value != null)
               setDataToVariable(variable.getVariableName(), value);

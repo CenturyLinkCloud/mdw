@@ -11,14 +11,14 @@ import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.adapter.HeaderAwareAdapter;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.HttpHelper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter;
 
 @Tracked(LogLevel.TRACE)
@@ -178,8 +178,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
             Map<String,String> headers = null;
             String headersVar = getAttributeValueSmart(HEADERS_VARIABLE);
             if (headersVar != null) {
-                ProcessVO processVO = getProcessDefinition();
-                VariableVO variableVO = processVO.getVariable(headersVar);
+                Process processVO = getProcessDefinition();
+                Variable variableVO = processVO.getVariable(headersVar);
                 if (variableVO == null)
                     throw new ActivityException("Headers variable '" + headersVar + "' is not defined for process " + processVO.getLabel());
                 if (!variableVO.getVariableType().equals(Map.class.getName()))

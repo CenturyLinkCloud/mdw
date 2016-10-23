@@ -7,10 +7,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.utilities.HttpHelper;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.services.ProcessException;
+import com.centurylink.mdw.util.HttpHelper;
 
 public class IntraMDWMessengerRest extends IntraMDWMessenger {
 

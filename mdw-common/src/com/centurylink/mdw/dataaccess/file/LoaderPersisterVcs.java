@@ -27,36 +27,30 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.bpm.ActivityImplementorDocument;
-import com.centurylink.mdw.bpm.ExternalEventHandlerDocument;
-import com.centurylink.mdw.bpm.MDWActivityImplementor;
-import com.centurylink.mdw.bpm.MDWExternalEvent;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.ProcessPersister;
 import com.centurylink.mdw.dataaccess.VersionControl;
-import com.centurylink.mdw.model.data.monitor.ServiceLevelAgreement;
-import com.centurylink.mdw.model.data.task.TaskCategory;
-import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
-import com.centurylink.mdw.model.value.activity.ActivityVO;
-import com.centurylink.mdw.model.value.attribute.AttributeVO;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.event.ExternalEventVO;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.model.value.variable.VariableTypeVO;
-import com.centurylink.mdw.model.value.work.WorkTransitionVO;
-import com.centurylink.mdw.task.TaskTemplate;
-import com.centurylink.mdw.task.TaskTemplateDocument;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.event.ExternalEvent;
+import com.centurylink.mdw.model.monitor.ServiceLevelAgreement;
+import com.centurylink.mdw.model.task.TaskCategory;
+import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.variable.VariableType;
+import com.centurylink.mdw.model.workflow.Activity;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.Transition;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.timer.ProgressMonitor;
 
 // TODO clear VersionControl & PackageDir/AssetFile caches on Cache Refresh.
 public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
@@ -75,7 +69,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     private FileFilter mdwDirFilter;
     private FileFilter subDirFilter;
     private FileFilter procFileFilter;
-    private FileFilter ruleSetFileFilter;
+    private FileFilter assetFileFilter;
     private FileFilter implFileFilter;
     private FileFilter evthFileFilter;
     private FileFilter taskFileFilter;
@@ -118,7 +112,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 return file.isFile() && file.getName().endsWith(PROCESS_FILE_EXTENSION);
             }
         };
-        this.ruleSetFileFilter = new FileFilter() {
+        this.assetFileFilter = new FileFilter() {
             public boolean accept(File file) {
                 return file.isFile() && !file.getName().endsWith(IMPL_FILE_EXTENSION) && !file.getName().endsWith(EVT_HANDLER_FILE_EXTENSION)
                         && !file.getName().endsWith(TASK_TEMPLATE_FILE_EXTENSION) && !file.getName().endsWith(PROCESS_FILE_EXTENSION);
@@ -158,7 +152,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         };
     }
 
-    protected PackageDir createPackage(PackageVO packageVo) throws DataAccessException, IOException {
+    protected PackageDir createPackage(Package packageVo) throws DataAccessException, IOException {
         PackageDir pkgDir = new PackageDir(storageDir, packageVo, versionControl);
         getPackageDirs().add(0, pkgDir);
         return pkgDir;
@@ -339,22 +333,22 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     // FileSystemAccess methods
 
-    public PackageVO loadPackage(PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
-        PackageVO packageVO = new PackageVO();
+    public Package loadPackage(PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
+        Package packageVO = new Package();
 
         packageVO.setName(pkgDir.getPackageName());
-        packageVO.setVersion(PackageVO.parseVersion(pkgDir.getPackageVersion()));
+        packageVO.setVersion(Package.parseVersion(pkgDir.getPackageVersion()));
         packageVO.setId(versionControl.getId(pkgDir.getLogicalDir()));
         packageVO.setSchemaVersion(DataAccess.currentSchemaVersion);
 
         String pkgJson = new String(read(pkgDir.getMetaFile()));
-        PackageVO jsonPkg = new PackageVO(new JSONObject(pkgJson));
+        Package jsonPkg = new Package(new JSONObject(pkgJson));
         packageVO.setGroup(jsonPkg.getGroup());
         packageVO.setAttributes(jsonPkg.getAttributes());
         packageVO.setMetaContent(pkgJson);
 
         packageVO.setProcesses(loadProcesses(pkgDir, deep));
-        packageVO.setRuleSets(loadRuleSets(pkgDir, deep));
+        packageVO.setAssets(loadAssets(pkgDir, deep));
         packageVO.setImplementors(loadActivityImplementors(pkgDir));
         packageVO.setExternalEvents(loadExternalEventHandlers(pkgDir));
         packageVO.setTaskTemplates(loadTaskTemplates(pkgDir));
@@ -364,7 +358,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return packageVO;
     }
 
-    public long save(PackageVO packageVO, PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
+    public long save(Package packageVO, PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
         File mdwDir = new File(pkgDir + "/.mdw");
         if (!mdwDir.exists()) {
             if (!mdwDir.mkdirs())
@@ -379,7 +373,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         if (deep) {
             saveActivityImplementors(packageVO, pkgDir);
             saveExternalEventHandlers(packageVO, pkgDir);
-            saveRuleSets(packageVO, pkgDir);
+            saveAssets(packageVO, pkgDir);
             saveTaskTemplates(packageVO, pkgDir);
             saveProcesses(packageVO, pkgDir); // also saves v0 task templates
         }
@@ -387,14 +381,14 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return packageVO.getPackageId();
     }
 
-    public ProcessVO loadProcess(PackageDir pkgDir, AssetFile assetFile, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
-        ProcessVO process;
+    public Process loadProcess(PackageDir pkgDir, AssetFile assetFile, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
+        Process process;
         if (deep) {
             String content = new String(read(assetFile));
-            process = new ProcessVO(new JSONObject(content));
+            process = new Process(new JSONObject(content));
             Long loadId = process.getProcessId();
-            WorkTransitionVO obsoleteStartTransition = null;
-            for (WorkTransitionVO t : process.getTransitions()) {
+            Transition obsoleteStartTransition = null;
+            for (Transition t : process.getTransitions()) {
                 if (t.getFromWorkId().equals(loadId)) {
                     obsoleteStartTransition = t;
                     break;
@@ -404,14 +398,13 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 process.getTransitions().remove(obsoleteStartTransition);
         }
         else {
-            process = new ProcessVO();
+            process = new Process();
         }
 
         process.setId(assetFile.getId());
         int lastDot = assetFile.getName().lastIndexOf('.');
         process.setName(assetFile.getName().substring(0, lastDot));
-        process.setLanguage(RuleSetVO.PROCESS);
-        process.setInRuleSet(true);
+        process.setLanguage(Asset.PROCESS);
         process.setRawFile(assetFile);
         process.setVersion(assetFile.getRevision().getVersion());  // TODO remove version from process XML for file-persist
         process.setModifyDate(assetFile.getRevision().getModDate());
@@ -423,12 +416,12 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return process;
     }
 
-    public long save(ProcessVO process, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
+    public long save(Process process, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
         process.removeEmptyAndOverrideAttributes();
         // save task templates
-        List<ActivityImplementorVO> impls = getActivityImplementors();  // TODO maybe cache these
-        for (ActivityVO activity : process.getActivities()) {
-            for (ActivityImplementorVO impl : impls) {
+        List<ActivityImplementor> impls = getActivityImplementors();  // TODO maybe cache these
+        for (Activity activity : process.getActivities()) {
+            for (ActivityImplementor impl : impls) {
                 if (activity.getImplementorClassName().equals(impl.getImplementorClassName())) {
                     if (impl.isManualTask()) {
                         if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
@@ -436,7 +429,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                         }
                         else {
                             // create the task template from activity attributes
-                            TaskVO taskVo = getTask(process.getProcessName(), activity);
+                            TaskTemplate taskVo = getTask(process.getProcessName(), activity);
                             taskVo.setPackageName(process.getPackageName());
                             save(taskVo, pkgDir);
                         }
@@ -445,9 +438,9 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             }
         }
         if (process.getSubProcesses() != null) {
-            for (ProcessVO embedded : process.getSubProcesses()) {
-                for (ActivityVO activity : embedded.getActivities()) {
-                    for (ActivityImplementorVO impl : impls) {
+            for (Process embedded : process.getSubProcesses()) {
+                for (Activity activity : embedded.getActivities()) {
+                    for (ActivityImplementor impl : impls) {
                         if (activity.getImplementorClassName().equals(impl.getImplementorClassName())) {
                             if (impl.isManualTask()) {
                                 if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
@@ -455,7 +448,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                                 }
                                 else {
                                     // create the task template from activity attributes
-                                    TaskVO taskVo = getTask(process.getProcessName(), activity);
+                                    TaskTemplate taskVo = getTask(process.getProcessName(), activity);
                                     taskVo.setPackageName(process.getPackageName());
                                     save(taskVo, pkgDir);
                                 }
@@ -480,65 +473,50 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return process.getId();
     }
 
-    public RuleSetVO loadRuleSet(PackageDir pkgDir, AssetFile assetFile, boolean deep) throws IOException, XmlException {
-        RuleSetVO ruleSet = new RuleSetVO();
-        ruleSet.setId(assetFile.getId());
-        ruleSet.setPackageName(pkgDir.getPackageName());
-        ruleSet.setPackageVersion(pkgDir.getPackageVersion());
-        ruleSet.setName(assetFile.getName());
-        ruleSet.setLanguage(RuleSetVO.getFormat(assetFile.getName()));
-        ruleSet.setVersion(assetFile.getRevision().getVersion());
-        ruleSet.setLoadDate(new Date());
-        ruleSet.setModifyDate(assetFile.getRevision().getModDate());
-        ruleSet.setRevisionComment(assetFile.getRevision().getComment());
-        ruleSet.setRawFile(assetFile);
+    public Asset loadAsset(PackageDir pkgDir, AssetFile assetFile, boolean deep) throws IOException, XmlException {
+        Asset asset = new Asset();
+        asset.setId(assetFile.getId());
+        asset.setPackageName(pkgDir.getPackageName());
+        asset.setPackageVersion(pkgDir.getPackageVersion());
+        asset.setName(assetFile.getName());
+        asset.setLanguage(Asset.getFormat(assetFile.getName()));
+        asset.setVersion(assetFile.getRevision().getVersion());
+        asset.setLoadDate(new Date());
+        asset.setModifyDate(assetFile.getRevision().getModDate());
+        asset.setRevisionComment(assetFile.getRevision().getComment());
+        asset.setRawFile(assetFile);
         if (deep) {
-            ruleSet.setRaw(true);
+            asset.setRaw(true);
             // do not load jar assets into memory
-            if (!RuleSetVO.excludedFromMemoryCache(assetFile.getName()))
-                ruleSet.setRawContent(read(assetFile));
+            if (!Asset.excludedFromMemoryCache(assetFile.getName()))
+                asset.setRawContent(read(assetFile));
         }
-        return ruleSet;
+        return asset;
     }
 
-    public long save(RuleSetVO ruleSet, PackageDir pkgDir) throws IOException {
-        AssetFile assetFile = pkgDir.getAssetFile(getRuleSetFile(ruleSet), getAssetRevision(ruleSet));
-        write(ruleSet.getContent(), assetFile);
-        ruleSet.setId(versionControl.getId(assetFile.getLogicalFile()));
-        ruleSet.setVersion(assetFile.getRevision().getVersion());
-        ruleSet.setModifyingUser(assetFile.getRevision().getModUser());
-        ruleSet.setModifyDate(assetFile.getRevision().getModDate());
-        ruleSet.setRevisionComment(assetFile.getRevision().getComment());
-        ruleSet.setPackageName(pkgDir.getPackageName());
-        ruleSet.setRawFile(assetFile);
+    public long save(Asset asset, PackageDir pkgDir) throws IOException {
+        AssetFile assetFile = pkgDir.getAssetFile(getAssetFile(asset), getAssetRevision(asset));
+        write(asset.getContent(), assetFile);
+        asset.setId(versionControl.getId(assetFile.getLogicalFile()));
+        asset.setVersion(assetFile.getRevision().getVersion());
+        asset.setModifyingUser(assetFile.getRevision().getModUser());
+        asset.setModifyDate(assetFile.getRevision().getModDate());
+        asset.setRevisionComment(assetFile.getRevision().getComment());
+        asset.setPackageName(pkgDir.getPackageName());
+        asset.setRawFile(assetFile);
 
-        return ruleSet.getId();
+        return asset.getId();
     }
 
-    public ActivityImplementorVO loadActivityImplementor(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
+    public ActivityImplementor loadActivityImplementor(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
         String content = new String(read(assetFile));
-        ActivityImplementorVO implVo;
-        if (content.trim().startsWith("{")) {
-            implVo = new ActivityImplementorVO(new JSONObject(content));
-        }
-        else {
-            ActivityImplementorDocument doc = ActivityImplementorDocument.Factory.parse(content);
-            MDWActivityImplementor impl = doc.getActivityImplementor();
-            implVo = new ActivityImplementorVO();
-            implVo.setImplementorClassName(impl.getImplementation());
-            implVo.setBaseClassName(impl.getType());
-            implVo.setLabel(impl.getLabel());
-            implVo.setIconName(impl.getIconFile());
-            implVo.setAttributeDescription(impl.getAttributeDescription());
-            implVo.setHidden(impl.getHidden());
-            implVo.setShowInToolbox(!impl.getHidden());
-        }
+        ActivityImplementor implVo = new ActivityImplementor(new JSONObject(content));
         implVo.setImplementorId(assetFile.getId());
         implVo.setPackageName(pkgDir.getPackageName());
         return implVo;
     }
 
-    public long save(ActivityImplementorVO implVo, PackageDir pkgDir) throws IOException, JSONException {
+    public long save(ActivityImplementor implVo, PackageDir pkgDir) throws IOException, JSONException {
         String content = implVo.getJson().toString(2);
         AssetFile assetFile = pkgDir.getAssetFile(getActivityImplementorFile(implVo), null); // no revs
         write(content.getBytes(), assetFile);
@@ -546,25 +524,15 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return implVo.getImplementorId();
     }
 
-    public ExternalEventVO loadExternalEventHandler(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
+    public ExternalEvent loadExternalEventHandler(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
         String content = new String(read(assetFile));
-        ExternalEventVO evthVo;
-        if (content.trim().startsWith("{")) {
-            evthVo = new ExternalEventVO(new JSONObject(content));
-        }
-        else {
-            ExternalEventHandlerDocument doc = ExternalEventHandlerDocument.Factory.parse(content);
-            MDWExternalEvent evth = doc.getExternalEventHandler();
-            evthVo = new ExternalEventVO();
-            evthVo.setEventHandler(evth.getEventHandler());
-            evthVo.setEventName(evth.getEventName());
-        }
+        ExternalEvent evthVo = new ExternalEvent(new JSONObject(content));
         evthVo.setId(assetFile.getId());
         evthVo.setPackageName(pkgDir.getPackageName());
         return evthVo;
     }
 
-    public long save(ExternalEventVO evthVo, PackageDir pkgDir) throws IOException, JSONException {
+    public long save(ExternalEvent evthVo, PackageDir pkgDir) throws IOException, JSONException {
         String content = evthVo.getJson().toString(2);
         AssetFile assetFile = pkgDir.getAssetFile(getExternalEventHandlerFile(evthVo), null); // no revs
         write(content.getBytes(), assetFile);
@@ -572,17 +540,9 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return evthVo.getId();
     }
 
-    public TaskVO loadTaskTemplate(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
+    public TaskTemplate loadTaskTemplate(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
         String content = new String(read(assetFile));
-        TaskVO taskVO;
-        if (content.trim().startsWith("{")) {
-            taskVO = new TaskVO(new JSONObject(content));
-        }
-        else {
-            TaskTemplateDocument doc = TaskTemplateDocument.Factory.parse(content);
-            TaskTemplate taskTemplate = doc.getTaskTemplate();
-            taskVO = new TaskVO(taskTemplate);
-        }
+        TaskTemplate taskVO = new TaskTemplate(new JSONObject(content));
         taskVO.setName(assetFile.getName());
         taskVO.setTaskId(assetFile.getId());
         taskVO.setPackageName(pkgDir.getPackageName());
@@ -590,7 +550,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return taskVO;
     }
 
-    public long save(TaskVO taskVo, PackageDir pkgDir) throws IOException, JSONException {
+    public long save(TaskTemplate taskVo, PackageDir pkgDir) throws IOException, JSONException {
         String content = taskVo.getJson().toString(2);
         AssetFile assetFile = pkgDir.getAssetFile(getTaskTemplateFile(taskVo), taskVo.getVersion() > 0 ? getAssetRevision(taskVo) : null);
         write(content.getBytes(), assetFile);
@@ -598,66 +558,65 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return taskVo.getTaskId();
     }
 
-    public List<ProcessVO> loadProcesses(PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
-        List<ProcessVO> processes = new ArrayList<ProcessVO>();
+    public List<Process> loadProcesses(PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
+        List<Process> processes = new ArrayList<Process>();
         for (File procFile : pkgDir.listFiles(procFileFilter))
             processes.add(loadProcess(pkgDir, pkgDir.getAssetFile(procFile), deep));
         return processes;
     }
 
-    public void saveProcesses(PackageVO packageVo, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
+    public void saveProcesses(Package packageVo, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
         if (packageVo.getProcesses() != null) {
-            for (ProcessVO process : packageVo.getProcesses()) {
+            for (Process process : packageVo.getProcesses()) {
                 process.setPackageName(packageVo.getName());
                 save(process, pkgDir);
             }
         }
     }
 
-    public List<RuleSetVO> loadRuleSets(PackageDir pkgDir, boolean deep) throws IOException, XmlException {
-        List<RuleSetVO> ruleSets = new ArrayList<RuleSetVO>();
-        for (File rsFile : pkgDir.listFiles(ruleSetFileFilter))
-            ruleSets.add(loadRuleSet(pkgDir, pkgDir.getAssetFile(rsFile), deep));
-        Collections.sort(ruleSets, new Comparator<RuleSetVO>() {
-            public int compare(RuleSetVO rs1, RuleSetVO rs2) {
+    public List<Asset> loadAssets(PackageDir pkgDir, boolean deep) throws IOException, XmlException {
+        List<Asset> assets = new ArrayList<Asset>();
+        for (File rsFile : pkgDir.listFiles(assetFileFilter))
+            assets.add(loadAsset(pkgDir, pkgDir.getAssetFile(rsFile), deep));
+        Collections.sort(assets, new Comparator<Asset>() {
+            public int compare(Asset rs1, Asset rs2) {
                 if (rs1.getName().equals(rs2.getName()))
                     return rs2.getVersion() - rs1.getVersion(); // later versions first
                 else
                     return rs1.getName().compareToIgnoreCase(rs2.getName()); // alphabetically by name
             }
         });
-        return ruleSets;
+        return assets;
     }
 
-    public void saveRuleSets(PackageVO packageVo, PackageDir pkgDir) throws IOException {
-        // TODO custom attributes
-        if (packageVo.getRuleSets() != null) {
-            for (RuleSetVO ruleSet : packageVo.getRuleSets()) {
-                if (!ruleSet.isEmpty()) {
-                    ruleSet.setPackageName(packageVo.getName());
-                    save(ruleSet, pkgDir);
+    public void saveAssets(Package packageVo, PackageDir pkgDir) throws IOException {
+        if (packageVo.getAssets() != null) {
+            for (Asset asset : packageVo.getAssets()) {
+                if (!asset.isEmpty()) {
+                    asset.setPackageName(packageVo.getName());
+                    save(asset, pkgDir);
                 }
             }
         }
     }
 
-    public List<ActivityImplementorVO> loadActivityImplementors(PackageDir pkgDir) throws IOException, XmlException, JSONException {
-        List<ActivityImplementorVO> impls = new ArrayList<ActivityImplementorVO>();
+    public List<ActivityImplementor> loadActivityImplementors(PackageDir pkgDir) throws IOException, XmlException, JSONException {
+        List<ActivityImplementor> impls = new ArrayList<ActivityImplementor>();
         for (File implFile : pkgDir.listFiles(implFileFilter))
             impls.add(loadActivityImplementor(pkgDir, pkgDir.getAssetFile(implFile)));
         return impls;
     }
 
-    public void saveActivityImplementors(PackageVO packageVo, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
+    public void saveActivityImplementors(Package packageVo, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
         if (packageVo.getImplementors() != null && !packageVo.getImplementors().isEmpty()) {
-            List<ActivityImplementorVO> existingImpls = new ArrayList<ActivityImplementorVO>();
+            List<ActivityImplementor> existingImpls = new ArrayList<ActivityImplementor>();
             for (PackageDir existPkgDir : getPackageDirs()) {
                 if (!existPkgDir.isArchive())
                     existingImpls.addAll(loadActivityImplementors(existPkgDir));
             }
-            for (ActivityImplementorVO impl : packageVo.getImplementors()) {
+            for (ActivityImplementor impl : packageVo.getImplementors()) {
                 boolean alreadyPresentInAnotherPackage = false;
-                for (ActivityImplementorVO existingImpl : existingImpls) {
+                for (ActivityImplementor existingImpl : existingImpls) {
                     if (existingImpl.getImplementorClassName().equals(impl.getImplementorClassName())) {
                         alreadyPresentInAnotherPackage = true;
                         break;
@@ -672,32 +631,32 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public List<ExternalEventVO> loadExternalEventHandlers(PackageDir pkgDir) throws IOException, XmlException, JSONException {
-        List<ExternalEventVO> evtHandlers = new ArrayList<ExternalEventVO>();
+    public List<ExternalEvent> loadExternalEventHandlers(PackageDir pkgDir) throws IOException, XmlException, JSONException {
+        List<ExternalEvent> evtHandlers = new ArrayList<ExternalEvent>();
         for (File evthFile : pkgDir.listFiles(evthFileFilter))
             evtHandlers.add(loadExternalEventHandler(pkgDir, pkgDir.getAssetFile(evthFile)));
         return evtHandlers;
     }
 
-    public void saveExternalEventHandlers(PackageVO packageVo, PackageDir pkgDir) throws IOException, JSONException {
+    public void saveExternalEventHandlers(Package packageVo, PackageDir pkgDir) throws IOException, JSONException {
         if (packageVo.getExternalEvents() != null) {
-            for (ExternalEventVO evth : packageVo.getExternalEvents()) {
+            for (ExternalEvent evth : packageVo.getExternalEvents()) {
                 evth.setPackageName(pkgDir.getPackageName());
                 save(evth, pkgDir);
             }
         }
     }
 
-    public List<TaskVO> loadTaskTemplates(PackageDir pkgDir) throws IOException, XmlException, JSONException {
-        List<TaskVO> tasks = new ArrayList<TaskVO>();
+    public List<TaskTemplate> loadTaskTemplates(PackageDir pkgDir) throws IOException, XmlException, JSONException {
+        List<TaskTemplate> tasks = new ArrayList<TaskTemplate>();
         for (File taskFile : pkgDir.listFiles(taskFileFilter))
             tasks.add(loadTaskTemplate(pkgDir, pkgDir.getAssetFile(taskFile)));
         return tasks;
     }
 
-    public void saveTaskTemplates(PackageVO packageVo, PackageDir pkgDir) throws IOException, JSONException {
+    public void saveTaskTemplates(Package packageVo, PackageDir pkgDir) throws IOException, JSONException {
         if (packageVo.getTaskTemplates() != null) {
-            for (TaskVO task : packageVo.getTaskTemplates()) {
+            for (TaskTemplate task : packageVo.getTaskTemplates()) {
                 task.setPackageName(pkgDir.getPackageName());
                 save(task, pkgDir);
             }
@@ -707,7 +666,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * Only for top-level packages, and relies on getPackageName().
      */
-    private File getProcessFile(ProcessVO process) {
+    private File getProcessFile(Process process) {
         String fileName = process.getName() + PROCESS_FILE_EXTENSION;
         return new File(storageDir + "/" + process.getPackageName().replace('.', '/') + "/" + fileName);
     }
@@ -715,17 +674,17 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * Only for top-level packages, and relies on getPackageName().
      */
-    private File getRuleSetFile(RuleSetVO ruleSet) {
-        String fileName = ruleSet.getName();
+    private File getAssetFile(Asset asset) {
+        String fileName = asset.getName();
         if (fileName.indexOf('.') < 0)
-            fileName += RuleSetVO.getFileExtension(ruleSet.getLanguage());
-        return new File(storageDir + "/" + ruleSet.getPackageName().replace('.', '/') + "/" + fileName);
+            fileName += Asset.getFileExtension(asset.getLanguage());
+        return new File(storageDir + "/" + asset.getPackageName().replace('.', '/') + "/" + fileName);
     }
 
     /**
      * Only for top-level packages, and relies on getPackageName().
      */
-    private File getActivityImplementorFile(ActivityImplementorVO implementor) {
+    private File getActivityImplementorFile(ActivityImplementor implementor) {
         String fileName = implementor.getSimpleName() + IMPL_FILE_EXTENSION;
         return new File(storageDir + "/" + implementor.getPackageName().replace('.', '/') + "/" + fileName);
     }
@@ -733,7 +692,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * Only for top-level packages, and relies on getPackageName().
      */
-    private File getExternalEventHandlerFile(ExternalEventVO eventHandler) {
+    private File getExternalEventHandlerFile(ExternalEvent eventHandler) {
         String fileName = eventHandler.getSimpleName() + EVT_HANDLER_FILE_EXTENSION;
         return new File(storageDir + "/" + eventHandler.getPackageName().replace('.', '/') + "/" + fileName);
     }
@@ -741,7 +700,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * Only for top-level packages, and relies on getPackageName().
      */
-    private File getTaskTemplateFile(TaskVO taskTemplate) {
+    private File getTaskTemplateFile(TaskTemplate taskTemplate) {
         String fileName;
         if (taskTemplate.getVersion() > 0)
             fileName = taskTemplate.getName();  // use asset name
@@ -750,12 +709,12 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return new File(storageDir + "/" + taskTemplate.getPackageName().replace('.', '/') + "/" + fileName);
     }
 
-    public AssetRevision getAssetRevision(RuleSetVO ruleSet) {
+    public AssetRevision getAssetRevision(Asset asset) {
         AssetRevision rev = new AssetRevision();
-        rev.setVersion(ruleSet.getVersion());
+        rev.setVersion(asset.getVersion());
         rev.setModDate(new Date());
         rev.setModUser(user);
-        rev.setComment(ruleSet.getRevisionComment());
+        rev.setComment(asset.getRevisionComment());
         return rev;
     }
 
@@ -768,11 +727,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return rev;
     }
 
-    protected void removeObsoleteTaskActivityAttributes(ActivityVO manualTaskActivity) {
+    protected void removeObsoleteTaskActivityAttributes(Activity manualTaskActivity) {
         if (manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
-            List<AttributeVO> attributes = new ArrayList<AttributeVO>();
+            List<Attribute> attributes = new ArrayList<Attribute>();
             List<String> obsoleteAttributes = Arrays.asList(TaskActivity.ATTRIBUTES_MOVED_TO_TASK_TEMPLATE);
-            for (AttributeVO attribute : manualTaskActivity.getAttributes()) {
+            for (Attribute attribute : manualTaskActivity.getAttributes()) {
                 if (!obsoleteAttributes.contains(attribute.getAttributeName()))
                     attributes.add(attribute);
             }
@@ -780,8 +739,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    protected TaskVO getTask(String processName, ActivityVO manualTaskActivity) {
-        TaskVO task = new TaskVO();
+    protected TaskTemplate getTask(String processName, Activity manualTaskActivity) {
+        TaskTemplate task = new TaskTemplate();
         String logicalId = manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_LOGICAL_ID);
         if (StringHelper.isEmpty(logicalId)) {
             logicalId = processName + ":" + manualTaskActivity.getAttribute(WorkAttributeConstant.LOGICAL_ID);
@@ -836,7 +795,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     // loader api methods
-    public PackageVO loadPackage(Long packageId, boolean deep) throws DataAccessException {
+    public Package loadPackage(Long packageId, boolean deep) throws DataAccessException {
         try {
             PackageDir pkgDir = getPackageDir(packageId);
             return pkgDir == null ? null : loadPackage(pkgDir, deep);
@@ -846,7 +805,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public PackageVO getPackage(String name) throws DataAccessException {
+    public Package getPackage(String name) throws DataAccessException {
         PackageDir pkgDir = getTopLevelPackageDir(name);
         if (pkgDir == null)
             return null;
@@ -870,7 +829,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * this clears the cached package list
      */
-    public synchronized List<PackageVO> getPackageList(boolean deep, ProgressMonitor progressMonitor) throws DataAccessException {
+    public synchronized List<Package> getPackageList(boolean deep, ProgressMonitor progressMonitor) throws DataAccessException {
 
         pkgDirs = null;
         versionControl.clear();
@@ -878,7 +837,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         if (progressMonitor != null)
             progressMonitor.progress(10);
 
-        List<PackageVO> packages = new ArrayList<PackageVO>();
+        List<Package> packages = new ArrayList<Package>();
 
         for (PackageDir pkgDir : getPackageDirs()) {
             try {
@@ -895,8 +854,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return packages;
     }
 
-    public List<ProcessVO> getProcessList() throws DataAccessException {
-        List<ProcessVO> processes = new ArrayList<ProcessVO>();
+    public List<Process> getProcessList() throws DataAccessException {
+        List<Process> processes = new ArrayList<Process>();
         try {
             for (PackageDir pkgDir : getPackageDirs())
                 processes.addAll(loadProcesses(pkgDir, false));
@@ -911,7 +870,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public ProcessVO loadProcess(Long processId, boolean withSubProcesses) throws DataAccessException {
+    public Process loadProcess(Long processId, boolean withSubProcesses) throws DataAccessException {
         File logicalFile = versionControl.getFile(processId);
         if (logicalFile == null)
             return null; // process not found
@@ -927,18 +886,18 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public ProcessVO getProcessBase(Long processId) throws DataAccessException {
+    public Process getProcessBase(Long processId) throws DataAccessException {
         return loadProcess(processId, true);
     }
 
-    public ProcessVO getProcessBase(String name, int version) throws DataAccessException {
-        List<ProcessVO> versions = version == 0 ? new ArrayList<ProcessVO>() : null;
+    public Process getProcessBase(String name, int version) throws DataAccessException {
+        List<Process> versions = version == 0 ? new ArrayList<Process>() : null;
         for (PackageDir pkgDir : getPackageDirs()) {
             for (File procFile : pkgDir.listFiles(procFileFilter)) {
                 String fileName = procFile.getName();
                 if (fileName.substring(0, fileName.length() - PROCESS_FILE_EXTENSION.length()).equals(name)) {
                     try {
-                        ProcessVO process = loadProcess(pkgDir, pkgDir.getAssetFile(procFile), true);
+                        Process process = loadProcess(pkgDir, pkgDir.getAssetFile(procFile), true);
                         if (version == 0) {
                             versions.add(process);
                         }
@@ -955,9 +914,9 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 }
             }
         }
-        ProcessVO found = null;
+        Process found = null;
         if (version == 0 && !versions.isEmpty()) {
-            for (ProcessVO proc : versions) {
+            for (Process proc : versions) {
                 if (found == null || found.getVersion() < proc.getVersion())
                     found = proc;
             }
@@ -965,12 +924,12 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return found;
     }
 
-    public List<RuleSetVO> getRuleSets() throws DataAccessException {
-        List<RuleSetVO> ruleSets = new ArrayList<RuleSetVO>();
+    public List<Asset> getAssets() throws DataAccessException {
+        List<Asset> assets = new ArrayList<Asset>();
         try {
             for (PackageDir pkgDir : getPackageDirs())
-                ruleSets.addAll(loadRuleSets(pkgDir, false));
-            return ruleSets;
+                assets.addAll(loadAssets(pkgDir, false));
+            return assets;
         }
         catch (IOException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
@@ -980,11 +939,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public RuleSetVO getRuleSet(Long id) throws DataAccessException {
+    public Asset getAsset(Long id) throws DataAccessException {
         try {
             File logicalFile = versionControl.getFile(id);
             PackageDir pkgDir = getPackageDir(logicalFile);
-            return loadRuleSet(pkgDir, pkgDir.findAssetFile(logicalFile), true);
+            return loadAsset(pkgDir, pkgDir.findAssetFile(logicalFile), true);
         }
         catch (IOException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
@@ -994,13 +953,13 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public RuleSetVO getRuleSet(String name, String language, int version) throws DataAccessException {
-        for (RuleSetVO ruleSet : getRuleSets()) {
-            if (ruleSet.getName().equals(name) && (ruleSet.getVersion() == version || version == 0)) {
+    public Asset getAsset(String name, String language, int version) throws DataAccessException {
+        for (Asset asset : getAssets()) {
+            if (asset.getName().equals(name) && (asset.getVersion() == version || version == 0)) {
                 try {
-                    File logicalFile = versionControl.getFile(ruleSet.getId());
+                    File logicalFile = versionControl.getFile(asset.getId());
                     PackageDir pkgDir = getPackageDir(logicalFile);
-                    return loadRuleSet(pkgDir, pkgDir.findAssetFile(logicalFile), true);
+                    return loadAsset(pkgDir, pkgDir.findAssetFile(logicalFile), true);
                 }
                 catch (Exception ex) {
                     throw new DataAccessException(ex.getMessage(), ex);
@@ -1010,12 +969,12 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return null;
     }
 
-    public RuleSetVO getRuleSet(Long packageId, String name) throws DataAccessException {
+    public Asset getAsset(Long packageId, String name) throws DataAccessException {
         PackageDir pkgDir = getPackageDir(packageId);
-        for (File ruleSetFile : pkgDir.listFiles(ruleSetFileFilter)) {
-            if (ruleSetFile.getName().equals(name)) {
+        for (File assetFile : pkgDir.listFiles(assetFileFilter)) {
+            if (assetFile.getName().equals(name)) {
                 try {
-                    return loadRuleSet(pkgDir, pkgDir.getAssetFile(ruleSetFile), true);
+                    return loadAsset(pkgDir, pkgDir.getAssetFile(assetFile), true);
                 }
                 catch (IOException ex) {
                     throw new DataAccessException(ex.getMessage(), ex);
@@ -1028,16 +987,16 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return null;
     }
 
-    public RuleSetVO getRuleSetForOwner(String ownerType, Long ownerId) throws DataAccessException {
+    public Asset getAssetForOwner(String ownerType, Long ownerId) throws DataAccessException {
         if (ownerType.equals(OwnerType.PACKAGE)) {
             PackageDir pkgDir = getPackageDir(ownerId);
             try {
-                PackageVO pkgVO = loadPackage(pkgDir, false);
+                Package pkgVO = loadPackage(pkgDir, false);
                 if (pkgVO.getMetaContent() != null) {
-                    RuleSetVO ruleSet = new RuleSetVO();
-                    ruleSet.setLanguage(RuleSetVO.CONFIG);
-                    ruleSet.setRuleSet(pkgVO.getMetaContent());
-                    return ruleSet;
+                    Asset asset = new Asset();
+                    asset.setLanguage(Asset.CONFIG);
+                    asset.setStringContent(pkgVO.getMetaContent());
+                    return asset;
                 }
             }
             catch (Exception ex) {
@@ -1047,17 +1006,17 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return null;
     }
 
-    public List<ActivityImplementorVO> getActivityImplementors() throws DataAccessException {
+    public List<ActivityImplementor> getActivityImplementors() throws DataAccessException {
         try {
-            Map<String,ActivityImplementorVO> impls = new HashMap<String,ActivityImplementorVO>();
+            Map<String,ActivityImplementor> impls = new HashMap<String,ActivityImplementor>();
             for (PackageDir pkgDir : getPackageDirs()) {
-                for (ActivityImplementorVO impl : loadActivityImplementors(pkgDir)) {
+                for (ActivityImplementor impl : loadActivityImplementors(pkgDir)) {
                     if (!impls.containsKey(impl.getImplementorClassName()))
                         impls.put(impl.getImplementorClassName(), impl);
                 }
             }
-            List<ActivityImplementorVO> modifiableList = new ArrayList<ActivityImplementorVO>();
-            modifiableList.addAll(Arrays.asList(impls.values().toArray(new ActivityImplementorVO[0])));
+            List<ActivityImplementor> modifiableList = new ArrayList<ActivityImplementor>();
+            modifiableList.addAll(Arrays.asList(impls.values().toArray(new ActivityImplementor[0])));
             return modifiableList;
         }
         catch (Exception ex) {
@@ -1065,21 +1024,21 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public List<ActivityImplementorVO> getReferencedImplementors(PackageVO packageVO) throws DataAccessException {
+    public List<ActivityImplementor> getReferencedImplementors(Package packageVO) throws DataAccessException {
         PackageDir pkgDir = getPackageDir(packageVO.getId());
         List<String> implClasses = new ArrayList<String>();
         try {
-            for (ProcessVO process : loadProcesses(pkgDir, true)) {
-                for (ActivityVO activity : process.getActivities()) {
+            for (Process process : loadProcesses(pkgDir, true)) {
+                for (Activity activity : process.getActivities()) {
                     String implClass = activity.getImplementorClassName();
                     if (!implClasses.contains(implClass))
                         implClasses.add(implClass);
                 }
             }
-            List<ActivityImplementorVO> referencedImpls = new ArrayList<ActivityImplementorVO>();
-            List<ActivityImplementorVO> allImpls = getActivityImplementors();  // TODO cache these
+            List<ActivityImplementor> referencedImpls = new ArrayList<ActivityImplementor>();
+            List<ActivityImplementor> allImpls = getActivityImplementors();  // TODO cache these
             for (String implClass : implClasses) {
-                for (ActivityImplementorVO impl : allImpls) {
+                for (ActivityImplementor impl : allImpls) {
                     if (impl.getImplementorClassName().equals(implClass)) {
                         referencedImpls.add(impl);
                         break;
@@ -1093,9 +1052,9 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public List<ExternalEventVO> loadExternalEvents() throws DataAccessException {
+    public List<ExternalEvent> loadExternalEvents() throws DataAccessException {
         try {
-            List<ExternalEventVO> evtHandlers = new ArrayList<ExternalEventVO>();
+            List<ExternalEvent> evtHandlers = new ArrayList<ExternalEvent>();
             for (PackageDir pkgDir : getPackageDirs())
                 evtHandlers.addAll(loadExternalEventHandlers(pkgDir));
             return evtHandlers;
@@ -1105,11 +1064,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public List<TaskVO> getTaskTemplates() throws DataAccessException {
+    public List<TaskTemplate> getTaskTemplates() throws DataAccessException {
         try {
-            List<TaskVO> tasks = new ArrayList<TaskVO>();
+            List<TaskTemplate> tasks = new ArrayList<TaskTemplate>();
             for (PackageDir pkgDir : getPackageDirs()) {
-                for (TaskVO pkgTask : loadTaskTemplates(pkgDir)) {
+                for (TaskTemplate pkgTask : loadTaskTemplates(pkgDir)) {
                     // do not load duplicate tasks -- keep only latest
                     if (!tasks.contains(pkgTask))
                         tasks.add(pkgTask);
@@ -1122,8 +1081,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public List<VariableTypeVO> getVariableTypes() throws DataAccessException {
-        List<VariableTypeVO> types = baselineData.getVariableTypes();
+    public List<VariableType> getVariableTypes() throws DataAccessException {
+        List<VariableType> types = baselineData.getVariableTypes();
         return types;
     }
 
@@ -1141,8 +1100,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * uses db loader method to avoid code duplication
      */
-    public List<ProcessVO> findCallingProcesses(ProcessVO subproc) throws DataAccessException {
-        List<ProcessVO> callers = new ArrayList<ProcessVO>();
+    public List<Process> findCallingProcesses(Process subproc) throws DataAccessException {
+        List<Process> callers = new ArrayList<Process>();
         try {
             Pattern singleProcPattern = Pattern.compile(".*Attribute Name=\"processname\" Value=\"[^\"]*" + subproc.getName() + "\".*", Pattern.DOTALL);
             Pattern multiProcPattern = Pattern.compile(".*Attribute Name=\"processmap\" Value=\"[^\"]*" + subproc.getName() + "[^>]*.*", Pattern.DOTALL);
@@ -1150,13 +1109,13 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 for (File procFile : pkgDir.listFiles(procFileFilter)) {
                     String xml = new String(read(procFile));
                     if (singleProcPattern.matcher(xml).matches() || multiProcPattern.matcher(xml).matches()) {
-                        ProcessVO procVO = loadProcess(pkgDir, pkgDir.getAssetFile(procFile), true);
-                        for (ActivityVO activity : procVO.getActivities()) {
+                        Process procVO = loadProcess(pkgDir, pkgDir.getAssetFile(procFile), true);
+                        for (Activity activity : procVO.getActivities()) {
                             if (activityInvokesProcess(activity, subproc) && !callers.contains(procVO))
                                 callers.add(procVO);
                         }
-                        for (ProcessVO embedded : procVO.getSubProcesses()) {
-                            for (ActivityVO activity : embedded.getActivities()) {
+                        for (Process embedded : procVO.getSubProcesses()) {
+                            for (Activity activity : embedded.getActivities()) {
                                 if (activityInvokesProcess(activity, subproc) && !callers.contains(procVO))
                                     callers.add(procVO);
                             }
@@ -1174,14 +1133,14 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * uses db loader method to avoid code duplication
      */
-    public List<ProcessVO> findCalledProcesses(ProcessVO mainproc) throws DataAccessException {
+    public List<Process> findCalledProcesses(Process mainproc) throws DataAccessException {
         // make sure process is loaded
         mainproc = loadProcess(mainproc.getId(), false);
         return findInvoked(mainproc, getProcessList());
     }
 
-    public List<ProcessVO> getProcessListForImplementor(Long implementorId, String implementorClass) throws DataAccessException {
-        List<ProcessVO> processes = new ArrayList<ProcessVO>();
+    public List<Process> getProcessListForImplementor(Long implementorId, String implementorClass) throws DataAccessException {
+        List<Process> processes = new ArrayList<Process>();
         try {
             String implDecl = "Implementation=\"" + implementorClass + "\"";  // crude but fast
             for (PackageDir pkgDir : getPackageDirs()) {
@@ -1208,7 +1167,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * Only for top-level packages.
      */
-    public Long persistPackage(PackageVO packageVO, PersistType persistType) throws DataAccessException {
+    public Long persistPackage(Package packageVO, PersistType persistType) throws DataAccessException {
         try {
             PackageDir pkgDir;
             if (persistType == PersistType.NEW_VERSION || persistType == PersistType.CREATE_JSON) {
@@ -1273,7 +1232,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             throw new DataAccessException("Cannot rename archived package: " + oldPkgDir);
         File newPkg = new File(storageDir + "/" + newName);
         try {
-            PackageVO pkg = loadPackage(packageId, false);
+            Package pkg = loadPackage(packageId, false);
             pkg.setName(newName);
             pkg.setVersion(newVersion);
             save(pkg, oldPkgDir, false); // at this point package.xml name doesn't match oldPkgDir
@@ -1310,7 +1269,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * Saves to top-level package.  Expects process.getPackageName() to be set.
      * This has the side effect of archiving the process's package if a new version is being saved.
      */
-    public Long persistProcess(ProcessVO process, PersistType persistType) throws DataAccessException {
+    public Long persistProcess(Process process, PersistType persistType) throws DataAccessException {
         try {
             PackageDir pkgDir = getTopLevelPackageDir(process.getPackageName());
             if (persistType == PersistType.NEW_VERSION) {
@@ -1340,7 +1299,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
             File existFile = pkgDir.findAssetFile(logicalFile);
-            ProcessVO proc = loadProcess(pkgDir, pkgDir.getAssetFile(existFile), true);
+            Process proc = loadProcess(pkgDir, pkgDir.getAssetFile(existFile), true);
             proc.setName(newName);
             proc.setVersion(newVersion);
             save(proc, pkgDir); // update version and name
@@ -1358,7 +1317,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public void deleteProcess(ProcessVO process) throws DataAccessException {
+    public void deleteProcess(Process process) throws DataAccessException {
         deleteProcess(process.getId());
     }
 
@@ -1390,7 +1349,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         File logicalFile = versionControl.getFile(processId);
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
-            ProcessVO process = loadProcess(pkgDir, pkgDir.findAssetFile(logicalFile), true);
+            Process process = loadProcess(pkgDir, pkgDir.findAssetFile(logicalFile), true);
             PackageDir newPkgDir = getPackageDir(packageId);
             File newFile = new File(newPkgDir + "/" + process.getName() + PROCESS_FILE_EXTENSION);
             save(process, newPkgDir);
@@ -1412,11 +1371,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * Saves to top-level package.  Expects getPackageName() to be set.
      */
-    public Long createRuleSet(RuleSetVO ruleSet) throws DataAccessException {
+    public Long createAsset(Asset asset) throws DataAccessException {
         try {
-          ruleSet.setVersion(1);
-          long id = save(ruleSet, getTopLevelPackageDir(ruleSet.getPackageName()));
-          ruleSet.setId(id);
+          asset.setVersion(1);
+          long id = save(asset, getTopLevelPackageDir(asset.getPackageName()));
+          asset.setId(id);
           return id;
         }
         catch (IOException ex) {
@@ -1427,28 +1386,28 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * asset is saved locally; just update the version
      */
-    public void updateRuleSet(RuleSetVO ruleSet) throws DataAccessException {
+    public void updateAsset(Asset asset) throws DataAccessException {
         try {
-            versionControl.setRevision(getRuleSetFile(ruleSet), getAssetRevision(ruleSet));
+            versionControl.setRevision(getAssetFile(asset), getAssetRevision(asset));
         }
         catch (IOException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
     }
 
-    public void renameRuleSet(RuleSetVO ruleset, String newName) throws DataAccessException  {
-        File logicalFile = versionControl.getFile(ruleset.getId());
+    public void renameAsset(Asset asset, String newName) throws DataAccessException  {
+        File logicalFile = versionControl.getFile(asset.getId());
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
             File oldFile = pkgDir.findAssetFile(logicalFile);
             File newFile = new File(oldFile.getParentFile() + "/" + newName);
             rename(oldFile, newFile);
-            ruleset.setName(newName);
-            versionControl.setRevision(getRuleSetFile(ruleset), getAssetRevision(ruleset));
+            asset.setName(newName);
+            versionControl.setRevision(getAssetFile(asset), getAssetRevision(asset));
             versionControl.clearId(logicalFile);
-            versionControl.setRevision(newFile, getAssetRevision(ruleset.getVersion(), "Renamed from " + oldFile));
-            RuleSetVO newRuleSet = loadRuleSet(pkgDir, pkgDir.getAssetFile(newFile), false); // prime
-            ruleset.setId(newRuleSet.getId());
+            versionControl.setRevision(newFile, getAssetRevision(asset.getVersion(), "Renamed from " + oldFile));
+            Asset newAsset = loadAsset(pkgDir, pkgDir.getAssetFile(newFile), false); // prime
+            asset.setId(newAsset.getId());
         }
         catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
@@ -1456,18 +1415,18 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     /**
-     * may have already been deleted by removeRuleSetFromPackage()
+     * may have already been deleted by removeAssetFromPackage()
      */
-    public void deleteRuleSet(Long ruleSetId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(ruleSetId);
+    public void deleteAsset(Long assetId) throws DataAccessException {
+        File logicalFile = versionControl.getFile(assetId);
         if (logicalFile != null) {
             PackageDir pkgDir = getPackageDir(logicalFile);
             try {
-                File ruleSetFile = pkgDir.findAssetFile(logicalFile);
-                if (ruleSetFile.exists()) {
-                    delete(ruleSetFile);
+                File assetFile = pkgDir.findAssetFile(logicalFile);
+                if (assetFile.exists()) {
+                    delete(assetFile);
                     versionControl.clearId(logicalFile);
-                    versionControl.deleteRev(ruleSetFile);
+                    versionControl.deleteRev(assetFile);
                 }
             }
             catch (IOException ex) {
@@ -1477,19 +1436,19 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     /**
-     * in move scenario, must be called before removeRuleSetFromPackage()
+     * in move scenario, must be called before removeAssetFromPackage()
      */
-    public long addRuleSetToPackage(Long ruleSetId, Long packageId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(ruleSetId);
+    public long addAssetToPackage(Long assetId, Long packageId) throws DataAccessException {
+        File logicalFile = versionControl.getFile(assetId);
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
             AssetFile existFile = pkgDir.findAssetFile(logicalFile);
-            RuleSetVO asset = loadRuleSet(pkgDir, existFile, true);
+            Asset asset = loadAsset(pkgDir, existFile, true);
             PackageDir newPkgDir = getPackageDir(packageId);
             File newFile = new File(newPkgDir + "/" + existFile.getName());
             save(asset, newPkgDir);
             versionControl.setRevision(newFile, getAssetRevision(asset.getVersion(), null));
-            return loadRuleSet(newPkgDir, newPkgDir.getAssetFile(newFile), false).getId();
+            return loadAsset(newPkgDir, newPkgDir.getAssetFile(newFile), false).getId();
         }
         catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
@@ -1497,16 +1456,16 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     /**
-     * file may have been deleted in deleteRuleSet()
+     * file may have been deleted in deleteAsset()
      */
-    public void removeRuleSetFromPackage(Long ruleSetId, Long packageId) throws DataAccessException {
-        deleteRuleSet(ruleSetId);
+    public void removeAssetFromPackage(Long assetId, Long packageId) throws DataAccessException {
+        deleteAsset(assetId);
     }
 
     /**
      * Saves to top-level package.  Expects getPackageName() to be set.
      */
-    public Long createActivityImplementor(ActivityImplementorVO implementor) throws DataAccessException {
+    public Long createActivityImplementor(ActivityImplementor implementor) throws DataAccessException {
         try {
             return save(implementor, getTopLevelPackageDir(implementor.getPackageName()));
         }
@@ -1518,7 +1477,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public void updateActivityImplementor(ActivityImplementorVO implementor) throws DataAccessException {
+    public void updateActivityImplementor(ActivityImplementor implementor) throws DataAccessException {
         createActivityImplementor(implementor);
     }
 
@@ -1550,7 +1509,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         File logicalFile = versionControl.getFile(activityImplId);
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
-            ActivityImplementorVO implementor = loadActivityImplementor(pkgDir, pkgDir.findAssetFile(logicalFile));
+            ActivityImplementor implementor = loadActivityImplementor(pkgDir, pkgDir.findAssetFile(logicalFile));
             PackageDir newPkgDir = getPackageDir(packageId);
             File newFile = new File(newPkgDir + "/" + implementor.getSimpleName() + IMPL_FILE_EXTENSION);
             implementor.setPackageName(newPkgDir.getPackageName());  // required for save()
@@ -1572,7 +1531,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * Saves to top-level package.  Expects getPackageName() to be set.
      */
-    public void createExternalEvent(ExternalEventVO eventHandler) throws DataAccessException {
+    public void createExternalEvent(ExternalEvent eventHandler) throws DataAccessException {
         try {
             save(eventHandler, getTopLevelPackageDir(eventHandler.getPackageName()));
         }
@@ -1584,7 +1543,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public void updateExternalEvent(ExternalEventVO eventHandler) throws DataAccessException {
+    public void updateExternalEvent(ExternalEvent eventHandler) throws DataAccessException {
         createExternalEvent(eventHandler);
     }
 
@@ -1616,7 +1575,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         File logicalFile = versionControl.getFile(externalEventId);
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
-            ExternalEventVO eventHandler = loadExternalEventHandler(pkgDir, pkgDir.findAssetFile(logicalFile));
+            ExternalEvent eventHandler = loadExternalEventHandler(pkgDir, pkgDir.findAssetFile(logicalFile));
             PackageDir newPkgDir = getPackageDir(packageId);
             File newFile = new File(newPkgDir + "/" + eventHandler.getSimpleName() + EVT_HANDLER_FILE_EXTENSION);
             eventHandler.setPackageName(newPkgDir.getPackageName());  // required for save()
@@ -1638,7 +1597,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * Saves to top-level package.  Expects getPackageName() to be set.
      */
-    public void createTaskTemplate(TaskVO taskTemplate) throws DataAccessException {
+    public void createTaskTemplate(TaskTemplate taskTemplate) throws DataAccessException {
         try {
             save(taskTemplate, getTopLevelPackageDir(taskTemplate.getPackageName()));
         }
@@ -1671,7 +1630,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public void updateTaskTemplate(TaskVO taskTemplate) throws DataAccessException {
+    public void updateTaskTemplate(TaskTemplate taskTemplate) throws DataAccessException {
         createTaskTemplate(taskTemplate);
     }
 
@@ -1682,7 +1641,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         File logicalFile = versionControl.getFile(taskId);
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
-            TaskVO taskTemplate = loadTaskTemplate(pkgDir, pkgDir.findAssetFile(logicalFile));
+            TaskTemplate taskTemplate = loadTaskTemplate(pkgDir, pkgDir.findAssetFile(logicalFile));
             PackageDir newPkgDir = getPackageDir(packageId);
             File newFile = new File(pkgDir + "/" + taskTemplate.getTaskName() + TASK_TEMPLATE_FILE_EXTENSION);
             taskTemplate.setPackageName(newPkgDir.getPackageName());
@@ -1719,14 +1678,14 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     public void setAttributes(String owner, Long ownerId, Map<String,String> attributes) throws DataAccessException {
     }
 
-    public boolean activityInvokesProcess(ActivityVO activity, ProcessVO subproc) {
+    public boolean activityInvokesProcess(Activity activity, Process subproc) {
         String procName = activity.getAttribute(WorkAttributeConstant.PROCESS_NAME);
         if (procName != null && (procName.equals(subproc.getName()) || procName.endsWith("/" + subproc.getName()))) {
             String verSpec = activity.getAttribute(WorkAttributeConstant.PROCESS_VERSION);
             try {
                 // compatibility
                 int ver = Integer.parseInt(verSpec);
-                verSpec = RuleSetVO.formatVersion(ver);
+                verSpec = Asset.formatVersion(ver);
             }
             catch (NumberFormatException ex) {}
 
@@ -1744,7 +1703,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                         try {
                             // compatibility
                             int ver = Integer.parseInt(verSpec);
-                            verSpec = RuleSetVO.formatVersion(ver);
+                            verSpec = Asset.formatVersion(ver);
                         }
                         catch (NumberFormatException ex) {}
 
@@ -1757,10 +1716,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return false;
     }
 
-    public List<ProcessVO> findInvoked(ProcessVO caller, List<ProcessVO> processes) {
-        List<ProcessVO> called = new ArrayList<ProcessVO>();
+    public List<Process> findInvoked(Process caller, List<Process> processes) {
+        List<Process> called = new ArrayList<Process>();
         if (caller.getActivities() != null) {
-            for (ActivityVO activity : caller.getActivities()) {
+            for (Activity activity : caller.getActivities()) {
                 String procName = activity.getAttribute(WorkAttributeConstant.PROCESS_NAME);
                 if (procName != null) {
                     String verSpec = activity.getAttribute(WorkAttributeConstant.PROCESS_VERSION);
@@ -1768,12 +1727,12 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                         try {
                             // compatibility
                             int ver = Integer.parseInt(verSpec);
-                            verSpec = RuleSetVO.formatVersion(ver);
+                            verSpec = Asset.formatVersion(ver);
                         }
                         catch (NumberFormatException ex) {}
 
-                        ProcessVO latestMatch = null;
-                        for (ProcessVO process : processes) {
+                        Process latestMatch = null;
+                        for (Process process : processes) {
                             if ((procName.equals(process.getName()) || procName.endsWith("/" + process.getName()))
                             && (process.meetsVersionSpec(verSpec) && (latestMatch == null || latestMatch.getVersion() < process.getVersion()))) {
                                 latestMatch = process;
@@ -1795,12 +1754,12 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                                     try {
                                         // compatibility
                                         int ver = Integer.parseInt(verSpec);
-                                        verSpec = RuleSetVO.formatVersion(ver);
+                                        verSpec = Asset.formatVersion(ver);
                                     }
                                     catch (NumberFormatException ex) {}
 
-                                ProcessVO latestMatch = null;
-                                for (ProcessVO process : processes) {
+                                Process latestMatch = null;
+                                for (Process process : processes) {
                                     if ((nameSpec.equals(process.getName()) || nameSpec.endsWith("/" + process.getName()))
                                       && (process.meetsVersionSpec(verSpec) && (latestMatch == null || latestMatch.getVersion() < process.getVersion()))) {
                                         latestMatch = process;

@@ -3,9 +3,9 @@
  */
 package com.centurylink.mdw.services.pooling;
 
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.property.PropertyUtil;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.config.PropertyUtil;
 
 public abstract class Config {
     

@@ -4,13 +4,13 @@
 package com.centurylink.mdw.workflow.activity.event;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 @Tracked(LogLevel.TRACE)

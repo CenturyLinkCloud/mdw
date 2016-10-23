@@ -25,20 +25,20 @@ import org.springframework.jms.core.MessageCreator;
 import org.w3c.dom.Document;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.JMSServices;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.data.monitor.CertifiedMessage;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.model.monitor.CertifiedMessage;
+import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.services.event.CertifiedMessageManager;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.JMSServices;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
 
 

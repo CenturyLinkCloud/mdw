@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.adapter;
 
-import com.centurylink.mdw.model.value.attribute.AttributeVO;
+import com.centurylink.mdw.model.attribute.Attribute;
 
 public class SimulationResponse {
 
@@ -11,9 +11,9 @@ public class SimulationResponse {
     private String returnCode;
     private Integer chance;
     private String response;
-    private AttributeVO attr;
+    private Attribute attr;
     
-    public SimulationResponse(AttributeVO attr) {
+    public SimulationResponse(Attribute attr) {
         this(attr.getAttributeValue());
         this.attr = attr;
     }
@@ -90,11 +90,11 @@ public class SimulationResponse {
         this.updateAttr();
     }
 
-    public AttributeVO getAttribute() {
+    public Attribute getAttribute() {
         return attr;
     }
 
-    public void setAttribute(AttributeVO attr) {
+    public void setAttribute(Attribute attr) {
         this.attr = attr;
         this.updateAttr();
     }

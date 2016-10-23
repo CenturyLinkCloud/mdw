@@ -12,11 +12,10 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserServices;
-import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,7 +38,7 @@ public class AuthenticatedUser extends JsonRestService {
      */
     @Override
     @ApiOperation(value="Retrieves the user as authenticated by MDW",
-        response=UserVO.class)
+        response=User.class)
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         // we trust this header value because only MDW set it
         String authUser = (String)headers.get(Listener.AUTHENTICATED_USER_HEADER);
@@ -47,7 +46,7 @@ public class AuthenticatedUser extends JsonRestService {
             if (authUser == null)
                 throw new ServiceException("Missing parameter: " + Listener.AUTHENTICATED_USER_HEADER);
             UserServices userServices = ServiceLocator.getUserServices();
-            UserVO userVO = userServices.getUser(authUser);
+            User userVO = userServices.getUser(authUser);
             return userVO.getJsonWithRoles();
         }
         catch (Exception ex) {

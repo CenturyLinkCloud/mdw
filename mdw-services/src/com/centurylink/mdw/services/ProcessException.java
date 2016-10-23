@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.services;
 
-import com.centurylink.mdw.common.exception.MDWException;
+import com.centurylink.mdw.common.MDWException;
 
 /**
  *

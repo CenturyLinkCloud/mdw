@@ -14,37 +14,37 @@ import org.apache.xmlbeans.XmlOptions;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.bpm.WorkTypeDocument.WorkType;
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.constant.ActivityResultCodeConstant;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.VariableConstants;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.constant.ActivityResultCodeConstant;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.VariableConstants;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.listener.ExternalEventHandlerBase;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.VariableVO;
-import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
+import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.Action;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.Parameter;
+import com.centurylink.mdw.service.data.task.TaskDataAccess;
+import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.UserManager;
-import com.centurylink.mdw.services.dao.task.TaskDAO;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
 
@@ -62,10 +62,10 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                 String actionType = getActionParam(action, "mdw.Action", true);
                 if (actionType.equals("Launch")) {
                     Long processId = new Long(getActionParam(action, "mdw.DefinitionId", true));
-                    ProcessVO procdef = getProcessDefinition(processId);
+                    Process procdef = getProcessDefinition(processId);
                     if (procdef == null)
                         throw new EventHandlerException("Process Definition not found for ID: " + processId);
-                    PackageVO pkg = PackageVOCache.getProcessPackage(processId);
+                    Package pkg = PackageCache.getProcessPackage(processId);
                     if (pkg != null && !pkg.isDefaultPackage())
                         setPackage(pkg); // prefer process package over default of EventHandler
                     String masterRequestId = getActionParam(action, "mdw.MasterRequestId", true);
@@ -97,7 +97,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                           }
                         }
                     }
-                    VariableVO requestVar = procdef.getVariable(VariableConstants.REQUEST);
+                    Variable requestVar = procdef.getVariable(VariableConstants.REQUEST);
                     DocumentReference docRef = createDocument(owner, ownerId, actionRequestDocument, requestVar == null ? null : requestVar.getVariableType());
                     if (synchronous) {
                         return invokeServiceProcess(processId, docRef.getDocumentId(), masterRequestId, msg, processParams, responseVarName, 0);
@@ -124,8 +124,8 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                 Long definitionId = new Long(getActionParam(action, "mdw.DefinitionId", true));
                 Long instanceId = new Long(getActionParam(action, "mdw.InstanceId", true));
                 EventManager eventMgr = ServiceLocator.getEventManager();
-                ActivityInstanceVO actInstVO = eventMgr.getActivityInstance(instanceId);
-                ProcessInstanceVO procInstVO = eventMgr.getProcessInstance(actInstVO.getOwnerId());
+                ActivityInstance actInstVO = eventMgr.getActivityInstance(instanceId);
+                ProcessInstance procInstVO = eventMgr.getProcessInstance(actInstVO.getOwnerId());
 
                 if (actionType.equals(ActivityResultCodeConstant.RESULT_RETRY)) {
                     checkProcessInstanceStatus(procInstVO, actionType);
@@ -156,7 +156,6 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                 else {
                     String taskName = getActionParam(action, "mdw.TaskName", true);
                     String masterRequestId = getActionParam(action, "mdw.MasterRequestId", true);
-                    String dbUrl = getActionParam(action, "mdw.DbUrl", true);
                     int n = taskName.length();
                     int k = 0;
                     if (n > 3 && taskName.charAt(n - 3) == '[' &&
@@ -165,10 +164,10 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                         k = Integer.parseInt(taskName.substring(n - 2, n - 1));
                         taskName = taskName.substring(0, n - 3);
                     }
-                    TaskVO taskVo = TaskTemplateCache.getTemplateForName(taskName);
+                    TaskTemplate taskVo = TaskTemplateCache.getTemplateForName(taskName);
                     if (taskVo == null)
                         return createErrorResponse("Task definition not found for: '" + taskName + "'");
-                    List<Long> tiList = new TaskDAO(new DatabaseAccess(null)).findTaskInstance(taskVo.getTaskId(), masterRequestId);
+                    List<Long> tiList = new TaskDataAccess(new DatabaseAccess(null)).findTaskInstance(taskVo.getTaskId(), masterRequestId);
                     if (tiList.size() < k + 1)
                         return createErrorResponse("Cannot find the task instance for masterRequestId: " + masterRequestId + " and name: '" + taskName + "'");
                     taskInstanceId = tiList.get(k);
@@ -190,7 +189,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
 
     }
 
-    private void checkProcessInstanceStatus(ProcessInstanceVO processInstanceVO, String action) throws MDWException {
+    private void checkProcessInstanceStatus(ProcessInstance processInstanceVO, String action) throws MDWException {
         int statusCode = processInstanceVO.getStatusCode();
         if (statusCode == WorkStatus.STATUS_COMPLETED.intValue())
             throw new MDWException("Cannot perform action " + action + " on Completed process instance ID: " + processInstanceVO.getId());

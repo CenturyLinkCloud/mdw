@@ -8,8 +8,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.xmlbeans.XmlObject;
 
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.model.listener.Listener;
 

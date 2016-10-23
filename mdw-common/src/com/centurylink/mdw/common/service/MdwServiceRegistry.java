@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.centurylink.mdw.model.data.monitor.ScheduledJob;
+import com.centurylink.mdw.model.monitor.ScheduledJob;
 
 public class MdwServiceRegistry extends ServiceRegistry {
 

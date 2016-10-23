@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.utilities.HttpHelper;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 
 @Tracked(LogLevel.TRACE)
 public class MultiRestServiceAdapter extends RestServiceAdapter {

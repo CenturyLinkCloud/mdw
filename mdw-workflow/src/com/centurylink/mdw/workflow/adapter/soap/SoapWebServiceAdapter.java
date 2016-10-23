@@ -22,14 +22,14 @@ import javax.xml.transform.TransformerException;
 import org.w3c.dom.Node;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
-import com.centurylink.mdw.common.utilities.HttpHelper;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.StringDocument;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
+import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter;
 import com.centurylink.mdw.xml.DomHelper;
 

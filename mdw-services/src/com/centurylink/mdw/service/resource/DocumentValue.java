@@ -9,21 +9,21 @@ import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.exception.DataAccessException;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.TextService;
 import com.centurylink.mdw.common.service.XmlService;
-import com.centurylink.mdw.common.translator.SelfSerializable;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.variable.DocumentVO;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.service.Resource;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.translator.SelfSerializable;
+import com.centurylink.mdw.translator.VariableTranslator;
 
 public class DocumentValue implements TextService, XmlService, JsonService {
 
@@ -34,7 +34,7 @@ public class DocumentValue implements TextService, XmlService, JsonService {
      * Gets the straight value as text.
      */
     public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        DocumentVO docVO = getDocumentVO(parameters);
+        Document docVO = getDocumentVO(parameters);
         if (docVO.getDocumentType().equals(Object.class.getName())) {
             Object obj = VariableTranslator.realToObject(getPackageVO(docVO), "java.lang.Object", docVO.getContent());
             return obj.toString();
@@ -46,7 +46,7 @@ public class DocumentValue implements TextService, XmlService, JsonService {
      * Gets the type info.
      */
     public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        DocumentVO docVO = getDocumentVO(parameters);
+        Document docVO = getDocumentVO(parameters);
         JSONObject json = new JSONObject();
         try {
             json.put("className", docVO.getDocumentType());
@@ -67,7 +67,7 @@ public class DocumentValue implements TextService, XmlService, JsonService {
      * Gets the type info.
      */
     public String getXml(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        DocumentVO docVO = getDocumentVO(parameters);
+        Document docVO = getDocumentVO(parameters);
         Resource resDoc = Resource.Factory.newInstance();
         Parameter className = resDoc.addNewParameter();
         className.setName("className");
@@ -83,14 +83,14 @@ public class DocumentValue implements TextService, XmlService, JsonService {
         return resDoc.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2));
     }
 
-    private DocumentVO getDocumentVO(Map<String,Object> parameters) throws ServiceException {
+    private Document getDocumentVO(Map<String,Object> parameters) throws ServiceException {
         try {
             Object docId = parameters.get(PARAM_DOC_ID);
             if (docId == null)
                 throw new ServiceException("Missing parameter: id is required.");
 
             EventManager eventMgr = ServiceLocator.getEventManager();
-            DocumentVO docVO = eventMgr.getDocumentVO(new Long(docId.toString()));
+            Document docVO = eventMgr.getDocumentVO(new Long(docId.toString()));
             if (docVO.getDocumentType() == null)
                 docVO.setDocumentType(parameters.get(PARAM_DOC_TYPE) == null ? null : parameters.get(PARAM_DOC_TYPE).toString());
             if (docVO.getDocumentType() == null)
@@ -102,11 +102,11 @@ public class DocumentValue implements TextService, XmlService, JsonService {
         }
     }
 
-    private PackageVO getPackageVO(DocumentVO docVO) throws ServiceException {
+    private Package getPackageVO(Document docVO) throws ServiceException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
-            ProcessInstanceVO procInstVO = eventMgr.getProcessInstance(docVO.getOwnerId());
-            return PackageVOCache.getProcessPackage(procInstVO.getProcessId());
+            ProcessInstance procInstVO = eventMgr.getProcessInstance(docVO.getOwnerId());
+            return PackageCache.getProcessPackage(procInstVO.getProcessId());
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);

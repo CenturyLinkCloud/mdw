@@ -5,12 +5,12 @@ package com.centurylink.mdw.service.resource;
 
 import java.util.Map;
 
-import com.centurylink.mdw.common.ApplicationContext;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.TextService;
-import com.centurylink.mdw.common.system.SystemUtil;
 import com.centurylink.mdw.container.ThreadPoolProvider;
-import com.centurylink.mdw.container.plugins.CommonThreadPool;
+import com.centurylink.mdw.container.plugin.CommonThreadPool;
+import com.centurylink.mdw.system.SystemUtil;
 
 public class SystemInfo implements TextService {
 

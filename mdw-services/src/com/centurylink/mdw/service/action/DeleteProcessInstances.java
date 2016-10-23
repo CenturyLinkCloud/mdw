@@ -9,11 +9,11 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.model.value.process.ProcessList;
+import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.services.ProcessServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class DeleteProcessInstances implements JsonService {
 

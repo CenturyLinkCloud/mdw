@@ -3,18 +3,18 @@
  */
 package com.centurylink.mdw.services.task.factory;
 
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.exception.StrategyException;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.common.service.RegisteredService;
-import com.centurylink.mdw.common.task.TaskServiceRegistry;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.observer.task.PrioritizationStrategy;
 import com.centurylink.mdw.observer.task.RoutingStrategy;
 import com.centurylink.mdw.observer.task.SubTaskStrategy;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.task.types.TaskServiceRegistry;
 
 public class TaskInstanceStrategyFactory {
 
@@ -56,7 +56,7 @@ public class TaskInstanceStrategyFactory {
      * @throws StrategyException
      */
     public static RoutingStrategy getRoutingStrategy(String attributeValue, Long processInstanceId) throws StrategyException {
-        PackageVO packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
+        Package packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
         TaskInstanceStrategyFactory factory = getInstance();
         String className = factory.getStrategyClassName(attributeValue, StrategyType.RoutingStrategy);
         RoutingStrategy strategy = (RoutingStrategy) factory.getStrategyInstance(RoutingStrategy.class, className, packageVO);
@@ -83,7 +83,7 @@ public class TaskInstanceStrategyFactory {
      * @return the subtask strategy implementor instance
      */
     public static SubTaskStrategy getSubTaskStrategy(String attributeValue, Long processInstanceId) throws StrategyException {
-        PackageVO packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
+        Package packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
         TaskInstanceStrategyFactory factory = getInstance();
         String className = factory.getStrategyClassName(attributeValue, StrategyType.SubTaskStrategy);
         SubTaskStrategy strategy = (SubTaskStrategy) factory.getStrategyInstance(SubTaskStrategy.class, className, packageVO);
@@ -110,7 +110,7 @@ public class TaskInstanceStrategyFactory {
      * @return the Prioritization strategy implementor instance
      */
     public static PrioritizationStrategy getPrioritizationStrategy(String attributeValue, Long processInstanceId) throws StrategyException {
-        PackageVO packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
+        Package packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
         TaskInstanceStrategyFactory factory = getInstance();
         String className = factory.getStrategyClassName(attributeValue, StrategyType.PrioritizationStrategy);
         PrioritizationStrategy strategy = (PrioritizationStrategy) factory.getStrategyInstance(PrioritizationStrategy.class, className, packageVO);
@@ -134,13 +134,13 @@ public class TaskInstanceStrategyFactory {
      * @return the strategy implementor instance
      */
     public static AutoAssignStrategy getAutoAssignStrategy(String logicalName, Long processInstanceId) throws StrategyException {
-        PackageVO packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
+        Package packageVO = processInstanceId == null ? null : getPackage(processInstanceId);
         TaskInstanceStrategyFactory factory = getInstance();
         String className = factory.getStrategyClassName(logicalName, StrategyType.AutoAssignStrategy);
         return (AutoAssignStrategy) factory.getStrategyInstance(AutoAssignStrategy.class, className, packageVO);
     }
 
-    public Object getStrategyInstance(Class<? extends RegisteredService> strategyInterface, String strategyClassName, PackageVO packageVO) throws StrategyException {
+    public Object getStrategyInstance(Class<? extends RegisteredService> strategyInterface, String strategyClassName, Package packageVO) throws StrategyException {
         try {
             TaskServiceRegistry registry = TaskServiceRegistry.getInstance();
             // cloud mode
@@ -181,11 +181,11 @@ public class TaskInstanceStrategyFactory {
      * @param processInstanceId
      * @return
      */
-    private static PackageVO getPackage(Long processInstanceId) {
+    private static Package getPackage(Long processInstanceId) {
         try {
             EventManager eventManager = ServiceLocator.getEventManager();
-            ProcessVO process = eventManager.findProcessByProcessInstanceId(processInstanceId);
-            PackageVO packageVO = PackageVOCache.getProcessPackage(process.getId());
+            Process process = eventManager.findProcessByProcessInstanceId(processInstanceId);
+            Package packageVO = PackageCache.getProcessPackage(process.getId());
             return packageVO;
         }
         catch (Exception ex) {

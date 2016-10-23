@@ -6,7 +6,7 @@ package com.centurylink.mdw.monitor;
 import java.util.Map;
 
 import com.centurylink.mdw.common.service.RegisteredService;
-import com.centurylink.mdw.model.value.process.ProcessRuntimeContext;
+import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 
 /**
  * Process monitors can be registered through @RegisteredService annotations to get

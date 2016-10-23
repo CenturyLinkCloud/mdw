@@ -5,7 +5,7 @@ package com.centurylink.mdw.monitor.impl;
 
 import java.util.Map;
 
-import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.monitor.ActivityMonitor;
 
 public class ActivityTraceMonitor extends Monitor implements ActivityMonitor {

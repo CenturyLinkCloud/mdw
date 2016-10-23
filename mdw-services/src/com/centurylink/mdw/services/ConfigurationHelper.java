@@ -7,12 +7,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
 
+import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument;
-import com.centurylink.mdw.common.Compatibility;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.services.cache.CacheRegistration;
+import com.centurylink.mdw.util.log.LoggerUtil;
 
 public class ConfigurationHelper implements Serializable{
 

@@ -17,27 +17,27 @@ import javax.mail.internet.InternetAddress;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.email.ProcessEmailModel;
-import com.centurylink.mdw.common.email.TemplatedEmail;
-import com.centurylink.mdw.common.exception.CachingException;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.file.WildcardFilenameFilter;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.value.user.UserGroupVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
+import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.email.ProcessEmailModel;
+import com.centurylink.mdw.email.TemplatedEmail;
+import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserException;
 import com.centurylink.mdw.services.UserManager;
-import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.file.WildcardFilenameFilter;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 /**
@@ -213,11 +213,11 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
             throw new ActivityException("Recipient parameter '" + varName + "' value is null");
         }
 //        String recipParamType = getParameterType(varName);
-        VariableInstanceInfo var = super.getVariableInstance(varName);
+        VariableInstance var = super.getVariableInstance(varName);
         String recipParamType = var.getType();
         if (recipParamType.equals("java.lang.String")) {
             String recip = (String) recipParam;
-            UserGroupVO group = null;
+            Workgroup group = null;
             try {
                 group = UserGroupCache.getWorkgroup(recip);
             }
@@ -240,7 +240,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
             List<Address> addresses = new ArrayList<Address>();
             String[] recips = (String[]) recipParam;
             for (String recip : recips) {
-                UserGroupVO group = null;
+                Workgroup group = null;
                 try {
                     group = UserGroupCache.getWorkgroup(recip);
                 }

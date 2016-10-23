@@ -7,20 +7,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
-import com.centurylink.mdw.model.value.requests.Request;
-import com.centurylink.mdw.model.value.requests.RequestCount;
-import com.centurylink.mdw.model.value.requests.RequestList;
+import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.request.RequestCount;
+import com.centurylink.mdw.model.request.RequestList;
+import com.centurylink.mdw.service.data.RequestDataAccess;
 import com.centurylink.mdw.services.RequestServices;
-import com.centurylink.mdw.services.dao.RequestsDAO;
 
 public class RequestServicesImpl implements RequestServices {
 
-    private RequestsDAO getDAO() {
-        return new RequestsDAO();
+    private RequestDataAccess getDAO() {
+        return new RequestDataAccess();
     }
 
     protected AggregateDataAccessVcs getAggregateDataAccess() throws DataAccessException {

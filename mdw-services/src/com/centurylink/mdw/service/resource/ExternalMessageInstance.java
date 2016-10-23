@@ -19,7 +19,6 @@ public class ExternalMessageInstance implements JsonService {
         String activityInstId = (String)parameters.get("activityInstId");
         if (activityInstId == null)
             throw new ServiceException("Missing parameter: activityInstId");
-        String eventInstId = (String)parameters.get("eventInstId");
 
         // TODO: needed by Designer
 

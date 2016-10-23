@@ -5,7 +5,7 @@ package com.centurylink.mdw.java;
 
 import java.util.Map;
 
-import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 
 public interface JavaExecutor {
 

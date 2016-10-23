@@ -4,9 +4,9 @@
 package com.centurylink.mdw.workflow.activity.process;
 
 import com.centurylink.mdw.activity.types.FinishActivity;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.data.event.EventType;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 

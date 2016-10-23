@@ -3,18 +3,13 @@
  */
 package com.centurylink.mdw.workflow.activity.script;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.ScriptActivity;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 /**
@@ -45,15 +40,7 @@ public class ScriptExecutorActivity extends DefaultActivityImpl implements Scrip
                 throw new  ActivityException("Script content has not been defined");
             }
 
-            Object retObj = null;
-            if (PropertyManager.getBooleanProperty(PropertyNames.MDW_DEPRECATED_ACTIVITY_SCRIPT_BINDING, false)) {
-                Map<String,Object> addlBindings = new HashMap<String,Object>();
-                addlBindings.put("activity", this);
-                retObj = executeScript(script, language, addlBindings);
-            }
-            else {
-                retObj = executeScript(script, language);
-            }
+            Object retObj = executeScript(script, language);
 
             if (retObj != null)
                 setReturnCode(retObj.toString());

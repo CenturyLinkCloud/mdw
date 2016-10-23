@@ -120,16 +120,6 @@ routesSvc.factory('routes', function() {
         controller: 'TaskHistoryController'
       },
       {
-        path: '/taskTemplates',
-        templateUrl: 'taskTemplates/templates.html',
-        controller: 'TasksTemplatesController'
-      },
-      {
-        path: '/taskTemplates/:taskName',
-        templateUrl: 'taskTemplates/tasktabs.html',
-        controller: 'TaskTemplateController'
-      },
-      {
         path: '/workflow-nav', 
         templateUrl: 'layout/workflow-nav.html'
       },

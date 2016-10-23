@@ -10,8 +10,8 @@ import java.util.Map;
 
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.value.process.LinkedProcessInstance;
-import com.centurylink.mdw.model.value.process.ProcessList;
+import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.services.ProcessServices;
 import com.centurylink.mdw.services.ServiceLocator;
 

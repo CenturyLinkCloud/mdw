@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.container;
 
-import com.centurylink.mdw.common.exception.MDWException;
+import com.centurylink.mdw.common.MDWException;
 
 public class ContainerException extends MDWException {
     

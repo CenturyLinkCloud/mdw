@@ -17,21 +17,21 @@ import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.bpm.Attachment;
 import com.centurylink.mdw.bpm.MessageDocument;
 import com.centurylink.mdw.bpm.MessageDocument.Message;
-import com.centurylink.mdw.common.constant.MiscConstants;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.property.PropertyUtil;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.config.PropertyUtil;
+import com.centurylink.mdw.constant.MiscConstants;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import com.centurylink.mdw.xml.XmlPath;
-import com.qwest.mbeng.MbengVariable;
 
 /**
  * Base class for all the ProcessStart Controlled Activity
@@ -65,12 +65,11 @@ public class ProcessStartActivity extends DefaultActivityImpl implements StartAc
                         String value = evaluate(msgdoc, one);
                         // do not override input values set explicitly with null ones from xpath (eg: HandleOrder demo)
                         if (value != null) {
-                            VariableVO variablevo = getProcessDefinition().getVariable(key);
-                            if (MbengVariable.KIND_STRING == variablevo.getKind()) {
-                            	this.setParameterValue(key, value);
-                            } else if (MbengVariable.KIND_DOCUMENT == variablevo.getKind()) {
-                            	this.setParameterValueAsDocument(key, variablevo.getVariableType(), value);
-                            }
+                            Variable variable = getProcessDefinition().getVariable(key);
+                            if (VariableTranslator.isDocumentReferenceVariable(getPackage(), variable.getVariableType()))
+                                setParameterValueAsDocument(key, variable.getVariableType(), value);
+                            else
+                        	    setParameterValue(key, value);
                         }
                     }
                 }

@@ -3,8 +3,8 @@
  */
 package com.centurylink.mdw.tests.cloud;
 
-import com.centurylink.mdw.common.exception.TranslationException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
+import com.centurylink.mdw.translator.TranslationException;
+import com.centurylink.mdw.translator.VariableTranslator;
 
 public class MyFloatTranslator extends VariableTranslator {
 

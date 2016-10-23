@@ -9,23 +9,23 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.TransactionWrapper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.activity.ActivityVO;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.work.WorkTransitionVO;
-import com.centurylink.mdw.services.process.ProcessExecuter;
-import com.centurylink.mdw.synchronization.SyncExpressionEvaluator;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.workflow.Activity;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.Transition;
+import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.services.process.ProcessExecutor;
+import com.centurylink.mdw.sync.SyncExpressionEvaluator;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.TransactionWrapper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
 
 /**
@@ -46,7 +46,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
     public  void  execute() throws ActivityException{
     	isSynchronized = checkIfSynchronized();
     	if (!isSynchronized) {
-    		EventWaitInstanceVO received = registerWaitEvents(false, true);
+    		EventWaitInstance received = registerWaitEvents(false, true);
     		if (received!=null)
     			resume(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
     	}
@@ -56,15 +56,15 @@ public class SynchronizationActivity extends AbstractWait implements com.century
     	String syncExpression = getAttributeValue(WorkAttributeConstant.SYNC_EXPRESSION);
     	boolean yes;
         try {
-        	ProcessExecuter engine = getEngine();
-        	ProcessVO procdef = getProcessDefinition();
+        	ProcessExecutor engine = getEngine();
+        	Process procdef = getProcessDefinition();
     		Map<String,String> idToEscapedName = new HashMap<String,String>();	// for backward compatibility
-        	List<WorkTransitionVO> incomingTransitions =
+        	List<Transition> incomingTransitions =
         		getIncomingTransitions(procdef, this.getActivityId(), idToEscapedName);
         	engine.determineCompletedTransitions(getProcessInstanceId(), incomingTransitions);
         	if (StringHelper.isEmpty(syncExpression)) {
         		yes = true;
-        		for (WorkTransitionVO one : incomingTransitions) {
+        		for (Transition one : incomingTransitions) {
         			if (!one.getEventType().equals(EventType.FINISH)) {
         				yes = false;
         			}
@@ -73,7 +73,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
         		String[] syncedActivityIds = new String[incomingTransitions.size()];
         		List<String> completedActivities = new ArrayList<String>();
         		for (int i=0; i<syncedActivityIds.length; i++) {
-        			WorkTransitionVO sync = incomingTransitions.get(i);
+        			Transition sync = incomingTransitions.get(i);
         			syncedActivityIds[i] = sync.getCompletionCode();
         			if (sync.getEventType().equals(EventType.FINISH))
         				completedActivities.add(syncedActivityIds[i]);
@@ -114,14 +114,14 @@ public class SynchronizationActivity extends AbstractWait implements com.century
     /**
      * reuse WorkTransitionVO for sync info
      */
-    private List<WorkTransitionVO> getIncomingTransitions(ProcessVO procdef, Long activityId,
+    private List<Transition> getIncomingTransitions(Process procdef, Long activityId,
     		Map<String,String> idToEscapedName) {
-    	List<WorkTransitionVO> incomingTransitions = new ArrayList<WorkTransitionVO>();
-        for (WorkTransitionVO trans : procdef.getTransitions()) {
+    	List<Transition> incomingTransitions = new ArrayList<Transition>();
+        for (Transition trans : procdef.getTransitions()) {
             if (trans.getToWorkId().equals(activityId)) {
-            	WorkTransitionVO sync = new WorkTransitionVO();
+            	Transition sync = new Transition();
             	sync.setWorkTransitionId(trans.getWorkTransitionId());
-            	ActivityVO act = procdef.getActivityVO(trans.getFromWorkId());
+            	Activity act = procdef.getActivityVO(trans.getFromWorkId());
             	String logicalId = act.getLogicalId();
             	// id to escaped name map is for backward compatibility
             	idToEscapedName.put(logicalId, escape(act.getActivityName()));
@@ -167,11 +167,11 @@ public class SynchronizationActivity extends AbstractWait implements com.century
     	throws ActivityException {
     }
 
-    private boolean isOtherEvent(InternalEventVO eventMessageDoc) {
+    private boolean isOtherEvent(InternalEvent eventMessageDoc) {
     	return OwnerType.DOCUMENT.equals(eventMessageDoc.getSecondaryOwnerType());
     }
 
-	public final boolean resume(InternalEventVO eventMessageDoc)
+	public final boolean resume(InternalEvent eventMessageDoc)
 			throws ActivityException {
 		TransactionWrapper transaction = null;
 		try {
@@ -204,7 +204,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
 		}
 	}
 
-	public boolean resumeWaiting(InternalEventVO eventMessageDoc)
+	public boolean resumeWaiting(InternalEvent eventMessageDoc)
 			throws ActivityException {
 		// check if it is synchronized at this time
 		TransactionWrapper transaction = null;
@@ -213,7 +213,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
 	    	super.lockActivityInstance();
 	    	isSynchronized = this.checkIfSynchronized();
 	    	if (isSynchronized) return true;
-			EventWaitInstanceVO received = registerWaitEvents(true, true);
+			EventWaitInstance received = registerWaitEvents(true, true);
 	    	if (received!=null) {
 	 			boolean done = resume(getExternalEventInstanceDetails(received.getMessageDocumentId()),
 	 					received.getCompletionCode());

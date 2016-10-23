@@ -7,7 +7,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
-import com.centurylink.mdw.common.utilities.ClasspathUtil;
+import com.centurylink.mdw.util.ClasspathUtil;
 
 /**
  *  Locates a class in the Java classpath at build time.

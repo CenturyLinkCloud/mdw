@@ -9,27 +9,27 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.ProcessVisibilityConstant;
-import com.centurylink.mdw.common.constant.VariableConstants;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.TransactionWrapper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.ProcessVisibilityConstant;
+import com.centurylink.mdw.constant.VariableConstants;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.dao.process.EngineDataAccessDB;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
-import com.centurylink.mdw.services.process.ProcessExecuter;
+import com.centurylink.mdw.services.process.ProcessExecutor;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.TransactionWrapper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 
 /**
  * This activity implementor implements invocation of subprocesses.
@@ -66,21 +66,21 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
      * @return a map (name-value pairs) of variable bindings
      * @throws Exception various types of exceptions
      */
-    protected Map<String,String> createVariableBinding(List<VariableVO> childVars)
+    protected Map<String,String> createVariableBinding(List<Variable> childVars)
             throws Exception {
         Map<String,String> validParams = new HashMap<String,String>();
         String map = getAttributeValue(VARIABLES);
         if (map==null) map = "";
         String vn, v;
-        for (VariableVO childVar : childVars) {
+        for (Variable childVar : childVars) {
             if (!allowInput(childVar)) continue;
             vn = childVar.getVariableName();
             v = StringHelper.getMapValue(map, vn, ';');
             if (vn.equals(VariableConstants.REQUEST)) {
-                VariableInstanceInfo varinst = getVariableInstance(VariableConstants.REQUEST);
+                VariableInstance varinst = getVariableInstance(VariableConstants.REQUEST);
                 v = varinst==null?null:varinst.getStringValue();
             } else if (vn.equals(VariableConstants.MASTER_DOCUMENT)) {
-                VariableInstanceInfo varinst = getVariableInstance(VariableConstants.MASTER_DOCUMENT);
+                VariableInstance varinst = getVariableInstance(VariableConstants.MASTER_DOCUMENT);
                 v = varinst==null?null:varinst.getStringValue();
             } else {
                 v = evaluateBindingValue(childVar, v);
@@ -93,11 +93,11 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
 
     public void execute() throws ActivityException{
         try{
-            ProcessVO subprocdef = getSubProcessVO();
+            Process subprocdef = getSubProcessVO();
             if (isLogDebugEnabled())
               logdebug("Invoking subprocess: " + subprocdef.getLabel());
             subprocIsService = subprocdef.getProcessType().equals(ProcessVisibilityConstant.SERVICE);
-            List<VariableVO> childVars = subprocdef.getVariables();
+            List<Variable> childVars = subprocdef.getVariables();
             Map<String,String> validParams = createVariableBinding(childVars);
             String ownerType = OwnerType.PROCESS_INSTANCE;
             String secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
@@ -116,14 +116,14 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 ownerId = (Long) rootProcessOwner[0];
                 ownerType = (String) rootProcessOwner[1];
             }
-            InternalEventVO evMsg = InternalEventVO.createProcessStartMessage(
+            InternalEvent evMsg = InternalEvent.createProcessStartMessage(
                     subprocdef.getProcessId(), ownerType,
                     ownerId, getMasterRequestId(), null,
                     secondaryOwnerType, secondaryOwnerId);
-            ProcessExecuter engine = getEngine();
+            ProcessExecutor engine = getEngine();
             if (engine.isInService()) {
                 if (subprocIsService) {        // call directly
-                    ProcessInstanceVO pi = getEngine().createProcessInstance(
+                    ProcessInstance pi = getEngine().createProcessInstance(
                             subprocdef.getProcessId(), OwnerType.PROCESS_INSTANCE,
                             getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
                             getMasterRequestId(), validParams);
@@ -142,7 +142,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 } else {
                     int perfLevel = subprocdef.getPerformanceLevel();
                     if (perfLevel==0 || perfLevel==engine.getPerformanceLevel()) {
-                        ProcessInstanceVO pi = getEngine().createProcessInstance(
+                        ProcessInstance pi = getEngine().createProcessInstance(
                                 subprocdef.getProcessId(), OwnerType.PROCESS_INSTANCE,
                                 getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
                                 getMasterRequestId(), validParams);
@@ -164,7 +164,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
 
     }
 
-    boolean resume_on_process_finish(InternalEventVO msg, Integer status)
+    boolean resume_on_process_finish(InternalEvent msg, Integer status)
         throws ActivityException {
         try{
             Long subprocInstId = msg.getWorkInstanceId();
@@ -187,10 +187,10 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         String map = getAttributeValue(VARIABLES);
         if (map==null) map = "";
         if (params!=null) {
-            ProcessVO procdef = getMainProcessDefinition();
+            Process procdef = getMainProcessDefinition();
             for (String varname : params.keySet()) {
                 String para = getActualParameterVariable(map, varname);
-                VariableVO var = procdef.getVariable(para);
+                Variable var = procdef.getVariable(para);
                 if (var == null)
                     throw new ActivityException("Bound variable: '" + var + "' not found in process definition");
                 String varvalue = params.get(varname);
@@ -241,7 +241,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         if (!OwnerType.PROCESS_INSTANCE.equals(owner)) {
             return new Object[]{ownerId, owner};
         } else {
-            ProcessInstanceVO pi = null;
+            ProcessInstance pi = null;
             try {
                 pi = getEngine().getProcessInstance(ownerId);
             } catch (ProcessException e) {
@@ -271,7 +271,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
      * @return
      * @throws DataAccessException
      */
-    private ProcessInstanceVO getProcInstFromDB(Long procInstId) throws DataAccessException {
+    private ProcessInstance getProcInstFromDB(Long procInstId) throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -285,7 +285,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         }
     }
 
-    protected ProcessVO getSubProcessVO() throws DataAccessException {
+    protected Process getSubProcessVO() throws DataAccessException {
 
         String name = getAttributeValue(WorkAttributeConstant.PROCESS_NAME);
         String verSpec = getAttributeValue(WorkAttributeConstant.PROCESS_VERSION);

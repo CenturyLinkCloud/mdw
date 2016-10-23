@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.activity.types;
 
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
 
 
 /**

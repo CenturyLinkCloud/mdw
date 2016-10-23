@@ -11,9 +11,9 @@ import java.util.Map;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.model.value.asset.Asset;
-import com.centurylink.mdw.model.value.asset.PackageAssets;
-import com.centurylink.mdw.model.value.asset.PackageList;
+import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.PackageAssets;
+import com.centurylink.mdw.model.asset.PackageList;
 
 /**
  * Services for interacting with design-time workflow assets.
@@ -33,16 +33,6 @@ public interface AssetServices {
      */
     public byte[] getAssetContent(String asset) throws ServiceException;
 
-
-    /**
-     * Saves a new version of a workflow asset.
-     * @param asset - Qualified name (including workflow package: 'MyPackage/MyText.txt').
-     *                File extension is required, and must designate a format supported by MDW.
-     * @param content - Contents of the asset.
-     * @param user - The workstation ID of the user making the change.
-     * @param comment - Explanation for asset history.
-     */
-    public void saveAsset(String asset, Object content, String user, String comment) throws ServiceException;
 
     /**
      * Returns the list of workflow packages.  Does not include archived packages.
@@ -66,12 +56,12 @@ public interface AssetServices {
      * Returns all assets for a given file extension (mapped to their package name).
      * Assets do not contain VCS info.
      */
-    public Map<String,List<Asset>> getAssetsOfType(String format) throws ServiceException;
+    public Map<String,List<AssetInfo>> getAssetsOfType(String format) throws ServiceException;
 
     /**
      * Includes Git info if available.
      * @param assetPath - myPackage/myAsset.ext
      */
-    public Asset getAsset(String assetPath) throws ServiceException;
+    public AssetInfo getAsset(String assetPath) throws ServiceException;
 
 }

@@ -6,14 +6,14 @@ package com.centurylink.mdw.timer.startup;
 import java.util.Date;
 import java.util.TimerTask;
 
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 
 /**
  * The timer task that monitors MDW scheduled events.

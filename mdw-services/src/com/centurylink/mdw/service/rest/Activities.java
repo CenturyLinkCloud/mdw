@@ -22,14 +22,13 @@ import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.model.value.activity.ActivityCount;
-import com.centurylink.mdw.model.value.activity.ActivityInstance;
-import com.centurylink.mdw.model.value.activity.ActivityList;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.workflow.ActivityCount;
+import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
+import com.centurylink.mdw.model.workflow.ActivityList;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,7 +45,7 @@ public class Activities extends JsonRestService implements JsonExportable {
     @Override
     public List<String> getRoles(String path) {
         List<String> roles = super.getRoles(path);
-        roles.add(UserRoleVO.PROCESS_EXECUTION);
+        roles.add(Role.PROCESS_EXECUTION);
         return roles;
     }
 
@@ -57,7 +56,7 @@ public class Activities extends JsonRestService implements JsonExportable {
     @Path("/{instanceId|special}")
     @ApiOperation(value="Retrieve an activity, query many activity instances, or perform special queries",
         notes="If instanceId and special are not present, returns a page of activities that meet query criteria.",
-        response=ActivityInstance.class, responseContainer="List")
+        response=ActivityInstanceInfo.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
@@ -74,7 +73,7 @@ public class Activities extends JsonRestService implements JsonExportable {
                 if (segOne.equals("definitions")) {
                     ActivityList activityVOs = workflowServices.getActivityDefinitions(query);
                     JSONArray jsonActivities = new JSONArray();
-                    for (ActivityInstance activityInstance : activityVOs.getActivities()) {
+                    for (ActivityInstanceInfo activityInstance : activityVOs.getActivities()) {
                         jsonActivities.put(activityInstance.getJson());
                     }
                     //return new JsonArray(jsonActivities).getJson();

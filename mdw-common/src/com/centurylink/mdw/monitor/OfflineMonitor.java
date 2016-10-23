@@ -5,7 +5,7 @@ package com.centurylink.mdw.monitor;
 
 import java.util.Map;
 
-import com.centurylink.mdw.model.value.process.RuntimeContext;
+import com.centurylink.mdw.model.workflow.RuntimeContext;
 
 /**
  * Indicates that a monitor should be run in a separate thread so as not

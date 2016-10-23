@@ -12,11 +12,11 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import com.centurylink.mdw.bpm.ConfigurationChangeRequestDocument;
-import com.centurylink.mdw.common.constant.JMSDestinationNames;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.constant.JMSDestinationNames;
 import com.centurylink.mdw.services.ConfigurationHelper;
 import com.centurylink.mdw.services.event.BroadcastHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class ConfigurationEventListener extends JmsListener {
 

@@ -20,22 +20,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.PropertyException;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.utilities.FileHelper;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.ZipHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.timer.LoggerProgressMonitor;
-import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.ProcessPersister;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
@@ -43,14 +36,21 @@ import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.model.value.asset.Asset;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.user.AuthenticatedUser;
-import com.centurylink.mdw.model.value.user.UserActionVO;
-import com.centurylink.mdw.model.value.user.UserActionVO.Action;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
+import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.user.AuthenticatedUser;
+import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.UserAction.Action;
+import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.file.ZipHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.LoggerProgressMonitor;
+import com.centurylink.mdw.util.timer.ProgressMonitor;
 
 /**
  * Only works for VCS assets.
@@ -91,7 +91,7 @@ public class AssetContentServlet extends HttpServlet {
             }
         }
         else {
-            Asset asset = new Asset(assetRoot, path);
+            AssetInfo asset = new AssetInfo(assetRoot, path);
             boolean gitRemote = "true".equalsIgnoreCase(request.getParameter("gitRemote"));
 
             if (!asset.getFile().isFile() && !gitRemote) {
@@ -171,12 +171,12 @@ public class AssetContentServlet extends HttpServlet {
                     logger.info("Importing " + tempFile + " into: " + assetRoot);
                     ImporterExporterJson importer = new ImporterExporterJson();
                     String packageJson = new String(FileHelper.read(tempFile));
-                    List<PackageVO> packages = importer.importPackages(packageJson);
+                    List<Package> packages = importer.importPackages(packageJson);
                     ProcessPersister persister = DataAccess.getProcessPersister();
                     if (!(persister instanceof LoaderPersisterVcs))
                             throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Asset import only allowed for VCS Assets");
                     LoaderPersisterVcs persisterVcs = (LoaderPersisterVcs) persister;
-                    for (PackageVO pkg : packages) {
+                    for (Package pkg : packages) {
                         PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkg.getName());
                         if (pkgDir == null) {
                             // new pkg
@@ -218,11 +218,11 @@ public class AssetContentServlet extends HttpServlet {
         AuthenticatedUser user = (AuthenticatedUser)session.getAttribute("authenticatedUser");
         if (user == null)
             throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED, "Authentication failure");
-        if (!user.hasRole(UserRoleVO.PROCESS_DESIGN))
+        if (!user.hasRole(Role.PROCESS_DESIGN))
             throw new AuthorizationException(AuthorizationException.FORBIDDEN, "User " + user.getCuid() + " not authorized for this action");
 
         logger.info("Import request received from user: " + user.getCuid() + " for items: " + includes);
-        UserActionVO userAction = new UserActionVO(user.getCuid(), Action.Import, entity, 0L, includes);
+        UserAction userAction = new UserAction(user.getCuid(), Action.Import, entity, 0L, includes);
         userAction.setSource("Asset Import Service");
         ServiceLocator.getUserServices().auditLog(userAction);
     }

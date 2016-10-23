@@ -11,13 +11,13 @@ import org.apache.xmlbeans.XmlOptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.exception.TranslationException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.TranslationException;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class XmlBeanTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 

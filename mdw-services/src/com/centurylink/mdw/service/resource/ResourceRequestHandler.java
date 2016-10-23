@@ -14,9 +14,6 @@ import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.TextService;
 import com.centurylink.mdw.common.service.XmlService;
-import com.centurylink.mdw.common.utilities.ResourceFormatter.Format;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.service.Parameter;
@@ -24,7 +21,10 @@ import com.centurylink.mdw.service.Resource;
 import com.centurylink.mdw.service.ResourceRequestDocument;
 import com.centurylink.mdw.service.ResourceRequestDocument.ResourceRequest;
 import com.centurylink.mdw.service.handler.ServiceRequestHandler;
-import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.service.rest.JsonRestService;
+import com.centurylink.mdw.util.ResourceFormatter.Format;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class ResourceRequestHandler extends ServiceRequestHandler {
 
@@ -57,12 +57,6 @@ public class ResourceRequestHandler extends ServiceRequestHandler {
             // compatibility for individually-registered handlers
             if (resource.getName().equals("GetAppSummary")) {
                 resource.setName(APP_SUMMARY);
-            }
-            else if (resource.getName().equals("ConfigFile") || resource.getName().equals("GetConfigFile")) {
-                resource.setName(CONFIG_ELEMENT);
-            }
-            else if (resource.getName().equals("RuleSet") || resource.getName().equals("GetRuleSet")) {
-                resource.setName(WORKFLOW_ASSET);
             }
             else if (resource.getName().equals("User")) {
                 resource.setName("Users");

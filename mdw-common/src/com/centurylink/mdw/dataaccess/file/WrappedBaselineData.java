@@ -6,15 +6,15 @@ package com.centurylink.mdw.dataaccess.file;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.cache.impl.VariableTypeCache;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.dataaccess.BaselineData;
-import com.centurylink.mdw.model.data.task.TaskCategory;
-import com.centurylink.mdw.model.data.task.TaskState;
-import com.centurylink.mdw.model.data.task.TaskStatus;
-import com.centurylink.mdw.model.value.variable.VariableTypeVO;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.task.TaskCategory;
+import com.centurylink.mdw.model.task.TaskState;
+import com.centurylink.mdw.model.task.TaskStatus;
+import com.centurylink.mdw.model.variable.VariableType;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Allows dynamic retrieval of baseline data.
@@ -49,7 +49,7 @@ public abstract class WrappedBaselineData implements BaselineData {
         return overrideBaselineData == null ? defaultBaselineData : overrideBaselineData;
     }
 
-    public List<VariableTypeVO> getVariableTypes() {
+    public List<VariableType> getVariableTypes() {
         return getBaselineData().getVariableTypes();
     }
 

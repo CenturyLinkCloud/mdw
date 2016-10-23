@@ -21,19 +21,19 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.xmlbeans.XmlOptions;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.utilities.AuthUtils;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.timer.CodeTimer;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.user.AuthenticatedUser;
+import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.service.Resource;
 import com.centurylink.mdw.service.ResourceRequestDocument;
 import com.centurylink.mdw.service.ResourceRequestDocument.ResourceRequest;
+import com.centurylink.mdw.util.AuthUtils;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.CodeTimer;
 
 public class RestServlet extends HttpServlet {
 

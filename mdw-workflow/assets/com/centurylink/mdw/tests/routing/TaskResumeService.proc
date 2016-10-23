@@ -49,15 +49,10 @@
     },
     {
       "attributes": {
-        "Category": "COM",
-        "FormName": "Autoform",
-        "Groups": "MDW Support",
-        "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
-        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
         "STATUS_AFTER_EVENT": "Cancelled",
-        "TaskLogicalId": "TaskResumeService:A4",
-        "TaskName": "autoform task for service resume",
-        "Variables": "custom,custom,Not Displayed,0,,java.lang.Boolean;inputString,inputString,Optional,0,,java.lang.String;requiredString,requiredString,Required,0,,java.lang.String",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.routing/autoform task for service resume.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WORK_DISPLAY_INFO": "x=317,y=78,w=108,h=71",
         "Wait for Task": "TRUE"
       },
@@ -73,14 +68,10 @@
     },
     {
       "attributes": {
-        "AlertIntervalUnits": "Hours",
-        "Category": "COM",
-        "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
-        "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
-        "SLAUnits": "Hours",
         "STATUS_AFTER_EVENT": "Cancelled",
-        "TaskLogicalId": "TaskResumeService:A5",
-        "TaskName": "custom task for service resume",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.routing/custom task for service resume.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WORK_DISPLAY_INFO": "x=315,y=172,w=109,h=70"
       },
       "id": "A5",
@@ -114,5 +105,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.3"
+  "version": "0.4"
 }

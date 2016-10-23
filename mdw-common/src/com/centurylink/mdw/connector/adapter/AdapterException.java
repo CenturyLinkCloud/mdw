@@ -4,7 +4,7 @@
 package com.centurylink.mdw.connector.adapter;
 
 
-import com.centurylink.mdw.common.exception.MDWException;
+import com.centurylink.mdw.common.MDWException;
 
 public class AdapterException extends MDWException {
 	private static final long serialVersionUID = 1L;

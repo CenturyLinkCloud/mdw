@@ -1,22 +1,22 @@
 // unit tests for version spec parsing
-import static com.centurylink.mdw.model.value.attribute.AssetVersionSpec.parse;
-import com.centurylink.mdw.model.value.process.ProcessVO;
+import static com.centurylink.mdw.model.asset.AssetVersionSpec.parse;
+import com.centurylink.mdw.model.workflow.Process;
 
 assert onServer
 
-def myProcV_1 = new ProcessVO()
+def myProcV_1 = new Process()
 myProcV_1.setName("MyProcess")
 myProcV_1.setVersion(1000)
 
-def myProcV_1pt5 = new ProcessVO()
+def myProcV_1pt5 = new Process()
 myProcV_1pt5.setName("MyProcess")
 myProcV_1pt5.setVersion(1005)
 
-def myProcV_2 = new ProcessVO()
+def myProcV_2 = new Process()
 myProcV_2.setName("MyProcess")
 myProcV_2.setVersion(2000)
 
-def myProcV_10pt2 = new ProcessVO()
+def myProcV_10pt2 = new Process()
 myProcV_10pt2.setName("MyProcess")
 myProcV_10pt2.setVersion(10002)
 

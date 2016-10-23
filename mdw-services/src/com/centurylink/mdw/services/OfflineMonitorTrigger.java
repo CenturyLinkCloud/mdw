@@ -3,17 +3,17 @@
  */
 package com.centurylink.mdw.services;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.exception.ObserverException;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.container.ThreadPoolProvider;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.process.RuntimeContext;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.workflow.RuntimeContext;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.monitor.AdapterMonitor;
 import com.centurylink.mdw.monitor.OfflineMonitor;
+import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.TaskNotifier;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class OfflineMonitorTrigger<T extends RuntimeContext> {
 

@@ -5,13 +5,13 @@ package com.centurylink.mdw.services.process;
 
 import javax.jms.JMSException;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.constant.SpringConstants;
-import com.centurylink.mdw.common.spring.SpringAppContext;
-import com.centurylink.mdw.common.utilities.MessageProducer;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.constant.SpringConstants;
 import com.centurylink.mdw.container.ThreadPoolProvider;
+import com.centurylink.mdw.spring.SpringAppContext;
+import com.centurylink.mdw.util.MessageProducer;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * This class is used in the services project to send messages

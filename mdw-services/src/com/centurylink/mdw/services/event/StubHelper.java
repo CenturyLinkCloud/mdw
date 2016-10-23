@@ -4,10 +4,10 @@
 package com.centurylink.mdw.services.event;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.soccom.SoccomClient;
 
 public class StubHelper {

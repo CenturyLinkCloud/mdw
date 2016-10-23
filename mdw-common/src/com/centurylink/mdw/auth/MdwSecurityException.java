@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.auth;
 
-import com.centurylink.mdw.common.exception.MDWException;
+import com.centurylink.mdw.common.MDWException;
 
 public class MdwSecurityException extends MDWException {
 

@@ -3,10 +3,10 @@
  */
 package com.centurylink.mdw.listener.email;
 
-import static com.centurylink.mdw.common.constant.MessageAttributeConstant.MESSAGE_RECIPIENTS;
-import static com.centurylink.mdw.common.constant.MessageAttributeConstant.MESSAGE_SENDER;
-import static com.centurylink.mdw.common.constant.MessageAttributeConstant.MESSAGE_SENT_DATE;
-import static com.centurylink.mdw.common.constant.MessageAttributeConstant.MESSAGE_SUBJECT;
+import static com.centurylink.mdw.constant.MessageAttributeConstant.MESSAGE_RECIPIENTS;
+import static com.centurylink.mdw.constant.MessageAttributeConstant.MESSAGE_SENDER;
+import static com.centurylink.mdw.constant.MessageAttributeConstant.MESSAGE_SENT_DATE;
+import static com.centurylink.mdw.constant.MessageAttributeConstant.MESSAGE_SUBJECT;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,12 +27,12 @@ import org.bouncycastle.util.encoders.Base64;
 import com.centurylink.mdw.bpm.Attachment;
 import com.centurylink.mdw.bpm.MessageDocument;
 import com.centurylink.mdw.bpm.ProtocolAttributePair;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.listener.ListenerException;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class MDWEmailListener {
 

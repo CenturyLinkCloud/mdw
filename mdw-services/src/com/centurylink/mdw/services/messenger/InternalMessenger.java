@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.dao.process.EngineDataAccess;
-import com.centurylink.mdw.services.process.ProcessExecuter;
+import com.centurylink.mdw.services.process.ProcessExecutor;
 
 public abstract class InternalMessenger {
 	
@@ -21,7 +21,7 @@ public abstract class InternalMessenger {
 	public static final int CACHE_ON = 1;
 	public static final int CACHE_ONLY = 2;
 	
-    private Queue<InternalEventVO> messageQueue;
+    private Queue<InternalEvent> messageQueue;
     private int cacheOption;
     
 	public InternalMessenger() {
@@ -35,7 +35,7 @@ public abstract class InternalMessenger {
 	 * @return null if the message is cached; message ID if not cached
 	 * @throws SQLException 
 	 */
-	protected String addMessage(InternalEventVO msg, EngineDataAccess edao) throws SQLException {
+	protected String addMessage(InternalEvent msg, EngineDataAccess edao) throws SQLException {
 		if (cacheOption==CACHE_ONLY) {
 			synchronized (messageQueue) {
 				messageQueue.add(msg);
@@ -59,7 +59,7 @@ public abstract class InternalMessenger {
 	/*
 	 * for InternalMessengerJms short delay only
 	 */
-	protected String addMessageNoCaching(InternalEventVO msg, EngineDataAccess edao, String msgid) throws SQLException {
+	protected String addMessageNoCaching(InternalEvent msg, EngineDataAccess edao, String msgid) throws SQLException {
 		if (cacheOption==CACHE_ONLY) {
 			return null;
 		} else {	// CACHE_ON/CACHE_OFF
@@ -70,25 +70,25 @@ public abstract class InternalMessenger {
 
 	public void setCacheOption(int v) {
 		this.cacheOption = v;
-		if (messageQueue==null) messageQueue = new LinkedList<InternalEventVO>();
+		if (messageQueue==null) messageQueue = new LinkedList<InternalEvent>();
 	}
 	
-	abstract public void sendMessage(InternalEventVO msg, EngineDataAccess edao)
+	abstract public void sendMessage(InternalEvent msg, EngineDataAccess edao)
 	throws ProcessException;
 
-	abstract public void sendDelayedMessage(InternalEventVO msg, int delaySeconds, 
+	abstract public void sendDelayedMessage(InternalEvent msg, int delaySeconds, 
 			String msgid, boolean isUpdate, EngineDataAccess edao)
 	throws ProcessException;
 	
 	abstract public void broadcastMessage(String msg)
 	throws ProcessException;
 	
-	public InternalEventVO getNextMessageFromQueue(ProcessExecuter engine)
+	public InternalEvent getNextMessageFromQueue(ProcessExecutor engine)
 	throws DataAccessException {
 		if (messageQueue==null) return null;
 		synchronized (messageQueue) {
 			if (messageQueue.isEmpty()) return null;
-			InternalEventVO nextMessage = messageQueue.remove();
+			InternalEvent nextMessage = messageQueue.remove();
 			while (nextMessage!=null) {
 				String msgid = nextMessage.getMessageId();
 				if (msgid==null || engine.deleteInternalEvent(msgid)) break;
@@ -98,7 +98,7 @@ public abstract class InternalMessenger {
 		}
 	}
 	
-	private String generateMessageId(InternalEventVO msg) throws SQLException {
+	private String generateMessageId(InternalEvent msg) throws SQLException {
 		// ServerName:serverStartTime:memory_sequence_number
 		String msgid;
 		if (msg.isProcess()) {

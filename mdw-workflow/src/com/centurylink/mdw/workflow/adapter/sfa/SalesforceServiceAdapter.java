@@ -8,12 +8,12 @@ import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
 import com.centurylink.mdw.xml.DomHelper;
 import com.sforce.soap.enterprise.EnterpriseConnection;

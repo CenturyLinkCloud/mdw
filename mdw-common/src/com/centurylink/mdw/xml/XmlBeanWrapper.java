@@ -24,7 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 
-import com.centurylink.mdw.common.Compatibility;
+import com.centurylink.mdw.app.Compatibility;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -94,17 +94,6 @@ public abstract class XmlBeanWrapper implements Serializable {
         options.setSaveAggressiveNamespaces();
         options.setSavePrettyPrintIndent(2);
         return options;
-    }
-
-    @Deprecated
-    @ApiModelProperty(hidden=true)
-    public XmlOptions getXmlOptions() {
-        try {
-            return getXmlLoadOptions();
-        }
-        catch (XmlException ex) {
-            throw new IllegalStateException("Cannot load compatibility namespace mappings", ex);
-        }
     }
 
     @ApiModelProperty(hidden=true)

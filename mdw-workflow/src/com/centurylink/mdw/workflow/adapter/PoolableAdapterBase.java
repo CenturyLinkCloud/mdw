@@ -19,27 +19,27 @@ import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.AdapterInvocationError;
 import com.centurylink.mdw.adapter.PoolableAdapter;
 import com.centurylink.mdw.adapter.SimulationResponse;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
-import com.centurylink.mdw.model.value.attribute.AttributeVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
+import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.monitor.AdapterMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.event.StubHelper;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 /**
@@ -361,7 +361,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
      */
     protected void handleConnectionException(int errorCode, Throwable originalCause)
     throws ActivityException {
-		InternalEventVO message = InternalEventVO.createActivityStartMessage(getActivityId(),
+		InternalEvent message = InternalEvent.createActivityStartMessage(getActivityId(),
 				getProcessInstanceId(), getWorkTransitionInstanceId(), getMasterRequestId(),
 				COMPCODE_AUTO_RETRY);
     	ScheduledEventQueue eventQueue = ScheduledEventQueue.getSingleton();
@@ -493,7 +493,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
      */
     protected String getStubResponse(String requestData) {
         List<SimulationResponse> responses = new ArrayList<SimulationResponse>();
-        for (AttributeVO attr : this.getAttributes()) {
+        for (Attribute attr : this.getAttributes()) {
             if (attr.getAttributeName().startsWith(WorkAttributeConstant.SIMULATION_RESPONSE)) {
                 SimulationResponse r = new SimulationResponse(attr.getAttributeValue());
                 responses.add(r);

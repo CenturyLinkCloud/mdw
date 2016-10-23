@@ -7,24 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.exception.ObserverException;
-import com.centurylink.mdw.common.exception.StrategyException;
-import com.centurylink.mdw.common.task.TaskServiceRegistry;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.model.value.activity.ActivityVO;
-import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.task.TaskVO;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.common.StrategyException;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.workflow.Activity;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.TaskNotifier;
 import com.centurylink.mdw.observer.task.TemplatedNotifier;
+import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
+import com.centurylink.mdw.task.types.TaskServiceRegistry;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class TaskInstanceNotifierFactory {
 
@@ -45,7 +45,7 @@ public class TaskInstanceNotifierFactory {
      * @return the registered notifier or null if not found
      */
     public List<String> getNotifierSpecs(Long taskId, String outcome) throws ObserverException {
-        TaskVO taskVO = TaskTemplateCache.getTaskTemplate(taskId);
+        TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskId);
         if (taskVO != null) {
             String noticesAttr = taskVO.getAttribute(TaskAttributeConstant.NOTICES);
             if (!StringHelper.isEmpty(noticesAttr) && !"$DefaultNotices".equals(noticesAttr)) {
@@ -68,10 +68,10 @@ public class TaskInstanceNotifierFactory {
         EventManager eventManager = ServiceLocator.getEventManager();
         try {
             if (processInstanceId != null) {
-                ProcessVO process = eventManager.findProcessByProcessInstanceId(processInstanceId);
+                Process process = eventManager.findProcessByProcessInstanceId(processInstanceId);
                 if (process != null && process.getActivities() != null) {
-                    TaskVO taskVO = TaskTemplateCache.getTaskTemplate(taskId);
-                    for (ActivityVO activity : process.getActivities()) {
+                    TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskId);
+                    for (Activity activity : process.getActivities()) {
                         if (taskVO.getLogicalId().equals(activity.getAttribute(TaskAttributeConstant.TASK_LOGICAL_ID))) {
                             noticesAttr = activity.getAttribute(TaskAttributeConstant.NOTICES);
                             break;
@@ -147,7 +147,7 @@ public class TaskInstanceNotifierFactory {
 
     public TaskNotifier getNotifier(String notifierSpec, Long processInstanceId) {
         TaskNotifier notifier = null;
-        PackageVO packageVO = null;
+        Package packageVO = null;
 
         int k = notifierSpec.indexOf(':');
         int lastIndex = notifierSpec.lastIndexOf(":") == k ? 0 : notifierSpec.lastIndexOf(":");
@@ -156,8 +156,8 @@ public class TaskInstanceNotifierFactory {
         try {
             if (processInstanceId != null) {
                 EventManager eventManager = ServiceLocator.getEventManager();
-                ProcessVO process = eventManager.findProcessByProcessInstanceId(processInstanceId);
-                packageVO = PackageVOCache.getProcessPackage(process.getId());
+                Process process = eventManager.findProcessByProcessInstanceId(processInstanceId);
+                packageVO = PackageCache.getProcessPackage(process.getId());
             }
             notifier = getNotifierInstance(getNotifierClassName(className), packageVO);
             if (notifier instanceof TemplatedNotifier) {
@@ -176,7 +176,7 @@ public class TaskInstanceNotifierFactory {
         }
     }
 
-     public TaskNotifier getNotifierInstance(String notifierClassName, PackageVO packageVO)
+     public TaskNotifier getNotifierInstance(String notifierClassName, Package packageVO)
     throws StrategyException {
         try {
             TaskServiceRegistry registry = TaskServiceRegistry.getInstance();

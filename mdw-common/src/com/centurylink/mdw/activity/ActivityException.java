@@ -5,8 +5,8 @@ package com.centurylink.mdw.activity;
 
 import org.json.JSONException;
 
-import com.centurylink.mdw.common.WorkflowException;
-import com.centurylink.mdw.model.value.activity.ActivityInstance;
+import com.centurylink.mdw.app.WorkflowException;
+import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
 
 /**
  * Exception thrown by a workflow activity.
@@ -32,13 +32,13 @@ public class ActivityException extends WorkflowException {
 
     }
 
-    private ActivityInstance actInst = null;
+    private ActivityInstanceInfo actInst = null;
 
-    public ActivityInstance getActivityInstance() {
+    public ActivityInstanceInfo getActivityInstance() {
         return actInst;
     }
 
-    public void setActivityInstance(ActivityInstance activityInst) {
+    public void setActivityInstance(ActivityInstanceInfo activityInst) {
         actInst = activityInst;
     }
 

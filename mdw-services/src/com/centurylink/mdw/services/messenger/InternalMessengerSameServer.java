@@ -5,16 +5,16 @@ package com.centurylink.mdw.services.messenger;
 
 import java.util.Date;
 
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.dao.process.EngineDataAccess;
 import com.centurylink.mdw.services.event.BroadcastHelper;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.process.EventServices;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class InternalMessengerSameServer extends InternalMessenger {
 
@@ -22,7 +22,7 @@ public class InternalMessengerSameServer extends InternalMessenger {
     public InternalMessengerSameServer() {
     }
 
-	public void sendMessage(InternalEventVO msg, EngineDataAccess edao)
+	public void sendMessage(InternalEvent msg, EngineDataAccess edao)
 		throws ProcessException
 	{
 		try {
@@ -35,7 +35,7 @@ public class InternalMessengerSameServer extends InternalMessenger {
 		}
 	}
 
-	public void sendDelayedMessage(InternalEventVO msg, int delaySeconds, String msgid, boolean isUpdate,
+	public void sendDelayedMessage(InternalEvent msg, int delaySeconds, String msgid, boolean isUpdate,
 			EngineDataAccess edao) throws ProcessException
 	{
 		if (delaySeconds<=0) {

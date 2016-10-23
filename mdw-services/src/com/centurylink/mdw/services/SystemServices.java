@@ -5,7 +5,7 @@ package com.centurylink.mdw.services;
 
 import java.util.List;
 
-import com.centurylink.mdw.model.value.system.SysInfoCategory;
+import com.centurylink.mdw.model.system.SysInfoCategory;
 
 public interface SystemServices {
 

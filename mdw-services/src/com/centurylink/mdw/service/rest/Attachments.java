@@ -12,14 +12,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
-import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 import io.swagger.annotations.Api;
 
@@ -31,7 +30,7 @@ public class Attachments extends JsonRestService {
     @Override
     public List<String> getRoles(String path) {
         List<String> roles = super.getRoles(path);
-        roles.add(UserRoleVO.PROCESS_EXECUTION);
+        roles.add(Role.PROCESS_EXECUTION);
         return roles;
     }
 
@@ -48,7 +47,7 @@ public class Attachments extends JsonRestService {
     throws ServiceException, JSONException {
         try {
             String user = content.getString("user");
-            UserVO userVO = ServiceLocator.getUserManager().getUser(user);
+            User userVO = ServiceLocator.getUserManager().getUser(user);
             if (userVO == null)
                 throw new ServiceException("User not found: " + user);
 

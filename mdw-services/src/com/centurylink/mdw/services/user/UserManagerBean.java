@@ -7,59 +7,59 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.exception.CachingException;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.timer.CodeTimer;
+import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.value.user.AuthenticatedUser;
-import com.centurylink.mdw.model.value.user.UserGroupVO;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.user.AuthenticatedUser;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserDataAccess;
 import com.centurylink.mdw.services.UserException;
 import com.centurylink.mdw.services.UserManager;
-import com.centurylink.mdw.services.dao.user.UserDAO;
-import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.timer.CodeTimer;
 
 
 public class UserManagerBean implements UserManager {
 
-    private UserDAO getUserDAO() {
+    private UserDataAccess getUserDAO() {
     	DatabaseAccess db = new DatabaseAccess(null);
-    	return new UserDAO(db);
+    	return new UserDataAccess(db);
     }
 
-    public UserVO getUser(String userName)
+    public User getUser(String userName)
     throws DataAccessException {
         return getUserDAO().getUser(userName);
     }
 
-    public UserVO getUser(Long userId)
+    public User getUser(Long userId)
     throws UserException, DataAccessException {
         return getUserDAO().getUser(userId);
     }
 
-    public UserGroupVO getUserGroup(String groupName, boolean loadRolesForUsers)
+    public Workgroup getUserGroup(String groupName, boolean loadRolesForUsers)
     throws UserException, DataAccessException {
-        UserDAO userDAO = getUserDAO();
-        UserGroupVO userGroup = userDAO.getGroup(groupName);
+        UserDataAccess userDAO = getUserDAO();
+        Workgroup userGroup = userDAO.getGroup(groupName);
         if (userGroup == null)
             return null;
         userGroup.setRoles(userDAO.getRolesForGroup(userGroup.getId()));
-        List<UserVO> users = userDAO.getUsersForGroup(userGroup.getName(),loadRolesForUsers);
-        userGroup.setUsers(users.toArray(new UserVO[0]));
+        List<User> users = userDAO.getUsersForGroup(userGroup.getName(),loadRolesForUsers);
+        userGroup.setUsers(users.toArray(new User[0]));
         return userGroup;
     }
 
-    public UserGroupVO getUserGroup(Long groupId, boolean loadRolesForUsers)
+    public Workgroup getUserGroup(Long groupId, boolean loadRolesForUsers)
     throws UserException, DataAccessException {
-        UserDAO userDAO = getUserDAO();
-        UserGroupVO userGroup = userDAO.getGroup(groupId);
+        UserDataAccess userDAO = getUserDAO();
+        Workgroup userGroup = userDAO.getGroup(groupId);
         if (userGroup == null)
             return null;
         userGroup.setRoles(userDAO.getRolesForGroup(userGroup.getId()));
-        List<UserVO> users = userDAO.getUsersForGroup(userGroup.getName(),loadRolesForUsers);
-        userGroup.setUsers(users.toArray(new UserVO[0]));
+        List<User> users = userDAO.getUsersForGroup(userGroup.getName(),loadRolesForUsers);
+        userGroup.setUsers(users.toArray(new User[0]));
         return userGroup;
     }
 
@@ -71,8 +71,8 @@ public class UserManagerBean implements UserManager {
      */
     public boolean doesUserBelongToGroup(String pUserName, String pUserGroupName)
     throws UserException, DataAccessException {
-    	UserVO user = getUserDAO().getUser(pUserName);
-    	for (UserGroupVO group : user.getWorkgroups()) {
+    	User user = getUserDAO().getUser(pUserName);
+    	for (Workgroup group : user.getWorkgroups()) {
     		if (group.getName().equals(pUserGroupName)) return true;
     	}
         return false;
@@ -84,14 +84,14 @@ public class UserManagerBean implements UserManager {
      * @param pUserRoleName
      * @return UserRole
      */
-    public UserRoleVO getUserRole(String pUserRoleName)
+    public Role getUserRole(String pUserRoleName)
     throws UserException, DataAccessException {
-        UserDAO userDAO = getUserDAO();
-        UserRoleVO userRole = userDAO.getRole(pUserRoleName);
+        UserDataAccess userDAO = getUserDAO();
+        Role userRole = userDAO.getRole(pUserRoleName);
         if (userRole == null)
             return null;
-        List<UserVO> users = userDAO.getUsersForRole(pUserRoleName);
-        userRole.setUsers(users.toArray(new UserVO[0]));
+        List<User> users = userDAO.getUsersForRole(pUserRoleName);
+        userRole.setUsers(users.toArray(new User[0]));
         return userRole;
     }
 
@@ -100,21 +100,9 @@ public class UserManagerBean implements UserManager {
      *
      * @return Collection of UserRole
      */
-    public List<UserRoleVO> getUserRoles()
+    public List<Role> getUserRoles()
     throws UserException, DataAccessException {
     	return getUserDAO().getAllRoles();
-    }
-
-    /**
-     * Returns all the roles that are mapped to the task action.
-     *
-     * @param pTaskActionId
-     * @return array of UserRole objects
-     */
-    public UserRoleVO[] getUserRolesForTaskAction(Long pTaskActionId)
-    throws UserException, DataAccessException {
-    	List<UserRoleVO> r = getUserDAO().getRolesForAction(pTaskActionId);
-        return r.toArray(new UserRoleVO[r.size()]);
     }
 
     /**
@@ -126,7 +114,7 @@ public class UserManagerBean implements UserManager {
     public void updateUserGroups(String pCUID, String[] pUpdatedGrps)
     throws UserException, DataAccessException {
         CodeTimer timer = new CodeTimer("UserManager.updateUserGroups()", true);
-        UserVO usr = this.getUserDAO().getUser(pCUID);
+        User usr = this.getUserDAO().getUser(pCUID);
         if (usr == null) {
             timer.stopAndLogTiming("NoUser");
             throw new UserException("User not found. CUID=" + pCUID);
@@ -134,25 +122,6 @@ public class UserManagerBean implements UserManager {
         getUserDAO().updateGroupsForUser(usr.getId(), pUpdatedGrps);
         timer.stopAndLogTiming("");
 
-    }
-
-    /**
-     * Updates the User roles for the passed in user Id
-     *
-     * @param pCUID
-     * @param pUpdatedGrps
-     */
-    @Deprecated
-    public void updateUserRoles(String pCUID, String[] pUpdatedRoles)
-    throws UserException, DataAccessException {
-        CodeTimer timer = new CodeTimer("UserManager.updateUserRoles()", true);
-        UserVO usr = this.getUserDAO().getUser(pCUID);
-        if (usr == null) {
-            timer.stopAndLogTiming("NoUser");
-            throw new UserException("User with CUID does not exists. CUID=" + pCUID);
-        }
-        getUserDAO().updateRolesForUser(usr.getId(), UserGroupVO.COMMON_GROUP_ID, pUpdatedRoles);
-        timer.stopAndLogTiming("");
     }
 
     public void updateUserRoles(Long userId, Long groupId, String[] pUpdatedRoles)
@@ -166,7 +135,7 @@ public class UserManagerBean implements UserManager {
     throws UserException, DataAccessException {
         CodeTimer timer = new CodeTimer("UserManager.updateUserRoles()", true);
         Long userId = getUser(cuid).getId();
-        Long groupId = groupName.equals(UserGroupVO.COMMON_GROUP) ? UserGroupVO.COMMON_GROUP_ID : getUserGroup(groupName, false).getId();
+        Long groupId = groupName.equals(Workgroup.COMMON_GROUP) ? Workgroup.COMMON_GROUP_ID : getUserGroup(groupName, false).getId();
         getUserDAO().updateRolesForUser(userId, groupId, updatedRoles);
         timer.stopAndLogTiming("");
     }
@@ -174,15 +143,15 @@ public class UserManagerBean implements UserManager {
     /**
      * Returns the users belonging to a set of groups.
      */
-    public UserVO[] getUsersForGroups(String[] groups)
+    public User[] getUsersForGroups(String[] groups)
     throws UserException, DataAccessException {
         try {
-            List<UserVO> uniqueUsers = new ArrayList<UserVO>();
+            List<User> uniqueUsers = new ArrayList<User>();
             for (String group : groups) {
-                UserVO[] users = UserGroupCache.getWorkgroup(group).getUsers();
-                for (UserVO check : users) {
+                User[] users = UserGroupCache.getWorkgroup(group).getUsers();
+                for (User check : users) {
                     boolean found = false;
-                    for (UserVO user : uniqueUsers) {
+                    for (User user : uniqueUsers) {
                         if (user.getId().equals(check.getId())) {
                             found = true;
                             break;
@@ -192,21 +161,11 @@ public class UserManagerBean implements UserManager {
                         uniqueUsers.add(check);
                 }
             }
-            return uniqueUsers.toArray(new UserVO[uniqueUsers.size()]);
+            return uniqueUsers.toArray(new User[uniqueUsers.size()]);
         }
         catch (CachingException ex) {
             throw new UserException(ex.getMessage(), ex);
         }
-    }
-
-    /**
-     * Returns the users belonging to a role
-     */
-    @Deprecated
-    public List<UserVO> getUsersForRole(String roleName)
-    throws UserException, DataAccessException {
-    	UserDAO userDAO = getUserDAO();
-    	return userDAO.getUsersForRole(roleName);
     }
 
     /**
@@ -215,9 +174,9 @@ public class UserManagerBean implements UserManager {
      * @param pCuid the user's CUID
      * @return the workgroups for this user
      */
-    public UserGroupVO[] getGroupsForUser(String pCuid)
+    public Workgroup[] getGroupsForUser(String pCuid)
     throws UserException, DataAccessException {
-    	UserVO user = getUserDAO().getUser(pCuid);
+    	User user = getUserDAO().getUser(pCuid);
     	return user.getWorkgroups();
     }
 
@@ -226,11 +185,11 @@ public class UserManagerBean implements UserManager {
      *
      * @return the groups
      */
-    public List<UserGroupVO> getUserGroups(boolean includeDeleted)
+    public List<Workgroup> getUserGroups(boolean includeDeleted)
     throws UserException, DataAccessException {
-        UserDAO userDAO = getUserDAO();
-        List<UserGroupVO> groups = userDAO.getAllGroups(includeDeleted);
-    	for (UserGroupVO group : groups) {
+        UserDataAccess userDAO = getUserDAO();
+        List<Workgroup> groups = userDAO.getAllGroups(includeDeleted);
+    	for (Workgroup group : groups) {
     		group.setRoles(userDAO.getRolesForGroup(group.getId()));
          }
         return groups;
@@ -242,21 +201,21 @@ public class UserManagerBean implements UserManager {
      *
      * @return Array of UserVO objects
      */
-    public UserVO[] getUserVOs()
+    public User[] getUserVOs()
     throws UserException, DataAccessException {
         CodeTimer timer = new CodeTimer("UserManager.getUserVOs()", true);
-        List<UserVO> userList = this.getUserDAO().queryUsers("END_DATE is null", true, -1, -1, "CUID");
+        List<User> userList = this.getUserDAO().queryUsers("END_DATE is null", true, -1, -1, "CUID");
         timer.stopAndLogTiming("");
-        return userList.toArray(new UserVO[userList.size()]);
+        return userList.toArray(new User[userList.size()]);
     }
 
     /**
      * Retrieves a list of shallow UserVOs.
      */
-    public List<UserVO> getUsers()
+    public List<User> getUsers()
     throws UserException, DataAccessException {
         CodeTimer timer = new CodeTimer("UserManager.getUsers()", true);
-        List<UserVO> userList = this.getUserDAO().queryUsers("END_DATE is null", false, -1, -1, "NAME");
+        List<User> userList = this.getUserDAO().queryUsers("END_DATE is null", false, -1, -1, "NAME");
         timer.stopAndLogTiming("");
         return userList;
     }
@@ -266,10 +225,10 @@ public class UserManagerBean implements UserManager {
      *
      * @return Collection of UserVO
      */
-    public  List<UserVO> queryUsers(String whereCondition, boolean withGroups, int startIndex, int endIndex, String sortOn)
+    public  List<User> queryUsers(String whereCondition, boolean withGroups, int startIndex, int endIndex, String sortOn)
     throws UserException, DataAccessException {
         CodeTimer timer = new CodeTimer("UserManager.getAllUsers()", true);
-        List<UserVO> retUsers = this.getUserDAO().queryUsers(whereCondition, withGroups, startIndex, endIndex, sortOn);
+        List<User> retUsers = this.getUserDAO().queryUsers(whereCondition, withGroups, startIndex, endIndex, sortOn);
         timer.stopAndLogTiming("");
         return retUsers;
     }
@@ -310,7 +269,7 @@ public class UserManagerBean implements UserManager {
      *
      * @param pUserGroupVO a user group value object
      */
-    public void addUserGroup(UserGroupVO pUserGroupVO)
+    public void addUserGroup(Workgroup pUserGroupVO)
     throws UserException, DataAccessException {
         CodeTimer timer = new CodeTimer("UserManager.addUserGroup()", true);
         pUserGroupVO.setId(null);
@@ -326,7 +285,7 @@ public class UserManagerBean implements UserManager {
      * @param pGroupName
      * @param pComment
      */
-    public void updateUserGroup(UserGroupVO pUserGroupVO)
+    public void updateUserGroup(Workgroup pUserGroupVO)
     throws UserException, DataAccessException {
         CodeTimer timer = new CodeTimer("UserManager.updateUserGroup()", true);
         getUserDAO().saveGroup(pUserGroupVO);
@@ -353,7 +312,7 @@ public class UserManagerBean implements UserManager {
      *
      * @param pUserGroupVO a user value object
      */
-    public void addUser(UserVO pUserVO)
+    public void addUser(User pUserVO)
     throws UserException, DataAccessException {
         CodeTimer timer = new CodeTimer("UserManager.addUser()", true);
         pUserVO.setId(null);
@@ -372,7 +331,7 @@ public class UserManagerBean implements UserManager {
     public void updateUser(Long pUserId, String pCuid, String pName)
     throws UserException, DataAccessException {
         CodeTimer timer = new CodeTimer("UserManager.updateUser()", true);
-        UserVO user = this.getUserDAO().getUser(pUserId);
+        User user = this.getUserDAO().getUser(pUserId);
         if (pCuid != null) {
             user.setCuid(pCuid);
         }
@@ -396,7 +355,7 @@ public class UserManagerBean implements UserManager {
      *
      * @param pUserRole a user role object
      */
-    public void addUserRole(UserRoleVO pUserRole)
+    public void addUserRole(Role pUserRole)
     throws UserException, DataAccessException {
         CodeTimer timer = new CodeTimer("UserManager.addUserRole()", true);
         pUserRole.setId(null);
@@ -412,7 +371,7 @@ public class UserManagerBean implements UserManager {
      * @param pRoleName
      * @param pComment
      */
-    public void updateUserRole(UserRoleVO role)
+    public void updateUserRole(Role role)
     throws UserException, DataAccessException {
         CodeTimer timer = new CodeTimer("UserManager.updateUserRole()", true);
         this.getUserDAO().saveRole(role);
@@ -438,7 +397,7 @@ public class UserManagerBean implements UserManager {
     throws UserException, DataAccessException {
         AuthenticatedUser authUser = new AuthenticatedUser();
         // load user
-        UserVO user = getUser(cuid);
+        User user = getUser(cuid);
         if (user == null) {
             return null;
         }
@@ -483,7 +442,7 @@ public class UserManagerBean implements UserManager {
     throws DataAccessException, UserException {
       List<String> addresses = new ArrayList<String>();
       String preferredEmail =null;
-      for (UserVO user : getUsersForGroups(groups)) {
+      for (User user : getUsersForGroups(groups)) {
           if (!"dev".equalsIgnoreCase(user.getCuid())) {
         	  user.setAttributes(getUserPreferences(user.getId()));
         	  preferredEmail = user.getEmail();

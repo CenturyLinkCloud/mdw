@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.json.JSONException;
 
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.RegisteredService;
@@ -15,12 +15,12 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.TextService;
 import com.centurylink.mdw.common.service.XmlService;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.common.utilities.ResourceFormatter.Format;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.ExternalEventHandler;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.process.PackageAware;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.workflow.PackageAware;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.ResourceFormatter.Format;
 
 public abstract class ServiceRequestHandler implements ExternalEventHandler, PackageAware {
 
@@ -28,9 +28,9 @@ public abstract class ServiceRequestHandler implements ExternalEventHandler, Pac
 
     protected String requestId;
 
-    private PackageVO pkg;
-    public PackageVO getPackage() { return pkg; }
-    public void setPackage(PackageVO pkg) { this.pkg = pkg; }
+    private Package pkg;
+    public Package getPackage() { return pkg; }
+    public void setPackage(Package pkg) { this.pkg = pkg; }
 
     protected String createErrorResponse(int code, String message, Format format) throws EventHandlerException {
         return createResponse(code, message, format);
@@ -92,9 +92,9 @@ public abstract class ServiceRequestHandler implements ExternalEventHandler, Pac
                 serviceClassName = defaultImplPackage + "." + logicalName.replaceAll(" ", "").replaceAll("-", "");
             int lastDot = serviceClassName.lastIndexOf('.');
             String packageName = serviceClassName.substring(0, lastDot);
-            PackageVO packageVO = PackageVOCache.getPackageVO(packageName);
+            Package packageVO = PackageCache.getPackageVO(packageName);
             if (packageVO == null)
-                packageVO = PackageVOCache.getPackage(logicalName); // new jax-rs style pathing
+                packageVO = PackageCache.getPackage(logicalName); // new jax-rs style pathing
 
             Class<? extends TextService> serviceClass;
 

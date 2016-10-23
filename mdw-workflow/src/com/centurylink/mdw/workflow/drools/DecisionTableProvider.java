@@ -7,8 +7,8 @@ import java.io.InputStream;
 
 import org.drools.decisiontable.InputType;
 
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.util.StringHelper;
 
 /**
  * Provider wired to handle Excel 2007 format.
@@ -23,13 +23,13 @@ public class DecisionTableProvider {
 
         SpreadsheetCompiler compiler = new SpreadsheetCompiler();
 
-        if (format.equals(RuleSetVO.EXCEL) || format.equals(RuleSetVO.EXCEL_2007)) {
+        if (format.equals(Asset.EXCEL) || format.equals(Asset.EXCEL_2007)) {
             if (StringHelper.isEmpty(worksheetName))
                 return compiler.compile(inStream, format);
             else
                 return compiler.compile(inStream, format, worksheetName);
         }
-        else if (format.equals(RuleSetVO.CSV)) {
+        else if (format.equals(Asset.CSV)) {
             return compiler.compile(inStream, InputType.CSV);
         }
         else {

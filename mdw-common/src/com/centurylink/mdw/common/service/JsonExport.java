@@ -28,8 +28,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.utilities.JsonUtil;
-import com.centurylink.mdw.common.utilities.StringHelper;
+import com.centurylink.mdw.util.JsonUtil;
+import com.centurylink.mdw.util.StringHelper;
 
 /**
  * TODO: other formats (eg: CSV)

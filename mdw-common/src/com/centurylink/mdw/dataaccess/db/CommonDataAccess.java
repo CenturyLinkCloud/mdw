@@ -6,6 +6,8 @@ package com.centurylink.mdw.dataaccess.db;
 import java.net.ConnectException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,22 +17,28 @@ import javax.sql.XAConnection;
 import javax.transaction.Status;
 import javax.transaction.TransactionManager;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.utilities.TransactionUtil;
-import com.centurylink.mdw.common.utilities.TransactionWrapper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DataAccessOfflineException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.value.attribute.AttributeVO;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.DocumentVO;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetHeader;
+import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.util.TransactionUtil;
+import com.centurylink.mdw.util.TransactionWrapper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class CommonDataAccess {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    protected static final String PROC_INST_COLS = "pi.master_request_id, pi.process_instance_id, pi.process_id, pi.owner, pi.owner_id, " +
+            "pi.status_cd, pi.start_dt, pi.end_dt, pi.compcode, pi.comments";
 
     protected DatabaseAccess db;
     private int databaseVersion;
@@ -181,14 +189,14 @@ public class CommonDataAccess {
         return value;
     }
 
-    protected List<AttributeVO> getAttributes0(String ownerType, Long ownerId)
+    protected List<Attribute> getAttributes0(String ownerType, Long ownerId)
     throws SQLException {
         String query = "select ATTRIBUTE_ID, ATTRIBUTE_NAME, ATTRIBUTE_VALUE from ATTRIBUTE " +
                 "where ATTRIBUTE_OWNER_ID=? and ATTRIBUTE_OWNER='" + ownerType + "'";
         ResultSet rs = db.runSelect(query, ownerId);
-        List<AttributeVO> attribs = new ArrayList<AttributeVO>();
+        List<Attribute> attribs = new ArrayList<Attribute>();
         while (rs.next()) {
-            AttributeVO vo = new AttributeVO(rs.getString(2), rs.getString(3));
+            Attribute vo = new Attribute(rs.getString(2), rs.getString(3));
             vo.setAttributeId(new Long(rs.getLong(1)));
             attribs.add(vo);
         }
@@ -202,17 +210,17 @@ public class CommonDataAccess {
      * @return
      * @throws SQLException
      */
-    protected List<AttributeVO> getAttributes1(String ownerType, Long ownerId)
+    protected List<Attribute> getAttributes1(String ownerType, Long ownerId)
     throws SQLException {
-        List<AttributeVO> attrs = getAttributes0(ownerType, ownerId);
+        List<Attribute> attrs = getAttributes0(ownerType, ownerId);
         if (attrs==null) return null;
         ResultSet rs;
         String query = "select RULE_SET_DETAILS from RULE_SET where RULE_SET_ID=?";
-        for (AttributeVO attr : attrs) {
+        for (Attribute attr : attrs) {
             String v = attr.getAttributeValue();
-            if (v!=null && v.startsWith(RuleSetVO.ATTRIBUTE_OVERFLOW)) {
-                Long rulesetId = new Long(v.substring(RuleSetVO.ATTRIBUTE_OVERFLOW.length()+1));
-                rs = db.runSelect(query, rulesetId);
+            if (v!=null && v.startsWith(Asset.ATTRIBUTE_OVERFLOW)) {
+                Long assetId = new Long(v.substring(Asset.ATTRIBUTE_OVERFLOW.length()+1));
+                rs = db.runSelect(query, assetId);
                 if (rs.next()) {
                     attr.setAttributeValue(rs.getString(1));
                 }
@@ -221,7 +229,7 @@ public class CommonDataAccess {
         return attrs;
     }
 
-    protected AttributeVO getAttribute0(String ownerType, Long ownerId, String attrname)
+    protected Attribute getAttribute0(String ownerType, Long ownerId, String attrname)
         throws SQLException
     {
         db.openConnection();
@@ -233,7 +241,7 @@ public class CommonDataAccess {
         args[2] = attrname;
         ResultSet rs = db.runSelect(query, args);
         if (rs.next()) {
-            AttributeVO vo = new AttributeVO(attrname, rs.getString(2));
+            Attribute vo = new Attribute(attrname, rs.getString(2));
             vo.setAttributeId(new Long(rs.getLong(1)));
             return vo;
         } else return null;
@@ -241,13 +249,13 @@ public class CommonDataAccess {
 
     public void setAttributes0(String ownerType, Long ownerId, Map<String,String> attributes)
     throws SQLException {
-        List<AttributeVO> attrs = null;
+        List<Attribute> attrs = null;
         if (attributes != null && !attributes.isEmpty()) {
-            attrs = new ArrayList<AttributeVO>();
+            attrs = new ArrayList<Attribute>();
             for (String name : attributes.keySet()) {
                 String value = attributes.get(name);
                 if (value != null && !value.isEmpty())
-                    attrs.add(new AttributeVO(name, value));
+                    attrs.add(new Attribute(name, value));
             }
         }
         deleteAttributes0(ownerType, ownerId);
@@ -314,7 +322,7 @@ public class CommonDataAccess {
         db.runUpdate(query, attrPrefix);
     }
 
-    protected void addAttributes0(String pOwner, Long pOwnerId, List<AttributeVO> pAttributes)
+    protected void addAttributes0(String pOwner, Long pOwnerId, List<Attribute> pAttributes)
     throws SQLException {
         String query = "insert into ATTRIBUTE"
             + " (attribute_id,attribute_owner,attribute_owner_id,attribute_name,attribute_value,"
@@ -323,7 +331,7 @@ public class CommonDataAccess {
             + ",?,?,?,?,"+now()+",'MDWEngine')";
         db.prepareStatement(query);
         Object[] args = new Object[4];
-        for (AttributeVO vo : pAttributes) {
+        for (Attribute vo : pAttributes) {
             String v = vo.getAttributeValue();
             if (v==null||v.length()==0) continue;
             args[0] = pOwner;
@@ -385,7 +393,7 @@ public class CommonDataAccess {
     /**
      * Not for update.  Opens a new connection.
      */
-    public DocumentVO getDocument(Long documentId) throws DataAccessException {
+    public Document getDocument(Long documentId) throws DataAccessException {
         try {
             db.openConnection();
             return this.getDocument(documentId, false);
@@ -396,17 +404,17 @@ public class CommonDataAccess {
         }
     }
 
-    public DocumentVO getDocument(Long documentId, boolean forUpdate) throws SQLException {
+    public Document getDocument(Long documentId, boolean forUpdate) throws SQLException {
         return loadDocument(documentId, forUpdate);
     }
 
-    public DocumentVO loadDocument(Long documentId, boolean forUpdate)
+    public Document loadDocument(Long documentId, boolean forUpdate)
             throws SQLException {
         String query = "select CREATE_DT, MODIFY_DT, DOCUMENT_TYPE, OWNER_TYPE, OWNER_ID " +
             "from DOCUMENT where DOCUMENT_ID = ?" + (forUpdate ? " for update" : "");
         ResultSet rs = db.runSelect(query, documentId);
         if (rs.next()) {
-            DocumentVO vo = new DocumentVO();
+            Document vo = new Document();
             vo.setDocumentId(documentId);
             vo.setCreateDate(rs.getTimestamp("CREATE_DT"));
             vo.setModifyDate(rs.getTimestamp("MODIFY_DT"));
@@ -431,15 +439,15 @@ public class CommonDataAccess {
         }
     }
 
-    public ProcessVO getProcessBase0(String processName, int version)
+    public Process getProcessBase0(String processName, int version)
             throws SQLException,DataAccessException {
         String query;
         if (version>0) {
             query = "select RULE_SET_ID, COMMENTS, VERSION_NO, MOD_DT, MOD_USR" +
-                " from RULE_SET where RULE_SET_NAME=? and LANGUAGE='"+RuleSetVO.PROCESS+"' and VERSION_NO=" + version;
+                " from RULE_SET where RULE_SET_NAME=? and LANGUAGE='"+Asset.PROCESS+"' and VERSION_NO=" + version;
         } else {
             query = "select RULE_SET_ID, COMMENTS, VERSION_NO, MOD_DT, MOD_USR" +
-                " from RULE_SET where RULE_SET_NAME=? and LANGUAGE='"+RuleSetVO.PROCESS+"' order by VERSION_NO desc";
+                " from RULE_SET where RULE_SET_NAME=? and LANGUAGE='"+Asset.PROCESS+"' order by VERSION_NO desc";
         }
         ResultSet rs = db.runSelect(query, processName);
         String processComment;
@@ -449,11 +457,10 @@ public class CommonDataAccess {
             processComment = rs.getString(2);
             version = rs.getInt(3);
         } else throw new DataAccessException("Process does not exist; name=" + processName);
-        ProcessVO retVO= new ProcessVO(processId, processName, processComment, null);   // external events - load later
+        Process retVO= new Process(processId, processName, processComment, null);   // external events - load later
         retVO.setVersion(version);
         retVO.setModifyDate(rs.getTimestamp(4));
         retVO.setModifyingUser(rs.getString(5));
-        retVO.setInRuleSet(true);
         return retVO;
     }
 
@@ -762,6 +769,39 @@ public class CommonDataAccess {
         finally {
             db.closeConnection();
         }
+    }
+
+    /**
+     * Assumes pi.* table prefix.
+     */
+    protected ProcessInstance buildProcessInstance(ResultSet rs) throws SQLException {
+        ProcessInstance pi = new ProcessInstance();
+        pi.setMasterRequestId(rs.getString("master_request_id"));
+        pi.setId(rs.getLong("process_instance_id"));
+        pi.setProcessId(rs.getLong("process_id"));
+        pi.setOwner(rs.getString("owner"));
+        pi.setOwnerId(rs.getLong("owner_id"));
+        int statusCode = rs.getInt("status_cd");
+        pi.setStatus(WorkStatuses.getWorkStatuses().get(statusCode));
+        pi.setStartDate(rs.getTimestamp("start_dt"));
+        pi.setEndDate(rs.getTimestamp("end_dt"));
+        pi.setCompletionCode(rs.getString("compcode"));
+        pi.setComment(rs.getString("comments"));
+        // avoid loading into ProcessCache
+        if (pi.getComment() != null) {
+            AssetHeader assetHeader = new AssetHeader(pi.getComment());
+            pi.setProcessName(assetHeader.getName());
+            pi.setProcessVersion(assetHeader.getVersion());
+            pi.setPackageName(assetHeader.getPackageName());
+        }
+        return pi;
+    }
+
+    private static DateFormat dateFormat;
+    protected static DateFormat getDateFormat() {
+        if (dateFormat == null)
+            dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+        return dateFormat;
     }
 
 }

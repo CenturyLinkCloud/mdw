@@ -35,7 +35,7 @@
     },
     {
       "attributes": {
-        "Java": "/**\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n */\n\npackage com.centurylink.mdw.tests.workflow;\n\nimport java.util.Map;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\nimport com.centurylink.mdw.java.MdwJavaException;\nimport com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;\n\n/**\n * Dynamic Java to force an error.\n */\npublic class ThrowanException_A26 implements JavaExecutor {\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n    }\n\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\n        throw new RuntimeException(\"Help me, I'm an error\");\n    }\n\n}\n",
+        "Java": "/**\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n */\n\npackage com.centurylink.mdw.tests.workflow;\n\nimport java.util.Map;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\nimport com.centurylink.mdw.java.MdwJavaException;\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\n\n/**\n * Dynamic Java to force an error.\n */\npublic class ThrowanException_A26 implements JavaExecutor {\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n    }\n\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\n        throw new RuntimeException(\"Help me, I'm an error\");\n    }\n\n}\n",
         "WORK_DISPLAY_INFO": "x=166,y=176,w=132,h=69"
       },
       "id": "A26",
@@ -99,5 +99,5 @@
     "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=43,y=29,w=202,h=27"
   },
-  "version": "0.7"
+  "version": "0.8"
 }

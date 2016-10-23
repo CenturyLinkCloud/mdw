@@ -4,9 +4,9 @@
 package com.centurylink.mdw.common.translator.impl;
 
 
-import com.centurylink.mdw.common.translator.VariableTranslator;
-
 import java.net.URI;
+
+import com.centurylink.mdw.translator.VariableTranslator;
 
 /**
  *

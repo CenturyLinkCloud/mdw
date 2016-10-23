@@ -10,18 +10,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.model.value.activity.ActivityVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.workflow.Activity;
+import com.centurylink.mdw.model.workflow.Process;
 
 /**
  * Assigns geographical sequence numbers to activities and subprocesses for a process.
  */
 public class ActivityNodeSequencer {
 
-    private ProcessVO process;
+    private Process process;
 
-    public ActivityNodeSequencer(ProcessVO process) {
+    public ActivityNodeSequencer(Process process) {
         this.process = process;
     }
 
@@ -31,10 +31,10 @@ public class ActivityNodeSequencer {
         int currentActivitySeq = assignNodeSequenceIds(this.process, 1);
         // subprocesses
         if (process.getSubProcesses() != null && !process.getSubProcesses().isEmpty()) {
-            List<ProcessVO> subprocesses = new ArrayList<ProcessVO>(); // create a copy to avoid side effects
+            List<Process> subprocesses = new ArrayList<Process>(); // create a copy to avoid side effects
             subprocesses.addAll(process.getSubProcesses());
-            Collections.sort(subprocesses, new Comparator<ProcessVO>() {
-                public int compare(ProcessVO sp1, ProcessVO sp2) {
+            Collections.sort(subprocesses, new Comparator<Process>() {
+                public int compare(Process sp1, Process sp2) {
                     DisplayInfo d1 = getDisplayInfo("T" + sp1.getId(), sp1.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
                     DisplayInfo d2 = getDisplayInfo("T" + sp2.getName(), sp2.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
                     // TODO: something better
@@ -45,7 +45,7 @@ public class ActivityNodeSequencer {
                 }
             });
             for (int i = 0; i < subprocesses.size(); i++) {
-                ProcessVO subprocess = subprocesses.get(i);
+                Process subprocess = subprocesses.get(i);
                 subprocess.setSequenceId(i + 1);
                 currentActivitySeq = assignNodeSequenceIds(subprocess, ++currentActivitySeq);
             }
@@ -53,22 +53,22 @@ public class ActivityNodeSequencer {
     }
 
     private int currentSeq;
-    private int assignNodeSequenceIds(ProcessVO process, int sequenceStart) {
-        for (ActivityVO activity : process.getActivities())
+    private int assignNodeSequenceIds(Process process, int sequenceStart) {
+        for (Activity activity : process.getActivities())
             activity.setSequenceId(0);  // clear all
         currentSeq = sequenceStart;
-        ActivityVO start = process.getStartActivity();
+        Activity start = process.getStartActivity();
         start.setSequenceId(currentSeq);
         setDownstreamNodeSequenceIds(process, start);
         return currentSeq;
     }
 
-    private void setDownstreamNodeSequenceIds(ProcessVO process, ActivityVO start) {
-        List<ActivityVO> downstreamNodes = new ArrayList<ActivityVO>(); // create a copy to avoid side effects
-        for (ActivityVO activity : process.getDownstreamActivities(start))
+    private void setDownstreamNodeSequenceIds(Process process, Activity start) {
+        List<Activity> downstreamNodes = new ArrayList<Activity>(); // create a copy to avoid side effects
+        for (Activity activity : process.getDownstreamActivities(start))
             downstreamNodes.add(process.getActivityById(activity.getLogicalId()));
-        Collections.sort(downstreamNodes, new Comparator<ActivityVO>() {
-            public int compare(ActivityVO a1, ActivityVO a2) {
+        Collections.sort(downstreamNodes, new Comparator<Activity>() {
+            public int compare(Activity a1, Activity a2) {
                 DisplayInfo d1 = getDisplayInfo(a1.getLogicalId(), a1.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
                 DisplayInfo d2 = getDisplayInfo(a2.getLogicalId(), a2.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
                 // TODO: something better
@@ -78,7 +78,7 @@ public class ActivityNodeSequencer {
                 return (int)(Math.sqrt(Math.pow(d1.x,2) + Math.pow(d1.y,2)) - Math.sqrt(Math.pow(d2.x,2) + Math.pow(d2.y,2)));
             }
         });
-        for (ActivityVO downstreamNode : downstreamNodes) {
+        for (Activity downstreamNode : downstreamNodes) {
             // may have been already set due to converging paths
             if (downstreamNode.getSequenceId() == 0) {
                 downstreamNode.setSequenceId(++currentSeq);

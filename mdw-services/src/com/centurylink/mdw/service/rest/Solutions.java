@@ -11,17 +11,16 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.project.Solution;
-import com.centurylink.mdw.model.value.project.Solution.MemberType;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.workflow.Solution;
+import com.centurylink.mdw.model.workflow.Solution.MemberType;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SolutionServices;
-import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -35,7 +34,7 @@ public class Solutions extends JsonRestService {
     @Override
     public List<String> getRoles(String path) {
         List<String> roles = super.getRoles(path);
-        roles.add(UserRoleVO.PROCESS_EXECUTION);
+        roles.add(Role.PROCESS_EXECUTION);
         return roles;
     }
 

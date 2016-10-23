@@ -20,21 +20,21 @@ import javax.naming.directory.SearchResult;
 import org.apache.xmlbeans.XmlOptions;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.ExpressionUtil;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.user.Attribute;
 import com.centurylink.mdw.user.UserDocument;
 import com.centurylink.mdw.user.UserDocument.User;
+import com.centurylink.mdw.util.ExpressionUtil;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
 
 @Tracked(LogLevel.TRACE)
@@ -166,13 +166,13 @@ public class LdapAdapter extends AdapterActivityBase {
                      resultList.add(val);
                  }
             }
-            ProcessVO processVO = getMainProcessDefinition();
+            Process processVO = getMainProcessDefinition();
 
 
-            VariableVO userDocVar = null;
+            Variable userDocVar = null;
             for (String varName : bindings.keySet()) {
                 String mappedAttr = bindings.get(varName);
-                VariableVO varVO = processVO.getVariable(varName);
+                Variable varVO = processVO.getVariable(varName);
                 String varType = varVO.getVariableType();
 
                 if (varVO.isDocument()) {

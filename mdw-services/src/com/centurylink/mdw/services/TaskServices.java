@@ -7,20 +7,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.exception.CachingException;
-import com.centurylink.mdw.common.exception.DataAccessException;
+import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.task.TaskList;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
-import com.centurylink.mdw.model.value.task.TaskActionVO;
-import com.centurylink.mdw.model.value.task.TaskCount;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
-import com.centurylink.mdw.model.value.task.TaskVO;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.task.UserTaskAction;
+import com.centurylink.mdw.model.task.TaskCount;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.task.SubTask;
+import com.centurylink.mdw.task.types.TaskList;
 
 public interface TaskServices {
 
@@ -33,13 +33,13 @@ public interface TaskServices {
 
     public Map<String,String> getIndexes(Long taskInstanceId) throws DataAccessException;
 
-    public TaskInstanceVO createCustomTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
+    public TaskInstance createCustomTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
             Long activityInstanceId, Long transitionId) throws TaskException, DataAccessException, CachingException;
 
-    public TaskInstanceVO createAutoFormTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
+    public TaskInstance createAutoFormTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
             Long activityInstanceId, FormDataDocument formDoc) throws TaskException, DataAccessException, CachingException;
 
-    public TaskInstanceVO getInstance(Long instanceId) throws DataAccessException;
+    public TaskInstance getInstance(Long instanceId) throws DataAccessException;
 
     /**
      * Returns a map of name to runtime Value.
@@ -62,7 +62,7 @@ public interface TaskServices {
 
     public TaskList getSubtasks(Long masterTaskInstanceId) throws ServiceException;
 
-    public List<TaskVO> getTaskTemplates(Query query) throws ServiceException;
+    public List<TaskTemplate> getTaskTemplates(Query query) throws ServiceException;
 
     public List<TaskCount> getTopThroughputTasks(String aggregateBy, Query query) throws ServiceException;
 
@@ -70,10 +70,10 @@ public interface TaskServices {
 
     public TaskRuntimeContext getRuntimeContext(Long instanceId) throws ServiceException;
 
-    public void performTaskAction(TaskActionVO taskAction, Query query) throws ServiceException;
+    public void performTaskAction(UserTaskAction taskAction, Query query) throws ServiceException;
 
     /**
      * Update a task instance.
      */
-    public void updateTask(String userCuid, TaskInstanceVO taskInstance) throws ServiceException;
+    public void updateTask(String userCuid, TaskInstance taskInstance) throws ServiceException;
 }

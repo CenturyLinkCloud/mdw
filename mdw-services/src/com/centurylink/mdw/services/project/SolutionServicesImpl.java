@@ -7,19 +7,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.value.project.Solution;
-import com.centurylink.mdw.model.value.project.Solution.MemberType;
-import com.centurylink.mdw.model.value.project.SolutionList;
+import com.centurylink.mdw.model.workflow.Solution;
+import com.centurylink.mdw.model.workflow.SolutionList;
+import com.centurylink.mdw.model.workflow.Solution.MemberType;
+import com.centurylink.mdw.service.data.SolutionsDataAccess;
 import com.centurylink.mdw.services.SolutionServices;
-import com.centurylink.mdw.services.dao.SolutionsDAO;
 
 public class SolutionServicesImpl implements SolutionServices {
 
-    private SolutionsDAO getDAO() {
-        return new SolutionsDAO();
+    private SolutionsDataAccess getDAO() {
+        return new SolutionsDataAccess();
     }
 
     public SolutionList getSolutions() throws ServiceException {

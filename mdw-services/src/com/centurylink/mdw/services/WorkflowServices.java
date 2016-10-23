@@ -10,15 +10,15 @@ import java.util.Map;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.model.value.activity.ActivityCount;
-import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
-import com.centurylink.mdw.model.value.activity.ActivityInstance;
-import com.centurylink.mdw.model.value.activity.ActivityList;
-import com.centurylink.mdw.model.value.process.ProcessCount;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessList;
-import com.centurylink.mdw.model.value.process.ProcessRuntimeContext;
-import com.centurylink.mdw.model.value.process.ProcessVO;
+import com.centurylink.mdw.model.workflow.ProcessCount;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessList;
+import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
+import com.centurylink.mdw.model.workflow.ActivityCount;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
+import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
+import com.centurylink.mdw.model.workflow.ActivityList;
+import com.centurylink.mdw.model.workflow.Process;
 
 public interface WorkflowServices {
 
@@ -103,8 +103,8 @@ public interface WorkflowServices {
     public void actionActivity(String activityInstanceId, String action, String completionCode)
             throws ServiceException;
 
-    ProcessInstanceVO getProcess(Long instanceId) throws ServiceException;
-    ProcessInstanceVO getProcess(Long instanceId, boolean withSubprocs) throws ServiceException;
+    ProcessInstance getProcess(Long instanceId) throws ServiceException;
+    ProcessInstance getProcess(Long instanceId, boolean withSubprocs) throws ServiceException;
 
     ProcessRuntimeContext getContext(Long instanceId) throws ServiceException;
 
@@ -124,13 +124,13 @@ public interface WorkflowServices {
 
     public Map<Date,List<ActivityCount>> getActivityInstanceBreakdown(Query query) throws ServiceException;
 
-    public List<ProcessVO> getProcessDefinitions(Query query) throws ServiceException;
-    public ProcessVO getProcessDefinition(String assetPath, Query query) throws ServiceException;
+    public List<Process> getProcessDefinitions(Query query) throws ServiceException;
+    public Process getProcessDefinition(String assetPath, Query query) throws ServiceException;
 
     public ActivityList getActivityDefinitions(Query query) throws ServiceException;
 
-    public ActivityInstance getActivity(Long instanceId) throws ServiceException;
+    public ActivityInstanceInfo getActivity(Long instanceId) throws ServiceException;
 
-    public List<ActivityImplementorVO> getImplementors() throws ServiceException;
-    public ActivityImplementorVO getImplementor(String className) throws ServiceException;
+    public List<ActivityImplementor> getImplementors() throws ServiceException;
+    public ActivityImplementor getImplementor(String className) throws ServiceException;
 }

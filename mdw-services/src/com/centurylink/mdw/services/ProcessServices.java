@@ -5,20 +5,20 @@ package com.centurylink.mdw.services;
 
 import java.util.Map;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.model.value.process.LinkedProcessInstance;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessList;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessList;
 
 public interface ProcessServices {
 
     public ProcessList getInstances(Map<String,String> criteria, Map<String,String> varCriteria, int pageIndex, int pageSize, String orderBy)
     throws DataAccessException;
 
-    public ProcessInstanceVO getInstance(Long processInstanceId)
+    public ProcessInstance getInstance(Long processInstanceId)
     throws DataAccessException;
 
-    public ProcessInstanceVO getInstanceShallow(Long processInstanceId)
+    public ProcessInstance getInstanceShallow(Long processInstanceId)
     throws DataAccessException;
 
     public void deleteProcessInstances(ProcessList processList)

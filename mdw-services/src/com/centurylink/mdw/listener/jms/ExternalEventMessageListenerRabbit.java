@@ -11,12 +11,12 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.centurylink.mdw.common.constant.SpringConstants;
-import com.centurylink.mdw.common.utilities.MessageProducer;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.constant.SpringConstants;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.util.MessageProducer;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /*
  * Copyright (c) 2011 CenturyLink, Inc. All Rights Reserved.

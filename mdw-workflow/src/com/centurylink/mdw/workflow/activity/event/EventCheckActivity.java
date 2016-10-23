@@ -4,13 +4,13 @@
 package com.centurylink.mdw.workflow.activity.event;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.process.CompletionCode;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 
 @Tracked(LogLevel.TRACE)
 public class EventCheckActivity extends EventWaitActivity {
@@ -23,7 +23,7 @@ public class EventCheckActivity extends EventWaitActivity {
      * Method that executes the logic based on the work
      */
     public void execute() throws ActivityException {
-        EventWaitInstanceVO received = registerWaitEvents(false, true);
+        EventWaitInstance received = registerWaitEvents(false, true);
         if (received!=null) {
             setReturnCodeAndExitStatus(received.getCompletionCode());
             processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
@@ -82,12 +82,12 @@ public class EventCheckActivity extends EventWaitActivity {
     /**
      * Typically you will not override this method
      */
-    public boolean resumeWaiting(InternalEventVO eventMessageDoc) throws ActivityException {
+    public boolean resumeWaiting(InternalEvent eventMessageDoc) throws ActivityException {
         if (WorkStatus.STATUSNAME_COMPLETED.equalsIgnoreCase(eventMessageDoc.getCompletionCode())){
             setReturnCode(null);
             return true;
         }
-        EventWaitInstanceVO received = registerWaitEvents(true, true);
+        EventWaitInstance received = registerWaitEvents(true, true);
         if (received!=null) {
             setReturnCodeAndExitStatus(received.getCompletionCode());
             processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));

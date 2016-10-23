@@ -16,11 +16,11 @@ import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.representer.Representer;
 
 import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument;
-import com.centurylink.mdw.common.exception.TranslationException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.ExecutionPlan;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.TranslationException;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
 
 /**
  * By convention, the first line of serialized yaml is a comment that

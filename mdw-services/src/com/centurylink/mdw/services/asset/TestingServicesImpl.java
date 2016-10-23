@@ -20,19 +20,19 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.model.value.asset.Asset;
-import com.centurylink.mdw.model.value.asset.PackageAssets;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.test.PackageTests;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseList;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class TestingServicesImpl implements TestingServices {
 
@@ -45,19 +45,19 @@ public class TestingServicesImpl implements TestingServices {
     }
 
     public TestCaseList getTestCases() throws ServiceException {
-        return getTestCases(RuleSetVO.getFileExtension(RuleSetVO.TEST).substring(1));
+        return getTestCases(Asset.getFileExtension(Asset.TEST).substring(1));
     }
 
     public TestCaseList getTestCases(String format) throws ServiceException {
         TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
         testCaseList.setTestCases(new ArrayList<PackageTests>());
         List<TestCase> allTests = new ArrayList<TestCase>();
-        Map<String,List<Asset>> pkgAssets = assetServices.getAssetsOfType(format);
+        Map<String,List<AssetInfo>> pkgAssets = assetServices.getAssetsOfType(format);
         for (String pkgName : pkgAssets.keySet()) {
-            List<Asset> assets = pkgAssets.get(pkgName);
+            List<AssetInfo> assets = pkgAssets.get(pkgName);
             PackageTests pkgTests = new PackageTests(assetServices.getPackage(pkgName));
             pkgTests.setTestCases(new ArrayList<TestCase>());
-            for (Asset asset : assets) {
+            for (AssetInfo asset : assets) {
                 TestCase testCase = new TestCase(pkgName, asset);
                 pkgTests.getTestCases().add(testCase);
                 allTests.add(testCase);
@@ -105,14 +105,14 @@ public class TestingServicesImpl implements TestingServices {
 
     private TestCase readTestCase(String path) throws ServiceException, IOException {
         String pkg = path.substring(0, path.lastIndexOf('/'));
-        Asset testCaseAsset = assetServices.getAsset(path);
+        AssetInfo testCaseAsset = assetServices.getAsset(path);
         String rootName = testCaseAsset.getRootName();
         TestCase testCase = new TestCase(pkg, testCaseAsset);
         PackageAssets pkgAssets = assetServices.getAssets(pkg);
-        String yamlExt = RuleSetVO.getFileExtension(RuleSetVO.YAML);
+        String yamlExt = Asset.getFileExtension(Asset.YAML);
         File resultsDir = getTestResultsDir();
         // TODO: support specified (non-convention) expected results
-        for (Asset pkgAsset : pkgAssets.getAssets()) {
+        for (AssetInfo pkgAsset : pkgAssets.getAssets()) {
             if (pkgAsset.getName().endsWith(yamlExt) && rootName.equals(pkgAsset.getRootName())) {
                 testCase.setExpected(pkg + "/" + pkgAsset.getName());
                 if (resultsDir != null) {
@@ -269,12 +269,12 @@ public class TestingServicesImpl implements TestingServices {
         if (resultsDir == null)
             return null;
         String summaryFile = null;
-        if (format == null || RuleSetVO.getFileExtension(RuleSetVO.TEST).equals("." + format)) {
+        if (format == null || Asset.getFileExtension(Asset.TEST).equals("." + format)) {
             summaryFile = PropertyManager.getProperty(PropertyNames.MDW_FUNCTION_TESTS_SUMMARY_FILE);
             if (summaryFile == null)
                 summaryFile = "mdw-function-test-results.xml";
         }
-        else if (RuleSetVO.getFileExtension(RuleSetVO.FEATURE).equals("." + format)) {
+        else if (Asset.getFileExtension(Asset.FEATURE).equals("." + format)) {
             summaryFile = PropertyManager.getProperty(PropertyNames.MDW_FEATURE_TESTS_SUMMARY_FILE);
             if (summaryFile == null)
                 summaryFile = "mdw-cucumber-test-results.xml";

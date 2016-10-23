@@ -8,14 +8,14 @@ import java.net.URL;
 import java.util.Map;
 
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.service.AbstractRoutingStrategy;
 import com.centurylink.mdw.common.service.RequestRoutingStrategy;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Routing strategy that determines the appropriate destination based on the round-robin algorithm.

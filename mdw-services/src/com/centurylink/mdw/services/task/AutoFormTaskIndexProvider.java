@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.observer.task.TaskIndexProvider;
+import com.centurylink.mdw.util.StringHelper;
 
 /**
  * Collects index values based on a simple toString() evaluation of the configured variables.

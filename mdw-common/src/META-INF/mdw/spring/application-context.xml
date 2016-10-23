@@ -19,25 +19,25 @@
     destroy-method="close">
     <property
       name="driverClassName"
-      value="#{T(com.centurylink.mdw.common.utilities.property.PropertyManager).getProperty('mdw.database.driver')}" />
+      value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.driver')}" />
     <property
       name="url"
-      value="#{T(com.centurylink.mdw.common.utilities.property.PropertyManager).getProperty('mdw.database.url')}" />
+      value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.url')}" />
     <property
       name="username"
-      value="#{T(com.centurylink.mdw.common.utilities.property.PropertyManager).getProperty('mdw.database.username')}" />
+      value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.username')}" />
     <property
       name="password"
-      value="#{T(com.centurylink.mdw.common.utilities.property.PropertyManager).getProperty('mdw.database.password')}" />
+      value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.password')}" />
     <property
       name="maxActive"
-      value="#{T(com.centurylink.mdw.common.utilities.property.PropertyManager).getIntegerProperty('mdw.database.poolsize',5)}" />
+      value="#{T(com.centurylink.mdw.config.PropertyManager).getIntegerProperty('mdw.database.poolsize',5)}" />
     <property
       name="maxIdle"
-      value="#{T(com.centurylink.mdw.common.utilities.property.PropertyManager).getIntegerProperty('mdw.database.poolMaxIdle',5)}" />
+      value="#{T(com.centurylink.mdw.config.PropertyManager).getIntegerProperty('mdw.database.poolMaxIdle',5)}" />
     <property
       name="validationQuery"
-      value="#{T(com.centurylink.mdw.common.utilities.property.PropertyManager).getProperty('mdw.database.validationQuery')}" />
+      value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.validationQuery')}" />
     <property
       name="testOnBorrow"
       value="true" />
@@ -94,8 +94,8 @@
         <value type="java.lang.Class">com.centurylink.mdw.common.service.types.Error</value>
         <value type="java.lang.Class">com.centurylink.mdw.common.service.types.Task</value>
         <value type="java.lang.Class">com.centurylink.mdw.common.service.types.TaskAction</value>
-        <value type="java.lang.Class">com.centurylink.mdw.common.task.SubTask</value>
-        <value type="java.lang.Class">com.centurylink.mdw.common.task.SubTaskPlan</value>
+        <value type="java.lang.Class">com.centurylink.mdw.task.types.SubTask</value>
+        <value type="java.lang.Class">com.centurylink.mdw.task.types.SubTaskPlan</value>
       </list>
     </constructor-arg>
   </bean>
@@ -160,13 +160,13 @@
   <!-- New provider -->
   <bean
     id="jmsProvider"
-    class="com.centurylink.mdw.container.plugins.activemq.ActiveMqJms">
+    class="com.centurylink.mdw.container.plugin.activemq.ActiveMqJms">
   </bean> 
   
   <!-- Inject the new provider into the Application Context -->
   <bean
     id="appContext"
-    class="com.centurylink.mdw.common.ApplicationContext">
+    class="com.centurylink.mdw.app.ApplicationContext">
     <property
       name="jmsProvider"
       ref="jmsProvider" />

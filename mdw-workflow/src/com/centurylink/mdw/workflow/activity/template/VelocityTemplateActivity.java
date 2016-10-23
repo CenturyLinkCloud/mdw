@@ -15,15 +15,15 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.tools.view.XMLToolboxManager;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.FileHelper;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 @Tracked(LogLevel.TRACE)
@@ -84,10 +84,10 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
             setOutputDocuments(temp == null ? new String[0] : temp.split("#"));
 
             // get the template from the cache
-            RuleSetVO templateVO = getTemplate(templateName);
+            Asset templateVO = getTemplate(templateName);
 
-            // Get the template text from the RuleSetVO Object
-            String templateContent = templateVO.getRuleSet();
+            // Get the template text from the AssetVO Object
+            String templateContent = templateVO.getStringContent();
 
             if (isLogDebugEnabled()) {
                 logdebug(templateVO.getDescription() + " Contains:\n" + templateContent);
@@ -122,10 +122,10 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
         }
     }
 
-    protected RuleSetVO getTemplate(String name) throws ActivityException {
-        RuleSetVO template = null;
+    protected Asset getTemplate(String name) throws ActivityException {
+        Asset template = null;
 
-        template = RuleSetCache.getRuleSet(name, RuleSetVO.VELOCITY);
+        template = AssetCache.getAsset(name, Asset.VELOCITY);
         if (template == null)
           throw new ActivityException("Unable to load velocity template '" + name + "'");
         else
@@ -161,9 +161,9 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
                 context = new VelocityContext();
             }
 
-            ProcessVO processVO = getMainProcessDefinition();
-            List<VariableVO> varVOs = processVO.getVariables();
-            for (VariableVO variableVO : varVOs) {
+            Process processVO = getMainProcessDefinition();
+            List<Variable> varVOs = processVO.getVariables();
+            for (Variable variableVO : varVOs) {
               String variableName = variableVO.getVariableName();
               Object variableValue = getVariableValue(variableName);
               context.put(variableName, variableValue);

@@ -9,8 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Jsonable;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.model.value.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.util.StringHelper;
 
 /**
  * Simple test case model for automated testing services.
@@ -28,13 +28,13 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
         Passed
     }
 
-    public TestCase(String pkg, Asset asset) {
+    public TestCase(String pkg, AssetInfo asset) {
         this.pkg = pkg;
         this.asset = asset;
     }
 
-    private Asset asset;
-    public Asset getAsset() { return asset; }
+    private AssetInfo asset;
+    public AssetInfo getAsset() { return asset; }
 
     public String getName() {
         return asset.getName();

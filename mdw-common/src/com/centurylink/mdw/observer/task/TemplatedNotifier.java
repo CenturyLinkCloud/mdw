@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.observer.task;
 
-import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
 
 
 /**

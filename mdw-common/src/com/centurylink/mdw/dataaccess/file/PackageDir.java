@@ -12,11 +12,11 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.dataaccess.AssetRevision;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.workflow.Package;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -70,7 +70,7 @@ public class PackageDir extends File {
                 fis = new FileInputStream(pkgFile);
                 byte[] bytes = new byte[(int) pkgFile.length()];
                 fis.read(bytes);
-                PackageVO pkgVo = new PackageVO(new JSONObject(new String(bytes)));
+                Package pkgVo = new Package(new JSONObject(new String(bytes)));
                 pkgName = pkgVo.getName();
                 pkgVersion = pkgVo.getVersionString();
             }
@@ -119,12 +119,12 @@ public class PackageDir extends File {
     /**
      * For newly-created packages.
      */
-    public PackageDir(File storageDir, PackageVO packageVo, VersionControl versionControl) throws IOException {
+    public PackageDir(File storageDir, Package packageVo, VersionControl versionControl) throws IOException {
         this(storageDir, new File(storageDir + "/" + packageVo.getName().replace('.', '/')), versionControl);
         this.logicalDir = new File("/" + packageVo.getName() + " v" + packageVo.getVersionString());
         this.pkgId = packageVo.getId() == null ? versionControl.getId(logicalDir) : packageVo.getId();
         this.pkgName = packageVo.getName();
-        this.pkgVersion = PackageVO.formatVersion(packageVo.getVersion());
+        this.pkgVersion = Package.formatVersion(packageVo.getVersion());
     }
 
     /**

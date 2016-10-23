@@ -18,12 +18,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
 import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.xml.DomHelper;
 
 @Tracked(LogLevel.TRACE)
@@ -52,7 +52,7 @@ public class DocumentWebServiceAdapter extends SoapWebServiceAdapter {
                 soapBody.addDocument(requestDoc);
             }
             else {
-                VariableVO reqVar = getProcessDefinition().getVariable(getAttributeValue(REQUEST_VARIABLE));
+                Variable reqVar = getProcessDefinition().getVariable(getAttributeValue(REQUEST_VARIABLE));
                 XmlDocumentTranslator docRefTrans = (XmlDocumentTranslator)VariableTranslator.getTranslator(getPackage(), reqVar.getVariableType());
                 requestDoc = docRefTrans.toDomDocument(requestObj);
                 Document copiedDocument = DomHelper.copyDomDocument(requestDoc);

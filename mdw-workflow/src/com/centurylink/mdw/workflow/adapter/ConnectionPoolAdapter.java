@@ -13,22 +13,22 @@ import org.apache.xmlbeans.XmlObject;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.monitor.CertifiedMessage;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.monitor.CertifiedMessage;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.services.event.CertifiedMessageManager;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.pooling.AdapterConnectionPool;
 import com.centurylink.mdw.services.pooling.ConnectionPoolRegistration;
 import com.centurylink.mdw.services.pooling.PooledAdapterConnection;
+import com.centurylink.mdw.util.StringHelper;
 
 /**
  * New implementation of JMS Adapter which can be
@@ -188,15 +188,15 @@ public class ConnectionPoolAdapter extends PoolableAdapterBase implements Suspen
     throws ActivityException {
     	ScheduledEventQueue eventQueue = ScheduledEventQueue.getSingleton();
     	if (errorCode==ConnectionException.POOL_EXHAUSTED || errorCode==ConnectionException.POOL_DISABLED) {
-    		ActivityInstanceVO actinst = this.getActivityInstance();
-    		InternalEventVO message = InternalEventVO.createActivityNotifyMessage(actinst,
+    		ActivityInstance actinst = this.getActivityInstance();
+    		InternalEvent message = InternalEvent.createActivityNotifyMessage(actinst,
 					EventType.RESUME, getMasterRequestId(),
 					COMPCODE_AUTO_RETRY);
         	loginfo("suspend the activity - " + originalCause.getMessage());
         	eventQueue.scheduleInternalEvent(ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId(),
         			null, message.toString(), "pool:"+pool.getName());
     	} else {
-    		InternalEventVO message = InternalEventVO.createActivityStartMessage(getActivityId(),
+    		InternalEvent message = InternalEvent.createActivityStartMessage(getActivityId(),
     				getProcessInstanceId(), getWorkTransitionInstanceId(), getMasterRequestId(),
     				COMPCODE_AUTO_RETRY);
     		int retry_interval = this.getRetryInterval();
@@ -215,14 +215,14 @@ public class ConnectionPoolAdapter extends PoolableAdapterBase implements Suspen
 			|| exceptionCode==ConnectionException.POOL_DISABLED;
 	}
 
-	public boolean resume(InternalEventVO eventMessageDoc)
+	public boolean resume(InternalEvent eventMessageDoc)
 			throws ActivityException {
 		fromResume = true;
 		this.execute();		// openConnection actually gets the already assigned connection
 		return !needSuspend();
 	}
 
-	public boolean resumeWaiting(InternalEventVO eventMessageDoc)
+	public boolean resumeWaiting(InternalEvent eventMessageDoc)
 			throws ActivityException {
 		// not currently used (the activity is never put in hold status)
 		return true;

@@ -9,12 +9,12 @@ import java.util.List;
 import javax.el.PropertyNotFoundException;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.data.task.TaskAction;
-import com.centurylink.mdw.model.data.task.TaskStatus;
-import com.centurylink.mdw.model.value.task.TaskActionVO;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
-import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.task.TaskAction;
+import com.centurylink.mdw.model.task.UserTaskAction;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.task.TaskStatus;
+import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.variable.Variable;
 
 public class TaskActionValidator {
 
@@ -24,7 +24,7 @@ public class TaskActionValidator {
         this.runtimeContext = runtimeContext;
     }
 
-    public void validateAction(TaskActionVO action) throws TaskValidationException {
+    public void validateAction(UserTaskAction action) throws TaskValidationException {
 
         if (action.getTaskAction() == null)
             throw new TaskValidationException("Missing task action");
@@ -54,11 +54,11 @@ public class TaskActionValidator {
                     throw new TaskValidationException(ServiceException.NOT_AUTHORIZED, "Task Instance "
                         + runtimeContext.getInstanceId() + " not assigned to user " + action.getUser());
                 }
-                TaskVO taskTemplate = runtimeContext.getTaskTemplate();
-                List<VariableVO> variables = taskTemplate.getVariables();
+                TaskTemplate taskTemplate = runtimeContext.getTaskTemplate();
+                List<Variable> variables = taskTemplate.getVariables();
                 if (variables != null) {
                     List<String> missingRequired = new ArrayList<String>();
-                    for (VariableVO variable : variables) {
+                    for (Variable variable : variables) {
                         if (variable.isRequired()) {
                             try {
                                 Object value = runtimeContext.getValue(variable.getName());
@@ -91,7 +91,7 @@ public class TaskActionValidator {
         }
     }
 
-    protected TaskAction getAllowableAction(TaskActionVO taskAction) throws Exception {
+    protected TaskAction getAllowableAction(UserTaskAction taskAction) throws Exception {
         for (TaskAction allowableAction : AllowableTaskActions.getTaskDetailActions(taskAction.getUser(), runtimeContext)) {
             if (allowableAction.getTaskActionName().equals(taskAction.getAction().toString()))
                 return allowableAction;

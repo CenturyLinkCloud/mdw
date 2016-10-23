@@ -14,17 +14,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.data.task.TaskStatuses;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.data.work.WorkStatuses;
-import com.centurylink.mdw.model.value.activity.ActivityCount;
-import com.centurylink.mdw.model.value.process.ProcessCount;
-import com.centurylink.mdw.model.value.requests.RequestCount;
-import com.centurylink.mdw.model.value.task.TaskCount;
+import com.centurylink.mdw.model.request.RequestCount;
+import com.centurylink.mdw.model.task.TaskCount;
+import com.centurylink.mdw.model.task.TaskStatuses;
+import com.centurylink.mdw.model.workflow.ActivityCount;
+import com.centurylink.mdw.model.workflow.ProcessCount;
+import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.model.workflow.WorkStatuses;
 
 /**
  * For MDW 6 we'll factor an interface from this.

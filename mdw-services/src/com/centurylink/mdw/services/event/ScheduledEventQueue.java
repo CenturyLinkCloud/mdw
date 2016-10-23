@@ -14,27 +14,27 @@ import java.util.PriorityQueue;
 
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.cache.CacheEnabled;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.provider.CacheService;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.provider.CacheService;
+import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.services.dao.process.EngineDataAccessDB;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.IntraMDWMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.process.EventServices;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class ScheduledEventQueue implements CacheEnabled, CacheService {
 
@@ -121,7 +121,7 @@ public class ScheduledEventQueue implements CacheEnabled, CacheService {
     			        return false;  // Don't remove event from DB since it couldn't be processed (no thread available)
     			} else {
             		InternalMessenger msgbroker = MessengerFactory.newInternalMessenger();
-            		msgbroker.sendMessage(new InternalEventVO(event.getMessage()), edao);
+            		msgbroker.sendMessage(new InternalEvent(event.getMessage()), edao);
     			}
     		} else if (event.isScheduledJob()) {
     			// timer task

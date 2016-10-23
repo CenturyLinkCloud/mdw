@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.observer.task.TaskIndexProvider;
 
 @RegisteredService(TaskIndexProvider.class)

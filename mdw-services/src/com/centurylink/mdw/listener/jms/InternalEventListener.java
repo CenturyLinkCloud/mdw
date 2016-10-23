@@ -17,16 +17,16 @@ import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 import javax.jms.TextMessage;
 
-import com.centurylink.mdw.common.constant.JMSDestinationNames;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.ServiceLocatorException;
-import com.centurylink.mdw.common.utilities.JMSServices;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
+import com.centurylink.mdw.constant.JMSDestinationNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
-import com.centurylink.mdw.model.data.monitor.CertifiedMessage;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.monitor.CertifiedMessage;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.process.InternalEventDriver;
+import com.centurylink.mdw.util.JMSServices;
+import com.centurylink.mdw.util.ServiceLocatorException;
+import com.centurylink.mdw.util.log.LoggerUtil;
 
 public class InternalEventListener extends JmsListener {
 

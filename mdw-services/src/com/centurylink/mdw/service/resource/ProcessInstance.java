@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.services.ProcessServices;
 import com.centurylink.mdw.services.ServiceLocator;
 
@@ -22,7 +21,7 @@ public class ProcessInstance implements JsonService {
         boolean shallow = "true".equals(parameters.get("shallow"));
         try {
             ProcessServices processServices = ServiceLocator.getProcessServices();
-            ProcessInstanceVO processInstance;
+            com.centurylink.mdw.model.workflow.ProcessInstance processInstance;
             if (shallow)
                 processInstance = processServices.getInstanceShallow(new Long(instanceId));
             else

@@ -5,12 +5,12 @@ package com.centurylink.mdw.workflow.task.strategy;
 
 import org.drools.KnowledgeBase;
 
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.exception.StrategyException;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.common.StrategyException;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.observer.task.ParameterizedStrategy;
 import com.centurylink.mdw.workflow.drools.cache.DroolsKnowledgeBaseCache;
-import com.centurylink.mdw.workflow.drools.cache.KnowledgeBaseRuleSet;
+import com.centurylink.mdw.workflow.drools.cache.KnowledgeBaseAsset;
 
 public abstract class RulesBasedStrategy extends ParameterizedStrategy {
 
@@ -41,7 +41,7 @@ public abstract class RulesBasedStrategy extends ParameterizedStrategy {
      * @throws StrategyException
      */
     protected KnowledgeBase getKnowledgeBase(String name, String modifier) throws StrategyException {
-        KnowledgeBaseRuleSet kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseRuleSet(name, modifier, null, getClassLoader());
+        KnowledgeBaseAsset kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseAsset(name, modifier, null, getClassLoader());
 
         if (kbrs == null) {
             return null;
@@ -72,7 +72,7 @@ public abstract class RulesBasedStrategy extends ParameterizedStrategy {
         int lastSlash = kbNameStr.lastIndexOf('/');
         String pkg = lastSlash == -1 ? null : kbNameStr.substring(0, lastSlash) ;
 
-        PackageVO pkgVO = PackageVOCache.getPackage(pkg);
+        Package pkgVO = PackageCache.getPackage(pkg);
         if (pkgVO == null)
             throw new StrategyException("Unable to get package name from strategy: " + kbAttributeName +" value="+kbNameStr);
         // return the cloud class loader by default, unless the bundle spec is set

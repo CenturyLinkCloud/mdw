@@ -12,16 +12,16 @@ import org.apache.oltu.oauth2.common.OAuth;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.auth.OAuthAuthenticator;
-import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.ExpressionUtil;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.util.ExpressionUtil;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
 
 @Tracked(LogLevel.TRACE)

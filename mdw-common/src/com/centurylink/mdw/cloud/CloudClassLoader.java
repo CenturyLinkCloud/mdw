@@ -19,14 +19,14 @@ import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.java.CompiledJavaCache;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Used for Tomcat (and generally in cloud mode) to include Jar assets and library jars
@@ -39,18 +39,18 @@ public class CloudClassLoader extends ClassLoader {
     private List<File> classpath;
     public List<File> getClasspath() { return classpath; }
 
-    private PackageVO packageVO;
+    private Package packageVO;
 
     private File assetRoot;
 
-    private List<RuleSetVO> jarAssets;
-    public List<RuleSetVO> getJarAssets() {
+    private List<Asset> jarAssets;
+    public List<Asset> getJarAssets() {
         if (jarAssets == null) {
-            jarAssets = new ArrayList<RuleSetVO>();
-            jarAssets.addAll(RuleSetCache.getRuleSets(RuleSetVO.JAR));
+            jarAssets = new ArrayList<Asset>();
+            jarAssets.addAll(AssetCache.getAssets(Asset.JAR));
             // same-package jars go first
-            Collections.sort(jarAssets, new Comparator<RuleSetVO>() {
-                public int compare(RuleSetVO rs1, RuleSetVO rs2) {
+            Collections.sort(jarAssets, new Comparator<Asset>() {
+                public int compare(Asset rs1, Asset rs2) {
                     String pkgName = packageVO.getName();
                     if (pkgName.equals(rs1.getPackageName()) && !pkgName.equals(rs2.getPackageName()))
                         return -1;
@@ -64,7 +64,7 @@ public class CloudClassLoader extends ClassLoader {
         return jarAssets;
     }
 
-    public CloudClassLoader(PackageVO pkg) {
+    public CloudClassLoader(Package pkg) {
         super(pkg.getClassLoader());
         packageVO = pkg;
 
@@ -102,10 +102,10 @@ public class CloudClassLoader extends ClassLoader {
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         byte[] b = null;
         try {
-            RuleSetVO javaRuleSet = RuleSetCache.getRuleSet(name, RuleSetVO.JAVA);
+            Asset javaAsset = AssetCache.getAsset(name, Asset.JAVA);
             // try dynamic java first
-            if (javaRuleSet != null)
-                return CompiledJavaCache.getClass(getParent(), packageVO, name, javaRuleSet.getRuleSet());
+            if (javaAsset != null)
+                return CompiledJavaCache.getClass(getParent(), packageVO, name, javaAsset.getStringContent());
             // try shared cache
             Class<?> found;
             synchronized(sharedClassCache) {
@@ -135,7 +135,7 @@ public class CloudClassLoader extends ClassLoader {
         if (lastDot > 0)
             pkgName = name.substring(0, lastDot);
 
-        Package pkg = getPackage(pkgName);
+        java.lang.Package pkg = getPackage(pkgName);
         if (pkg == null)
             definePackage(pkgName, null, null, null, "MDW", packageVO.getVersionString(), "CenturyLink", null);
         Class<?> clz = defineClass(name, b, 0, b.length);
@@ -223,7 +223,7 @@ public class CloudClassLoader extends ClassLoader {
         // prefer assets in the same package
         byte[] b = null;
         if (assetRoot != null) {
-            for (RuleSetVO jarAsset : getJarAssets()) {
+            for (Asset jarAsset : getJarAssets()) {
                 File jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
                 b = findInJarFile(jarFile, path);
                 if (b != null)
@@ -270,7 +270,7 @@ public class CloudClassLoader extends ClassLoader {
     public InputStream getResourceAsStream(String name) {
         byte[] b = null;
         try {
-            RuleSetVO resource = RuleSetCache.getRuleSet(packageVO.getName() + "/" + name);
+            Asset resource = AssetCache.getAsset(packageVO.getName() + "/" + name);
             if (resource != null)
                 b = resource.getRawContent();
             if (b == null)

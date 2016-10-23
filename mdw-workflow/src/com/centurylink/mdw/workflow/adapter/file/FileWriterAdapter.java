@@ -7,12 +7,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
 
 @Tracked(LogLevel.TRACE)

@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.test.impl;
 
-import com.centurylink.mdw.model.value.user.AuthenticatedUser;
+import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.test.TestUserService;
 
 public class TestUserServiceBean implements TestUserService {

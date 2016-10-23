@@ -20,23 +20,23 @@ import org.drools.builder.ResourceType;
 import org.drools.compiler.PackageBuilderConfiguration;
 import org.drools.io.ResourceFactory;
 
-import com.centurylink.mdw.common.Compatibility;
-import com.centurylink.mdw.common.Compatibility.SubstitutionResult;
-import com.centurylink.mdw.common.cache.PreloadableCache;
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.exception.CachingException;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.app.Compatibility;
+import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
+import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.workflow.drools.DecisionTableProvider;
 
 public class DroolsKnowledgeBaseCache implements PreloadableCache  {
 
-    private static final String[] LANGUAGES = new String[] {RuleSetVO.DROOLS, RuleSetVO.EXCEL, RuleSetVO.EXCEL_2007, RuleSetVO.GUIDED};
+    private static final String[] LANGUAGES = new String[] {Asset.DROOLS, Asset.EXCEL, Asset.EXCEL_2007, Asset.GUIDED};
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private static volatile Map<String,KnowledgeBaseRuleSet> kbaseMap = Collections.synchronizedMap(new TreeMap<String,KnowledgeBaseRuleSet>());
+    private static volatile Map<String,KnowledgeBaseAsset> kbaseMap = Collections.synchronizedMap(new TreeMap<String,KnowledgeBaseAsset>());
 
     private static String[] preLoaded;
 
@@ -64,52 +64,52 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
         }
     }
 
-    public static KnowledgeBaseRuleSet getKnowledgeBaseRuleSet(String name) {
-        return getKnowledgeBaseRuleSet(name, null, null);
+    public static KnowledgeBaseAsset getKnowledgeBaseAsset(String name) {
+        return getKnowledgeBaseAsset(name, null, null);
     }
 
-    public static KnowledgeBaseRuleSet getKnowledgeBaseRuleSet(String name, String modifier) {
-        return getKnowledgeBaseRuleSet(name, modifier, null);
+    public static KnowledgeBaseAsset getKnowledgeBaseAsset(String name, String modifier) {
+        return getKnowledgeBaseAsset(name, modifier, null);
     }
 
-    public static KnowledgeBaseRuleSet getKnowledgeBaseRuleSet(String name, String modifier, Map<String,String> attributes) {
-        return getKnowledgeBaseRuleSet(name, modifier, null, getDefaultClassLoader());
+    public static KnowledgeBaseAsset getKnowledgeBaseAsset(String name, String modifier, Map<String,String> attributes) {
+        return getKnowledgeBaseAsset(name, modifier, null, getDefaultClassLoader());
     }
 
-    public static synchronized KnowledgeBaseRuleSet getKnowledgeBaseRuleSet(String name, String modifier, Map<String,String> attributes, ClassLoader loader) {
+    public static synchronized KnowledgeBaseAsset getKnowledgeBaseAsset(String name, String modifier, Map<String,String> attributes, ClassLoader loader) {
 
         Key key = new Key(name, modifier, attributes, loader);
 
-        KnowledgeBaseRuleSet knowledgeBaseRuleSet = kbaseMap.get(key.toString());
+        KnowledgeBaseAsset knowledgeBaseAsset = kbaseMap.get(key.toString());
 
-        if (knowledgeBaseRuleSet == null) {
+        if (knowledgeBaseAsset == null) {
             try {
-                logger.info("Loading KnowledgeBase RuleSet based on key: " + key);
-                knowledgeBaseRuleSet = loadKnowledgeBaseRuleSet(key);
-                kbaseMap.put(key.toString(), knowledgeBaseRuleSet);
+                logger.info("Loading KnowledgeBase Asset based on key: " + key);
+                knowledgeBaseAsset = loadKnowledgeBaseAsset(key);
+                kbaseMap.put(key.toString(), knowledgeBaseAsset);
             }
             catch (Exception ex) {
                 logger.severeException(ex.getMessage(), ex);
             }
         }
-        return knowledgeBaseRuleSet;
+        return knowledgeBaseAsset;
     }
 
     // load asset based on specified version/range
-    public static synchronized KnowledgeBaseRuleSet getKnowledgeBaseRuleSet(AssetVersionSpec drlAssetVerSpec, String modifier, Map<String,String> attributes, ClassLoader loader) {
+    public static synchronized KnowledgeBaseAsset getKnowledgeBaseAsset(AssetVersionSpec drlAssetVerSpec, String modifier, Map<String,String> attributes, ClassLoader loader) {
         Key key = new Key(drlAssetVerSpec, modifier, attributes, loader);
-        KnowledgeBaseRuleSet knowledgeBaseRuleSet = kbaseMap.get(key.toString());
-        if (knowledgeBaseRuleSet == null) {
+        KnowledgeBaseAsset knowledgeBaseAsset = kbaseMap.get(key.toString());
+        if (knowledgeBaseAsset == null) {
             try {
-                logger.info("Loading KnowledgeBase RuleSet based on key : "+ key);
-                knowledgeBaseRuleSet = loadKnowledgeBaseRuleSet(key);
-                kbaseMap.put(key.toString(), knowledgeBaseRuleSet);
+                logger.info("Loading KnowledgeBase Asset based on key : "+ key);
+                knowledgeBaseAsset = loadKnowledgeBaseAsset(key);
+                kbaseMap.put(key.toString(), knowledgeBaseAsset);
             }
             catch (Exception ex) {
                 logger.severeException(ex.getMessage(), ex);
             }
         }
-        return knowledgeBaseRuleSet;
+        return knowledgeBaseAsset;
     }
 
     public static KnowledgeBase getKnowledgeBase(String name) {
@@ -121,7 +121,7 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
     }
 
     public static KnowledgeBase getKnowledgeBase(String name, String modifier, Map<String,String> attributes) {
-        KnowledgeBaseRuleSet kbrs = getKnowledgeBaseRuleSet(name, modifier, attributes);
+        KnowledgeBaseAsset kbrs = getKnowledgeBaseAsset(name, modifier, attributes);
         if (kbrs == null)
             return null;
         else
@@ -141,13 +141,13 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
     }
 
     private synchronized void load() throws CachingException {
-        Map<String,KnowledgeBaseRuleSet> kbaseMapTemp = Collections.synchronizedMap(new TreeMap<String,KnowledgeBaseRuleSet>());
+        Map<String,KnowledgeBaseAsset> kbaseMapTemp = Collections.synchronizedMap(new TreeMap<String,KnowledgeBaseAsset>());
         if (preLoaded != null) {   // otherwise load is performed lazily
             try {
                 for (String preLoadKey : preLoaded) {
                     Key key = new Key(preLoadKey);
-                    logger.info("PreLoading KnowledgeBase RuleSet based on key: " + key);
-                    KnowledgeBaseRuleSet kbrs = loadKnowledgeBaseRuleSet(key);
+                    logger.info("PreLoading KnowledgeBase Asset based on key: " + key);
+                    KnowledgeBaseAsset kbrs = loadKnowledgeBaseAsset(key);
                     if (kbrs != null) {
                         kbaseMapTemp.put(preLoadKey, kbrs);
                     }
@@ -167,12 +167,12 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
             loadCache();
     }
 
-    private static KnowledgeBaseRuleSet loadKnowledgeBaseRuleSet(Key key) throws IOException, CachingException {
+    private static KnowledgeBaseAsset loadKnowledgeBaseAsset(Key key) throws IOException, CachingException {
 
-        RuleSetVO ruleSet = getRuleSet(key);
+        Asset asset = getAsset(key);
 
-        if (ruleSet == null) {
-            throw new CachingException("No rule set found for: '" + key.name + "'");
+        if (asset == null) {
+            throw new CachingException("No asset found for: '" + key.name + "'");
         }
 
         PackageBuilderConfiguration pbConfig = null;
@@ -182,11 +182,11 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(pbConfig);
 
         String rules = null;
-        String format = ruleSet.getLanguage();
+        String format = asset.getLanguage();
 
-        if (format.equals(RuleSetVO.EXCEL) || format.equals(RuleSetVO.EXCEL_2007) || format.equals(RuleSetVO.CSV)) {
+        if (format.equals(Asset.EXCEL) || format.equals(Asset.EXCEL_2007) || format.equals(Asset.CSV)) {
             // decision table XLS, XLSX or CSV
-            byte[] decodeBytes = ruleSet.getContent();
+            byte[] decodeBytes = asset.getContent();
 
             // modifier for decision table must be worksheet name
             DecisionTableProvider dtProvider = new DecisionTableProvider();
@@ -196,58 +196,58 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
                 rules = dtProvider.loadFromInputStream(new ByteArrayInputStream(decodeBytes), format, key.modifier);
 
             if (Compatibility.hasCodeSubstitutions())
-                rules = doCompatibilityCodeSubstitutions(ruleSet.getLabel(), rules);
+                rules = doCompatibilityCodeSubstitutions(asset.getLabel(), rules);
             if (logger.isDebugEnabled())
-                logger.debug("Converted rule for " + ruleSet.getDescription() + ":\n" + rules + "\n================================");
+                logger.debug("Converted rule for " + asset.getDescription() + ":\n" + rules + "\n================================");
         }
-        else if (format.equals(RuleSetVO.DROOLS) || format.equals(RuleSetVO.GUIDED)) {
+        else if (format.equals(Asset.DROOLS) || format.equals(Asset.GUIDED)) {
             // drools DRL or BRL
-            rules = ruleSet.getRuleSet();
+            rules = asset.getStringContent();
             if (Compatibility.hasCodeSubstitutions())
-                rules = doCompatibilityCodeSubstitutions(ruleSet.getLabel(), rules);
+                rules = doCompatibilityCodeSubstitutions(asset.getLabel(), rules);
         }
         else {
-            throw new CachingException("Unsupported rules format '" + format + "' for " + ruleSet.getDescription());
+            throw new CachingException("Unsupported rules format '" + format + "' for " + asset.getDescription());
         }
 
-        ResourceType resourceType = format.equals(RuleSetVO.GUIDED) ? ResourceType.BRL : ResourceType.DRL;
+        ResourceType resourceType = format.equals(Asset.GUIDED) ? ResourceType.BRL : ResourceType.DRL;
         kbuilder.add(ResourceFactory.newByteArrayResource(rules.getBytes()), resourceType);
 
         if (kbuilder.hasErrors()) {
-            if (format.equals(RuleSetVO.EXCEL) || format.equals(RuleSetVO.EXCEL_2007)) {
+            if (format.equals(Asset.EXCEL) || format.equals(Asset.EXCEL_2007)) {
                 // log the converted rules
-                logger.severe("Converted rule for " + ruleSet.getDescription() + ":\n" + rules + "\n================================");
+                logger.severe("Converted rule for " + asset.getDescription() + ":\n" + rules + "\n================================");
             }
-            throw new CachingException("Error parsing knowledge base from rules for " + ruleSet.getDescription() + "\n" + kbuilder.getErrors());
+            throw new CachingException("Error parsing knowledge base from rules for " + asset.getDescription() + "\n" + kbuilder.getErrors());
         }
         else {
             KnowledgeBase knowledgeBase = KnowledgeBaseFactory.newKnowledgeBase();
             knowledgeBase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-            logger.info("Loaded KnowledgeBase from RuleSet: " + ruleSet.getLabel());
-            return new KnowledgeBaseRuleSet(knowledgeBase, ruleSet);
+            logger.info("Loaded KnowledgeBase from Asset: " + asset.getLabel());
+            return new KnowledgeBaseAsset(knowledgeBase, asset);
         }
     }
 
-    public static RuleSetVO getRuleSet(Key key) {
-        RuleSetVO ruleSet = null;
+    public static Asset getAsset(Key key) {
+        Asset asset = null;
 
         if (key.drlVersionSpec != null) {
-            ruleSet = key.attributes == null ? RuleSetCache.getRuleSet(key.drlVersionSpec) : RuleSetCache.getRuleSet(key.drlVersionSpec, key.attributes);
+            asset = key.attributes == null ? AssetCache.getAsset(key.drlVersionSpec) : AssetCache.getAsset(key.drlVersionSpec, key.attributes);
         }
-        if (ruleSet != null)
-            return ruleSet;
+        if (asset != null)
+            return asset;
 
-        String ruleSetName = key.name == null ? key.drlVersionSpec.getQualifiedName() : key.name;
+        String assetName = key.name == null ? key.drlVersionSpec.getQualifiedName() : key.name;
 
         if (key.attributes == null) {
-            ruleSet = RuleSetCache.getRuleSet(ruleSetName, LANGUAGES);
+            asset = AssetCache.getAsset(assetName, LANGUAGES);
         }
         else {
-            for (int i = 0; i < LANGUAGES.length && ruleSet == null; i++) {
-                ruleSet = RuleSetCache.getLatestRuleSet(ruleSetName, LANGUAGES[i], key.attributes);
+            for (int i = 0; i < LANGUAGES.length && asset == null; i++) {
+                asset = AssetCache.getLatestAssets(assetName, LANGUAGES[i], key.attributes);
             }
         }
-        return ruleSet;
+        return asset;
     }
 
 

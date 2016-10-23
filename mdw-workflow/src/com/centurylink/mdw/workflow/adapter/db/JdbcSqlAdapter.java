@@ -6,12 +6,12 @@ package com.centurylink.mdw.workflow.adapter.db;
 import java.sql.SQLException;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
 
 @Tracked(LogLevel.TRACE)

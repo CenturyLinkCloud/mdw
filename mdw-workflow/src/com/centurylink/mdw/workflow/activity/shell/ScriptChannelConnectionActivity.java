@@ -18,16 +18,16 @@ import org.w3c.dom.Document;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.HttpHelper;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.service.Action;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import com.qwest.mbeng.DomDocument;
@@ -137,9 +137,9 @@ public class ScriptChannelConnectionActivity extends DefaultActivityImpl
           GroovyShell shell = new GroovyShell(getClass().getClassLoader());
           Script script = shell.parse(rule);
           Binding binding = new Binding();
-          List<VariableVO> vos = getProcessDefinition().getVariables();
+          List<Variable> vos = getProcessDefinition().getVariables();
 
-          for (VariableVO variableVO: vos) {
+          for (Variable variableVO: vos) {
             String variableName = variableVO.getVariableName();
             Object variableValue = getVariableValue(variableName);
             binding.setVariable(variableName, variableValue);
@@ -147,7 +147,7 @@ public class ScriptChannelConnectionActivity extends DefaultActivityImpl
           script.setBinding(binding);
           script.run();
 
-          for (VariableVO variableVO: vos) {
+          for (Variable variableVO: vos) {
               String variableName = variableVO.getVariableName();
               Object groovyVarValue = binding.getVariable(variableName);
               setParamValue(variableName, variableVO.getVariableType(), groovyVarValue);

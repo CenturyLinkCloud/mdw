@@ -7,19 +7,19 @@ import java.net.URL;
 import java.util.Map;
 
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.constant.JMSDestinationNames;
-import com.centurylink.mdw.common.constant.PropertyNames;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.RequestRoutingStrategy;
-import com.centurylink.mdw.common.utilities.HttpHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.JMSDestinationNames;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.monitor.ServiceMonitor;
+import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 @RegisteredService(ServiceMonitor.class)
 public class RoutingServiceMonitor implements ServiceMonitor {
@@ -44,7 +44,7 @@ public class RoutingServiceMonitor implements ServiceMonitor {
 
         // If GET request, check exclusion_list property of routing package
         if ("GET".equalsIgnoreCase(headers.get(Listener.METAINFO_HTTP_METHOD))) {
-            PackageVO pkg = PackageVOCache.getPackage(this.getClass().getName().substring(0,this.getClass().getName().lastIndexOf('.')));
+            Package pkg = PackageCache.getPackage(this.getClass().getName().substring(0,this.getClass().getName().lastIndexOf('.')));
             String[] exclusions = pkg.getProperty("ExclusionRoutingList").split(",");
             for (String path : exclusions) {
                 if (headers.get(Listener.METAINFO_REQUEST_PATH).toLowerCase().contains(path.toLowerCase()))

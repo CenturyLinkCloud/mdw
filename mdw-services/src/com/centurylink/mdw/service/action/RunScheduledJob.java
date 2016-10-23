@@ -9,10 +9,10 @@ import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.XmlService;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.common.utilities.form.CallURL;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.model.data.monitor.ScheduledJob;
+import com.centurylink.mdw.model.monitor.ScheduledJob;
+import com.centurylink.mdw.util.CallURL;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class RunScheduledJob implements XmlService {
 

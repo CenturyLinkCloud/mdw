@@ -8,10 +8,10 @@ import java.lang.reflect.Constructor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.centurylink.mdw.common.Compatibility;
-import com.centurylink.mdw.common.exception.TranslationException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
+import com.centurylink.mdw.app.Compatibility;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.TranslationException;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.xml.XmlBeanWrapper;
 
 public class XmlBeanWrapperTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {

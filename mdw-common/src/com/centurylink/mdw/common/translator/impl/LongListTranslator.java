@@ -9,8 +9,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.centurylink.mdw.common.exception.TranslationException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.TranslationException;
 
 public class LongListTranslator extends DocumentReferenceTranslator {
 

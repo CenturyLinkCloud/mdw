@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.service.api.MdwScanner;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 import io.swagger.models.Swagger;
 import io.swagger.servlet.Reader;

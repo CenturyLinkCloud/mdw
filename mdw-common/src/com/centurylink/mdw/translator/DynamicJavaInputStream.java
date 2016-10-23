@@ -9,16 +9,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 
 import com.centurylink.mdw.java.CompiledJavaCache;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.workflow.Package;
 
 /**
  * Uses the CompiledJavaCache for loading classes to be deserialized.
  */
 public class DynamicJavaInputStream extends ObjectInputStream {
 
-    private PackageVO packageVO;
+    private Package packageVO;
 
-    public DynamicJavaInputStream(InputStream in, PackageVO packageVO) throws IOException {
+    public DynamicJavaInputStream(InputStream in, Package packageVO) throws IOException {
         super(in);
         this.packageVO = packageVO;
     }

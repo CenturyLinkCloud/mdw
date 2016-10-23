@@ -103,7 +103,7 @@ process: # 13593
   variable: # 20521
     name: changedXmlBeanWrapper
     value: |
-      com.centurylink.mdw.model.ActionRequestXmlBeanWrapper
+      com.centurylink.mdw.common.service.types.ActionRequestMessage
 <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
         <Action name="beZen">
           <Parameter name="priority">URGENT</Parameter>
@@ -195,7 +195,7 @@ process: # 13593
   variable: # 20511
     name: unchangedXmlBeanWrapper
     value: |
-      com.centurylink.mdw.model.ActionRequestXmlBeanWrapper
+      com.centurylink.mdw.common.service.types.ActionRequestMessage
 <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
         <Action name="beZen">
           <Parameter name="priority">URGENT</Parameter>
@@ -324,7 +324,7 @@ process: # 13592
   variable: # 20507
     name: changedXmlBeanWrapper
     value: |
-      com.centurylink.mdw.model.ActionRequestXmlBeanWrapper
+      com.centurylink.mdw.common.service.types.ActionRequestMessage
 <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
         <Action name="beZen">
           <Parameter name="priority">URGENT</Parameter>
@@ -417,7 +417,7 @@ process: # 13592
   variable: # 20497
     name: unchangedXmlBeanWrapper
     value: |
-      com.centurylink.mdw.model.ActionRequestXmlBeanWrapper
+      com.centurylink.mdw.common.service.types.ActionRequestMessage
 <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
         <Action name="beZen">
           <Parameter name="priority">URGENT</Parameter>

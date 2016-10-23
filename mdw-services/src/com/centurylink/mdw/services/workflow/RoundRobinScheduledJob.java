@@ -6,16 +6,16 @@ package com.centurylink.mdw.services.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.form.CallURL;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.model.data.monitor.LoadBalancedScheduledJob;
-import com.centurylink.mdw.model.value.event.EventInstanceVO;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.event.EventInstance;
+import com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.CallURL;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public abstract class RoundRobinScheduledJob extends LoadBalancedScheduledJob {
 
@@ -31,7 +31,7 @@ public abstract class RoundRobinScheduledJob extends LoadBalancedScheduledJob {
 
             // round robin logic to find next available server
             if (serverList.size() > 1) {
-                EventInstanceVO event = eventManager.getEventInstance(eventName);
+                EventInstance event = eventManager.getEventInstance(eventName);
                 if (event != null && !StringHelper.isEmpty(event.getComments())) {
                     int index = serverList.indexOf(event.getComments());
                     if (index > -1) {

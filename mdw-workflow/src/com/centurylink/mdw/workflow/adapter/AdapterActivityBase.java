@@ -14,24 +14,24 @@ import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.AdapterInvocationError;
 import com.centurylink.mdw.adapter.HeaderAwareAdapter;
 import com.centurylink.mdw.adapter.SimulationResponse;
-import com.centurylink.mdw.common.constant.ActivityResultCodeConstant;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.ProcessVisibilityConstant;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.exception.TranslationException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
-import com.centurylink.mdw.model.value.attribute.AttributeVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
+import com.centurylink.mdw.constant.ActivityResultCodeConstant;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.ProcessVisibilityConstant;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.monitor.AdapterMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.services.event.StubHelper;
+import com.centurylink.mdw.translator.TranslationException;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 /**
@@ -247,7 +247,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
         } else if (errorCause instanceof ConnectionException) {
             errorCode = ((ConnectionException)errorCause).getCode();
             // if process is invoked sync style, no need to retry due to connection failure
-            ProcessVO procVO = getProcessDefinition();
+            Process procVO = getProcessDefinition();
             if (procVO.getProcessType().equals(ProcessVisibilityConstant.SERVICE)) {
             	super.setReturnCode("ERROR:");
             	return;
@@ -344,7 +344,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
      */
     protected Object getStubResponse(Object requestData) {
         List<SimulationResponse> responses = new ArrayList<SimulationResponse>();
-        for (AttributeVO attr : this.getAttributes()) {
+        for (Attribute attr : this.getAttributes()) {
             if (attr.getAttributeName().startsWith(WorkAttributeConstant.SIMULATION_RESPONSE)) {
                 SimulationResponse r = new SimulationResponse(attr.getAttributeValue());
                 responses.add(r);

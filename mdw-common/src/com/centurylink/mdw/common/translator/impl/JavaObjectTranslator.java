@@ -13,10 +13,10 @@ import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.centurylink.mdw.common.exception.TranslationException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.java.MdwJavaException;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.TranslationException;
 
 public class JavaObjectTranslator extends DocumentReferenceTranslator {
 

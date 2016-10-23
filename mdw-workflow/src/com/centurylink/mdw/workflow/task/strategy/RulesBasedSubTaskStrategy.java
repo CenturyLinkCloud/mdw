@@ -11,23 +11,23 @@ import org.drools.KnowledgeBase;
 import org.drools.command.CommandFactory;
 import org.drools.runtime.StatelessKnowledgeSession;
 
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.exception.StrategyException;
-import com.centurylink.mdw.common.provider.ProviderRegistry;
-import com.centurylink.mdw.common.task.SubTaskPlan;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
+import com.centurylink.mdw.common.StrategyException;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.observer.task.SubTaskStrategy;
+import com.centurylink.mdw.provider.ProviderRegistry;
+import com.centurylink.mdw.task.types.SubTaskPlan;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class RulesBasedSubTaskStrategy extends RulesBasedStrategy implements SubTaskStrategy {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public String getSubTaskPlan(TaskRuntimeContext masterTaskContext) throws StrategyException {
-        TaskInstanceVO masterTaskInstance = masterTaskContext.getTaskInstanceVO();
+        TaskInstance masterTaskInstance = masterTaskContext.getTaskInstanceVO();
         KnowledgeBase knowledgeBase = getKnowledgeBase();
 
         StatelessKnowledgeSession knowledgeSession = knowledgeBase.newStatelessKnowledgeSession();

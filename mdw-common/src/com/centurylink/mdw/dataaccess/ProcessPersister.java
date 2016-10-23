@@ -7,13 +7,12 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.event.ExternalEventVO;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.task.TaskVO;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.event.ExternalEvent;
+import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
 
 /**
  * common interface for all process persistence
@@ -26,43 +25,43 @@ public interface ProcessPersister {
 
     int getDatabaseVersion();
 
-    Long persistPackage(PackageVO packageVO, PersistType persistType)
+    Long persistPackage(Package packageVO, PersistType persistType)
     throws DataAccessException;
 
     int deletePackage(Long packageId)
     throws DataAccessException;
 
-    void deleteProcess(ProcessVO process)
+    void deleteProcess(Process process)
     throws DataAccessException;
 
-    Long persistProcess(ProcessVO process, PersistType persistType)
+    Long persistProcess(Process process, PersistType persistType)
     throws DataAccessException, XmlException;
 
-    void createExternalEvent(ExternalEventVO eventHandler)
+    void createExternalEvent(ExternalEvent eventHandler)
     throws DataAccessException;
 
     void deleteExternalEvent(Long handlerId)
     throws DataAccessException;
 
-    void updateExternalEvent(ExternalEventVO eventHandler)
+    void updateExternalEvent(ExternalEvent eventHandler)
     throws DataAccessException;
 
-    void createTaskTemplate(TaskVO taskTemplate)
+    void createTaskTemplate(TaskTemplate taskTemplate)
     throws DataAccessException;
 
     void deleteTaskTemplate(Long taskId)
     throws DataAccessException;
 
-    void updateTaskTemplate(TaskVO taskTemplate)
+    void updateTaskTemplate(TaskTemplate taskTemplate)
     throws DataAccessException;
 
-    Long createActivityImplementor(ActivityImplementorVO implementor)
+    Long createActivityImplementor(ActivityImplementor implementor)
     throws DataAccessException;
 
     void deleteActivityImplementor(Long implementorId)
     throws DataAccessException;
 
-    void updateActivityImplementor(ActivityImplementorVO vo)
+    void updateActivityImplementor(ActivityImplementor vo)
     throws DataAccessException;
 
     long renameProcess(Long processId, String newName, int newVersion)
@@ -74,7 +73,7 @@ public interface ProcessPersister {
     /**
      * TODO: The signatures for renameProcess() and renamePackage() should be similar.
      */
-    void renameRuleSet(RuleSetVO ruleset, String newName)
+    void renameAsset(Asset asset, String newName)
     throws DataAccessException;
 
     long addProcessToPackage(Long processId, Long packageId)
@@ -101,19 +100,19 @@ public interface ProcessPersister {
     void removeActivityImplFromPackage(Long activityImplId, Long packageId)
     throws DataAccessException;
 
-    long addRuleSetToPackage(Long ruleSetId, Long packageId)
+    long addAssetToPackage(Long assetId, Long packageId)
     throws DataAccessException;
 
-    void removeRuleSetFromPackage(Long ruleSetId, Long packageId)
+    void removeAssetFromPackage(Long assetId, Long packageId)
     throws DataAccessException;
 
-    Long createRuleSet(RuleSetVO ruleset)
+    Long createAsset(Asset asset)
     throws DataAccessException;
 
-    void updateRuleSet(RuleSetVO ruleset)
+    void updateAsset(Asset asset)
     throws DataAccessException;
 
-    void deleteRuleSet(Long ruleSetId)
+    void deleteAsset(Long assetId)
     throws DataAccessException;
 
     Long setAttribute(String ownerType, Long ownerId, String attrname, String attrvalue)

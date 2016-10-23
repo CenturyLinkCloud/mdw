@@ -6,14 +6,8 @@ package com.centurylink.mdw.dataaccess;
 import java.io.File;
 import java.io.IOException;
 
-import com.centurylink.mdw.common.SchemaTypeTranslator;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.spring.SpringAppContext;
-import com.centurylink.mdw.common.utilities.DesignatedHostSslVerifier;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.db.UserDataAccessDb;
 import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
@@ -21,6 +15,10 @@ import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.dataaccess.file.RuntimeDataAccessVcs;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.dataaccess.file.WrappedBaselineData;
+import com.centurylink.mdw.spring.SpringAppContext;
+import com.centurylink.mdw.util.DesignatedHostSslVerifier;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class DataAccess {
 
@@ -37,16 +35,16 @@ public class DataAccess {
      * Not to be called from Designer due to property lookup.
      */
     public static ProcessPersister getProcessPersister(int version, int supportedVersion,
-            DatabaseAccess db, SchemaTypeTranslator stt) throws DataAccessException {
+            DatabaseAccess db) throws DataAccessException {
         String fileBasedAssetLoc = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION);
-        return getProcessPersister(version, supportedVersion, db, stt,fileBasedAssetLoc);
+        return getProcessPersister(version, supportedVersion, db, fileBasedAssetLoc);
     }
 
     public static ProcessPersister getProcessPersister(int version, int supportedVersion,
-            DatabaseAccess db, SchemaTypeTranslator stt, String fileBasedAssetLoc)
+            DatabaseAccess db, String fileBasedAssetLoc)
             throws DataAccessException {
         if (fileBasedAssetLoc != null)
-            return (ProcessPersister) getVcsProcessLoader(new File(fileBasedAssetLoc), db);
+            return (ProcessPersister) getVcsProcessLoader(new File(fileBasedAssetLoc));
         else
             throw new UnsupportedOperationException("Only VCS assets are supported");
     }
@@ -62,7 +60,7 @@ public class DataAccess {
     public static ProcessLoader getProcessLoader(int version, int supportedVersion, DatabaseAccess db,
             String fileBasedAssetLoc) throws DataAccessException {
         if (fileBasedAssetLoc != null)
-            return getVcsProcessLoader(new File(fileBasedAssetLoc), db);
+            return getVcsProcessLoader(new File(fileBasedAssetLoc));
         else
             throw new UnsupportedOperationException("Only VCS assets are supported");
     }
@@ -100,7 +98,7 @@ public class DataAccess {
 
     private static volatile ProcessLoader loaderPersisterVcs;
     private static final Object loaderPersisterLock = new Object();
-    protected static ProcessLoader getVcsProcessLoader(File rootDir, DatabaseAccess db) throws DataAccessException {
+    protected static ProcessLoader getVcsProcessLoader(File rootDir) throws DataAccessException {
         ProcessLoader myLoaderPersisterVcs = loaderPersisterVcs;
         if (myLoaderPersisterVcs == null) {  // needs to be always the same version
             synchronized(loaderPersisterLock) {

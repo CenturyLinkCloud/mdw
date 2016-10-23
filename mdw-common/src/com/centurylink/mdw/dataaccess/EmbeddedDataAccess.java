@@ -8,15 +8,14 @@ import java.sql.SQLException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.utilities.JsonUtil;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.container.EmbeddedDb;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.JsonUtil;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * TODO: users
@@ -33,7 +32,7 @@ public class EmbeddedDataAccess {
 
     public void create(String url, String user, String password, String assetLoc, String baseLoc, String dataLoc) throws DataAccessException {
         // implementors must be in this package
-        PackageVO pkg = PackageVOCache.getPackage(EmbeddedDb.DB_ASSET_PACKAGE);
+        Package pkg = PackageCache.getPackage(EmbeddedDb.DB_ASSET_PACKAGE);
         if (pkg == null)
             throw new DataAccessException("Missing required asset package: " + EmbeddedDb.DB_ASSET_PACKAGE);
 
@@ -92,7 +91,7 @@ public class EmbeddedDataAccess {
                     if (usersObj.has("users")) {
                         JSONArray usersArr = usersObj.getJSONArray("users");
                         for (int i = 0; i < usersArr.length(); i++)
-                            embeddedDb.insertUser(new UserVO(usersArr.getJSONObject(i)));
+                            embeddedDb.insertUser(new User(usersArr.getJSONObject(i)));
                     }
                 }
             }

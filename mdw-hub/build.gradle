@@ -6,8 +6,6 @@ dependencies {
     compile project(":mdw-services")
     compile project(":mdw-workflow")
     
-    compile group: "com.centurylink.mdw", name: "mdw-designer-core", version: "8.9.8"
-
     providedCompile group: "javax.jms", name: "jms", version: "1.1.1"
     providedCompile group: "javax.mail", name: "mail", version: "1.4.5"
     providedCompile group: "javax.servlet", name: "servlet-api", version: "2.5"

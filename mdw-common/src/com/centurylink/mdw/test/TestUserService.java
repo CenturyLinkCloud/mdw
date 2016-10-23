@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.test;
 
-import com.centurylink.mdw.model.value.user.AuthenticatedUser;
+import com.centurylink.mdw.model.user.AuthenticatedUser;
 
 public interface TestUserService {
 

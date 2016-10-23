@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.java.CompiledJavaCache;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class ServiceRegistry {
 
@@ -44,7 +44,7 @@ public class ServiceRegistry {
      * @param className
      * @return
      */
-    public <T extends RegisteredService> T getDynamicService(PackageVO processPackageVO, Class<T> serviceInterface, String className) {
+    public <T extends RegisteredService> T getDynamicService(Package processPackageVO, Class<T> serviceInterface, String className) {
         if (dynamicServices.containsKey(serviceInterface.getName())
                 && dynamicServices.get(serviceInterface.getName()).contains(className)) {
             try {
@@ -63,7 +63,7 @@ public class ServiceRegistry {
         return null;
     }
 
-    public <T extends RegisteredService> T getDynamicServiceForPath(PackageVO pkg, Class<T> serviceInterface, String resourcePath) {
+    public <T extends RegisteredService> T getDynamicServiceForPath(Package pkg, Class<T> serviceInterface, String resourcePath) {
         String className = pathToDynamicServiceClass.get(resourcePath);
         if (className != null)
             return getDynamicService(pkg, serviceInterface, className);

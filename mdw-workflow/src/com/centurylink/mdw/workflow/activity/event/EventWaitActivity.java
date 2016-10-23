@@ -6,24 +6,24 @@ package com.centurylink.mdw.workflow.activity.event;
 import java.util.List;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.data.monitor.ServiceLevelAgreement;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.monitor.ServiceLevelAgreement;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.process.CompletionCode;
-import com.centurylink.mdw.services.process.ProcessExecuter;
+import com.centurylink.mdw.services.process.ProcessExecutor;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
 
 @Tracked(LogLevel.TRACE)
@@ -39,7 +39,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
      * Method that executes the logic based on the work
      */
     public void execute() throws ActivityException {
-    	EventWaitInstanceVO received = registerWaitEvents(false, true);
+    	EventWaitInstance received = registerWaitEvents(false, true);
         if (received!=null) {
         	setReturnCodeAndExitStatus(received.getCompletionCode());
         	processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
@@ -51,7 +51,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
             int timeout = getTimeoutSeconds();
     		if (timeout > 0) {
         		loginfo("set activity timeout as " + timeout + " seconds");
-        		InternalEventVO delayMsg = InternalEventVO.createActivityDelayMessage(getActivityInstance(),
+        		InternalEvent delayMsg = InternalEvent.createActivityDelayMessage(getActivityInstance(),
         				getMasterRequestId());
     			try {
 					getEngine().sendDelayedInternalEvent(delayMsg, timeout,
@@ -123,7 +123,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
      * This method is called when the message is received after registration. It extracts the message,
      * records the message in ADAPTER_INSTANCE table, and invoke {@link processMessage(String,String)}.
      */
-    public final boolean resume(InternalEventVO eventMessageDoc) throws ActivityException {
+    public final boolean resume(InternalEvent eventMessageDoc) throws ActivityException {
     	boolean toFinish;
     	String secondaryOwnerType = eventMessageDoc.getSecondaryOwnerType();
     	if (secondaryOwnerType!=null && secondaryOwnerType.equals(OwnerType.DOCUMENT)) {
@@ -172,8 +172,8 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
         try {
             String rcvdMsgDocVar = getAttributeValueSmart(RECEIVED_MESSAGE_DOC_VAR);
             if (rcvdMsgDocVar != null && !rcvdMsgDocVar.isEmpty()) {
-                ProcessVO processVO = getProcessDefinition();
-                VariableVO variableVO = processVO.getVariable(rcvdMsgDocVar);
+                Process processVO = getProcessDefinition();
+                Variable variableVO = processVO.getVariable(rcvdMsgDocVar);
                 if (variableVO == null)
                     throw new ActivityException("Received Message Variable '" + rcvdMsgDocVar + "' is not defined or is not Document Type for process " + processVO.getLabel());
                 if (message != null) {
@@ -216,8 +216,8 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     /**
      * Typically you will not override this method
      */
-    public boolean resumeWaiting(InternalEventVO eventMessageDoc) throws ActivityException {
-    	EventWaitInstanceVO received = registerWaitEvents(true, true);
+    public boolean resumeWaiting(InternalEvent eventMessageDoc) throws ActivityException {
+    	EventWaitInstance received = registerWaitEvents(true, true);
 		if (received!=null) {
 			setReturnCodeAndExitStatus(received.getCompletionCode());
         	processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
@@ -240,9 +240,9 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
 	 */
 	protected void updateSLA(int seconds) throws ActivityException {
 		try {
-        	ProcessExecuter engine = this.getEngine();
+        	ProcessExecutor engine = this.getEngine();
         	super.loginfo("Update activity timeout as " + seconds + " seconds");
-    		InternalEventVO delayMsg = InternalEventVO.createActivityDelayMessage(this.getActivityInstance(),
+    		InternalEvent delayMsg = InternalEvent.createActivityDelayMessage(this.getActivityInstance(),
     				this.getMasterRequestId());
         	String eventName = ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId() + "timeout";
         	engine.sendDelayedInternalEvent(delayMsg, seconds, eventName, true);

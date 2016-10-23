@@ -36,7 +36,7 @@
       "implementor": "com.centurylink.mdw.workflow.adapter.jms.JmsAdapter",
       "name": "Synchronous Cloud\r\nJMS Request",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=648,ly=70,type=Elbow,xs=532&765,ys=70&70"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=648,ly=69,type=Elbow,xs=532&765,ys=69&69"},
         "event": "FINISH",
         "id": "T16",
         "to": "A12"
@@ -110,7 +110,7 @@
       "implementor": "com.centurylink.mdw.workflow.adapter.jms.JmsAdapter",
       "name": "Synchronous OSGi\r\nJMS Request",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=654,ly=175,type=Elbow,xs=544&765,ys=256&94"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=654,ly=175,type=Elbow,xs=544&765,ys=256&93"},
         "event": "FINISH",
         "id": "T17",
         "to": "A12"
@@ -188,14 +188,15 @@
     {
       "attributes": {
         "DESCRIPTION": "For synchronous calls, grabs the jmsmessage Id from the <RequestId> field in the MDWStatusMessage reponse, to help match with expected results",
-        "Java": "/**\n * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.\n */\r\n\r\npackage com.centurylink.mdw.tests;\r\n\r\nimport java.util.Map;\r\n\nimport com.centurylink.mdw.bpm.MDWStatusMessageDocument;\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;\r\n\r\n/**\r\n * Dynamic Java executor.\r\n */\r\npublic class SetResponseJMSMessageId_A12 implements JavaExecutor\r\n{\r\n  \r\n  public void initialize(ActivityRuntimeContext context) throws MdwJavaException\r\n  {\r\n    // TODO Auto-generated method stub\r\n  }\r\n\r\n  public Object execute(Map<String,Object> variables) throws JavaExecutionException\r\n  {\n    System.out.println(variables.get(\"syncResponse\"));\r\n    MDWStatusMessageDocument doc = (MDWStatusMessageDocument)variables.get(\"syncResponse\");\n    if (doc !=null) {\n      variables.put(\"jmsMessageId\", doc.getMDWStatusMessage().getRequestID());\n    }\n    return null;\n  }\r\n\r\n}\r\n",
-        "WORK_DISPLAY_INFO": "x=769,y=58,w=100,h=73"
+        "Java": "/**\n * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.\n */\r\n\r\npackage com.centurylink.mdw.tests.workflow;\r\n\r\nimport java.util.Map;\r\n\nimport com.centurylink.mdw.bpm.MDWStatusMessageDocument;\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\n/**\r\n * Dynamic Java executor.\r\n */\r\npublic class SetResponseJMSMessageId_A12 implements JavaExecutor\r\n{\r\n\r\n  public void initialize(ActivityRuntimeContext context) throws MdwJavaException\r\n  {\r\n    // TODO Auto-generated method stub\r\n  }\r\n\r\n  public Object execute(Map<String,Object> variables) throws JavaExecutionException\r\n  {\n    System.out.println(variables.get(\"syncResponse\"));\r\n    MDWStatusMessageDocument doc = (MDWStatusMessageDocument)variables.get(\"syncResponse\");\n    if (doc !=null) {\n      variables.put(\"jmsMessageId\", doc.getMDWStatusMessage().getRequestID());\n    }\n    return null;\n  }\r\n\r\n}\r\n",
+        "WORK_DISPLAY_INFO": "x=769,y=57,w=100,h=73"
       },
+      "description": "For synchronous calls, grabs the jmsmessage Id from the <RequestId> field in the MDWStatusMessage reponse, to help match with expected results",
       "id": "A12",
       "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
       "name": "Set Response\r\nJMS Message Id",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=935,ly=155,type=Elbow,xs=873&998,ys=94&217"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=935,ly=154,type=Elbow,xs=873&998,ys=93&217"},
         "event": "FINISH",
         "id": "T18",
         "to": "A2"
@@ -234,5 +235,5 @@
       "type": "org.apache.xmlbeans.XmlObject"
     }
   },
-  "version": "0.1"
+  "version": "0.2"
 }

@@ -11,15 +11,15 @@ import org.drools.KnowledgeBase;
 import org.drools.command.CommandFactory;
 import org.drools.runtime.StatelessKnowledgeSession;
 
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.exception.StrategyException;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.task.TaskVO;
+import com.centurylink.mdw.common.StrategyException;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.observer.task.RoutingStrategy;
 
 public class RulesBasedRoutingStrategy extends RulesBasedStrategy implements RoutingStrategy {
 
-    public List<String> determineWorkgroups(TaskVO taskTemplate, TaskInstanceVO taskInstance) throws StrategyException {
+    public List<String> determineWorkgroups(TaskTemplate taskTemplate, TaskInstance taskInstance) throws StrategyException {
         KnowledgeBase knowledgeBase = getKnowledgeBase();
         
         StatelessKnowledgeSession knowledgeSession = knowledgeBase.newStatelessKnowledgeSession();

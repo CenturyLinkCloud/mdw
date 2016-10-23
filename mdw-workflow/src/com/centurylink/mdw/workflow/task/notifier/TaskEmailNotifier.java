@@ -15,43 +15,43 @@ import javax.mail.internet.InternetAddress;
 
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.cache.impl.TemplateCache;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.email.TaskEmailModel;
-import com.centurylink.mdw.common.email.Template;
-import com.centurylink.mdw.common.email.TemplatedEmail;
-import com.centurylink.mdw.common.exception.CachingException;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.exception.ObserverException;
-import com.centurylink.mdw.common.utilities.CryptUtil;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.model.data.task.TaskAction;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
-import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.model.value.user.UserGroupVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.DocumentVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
+import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.impl.TemplateCache;
+import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.email.TaskEmailModel;
+import com.centurylink.mdw.email.Template;
+import com.centurylink.mdw.email.TemplatedEmail;
+import com.centurylink.mdw.model.task.TaskAction;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.TemplatedNotifier;
+import com.centurylink.mdw.service.data.process.ProcessCache;
+import com.centurylink.mdw.service.data.task.TaskTemplateCache;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.UserException;
 import com.centurylink.mdw.services.UserManager;
-import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
-import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
+import com.centurylink.mdw.util.CryptUtil;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class TaskEmailNotifier extends TemplatedNotifier {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -81,7 +81,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
             if (template == null || template.getAssetId() == 0L)
                 return PropertyManager.getProperty(name);
             else {
-                PackageVO pkg = PackageVOCache.getRuleSetPackage(template.getAssetId());
+                Package pkg = PackageCache.getAssetPackage(template.getAssetId());
                 if (pkg == null)
                     return PropertyManager.getProperty(name);
                 else
@@ -94,15 +94,14 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         }
     }
 
-    protected String getSubject(TaskInstanceVO taskInstance, String outcome) {
+    protected String getSubject(TaskInstance taskInstance, String outcome) {
         return "Task: \"" + taskInstance.getTaskName() + "\" " + outcome + " Notice";
     }
 
-    protected JSONObject createEmailJson(TemplatedEmail templatedEmail, TaskInstanceVO taskInstance)
+    protected JSONObject createEmailJson(TemplatedEmail templatedEmail, TaskInstance taskInstance)
     throws MessagingException, DataAccessException {
         JSONObject emailJson = templatedEmail.buildEmailJson();
 		EventManager eventManager = ServiceLocator.getEventManager();
-        Long procInstId = taskInstance.getOwnerId();
         eventManager.createDocument(JSONObject.class.getName(), OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), emailJson);
         return emailJson;
     }
@@ -115,7 +114,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
      */
     protected void sendEmail(TaskRuntimeContext runTimeContext, String outcome)
     throws ObserverException {
-        TaskInstanceVO taskInstance = runTimeContext.getTaskInstanceVO();
+        TaskInstance taskInstance = runTimeContext.getTaskInstanceVO();
         TaskEmailModel emailModel = new TaskEmailModel(taskInstance, new VariablesModel(taskInstance.getOwnerId()));
         TemplatedEmail templatedEmail = new TemplatedEmail();
         templatedEmail.setFromAddress(getFromAddress());
@@ -123,7 +122,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         templatedEmail.setHtml(true);
         templatedEmail.setTemplateName(getTemplate());
         templatedEmail.setTemplateAssetVerSpec(getTemplateSpec());
-        TaskVO taskVO = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
+        TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
         if (taskVO != null)
             emailModel.setDescription(taskVO.getComment());
         templatedEmail.setModel(emailModel);
@@ -193,7 +192,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
      * @return array of recipient addresses
      * @throws AddressException
      */
-    protected Address[] getRecipients(TaskInstanceVO taskInstance, String outcome, TaskEmailModel emailModel)
+    protected Address[] getRecipients(TaskInstance taskInstance, String outcome, TaskEmailModel emailModel)
     throws ObserverException, AddressException {
         if ("Assigned".equals(outcome)) {
             // send e-mail only to assignee
@@ -212,7 +211,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
             // use that for the e-mail recipients, otherwise default to task workgroups
             String noticeGroups;
             String recipientEmails;
-        	TaskVO task = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
+        	TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
             if (task!=null) {
             	noticeGroups = task.getAttribute(TaskAttributeConstant.NOTICE_GROUPS);
                 recipientEmails = task.getAttribute(TaskAttributeConstant.RECIPIENT_EMAILS);
@@ -270,7 +269,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
     throws ObserverException, CachingException, AddressException {
         if (recipVarValue instanceof String) {
             String recip = (String) recipVarValue;
-            UserGroupVO group = null;
+            Workgroup group = null;
             try {
                 group = UserGroupCache.getWorkgroup(recip);
             }
@@ -293,7 +292,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
             List<Address> addresses = new ArrayList<Address>();
             String[] recips = (String[]) recipVarValue;
             for (String recip : recips) {
-                UserGroupVO group = null;
+                Workgroup group = null;
                 try {
                     group = UserGroupCache.getWorkgroup(recip);
                 }
@@ -329,7 +328,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
      * specified by the designated recipient process variable value.
      * @throws AddressException
      */
-    protected Address[] getCcRecipients(TaskInstanceVO taskInstance, String outcome, TaskEmailModel emailModel)
+    protected Address[] getCcRecipients(TaskInstance taskInstance, String outcome, TaskEmailModel emailModel)
     throws ObserverException, AddressException {
         List<Address> recipients = new ArrayList<Address>();
 
@@ -337,7 +336,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         // use that for the e-mail recipients, otherwise default to task workgroups
         String ccNoticeGroups;
         String ccRecipientEmails;
-        TaskVO task = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
+        TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
         if (task!=null) {
         	ccNoticeGroups = task.getAttribute(TaskAttributeConstant.CC_GROUPS);
             ccRecipientEmails = task.getAttribute(TaskAttributeConstant.CC_EMAILS);
@@ -410,7 +409,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         return toRecipients.toArray(new Address[0]);
     }
 
-    protected Address[] getNoticeGroupsEmailAddresses(TaskInstanceVO taskInstanceVO, String noticeGroups)
+    protected Address[] getNoticeGroupsEmailAddresses(TaskInstance taskInstanceVO, String noticeGroups)
     throws ObserverException {
         if (noticeGroups == null)
             return null;
@@ -428,7 +427,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
      * @param taskInstanceVO
      * @return an array with the valid e-mail addresses
      */
-    protected Address[] getTaskUserEmailAddresses(TaskInstanceVO taskInstanceVO)
+    protected Address[] getTaskUserEmailAddresses(TaskInstance taskInstanceVO)
     throws ObserverException {
         try {
 			TaskManager taskManager = ServiceLocator.getTaskManager();
@@ -443,7 +442,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         }
     }
 
-    protected Address getAssigneeEmailAddress(TaskInstanceVO taskInstance) throws AddressException {
+    protected Address getAssigneeEmailAddress(TaskInstance taskInstance) throws AddressException {
         return new InternetAddress(taskInstance.getTaskClaimUserCuid() + "@centurylink.com");
     }
 
@@ -469,8 +468,8 @@ public class TaskEmailNotifier extends TemplatedNotifier {
 
     protected class VariablesModel extends HashMap<String,Object> {
 		private static final long serialVersionUID = 1L;
-		private ProcessVO processVO = null;
-		private ProcessInstanceVO procInstVO = null;
+		private Process processVO = null;
+		private ProcessInstance procInstVO = null;
 		private Long procInstId;
 		public VariablesModel(Long procInstId) { this.procInstId = procInstId; }
 		@Override
@@ -481,23 +480,23 @@ public class TaskEmailNotifier extends TemplatedNotifier {
 				EventManager eventMgr = ServiceLocator.getEventManager();
 				if (procInstVO == null || processVO == null) {
 					procInstVO = eventMgr.getProcessInstance(procInstId);
-					processVO = ProcessVOCache.getProcessVO(procInstVO.getProcessId());
+					processVO = ProcessCache.getProcess(procInstVO.getProcessId());
 				}
 				Long procInstanceId = procInstId;
-				VariableInstanceInfo vi = null;
-                if (processVO.isEmbeddedProcess() || procInstVO.isNewEmbedded()) {
+				VariableInstance vi = null;
+                if (procInstVO.isEmbedded()) {
                     procInstanceId = procInstVO.getOwnerId();
                     procInstVO = eventMgr.getProcessInstance(procInstanceId);
-                    processVO = ProcessVOCache.getProcessVO(procInstVO.getProcessId());
+                    processVO = ProcessCache.getProcess(procInstVO.getProcessId());
                 }
 
                 vi = eventMgr.getVariableInstance(procInstanceId, (String)key);
-                PackageVO packageVO = PackageVOCache.getProcessPackage(processVO.getProcessId());
+                Package packageVO = PackageCache.getProcessPackage(processVO.getProcessId());
 
 				if (vi!=null) {
 					result = vi.getData();
 					if (result instanceof DocumentReference) {
-					    DocumentVO docvo = eventMgr.getDocumentVO(((DocumentReference)result).getDocumentId());
+					    Document docvo = eventMgr.getDocumentVO(((DocumentReference)result).getDocumentId());
 					    result = docvo==null?null:docvo.getObject(vi.getType(), packageVO);
 					}
 					if (result!=null) this.put((String)key, result);

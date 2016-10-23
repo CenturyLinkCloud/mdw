@@ -8,21 +8,21 @@ import java.util.List;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.StringHelper;
+import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.attribute.AttributeDefinition;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.attribute.AttributeDefinition;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.process.CompletionCode;
 import com.centurylink.mdw.services.task.WaitingForMe;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.StringHelper;
 import com.qwest.mbeng.MbengNode;
 
 
@@ -40,7 +40,7 @@ public abstract class CompositeSynchronousAdapterBase extends PoolableAdapterBas
 			registerWaitEvents(false, false);
     		if (response_timeout > 0) {
     			if (logger.isDebugEnabled()) logger.debug("Set timeout " + response_timeout + " seconds");
-        		InternalEventVO delayMsg = InternalEventVO.createActivityDelayMessage(getActivityInstance(),
+        		InternalEvent delayMsg = InternalEvent.createActivityDelayMessage(getActivityInstance(),
         				this.getMasterRequestId());
         		try {
 					getEngine().sendDelayedInternalEvent(delayMsg, response_timeout,
@@ -137,7 +137,7 @@ public abstract class CompositeSynchronousAdapterBase extends PoolableAdapterBas
 	}
 
 	@Override
-	public final boolean resume(InternalEventVO eventMessageDoc)
+	public final boolean resume(InternalEvent eventMessageDoc)
 			throws ActivityException {
 		String responseData = getMessageFromEventMessage(eventMessageDoc);
 		if (!StringHelper.isEmpty(responseData) && doLogging()) logMessage(responseData, true);
@@ -146,7 +146,7 @@ public abstract class CompositeSynchronousAdapterBase extends PoolableAdapterBas
 	}
 
 	// copied from WaitActivity
-    private String getMessageFromEventMessage(InternalEventVO eventMessageDoc)
+    private String getMessageFromEventMessage(InternalEvent eventMessageDoc)
 		throws ActivityException {
 		if (eventMessageDoc.getParameters()!=null) {
 			String msg = eventMessageDoc.getParameters().get("ExternalEventMessage");
@@ -172,7 +172,7 @@ public abstract class CompositeSynchronousAdapterBase extends PoolableAdapterBas
      * Not currently implemented for listening to unsolicited events.
      * If we do need that, copy the code from event wait activity.
      */
-    public boolean resumeWaiting(InternalEventVO eventMessageDoc) throws ActivityException {
+    public boolean resumeWaiting(InternalEvent eventMessageDoc) throws ActivityException {
     	return false;
     }
 
@@ -194,7 +194,7 @@ public abstract class CompositeSynchronousAdapterBase extends PoolableAdapterBas
     }
 
 	// copied from ControlledWaitActivityImpl.
-	protected EventWaitInstanceVO registerWaitEvents(boolean reregister, boolean check_if_arrvied)
+	protected EventWaitInstance registerWaitEvents(boolean reregister, boolean check_if_arrvied)
 		throws ActivityException {
 		List<String[]> eventSpecs = this.getWaitEventSpecs();
 		if (eventSpecs.isEmpty()) return null;
@@ -211,7 +211,7 @@ public abstract class CompositeSynchronousAdapterBase extends PoolableAdapterBas
 					|| eventOccur.equalsIgnoreCase("true"));
 		}
 		try {
-			EventWaitInstanceVO received = getEngine().createEventWaitInstances(
+			EventWaitInstance received = getEngine().createEventWaitInstances(
 					this.getActivityInstanceId(),
 					eventNames,
 					eventCompletionCodes,

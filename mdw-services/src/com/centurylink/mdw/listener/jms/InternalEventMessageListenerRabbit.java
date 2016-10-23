@@ -6,9 +6,9 @@ package com.centurylink.mdw.listener.jms;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessageProperties;
 
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Spring Replacement for InternalEventListener

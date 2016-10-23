@@ -6,10 +6,10 @@ package com.centurylink.mdw.listener.tibco;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.qwest.bus.BusMessage;
 import com.qwest.bus.responder.BusProcessor;
 

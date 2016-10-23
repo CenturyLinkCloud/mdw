@@ -8,18 +8,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.utilities.TransactionWrapper;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.value.history.HistoryList;
-import com.centurylink.mdw.model.value.user.UserActionVO;
+import com.centurylink.mdw.model.event.HistoryList;
+import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.services.HistoryServices;
-import com.centurylink.mdw.services.dao.process.EngineDataAccessDB;
+import com.centurylink.mdw.util.TransactionWrapper;
 
 public class HistoryServicesImpl implements HistoryServices {
     public HistoryList getHistory(int historyLength) throws ServiceException {
-        List<UserActionVO> historyVOList = new ArrayList<UserActionVO>();
+        List<UserAction> historyVOList = new ArrayList<UserAction>();
         HistoryList historyList;
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();

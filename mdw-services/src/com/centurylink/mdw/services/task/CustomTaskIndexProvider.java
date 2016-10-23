@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.observer.task.TaskIndexProvider;
+import com.centurylink.mdw.util.StringHelper;
 
 /**
  * Standard index provider for custom manual tasks.

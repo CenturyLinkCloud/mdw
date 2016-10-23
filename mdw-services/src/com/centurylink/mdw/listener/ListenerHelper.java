@@ -15,18 +15,14 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.StartActivity;
+import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
-import com.centurylink.mdw.common.Compatibility;
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.exception.MDWException;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.common.MDWException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.timer.CodeTimer;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.event.DefaultExternalEventHandler;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.EventHandlerRegistry;
@@ -34,21 +30,25 @@ import com.centurylink.mdw.event.ExternalEventHandler;
 import com.centurylink.mdw.event.ExternalEventHandlerErrorResponse;
 import com.centurylink.mdw.event.UnparseableMessageException;
 import com.centurylink.mdw.model.FormDataDocument;
+import com.centurylink.mdw.model.event.ExternalEvent;
+import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.event.ExternalEventVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.process.PackageAware;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.workflow.PackageAware;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.ServiceMonitor;
 import com.centurylink.mdw.service.action.ActionRequestHandler;
+import com.centurylink.mdw.service.data.event.EventHandlerCache;
 import com.centurylink.mdw.service.resource.ResourceRequestHandler;
 import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.event.ExternalEventCache;
 import com.centurylink.mdw.services.event.ServiceHandler;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.CodeTimer;
 import com.centurylink.mdw.xml.XmlPath;
 
 public class ListenerHelper {
@@ -81,16 +81,16 @@ public class ListenerHelper {
     static final String RESOURCE_REQUEST = "ResourceRequest";
     static final String ACTION_REQUEST = "ActionRequest";
 
-    private ExternalEventVO findEventHandler(XmlObject xmlBean, Map<String, String> metaInfo) throws XmlException {
+    private ExternalEvent findEventHandler(XmlObject xmlBean, Map<String, String> metaInfo) throws XmlException {
         String rootname = XmlPath.getRootNodeName(xmlBean);
         if (rootname.startsWith("_mdw_"))
             return null; // internal request
-        List<ExternalEventVO> bucket = ExternalEventCache.getExternalEvents(rootname);
+        List<ExternalEvent> bucket = EventHandlerCache.getExternalEvents(rootname);
         if (bucket != null) {
             if ("ActionRequest".equals(rootname) || isRestPostPutDelete(metaInfo)) {
                 // compatibility for ESOWF -- prefer qualified matches
-                ExternalEventVO frameworkActionHandler = null;
-                for (ExternalEventVO e : bucket) {
+                ExternalEvent frameworkActionHandler = null;
+                for (ExternalEvent e : bucket) {
                     String v = e.getXpath().evaluate(xmlBean);
                     if (v != null) {
                         if ("ActionRequest".equals(e.getEventName()))
@@ -103,16 +103,16 @@ public class ListenerHelper {
                     return frameworkActionHandler;
             }
             else {
-                for (ExternalEventVO e : bucket) {
+                for (ExternalEvent e : bucket) {
                     String v = e.getXpath().evaluate(xmlBean);
                     if (v != null)
                         return e;
                 }
             }
         }
-        bucket = ExternalEventCache.getExternalEvents("*");
+        bucket = EventHandlerCache.getExternalEvents("*");
         if (bucket != null) {
-            for (ExternalEventVO e : bucket) {
+            for (ExternalEvent e : bucket) {
                 String v = XmlPath.evaluate(xmlBean, e.getEventName());
                 if (v != null)
                     return e;
@@ -122,14 +122,14 @@ public class ListenerHelper {
         // bootstrap to make services available before packages imported
         String rootNodeName = XmlPath.getRootNodeName(xmlBean);
         if (RESOURCE_REQUEST.equals(rootNodeName))
-            return new ExternalEventVO(0L, RESOURCE_REQUEST, ResourceRequestHandler.class.getName());
+            return new ExternalEvent(0L, RESOURCE_REQUEST, ResourceRequestHandler.class.getName());
         else if (ACTION_REQUEST.equals(rootNodeName))
-            return new ExternalEventVO(0L, ACTION_REQUEST, ActionRequestHandler.class.getName());
+            return new ExternalEvent(0L, ACTION_REQUEST, ActionRequestHandler.class.getName());
         else
-            return ExternalEventCache.getDefaultEventHandler();
+            return EventHandlerCache.getDefaultEventHandler();
     }
 
-    private ExternalEventVO findEventHandlerJson(JSONObject jsonobj, Map<String, String> metaInfo) throws JSONException {
+    private ExternalEvent findEventHandlerJson(JSONObject jsonobj, Map<String, String> metaInfo) throws JSONException {
         String eventHandlerSpec = null;
         JSONObject meta = jsonobj.has("META") ? jsonobj.getJSONObject("META") : null;
         if (meta != null && meta.has(FormDataDocument.META_ACTION))
@@ -144,7 +144,7 @@ public class ListenerHelper {
         }
         if (eventHandlerSpec == null)
             throw new JSONException("Neither function nor ActionRequest provided in json query");
-        ExternalEventVO handler = new ExternalEventVO();
+        ExternalEvent handler = new ExternalEvent();
         handler.setEventHandler(eventHandlerSpec);
         if (isActionRequest) {
             handler.setEventName("ActionRequest");
@@ -289,7 +289,7 @@ public class ListenerHelper {
         ExternalEventHandler handler = null;
         try {
             // find event handler specification
-            ExternalEventVO eventHandler;
+            ExternalEvent eventHandler;
             if (msgdoc instanceof JSONObject)
                 eventHandler = findEventHandlerJson((JSONObject)msgdoc, metaInfo);
             else
@@ -320,7 +320,7 @@ public class ListenerHelper {
                 String packageName = metaInfo.get(Listener.METAINFO_PACKAGE_NAME);
                 if (packageName == null)
                     packageName = eventHandler.getPackageName(); // currently only populated for VCS assets
-                PackageVO pkg = PackageVOCache.getPackage(packageName);
+                Package pkg = PackageCache.getPackage(packageName);
                 if (pkg == null && (ActionRequestHandler.class.getName().equals(clsname) || ResourceRequestHandler.class.getName().equals(clsname))) {
                     // can happen during bootstrap scenario -- just try regular reflection
                     handler = Class.forName(clsname).asSubclass(ExternalEventHandler.class).newInstance();
@@ -662,7 +662,7 @@ public class ListenerHelper {
      * @return document reference that refers to the newly created document.
      * @throws EventHandlerException
      */
-    public DocumentReference createDocument(String docType, Object document, PackageVO pkg,
+    public DocumentReference createDocument(String docType, Object document, Package pkg,
             String ownerType, Long ownerId) throws EventHandlerException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
@@ -707,9 +707,9 @@ public class ListenerHelper {
      * @param parameters
      * @return
      */
-    public InternalEventVO buildProcessStartMessage(Long processId, Long eventInstId,
+    public InternalEvent buildProcessStartMessage(Long processId, Long eventInstId,
             String masterRequestId, Map<String, String> parameters) {
-        InternalEventVO evMsg = InternalEventVO.createProcessStartMessage(processId,
+        InternalEvent evMsg = InternalEvent.createProcessStartMessage(processId,
                 OwnerType.DOCUMENT, eventInstId, masterRequestId, null, null, null);
         evMsg.setParameters(parameters);
         evMsg.setCompletionCode(StartActivity.STANDARD_START); // completion

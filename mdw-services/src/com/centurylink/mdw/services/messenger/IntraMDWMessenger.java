@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.services.messenger;
 
-import com.centurylink.mdw.common.exception.MDWException;
+import com.centurylink.mdw.common.MDWException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 
 public abstract class IntraMDWMessenger {

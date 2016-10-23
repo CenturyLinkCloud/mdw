@@ -36,18 +36,19 @@ import org.apache.xmlbeans.XmlException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
-import com.centurylink.mdw.common.Compatibility;
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.utilities.AuthUtils;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.timer.CodeTimer;
+import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.listener.ListenerHelper;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.AuthUtils;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.CodeTimer;
 import com.centurylink.mdw.xml.DomHelper;
 
 /**
@@ -73,10 +74,10 @@ public class SoapServlet extends HttpServlet {
 
         if (request.getServletPath().endsWith(RPC_SERVICE_PATH)
                 || RPC_SERVICE_PATH.equals(request.getPathInfo())) {
-            RuleSetVO ruleSetVO = RuleSetCache
-                    .getRuleSet("com.centurylink.mdw.base/MdwRpcWebService.wsdl", RuleSetVO.WSDL);
+            Asset rpcWsdlAsset = AssetCache
+                    .getAsset(Package.MDW + "/MdwRpcWebService.wsdl", Asset.WSDL);
             response.setContentType("text/xml");
-            response.getWriter().print(substituteRuntimeWsdl(ruleSetVO.getRuleSet()));
+            response.getWriter().print(substituteRuntimeWsdl(rpcWsdlAsset.getStringContent()));
         }
         else if (request.getPathInfo() == null
                 || request.getPathInfo().equalsIgnoreCase("mdw.wsdl")) {
@@ -84,20 +85,20 @@ public class SoapServlet extends HttpServlet {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("/mdw.wsdl");
             requestDispatcher.forward(request, response);
         }
-        else if (request.getPathInfo().toUpperCase().endsWith(RuleSetVO.WSDL)) {
-            String wsdlRuleSet = request.getPathInfo().substring(1);
-            RuleSetVO ruleSetVO = RuleSetCache.getRuleSet(wsdlRuleSet, RuleSetVO.WSDL);
-            if (ruleSetVO == null) {
+        else if (request.getPathInfo().toUpperCase().endsWith(Asset.WSDL)) {
+            String wsdlAsset = request.getPathInfo().substring(1);
+            Asset asset = AssetCache.getAsset(wsdlAsset, Asset.WSDL);
+            if (asset == null) {
                 // try trimming file extension
-                wsdlRuleSet = wsdlRuleSet.substring(0, wsdlRuleSet.length() - 5);
-                ruleSetVO = RuleSetCache.getRuleSet(wsdlRuleSet, RuleSetVO.WSDL);
+                wsdlAsset = wsdlAsset.substring(0, wsdlAsset.length() - 5);
+                asset = AssetCache.getAsset(wsdlAsset, Asset.WSDL);
             }
-            if (ruleSetVO == null) {
+            if (asset == null) {
                 // try with lowercase extension
-                wsdlRuleSet = wsdlRuleSet + ".wsdl";
-                ruleSetVO = RuleSetCache.getRuleSet(wsdlRuleSet, RuleSetVO.WSDL);
+                wsdlAsset = wsdlAsset + ".wsdl";
+                asset = AssetCache.getAsset(wsdlAsset, Asset.WSDL);
             }
-            if (ruleSetVO == null) {
+            if (asset == null) {
                 String message = "No WSDL resource found: " + request.getPathInfo().substring(1);
                 logger.severe(message);
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -105,7 +106,7 @@ public class SoapServlet extends HttpServlet {
             }
             else {
                 response.setContentType("text/xml");
-                response.getWriter().print(substituteRuntimeWsdl(ruleSetVO.getRuleSet()));
+                response.getWriter().print(substituteRuntimeWsdl(asset.getStringContent()));
             }
         }
         else {

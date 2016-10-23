@@ -13,13 +13,13 @@ import javax.jms.QueueConnectionFactory;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.JMSServices;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
+import com.centurylink.mdw.util.JMSServices;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public abstract class JmsListener  {
 
@@ -65,7 +65,7 @@ public abstract class JmsListener  {
 
         	// ActiveMQ is not able to listen on a topic when connected as a queue
             if (queue_name.endsWith(".topic") &&
-              ApplicationContext.getJmsProvider().getClass().getName().equals("com.centurylink.mdw.container.plugins.activemq.ActiveMqJms")) {
+              ApplicationContext.getJmsProvider().getClass().getName().equals("com.centurylink.mdw.container.plugin.activemq.ActiveMqJms")) {
                 connection = jmsServices.getTopicConnectionFactory(null).createConnection();
                 connection.start();
                 session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);

@@ -16,17 +16,16 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.data.common.InstanceNote;
-import com.centurylink.mdw.model.data.common.NotesList;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.note.InstanceNote;
+import com.centurylink.mdw.model.note.NotesList;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
-import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -41,7 +40,7 @@ public class Notes extends JsonRestService {
     @Override
     public List<String> getRoles(String path) {
         List<String> roles = super.getRoles(path);
-        roles.add(UserRoleVO.PROCESS_EXECUTION);
+        roles.add(Role.PROCESS_EXECUTION);
         return roles;
     }
 
@@ -100,7 +99,7 @@ public class Notes extends JsonRestService {
         try {
             InstanceNote note = new InstanceNote(content);
             String user = note.getCreatedBy();
-            UserVO userVO = ServiceLocator.getUserManager().getUser(user);
+            User userVO = ServiceLocator.getUserManager().getUser(user);
             if (userVO == null)
                 throw new ServiceException("User not found: " + user);
             TaskManager taskMgr = ServiceLocator.getTaskManager();
@@ -132,7 +131,7 @@ public class Notes extends JsonRestService {
 
             InstanceNote note = new InstanceNote(content);
             String user = note.getCreatedBy();  // createdBy populated by ctor (not modBy)
-            UserVO userVO = ServiceLocator.getUserManager().getUser(user);
+            User userVO = ServiceLocator.getUserManager().getUser(user);
             if (userVO == null)
                 throw new ServiceException("User not found: " + user);
 
@@ -164,7 +163,7 @@ public class Notes extends JsonRestService {
             if (user == null) {
                 throw new ServiceException(HTTP_400_BAD_REQUEST, "URL for removal of Notes should be e.g /Notes/123/user : ");
             }
-            UserVO userVO = ServiceLocator.getUserManager().getUser(user);
+            User userVO = ServiceLocator.getUserManager().getUser(user);
             if (userVO == null)
                 throw new ServiceException("User not found: " + user);
 

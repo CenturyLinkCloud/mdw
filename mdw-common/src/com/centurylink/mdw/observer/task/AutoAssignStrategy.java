@@ -3,10 +3,10 @@
  */
 package com.centurylink.mdw.observer.task;
 
-import com.centurylink.mdw.common.exception.ObserverException;
 import com.centurylink.mdw.common.service.RegisteredService;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.observer.ObserverException;
 
 /**
  * Represents an algorithm for automatically assigning a task instance to a user.
@@ -18,5 +18,5 @@ public interface AutoAssignStrategy extends RegisteredService {
      * @param taskInstanceVO
      * @return the assignee, or null if no appropriate users
      */
-    public UserVO selectAssignee(TaskInstanceVO taskInstanceVO) throws ObserverException;
+    public User selectAssignee(TaskInstance taskInstanceVO) throws ObserverException;
 }

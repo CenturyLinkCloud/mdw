@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.hub.context.Mdw;
 import com.centurylink.mdw.hub.context.WebAppContext;
-import com.centurylink.mdw.model.value.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetInfo;
 
 /**
  * Serves up custom content from user-override mdw-admin package.
@@ -26,7 +26,7 @@ public class CustomContentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = request.getPathInfo().substring(1);
         Mdw mdw = WebAppContext.getMdw();
-        Asset asset = new Asset(mdw.getAssetRoot(), mdw.getOverridePackage() + "/" + path);
+        AssetInfo asset = new AssetInfo(mdw.getAssetRoot(), mdw.getOverridePackage() + "/" + path);
         response.setContentType(asset.getContentType());
 
         if (asset.shouldCache(request.getHeader("If-None-Match"))) {

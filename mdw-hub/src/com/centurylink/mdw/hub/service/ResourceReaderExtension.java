@@ -13,7 +13,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
-import com.centurylink.mdw.services.rest.RestService;
+import com.centurylink.mdw.service.rest.RestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

@@ -21,7 +21,7 @@ process: # 13755
   variable: # 20937
     name: requestDoc
     value: |
-      <tns:GetEmployee xmlns:tns="http://mdw-servicemix.centurylink.com/serviceTypes">
+      <tns:GetEmployee xmlns:tns="http://mdw.centurylink.com/serviceTypes">
         <tns:workstationId>dxoakes</tns:workstationId>
       </tns:GetEmployee>
   variable: # 20941

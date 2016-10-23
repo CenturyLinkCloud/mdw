@@ -3,7 +3,6 @@
  */
 package com.centurylink.mdw.services;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -11,104 +10,21 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.query.PaginatedResponse;
-import com.centurylink.mdw.common.query.QueryRequest;
-import com.centurylink.mdw.model.FormDataDocument;
-import com.centurylink.mdw.model.data.common.Attachment;
-import com.centurylink.mdw.model.data.common.InstanceNote;
-import com.centurylink.mdw.model.data.event.EventLog;
-import com.centurylink.mdw.model.data.task.TaskAction;
-import com.centurylink.mdw.model.data.task.TaskCategory;
-import com.centurylink.mdw.model.data.task.TaskState;
-import com.centurylink.mdw.model.data.task.TaskStatus;
-import com.centurylink.mdw.model.value.attribute.AttributeVO;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
-import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.model.value.variable.DocumentVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceVO;
-import com.centurylink.mdw.services.dao.task.TaskDAOException;
+import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.Attachment;
+import com.centurylink.mdw.model.event.EventLog;
+import com.centurylink.mdw.model.note.InstanceNote;
+import com.centurylink.mdw.model.task.TaskAction;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.service.data.task.TaskDataException;
 import com.centurylink.mdw.task.SubTask;
 import com.centurylink.mdw.task.SubTaskPlanDocument.SubTaskPlan;
 
 public interface TaskManager {
-    public TaskAction[] getTaskActionVOs() throws TaskException, DataAccessException;
-
-    /**
-     * Retrieves all task templates associated with a particular work group.
-     * @return array of task template objects
-     */
-    public List<TaskVO> getTasksForWorkgroup(String groupName)
-    throws DataAccessException;
-
-    /**
-     * Returns all TaskVOs (task templates) in their shallow form.
-     *
-     * @return Array of TaskVO
-     */
-    public TaskVO[] getShallowTaskVOs()
-    throws TaskException, DataAccessException;
-
-    /**
-     * Returns the fully populated TaskVO (task template)
-     */
-    public TaskVO getTaskVO(Long taskId)
-    throws TaskException, DataAccessException;
-
-    /**
-     * Method that returns the collection of attributes for the given task template
-     *
-     * @param pTaskId
-     * @return List of AttributeVOs
-     */
-    public List<AttributeVO> getTaskAttributes(Long pTaskId)
-    throws TaskException, DataAccessException;
-
-    /**
-     * Returns the unclaimed tasks for the specified set of work groups
-     *
-     * @param workgroups
-     * @param queryRequest
-     * @return PaginatedResponse
-     */
-    public PaginatedResponse getUnClaimedTaskInstanceVOs(String[] workgroups, QueryRequest queryRequest)
-    throws TaskException, DataAccessException;
-
-    /**
-     * Returns the unclaimed tasks for the specified set of work groups, including variables
-     *
-     * @param workgroups
-     * @param queryRequest
-     * @param variables variable values to retrieve
-     * @param variablesCriteria
-     * @param indexKeys
-     * @param indexCriteria
-     * @return PaginatedResponse
-     */
-    public PaginatedResponse getUnClaimedTaskInstanceVOs(String[] workgroups, QueryRequest queryRequest, List<String> variables, Map<String,String> variablesCriteria,
-            List<String> indexKeys, Map<String,String> indexCriteria)
-    throws TaskException, DataAccessException;
-
-    /**
-     * Returns the unclaimed tasks for the specified set of work groups based on search key, including variables
-     * @param workgroups
-     * @param queryRequest
-     * @param variables
-     * @param variablesCriteria
-     * @param indexKeys
-     * @param indexCriteria
-     * @param searchColumns
-     * @param searchKey
-     * @return
-     * @throws TaskException
-     * @throws DataAccessException
-     */
-    public PaginatedResponse getUnClaimedTaskInstanceVOs(String[] workgroups, QueryRequest queryRequest, List<String> variables, Map<String,String> variablesCriteria,
-             List<String> indexKeys, Map<String,String> indexCriteria, List<String> searchColumns, Object searchKey)
-    throws TaskException, DataAccessException;
 
     /**
      * Return the claimed tasks for a given user, including specified variable values and index keys
@@ -122,7 +38,7 @@ public interface TaskManager {
      * @throws TaskException
      * @throws DataAccessException
      */
-    public TaskInstanceVO[] getClaimedTaskInstanceVOs(Long userId, Map<String,String> criteria, List<String> variables, Map<String,String> variablesCriteria, List<String> indexKeys, Map<String,String> indexCriteria)
+    public TaskInstance[] getAssignedTasks(Long userId, Map<String,String> criteria, List<String> variables, Map<String,String> variablesCriteria, List<String> indexKeys, Map<String,String> indexCriteria)
             throws TaskException, DataAccessException;
     /**
      * Returns the claimed tasks for a given user, including specified variable values
@@ -132,7 +48,7 @@ public interface TaskManager {
      * @param variables
      * @return Array of TaskInstanceVOs
      */
-    public TaskInstanceVO[] getClaimedTaskInstanceVOs(Long userId, Map<String,String> criteria, List<String> variables, Map<String,String> variablesCriteria)
+    public TaskInstance[] getAssignedTasks(Long userId, Map<String,String> criteria, List<String> variables, Map<String,String> variablesCriteria)
     throws TaskException, DataAccessException;
 
 
@@ -143,7 +59,7 @@ public interface TaskManager {
      * @param criteria
      * @return Array of TaskInstanceVOs
      */
-    public TaskInstanceVO[] getClaimedTaskInstanceVOs(Long userId, Map<String,String> criteria)
+    public TaskInstance[] getAssignedTasks(Long userId, Map<String,String> criteria)
     throws TaskException, DataAccessException;
 
     /**
@@ -151,10 +67,10 @@ public interface TaskManager {
      *
      * @param pTaskInstId
      * @return the taskInst and associated data
-     * @throws TaskDAOException
+     * @throws TaskDataException
      * @throws DataAccessException
      */
-    public TaskInstanceVO getTaskInstanceVO(Long pTaskInstId)
+    public TaskInstance getTaskInstanceVO(Long pTaskInstId)
     throws TaskException, DataAccessException;
 
     /**
@@ -162,7 +78,7 @@ public interface TaskManager {
      *
      * @param pId
      */
-    public TaskInstanceVO getTaskInstance(Long pId)
+    public TaskInstance getTaskInstance(Long pId)
     throws DataAccessException;
 
     /**
@@ -183,22 +99,19 @@ public interface TaskManager {
      * @return
      * @throws DataAccessException
      */
-    public void getTaskInstanceAdditionalInfo(TaskInstanceVO taskInst)
-    throws DataAccessException, TaskException;
-
-    public String getTaskInstanceUrl(Long taskInstanceId)
+    public void getTaskInstanceAdditionalInfo(TaskInstance taskInst)
     throws DataAccessException, TaskException;
 
     /**
      * Convenience method for below.
      */
-    public TaskInstanceVO createTaskInstance(Long taskId, String masterRequestId, Long procInstId, String secOwner, Long secOwnerId)
+    public TaskInstance createTaskInstance(Long taskId, String masterRequestId, Long procInstId, String secOwner, Long secOwnerId)
     throws TaskException, DataAccessException;
 
     /**
      * Convenience method for below.
      */
-    public TaskInstanceVO createTaskInstance(Long taskId, String masterRequestId, Long procInstId, String secOwner, Long secOwnerId, Map<String,String> indices)
+    public TaskInstance createTaskInstance(Long taskId, String masterRequestId, Long procInstId, String secOwner, Long secOwnerId, Map<String,String> indices)
     throws TaskException, DataAccessException;
 
     /**
@@ -231,29 +144,10 @@ public interface TaskManager {
      * @param assignee  assignee CUID if this is to be auto-assigned by process variable
      * @return TaskInstance
      */
-   public TaskInstanceVO createTaskInstance(Long taskId, Long procInstId,
+   public TaskInstance createTaskInstance(Long taskId, Long procInstId,
            String secondaryOwner, Long secondaryOwnerId, String message,
            String pOwnerAppName, Long pAssTaskInstId, String taskName,
            int dueInSeconds, Map<String,String> indices, String assignee, String masterRequestId)
-   throws TaskException, DataAccessException;
-
-   /**
-    * This version is used to create detail-only task instance where
-    * the summary instance is hosted in remote task manager.
-    * The method only creates task instance entry in database.
-    * It does *not* create SLA, groups, indices, notifications, observers,
-    * auto-assignment, or audit log.
-    *
-    * @param taskId task template ID
-    * @param procInstId process instance ID
-    * @param secondaryOwner can be DOCUMENT (general task) or WORK_TRANSITION_INSTANCE (for classic task)
-    * @param secondaryOwnerId document ID or transition instance ID
-    * @param message  return message (typically stacktrace for fallout tasks) of the activity for classic task
-    * @param taskName task name. Taken from task template when not populated
-    * @return TaskInstance
-    */
-   public TaskInstanceVO createTaskInstance(Long taskId, Long procInstId,
-           String secondaryOwner, Long secondaryOwnerId, String message, String taskName, String masterRequestId)
    throws TaskException, DataAccessException;
 
    /**
@@ -268,53 +162,8 @@ public interface TaskManager {
     * @param documentId secondary owner, optional
     * @return TaskInstance
     */
-   public TaskInstanceVO createTaskInstance(Long taskId, String masterOwnerId,
+   public TaskInstance createTaskInstance(Long taskId, String masterOwnerId,
       String comment, Date dueDate, Long userId, Long documentId)
-   throws TaskException, DataAccessException;
-
-   /**
-    * Returns the available task statuses from reference data.
-    *
-    * @return the statuses
-    */
-   public Collection<TaskStatus> getTaskStatuses()
-   throws DataAccessException;
-
-   /**
-    * Returns the available task statuses from reference data.
-    *
-    * @return the statuses
-    */
-   public Collection<TaskState> getTaskStates()
-   throws DataAccessException;
-
-   /**
-    * Updates the appropriate taskInstanceData based on the passed info.
-    *
-    * @param variableInstanceVO
-    * @param value
-    * @param userId
-    */
-   public void updateTaskInstanceData(VariableInstanceVO variableInstanceVO, Serializable value, Long userId)
-   throws TaskException, DataAccessException;
-
-   /**
-    * Returns the available notes for the given owner type and ID
-    *
-    * @param owner the owner type
-    * @param id the owner id
-    * @return collection of notes for the given owner
-    */
-   public Collection<InstanceNote> getNotes(String owner, Long instanceId)
-   throws DataAccessException;
-
-   /**
-    * Creates and returns the list of tasks associated with an order
-    *
-    * @param pOwnerId
-    * @return Collection
-    */
-   public TaskInstanceVO[] getTaskInstanceVOsForMasterOwner(String pMasterOwnerId)
    throws TaskException, DataAccessException;
 
    /**
@@ -323,7 +172,7 @@ public interface TaskManager {
     * @throws TaskException
     * @throws DataAccessException
     */
-   public void cancelTaskInstance(TaskInstanceVO taskInst)
+   public void cancelTaskInstance(TaskInstance taskInst)
    throws TaskException, DataAccessException;
 
    /**
@@ -331,16 +180,16 @@ public interface TaskManager {
     *
     * @param pProcessInstance
     */
-   public void cancelTaskInstancesForProcessInstance(Long pProcessInstId)
+   public void cancelTasksForProcessInstance(Long pProcessInstId)
+   throws TaskException, DataAccessException;
+
+   public void cancelTasksForProcessInstances(List<Long> procInstIds)
    throws TaskException, DataAccessException;
 
    public void cancelTasksOfActivityInstance(Long actInstId, Long procInstId)
-           throws NamingException, MDWException;
+   throws NamingException, MDWException;
 
-   public void cancelTasksOfProcessInstances(List<Long> procInstIds) throws TaskException, DataAccessException;
-
-
-   public TaskInstanceVO performActionOnTaskInstance(String action, Long taskInstanceId,
+   public TaskInstance performActionOnTaskInstance(String action, Long taskInstanceId,
            Long userId, Long assigneeId, String comment, String destination, boolean notifyEngine)
    throws TaskException, DataAccessException;
 
@@ -359,7 +208,7 @@ public interface TaskManager {
     *        infinite recursion when this is called from the service endpoint itself)
     * @return the updated task instance
     */
-   public TaskInstanceVO performActionOnTaskInstance(String action, Long taskInstanceId,
+   public TaskInstance performActionOnTaskInstance(String action, Long taskInstanceId,
            Long userId, Long assigneeId, String comment, String destination, boolean notifyEngine, boolean allowResumeEndpoint)
    throws TaskException, DataAccessException;
 
@@ -371,62 +220,18 @@ public interface TaskManager {
     * @throws TaskException
     * @throws DataAccessException
     */
-   public void closeTaskInstance(TaskInstanceVO ti, String action, String comment)
+   public void closeTaskInstance(TaskInstance ti, String action, String comment)
    throws TaskException, DataAccessException;
 
    /**
-    * Retrieves all task templates.
+    * Returns the available notes for the given owner type and ID
     *
-    * @return Collection of Tasks
+    * @param owner the owner type
+    * @param id the owner id
+    * @return collection of notes for the given owner
     */
-   public Collection<TaskVO> getTasks()
+   public Collection<InstanceNote> getNotes(String owner, Long instanceId)
    throws DataAccessException;
-
-   /**
-    * Retrieves all task templates with given category
-    *
-    * @param categoryId
-    * @return Array of Tasks
-    */
-   public TaskVO[] getTasks(Long categoryId)
-   throws DataAccessException;
-
-   /**
-    * Returns all the Task categories.
-    *
-    * @return Collection of TaskCategory objects
-    */
-   public TaskCategory[] getTaskCategories()
-   throws DataAccessException;
-
-   /**
-    * Creates and returns a task category for the given params
-    *
-    * @param pCode
-    * @param pDesc
-    * @return TaskCategory
-    */
-   public TaskCategory createTaskCategory(String pCode, String pDesc)
-   throws TaskException, DataAccessException;
-
-   /**
-    * Updates the Task Category
-    *
-    * @param pId
-    * @param pCode
-    * @param pDesc
-    * @return TaskCategory
-    */
-   public TaskCategory updateTaskCategory(Long pId, String pCode, String pDesc)
-   throws TaskException, DataAccessException;
-
-   /**
-    * Deletes the Task Category
-    *
-    * @param pId task category ID
-    */
-   public void deleteTaskCategory(Long pId)
-   throws TaskException, DataAccessException;
 
    /**
     * Creates a instance note.
@@ -455,39 +260,13 @@ public interface TaskManager {
    throws TaskException, DataAccessException;
 
    /**
-    * Deletes the task action user role mapping for the passid in user role
-    * This is to be retired after MDW 5.2
+    * Returns the collection of attachments
     *
-    * @param pTaskUserGroupMap
+    * @param pTaskInstId
+    * @return Collection of Attachment
     */
-   @Deprecated
-   public void updateTaskUserGroupMappings(Long pTaskId, Long[] pUserGroupIds)
-   throws TaskException, DataAccessException;
-
-   /**
-    * Updates a bache of task instances to Jeopardy state as appropriate.
-    *
-    */
-   public int updateTaskInstanceStateAsJeopardy()
-   throws TaskException, DataAccessException;
-
-   /**
-    * Updates a batch of task instances to Alert state as appropriate.
-    */
-   public int updateTaskInstanceStateAsAlert()
-   throws TaskException, DataAccessException;
-
-   /**
-    * Update a single task instance to alert or jeopardy state.
-    * When updating to alert state, also schedule an event so that it will later
-    * update to jeopardy state.
-    * @param taskInstId
-    * @param isAlert true to update it to alert state; o/w to jeopardy state
-    * @throws TaskException
-    * @throws DataAccessException
-    */
-   public void updateTaskInstanceState(Long taskInstId, boolean isAlert)
-   throws TaskException, DataAccessException;
+   public Collection<Attachment> getAttachments(String attachName,String attachmentLocation)
+   throws DataAccessException;
 
    /**
     * Creates and adds a task attachment
@@ -506,15 +285,6 @@ public interface TaskManager {
     */
    public void removeAttachment(Long pAttachId, Long userId)
    throws DataAccessException, TaskException;
-
-   /**
-    * Returns the collection of attachments
-    *
-    * @param pTaskInstId
-    * @return Collection of Attachment
-    */
-   public Collection<Attachment> getAttachments(String attachName,String attachmentLocation)
-   throws DataAccessException;
 
    /**
     * Returns the attachment
@@ -542,64 +312,7 @@ public interface TaskManager {
     * @param activityInstId activity instance ID
     * @param pProcessInstId process instance ID for general tasks; null for classic tasks
     */
-   public TaskInstanceVO getTaskInstanceByActivityInstanceId(Long activityInstanceId, Long procInstId)
-   throws TaskException, DataAccessException;
-
-   /**
-    * Creates and returns a task template
-    *
-    * @param task the task template object to be created
-    * @param saveAttributes when it is true, persist task template attributes as well
-    * @return task template ID
-    */
-   public Long createTask(TaskVO task, boolean saveAttributes)
-   throws DataAccessException;
-
-   /**
-    * updates the task template
-    *
-    * @param task the task template object to updated
-    * @param saveAttributes when it is true, persist task template attributes as well
-    */
-   public void updateTask(TaskVO task, boolean saveAttributes)
-   throws TaskException, DataAccessException;
-
-   /**
-    * deletes the task template
-    *
-    * @param pTaskId task template ID
-    */
-   public void deleteTask(Long pTaskId)
-   throws DataAccessException;
-
-   /**
-    * Creates a task template attribute
-    *
-    * @param pTaskId task template ID
-    * @param pName
-    * @param pValue
-    * @return Attribute
-    */
-   public void addTaskAttribute(Long pTaskId, String pName, String pValue, Integer pType)
-   throws DataAccessException;
-
-   /**
-    * Updates the passed in attribute for task
-    *
-    * @param pAttribId
-    * @param pName
-    * @param pValue
-    * @return Attribute
-    */
-   public void updateTaskAttribute(Long pAttribId, String pName, String pValue, Integer pType)
-   throws DataAccessException;
-
-   /**
-    * Deletes the passed in attribute for task
-    *
-    * @param pAttribId
-    */
-   public void deleteTaskAttribute(Long pAttribId)
+   public TaskInstance getTaskInstanceByActivityInstanceId(Long activityInstanceId, Long procInstId)
    throws TaskException, DataAccessException;
 
    /**
@@ -620,12 +333,6 @@ public interface TaskManager {
     */
    public void updateTaskInstanceComments(Long taskInstanceId, String comments)
    throws TaskException, DataAccessException;
-
-   public TaskAction getTaskAction(String action)
-   throws DataAccessException;
-
-   public TaskAction addTaskAction(String action, String description)
-   throws DataAccessException;
 
    /**
     * Gets the dynamic task actions associated with a task instance as determined by
@@ -664,19 +371,10 @@ public interface TaskManager {
     * @return the form data document containing the task instance data
     * @throws DataAccessException
     */
-   public DocumentVO getTaskInstanceData(TaskInstanceVO taskInst)
+   public Document getTaskInstanceData(TaskInstance taskInst)
    throws DataAccessException;
 
-   public VariableInstanceVO[] getProcessInstanceVariables(Long procInstId)
-   throws DataAccessException;
-
-   /**
-    * Get the list of group names to which the given task template is associated with
-    * @param taskId
-    * @return
-    * @throws DataAccessException
-    */
-   public List<String> getGroupsForTask(Long taskId)
+   public VariableInstance[] getProcessInstanceVariables(Long procInstId)
    throws DataAccessException;
 
    /**
@@ -685,93 +383,15 @@ public interface TaskManager {
     * @return
     * @throws DataAccessException
     */
-   public List<String> getGroupsForTaskInstance(TaskInstanceVO taskInst)
+   public List<String> getGroupsForTaskInstance(TaskInstance taskInst)
    throws DataAccessException, TaskException;
-
-   /**
-    * Save a resource into database. This is used to import resources
-    * @param resource
-    * @return
-    * @throws DataAccessException
-    */
-   public Long saveResource(RuleSetVO resource)
-   throws DataAccessException;
-
-   /**
-    * Saves a workflow asset and its package association. Always saves a new version.
-    * @param workflowPackage
-    * @param asset
-    * @param user making the change
-    * @return id
-    */
-   public Long saveAsset(String workflowPackage, RuleSetVO asset, String user)
-   throws DataAccessException, TaskException;
-
-   /**
-    * Count the total number of task instances satisfying the
-    * from-where clause constructed by the method buildFromWhereClause.
-    * @param fromWhereClause from-where clause string constructed
-    *     from query criteria by the method buildFromWhereClause
-    * @return number of task instances satisfying the query criteria.
-    * @throws TaskException
-    * @throws DataAccessException
-    */
-   public int countTaskInstances(String fromWhereClause)
-   throws TaskException, DataAccessException;
-
-   /**
-    * Load a page of task instances satisfying the
-    * from-where clause constructed by the method buildFromWhereClause.
-    * @param fromWhereClause
-    * @param startIndex the index of the start row on the page. The first row has index 0
-    * @param endIndex the index of the end row on the page plus one
-    * @param sortOn the column name on which the task instances are sorted.
-    *     If this is null, the sorting is based on task instance ID.
-    *     The default sorting order is ascending, and if a descending order
-    *     is desired, a "-" should be prefixed to the column name.
-    * @param loadIndices when it is true, the query also loads
-    *     indices for each task instance as stored in the TASK_INST_INDEX table.
-    *     The indices can be accessed through TaskInstanceVO.getVariables()
-    * @return a page of task instance list
-    * @throws TaskException
-    * @throws DataAccessException
-    */
-   public List<TaskInstanceVO> queryTaskInstances(String fromWhereClause,
-      int startIndex, int endIndex, String sortOn, boolean loadIndices)
-   throws TaskException, DataAccessException;
-
-   /**
-    * Count the total number of task templates satisfying the
-    * where clause, which must be a valid SQL where clause composed
-    * of field names in the TASK table.
-    * @param whereCondition the where clause
-    * @return
-    * @throws DataAccessException
-    */
-   public int countTasks(String whereCondition) throws DataAccessException;
-
-   /**
-    * Retrieve a page of task templates satisfying the where clause,
-    * which must be a valid SQL where clause composed
-    * of field names in the TASK table.
-    * @param whereCondition
-    * @param startIndex the index of the start row on the page. The first row has index 0
-    * @param endIndex the index of the end row on the page plus one
-    * @param sortOn the column name on which the task templates are sorted.
-    *     The default sorting order is ascending, and if a descending order
-    *     is desired, a "-" should be prefixed to the column name.
-    * @return
-    * @throws DataAccessException
-    */
-   public List<TaskVO> queryTasks(String whereCondition, int startIndex, int endIndex, String sortOn)
-   throws DataAccessException;
 
    public List<SubTask> getSubTaskList(TaskRuntimeContext runtimeContext) throws TaskException;
 
    /**
    * Get all subtask instances for a specified master task instance id.
    */
-  public List<TaskInstanceVO> getSubTaskInstances(Long masterTaskInstanceId)
+  public List<TaskInstance> getSubTaskInstances(Long masterTaskInstanceId)
   throws DataAccessException;
 
   /**
@@ -793,21 +413,9 @@ public interface TaskManager {
   throws DataAccessException;
 
   /**
-   * Update task instance data
-   */
-  public void updateTaskInstanceData(Map<String, Object> changes, List<String> workGroups, Long autoAssignee, TaskInstanceVO taskInst, String cuid)
-      throws DataAccessException, TaskException;
-
-  /**
-   * Get the duedate,priority,workgroups and auo-assignee after applying strategy
-   */
-  public Map<String, Object> getChangesAfterApplyStrategy(Map<String, Object> changesMap, TaskInstanceVO taskInst)
-      throws DataAccessException, TaskException;
-
-  /**
    * Get the runtime context for a taskInstance.
    */
-  public TaskRuntimeContext getTaskRuntimeContext(TaskInstanceVO taskInstanceVO)
+  public TaskRuntimeContext getTaskRuntimeContext(TaskInstance taskInstanceVO)
       throws DataAccessException;
 
   /**
@@ -815,19 +423,11 @@ public interface TaskManager {
    */
   public SubTaskPlan getSubTaskPlan(TaskRuntimeContext runtimeContext) throws TaskException;
 
-  /**
-   * Use setIndexes(TaskRuntimeContext).
-   */
-  @Deprecated
-  public Map<String,String> collectIndices(Long taskId, Long processInstanceId, FormDataDocument formdatadoc) throws DataAccessException;
-
   public void setIndexes(TaskRuntimeContext runtimeContext) throws DataAccessException;
 
-  public boolean isInFinalStatus(TaskInstanceVO pTaskInstance);
+  public Long getActivityInstanceId(TaskInstance taskInstance, boolean sourceActInst);
 
-  public Long getActivityInstanceId(TaskInstanceVO taskInstance, boolean sourceActInst);
-
-  public void notifyTaskAction(TaskInstanceVO taskInstance, String action, Integer previousStatus, Integer previousState)
+  public void notifyTaskAction(TaskInstance taskInstance, String action, Integer previousStatus, Integer previousState)
   throws TaskException, DataAccessException;
 
 }

@@ -11,13 +11,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.value.asset.Asset;
-import com.centurylink.mdw.model.value.asset.PackageAssets;
-import com.centurylink.mdw.model.value.asset.PackageList;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
+import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.PackageAssets;
+import com.centurylink.mdw.model.asset.PackageList;
+import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -59,7 +58,7 @@ public class Assets extends JsonRestService {
                 }
                 else {
                     String assetPath = pkg + "/" + asset;
-                    Asset theAsset = assetServices.getAsset(assetPath);
+                    AssetInfo theAsset = assetServices.getAsset(assetPath);
                     if (theAsset == null)
                         throw new ServiceException(ServiceException.NOT_FOUND, "No such asset: " + assetPath);
                     else

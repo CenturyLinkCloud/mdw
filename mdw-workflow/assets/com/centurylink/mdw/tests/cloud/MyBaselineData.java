@@ -7,9 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.model.data.task.TaskCategory;
-import com.centurylink.mdw.model.value.variable.VariableTypeVO;
-
+import com.centurylink.mdw.model.task.TaskCategory;
+import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 
 /**
@@ -17,15 +16,15 @@ import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
  */
 public class MyBaselineData extends MdwBaselineData {
     private List<TaskCategory> myTaskCategories;
-    private List<VariableTypeVO> myVariableTypes;
+    private List<VariableType> myVariableTypes;
 
     public MyBaselineData() {
         myTaskCategories = new ArrayList<TaskCategory>();
         myTaskCategories.add(new TaskCategory(101L, "PLN", "Planning"));
         myTaskCategories.add(new TaskCategory(102L, "CON", "Construction"));
 
-        myVariableTypes = new ArrayList<VariableTypeVO>();
-        myVariableTypes.add(new VariableTypeVO(501L, "java.lang.Float", "com.centurylink.mdw.tests.cloud.MyFloatTranslator"));
+        myVariableTypes = new ArrayList<VariableType>();
+        myVariableTypes.add(new VariableType(501L, "java.lang.Float", "com.centurylink.mdw.tests.cloud.MyFloatTranslator"));
     }
 
     private Map<Integer,TaskCategory> taskCategories;
@@ -50,12 +49,12 @@ public class MyBaselineData extends MdwBaselineData {
         return taskCategoryCodes;
     }
 
-    private List<VariableTypeVO> variableTypes;
+    private List<VariableType> variableTypes;
     @Override
-    public List<VariableTypeVO> getVariableTypes() {
+    public List<VariableType> getVariableTypes() {
         if (variableTypes == null) {
             variableTypes = super.getVariableTypes();
-            for (VariableTypeVO myVariableType : myVariableTypes)
+            for (VariableType myVariableType : myVariableTypes)
                 variableTypes.add(myVariableType);
         }
         return variableTypes;

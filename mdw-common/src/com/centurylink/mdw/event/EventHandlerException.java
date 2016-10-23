@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.event;
 
-import com.centurylink.mdw.common.WorkflowException;
+import com.centurylink.mdw.app.WorkflowException;
 
 public class EventHandlerException extends WorkflowException {
 

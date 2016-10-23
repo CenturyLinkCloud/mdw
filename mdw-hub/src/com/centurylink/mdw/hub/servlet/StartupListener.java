@@ -18,21 +18,14 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.constant.JMSDestinationNames;
-import com.centurylink.mdw.common.constant.PropertyGroups;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.constant.SpringConstants;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.exception.StartupException;
-import com.centurylink.mdw.common.provider.StartupService;
-import com.centurylink.mdw.common.spring.SpringAppContext;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.property.impl.PropertyManagerDatabase;
-import com.centurylink.mdw.common.utilities.startup.StartupClass;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.config.PropertyManagerDatabase;
+import com.centurylink.mdw.constant.JMSDestinationNames;
+import com.centurylink.mdw.constant.PropertyGroups;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.constant.SpringConstants;
 import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccess;
@@ -43,11 +36,18 @@ import com.centurylink.mdw.listener.jms.InternalEventListener;
 import com.centurylink.mdw.listener.rmi.RMIListenerImpl;
 import com.centurylink.mdw.listeners.startup.StartupRegistry;
 import com.centurylink.mdw.model.listener.RMIListener;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.provider.StartupService;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.pooling.ConnectionPoolRegistration;
+import com.centurylink.mdw.spring.SpringAppContext;
+import com.centurylink.mdw.startup.StartupClass;
+import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.timer.startup.TimerTaskRegistration;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class StartupListener implements ServletContextListener {
     private static ThreadPoolProvider thread_pool;
@@ -305,7 +305,7 @@ public class StartupListener implements ServletContextListener {
 
             StartupClass instance = null;
             try {
-                ClassLoader clsloader = PackageVO.getDefaultPackage().getClassLoader();
+                ClassLoader clsloader = Package.getDefaultPackage().getClassLoader();
                 Class<? extends StartupClass> startupClass = clsloader.loadClass(className).asSubclass(StartupClass.class);
                 instance = startupClass.newInstance();
             }

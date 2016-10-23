@@ -5,21 +5,21 @@ package com.centurylink.mdw.services.messenger;
 
 import java.util.Date;
 
-import com.centurylink.mdw.common.constant.JMSDestinationNames;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.JMSServices;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.JMSDestinationNames;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.dao.process.EngineDataAccess;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
+import com.centurylink.mdw.util.JMSServices;
 
 public class InternalMessengerJms extends InternalMessenger {
 	
     private static int threshold = -1;
 	
-	public void sendMessage(InternalEventVO msg, EngineDataAccess edao) 
+	public void sendMessage(InternalEvent msg, EngineDataAccess edao) 
 		throws ProcessException
 	{
 		try {
@@ -33,7 +33,7 @@ public class InternalMessengerJms extends InternalMessenger {
 	}
 
 	@Override
-	public void sendDelayedMessage(InternalEventVO msg, int delaySeconds, String msgid, boolean isUpdate,
+	public void sendDelayedMessage(InternalEvent msg, int delaySeconds, String msgid, boolean isUpdate,
 			EngineDataAccess edao) throws ProcessException {
 		try {
 			if (threshold<0) {

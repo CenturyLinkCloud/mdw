@@ -8,10 +8,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.centurylink.mdw.common.provider.ProviderRegistry;
-import com.centurylink.mdw.common.task.TaskServiceRegistry;
 import com.centurylink.mdw.event.EventHandlerRegistry;
 import com.centurylink.mdw.monitor.MonitorRegistry;
+import com.centurylink.mdw.provider.ProviderRegistry;
+import com.centurylink.mdw.task.types.TaskServiceRegistry;
 
 public class DynamicJavaServiceRegistry {
 

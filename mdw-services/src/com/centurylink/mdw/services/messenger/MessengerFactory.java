@@ -5,12 +5,12 @@ package com.centurylink.mdw.services.messenger;
 
 import javax.naming.NamingException;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.constant.ApplicationConstants;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.ApplicationConstants;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class MessengerFactory {
 

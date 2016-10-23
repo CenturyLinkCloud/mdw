@@ -9,9 +9,9 @@ import java.util.Map;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.value.requests.Request;
-import com.centurylink.mdw.model.value.requests.RequestCount;
-import com.centurylink.mdw.model.value.requests.RequestList;
+import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.request.RequestCount;
+import com.centurylink.mdw.model.request.RequestList;
 
 public interface RequestServices {
 

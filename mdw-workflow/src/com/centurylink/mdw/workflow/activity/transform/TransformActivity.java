@@ -24,14 +24,14 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity;
 
 /**
@@ -101,14 +101,14 @@ public class TransformActivity extends ScriptExecutorActivity {
         Script script = shell.parse(transform);
         Binding binding = new Binding();
 
-        VariableVO inputVar = getMainProcessDefinition().getVariable(inputDocument);
+        Variable inputVar = getMainProcessDefinition().getVariable(inputDocument);
         if (inputVar == null)
           throw new ActivityException("Input document variable not found: " + inputDocument);
         String inputVarName = inputVar.getVariableName();
         Object inputVarValue = getGPathParamValue(inputVarName, inputVar.getVariableType());
         binding.setVariable(inputVarName, inputVarValue);
 
-        VariableVO outputVar = getMainProcessDefinition().getVariable(getOutputDocuments()[0]);
+        Variable outputVar = getMainProcessDefinition().getVariable(getOutputDocuments()[0]);
         String outputVarName = outputVar.getVariableName();
         Object outputVarValue = getGPathParamValue(outputVarName, outputVar.getVariableType());
         binding.setVariable(outputVarName, outputVarValue);
@@ -130,7 +130,7 @@ public class TransformActivity extends ScriptExecutorActivity {
 
         String output = null;
 
-        VariableVO inputVar = getMainProcessDefinition().getVariable(inputDocument);
+        Variable inputVar = getMainProcessDefinition().getVariable(inputDocument);
         if (inputVar == null)
           throw new ActivityException("Input document variable not found: " + inputDocument);
         String inputVarName = inputVar.getVariableName();
@@ -145,7 +145,7 @@ public class TransformActivity extends ScriptExecutorActivity {
             throw new ActivityException("Input does not appear to be a document: " + inputVarName);
         }
 
-        VariableVO outputVar = getMainProcessDefinition().getVariable(getOutputDocuments()[0]);
+        Variable outputVar = getMainProcessDefinition().getVariable(getOutputDocuments()[0]);
         String outputVarName = outputVar.getVariableName();
         String outputVarType = outputVar.getVariableType();
         com.centurylink.mdw.variable.VariableTranslator outTranslator = VariableTranslator.getTranslator(getPackage(), outputVarType);

@@ -6,8 +6,8 @@ package com.centurylink.mdw.common.translator.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.centurylink.mdw.common.exception.TranslationException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.TranslationException;
 import com.qwest.mbeng.MbengException;
 import com.qwest.mbeng.MbengTableArray;
 import com.qwest.mbeng.MbengTableSchema;

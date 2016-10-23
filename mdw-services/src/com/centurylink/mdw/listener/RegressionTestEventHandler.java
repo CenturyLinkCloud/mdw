@@ -13,39 +13,39 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.ProcessVisibilityConstant;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.exception.MDWException;
+import com.centurylink.mdw.common.MDWException;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.SimpleLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.ProcessVisibilityConstant;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.task.TaskActionVO;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.model.value.user.UserVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
-import com.centurylink.mdw.model.value.variable.VariableVO;
-import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.task.UserTaskAction;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.Parameter;
+import com.centurylink.mdw.service.data.task.TaskDataAccess;
+import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.UserManager;
-import com.centurylink.mdw.services.dao.task.TaskDAO;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.SimpleLogger;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class RegressionTestEventHandler extends ExternalEventHandlerBase {
 
@@ -116,21 +116,21 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
          String resp;
          Long eventInstId = new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
          Long processId = getProcessId(processName);
-         ProcessVO procVO = getProcessDefinition(processId);
-         Map<String,String> params = new HashMap<String,String>();
+         Process procVO = getProcessDefinition(processId);
+         Map<String,Object> params = new HashMap<String,Object>();
          for (Parameter param : xmlbean.getActionRequest().getAction().getParameterList()) {
              if (param.getName().equals("MasterRequestId")) continue;
              if (param.getName().equals("ProcessName")) continue;
              if (param.getName().equals("PerformanceLevel")) continue;
-             VariableVO var = procVO.getVariable(param.getName());
+             Variable var = procVO.getVariable(param.getName());
              if (var!=null) params.put(param.getName(), param.getStringValue());
          }
          String processType = procVO.getProcessType();
          if (processType.equals(ProcessVisibilityConstant.SERVICE)) {
-             resp = super.invokeProcessAsService(procVO.getProcessId(), eventInstId, masterRequestId,
+             resp = invokeServiceProcess(procVO.getProcessId(), eventInstId, masterRequestId,
                      message, params, null, performance_level, null);
          } else {
-             super.startProcess(processId, eventInstId, masterRequestId, params, null);
+             launchProcess(processId, eventInstId, masterRequestId, params, null);
              resp = createSuccessResponse(null);
          }
          return resp;
@@ -163,7 +163,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
     private String getProcessInstanceId(ActionRequestDocument xmlbean, EventManager eventMgr) throws Exception {
         String masterRequestId=getParameter(xmlbean, "MasterRequestId", true);
         String processName=getParameter(xmlbean, "ProcessName", true);
-        List<ProcessInstanceVO> procInstList = eventMgr.getProcessInstances(masterRequestId, processName);
+        List<ProcessInstance> procInstList = eventMgr.getProcessInstances(masterRequestId, processName);
         if (procInstList!=null && procInstList.size()>0)
             return procInstList.get(0).getId().toString();
         else return "$ProcessInstanceId";
@@ -173,7 +173,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         String masterRequestId=getParameter(xmlbean, "MasterRequestId", true);
         String processName=getParameter(xmlbean, "ProcessName", true);
         String activityLogicalId=getParameter(xmlbean, "ActivityLogicalId", true);
-        List<ActivityInstanceVO> actInstList = eventMgr.getActivityInstances(masterRequestId,
+        List<ActivityInstance> actInstList = eventMgr.getActivityInstances(masterRequestId,
                 processName, activityLogicalId);
         if (actInstList!=null && actInstList.size()>0) return actInstList.get(0).getId().toString();
         else return "$ActivityInstanceId";
@@ -182,9 +182,9 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
     private String getVariableValue(ActionRequestDocument xmlbean, EventManager eventMgr, String varname) throws Exception {
         String masterRequestId=getParameter(xmlbean, "MasterRequestId", true);
         String processName=getParameter(xmlbean, "ProcessName", true);
-        List<ProcessInstanceVO> procInstList = eventMgr.getProcessInstances(masterRequestId, processName);
+        List<ProcessInstance> procInstList = eventMgr.getProcessInstances(masterRequestId, processName);
         if (procInstList==null || procInstList.size()==0) return "$" + varname;
-        VariableInstanceInfo varinst = eventMgr.getVariableInstance(procInstList.get(0).getId(), varname);
+        VariableInstance varinst = eventMgr.getVariableInstance(procInstList.get(0).getId(), varname);
         if (varinst==null) return "";
         return varinst.getStringValue();
     }
@@ -208,11 +208,11 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
                     String value;
                     if (expression.startsWith("$")) {
                         String varname = expression.substring(1);
-                        if (varname.equalsIgnoreCase(VariableVO.PROCESS_INSTANCE_ID))
+                        if (varname.equalsIgnoreCase(Variable.PROCESS_INSTANCE_ID))
                             value = getProcessInstanceId(xmlbean, eventMgr);
-                        else if (varname.equalsIgnoreCase(VariableVO.MASTER_REQUEST_ID))
+                        else if (varname.equalsIgnoreCase(Variable.MASTER_REQUEST_ID))
                             value = getParameter(xmlbean, "MasterRequestId", true);
-                        else if (varname.equalsIgnoreCase(VariableVO.ACTIVITY_INSTANCE_ID))
+                        else if (varname.equalsIgnoreCase(Variable.ACTIVITY_INSTANCE_ID))
                             value = getActivityInstanceId(xmlbean, eventMgr);
                         else value = getVariableValue(xmlbean, eventMgr, varname);
                     } else {
@@ -272,10 +272,10 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
             k = Integer.parseInt(taskName.substring(n - 2, n - 1));
             taskName = taskName.substring(0, n - 3);
         }
-        TaskVO taskVo = TaskTemplateCache.getTemplateForName(taskName);
+        TaskTemplate taskVo = TaskTemplateCache.getTemplateForName(taskName);
         if (taskVo == null)
             throw new Exception("No task found for name: '" + taskName + "'");
-        List<Long> tiList = new TaskDAO(new DatabaseAccess(null)).findTaskInstance(taskVo.getTaskId(), masterRequestId);
+        List<Long> tiList = new TaskDataAccess(new DatabaseAccess(null)).findTaskInstance(taskVo.getTaskId(), masterRequestId);
         if (tiList.size() < k + 1)
             throw new Exception("Cannot find the task instance with request: " + masterRequestId + " and name: '" + taskName + "'");
         Long taskInstId;
@@ -295,33 +295,29 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         String masterRequestId = getParameter(xmlbean, "MasterRequestId", true);
         Long taskInstId = this.findTaskInstanceId(taskName, masterRequestId);
         UserManager userManager = ServiceLocator.getUserManager();
-        UserVO user = userManager.getUser(cuid);
+        User user = userManager.getUser(cuid);
         if (user == null)
             throw new ServiceException("Unrecognized user: " + cuid);
         Long userId = user.getId();
         List<Parameter> params = xmlbean.getActionRequest().getAction().getParameterList();
         TaskManager taskManager = ServiceLocator.getTaskManager();
         if (params!=null && !params.isEmpty()) {
-            TaskInstanceVO taskInst = taskManager.getTaskInstanceVO(taskInstId);
+            TaskInstance taskInst = taskManager.getTaskInstanceVO(taskInstId);
             if (taskInst.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
                 EventManager eventManager = ServiceLocator.getEventManager();
                 Long procInstId = taskInst.getOwnerId();
-                ProcessInstanceVO procInst = eventManager.getProcessInstance(procInstId);
-                ProcessVO procdef = super.getProcessDefinition(procInst.getProcessId());
-                if (procdef.isEmbeddedProcess()) {
-                    procInstId = procInst.getOwnerId();
-                    procInst = eventManager.getProcessInstance(procInstId);
-                    procdef = super.getProcessDefinition(procInst.getProcessId());
-                } else if (procInst.isNewEmbedded()) {
+                ProcessInstance procInst = eventManager.getProcessInstance(procInstId);
+                Process procdef = super.getProcessDefinition(procInst.getProcessId());
+                if (procInst.isEmbedded()) {
                     procInstId = procInst.getOwnerId();
                 }
                 for (Parameter param : params) {
                     String pname = param.getName();
                     if (pname.startsWith("formdata.")) {
                         String varname = pname.substring(9);
-                        VariableInstanceInfo var = eventManager.getVariableInstance(procInstId, varname);
+                        VariableInstance var = eventManager.getVariableInstance(procInstId, varname);
                         if (var==null) {
-                            VariableVO vardef = procdef.getVariable(varname);
+                            Variable vardef = procdef.getVariable(varname);
                             if (vardef==null) throw new Exception("The variable is not defined: " + varname);
                             if (vardef.isDocument()) {
                                 Long docid = eventManager.createDocument(vardef.getVariableType(),
@@ -344,7 +340,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
             }
         }
         taskManager.performActionOnTaskInstance(directAction, taskInstId, userId, userId, null, null, true);
-        TaskActionVO taskAction = new TaskActionVO();
+        UserTaskAction taskAction = new UserTaskAction();
         taskAction.setAction(directAction);
         taskAction.setTaskInstanceId(taskInstId);
         taskAction.setUser(cuid);

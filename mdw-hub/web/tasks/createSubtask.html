@@ -2,9 +2,9 @@
   <div class="form-group" ng-class="{'has-error': subtask.template === undefined}">
     <label class="control-label col-xs-2 mdw-required" for="taskTemplate">Template:</label>
     <div class="mdw-float-left mdw-lg-width">
-      <input type="text" id="taskTemplate" class="form-control" autofocus placeholder=" search"
+      <input type="text" id="subtaskTemplate" class="form-control" autofocus placeholder=" search"
         uib-typeahead="template as template.name for template in findTemplate($viewValue)"
-        typeahead-editable="false" ng-model="subtask.template"
+        typeahead-editable="false" ng-model="subtask.template" spellcheck="false"
         ng-blur="subtask.template === '' ? undefined : subtask.template">
     </div>
     <div class="mdw-buttons mdw-sm-indent mdw-float-left">

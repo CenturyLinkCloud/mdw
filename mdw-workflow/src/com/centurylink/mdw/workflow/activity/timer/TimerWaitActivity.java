@@ -6,19 +6,19 @@ package com.centurylink.mdw.workflow.activity.timer;
 import java.util.Date;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
-import com.centurylink.mdw.services.process.ProcessExecuter;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.services.process.ProcessExecutor;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
 
 
@@ -84,18 +84,18 @@ public class TimerWaitActivity extends AbstractWait {
     throws ActivityException
     {
     	try {
-    		ProcessExecuter engine = getEngine();
+    		ProcessExecutor engine = getEngine();
     		long currentTime = DatabaseAccess.getCurrentTime();
     		engine.updateActivityInstanceEndTime(getActivityInstanceId(),
     				new Date(currentTime+seconds*1000L));
     	} catch (Exception e) {
      		super.logwarn("Failed to set timer expiration time in DB: " + e.getMessage());
     	}
-    	InternalEventVO message = InternalEventVO.createActivityNotifyMessage(getActivityInstance(),
+    	InternalEvent message = InternalEvent.createActivityNotifyMessage(getActivityInstance(),
     			EventType.RESUME, getMasterRequestId(), null);
      	message.setMessageDelay(seconds);
         try {
-        	ProcessExecuter engine = getEngine();
+        	ProcessExecutor engine = getEngine();
         	String eventName = ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId() + "timer";
         	engine.sendDelayedInternalEvent(message, seconds, eventName, isUpdate);
         } catch (Exception e) {
@@ -106,7 +106,7 @@ public class TimerWaitActivity extends AbstractWait {
     @Override
     public void execute() throws ActivityException {
     	int seconds = getWaitPeriodInSeconds();
-    	EventWaitInstanceVO received = registerWaitEvents(false, true);
+    	EventWaitInstance received = registerWaitEvents(false, true);
     	sendDelayedResumeMessage(seconds);
     	if (received!=null) {
     		this.setReturnCode(received.getCompletionCode());
@@ -158,7 +158,7 @@ public class TimerWaitActivity extends AbstractWait {
  		throws ActivityException {
     }
 
-    private boolean isOtherEvent(InternalEventVO event) {
+    private boolean isOtherEvent(InternalEvent event) {
     	return OwnerType.DOCUMENT.equals(event.getSecondaryOwnerType());
     }
 
@@ -184,7 +184,7 @@ public class TimerWaitActivity extends AbstractWait {
      * the activity so that it can reset timer and wait again, please override
      * the method {@link #processTimerExpiration()}.
      */
-    public final boolean resume(InternalEventVO event) throws ActivityException {
+    public final boolean resume(InternalEvent event) throws ActivityException {
     	if (isOtherEvent(event)) {
          	String messageString = this.getMessageFromEventMessage(event);
         	this.setReturnCode(event.getCompletionCode());
@@ -207,11 +207,11 @@ public class TimerWaitActivity extends AbstractWait {
      * Customization should be done with the methods {@link #processOtherMessage(String, String)},
      * {@link #registerWaitEvents()}, and {@link #processTimerExpiration()}.
      */
-    public final boolean resumeWaiting(InternalEventVO event)
+    public final boolean resumeWaiting(InternalEvent event)
     	throws ActivityException {
     	// check if timer is expired at this time?
     	try {
-			ActivityInstanceVO ai = getEngine().getActivityInstance(getActivityInstanceId());
+			ActivityInstance ai = getEngine().getActivityInstance(getActivityInstanceId());
 			Date expectedEndTime = StringHelper.stringToDate(ai.getEndDate());
 			long currentTime = DatabaseAccess.getCurrentTime();
 			if (currentTime>expectedEndTime.getTime()) {
@@ -223,7 +223,7 @@ public class TimerWaitActivity extends AbstractWait {
 			throw new ActivityException(-1, e.getMessage(), e);
 		}
 
-		EventWaitInstanceVO received = registerWaitEvents(true,true);
+		EventWaitInstance received = registerWaitEvents(true,true);
     	if (received!=null) {
  	    	this.setReturnCode(received.getCompletionCode());
  	    	processOtherMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));

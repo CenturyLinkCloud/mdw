@@ -4,7 +4,7 @@
 package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.value.history.HistoryList;
+import com.centurylink.mdw.model.event.HistoryList;
 
 /**
  * Services for getting the audit log in mdw-admin.

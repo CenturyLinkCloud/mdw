@@ -5,21 +5,21 @@ package com.centurylink.mdw.workflow.task.strategy;
 
 import java.util.Date;
 
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.exception.StrategyException;
-import com.centurylink.mdw.model.value.task.TaskVO;
+import com.centurylink.mdw.common.StrategyException;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.observer.task.PrioritizationStrategy;
 
 public class SpecifiedPrioritizationStrategy implements PrioritizationStrategy {
 
     @Override
-    public Date determineDueDate(TaskVO taskTemplate) throws StrategyException {
+    public Date determineDueDate(TaskTemplate taskTemplate) throws StrategyException {
         // default due date calculation based on sla
         return null;
     }
 
     @Override
-    public int determinePriority(TaskVO taskTemplate, Date dueDate) throws StrategyException {
+    public int determinePriority(TaskTemplate taskTemplate, Date dueDate) throws StrategyException {
         String pri = taskTemplate.getAttribute(TaskAttributeConstant.PRIORITY);
         if (pri == null)
             throw new StrategyException("Missing task attribute: 'PRIORITY'");

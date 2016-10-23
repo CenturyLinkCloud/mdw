@@ -14,22 +14,22 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.Compatibility;
-import com.centurylink.mdw.common.Compatibility.SubstitutionResult;
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.exception.CachingException;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.VariableTranslator;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.app.Compatibility;
+import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
+import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.translator.impl.XmlBeanWrapperTranslator;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.timer.CodeTimer;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.java.JavaNaming;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.CodeTimer;
 
 public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
 
@@ -152,13 +152,13 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
     private static GroovyScriptEngine scriptEngine;
     private static GroovyScriptEngine getScriptEngine() throws DataAccessException, IOException, CachingException {
         synchronized (GroovyScriptEngine.class) {
-            if (scriptEngine == null || !RuleSetCache.isLoaded()) {
+            if (scriptEngine == null || !AssetCache.isLoaded()) {
                 CodeTimer timer = new CodeTimer("Initialize script libraries", true);
                 initializeScriptLibraries();
                 initializeDynamicJavaAssets();
                 String[] rootDirs = new String[] { getRootDir() };
-                if (ApplicationContext.isWar() && PackageVOCache.getPackage(PackageVO.MDW + ".base").getCloudClassLoader() != null)
-                    scriptEngine = new GroovyScriptEngine(rootDirs, PackageVOCache.getPackage(PackageVO.MDW + ".base").getCloudClassLoader());
+                if (ApplicationContext.isWar() && PackageCache.getPackage(Package.MDW + ".base").getCloudClassLoader() != null)
+                    scriptEngine = new GroovyScriptEngine(rootDirs, PackageCache.getPackage(Package.MDW + ".base").getCloudClassLoader());
                 else
                     scriptEngine = new GroovyScriptEngine(rootDirs);
                 // clear the cached library versions
@@ -180,8 +180,8 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
         // write the groovy-language rule_sets into the root directory
         logger.info("Initializing Groovy script assets...");
 
-        for (RuleSetVO groovy : RuleSetCache.getRuleSets(RuleSetVO.GROOVY)) {
-            PackageVO pkg = PackageVOCache.getRuleSetPackage(groovy.getId());
+        for (Asset groovy : AssetCache.getAssets(Asset.GROOVY)) {
+            Package pkg = PackageCache.getAssetPackage(groovy.getId());
             String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getPackageName());
             File dir = createNeededDirs(packageName);
             String filename = dir + "/" + groovy.getName();
@@ -192,7 +192,7 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             if (file.exists())
                 file.delete();
 
-            String content = groovy.getRuleSet();
+            String content = groovy.getStringContent();
             if (content != null) {
                 if (Compatibility.hasCodeSubstitutions())
                     content = doCompatibilityCodeSubstitutions(groovy.getLabel(), content);
@@ -210,8 +210,8 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
     private static void initializeDynamicJavaAssets() throws DataAccessException, IOException, CachingException {
         logger.info("Initializing Dynamic Java assets for Groovy...");
 
-        for (RuleSetVO java : RuleSetCache.getRuleSets(RuleSetVO.JAVA)) {
-            PackageVO pkg = PackageVOCache.getRuleSetPackage(java.getId());
+        for (Asset java : AssetCache.getAssets(Asset.JAVA)) {
+            Package pkg = PackageCache.getAssetPackage(java.getId());
             String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getPackageName());
             File dir = createNeededDirs(packageName);
             String filename = dir + "/" + java.getName();
@@ -223,7 +223,7 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             if (file.exists())
                 file.delete();
 
-            String content = java.getRuleSet();
+            String content = java.getStringContent();
             if (content != null) {
                 if (Compatibility.hasCodeSubstitutions())
                     content = doCompatibilityCodeSubstitutions(java.getLabel(), content);

@@ -5,7 +5,7 @@ package com.centurylink.mdw.monitor.impl;
 
 import java.util.Map;
 
-import com.centurylink.mdw.model.value.process.ProcessRuntimeContext;
+import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.monitor.ProcessMonitor;
 
 public class ProcessTraceMonitor extends Monitor implements ProcessMonitor {

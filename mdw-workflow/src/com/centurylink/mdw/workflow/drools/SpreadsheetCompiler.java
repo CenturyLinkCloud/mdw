@@ -17,7 +17,7 @@ import org.drools.template.model.DRLOutput;
 import org.drools.template.model.Package;
 import org.drools.template.parser.DataListener;
 
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.model.asset.Asset;
 
 /**
  * Extends Drools SpreadsheetCompiler to provide Excel 2007 support.
@@ -29,9 +29,9 @@ public class SpreadsheetCompiler extends org.drools.decisiontable.SpreadsheetCom
         RuleSheetListener listener = new DefaultRuleSheetListener();
         DecisionTableParser parser = null; 
         
-        if (format.equals(RuleSetVO.EXCEL))
+        if (format.equals(Asset.EXCEL))
             parser = new ExcelParser(listener);
-        else if (format.equals(RuleSetVO.EXCEL_2007))
+        else if (format.equals(Asset.EXCEL_2007))
             parser = new Excel2007Parser(listener);
             
         
@@ -57,12 +57,12 @@ public class SpreadsheetCompiler extends org.drools.decisiontable.SpreadsheetCom
         listeners.add(listener);
         sheetListeners.put(worksheetName, listeners);
         
-        if (format.equals(RuleSetVO.EXCEL)) {        
+        if (format.equals(Asset.EXCEL)) {        
             ExcelParser parser = new ExcelParser(sheetListeners);
             parser.parseFile(stream);
             return listener;
         }
-        else if (format.equals(RuleSetVO.EXCEL_2007)) {
+        else if (format.equals(Asset.EXCEL_2007)) {
             Excel2007Parser parser = new Excel2007Parser(sheetListeners);
             parser.parseFile(stream);
             return listener;

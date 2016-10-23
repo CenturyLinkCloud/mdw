@@ -12,10 +12,10 @@ import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.XmlService;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class SaveConfig implements XmlService {
 

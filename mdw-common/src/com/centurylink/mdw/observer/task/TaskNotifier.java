@@ -3,9 +3,9 @@
  */
 package com.centurylink.mdw.observer.task;
 
-import com.centurylink.mdw.common.exception.ObserverException;
 import com.centurylink.mdw.common.service.RegisteredService;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
+import com.centurylink.mdw.observer.ObserverException;
 
 public interface TaskNotifier extends RegisteredService {
 

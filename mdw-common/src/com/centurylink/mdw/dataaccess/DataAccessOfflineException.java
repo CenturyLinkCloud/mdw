@@ -3,8 +3,6 @@
  */
 package com.centurylink.mdw.dataaccess;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-
 public class DataAccessOfflineException extends DataAccessException {
 
     public DataAccessOfflineException(String msg) {

@@ -8,21 +8,21 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.java.DynamicJavaImplementor;
 import com.centurylink.mdw.java.JavaExecutor;
 import com.centurylink.mdw.java.JavaNaming;
 import com.centurylink.mdw.java.MdwJavaException;
-import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 @Tracked(LogLevel.TRACE)
@@ -76,16 +76,16 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
         try {
 
             // run the executor
-            ProcessVO processVO = getMainProcessDefinition();
-            List<VariableVO> varVOs = processVO.getVariables();
+            Process processVO = getMainProcessDefinition();
+            List<Variable> varVOs = processVO.getVariables();
             Map<String,Object> bindings = new HashMap<String,Object>();
-            for (VariableVO varVO: varVOs) {
+            for (Variable varVO: varVOs) {
                 bindings.put(varVO.getVariableName(), getVariableValue(varVO.getVariableName()));
             }
 
             Object retObj = getExecutorInstance().execute(bindings);
 
-            for (VariableVO variableVO: varVOs) {
+            for (Variable variableVO: varVOs) {
                 String variableName = variableVO.getVariableName();
                 Object bindValue = bindings.get(variableName);
                 String varType = variableVO.getVariableType();
@@ -133,7 +133,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
      * Runtime package is mainly for classloader
      */
     protected String getPackageName() throws ActivityException {
-        PackageVO pkg = PackageVOCache.getProcessPackage(getMainProcessDefinition().getId());
+        Package pkg = PackageCache.getProcessPackage(getMainProcessDefinition().getId());
         if (pkg.isDefaultPackage())
             return "";
         else

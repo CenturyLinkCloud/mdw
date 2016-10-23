@@ -21,17 +21,16 @@ import com.centurylink.mdw.common.service.JsonListMap;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.model.value.process.ProcessCount;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessList;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
+import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.workflow.ProcessCount;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessList;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.StringHelper;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -54,7 +53,7 @@ public class Processes extends JsonRestService implements JsonExportable {
         notes="If instanceId and special are not present, returns a page of processes that meet query criteria. "
           + "If {subData} is 'values', and then {subId} can be varName or expression (otherwise all populated values are returned). "
           + "If {subData} is 'summary' then a only summary-level process info is returned.",
-        response=ProcessInstanceVO.class, responseContainer="List")
+        response=ProcessInstance.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
@@ -82,7 +81,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         }
                     }
                     else if ("summary".equalsIgnoreCase(segTwo)) {
-                        ProcessInstanceVO process = workflowServices.getProcess(instanceId, false);
+                        ProcessInstance process = workflowServices.getProcess(instanceId, false);
                         JSONObject summary = new JSONObject();
                         summary.put("id", process.getId());
                         summary.put("name", process.getProcessName());
@@ -101,9 +100,9 @@ public class Processes extends JsonRestService implements JsonExportable {
                     // path must be special
                     Query query = getQuery(path, headers);
                     if (segOne.equals("definitions")) {
-                        List<ProcessVO> processVOs = workflowServices.getProcessDefinitions(query);
+                        List<Process> processVOs = workflowServices.getProcessDefinitions(query);
                         JSONArray jsonProcesses = new JSONArray();
-                        for (ProcessVO processVO : processVOs) {
+                        for (Process processVO : processVOs) {
                             JSONObject jsonProcess = new JSONObject();
                             jsonProcess.put("packageName", processVO.getPackageName());
                             jsonProcess.put("processId", processVO.getId());

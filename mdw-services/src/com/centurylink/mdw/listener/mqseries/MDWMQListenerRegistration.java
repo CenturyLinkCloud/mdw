@@ -7,15 +7,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.provider.StartupException;
-import com.centurylink.mdw.common.provider.StartupService;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyUtil;
-import com.centurylink.mdw.common.utilities.startup.StartupClass;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.config.PropertyUtil;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.provider.StartupException;
+import com.centurylink.mdw.provider.StartupService;
+import com.centurylink.mdw.startup.StartupClass;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * You need to make sure the following libs are in class path");

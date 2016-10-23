@@ -11,10 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.utilities.ExpressionUtil;
-import com.centurylink.mdw.common.utilities.FileHelper;
+import com.centurylink.mdw.common.MDWException;
 import com.centurylink.mdw.hub.context.WebAppContext;
+import com.centurylink.mdw.util.ExpressionUtil;
+import com.centurylink.mdw.util.file.FileHelper;
 
 /**
  * Handles user-custom scripts and stylesheets by injecting into index.html.

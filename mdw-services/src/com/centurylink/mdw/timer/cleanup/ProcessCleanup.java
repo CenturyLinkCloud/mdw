@@ -13,15 +13,15 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 
-import com.centurylink.mdw.common.constant.PropertyGroups;
-import com.centurylink.mdw.common.utilities.FileHelper;
-import com.centurylink.mdw.common.utilities.form.CallURL;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyGroups;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.data.work.WorkStatus;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.workflow.RoundRobinScheduledJob;
+import com.centurylink.mdw.util.CallURL;
+import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Clean up old database entries from processes that are older than a specified amount

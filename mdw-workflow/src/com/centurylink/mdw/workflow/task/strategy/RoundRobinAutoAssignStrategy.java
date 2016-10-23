@@ -7,37 +7,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.exception.ObserverException;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.UserManager;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class RoundRobinAutoAssignStrategy implements AutoAssignStrategy {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private static Map<Long,UserVO> latestAssignees = new HashMap<Long,UserVO>();
+    private static Map<Long,User> latestAssignees = new HashMap<Long,User>();
 
-    public UserVO selectAssignee(TaskInstanceVO taskInstanceVO) throws ObserverException {
+    public User selectAssignee(TaskInstance taskInstanceVO) throws ObserverException {
         try {
 			TaskManager taskManager = ServiceLocator.getTaskManager();
         	List<String> groups = taskManager.getGroupsForTaskInstance(taskInstanceVO);
             UserManager userManager = ServiceLocator.getUserManager();
-        	UserVO[] taskUsers = userManager.getUsersForGroups(groups.toArray(new String[groups.size()]));
+        	User[] taskUsers = userManager.getUsersForGroups(groups.toArray(new String[groups.size()]));
             if (taskUsers == null || taskUsers.length == 0) {
                 return null;
             }
 
-            UserVO assignee = taskUsers[0];
-            UserVO lastAssignee = latestAssignees.get(taskInstanceVO.getTaskId());
+            User assignee = taskUsers[0];
+            User lastAssignee = latestAssignees.get(taskInstanceVO.getTaskId());
 
             if (lastAssignee != null) {
                 for (int i = 0; i < taskUsers.length; i++) {
-                    UserVO user = taskUsers[i];
+                    User user = taskUsers[i];
                     if (user.getId().equals(lastAssignee.getId())) {
                         if (i < taskUsers.length - 1) {
                             assignee = taskUsers[i+1];

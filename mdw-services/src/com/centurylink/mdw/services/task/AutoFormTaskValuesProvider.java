@@ -10,16 +10,16 @@ import java.util.Map;
 
 import javax.el.PropertyNotFoundException;
 
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.StringHelper;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.Value.Display;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.observer.task.TaskValuesProvider;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.StringHelper;
 
 public class AutoFormTaskValuesProvider implements TaskValuesProvider {
 
@@ -34,7 +34,7 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
                       value.setValue(str);
                 }
                 else {
-                    VariableVO var = runtimeContext.getProcess().getVariable(value.getName());
+                    Variable var = runtimeContext.getProcess().getVariable(value.getName());
                     if (var != null) {
                         com.centurylink.mdw.variable.VariableTranslator vt = VariableTranslator.getTranslator(runtimeContext.getPackage(), value.getType());
                         if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), value.getType())) {
@@ -76,7 +76,7 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
                 }
             }
             else {
-                VariableVO var = runtimeContext.getProcess().getVariable(name);
+                Variable var = runtimeContext.getProcess().getVariable(name);
                 if (var == null) {
                     throw new ServiceException(400, "Variable not found: " + name);
                 }
@@ -118,7 +118,7 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
                     value.setType(String.class.getName());
                 }
                 else {
-                    VariableVO var = runtimeContext.getProcess().getVariable(name);
+                    Variable var = runtimeContext.getProcess().getVariable(name);
                     if (var != null)
                         value.setType(var.getVariableType());
                 }

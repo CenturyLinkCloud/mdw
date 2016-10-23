@@ -9,11 +9,11 @@ import java.util.Iterator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.exception.TranslationException;
 import com.centurylink.mdw.common.service.Jsonable;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.JsonTranslator;
 import com.centurylink.mdw.java.CompiledJavaCache;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.JsonTranslator;
+import com.centurylink.mdw.translator.TranslationException;
 
 public class JsonableTranslator extends DocumentReferenceTranslator implements JsonTranslator {
 

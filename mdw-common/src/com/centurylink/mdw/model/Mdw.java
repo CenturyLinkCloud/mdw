@@ -6,7 +6,7 @@ package com.centurylink.mdw.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.ApplicationContext;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Jsonable;
 
 public class Mdw implements Jsonable {

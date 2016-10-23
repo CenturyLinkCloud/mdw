@@ -6,16 +6,16 @@ package com.centurylink.mdw.dataaccess;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.model.data.task.TaskCategory;
-import com.centurylink.mdw.model.data.task.TaskState;
-import com.centurylink.mdw.model.data.task.TaskStatus;
-import com.centurylink.mdw.model.value.variable.VariableTypeVO;
+import com.centurylink.mdw.model.task.TaskCategory;
+import com.centurylink.mdw.model.task.TaskState;
+import com.centurylink.mdw.model.task.TaskStatus;
+import com.centurylink.mdw.model.variable.VariableType;
 
 /**
  * Injectable reference data.
  */
 public interface BaselineData {
-    public List<VariableTypeVO> getVariableTypes();
+    public List<VariableType> getVariableTypes();
     public String getVariableType(Object value);
 
     /**

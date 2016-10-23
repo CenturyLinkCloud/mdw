@@ -13,17 +13,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.exception.CachingException;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.utilities.StringHelper;
+import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.UserDataAccess;
-import com.centurylink.mdw.model.data.event.EventLog;
-import com.centurylink.mdw.model.value.user.UserActionVO;
-import com.centurylink.mdw.model.value.user.UserGroupVO;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.event.EventLog;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.util.StringHelper;
 
 public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess {
 
@@ -36,14 +35,14 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
     /**
      * This code is cloned from getUser(String) in UserDAO
      */
-    public UserVO getUser(String userName) throws DataAccessException {
+    public User getUser(String userName) throws DataAccessException {
         try {
             db.openConnection();
             String sql = "select " + USER_SELECT_FIELDS + " from USER_INFO u where lower(u.CUID)=?";
                sql += " and END_DATE is null";
              ResultSet rs = db.runSelect(sql, userName.toLowerCase());
              if (rs.next()) {
-                 UserVO user = createUserInfoFromResultSet(rs);
+                 User user = createUserInfoFromResultSet(rs);
                  loadGroupsRolesForUser(user);
                  loadAttributesForUser(user);
                  return user;
@@ -55,8 +54,8 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
         }
     }
 
-    protected UserVO createUserInfoFromResultSet(ResultSet rs) throws SQLException {
-        UserVO user = new UserVO();
+    protected User createUserInfoFromResultSet(ResultSet rs) throws SQLException {
+        User user = new User();
         user.setId(rs.getLong(1));
         user.setCuid(rs.getString(2));
         String name = rs.getString(3);
@@ -70,7 +69,7 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
         return user;
     }
 
-    protected void loadGroupsRolesForUser(UserVO user) throws SQLException, CachingException {
+    protected void loadGroupsRolesForUser(User user) throws SQLException, CachingException {
         // load groups
         String sql = "select g.USER_GROUP_ID, g.GROUP_NAME, g.COMMENTS, ug.COMMENTS " +
             "from USER_GROUP_MAPPING ug, USER_GROUP g " +
@@ -78,14 +77,14 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
         sql += "order by lower(g.GROUP_NAME)";
 
         ResultSet rs = db.runSelect(sql, user.getId());
-        ArrayList<UserGroupVO> groups = new ArrayList<UserGroupVO>();
+        ArrayList<Workgroup> groups = new ArrayList<Workgroup>();
         Map<String,Boolean> rolesConverted = new HashMap<String,Boolean>();
         while (rs.next()) {
             Long groupId = rs.getLong(1);
             String groupName = rs.getString(2);
             String comment = rs.getString(3);
             String converted = rs.getString(4);
-            UserGroupVO group = new UserGroupVO(groupId, groupName, comment);
+            Workgroup group = new Workgroup(groupId, groupName, comment);
             rolesConverted.put(groupName, "Converted".equalsIgnoreCase(converted));
             groups.add(group);
         }
@@ -99,7 +98,7 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
         rs = db.runSelect(sql, user.getId());
         while (rs.next()) {
             Long groupId = rs.getLong(2);
-            for (UserGroupVO group : groups) {
+            for (Workgroup group : groups) {
                 if (group.getId().equals(groupId)) {
                     List<String> roles = group.getRoles();
                     if (roles==null) {
@@ -127,12 +126,11 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
         rs = db.runSelect(sql, user.getCuid());
         List<String> sharedRoles = new ArrayList<String>();
         while (rs.next()) {
-            String role = rs.getString(1);
-            String roleName = UserRoleVO.toNewName(role);
+            String roleName = rs.getString(1);
             if (!sharedRoles.contains(roleName))
                 sharedRoles.add(roleName);
         }
-        UserGroupVO sharedGroup = new UserGroupVO(UserGroupVO.COMMON_GROUP_ID, UserGroupVO.COMMON_GROUP, null);
+        Workgroup sharedGroup = new Workgroup(Workgroup.COMMON_GROUP_ID, Workgroup.COMMON_GROUP, null);
         sharedGroup.setRoles(sharedRoles);
         groups.add(sharedGroup);
         // set groups to user
@@ -140,7 +138,7 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
         user.setGroups(groups);
     }
 
-    protected void loadAttributesForUser(UserVO user) throws SQLException, CachingException {
+    protected void loadAttributesForUser(User user) throws SQLException, CachingException {
         // load groups
         String sql = "select attribute_name, attribute_value from attribute " +
             "where attribute_owner = 'USER' " +
@@ -150,9 +148,9 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
             user.setAttribute(rs.getString("attribute_name"), rs.getString("attribute_value"));
     }
 
-    public List<UserGroupVO> getAllGroups(boolean includeDeleted) throws DataAccessException {
+    public List<Workgroup> getAllGroups(boolean includeDeleted) throws DataAccessException {
         try {
-            List<UserGroupVO> groups = new ArrayList<UserGroupVO>();
+            List<Workgroup> groups = new ArrayList<Workgroup>();
             db.openConnection();
             String sql = "select USER_GROUP_ID, GROUP_NAME, COMMENTS, PARENT_GROUP_ID, END_DATE from USER_GROUP";
             if (!includeDeleted) sql = sql + " where END_DATE is null";
@@ -163,14 +161,14 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
                 Long groupId = rs.getLong(1);
                 String groupName = rs.getString(2);
                 String comments = rs.getString(3);
-                UserGroupVO group = new UserGroupVO(groupId, groupName, comments);
+                Workgroup group = new Workgroup(groupId, groupName, comments);
                 long pid = rs.getLong(4);
                 if (pid>0L) group.setParentGroup(Long.toString(pid));
                 group.setEndDate(rs.getString(5));
                 nameMap.put(groupId, groupName);
                 groups.add(group);
             }
-            for (UserGroupVO group : groups) {
+            for (Workgroup group : groups) {
                 if (group.getParentGroup()!=null) {
                     Long pid = new Long(group.getParentGroup());
                     group.setParentGroup(nameMap.get(pid));
@@ -201,7 +199,7 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
         }
     }
 
-    public void auditLogUserAction(UserActionVO userAction)
+    public void auditLogUserAction(UserAction userAction)
     throws DataAccessException {
         try {
             db.openConnection();

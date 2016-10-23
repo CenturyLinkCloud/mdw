@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.HttpHelper;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
 
 /**

@@ -25,31 +25,31 @@ import javax.tools.ToolProvider;
 import javax.ws.rs.Path;
 
 import com.centurylink.mdw.annotations.RegisteredService;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.app.Compatibility;
+import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
+import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.cache.ExcludableCache;
+import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.cloud.CloudClasspath;
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.Compatibility;
-import com.centurylink.mdw.common.Compatibility.SubstitutionResult;
-import com.centurylink.mdw.common.cache.AssetCache;
-import com.centurylink.mdw.common.cache.PreloadableCache;
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.exception.CachingException;
-import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.DynamicJavaServiceRegistry;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.XmlService;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Compiles and caches java asset classes, and provides a class-loading mechanism to allow these assets
  * to reference Jar classes as well.
  */
-public class CompiledJavaCache implements PreloadableCache, AssetCache {
+public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -82,7 +82,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
     }
 
     public String getFormat() {
-        return RuleSetVO.JAVA;
+        return Asset.JAVA;
     }
 
     /**
@@ -90,16 +90,16 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
      * @param string
      */
     private void loadDynamicJavaRegisteredServices() {
-        Map<PackageVO,Map<String,String>> packagedJava = new HashMap<PackageVO,Map<String,String>>();
+        Map<Package,Map<String,String>> packagedJava = new HashMap<Package,Map<String,String>>();
         try {
-            for (RuleSetVO javaRuleSet : RuleSetCache.getRuleSets(RuleSetVO.JAVA)) {
+            for (Asset javaAsset : AssetCache.getAssets(Asset.JAVA)) {
                 // process RegisteredService-annotated classes
-                if (javaRuleSet.getRuleSet().indexOf("@RegisteredService") > 0 ||
-                        javaRuleSet.getRuleSet().indexOf("@Path") > 0 || javaRuleSet.getRuleSet().indexOf("@Api") > 0) {
-                    String className = JavaNaming.getValidClassName(javaRuleSet.getName());
-                    PackageVO javaAssetPackage = PackageVOCache.getRuleSetPackage(javaRuleSet.getId());
+                if (javaAsset.getStringContent().indexOf("@RegisteredService") > 0 ||
+                        javaAsset.getStringContent().indexOf("@Path") > 0 || javaAsset.getStringContent().indexOf("@Api") > 0) {
+                    String className = JavaNaming.getValidClassName(javaAsset.getName());
+                    Package javaAssetPackage = PackageCache.getAssetPackage(javaAsset.getId());
                     if (javaAssetPackage == null) {
-                        logger.severe("Omitting unpackaged Registered Service from compilation: " + javaRuleSet.getLabel());
+                        logger.severe("Omitting unpackaged Registered Service from compilation: " + javaAsset.getLabel());
                     }
                     else {
                         String qName = JavaNaming.getValidPackageName(javaAssetPackage.getPackageName()) + "." + className;
@@ -108,7 +108,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
                             javaSources = new HashMap<String,String>();
                             packagedJava.put(javaAssetPackage, javaSources);
                         }
-                        javaSources.put(qName, javaRuleSet.getRuleSet());
+                        javaSources.put(qName, javaAsset.getStringContent());
                     }
                 }
             }
@@ -118,7 +118,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
         }
 
         if (!packagedJava.isEmpty()) {
-            for (PackageVO pkg : packagedJava.keySet()) {
+            for (Package pkg : packagedJava.keySet()) {
                 try {
                     List<Class<?>> classes = CompiledJavaCache.compileClasses(getClass().getClassLoader(), pkg, packagedJava.get(pkg), true);
                     for (Class<?> clazz : classes) {
@@ -162,17 +162,17 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
         DynamicJavaServiceRegistry.clearRegisteredServices();
     }
 
-    public static Class<?> getClass(PackageVO currentPackage, String className, String javaCode)
+    public static Class<?> getClass(Package currentPackage, String className, String javaCode)
     throws ClassNotFoundException, IOException, MdwJavaException {
         return getClass(null, currentPackage, className, javaCode);
     }
 
-    public static Class<?> getClass(ClassLoader parentLoader, PackageVO currentPackage, String className, String javaCode)
+    public static Class<?> getClass(ClassLoader parentLoader, Package currentPackage, String className, String javaCode)
     throws ClassNotFoundException, IOException, MdwJavaException {
         return getClass(parentLoader, currentPackage, className, javaCode, true);
     }
 
-    public static Class<?> getClass(ClassLoader parentLoader, PackageVO currentPackage, String className, String javaCode, boolean cache)
+    public static Class<?> getClass(ClassLoader parentLoader, Package currentPackage, String className, String javaCode, boolean cache)
     throws ClassNotFoundException, IOException, MdwJavaException {
         ClassCacheKey key = new ClassCacheKey(className, parentLoader);
         Class<?> clazz = cache ? compiledCache.get(key) : null;
@@ -213,7 +213,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
      * @param cache true to add compiled classes to cache
      * @return list of compiled classes
      */
-    public static List<Class<?>> compileClasses(ClassLoader parentLoader, PackageVO currentPackage, Map<String,String> javaSources, boolean cache)
+    public static List<Class<?>> compileClasses(ClassLoader parentLoader, Package currentPackage, Map<String,String> javaSources, boolean cache)
     throws ClassNotFoundException, IOException, MdwJavaException {
         try {
             for (String className : javaSources.keySet()) {
@@ -249,7 +249,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
         }
     }
 
-    public static Class<?> getResourceClass(String className, ClassLoader parentLoader, PackageVO currentPackage)
+    public static Class<?> getResourceClass(String className, ClassLoader parentLoader, Package currentPackage)
     throws ClassNotFoundException, IOException, MdwJavaException {
         if (className.indexOf('$') > 0) {
             // inner class -- check previously loaded
@@ -267,8 +267,8 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
                 }
             }
         }
-        RuleSetVO javaRuleSet = RuleSetCache.getRuleSet(className, RuleSetVO.JAVA);
-        if (javaRuleSet == null)
+        Asset javaAsset = AssetCache.getAsset(className, Asset.JAVA);
+        if (javaAsset == null)
             throw new ClassNotFoundException(className);
 
         try {
@@ -277,26 +277,26 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
                 int lastDot = className.lastIndexOf('.');
                 if (lastDot == -1)  {
                     // default package
-                    currentPackage = PackageVOCache.getDefaultPackageVO();
+                    currentPackage = PackageCache.getDefaultPackageVO();
                 }
                 else {
                     String packageName = className.substring(0, lastDot);
-                    currentPackage = PackageVOCache.getPackageVO(packageName);
+                    currentPackage = PackageCache.getPackageVO(packageName);
                 }
             }
 
-            return getClass(parentLoader, currentPackage, className, javaRuleSet.getRuleSet());
+            return getClass(parentLoader, currentPackage, className, javaAsset.getStringContent());
         }
         catch (CachingException ex) {
             throw new MdwJavaException(ex.getMessage(), ex);
         }
     }
 
-    public static Object getInstance(String resourceClassName, ClassLoader parentLoader, PackageVO currentPackage) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, MdwJavaException  {
+    public static Object getInstance(String resourceClassName, ClassLoader parentLoader, Package currentPackage) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, MdwJavaException  {
         return getResourceClass(resourceClassName, parentLoader, currentPackage).newInstance();
     }
 
-    private static Class<?> compileJavaCode(ClassLoader parentLoader, final PackageVO currentPackage, String className, String javaCode, boolean cache)
+    private static Class<?> compileJavaCode(ClassLoader parentLoader, final Package currentPackage, String className, String javaCode, boolean cache)
     throws ClassNotFoundException, IOException, MdwJavaException {
         if (parentLoader == null)
             parentLoader = CompiledJavaCache.class.getClassLoader();
@@ -362,7 +362,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
         return new DynamicJavaClassLoader(parentLoader, currentPackage, cache).loadClass(className);
     }
 
-    private static List<Class<?>> compileJava(ClassLoader parentLoader, final PackageVO currentPackage, Map<String,String> javaSources, boolean cache)
+    private static List<Class<?>> compileJava(ClassLoader parentLoader, final Package currentPackage, Map<String,String> javaSources, boolean cache)
     throws ClassNotFoundException, IOException, MdwJavaException {
         if (parentLoader == null)
             parentLoader = CompiledJavaCache.class.getClassLoader();
@@ -496,7 +496,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
     }
 
     private static volatile Map<CompilerClasspathKey,String> compilerClasspaths = Collections.synchronizedMap(new HashMap<CompilerClasspathKey,String>());
-    public static String getJavaCompilerClasspath(ClassLoader parentLoader, PackageVO packageVO) throws IOException {
+    public static String getJavaCompilerClasspath(ClassLoader parentLoader, Package packageVO) throws IOException {
         CompilerClasspathKey key = new CompilerClasspathKey(parentLoader);
         String classpath = compilerClasspaths.get(key);
         if (classpath == null) {
@@ -521,8 +521,8 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
         logger.info("Initializing Java source assets...");
         long before = System.currentTimeMillis();
 
-        for (RuleSetVO javaSource : RuleSetCache.getRuleSets(RuleSetVO.JAVA)) {
-            PackageVO pkg = PackageVOCache.getRuleSetPackage(javaSource.getId());
+        for (Asset javaSource : AssetCache.getAssets(Asset.JAVA)) {
+            Package pkg = PackageCache.getAssetPackage(javaSource.getId());
             String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getPackageName());
             String className = JavaNaming.getValidClassName(javaSource.getName());
             File dir = createNeededDirs(packageName);
@@ -530,7 +530,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
             if (file.exists())
                 file.delete();
 
-            String javaCode = javaSource.getRuleSet();
+            String javaCode = javaSource.getStringContent();
             if (javaCode != null) {
                 javaCode = doCompatibilityCodeSubstitutions(packageName + "." + className, javaCode);
                 FileWriter writer = new FileWriter(file);
@@ -550,11 +550,11 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
             for (String preCompClass : preCompiled) {
                 logger.info("Precompiling dynamic Java asset class: " + preCompClass);
                 try {
-                    RuleSetVO javaRuleSet = RuleSetCache.getRuleSet(preCompClass, RuleSetVO.JAVA);
-                    PackageVO pkg = PackageVOCache.getRuleSetPackage(javaRuleSet.getId());
+                    Asset javaAsset = AssetCache.getAsset(preCompClass, Asset.JAVA);
+                    Package pkg = PackageCache.getAssetPackage(javaAsset.getId());
                     String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getPackageName());
-                    String className = (pkg == null ? "" : packageName + ".") + JavaNaming.getValidClassName(javaRuleSet.getName());
-                    getClass(null, pkg, className, javaRuleSet.getRuleSet());
+                    String className = (pkg == null ? "" : packageName + ".") + JavaNaming.getValidClassName(javaAsset.getName());
+                    getClass(null, pkg, className, javaAsset.getStringContent());
                 }
                 catch (Exception ex) {
                     // let other classes continue to process
@@ -640,10 +640,10 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
 
     static class DynamicJavaClassLoader extends ClassLoader {
 
-        private PackageVO packageVO;
+        private Package packageVO;
         private boolean cache;
 
-        DynamicJavaClassLoader(ClassLoader parentLoader, PackageVO packageVO, boolean cache) {
+        DynamicJavaClassLoader(ClassLoader parentLoader, Package packageVO, boolean cache) {
             super(parentLoader);
             this.packageVO = packageVO;
             this.cache = cache;
@@ -660,7 +660,7 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
                 JavaFileObject jfo = MdwJavaFileManager.getJavaFileObject(name);
                 if (jfo != null) {
                     if (packageVO != null && packageVO.getName() != null) {
-                        Package pkg = getPackage(packageVO.getName());
+                        java.lang.Package pkg = getPackage(packageVO.getName());
                         if (pkg == null)
                             definePackage(packageVO.getName(), null, null, null, "MDW", packageVO.getVersionString(), "CenturyLink", null);
                     }
@@ -748,12 +748,12 @@ public class CompiledJavaCache implements PreloadableCache, AssetCache {
      */
     public static Class<?> getClassFromAssetName(ClassLoader parentClassLoader, String className) throws CachingException, MdwJavaException, ClassNotFoundException, IOException {
         Class<?> clazz = null;
-        PackageVO javaAssetPackage = PackageVOCache.getJavaRuleSetPackage(className);
-        RuleSetVO javaRuleSet = RuleSetCache.getRuleSet(className, RuleSetVO.JAVA);
+        Package javaAssetPackage = PackageCache.getJavaAssetPackage(className);
+        Asset javaAsset = AssetCache.getAsset(className, Asset.JAVA);
         if (parentClassLoader == null) {
             parentClassLoader = javaAssetPackage.getClassLoader();
         }
-        clazz = getClass(parentClassLoader, javaAssetPackage, className, javaRuleSet.getRuleSet());
+        clazz = getClass(parentClassLoader, javaAssetPackage, className, javaAsset.getStringContent());
         return clazz;
     }
 }

@@ -8,15 +8,15 @@ import java.util.List;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.ServiceLocatorException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.ProcessException;
+import com.centurylink.mdw.util.ServiceLocatorException;
+import com.centurylink.mdw.util.StringHelper;
 
 
 /**
@@ -36,7 +36,7 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
         return StringHelper.parseTable(attVal, ',', ';', 3);
     }
 
-    protected EventWaitInstanceVO registerWaitEvents(boolean reregister, boolean check_if_arrvied)
+    protected EventWaitInstance registerWaitEvents(boolean reregister, boolean check_if_arrvied)
     throws ActivityException {
         List<String[]> eventSpecs = this.getWaitEventSpecs();
         if (eventSpecs.isEmpty()) return null;
@@ -58,7 +58,7 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
             		|| eventOccur.equalsIgnoreCase("true"));
         }
         try {
-        	EventWaitInstanceVO received = getEngine().createEventWaitInstances(
+        	EventWaitInstance received = getEngine().createEventWaitInstances(
             		this.getActivityInstanceId(),
             		eventNames,
             		eventCompletionCodes,
@@ -70,12 +70,12 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
         }
     }
 
-    protected EventWaitInstanceVO registerWaitEvent(String eventName, String completionCode,
+    protected EventWaitInstance registerWaitEvent(String eventName, String completionCode,
     		boolean recurring, boolean check_if_arrvied)
     	throws ServiceLocatorException, DataAccessException, ProcessException {
 		if (StringHelper.isEmpty(completionCode))
 			completionCode = EventType.EVENTNAME_FINISH;
-		EventWaitInstanceVO received = getEngine().createEventWaitInstance(
+		EventWaitInstance received = getEngine().createEventWaitInstance(
 				this.getActivityInstanceId(),
 				eventName,
 				completionCode, recurring, !check_if_arrvied);
@@ -119,7 +119,7 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
 		return actInstStatus;
     }
 
-    protected String getMessageFromEventMessage(InternalEventVO eventMessageDoc)
+    protected String getMessageFromEventMessage(InternalEvent eventMessageDoc)
     	throws ActivityException {
     	if (eventMessageDoc.getParameters()!=null) {
     		String msg = eventMessageDoc.getParameters().get("ExternalEventMessage");
@@ -133,7 +133,7 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
 	    return true;
 	}
 
-    public boolean resume(InternalEventVO eventMessageDoc)
+    public boolean resume(InternalEvent eventMessageDoc)
     throws ActivityException {
         return true;
     }

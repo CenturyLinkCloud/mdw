@@ -13,11 +13,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.utilities.FileHelper;
+import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.container.EmbeddedDb;
-import com.centurylink.mdw.model.value.user.UserGroupVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.util.file.FileHelper;
 
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfiguration;
@@ -188,7 +188,7 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
         }
     }
 
-    public void insertUser(UserVO user) throws SQLException {
+    public void insertUser(User user) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -205,8 +205,8 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
                 String addGroupQuery = getAssetContent("add_user_to_group.sql");
                 String addCommonRoleQuery = getAssetContent("add_user_to_common_role.sql");
                 String addGroupRoleQuery = getAssetContent("add_user_to_group_role.sql");
-                for (UserGroupVO group : user.getWorkgroups()) {
-                    if (UserGroupVO.COMMON_GROUP.equals(group.getName())) {
+                for (Workgroup group : user.getWorkgroups()) {
+                    if (Workgroup.COMMON_GROUP.equals(group.getName())) {
                         if (group.getRoles() != null) {
                             for (String role : group.getRoles()) {
                                 preparedStatement = connection.prepareStatement(addCommonRoleQuery);
@@ -260,6 +260,6 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
     };
 
     protected String getAssetContent(String asset) {
-        return  RuleSetCache.getRuleSet(EmbeddedDb.DB_ASSET_PACKAGE + "/" + asset).getRuleSet();
+        return  AssetCache.getAsset(EmbeddedDb.DB_ASSET_PACKAGE + "/" + asset).getStringContent();
     }
 }

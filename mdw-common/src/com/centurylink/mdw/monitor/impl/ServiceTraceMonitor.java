@@ -5,10 +5,10 @@ package com.centurylink.mdw.monitor.impl;
 
 import java.util.Map;
 
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.monitor.ServiceMonitor;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class ServiceTraceMonitor implements ServiceMonitor {
 

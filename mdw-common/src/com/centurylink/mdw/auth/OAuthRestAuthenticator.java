@@ -10,9 +10,9 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.HttpHelper;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.util.HttpHelper;
 
 public class OAuthRestAuthenticator implements Authenticator {
 

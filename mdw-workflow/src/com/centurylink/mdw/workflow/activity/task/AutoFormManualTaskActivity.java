@@ -7,21 +7,21 @@ import java.util.List;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.common.constant.FormConstants;
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.constant.FormConstants;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.FormDataDocument;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.qwest.mbeng.MbengException;
 
 @Tracked(LogLevel.TRACE)
@@ -48,7 +48,7 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
             // new-style task templates
             String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
             AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
-            TaskVO template = TaskTemplateCache.getTaskTemplate(spec);
+            TaskTemplate template = TaskTemplateCache.getTaskTemplate(spec);
             if (template == null)
                 throw new ActivityException("Task template not found: " + spec);
             TaskServices taskServices = ServiceLocator.getTaskServices();
@@ -63,7 +63,7 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
                         this.getActivityInstanceId(),
                         getEventName(formdata),
                         EventType.EVENTNAME_FINISH, true, true);
-                EventWaitInstanceVO received = registerWaitEvents(false,true);
+                EventWaitInstance received = registerWaitEvents(false,true);
                 if (received!=null)
                         resume(getExternalEventInstanceDetails(received.getMessageDocumentId()),
                                          received.getCompletionCode());
@@ -98,7 +98,7 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
                 // use Task Template for attributes
                 String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
                 AssetVersionSpec spec = new AssetVersionSpec(taskTemplateAttr, templateVersion == null ? "0" : templateVersion);
-                TaskVO template = TaskTemplateCache.getTaskTemplate(spec);
+                TaskTemplate template = TaskTemplateCache.getTaskTemplate(spec);
                 if (template == null)
                     throw new ActivityException("Task template not found: " + spec);
                 String taskLogicalId = template.getLogicalId();
@@ -131,7 +131,7 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
         	fillInVariables(datadoc);
         } else {
         	// include all instantiated process variables
-        	for (VariableInstanceInfo var : this.getParameters()) {
+        	for (VariableInstance var : this.getParameters()) {
         		String value;
         		if (var.isDocument()) {
         			value = getDocumentContent((DocumentReference)var.getData());
@@ -186,7 +186,7 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
     				String displayOption = one[2];
     				if (displayOption.equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
     				String data;
-    				VariableInstanceInfo varinst = this.getVariableInstance(varname);
+    				VariableInstance varinst = this.getVariableInstance(varname);
     				if (varinst!=null) {
     					if (varinst.isDocument()) {
     						DocumentReference docref = (DocumentReference)varinst.getData();

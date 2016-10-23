@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.value.user.UserActionVO;
+import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserServices;
 
@@ -20,7 +20,7 @@ public class AuditLog implements JsonService {
             JSONObject jsonObject = (JSONObject) parameters.get("userAction");
             if (jsonObject == null)
                 throw new ServiceException("Missing parameter: 'userAction'.");
-            UserActionVO userAction = new UserActionVO(jsonObject);
+            UserAction userAction = new UserAction(jsonObject);
             UserServices userServices = ServiceLocator.getUserServices();
             userServices.auditLog(userAction);
             return null;  // success

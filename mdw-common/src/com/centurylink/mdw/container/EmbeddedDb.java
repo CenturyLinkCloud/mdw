@@ -6,7 +6,7 @@ package com.centurylink.mdw.container;
 import java.sql.SQLException;
 
 import com.centurylink.mdw.common.service.RegisteredService;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.user.User;
 
 public interface EmbeddedDb extends RegisteredService {
 
@@ -33,6 +33,6 @@ public interface EmbeddedDb extends RegisteredService {
      */
     public void createMdwSchema() throws SQLException;
 
-    public void insertUser(UserVO user) throws SQLException;
+    public void insertUser(User user) throws SQLException;
 
 }

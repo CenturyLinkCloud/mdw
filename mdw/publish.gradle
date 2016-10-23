@@ -12,11 +12,9 @@ configurations {
 
 dependencies {
     publish files("../${mdwOutputDir}/mdw-common-${mdwVersion}.jar")
-    publish group: "com.centurylink.mdw", name: "mdw-designer-core", version: "${mdwDesignerVersion}"
     publish group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
     publish group: "org.json", name: "json", version: "20090211"
     publish group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
-    publish group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"
 }
 
 task buildBaseConfigs() << {
@@ -63,14 +61,14 @@ task exportAssetPackages {
                 javaexec {
                     maxHeapSize "1280m"
                     classpath configurations.publish
-                    main = "com.centurylink.mdw.designer.Exporter"
+                    main = "com.centurylink.mdw.dataaccess.file.ImporterExporterJson"
                     args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.json"
                 }
             }
             else {
                 javaexec {
                     classpath configurations.publish
-                    main = "com.centurylink.mdw.designer.Exporter"
+                    main = "com.centurylink.mdw.dataaccess.file.ImporterExporterJson"
                     args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.json"
                 }
             }

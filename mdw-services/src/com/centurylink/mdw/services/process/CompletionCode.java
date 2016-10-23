@@ -4,8 +4,8 @@
 package com.centurylink.mdw.services.process;
 
 import com.centurylink.mdw.bpm.EventTypeDocument;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.work.WorkStatus;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 
 public class CompletionCode {
 

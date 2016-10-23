@@ -12,19 +12,19 @@ import org.json.JSONObject;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.common.service.RegisteredService;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.process.PackageAware;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.workflow.PackageAware;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class DefaultExternalEventHandler implements ExternalEventHandler, PackageAware, RegisteredService, ExternalEventHandlerErrorResponse {
 
     protected static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private PackageVO pkg;
-    public PackageVO getPackage() { return pkg; }
-    public void setPackage(PackageVO pkg) { this.pkg = pkg; }
+    private Package pkg;
+    public Package getPackage() { return pkg; }
+    public void setPackage(Package pkg) { this.pkg = pkg; }
 
     /*
      * This handleEventMessage is for future use, whenever we determine that a

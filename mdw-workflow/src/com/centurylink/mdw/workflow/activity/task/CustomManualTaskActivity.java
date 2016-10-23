@@ -10,16 +10,14 @@ import org.json.JSONObject;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
 import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.common.Compatibility;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.task.TaskAction;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
+import com.centurylink.mdw.app.Compatibility;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.task.TaskAction;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.services.ProcessException;
@@ -27,6 +25,8 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
 
 public class CustomManualTaskActivity extends AbstractWait implements TaskActivity, SuspendibleActivity {
@@ -50,7 +50,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
             taskServices.createCustomTaskInstance(spec, getMasterRequestId(), getProcessInstanceId(),
                     getActivityInstanceId(), getWorkTransitionInstanceId());
 
-            EventWaitInstanceVO received = registerWaitEvents(false,true);
+            EventWaitInstance received = registerWaitEvents(false,true);
             if (received!=null)
               resume(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
         } catch(Exception ex) {
@@ -68,9 +68,9 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
               messageString.indexOf("TaskAction") > 0;
     }
 
-    protected EventWaitInstanceVO resumeWaitingForTaskAction() throws ActivityException {
+    protected EventWaitInstance resumeWaitingForTaskAction() throws ActivityException {
         try {
-            EventWaitInstanceVO received;
+            EventWaitInstance received;
             received = getEngine().createEventWaitInstance(this.getActivityInstanceId(),
                     "TaskAction-" + this.getActivityInstanceId(), null, true, false);
             if (received == null)
@@ -107,7 +107,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
             compCode = WorkStatus.STATUSNAME_HOLD + "::" + (compCode == null ? "" : compCode);
         }
         else {
-            ProcessVO proc = getProcessDefinition();
+            Process proc = getProcessDefinition();
             if (proc.isEmbeddedExceptionHandler()) {
                 this.setProcessInstanceCompletionCode(taskAction);
                 compCode = null;
@@ -152,7 +152,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
      * is therefore declared as final. To customize handling of events, please override
      * the method {@link #processOtherMessage(String, String)}
      */
-    public final boolean resume(InternalEventVO event) throws ActivityException {
+    public final boolean resume(InternalEvent event) throws ActivityException {
         // secondary owner type must be OwnerType.EXTERNAL_EVENT_INSTANCE
         String messageString = super.getMessageFromEventMessage(event);
         return resume(messageString, event.getCompletionCode());
@@ -192,7 +192,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
         }
     }
 
-    protected boolean isRespondingToCall(InternalEventVO eventMessageDoc) {
+    protected boolean isRespondingToCall(InternalEvent eventMessageDoc) {
         String compcode = eventMessageDoc.getCompletionCode();
         if (compcode == null)
             return false;
@@ -209,7 +209,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
      * Customization should be done with the methods {@link #processOtherMessage(String, String)}
      * and {@link #registerWaitEvents()}.
      */
-    public final boolean resumeWaiting(InternalEventVO event) throws ActivityException {
+    public final boolean resumeWaiting(InternalEvent event) throws ActivityException {
         if (isRespondingToCall(event)) {
             String response = processTaskCallResponse();
             try {
@@ -221,7 +221,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
             }
         }
         boolean done;
-        EventWaitInstanceVO received;
+        EventWaitInstance received;
         try {
             received = getEngine().createEventWaitInstance(this.getActivityInstanceId(),
                     "TaskAction-" + this.getActivityInstanceId(), null, true, false);

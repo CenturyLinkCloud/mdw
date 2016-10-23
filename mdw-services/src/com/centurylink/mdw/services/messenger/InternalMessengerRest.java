@@ -8,15 +8,15 @@ import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.utilities.HttpHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.dao.process.EngineDataAccess;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
+import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class InternalMessengerRest extends InternalMessenger {
 
@@ -26,7 +26,7 @@ public class InternalMessengerRest extends InternalMessenger {
         this.serviceContext = serviceContext;
     }
 
-    private void sendMessageSub(InternalEventVO msg, String msgid) throws IOException {
+    private void sendMessageSub(InternalEvent msg, String msgid) throws IOException {
         HttpHelper httpHelper = new HttpHelper(new URL(ApplicationContext.getLocalServiceUrl()));
         HashMap<String,String> headers = new HashMap<String,String>();
         headers.put("MDWInternalMessageId", msgid);
@@ -34,7 +34,7 @@ public class InternalMessengerRest extends InternalMessenger {
         httpHelper.post(msg.toXml());
     }
 
-    public void sendMessage(InternalEventVO msg, EngineDataAccess edao)
+    public void sendMessage(InternalEvent msg, EngineDataAccess edao)
         throws ProcessException
     {
         try {
@@ -46,7 +46,7 @@ public class InternalMessengerRest extends InternalMessenger {
         }
     }
 
-    public void sendDelayedMessage(InternalEventVO msg, int delaySeconds, String msgid, boolean isUpdate,
+    public void sendDelayedMessage(InternalEvent msg, int delaySeconds, String msgid, boolean isUpdate,
             EngineDataAccess edao) throws ProcessException
     {
         if (delaySeconds<=0) {

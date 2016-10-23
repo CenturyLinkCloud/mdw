@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.centurylink.mdw.common.provider.StartupService;
 import com.centurylink.mdw.common.service.DynamicJavaServiceRegistry;
 import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.common.service.ServiceRegistry;
+import com.centurylink.mdw.provider.StartupService;
 
 /**
  * Keeps track of custom startup providers.

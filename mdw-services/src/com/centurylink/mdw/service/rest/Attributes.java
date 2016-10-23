@@ -13,10 +13,9 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
+import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

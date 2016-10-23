@@ -6,30 +6,29 @@ package com.centurylink.mdw.dataaccess;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
-import com.centurylink.mdw.model.data.event.EventLog;
-import com.centurylink.mdw.model.value.activity.ActivityList;
-import com.centurylink.mdw.model.value.process.LinkedProcessInstance;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessList;
-import com.centurylink.mdw.model.value.variable.DocumentVO;
+import com.centurylink.mdw.model.event.EventLog;
+import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.workflow.ActivityList;
+import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessList;
 
 public interface RuntimeDataAccess {
 
     boolean hasProcessInstances(Long processId)
     throws DataAccessException;
 
-    ProcessInstanceVO getProcessInstanceBase(Long procInstId)
+    ProcessInstance getProcessInstanceBase(Long procInstId)
     throws DataAccessException;
 
-    ProcessInstanceVO getProcessInstanceAll(Long procInstId)
+    ProcessInstance getProcessInstanceAll(Long procInstId)
     throws DataAccessException;
 
     /**
      * Same as getProcessInstanceAll(), except returns null if not found.
      */
-    ProcessInstanceVO getProcessInstance(Long instanceId) throws DataAccessException;
+    ProcessInstance getProcessInstance(Long instanceId) throws DataAccessException;
 
     int deleteProcessInstancesForProcess(Long processId)
     throws DataAccessException;
@@ -52,10 +51,10 @@ public interface RuntimeDataAccess {
     ProcessList getProcessInstanceList(Map<String,String> criteria, List<String> variableNames, Map<String,String> variables, int pageIndex, int pageSize, String orderBy)
     throws DataAccessException;
 
-    List<ProcessInstanceVO> getProcessInstanceList(String owner, String secondaryOwner, Long secondaryOwnerId, String orderBy)
+    List<ProcessInstance> getProcessInstanceList(String owner, String secondaryOwner, Long secondaryOwnerId, String orderBy)
     throws DataAccessException;
 
-    DocumentVO getDocument(Long documentId)
+    Document getDocument(Long documentId)
     throws DataAccessException;
 
     public List<EventLog> getEventLogs(String pEventName, String pEventSource, String pEventOwner, Long pEventOwnerId)

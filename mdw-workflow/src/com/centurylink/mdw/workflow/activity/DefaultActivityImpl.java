@@ -4,7 +4,7 @@
 package com.centurylink.mdw.workflow.activity;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.services.process.BaseActivity;
 
 

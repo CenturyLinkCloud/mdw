@@ -5,7 +5,7 @@ package com.centurylink.mdw.services;
 
 import java.util.Map;
 
-import com.centurylink.mdw.model.value.process.ProcessVO;
+import com.centurylink.mdw.model.workflow.Process;
 
 /**
  * Services related to executing and notifying MDW workflow processes.
@@ -98,7 +98,7 @@ public interface ProcessManager {
      * @param parameters map with Object values
      * @return map with String values
      */
-    public Map<String,String> translateParameters(ProcessVO processVO, Map<String,Object> parameters)
+    public Map<String,String> translateParameters(Process processVO, Map<String,Object> parameters)
             throws ProcessException;
 
     /**

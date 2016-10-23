@@ -17,8 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.constant.FormConstants;
-import com.centurylink.mdw.model.data.task.TaskStatus;
+import com.centurylink.mdw.constant.FormConstants;
+import com.centurylink.mdw.model.task.TaskStatus;
 import com.qwest.mbeng.DomDocument;
 import com.qwest.mbeng.FormatDom;
 import com.qwest.mbeng.MbengException;

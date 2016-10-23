@@ -8,7 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.centurylink.mdw.common.translator.VariableTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
 
 public class DateTranslator extends VariableTranslator {
     private static DateFormat dateFormat;

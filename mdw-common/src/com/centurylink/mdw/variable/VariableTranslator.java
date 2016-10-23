@@ -3,12 +3,12 @@
  */
 package com.centurylink.mdw.variable;
 
-import com.centurylink.mdw.common.exception.TranslationException;
-import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.translator.TranslationException;
 
 public interface VariableTranslator {
 
-    public void setPackage(PackageVO pkg);
+    public void setPackage(Package pkg);
     
     public abstract String toString(Object pObject) throws TranslationException;
 

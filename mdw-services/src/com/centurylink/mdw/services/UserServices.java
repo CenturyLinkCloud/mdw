@@ -3,21 +3,21 @@
  */
 package com.centurylink.mdw.services;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.model.value.user.RoleList;
-import com.centurylink.mdw.model.value.user.UserActionVO;
-import com.centurylink.mdw.model.value.user.UserGroupVO;
-import com.centurylink.mdw.model.value.user.UserList;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
-import com.centurylink.mdw.model.value.user.UserVO;
-import com.centurylink.mdw.model.value.user.WorkgroupList;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.user.RoleList;
+import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.user.UserList;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.WorkgroupList;
 
 public interface UserServices {
 
     public WorkgroupList getWorkgroups() throws DataAccessException;
-    public UserGroupVO getWorkgroup(String name) throws DataAccessException;
-    public void createWorkgroup(UserGroupVO workgroup) throws DataAccessException;
-    public void updateWorkgroup(UserGroupVO workgroup) throws DataAccessException;
+    public Workgroup getWorkgroup(String name) throws DataAccessException;
+    public void createWorkgroup(Workgroup workgroup) throws DataAccessException;
+    public void updateWorkgroup(Workgroup workgroup) throws DataAccessException;
     public void deleteWorkgroup(String name) throws DataAccessException;
 
     public UserList getUsers() throws DataAccessException;
@@ -33,9 +33,9 @@ public interface UserServices {
      * Find users who belong to a list of workgroups.
      */
     public UserList findWorkgroupUsers(String[] workgroups, String prefix) throws DataAccessException;
-    public UserVO getUser(String cuid) throws DataAccessException;
-    public void createUser(UserVO user) throws DataAccessException;
-    public void updateUser(UserVO user) throws DataAccessException;
+    public User getUser(String cuid) throws DataAccessException;
+    public void createUser(User user) throws DataAccessException;
+    public void updateUser(User user) throws DataAccessException;
     public void deleteUser(String cuid) throws DataAccessException;
     public void addUserToWorkgroup(String cuid, String group) throws DataAccessException;
     public void removeUserFromWorkgroup(String cuid, String group) throws DataAccessException;
@@ -44,11 +44,11 @@ public interface UserServices {
 
 
     public RoleList getRoles() throws DataAccessException;
-    public UserRoleVO getRole(String name) throws DataAccessException;
-    public void createRole(UserRoleVO role) throws DataAccessException;
-    public void updateRole(UserRoleVO role) throws DataAccessException;
+    public Role getRole(String name) throws DataAccessException;
+    public void createRole(Role role) throws DataAccessException;
+    public void updateRole(Role role) throws DataAccessException;
     public void deleteRole(String name) throws DataAccessException;
 
-    public void auditLog(UserActionVO userAction) throws DataAccessException;
+    public void auditLog(UserAction userAction) throws DataAccessException;
 
 }

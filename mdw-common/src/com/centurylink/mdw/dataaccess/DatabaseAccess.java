@@ -18,13 +18,12 @@ import java.util.Map;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.constant.ApplicationConstants;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.ApplicationConstants;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.util.log.LoggerUtil;
 
 public class DatabaseAccess {
 
@@ -460,7 +459,7 @@ public class DatabaseAccess {
             db_time_diff = new Long(Math.abs(r) < 60000 ? q*1800000 : raw_diff);
 
             System.out.println("Database time difference: " + db_time_diff/1000.0 + " seconds (raw diff=" + raw_diff + ")");
-            TaskInstanceVO.setDbTimeDiff(db_time_diff);
+            TaskInstance.setDbTimeDiff(db_time_diff);
         }
         return System.currentTimeMillis()+db_time_diff.longValue();
     }

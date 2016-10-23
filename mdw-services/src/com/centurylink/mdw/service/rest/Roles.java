@@ -11,17 +11,16 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.exception.CachingException;
-import com.centurylink.mdw.common.exception.DataAccessException;
+import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserServices;
-import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
-import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -35,7 +34,7 @@ public class Roles extends JsonRestService {
     @Override
     public List<String> getRoles(String path) {
         List<String> roles = super.getRoles(path);
-        roles.add(UserRoleVO.USER_ADMIN);
+        roles.add(Role.USER_ADMIN);
         return roles;
     }
 
@@ -52,7 +51,7 @@ public class Roles extends JsonRestService {
     @Path("/{roleName}")
     @ApiOperation(value="Retrieve a role or all roles",
         notes="If roleName is not present, returns all roles.",
-        response=UserRoleVO.class, responseContainer="List")
+        response=Role.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         UserServices userServices = ServiceLocator.getUserServices();
         Map<String,String> parameters = getParameters(headers);
@@ -88,17 +87,17 @@ public class Roles extends JsonRestService {
 
         UserServices userServices = ServiceLocator.getUserServices();
         try {
-            UserRoleVO existing = userServices.getRoles().get(name);
+            Role existing = userServices.getRoles().get(name);
 
             if (rel == null) {
                 if (existing != null)
                     throw new ServiceException(HTTP_409_CONFLICT, "Role name already exists: " + name);
-                UserRoleVO role = new UserRoleVO(content);
+                Role role = new Role(content);
                 userServices.createRole(role);
             }
             else if (rel.equals("users")) {
                 String cuid = getSegment(path, 3);
-                UserVO user = UserGroupCache.getUser(cuid);
+                User user = UserGroupCache.getUser(cuid);
                 if (user == null) {
                     throw new CachingException("Cannot find user: " + cuid);
                 }
@@ -133,12 +132,12 @@ public class Roles extends JsonRestService {
     throws ServiceException, JSONException {
 
         UserServices userServices = ServiceLocator.getUserServices();
-        UserRoleVO role = new UserRoleVO(content);
+        Role role = new Role(content);
         String name = getSegment(path, 1);
         if (name == null)
             throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing path segment: {name}");
         try {
-            UserRoleVO existing = userServices.getRole(name);
+            Role existing = userServices.getRole(name);
             if (existing == null)
                 throw new ServiceException(HTTP_404_NOT_FOUND, "Role not found: " + name);
             // update

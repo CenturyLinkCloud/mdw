@@ -11,24 +11,24 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.TransactionWrapper;
-import com.centurylink.mdw.common.utilities.form.CallURL;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.data.monitor.ScheduledJob;
-import com.centurylink.mdw.model.data.monitor.ServiceLevelAgreement;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
-import com.centurylink.mdw.services.dao.process.EngineDataAccessDB;
-import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.monitor.ScheduledJob;
+import com.centurylink.mdw.model.monitor.ServiceLevelAgreement;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
+import com.centurylink.mdw.util.CallURL;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.TransactionWrapper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /*
  * Scheduled job that sweeps for expired process SLAs and triggers the
@@ -63,18 +63,17 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
             Calendar systcalendar = Calendar.getInstance();
             systcalendar.setTimeInMillis(dbtime);
 
-            for (RuleSetVO ruleSet : RuleSetCache.getRuleSets(RuleSetVO.PROCESS)) {
-                ProcessVO processVO = ProcessVOCache.getProcessVO(ruleSet.getId());
+            for (Asset asset : AssetCache.getAssets(Asset.PROCESS)) {
+                Process processVO = ProcessCache.getProcess(asset.getId());
                 int sla = 0;
                 if ((processVO.getAttribute("SLA") != null && processVO.getAttribute("SLA") != "")) {
 
                     sla = Integer.parseInt(processVO.getAttribute("SLA"));
 
                     if (sla > 0) {
-                        ArrayList<ProcessInstanceVO> listProcessVo = getProcessInstances(ruleSet
-                                .getId());
+                        ArrayList<ProcessInstance> listProcessVo = getProcessInstances(asset.getId());
 
-                        for (ProcessInstanceVO tempProcessVO : listProcessVo) {
+                        for (ProcessInstance tempProcessVO : listProcessVo) {
 
                             String processStartDate = tempProcessVO.getStartDate();
                             Date date = sdfStatDate.parse(processStartDate);
@@ -93,14 +92,14 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
                             boolean eligibleToProcess = processCalendar.compareTo(systcalendar) < 0;
 
                             if (eligibleToProcess) {
-                                List<ActivityInstanceVO> activityList = tempProcessVO
+                                List<ActivityInstance> activityList = tempProcessVO
                                         .getActivities();
-                                for (ActivityInstanceVO tempActivityInstanceVO : activityList) {
+                                for (ActivityInstance tempActivityInstanceVO : activityList) {
                                     if (tempActivityInstanceVO.getStatusCode() == WorkStatus.STATUS_WAITING
                                             .intValue()
                                             || tempActivityInstanceVO.getStatusCode() == WorkStatus.STATUS_IN_PROGRESS
                                                     .intValue()) {
-                                        InternalEventVO event = InternalEventVO
+                                        InternalEvent event = InternalEvent
                                                 .createActivityDelayMessage(tempActivityInstanceVO,
                                                         tempProcessVO.getMasterRequestId());
                                         logger.info("SLA clean event=" + event);
@@ -134,11 +133,11 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
     /*
      * Read  all process instances with wait or in progress stage and expired process SLAs
      */
-    private ArrayList<ProcessInstanceVO> getProcessInstances(Long process_id) {
+    private ArrayList<ProcessInstance> getProcessInstances(Long process_id) {
         String getProInstances = "select * from PROCESS_INSTANCE where process_id=? and END_DT is null and (status_cd=7 or status_cd=2)"; // Workstatus 2,7
 
         DatabaseAccess db = new DatabaseAccess(null);
-        final ArrayList<ProcessInstanceVO> processVoList = new ArrayList<ProcessInstanceVO>();
+        final ArrayList<ProcessInstance> processVoList = new ArrayList<ProcessInstance>();
         try {
             db.openConnection();
             Object[] args = new Object[1];
@@ -146,7 +145,7 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
 
             ResultSet rs = db.runSelect(getProInstances, args);
             while (rs.next()) {
-                ProcessInstanceVO processInstVO = new ProcessInstanceVO();
+                ProcessInstance processInstVO = new ProcessInstance();
                 processInstVO.setId(rs.getLong(1));
                 processInstVO.setProcessId(rs.getLong(2));
                 processInstVO.setStartDate(StringHelper.dateToString(rs.getTimestamp(8)));
@@ -166,8 +165,8 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
         return processVoList;
     }
 
-    private List<ActivityInstanceVO> getProcessInstanceActivity(Long procInstId) {
-        List<ActivityInstanceVO> actInstList = new ArrayList<ActivityInstanceVO>();
+    private List<ActivityInstance> getProcessInstanceActivity(Long procInstId) {
+        List<ActivityInstance> actInstList = new ArrayList<ActivityInstance>();
 
         DatabaseAccess db = new DatabaseAccess(null);
         String query = "select ACTIVITY_INSTANCE_ID,STATUS_CD,START_DT,END_DT,STATUS_MESSAGE,ACTIVITY_ID"
@@ -179,9 +178,9 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
             Object[] args = new Object[1];
             args[0] = procInstId;
             ResultSet rs = db.runSelect(query, args);
-            ActivityInstanceVO actInst;
+            ActivityInstance actInst;
             while (rs.next()) {
-                actInst = new ActivityInstanceVO();
+                actInst = new ActivityInstance();
                 actInst.setId(new Long(rs.getLong(1)));
                 actInst.setStatusCode(rs.getInt(2));
                 actInst.setStartDate(StringHelper.dateToString(rs.getTimestamp(3)));

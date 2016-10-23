@@ -7,27 +7,27 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.model.data.event.EventLog;
-import com.centurylink.mdw.model.data.monitor.CertifiedMessage;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.data.monitor.UnscheduledEvent;
-import com.centurylink.mdw.model.value.event.EventInstanceVO;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.user.UserActionVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.DocumentVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
-import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
-import com.centurylink.mdw.model.value.work.WorkTransitionInstanceVO;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.event.EventInstance;
+import com.centurylink.mdw.model.event.EventLog;
+import com.centurylink.mdw.model.monitor.CertifiedMessage;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.monitor.UnscheduledEvent;
+import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.TransitionInstance;
 import com.centurylink.mdw.services.event.ServiceHandler;
 import com.centurylink.mdw.services.event.WorkflowHandler;
 
 public interface EventManager {
 
-    public void createAuditLog(UserActionVO userAction)
+    public void createAuditLog(UserAction userAction)
     throws DataAccessException, EventException;
 
     /**
@@ -90,7 +90,7 @@ public interface EventManager {
      * @param pSecondaryOwnerId
      * @return new WorkInstance
      */
-    public ProcessInstanceVO createProcessInstance(Long pProcessId, String pProcessOwner,
+    public ProcessInstance createProcessInstance(Long pProcessId, String pProcessOwner,
         Long pProcessOwnerId, String pSecondaryOwner, Long pSecondaryOwnerId, String pMasterRequestId)
     throws ProcessException, DataAccessException;
 
@@ -101,7 +101,7 @@ public interface EventManager {
     /**
      * get variable instance by its ID
      */
-    public VariableInstanceInfo getVariableInstance(Long varInstId)
+    public VariableInstance getVariableInstance(Long varInstId)
     throws DataAccessException;
 
     /**
@@ -109,7 +109,7 @@ public interface EventManager {
      * The method does not take care of embedded process, so the caller needs to pass
      * the parent process instance id when looking for variables for embedded process
      */
-    public VariableInstanceInfo getVariableInstance(Long procInstId, String name)
+    public VariableInstance getVariableInstance(Long procInstId, String name)
     throws DataAccessException;
 
     /**
@@ -123,7 +123,7 @@ public interface EventManager {
      * @param value
      */
     public void updateVariableInstance(Long pVarInstId, Object value)
-    throws ProcessException, com.centurylink.mdw.common.exception.DataAccessException;
+    throws ProcessException, com.centurylink.mdw.dataaccess.DataAccessException;
 
     /**
      * Set the variable instance value.
@@ -138,13 +138,13 @@ public interface EventManager {
      * @return
      * @throws DataAccessException
      */
-    public VariableInstanceInfo setVariableInstance(Long procInstId, String name, Object value)
+    public VariableInstance setVariableInstance(Long procInstId, String name, Object value)
     throws DataAccessException;
 
-    public List<VariableInstanceInfo> getProcessInstanceVariables(Long procInstId)
+    public List<VariableInstance> getProcessInstanceVariables(Long procInstId)
     throws DataAccessException;
 
-    public DocumentVO getDocumentVO(Long documentId)
+    public Document getDocumentVO(Long documentId)
     throws DataAccessException;
 
     public void updateDocumentContent(Long docid, Object doc, String type)
@@ -157,7 +157,7 @@ public interface EventManager {
     public Long createDocument(String type, String ownerType, Long ownerId, Object doc)
     throws DataAccessException;
 
-    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, PackageVO pkg)
+    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg)
     throws DataAccessException;
 
     ////////////////////////////////////////////
@@ -193,7 +193,7 @@ public interface EventManager {
      * @param transInstId
      * @return transition instance object
      */
-    public WorkTransitionInstanceVO getWorkTransitionInstance(Long transInstId)
+    public TransitionInstance getWorkTransitionInstance(Long transInstId)
     throws DataAccessException, ProcessException;
 
     /**
@@ -202,7 +202,7 @@ public interface EventManager {
      * @param pActivityInstId
      * @return ActivityInstance
      */
-    public ActivityInstanceVO getActivityInstance(Long pActivityInstId)
+    public ActivityInstance getActivityInstance(Long pActivityInstId)
     throws ProcessException, DataAccessException;
 
     /**
@@ -217,7 +217,7 @@ public interface EventManager {
      * @throws ProcessException
      * @throws DataAccessException
      */
-    public List<ActivityInstanceVO> getActivityInstances(String masterRequestId,
+    public List<ActivityInstance> getActivityInstances(String masterRequestId,
     		String processName, String activityLogicalId)
     throws ProcessException, DataAccessException;
 
@@ -227,7 +227,7 @@ public interface EventManager {
      * @param procInstId
      * @return ProcessInstanceVO
      */
-    public ProcessInstanceVO getProcessInstance(Long procInstId)
+    public ProcessInstance getProcessInstance(Long procInstId)
     throws ProcessException, DataAccessException;
 
     /**
@@ -237,16 +237,16 @@ public interface EventManager {
      * @param loadVariables
      * @return ProcessInstance
      */
-    public ProcessInstanceVO getProcessInstance(Long procInstId, boolean loadVariables)
+    public ProcessInstance getProcessInstance(Long procInstId, boolean loadVariables)
     throws ProcessException, DataAccessException;
 
     /**
      * Returns Document VO
      * @param forUpdate
-     * @throws com.centurylink.mdw.common.exception.DataAccessException
+     * @throws com.centurylink.mdw.dataaccess.DataAccessException
      */
-    public DocumentVO getDocument(DocumentReference docRef, boolean forUpdate)
-    throws ProcessException, com.centurylink.mdw.common.exception.DataAccessException;
+    public Document getDocument(DocumentReference docRef, boolean forUpdate)
+    throws ProcessException, com.centurylink.mdw.dataaccess.DataAccessException;
 
     /**
      * Returns the process instances by process name and master request ID.
@@ -259,7 +259,7 @@ public interface EventManager {
      * @throws ProcessException
      * @throws DataAccessException
      */
-    public List<ProcessInstanceVO> getProcessInstances(String masterRequestId, String processName)
+    public List<ProcessInstance> getProcessInstances(String masterRequestId, String processName)
     throws ProcessException, DataAccessException;
 
     /**
@@ -270,7 +270,7 @@ public interface EventManager {
      * @param pOwnerId Id for the owner
      * @return Process instance object
      */
-    public List<ProcessInstanceVO> getProcessInstances(Long pProcessId, String pOwner, Long pOwnerId)
+    public List<ProcessInstance> getProcessInstances(Long pProcessId, String pOwner, Long pOwnerId)
     throws ProcessException, DataAccessException;
 
     /**
@@ -289,10 +289,10 @@ public interface EventManager {
 
     /**
      * get the process definition by process ID
-     * @param pProcessId process ID
+     * @param processId process ID
      * @return process definition
      */
-    public ProcessVO getProcessVO(Long pProcessId)
+    public Process getProcess(Long processId)
     throws DataAccessException, ProcessException;
 
     /**
@@ -404,7 +404,7 @@ public interface EventManager {
     public void sendInternalEvent(String message)
     throws ProcessException;
 
-    public EventInstanceVO getEventInstance(String eventName)
+    public EventInstance getEventInstance(String eventName)
     throws DataAccessException;
 
     /**
@@ -436,7 +436,7 @@ public interface EventManager {
     public WorkflowHandler getWorkflowHandler(String asset, Map<String,String> parameters)
     throws EventException;
 
-    public ProcessVO findProcessByProcessInstanceId(Long processInstanceId)
+    public Process findProcessByProcessInstanceId(Long processInstanceId)
     throws DataAccessException, ProcessException;
 
 }

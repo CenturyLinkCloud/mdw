@@ -10,8 +10,8 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.exception.TranslationException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.TranslationException;
 
 public class StringStringMapTranslator extends DocumentReferenceTranslator {
 

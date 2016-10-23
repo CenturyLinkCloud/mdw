@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.ClasspathUtil;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.util.ClasspathUtil;
 
 // TODO add the jars in PropertyNames.MDW_JAR_LIBRARY_PATH
 public class CloudClasspath {
@@ -49,7 +49,7 @@ public class CloudClasspath {
                         cloudClasspath += PATH_SEP;
                 }
             }
-            List<RuleSetVO> jarAssets = cloudClassLoader.getJarAssets();
+            List<Asset> jarAssets = cloudClassLoader.getJarAssets();
             if (jarAssets != null) {
                 if (ApplicationContext.isFileBasedAssetPersist()) {
                     String assetLoc = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION);
@@ -61,7 +61,7 @@ public class CloudClasspath {
                     if (!tempLibDir.exists()) {
                         if (!tempLibDir.mkdirs())
                             throw new IOException("Unable to create directory: " + tempLibDir);
-                        for (RuleSetVO jarAsset : jarAssets) {
+                        for (Asset jarAsset : jarAssets) {
                             String name = jarAsset.getName().endsWith(".jar") ? jarAsset.getName() : jarAsset.getName() + ".jar";
                             File destFile = new File(tempLibDir + "/" + jarAsset.getPackageName() + "/" + name);
                             jarAssetFiles.add(destFile);

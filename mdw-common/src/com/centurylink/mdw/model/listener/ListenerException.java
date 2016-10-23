@@ -4,10 +4,9 @@
 package com.centurylink.mdw.model.listener;
 
 
-// CUSTOM IMPORTS -----------------------------------------------------
-import com.centurylink.mdw.common.exception.MDWException;
-
 import java.io.Serializable;
+
+import com.centurylink.mdw.common.MDWException;
 
 // JAVA IMPORTS -------------------------------------------------------
 

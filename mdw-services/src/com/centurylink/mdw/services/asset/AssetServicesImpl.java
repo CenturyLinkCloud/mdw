@@ -16,36 +16,36 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 import org.w3c.dom.Element;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.bpm.PackageDocument;
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.exception.DataAccessException;
+import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.Content;
-import com.centurylink.mdw.common.utilities.DesignatedHostSslVerifier;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.timer.CodeTimer;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.AssetFile;
 import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.model.value.asset.Asset;
-import com.centurylink.mdw.model.value.asset.PackageAssets;
-import com.centurylink.mdw.model.value.asset.PackageList;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.PackageAssets;
+import com.centurylink.mdw.model.asset.PackageList;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
+import com.centurylink.mdw.util.DesignatedHostSslVerifier;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.CodeTimer;
 
 public class AssetServicesImpl implements AssetServices {
 
@@ -128,84 +128,12 @@ public class AssetServicesImpl implements AssetServices {
     }
 
     public byte[] getAssetContent(String assetPath) throws ServiceException {
-        return RuleSetCache.getRuleSet(assetPath).getRuleSet().getBytes();
-    }
-
-    public void saveAsset(String asset, Object content, String user, String comment) throws ServiceException {
-        if (asset == null)
-            throw new ServiceException("Missing parameter: " + " asset");
-        int slashIdx = asset.indexOf('/');
-        if (slashIdx == -1)
-            throw new ServiceException("Asset name must be qualified: MyPackage/MyText.txt");
-        String pkg = asset.substring(0, slashIdx);
-        String name = asset.substring(slashIdx + 1);
-        int dotIdx = name.indexOf('.');
-        if (dotIdx == -1)
-            throw new ServiceException("Asset format must be identified by a filename extension.");
-        String ext = name.substring(dotIdx);
-        String language = RuleSetVO.getFormat(name);
-        if (language == null)
-            throw new ServiceException("Asset format unknown for extension: '" + ext + "'");
-        boolean isBinary = RuleSetVO.isBinary(language);
-
-        // determine content
-        if (content == null)
-            throw new ServiceException("Missing parameter: " + " Content");
-        if (content instanceof Content) {
-            Content contentXmlBean = (Content) content;
-            if (contentXmlBean.getAny() == null || contentXmlBean.getAny().isEmpty()) {
-                throw new ServiceException("Missing content");
-            }
-            content = ((Element)contentXmlBean.getAny().get(0)).getTextContent();
-        }
-
-        if (user == null)
-            throw new ServiceException("Missing parameter: " + " user");
-
-        try {
-            UserVO userVO = ServiceLocator.getUserManager().getUser(user);
-
-            if (userVO == null)
-                throw new ServiceException("Unknown user: " + user);
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            RuleSetVO ruleSetVo = new RuleSetVO();
-            ruleSetVo.setName(name);
-            ruleSetVo.setLanguage(language);
-            ruleSetVo.setId(0L);
-            ruleSetVo.setCreateUser(user);
-            ruleSetVo.setComment(comment);
-            RuleSetVO existing = RuleSetCache.getRuleSet(asset);
-            if (userVO != null && StringUtils.isNotBlank(userVO.getName()) && existing!=null && existing.getModifyingUser()!= null && !existing.getModifyingUser().equals(userVO.getName())) {
-                throw new ServiceException("The selected Asset locked by :" + existing.getModifyingUser());
-            }
-            if (existing == null)
-                ruleSetVo.setVersion(1);
-            else
-                ruleSetVo.setVersion(existing.getVersion() + 1);
-            if (content instanceof byte[]) {
-                if (isBinary)
-                    ruleSetVo.setRuleSet(RuleSetVO.encode((byte[])content));
-                else
-                    ruleSetVo.setRuleSet(new String((byte[])content));
-            }
-            else {
-                ruleSetVo.setRuleSet(content.toString());
-            }
-
-            taskMgr.saveAsset(pkg, ruleSetVo, user);
-            new RuleSetCache().clearCache();
-            new PackageVOCache().clearCache();
-        }
-        catch (Exception ex) {
-            throw new ServiceException(ex.getMessage(), ex);
-        }
-
-        return;
+        return AssetCache.getAsset(assetPath).getStringContent().getBytes();
     }
 
     /**
      * Returns all the assets for the specified package.
-     * Works only for VCS assets.  Does not use the RuleSetCache.
+     * Works only for VCS assets.  Does not use the AssetVOCache.
      */
     public PackageAssets getAssets(String packageName) throws ServiceException {
 
@@ -216,11 +144,11 @@ public class AssetServicesImpl implements AssetServices {
                 if (pkgDir == null)
                     throw new DataAccessException("Missing package metadata directory: " + pkgDir);
             }
-            List<Asset> assets = new ArrayList<Asset>();
+            List<AssetInfo> assets = new ArrayList<AssetInfo>();
             if (!DiffType.MISSING.equals(pkgDir.getVcsDiffType())) {
                 for (File file : pkgDir.listFiles())
                     if (file.isFile()) {
-                        assets.add(new Asset(pkgDir.getAssetFile(file)));
+                        assets.add(new AssetInfo(pkgDir.getAssetFile(file)));
                 }
             }
 
@@ -239,20 +167,20 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
-    public Map<String,List<Asset>> getAssetsOfType(String format) throws ServiceException {
-        Map<String,List<Asset>> packageAssets = new HashMap<String,List<Asset>>();
+    public Map<String,List<AssetInfo>> getAssetsOfType(String format) throws ServiceException {
+        Map<String,List<AssetInfo>> packageAssets = new HashMap<String,List<AssetInfo>>();
         List<File> assetRoots = new ArrayList<File>();
         assetRoots.add(assetRoot);
         try {
             CodeTimer timer = new CodeTimer("AssetServices", true);
             List<PackageDir> pkgDirs = findPackageDirs(assetRoots);
             for (PackageDir pkgDir : pkgDirs) {
-                List<Asset> assets = null;
+                List<AssetInfo> assets = null;
                 for (File file : pkgDir.listFiles())
                     if (file.isFile() && file.getName().endsWith("." + format)) {
                         if (assets == null)
-                            assets = new ArrayList<Asset>();
-                        assets.add(new Asset(pkgDir.getAssetFile(file)));
+                            assets = new ArrayList<AssetInfo>();
+                        assets.add(new AssetInfo(pkgDir.getAssetFile(file)));
                 }
                 if (assets != null)
                     packageAssets.put(pkgDir.getPackageName(), assets);
@@ -394,7 +322,7 @@ public class AssetServicesImpl implements AssetServices {
                 GitDiffs diffs = versionControl.getDiffs(gitBranch, pkgVcPath);
                 pkgDir.setVcsDiffType(diffs.getDiffType(pkgVcPath + "/" + PackageDir.META_DIR + "/" + pkgDir.getMetaFile().getName()));
 
-                for (Asset asset : pkgAssets.getAssets()) {
+                for (AssetInfo asset : pkgAssets.getAssets()) {
                     String assetVcPath = versionControl.getRelativePath(asset.getFile());
                     DiffType diffType = diffs.getDiffType(assetVcPath);
                     if (diffType != null) {
@@ -440,7 +368,7 @@ public class AssetServicesImpl implements AssetServices {
         return vc;
     }
 
-    public Asset getAsset(String path) throws ServiceException {
+    public AssetInfo getAsset(String path) throws ServiceException {
         try {
             int lastSlash = path.lastIndexOf('/');
             String pkgName = path.substring(0, lastSlash);
@@ -452,19 +380,19 @@ public class AssetServicesImpl implements AssetServices {
                     throw new DataAccessException("Missing package metadata directory: " + pkgDir);
 
                 // ghost package contains ghost assets
-                Asset asset = getGhostAsset(pkgDir, assetName);
+                AssetInfo asset = getGhostAsset(pkgDir, assetName);
                 if (asset == null)
                     throw new DataAccessException("Missing asset file: " + path);
                 return asset;
             }
             AssetFile assetFile = pkgDir.getAssetFile(new File(pkgDir + "/" + assetName));
             if (assetFile.isFile()) {
-                Asset asset = new Asset(assetFile);
+                AssetInfo asset = new AssetInfo(assetFile);
                 addVersionControlInfo(asset);
                 return asset;
             }
             else {
-                Asset asset = getGhostAsset(pkgDir, assetName);
+                AssetInfo asset = getGhostAsset(pkgDir, assetName);
                 if (asset == null)
                     throw new DataAccessException("Missing asset file for path: " + assetPath);
                 return asset;
@@ -475,7 +403,7 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
-    private void addVersionControlInfo(Asset asset) throws ServiceException {
+    private void addVersionControlInfo(AssetInfo asset) throws ServiceException {
         try {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
             if (versionControl != null) {
@@ -510,7 +438,7 @@ public class AssetServicesImpl implements AssetServices {
                 String metaContent = ((VersionControlGit)getVersionControl()).getRemoteContentString(gitBranch, pkgMetaFilePath);
                 if (metaContent != null) {
                     if (metaContent.trim().startsWith("{")) {
-                        PackageVO pkgVO = new PackageVO(new JSONObject(metaContent));
+                        Package pkgVO = new Package(new JSONObject(metaContent));
                         pkgDir.setPackageVersion(pkgVO.getVersionString());
                     }
                     else {
@@ -526,15 +454,15 @@ public class AssetServicesImpl implements AssetServices {
         return pkgDir;
     }
 
-    private Asset getGhostAsset(PackageDir pkgDir, String assetName) throws Exception {
-        Asset asset = null;
+    private AssetInfo getGhostAsset(PackageDir pkgDir, String assetName) throws Exception {
+        AssetInfo asset = null;
         VersionControlGit gitVc = (VersionControlGit) getVersionControl();
         if (gitVc != null) {
             String path = assetPath + "/" + pkgDir.getPackageName() + "/" + assetName;
             GitDiffs diffs = gitVc.getDiffs(gitBranch, path);
             if (DiffType.MISSING.equals(diffs.getDiffType(path))) {
                 AssetFile assetFile = pkgDir.getAssetFile(new File(path));
-                asset = new Asset(assetFile);
+                asset = new AssetInfo(assetFile);
                 asset.setVcsDiffType(DiffType.MISSING);
                 if (pkgDir.getVcsDiffType() != DiffType.MISSING) {
                     // non-ghost pkg -- set version from remote

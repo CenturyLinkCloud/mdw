@@ -8,17 +8,17 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
 
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.ProcessVisibilityConstant;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.VariableTranslator;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
 
 public class ProcessStartEventHandler extends ExternalEventHandlerBase {
 
@@ -35,11 +35,11 @@ public class ProcessStartEventHandler extends ExternalEventHandlerBase {
             if (processName==null)
                 throw new EventHandlerException("START_PROCESS needs ProcessName argument");
             Long processId = getProcessId(processName);
-            PackageVO pkg = PackageVOCache.getProcessPackage(processId);
+            Package pkg = PackageCache.getProcessPackage(processId);
             if (pkg != null && !pkg.isDefaultPackage())
                 setPackage(pkg); // prefer process package over default of EventHandler
             String masterRequestId = getMasterRequestId((XmlObject)msgdoc, metaInfo);
-            ProcessVO procVO = getProcessDefinition(processId);
+            Process procVO = getProcessDefinition(processId);
             String processType = procVO.getProcessType();
             Map<String,Object> parameters = buildParameters((XmlObject)msgdoc, metaInfo, procVO);
 
@@ -67,9 +67,9 @@ public class ProcessStartEventHandler extends ExternalEventHandlerBase {
      * @param metaInfo
      * @return
      */
-    protected Map<String,Object> buildParameters(XmlObject msgdoc, Map<String,String> metaInfo, ProcessVO processVO) {
+    protected Map<String,Object> buildParameters(XmlObject msgdoc, Map<String,String> metaInfo, Process processVO) {
         Map<String,Object> params = null;
-        VariableVO requestVO = processVO.getVariable("request");
+        Variable requestVO = processVO.getVariable("request");
         if (requestVO != null && requestVO.getVariableCategory() == 1) {
             params = new HashMap<String,Object>();
 

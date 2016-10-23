@@ -6,10 +6,10 @@ package com.centurylink.mdw.common.translator.impl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.centurylink.mdw.common.exception.TranslationException;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.model.FormDataDocument;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.TranslationException;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.xml.DomHelper;
 import com.qwest.mbeng.MbengException;
 

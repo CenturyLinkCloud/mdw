@@ -13,18 +13,15 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.PoolableAdapter;
-import com.centurylink.mdw.common.cache.CacheEnabled;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.provider.CacheService;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.property.PropertyUtil;
+import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
@@ -32,6 +29,9 @@ import com.centurylink.mdw.services.event.CertifiedMessageManager;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class AdapterConnectionPool
 		extends MDWConnectionPool implements CacheEnabled, CacheService {

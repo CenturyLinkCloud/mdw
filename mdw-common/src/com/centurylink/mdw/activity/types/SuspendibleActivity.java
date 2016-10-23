@@ -4,7 +4,7 @@
 package com.centurylink.mdw.activity.types;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
+import com.centurylink.mdw.model.event.InternalEvent;
 
 
 /**
@@ -56,7 +56,7 @@ public interface SuspendibleActivity {
      *
      *
      */
-	boolean resume(InternalEventVO eventMessageDoc)
+	boolean resume(InternalEvent eventMessageDoc)
     throws ActivityException;
 
     /**
@@ -77,7 +77,7 @@ public interface SuspendibleActivity {
      * in case the event is already arrived.
      *
      */
-	boolean resumeWaiting(InternalEventVO event)
+	boolean resumeWaiting(InternalEvent event)
 	throws ActivityException;
 
 }

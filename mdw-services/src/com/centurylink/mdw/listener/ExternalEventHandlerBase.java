@@ -9,29 +9,28 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlObject;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.spring.SpringAppContext;
-import com.centurylink.mdw.common.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.ExternalEventHandler;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.event.EventInstanceVO;
-import com.centurylink.mdw.model.value.process.PackageAware;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.PackageAware;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
+import com.centurylink.mdw.spring.SpringAppContext;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlPath;
 
 
@@ -45,7 +44,6 @@ import com.centurylink.mdw.xml.XmlPath;
 
 public abstract class ExternalEventHandlerBase implements ExternalEventHandler, PackageAware {
 
-    protected static final String PROP_DO_PARTIAL_DB_LOGGING = PropertyNames.PROP_DO_PARTIAL_DB_LOGGING;
     protected static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     protected ExternalEventHandlerBase() {
@@ -71,13 +69,13 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
      * @param processId Process definition ID
      * @return memory representation of the process definition
      */
-    protected ProcessVO getProcessDefinition(Long processId) {
-        return ProcessVOCache.getProcessVO(processId);
+    protected Process getProcessDefinition(Long processId) {
+        return ProcessCache.getProcess(processId);
     }
 
-    private PackageVO pkg;
-    public PackageVO getPackage() { return pkg; }
-    public void setPackage(PackageVO pkg) { this.pkg = pkg; }
+    private Package pkg;
+    public Package getPackage() { return pkg; }
+    public void setPackage(Package pkg) { this.pkg = pkg; }
 
     /**
      * This method is used to start a regular process.
@@ -101,25 +99,6 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
     protected Long launchProcess(Long processId, Long eventInstId, String masterRequestId,
             Map<String,Object> parameters) throws Exception {
         return launchProcess(processId, eventInstId, masterRequestId, parameters, (Map<String,String>)null);
-    }
-
-    /**
-     * @deprecated use {@link #launchProcess(Long, Long, String, Map, Map)}
-     */
-    @Deprecated
-    protected Long startProcess(Long processId, Long eventInstId, String masterRequestId,
-                    Map<String,String> parameters, Map<String,String> headers) throws Exception {
-        ProcessEngineDriver driver = new ProcessEngineDriver();
-        return driver.startProcess(processId, masterRequestId, OwnerType.DOCUMENT, eventInstId, parameters, headers);
-    }
-
-    /**
-     * @deprecated use {@link #launchProcess(Long, Long, String, Map)}
-     */
-    @Deprecated
-    protected Long startProcess(Long processId, Long eventInstId, String masterRequestId,
-            Map<String,String> parameters) throws Exception {
-        return startProcess(processId, eventInstId, masterRequestId, parameters, (Map<String,String>)null);
     }
 
     /**
@@ -156,7 +135,7 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
                     delay);
         } catch (Exception e) {
             logger.severeException(e.getMessage(), e);
-            status = EventInstanceVO.RESUME_STATUS_FAILURE;
+            status = EventInstance.RESUME_STATUS_FAILURE;
         }
         return status;
     }
@@ -215,49 +194,6 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
     protected String invokeServiceProcess(Long processId, Long eventInstId, String masterRequestId,
             String masterRequest, Map<String,Object> parameters, String responseVarName) throws Exception {
         return invokeServiceProcess(processId, eventInstId, masterRequestId, masterRequest, parameters, responseVarName, 0, null);
-    }
-
-    /**
-     * @deprecated use {@link #invokeServiceProcess(Long, Long, String, String, Map, String, int, Map)}
-     */
-    @Deprecated
-    protected String invokeProcessAsService(Long processId, Long eventInstId, String masterRequestId,
-            String masterRequest, Map<String,String> parameters, String responseVarName, int performanceLevel,
-            Map<String,String> headers) throws Exception {
-        ProcessEngineDriver engineDriver = new ProcessEngineDriver();
-        return engineDriver.invokeService(processId, OwnerType.DOCUMENT, eventInstId, masterRequestId,
-                masterRequest, parameters, responseVarName, performanceLevel, null, null, headers);
-    }
-
-    /**
-     * @deprecated use {@link #invokeServiceProcess(Long, Long, String, String, Map, String, int)}
-     */
-    @Deprecated
-    protected String invokeProcessAsService(Long processId, Long eventInstId,
-            String masterRequestId, String masterRequest, Map<String,String> parameters,
-            String responseVarName, int performanceLevel) throws Exception {
-        return invokeProcessAsService(processId, eventInstId, masterRequestId,
-                masterRequest, parameters, responseVarName, performanceLevel, (Map<String,String>)null);
-    }
-
-    /**
-     * @deprecated use {@link #invokeServiceProcess(Long, Long, String, String, Map, String, Map)}
-     */
-    @Deprecated
-    protected String launchProcessAsService(Long processId, Long eventInstId, String masterRequestId,
-            String masterRequest, Map<String,Object> parameters, String responseVarName, Map<String,String> headers) throws Exception {
-        Map<String,String> stringParams = translateParameters(processId, parameters);
-        return invokeProcessAsService(processId, eventInstId, masterRequestId, masterRequest,
-                stringParams, responseVarName, 0, headers);
-    }
-
-    /**
-     * @deprecated use {@link #invokeServiceProcess(Long, Long, String, String, Map, String)}
-     */
-    @Deprecated
-    protected String launchProcessAsService(Long processId, Long eventInstId, String masterRequestId,
-            String masterRequest, Map<String,Object> parameters, String responseVarName) throws Exception {
-        return launchProcessAsService(processId, eventInstId, masterRequestId, masterRequest, parameters, responseVarName, (Map<String,String>)null);
     }
 
     /**
@@ -365,10 +301,10 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
     throws EventHandlerException {
         Map<String,String> stringParams = new HashMap<String,String>();
         if (parameters != null) {
-            ProcessVO processVO = getProcessDefinition(processId);
+            Process processVO = getProcessDefinition(processId);
             for (String key : parameters.keySet()) {
                 Object val = parameters.get(key);
-                VariableVO vo = processVO.getVariable(key);
+                Variable vo = processVO.getVariable(key);
                 if (vo == null)
                   throw new EventHandlerException("Variable '" + key + "' not found for process: " + processVO.getProcessName() + " v" + processVO.getVersionString() + "(id=" + processId + ")");
 
@@ -391,21 +327,21 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
         return stringParams;
     }
 
-    public RuleSetVO getResource(String name, String language, int version)
+    public Asset getResource(String name, String language, int version)
         throws DataAccessException {
-        return RuleSetCache.getRuleSet(name, language, version);
+        return AssetCache.getAsset(name, language, version);
     }
 
-    public String marshalJaxb(Object jaxbObject, PackageVO pkg) throws Exception {
+    public String marshalJaxb(Object jaxbObject, Package pkg) throws Exception {
           return getJaxbTranslator(pkg).realToString(jaxbObject);
     }
 
-    public Object unmarshalJaxb(String xml, PackageVO pkg) throws Exception {
+    public Object unmarshalJaxb(String xml, Package pkg) throws Exception {
         return getJaxbTranslator(pkg).realToObject(xml);
     }
 
     static String JAXB_TRANSLATOR_CLASS = "com.centurylink.mdw.jaxb.JaxbElementTranslator";
-    protected DocumentReferenceTranslator getJaxbTranslator(PackageVO pkg) throws Exception {
+    protected DocumentReferenceTranslator getJaxbTranslator(Package pkg) throws Exception {
         return (DocumentReferenceTranslator)SpringAppContext.getInstance().getVariableTranslator(JAXB_TRANSLATOR_CLASS, pkg);
     }
 

@@ -4,10 +4,10 @@
 package com.centurylink.mdw.services.messenger;
 
 
-import com.centurylink.mdw.common.constant.JMSDestinationNames;
-import com.centurylink.mdw.common.utilities.JMSServices;
 import com.centurylink.mdw.connector.adapter.AdapterException;
+import com.centurylink.mdw.constant.JMSDestinationNames;
 import com.centurylink.mdw.services.ProcessException;
+import com.centurylink.mdw.util.JMSServices;
 
 public class IntraMDWMessengerJms extends IntraMDWMessenger {
 

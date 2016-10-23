@@ -7,9 +7,9 @@ import java.util.Map;
 
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.task.TaskList;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
+import com.centurylink.mdw.task.types.TaskList;
 
 public class ProcessTasks implements JsonService {
 

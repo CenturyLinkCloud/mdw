@@ -10,20 +10,20 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.centurylink.mdw.common.utilities.form.CallURL;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.model.data.task.TaskState;
-import com.centurylink.mdw.model.data.task.TaskStatus;
-import com.centurylink.mdw.model.data.task.TaskStatuses;
-import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
+import com.centurylink.mdw.model.task.TaskState;
+import com.centurylink.mdw.model.task.TaskStatus;
+import com.centurylink.mdw.model.task.TaskStatuses;
+import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.workflow.RoundRobinScheduledJob;
+import com.centurylink.mdw.util.CallURL;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Updates task_instance_state to 5 (Invalid) for VCS Asset manual tasks with missing templates.
@@ -58,7 +58,7 @@ public class TaskCleanup extends RoundRobinScheduledJob {
         try {
             // known task template ids
             List<Long> taskTemplateIds = new ArrayList<Long>();
-            List<TaskVO> taskTemplates = null;
+            List<TaskTemplate> taskTemplates = null;
             String assetLoc = args.getParameter(ARG_ASSET_LOC);
             if (assetLoc != null) {
                 VersionControlGit vc = new VersionControlGit();
@@ -69,7 +69,7 @@ public class TaskCleanup extends RoundRobinScheduledJob {
             else {
                 taskTemplates = TaskTemplateCache.getTaskTemplates();
             }
-            for (TaskVO taskTemplate : taskTemplates)
+            for (TaskTemplate taskTemplate : taskTemplates)
                 taskTemplateIds.add(taskTemplate.getTaskId());
 
             // query for non-final task instances

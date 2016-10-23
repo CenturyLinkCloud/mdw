@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
 
 public interface TaskValuesProvider {
 

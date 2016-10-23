@@ -6,83 +6,82 @@ package com.centurylink.mdw.dataaccess;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
-import com.centurylink.mdw.model.data.task.TaskCategory;
-import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.event.ExternalEventVO;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.model.value.variable.VariableTypeVO;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.event.ExternalEvent;
+import com.centurylink.mdw.model.task.TaskCategory;
+import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.variable.VariableType;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.timer.ProgressMonitor;
 
 /**
  * common interface for all process loading
  */
 public interface ProcessLoader {
 
-    PackageVO loadPackage(Long packageId, boolean deep)
+    Package loadPackage(Long packageId, boolean deep)
     throws DataAccessException;
 
-    PackageVO getPackage(String name)
+    Package getPackage(String name)
     throws DataAccessException;
 
-    List<PackageVO> getPackageList(boolean deep, ProgressMonitor progressMonitor)
+    List<Package> getPackageList(boolean deep, ProgressMonitor progressMonitor)
     throws DataAccessException;
 
-    List<ProcessVO> getProcessList()
+    List<Process> getProcessList()
     throws DataAccessException;
 
-    ProcessVO loadProcess(Long processID, boolean withSubProcesses)
+    Process loadProcess(Long processID, boolean withSubProcesses)
     throws DataAccessException;
 
-    ProcessVO getProcessBase(Long processId)
+    Process getProcessBase(Long processId)
     throws DataAccessException;
 
-    ProcessVO getProcessBase(String name, int version)
+    Process getProcessBase(String name, int version)
     throws DataAccessException;
 
-    List<ExternalEventVO> loadExternalEvents()
+    List<ExternalEvent> loadExternalEvents()
     throws DataAccessException;
 
-    List<TaskVO> getTaskTemplates()
+    List<TaskTemplate> getTaskTemplates()
     throws DataAccessException;
 
-    List<ActivityImplementorVO> getActivityImplementors()
+    List<ActivityImplementor> getActivityImplementors()
     throws DataAccessException;
 
-    List<VariableTypeVO> getVariableTypes()
+    List<VariableType> getVariableTypes()
     throws DataAccessException;
 
     List<TaskCategory> getTaskCategories()
     throws DataAccessException;
 
-    List<ActivityImplementorVO> getReferencedImplementors(PackageVO packageVO)
+    List<ActivityImplementor> getReferencedImplementors(Package packageVO)
     throws DataAccessException;
 
-    List<ProcessVO> findCallingProcesses(ProcessVO subproc)
+    List<Process> findCallingProcesses(Process subproc)
     throws DataAccessException;
 
-    List<ProcessVO> findCalledProcesses(ProcessVO main)
+    List<Process> findCalledProcesses(Process main)
     throws DataAccessException;
 
-    List<RuleSetVO> getRuleSets()
+    List<Asset> getAssets()
     throws DataAccessException;
 
-    RuleSetVO getRuleSet(Long ruleSetId)
+    Asset getAsset(Long assetId)
     throws DataAccessException;
 
-    RuleSetVO getRuleSet(String name, String language, int version)
+    Asset getAsset(String name, String language, int version)
     throws DataAccessException;
 
-    RuleSetVO getRuleSet(Long packageId, String name)
+    Asset getAsset(Long packageId, String name)
     throws DataAccessException;
 
-    RuleSetVO getRuleSetForOwner(String ownerType, Long ownerId)
+    Asset getAssetForOwner(String ownerType, Long ownerId)
     throws DataAccessException;
 
-    public List<ProcessVO> getProcessListForImplementor(Long implementorId, String implementorClass)
+    public List<Process> getProcessListForImplementor(Long implementorId, String implementorClass)
     throws DataAccessException;
 
     public Map<String,String> getAttributes(String ownerType, Long ownerId)

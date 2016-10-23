@@ -11,11 +11,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
+import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -35,7 +34,7 @@ public class Workflow extends JsonRestService {
     @Path("/{packageName}/{processName}/{processVersion}")
     @ApiOperation(value="Retrieve a process definition JSON.",
         notes="Path segments {packageName} and {processName} are required, while {processVersion} is optional.",
-        response=ProcessVO.class)
+        response=Process.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="version", paramType="query")})
     public JSONObject get(String path, Map<String,String> headers)
@@ -46,7 +45,7 @@ public class Workflow extends JsonRestService {
             if (segments.length < 3)
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Path segments {packageName}/{processName} are required");
             String assetPath = segments[1] + "/" + segments[2];
-            ProcessVO process = workflowServices.getProcessDefinition(assetPath, getQuery(path, headers));
+            Process process = workflowServices.getProcessDefinition(assetPath, getQuery(path, headers));
             JSONObject json = process.getJson(); // does not include name or package
             json.put("name", process.getName());
             json.put("packageName", process.getPackageName());

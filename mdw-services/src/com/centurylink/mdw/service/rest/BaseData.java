@@ -18,10 +18,9 @@ import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.DataAccess;
-import com.centurylink.mdw.model.data.task.TaskCategory;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.variable.VariableTypeVO;
-import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.model.task.TaskCategory;
+import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.variable.VariableType;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,9 +49,9 @@ public class BaseData extends JsonRestService {
         try {
             BaselineData baselineData = DataAccess.getBaselineData();
             if (dataType.equals("VariableTypes")) {
-                List<VariableTypeVO> variableTypes = baselineData.getVariableTypes();
+                List<VariableType> variableTypes = baselineData.getVariableTypes();
                 JSONArray jsonArray = new JSONArray();
-                for (VariableTypeVO variableType : variableTypes)
+                for (VariableType variableType : variableTypes)
                     jsonArray.put(variableType.getJson());
                 return new JsonArray(jsonArray).getJson();
             }

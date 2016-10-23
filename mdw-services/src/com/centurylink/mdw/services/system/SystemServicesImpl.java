@@ -15,14 +15,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.property.PropertyUtil;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.value.system.SysInfo;
-import com.centurylink.mdw.model.value.system.SysInfoCategory;
+import com.centurylink.mdw.model.system.SysInfo;
+import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.services.SystemServices;
+import com.centurylink.mdw.util.log.LoggerUtil;
 
 public class SystemServicesImpl implements SystemServices {
 

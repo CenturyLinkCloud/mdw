@@ -13,26 +13,26 @@ import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.yaml.snakeyaml.Yaml;
 
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.PropertyNames;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Jsonable;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.StringDocument;
+import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.event.EventInstanceVO;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ProcessManager;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlBeanWrapper;
 import com.qwest.mbeng.MbengDocument;
 import com.qwest.mbeng.MbengTableArray;
@@ -57,14 +57,14 @@ public class ProcessManagerBean implements ProcessManager {
 
         try {
             Long docId = 0L;
-            ProcessVO processVO = ProcessVOCache.getProcessVO(processName, 0);
+            Process processVO = ProcessCache.getProcess(processName, 0);
             if (masterRequest != null) {
                 String docType = masterRequestDocType;
                 if (docType == null)
                     docType = getDocType(masterRequest);
                 EventManager eventMgr = ServiceLocator.getEventManager();
                 docId = eventMgr.createDocument(docType, OwnerType.LISTENER_REQUEST, 0L,
-                        masterRequest, PackageVOCache.getProcessPackage(processVO.getId()));
+                        masterRequest, PackageCache.getProcessPackage(processVO.getId()));
                 if (headers == null)
                     headers = new HashMap<String,String>();
                 headers.put(Listener.METAINFO_DOCUMENT_ID, docId.toString());
@@ -95,8 +95,8 @@ public class ProcessManagerBean implements ProcessManager {
         try {
             Long docId = 0L;
             String request = null;
-            ProcessVO processVO = ProcessVOCache.getProcessVO(processName, 0);
-            PackageVO pkg = PackageVOCache.getProcessPackage(processVO.getId());
+            Process processVO = ProcessCache.getProcess(processName, 0);
+            Package pkg = PackageCache.getProcessPackage(processVO.getId());
             if (masterRequest != null) {
                 String docType = masterRequestDocType;
                 if (docType == null)
@@ -119,7 +119,7 @@ public class ProcessManagerBean implements ProcessManager {
                 String respVar = responseVarName;
                 if (respVar == null)
                     respVar = "response";
-                VariableVO var = processVO.getVariable(respVar);
+                Variable var = processVO.getVariable(respVar);
                 if (var != null && var.isOutput() && !var.isString()) {
                     response = VariableTranslator.realToObject(pkg, var.getVariableType(), resp);
                 }
@@ -131,18 +131,18 @@ public class ProcessManagerBean implements ProcessManager {
         }
     }
 
-    public Map<String,String> translateParameters(ProcessVO processVO, Map<String,Object> parameters) throws ProcessException {
+    public Map<String,String> translateParameters(Process processVO, Map<String,Object> parameters) throws ProcessException {
         Map<String,String> stringParams = new HashMap<String,String>();
         for (String key : parameters.keySet()) {
             Object val = parameters.get(key);
-            VariableVO vo = processVO.getVariable(key);
+            Variable vo = processVO.getVariable(key);
             if (vo == null)
               throw new ProcessException("Variable '" + key + "' not found for process: " + processVO.getProcessName() + " v" + processVO.getVersionString() + "(id=" + processVO.getId() + ")");
             String translated;
             if (val instanceof String)
                 translated = (String)val;
             else
-                translated = VariableTranslator.toString(PackageVOCache.getProcessPackage(processVO.getId()), vo.getVariableType(), val);
+                translated = VariableTranslator.toString(PackageCache.getProcessPackage(processVO.getId()), vo.getVariableType(), val);
             stringParams.put(key, translated);
         }
         return stringParams;
@@ -167,7 +167,7 @@ public class ProcessManagerBean implements ProcessManager {
             return eventManager.notifyProcess(eventName, docId, message, delay);
         } catch (Exception e) {
             logger.severeException(e.getMessage(), e);
-            return EventInstanceVO.RESUME_STATUS_FAILURE;
+            return EventInstance.RESUME_STATUS_FAILURE;
         }
     }
 

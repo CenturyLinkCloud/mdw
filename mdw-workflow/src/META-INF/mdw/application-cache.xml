@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO better way to handle this -->
-<ApplicationCache xmlns="http://mdw.qwest.com/XMLSchema">
-  <Cache Name="TaskCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache</Property>
+<ApplicationCache xmlns="http://mdw.centurylink.com/bpm">
+  <Cache Name="TaskTemplateCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.data.task.TaskTemplateCache</Property>
   </Cache>
   <Cache Name="VariableTypeCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.common.cache.impl.VariableTypeCache</Property>
+    <Property Name="ClassName">com.centurylink.mdw.cache.impl.VariableTypeCache</Property>
   </Cache>
-  <Cache Name="ExternalEventCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.services.event.ExternalEventCache</Property>
-  </Cache>
-  <Cache Name="TaskCategoryCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.services.dao.task.cache.TaskCategoryCache</Property>
+  <Cache Name="EventHandlerCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.data.event.EventHandlerCache</Property>
   </Cache>
   <Cache Name="TemplateCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.common.cache.impl.TemplateCache</Property>
+    <Property Name="ClassName">com.centurylink.mdw.cache.impl.TemplateCache</Property>
   </Cache>
-  <Cache Name="RuleSetCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.common.cache.impl.RuleSetCache</Property>
-    <!-- 
-    <Property Name="PreInitialized">com.centurylink.mdw.script.GroovyExecutor</Property>
-     -->
+  <Cache Name="AssetCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.cache.impl.AssetCache</Property>
   </Cache>
   <Cache Name="DroolsKnowledgeBaseCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.workflow.drools.cache.DroolsKnowledgeBaseCache</Property>
@@ -32,21 +25,18 @@
     </Property>
      -->  
   </Cache>
-  <Cache Name="WebPageCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.common.cache.impl.WebPageCache</Property>
-  </Cache>
-  <Cache Name="PackageVOCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.common.cache.impl.PackageVOCache</Property>
+  <Cache Name="PackageCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.cache.impl.PackageCache</Property>
   </Cache>
   <Cache Name="CompiledJavaCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.java.CompiledJavaCache</Property>
-    <Property Name="dependsOn">PackageVOCache,RuleSetCache</Property>
+    <Property Name="dependsOn">PackageCache,AssetCache</Property>
   </Cache>
   <Cache Name="SpringAppCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.common.spring.SpringAppContext</Property>
+    <Property Name="ClassName">com.centurylink.mdw.spring.SpringAppContext</Property>
   </Cache>
   <Cache Name="UserGroupCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.services.dao.user.cache.UserGroupCache</Property>
+    <Property Name="ClassName">com.centurylink.mdw.service.data.task.UserGroupCache</Property>
   </Cache>
   <!-- AllowableTasks is empty for non-VCS Assets, which use the classic MDWHub mechanism -->
   <Cache Name="AllowableTaskActions" Type="ReadOnly">

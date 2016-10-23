@@ -23,13 +23,13 @@ process: # 13754
     value: |
       <ser:ApplicationSummary xmlns:ser="http://mdw.centurylink.com/services">
         <ApplicationName>MDW</ApplicationName>
-        <Version>6.0.01-SNAPSHOT</Version>
-        <MdwVersion>6.0.01-SNAPSHOT</MdwVersion>
-        <MdwBuild>2016-10-21 10:10:28</MdwBuild>
+        <Version>${~6.*}</Version>
+        <MdwVersion>${~6.*}</MdwVersion>
+        <MdwBuild>${~201.*}</MdwBuild>
         <MdwHubUrl>http://localhost:8080/mdw</MdwHubUrl>
         <ServicesUrl>http://localhost:8080/mdw</ServicesUrl>
         <DbInfo jdbcUrl="jdbc:mysql://localhost:3306/mdw6" user="mdw6"/>
         <Container>Tomcat</Container>
         <Database>MySQL</Database>
-        <Repository provider="Git" url="https://github.com/CenturyLinkCloud/MDW.git" branch="master" commit="9c9bbacb8f869dd3df374ca76944af3b56c7e300"/>
+        <Repository provider="Git" url="https://github.com/CenturyLinkCloud/MDW.git" branch="master" commit="${~.*}"/>
       </ser:ApplicationSummary>

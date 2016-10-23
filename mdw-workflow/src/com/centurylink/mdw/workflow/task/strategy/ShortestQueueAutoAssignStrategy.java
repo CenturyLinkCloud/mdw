@@ -6,34 +6,34 @@ package com.centurylink.mdw.workflow.task.strategy;
 import java.util.HashMap;
 import java.util.List;
 
-import com.centurylink.mdw.common.exception.ObserverException;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.UserManager;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class ShortestQueueAutoAssignStrategy implements AutoAssignStrategy {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    public UserVO selectAssignee(TaskInstanceVO taskInstanceVO) throws ObserverException {
+    public User selectAssignee(TaskInstance taskInstanceVO) throws ObserverException {
         try {
 			TaskManager taskManager = ServiceLocator.getTaskManager();
             List<String> groups = taskManager.getGroupsForTaskInstance(taskInstanceVO);
             UserManager userManager = ServiceLocator.getUserManager();
-            UserVO[] taskUsers = userManager.getUsersForGroups(groups.toArray(new String[groups.size()]));
+            User[] taskUsers = userManager.getUsersForGroups(groups.toArray(new String[groups.size()]));
             if (taskUsers == null || taskUsers.length == 0) {
                 return null;
             }
 
-            UserVO assignee = taskUsers[0];
+            User assignee = taskUsers[0];
             int shortest = Integer.MAX_VALUE;
-            for (UserVO user : taskUsers) {
-                int depth = taskManager.getClaimedTaskInstanceVOs(user.getId(), new HashMap<String,String>()).length;
+            for (User user : taskUsers) {
+                int depth = taskManager.getAssignedTasks(user.getId(), new HashMap<String,String>()).length;
                 if (depth < shortest) {
                     assignee = user;
                     shortest = depth;

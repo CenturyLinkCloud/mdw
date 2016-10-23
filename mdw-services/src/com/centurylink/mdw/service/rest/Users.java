@@ -11,16 +11,15 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserServices;
-import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -34,7 +33,7 @@ public class Users extends JsonRestService {
     @Override
     public List<String> getRoles(String path) {
         List<String> roles = super.getRoles(path);
-        roles.add(UserRoleVO.USER_ADMIN);
+        roles.add(Role.USER_ADMIN);
         return roles;
     }
 
@@ -51,7 +50,7 @@ public class Users extends JsonRestService {
     @Path("/{cuid}")
     @ApiOperation(value="Retrieve a specific user or a page of users",
         notes="If cuid is not present, returns a page of users; if Find is present, searches by pattern.",
-        response=UserVO.class, responseContainer="List")
+        response=User.class, responseContainer="List")
     @ApiImplicitParams({
         @ApiImplicitParam(name="find", paramType="query", dataType="string")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
@@ -98,10 +97,10 @@ public class Users extends JsonRestService {
         UserServices userServices = ServiceLocator.getUserServices();
         try {
             if (rel == null) {
-                UserVO existing = userServices.getUsers().get(cuid);
+                User existing = userServices.getUsers().get(cuid);
                 if (existing != null)
                     throw new ServiceException(HTTP_409_CONFLICT, "User ID already exists: " + cuid);
-                UserVO user = new UserVO(content);
+                User user = new User(content);
                 userServices.createUser(user);
             }
             else if (rel.equals("workgroups")) {
@@ -135,12 +134,12 @@ public class Users extends JsonRestService {
     throws ServiceException, JSONException {
 
         UserServices userServices = ServiceLocator.getUserServices();
-        UserVO user = new UserVO(content);
+        User user = new User(content);
         String cuid = getSegment(path, 1);
         if (cuid == null)
             throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing path segment: {cuid}");
         try {
-            UserVO existing = userServices.getUser(cuid);
+            User existing = userServices.getUser(cuid);
             if (existing == null)
                 throw new ServiceException(HTTP_404_NOT_FOUND, "User not found: " + cuid);
             // update

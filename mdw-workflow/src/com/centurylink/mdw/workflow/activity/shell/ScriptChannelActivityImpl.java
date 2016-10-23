@@ -15,19 +15,19 @@ import org.apache.xmlbeans.XmlOptions;
 import org.w3c.dom.Document;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.HttpHelper;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.service.Action;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.workflow.activity.event.EventWaitActivity;
 import com.qwest.mbeng.DomDocument;
@@ -43,7 +43,6 @@ public class ScriptChannelActivityImpl extends EventWaitActivity {
 	public static final String CHANNEL_COMMAND_TIMEOUT="Timeout";
     public static final String OUTPUTDOCS = "Output Documents";
     //public static final String OUTPUT_VARIABLE = "OutputVariable";
-    public static final String RETURNCODE = "vReturnCode";
     private static final String VRESPONSE = "response";
 
     protected String[] outputDocuments;
@@ -128,7 +127,7 @@ public class ScriptChannelActivityImpl extends EventWaitActivity {
      *
      * @throws ActivityException
      */
-    protected EventWaitInstanceVO registerWaitEvents() throws ActivityException {
+    protected EventWaitInstance registerWaitEvents() throws ActivityException {
     	super.loginfo("Inside ControlledScriptChannelActivityImpl.registerWaitEvents() :" + resourceID );
 //    	logger.info("Inside ControlledScriptChannelActivityImpl.registerWaitEvents() :" + resourceID );
         String eventName = getWaitEventOwner() + ":" + getWaitEventOwnerId() + "_" + this.resourceID;
@@ -231,11 +230,12 @@ public class ScriptChannelActivityImpl extends EventWaitActivity {
 
       }
 
-      if (isLogInfoEnabled()) loginfo("****Closure Str:" + closureStr);
+      if (isLogInfoEnabled())
+          loginfo("****Closure Str:" + closureStr);
       String localReturnCode = null;
       if (closureStr != null && closureStr.length() > 0) {
-			RuleSetVO ruleSet = getRuleSet(closureStr, RuleSetVO.GROOVY, 0);
-            String ruleStr = (ruleSet != null) ? ruleSet.getRuleSet(): null;
+			Asset asset = getAsset(closureStr, Asset.GROOVY, 0);
+            String ruleStr = (asset != null) ? asset.getStringContent(): null;
 
             if (isLogInfoEnabled()) loginfo("****Rule:" + ruleStr);
             if (ruleStr != null)   {
@@ -275,7 +275,7 @@ public class ScriptChannelActivityImpl extends EventWaitActivity {
     protected void setParamValue(String varName, String varType, Object v)
     throws ActivityException {
     	if (v==null) return;
-    	if (VariableTranslator.isDocumentReferenceVariable(varType)) {
+    	if (VariableTranslator.isDocumentReferenceVariable(getPackage(), varType)) {
     		if (isOutputDocument(varName)) {
     			if (v instanceof DomDocument) {
     					if (varType.equals(Document.class.getName())) { // DOM document
@@ -310,8 +310,8 @@ public class ScriptChannelActivityImpl extends EventWaitActivity {
             Script script = shell.parse(rule);
             Binding binding = new Binding();
 
-            List<VariableVO> vos = getMainProcessDefinition().getVariables();
-            for (VariableVO variableVO: vos) {
+            List<Variable> vos = getMainProcessDefinition().getVariables();
+            for (Variable variableVO: vos) {
               String variableName = variableVO.getVariableName();
               Object variableValue = getVariableValue(variableName);
               binding.setVariable(variableName, variableValue);
@@ -328,7 +328,7 @@ public class ScriptChannelActivityImpl extends EventWaitActivity {
             script.setBinding(binding);
             script.run();
 
-            for (VariableVO variableVO: vos) {
+            for (Variable variableVO: vos) {
                 String variableName = variableVO.getVariableName();
                 Object groovyVarValue = binding.getVariable(variableName);
                 if (!variableName.equals(VRESPONSE))
@@ -347,15 +347,9 @@ public class ScriptChannelActivityImpl extends EventWaitActivity {
             		if (object != null)
             		return (object.toString());
             	}
-               } else  if (binding.getVariables().containsKey(RETURNCODE)){
-                Object  object = binding.getVariable(RETURNCODE);
-                if ( object != null) {
-                  return (object.toString());
-                }
                }
             }
         }catch(Exception ex){
-//          logger.severeException(ex.getMessage(), ex);
           throw new ActivityException(-1, "Exception in executeGroovyScript", ex);
         }
 

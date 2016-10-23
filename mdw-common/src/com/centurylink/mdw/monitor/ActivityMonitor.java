@@ -6,7 +6,7 @@ package com.centurylink.mdw.monitor;
 import java.util.Map;
 
 import com.centurylink.mdw.common.service.RegisteredService;
-import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 
 /**
  * Activity monitors can be registered through @RegisteredService annotations to get

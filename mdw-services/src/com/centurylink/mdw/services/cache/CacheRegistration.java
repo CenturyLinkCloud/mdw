@@ -15,30 +15,29 @@ import java.util.Properties;
 
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument.ApplicationCache;
 import com.centurylink.mdw.bpm.CacheDocument.Cache;
 import com.centurylink.mdw.bpm.PropertyDocument.Property;
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.Compatibility;
-import com.centurylink.mdw.common.cache.AssetCache;
-import com.centurylink.mdw.common.cache.CacheEnabled;
-import com.centurylink.mdw.common.cache.FixedCapacityCache;
-import com.centurylink.mdw.common.cache.PreloadableCache;
-import com.centurylink.mdw.common.exception.StartupException;
-import com.centurylink.mdw.common.provider.CacheService;
-import com.centurylink.mdw.common.spring.SpringAppContext;
-import com.centurylink.mdw.common.utilities.FileHelper;
-import com.centurylink.mdw.common.utilities.HttpHelper;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.common.utilities.startup.StartupClass;
+import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.cache.ExcludableCache;
+import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.dataaccess.DataAccess;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.services.bundle.CacheRegistry;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
+import com.centurylink.mdw.spring.SpringAppContext;
+import com.centurylink.mdw.startup.StartupClass;
+import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 
 /**
@@ -93,14 +92,11 @@ public class CacheRegistration implements StartupClass {
         for (String cacheName : caches.keySet()) {
             Properties cacheProps = (Properties)caches.get(cacheName);
             String cacheClassName = cacheProps.getProperty("ClassName");
-            String cacheCapacity = cacheProps.getProperty("CacheCapacity");
             logger.info(" - loading cache " + cacheName);
             CacheEnabled cachingObj = getCacheInstance(cacheClassName, cacheProps);
 
             if (cachingObj != null) {
-                if (cachingObj instanceof FixedCapacityCache)
-                    ((FixedCapacityCache)cachingObj).setCapacity(Integer.parseInt(cacheCapacity));
-                if (cachingObj instanceof PreloadableCache){
+                if (cachingObj instanceof PreloadableCache) {
                     ((PreloadableCache)cachingObj).loadCache();
                 }
                 synchronized(allCaches) {
@@ -120,8 +116,6 @@ public class CacheRegistration implements StartupClass {
     private void preloadDynamicCache() throws Exception {
         List<CacheService> dynamicCacheServices = CacheRegistry.getInstance().getDynamicCacheServices();
         for (CacheService dynamicCacheService : dynamicCacheServices) {
-            if (dynamicCacheService instanceof FixedCapacityCache)
-                ((FixedCapacityCache) dynamicCacheService).setCapacity(50); // TODO : Dynamic capacity - no hard code
             if (dynamicCacheService instanceof PreloadableCache) {
                 ((PreloadableCache) dynamicCacheService).loadCache();
             }
@@ -187,7 +181,7 @@ public class CacheRegistration implements StartupClass {
             refreshCache(propmgr);
             if (ApplicationContext.isFileBasedAssetPersist())
                 DataAccess.getProcessLoader().getPackageList(false, null); // prime the ids
-            if (excludedFormats == null || !excludedFormats.contains(RuleSetVO.JAVA))
+            if (excludedFormats == null || !excludedFormats.contains(Asset.JAVA))
                 CacheRegistry.getInstance().clearDynamicServices();
             synchronized (allCaches) {
                 for (String cacheName : allCaches.keySet()) {
@@ -217,7 +211,7 @@ public class CacheRegistration implements StartupClass {
     public void refreshCache(String cacheName, List<String> excludedFormats) {
         CacheEnabled cache = allCaches.get(cacheName);
         if (cache != null) {
-            if (excludedFormats != null && cache instanceof AssetCache && excludedFormats.contains(((AssetCache)cache).getFormat())) {
+            if (excludedFormats != null && cache instanceof ExcludableCache && excludedFormats.contains(((ExcludableCache)cache).getFormat())) {
                 logger.debug(" - omitting cache " + cacheName);
             }
             else {

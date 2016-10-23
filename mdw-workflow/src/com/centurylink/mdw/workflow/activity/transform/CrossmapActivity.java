@@ -10,14 +10,12 @@ import org.json.JSONObject;
 import org.w3c.dom.Document;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.cache.impl.RuleSetCache;
-import com.centurylink.mdw.common.translator.JsonTranslator;
-import com.centurylink.mdw.common.translator.VariableTranslator;
+import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.translator.impl.DomDocumentTranslator;
-import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
-import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.script.Builder;
 import com.centurylink.mdw.script.CrossmapScript;
 import com.centurylink.mdw.script.JsonBuilder;
@@ -25,6 +23,8 @@ import com.centurylink.mdw.script.JsonSlurper;
 import com.centurylink.mdw.script.Slurper;
 import com.centurylink.mdw.script.XmlBuilder;
 import com.centurylink.mdw.script.XmlSlurper;
+import com.centurylink.mdw.translator.JsonTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import com.centurylink.mdw.xml.DomHelper;
 
@@ -47,17 +47,17 @@ public class CrossmapActivity extends DefaultActivityImpl {
                 throw new ActivityException("Missing attribute: " + MAPPER);
             String mapperVer = getAttributeValueSmart(MAPPER_VERSION);
             AssetVersionSpec spec = new AssetVersionSpec(mapper, mapperVer == null ? "0" : mapperVer);
-            RuleSetVO mapperScript = RuleSetCache.getRuleSet(spec);
+            Asset mapperScript = AssetCache.getAsset(spec);
             if (mapperScript == null)
                 throw new ActivityException("Cannot load mapping script: " + spec);
-            if (!RuleSetVO.GROOVY.equals(mapperScript.getLanguage()))
+            if (!Asset.GROOVY.equals(mapperScript.getLanguage()))
                 throw new ActivityException("Unsupported mapper language: " + mapperScript.getLanguage());
 
             // input
             String inputAttr = getAttributeValueSmart(INPUT);
             if (inputAttr == null)
                 throw new ActivityException("Missing attribute: " + INPUT);
-            VariableVO inputVar = runtimeContext.getProcess().getVariable(inputAttr);
+            Variable inputVar = runtimeContext.getProcess().getVariable(inputAttr);
             if (inputVar == null)
                 throw new ActivityException("Input variable not defined: " + inputAttr);
             com.centurylink.mdw.variable.VariableTranslator inputTrans
@@ -82,7 +82,7 @@ public class CrossmapActivity extends DefaultActivityImpl {
             String outputAttr = getAttributeValueSmart(OUTPUT);
             if (outputAttr == null)
                 throw new ActivityException("Missing attribute: " + OUTPUT);
-            VariableVO outputVar = runtimeContext.getProcess().getVariable(outputAttr);
+            Variable outputVar = runtimeContext.getProcess().getVariable(outputAttr);
             if (outputVar == null)
                 throw new ActivityException("Output variable not defined: " + outputVar);
             com.centurylink.mdw.variable.VariableTranslator outputTrans
@@ -95,7 +95,7 @@ public class CrossmapActivity extends DefaultActivityImpl {
             else
                 throw new ActivityException("Unsupported output variable type: " + outputVar.getVariableType());
 
-            runScript(mapperScript.getRuleSet(), slurper, builder);
+            runScript(mapperScript.getStringContent(), slurper, builder);
 
             if (outputTrans instanceof JsonTranslator) {
                 Object output = ((JsonTranslator)outputTrans).fromJson(new JSONObject(builder.getString()));

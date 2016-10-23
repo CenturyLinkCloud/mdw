@@ -12,7 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Jsonable;
-import com.centurylink.mdw.common.utilities.StringHelper;
+import com.centurylink.mdw.util.StringHelper;
 
 public class TestCaseList implements Jsonable {
 

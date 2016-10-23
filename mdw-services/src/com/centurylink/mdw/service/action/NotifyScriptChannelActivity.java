@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
 
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.listener.ExternalEventHandlerBase;
 import com.centurylink.mdw.listener.ListenerHelper;
@@ -17,6 +15,8 @@ import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * External event handler for processing incoming requests.

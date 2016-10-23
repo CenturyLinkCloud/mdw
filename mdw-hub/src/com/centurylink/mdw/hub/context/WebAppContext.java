@@ -16,13 +16,13 @@ import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.constant.AuthConstants;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.model.value.system.SysInfo;
-import com.centurylink.mdw.model.value.system.SysInfoCategory;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.AuthConstants;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.system.SysInfo;
+import com.centurylink.mdw.model.system.SysInfoCategory;
+import com.centurylink.mdw.util.log.LoggerUtil;
 
 public class WebAppContext {
 

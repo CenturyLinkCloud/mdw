@@ -6,11 +6,11 @@ package com.centurylink.mdw.services;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.model.value.user.AuthenticatedUser;
-import com.centurylink.mdw.model.value.user.UserGroupVO;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.user.AuthenticatedUser;
+import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.User;
 
 public interface UserManager {
 
@@ -20,7 +20,7 @@ public interface UserManager {
 	 * @return the user object, or null if the user does not exist
 	 * @throws DataAccessException when there is database access failure
 	 */
-    public UserVO getUser(String userName)
+    public User getUser(String userName)
     throws DataAccessException;
 
 	/**
@@ -29,7 +29,7 @@ public interface UserManager {
 	 * @return the user object, or null if no user entry with this ID exists
 	 * @throws DataAccessException when there is database access failure
 	 */
-    public UserVO getUser(Long userId)
+    public User getUser(Long userId)
     throws UserException, DataAccessException;
 
     /**
@@ -42,7 +42,7 @@ public interface UserManager {
      * @throws UserException
      * @throws DataAccessException
      */
-    public UserGroupVO getUserGroup(String groupName, boolean loadRolesForUsers)
+    public Workgroup getUserGroup(String groupName, boolean loadRolesForUsers)
     throws UserException, DataAccessException;
 
     /**
@@ -55,7 +55,7 @@ public interface UserManager {
      * @throws UserException
      * @throws DataAccessException
      */
-    public UserGroupVO getUserGroup(Long groupId, boolean loadRolesForUsers)
+    public Workgroup getUserGroup(Long groupId, boolean loadRolesForUsers)
     throws UserException, DataAccessException;
 
     /**
@@ -74,7 +74,7 @@ public interface UserManager {
      * @param pUserRoleName role name
      * @return UserRole
      */
-    public UserRoleVO getUserRole(String pUserRoleName)
+    public Role getUserRole(String pUserRoleName)
     throws UserException, DataAccessException;
 
     /**
@@ -82,17 +82,7 @@ public interface UserManager {
      *
      * @return Array of UserRole
      */
-    public List<UserRoleVO> getUserRoles()
-    throws UserException, DataAccessException;
-
-    /**
-     * Returns all the roles that are mapped to the task action.
-     * This feature may be obsolete - check with Don
-     *
-     * @param pTaskActionId
-     * @return array of UserRole objects
-     */
-    public UserRoleVO[] getUserRolesForTaskAction(Long pTaskActionId)
+    public List<Role> getUserRoles()
     throws UserException, DataAccessException;
 
     /**
@@ -102,18 +92,6 @@ public interface UserManager {
      * @param pUpdatedGrps name of all groups the user should be a member
      */
     public void updateUserGroups(String pCUID, String[] pUpdatedGrps)
-    throws UserException, DataAccessException;
-
-    /**
-     * Updates the User roles for the passed in user Id
-     * This feature is retired in MDW 5.2 in favor of group based
-     * role model.
-     *
-     * @param pCUID
-     * @param pUpdatedGrps
-     */
-    @Deprecated
-    public void updateUserRoles(String pCUID, String[] pUpdatedRoles)
     throws UserException, DataAccessException;
 
     /**
@@ -141,19 +119,7 @@ public interface UserManager {
     /**
      * Returns the users belonging to a set of groups.
      */
-    public UserVO[] getUsersForGroups(String[] groups)
-    throws UserException, DataAccessException;
-
-    /**
-     * Returns all the users having the given role
-     * Deprecated in favor of group based role model
-     * @param roleName
-     * @return
-     * @throws UserException
-     * @throws DataAccessException
-     */
-    @Deprecated
-    public List<UserVO> getUsersForRole(String roleName)
+    public User[] getUsersForGroups(String[] groups)
     throws UserException, DataAccessException;
 
     /**
@@ -162,7 +128,7 @@ public interface UserManager {
      * @param pCuid the user's CUID
      * @return the workgroups for this user
      */
-    public UserGroupVO[] getGroupsForUser(String pCuid)
+    public Workgroup[] getGroupsForUser(String pCuid)
     throws UserException, DataAccessException;
 
     /**
@@ -172,7 +138,7 @@ public interface UserManager {
      * 		that are deleted (end-dated in the database) are also included
      * @return the groups
      */
-    public List<UserGroupVO> getUserGroups(boolean includeDeleted)
+    public List<Workgroup> getUserGroups(boolean includeDeleted)
     throws UserException, DataAccessException;
 
     /**
@@ -182,13 +148,13 @@ public interface UserManager {
      *
      * @return Array of UserVO objects
      */
-    public UserVO[] getUserVOs()
+    public User[] getUserVOs()
     throws UserException, DataAccessException;
 
     /**
      * Retrieves a list of shallow UserVOs.
      */
-    public List<UserVO> getUsers()
+    public List<User> getUsers()
     throws UserException, DataAccessException;
 
     /**
@@ -209,7 +175,7 @@ public interface UserManager {
      * @throws UserException
      * @throws DataAccessException
      */
-    public List<UserVO> queryUsers(String whereCondition,
+    public List<User> queryUsers(String whereCondition,
     		boolean withGroups, int startIndex, int endIndex, String sortOn)
     throws UserException, DataAccessException;
 
@@ -247,7 +213,7 @@ public interface UserManager {
      *
      * @param pUserGroupVO a user group value object
      */
-    public void addUserGroup(UserGroupVO pUserGroupVO)
+    public void addUserGroup(Workgroup pUserGroupVO)
     throws UserException, DataAccessException;
 
     /**
@@ -256,7 +222,7 @@ public interface UserManager {
      * @throws UserException
      * @throws DataAccessException
      */
-    public void updateUserGroup(UserGroupVO pUserGroupVO)
+    public void updateUserGroup(Workgroup pUserGroupVO)
     throws UserException, DataAccessException;
 
     /**
@@ -272,7 +238,7 @@ public interface UserManager {
      *
      * @param pUserGroupVO a user value object
      */
-    public void addUser(UserVO pUserVO)
+    public void addUser(User pUserVO)
     throws UserException, DataAccessException;
 
     /**
@@ -298,7 +264,7 @@ public interface UserManager {
      *
      * @param pUserRole a role object to be persisted
      */
-    public void addUserRole(UserRoleVO pUserRole)
+    public void addUserRole(Role pUserRole)
     throws UserException, DataAccessException;
 
     /**
@@ -308,7 +274,7 @@ public interface UserManager {
      * 		to identify which role to update, and name and description
      * 		are to be modified.
      */
-    public void updateUserRole(UserRoleVO role)
+    public void updateUserRole(Role role)
     throws UserException, DataAccessException;
 
     /**

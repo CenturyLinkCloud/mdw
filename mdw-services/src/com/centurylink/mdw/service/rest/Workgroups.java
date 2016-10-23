@@ -11,18 +11,17 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.exception.CachingException;
-import com.centurylink.mdw.common.exception.DataAccessException;
+import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.user.UserGroupVO;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserServices;
-import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
-import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -36,7 +35,7 @@ public class Workgroups extends JsonRestService {
     @Override
     public List<String> getRoles(String path) {
         List<String> roles = super.getRoles(path);
-        roles.add(UserRoleVO.USER_ADMIN);
+        roles.add(Role.USER_ADMIN);
         return roles;
     }
 
@@ -52,7 +51,7 @@ public class Workgroups extends JsonRestService {
     @Path("/{groupName}")
     @ApiOperation(value="Retrieve a workgroup or all workgroups",
         notes="If groupName is not present, returns all workgroups.",
-        response=UserGroupVO.class, responseContainer="List")
+        response=Workgroup.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         UserServices userServices = ServiceLocator.getUserServices();
@@ -88,16 +87,16 @@ public class Workgroups extends JsonRestService {
 
         UserServices userServices = ServiceLocator.getUserServices();
         try {
-            UserGroupVO existing = userServices.getWorkgroups().get(name);
+            Workgroup existing = userServices.getWorkgroups().get(name);
             if (rel == null) {
                 if (existing != null)
                     throw new ServiceException(HTTP_409_CONFLICT, "Workgroup name already exists: " + name);
-                UserGroupVO workgroup = new UserGroupVO(content);
+                Workgroup workgroup = new Workgroup(content);
                 userServices.createWorkgroup(workgroup);
             }
             else if (rel.equals("users")) {
                 String cuid = getSegment(path, 3);
-                UserVO user = UserGroupCache.getUser(cuid);
+                User user = UserGroupCache.getUser(cuid);
                 if (user == null) {
                     throw new CachingException("Cannot find user: " + cuid);
                 }
@@ -132,12 +131,12 @@ public class Workgroups extends JsonRestService {
     throws ServiceException, JSONException {
 
         UserServices userServices = ServiceLocator.getUserServices();
-        UserGroupVO workgroup = new UserGroupVO(content);
+        Workgroup workgroup = new Workgroup(content);
         String name = getSegment(path, 1);
         if (name == null)
             throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing path segment: {name}");
         try {
-            UserGroupVO existing = userServices.getWorkgroup(name);
+            Workgroup existing = userServices.getWorkgroup(name);
             if (existing == null)
                 throw new ServiceException(HTTP_404_NOT_FOUND, "Workgroup not found: " + name);
             // update

@@ -11,41 +11,41 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.WorkflowException;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.constant.VariableConstants;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.exception.ServiceLocatorException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.CollectionUtil;
-import com.centurylink.mdw.common.utilities.TransactionWrapper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.value.activity.ActivityVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.DocumentVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
-import com.centurylink.mdw.model.value.variable.VariableVO;
-import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
-import com.centurylink.mdw.model.value.work.WorkTransitionVO;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.app.WorkflowException;
+import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.constant.VariableConstants;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.workflow.Activity;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.Transition;
+import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.service.data.process.EngineDataAccess;
+import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
+import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.dao.process.EngineDataAccess;
-import com.centurylink.mdw.services.dao.process.EngineDataAccessCache;
-import com.centurylink.mdw.services.dao.process.EngineDataAccessDB;
-import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.CollectionUtil;
+import com.centurylink.mdw.util.ServiceLocatorException;
+import com.centurylink.mdw.util.TransactionWrapper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class ProcessEngineDriver {
 
@@ -75,7 +75,7 @@ public class ProcessEngineDriver {
      * @param processInstId
      * @return false if process has been canceled or completed
      */
-    private boolean processInstanceIsActive(ProcessInstanceVO processInst) throws ProcessException {
+    private boolean processInstanceIsActive(ProcessInstance processInst) throws ProcessException {
         Integer status = processInst.getStatusCode();
         if (WorkStatus.STATUS_CANCELLED.equals(status)) {
             logger.info("ProcessInstance has been cancelled. ProcessInstanceId = " + processInst.getId());
@@ -96,17 +96,13 @@ public class ProcessEngineDriver {
         return ret;
     }
 
-    private boolean isRecursiveCall(ProcessInstanceVO originatingInstance,
-    		ProcessVO processVO, Long embeddedProcId) {
-    	if (processVO.isInRuleSet()) {
-    		if (processVO.getProcessId().equals(originatingInstance.getProcessId())) {
-    			if (originatingInstance.getOwner().equals(OwnerType.MAIN_PROCESS_INSTANCE)) {
-    				return embeddedProcId.toString().equals(originatingInstance.getComment());
-    			} else return false;
-    		} else return false;
-    	} else {
-    		return embeddedProcId.equals(originatingInstance.getProcessId());
-    	}
+    private boolean isRecursiveCall(ProcessInstance originatingInstance,
+    		Process processVO, Long embeddedProcId) {
+		if (processVO.getProcessId().equals(originatingInstance.getProcessId())) {
+			if (originatingInstance.getOwner().equals(OwnerType.MAIN_PROCESS_INSTANCE)) {
+				return embeddedProcId.toString().equals(originatingInstance.getComment());
+			} else return false;
+		} else return false;
     }
 
     /**
@@ -116,8 +112,8 @@ public class ProcessEngineDriver {
      * @param eventMessageDoc
      * @param eventType
      */
-    private void handleInheritedEvent(ProcessExecuter engine, ProcessInstanceVO processInstVO,
-            ProcessVO processVO, InternalEventVO messageDoc, Integer eventType)
+    private void handleInheritedEvent(ProcessExecutor engine, ProcessInstance processInstVO,
+            Process processVO, InternalEvent messageDoc, Integer eventType)
       throws ProcessException {
         try {
         	if (logger.isInfoEnabled())
@@ -126,8 +122,8 @@ public class ProcessEngineDriver {
         			"Inherited Event - type=" + eventType + ", compcode="
         			+ messageDoc.getCompletionCode());
             String compCode = messageDoc.getCompletionCode();
-            ProcessInstanceVO originatingInstance = processInstVO;
-            ProcessVO embeddedProcdef = processVO.findEmbeddedProcess(eventType, compCode);
+            ProcessInstance originatingInstance = processInstVO;
+            Process embeddedProcdef = processVO.findEmbeddedProcess(eventType, compCode);
             while (embeddedProcdef==null && processInstVO.getOwner().equals(OwnerType.PROCESS_INSTANCE)) {
                 processInstVO = engine.getProcessInstance(processInstVO.getOwnerId());
                 processVO = getProcessDefinition(processInstVO);
@@ -145,7 +141,7 @@ public class ProcessEngineDriver {
                         secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
                         // Update the Process Variable "exception" with the exception handler's triggering Activity exception
                         if (processVO.getVariable("exception") != null && messageDoc.getSecondaryOwnerId() > 0) {
-                            VariableInstanceInfo exceptionVar = processInstVO.getVariable("exception");
+                            VariableInstance exceptionVar = processInstVO.getVariable("exception");
                             if (exceptionVar == null)
                                 engine.createVariableInstance(processInstVO, "exception", new DocumentReference(messageDoc.getSecondaryOwnerId()));
                             else
@@ -165,14 +161,14 @@ public class ProcessEngineDriver {
                         messageDoc.setSecondaryOwnerType(null);
                     }
                 } else messageDoc.setSecondaryOwnerType(null);
-                String ownerType = processVO.isInRuleSet()?OwnerType.MAIN_PROCESS_INSTANCE:OwnerType.PROCESS_INSTANCE;
-                ProcessInstanceVO procInst = engine.createProcessInstance(
+                String ownerType = OwnerType.MAIN_PROCESS_INSTANCE;
+                ProcessInstance procInst = engine.createProcessInstance(
                 		embeddedProcdef.getProcessId(), ownerType, processInstVO.getId(),
                 		secondaryOwnerType, secondaryOwnerId, processInstVO.getMasterRequestId(), null);
                 engine.startProcessInstance(procInst, 0);
             } else if (eventType.equals(EventType.ABORT)) {
             	// abort the root process instance
-            	InternalEventVO event = InternalEventVO.createProcessAbortMessage(processInstVO);
+            	InternalEvent event = InternalEvent.createProcessAbortMessage(processInstVO);
             	engine.abortProcessInstance(event);
             }
             else {
@@ -185,8 +181,8 @@ public class ProcessEngineDriver {
         }
     }
 
-    private void retryActivityStartWhenInstanceExists(ProcessExecuter engine,
-    		InternalEventVO event, ProcessInstanceVO pi) {
+    private void retryActivityStartWhenInstanceExists(ProcessExecutor engine,
+    		InternalEvent event, ProcessInstance pi) {
     	int count = event.getDeliveryCount();
 		String av = PropertyManager.getProperty(PropertyNames.MDW_ACTIVITY_ACTIVE_MAX_RETRY);
 		int max_retry = 5;
@@ -224,13 +220,13 @@ public class ProcessEngineDriver {
 		}
     }
 
-    private void resumeActivity(ProcessExecuter engine, InternalEventVO event,
-    		ProcessInstanceVO procInst, boolean resumeOnHold) {
+    private void resumeActivity(ProcessExecutor engine, InternalEvent event,
+    		ProcessInstance procInst, boolean resumeOnHold) {
     	Long actInstId = event.getWorkInstanceId();
-    	ActivityRuntimeVO ar = null;
+    	ActivityRuntime ar = null;
     	try {
             ar = engine.resumeActivityPrepare(procInst, event, resumeOnHold);
-            if (ar.getStartCase()!=ActivityRuntimeVO.RESUMECASE_NORMAL) return;
+            if (ar.getStartCase()!=ActivityRuntime.RESUMECASE_NORMAL) return;
             boolean finished;
             if (ar.getActivity() instanceof SuspendibleActivity) {
             	if ("true".equalsIgnoreCase(useTransactionOnExcecute)) {
@@ -249,46 +245,46 @@ public class ProcessEngineDriver {
         }
     }
 
-    private void executeActivity(ProcessExecuter engine, InternalEventVO event, ProcessInstanceVO procInst)
+    private void executeActivity(ProcessExecutor engine, InternalEvent event, ProcessInstance procInst)
     {
-    	ActivityRuntimeVO ar = null;
+    	ActivityRuntime ar = null;
 		try {
 			// Step 1. check, create and prepare activity instance
 			ar = engine.prepareActivityInstance(event, procInst);
 			switch (ar.getStartCase()) {
-			case ActivityRuntimeVO.STARTCASE_PROCESS_TERMINATED:
+			case ActivityRuntime.STARTCASE_PROCESS_TERMINATED:
 				logger.info("ProcessInstance is already terminated. ProcessInstanceId = "
 						+ ar.getProcessInstance().getId());
 				break;
-			case ActivityRuntimeVO.STARTCASE_ERROR_IN_PREPARE:
+			case ActivityRuntime.STARTCASE_ERROR_IN_PREPARE:
 				// error already reported
 				break;
-			case ActivityRuntimeVO.STARTCASE_INSTANCE_EXIST:
+			case ActivityRuntime.STARTCASE_INSTANCE_EXIST:
         		retryActivityStartWhenInstanceExists(engine, event, ar.getProcessInstance());
 				break;
-			case ActivityRuntimeVO.STARTCASE_SYNCH_COMPLETE:
+			case ActivityRuntime.STARTCASE_SYNCH_COMPLETE:
 				logger.info(logtag(ar.getProcessInstance().getProcessId(),
 						ar.getProcessInstance().getId(),ar.getActivityInstance().getDefinitionId(),
 						ar.getActivityInstance().getId()),
 						"The synchronization activity is already completed");
 				break;
-			case ActivityRuntimeVO.STARTCASE_SYNCH_HOLD:
+			case ActivityRuntime.STARTCASE_SYNCH_HOLD:
 				logger.info(logtag(ar.getProcessInstance().getProcessId(),
 						ar.getProcessInstance().getId(),ar.getActivityInstance().getDefinitionId(),
 						ar.getActivityInstance().getId()),
 						"The synchronization activity is on-hold - ignore incoming transition");
 				break;
-			case ActivityRuntimeVO.STARTCASE_SYNCH_WAITING:
+			case ActivityRuntime.STARTCASE_SYNCH_WAITING:
 				event.setWorkInstanceId(ar.getActivityInstance().getId());
 				event.setEventType(EventType.RESUME);
 				resumeActivity(engine, event, procInst, false);
 				break;
-			case ActivityRuntimeVO.STARTCASE_RESUME_WAITING:
+			case ActivityRuntime.STARTCASE_RESUME_WAITING:
         		event.setWorkInstanceId(ar.getActivityInstance().getId());
         		event.setEventType(EventType.RESUME);
         		resumeActivity(engine, event, procInst, true);
 				break;
-			case ActivityRuntimeVO.STARTCASE_NORMAL:
+			case ActivityRuntime.STARTCASE_NORMAL:
 			default:
 				// Step 2. invoke execute() of the activity
 			    String resCode = ar.activity.notifyMonitors(WorkStatus.LOGMSG_EXECUTE);
@@ -330,15 +326,15 @@ public class ProcessEngineDriver {
 		}
     }
 
-    private void handleDelay(ProcessExecuter engine, InternalEventVO event,
-    		ProcessInstanceVO processInstance) throws Exception
+    private void handleDelay(ProcessExecutor engine, InternalEvent event,
+    		ProcessInstance processInstance) throws Exception
 	{
 		if (!processInstanceIsActive(processInstance)) return;
 
 		if (OwnerType.SLA.equals(event.getSecondaryOwnerType())) {
 			// new way to handle SLA through JMS message delay rather than timer demon
 			Long actInstId = event.getWorkInstanceId();
-		    ActivityInstanceVO ai = engine.getActivityInstance(actInstId);
+		    ActivityInstance ai = engine.getActivityInstance(actInstId);
 		    if (ai.getStatusCode()!=WorkStatus.STATUS_WAITING.intValue()) {
 		    	// ignore the message when the status is not waiting.
 		    	return;
@@ -348,8 +344,8 @@ public class ProcessEngineDriver {
 		    logger.info(tag, "Activity in waiting status times out");
 
 		    Integer actInstStatus = WorkStatus.STATUS_CANCELLED;
-		    ProcessVO procdef = getProcessDefinition(processInstance);
-		    ActivityVO activity = procdef.getActivityVO(ai.getDefinitionId());
+		    Process procdef = getProcessDefinition(processInstance);
+		    Activity activity = procdef.getActivityVO(ai.getDefinitionId());
 		    String status = activity.getAttribute(WorkAttributeConstant.STATUS_AFTER_TIMEOUT);
 		    if (status!=null) {
 		    	for (int i=0; i<WorkStatus.allStatusNames.length; i++) {
@@ -373,8 +369,8 @@ public class ProcessEngineDriver {
 
 		}
 
-		ProcessVO processVO = getProcessDefinition(processInstance);
-		List<WorkTransitionVO> workTransitionVOs = processVO.getWorkTransitions(event.getWorkId(),
+		Process processVO = getProcessDefinition(processInstance);
+		List<Transition> workTransitionVOs = processVO.getWorkTransitions(event.getWorkId(),
 				EventType.DELAY, event.getCompletionCode());
 		if (CollectionUtil.isNotEmpty(workTransitionVOs)) {
 			engine.createTransitionInstances(processInstance, workTransitionVOs,
@@ -384,8 +380,8 @@ public class ProcessEngineDriver {
 		}
 	}
 
-    private ProcessInstanceVO findProcessInstance(ProcessExecuter engine,
-    		InternalEventVO event) throws ProcessException, DataAccessException {
+    private ProcessInstance findProcessInstance(ProcessExecutor engine,
+    		InternalEvent event) throws ProcessException, DataAccessException {
     	Long procInstId;
     	if (event.isProcess()) procInstId = event.getWorkInstanceId();	// can be null or populated for process start message
     	else procInstId = event.getOwnerId();
@@ -401,10 +397,10 @@ public class ProcessEngineDriver {
     public void processEvents(String msgid, String textMessage) {
         try {
             if (logger.isDebugEnabled()) logger.debug("executeFlow: " + textMessage);
-        	InternalEventVO event = new InternalEventVO(textMessage);
+        	InternalEvent event = new InternalEvent(textMessage);
         	// a. find the process instance (looking for memory only first, then regular)
         	Long procInstId;
-        	ProcessInstanceVO procInst;
+        	ProcessInstance procInst;
         	if (event.isProcess()) {
         		if (event.getEventType().equals(EventType.FINISH)) {
         			procInstId = null;	// not needed, and for remote process returns, will not be able to find it
@@ -442,11 +438,11 @@ public class ProcessEngineDriver {
         	int performance_level;
         	if (procInst==null) {		// must be process start message
         		if (event.isProcess() && event.getEventType().equals(EventType.START)) {
-        			ProcessVO procdef = getProcessDefinition(event.getWorkId());
+        			Process procdef = getProcessDefinition(event.getWorkId());
         			performance_level = procdef.getPerformanceLevel();
         		} else performance_level = 0;
         	} else {
-        		ProcessVO procdef = getProcessDefinition(procInst.getProcessId());
+        		Process procdef = getProcessDefinition(procInst.getProcessId());
         		if (procdef == null) {
         		    String msg = "Unable to load process id " + procInst.getProcessId() + " (instance id=" + procInst.getId() + ") for " + msgid;
         		    if (ApplicationContext.isFileBasedAssetPersist() && ApplicationContext.isDevelopment()) {
@@ -455,7 +451,7 @@ public class ProcessEngineDriver {
             		        logger.severe(msg + " (event will be deleted)");
             		        EngineDataAccess edao = EngineDataAccessCache.getInstance(false, default_performance_level_regular);
             		        InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
-            		        ProcessExecuter engine = new ProcessExecuter(edao, msgBroker, false);
+            		        ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
             		        engine.deleteInternalEvent(msgid);
             		        return;
         		        }
@@ -473,7 +469,7 @@ public class ProcessEngineDriver {
     		// c. create engine
         	EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
     		InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
-            ProcessExecuter engine = new ProcessExecuter(edao, msgBroker, false);
+            ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
     		if (msgid!=null) {
     			boolean success = engine.deleteInternalEvent(msgid);
     			if (!success) {
@@ -512,8 +508,8 @@ public class ProcessEngineDriver {
 		}
     }
 
-    private void processEvent(ProcessExecuter engine,
-    		InternalEventVO event, ProcessInstanceVO procInst) {
+    private void processEvent(ProcessExecutor engine,
+    		InternalEvent event, ProcessInstance procInst) {
         try {
         	if (event.isProcess()) {
         		if (event.getEventType().equals(EventType.START)) {
@@ -540,9 +536,9 @@ public class ProcessEngineDriver {
     	        } else if (event.getEventType().equals(EventType.DELAY)) {
     	        	handleDelay(engine, event, procInst);
     	        } else {
-    	            ProcessVO processVO = getProcessDefinition(procInst);
+    	            Process processVO = getProcessDefinition(procInst);
     	            procInst.setProcessName(processVO.getProcessName());
-    	            List<WorkTransitionVO> workTransitionVOs = processVO.getWorkTransitions(event.getWorkId(),
+    	            List<Transition> workTransitionVOs = processVO.getWorkTransitions(event.getWorkId(),
     	            		event.getEventType(), event.getCompletionCode());
     	            if (CollectionUtil.isNotEmpty(workTransitionVOs)) {
     	            	engine.createTransitionInstances(procInst, workTransitionVOs,
@@ -570,7 +566,7 @@ public class ProcessEngineDriver {
         }
     }
 
-	private void addDocumentToCache(ProcessExecuter engine, Long docid, String type, String content) {
+	private void addDocumentToCache(ProcessExecutor engine, Long docid, String type, String content) {
     	if (content!=null) {
     		if (docid.longValue()==0L) {
     			try {
@@ -579,7 +575,7 @@ public class ProcessEngineDriver {
 					// should never happen, as this is cache only
 				}
     		} else {
-    	    	DocumentVO docvo = new DocumentVO();
+    	    	Document docvo = new Document();
     	    	docvo.setContent(content);
     	    	docvo.setDocumentId(docid);
     	    	docvo.setDocumentType(type);
@@ -643,7 +639,7 @@ public class ProcessEngineDriver {
         EngineDataAccess edao = EngineDataAccessCache.getInstance(true, performance_level);
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
-        ProcessExecuter engine = new ProcessExecuter(edao, msgBroker, true);
+        ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, true);
         if (performance_level >= 5) {
             if (OwnerType.DOCUMENT.equals(ownerType))
                 addDocumentToCache(engine, ownerId, XmlObject.class.getName(), masterRequest);
@@ -653,7 +649,7 @@ public class ProcessEngineDriver {
                     if (value != null && value.startsWith("DOCUMENT:")) {
                         DocumentReference docRef = new DocumentReference(parameters.get(key));
                         if (!docRef.getDocumentId().equals(ownerId)) {
-                            DocumentVO docVO = engine.loadDocument(docRef, false);
+                            Document docVO = engine.loadDocument(docRef, false);
                             if (docVO != null && docVO.getContent() != null)
                                 addDocumentToCache(engine, docRef.getDocumentId(), docVO.getDocumentType(), docVO.getContent());
                         }
@@ -661,7 +657,7 @@ public class ProcessEngineDriver {
                 }
             }
         }
-        ProcessInstanceVO mainProcessInst = executeServiceProcess(engine, processId,
+        ProcessInstance mainProcessInst = executeServiceProcess(engine, processId,
         		ownerType, ownerId, masterRequestId, parameters, secondaryOwnerType, secondaryOwnerId, headers);
     	boolean completed = mainProcessInst.getStatusCode().equals(WorkStatus.STATUS_COMPLETED);
     	String resp = completed?engine.getSynchronousProcessResponse(mainProcessInst.getId(), responseVarName):null;
@@ -695,8 +691,8 @@ public class ProcessEngineDriver {
         EngineDataAccess edao = EngineDataAccessCache.getInstance(true, performance_level);
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
-        ProcessExecuter engine = new ProcessExecuter(edao, msgBroker, true);
-        ProcessInstanceVO mainProcessInst = executeServiceProcess(engine, processId,
+        ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, true);
+        ProcessInstance mainProcessInst = executeServiceProcess(engine, processId,
         		OwnerType.PROCESS_INSTANCE, parentProcInstId, masterRequestId, parameters, null, null, null);
        	boolean completed = mainProcessInst.getStatusCode().equals(WorkStatus.STATUS_COMPLETED);
     	Map<String,String> resp = completed?engine.getOutPutParameters(mainProcessInst.getId(), processId):null;
@@ -720,14 +716,14 @@ public class ProcessEngineDriver {
      * @return
      * @throws Exception
      */
-    private ProcessInstanceVO executeServiceProcess(ProcessExecuter engine, Long processId,
+    private ProcessInstance executeServiceProcess(ProcessExecutor engine, Long processId,
             String ownerType, Long ownerId, String masterRequestId, Map<String,String> parameters,
             String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
-    	ProcessVO procdef = getProcessDefinition(processId);
+    	Process procdef = getProcessDefinition(processId);
     	Long startActivityId = procdef.getStartActivity().getActivityId();
         if (masterRequestId == null)
             masterRequestId = genMasterRequestId();
-        ProcessInstanceVO mainProcessInst = engine.createProcessInstance(
+        ProcessInstance mainProcessInst = engine.createProcessInstance(
         		processId, ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
     			masterRequestId, parameters);
         mainProcessInstanceId = mainProcessInst.getId();
@@ -743,13 +739,13 @@ public class ProcessEngineDriver {
                 WorkStatus.LOGMSG_PROC_START + " - " + procdef.getProcessName() + "/" + procdef.getVersionString());
         engine.notifyMonitors(mainProcessInst, WorkStatus.LOGMSG_PROC_START);
         // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
-        InternalEventVO event = InternalEventVO.createActivityStartMessage(startActivityId,
+        InternalEvent event = InternalEvent.createActivityStartMessage(startActivityId,
         		mainProcessInst.getId(), 0L, masterRequestId, EventType.EVENTNAME_START);
     	InternalMessenger msgBroker = engine.getInternalMessenger();
     	lastException = null;
     	processEvent(engine, event, mainProcessInst);
         while ((event=msgBroker.getNextMessageFromQueue(engine))!=null) {
-    		ProcessInstanceVO procInst = this.findProcessInstance(engine, event);
+    		ProcessInstance procInst = this.findProcessInstance(engine, event);
         	processEvent(engine, event, procInst);
         }
         mainProcessInst = engine.getProcessInstance(mainProcessInst.getId());
@@ -760,7 +756,7 @@ public class ProcessEngineDriver {
     	return mainProcessInstanceId;
     }
 
-    private void setOwnerDocumentProcessInstanceId(ProcessExecuter engine,
+    private void setOwnerDocumentProcessInstanceId(ProcessExecutor engine,
     		Long msgDocId, Long procInstId, String masterRequestId) {
     	// update document's process instance id attribute
     	try {
@@ -773,18 +769,18 @@ public class ProcessEngineDriver {
     	}
     }
 
-	private void bindRequestVariable(ProcessVO procdef,
-			Long reqdocId, ProcessExecuter engine, ProcessInstanceVO pi)
+	private void bindRequestVariable(Process procdef,
+			Long reqdocId, ProcessExecutor engine, ProcessInstance pi)
 	throws DataAccessException {
-        VariableVO requestVO = procdef.getVariable(VariableConstants.REQUEST);
+        Variable requestVO = procdef.getVariable(VariableConstants.REQUEST);
         if (requestVO==null) return;
         int cat = requestVO.getVariableCategory();
         String vartype = requestVO.getVariableType();
-        if (cat!=VariableVO.CAT_INPUT && cat!=VariableVO.CAT_INOUT) return;
+        if (cat!=Variable.CAT_INPUT && cat!=Variable.CAT_INOUT) return;
         if (!VariableTranslator.isDocumentReferenceVariable(vartype)) return;
-        List<VariableInstanceInfo> viList = pi.getVariables();
+        List<VariableInstance> viList = pi.getVariables();
         if (viList!=null) {
-        	for (VariableInstanceInfo vi : viList) {
+        	for (VariableInstance vi : viList) {
         		if (vi.getName().equals(VariableConstants.REQUEST)) return;
         	}
         }
@@ -792,18 +788,18 @@ public class ProcessEngineDriver {
         engine.createVariableInstance(pi, VariableConstants.REQUEST, docref);
 	}
 
-    private void bindRequestHeadersVariable(ProcessVO procdef, Map<String,String> headers,
-            ProcessExecuter engine, ProcessInstanceVO pi) throws DataAccessException {
-        VariableVO headersVO = procdef.getVariable(VariableConstants.REQUEST_HEADERS);
+    private void bindRequestHeadersVariable(Process procdef, Map<String,String> headers,
+            ProcessExecutor engine, ProcessInstance pi) throws DataAccessException {
+        Variable headersVO = procdef.getVariable(VariableConstants.REQUEST_HEADERS);
         if (headersVO == null)
             return;
         int cat = headersVO.getVariableCategory();
         String vartype = headersVO.getVariableType();
-        if (cat != VariableVO.CAT_INPUT && cat != VariableVO.CAT_INOUT)
+        if (cat != Variable.CAT_INPUT && cat != Variable.CAT_INOUT)
             return;
-        List<VariableInstanceInfo> viList = pi.getVariables();
+        List<VariableInstance> viList = pi.getVariables();
         if (viList != null) {
-            for (VariableInstanceInfo vi : viList) {
+            for (VariableInstance vi : viList) {
                 if (vi.getName().equals(VariableConstants.REQUEST_HEADERS))
                     return;
             }
@@ -850,7 +846,7 @@ public class ProcessEngineDriver {
     public Long startProcess(Long processId, String masterRequestId, String ownerType,
 			Long ownerId, Map<String,String> vars,
 			String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
-        ProcessVO procdef = getProcessDefinition(processId);
+        Process procdef = getProcessDefinition(processId);
         int performance_level = procdef.getPerformanceLevel();
         if (performance_level<=0) performance_level = default_performance_level_regular;
     	EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
@@ -858,8 +854,8 @@ public class ProcessEngineDriver {
 		// do not set internal messenger with cache options, as this engine does not process it directly
         if (masterRequestId == null)
             masterRequestId = genMasterRequestId();
-        ProcessExecuter engine = new ProcessExecuter(edao, msgBroker, false);
-        ProcessInstanceVO processInst = engine.createProcessInstance(processId,
+        ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
+        ProcessInstance processInst = engine.createProcessInstance(processId,
         		ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
         		masterRequestId, vars);
         if (ownerType.equals(OwnerType.DOCUMENT)) {
@@ -891,7 +887,7 @@ public class ProcessEngineDriver {
      */
 	public Long startProcessFromActivity(Long processId, Long activityId, String masterRequestId,
 			String ownerType, Long ownerId, Map<String,String> vars, Long packageId) throws Exception {
-        ProcessVO procdef = getProcessDefinition(processId);
+        Process procdef = getProcessDefinition(processId);
         int performance_level = procdef.getPerformanceLevel();
         if (performance_level<=0) performance_level = default_performance_level_regular;
     	EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
@@ -899,8 +895,8 @@ public class ProcessEngineDriver {
         Long procInstId;
         if (masterRequestId == null)
             masterRequestId = genMasterRequestId();
-        ProcessExecuter engine = new ProcessExecuter(edao, msgBroker, false);
-        ProcessInstanceVO processInst = engine.createProcessInstance(
+        ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
+        ProcessInstance processInst = engine.createProcessInstance(
         		procdef.getProcessId(), ownerType, ownerId, null, null,
         		masterRequestId, vars);
         logger.info(logtag(processId, processInst.getId(), masterRequestId),
@@ -910,7 +906,7 @@ public class ProcessEngineDriver {
     		setOwnerDocumentProcessInstanceId(engine, ownerId, processInst.getId(), masterRequestId);
         engine.updateProcessInstanceStatus(processInst.getId(), WorkStatus.STATUS_PENDING_PROCESS);
         // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
-        InternalEventVO evMsg = InternalEventVO.createActivityStartMessage(activityId,
+        InternalEvent evMsg = InternalEvent.createActivityStartMessage(activityId,
 	        		processInst.getId(), null, masterRequestId, null);
         engine.sendInternalEvent(evMsg);
         procInstId = processInst.getId();
@@ -942,37 +938,20 @@ public class ProcessEngineDriver {
 
 	private void loadDefaultPerformanceLevel() {
 		String pv = PropertyManager.getProperty(PropertyNames.MDW_PERFORMANCE_LEVEL_REGULAR);
-		if (pv!=null) {
+		if (pv != null)
 			default_performance_level_regular = Integer.parseInt(pv);
-		} else {
-			pv = PropertyManager.getProperty(PropertyNames.MDW_ENGINE_MESSAGE_PROCESSING);
-			if (pv!=null) {
-				// backward compatibility with 5.0
-				if (pv.equalsIgnoreCase("multiple")) default_performance_level_regular = 3;
-				else if (pv.equalsIgnoreCase("memoryonly")) default_performance_level_regular = 9;
-				else default_performance_level_regular = 1;
-			} else default_performance_level_regular = 3;
-		}
 		pv = PropertyManager.getProperty(PropertyNames.MDW_PERFORMANCE_LEVEL_SERVICE);
-		if (pv!=null) {
+		if (pv != null)
 			default_performance_level_service = Integer.parseInt(pv);
-		} else {
-			pv = PropertyManager.getProperty(PropertyNames.PROP_DO_PARTIAL_DB_LOGGING);
-			if (pv!=null) {
-				// backward compatibility with 5.0
-				if (pv.equalsIgnoreCase("true")) default_performance_level_service = 5;
-	    		else default_performance_level_service = 9;
-	    	} else default_performance_level_service = 3;
-		}
 	}
 
-	private ProcessVO getProcessDefinition(Long processId) {
-        return ProcessVOCache.getProcessVO(processId);
+	private Process getProcessDefinition(Long processId) {
+        return ProcessCache.getProcess(processId);
 	}
 
-    private ProcessVO getProcessDefinition(ProcessInstanceVO procinst) {
-    	ProcessVO procdef = ProcessVOCache.getProcessVO(procinst.getProcessId());
-    	if (procinst.isNewEmbedded())
+    private Process getProcessDefinition(ProcessInstance procinst) {
+    	Process procdef = ProcessCache.getProcess(procinst.getProcessId());
+    	if (procinst.isEmbedded())
     		procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
     	return procdef;
     }

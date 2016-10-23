@@ -11,18 +11,18 @@ import org.drools.KnowledgeBase;
 import org.drools.command.CommandFactory;
 import org.drools.runtime.StatelessKnowledgeSession;
 
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.exception.StrategyException;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.task.TaskVO;
+import com.centurylink.mdw.common.StrategyException;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.observer.task.PrioritizationStrategy;
 
 public class RulesBasedPrioritizationStrategy extends RulesBasedStrategy implements PrioritizationStrategy {
 
     @Override
-    public Date determineDueDate(TaskVO taskTemplate) throws StrategyException {
+    public Date determineDueDate(TaskTemplate taskTemplate) throws StrategyException {
 
-        TaskInstanceVO taskInstanceVO = new TaskInstanceVO();  // for holding values
+        TaskInstance taskInstanceVO = new TaskInstance();  // for holding values
 
         // execute rules only once (results are stored in taskInstanceVO)
         KnowledgeBase knowledgeBase = getKnowledgeBase();
@@ -38,8 +38,8 @@ public class RulesBasedPrioritizationStrategy extends RulesBasedStrategy impleme
         return taskInstanceVO.getDueDate();
     }
 
-    public int determinePriority(TaskVO taskTemplate, Date dueDate) throws StrategyException {
-        TaskInstanceVO taskInstanceVO = new TaskInstanceVO();  // for holding values
+    public int determinePriority(TaskTemplate taskTemplate, Date dueDate) throws StrategyException {
+        TaskInstance taskInstanceVO = new TaskInstance();  // for holding values
         return taskInstanceVO.getPriority() == null ? 0 : taskInstanceVO.getPriority();
     }
 

@@ -96,6 +96,12 @@ task javadocs(type: Javadoc) {
     destinationDir = file('../mdw-hub/web/javadoc')
 }
 
+task exportAssetPackages(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["exportAssetPackages"]
+    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
+}
+
 task versions << {
     println "Java Version: " + System.getProperty("java.version")
     println GradleVersion.current().prettyPrint()

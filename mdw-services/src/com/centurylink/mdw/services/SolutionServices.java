@@ -4,9 +4,9 @@
 package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.value.project.Solution;
-import com.centurylink.mdw.model.value.project.SolutionList;
-import com.centurylink.mdw.model.value.project.Solution.MemberType;
+import com.centurylink.mdw.model.workflow.Solution;
+import com.centurylink.mdw.model.workflow.SolutionList;
+import com.centurylink.mdw.model.workflow.Solution.MemberType;
 
 public interface SolutionServices {
 

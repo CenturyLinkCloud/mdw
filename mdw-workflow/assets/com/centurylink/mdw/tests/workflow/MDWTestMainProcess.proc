@@ -75,7 +75,7 @@
     {
       "attributes": {
         "OsgiBundleSymbolicName": "com.centurylink.mdw.workflow",
-        "Rule": "import org.w3c.dom.Node;\r\nimport org.w3c.dom.NodeList; \r\n\r\nNodeList nodes = order.getFirstChild().getChildNodes();   \r\n Node node = nodes.item(1);\r\n if (\"orderId\".equals(node.getLocalName()))  \r\n   orderId = node.getFirstChild().getNodeValue();\r\n\r\n  ",
+        "Rule": "import org.w3c.dom.Node;\r\nimport org.w3c.dom.NodeList;\r\n\r\nNodeList nodes = order.getFirstChild().getChildNodes();\r\n Node node = nodes.item(0);\r\n if (\"orderId\".equals(node.getLocalName()))\r\n   orderId = node.getFirstChild().getNodeValue();\r\n\r\n",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=858,y=657,w=25,h=23"
       },
@@ -762,5 +762,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "3.30"
+  "version": "3.31"
 }

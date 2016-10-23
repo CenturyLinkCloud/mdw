@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.model.value.activity.MockRuntimeContext;
+import com.centurylink.mdw.test.MockRuntimeContext;
 
 /**
  * Unit test for REST service adapter activity.

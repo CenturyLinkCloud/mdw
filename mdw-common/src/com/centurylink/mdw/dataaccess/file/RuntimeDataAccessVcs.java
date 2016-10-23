@@ -12,30 +12,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import com.centurylink.mdw.common.cache.impl.VariableTypeCache;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.query.QueryRequest;
+import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.common.service.Query;
-import com.centurylink.mdw.common.utilities.StringHelper;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.BaselineData;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.data.event.EventLog;
-import com.centurylink.mdw.model.data.work.WorkStatus;
-import com.centurylink.mdw.model.data.work.WorkStatuses;
-import com.centurylink.mdw.model.value.activity.ActivityInstance;
-import com.centurylink.mdw.model.value.activity.ActivityList;
-import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
-import com.centurylink.mdw.model.value.process.LinkedProcessInstance;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessList;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
-import com.centurylink.mdw.model.value.variable.VariableTypeVO;
-import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
-import com.centurylink.mdw.model.value.work.WorkTransitionInstanceVO;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.event.EventLog;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.variable.VariableType;
+import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.ActivityList;
+import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessList;
+import com.centurylink.mdw.model.workflow.TransitionInstance;
+import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.util.StringHelper;
 
 /**
  * Used for VCS-based assets in the runtime container (not Designer).
@@ -44,14 +43,14 @@ import com.centurylink.mdw.model.value.work.WorkTransitionInstanceVO;
  */
 public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDataAccess {
 
-    private List<VariableTypeVO> variableTypes;
+    private List<VariableType> variableTypes;
 
     public RuntimeDataAccessVcs(DatabaseAccess db, int databaseVersion, int supportedVersion, BaselineData baselineData) {
         super(db, databaseVersion, supportedVersion);
         this.variableTypes = baselineData.getVariableTypes();
     }
 
-    public ProcessInstanceVO getProcessInstance(Long instanceId) throws DataAccessException {
+    public ProcessInstance getProcessInstance(Long instanceId) throws DataAccessException {
         try {
             String q = "select PROCESS_INSTANCE_ID from PROCESS_INSTANCE where PROCESS_INSTANCE_ID=?";
             db.openConnection();
@@ -66,20 +65,20 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         }
     }
 
-    public ProcessInstanceVO getProcessInstanceAll(Long procInstId)
+    public ProcessInstance getProcessInstanceAll(Long procInstId)
     throws DataAccessException {
         try {
             db.openConnection();
-            ProcessInstanceVO procInstInfo = this.getProcessInstanceBase0(procInstId);
-            List<ActivityInstanceVO> actInstList = new ArrayList<ActivityInstanceVO>();
+            ProcessInstance procInstInfo = this.getProcessInstanceBase0(procInstId);
+            List<ActivityInstance> actInstList = new ArrayList<ActivityInstance>();
             String query = "select ACTIVITY_INSTANCE_ID,STATUS_CD,START_DT,END_DT," +
                 "    STATUS_MESSAGE,ACTIVITY_ID,COMPCODE" +
                 " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?" +
                 " order by ACTIVITY_INSTANCE_ID desc";
             ResultSet rs = db.runSelect(query, procInstId);
-            ActivityInstanceVO actInst;
+            ActivityInstance actInst;
             while (rs.next()) {
-                actInst = new ActivityInstanceVO();
+                actInst = new ActivityInstance();
                 actInst.setId(new Long(rs.getLong(1)));
                 actInst.setStatusCode(rs.getInt(2));
                 actInst.setStartDate(StringHelper.dateToString(rs.getTimestamp(3)));
@@ -90,15 +89,15 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 actInstList.add(actInst);
             }
             procInstInfo.setActivities(actInstList);
-            List<WorkTransitionInstanceVO> workTransInstanceList
-                = new ArrayList<WorkTransitionInstanceVO>();
+            List<TransitionInstance> workTransInstanceList
+                = new ArrayList<TransitionInstance>();
             query = "select WORK_TRANS_INST_ID,STATUS_CD,START_DT,END_DT,WORK_TRANS_ID" +
                 " from WORK_TRANSITION_INSTANCE" +
                 " where PROCESS_INST_ID=? order by WORK_TRANS_INST_ID desc";
             rs = db.runSelect(query, procInstId);
-            WorkTransitionInstanceVO workTransInstance;
+            TransitionInstance workTransInstance;
             while (rs.next()) {
-                workTransInstance = new WorkTransitionInstanceVO();
+                workTransInstance = new TransitionInstance();
                 workTransInstance.setTransitionInstanceID(new Long(rs.getLong(1)));
                 workTransInstance.setProcessInstanceID(procInstId);
                 workTransInstance.setStatusCode(rs.getInt(2));
@@ -108,12 +107,12 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 workTransInstanceList.add(workTransInstance);
             }
             procInstInfo.setTransitions(workTransInstanceList);
-            List<VariableInstanceInfo> variableDataList = new ArrayList<VariableInstanceInfo>();
+            List<VariableInstance> variableDataList = new ArrayList<VariableInstance>();
             query = "select VARIABLE_INST_ID, VARIABLE_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID " +
                 "from VARIABLE_INSTANCE where PROCESS_INST_ID=? order by lower(VARIABLE_NAME)";
             rs = db.runSelect(query, procInstId);
             while (rs.next()) {
-                VariableInstanceInfo data = new VariableInstanceInfo();
+                VariableInstance data = new VariableInstance();
                 data.setInstanceId(new Long(rs.getLong(1)));
                 data.setVariableId(new Long(rs.getLong(2)));
                 data.setStringValue(rs.getString(3));
@@ -130,7 +129,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         }
     }
 
-    public ProcessInstanceVO getProcessInstanceBase(Long procInstId) throws DataAccessException {
+    public ProcessInstance getProcessInstanceBase(Long procInstId) throws DataAccessException {
         try {
             db.openConnection();
             return getProcessInstanceBase0(procInstId);
@@ -158,14 +157,14 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             // instances query
             if (orderBy == null)
                 orderBy = " ORDER BY PROCESS_INSTANCE_ID DESC\n";
-            int startIndex = pageSize==QueryRequest.ALL_ROWS ? QueryRequest.ALL_ROWS : (pageIndex - 1) * pageSize;
+            int startIndex = pageSize == Query.MAX_ALL ? Query.MAX_ALL : (pageIndex - 1) * pageSize;
             int endIndex = startIndex + pageSize;
             query = buildQuery(criteria, startIndex, endIndex, orderBy);
 
             rs = db.runSelect(query, null);
-            List<ProcessInstanceVO> mdwProcessInstanceList = new ArrayList<ProcessInstanceVO>();
+            List<ProcessInstance> mdwProcessInstanceList = new ArrayList<ProcessInstance>();
             while (rs.next()) {
-                ProcessInstanceVO pi = new ProcessInstanceVO(rs.getLong(8), rs.getString(9));
+                ProcessInstance pi = new ProcessInstance(rs.getLong(8), rs.getString(9));
                 pi.setOwner(rs.getString(6));
                 pi.setOwnerId(rs.getLong(7));
                 pi.setMasterRequestId(rs.getString(2));
@@ -181,7 +180,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             processList.setRetrieveDate(DatabaseAccess.getDbDate());
             processList.setCount(mdwProcessInstanceList.size());
             processList.setTotal(count);
-            for (ProcessInstanceVO process : processList.getItems())
+            for (ProcessInstance process : processList.getItems())
                 populateNameVersionStatus(process);
             return processList;
         } catch (Exception e) {
@@ -195,7 +194,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
     public ProcessList getProcessInstanceList(Map<String,String> criteria, Map<String,String> variables, int pageIndex, int pageSize, String orderBy)
     throws DataAccessException {
         ProcessList procList = getProcessInstanceList(criteria, null, variables, pageIndex, pageSize, orderBy);
-        for (ProcessInstanceVO process : procList.getItems())
+        for (ProcessInstance process : procList.getItems())
             populateNameVersionStatus(process);
         return procList;
     }
@@ -218,18 +217,16 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             else
                 count = new Long(-1);
 
-            QueryRequest req = new QueryRequest();
-            req.setRestrictions(criteria);
             if (orderBy == null)
                 orderBy = " ORDER BY PROCESS_INSTANCE_ID DESC\n";
-            int startIndex = pageSize==QueryRequest.ALL_ROWS ? QueryRequest.ALL_ROWS : (pageIndex - 1) * pageSize;
+            int startIndex = pageSize == Query.MAX_ALL ? Query.MAX_ALL : (pageIndex - 1) * pageSize;
             int endIndex = startIndex + pageSize;
             query = buildQuery(criteria, variableNames, variables, startIndex, endIndex, orderBy);
 
             rs = db.runSelect(query, null);
-            List<ProcessInstanceVO> mdwProcessInstanceList = new ArrayList<ProcessInstanceVO>();
+            List<ProcessInstance> mdwProcessInstanceList = new ArrayList<ProcessInstance>();
             while (rs.next()) {
-                ProcessInstanceVO pi = new ProcessInstanceVO(rs.getLong(8), rs.getString(9));
+                ProcessInstance pi = new ProcessInstance(rs.getLong(8), rs.getString(9));
                 pi.setOwner(rs.getString(6));
                 pi.setOwnerId(rs.getLong(7));
                 pi.setMasterRequestId(rs.getString(2));
@@ -239,11 +236,11 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 pi.setComment(rs.getString(10));
                 pi.setEndDate(StringHelper.dateToString(rs.getTimestamp(5)));
                 if (variableNames != null && variableNames.size() > 0) {
-                    List<VariableInstanceInfo> vars = new ArrayList<VariableInstanceInfo>();
+                    List<VariableInstance> vars = new ArrayList<VariableInstance>();
                     for (String varName : variableNames) {
                         String name = varName.startsWith("DATE:") ? varName.substring(5) : varName;
                         String varVal = rs.getString(name.toUpperCase());
-                        VariableInstanceInfo varInstInfo = new VariableInstanceInfo();
+                        VariableInstance varInstInfo = new VariableInstance();
                         varInstInfo.setName(name);
                         varInstInfo.setStringValue(varVal);
                         vars.add(varInstInfo);
@@ -266,7 +263,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         }
     }
 
-    public List<ProcessInstanceVO> getProcessInstanceList(String owner, String secondaryOwner,
+    public List<ProcessInstance> getProcessInstanceList(String owner, String secondaryOwner,
             Long secondaryOwnerId, String orderBy) throws DataAccessException {
         try {
             db.openConnection();
@@ -279,9 +276,9 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                             + " AND SECONDARY_OWNER_ID = " + secondaryOwnerId + " AND pi.OWNER = '" + owner + "' AND SECONDARY_OWNER = '" + secondaryOwner +"'";
             query = query + orderBy;
             ResultSet rs = db.runSelect(query, null);
-            List<ProcessInstanceVO> mdwProcessInstanceList = new ArrayList<ProcessInstanceVO>();
+            List<ProcessInstance> mdwProcessInstanceList = new ArrayList<ProcessInstance>();
             while (rs.next()) {
-                ProcessInstanceVO pi = new ProcessInstanceVO(rs.getLong(2), rs.getString(8));
+                ProcessInstance pi = new ProcessInstance(rs.getLong(2), rs.getString(8));
                 pi.setOwner(owner);
                 pi.setOwnerId(rs.getLong(3));
                 pi.setMasterRequestId(rs.getString(9));
@@ -433,7 +430,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
 
     protected String buildQuery(Map<String,String> criteria, List<String> variables, Map<String,String> variableCriteria, int startIndex, int endIndex, String orderBy) {
         StringBuffer sqlBuff = new StringBuffer();
-        if (startIndex != QueryRequest.ALL_ROWS)
+        if (startIndex != Query.MAX_ALL)
             sqlBuff.append(db.pagingQueryPrefix());
         sqlBuff.append("select pis.process_instance_id, pis.master_request_id, pis.status_cd, pis.start_dt, pis.end_dt, ")
             .append("pis.owner, pis.owner_id, pis.process_id, '' as process_name, pis.comments");
@@ -448,7 +445,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         sqlBuff.append(") pis\n");
         if (orderBy != null)
             sqlBuff.append("\n").append(orderBy);
-        if (startIndex != QueryRequest.ALL_ROWS)
+        if (startIndex != Query.MAX_ALL)
             sqlBuff.append(db.pagingQuerySuffix(startIndex, endIndex-startIndex));
         return sqlBuff.toString();
     }
@@ -494,10 +491,10 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
 
     protected String buildQuery(Map<String,String> criteria, int startIndex, int endIndex, String orderBy) {
         StringBuffer sqlBuff = new StringBuffer();
-        if (startIndex != QueryRequest.ALL_ROWS)
+        if (startIndex != Query.MAX_ALL)
             sqlBuff.append(db.pagingQueryPrefix());
         sqlBuff.append("SELECT ");
-        if (startIndex != QueryRequest.ALL_ROWS)
+        if (startIndex != Query.MAX_ALL)
             sqlBuff.append("/*+ NO_USE_NL(pi r) */ ");
         sqlBuff.append("pi.PROCESS_INSTANCE_ID, pi.MASTER_REQUEST_ID, pi.STATUS_CD, pi.START_DT, ");
         sqlBuff.append("pi.END_DT, pi.OWNER, pi.OWNER_ID, pi.PROCESS_ID, '' as NAME, pi.COMMENTS\n");
@@ -506,7 +503,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         if (!OwnerType.MAIN_PROCESS_INSTANCE.equals(criteria.get("owner")))
             sqlBuff.append(" and pi.OWNER!='" + OwnerType.MAIN_PROCESS_INSTANCE +"' ");
         buildQueryCommon(sqlBuff, criteria, orderBy);
-        if (startIndex != QueryRequest.ALL_ROWS)
+        if (startIndex != Query.MAX_ALL)
             sqlBuff.append(db.pagingQuerySuffix(startIndex, endIndex-startIndex));
         return sqlBuff.toString();
     }
@@ -518,14 +515,14 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         return " AND pi.COMMENTS like '" + pkg + " v%/" + proc + " v%'";
     }
 
-    protected ProcessInstanceVO getProcessInstanceBase0(Long processInstanceId) throws SQLException, DataAccessException {
+    protected ProcessInstance getProcessInstanceBase0(Long processInstanceId) throws SQLException, DataAccessException {
         String query = "select PROCESS_ID, OWNER, OWNER_ID, MASTER_REQUEST_ID, " +
                 "STATUS_CD, START_DT, END_DT, COMPCODE, COMMENTS\n" +
                 "from PROCESS_INSTANCE where PROCESS_INSTANCE_ID = ?";
         ResultSet rs = db.runSelect(query, processInstanceId);
         if (!rs.next())
             throw new SQLException("Cannot find process instance ID: " + processInstanceId);
-        ProcessInstanceVO pi = new ProcessInstanceVO(rs.getLong("PROCESS_ID"), "");
+        ProcessInstance pi = new ProcessInstance(rs.getLong("PROCESS_ID"), "");
         pi.setId(processInstanceId);
         pi.setOwner(rs.getString("OWNER"));
         pi.setOwnerId(rs.getLong("OWNER_ID"));
@@ -543,7 +540,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
      * For VCS-defined processes, relies on comment having been set.
      * Also sets status name from code.
      */
-    protected void populateNameVersionStatus(ProcessInstanceVO processInstance) throws DataAccessException {
+    protected void populateNameVersionStatus(ProcessInstance processInstance) throws DataAccessException {
         if (processInstance.getComment() != null) {
             AssetVersionSpec spec = AssetVersionSpec.parse(processInstance.getComment());
             processInstance.setProcessName(spec.getName());
@@ -563,8 +560,8 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         }
     }
 
-    protected List<ProcessInstanceVO> getProcessInstancesForOwner(String ownerType, Long ownerId) throws SQLException, DataAccessException {
-        List<ProcessInstanceVO> instanceList = null;
+    protected List<ProcessInstance> getProcessInstancesForOwner(String ownerType, Long ownerId) throws SQLException, DataAccessException {
+        List<ProcessInstance> instanceList = null;
         String query = "select pi.PROCESS_INSTANCE_ID, pi.PROCESS_ID, pi.MASTER_REQUEST_ID," +
                 " pi.STATUS_CD, pi.START_DT, pi.END_DT, pi.COMPCODE, pi.COMMENTS" +
                 " from PROCESS_INSTANCE pi" +
@@ -572,10 +569,10 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         ResultSet rs = db.runSelect(query, ownerId);
         while (rs.next()) {
             if (instanceList == null)
-                instanceList = new ArrayList<ProcessInstanceVO>();
+                instanceList = new ArrayList<ProcessInstance>();
             Long processId = rs.getLong("PROCESS_ID");
             String comment = rs.getString("COMMENTS");
-            ProcessInstanceVO pi = new ProcessInstanceVO(processId, "");
+            ProcessInstance pi = new ProcessInstance(processId, "");
             pi.setId(rs.getLong("PROCESS_INSTANCE_ID"));
             pi.setOwner(ownerType);
             pi.setOwnerId(ownerId);
@@ -604,7 +601,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 count = new Long(rs.getLong(1));
             else
                 count = new Long(-1);
-            List<ActivityInstance> mdwActivityInstanceList = new ArrayList<ActivityInstance>();
+            List<ActivityInstanceInfo> mdwActivityInstanceList = new ArrayList<ActivityInstanceInfo>();
             ActivityList actList = new ActivityList(ActivityList.ACTIVITY_INSTANCES, mdwActivityInstanceList);
             if (count <= 0) {
                 return actList;
@@ -614,7 +611,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
 
             rs = db.runSelect(sql.toString(), null);
             while (rs.next()) {
-                ActivityInstance ai = new ActivityInstance();
+                ActivityInstanceInfo ai = new ActivityInstanceInfo();
                 ai.setId(rs.getLong("aii"));
                 ai.setDefinitionId("A" + rs.getLong("activity_id"));
                 ai.setMasterRequestId(rs.getString("master_request_id"));
@@ -646,12 +643,12 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
     public LinkedProcessInstance getProcessInstanceCallHierarchy(Long processInstanceId) throws DataAccessException {
         try {
             db.openConnection();
-            ProcessInstanceVO startingInstance = getProcessInstanceBase0(processInstanceId);
+            ProcessInstance startingInstance = getProcessInstanceBase0(processInstanceId);
             LinkedProcessInstance startingLinked = new LinkedProcessInstance(startingInstance);
             LinkedProcessInstance top = startingLinked;
             // callers
             while (OwnerType.PROCESS_INSTANCE.equals(top.getProcessInstance().getOwner())) {
-                ProcessInstanceVO caller = getProcessInstanceBase0(top.getProcessInstance().getOwnerId());
+                ProcessInstance caller = getProcessInstanceBase0(top.getProcessInstance().getOwnerId());
                 LinkedProcessInstance callerLinked = new LinkedProcessInstance(caller);
                 top.setParent(callerLinked);
                 callerLinked.getChildren().add(top);
@@ -668,10 +665,10 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
     }
 
     private void addCalledHierarchy(LinkedProcessInstance caller) throws SQLException, DataAccessException {
-        ProcessInstanceVO callerProcInst = caller.getProcessInstance();
-        List<ProcessInstanceVO> calledInsts = getProcessInstancesForOwner(OwnerType.PROCESS_INSTANCE, callerProcInst.getId());
+        ProcessInstance callerProcInst = caller.getProcessInstance();
+        List<ProcessInstance> calledInsts = getProcessInstancesForOwner(OwnerType.PROCESS_INSTANCE, callerProcInst.getId());
         if (calledInsts != null) {
-            for (ProcessInstanceVO calledInst : calledInsts) {
+            for (ProcessInstance calledInst : calledInsts) {
                 LinkedProcessInstance child = new LinkedProcessInstance(calledInst);
                 child.setParent(caller);
                 caller.getChildren().add(child);
@@ -943,7 +940,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             return VariableTypeCache.getTypeName(id);
         }
         else {
-            for (VariableTypeVO variableType : variableTypes) {
+            for (VariableType variableType : variableTypes) {
                 if (variableType.getVariableTypeId().longValue() == id.longValue())
                     return variableType.getVariableType();
             }

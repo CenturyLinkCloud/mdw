@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.services.messenger;
 
-import com.centurylink.mdw.common.ApplicationContext;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.model.listener.RMIListener;
 import com.centurylink.mdw.services.ProcessException;

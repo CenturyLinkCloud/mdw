@@ -3,18 +3,18 @@
  */
 package com.centurylink.mdw.workflow.task.strategy;
 
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.exception.ObserverException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
-import com.centurylink.mdw.model.value.task.TaskVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.AutoAssignStrategy;
+import com.centurylink.mdw.service.data.task.TaskTemplateCache;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
-import com.centurylink.mdw.services.dao.task.cache.TaskTemplateCache;
-import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
+import com.centurylink.mdw.util.StringHelper;
 
 /**
  * Assign tasks based on the CUID contained in process variable. The variable
@@ -25,8 +25,8 @@ import com.centurylink.mdw.services.dao.user.cache.UserGroupCache;
  */
 public class ProcessVariableAutoAssignStrategy implements AutoAssignStrategy {
 
-    public UserVO selectAssignee(TaskInstanceVO taskInstanceVO) throws ObserverException {
-        TaskVO taskVO = TaskTemplateCache.getTaskTemplate(taskInstanceVO.getTaskId());
+    public User selectAssignee(TaskInstance taskInstanceVO) throws ObserverException {
+        TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskInstanceVO.getTaskId());
         String assigneeVarSpec = taskVO.getAttribute(TaskAttributeConstant.ASSIGNEE_VAR);
         if (StringHelper.isEmpty(assigneeVarSpec))
             throw new ObserverException("Missing task attribute: " + TaskAttributeConstant.ASSIGNEE_VAR);

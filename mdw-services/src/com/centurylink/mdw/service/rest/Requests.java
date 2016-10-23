@@ -19,14 +19,13 @@ import com.centurylink.mdw.common.service.JsonListMap;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.value.requests.Request;
-import com.centurylink.mdw.model.value.requests.RequestCount;
-import com.centurylink.mdw.model.value.requests.RequestList;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
+import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.request.RequestCount;
+import com.centurylink.mdw.model.request.RequestList;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.RequestServices;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,7 +37,7 @@ public class Requests extends JsonRestService implements JsonExportable {
     @Override
     public List<String> getRoles(String path) {
         List<String> roles = super.getRoles(path);
-        roles.add(UserRoleVO.PROCESS_EXECUTION);
+        roles.add(Role.PROCESS_EXECUTION);
         return roles;
     }
 

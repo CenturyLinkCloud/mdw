@@ -14,23 +14,22 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.constant.PropertyNames;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.timer.LoggerProgressMonitor;
-import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.user.UserActionVO.Action;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.UserAction.Action;
+import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.LoggerProgressMonitor;
+import com.centurylink.mdw.util.timer.ProgressMonitor;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -46,7 +45,7 @@ public class GitVcs extends JsonRestService {
     @Override
     public List<String> getRoles(String path) {
         List<String> roles = super.getRoles(path);
-        roles.add(UserRoleVO.PROCESS_DESIGN);
+        roles.add(Role.PROCESS_DESIGN);
         return roles;
     }
 

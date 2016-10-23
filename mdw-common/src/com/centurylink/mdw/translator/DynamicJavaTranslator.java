@@ -7,7 +7,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import com.centurylink.mdw.common.exception.TranslationException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 
 public class DynamicJavaTranslator extends JavaObjectTranslator {

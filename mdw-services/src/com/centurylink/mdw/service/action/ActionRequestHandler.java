@@ -14,9 +14,6 @@ import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.TextService;
 import com.centurylink.mdw.common.service.XmlService;
-import com.centurylink.mdw.common.utilities.ResourceFormatter.Format;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.jaxb.JaxbElementTranslator;
 import com.centurylink.mdw.listener.RegressionTestEventHandler;
@@ -24,9 +21,12 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.service.Action;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
+import com.centurylink.mdw.service.handler.ServiceRequestHandler;
 import com.centurylink.mdw.service.Content;
 import com.centurylink.mdw.service.Parameter;
-import com.centurylink.mdw.service.handler.ServiceRequestHandler;
+import com.centurylink.mdw.util.ResourceFormatter.Format;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlPath;
 
 public class ActionRequestHandler extends ServiceRequestHandler {

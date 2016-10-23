@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.centurylink.mdw.common.cache.AssetCache;
-import com.centurylink.mdw.common.provider.CacheService;
+import com.centurylink.mdw.cache.ExcludableCache;
 import com.centurylink.mdw.common.service.DynamicJavaServiceRegistry;
 import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.common.service.ServiceRegistry;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
-import com.centurylink.mdw.model.value.attribute.RuleSetVO;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.provider.CacheService;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class CacheRegistry extends ServiceRegistry {
 
@@ -59,7 +59,7 @@ public class CacheRegistry extends ServiceRegistry {
     }
 
     public void refreshAll(List<String> excludedFormats) {
-        if (excludedFormats == null || !excludedFormats.contains(RuleSetVO.JAVA))
+        if (excludedFormats == null || !excludedFormats.contains(Asset.JAVA))
           refreshAllDynamicCache();
         List<String> toRefresh = getNamesBasedOnDependencyHierarchy();
         synchronized(byName) {
@@ -108,7 +108,7 @@ public class CacheRegistry extends ServiceRegistry {
         if (provider == null)
             provider = byDynamicName.get(name);
         if (provider != null) {
-            if (excluded != null && provider instanceof AssetCache && excluded.contains(((AssetCache)provider).getFormat())) {
+            if (excluded != null && provider instanceof ExcludableCache && excluded.contains(((ExcludableCache)provider).getFormat())) {
                 logger.debug("Omitting cache " + name + " (class=" + provider.getClass().getName() + ")");
             }
             else {

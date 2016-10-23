@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.script;
 
-import com.centurylink.mdw.common.exception.MDWException;
+import com.centurylink.mdw.common.MDWException;
 
 public class ExecutionException extends MDWException {
 

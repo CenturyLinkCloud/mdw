@@ -12,13 +12,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.utilities.JsonUtil;
-import com.centurylink.mdw.model.value.activity.ActivityImplementorVO;
-import com.centurylink.mdw.model.value.activity.Pagelet;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
+import com.centurylink.mdw.model.asset.Pagelet;
+import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.JsonUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,18 +35,18 @@ public class Implementors extends JsonRestService {
     @Path("/{className}")
     @ApiOperation(value="Retrieve activity implementor(s) JSON.",
         notes="If {className} is provided, a specific implementor is returned; otherwise all implementors.",
-        response=ActivityImplementorVO.class, responseContainer="List")
+        response=ActivityImplementor.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         try {
             String implClassName = getSegment(path, 1);
             if (implClassName == null) {
-                List<ActivityImplementorVO> impls = workflowServices.getImplementors();
+                List<ActivityImplementor> impls = workflowServices.getImplementors();
                 return JsonUtil.getJsonArray(impls).getJson();
             }
             else {
-                ActivityImplementorVO impl = workflowServices.getImplementor(implClassName);
+                ActivityImplementor impl = workflowServices.getImplementor(implClassName);
                 if (impl == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Implementor not found: " + implClassName);
                 String pagelet = impl.getAttributeDescription();

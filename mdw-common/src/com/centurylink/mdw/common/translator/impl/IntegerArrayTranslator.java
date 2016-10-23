@@ -4,8 +4,8 @@
 package com.centurylink.mdw.common.translator.impl;
 
 
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.StringHelper;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.StringHelper;
 
 import java.util.StringTokenizer;
 

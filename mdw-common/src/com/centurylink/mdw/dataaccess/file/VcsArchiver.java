@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.timer.ProgressMonitor;
 
 public class VcsArchiver {
 

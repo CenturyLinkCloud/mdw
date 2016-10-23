@@ -12,8 +12,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.StringHelper;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.StringHelper;
 
 /**
  * 

@@ -15,19 +15,19 @@ import org.drools.runtime.StatelessKnowledgeSession;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.RuleActivity;
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.exception.PropertyException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import com.centurylink.mdw.workflow.drools.cache.DroolsKnowledgeBaseCache;
-import com.centurylink.mdw.workflow.drools.cache.KnowledgeBaseRuleSet;
+import com.centurylink.mdw.workflow.drools.cache.KnowledgeBaseAsset;
 
 @Tracked(LogLevel.TRACE)
 public class DroolsActivity extends DefaultActivityImpl implements RuleActivity {
@@ -63,7 +63,7 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
         List<Object> facts = new ArrayList<Object>();
         Map<String,Object> values = new HashMap<String,Object>();
 
-        for (VariableInstanceInfo variableInstance : getParameters()) {
+        for (VariableInstance variableInstance : getParameters()) {
             Object value = getVariableValue(variableInstance.getName());
             values.put(variableInstance.getName(), value);
         }
@@ -77,8 +77,8 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
         setOutputDocuments(temp == null ? new String[0] : temp.split("#"));
 
         // TODO handle document variables
-        ProcessVO processVO = getProcessDefinition();
-        for (VariableVO variable : processVO.getVariables()) {
+        Process processVO = getProcessDefinition();
+        for (Variable variable : processVO.getVariables()) {
             Object newValue = values.get(variable.getVariableName());
             if (newValue != null)
                 setVariableValue(variable.getVariableName(), variable.getVariableType(), newValue);
@@ -99,21 +99,21 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
      */
     protected KnowledgeBase getKnowledgeBase(String name, String assetVersion, String modifier) throws ActivityException {
         Map<String,String> customAttrs = null;
-        KnowledgeBaseRuleSet kbrs;
+        KnowledgeBaseAsset kbrs;
         if (assetVersion == null)
-            kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseRuleSet(name, modifier, customAttrs, getClassLoader());
+            kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseAsset(name, modifier, customAttrs, getClassLoader());
         else
-            kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseRuleSet(new AssetVersionSpec(name, assetVersion), modifier, customAttrs, getClassLoader());
+            kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseAsset(new AssetVersionSpec(name, assetVersion), modifier, customAttrs, getClassLoader());
 
         if (kbrs == null) {
             return null;
         }
         else {
-            super.loginfo("Using Knowledge Base: " + kbrs.getRuleSet().getLabel());
+            super.loginfo("Using Knowledge Base: " + kbrs.getAsset().getLabel());
 
             String versionLabelVarName = getAttributeValue(RULE_VERSION_VAR);
             if (versionLabelVarName != null)
-                setParameterValue(versionLabelVarName, kbrs.getRuleSet().getLabel());
+                setParameterValue(versionLabelVarName, kbrs.getAsset().getLabel());
             return kbrs.getKnowledgeBase();
         }
     }
@@ -125,7 +125,7 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
      */
     protected ClassLoader getClassLoader() {
         ClassLoader loader = null;
-        PackageVO pkg =PackageVOCache.getProcessPackage(getProcessId());
+        Package pkg =PackageCache.getProcessPackage(getProcessId());
         if (pkg != null) {
             loader = pkg.getClassLoader();
         }

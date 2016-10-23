@@ -6,10 +6,9 @@ package com.centurylink.mdw.dataaccess;
 import java.util.List;
 import java.util.Set;
 
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.model.value.user.UserActionVO;
-import com.centurylink.mdw.model.value.user.UserGroupVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.user.User;
 
 public interface UserDataAccess {
 
@@ -20,7 +19,7 @@ public interface UserDataAccess {
      * @return UserVO object that contains group names and role names for each group.
      * @throws DataAccessException
      */
-    UserVO getUser(String userName)
+    User getUser(String userName)
     throws DataAccessException;
 
     /**
@@ -28,13 +27,13 @@ public interface UserDataAccess {
      * @return
      * @throws DataAccessException
      */
-    List<UserGroupVO> getAllGroups(boolean includeDeleted)
+    List<Workgroup> getAllGroups(boolean includeDeleted)
     throws DataAccessException;
 
     List<String> getRoleNames()
     throws DataAccessException;
 
-    void auditLogUserAction(UserActionVO userAction)
+    void auditLogUserAction(UserAction userAction)
     throws DataAccessException;
 
     public boolean isOnline() throws DataAccessException;

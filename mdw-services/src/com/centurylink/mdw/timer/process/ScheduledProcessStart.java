@@ -7,15 +7,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.utilities.form.CallURL;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.listener.ExternalEventHandlerBase;
-import com.centurylink.mdw.model.data.monitor.ScheduledJob;
+import com.centurylink.mdw.model.monitor.ScheduledJob;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
+import com.centurylink.mdw.util.CallURL;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Clean up old database entries from processes that are older than a specified amount

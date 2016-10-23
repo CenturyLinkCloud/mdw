@@ -113,7 +113,7 @@
         "OsgiBundleSymbolicName": "com.centurylink.donsservicemix",
         "Output Documents": "requestDoc",
         "RETURN_CODE": "httpMethod",
-        "Rule": "System.out.println(\"HTTP Method: \" + httpMethod);\r\n\r\nif (httpMethod.equals(\"POST\") || httpMethod.equals(\"SIM\"))\r\n{\r\n  requestDoc = '''<tns:GetEmployee xmlns:tns=\"http://mdw-servicemix.centurylink.com/serviceTypes\">\r\n  <tns:workstationId>dxoakes<\/tns:workstationId>\r\n<\/tns:GetEmployee>''';\r\n \r\n}\r\n  ",
+        "Rule": "System.out.println(\"HTTP Method: \" + httpMethod);\r\n\r\nif (httpMethod.equals(\"POST\") || httpMethod.equals(\"SIM\"))\r\n{\r\n  requestDoc = '''<tns:GetEmployee xmlns:tns=\"http://mdw.centurylink.com/serviceTypes\">\r\n  <tns:workstationId>dxoakes<\/tns:workstationId>\r\n<\/tns:GetEmployee>''';\r\n\r\n}\r\n\r\nreturn httpMethod\r\n",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=228,y=70,w=100,h=60"
       },
@@ -167,5 +167,5 @@
       "type": "com.centurylink.mdw.model.StringDocument"
     }
   },
-  "version": "0.19"
+  "version": "0.20"
 }

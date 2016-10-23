@@ -7,11 +7,11 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
 
-import com.centurylink.mdw.common.constant.PropertyNames;
-import com.centurylink.mdw.common.utilities.property.PropertyManager;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.event.EventHandlerException;
+import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.event.EventInstanceVO;
 
 public class NotifyWaitingActivityEventHandler extends ExternalEventHandlerBase {
 
@@ -36,7 +36,7 @@ public class NotifyWaitingActivityEventHandler extends ExternalEventHandlerBase 
 			}
             // a custom implementation of this handler may populate parameters here
             Integer status = notifyProcesses(eventName, eventInstId, message, delay);
-            if (status.equals(EventInstanceVO.RESUME_STATUS_PARTIAL_SUCCESS)) {
+            if (status.equals(EventInstance.RESUME_STATUS_PARTIAL_SUCCESS)) {
                 // TODO what???
             }
             response = createResponseMessage(null, null, msgdoc, metainfo);

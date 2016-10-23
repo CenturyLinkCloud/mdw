@@ -6,8 +6,8 @@ package com.centurylink.mdw.tests.tasks;
 import org.apache.xmlbeans.XmlOptions;
 
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.common.exception.StrategyException;
-import com.centurylink.mdw.model.value.task.TaskRuntimeContext;
+import com.centurylink.mdw.common.StrategyException;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.observer.task.SubTaskStrategy;
 import com.centurylink.mdw.task.SubTask;
 import com.centurylink.mdw.task.SubTaskPlanDocument;

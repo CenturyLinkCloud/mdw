@@ -7,14 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.utilities.StringHelper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-import com.centurylink.mdw.common.utilities.timer.Tracked;
 import com.centurylink.mdw.groovy.GroovyNaming;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.script.ExecutionException;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.AbstractEvaluator;
 
 /**
@@ -67,7 +67,7 @@ public class ScriptEvaluator extends AbstractEvaluator  {
     }
 
 	protected boolean isBooleanExpression(String language, String expression) throws ActivityException {
-        for (VariableVO varVO: getMainProcessDefinition().getVariables()) {
+        for (Variable varVO: getMainProcessDefinition().getVariables()) {
             if (Boolean.class.getName().equals(varVO.getVariableType())) {
                 if (JAVA_EL.equals(language)) {
                     if (expression.equals("#{" + varVO.getName() + "}"))

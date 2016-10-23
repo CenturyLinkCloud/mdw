@@ -1,7 +1,7 @@
 // Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
-var taskMod = angular.module('task', ['ngResource', 'mdw', 'ui.grid', 'ui.grid.selection', 'taskTemplates']);
+var taskMod = angular.module('task', ['ngResource', 'mdw', 'ui.grid', 'ui.grid.selection']);
 
 // task summary
 taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http', 'mdw', 'util', 'TaskUtil', 'Tasks', 'Task', 'TaskAction',
@@ -136,8 +136,8 @@ taskMod.controller('TaskValuesController', ['$scope', '$route', '$routeParams', 
 }]);
 
 // subtasks
-taskMod.controller('SubtasksController', ['$scope', '$routeParams', '$location', 'mdw', 'Tasks', 'Task', 'TaskUtil', 'TaskTemplates',
-                                           function($scope, $routeParams, $location, mdw, Tasks, Task, TaskUtil, TaskTemplates) {
+taskMod.controller('SubtasksController', ['$scope', '$http', '$routeParams', '$location', 'mdw', 'Tasks', 'Task', 'TaskUtil',
+                                           function($scope, $http, $routeParams, $location, mdw, Tasks, Task, TaskUtil) {
   mdw.message = null;
   $scope.task = Task.getTask($scope);
   if (!$scope.task)
@@ -171,19 +171,19 @@ taskMod.controller('SubtasksController', ['$scope', '$routeParams', '$location',
     $scope.setCreate(false);
   };
   
-  TaskTemplates.taskTemplatelist = TaskTemplates.get();
   $scope.findTemplate = function(typed) {
-    var filteredTemplateList = [];
-    var templateName;
-    for (var i = 0; i < TaskTemplates.taskTemplatelist.taskTemplates.length; i++) {
-        templateName = TaskTemplates.taskTemplatelist.taskTemplates[i].name;
-        if (templateName.indexOf(typed) >= 0) {
-            filteredTemplateList.push(TaskTemplates.taskTemplatelist.taskTemplates[i]);
-        }
-    }
-    return filteredTemplateList;
+    return $http.get(mdw.roots.services + '/services/Tasks/templates' + '?app=mdw-admin&find=' + typed).then(function(response) {
+      // services matches on task name
+      if (response.data.length > 0) {
+        var matches = [];
+        response.data.forEach(function(taskDef) {
+          matches.push(taskDef);
+        });
+        return matches;
+      }
+    });
   };
-
+  
   $scope.save = function() {
     console.log('creating subtask: ' + $scope.subtask.template.logicalId);
     

@@ -1,5 +1,7 @@
-#Wed Sep 14 15:10:48 MDT 2016
-TaskResumeService.proc=3
+#Sat Oct 22 23:15:33 MDT 2016
+TaskResumeService.proc=4
+autoform\ task\ for\ service\ resume.task=1
+custom\ task\ for\ service\ resume.task=1
 task-resume-notify.test=1
 task-resume-notify.yaml=1
 task-resume-service.test=2

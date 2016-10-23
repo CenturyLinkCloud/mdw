@@ -9,16 +9,16 @@ import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.InvokeProcessActivity;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.utilities.TransactionWrapper;
-import com.centurylink.mdw.model.value.attribute.AssetVersionSpec;
-import com.centurylink.mdw.model.value.event.EventWaitInstanceVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
-import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
+import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
 
 /**
@@ -31,7 +31,7 @@ import com.centurylink.mdw.workflow.activity.AbstractWait;
 public abstract class InvokeProcessActivityBase extends AbstractWait
 		implements InvokeProcessActivity {
 
-	public final boolean resumeWaiting(InternalEventVO msg)
+	public final boolean resumeWaiting(InternalEvent msg)
 			throws ActivityException {
 		TransactionWrapper transaction = null;
 		try {
@@ -40,7 +40,7 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
 			if (allSubProcessCompleted()) {
 				return true;
 			} else {
-				EventWaitInstanceVO received = registerWaitEvents(true, true);
+				EventWaitInstance received = registerWaitEvents(true, true);
 				if (received!=null) {
 					this.setReturnCode(received.getCompletionCode());
 					processOtherMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
@@ -100,10 +100,10 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
     	}
     }
 
-    abstract boolean resume_on_process_finish(InternalEventVO msg, Integer status)
+    abstract boolean resume_on_process_finish(InternalEvent msg, Integer status)
 	throws ActivityException;
 
-    public final boolean resume(InternalEventVO msg)
+    public final boolean resume(InternalEvent msg)
 	    throws ActivityException {
     	TransactionWrapper transaction = null;
 		try {
@@ -125,19 +125,19 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
 		}
 	}
 
-    protected boolean allowInput(VariableVO childVar) {
+    protected boolean allowInput(Variable childVar) {
     	int varCat = childVar.getVariableCategory().intValue();
-    	if (varCat==VariableVO.CAT_INPUT || varCat==VariableVO.CAT_INOUT
-    			|| varCat==VariableVO.CAT_STATIC) return true;
+    	if (varCat==Variable.CAT_INPUT || varCat==Variable.CAT_INOUT
+    			|| varCat==Variable.CAT_STATIC) return true;
     	else return false;
     }
 
-    protected String evaluateBindingValue(VariableVO childVar, String v) {
+    protected String evaluateBindingValue(Variable childVar, String v) {
     	if (v!=null && v.length()>0) {
     		int varCat = childVar.getVariableCategory().intValue();
-			if (varCat!=VariableVO.CAT_STATIC) {
+			if (varCat!=Variable.CAT_STATIC) {
 				if (valueIsVariable(v)) {
-					VariableInstanceInfo varinst = this.getVariableInstance(v.substring(1));
+					VariableInstance varinst = this.getVariableInstance(v.substring(1));
 					v = varinst==null?null:varinst.getStringValue();
 				} else {
 					try {
@@ -157,12 +157,12 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
 
     protected Map<String,String> getOutputParameters(Long subprocInstId, Long subprocId)
     	throws SQLException, ProcessException, DataAccessException {
-    	ProcessVO subprocDef = ProcessVOCache.getProcessVO(subprocId);
+    	Process subprocDef = ProcessCache.getProcess(subprocId);
     	Map<String,String> params = null;
-    	for (VariableVO var : subprocDef.getVariables()) {
-    		if (var.getVariableCategory().intValue()==VariableVO.CAT_OUTPUT
-    				|| var.getVariableCategory().intValue()==VariableVO.CAT_INOUT) {
-    			VariableInstanceInfo vio = getEngine().getVariableInstance(subprocInstId, var.getVariableName());
+    	for (Variable var : subprocDef.getVariables()) {
+    		if (var.getVariableCategory().intValue()==Variable.CAT_OUTPUT
+    				|| var.getVariableCategory().intValue()==Variable.CAT_INOUT) {
+    			VariableInstance vio = getEngine().getVariableInstance(subprocInstId, var.getVariableName());
     			if (vio!=null) {
     				if (params==null) params = new HashMap<String,String>();
     				params.put(var.getVariableName(), vio.getStringValue());
@@ -176,8 +176,8 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
      * TODO: Smart subprocess versioning for federated workflow.
      * TODO: Allow expressions that resolve to a version/spec.
      */
-    protected ProcessVO getSubProcessVO(String name, String verSpec) throws DataAccessException {
-        ProcessVO match = ProcessVOCache.getProcessVOSmart(new AssetVersionSpec(name, verSpec));
+    protected Process getSubProcessVO(String name, String verSpec) throws DataAccessException {
+        Process match = ProcessCache.getProcessSmart(new AssetVersionSpec(name, verSpec));
         if (match == null)
             throw new DataAccessException("Unable to find process definition for " + name + " v" + verSpec);
         return match;

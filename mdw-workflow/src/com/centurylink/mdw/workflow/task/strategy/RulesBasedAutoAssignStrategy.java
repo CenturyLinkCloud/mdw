@@ -10,25 +10,25 @@ import org.drools.KnowledgeBase;
 import org.drools.command.CommandFactory;
 import org.drools.runtime.StatelessKnowledgeSession;
 
-import com.centurylink.mdw.common.constant.TaskAttributeConstant;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.ObserverException;
-import com.centurylink.mdw.common.exception.StrategyException;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.model.value.task.TaskInstanceVO;
-import com.centurylink.mdw.model.value.user.UserVO;
+import com.centurylink.mdw.common.StrategyException;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserManager;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class RulesBasedAutoAssignStrategy extends RulesBasedStrategy implements AutoAssignStrategy {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
 
-    public UserVO selectAssignee(TaskInstanceVO taskInstanceVO) throws ObserverException{
-      UserVO user = new UserVO();
+    public User selectAssignee(TaskInstance taskInstanceVO) throws ObserverException{
+      User user = new User();
       UserManager userManager = ServiceLocator.getUserManager();
       KnowledgeBase knowledgeBase = null;
       logger.info("Getting knowledgeBase");

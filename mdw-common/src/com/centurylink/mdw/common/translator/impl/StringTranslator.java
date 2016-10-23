@@ -3,21 +3,12 @@
  */
 package com.centurylink.mdw.common.translator.impl;
 
-import com.centurylink.mdw.common.translator.VariableTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
 
-
-/**
- *
- */
 public class StringTranslator extends VariableTranslator {
 
-    /**
-     * converts the passed in String to an equivalent object
-     * @param pStr
-     * @return Object
-     */
-    public Object toObject(String pStr){
-        return pStr;
+    public Object toObject(String str){
+        return str;
     }
 
     public String toString(Object obj) {

@@ -14,53 +14,48 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
-import com.centurylink.mdw.common.ApplicationContext;
-import com.centurylink.mdw.common.cache.impl.PackageVOCache;
-import com.centurylink.mdw.common.constant.ActivityResultCodeConstant;
-import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.exception.DataAccessException;
-import com.centurylink.mdw.common.exception.MDWException;
-import com.centurylink.mdw.common.translator.VariableTranslator;
-import com.centurylink.mdw.common.utilities.TransactionWrapper;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
-import com.centurylink.mdw.common.utilities.timer.CodeTimer;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.common.MDWException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.constant.ActivityResultCodeConstant;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.event.ExternalEventHandler;
-import com.centurylink.mdw.model.data.event.EventLog;
-import com.centurylink.mdw.model.data.event.EventType;
-import com.centurylink.mdw.model.data.monitor.CertifiedMessage;
-import com.centurylink.mdw.model.data.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.data.monitor.UnscheduledEvent;
-import com.centurylink.mdw.model.data.work.WorkStatus;
+import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.event.EventInstance;
+import com.centurylink.mdw.model.event.EventLog;
+import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.value.activity.ActivityVO;
-import com.centurylink.mdw.model.value.attribute.AttributeVO;
-import com.centurylink.mdw.model.value.event.EventInstanceVO;
-import com.centurylink.mdw.model.value.event.InternalEventVO;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
-import com.centurylink.mdw.model.value.process.ProcessVO;
-import com.centurylink.mdw.model.value.user.UserActionVO;
-import com.centurylink.mdw.model.value.user.UserActionVO.Action;
-import com.centurylink.mdw.model.value.variable.DocumentReference;
-import com.centurylink.mdw.model.value.variable.DocumentVO;
-import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
-import com.centurylink.mdw.model.value.variable.VariableVO;
-import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
-import com.centurylink.mdw.model.value.work.WorkTransitionInstanceVO;
+import com.centurylink.mdw.model.monitor.CertifiedMessage;
+import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.monitor.UnscheduledEvent;
+import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.user.UserAction.Action;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.Activity;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.TransitionInstance;
+import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.service.data.process.EngineDataAccess;
+import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.dao.process.EngineDataAccess;
-import com.centurylink.mdw.services.dao.process.EngineDataAccessDB;
-import com.centurylink.mdw.services.dao.process.cache.ProcessVOCache;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.IntraMDWMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
@@ -68,19 +63,24 @@ import com.centurylink.mdw.services.pooling.AdapterConnectionPool;
 import com.centurylink.mdw.services.pooling.ConnectionPoolRegistration;
 import com.centurylink.mdw.services.pooling.PooledAdapterConnection;
 import com.centurylink.mdw.services.process.InternalEventDriver;
-import com.centurylink.mdw.services.process.ProcessExecuter;
+import com.centurylink.mdw.services.process.ProcessExecutor;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.TransactionWrapper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.CodeTimer;
 
 public class EventManagerBean implements EventManager {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    public void createAuditLog(UserActionVO userAction) throws DataAccessException, EventException {
+    public void createAuditLog(UserAction userAction) throws DataAccessException, EventException {
         String name = userAction.getAction().equals(Action.Other) ? userAction.getExtendedAction() : userAction.getAction().toString();
         String comment = userAction.getDescription();
-        if (userAction.getAction() == UserActionVO.Action.Forward)
+        if (userAction.getAction() == UserAction.Action.Forward)
             comment = comment == null ? userAction.getDestination() : comment + " > " + userAction.getDestination();
         String modUser = null;
-        if (userAction.getAction() == UserActionVO.Action.Assign)
+        if (userAction.getAction() == UserAction.Action.Assign)
             modUser = userAction.getDestination();
         createEventLog(name, EventLog.CATEGORY_AUDIT, "User Action",
             userAction.getSource(), userAction.getEntity().toString(), userAction.getEntityId(), userAction.getUser(), modUser, comment);
@@ -119,7 +119,7 @@ public class EventManagerBean implements EventManager {
     throws DataAccessException, EventException {
         EngineDataAccess edao = new EngineDataAccessDB();
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
-        ProcessExecuter engine = new ProcessExecuter(edao, msgBroker, false);
+        ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
         return engine.notifyProcess(pEventName, pEventInstId, message, delay);
     }
 
@@ -145,7 +145,7 @@ public class EventManagerBean implements EventManager {
     public String processExternalEvent(String clsname, String request, Map<String,String> metainfo)
         throws Exception {
         String packageName = metainfo.get(Listener.METAINFO_PACKAGE_NAME);
-        PackageVO pkg = PackageVOCache.getPackage(packageName);
+        Package pkg = PackageCache.getPackage(packageName);
         ExternalEventHandler handler = pkg.getEventHandler(clsname, request, metainfo);
         XmlObject xmlBean = XmlObject.Factory.parse(request);
         return handler.handleEventMessage(request, xmlBean, metainfo);
@@ -162,7 +162,7 @@ public class EventManagerBean implements EventManager {
      * @param pSecondaryOwnerId
      * @return new WorkInstance
      */
-    public ProcessInstanceVO createProcessInstance(Long pProcessId, String pProcessOwner,
+    public ProcessInstance createProcessInstance(Long pProcessId, String pProcessOwner,
         Long pProcessOwnerId, String pSecondaryOwner, Long pSecondaryOwnerId,
         String pMasterRequestId)
     throws ProcessException, DataAccessException {
@@ -170,8 +170,8 @@ public class EventManagerBean implements EventManager {
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            ProcessVO processVO = ProcessVOCache.getProcessVO(pProcessId);
-            ProcessInstanceVO pi = new ProcessInstanceVO(pProcessId, processVO.getProcessName());
+            Process processVO = ProcessCache.getProcess(pProcessId);
+            ProcessInstance pi = new ProcessInstance(pProcessId, processVO.getProcessName());
             pi.setOwner(pProcessOwner);
             pi.setOwnerId(pProcessOwnerId);
             pi.setSecondaryOwner(pSecondaryOwner);
@@ -195,19 +195,19 @@ public class EventManagerBean implements EventManager {
      * @param pVarInstId
      * @param pVariableData data to be updated. If the variable is a document variable,
      *         this should be the actual content
-     * @throws com.centurylink.mdw.common.exception.DataAccessException
+     * @throws com.centurylink.mdw.dataaccess.DataAccessException
      */
     public void updateVariableInstance(Long pVarInstanceId, Object pVariableData)
-    throws ProcessException, com.centurylink.mdw.common.exception.DataAccessException {
+    throws ProcessException, com.centurylink.mdw.dataaccess.DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            VariableInstanceInfo varInst = edao.getVariableInstance(pVarInstanceId);
+            VariableInstance varInst = edao.getVariableInstance(pVarInstanceId);
             // do we need to check if this also looks for variables defined in ancestor processes?
             if (VariableTranslator.isDocumentReferenceVariable(varInst.getType())) {
                 DocumentReference docref = (DocumentReference)varInst.getData();
-                DocumentVO docvo = edao.getDocument(docref.getDocumentId(), false);
+                Document docvo = edao.getDocument(docref.getDocumentId(), false);
                 if (pVariableData instanceof String) docvo.setContent((String)pVariableData);
                 else docvo.setObject(pVariableData, varInst.getType());
                 edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent());
@@ -228,26 +228,26 @@ public class EventManagerBean implements EventManager {
      * This does not take care of checking for embedded processes.
      * For document variables, the value must be DocumentReference, not the document content
      */
-    public VariableInstanceInfo setVariableInstance(Long procInstId, String name, Object value)
+    public VariableInstance setVariableInstance(Long procInstId, String name, Object value)
     throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            VariableInstanceInfo varInst = edao.getVariableInstance(procInstId, name);
+            VariableInstance varInst = edao.getVariableInstance(procInstId, name);
             if (varInst != null) {
                 if (value instanceof String) varInst.setStringValue((String)value);
                 else varInst.setData(value);
                 edao.updateVariableInstance(varInst);
             } else {
                 if (value != null) {
-                    ProcessVO processVO = ProcessVOCache.getProcessVO(edao.getProcessInstance(procInstId).getProcessId());
-                    VariableVO variableVO = processVO.getVariable(name);
+                    Process processVO = ProcessCache.getProcess(edao.getProcessInstance(procInstId).getProcessId());
+                    Variable variableVO = processVO.getVariable(name);
                     if (variableVO==null) {
                         throw new DataAccessException("Variable " + name + " is not defined for process " + processVO.getProcessId());
                     }
 
-                    varInst = new VariableInstanceInfo();
+                    varInst = new VariableInstance();
                     varInst.setName(name);
                     varInst.setVariableId(variableVO.getVariableId());
                     varInst.setType(variableVO.getVariableType());
@@ -265,7 +265,7 @@ public class EventManagerBean implements EventManager {
         }
     }
 
-    public VariableInstanceInfo getVariableInstance(Long varInstId)
+    public VariableInstance getVariableInstance(Long varInstId)
     throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -279,7 +279,7 @@ public class EventManagerBean implements EventManager {
         }
     }
 
-    public VariableInstanceInfo getVariableInstance(Long procInstId, String name)
+    public VariableInstance getVariableInstance(Long procInstId, String name)
     throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -293,7 +293,7 @@ public class EventManagerBean implements EventManager {
         }
     }
 
-    public List<VariableInstanceInfo> getProcessInstanceVariables(Long procInstId)
+    public List<VariableInstance> getProcessInstanceVariables(Long procInstId)
         throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -308,7 +308,7 @@ public class EventManagerBean implements EventManager {
     }
 
     public void updateProcessInstanceStatus(Long pProcInstId, Integer status)
-    throws ProcessException, com.centurylink.mdw.common.exception.DataAccessException {
+    throws ProcessException, com.centurylink.mdw.dataaccess.DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -336,12 +336,12 @@ public class EventManagerBean implements EventManager {
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            List<ProcessInstanceVO> procInsts = edao.getProcessInstancesByMasterRequestId(masterRequestId, null);
-            for (ProcessInstanceVO pi : procInsts) {
-                List<ActivityInstanceVO> actInsts = edao.getActivityInstancesForProcessInstance(pi.getId());
-                for (ActivityInstanceVO ai : actInsts) {
+            List<ProcessInstance> procInsts = edao.getProcessInstancesByMasterRequestId(masterRequestId, null);
+            for (ProcessInstance pi : procInsts) {
+                List<ActivityInstance> actInsts = edao.getActivityInstancesForProcessInstance(pi.getId());
+                for (ActivityInstance ai : actInsts) {
                     if (ai.getStatusCode()==WorkStatus.STATUS_WAITING.intValue()) {
-                        InternalEventVO event = InternalEventVO.createActivityDelayMessage(ai,
+                        InternalEvent event = InternalEvent.createActivityDelayMessage(ai,
                                 masterRequestId);
                         this.sendInternalEvent(event, edao);
                     }
@@ -367,7 +367,7 @@ public class EventManagerBean implements EventManager {
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            this.sendInternalEvent(new InternalEventVO(message), edao);
+            this.sendInternalEvent(new InternalEvent(message), edao);
         } catch (DataAccessException e) {
             throw new ProcessException(0, "Failed to send internal message", e);
         } catch (XmlException e) {
@@ -381,7 +381,7 @@ public class EventManagerBean implements EventManager {
         }
     }
 
-    private void sendInternalEvent(InternalEventVO pMsg, EngineDataAccess edao) throws ProcessException {
+    private void sendInternalEvent(InternalEvent pMsg, EngineDataAccess edao) throws ProcessException {
         InternalMessenger msgbroker = MessengerFactory.newInternalMessenger();
         msgbroker.sendMessage(pMsg, edao);
     }
@@ -393,15 +393,15 @@ public class EventManagerBean implements EventManager {
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            ActivityInstanceVO ai = edao.getActivityInstance(activityInstId);
+            ActivityInstance ai = edao.getActivityInstance(activityInstId);
             Long procInstId = ai.getOwnerId();
-            ProcessInstanceVO pi = edao.getProcessInstance(procInstId);
+            ProcessInstance pi = edao.getProcessInstance(procInstId);
             if (!this.isProcessInstanceResumable(pi)) {
                 logger.info("ProcessInstance in NOT resumable. ProcessInstanceId:" + pi.getId());
                 timer.stopAndLogTiming("NotResumable");
                 throw new ProcessException("The process instance is not resumable");
             }
-            InternalEventVO outgoingMsg = InternalEventVO.createActivityStartMessage(
+            InternalEvent outgoingMsg = InternalEvent.createActivityStartMessage(
                     activityId, procInstId, null, pi.getMasterRequestId(), ActivityResultCodeConstant.RESULT_RETRY);
             edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
             this.sendInternalEvent(outgoingMsg, edao);
@@ -422,9 +422,9 @@ public class EventManagerBean implements EventManager {
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            ActivityInstanceVO ai = edao.getActivityInstance(activityInstId);
+            ActivityInstance ai = edao.getActivityInstance(activityInstId);
             Long procInstId = ai.getOwnerId();
-            ProcessInstanceVO pi = edao.getProcessInstance(procInstId);
+            ProcessInstance pi = edao.getProcessInstance(procInstId);
             if (!this.isProcessInstanceResumable(pi)) {
                 logger.info("ProcessInstance in NOT resumable. ProcessInstanceId:" + pi.getId());
                 timer.stopAndLogTiming("NotResumable");
@@ -453,7 +453,7 @@ public class EventManagerBean implements EventManager {
                 eventType = EventType.FINISH;
             }
 
-            InternalEventVO outgoingMsg = InternalEventVO.
+            InternalEvent outgoingMsg = InternalEvent.
                 createActivityNotifyMessage(ai, eventType,
                         pi.getMasterRequestId(), completionCode);
             this.sendInternalEvent(outgoingMsg, edao);
@@ -474,7 +474,7 @@ public class EventManagerBean implements EventManager {
      * @param pInstance
      * @return boolean status
      */
-    private boolean isProcessInstanceResumable(ProcessInstanceVO pInstance) {
+    private boolean isProcessInstanceResumable(ProcessInstance pInstance) {
 
         int statusCd = pInstance.getStatusCode().intValue();
         if (statusCd == WorkStatus.STATUS_COMPLETED.intValue()) {
@@ -491,7 +491,7 @@ public class EventManagerBean implements EventManager {
      * @param pProcInstId
      * @return ProcessInstance
      */
-    public ProcessInstanceVO getProcessInstance(Long procInstId)
+    public ProcessInstance getProcessInstance(Long procInstId)
     throws ProcessException, DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -513,12 +513,12 @@ public class EventManagerBean implements EventManager {
      * @param loadVariables
      * @return ProcessInstance
      */
-    public ProcessInstanceVO getProcessInstance(Long procInstId, boolean loadVariables)
+    public ProcessInstance getProcessInstance(Long procInstId, boolean loadVariables)
     throws ProcessException, DataAccessException {
         if (loadVariables)
         {
-            ProcessInstanceVO processInstanceVO = this.getProcessInstance(procInstId);
-            List<VariableInstanceInfo> variables =  this.getProcessInstanceVariables(procInstId);
+            ProcessInstance processInstanceVO = this.getProcessInstance(procInstId);
+            List<VariableInstance> variables =  this.getProcessInstanceVariables(procInstId);
             processInstanceVO.setVariables(variables);
             return processInstanceVO;
         }
@@ -535,12 +535,12 @@ public class EventManagerBean implements EventManager {
      * @throws ProcessException
      * @throws DataAccessException
      */
-    public List<ProcessInstanceVO> getProcessInstances(String masterRequestId, String processName)
+    public List<ProcessInstance> getProcessInstances(String masterRequestId, String processName)
     throws ProcessException, DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
-            ProcessVO procdef = ProcessVOCache.getProcessVO(processName, 0);
+            Process procdef = ProcessCache.getProcess(processName, 0);
             if (procdef==null) return null;
             transaction = edao.startTransaction();
             return edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getProcessId());
@@ -564,23 +564,23 @@ public class EventManagerBean implements EventManager {
      * @throws ProcessException
      * @throws DataAccessException
      */
-    public List<ActivityInstanceVO> getActivityInstances(String masterRequestId, String processName, String activityLogicalId)
+    public List<ActivityInstance> getActivityInstances(String masterRequestId, String processName, String activityLogicalId)
     throws ProcessException, DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
-            ProcessVO procdef = ProcessVOCache.getProcessVO(processName, 0);
+            Process procdef = ProcessCache.getProcess(processName, 0);
             if (procdef==null) return null;
-            ActivityVO actdef = procdef.getActivityByLogicalId(activityLogicalId);
+            Activity actdef = procdef.getActivityByLogicalId(activityLogicalId);
             if (actdef==null) return null;
             transaction = edao.startTransaction();
-            List<ActivityInstanceVO> actInstList = new ArrayList<ActivityInstanceVO>();
-            List<ProcessInstanceVO> procInstList =
+            List<ActivityInstance> actInstList = new ArrayList<ActivityInstance>();
+            List<ProcessInstance> procInstList =
                 edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getProcessId());
             if (procInstList.size()==0) return actInstList;
-            for (ProcessInstanceVO pi : procInstList) {
-                List<ActivityInstanceVO> actInsts = edao.getActivityInstances(actdef.getActivityId(), pi.getId(), false, false);
-                for (ActivityInstanceVO ai : actInsts) {
+            for (ProcessInstance pi : procInstList) {
+                List<ActivityInstance> actInsts = edao.getActivityInstances(actdef.getActivityId(), pi.getId(), false, false);
+                for (ActivityInstance ai : actInsts) {
                     actInstList.add(ai);
                 }
             }
@@ -598,9 +598,9 @@ public class EventManagerBean implements EventManager {
      * @param pActivityInstId
      * @return ActivityInstance
      */
-    public ActivityInstanceVO getActivityInstance(Long pActivityInstId)
+    public ActivityInstance getActivityInstance(Long pActivityInstId)
     throws ProcessException, DataAccessException {
-        ActivityInstanceVO ai;
+        ActivityInstance ai;
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -622,7 +622,7 @@ public class EventManagerBean implements EventManager {
      * @param pOwnerId Unique Id for the owner
      * @return ProcessInstance object
      */
-    public List<ProcessInstanceVO> getProcessInstances(Long pProcessId, String pOwner, Long pOwnerId)
+    public List<ProcessInstance> getProcessInstances(Long pProcessId, String pOwner, Long pOwnerId)
     throws ProcessException, DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -642,9 +642,9 @@ public class EventManagerBean implements EventManager {
      * @param pId
      * @return WorkTransitionINstance
      */
-    public WorkTransitionInstanceVO getWorkTransitionInstance(Long pId)
+    public TransitionInstance getWorkTransitionInstance(Long pId)
     throws DataAccessException, ProcessException {
-        WorkTransitionInstanceVO wti;
+        TransitionInstance wti;
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -664,7 +664,7 @@ public class EventManagerBean implements EventManager {
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            DocumentVO docvo = edao.getDocument(docid, false);
+            Document docvo = edao.getDocument(docid, false);
             if (doc instanceof String) docvo.setContent((String)doc);
             else docvo.setObject(doc, type);
             edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent());
@@ -681,7 +681,7 @@ public class EventManagerBean implements EventManager {
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            DocumentVO docvo = edao.getDocument(docid, false);
+            Document docvo = edao.getDocument(docid, false);
             if (documentType != null)
                 docvo.setDocumentType(documentType);
             if (ownerType != null)
@@ -703,13 +703,13 @@ public class EventManagerBean implements EventManager {
         return createDocument(type, ownerType, ownerId, doc, null);
     }
 
-    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, PackageVO pkg)
+    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg)
     throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            DocumentVO docvo = new DocumentVO();
+            Document docvo = new Document();
             if (doc instanceof String) docvo.setContent((String)doc);
             else docvo.setObject(doc, type);
             docvo.setDocumentType(type);
@@ -724,7 +724,7 @@ public class EventManagerBean implements EventManager {
         }
     }
 
-    public DocumentVO getDocumentVO(Long docid)
+    public Document getDocumentVO(Long docid)
     throws DataAccessException {
         try {
             DatabaseAccess db = new DatabaseAccess(null);
@@ -741,20 +741,20 @@ public class EventManagerBean implements EventManager {
      * @param pProcessId
      * @return ProcessVO
      */
-    public ProcessVO getProcessVO(Long id)
+    public Process getProcess(Long id)
     throws DataAccessException, ProcessException {
         CodeTimer timer = new CodeTimer("getProcessVO()", true);
         ProcessLoader loader = DataAccess.getProcessLoader();
-        ProcessVO processVO;
+        Process processVO;
         try {
             processVO = loader.loadProcess(id, true);
-            if (processVO != null && processVO.isInRuleSet()) {
+            if (processVO != null) {
                 // all db attributes are override attributes
                 Map<String,String> attributes = getAttributes(OwnerType.PROCESS, id);
                 if (attributes != null)
                     processVO.applyOverrideAttributes(attributes);
             }
-        } catch (com.centurylink.mdw.common.exception.DataAccessException e) {
+        } catch (com.centurylink.mdw.dataaccess.DataAccessException e) {
             throw new DataAccessException(0, "Cannot load process ID: " + id + " (" + e.getMessage() + ")", e);
         }
         timer.stopAndLogTiming("");
@@ -769,7 +769,7 @@ public class EventManagerBean implements EventManager {
         if (lastSlash >= 0)
             plainName = plainName.substring(lastSlash + 1);  // currently just ignore package ref since name is unique
         ProcessLoader loader = DataAccess.getProcessLoader();
-        ProcessVO processVO;
+        Process processVO;
         try {
             processVO = loader.getProcessBase(plainName, version);
         } catch (Exception e) {
@@ -791,7 +791,7 @@ public class EventManagerBean implements EventManager {
         }
     }
 
-    public EventInstanceVO getEventInstance(String eventName) throws DataAccessException {
+    public EventInstance getEventInstance(String eventName) throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -918,7 +918,7 @@ public class EventManagerBean implements EventManager {
         List<UnscheduledEvent> returnList = new ArrayList<UnscheduledEvent>();
         ThreadPoolProvider thread_pool = ApplicationContext.getThreadPoolProvider();
         for (UnscheduledEvent one : eventList) {
-            if (EventInstanceVO.ACTIVE_INTERNAL_EVENT.equals(one.getReference())) {
+            if (EventInstance.ACTIVE_INTERNAL_EVENT.equals(one.getReference())) {
                 InternalEventDriver command = new InternalEventDriver(one.getName(), one.getMessage());
                 if (!thread_pool.execute(ThreadPoolProvider.WORKER_SCHEDULER, one.getName(), command)) {
                     String msg = ThreadPoolProvider.WORKER_SCHEDULER + " has no thread available for Unscheduled event: " + one.getName() + " message:\n" + one.getMessage();
@@ -990,12 +990,12 @@ public class EventManagerBean implements EventManager {
             // 2. handle the case when the message has been deleted (only possible to delete from admin
             if (refreshed==null) {
                 // only possible when the message is deleted from admin
-                message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_CANCEL);
+                message.setStatus(EventInstance.STATUS_CERTIFIED_MESSAGE_CANCEL);
                 return false;
             }
             // 3. handle the case when the message has been processed by another managed server
             int count = refreshed.getTryCount();
-            if (!refreshed.getStatus().equals(EventInstanceVO.STATUS_CERTIFIED_MESSAGE)) return false;
+            if (!refreshed.getStatus().equals(EventInstance.STATUS_CERTIFIED_MESSAGE)) return false;
             if (count!=message.getTryCount()) {
                 // the message has been retried by some other server, successful or failed
                 message.setTryCount(count);
@@ -1007,10 +1007,10 @@ public class EventManagerBean implements EventManager {
             // 4. load message content if not already in memory
             if (message.getContent()==null) {
                 try {
-                    DocumentVO docvo = this.getDocumentVO(message.getDocumentId());
+                    Document docvo = this.getDocumentVO(message.getDocumentId());
                     message.setContent(docvo.getContent());
                 } catch (DataAccessException e) {
-                    message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_HOLD);
+                    message.setStatus(EventInstance.STATUS_CERTIFIED_MESSAGE_HOLD);
                     logger.severeException(LoggerUtil.getStandardLogger().getSentryMark()+
                             "Failed to load certified message content: " + message.getId(), e);
                     updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
@@ -1037,14 +1037,14 @@ public class EventManagerBean implements EventManager {
                     messenger.sendCertifiedMessage(message.getContent(), message.getId(), ackTimeout);
                 }
                 // 6a. mark message delivered
-                message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_DELIVERED);
+                message.setStatus(EventInstance.STATUS_CERTIFIED_MESSAGE_DELIVERED);
                 updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
                         new Date(DatabaseAccess.getCurrentTime()));
                 return false;
             } catch (AdapterException e1) {
                 // 6b. handle non-retriable errors
                 exceptionCode = ((AdapterException)e1).getErrorCode();
-                message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_HOLD);
+                message.setStatus(EventInstance.STATUS_CERTIFIED_MESSAGE_HOLD);
                 logger.severeException(LoggerUtil.getStandardLogger().getSentryMark()+ "Certified message hits unretriable error: "
                             + message.getId(), e1);
                 updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
@@ -1071,7 +1071,7 @@ public class EventManagerBean implements EventManager {
                     return false;
                 } else if (count>=maxTries) {
                     // 7a. when exceeding max retry limit
-                    message.setStatus(EventInstanceVO.STATUS_CERTIFIED_MESSAGE_HOLD);
+                    message.setStatus(EventInstance.STATUS_CERTIFIED_MESSAGE_HOLD);
                     logger.severe(LoggerUtil.getStandardLogger().getSentryMark() +
                             "Certified message failed to deliver after max tries: " + message.getId());
                     updateCertifiedMessageStatus(edao, message.getId(), message.getStatus(), 0,
@@ -1082,7 +1082,7 @@ public class EventManagerBean implements EventManager {
                     message.setTryCount(count+1);
                     message.setNextTryTime(new Date(DatabaseAccess.getCurrentTime()+1000*retryInterval));
                     updateCertifiedMessageStatus(edao, message.getId(),
-                            EventInstanceVO.STATUS_CERTIFIED_MESSAGE, message.getTryCount(), message.getNextTryTime());
+                            EventInstance.STATUS_CERTIFIED_MESSAGE, message.getTryCount(), message.getNextTryTime());
                     return true;
                 }
             } finally {
@@ -1302,11 +1302,11 @@ public class EventManagerBean implements EventManager {
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            List<AttributeVO> attrs = edao.getAttributes(ownerType, ownerId);
+            List<Attribute> attrs = edao.getAttributes(ownerType, ownerId);
             if (attrs == null)
                 return null;
             Map<String,String> attributes = new HashMap<String,String>();
-            for (AttributeVO attr : attrs)
+            for (Attribute attr : attrs)
                 attributes.put(attr.getAttributeName(), attr.getAttributeValue());
             return attributes;
         } catch (SQLException e) {
@@ -1377,15 +1377,15 @@ public class EventManagerBean implements EventManager {
     /**
      * Returns Document VO
      * @param forUpdate
-     * @throws com.centurylink.mdw.common.exception.DataAccessException
+     * @throws com.centurylink.mdw.dataaccess.DataAccessException
      */
-    public DocumentVO getDocument(DocumentReference docRef, boolean forUpdate)
-    throws ProcessException, com.centurylink.mdw.common.exception.DataAccessException {
+    public Document getDocument(DocumentReference docRef, boolean forUpdate)
+    throws ProcessException, com.centurylink.mdw.dataaccess.DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            DocumentVO docvo = edao.getDocument(docRef.getDocumentId(), forUpdate);
+            Document docvo = edao.getDocument(docRef.getDocumentId(), forUpdate);
             return docvo;
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to get document content", e);
@@ -1395,13 +1395,13 @@ public class EventManagerBean implements EventManager {
     }
 
     @Override
-    public ProcessVO findProcessByProcessInstanceId(Long processInstanceId) throws DataAccessException,
+    public Process findProcessByProcessInstanceId(Long processInstanceId) throws DataAccessException,
             ProcessException {
-        ProcessInstanceVO processInst = getProcessInstance(processInstanceId);
-        if (processInst.isNewEmbedded()) {
+        ProcessInstance processInst = getProcessInstance(processInstanceId);
+        if (processInst.isEmbedded()) {
             processInst = getProcessInstance(processInst.getOwnerId());
         }
-        ProcessVO process = processInst != null ? ProcessVOCache.getProcessVO(processInst.getProcessId()) : null;
+        Process process = processInst != null ? ProcessCache.getProcess(processInst.getProcessId()) : null;
         return process;
     }
 

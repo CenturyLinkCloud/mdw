@@ -18,15 +18,14 @@ import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.RawJson;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.model.Mdw;
-import com.centurylink.mdw.model.value.process.PackageVO;
-import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
-import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -50,7 +49,7 @@ public class Packages extends JsonRestService implements JsonExportable {
     @Override
     @Path("/{package}")
     @ApiOperation(value="Export JSON content for a package or list of packages",
-        response=PackageVO.class)
+        response=Package.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="packages", paramType="query", dataType="array")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
@@ -72,10 +71,10 @@ public class Packages extends JsonRestService implements JsonExportable {
         try {
             // get the package vos from the loader
             ProcessLoader loader = DataAccess.getProcessLoader();
-            List<PackageVO> packages = new ArrayList<PackageVO>();
+            List<Package> packages = new ArrayList<Package>();
             for (String name : pkgNames) {
 
-                PackageVO pkg = loader.getPackage(name);
+                Package pkg = loader.getPackage(name);
                 if (pkg == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Package " + name + " not found"); // cannot be archived
                 pkg = loader.loadPackage(pkg.getId(), true); // deep load
