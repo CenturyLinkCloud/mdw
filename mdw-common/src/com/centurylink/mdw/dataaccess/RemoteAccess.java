@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.dataaccess;
 
@@ -30,6 +30,6 @@ public class RemoteAccess {
     }
 
     public int getSchemaVersion() {
-    	return schemaVersion;
+        return schemaVersion;
     }
 }

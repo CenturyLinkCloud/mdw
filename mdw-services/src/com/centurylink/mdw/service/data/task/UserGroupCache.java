@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.service.data.task;
 
@@ -28,10 +28,10 @@ import com.centurylink.mdw.util.timer.CodeTimer;
  */
 public class UserGroupCache implements PreloadableCache, CacheService {
 
-	private static UserGroupCache instance;
+    private static UserGroupCache instance;
 
-	// these are loaded initially (and users are shallow)
-	private List<User> users;
+    // these are loaded initially (and users are shallow)
+    private List<User> users;
     private List<Workgroup> workgroups;
     private List<Role> roles;
     private List<String> userAttributeNames;
@@ -76,7 +76,7 @@ public class UserGroupCache implements PreloadableCache, CacheService {
     }
 
     public static Workgroup getWorkgroup(String groupName) throws CachingException {
-    	return instance.getWorkgroup0(groupName);
+        return instance.getWorkgroup0(groupName);
     }
 
     public static void set(Workgroup workgroup) {

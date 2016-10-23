@@ -34,23 +34,23 @@ public class TaskTemplateCache implements PreloadableCache {
 
     public void initialize(Map<String,String> params) {}
 
-	public int getCacheSize() {
+    public int getCacheSize() {
         return taskVoCache.size();
     }
 
-	public void clearCache() {
+    public void clearCache() {
         taskVoCache.clear();
         templateVersions.clear();
     }
 
-	public void loadCache() throws CachingException {
-	    load();
-	}
+    public void loadCache() throws CachingException {
+        load();
+    }
 
     private synchronized void load() throws CachingException {
         List<TaskTemplate> taskVoCacheTemp = new ArrayList<TaskTemplate>();
         try {
-    		List<TaskTemplate> taskTemplates = DataAccess.getProcessLoader().getTaskTemplates();
+            List<TaskTemplate> taskTemplates = DataAccess.getProcessLoader().getTaskTemplates();
             for (TaskTemplate taskTemplate : taskTemplates)
                 taskVoCacheTemp.add(taskTemplate);
             synchronized(lock) {

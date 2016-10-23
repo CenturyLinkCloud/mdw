@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.note;
 
@@ -14,17 +14,17 @@ import com.centurylink.mdw.util.StringHelper;
 
 public class InstanceNote implements Serializable, Jsonable, Comparable<InstanceNote> {
 
-	private String noteName;
-	private String noteDetails;
-	private Long id;
-	private String ownerType;
-	private Long ownerId;
-	private Date createdDate, modifiedDate;
-	private String createdBy, modifiedBy;
+    private String noteName;
+    private String noteDetails;
+    private Long id;
+    private String ownerType;
+    private Long ownerId;
+    private Date createdDate, modifiedDate;
+    private String createdBy, modifiedBy;
 
-	public InstanceNote() {
+    public InstanceNote() {
 
-	}
+    }
 
     public InstanceNote(JSONObject json) throws JSONException {
         noteName = json.getString("name");
@@ -66,65 +66,65 @@ public class InstanceNote implements Serializable, Jsonable, Comparable<Instance
      */
     public void setNoteDetails(String pNoteDetails) { this.noteDetails = pNoteDetails; }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getOwnerType() {
-		return ownerType;
-	}
+    public String getOwnerType() {
+        return ownerType;
+    }
 
-	public void setOwnerType(String ownerType) {
-		this.ownerType = ownerType;
-	}
+    public void setOwnerType(String ownerType) {
+        this.ownerType = ownerType;
+    }
 
-	public Long getOwnerId() {
-		return ownerId;
-	}
+    public Long getOwnerId() {
+        return ownerId;
+    }
 
-	public void setOwnerId(Long ownerId) {
-		this.ownerId = ownerId;
-	}
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
+    public Date getModifiedDate() {
+        return modifiedDate;
+    }
 
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
+    public void setModifiedDate(Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
 
-	public Date getLastModified() {
-	    return modifiedDate == null ? createdDate : modifiedDate;
-	}
+    public Date getLastModified() {
+        return modifiedDate == null ? createdDate : modifiedDate;
+    }
 
-	public String getCreatedBy() {
-		return createdBy;
-	}
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-	public String getModifiedBy() {
-		return modifiedBy;
-	}
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
 
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
 
     public String getJsonName() { return "Note"; }
 

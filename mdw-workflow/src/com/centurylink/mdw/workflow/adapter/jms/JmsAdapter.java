@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.adapter.jms;
 
@@ -79,13 +79,13 @@ public class JmsAdapter extends AdapterActivityBase {
      * returns false.
      */
     public boolean isSynchronous() {
-    	String attr = this.getAttributeValue(SYNCHRONOUS_RESPONSE);
-    	return (attr!=null && attr.equalsIgnoreCase("true"));
+        String attr = this.getAttributeValue(SYNCHRONOUS_RESPONSE);
+        return (attr!=null && attr.equalsIgnoreCase("true"));
     }
 
     private boolean isCertified() {
-    	String attr = this.getAttributeValue(SYNCHRONOUS_RESPONSE);
-    	return (attr!=null && attr.equalsIgnoreCase("Certified"));
+        String attr = this.getAttributeValue(SYNCHRONOUS_RESPONSE);
+        return (attr!=null && attr.equalsIgnoreCase("Certified"));
     }
 
     /**
@@ -102,13 +102,13 @@ public class JmsAdapter extends AdapterActivityBase {
     }
 
     @Override
-	protected Long logMessage(String message, boolean isResponse) {
-    	Long docid = super.logMessage(message, isResponse);
-    	if (!isResponse) requestLoggingId = docid;
-    	return docid;
-	}
+    protected Long logMessage(String message, boolean isResponse) {
+        Long docid = super.logMessage(message, isResponse);
+        if (!isResponse) requestLoggingId = docid;
+        return docid;
+    }
 
-	/**
+    /**
      * The method overrides the one in the super class to perform
      * JMS specific functions.
      */
@@ -117,20 +117,20 @@ public class JmsAdapter extends AdapterActivityBase {
         throws AdapterException, ConnectionException
     {
         try {
-        	if (this.isCertified()) {
-        		Long docid;
-        		if (requestLoggingId==null) {
-        			DocumentReference docref = super.createDocument(XmlObject.class.getName(),
-        					requestData, OwnerType.ACTIVITY_INSTANCE_REQUEST, this.getActivityInstanceId());
-        			docid = docref.getDocumentId();
-        		} else docid = requestLoggingId;
-        		CertifiedMessageManager queue = (CertifiedMessageManager)conn;
+            if (this.isCertified()) {
+                Long docid;
+                if (requestLoggingId==null) {
+                    DocumentReference docref = super.createDocument(XmlObject.class.getName(),
+                            requestData, OwnerType.ACTIVITY_INSTANCE_REQUEST, this.getActivityInstanceId());
+                    docid = docref.getDocumentId();
+                } else docid = requestLoggingId;
+                CertifiedMessageManager queue = (CertifiedMessageManager)conn;
                 Map<String,String> props = new HashMap<String,String>();
-            	props.put(CertifiedMessage.PROP_PROTOCOL, CertifiedMessage.PROTOCOL_MDW2MDW);
+                props.put(CertifiedMessage.PROP_PROTOCOL, CertifiedMessage.PROTOCOL_MDW2MDW);
                 props.put(CertifiedMessage.PROP_JNDI_URL, getAttributeValueSmart(SERVER_URL));
-        		queue.sendTextMessage(props, (String)requestData, docid, logtag());
-        		return null;
-        	}
+                queue.sendTextMessage(props, (String)requestData, docid, logtag());
+                return null;
+            }
             Object result;
 
             if (jmsSenderReceiver != null) {
@@ -235,7 +235,7 @@ public class JmsAdapter extends AdapterActivityBase {
     }
 
     protected String getCorrelationId() throws PropertyException {
-    	 String correlationId = this.getAttributeValueSmart(CORRELATION_ID);
+         String correlationId = this.getAttributeValueSmart(CORRELATION_ID);
          if (correlationId!=null && correlationId.length()>0) {
              correlationId = translatePlaceHolder(correlationId);
          }
@@ -250,20 +250,20 @@ public class JmsAdapter extends AdapterActivityBase {
      * @return timeout value in seconds
      */
     protected int getTimeoutForResponse() {
-    	String timeout_s = null;
-    	int timeout;
-    	try {
-    		timeout_s = this.getAttributeValueSmart(TIMEOUT);
-			timeout = timeout_s==null?30:Integer.parseInt(timeout_s);
-			if (timeout<0) timeout = 30;
-		} catch (NumberFormatException e) {
-			logger.severeException("Cannot parse timeout value " + timeout_s, e);
-			timeout = 30;
-		} catch (PropertyException e) {
-			logger.severeException("Cannot read timeout attribute " + TIMEOUT, e);
-			timeout = 30;
-		}
-		return timeout;
+        String timeout_s = null;
+        int timeout;
+        try {
+            timeout_s = this.getAttributeValueSmart(TIMEOUT);
+            timeout = timeout_s==null?30:Integer.parseInt(timeout_s);
+            if (timeout<0) timeout = 30;
+        } catch (NumberFormatException e) {
+            logger.severeException("Cannot parse timeout value " + timeout_s, e);
+            timeout = 30;
+        } catch (PropertyException e) {
+            logger.severeException("Cannot read timeout attribute " + TIMEOUT, e);
+            timeout = 30;
+        }
+        return timeout;
     }
 
     /**
@@ -287,10 +287,10 @@ public class JmsAdapter extends AdapterActivityBase {
      */
     @Override
     protected Object openConnection() throws ConnectionException {
-    	if (this.isCertified()) {
-    		requestLoggingId = null;
-    		return CertifiedMessageManager.getSingleton();
-    	}
+        if (this.isCertified()) {
+            requestLoggingId = null;
+            return CertifiedMessageManager.getSingleton();
+        }
         qConnection = null;
         qSession = null;
         queue = null;
@@ -323,18 +323,18 @@ public class JmsAdapter extends AdapterActivityBase {
      * The method will through exception if the variable is not bound,
      * or the value is not bound to a DocumentReference or String.
      */
-	@Override
-	protected Object getRequestData() throws ActivityException {
-		Object request = super.getRequestData();
-		if (request==null) throw new ActivityException("Request data is null");
-		if (request instanceof DocumentReference) request = getDocumentContent((DocumentReference)request);
-		if (request instanceof String) return request;
-		else if (request instanceof Document) return
-			VariableTranslator.realToString(Document.class.getName(), request);
-		else if (request instanceof XmlObject) return ((XmlObject)request).xmlText();
-		else throw new ActivityException(
-				"Cannot handle request of type " + request.getClass().getName());
-	}
+    @Override
+    protected Object getRequestData() throws ActivityException {
+        Object request = super.getRequestData();
+        if (request==null) throw new ActivityException("Request data is null");
+        if (request instanceof DocumentReference) request = getDocumentContent((DocumentReference)request);
+        if (request instanceof String) return request;
+        else if (request instanceof Document) return
+            VariableTranslator.realToString(Document.class.getName(), request);
+        else if (request instanceof XmlObject) return ((XmlObject)request).xmlText();
+        else throw new ActivityException(
+                "Cannot handle request of type " + request.getClass().getName());
+    }
 
 
 }

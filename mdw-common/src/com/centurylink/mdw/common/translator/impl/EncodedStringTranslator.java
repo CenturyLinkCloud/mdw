@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.common.translator.impl;
 
@@ -19,16 +19,16 @@ import org.apache.commons.codec.net.BCodec;
  */
 public class EncodedStringTranslator extends VariableTranslator {
 
-	// CONSTANTS ------------------------------------------------------
+    // CONSTANTS ------------------------------------------------------
 
-	// CLASS VARIABLES ------------------------------------------------
+    // CLASS VARIABLES ------------------------------------------------
     private static StringEncoder encoder = new BCodec();
     private static StringDecoder decoder = new BCodec();
-	// INSTANCE VARIABLES ---------------------------------------------
+    // INSTANCE VARIABLES ---------------------------------------------
 
-	// CONSTRUCTORS ---------------------------------------------------
+    // CONSTRUCTORS ---------------------------------------------------
 
-	// PUBLIC AND PROTECTED METHODS -----------------------------------
+    // PUBLIC AND PROTECTED METHODS -----------------------------------
     /**
      * converts the passed in String to an equivalent object
      * @param pStr
@@ -63,9 +63,9 @@ public class EncodedStringTranslator extends VariableTranslator {
 
 
 
-   	// PRIVATE METHODS ------------------------------------------------
+       // PRIVATE METHODS ------------------------------------------------
 
-	// ACCESSOR METHODS -----------------------------------------------
+    // ACCESSOR METHODS -----------------------------------------------
 
-	// INNER CLASSES --------------------------------------------------
+    // INNER CLASSES --------------------------------------------------
 }

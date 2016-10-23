@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.common.translator.impl;
 
@@ -12,16 +12,16 @@ import com.centurylink.mdw.translator.VariableTranslator;
  */
 public class LongTranslator extends VariableTranslator {
 
-	// CONSTANTS ------------------------------------------------------
+    // CONSTANTS ------------------------------------------------------
 
-	// CLASS VARIABLES ------------------------------------------------
+    // CLASS VARIABLES ------------------------------------------------
 
-	// INSTANCE VARIABLES ---------------------------------------------
+    // INSTANCE VARIABLES ---------------------------------------------
 
-	// CONSTRUCTORS ---------------------------------------------------
+    // CONSTRUCTORS ---------------------------------------------------
     public LongTranslator(){
     }
-	// PUBLIC AND PROTECTED METHODS -----------------------------------
+    // PUBLIC AND PROTECTED METHODS -----------------------------------
     /**
      * Converts the passed in object to a string
      * @param pObject
@@ -40,9 +40,9 @@ public class LongTranslator extends VariableTranslator {
      return new Long(pStr);
     }
 
-   	// PRIVATE METHODS ------------------------------------------------
+       // PRIVATE METHODS ------------------------------------------------
 
-	// ACCESSOR METHODS -----------------------------------------------
+    // ACCESSOR METHODS -----------------------------------------------
 
-	// INNER CLASSES --------------------------------------------------
+    // INNER CLASSES --------------------------------------------------
 }

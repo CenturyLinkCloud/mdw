@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.email;
 
@@ -73,7 +73,7 @@ public class TemplatedEmail {
             mailHost = getProperty("MDWFramework.JavaMail/smtpHost");
         }
         if (mailHost == null)
-        	mailHost = defaultMailHost;
+            mailHost = defaultMailHost;
         return mailHost;
     }
 
@@ -96,7 +96,7 @@ public class TemplatedEmail {
         String port = getProperty(PropertyNames.MDW_MAIL_SMTP_PORT);
         if (port == null)
             port = getProperty("MDWFramework.JavaMail/smtpPort");
-    	return port;
+        return port;
     }
 
     /**
@@ -290,9 +290,9 @@ public class TemplatedEmail {
                     message.setRecipients(Message.RecipientType.TO, newRecips.toArray(new Address[0]));
                     if (!newCCs.isEmpty()) {
                         message.setRecipients(Message.RecipientType.CC, newCCs.toArray(new Address[0]));
-    				} else if (ccRecipients!=null) {
-    					message.setRecipients(Message.RecipientType.CC, new Address[0]);
-    				}
+                    } else if (ccRecipients!=null) {
+                        message.setRecipients(Message.RecipientType.CC, new Address[0]);
+                    }
                     Transport.send(message);
                 }
             }
@@ -318,37 +318,37 @@ public class TemplatedEmail {
     }
 
     public JSONObject buildEmailJson() throws MessagingException {
-    	JSONObject jsonobj = new JSONObject();
-		try {
-			jsonobj.put("FROM", fromAddress);
-			jsonobj.put("SUBJECT", substitute(subject));
-			jsonobj.put("ISHTML", html?"true":"false");
-			jsonobj.put("CONTENT", getBody());
-			if (!images.isEmpty()) {
-				JSONObject imagesObj = new JSONObject();
-				jsonobj.put("IMAGES", imagesObj);
-				for (String imageId : images.keySet()) {
-					String imageFile = images.get(imageId);
-					imagesObj.put(imageId, imageFile);
-				}
-			}
-			JSONArray addrs = new JSONArray();
-			jsonobj.put("RECIPIENTS", addrs);
-			for (Address a : recipients) {
-				addrs.put(a.toString());
-			}
-			if (ccRecipients != null) {
-				addrs = new JSONArray();
-				jsonobj.put("CC", addrs);
-				for (Address a : ccRecipients) {
-					addrs.put(a.toString());
-				}
-			}
+        JSONObject jsonobj = new JSONObject();
+        try {
+            jsonobj.put("FROM", fromAddress);
+            jsonobj.put("SUBJECT", substitute(subject));
+            jsonobj.put("ISHTML", html?"true":"false");
+            jsonobj.put("CONTENT", getBody());
+            if (!images.isEmpty()) {
+                JSONObject imagesObj = new JSONObject();
+                jsonobj.put("IMAGES", imagesObj);
+                for (String imageId : images.keySet()) {
+                    String imageFile = images.get(imageId);
+                    imagesObj.put(imageId, imageFile);
+                }
+            }
+            JSONArray addrs = new JSONArray();
+            jsonobj.put("RECIPIENTS", addrs);
+            for (Address a : recipients) {
+                addrs.put(a.toString());
+            }
+            if (ccRecipients != null) {
+                addrs = new JSONArray();
+                jsonobj.put("CC", addrs);
+                for (Address a : ccRecipients) {
+                    addrs.put(a.toString());
+                }
+            }
 
-			return jsonobj;
-		} catch (JSONException e1) {
-        	throw new MessagingException("Failed to generate email document", e1);
-		}
+            return jsonobj;
+        } catch (JSONException e1) {
+            throw new MessagingException("Failed to generate email document", e1);
+        }
     }
 
     /**

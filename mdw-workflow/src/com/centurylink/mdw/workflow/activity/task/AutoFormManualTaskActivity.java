@@ -126,22 +126,22 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
         FormDataDocument datadoc = new FormDataDocument();
         String formname = this.getAttributeValue(TaskActivity.ATTRIBUTE_FORM_NAME);
         if (formname!=null && !formname.startsWith("html:")) {
-        	// use form to selectively include process variables
-        	fillInCustomActions(datadoc);
-        	fillInVariables(datadoc);
+            // use form to selectively include process variables
+            fillInCustomActions(datadoc);
+            fillInVariables(datadoc);
         } else {
-        	// include all instantiated process variables
-        	for (VariableInstance var : this.getParameters()) {
-        		String value;
-        		if (var.isDocument()) {
-        			value = getDocumentContent((DocumentReference)var.getData());
-        		} else value = var.getStringValue();
-        		try {
-        			datadoc.setValue(var.getName(), value);
-        		} catch (MbengException e) {
-        			super.logwarn("Failed to set variable in form data document: " + var.getName());
-        		}
-        	}
+            // include all instantiated process variables
+            for (VariableInstance var : this.getParameters()) {
+                String value;
+                if (var.isDocument()) {
+                    value = getDocumentContent((DocumentReference)var.getData());
+                } else value = var.getStringValue();
+                try {
+                    datadoc.setValue(var.getName(), value);
+                } catch (MbengException e) {
+                    super.logwarn("Failed to set variable in form data document: " + var.getName());
+                }
+            }
         }
         return datadoc;
     }
@@ -159,45 +159,45 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
      */
     protected String extractFormData(FormDataDocument datadoc)
             throws ActivityException {
-    	String varstring = this.getAttributeValue(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
-		List<String[]> parsed = StringHelper.parseTable(varstring, ',', ';', 5);
-		for (String[] one : parsed) {
-			String varname = one[0];
-			String displayOption = one[2];
-			if (displayOption.equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
-			if (displayOption.equals(TaskActivity.VARIABLE_DISPLAY_READONLY)) continue;
-			if (varname.startsWith("#{") || varname.startsWith("${")) continue;
-			String data = datadoc.getValue(varname);
-			setDataToVariable(varname, data);
-		}
+        String varstring = this.getAttributeValue(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
+        List<String[]> parsed = StringHelper.parseTable(varstring, ',', ';', 5);
+        for (String[] one : parsed) {
+            String varname = one[0];
+            String displayOption = one[2];
+            if (displayOption.equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
+            if (displayOption.equals(TaskActivity.VARIABLE_DISPLAY_READONLY)) continue;
+            if (varname.startsWith("#{") || varname.startsWith("${")) continue;
+            String data = datadoc.getValue(varname);
+            setDataToVariable(varname, data);
+        }
         return null;
     }
 
     protected void fillInVariables(FormDataDocument formdatadoc)
-	throws ActivityException {
-    	try {
-			String varstring = this.getAttributeValue(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
-			List<String[]> parsed = StringHelper.parseTable(varstring, ',', ';', 5);
-			for (String[] one : parsed) {
-				String varname = one[0];
-				// TODO: support expressions in displaying autoform manual tasks
-				// (currently only supported for Task services
-				if (!varname.startsWith("#{") && !varname.startsWith("${")) {
-    				String displayOption = one[2];
-    				if (displayOption.equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
-    				String data;
-    				VariableInstance varinst = this.getVariableInstance(varname);
-    				if (varinst!=null) {
-    					if (varinst.isDocument()) {
-    						DocumentReference docref = (DocumentReference)varinst.getData();
-    						data = super.getDocumentContent(docref);
-    					} else data = varinst.getStringValue();
-    					formdatadoc.setValue(varname, data);
-    				}
-				}
-			}
-		} catch (MbengException e) {
-			throw new ActivityException(-1, "Failed to fill in variable data", e);
-		}
+    throws ActivityException {
+        try {
+            String varstring = this.getAttributeValue(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
+            List<String[]> parsed = StringHelper.parseTable(varstring, ',', ';', 5);
+            for (String[] one : parsed) {
+                String varname = one[0];
+                // TODO: support expressions in displaying autoform manual tasks
+                // (currently only supported for Task services
+                if (!varname.startsWith("#{") && !varname.startsWith("${")) {
+                    String displayOption = one[2];
+                    if (displayOption.equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
+                    String data;
+                    VariableInstance varinst = this.getVariableInstance(varname);
+                    if (varinst!=null) {
+                        if (varinst.isDocument()) {
+                            DocumentReference docref = (DocumentReference)varinst.getData();
+                            data = super.getDocumentContent(docref);
+                        } else data = varinst.getStringValue();
+                        formdatadoc.setValue(varname, data);
+                    }
+                }
+            }
+        } catch (MbengException e) {
+            throw new ActivityException(-1, "Failed to fill in variable data", e);
+        }
     }
 }

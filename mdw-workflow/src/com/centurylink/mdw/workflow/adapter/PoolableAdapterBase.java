@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.adapter;
 
@@ -48,10 +48,10 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 @Tracked(LogLevel.TRACE)
 //public abstract class AdapterActivityBasePlus extends AdapterActivityBase {
 public abstract class PoolableAdapterBase extends DefaultActivityImpl
-	implements AdapterActivity, PoolableAdapter,  AdapterInvocationError {
+    implements AdapterActivity, PoolableAdapter,  AdapterInvocationError {
     static final String PROP_RETRY_EXCEPTIONS = "RETRY_EXCEPTIONS";
     private static Random random = null;
-    boolean isStubbing;		// expose only to allow CompositeSynchronousAdapter to access
+    boolean isStubbing;        // expose only to allow CompositeSynchronousAdapter to access
 
     /**
      * Timeout value for waiting for responses. Used for synchronous mode only.
@@ -62,19 +62,19 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
      * @return timeout value in seconds
      */
     protected int getTimeoutForResponse() {
-    	String timeout_s = null;
-    	int timeout;
-    	try {
-    		timeout_s = this.getAttributeValueSmart(PROP_TIMEOUT);
-			timeout = timeout_s==null?-1:Integer.parseInt(timeout_s);
-		} catch (NumberFormatException e) {
-			logger.severeException("Cannot parse timeout value " + timeout_s, e);
-			timeout = -1;
-		} catch (PropertyException e) {
-			logger.severeException("Cannot read timeout attribute " + PROP_TIMEOUT, e);
-			timeout = -1;
-		}
-		return timeout;
+        String timeout_s = null;
+        int timeout;
+        try {
+            timeout_s = this.getAttributeValueSmart(PROP_TIMEOUT);
+            timeout = timeout_s==null?-1:Integer.parseInt(timeout_s);
+        } catch (NumberFormatException e) {
+            logger.severeException("Cannot parse timeout value " + timeout_s, e);
+            timeout = -1;
+        } catch (PropertyException e) {
+            logger.severeException("Cannot read timeout attribute " + PROP_TIMEOUT, e);
+            timeout = -1;
+        }
+        return timeout;
     }
 
     abstract protected boolean canBeSynchronous();
@@ -82,7 +82,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
     abstract protected boolean canBeAsynchronous();
 
     protected boolean canBeCertified() {
-    	return false;
+        return false;
     }
 
     /**
@@ -96,8 +96,8 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
      * The method will through exception if the variable is not bound,
      * or the value is not bound to a DocumentReference or String.
      */
-	protected String getRequestData() throws ActivityException {
-		String varname = getAttributeValue(REQUEST_VARIABLE);
+    protected String getRequestData() throws ActivityException {
+        String varname = getAttributeValue(REQUEST_VARIABLE);
         Object request = varname == null ? null : getParameterValue(varname);
 
         if (hasPreScript()) {
@@ -110,23 +110,23 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
                 request = ret;
             }
         }
-		if (request == null)
-		    throw new ActivityException("Request data is null");
+        if (request == null)
+            throw new ActivityException("Request data is null");
 
-		// TODO handle general document types via Variable translator mechanism
-		// instead of just these specific types
-		if (request instanceof DocumentReference)
-		    request = getDocumentContent((DocumentReference)request);
-		if (request instanceof String)
-		    return (String)request;
-		else if (request instanceof Document)
-		    return VariableTranslator.realToString(Document.class.getName(), request);
-		else if (request instanceof XmlObject)
-		    return ((XmlObject)request).xmlText();
-		else
-		    throw new ActivityException(
-				"Cannot handle request of type " + request.getClass().getName());
-	}
+        // TODO handle general document types via Variable translator mechanism
+        // instead of just these specific types
+        if (request instanceof DocumentReference)
+            request = getDocumentContent((DocumentReference)request);
+        if (request instanceof String)
+            return (String)request;
+        else if (request instanceof Document)
+            return VariableTranslator.realToString(Document.class.getName(), request);
+        else if (request instanceof XmlObject)
+            return ((XmlObject)request).xmlText();
+        else
+            throw new ActivityException(
+                "Cannot handle request of type " + request.getClass().getName());
+    }
 
     /**
      * The method is used to determine if the current usage is synchronous (waiting for response) or not.
@@ -134,17 +134,17 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
      */
     @Override
     public boolean isSynchronous() {
-    	if (canBeSynchronous()) {
-    		if (this.canBeAsynchronous()) {
-    	    	String attr = this.getAttributeValue(PROP_SYNCHRONOUS_RESPONSE);
-    	    	return (attr!=null && attr.equalsIgnoreCase("true"));
-    		} else return true;
-    	} else return false;
+        if (canBeSynchronous()) {
+            if (this.canBeAsynchronous()) {
+                String attr = this.getAttributeValue(PROP_SYNCHRONOUS_RESPONSE);
+                return (attr!=null && attr.equalsIgnoreCase("true"));
+            } else return true;
+        } else return false;
     }
 
     protected boolean isCertified() {
-    	String attr = this.getAttributeValue(PROP_SYNCHRONOUS_RESPONSE);
-    	return (attr!=null && attr.equalsIgnoreCase("Certified"));
+        String attr = this.getAttributeValue(PROP_SYNCHRONOUS_RESPONSE);
+        return (attr!=null && attr.equalsIgnoreCase("Certified"));
     }
 
     /**
@@ -164,122 +164,122 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
      * or set the response to the variable specified in RESPONSE_VARIABLE attribute.
      * @param response response message from the external system
      * @throws ConnectionException this exception indicates a system connection
-     * 		failure (most likely between the direct interfacing system to down
-     * 		stream systems, as direct connection failure will not some to this method).
-     *		The exception is auto-retriable.
+     *         failure (most likely between the direct interfacing system to down
+     *         stream systems, as direct connection failure will not some to this method).
+     *        The exception is auto-retriable.
      * @throws AdapterException thrown when the external system responded but
      *      the response needs to be handled as a non-auto-retriable error.
      * @throws ActivityException thrown when the post processing
-     * 		logic hits an exception that needs to fail the activity.
-     * 		This error is not auto-retriable, either.
+     *         logic hits an exception that needs to fail the activity.
+     *         This error is not auto-retriable, either.
      */
-	public void onSuccess(String response)
-	throws ActivityException, ConnectionException, AdapterException {
-		if (response==null) return;
+    public void onSuccess(String response)
+    throws ActivityException, ConnectionException, AdapterException {
+        if (response==null) return;
         String varname = this.getAttributeValue(RESPONSE_VARIABLE);
         if (varname==null) return;
         String vartype = this.getParameterType(varname);
         if (VariableTranslator.isDocumentReferenceVariable(vartype))
             this.setParameterValueAsDocument(varname, vartype, response);
         else this.setParameterValue(varname, response);
-	}
+    }
 
-	/**
-	 * The method is invoked on the failure of each try.
-	 * The outcome of the method must be one of the following:
-	 * a) throw ConnectionException. The engine will put the activity in error status,
-	 * 			and schedule automatically retry of the activity
-	 * b) throw AdapterException. The engine will put the activity in error status,
-	 * 			and transition based on ERROR event (typically lead to exception handler)
-	 * c) return a completion code w/o throwing exception. The engine will complete
-	 * 			the activity and transition accordingly
-	 *
-	 * The default implementation does the the following
-	 *  - if errorCause is an AdapterException, throws it.
-	 *  - if errorCause is a ConnectionException, throws it.
-	 *  - in any other case, throw an AdapterException wrapping the original exception
-	 *
-	 * If you override this method, you typically should re-throw ConnectionException,
-	 * so that the internal retry mechanism will not be impacted. More specifically,
-	 * the following are some special scenarios that you may need to know:
-	 *  - If the maximum number of retries has been reached, errorCause is an AdapterException
-	 *    with error code AdapterException.EXCEED_MAXTRIES. Original ConnectionException is its cause.
-	 *    If you do not want to put the activity in error status and invoke exception handler,
-	 *    rather would like to handle the logic within process definition, then return
-	 *    a completion code without re-throwing the exception.
-	 *  - If the activity is a ConnectionPoolAdapter and
-	 *    all connections are used in a connection pool, errorCause is a ConnectionException
-	 *    with error code ConnectionException.POOL_EXHAUSTED. You typically should just
-	 *    re-throw this exception so the engine will put activity in waiting status
-	 *	  and will resume after a connection becomes available.
-	 *  - If the activity is a ConnectionPoolAdapter and the connection pool is disabled
-	 *    (manually or automatically shut down), errorCause is a ConnectionException
-	 *    with error code ConnectionException.POOL_DISABLED. You typically should just
-	 *    re-throw this exception so the engine will put activity in waiting status,
-	 *	  and will resume after the pool is enabled.
-	 *
-	 * @param errorCause the exception received
-	 * @return the completion code for the activity, if no exception is thrown
-	 * @throws AdapterException when no retry is expected
-	 * @throws ConnectionException when retry is expected
-	 */
-	public String onFailure(Throwable errorCause)
-	throws AdapterException,ConnectionException {
-		if (errorCause instanceof AdapterException)
-		    throw (AdapterException)errorCause;
-		if (errorCause instanceof ConnectionException)
-		    throw (ConnectionException)errorCause;
-		throw new AdapterException(AdapterActivityBase.APPLICATION_ERROR, errorCause.getMessage(), errorCause);
-	}
+    /**
+     * The method is invoked on the failure of each try.
+     * The outcome of the method must be one of the following:
+     * a) throw ConnectionException. The engine will put the activity in error status,
+     *             and schedule automatically retry of the activity
+     * b) throw AdapterException. The engine will put the activity in error status,
+     *             and transition based on ERROR event (typically lead to exception handler)
+     * c) return a completion code w/o throwing exception. The engine will complete
+     *             the activity and transition accordingly
+     *
+     * The default implementation does the the following
+     *  - if errorCause is an AdapterException, throws it.
+     *  - if errorCause is a ConnectionException, throws it.
+     *  - in any other case, throw an AdapterException wrapping the original exception
+     *
+     * If you override this method, you typically should re-throw ConnectionException,
+     * so that the internal retry mechanism will not be impacted. More specifically,
+     * the following are some special scenarios that you may need to know:
+     *  - If the maximum number of retries has been reached, errorCause is an AdapterException
+     *    with error code AdapterException.EXCEED_MAXTRIES. Original ConnectionException is its cause.
+     *    If you do not want to put the activity in error status and invoke exception handler,
+     *    rather would like to handle the logic within process definition, then return
+     *    a completion code without re-throwing the exception.
+     *  - If the activity is a ConnectionPoolAdapter and
+     *    all connections are used in a connection pool, errorCause is a ConnectionException
+     *    with error code ConnectionException.POOL_EXHAUSTED. You typically should just
+     *    re-throw this exception so the engine will put activity in waiting status
+     *      and will resume after a connection becomes available.
+     *  - If the activity is a ConnectionPoolAdapter and the connection pool is disabled
+     *    (manually or automatically shut down), errorCause is a ConnectionException
+     *    with error code ConnectionException.POOL_DISABLED. You typically should just
+     *    re-throw this exception so the engine will put activity in waiting status,
+     *      and will resume after the pool is enabled.
+     *
+     * @param errorCause the exception received
+     * @return the completion code for the activity, if no exception is thrown
+     * @throws AdapterException when no retry is expected
+     * @throws ConnectionException when retry is expected
+     */
+    public String onFailure(Throwable errorCause)
+    throws AdapterException,ConnectionException {
+        if (errorCause instanceof AdapterException)
+            throw (AdapterException)errorCause;
+        if (errorCause instanceof ConnectionException)
+            throw (ConnectionException)errorCause;
+        throw new AdapterException(AdapterActivityBase.APPLICATION_ERROR, errorCause.getMessage(), errorCause);
+    }
 
-	/**
-	 * This is only used by activities, not connection pools
-	 * @return
-	 */
-	private int countTries() throws ActivityException {
-    	Integer[] statuses = { WorkStatus.STATUS_FAILED };
-    	// note the current activity is at in-progress status. Failed status must be counted
-    	// It is debatable if we should include other statuses
-		int count;
-    	try {
-    		count = this.getEngine().countActivityInstances(getProcessInstanceId(),
-    				this.getActivityId(), statuses);
-			count += 1;		// add the current instance - it is not yet in failed status
-    	} catch (Exception e) {
-			setReturnCode(null);	// override "RETRY"
-    		throw new ActivityException(-1, "Failed to get count on failed tries", e);
-    	}
-    	return count;
-	}
+    /**
+     * This is only used by activities, not connection pools
+     * @return
+     */
+    private int countTries() throws ActivityException {
+        Integer[] statuses = { WorkStatus.STATUS_FAILED };
+        // note the current activity is at in-progress status. Failed status must be counted
+        // It is debatable if we should include other statuses
+        int count;
+        try {
+            count = this.getEngine().countActivityInstances(getProcessInstanceId(),
+                    this.getActivityId(), statuses);
+            count += 1;        // add the current instance - it is not yet in failed status
+        } catch (Exception e) {
+            setReturnCode(null);    // override "RETRY"
+            throw new ActivityException(-1, "Failed to get count on failed tries", e);
+        }
+        return count;
+    }
 
-	/**
-	 * This is only used by activities, not connection pools
-	 * @return
-	 */
-	protected int getMaxTries() throws ActivityException {
-	    try {
-        	String v = getAttributeValueSmart(PROP_MAX_TRIES);
-        	int ret = StringHelper.getInteger(v, 1);
-        	return ret<1?1:ret;
+    /**
+     * This is only used by activities, not connection pools
+     * @return
+     */
+    protected int getMaxTries() throws ActivityException {
+        try {
+            String v = getAttributeValueSmart(PROP_MAX_TRIES);
+            int ret = StringHelper.getInteger(v, 1);
+            return ret<1?1:ret;
         }
         catch (PropertyException ex) {
             throw new ActivityException(ex.getMessage(), ex);
         }
-	}
+    }
 
-	/**
-	 * This is only used by activities, not connection pools
-	 * @return
-	 */
-	protected int getRetryInterval() throws ActivityException {
-	    try {
-    		String v = getAttributeValueSmart(PROP_RETRY_INTERVAL);
+    /**
+     * This is only used by activities, not connection pools
+     * @return
+     */
+    protected int getRetryInterval() throws ActivityException {
+        try {
+            String v = getAttributeValueSmart(PROP_RETRY_INTERVAL);
             return StringHelper.getInteger(v, 600);
-	    }
-	    catch (PropertyException ex) {
-	        throw new ActivityException(ex.getMessage(), ex);
-	    }
-	}
+        }
+        catch (PropertyException ex) {
+            throw new ActivityException(ex.getMessage(), ex);
+        }
+    }
 
     /**
      * Subclasses do not normally override this method.
@@ -292,35 +292,35 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
      * The primary method to implement are openConnection(),
      * invoke() and closeConnection()
      *
-	 * Notes: pollable adapter assumes request data is always string
-	 *
-	 */
+     * Notes: pollable adapter assumes request data is always string
+     *
+     */
     @Override
     public void execute() throws ActivityException {
         String requestData = getRequestData();
-		// when connection pool is down
+        // when connection pool is down
         String responseData = null;
         Object connection = null;
-    	StubHelper stubber = new StubHelper();
+        StubHelper stubber = new StubHelper();
         isStubbing = stubber.isStubbing() || isStubMode();
         boolean logging = doLogging();
         try {
-        	init();
+            init();
             if (!StringHelper.isEmpty(requestData) && doLogging())
                 logMessage(requestData, false);
             if (isStubbing) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
-            		responseData = stubber.getStubResponse(getMasterRequestId(), requestData);
-            		if (MAKE_ACTUAL_CALL.equals(responseData)) {
-                    	loginfo("Stub server instructs to get real response");
-                    	isStubbing = false;
-            			connection = this.openConnection();
-            			responseData = doInvoke(connection, requestData, getTimeoutForResponse(), getRequestHeaders());
-            		} else {
-            		    loginfo("Response received from stub server");
-            		}
-            	} else responseData = (String)this.getStubResponse(requestData);
+                    responseData = stubber.getStubResponse(getMasterRequestId(), requestData);
+                    if (MAKE_ACTUAL_CALL.equals(responseData)) {
+                        loginfo("Stub server instructs to get real response");
+                        isStubbing = false;
+                        connection = this.openConnection();
+                        responseData = doInvoke(connection, requestData, getTimeoutForResponse(), getRequestHeaders());
+                    } else {
+                        loginfo("Response received from stub server");
+                    }
+                } else responseData = (String)this.getStubResponse(requestData);
             } else {
                 connection = this.openConnection();
                 responseData = doInvoke(connection, requestData, getTimeoutForResponse(), getRequestHeaders());
@@ -338,9 +338,9 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
     }
 
     protected int getErrorCode(Throwable ex) {
-    	if (ex instanceof AdapterException) return ((AdapterException)ex).getErrorCode();
-    	if (ex instanceof ConnectionException) return ((ConnectionException)ex).getCode();
-    	return AdapterActivityBase.APPLICATION_ERROR;
+        if (ex instanceof AdapterException) return ((AdapterException)ex).getErrorCode();
+        if (ex instanceof ConnectionException) return ((ConnectionException)ex).getCode();
+        return AdapterActivityBase.APPLICATION_ERROR;
     }
 
     /**
@@ -351,7 +351,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
     protected void handleRetry(int errorCode, Throwable originalCause)
     throws ActivityException {
            handleConnectionException(-1, originalCause);
-	}
+    }
 
     /**
      * Typically you should not override this method. ConnectionPoolAdapter
@@ -361,66 +361,66 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
      */
     protected void handleConnectionException(int errorCode, Throwable originalCause)
     throws ActivityException {
-		InternalEvent message = InternalEvent.createActivityStartMessage(getActivityId(),
-				getProcessInstanceId(), getWorkTransitionInstanceId(), getMasterRequestId(),
-				COMPCODE_AUTO_RETRY);
-    	ScheduledEventQueue eventQueue = ScheduledEventQueue.getSingleton();
-    	int retry_interval = this.getRetryInterval();
-    	Date scheduledTime = new Date(DatabaseAccess.getCurrentTime()+retry_interval*1000);
-    	super.loginfo("The activity failed, set to retry at " + StringHelper.dateToString(scheduledTime));
-    	eventQueue.scheduleInternalEvent(ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId(),
-    			scheduledTime, message.toString(), "procinst:"+this.getProcessInstanceId().toString());
-    	this.setReturnCode(COMPCODE_AUTO_RETRY);
-    	// the above is to prevent engine from making transitions (typically to exception handler)
-    	throw new ActivityException(errorCode, originalCause.getMessage(), originalCause);
-	}
+        InternalEvent message = InternalEvent.createActivityStartMessage(getActivityId(),
+                getProcessInstanceId(), getWorkTransitionInstanceId(), getMasterRequestId(),
+                COMPCODE_AUTO_RETRY);
+        ScheduledEventQueue eventQueue = ScheduledEventQueue.getSingleton();
+        int retry_interval = this.getRetryInterval();
+        Date scheduledTime = new Date(DatabaseAccess.getCurrentTime()+retry_interval*1000);
+        super.loginfo("The activity failed, set to retry at " + StringHelper.dateToString(scheduledTime));
+        eventQueue.scheduleInternalEvent(ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId(),
+                scheduledTime, message.toString(), "procinst:"+this.getProcessInstanceId().toString());
+        this.setReturnCode(COMPCODE_AUTO_RETRY);
+        // the above is to prevent engine from making transitions (typically to exception handler)
+        throw new ActivityException(errorCode, originalCause.getMessage(), originalCause);
+    }
 
     protected void handleException(Throwable errorCause)
     throws ActivityException {
         logger.severeException(getAdapterInvocationErrorMessage(), errorCause);
-		int max_tries = this.getMaxTries();
-		int count = countTries();
-		boolean isRetryEnabled = isRetryable(errorCause);
-		boolean isConnectionException = errorCause instanceof ConnectionException;
-		String completionCode;
-		try {
-			// convert ConnectionException to AdapterException or throw AdapterException when retry enabled when exceeding max number of retries,
-			if (isConnectionException||isRetryEnabled) {
-				int errorCode =isConnectionException?((ConnectionException)errorCause).getCode():-1;
-				if (count >= max_tries && errorCode != ConnectionException.POOL_EXHAUSTED) {
-	                if (max_tries > 1)
-	                    errorCause = new AdapterException(AdapterException.EXCEED_MAXTRIES, "Maximum number of tries/retries reached", errorCause);
-	                else
-	                    errorCause = new AdapterException(-1, errorCause.getMessage(), errorCause);
-				} else {
-				if(isRetryEnabled&&!isConnectionException)
-					handleRetry(-1, errorCause);
-				}
-			}
-	        for (AdapterMonitor monitor : MonitorRegistry.getInstance().getAdapterMonitors()) {
+        int max_tries = this.getMaxTries();
+        int count = countTries();
+        boolean isRetryEnabled = isRetryable(errorCause);
+        boolean isConnectionException = errorCause instanceof ConnectionException;
+        String completionCode;
+        try {
+            // convert ConnectionException to AdapterException or throw AdapterException when retry enabled when exceeding max number of retries,
+            if (isConnectionException||isRetryEnabled) {
+                int errorCode =isConnectionException?((ConnectionException)errorCause).getCode():-1;
+                if (count >= max_tries && errorCode != ConnectionException.POOL_EXHAUSTED) {
+                    if (max_tries > 1)
+                        errorCause = new AdapterException(AdapterException.EXCEED_MAXTRIES, "Maximum number of tries/retries reached", errorCause);
+                    else
+                        errorCause = new AdapterException(-1, errorCause.getMessage(), errorCause);
+                } else {
+                if(isRetryEnabled&&!isConnectionException)
+                    handleRetry(-1, errorCause);
+                }
+            }
+            for (AdapterMonitor monitor : MonitorRegistry.getInstance().getAdapterMonitors()) {
                 String errResult = (String)monitor.onError(getRuntimeContext(), errorCause);
                 if (errResult != null) {
                     this.setReturnCode(errResult);
                     return;
                 }
-	        }
+            }
 
-			completionCode = onFailure(errorCause);
-			this.setReturnCode(completionCode);
-		} catch (ConnectionException e) {
-			handleConnectionException(e.getCode(), errorCause);
-		} catch (AdapterException e) {
-			this.setReturnCode(null);		// override "RETRY"
-			throw new ActivityException(e.getErrorCode(), e.getMessage(), e);
-		}
-	}
+            completionCode = onFailure(errorCause);
+            this.setReturnCode(completionCode);
+        } catch (ConnectionException e) {
+            handleConnectionException(e.getCode(), errorCause);
+        } catch (AdapterException e) {
+            this.setReturnCode(null);        // override "RETRY"
+            throw new ActivityException(e.getErrorCode(), e.getMessage(), e);
+        }
+    }
 
-	/**
-	 * Default behavior returns true if Throwable is included in RETRY_EXCEPTIONS
-	 * attribute (if declared).  If this attribute is not declared, any IOExceptions are
-	 * considered retryable.
-	 */
-	public boolean isRetryable(Throwable ex) {
+    /**
+     * Default behavior returns true if Throwable is included in RETRY_EXCEPTIONS
+     * attribute (if declared).  If this attribute is not declared, any IOExceptions are
+     * considered retryable.
+     */
+    public boolean isRetryable(Throwable ex) {
         try {
             String retryableAttr = getAttributeValueSmart(PROP_RETRY_EXCEPTIONS);
             if (retryableAttr != null) {
@@ -438,7 +438,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
         }
 
         return ex instanceof IOException;
-	}
+    }
 
 
     /**
@@ -461,7 +461,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
     protected Long logMessage(String message, boolean isResponse) {
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
-            		isResponse?OwnerType.ADAPTOR_RESPONSE:OwnerType.ADAPTOR_REQUEST,
+                    isResponse?OwnerType.ADAPTOR_RESPONSE:OwnerType.ADAPTOR_REQUEST,
                     this.getActivityInstanceId());
             return docref.getDocumentId();
         } catch (Exception ex) {
@@ -526,7 +526,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
      * This method is used for directly invoke the adapter activity
      * from code, rather than as part of process execution flow.
      *
-     * @param attrs	attributes to be passed to configure the activity.
+     * @param attrs    attributes to be passed to configure the activity.
      *
      * @param request request message
      * @return response message
@@ -534,30 +534,30 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
      * @throws ConnectionException
      */
     public String directInvoke(Properties props, String request, int timeout, Map<String,String> meta_data)
-    		throws AdapterException, ConnectionException {
-    	init(props);
-    	if (logger==null) logger = LoggerUtil.getStandardLogger();
+            throws AdapterException, ConnectionException {
+        init(props);
+        if (logger==null) logger = LoggerUtil.getStandardLogger();
         Object connection = null;
         try {
-        	connection = openConnection();
-        	return doInvoke(connection, request, timeout, meta_data);
+            connection = openConnection();
+            return doInvoke(connection, request, timeout, meta_data);
         } finally {
-        	if (connection != null) closeConnection(connection);
+            if (connection != null) closeConnection(connection);
         }
     }
 
-	protected String getAttribute(String name, String defval, boolean isSmart) throws AdapterException {
-		try {
-			String value = (isSmart)?getAttributeValueSmart(name):getAttributeValue(name);
-			return (value==null)?defval:value;
-		} catch (PropertyException e) {
-			throw new AdapterException(-1, "Failed to initialize the adapter", e);
-		}
-	}
+    protected String getAttribute(String name, String defval, boolean isSmart) throws AdapterException {
+        try {
+            String value = (isSmart)?getAttributeValueSmart(name):getAttributeValue(name);
+            return (value==null)?defval:value;
+        } catch (PropertyException e) {
+            throw new AdapterException(-1, "Failed to initialize the adapter", e);
+        }
+    }
 
-	protected boolean hasPreScript() {
-	    return getAttributeValue(WorkAttributeConstant.PRE_SCRIPT) != null;
-	}
+    protected boolean hasPreScript() {
+        return getAttributeValue(WorkAttributeConstant.PRE_SCRIPT) != null;
+    }
 
     protected Object executePreScript(Object requestData) throws ActivityException {
         String preScript = getAttributeValue(WorkAttributeConstant.PRE_SCRIPT);

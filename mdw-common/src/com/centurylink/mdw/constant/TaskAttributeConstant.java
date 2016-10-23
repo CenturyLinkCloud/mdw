@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.constant;
 
@@ -19,17 +19,17 @@ public class TaskAttributeConstant  {
      public static final String SUBTASKS_COMPLETE_MASTER = "SubtasksCompleteMaster"; // auto-complete main task when subtasks complete
      public static final String SUBTASK_RULES = "SubTask Rules";
      public static final String INDEX_PROVIDER = "IndexProvider";
-     public static final String ALERT_INTERVAL = "ALERT_INTERVAL";	// in seconds
+     public static final String ALERT_INTERVAL = "ALERT_INTERVAL";    // in seconds
      public static final String ASSIGNEE_VAR = "AssigneeVar";
-     public static final String CUSTOM_PAGE = "CustomPage";		// for custom tasks
+     public static final String CUSTOM_PAGE = "CustomPage";        // for custom tasks
      public static final String CUSTOM_PAGE_ASSET_VERSION = "CustomPage_assetVersion"; // for custom tasks page versions
      public static final String RENDERING_ENGINE = "Rendering"; // for custom tasks
-     public static final String FORM_NAME = "FormName";			// for general task
-     public static final String DESCRIPTION = "TaskDescription";	// only for TEMPLATE
-     public static final String TASK_SLA = "TaskSLA";		// in seconds
-     public static final String GROUPS = "Groups";			// only for TEMPLATE
-     public static final String INDICES = "Indices";		// only for TEMPLATE
-     public static final String VARIABLES = "Variables";	// only for autoform TEMPLATE
+     public static final String FORM_NAME = "FormName";            // for general task
+     public static final String DESCRIPTION = "TaskDescription";    // only for TEMPLATE
+     public static final String TASK_SLA = "TaskSLA";        // in seconds
+     public static final String GROUPS = "Groups";            // only for TEMPLATE
+     public static final String INDICES = "Indices";        // only for TEMPLATE
+     public static final String VARIABLES = "Variables";    // only for autoform TEMPLATE
      public static final String PRIORITY_STRATEGY = "PriorityStrategy"; //AK..added 09/27/2010--Note -- this should match the value in the PAGELET
      public static final String PRIORITY = "Priority";
      public static final String PRIORITIZATION_RULES = "Prioritization Rules";

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.event;
 
@@ -32,7 +32,7 @@ public class EventType  {
     
     public static final String[] allEventTypeNames =
     { EVENTNAME_START, EVENTNAME_FINISH, EVENTNAME_DELAY, EVENTNAME_ERROR,
-    	EVENTNAME_ABORT, EVENTNAME_RESUME, EVENTNAME_HOLD, EVENTNAME_CORRECT};
+        EVENTNAME_ABORT, EVENTNAME_RESUME, EVENTNAME_HOLD, EVENTNAME_CORRECT};
     
     private static Map<Integer,String> eventTypes = new HashMap<Integer,String>();
     
@@ -44,11 +44,11 @@ public class EventType  {
     }
     
     public static Integer getEventTypeFromName(String eventTypeName) {
-    	return eventTypeNames.get(eventTypeName);
+        return eventTypeNames.get(eventTypeName);
     }
 
     public static String getEventTypeName(Integer eventType) {
-    	return eventTypes.get(eventType);
+        return eventTypes.get(eventType);
     }
     
     static

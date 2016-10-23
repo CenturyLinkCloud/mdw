@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.container;
 
@@ -8,11 +8,11 @@ import javax.sql.DataSource;
 
 public interface DataSourceProvider {
 
-	String MDW = "MDW";
-	String JBOSS = "JBoss";
+    String MDW = "MDW";
+    String JBOSS = "JBoss";
     String TOMCAT = "Tomcat";
 
-	public DataSource getDataSource(String dataSourceName)
-	throws NamingException;
+    public DataSource getDataSource(String dataSourceName)
+    throws NamingException;
 
 }

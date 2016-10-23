@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.container.plugin.tomcat;
 
@@ -44,7 +44,7 @@ public class TomcatNaming implements NamingProvider {
     }
 
     public String getTransactionManagerName() {
-        return JAVA_TRANSACTION_MANAGER;	// not really used
+        return JAVA_TRANSACTION_MANAGER;    // not really used
     }
 
     public String getUserTransactionName() {
@@ -80,10 +80,10 @@ public class TomcatNaming implements NamingProvider {
 
     public Object lookup(String hostPort, String name, Class<?> cls) throws NamingException {
 
-    	if (cls.getName().equals("javax.transaction.TransactionManager") && useMdwTransactionManager) {
-    		return MdwTransactionManager.getInstance();
-    	}
-    	else if (cls.getName().equals("javax.jms.Topic")) {
+        if (cls.getName().equals("javax.transaction.TransactionManager") && useMdwTransactionManager) {
+            return MdwTransactionManager.getInstance();
+        }
+        else if (cls.getName().equals("javax.jms.Topic")) {
             JmsProvider jmsProvider = ApplicationContext.getJmsProvider();
             if (!(jmsProvider instanceof ActiveMqJms))
                 throw new NamingException("Unsupported JMS Provider: " + jmsProvider);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.process;
 
@@ -46,7 +46,7 @@ public class ProcessStartActivity extends DefaultActivityImpl implements StartAc
      * Default constructor with params
      */
     public ProcessStartActivity(){
-    	super();
+        super();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ProcessStartActivity extends DefaultActivityImpl implements StartAc
             String extMsg = getExternalEventInstanceDetails(extEventInstId);
             try {
                 if (extMsg!=null && parameters_spec != null) {
-                	XmlObject msgdoc = XmlObject.Factory.parse(extMsg);
+                    XmlObject msgdoc = XmlObject.Factory.parse(extMsg);
                     Map<String,String>parameters = StringHelper.parseMap(parameters_spec);
                     for (String key : parameters.keySet()) {
                         String one = parameters.get(key);
@@ -69,56 +69,56 @@ public class ProcessStartActivity extends DefaultActivityImpl implements StartAc
                             if (VariableTranslator.isDocumentReferenceVariable(getPackage(), variable.getVariableType()))
                                 setParameterValueAsDocument(key, variable.getVariableType(), value);
                             else
-                        	    setParameterValue(key, value);
+                                setParameterValue(key, value);
                         }
                     }
                 }
             } catch (XmlException e) {
-            	logger.severeException(e.getMessage(), e);
+                logger.severeException(e.getMessage(), e);
             }
         }
     }
 
-	protected void addDocumentAttachment(XmlObject msgdoc) throws ActivityException {
+    protected void addDocumentAttachment(XmlObject msgdoc) throws ActivityException {
 
-		try {
-			if (msgdoc instanceof MessageDocument) {
-				TaskManager taskMgr = ServiceLocator.getTaskManager();
-				EventManager eventMgr = ServiceLocator.getEventManager();
-				Long documentId = this.getProcessInstanceOwnerId();
-				Message emailMessage = ((MessageDocument) msgdoc).getMessage();
-				FileOutputStream outputFile = null;
-				List<Attachment> attachments = emailMessage.getAttachmentList();
-			    String filePath = getAttachmentLocation();
-				if (filePath.equals(MiscConstants.DEFAULT_ATTACHMENT_LOCATION)) {
-					for (Attachment attachment : attachments) {
-						taskMgr.addAttachment(attachment.getFileName(),
-								MiscConstants.ATTACHMENT_LOCATION_PREFIX+getMasterRequestId(),attachment.getContentType(), "SYSTEM",OwnerType.DOCUMENT,documentId);
-					}
-				} else { // download file to directory location
-			    	if (getMasterRequestId() != null) {
-			    		  filePath += getMasterRequestId() + "/";
-			    	}
-		    	  	File ownerDir = new File(filePath);
-		            ownerDir.mkdirs();
-		            Long attachmentId = null;
-		            for (Attachment attachment : attachments) {
-		            	outputFile = new FileOutputStream(filePath + attachment.getFileName());
-			            outputFile.write(Base64.decodeBase64(attachment.getAttachment()));
-			            outputFile.close();
-			            attachmentId = taskMgr.addAttachment(attachment.getFileName(),
-			            		filePath,attachment.getContentType(), "SYSTEM",OwnerType.DOCUMENT,documentId);
-			            attachment.unsetAttachment();
-			            attachment.setAttachmentId(attachmentId.longValue());
-					}
-		              eventMgr.updateDocumentContent(documentId, msgdoc.xmlText(), XmlObject.class.getName());
-				}
-			}
-		} catch (Exception e) {
-			logger.severeException("Exception occured to while adding attachment",e);
-			throw new ActivityException("Exception occured to while adding attachment"+e.getMessage());
-		}
-	}
+        try {
+            if (msgdoc instanceof MessageDocument) {
+                TaskManager taskMgr = ServiceLocator.getTaskManager();
+                EventManager eventMgr = ServiceLocator.getEventManager();
+                Long documentId = this.getProcessInstanceOwnerId();
+                Message emailMessage = ((MessageDocument) msgdoc).getMessage();
+                FileOutputStream outputFile = null;
+                List<Attachment> attachments = emailMessage.getAttachmentList();
+                String filePath = getAttachmentLocation();
+                if (filePath.equals(MiscConstants.DEFAULT_ATTACHMENT_LOCATION)) {
+                    for (Attachment attachment : attachments) {
+                        taskMgr.addAttachment(attachment.getFileName(),
+                                MiscConstants.ATTACHMENT_LOCATION_PREFIX+getMasterRequestId(),attachment.getContentType(), "SYSTEM",OwnerType.DOCUMENT,documentId);
+                    }
+                } else { // download file to directory location
+                    if (getMasterRequestId() != null) {
+                          filePath += getMasterRequestId() + "/";
+                    }
+                      File ownerDir = new File(filePath);
+                    ownerDir.mkdirs();
+                    Long attachmentId = null;
+                    for (Attachment attachment : attachments) {
+                        outputFile = new FileOutputStream(filePath + attachment.getFileName());
+                        outputFile.write(Base64.decodeBase64(attachment.getAttachment()));
+                        outputFile.close();
+                        attachmentId = taskMgr.addAttachment(attachment.getFileName(),
+                                filePath,attachment.getContentType(), "SYSTEM",OwnerType.DOCUMENT,documentId);
+                        attachment.unsetAttachment();
+                        attachment.setAttachmentId(attachmentId.longValue());
+                    }
+                      eventMgr.updateDocumentContent(documentId, msgdoc.xmlText(), XmlObject.class.getName());
+                }
+            }
+        } catch (Exception e) {
+            logger.severeException("Exception occured to while adding attachment",e);
+            throw new ActivityException("Exception occured to while adding attachment"+e.getMessage());
+        }
+    }
 
     private String evaluate(XmlObject /* Document */ doc, String expr) {
         String value;
@@ -130,14 +130,14 @@ public class ProcessStartActivity extends DefaultActivityImpl implements StartAc
 
     public String getAttachmentLocation() throws PropertyException
     {
-  	  PropertyManager propMgr = PropertyUtil.getInstance().getPropertyManager();
-  	  String filePath = propMgr.getStringProperty("MDWFramework.TaskManagerWeb", "attachments.storage.location");
-  	  if (StringHelper.isEmpty(filePath) || MiscConstants.DEFAULT_ATTACHMENT_LOCATION.equalsIgnoreCase(filePath)) {
-  		  filePath = MiscConstants.DEFAULT_ATTACHMENT_LOCATION;
-  	  } else if (! filePath.endsWith("/")){
-  		  filePath +="/";
-  	  }
-  	  return filePath;
+        PropertyManager propMgr = PropertyUtil.getInstance().getPropertyManager();
+        String filePath = propMgr.getStringProperty("MDWFramework.TaskManagerWeb", "attachments.storage.location");
+        if (StringHelper.isEmpty(filePath) || MiscConstants.DEFAULT_ATTACHMENT_LOCATION.equalsIgnoreCase(filePath)) {
+            filePath = MiscConstants.DEFAULT_ATTACHMENT_LOCATION;
+        } else if (! filePath.endsWith("/")){
+            filePath +="/";
+        }
+        return filePath;
     }
 
 }

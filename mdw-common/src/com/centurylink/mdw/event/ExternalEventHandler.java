@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.event;
 
@@ -17,7 +17,7 @@ public interface ExternalEventHandler {
       * The passed in message
       * @param msg message from external system in string format
       * @param msgobj message from external system in parsed form, such as generic XML bean, JSON object.
-      * 		It is passed in as null if the message cannot be parsed
+      *         It is passed in as null if the message cannot be parsed
       *         or does not have an object representation (such as USO orders)
       * @param metainfo meta information around the request message, such as protocol,
       *     reply to address, request id, event name, event id, event instance id,

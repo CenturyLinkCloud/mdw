@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.util;
 
@@ -12,9 +12,9 @@ import com.centurylink.mdw.common.MDWException;
   */
 public class ServiceLocatorException extends MDWException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ServiceLocatorException(String pMessage){
+    public ServiceLocatorException(String pMessage){
         super(pMessage);
     }
 

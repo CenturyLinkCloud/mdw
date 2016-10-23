@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.activity.types;
 
@@ -9,7 +9,7 @@ package com.centurylink.mdw.activity.types;
  */
 public interface FinishActivity extends GeneralActivity{
 
-	String getProcessCompletionCode();
-	
-	boolean doNotNotifyCaller();
+    String getProcessCompletionCode();
+    
+    boolean doNotNotifyCaller();
 }

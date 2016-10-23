@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.constant;
 
@@ -14,7 +14,7 @@ public interface OwnerType {
 
     public static final String PROCESS = "PROCESS";
     public static final String PROCESS_INSTANCE = "PROCESS_INSTANCE";
-    public static final String MAIN_PROCESS_INSTANCE = "MAIN_PROCESS_INSTANCE";	// for embedded proc inst
+    public static final String MAIN_PROCESS_INSTANCE = "MAIN_PROCESS_INSTANCE";    // for embedded proc inst
     public static final String EXTERNAL = "EXTERNAL";
 
     public static final String ACTIVITY = "ACTIVITY";
@@ -42,7 +42,7 @@ public interface OwnerType {
     public static final String LISTENER_REQUEST = "LISTENER_REQUEST";   // owner ID is event handler ID
     public static final String LISTENER_RESPONSE = "LISTENER_RESPONSE"; // owner ID is the document ID of LISTENER_REQUEST
 
-	// the following 4 constances are for MDW 4.* only
+    // the following 4 constances are for MDW 4.* only
     public static final String ACTIVITY_INSTANCE_REQUEST = "ACTIVITY_INST_REQ";
     public static final String ACTIVITY_INSTANCE_RESPONSE = "ACTIVITY_INST_RESP";
     public static final String EXTERNAL_EVENT_INSTANCE_REQUEST = "EXTERNAL_EVENT_INST_REQ";

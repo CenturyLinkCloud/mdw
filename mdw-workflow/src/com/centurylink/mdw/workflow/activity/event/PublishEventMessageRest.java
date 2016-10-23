@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.event;
 
@@ -12,30 +12,30 @@ import com.centurylink.mdw.workflow.adapter.rest.MultiRestServiceAdapter;
 @Tracked(LogLevel.TRACE)
 public class PublishEventMessageRest extends MultiRestServiceAdapter {
 
-	public static final String ATTRIBUTE_EVENT_NAME = "Event Name";
+    public static final String ATTRIBUTE_EVENT_NAME = "Event Name";
     public static final String ATTRIBUTE_MESSAGE = "Message";
 
-	public static final String beginMsg = "<MDWEventNotification><Name>";
-	public static final String middleMsg = "</Name><Message>";
-	public static final String endMsg = "</Message></MDWEventNotification>";
+    public static final String beginMsg = "<MDWEventNotification><Name>";
+    public static final String middleMsg = "</Name><Message>";
+    public static final String endMsg = "</Message></MDWEventNotification>";
 
-	@Override
-	protected String getRequestData() throws ActivityException {
-	    String eventName = getEventName();
+    @Override
+    protected String getRequestData() throws ActivityException {
+        String eventName = getEventName();
 
-	    if (eventName == null)
+        if (eventName == null)
             throw new ActivityException("Event Name attribute is missing");
 
-	    String request = beginMsg + eventName + middleMsg + StringEscapeUtils.escapeXml(getEventMessage()) + endMsg;
+        String request = beginMsg + eventName + middleMsg + StringEscapeUtils.escapeXml(getEventMessage()) + endMsg;
         return request;
     }
 
-	@Override
-	protected String getHttpMethod() throws ActivityException {
-	    return "POST";
+    @Override
+    protected String getHttpMethod() throws ActivityException {
+        return "POST";
     }
 
-	protected String getEventName() {
+    protected String getEventName() {
         String eventName = getAttributeValue(ATTRIBUTE_EVENT_NAME);
         return translatePlaceHolder(eventName);
     }

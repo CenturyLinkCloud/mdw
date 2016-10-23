@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity;
 
@@ -47,22 +47,22 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
             eventNames[i] = translatePlaceHolder(eventSpecs.get(i)[0]);
             eventCompletionCodes[i] = eventSpecs.get(i)[1];
             if (eventSpecs.get(i)[1]==null) {
-            	eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
+                eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
             } else {
-            	eventCompletionCodes[i] = eventSpecs.get(i)[1].trim();
-            	if (eventCompletionCodes[i].length()==0)
-            		eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
+                eventCompletionCodes[i] = eventSpecs.get(i)[1].trim();
+                if (eventCompletionCodes[i].length()==0)
+                    eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
             }
             String eventOccur = eventSpecs.get(i)[2];
             eventOccurances[i] = (eventOccur==null || eventOccur.length()==0
-            		|| eventOccur.equalsIgnoreCase("true"));
+                    || eventOccur.equalsIgnoreCase("true"));
         }
         try {
-        	EventWaitInstance received = getEngine().createEventWaitInstances(
-            		this.getActivityInstanceId(),
-            		eventNames,
-            		eventCompletionCodes,
-            		eventOccurances, !check_if_arrvied);
+            EventWaitInstance received = getEngine().createEventWaitInstances(
+                    this.getActivityInstanceId(),
+                    eventNames,
+                    eventCompletionCodes,
+                    eventOccurances, !check_if_arrvied);
             return received;
         } catch (Exception ex) {
             super.logexception(ex.getMessage(), ex);
@@ -71,67 +71,67 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
     }
 
     protected EventWaitInstance registerWaitEvent(String eventName, String completionCode,
-    		boolean recurring, boolean check_if_arrvied)
-    	throws ServiceLocatorException, DataAccessException, ProcessException {
-		if (StringHelper.isEmpty(completionCode))
-			completionCode = EventType.EVENTNAME_FINISH;
-		EventWaitInstance received = getEngine().createEventWaitInstance(
-				this.getActivityInstanceId(),
-				eventName,
-				completionCode, recurring, !check_if_arrvied);
-		return received;
-	}
+            boolean recurring, boolean check_if_arrvied)
+        throws ServiceLocatorException, DataAccessException, ProcessException {
+        if (StringHelper.isEmpty(completionCode))
+            completionCode = EventType.EVENTNAME_FINISH;
+        EventWaitInstance received = getEngine().createEventWaitInstance(
+                this.getActivityInstanceId(),
+                eventName,
+                completionCode, recurring, !check_if_arrvied);
+        return received;
+    }
 
     protected final void deregisterEvents() throws ActivityException {
-    	List<String[]> eventSpecs = this.getWaitEventSpecs();
-		if (eventSpecs.isEmpty()) return;
-		try {
-			getEngine().removeEventWaitForActivityInstance(getActivityInstanceId(),
-					"activity completed w/o event");
-		} catch (Exception e) {
-			throw new ActivityException(-1, e.getMessage(), e);
-		}
+        List<String[]> eventSpecs = this.getWaitEventSpecs();
+        if (eventSpecs.isEmpty()) return;
+        try {
+            getEngine().removeEventWaitForActivityInstance(getActivityInstanceId(),
+                    "activity completed w/o event");
+        } catch (Exception e) {
+            throw new ActivityException(-1, e.getMessage(), e);
+        }
     }
 
     protected final Integer handleEventCompletionCode() throws ActivityException {
-    	Integer actInstStatus;
-    	String compCode = this.getReturnCode();
-    	if (compCode!=null && (compCode.length()==0||compCode.equals(EventType.FINISH.toString())))
-    		compCode = null;
-    	String actInstStatusName = this.getAttributeValue(WorkAttributeConstant.STATUS_AFTER_EVENT);
-    	if (actInstStatusName!=null) {
-    		if (actInstStatusName.equals(WorkStatus.STATUSNAME_CANCELLED)) actInstStatus = WorkStatus.STATUS_CANCELLED;
-    		else if (actInstStatusName.equals(WorkStatus.STATUSNAME_WAITING)) actInstStatus = WorkStatus.STATUS_WAITING;
-    		else {
-    			actInstStatusName = WorkStatus.STATUSNAME_HOLD;
-    			actInstStatus = WorkStatus.STATUS_HOLD;
-    		}
-    	} else {
-			actInstStatusName = WorkStatus.STATUSNAME_HOLD;
-    		actInstStatus = WorkStatus.STATUS_HOLD;
-    	}
-    	if (compCode==null) compCode = actInstStatusName + "::";
-    	else compCode = actInstStatusName + "::" + compCode;
-		this.setReturnCode(compCode);
-		if (actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
-			this.registerWaitEvents(true, false);
-		}
-		return actInstStatus;
+        Integer actInstStatus;
+        String compCode = this.getReturnCode();
+        if (compCode!=null && (compCode.length()==0||compCode.equals(EventType.FINISH.toString())))
+            compCode = null;
+        String actInstStatusName = this.getAttributeValue(WorkAttributeConstant.STATUS_AFTER_EVENT);
+        if (actInstStatusName!=null) {
+            if (actInstStatusName.equals(WorkStatus.STATUSNAME_CANCELLED)) actInstStatus = WorkStatus.STATUS_CANCELLED;
+            else if (actInstStatusName.equals(WorkStatus.STATUSNAME_WAITING)) actInstStatus = WorkStatus.STATUS_WAITING;
+            else {
+                actInstStatusName = WorkStatus.STATUSNAME_HOLD;
+                actInstStatus = WorkStatus.STATUS_HOLD;
+            }
+        } else {
+            actInstStatusName = WorkStatus.STATUSNAME_HOLD;
+            actInstStatus = WorkStatus.STATUS_HOLD;
+        }
+        if (compCode==null) compCode = actInstStatusName + "::";
+        else compCode = actInstStatusName + "::" + compCode;
+        this.setReturnCode(compCode);
+        if (actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
+            this.registerWaitEvents(true, false);
+        }
+        return actInstStatus;
     }
 
     protected String getMessageFromEventMessage(InternalEvent eventMessageDoc)
-    	throws ActivityException {
-    	if (eventMessageDoc.getParameters()!=null) {
-    		String msg = eventMessageDoc.getParameters().get("ExternalEventMessage");
-    		if (msg!=null) return msg;
-    	}
-    	Long extEventInstId = eventMessageDoc.getSecondaryOwnerId();
-		return this.getExternalEventInstanceDetails(extEventInstId);
+        throws ActivityException {
+        if (eventMessageDoc.getParameters()!=null) {
+            String msg = eventMessageDoc.getParameters().get("ExternalEventMessage");
+            if (msg!=null) return msg;
+        }
+        Long extEventInstId = eventMessageDoc.getSecondaryOwnerId();
+        return this.getExternalEventInstanceDetails(extEventInstId);
     }
 
-	public boolean needSuspend() {
-	    return true;
-	}
+    public boolean needSuspend() {
+        return true;
+    }
 
     public boolean resume(InternalEvent eventMessageDoc)
     throws ActivityException {

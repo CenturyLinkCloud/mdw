@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.note;
 
@@ -25,19 +25,19 @@ public class TextNote implements Serializable, Jsonable {
 
     }
 
-	/**
-	 * @return the attributes
-	 */
-	public List<Attribute> getAttributes() {
-		return attributes;
-	}
+    /**
+     * @return the attributes
+     */
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
 
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(List<Attribute> attributes) {
-		this.attributes = attributes;
-	}
+    /**
+     * @param attributes the attributes to set
+     */
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
+    }
 
     /**
      * Returns the value of a process attribute.
@@ -61,28 +61,28 @@ public class TextNote implements Serializable, Jsonable {
         Attribute.setAttribute(attributes, attrname, value);
     }
 
-	public String getContent() {
-		return content;
-	}
+    public String getContent() {
+        return content;
+    }
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-	public String getReference() {
-		return reference;
-	}
+    public String getReference() {
+        return reference;
+    }
 
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
 
     public String getLogicalId() {
-    	return getAttribute(WorkAttributeConstant.LOGICAL_ID);
+        return getAttribute(WorkAttributeConstant.LOGICAL_ID);
     }
 
     public void setLogicalId(String id) {
-    	setAttribute(WorkAttributeConstant.LOGICAL_ID, id);
+        setAttribute(WorkAttributeConstant.LOGICAL_ID, id);
     }
 
     public TextNote(JSONObject json) throws JSONException {

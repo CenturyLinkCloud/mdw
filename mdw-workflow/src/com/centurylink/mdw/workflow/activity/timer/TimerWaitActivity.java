@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.timer;
 
@@ -47,9 +47,9 @@ public class TimerWaitActivity extends AbstractWait {
      * @throws ActivityException
      */
     protected final void sendDelayedResumeMessage(int seconds)
-    	throws ActivityException
+        throws ActivityException
     {
-    	sendOrUpdateExpirationMessage(seconds, false);
+        sendOrUpdateExpirationMessage(seconds, false);
     }
 
     /**
@@ -77,42 +77,42 @@ public class TimerWaitActivity extends AbstractWait {
     protected final void updateDelayedResumeMessage(int seconds)
     throws ActivityException
     {
-    	sendOrUpdateExpirationMessage(seconds, true);
+        sendOrUpdateExpirationMessage(seconds, true);
     }
 
     private void sendOrUpdateExpirationMessage(int seconds, boolean isUpdate)
     throws ActivityException
     {
-    	try {
-    		ProcessExecutor engine = getEngine();
-    		long currentTime = DatabaseAccess.getCurrentTime();
-    		engine.updateActivityInstanceEndTime(getActivityInstanceId(),
-    				new Date(currentTime+seconds*1000L));
-    	} catch (Exception e) {
-     		super.logwarn("Failed to set timer expiration time in DB: " + e.getMessage());
-    	}
-    	InternalEvent message = InternalEvent.createActivityNotifyMessage(getActivityInstance(),
-    			EventType.RESUME, getMasterRequestId(), null);
-     	message.setMessageDelay(seconds);
         try {
-        	ProcessExecutor engine = getEngine();
-        	String eventName = ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId() + "timer";
-        	engine.sendDelayedInternalEvent(message, seconds, eventName, isUpdate);
+            ProcessExecutor engine = getEngine();
+            long currentTime = DatabaseAccess.getCurrentTime();
+            engine.updateActivityInstanceEndTime(getActivityInstanceId(),
+                    new Date(currentTime+seconds*1000L));
         } catch (Exception e) {
-        	throw new ActivityException(-1, e.getMessage(), e);
+             super.logwarn("Failed to set timer expiration time in DB: " + e.getMessage());
+        }
+        InternalEvent message = InternalEvent.createActivityNotifyMessage(getActivityInstance(),
+                EventType.RESUME, getMasterRequestId(), null);
+         message.setMessageDelay(seconds);
+        try {
+            ProcessExecutor engine = getEngine();
+            String eventName = ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId() + "timer";
+            engine.sendDelayedInternalEvent(message, seconds, eventName, isUpdate);
+        } catch (Exception e) {
+            throw new ActivityException(-1, e.getMessage(), e);
         }
     }
 
     @Override
     public void execute() throws ActivityException {
-    	int seconds = getWaitPeriodInSeconds();
-    	EventWaitInstance received = registerWaitEvents(false, true);
-    	sendDelayedResumeMessage(seconds);
-    	if (received!=null) {
-    		this.setReturnCode(received.getCompletionCode());
-    		processOtherMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
-    		handleEventCompletionCode();
-    	}
+        int seconds = getWaitPeriodInSeconds();
+        EventWaitInstance received = registerWaitEvents(false, true);
+        sendDelayedResumeMessage(seconds);
+        if (received!=null) {
+            this.setReturnCode(received.getCompletionCode());
+            processOtherMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
+            handleEventCompletionCode();
+        }
     }
 
     /**
@@ -155,11 +155,11 @@ public class TimerWaitActivity extends AbstractWait {
       * @throws ActivityException
       */
     protected void processOtherMessage(String messageString)
- 		throws ActivityException {
+         throws ActivityException {
     }
 
     private boolean isOtherEvent(InternalEvent event) {
-    	return OwnerType.DOCUMENT.equals(event.getSecondaryOwnerType());
+        return OwnerType.DOCUMENT.equals(event.getSecondaryOwnerType());
     }
 
     /**
@@ -173,7 +173,7 @@ public class TimerWaitActivity extends AbstractWait {
      * @throws ActivityException
      */
       protected int processTimerExpiration() throws ActivityException {
-    	return 0;
+        return 0;
     }
 
     /**
@@ -185,18 +185,18 @@ public class TimerWaitActivity extends AbstractWait {
      * the method {@link #processTimerExpiration()}.
      */
     public final boolean resume(InternalEvent event) throws ActivityException {
-    	if (isOtherEvent(event)) {
-         	String messageString = this.getMessageFromEventMessage(event);
-        	this.setReturnCode(event.getCompletionCode());
-        	processOtherMessage(messageString);
-        	handleEventCompletionCode();
-         	return true;
-    	} else {	// timer expires
-    		int moreToWaitInSeconds = processTimerExpiration();
-        	if (moreToWaitInSeconds<=0) super.deregisterEvents();
-        	else sendDelayedResumeMessage(moreToWaitInSeconds);
-        	return moreToWaitInSeconds<=0;
-    	}
+        if (isOtherEvent(event)) {
+             String messageString = this.getMessageFromEventMessage(event);
+            this.setReturnCode(event.getCompletionCode());
+            processOtherMessage(messageString);
+            handleEventCompletionCode();
+             return true;
+        } else {    // timer expires
+            int moreToWaitInSeconds = processTimerExpiration();
+            if (moreToWaitInSeconds<=0) super.deregisterEvents();
+            else sendDelayedResumeMessage(moreToWaitInSeconds);
+            return moreToWaitInSeconds<=0;
+        }
     }
 
     /**
@@ -208,30 +208,30 @@ public class TimerWaitActivity extends AbstractWait {
      * {@link #registerWaitEvents()}, and {@link #processTimerExpiration()}.
      */
     public final boolean resumeWaiting(InternalEvent event)
-    	throws ActivityException {
-    	// check if timer is expired at this time?
-    	try {
-			ActivityInstance ai = getEngine().getActivityInstance(getActivityInstanceId());
-			Date expectedEndTime = StringHelper.stringToDate(ai.getEndDate());
-			long currentTime = DatabaseAccess.getCurrentTime();
-			if (currentTime>expectedEndTime.getTime()) {
-				int moreSeconds = processTimerExpiration();
-				if (moreSeconds>0) sendDelayedResumeMessage(moreSeconds);
-				else return true;
-			}
-		} catch (Exception e) {
-			throw new ActivityException(-1, e.getMessage(), e);
-		}
+        throws ActivityException {
+        // check if timer is expired at this time?
+        try {
+            ActivityInstance ai = getEngine().getActivityInstance(getActivityInstanceId());
+            Date expectedEndTime = StringHelper.stringToDate(ai.getEndDate());
+            long currentTime = DatabaseAccess.getCurrentTime();
+            if (currentTime>expectedEndTime.getTime()) {
+                int moreSeconds = processTimerExpiration();
+                if (moreSeconds>0) sendDelayedResumeMessage(moreSeconds);
+                else return true;
+            }
+        } catch (Exception e) {
+            throw new ActivityException(-1, e.getMessage(), e);
+        }
 
-		EventWaitInstance received = registerWaitEvents(true,true);
-    	if (received!=null) {
- 	    	this.setReturnCode(received.getCompletionCode());
- 	    	processOtherMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
- 	    	handleEventCompletionCode();
- 	    	return true;
- 		} else {
- 			return false;
- 		}
+        EventWaitInstance received = registerWaitEvents(true,true);
+        if (received!=null) {
+             this.setReturnCode(received.getCompletionCode());
+             processOtherMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
+             handleEventCompletionCode();
+             return true;
+         } else {
+             return false;
+         }
     }
 
 }

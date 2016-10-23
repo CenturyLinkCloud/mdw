@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.asset;
 
@@ -233,58 +233,58 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         this.createUser = user;
     }
     public String getModifyingUser() {
-		return modifyingUser;
-	}
-	public void setModifyingUser(String modifyingUser) {
-		this.modifyingUser = modifyingUser;
-	}
-	public Date getModifyDate() {
-		return modifyDate;
-	}
-	public void setModifyDate(Date modifyDate) {
-		this.modifyDate = modifyDate;
-	}
-	public Date getCreateDate() {
-		return createDate;
-	}
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-	public int getVersion() {
-		return version;
-	}
-	public void setVersion(int version) {
-		this.version = version;
-	}
-	public Object getCompiledObject() {
-		return compiledObject;
-	}
-	public void setCompiledObject(Object compiledObject) {
-		this.compiledObject = compiledObject;
-	}
+        return modifyingUser;
+    }
+    public void setModifyingUser(String modifyingUser) {
+        this.modifyingUser = modifyingUser;
+    }
+    public Date getModifyDate() {
+        return modifyDate;
+    }
+    public void setModifyDate(Date modifyDate) {
+        this.modifyDate = modifyDate;
+    }
+    public Date getCreateDate() {
+        return createDate;
+    }
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+    public int getVersion() {
+        return version;
+    }
+    public void setVersion(int version) {
+        this.version = version;
+    }
+    public Object getCompiledObject() {
+        return compiledObject;
+    }
+    public void setCompiledObject(Object compiledObject) {
+        this.compiledObject = compiledObject;
+    }
 
-	public boolean isLoaded() {
+    public boolean isLoaded() {
         return language!=null && content!=null;
     }
 
-	/**
-	 * based on server time
-	 */
-	public Date getLoadDate() {
-	    return this.loadDate;
-	}
+    /**
+     * based on server time
+     */
+    public Date getLoadDate() {
+        return this.loadDate;
+    }
 
-	public void setLoadDate(Date d) {
-	    this.loadDate = d;
-	}
+    public void setLoadDate(Date d) {
+        this.loadDate = d;
+    }
 
-	public List<Attribute> getAttributes() {
-	    return attributes;
-	}
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
 
-	public void setAttributes(List<Attribute> attributes) {
-	    this.attributes = attributes;
-	}
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
+    }
 
     public String getAttribute(String attrname) {
         return Attribute.findAttribute(attributes, attrname);
@@ -312,11 +312,11 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     }
 
     public static byte[] decode(String inputString) {
-    	return MiniEncrypter.decodeAlpha(inputString);
+        return MiniEncrypter.decodeAlpha(inputString);
     }
 
     public static String encode(byte[] inputBytes) {
-    	return MiniEncrypter.encodeAlpha(inputBytes);
+        return MiniEncrypter.encodeAlpha(inputBytes);
     }
 
     public byte[] getContent() {
@@ -459,7 +459,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
 
     @Override
     public String toString() {
-    	return getLabel();
+        return getLabel();
     }
 
     public int compareTo(Asset other) {
@@ -470,7 +470,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         return this.getName().compareToIgnoreCase(other.getName());
     }
 
-	public Long getOwnerId() {
+    public Long getOwnerId() {
         return ownerId;
     }
 
@@ -550,7 +550,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             minor = Integer.parseInt(versionString);
         }
         return major * 1000 + minor;
-	}
+    }
 
     // single digit without decimal means a major version not minor
     public static int parseVersionSpec(String versionString) throws NumberFormatException {
@@ -569,16 +569,16 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         return major * 1000 + minor;
     }
 
-	public static String formatVersion(int version) {
-	    if (version == 0)
-	        return "0";
-	    else
+    public static String formatVersion(int version) {
+        if (version == 0)
+            return "0";
+        else
             return version/1000 + "." + version%1000;
-	}
+    }
 
-	public static boolean excludedFromMemoryCache(String assetName) {
-	    return assetName.endsWith(".jar"); // jar files not loaded into memory
-	}
+    public static boolean excludedFromMemoryCache(String assetName) {
+        return assetName.endsWith(".jar"); // jar files not loaded into memory
+    }
 
     private static Map<String,String> languageToExtension;
     /**

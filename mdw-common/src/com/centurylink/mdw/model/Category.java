@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model;
 
 public class Category {
 
-	private Long id;
-	private String code;
-	private String description;
+    private Long id;
+    private String code;
+    private String description;
 
     /**
      * returns the categoryCode
@@ -32,12 +32,12 @@ public class Category {
       */
     public void setDescription(String pDesc) { this.description = pDesc; }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.task;
 
@@ -7,12 +7,12 @@ import com.centurylink.mdw.model.StatusCode;
 
 public class TaskStatus extends StatusCode {
 
-	// logical status ACTIVE means not COMPLETED or CANCELLED
-	public static final Integer STATUS_ACTIVE = new Integer(-1);
-	// logical status CLOSED means COMPLETED or CANCELLED
-	public static final Integer STATUS_CLOSED = new Integer(-2);
+    // logical status ACTIVE means not COMPLETED or CANCELLED
+    public static final Integer STATUS_ACTIVE = new Integer(-1);
+    // logical status CLOSED means COMPLETED or CANCELLED
+    public static final Integer STATUS_CLOSED = new Integer(-2);
 
-	public static final Integer STATUS_OPEN = new Integer(1);
+    public static final Integer STATUS_OPEN = new Integer(1);
     public static final Integer STATUS_ASSIGNED = new Integer(2);
     // public static final Integer STATUS_FAILED = new Integer(3);
     public static final Integer STATUS_COMPLETED = new Integer(4);

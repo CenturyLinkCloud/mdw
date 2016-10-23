@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.listener.file;
 
@@ -66,20 +66,20 @@ public class FileListenerRegistration implements StartupClass, StartupService {
 
         Map<String, Properties> fileListeners = new HashMap<String, Properties>();
         Properties fileListenerProperties = PropertyManager.getInstance().getProperties(PropertyNames.MDW_LISTENER_FILE);
-    	for (String pn : fileListenerProperties.stringPropertyNames()) {
-    		String[] pnParsed = pn.split("\\.");
-    		if (pnParsed.length==5) {
-    			String name = pnParsed[3];
-    			String attrname = pnParsed[4];
-    			Properties procspec = fileListeners.get(name);
-    			if (procspec==null) {
-    				procspec = new Properties();
-    				fileListeners.put(name, procspec);
-    			}
-    			String value = fileListenerProperties.getProperty(pn);
-    			procspec.put(attrname, value);
-    		}
-    	}
+        for (String pn : fileListenerProperties.stringPropertyNames()) {
+            String[] pnParsed = pn.split("\\.");
+            if (pnParsed.length==5) {
+                String name = pnParsed[3];
+                String attrname = pnParsed[4];
+                Properties procspec = fileListeners.get(name);
+                if (procspec==null) {
+                    procspec = new Properties();
+                    fileListeners.put(name, procspec);
+                }
+                String value = fileListenerProperties.getProperty(pn);
+                procspec.put(attrname, value);
+            }
+        }
         return fileListeners;
     }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.listener;
 
@@ -64,7 +64,7 @@ public class DefaultEventHandler implements ExternalEventHandler {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-	/**
+    /**
      * The handler creates a standard error response message.
      * The status code and status message are set in the following
      * ways:
@@ -112,88 +112,88 @@ public class DefaultEventHandler implements ExternalEventHandler {
         return resp;
     }
 
-	private String translateJavaObjectValue(EventManager eventMgr, String varValue,
-			VariableInstance varinst, Package pkg) throws DataAccessException {
-		DocumentReference docref = (DocumentReference)varinst.getData();
-		Document docvo = eventMgr.getDocumentVO(docref.getDocumentId());
-		JavaObjectTranslator translator = new JavaObjectTranslator();
-		Object obj = translator.realToObject(docvo.getContent(pkg));
-		if (obj instanceof SelfSerializable) {
-			((SelfSerializable)obj).fromString(varValue);
-			varValue = translator.realToString(obj);
-		}
-		return varValue;
-	}
+    private String translateJavaObjectValue(EventManager eventMgr, String varValue,
+            VariableInstance varinst, Package pkg) throws DataAccessException {
+        DocumentReference docref = (DocumentReference)varinst.getData();
+        Document docvo = eventMgr.getDocumentVO(docref.getDocumentId());
+        JavaObjectTranslator translator = new JavaObjectTranslator();
+        Object obj = translator.realToObject(docvo.getContent(pkg));
+        if (obj instanceof SelfSerializable) {
+            ((SelfSerializable)obj).fromString(varValue);
+            varValue = translator.realToString(obj);
+        }
+        return varValue;
+    }
 
     public String handleSpecialEventMessage(XmlObject msgdoc)
-    	throws EventHandlerException, XmlException {
-    	String rootNodeName = XmlPath.getRootNodeName(msgdoc);
-    	String response;
-    	if (rootNodeName.equals("_mdw_property")) {
-    		String propname = XmlPath.getRootNodeValue(msgdoc);
-    		response = PropertyManager.getProperty(propname);
-    		if (response==null) response = "";
-    	} else if (rootNodeName.equals("_mdw_update_variable")) {
-    		String varInstId = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_inst_id");
-    		String varValue = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_value");
+        throws EventHandlerException, XmlException {
+        String rootNodeName = XmlPath.getRootNodeName(msgdoc);
+        String response;
+        if (rootNodeName.equals("_mdw_property")) {
+            String propname = XmlPath.getRootNodeValue(msgdoc);
+            response = PropertyManager.getProperty(propname);
+            if (response==null) response = "";
+        } else if (rootNodeName.equals("_mdw_update_variable")) {
+            String varInstId = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_inst_id");
+            String varValue = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_value");
             String procInstId = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/proc_inst_id");
-    		if (varInstId==null || varValue==null) {
-        		String varName = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_name");
-        		if (varName==null || procInstId==null) {
-        			response = "ERROR: var_inst_id or var_value is null";
-        		} else {
-        			try {
-    					EventManager eventMgr = ServiceLocator.getEventManager();
-    					ProcessInstance procInst = eventMgr.getProcessInstance(new Long(procInstId));
-    					VariableInstance varinst = eventMgr.getVariableInstance(procInst.getId(), varName);
-    					if (varinst != null)
-    					    throw new Exception("Variable instance is already defined");
-    					Process procdef = ProcessCache.getProcess(procInst.getProcessId());
-    					Package pkg = PackageCache.getProcessPackage(procdef.getId());
-    					Variable vardef = procdef.getVariable(varName);
-    					if (vardef==null) throw new Exception("Variable is not defined for the process");
-    					if (vardef.getVariableType().equals(Object.class.getName()))
-    						varValue = translateJavaObjectValue(eventMgr, varValue, varinst, pkg);
-    					if (VariableTranslator.isDocumentReferenceVariable(pkg, vardef.getVariableType())) {
-    						Long docid = eventMgr.createDocument(vardef.getVariableType(),
+            if (varInstId==null || varValue==null) {
+                String varName = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_name");
+                if (varName==null || procInstId==null) {
+                    response = "ERROR: var_inst_id or var_value is null";
+                } else {
+                    try {
+                        EventManager eventMgr = ServiceLocator.getEventManager();
+                        ProcessInstance procInst = eventMgr.getProcessInstance(new Long(procInstId));
+                        VariableInstance varinst = eventMgr.getVariableInstance(procInst.getId(), varName);
+                        if (varinst != null)
+                            throw new Exception("Variable instance is already defined");
+                        Process procdef = ProcessCache.getProcess(procInst.getProcessId());
+                        Package pkg = PackageCache.getProcessPackage(procdef.getId());
+                        Variable vardef = procdef.getVariable(varName);
+                        if (vardef==null) throw new Exception("Variable is not defined for the process");
+                        if (vardef.getVariableType().equals(Object.class.getName()))
+                            varValue = translateJavaObjectValue(eventMgr, varValue, varinst, pkg);
+                        if (VariableTranslator.isDocumentReferenceVariable(pkg, vardef.getVariableType())) {
+                            Long docid = eventMgr.createDocument(vardef.getVariableType(),
                                     OwnerType.PROCESS_INSTANCE, procInst.getId(), varValue, pkg);
-    						varinst = eventMgr.setVariableInstance(procInst.getId(), varName,
-    								new DocumentReference(docid));
-            	    	    response = "OK:" + varinst.getInstanceId().toString() + ":" + docid.toString();
-    					} else {
-    						varinst = eventMgr.setVariableInstance(procInst.getId(), varName, varValue);
-            	    	    response = "OK:" + varinst.getInstanceId().toString();
-    					}
-        	    	} catch (Exception e) {
-    					response = "ERROR: [" + e.getClass().getName() + "] " + e.getMessage();
-    				}
-        		}
-    		} else {
-    			try {
-					EventManager eventMgr = ServiceLocator.getEventManager();
-					VariableInstance varinst = eventMgr.getVariableInstance(new Long(varInstId));
-					if (varinst==null)
-					    throw new Exception("Variable instance does not exist");
-					if (varinst.getType().equals(Object.class.getName())) {
+                            varinst = eventMgr.setVariableInstance(procInst.getId(), varName,
+                                    new DocumentReference(docid));
+                            response = "OK:" + varinst.getInstanceId().toString() + ":" + docid.toString();
+                        } else {
+                            varinst = eventMgr.setVariableInstance(procInst.getId(), varName, varValue);
+                            response = "OK:" + varinst.getInstanceId().toString();
+                        }
+                    } catch (Exception e) {
+                        response = "ERROR: [" + e.getClass().getName() + "] " + e.getMessage();
+                    }
+                }
+            } else {
+                try {
+                    EventManager eventMgr = ServiceLocator.getEventManager();
+                    VariableInstance varinst = eventMgr.getVariableInstance(new Long(varInstId));
+                    if (varinst==null)
+                        throw new Exception("Variable instance does not exist");
+                    if (varinst.getType().equals(Object.class.getName())) {
                         ProcessInstance procInst = eventMgr.getProcessInstance(new Long(procInstId));
                         Process procdef = ProcessCache.getProcess(procInst.getProcessId());
                         Package pkg = PackageCache.getProcessPackage(procdef.getId());
-						varValue = translateJavaObjectValue(eventMgr, varValue, varinst, pkg);
-					}
-					eventMgr.updateVariableInstance(varinst.getInstanceId(), varValue);
-    	    	    response = "OK";
-    	    	} catch (Exception e) {
-					response = "ERROR: [" + e.getClass().getName() + "] " + e.getMessage();
-				}
-    		}
-    	} else if (rootNodeName.equals("_mdw_version")) {
-    		response = ApplicationContext.getMdwVersion();
-    	} else if (rootNodeName.equals("_mdw_run_job")) {
-    		String classNameAndArgs = XmlPath.getRootNodeValue(msgdoc);
-    		CallURL url = new CallURL(classNameAndArgs);
-    		String className = url.getAction();
-    		Object aTimerTask = null;
-    		try {
+                        varValue = translateJavaObjectValue(eventMgr, varValue, varinst, pkg);
+                    }
+                    eventMgr.updateVariableInstance(varinst.getInstanceId(), varValue);
+                    response = "OK";
+                } catch (Exception e) {
+                    response = "ERROR: [" + e.getClass().getName() + "] " + e.getMessage();
+                }
+            }
+        } else if (rootNodeName.equals("_mdw_version")) {
+            response = ApplicationContext.getMdwVersion();
+        } else if (rootNodeName.equals("_mdw_run_job")) {
+            String classNameAndArgs = XmlPath.getRootNodeValue(msgdoc);
+            CallURL url = new CallURL(classNameAndArgs);
+            String className = url.getAction();
+            Object aTimerTask = null;
+            try {
                 ScheduledJob job = MdwServiceRegistry.getInstance().getScheduledJob(className);
                 if (job != null) {
                     if (job instanceof LoadBalancedScheduledJob)
@@ -213,80 +213,80 @@ public class DefaultEventHandler implements ExternalEventHandler {
                     else
                         ((TimerTask) aTimerTask).run(); // for backward compatibility
                 }
-    		}
-    		catch (Exception ex) {
-    		    logger.severeException("Failed to create instance for scheduled job " + className, ex);
-    		}
-    		// else exception already logged
-    		response = "OK";	// not used
-    	} else if (rootNodeName.equals("_mdw_refresh")) {
-    		String cachename = XmlPath.getRootNodeValue(msgdoc);
-    		CacheRegistration.broadcastRefresh(cachename, MessengerFactory.newInternalMessenger());
-//    		printServerInfo();
-    		response = "OK";
-    	} else if (rootNodeName.equals("_mdw_pool_ping")) {
-    		String poolname = XmlPath.getRootNodeValue(msgdoc);
-    		AdapterConnectionPool pool = ConnectionPoolRegistration.getPool(poolname);
-    		pool.ping_and_start();
-    		response = "OK";
-    	} else if (rootNodeName.equals("_mdw_peer_server_list")) {
-    		List<String> servers = ApplicationContext.getRoutingServerList().isEmpty() ? ApplicationContext.getManagedServerList() : ApplicationContext.getRoutingServerList();
-    		StringBuffer sb = new StringBuffer();
-    		for (String server : servers) {
-    			if (sb.length()>0) sb.append(",");
-    			sb.append(server);
-    		}
-    		response = sb.toString();
-    	} else if (rootNodeName.equals("_mdw_document_content")) {
-    		String documentId = XmlPath.evaluate(msgdoc, "/_mdw_document_content/document_id");
-    		String type = XmlPath.evaluate(msgdoc, "/_mdw_document_content/type");
-    		try {
-    			EventManager eventMgr = ServiceLocator.getEventManager();
-    			Document docvo = eventMgr.getDocumentVO(new Long(documentId));
-    			if (type.equals(Object.class.getName())) {
-    			    Object obj = VariableTranslator.realToObject(getPackageVO(docvo), "java.lang.Object", docvo.getContent(getPackageVO(docvo)));
-	    			response = obj.toString();
-    			} else response = docvo.getContent(getPackageVO(docvo));
-    		} catch (Exception e) {
-    		    logger.severeException(e.getMessage(), e);
-    			response = "ERROR: " + e.getClass().getName() + " - " + e.getMessage();
-    		}
-    	} else {
-    		response = "ERROR: unknown internal message " + rootNodeName;
-    	}
-    	return response;
+            }
+            catch (Exception ex) {
+                logger.severeException("Failed to create instance for scheduled job " + className, ex);
+            }
+            // else exception already logged
+            response = "OK";    // not used
+        } else if (rootNodeName.equals("_mdw_refresh")) {
+            String cachename = XmlPath.getRootNodeValue(msgdoc);
+            CacheRegistration.broadcastRefresh(cachename, MessengerFactory.newInternalMessenger());
+//            printServerInfo();
+            response = "OK";
+        } else if (rootNodeName.equals("_mdw_pool_ping")) {
+            String poolname = XmlPath.getRootNodeValue(msgdoc);
+            AdapterConnectionPool pool = ConnectionPoolRegistration.getPool(poolname);
+            pool.ping_and_start();
+            response = "OK";
+        } else if (rootNodeName.equals("_mdw_peer_server_list")) {
+            List<String> servers = ApplicationContext.getRoutingServerList().isEmpty() ? ApplicationContext.getManagedServerList() : ApplicationContext.getRoutingServerList();
+            StringBuffer sb = new StringBuffer();
+            for (String server : servers) {
+                if (sb.length()>0) sb.append(",");
+                sb.append(server);
+            }
+            response = sb.toString();
+        } else if (rootNodeName.equals("_mdw_document_content")) {
+            String documentId = XmlPath.evaluate(msgdoc, "/_mdw_document_content/document_id");
+            String type = XmlPath.evaluate(msgdoc, "/_mdw_document_content/type");
+            try {
+                EventManager eventMgr = ServiceLocator.getEventManager();
+                Document docvo = eventMgr.getDocumentVO(new Long(documentId));
+                if (type.equals(Object.class.getName())) {
+                    Object obj = VariableTranslator.realToObject(getPackageVO(docvo), "java.lang.Object", docvo.getContent(getPackageVO(docvo)));
+                    response = obj.toString();
+                } else response = docvo.getContent(getPackageVO(docvo));
+            } catch (Exception e) {
+                logger.severeException(e.getMessage(), e);
+                response = "ERROR: " + e.getClass().getName() + " - " + e.getMessage();
+            }
+        } else {
+            response = "ERROR: unknown internal message " + rootNodeName;
+        }
+        return response;
     }
 
     // test code to see if we can use MBean to broadcast.
     // The ListenAddress attribute returns empty string (default, so that it can listen to multiple address)
     // tried to access machine but that need WLS admin credential, so have not tried further
     @SuppressWarnings("unused")
-	private void printServerInfo() {
-    	Context ctx;
-    	try{
-    		ctx = new InitialContext();
-    		MBeanServer server = (MBeanServer)ctx.lookup("java:comp/env/jmx/runtime");
-    		ObjectName service = new ObjectName("com.bea:Name=RuntimeService," +
-    	      	"Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean");
-    		ObjectName domainMBean = (ObjectName) server.getAttribute(service,
-    			"DomainConfiguration");
-    		ObjectName[] servers = (ObjectName[]) server.getAttribute(domainMBean,
-    				"Servers");
-    		for (ObjectName one : servers) {
-    			String name = (String)server.getAttribute(one, "Name");
-    			String address = (String)server.getAttribute(one, "ListenAddress");
-    			Integer port = (Integer)server.getAttribute(one, "ListenPort");
-    			System.out.println("SERVER: " + name + " on " + address + ":" + port);
-    			ObjectName machine = (ObjectName)server.getAttribute(one, "Machine");
-    			ObjectName nodeManager = (ObjectName)server.getAttribute(machine, "NodeManager");
-    			// above line need WLS admin!!!
-    			address = (String)server.getAttribute(machine, "ListenAddress");
-    			System.out.println(" - hostname: " + address);
-    		}
-    		if (ctx!=null) return;
-    	}catch(Exception ex){
-    		ex.printStackTrace();
-    	}
+    private void printServerInfo() {
+        Context ctx;
+        try{
+            ctx = new InitialContext();
+            MBeanServer server = (MBeanServer)ctx.lookup("java:comp/env/jmx/runtime");
+            ObjectName service = new ObjectName("com.bea:Name=RuntimeService," +
+                  "Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean");
+            ObjectName domainMBean = (ObjectName) server.getAttribute(service,
+                "DomainConfiguration");
+            ObjectName[] servers = (ObjectName[]) server.getAttribute(domainMBean,
+                    "Servers");
+            for (ObjectName one : servers) {
+                String name = (String)server.getAttribute(one, "Name");
+                String address = (String)server.getAttribute(one, "ListenAddress");
+                Integer port = (Integer)server.getAttribute(one, "ListenPort");
+                System.out.println("SERVER: " + name + " on " + address + ":" + port);
+                ObjectName machine = (ObjectName)server.getAttribute(one, "Machine");
+                ObjectName nodeManager = (ObjectName)server.getAttribute(machine, "NodeManager");
+                // above line need WLS admin!!!
+                address = (String)server.getAttribute(machine, "ListenAddress");
+                System.out.println(" - hostname: " + address);
+            }
+            if (ctx!=null) return;
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     private Package getPackageVO(Document docVO) throws ServiceException {

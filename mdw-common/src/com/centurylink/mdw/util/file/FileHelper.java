@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.util.file;
 
@@ -285,19 +285,19 @@ public final class FileHelper {
     }
 
     public static byte[] readFromResourceStream(InputStream is) throws IOException {
-	    try {
-    		int length = is.available();
-			byte buffer[] = new byte[length];
-			int total_read = 0;
-			while (total_read<length) {
-				int n = is.read(buffer, total_read, length-total_read);
-				if (n>0) total_read += n;
-				else break;
-			}
-			return buffer;
-	    } finally {
-			try { is.close(); } catch (IOException e) {}
-	    }
+        try {
+            int length = is.available();
+            byte buffer[] = new byte[length];
+            int total_read = 0;
+            while (total_read<length) {
+                int n = is.read(buffer, total_read, length-total_read);
+                if (n>0) total_read += n;
+                else break;
+            }
+            return buffer;
+        } finally {
+            try { is.close(); } catch (IOException e) {}
+        }
     }
 
     public static InputStream openConfigurationFile(String filename) throws FileNotFoundException {

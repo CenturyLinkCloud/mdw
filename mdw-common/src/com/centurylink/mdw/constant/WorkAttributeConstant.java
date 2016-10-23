@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.constant;
 
@@ -72,8 +72,8 @@ public class WorkAttributeConstant  {
      public static final String FORM = "FORM";
 
      public static final String SLA = "SLA";
-     public static final String SLA_UNIT = "SLA_UNIT";	// this is for old $+SLA, seems
-     public static final String SLA_UNITS = "SLAUnits";	// this is new default name, seems
+     public static final String SLA_UNIT = "SLA_UNIT";    // this is for old $+SLA, seems
+     public static final String SLA_UNITS = "SLAUnits";    // this is new default name, seems
 
      public static final String STATUS_AFTER_TIMEOUT = "STATUS_AFTER_TIMEOUT";
      public static final String STATUS_AFTER_EVENT = "STATUS_AFTER_EVENT";
@@ -101,7 +101,7 @@ public class WorkAttributeConstant  {
       */
      public static final String VARIABLE_MAPPING = "Variable Mapping";
 
-	 //Attributes for setting pre-script and post-script in adapter activities
+     //Attributes for setting pre-script and post-script in adapter activities
      public static final String PRE_SCRIPT = "PreScript";
      public static final String PRE_SCRIPT_LANGUAGE = "PreScriptLang";
      public static final String POST_SCRIPT = "PostScript";

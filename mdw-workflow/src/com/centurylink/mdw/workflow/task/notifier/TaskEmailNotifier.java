@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.task.notifier;
 
@@ -101,7 +101,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
     protected JSONObject createEmailJson(TemplatedEmail templatedEmail, TaskInstance taskInstance)
     throws MessagingException, DataAccessException {
         JSONObject emailJson = templatedEmail.buildEmailJson();
-		EventManager eventManager = ServiceLocator.getEventManager();
+        EventManager eventManager = ServiceLocator.getEventManager();
         eventManager.createDocument(JSONObject.class.getName(), OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), emailJson);
         return emailJson;
     }
@@ -142,7 +142,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                     templatedEmail.setRecipients(new Address[]{recip});
                     templatedEmail.setCcRecipients(new Address[0]);
                     try {
-                    	templatedEmail.sendEmail();
+                        templatedEmail.sendEmail();
                     }
                     catch (MessagingException ex) {
                         logger.severeException(ex.getMessage(), ex);  // do not rethrow
@@ -156,7 +156,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                         templatedEmail.setRecipients(new Address[0]);
                         templatedEmail.setCcRecipients(new Address[]{ccRecip});
                         try {
-                        	templatedEmail.sendEmail();
+                            templatedEmail.sendEmail();
                         }
                         catch (MessagingException ex) {
                             logger.severeException(ex.getMessage(), ex);  // do not rethrow
@@ -168,7 +168,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                 templatedEmail.setRecipients(recipients);
                 templatedEmail.setCcRecipients(ccRecipients);
                 try {
-              	    templatedEmail.sendEmail(createEmailJson(templatedEmail, taskInstance));
+                      templatedEmail.sendEmail(createEmailJson(templatedEmail, taskInstance));
                 }
                 catch (MessagingException ex) {
                     logger.severeException(ex.getMessage(), ex);  // do not rethrow
@@ -211,15 +211,15 @@ public class TaskEmailNotifier extends TemplatedNotifier {
             // use that for the e-mail recipients, otherwise default to task workgroups
             String noticeGroups;
             String recipientEmails;
-        	TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
+            TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
             if (task!=null) {
-            	noticeGroups = task.getAttribute(TaskAttributeConstant.NOTICE_GROUPS);
+                noticeGroups = task.getAttribute(TaskAttributeConstant.NOTICE_GROUPS);
                 recipientEmails = task.getAttribute(TaskAttributeConstant.RECIPIENT_EMAILS);
                 if (!StringHelper.isEmpty(recipientEmails) && recipientEmails.indexOf('@') < 0 && !recipientEmails.startsWith("$"))
-                	recipientEmails = "$" + recipientEmails;
-            } else {	// should not happen even for shadow task instances, but just in case
-            	noticeGroups = null;
-            	recipientEmails = null;
+                    recipientEmails = "$" + recipientEmails;
+            } else {    // should not happen even for shadow task instances, but just in case
+                noticeGroups = null;
+                recipientEmails = null;
             }
             Address[] groupRecipients = getNoticeGroupsEmailAddresses(taskInstance, noticeGroups);
             if (groupRecipients == null) {
@@ -235,30 +235,30 @@ public class TaskEmailNotifier extends TemplatedNotifier {
 
             // variable-specified recipients
             if (recipientEmails != null) {
-            	if (recipientEmails.startsWith("$")) {
-            		Object recipVarValue = emailModel.getVariables().get(recipientEmails.substring(1).trim());
-            		if (recipVarValue != null) {
-            			try {
-            				for (Address address : getRecipientsFromVariable(recipVarValue)) {
-            					if (!recipients.contains(address))
-            						recipients.add(address);
-            				}
-            			} catch (CachingException ex) {
-            				throw new ObserverException(-1, ex.getMessage(), ex);
-            			}
-            		}
-            	} else {
-            		String[] emails = recipientEmails.split("[;,] *");
-            		for (String one : emails) {
-            			try {
-    						Address address = new InternetAddress(one);
-    						if (!recipients.contains(address))
-    	        				recipients.add(address);
-    					} catch (AddressException e) {
-    						logger.severeException("Illegal email address - " + one, e);
-    					}
-            		}
-            	}
+                if (recipientEmails.startsWith("$")) {
+                    Object recipVarValue = emailModel.getVariables().get(recipientEmails.substring(1).trim());
+                    if (recipVarValue != null) {
+                        try {
+                            for (Address address : getRecipientsFromVariable(recipVarValue)) {
+                                if (!recipients.contains(address))
+                                    recipients.add(address);
+                            }
+                        } catch (CachingException ex) {
+                            throw new ObserverException(-1, ex.getMessage(), ex);
+                        }
+                    }
+                } else {
+                    String[] emails = recipientEmails.split("[;,] *");
+                    for (String one : emails) {
+                        try {
+                            Address address = new InternetAddress(one);
+                            if (!recipients.contains(address))
+                                recipients.add(address);
+                        } catch (AddressException e) {
+                            logger.severeException("Illegal email address - " + one, e);
+                        }
+                    }
+                }
             }
 
             return recipients.toArray(new Address[0]);
@@ -338,13 +338,13 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         String ccRecipientEmails;
         TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
         if (task!=null) {
-        	ccNoticeGroups = task.getAttribute(TaskAttributeConstant.CC_GROUPS);
+            ccNoticeGroups = task.getAttribute(TaskAttributeConstant.CC_GROUPS);
             ccRecipientEmails = task.getAttribute(TaskAttributeConstant.CC_EMAILS);
             if (!StringHelper.isEmpty(ccRecipientEmails) && ccRecipientEmails.indexOf('@') < 0 && !ccRecipientEmails.startsWith("$"))
-            	ccRecipientEmails = "$" + ccRecipientEmails;
-        } else {	// should not happen even for shadow task instances, but just in case
-        	ccNoticeGroups = null;
-        	ccRecipientEmails = null;
+                ccRecipientEmails = "$" + ccRecipientEmails;
+        } else {    // should not happen even for shadow task instances, but just in case
+            ccNoticeGroups = null;
+            ccRecipientEmails = null;
         }
         Address[] groupRecipients = getNoticeGroupsEmailAddresses(taskInstance, ccNoticeGroups);
         if (groupRecipients != null) {
@@ -356,30 +356,30 @@ public class TaskEmailNotifier extends TemplatedNotifier {
 
         // variable-specified recipients
         if (ccRecipientEmails != null) {
-        	if (ccRecipientEmails.startsWith("$")) {
-        		Object recipVarValue = emailModel.getVariables().get(ccRecipientEmails.substring(1).trim());
-        		if (recipVarValue != null) {
-        			try {
-        				for (Address address : getRecipientsFromVariable(recipVarValue)) {
-        					if (!recipients.contains(address))
-        						recipients.add(address);
-        				}
-        			} catch (CachingException ex) {
-        				throw new ObserverException(-1, ex.getMessage(), ex);
-        			}
-        		}
-        	} else {
-        		String[] emails = ccRecipientEmails.split("[;,] *");
-        		for (String one : emails) {
-        			try {
-						Address address = new InternetAddress(one);
-						if (!recipients.contains(address))
-	        				recipients.add(address);
-					} catch (AddressException e) {
-						logger.severeException("Illegal email address - " + one, e);
-					}
-        		}
-        	}
+            if (ccRecipientEmails.startsWith("$")) {
+                Object recipVarValue = emailModel.getVariables().get(ccRecipientEmails.substring(1).trim());
+                if (recipVarValue != null) {
+                    try {
+                        for (Address address : getRecipientsFromVariable(recipVarValue)) {
+                            if (!recipients.contains(address))
+                                recipients.add(address);
+                        }
+                    } catch (CachingException ex) {
+                        throw new ObserverException(-1, ex.getMessage(), ex);
+                    }
+                }
+            } else {
+                String[] emails = ccRecipientEmails.split("[;,] *");
+                for (String one : emails) {
+                    try {
+                        Address address = new InternetAddress(one);
+                        if (!recipients.contains(address))
+                            recipients.add(address);
+                    } catch (AddressException e) {
+                        logger.severeException("Illegal email address - " + one, e);
+                    }
+                }
+            }
         }
 
         if (recipients.isEmpty())
@@ -414,7 +414,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         if (noticeGroups == null)
             return null;
         try {
-        	return toMailAddresses(getGroupEmails(noticeGroups.split("#")));
+            return toMailAddresses(getGroupEmails(noticeGroups.split("#")));
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -430,7 +430,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
     protected Address[] getTaskUserEmailAddresses(TaskInstance taskInstanceVO)
     throws ObserverException {
         try {
-			TaskManager taskManager = ServiceLocator.getTaskManager();
+            TaskManager taskManager = ServiceLocator.getTaskManager();
             List<String> groups;
             if (taskInstanceVO.isTemplateBased()) groups = taskInstanceVO.getGroups();
             else groups = taskManager.getGroupsForTaskInstance(taskInstanceVO);
@@ -453,7 +453,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
      */
     protected Address[] getGroupEmailAddresses(String[] groups) throws ObserverException, AddressException {
         try {
-        	return toMailAddresses(getGroupEmails(groups));
+            return toMailAddresses(getGroupEmails(groups));
         }
         catch (MDWException e) {
             logger.severeException(e.getMessage(), e);
@@ -467,23 +467,23 @@ public class TaskEmailNotifier extends TemplatedNotifier {
     }
 
     protected class VariablesModel extends HashMap<String,Object> {
-		private static final long serialVersionUID = 1L;
-		private Process processVO = null;
-		private ProcessInstance procInstVO = null;
-		private Long procInstId;
-		public VariablesModel(Long procInstId) { this.procInstId = procInstId; }
-		@Override
-		public Object get(Object key) {
-			Object result = super.get(key);
-			if (result!=null) return result;
-			try {
-				EventManager eventMgr = ServiceLocator.getEventManager();
-				if (procInstVO == null || processVO == null) {
-					procInstVO = eventMgr.getProcessInstance(procInstId);
-					processVO = ProcessCache.getProcess(procInstVO.getProcessId());
-				}
-				Long procInstanceId = procInstId;
-				VariableInstance vi = null;
+        private static final long serialVersionUID = 1L;
+        private Process processVO = null;
+        private ProcessInstance procInstVO = null;
+        private Long procInstId;
+        public VariablesModel(Long procInstId) { this.procInstId = procInstId; }
+        @Override
+        public Object get(Object key) {
+            Object result = super.get(key);
+            if (result!=null) return result;
+            try {
+                EventManager eventMgr = ServiceLocator.getEventManager();
+                if (procInstVO == null || processVO == null) {
+                    procInstVO = eventMgr.getProcessInstance(procInstId);
+                    processVO = ProcessCache.getProcess(procInstVO.getProcessId());
+                }
+                Long procInstanceId = procInstId;
+                VariableInstance vi = null;
                 if (procInstVO.isEmbedded()) {
                     procInstanceId = procInstVO.getOwnerId();
                     procInstVO = eventMgr.getProcessInstance(procInstanceId);
@@ -493,19 +493,19 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                 vi = eventMgr.getVariableInstance(procInstanceId, (String)key);
                 Package packageVO = PackageCache.getProcessPackage(processVO.getProcessId());
 
-				if (vi!=null) {
-					result = vi.getData();
-					if (result instanceof DocumentReference) {
-					    Document docvo = eventMgr.getDocumentVO(((DocumentReference)result).getDocumentId());
-					    result = docvo==null?null:docvo.getObject(vi.getType(), packageVO);
-					}
-					if (result!=null) this.put((String)key, result);
-				} else result = null;
-			} catch (Exception e) {
-				logger.severeException(e.getMessage(), e);
-				result = null;
-		    }
-			return result;
-		}
+                if (vi!=null) {
+                    result = vi.getData();
+                    if (result instanceof DocumentReference) {
+                        Document docvo = eventMgr.getDocumentVO(((DocumentReference)result).getDocumentId());
+                        result = docvo==null?null:docvo.getObject(vi.getType(), packageVO);
+                    }
+                    if (result!=null) this.put((String)key, result);
+                } else result = null;
+            } catch (Exception e) {
+                logger.severeException(e.getMessage(), e);
+                result = null;
+            }
+            return result;
+        }
     }
 }

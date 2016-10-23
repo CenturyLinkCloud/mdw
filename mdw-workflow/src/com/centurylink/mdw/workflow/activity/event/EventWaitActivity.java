@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.event;
 
@@ -39,27 +39,27 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
      * Method that executes the logic based on the work
      */
     public void execute() throws ActivityException {
-    	EventWaitInstance received = registerWaitEvents(false, true);
+        EventWaitInstance received = registerWaitEvents(false, true);
         if (received!=null) {
-        	setReturnCodeAndExitStatus(received.getCompletionCode());
-        	processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
-        	boolean toFinish = handleCompletionCode();
+            setReturnCodeAndExitStatus(received.getCompletionCode());
+            processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
+            boolean toFinish = handleCompletionCode();
             if (toFinish && exitStatus==null)
                 exitStatus = WorkStatus.STATUS_COMPLETED;
         } else {
-        	// set timeouts
+            // set timeouts
             int timeout = getTimeoutSeconds();
-    		if (timeout > 0) {
-        		loginfo("set activity timeout as " + timeout + " seconds");
-        		InternalEvent delayMsg = InternalEvent.createActivityDelayMessage(getActivityInstance(),
-        				getMasterRequestId());
-    			try {
-					getEngine().sendDelayedInternalEvent(delayMsg, timeout,
-							ScheduledEvent.INTERNAL_EVENT_PREFIX+getActivityInstanceId()+"timeout", false);
-				} catch (MDWException e) {
-					throw new ActivityException(0, "Failed to set timeout", e);
-				}
-    		}
+            if (timeout > 0) {
+                loginfo("set activity timeout as " + timeout + " seconds");
+                InternalEvent delayMsg = InternalEvent.createActivityDelayMessage(getActivityInstance(),
+                        getMasterRequestId());
+                try {
+                    getEngine().sendDelayedInternalEvent(delayMsg, timeout,
+                            ScheduledEvent.INTERNAL_EVENT_PREFIX+getActivityInstanceId()+"timeout", false);
+                } catch (MDWException e) {
+                    throw new ActivityException(0, "Failed to set timeout", e);
+                }
+            }
         }
     }
     protected boolean isEventRecurring(String completionCode) {
@@ -72,12 +72,12 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     }
 
     protected int getTimeoutSeconds() {
-    	String sla = this.getAttributeValue(WorkAttributeConstant.SLA);
-    	if (sla==null || sla.length()==0) return 0;
-    	String unit = getAttributeValue(WorkAttributeConstant.SLA_UNITS);
-    	if (StringHelper.isEmpty(unit)) unit = getAttributeValue(WorkAttributeConstant.SLA_UNIT);
-    	if (StringHelper.isEmpty(unit)) unit = ServiceLevelAgreement.INTERVAL_HOURS;
-    	return ServiceLevelAgreement.unitsToSeconds(sla, unit);
+        String sla = this.getAttributeValue(WorkAttributeConstant.SLA);
+        if (sla==null || sla.length()==0) return 0;
+        String unit = getAttributeValue(WorkAttributeConstant.SLA_UNITS);
+        if (StringHelper.isEmpty(unit)) unit = getAttributeValue(WorkAttributeConstant.SLA_UNIT);
+        if (StringHelper.isEmpty(unit)) unit = ServiceLevelAgreement.INTERVAL_HOURS;
+        return ServiceLevelAgreement.unitsToSeconds(sla, unit);
     }
 
     /**
@@ -92,7 +92,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
         try {
             // TODO this duplicates the data in document table. Any better solution?
             // this information is needed to display in designer only
-        	// same is true for GeneralManualTaskActivity
+            // same is true for GeneralManualTaskActivity
             this.createDocument(String.class.getName(), responseData,
                     OwnerType.ADAPTOR_RESPONSE, getActivityInstanceId());
         } catch (Exception ex) {
@@ -101,20 +101,20 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     }
 
     public boolean needSuspend() {
-		return !WorkStatus.STATUS_COMPLETED.equals(exitStatus);
+        return !WorkStatus.STATUS_COMPLETED.equals(exitStatus);
     }
 
 
     private void setReturnCodeAndExitStatus(String code) {
-    	CompletionCode compcode = new CompletionCode();
-    	compcode.parse(code);
-    	exitStatus = compcode.getActivityInstanceStatus();
-    	if (compcode.getEventType().equals(EventType.FINISH)) {
-    		setReturnCode(compcode.getCompletionCode());
-    	} else {
-    		setReturnCode(compcode.getEventTypeName() + ":" +
-    				(compcode.getCompletionCode()==null?"":compcode.getCompletionCode()));
-    	}
+        CompletionCode compcode = new CompletionCode();
+        compcode.parse(code);
+        exitStatus = compcode.getActivityInstanceStatus();
+        if (compcode.getEventType().equals(EventType.FINISH)) {
+            setReturnCode(compcode.getCompletionCode());
+        } else {
+            setReturnCode(compcode.getEventTypeName() + ":" +
+                    (compcode.getCompletionCode()==null?"":compcode.getCompletionCode()));
+        }
     }
 
     /**
@@ -124,18 +124,18 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
      * records the message in ADAPTER_INSTANCE table, and invoke {@link processMessage(String,String)}.
      */
     public final boolean resume(InternalEvent eventMessageDoc) throws ActivityException {
-    	boolean toFinish;
-    	String secondaryOwnerType = eventMessageDoc.getSecondaryOwnerType();
-    	if (secondaryOwnerType!=null && secondaryOwnerType.equals(OwnerType.DOCUMENT)) {
-    		String responseData = super.getMessageFromEventMessage(eventMessageDoc);
-    		setReturnCodeAndExitStatus(eventMessageDoc.getCompletionCode());
-        	processMessage(responseData);
-			toFinish = handleCompletionCode();
-    	} else {
-    		setReturnCodeAndExitStatus(eventMessageDoc.getCompletionCode());
-        	processMessage(null);
-			toFinish = handleCompletionCode();
-    	}
+        boolean toFinish;
+        String secondaryOwnerType = eventMessageDoc.getSecondaryOwnerType();
+        if (secondaryOwnerType!=null && secondaryOwnerType.equals(OwnerType.DOCUMENT)) {
+            String responseData = super.getMessageFromEventMessage(eventMessageDoc);
+            setReturnCodeAndExitStatus(eventMessageDoc.getCompletionCode());
+            processMessage(responseData);
+            toFinish = handleCompletionCode();
+        } else {
+            setReturnCodeAndExitStatus(eventMessageDoc.getCompletionCode());
+            processMessage(null);
+            toFinish = handleCompletionCode();
+        }
         return toFinish;
     }
 
@@ -189,68 +189,68 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     }
 
     protected boolean handleCompletionCode() throws ActivityException {
-		String compCode = this.getReturnCode();
-		if (compCode!=null && (compCode.length()==0||compCode.equals(EventType.EVENTNAME_FINISH)))
-			compCode = null;
-		String actInstStatusName;
-		if (exitStatus==null) actInstStatusName = null;
-		else if (exitStatus.equals(WorkStatus.STATUS_CANCELLED)) actInstStatusName = WorkStatus.STATUSNAME_CANCELLED;
-		else if (exitStatus.equals(WorkStatus.STATUS_WAITING)) actInstStatusName = WorkStatus.STATUSNAME_WAITING;
-		else if (exitStatus.equals(WorkStatus.STATUS_HOLD)) actInstStatusName = WorkStatus.STATUSNAME_HOLD;
-		else actInstStatusName = null;
-		if (actInstStatusName!=null) {
-			if (compCode==null) compCode = actInstStatusName + "::";
-			else compCode = actInstStatusName + "::" + compCode;
-		}
-		setReturnCode(compCode);
-    	if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
-    		this.registerWaitEvents(true, false);
-    		if (compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
-    				|| compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
-    				|| compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR))
-    			return true;
-    		else return false;
-    	} else return true;
+        String compCode = this.getReturnCode();
+        if (compCode!=null && (compCode.length()==0||compCode.equals(EventType.EVENTNAME_FINISH)))
+            compCode = null;
+        String actInstStatusName;
+        if (exitStatus==null) actInstStatusName = null;
+        else if (exitStatus.equals(WorkStatus.STATUS_CANCELLED)) actInstStatusName = WorkStatus.STATUSNAME_CANCELLED;
+        else if (exitStatus.equals(WorkStatus.STATUS_WAITING)) actInstStatusName = WorkStatus.STATUSNAME_WAITING;
+        else if (exitStatus.equals(WorkStatus.STATUS_HOLD)) actInstStatusName = WorkStatus.STATUSNAME_HOLD;
+        else actInstStatusName = null;
+        if (actInstStatusName!=null) {
+            if (compCode==null) compCode = actInstStatusName + "::";
+            else compCode = actInstStatusName + "::" + compCode;
+        }
+        setReturnCode(compCode);
+        if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
+            this.registerWaitEvents(true, false);
+            if (compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
+                    || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
+                    || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR))
+                return true;
+            else return false;
+        } else return true;
     }
 
     /**
      * Typically you will not override this method
      */
     public boolean resumeWaiting(InternalEvent eventMessageDoc) throws ActivityException {
-    	EventWaitInstance received = registerWaitEvents(true, true);
-		if (received!=null) {
-			setReturnCodeAndExitStatus(received.getCompletionCode());
-        	processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
-			return handleCompletionCode();
-		} else return false;
+        EventWaitInstance received = registerWaitEvents(true, true);
+        if (received!=null) {
+            setReturnCodeAndExitStatus(received.getCompletionCode());
+            processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
+            return handleCompletionCode();
+        } else return false;
     }
 
-	protected final void setActivityWaitingOnExit() {
-		this.exitStatus = WorkStatus.STATUS_WAITING;
-	}
+    protected final void setActivityWaitingOnExit() {
+        this.exitStatus = WorkStatus.STATUS_WAITING;
+    }
 
-	protected final void setActivityHoldOnExit() {
-		this.exitStatus = WorkStatus.STATUS_HOLD;
-	}
+    protected final void setActivityHoldOnExit() {
+        this.exitStatus = WorkStatus.STATUS_HOLD;
+    }
 
-	/**
-	 * Update SLA of this
-	 * @param seconds number of seconds from now as the new SLA
-	 * @throws ActivityException
-	 */
-	protected void updateSLA(int seconds) throws ActivityException {
-		try {
-        	ProcessExecutor engine = this.getEngine();
-        	super.loginfo("Update activity timeout as " + seconds + " seconds");
-    		InternalEvent delayMsg = InternalEvent.createActivityDelayMessage(this.getActivityInstance(),
-    				this.getMasterRequestId());
-        	String eventName = ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId() + "timeout";
-        	engine.sendDelayedInternalEvent(delayMsg, seconds, eventName, true);
+    /**
+     * Update SLA of this
+     * @param seconds number of seconds from now as the new SLA
+     * @throws ActivityException
+     */
+    protected void updateSLA(int seconds) throws ActivityException {
+        try {
+            ProcessExecutor engine = this.getEngine();
+            super.loginfo("Update activity timeout as " + seconds + " seconds");
+            InternalEvent delayMsg = InternalEvent.createActivityDelayMessage(this.getActivityInstance(),
+                    this.getMasterRequestId());
+            String eventName = ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId() + "timeout";
+            engine.sendDelayedInternalEvent(delayMsg, seconds, eventName, true);
         } catch (Exception e) {
-        	throw new ActivityException(-1, "Failed to update SLA for activity instance"
-        			+ this.getActivityInstanceId(), e);
+            throw new ActivityException(-1, "Failed to update SLA for activity instance"
+                    + this.getActivityInstanceId(), e);
         }
-	}
+    }
 
 
 }

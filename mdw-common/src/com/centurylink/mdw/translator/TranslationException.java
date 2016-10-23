@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.translator;
 
@@ -10,8 +10,8 @@ public class TranslationException extends RuntimeException {
     public TranslationException(String pMessage){
         super(pMessage);
     }
-	
-	public TranslationException(String message, Throwable cause) {
-	    super(message, cause);
-	}
+    
+    public TranslationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

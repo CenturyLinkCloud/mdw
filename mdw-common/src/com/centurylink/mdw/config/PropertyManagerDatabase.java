@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.config;
 
@@ -34,17 +34,17 @@ public class PropertyManagerDatabase extends PropertyManager {
      * @throws PropertyException
      */
     public PropertyManagerDatabase(String containerName, String dburl, String servletRealPath)
-    		throws StartupException {
-    	this.containerName = containerName;
+            throws StartupException {
+        this.containerName = containerName;
         this.dburl = dburl;
         this.servletRealPath = servletRealPath;
-        if (dburl!=null) {	// from designer. load from database only
-        	properties.clear();
-        	loadPropertiesFromDatabase(null, false);
-        } else {			// from container. load from files only (load from database later)
-        	mainPropertyFileName = getMainPropertyFileName();
-        	// 1. load properties from mdw.properties or ApplicationProperties.xml
-        	this.loadPropertiesFromFile(null, mainPropertyFileName, true, true);
+        if (dburl!=null) {    // from designer. load from database only
+            properties.clear();
+            loadPropertiesFromDatabase(null, false);
+        } else {            // from container. load from files only (load from database later)
+            mainPropertyFileName = getMainPropertyFileName();
+            // 1. load properties from mdw.properties or ApplicationProperties.xml
+            this.loadPropertiesFromFile(null, mainPropertyFileName, true, true);
             // 2. load properties from application.properties
             loadPropertiesFromFile(null, APPLICATION_PROPERTIES_FILE_NAME, true, false);
             // 3. load properties from package.properties (only application in cloud dev environment
@@ -77,11 +77,11 @@ public class PropertyManagerDatabase extends PropertyManager {
      *      do not throw exception (catching exception), as the case for calling loadFromFile in this method.
      */
     public void refreshCache() throws PropertyException {
-    	refreshProperties(true, false);
+        refreshProperties(true, false);
     }
 
     public void clearCache() {
-    	properties.clear();
+        properties.clear();
     }
 
     private String getMainPropertyFileName() throws StartupException {
@@ -95,12 +95,12 @@ public class PropertyManagerDatabase extends PropertyManager {
             if (file.exists()) return MDW_PROPERTIES_FILE_NAME;
         }
         throw new StartupException(StartupException.NO_PROPERTY_FILE_FOUND,
-        	"No mdw.properties configuration file is found");
+            "No mdw.properties configuration file is found");
     }
 
     private void refreshProperties(boolean printStackTraceWhenError, boolean fileonly) throws PropertyException {
 
-    	Properties tempProperties = new Properties();
+        Properties tempProperties = new Properties();
         getSources().clear();
 
         // 1. load properties from mdw.properties or ApplicationProperties.xml from configuration directory
@@ -120,49 +120,49 @@ public class PropertyManagerDatabase extends PropertyManager {
         }
 
         if (!fileonly) {
-        	// 4. load properties from database
-        	loadPropertiesFromDatabase(tempProperties, printStackTraceWhenError);
-        	// 5. load properties from local override
-	        loadPropertiesFromFile(tempProperties, ENV_OVERRIDE_PROPERTIES_FILE_NAME, false, false);
+            // 4. load properties from database
+            loadPropertiesFromDatabase(tempProperties, printStackTraceWhenError);
+            // 5. load properties from local override
+            loadPropertiesFromFile(tempProperties, ENV_OVERRIDE_PROPERTIES_FILE_NAME, false, false);
         }
 
         // update the cache
         updateCache(tempProperties);
     }
 
-	// load properties from database (override mdw.properties and application.properties)
+    // load properties from database (override mdw.properties and application.properties)
     public void loadPropertiesFromDatabase(Properties tempProperties, boolean printStackTraceWhenError) {
         try {
-        	loadPropertiesFromDatabase(tempProperties==null?properties:tempProperties, getMDWDatabaseURL(),
+            loadPropertiesFromDatabase(tempProperties==null?properties:tempProperties, getMDWDatabaseURL(),
                 "select ATTRIBUTE_NAME,ATTRIBUTE_VALUE from ATTRIBUTE where ATTRIBUTE_OWNER='"
                 + OwnerType.SYSTEM + "'");
             System.out.println("Loaded properties from database");
         } catch (PropertyException e) {
-        	if (printStackTraceWhenError) {
+            if (printStackTraceWhenError) {
                 System.out.println("Cannot load properties from database");
-        		e.printStackTrace();
-        	}
+                e.printStackTrace();
+            }
         }
     }
 
     // load local override properties (personal dev environment only)
     public void loadPropertiesFromFile(Properties tempProperties, String fileName,
-    		boolean verboseSuccess, boolean verboseFailure) {
+            boolean verboseSuccess, boolean verboseFailure) {
         try {
             loadFromFile(tempProperties==null?properties:tempProperties, fileName);
             if (verboseSuccess) System.out.println("Loaded properties from file " + fileName);
         } catch (PropertyException e) {
-        	if (verboseFailure) {
+            if (verboseFailure) {
                 System.out.println("Cannot load properties from " + fileName);
-        		e.printStackTrace();
-        	}
+                e.printStackTrace();
+            }
         }
     }
 
     final protected void updateCache(Properties tempProperties) {
         synchronized (properties) {
-        	properties.clear();
-        	properties.putAll(tempProperties);
+            properties.clear();
+            properties.putAll(tempProperties);
         }
     }
 
@@ -178,8 +178,8 @@ public class PropertyManagerDatabase extends PropertyManager {
          * @throws PropertyException
          */
     public String getStringProperty(String pGroupName, String pPropertyName) {
-    	if (pGroupName!=null) return this.getStringProperty(pGroupName + "/" + pPropertyName);
-    	else return this.getStringProperty(pPropertyName);
+        if (pGroupName!=null) return this.getStringProperty(pGroupName + "/" + pPropertyName);
+        else return this.getStringProperty(pPropertyName);
     }
 
      /**
@@ -262,8 +262,8 @@ public class PropertyManagerDatabase extends PropertyManager {
                 String propname = rs.getString(1);
                 String propvalue = rs.getString(2);
                 if (propvalue!=null && propvalue.length()>0) {
-                	properties.put(propname, propvalue);
-                	getSources().put(propname, DATABASE);
+                    properties.put(propname, propvalue);
+                    getSources().put(propname, DATABASE);
                 } else properties.remove(propname);
             }
         } catch (SQLException e) {
@@ -274,11 +274,11 @@ public class PropertyManagerDatabase extends PropertyManager {
     }
 
     public Properties getAllProperties() {
-    	return properties;
+        return properties;
     }
 
     public void setStringProperty(String property_name, String value) {
-    	if (value==null||value.length()==0) properties.remove(property_name);
-    	else properties.put(property_name, value);
+        if (value==null||value.length()==0) properties.remove(property_name);
+        else properties.put(property_name, value);
     }
 }

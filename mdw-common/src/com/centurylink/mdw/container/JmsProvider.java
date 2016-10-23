@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.container;
 
@@ -14,9 +14,9 @@ import javax.naming.NamingException;
 
 public interface JmsProvider {
 
-	String JBOSS = "JBoss";
-	String ACTIVEMQ = "ActiveMQ";
-	String NONE = "none";
+    String JBOSS = "JBoss";
+    String ACTIVEMQ = "ActiveMQ";
+    String NONE = "none";
 
     public QueueConnectionFactory getQueueConnectionFactory(NamingProvider namingProvider, String contextUrl)
     throws JMSException, NamingException;

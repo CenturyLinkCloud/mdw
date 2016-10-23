@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.notification;
 
@@ -122,7 +122,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
      * @throws AddressException
      */
     protected Address[] getRecipients(String groups, String recipEmails)
-    	throws ActivityException, CachingException, AddressException {
+        throws ActivityException, CachingException, AddressException {
         List<Address> recipients = new ArrayList<Address>();
 
         if (!StringHelper.isEmpty(groups)) {
@@ -132,23 +132,23 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
             }
         }
         if (!StringHelper.isEmpty(recipEmails)) {
-        	if (recipEmails.startsWith("$")) {
-        		for (Address address : getRecipientsFromVariable(recipEmails.substring(1).trim())) {
-        			if (!recipients.contains(address))
-        				recipients.add(address);
-        		}
-        	} else {
-        		String[] emails = recipEmails.split("[;,] *");
-        		for (String one : emails) {
-        			try {
-						Address address = new InternetAddress(one);
-						if (!recipients.contains(address))
-	        				recipients.add(address);
-					} catch (AddressException e) {
-						logger.severeException("Illegal email address - " + one, e);
-					}
-        		}
-        	}
+            if (recipEmails.startsWith("$")) {
+                for (Address address : getRecipientsFromVariable(recipEmails.substring(1).trim())) {
+                    if (!recipients.contains(address))
+                        recipients.add(address);
+                }
+            } else {
+                String[] emails = recipEmails.split("[;,] *");
+                for (String one : emails) {
+                    try {
+                        Address address = new InternetAddress(one);
+                        if (!recipients.contains(address))
+                            recipients.add(address);
+                    } catch (AddressException e) {
+                        logger.severeException("Illegal email address - " + one, e);
+                    }
+                }
+            }
         }
 
         return recipients.toArray(new Address[0]);
@@ -159,11 +159,11 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
      * @throws AddressException
      */
     protected Address[] getCcRecipients()
-    	throws ActivityException, CachingException, AddressException {
+        throws ActivityException, CachingException, AddressException {
         String groups = getAttributeValue(WorkAttributeConstant.CC_GROUPS);
         String recipEmails = getAttributeValue(WorkAttributeConstant.CC_EMAILS);
         if (!StringHelper.isEmpty(recipEmails) && recipEmails.indexOf('@') < 0 && !recipEmails.startsWith("$"))
-        	recipEmails = "$" + recipEmails;
+            recipEmails = "$" + recipEmails;
         if (StringHelper.isEmpty(groups) && StringHelper.isEmpty(recipEmails)) {
             return null;
         }
@@ -173,11 +173,11 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
     }
 
     private Address[] toMailAddresses(List<String> addressList) throws AddressException {
-    	Address[] addresses = new Address[addressList.size()];
-    	for (int i=0; i<addresses.length; i++) {
-    		addresses[i] = new InternetAddress(addressList.get(i));
-    	}
-    	return addresses;
+        Address[] addresses = new Address[addressList.size()];
+        for (int i=0; i<addresses.length; i++) {
+            addresses[i] = new InternetAddress(addressList.get(i));
+        }
+        return addresses;
     }
 
     /**

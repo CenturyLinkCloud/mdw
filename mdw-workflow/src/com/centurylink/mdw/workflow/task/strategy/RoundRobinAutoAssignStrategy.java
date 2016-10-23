@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.task.strategy;
 
@@ -24,10 +24,10 @@ public class RoundRobinAutoAssignStrategy implements AutoAssignStrategy {
 
     public User selectAssignee(TaskInstance taskInstanceVO) throws ObserverException {
         try {
-			TaskManager taskManager = ServiceLocator.getTaskManager();
-        	List<String> groups = taskManager.getGroupsForTaskInstance(taskInstanceVO);
+            TaskManager taskManager = ServiceLocator.getTaskManager();
+            List<String> groups = taskManager.getGroupsForTaskInstance(taskInstanceVO);
             UserManager userManager = ServiceLocator.getUserManager();
-        	User[] taskUsers = userManager.getUsersForGroups(groups.toArray(new String[groups.size()]));
+            User[] taskUsers = userManager.getUsersForGroups(groups.toArray(new String[groups.size()]));
             if (taskUsers == null || taskUsers.length == 0) {
                 return null;
             }

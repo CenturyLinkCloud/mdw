@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.service.data.process;
 
@@ -25,7 +25,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
  */
 public class ProcessCache implements CacheEnabled, CacheService {
 
-	public static String name = "ProcessCache";
+    public static String name = "ProcessCache";
     private static ProcessCache singleton = null;
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -40,11 +40,11 @@ public class ProcessCache implements CacheEnabled, CacheService {
     }
 
     synchronized private static ProcessCache getSingleton() {
-    	if (singleton==null) {
-    		singleton = new ProcessCache();
-        	(new CacheRegistration()).registerCache(name, singleton);
-    	}
-    	return singleton;
+        if (singleton==null) {
+            singleton = new ProcessCache();
+            (new CacheRegistration()).registerCache(name, singleton);
+        }
+        return singleton;
     }
 
     public void clearCache() {
@@ -56,15 +56,15 @@ public class ProcessCache implements CacheEnabled, CacheService {
     }
 
     public void refreshCache() {
-        	clearCache();
+            clearCache();
     }
 
     public static Process getProcess(Long processId) {
-    	return getSingleton().getProcess0(processId);
+        return getSingleton().getProcess0(processId);
     }
 
     public static Process getProcess(String procname, int version) {
-    	return getSingleton().getProcess0(procname, version);
+        return getSingleton().getProcess0(procname, version);
     }
 
     private void putInCache(Process process) {
@@ -72,11 +72,11 @@ public class ProcessCache implements CacheEnabled, CacheService {
     }
 
     private void putInCache(Process process, boolean versionZero) {
-    	processMap.put(process.getProcessId(), process);
+        processMap.put(process.getProcessId(), process);
         List<Process> vl = procNameMap.get(process.getProcessName());
         if (vl == null) {
-        	vl = new ArrayList<Process>();
-        	procNameMap.put(process.getProcessName(), vl);
+            vl = new ArrayList<Process>();
+            procNameMap.put(process.getProcessName(), vl);
         }
         vl.add(process);
         if (versionZero)
@@ -171,7 +171,7 @@ public class ProcessCache implements CacheEnabled, CacheService {
 
     private Process loadProcess(Long processId) {
         try {
-			EventManager eventMgr = ServiceLocator.getEventManager();
+            EventManager eventMgr = ServiceLocator.getEventManager();
             return eventMgr.getProcess(processId);
         }
         catch (Exception ex) {
@@ -182,14 +182,14 @@ public class ProcessCache implements CacheEnabled, CacheService {
 
     private Process loadProcess(String procname, int version) {
         try {
-        	EventManager eventMgr = ServiceLocator.getEventManager();
-        	Long procid = eventMgr.findProcessId(procname, version);
+            EventManager eventMgr = ServiceLocator.getEventManager();
+            Long procid = eventMgr.findProcessId(procname, version);
             if (procid == null)
                 throw new Exception("Process not found " + procname + " v" + version);
             return eventMgr.getProcess(procid);
         }
         catch (Exception ex) {
-        	StandardLogger logger = LoggerUtil.getStandardLogger();
+            StandardLogger logger = LoggerUtil.getStandardLogger();
             logger.severeException(ex.getMessage(), ex);
             return null;
         }

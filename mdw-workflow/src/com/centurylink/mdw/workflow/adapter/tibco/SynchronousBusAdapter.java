@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.adapter.tibco;
 
@@ -82,7 +82,7 @@ public class SynchronousBusAdapter extends AdapterActivityBase implements IBusWo
      * @return the string "DATA".
      */
     protected String getDataFieldName() {
-    	String v = this.getAttributeValue(DATA_FIELD_NAME_ATTRIBUTE);
+        String v = this.getAttributeValue(DATA_FIELD_NAME_ATTRIBUTE);
         return (v==null) ? DATA_FIELD_NAME_DATA : v;
     }
 
@@ -116,22 +116,22 @@ public class SynchronousBusAdapter extends AdapterActivityBase implements IBusWo
              reqMsg = this.createBusMessage(requestXML, topicName, timeOut, dataFieldName);
              if(!this.isRequestReply()){
                  pConnection.publish(reqMsg);
-//            	 Bus.publish(reqMsg);
+//                 Bus.publish(reqMsg);
                  logger.info("Message has been published for topicName="+topicName);
                  return null;
              } else {
-            	 long time_a = System.currentTimeMillis();
-            	 respMsg = pConnection.request(reqMsg);
+                 long time_a = System.currentTimeMillis();
+                 respMsg = pConnection.request(reqMsg);
 //             respMsg = Bus.request(reqMsg);
-            	 if (respMsg != null) {
-            		 responseXML = respMsg.getString(dataFieldName);
-            	 }else{
-            		 long time_b = System.currentTimeMillis();
-            		 if (time_b-time_a<(timeOut-2)*1000)
-            			 throw new AdapterException("Bus error, please investigate argos log for reasosn");
-            		 else throw new ConnectionException("Bus response timeout for request on topic "
-            				 + topicName);
-            	 }
+                 if (respMsg != null) {
+                     responseXML = respMsg.getString(dataFieldName);
+                 }else{
+                     long time_b = System.currentTimeMillis();
+                     if (time_b-time_a<(timeOut-2)*1000)
+                         throw new AdapterException("Bus error, please investigate argos log for reasosn");
+                     else throw new ConnectionException("Bus response timeout for request on topic "
+                             + topicName);
+                 }
              }
         } catch (BusMessageException ex){
             throw new AdapterException(-1, ex.getMessage(), ex);
@@ -171,22 +171,22 @@ public class SynchronousBusAdapter extends AdapterActivityBase implements IBusWo
 
     @Override
     protected Object openConnection() throws ConnectionException,AdapterException {
-    	try {
-        	String topic = this.getTopicName();
-        	String bus_uri = this.getAttributeValueSmart(BUS_URI);
-        	if (bus_uri!=null && bus_uri.length()>0) {
-        		// assuming initialize from activity attributes
+        try {
+            String topic = this.getTopicName();
+            String bus_uri = this.getAttributeValueSmart(BUS_URI);
+            if (bus_uri!=null && bus_uri.length()>0) {
+                // assuming initialize from activity attributes
                 setBusTopic(bus_uri, topic);
-        	} // else initialize from busconnector.xml for backward compatibility
-	    	return Bus.getBusConnector();
-		} catch (BusException e) {
-			e.printStackTrace();
-			throw new ConnectionException(ConnectionException.CONNECTION_DOWN, e.getMessage(), e);
-		} catch (URISyntaxException e) {
-			throw new AdapterException(AdapterException.CONFIGURATION_WRONG, e.getMessage(), e);
-		} catch (PropertyException e) {
-			throw new AdapterException(AdapterException.CONFIGURATION_WRONG, "Topic name property wrong", e);
-		}
+            } // else initialize from busconnector.xml for backward compatibility
+            return Bus.getBusConnector();
+        } catch (BusException e) {
+            e.printStackTrace();
+            throw new ConnectionException(ConnectionException.CONNECTION_DOWN, e.getMessage(), e);
+        } catch (URISyntaxException e) {
+            throw new AdapterException(AdapterException.CONFIGURATION_WRONG, e.getMessage(), e);
+        } catch (PropertyException e) {
+            throw new AdapterException(AdapterException.CONFIGURATION_WRONG, "Topic name property wrong", e);
+        }
     }
 
     /**
@@ -282,17 +282,17 @@ public class SynchronousBusAdapter extends AdapterActivityBase implements IBusWo
      * The method will through exception if the variable is not bound,
      * or the value is not bound to a DocumentReference or String.
      */
-	@Override
-	protected Object getRequestData() throws ActivityException {
-		Object request = super.getRequestData();
-		if (request==null) throw new ActivityException("Request data is null");
+    @Override
+    protected Object getRequestData() throws ActivityException {
+        Object request = super.getRequestData();
+        if (request==null) throw new ActivityException("Request data is null");
         if (request instanceof DocumentReference) request = getDocumentContent((DocumentReference)request);
-		if (request instanceof String) return request;
-		else if (request instanceof Document) return
-			VariableTranslator.realToString(Document.class.getName(), request);
-		else if (request instanceof XmlObject) return ((XmlObject)request).xmlText();
-		else throw new ActivityException(
-				"Cannot handle request of type " + request.getClass().getName());
-	}
+        if (request instanceof String) return request;
+        else if (request instanceof Document) return
+            VariableTranslator.realToString(Document.class.getName(), request);
+        else if (request instanceof XmlObject) return ((XmlObject)request).xmlText();
+        else throw new ActivityException(
+                "Cannot handle request of type " + request.getClass().getName());
+    }
 
 }

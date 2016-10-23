@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.constant;
 
@@ -8,9 +8,9 @@ package com.centurylink.mdw.constant;
  */
 public class VariableConstants {
 
-	/**
-	 * Variable mode constants
-	 */
+    /**
+     * Variable mode constants
+     */
     public static final Integer VARIABLE_CATEGORY_LOCAL = new Integer(0);
     public static final Integer VARIABLE_CATEGORY_INPUT = new Integer(1);
     public static final Integer VARIABLE_CATEGORY_OUTPUT = new Integer(2);

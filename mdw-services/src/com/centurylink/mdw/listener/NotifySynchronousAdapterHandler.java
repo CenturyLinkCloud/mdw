@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.listener;
 
@@ -33,13 +33,13 @@ public class NotifySynchronousAdapterHandler extends ExternalEventHandlerBase {
     }
     
     public void notifyWaitingThread(String eventName, String message) 
-    		throws JSONException, ProcessException {
-    	JSONObject json = new JSONObject();
-    	json.put("ACTION", "NOTIFY");
-    	json.put("CORRELATION_ID", eventName);
-    	json.put("MESSAGE", message);
-    	InternalMessenger messenger = MessengerFactory.newInternalMessenger();
-		messenger.broadcastMessage(json.toString());
+            throws JSONException, ProcessException {
+        JSONObject json = new JSONObject();
+        json.put("ACTION", "NOTIFY");
+        json.put("CORRELATION_ID", eventName);
+        json.put("MESSAGE", message);
+        InternalMessenger messenger = MessengerFactory.newInternalMessenger();
+        messenger.broadcastMessage(json.toString());
     }
 
 }

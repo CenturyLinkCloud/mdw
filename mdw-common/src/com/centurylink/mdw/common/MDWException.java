@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.common;
 
@@ -28,7 +28,7 @@ public class MDWException extends Exception {
     }
 
     public int getErrorCode(){
-    	return this.errorCode;
+        return this.errorCode;
     }
 
     public String getStackTraceDetails() {

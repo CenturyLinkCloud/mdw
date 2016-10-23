@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.activity.types;
 
@@ -10,17 +10,17 @@ package com.centurylink.mdw.activity.types;
  */
 public interface AdapterActivity extends GeneralActivity {
     
-	String PROP_MAX_TRIES = "max_tries";		// including the first try; 0 is retreated the same as 1
+    String PROP_MAX_TRIES = "max_tries";        // including the first try; 0 is retreated the same as 1
     String PROP_TIMEOUT = "timeout";
     String PROP_RETRY_INTERVAL = "retry_interval";
-	String PROP_SYNCHRONOUS_RESPONSE = "synchronous";
+    String PROP_SYNCHRONOUS_RESPONSE = "synchronous";
     String DO_LOGGING = "DO_LOGGING";
     String REQUEST_VARIABLE = "REQUEST_VARIABLE";
     String RESPONSE_VARIABLE = "RESPONSE_VARIABLE";
     String REQUEST_XSD = "REQUEST_XSD";
     String RESPONSE_XSD = "RESPONSE_XSD";
-	
-	String COMPCODE_AUTO_RETRY = "Automatic Retry";
+    
+    String COMPCODE_AUTO_RETRY = "Automatic Retry";
     
     String MAKE_ACTUAL_CALL = "(MAKE_ACTUAL_CALL)";
     String DEFAULT_STUBBER_HOST = "localhost";

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.constant;
 
@@ -105,7 +105,7 @@ public class FormConstants {
     public static final String URLARG_HIDDEN_WINID = "hiddenWinid";
     public static final String URLARG_HIDDEN_ACTION = "hiddenAction";
     public static final String URLARG_HIDDEN_ISDIALOG = "hiddenIsDialog";
-    public static final String URLARG_WINID = "winid";		// used by JSF version in template
+    public static final String URLARG_WINID = "winid";        // used by JSF version in template
     // explicit URL parameters
     public static final String URLARG_INPUTXML = "inputxml";
     public static final String URLARG_INPUTDOC = "inputdoc";
@@ -122,19 +122,19 @@ public class FormConstants {
     public static final String URLARG_FORMNAME = "formName";
     public static final String URLARG_NAME = "name";
     public static final String URLARG_ACTION = "action";
-    public static final String URLARG_DIR = "dir";			// list picker action direction
-    public static final String URLARG_LIST = "list";		// list picker action list
-    public static final String URLARG_TABLE = "table";		// for table paging function
-    public static final String URLARG_TOPAGE = "topage";	// for table paging function
-    public static final String URLARG_META = "meta";		// for table paging function
-    public static final String URLARG_PAGESIZE = "pagesize";	// for table paging function
-    public static final String URLARG_ROW = "row";			// for table add/delete/update row
-    public static final String URLARG_SORTON = "sorton";	// for table paging function
-    public static final String URLARG_TABS = "tabs";		// for tabbing of tabbed pane
-    public static final String URLARG_TAB = "tab";			// for tabbing of tabbed pane
-    public static final String URLARG_DATA = "data";		// for tabbing of tabbed pane
-    public static final String URLARG_TIMEOUT = "timeout";	// timeout for calling engine
-    public static final String URLARG_COMPLETION_CODE = "completionCode";	// completion code for calling engine
+    public static final String URLARG_DIR = "dir";            // list picker action direction
+    public static final String URLARG_LIST = "list";        // list picker action list
+    public static final String URLARG_TABLE = "table";        // for table paging function
+    public static final String URLARG_TOPAGE = "topage";    // for table paging function
+    public static final String URLARG_META = "meta";        // for table paging function
+    public static final String URLARG_PAGESIZE = "pagesize";    // for table paging function
+    public static final String URLARG_ROW = "row";            // for table add/delete/update row
+    public static final String URLARG_SORTON = "sorton";    // for table paging function
+    public static final String URLARG_TABS = "tabs";        // for tabbing of tabbed pane
+    public static final String URLARG_TAB = "tab";            // for tabbing of tabbed pane
+    public static final String URLARG_DATA = "data";        // for tabbing of tabbed pane
+    public static final String URLARG_TIMEOUT = "timeout";    // timeout for calling engine
+    public static final String URLARG_COMPLETION_CODE = "completionCode";    // completion code for calling engine
     public static final String URLARG_COMMENT = "comment";
     public static final String URLARG_PROMPT_INPUT = "prompt_input";
 

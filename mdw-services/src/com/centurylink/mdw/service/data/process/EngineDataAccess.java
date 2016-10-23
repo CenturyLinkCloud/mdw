@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.service.data.process;
 
@@ -22,134 +22,134 @@ import com.centurylink.mdw.util.TransactionWrapper;
 
 public interface EngineDataAccess {
 
-	/////// Process methods
+    /////// Process methods
 
-	Long createProcessInstance(ProcessInstance procinst)
-	throws DataAccessException,SQLException;
-
-	ProcessInstance getProcessInstance(Long procInstId)
+    Long createProcessInstance(ProcessInstance procinst)
     throws DataAccessException,SQLException;
 
-	void setProcessInstanceStatus(Long procInstId, Integer status)
+    ProcessInstance getProcessInstance(Long procInstId)
     throws DataAccessException,SQLException;
 
-	void setProcessInstanceCompletionCode(Long procInstId, String completionCode)
-	throws SQLException;
+    void setProcessInstanceStatus(Long procInstId, Integer status)
+    throws DataAccessException,SQLException;
 
-	List<ProcessInstance> getProcessInstances(Long procId, String ownerType, Long ownerId)
+    void setProcessInstanceCompletionCode(Long procInstId, String completionCode)
     throws SQLException;
 
-	List<ProcessInstance> getChildProcessInstances(Long procInstId)
+    List<ProcessInstance> getProcessInstances(Long procId, String ownerType, Long ownerId)
+    throws SQLException;
+
+    List<ProcessInstance> getChildProcessInstances(Long procInstId)
     throws SQLException;
 
     Integer lockProcessInstance(Long procInstId)
     throws SQLException;
 
-	/////// activity methods
+    /////// activity methods
 
-	ActivityInstance getActivityInstance(Long actInstId)
-	throws DataAccessException,SQLException;
-
-	Long createActivityInstance(ActivityInstance act)
-	throws DataAccessException,SQLException;
-
-	void setActivityInstanceStatus(ActivityInstance actInst, Integer status, String status_message)
+    ActivityInstance getActivityInstance(Long actInstId)
     throws DataAccessException,SQLException;
 
-	List<ActivityInstance> getActivityInstances(Long actId, Long procInstId,
-			boolean activeOnly, boolean isSynchActivity)
-	throws SQLException;
-
-	void updateActivityInstanceEndTime(Long actInstId, Date endtime)
-	throws SQLException;
-
-	int countActivityInstances(Long procInstId, Long activityId, Integer[] statuses)
-	throws SQLException;
-
-	Integer lockActivityInstance(Long actInstId)
-	throws SQLException;
-
-	/////// transition methods
-
-	Long createTransitionInstance(TransitionInstance vo)
+    Long createActivityInstance(ActivityInstance act)
     throws DataAccessException,SQLException;
 
-	void completeTransitionInstance(Long transInstId, Long actInstId)
-	throws DataAccessException,SQLException;
+    void setActivityInstanceStatus(ActivityInstance actInst, Integer status, String status_message)
+    throws DataAccessException,SQLException;
 
-	void cancelTransitionInstances(Long procInstId, String comment, Long transId)
+    List<ActivityInstance> getActivityInstances(Long actId, Long procInstId,
+            boolean activeOnly, boolean isSynchActivity)
     throws SQLException;
 
-	int countTransitionInstances(Long pProcInstId, Long pWorkTransId)
+    void updateActivityInstanceEndTime(Long actInstId, Date endtime)
     throws SQLException;
 
-	void determineCompletedTransitions(Long pProcInstId, List<Transition> transitions)
-	throws SQLException;
+    int countActivityInstances(Long procInstId, Long activityId, Integer[] statuses)
+    throws SQLException;
 
-	/////// variables
+    Integer lockActivityInstance(Long actInstId)
+    throws SQLException;
 
-	Long createVariableInstance(VariableInstance var, Long processInstId)
+    /////// transition methods
+
+    Long createTransitionInstance(TransitionInstance vo)
     throws DataAccessException,SQLException;
 
-	VariableInstance getVariableInstance(Long varInstId)
-	throws DataAccessException,SQLException;
-
-	VariableInstance getVariableInstance(Long procInstId, String varname)
-	throws SQLException;
-
-	void updateVariableInstance(VariableInstance var)
-	throws DataAccessException,SQLException;
-
-	List<VariableInstance> getProcessInstanceVariables(Long processInstanceId)
+    void completeTransitionInstance(Long transInstId, Long actInstId)
     throws DataAccessException,SQLException;
 
-	/////// documents
+    void cancelTransitionInstances(Long procInstId, String comment, Long transId)
+    throws SQLException;
 
-	/**
-	 * Always goes to the database.
-	 */
-	Document loadDocument(Long documentId, boolean forUpdate)
-	throws DataAccessException, SQLException;
+    int countTransitionInstances(Long pProcInstId, Long pWorkTransId)
+    throws SQLException;
 
-	Document getDocument(Long documentId, boolean forUpdate)
-	throws DataAccessException,SQLException;
+    void determineCompletedTransitions(Long pProcInstId, List<Transition> transitions)
+    throws SQLException;
 
-	Long createDocument(Document docvo)
-	throws DataAccessException,SQLException;
+    /////// variables
+
+    Long createVariableInstance(VariableInstance var, Long processInstId)
+    throws DataAccessException,SQLException;
+
+    VariableInstance getVariableInstance(Long varInstId)
+    throws DataAccessException,SQLException;
+
+    VariableInstance getVariableInstance(Long procInstId, String varname)
+    throws SQLException;
+
+    void updateVariableInstance(VariableInstance var)
+    throws DataAccessException,SQLException;
+
+    List<VariableInstance> getProcessInstanceVariables(Long processInstanceId)
+    throws DataAccessException,SQLException;
+
+    /////// documents
+
+    /**
+     * Always goes to the database.
+     */
+    Document loadDocument(Long documentId, boolean forUpdate)
+    throws DataAccessException, SQLException;
+
+    Document getDocument(Long documentId, boolean forUpdate)
+    throws DataAccessException,SQLException;
+
+    Long createDocument(Document docvo)
+    throws DataAccessException,SQLException;
 
     Long createDocument(Document docvo, Package pkg)
     throws DataAccessException,SQLException;
 
     void updateDocumentContent(Long documentId, String content)
-	throws DataAccessException,SQLException;
+    throws DataAccessException,SQLException;
 
-	void updateDocumentInfo(Document docvo)
-	throws SQLException;
+    void updateDocumentInfo(Document docvo)
+    throws SQLException;
 
-	/////// events
+    /////// events
 
-	void removeEventWaitForActivityInstance(Long activityInstanceId, String reason)
-	throws SQLException;
+    void removeEventWaitForActivityInstance(Long activityInstanceId, String reason)
+    throws SQLException;
 
-	void removeEventWaitForProcessInstance(Long processInstanceId)
-	throws SQLException;
+    void removeEventWaitForProcessInstance(Long processInstanceId)
+    throws SQLException;
 
-	Long recordEventWait(String eventName, boolean multipleRecepients,
+    Long recordEventWait(String eventName, boolean multipleRecepients,
             int preserveSeconds, Long actInstId, String compCode)
-	throws SQLException;
+    throws SQLException;
 
-	List<EventWaitInstance> recordEventArrive(String eventName, Long documentId)
-	throws SQLException;
+    List<EventWaitInstance> recordEventArrive(String eventName, Long documentId)
+    throws SQLException;
 
-	Long recordEventLog(String name, String category, String subCategory,
+    Long recordEventLog(String name, String category, String subCategory,
             String source, String ownerType, Long ownerId, String user, String modUser, String comments)
-	throws SQLException;
+    throws SQLException;
 
-	boolean recordEventFlag(String eventName, int preserveSeconds)
-	throws SQLException;
+    boolean recordEventFlag(String eventName, int preserveSeconds)
+    throws SQLException;
 
-	void persistInternalEvent(String eventId, String message)
-	throws SQLException;
+    void persistInternalEvent(String eventId, String message)
+    throws SQLException;
 
     int deleteEventInstance(String eventName)
     throws SQLException;
@@ -159,16 +159,16 @@ public interface EngineDataAccess {
 
     /////// transaction
 
-	TransactionWrapper startTransaction()
-	throws DataAccessException;
+    TransactionWrapper startTransaction()
+    throws DataAccessException;
 
-	void stopTransaction(TransactionWrapper transaction)
-	throws DataAccessException;
+    void stopTransaction(TransactionWrapper transaction)
+    throws DataAccessException;
 
-	/////// miscellaneous
+    /////// miscellaneous
 
-	DatabaseAccess getDatabaseAccess();
+    DatabaseAccess getDatabaseAccess();
 
-	int getPerformanceLevel();
+    int getPerformanceLevel();
 
 }

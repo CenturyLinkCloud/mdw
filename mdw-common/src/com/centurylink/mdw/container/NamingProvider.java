@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.container;
 
@@ -15,12 +15,12 @@ public interface NamingProvider {
 
     public static final String TRANSACTION_MANAGER_SYSTEM_PROPERTY = "com.centurylink.mdw.transaction.manager";
 
-	// container names
-	String TOMCAT = "Tomcat";
+    // container names
+    String TOMCAT = "Tomcat";
 
-	// standard J2EE resource names
-	String JAVA_TRANSACTION_MANAGER = "javax.transaction.TransactionManager";
-	String JAVA_USER_TRANSACTION = "javax.transaction.UserTransaction";
+    // standard J2EE resource names
+    String JAVA_TRANSACTION_MANAGER = "javax.transaction.TransactionManager";
+    String JAVA_USER_TRANSACTION = "javax.transaction.UserTransaction";
 
     public String qualifyServiceBeanName(String name);
 

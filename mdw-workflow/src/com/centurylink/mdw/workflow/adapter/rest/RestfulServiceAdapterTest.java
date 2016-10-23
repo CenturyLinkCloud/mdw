@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.adapter.rest;
 
@@ -16,7 +16,7 @@ import com.centurylink.mdw.test.MockRuntimeContext;
  */
 public class RestfulServiceAdapterTest {
 
-    static final String GET_RESPONSE = "Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.";
+    static final String GET_RESPONSE = "Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.";
 
     MockRuntimeContext runtimeContext;
     RestfulServiceAdapter restAdapterActivity;

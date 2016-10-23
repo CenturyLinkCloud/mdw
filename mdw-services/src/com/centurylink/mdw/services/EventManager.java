@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.services;
 
@@ -46,7 +46,7 @@ public interface EventManager {
     throws DataAccessException, EventException;
 
     public List<EventLog> getEventLogs(String pEventName, String pEventSource,
-    	    String pEventOwner, Long pEventOwnerId) throws DataAccessException;
+            String pEventOwner, Long pEventOwnerId) throws DataAccessException;
 
 
     /**
@@ -59,7 +59,7 @@ public interface EventManager {
      * @throws Exception
      */
     public String processExternalEvent(String clsname, String request, Map<String,String> metainfo)
-	throws Exception;
+    throws Exception;
 
     ////////////////////////////////////////////
     // notify/create process instances when receiving external events
@@ -165,7 +165,7 @@ public interface EventManager {
     ////////////////////////////////////////////
 
     public void sendDelayEventsToWaitActivities(String masterRequestId)
-	throws DataAccessException, ProcessException;
+    throws DataAccessException, ProcessException;
 
 
     public void retryActivity(Long activityId, Long activityInstId)
@@ -212,13 +212,13 @@ public interface EventManager {
      * @param activityLogicalId
      * @param masterRequestId
      * @return the list of activity instances. If the process definition or the activity
-     * 		with the given logical ID is not found, null
-     * 		or no such activity instances are found, an empty list is returned.
+     *         with the given logical ID is not found, null
+     *         or no such activity instances are found, an empty list is returned.
      * @throws ProcessException
      * @throws DataAccessException
      */
     public List<ActivityInstance> getActivityInstances(String masterRequestId,
-    		String processName, String activityLogicalId)
+            String processName, String activityLogicalId)
     throws ProcessException, DataAccessException;
 
     /**
@@ -254,8 +254,8 @@ public interface EventManager {
      * @param processName
      * @param masterRequestId
      * @return the list of process instances. If the process definition is not found, null
-     * 		is returned; if process definition is found but no process instances are found,
-     * 		an empty list is returned.
+     *         is returned; if process definition is found but no process instances are found,
+     *         an empty list is returned.
      * @throws ProcessException
      * @throws DataAccessException
      */
@@ -343,7 +343,7 @@ public interface EventManager {
     throws DataAccessException;
 
     public boolean deliverCertifiedMessage(CertifiedMessage message,
-    		int ackTimeout, int maxTries, int retryInterval);
+            int ackTimeout, int maxTries, int retryInterval);
 
     public boolean consumeCertifiedMessage(String messageId)
     throws DataAccessException;
@@ -375,17 +375,17 @@ public interface EventManager {
     throws DataAccessException;
 
     public List<String[]> getTableRowList(String tableName, Class<?>[] types, String[] fields,
-    		String whereClause, String orderby, boolean descending, int startRow, int rowCount)
+            String whereClause, String orderby, boolean descending, int startRow, int rowCount)
     throws DataAccessException;
 
     public int deleteTableRow(String tableName, String fieldName, Object fieldValue)
     throws DataAccessException;
 
     public void createTableRow(String tableName, String[] fieldNames, Object[] fieldValues)
-	throws DataAccessException;
+    throws DataAccessException;
 
     public int updateTableRow(String tableName, String keyName, Object keyValue,
-		String[] fieldNames, Object[] fieldValues)
+        String[] fieldNames, Object[] fieldValues)
     throws DataAccessException;
 
     //

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.listener;
 
@@ -23,17 +23,17 @@ public class NotifyWaitingActivityEventHandler extends ExternalEventHandlerBase 
             String eventName = metainfo.get(Listener.METAINFO_EVENT_NAME);
             Long eventInstId = new Long(metainfo.get(Listener.METAINFO_DOCUMENT_ID));
             eventName = placeHolderTranslation(eventName, metainfo, (XmlObject)msgdoc);
-			int delay = 2;
-			String av = PropertyManager.getProperty(PropertyNames.ACTIVITY_RESUME_DELAY);
-			if (av!=null) {
-				try {
-					delay = Integer.parseInt(av);
-					if (delay<0) delay = 0;
-					else if (delay>300) delay = 300;
-				} catch (Exception e) {
-					logger.warn("activity resume delay spec is not an integer");
-				}
-			}
+            int delay = 2;
+            String av = PropertyManager.getProperty(PropertyNames.ACTIVITY_RESUME_DELAY);
+            if (av!=null) {
+                try {
+                    delay = Integer.parseInt(av);
+                    if (delay<0) delay = 0;
+                    else if (delay>300) delay = 300;
+                } catch (Exception e) {
+                    logger.warn("activity resume delay spec is not an integer");
+                }
+            }
             // a custom implementation of this handler may populate parameters here
             Integer status = notifyProcesses(eventName, eventInstId, message, delay);
             if (status.equals(EventInstance.RESUME_STATUS_PARTIAL_SUCCESS)) {

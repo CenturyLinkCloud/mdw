@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.util;
 
@@ -62,15 +62,15 @@ public class ExpressionUtil {
                 else {
                     Object value;
                     if (lenient) {
-						try {
-							value = propUtilsBean.getProperty(model, match.substring(2, match.length() - 1));
-							if (value == null)
-							    value = match;
-						} catch (Exception e) {
-							value = match;
-						}
+                        try {
+                            value = propUtilsBean.getProperty(model, match.substring(2, match.length() - 1));
+                            if (value == null)
+                                value = match;
+                        } catch (Exception e) {
+                            value = match;
+                        }
                     } else {
-						value = propUtilsBean.getProperty(model, match.substring(2, match.length() - 1));
+                        value = propUtilsBean.getProperty(model, match.substring(2, match.length() - 1));
                     }
                     if (value != null)
                         substituted.append(value);

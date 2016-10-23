@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.connector.adapter;
 
@@ -7,10 +7,10 @@ package com.centurylink.mdw.connector.adapter;
 import com.centurylink.mdw.common.MDWException;
 
 public class AdapterException extends MDWException {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static final int EXCEED_MAXTRIES = 41282;
-	public static final int CONFIGURATION_WRONG = ConnectionException.CONFIGURATION_WRONG;
+    public static final int EXCEED_MAXTRIES = 41282;
+    public static final int CONFIGURATION_WRONG = ConnectionException.CONFIGURATION_WRONG;
 
     private boolean isRetryableError;
     public AdapterException(String pMessage){

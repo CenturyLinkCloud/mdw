@@ -73,61 +73,61 @@ public class Transition implements Serializable, Jsonable {
     }
 
 
-	public List<Attribute> getAttributes() {
-		return attributes;
-	}
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
 
-	public void setAttributes(List<Attribute> attributes) {
-		this.attributes = attributes;
-	}
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
+    }
 
-	public Integer getEventType() {
-		return eventType;
-	}
+    public Integer getEventType() {
+        return eventType;
+    }
 
-	public void setEventType(Integer eventType) {
-		this.eventType = eventType;
-	}
+    public void setEventType(Integer eventType) {
+        this.eventType = eventType;
+    }
 
-	public Long getFromWorkId() {
-		return fromWorkId;
-	}
+    public Long getFromWorkId() {
+        return fromWorkId;
+    }
 
-	public void setFromWorkId(Long fromWorkId) {
-		this.fromWorkId = fromWorkId;
-	}
+    public void setFromWorkId(Long fromWorkId) {
+        this.fromWorkId = fromWorkId;
+    }
 
-	public Long getToWorkId() {
-		return toWorkId;
-	}
+    public Long getToWorkId() {
+        return toWorkId;
+    }
 
-	public void setToWorkId(Long toWorkId) {
-		this.toWorkId = toWorkId;
-	}
+    public void setToWorkId(Long toWorkId) {
+        this.toWorkId = toWorkId;
+    }
 
-	public String getCompletionCode() {
-		return completionCode;
-	}
+    public String getCompletionCode() {
+        return completionCode;
+    }
 
-	public void setCompletionCode(String completionCode) {
-		this.completionCode = completionCode;
-	}
+    public void setCompletionCode(String completionCode) {
+        this.completionCode = completionCode;
+    }
 
-	public String getValidatorClassName() {
-		return validatorClassName;
-	}
+    public String getValidatorClassName() {
+        return validatorClassName;
+    }
 
-	public void setValidatorClassName(String validatorClassName) {
-		this.validatorClassName = validatorClassName;
-	}
+    public void setValidatorClassName(String validatorClassName) {
+        this.validatorClassName = validatorClassName;
+    }
 
-	public Long getWorkTransitionId() {
-		return workTransitionId;
-	}
+    public Long getWorkTransitionId() {
+        return workTransitionId;
+    }
 
-	public void setWorkTransitionId(Long workTransitionId) {
-		this.workTransitionId = workTransitionId;
-	}
+    public void setWorkTransitionId(Long workTransitionId) {
+        this.workTransitionId = workTransitionId;
+    }
 
     public void setProcessId(Long processId){
         this.processId = processId;
@@ -221,13 +221,13 @@ public class Transition implements Serializable, Jsonable {
     }
 
     public String getLabel() {
-    	if (eventType.equals(EventType.FINISH)) return completionCode;
-    	if (completionCode==null) return EventType.getEventTypeName(eventType);
-    	return EventType.getEventTypeName(eventType) + ":" + completionCode;
+        if (eventType.equals(EventType.FINISH)) return completionCode;
+        if (completionCode==null) return EventType.getEventTypeName(eventType);
+        return EventType.getEventTypeName(eventType) + ":" + completionCode;
     }
 
     public String getLogicalId() {
-    	return getAttribute(WorkAttributeConstant.LOGICAL_ID);
+        return getAttribute(WorkAttributeConstant.LOGICAL_ID);
     }
 
     public boolean isHidden() {

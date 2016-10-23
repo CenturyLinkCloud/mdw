@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.constant;
 
@@ -21,11 +21,11 @@ public class WorkTransitionAttributeConstant  {
      public static final String TRANSITION_RETRY_DELAY = "TRANSITION_RETRY_DELAY";
      public static final String TRANSITION_DISPLAY_INFO = "TRANSITION_DISPLAY_INFO";
 
-	// CLASS VARIABLES ------------------------------------------------
+    // CLASS VARIABLES ------------------------------------------------
 
-	// INSTANCE VARIABLES ---------------------------------------------
+    // INSTANCE VARIABLES ---------------------------------------------
 
-	// CONSTRUCTORS ---------------------------------------------------
+    // CONSTRUCTORS ---------------------------------------------------
 
-	// PUBLIC AND PROTECTED METHODS -----------------------------------
+    // PUBLIC AND PROTECTED METHODS -----------------------------------
 }

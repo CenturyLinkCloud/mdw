@@ -63,7 +63,7 @@ public class Package implements Serializable, Jsonable {
     private ClassLoader classloader;
     private String group;
 
-	public String getGroup() {
+    public String getGroup() {
         return group;
     }
 
@@ -82,140 +82,140 @@ public class Package implements Serializable, Jsonable {
     public void setArchived(boolean archived) { this.archived = archived; }
 
     /**
-	 * @return the attributes
-	 */
-	public List<Attribute> getAttributes() {
-		return attributes;
-	}
+     * @return the attributes
+     */
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
 
-	public List<Attribute> getAttributes(String attributeGroup) {
-	    if (attributes == null)
-	        return null;
-	    List<Attribute> groupAttributes = new ArrayList<Attribute>();
-	    for (Attribute attribute : attributes) {
-	        if (attributeGroup == null) {
-	            if (attribute.getAttributeGroup() == null)
-	                attributes.add(attribute);
-	        }
-	        else if (attributeGroup.equals(attribute.getAttributeGroup())) {
-	            attributes.add(attribute);
-	        }
-	    }
-	    return groupAttributes;
-	}
+    public List<Attribute> getAttributes(String attributeGroup) {
+        if (attributes == null)
+            return null;
+        List<Attribute> groupAttributes = new ArrayList<Attribute>();
+        for (Attribute attribute : attributes) {
+            if (attributeGroup == null) {
+                if (attribute.getAttributeGroup() == null)
+                    attributes.add(attribute);
+            }
+            else if (attributeGroup.equals(attribute.getAttributeGroup())) {
+                attributes.add(attribute);
+            }
+        }
+        return groupAttributes;
+    }
 
-	public Map<String,List<Attribute>> getAttributesByGroup() {
-	    if (attributes == null)
-	        return null;
-	    Map<String,List<Attribute>> grouped = new HashMap<String,List<Attribute>>();
-	    for (Attribute attribute : attributes) {
-	        String group = attribute.getAttributeGroup();
-	        List<Attribute> groupAttrs = grouped.get(group);
-	        if (groupAttrs == null) {
-	            groupAttrs = new ArrayList<Attribute>();
-	            grouped.put(group, groupAttrs);
-	        }
-	        groupAttrs.add(attribute);
-	    }
-	    return grouped;
-	}
-
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(List<Attribute> attributes) {
-		this.attributes = attributes;
-	}
-
-	public String getAttribute(String name) {
-	    if (attributes != null) {
-	        for (Attribute attr : attributes) {
-	            if (attr.getAttributeName().equals(name))
-	                return attr.getAttributeValue();
-	        }
-	    }
-	    return null;
-	}
-
-	public Long getPackageId() {
-		return packageId;
-	}
-
-	public Long getId() {
-	    return getPackageId();
-	}
-
-	/**
-	 * @param processId the processId to set
-	 */
-	public void setPackageId(Long packageId) {
-		this.packageId = packageId;
-	}
-
-	public void setId(Long id) {
-	    setPackageId(id);
-	}
-
-	/**
-	 * @return the processName
-	 */
-	public String getPackageName() {
-		return packageName;
-	}
-
-	public String getName() {
-	    return getPackageName();
-	}
-
-	/**
-	 * @param processName the processName to set
-	 */
-	public void setPackageName(String packageName) {
-		this.packageName = packageName;
-	}
-
-	public void setName(String name) {
-	    setPackageName(name);
-	}
+    public Map<String,List<Attribute>> getAttributesByGroup() {
+        if (attributes == null)
+            return null;
+        Map<String,List<Attribute>> grouped = new HashMap<String,List<Attribute>>();
+        for (Attribute attribute : attributes) {
+            String group = attribute.getAttributeGroup();
+            List<Attribute> groupAttrs = grouped.get(group);
+            if (groupAttrs == null) {
+                groupAttrs = new ArrayList<Attribute>();
+                grouped.put(group, groupAttrs);
+            }
+            groupAttrs.add(attribute);
+        }
+        return grouped;
+    }
 
     /**
-	 * @return the processDescription
-	 */
-	public String getPackageDescription() {
-		return packageDescription;
-	}
+     * @param attributes the attributes to set
+     */
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
+    }
 
-	/**
-	 * @param processDescription the processDescription to set
-	 */
-	public void setPackageDescription(String packageDescription) {
-		this.packageDescription = packageDescription;
-	}
+    public String getAttribute(String name) {
+        if (attributes != null) {
+            for (Attribute attr : attributes) {
+                if (attr.getAttributeName().equals(name))
+                    return attr.getAttributeValue();
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * @return the processes
-	 */
-	public List<Process> getProcesses() {
-	    return this.processes;
-	}
+    public Long getPackageId() {
+        return packageId;
+    }
 
-	/**
-	 * @param processes the processes to set
-	 */
-	public void setProcesses(List<Process> pProcesses) {
-	    this.processes = pProcesses;
-	}
+    public Long getId() {
+        return getPackageId();
+    }
 
-	public boolean containsProcess(Long processId) {
-	    if (processes == null)
-	      return false;
+    /**
+     * @param processId the processId to set
+     */
+    public void setPackageId(Long packageId) {
+        this.packageId = packageId;
+    }
 
-	    for (Process processVO : processes) {
-	        if (processVO.getProcessId().equals(processId))
-	            return true;
-	    }
-	    return false;
-	}
+    public void setId(Long id) {
+        setPackageId(id);
+    }
+
+    /**
+     * @return the processName
+     */
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public String getName() {
+        return getPackageName();
+    }
+
+    /**
+     * @param processName the processName to set
+     */
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public void setName(String name) {
+        setPackageName(name);
+    }
+
+    /**
+     * @return the processDescription
+     */
+    public String getPackageDescription() {
+        return packageDescription;
+    }
+
+    /**
+     * @param processDescription the processDescription to set
+     */
+    public void setPackageDescription(String packageDescription) {
+        this.packageDescription = packageDescription;
+    }
+
+    /**
+     * @return the processes
+     */
+    public List<Process> getProcesses() {
+        return this.processes;
+    }
+
+    /**
+     * @param processes the processes to set
+     */
+    public void setProcesses(List<Process> pProcesses) {
+        this.processes = pProcesses;
+    }
+
+    public boolean containsProcess(Long processId) {
+        if (processes == null)
+          return false;
+
+        for (Process processVO : processes) {
+            if (processVO.getProcessId().equals(processId))
+                return true;
+        }
+        return false;
+    }
 
     public boolean containsExternalEvent(Long externalEventId) {
         if (externalEvents == null)
@@ -272,18 +272,18 @@ public class Package implements Serializable, Jsonable {
         return false;
     }
     /**
-	 * @return the variables
-	 */
-	public List<Variable> getVariables() {
-		return variables;
-	}
+     * @return the variables
+     */
+    public List<Variable> getVariables() {
+        return variables;
+    }
 
-	/**
-	 * @param variables the variables to set
-	 */
-	public void setVariables(List<Variable> variables) {
-		this.variables = variables;
-	}
+    /**
+     * @param variables the variables to set
+     */
+    public void setVariables(List<Variable> variables) {
+        this.variables = variables;
+    }
 
     public List<ActivityImplementor> getImplementors() {
         return this.implementors;
@@ -427,34 +427,34 @@ public class Package implements Serializable, Jsonable {
     }
 
     public void hashProperties() {
-    	properties = new HashMap<String,String>();
-    	if (attributes!=null) {
-    		for (Attribute attr: attributes) {
-    			properties.put(attr.getAttributeName(), attr.getAttributeValue());
-    		}
-    	}
+        properties = new HashMap<String,String>();
+        if (attributes!=null) {
+            for (Attribute attr: attributes) {
+                properties.put(attr.getAttributeName(), attr.getAttributeValue());
+            }
+        }
     }
 
     public String getProperty(String propertyName) {
         if (properties == null)
             hashProperties();
-    	String v = properties.get(propertyName);
-    	if (v==null) v = PropertyManager.getProperty(propertyName);
-    	return v;
+        String v = properties.get(propertyName);
+        if (v==null) v = PropertyManager.getProperty(propertyName);
+        return v;
     }
 
     public static Package getDefaultPackage() {
-    	if (defaultPackage==null) {
-    		defaultPackage = new Package() {
-    			@Override
-    			public String getProperty(String propertyName) {
-    				return PropertyManager.getProperty(propertyName);
-    			}
-    		};
-    		// defaultPackage.setPackageName(DEFAULT_PACKAGE_NAME);
-    		// should leave package name to null - other places assume it
+        if (defaultPackage==null) {
+            defaultPackage = new Package() {
+                @Override
+                public String getProperty(String propertyName) {
+                    return PropertyManager.getProperty(propertyName);
+                }
+            };
+            // defaultPackage.setPackageName(DEFAULT_PACKAGE_NAME);
+            // should leave package name to null - other places assume it
         }
-    	return defaultPackage;
+        return defaultPackage;
     }
 
     /**
@@ -462,10 +462,10 @@ public class Package implements Serializable, Jsonable {
      * @return the bundle classloader specified by the package config
      */
     public ClassLoader getClassLoader() {
-    	if (classloader == null) {
+        if (classloader == null) {
             classloader = getClass().getClassLoader();
-    	}
-    	return classloader;
+        }
+        return classloader;
     }
 
     private CloudClassLoader cloudClassLoader = null;
@@ -476,8 +476,8 @@ public class Package implements Serializable, Jsonable {
     }
 
     public Class<?> loadClass(String classname) throws ClassNotFoundException {
-    	ClassLoader classloader = getClassLoader();
-    	return classloader.loadClass(classname);
+        ClassLoader classloader = getClassLoader();
+        return classloader.loadClass(classname);
     }
 
     public GeneralActivity getActivityImplementor(Activity activity)
@@ -515,7 +515,7 @@ public class Package implements Serializable, Jsonable {
             return injected;
         if (getCloudClassLoader().hasClass(handlerClass))
           return getCloudClassLoader().loadClass(handlerClass).asSubclass(ExternalEventHandler.class).newInstance();
-    	return getClassLoader().loadClass(handlerClass).asSubclass(ExternalEventHandler.class).newInstance();
+        return getClassLoader().loadClass(handlerClass).asSubclass(ExternalEventHandler.class).newInstance();
     }
 
     public static String formatVersion(int version) {

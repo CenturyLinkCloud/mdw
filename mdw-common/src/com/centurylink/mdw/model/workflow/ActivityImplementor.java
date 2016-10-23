@@ -53,7 +53,7 @@ public class ActivityImplementor implements Serializable, Comparable<ActivityImp
         oldBaseClassPackage + ".RuleActivity"
     };
 
-	@Override
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof ActivityImplementor)) return false;
         return implementorId.equals(((ActivityImplementor)obj).implementorId);
@@ -90,47 +90,47 @@ public class ActivityImplementor implements Serializable, Comparable<ActivityImp
         this.baseClassName = implClassName;
     }
 
-	public Long getImplementorId() {
-		return implementorId;
-	}
+    public Long getImplementorId() {
+        return implementorId;
+    }
 
-	public void setImplementorId(Long id) {
-		this.implementorId = id;
-	}
+    public void setImplementorId(Long id) {
+        this.implementorId = id;
+    }
 
-	public String getImplementorClassName() {
-		return implementorClassName;
-	}
+    public String getImplementorClassName() {
+        return implementorClassName;
+    }
 
-	public void setImplementorClassName(String name) {
-		this.implementorClassName = name;
-	}
+    public void setImplementorClassName(String name) {
+        this.implementorClassName = name;
+    }
 
-	public String getSimpleName() {
-	    return getImplementorClassNameWithoutPath();
-	}
+    public String getSimpleName() {
+        return getImplementorClassNameWithoutPath();
+    }
 
-	public String getImplementorClassNameWithoutPath() {
-		int k = implementorClassName.lastIndexOf('.');
-		if (k>0) return implementorClassName.substring(k+1);
-		else return implementorClassName;
-	}
+    public String getImplementorClassNameWithoutPath() {
+        int k = implementorClassName.lastIndexOf('.');
+        if (k>0) return implementorClassName.substring(k+1);
+        else return implementorClassName;
+    }
 
-	public Integer getImplementorType() {
-		return implementorType;
-	}
+    public Integer getImplementorType() {
+        return implementorType;
+    }
 
-	public void setImplementorType(Integer type) {
-		this.implementorType = type;
-	}
+    public void setImplementorType(Integer type) {
+        this.implementorType = type;
+    }
 
-	public List<Variable> getVariables() {
-		return variables;
-	}
+    public List<Variable> getVariables() {
+        return variables;
+    }
 
-	public void setVariables(List<Variable> vars) {
-		this.variables = vars;
-	}
+    public void setVariables(List<Variable> vars) {
+        this.variables = vars;
+    }
 
     public int compareTo(ActivityImplementor other) {
         if (this.getLabel() == null)
@@ -198,8 +198,8 @@ public class ActivityImplementor implements Serializable, Comparable<ActivityImp
     }
 
     public boolean isLoaded() {
-    	return this.attributeDescription!=null && this.baseClassName!=null
-    			&& this.label!=null && this.iconName!=null;
+        return this.attributeDescription!=null && this.baseClassName!=null
+                && this.label!=null && this.iconName!=null;
     }
 
 

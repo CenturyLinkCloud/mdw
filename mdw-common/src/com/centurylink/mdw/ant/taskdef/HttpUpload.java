@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.ant.taskdef;
 
@@ -74,10 +74,10 @@ public class HttpUpload extends HttpTransfer
     if (url == null || file == null)
       throw new BuildException("Null URL or File.");
     try {
-   	  	 uploadFile(url,file,user,password,overwrite);
+              uploadFile(url,file,user,password,overwrite);
     } catch (Exception ex){
-    	log("Exception: " + ex);
-    	ex.printStackTrace();
+        log("Exception: " + ex);
+        ex.printStackTrace();
         if (isFailOnError())
             throw new BuildException("Exception: " + ex);
     }

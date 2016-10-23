@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.shell;
 
@@ -67,40 +67,40 @@ public class ScriptChannelConnectionActivity extends DefaultActivityImpl
   @Override
   public void execute() throws ActivityException
   {
-	setActivityAttributes();
-	validateAttributes();
-	executeGroovyScript();
-	callConnectionService();
+    setActivityAttributes();
+    validateAttributes();
+    executeGroovyScript();
+    callConnectionService();
   }
 
   private void setActivityAttributes() throws ActivityException {
 
-	  try {
+      try {
 
-		  this.actionType = (String)this.getAttributeValueSmart(BORROW_OR_RETURN);
-		  this.configStatements = (String)this.getAttributeValue(CONFIG_STATEMENTS);
-		  this.configFile = (String)this.getAttributeValue(CONFIG_FILE);
-		  this.expression = (String)this.getAttributeValue(RULE);
-		  this.language = (String)this.getAttributeValue("SCRIPT");
-		  this.host = (String)this.getAttributeValueSmart(CONNECTION_HOSTS);
-		  this.prompt = (String)this.getAttributeValue(SHELL_PROMPT);
-  		  String temp = (String)this.getAttributeValueSmart(OUTPUTDOCS);
-  		  this.outputDocuments = temp==null?new String[0]:temp.split("#");
-  		  this.userNm = (String)this.getAttributeValueSmart(USERNAME);
-  		  this.password = (String)this.getAttributeValueSmart(PASSWORD);
-  		  this.scriptChannel = (String)this.getAttributeValueSmart(SCRIPTCHANNEL);
+          this.actionType = (String)this.getAttributeValueSmart(BORROW_OR_RETURN);
+          this.configStatements = (String)this.getAttributeValue(CONFIG_STATEMENTS);
+          this.configFile = (String)this.getAttributeValue(CONFIG_FILE);
+          this.expression = (String)this.getAttributeValue(RULE);
+          this.language = (String)this.getAttributeValue("SCRIPT");
+          this.host = (String)this.getAttributeValueSmart(CONNECTION_HOSTS);
+          this.prompt = (String)this.getAttributeValue(SHELL_PROMPT);
+            String temp = (String)this.getAttributeValueSmart(OUTPUTDOCS);
+            this.outputDocuments = temp==null?new String[0]:temp.split("#");
+            this.userNm = (String)this.getAttributeValueSmart(USERNAME);
+            this.password = (String)this.getAttributeValueSmart(PASSWORD);
+            this.scriptChannel = (String)this.getAttributeValueSmart(SCRIPTCHANNEL);
 
-	  } catch (PropertyException propertyexception) {
-//		  logger.severeException(propertyexception.getMessage(), propertyexception);
-		  throw new ActivityException(-1, propertyexception.getMessage(), propertyexception);
-	  }
+      } catch (PropertyException propertyexception) {
+//          logger.severeException(propertyexception.getMessage(), propertyexception);
+          throw new ActivityException(-1, propertyexception.getMessage(), propertyexception);
+      }
   }
 
   private void validateAttributes() throws ActivityException {
-	  if (this.language != null) {
-		  if (!this.language.equals("Groovy")) throw new ActivityException ("Invalid language : " + this.language + ", Only Groovy Language supported");
-	  }
-	  this.actionType  = this.actionType.equals("Borrow") ? "OPEN" : "RETURN";
+      if (this.language != null) {
+          if (!this.language.equals("Groovy")) throw new ActivityException ("Invalid language : " + this.language + ", Only Groovy Language supported");
+      }
+      this.actionType  = this.actionType.equals("Borrow") ? "OPEN" : "RETURN";
   }
 
   protected boolean isOutputDocument(String variableName) {
@@ -113,22 +113,22 @@ public class ScriptChannelConnectionActivity extends DefaultActivityImpl
 
   protected void setParamValue(String varName, String varType, Object v)
   throws ActivityException {
-  	if (v==null) return;
-  	if (VariableTranslator.isDocumentReferenceVariable(varType)) {
-  		if (isOutputDocument(varName)) {
-  			if (v instanceof DomDocument) {
-  					if (varType.equals(Document.class.getName())) { // DOM document
-  						v = ((DomDocument)v).getXmlDocument();
-  						this.setParameterValueAsDocument(varName, varType, v);
-  					} else {    // XML Bean
-  						this.setParameterValueAsDocument(varName, varType, v);
-  					}
-  			} else this.setParameterValueAsDocument(varName, varType, v);
-  		}
-  	} else this.setParameterValue(varName, v);
+      if (v==null) return;
+      if (VariableTranslator.isDocumentReferenceVariable(varType)) {
+          if (isOutputDocument(varName)) {
+              if (v instanceof DomDocument) {
+                      if (varType.equals(Document.class.getName())) { // DOM document
+                          v = ((DomDocument)v).getXmlDocument();
+                          this.setParameterValueAsDocument(varName, varType, v);
+                      } else {    // XML Bean
+                          this.setParameterValueAsDocument(varName, varType, v);
+                      }
+              } else this.setParameterValueAsDocument(varName, varType, v);
+          }
+      } else this.setParameterValue(varName, v);
   }
 
-	private void executeGroovyScript() throws ActivityException {
+    private void executeGroovyScript() throws ActivityException {
       String rule = (String)getAttributeValue(RULE);
       if(StringHelper.isEmpty(rule)){
         return;
@@ -160,139 +160,139 @@ public class ScriptChannelConnectionActivity extends DefaultActivityImpl
 
   private void callConnectionService() throws ActivityException  {
 
-	  ActionRequestDocument actionRequestDoc = ActionRequestDocument.Factory.newInstance();
-	  ActionRequest actionRequest = actionRequestDoc.addNewActionRequest();
-	  Action action = actionRequest.addNewAction();
-	  action.setName("NETWORK_REQUEST");
-	  Parameter param = action.addNewParameter();
-	  param.setName("ACTION");
-	  param.setStringValue(this.actionType);
+      ActionRequestDocument actionRequestDoc = ActionRequestDocument.Factory.newInstance();
+      ActionRequest actionRequest = actionRequestDoc.addNewActionRequest();
+      Action action = actionRequest.addNewAction();
+      action.setName("NETWORK_REQUEST");
+      Parameter param = action.addNewParameter();
+      param.setName("ACTION");
+      param.setStringValue(this.actionType);
 
-	  param = action.addNewParameter();
-	  param.setName("HOST");
-	  param.setStringValue(this.host);
+      param = action.addNewParameter();
+      param.setName("HOST");
+      param.setStringValue(this.host);
 
-	  param = action.addNewParameter();
-	  param.setName("PROMPT");
-	  param.setStringValue(this.prompt);
+      param = action.addNewParameter();
+      param.setName("PROMPT");
+      param.setStringValue(this.prompt);
 
-	  if (this.actionType.equals("RETURN")) {
-		  param = action.addNewParameter();
-		  param.setName("ID");
-		  param.setStringValue(getResourceID());
-	  } else {
-		  param = action.addNewParameter();
-		  param.setName("CONFIG_STATEMENTS");
-		  param.setStringValue(this.configStatements);
+      if (this.actionType.equals("RETURN")) {
+          param = action.addNewParameter();
+          param.setName("ID");
+          param.setStringValue(getResourceID());
+      } else {
+          param = action.addNewParameter();
+          param.setName("CONFIG_STATEMENTS");
+          param.setStringValue(this.configStatements);
 
-		  param = action.addNewParameter();
-		  param.setName("CONFIG_FILE");
-		  param.setStringValue(this.configFile);
+          param = action.addNewParameter();
+          param.setName("CONFIG_FILE");
+          param.setStringValue(this.configFile);
 
-		  param = action.addNewParameter();
-		  param.setName("USER_NM");
-		  param.setStringValue(this.userNm);
+          param = action.addNewParameter();
+          param.setName("USER_NM");
+          param.setStringValue(this.userNm);
 
-		  param = action.addNewParameter();
-		  param.setName("PASSWORD");
-		  param.setStringValue(this.password);
+          param = action.addNewParameter();
+          param.setName("PASSWORD");
+          param.setStringValue(this.password);
 
-		  param = action.addNewParameter();
-		  param.setName("SCRIPT_CHANNEL_TYPE");
-		  param.setStringValue(this.scriptChannel);
-	  }
+          param = action.addNewParameter();
+          param.setName("SCRIPT_CHANNEL_TYPE");
+          param.setStringValue(this.scriptChannel);
+      }
 
-	  try
-	  {
-		  HttpHelper httpHelper = new HttpHelper(new URL(getConnectionServiceLocation()));
-	      String response = httpHelper.post(actionRequestDoc.xmlText(new    XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2)));
+      try
+      {
+          HttpHelper httpHelper = new HttpHelper(new URL(getConnectionServiceLocation()));
+          String response = httpHelper.post(actionRequestDoc.xmlText(new    XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2)));
 
-	      MDWStatusMessageDocument statusMessageDoc = MDWStatusMessageDocument.Factory.parse(response);
-	      MDWStatusMessage statusMessage = statusMessageDoc.getMDWStatusMessage();
-	      if (statusMessage.getStatusMessage().indexOf("Success") >= 0) {
-	    	  this.setParameterValue("resourceID", statusMessage.getRequestID());
-	      } else {
-	    	  throw new Exception ("Problem in connection service: " + statusMessage.getStatusMessage());
-	      }
-	  } catch (IOException e)  {
-//		  logger.severeException(e.getMessage(), e);
-		  throw new ActivityException (-1, "Problem invoking connection service:" + e.getMessage(), e);
-	  } catch (XmlException e) {
-//		  logger.severeException(e.getMessage(), e);
-		  throw new ActivityException (-1, "Problem in parsing MDWStatusMessageDocument after calling connection service:"
-				  + e.getMessage(), e);
-	  } catch (Exception e) {
-//		  logger.severeException(e.getMessage(), e);
-		  throw new ActivityException (-1, "other exception in callConnectionService", e);
-	  }
+          MDWStatusMessageDocument statusMessageDoc = MDWStatusMessageDocument.Factory.parse(response);
+          MDWStatusMessage statusMessage = statusMessageDoc.getMDWStatusMessage();
+          if (statusMessage.getStatusMessage().indexOf("Success") >= 0) {
+              this.setParameterValue("resourceID", statusMessage.getRequestID());
+          } else {
+              throw new Exception ("Problem in connection service: " + statusMessage.getStatusMessage());
+          }
+      } catch (IOException e)  {
+//          logger.severeException(e.getMessage(), e);
+          throw new ActivityException (-1, "Problem invoking connection service:" + e.getMessage(), e);
+      } catch (XmlException e) {
+//          logger.severeException(e.getMessage(), e);
+          throw new ActivityException (-1, "Problem in parsing MDWStatusMessageDocument after calling connection service:"
+                  + e.getMessage(), e);
+      } catch (Exception e) {
+//          logger.severeException(e.getMessage(), e);
+          throw new ActivityException (-1, "other exception in callConnectionService", e);
+      }
   }
 
   private String getConnectionServiceLocation () throws ActivityException {
-	  String connectionServiceLocation = getProperty(PROPERTY_GROUP + "/ConnectionServiceLocation");
+      String connectionServiceLocation = getProperty(PROPERTY_GROUP + "/ConnectionServiceLocation");
       if (connectionServiceLocation==null)
-    	  throw new ActivityException("Property ConnectionServiceURL not defined");
-	  return connectionServiceLocation;
+          throw new ActivityException("Property ConnectionServiceURL not defined");
+      return connectionServiceLocation;
   }
 
   private String getResourceID () {
-	  return (String)this.getParameterValue("resourceID");
+      return (String)this.getParameterValue("resourceID");
   }
 
   public String getActionType() {
-  	return actionType;
+      return actionType;
   }
   public void setActionType(String actionType) {
-  	this.actionType = actionType;
+      this.actionType = actionType;
   }
 
   public String getConfigStatements() {
-  	return configStatements;
+      return configStatements;
   }
   public void setConfigStatements(String configStatements) {
-  	this.configStatements = configStatements;
+      this.configStatements = configStatements;
   }
 
   public String getConfigFile() {
-  	return configFile;
+      return configFile;
   }
   public void setConfigFile(String configFile) {
-  	this.configFile = configFile;
+      this.configFile = configFile;
   }
 
   public String getExpression() {
-	return expression;
+    return expression;
   }
   public void setExpression(String expression) {
-	this.expression = expression;
+    this.expression = expression;
   }
 
   public String getLanguage() {
-	return language;
+    return language;
   }
   public void setLanguage(String language) {
-	this.language = language;
+    this.language = language;
   }
 
   public String getHost() {
-	return host;
+    return host;
   }
   public void setHost(String host) {
-	this.host = host;
+    this.host = host;
   }
 
   public String getPrompt() {
-	return prompt;
+    return prompt;
   }
   public void setPrompt(String prompt) {
-	this.prompt = prompt;
+    this.prompt = prompt;
   }
 
 public String getScriptChannel() {
-	return scriptChannel;
+    return scriptChannel;
 }
 
 public void setScriptChannel(String scriptChannel) {
-	this.scriptChannel = scriptChannel;
+    this.scriptChannel = scriptChannel;
 }
 
 }

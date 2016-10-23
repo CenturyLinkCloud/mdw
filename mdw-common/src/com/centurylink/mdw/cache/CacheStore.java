@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.cache;
 
@@ -12,13 +12,13 @@ public interface CacheStore<K,T> {
     void add(K key, T obj);
     
     T get(K key);
-    	
+        
     void remove(K key);
     
     void update(K key, T obj);
     
     ///////////// test code
     
-	void print();
+    void print();
 
 }

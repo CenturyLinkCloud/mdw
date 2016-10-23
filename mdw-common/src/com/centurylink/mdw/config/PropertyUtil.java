@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.config;
 
@@ -15,22 +15,22 @@ public class PropertyUtil extends Object {
      * @return PropertyManager
      */
     public static PropertyUtil getInstance() {
-    	if (instance==null) {
-    		getInstance_synchronized();
-    	}
-    	return instance;
+        if (instance==null) {
+            getInstance_synchronized();
+        }
+        return instance;
     }
 
-	private static synchronized void getInstance_synchronized() {
-		if(instance==null) instance = new PropertyUtil();
-	}
+    private static synchronized void getInstance_synchronized() {
+        if(instance==null) instance = new PropertyUtil();
+    }
 
     /**
      * returns the handle to the property manager
      * @return PropertyManager
      */
- 	public PropertyManager getPropertyManager() {
- 		return PropertyManager.getInstance();
- 	}
+     public PropertyManager getPropertyManager() {
+         return PropertyManager.getInstance();
+     }
     
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.services.user;
 
@@ -25,8 +25,8 @@ import com.centurylink.mdw.util.timer.CodeTimer;
 public class UserManagerBean implements UserManager {
 
     private UserDataAccess getUserDAO() {
-    	DatabaseAccess db = new DatabaseAccess(null);
-    	return new UserDataAccess(db);
+        DatabaseAccess db = new DatabaseAccess(null);
+        return new UserDataAccess(db);
     }
 
     public User getUser(String userName)
@@ -71,10 +71,10 @@ public class UserManagerBean implements UserManager {
      */
     public boolean doesUserBelongToGroup(String pUserName, String pUserGroupName)
     throws UserException, DataAccessException {
-    	User user = getUserDAO().getUser(pUserName);
-    	for (Workgroup group : user.getWorkgroups()) {
-    		if (group.getName().equals(pUserGroupName)) return true;
-    	}
+        User user = getUserDAO().getUser(pUserName);
+        for (Workgroup group : user.getWorkgroups()) {
+            if (group.getName().equals(pUserGroupName)) return true;
+        }
         return false;
     }
 
@@ -102,7 +102,7 @@ public class UserManagerBean implements UserManager {
      */
     public List<Role> getUserRoles()
     throws UserException, DataAccessException {
-    	return getUserDAO().getAllRoles();
+        return getUserDAO().getAllRoles();
     }
 
     /**
@@ -176,8 +176,8 @@ public class UserManagerBean implements UserManager {
      */
     public Workgroup[] getGroupsForUser(String pCuid)
     throws UserException, DataAccessException {
-    	User user = getUserDAO().getUser(pCuid);
-    	return user.getWorkgroups();
+        User user = getUserDAO().getUser(pCuid);
+        return user.getWorkgroups();
     }
 
     /**
@@ -189,8 +189,8 @@ public class UserManagerBean implements UserManager {
     throws UserException, DataAccessException {
         UserDataAccess userDAO = getUserDAO();
         List<Workgroup> groups = userDAO.getAllGroups(includeDeleted);
-    	for (Workgroup group : groups) {
-    		group.setRoles(userDAO.getRolesForGroup(group.getId()));
+        for (Workgroup group : groups) {
+            group.setRoles(userDAO.getRolesForGroup(group.getId()));
          }
         return groups;
     }
@@ -235,7 +235,7 @@ public class UserManagerBean implements UserManager {
 
     public int countUsers(String whereCondition)
     throws UserException, DataAccessException {
-    	 return this.getUserDAO().countUsers(whereCondition);
+         return this.getUserDAO().countUsers(whereCondition);
     }
 
     /**
@@ -300,10 +300,10 @@ public class UserManagerBean implements UserManager {
     public void deleteUserGroup(Long pUserGroupId)
     throws UserException, DataAccessException {
         try {
-        	getUserDAO().deleteGroup(pUserGroupId);
+            getUserDAO().deleteGroup(pUserGroupId);
         }
         catch (Exception ex) {
-        	throw new UserException(ex.getMessage(), ex);
+            throw new UserException(ex.getMessage(), ex);
         }
     }
 
@@ -347,7 +347,7 @@ public class UserManagerBean implements UserManager {
      */
     public void deleteUser(Long pUserId)
     throws UserException, DataAccessException {
-    	getUserDAO().deleteUser(pUserId);
+        getUserDAO().deleteUser(pUserId);
     }
 
     /**
@@ -385,7 +385,7 @@ public class UserManagerBean implements UserManager {
      */
     public void deleteUserRole(Long pUserRoleId)
     throws UserException, DataAccessException {
-    	getUserDAO().deleteRole(pUserRoleId);
+        getUserDAO().deleteRole(pUserRoleId);
     }
 
     /**
@@ -430,7 +430,7 @@ public class UserManagerBean implements UserManager {
      */
     public void updateUserPreferences(Long userId, Map<String,String> preferences)
     throws UserException, DataAccessException {
-    	getUserDAO().updateUserPreferences(userId, preferences);
+        getUserDAO().updateUserPreferences(userId, preferences);
     }
 
     /**
@@ -444,16 +444,16 @@ public class UserManagerBean implements UserManager {
       String preferredEmail =null;
       for (User user : getUsersForGroups(groups)) {
           if (!"dev".equalsIgnoreCase(user.getCuid())) {
-        	  user.setAttributes(getUserPreferences(user.getId()));
-        	  preferredEmail = user.getEmail();
-        	  if(!StringHelper.isEmpty(preferredEmail)){
-        		  addresses.add(preferredEmail);
-        	  }else if (user.getCuid().indexOf('@') > 0){
-        		  addresses.add(user.getCuid());
-        	  }
-        	  else{
-        		  addresses.add(user.getCuid() + "@centurylink.com");
-        	  }
+              user.setAttributes(getUserPreferences(user.getId()));
+              preferredEmail = user.getEmail();
+              if(!StringHelper.isEmpty(preferredEmail)){
+                  addresses.add(preferredEmail);
+              }else if (user.getCuid().indexOf('@') > 0){
+                  addresses.add(user.getCuid());
+              }
+              else{
+                  addresses.add(user.getCuid() + "@centurylink.com");
+              }
           }
       }
       return addresses;

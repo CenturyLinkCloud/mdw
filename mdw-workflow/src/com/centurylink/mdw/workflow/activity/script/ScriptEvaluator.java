@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.script;
 
@@ -27,14 +27,14 @@ public class ScriptEvaluator extends AbstractEvaluator  {
     public static final String EXPRESSION = "Expression";
     public static final String SCRIPT_LANGUAGE = "SCRIPT";
 
-	private String scriptLanguage;
-	private String expression;
+    private String scriptLanguage;
+    private String expression;
 
    /**
      * Evaluates a condition and returns the result of the evaluation. The condition is an expression
      * in a supported script/rule language.  WorkTransition can be controlled using the result.
      */
-	@Override
+    @Override
     public Object evaluate() throws ActivityException {
 
         try {
@@ -66,7 +66,7 @@ public class ScriptEvaluator extends AbstractEvaluator  {
         }
     }
 
-	protected boolean isBooleanExpression(String language, String expression) throws ActivityException {
+    protected boolean isBooleanExpression(String language, String expression) throws ActivityException {
         for (Variable varVO: getMainProcessDefinition().getVariables()) {
             if (Boolean.class.getName().equals(varVO.getVariableType())) {
                 if (JAVA_EL.equals(language)) {
@@ -80,5 +80,5 @@ public class ScriptEvaluator extends AbstractEvaluator  {
             }
         }
         return false;
-	}
+    }
 }

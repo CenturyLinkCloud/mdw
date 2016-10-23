@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.startup;
 
@@ -13,18 +13,18 @@ package com.centurylink.mdw.startup;
 public interface StartupClass {
 
 
-	/**
-	 * Method that gets invoked when the server comes up
+    /**
+     * Method that gets invoked when the server comes up
      * The impl class will have logic to that gets
      * executed when the server starts up
      * @throws StartupException
-	 */
-	public void onStartup() throws StartupException;
+     */
+    public void onStartup() throws StartupException;
 
-	/**
-	 * Method that gets invoked when the server
+    /**
+     * Method that gets invoked when the server
      * shuts down
-	 */
-	public void onShutdown() ;
+     */
+    public void onShutdown() ;
 
 }

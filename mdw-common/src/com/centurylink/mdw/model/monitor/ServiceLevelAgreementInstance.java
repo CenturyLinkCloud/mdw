@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.monitor;
 
@@ -10,9 +10,9 @@ import com.centurylink.mdw.constant.OwnerType;
 
 public class ServiceLevelAgreementInstance implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static final Integer SLA_BREAK_REPORTED_YES = new Integer(1);
+    public static final Integer SLA_BREAK_REPORTED_YES = new Integer(1);
     public static final Integer SLA_BREAK_REPORTED_NO = new Integer(2);
 
 
@@ -31,7 +31,7 @@ public class ServiceLevelAgreementInstance implements Serializable {
      * @return Integer
      */
     public Integer getSLABreakReportedInd() {
-    	return this.breakReportedIndicator;
+        return this.breakReportedIndicator;
     }
 
     /**
@@ -39,14 +39,14 @@ public class ServiceLevelAgreementInstance implements Serializable {
      * @param pInd
      */
     public void setSLABreakReportedInd(Integer pInd) {
-    	this.breakReportedIndicator = pInd;
+        this.breakReportedIndicator = pInd;
     }
 
     /**
      * returns the estimatedCompletionDate
      */
     public Date getEstimatedCompletionDate() {
-    	return this.estimatedCompletionDate;
+        return this.estimatedCompletionDate;
     }
 
     /**
@@ -54,32 +54,32 @@ public class ServiceLevelAgreementInstance implements Serializable {
      * @param estimatedCompletionDate
      */
     public void setEstimatedCompletionDate(Date estimatedCompletionDate) {
-    	this.estimatedCompletionDate = estimatedCompletionDate;
+        this.estimatedCompletionDate = estimatedCompletionDate;
     }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getOwnerType() {
-		return ownerType;
-	}
+    public String getOwnerType() {
+        return ownerType;
+    }
 
-	public void setOwnerType(String ownerType) {
-		this.ownerType = ownerType;
-	}
+    public void setOwnerType(String ownerType) {
+        this.ownerType = ownerType;
+    }
 
-	public Long getOwnerId() {
-		return ownerId;
-	}
+    public Long getOwnerId() {
+        return ownerId;
+    }
 
-	public void setOwnerId(Long ownerId) {
-		this.ownerId = ownerId;
-	}
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
 
     
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.variable;
 
@@ -125,10 +125,10 @@ public class VariableInstance implements Jsonable, Serializable, Comparable<Vari
     }
 
     public boolean isDocument() {
-    	if (data!=null) return data instanceof DocumentReference;
-    	if (value==null) return false;
-    	if (!value.startsWith("DOCUMENT:")) return false;
-    	return VariableTranslator.isDocumentReferenceVariable(null, this.type);
+        if (data!=null) return data instanceof DocumentReference;
+        if (value==null) return false;
+        if (!value.startsWith("DOCUMENT:")) return false;
+        return VariableTranslator.isDocumentReferenceVariable(null, this.type);
     }
 
     public Long getDocumentId() {

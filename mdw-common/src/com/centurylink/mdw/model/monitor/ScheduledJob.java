@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.monitor;
 
@@ -8,6 +8,6 @@ import com.centurylink.mdw.util.CallURL;
 
 public interface ScheduledJob extends RegisteredService {
 
-	void run(CallURL args);
+    void run(CallURL args);
 
 }

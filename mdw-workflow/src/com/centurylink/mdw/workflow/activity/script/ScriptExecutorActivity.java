@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.script;
 
@@ -20,8 +20,8 @@ public class ScriptExecutorActivity extends DefaultActivityImpl implements Scrip
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-	public static final String RULE = "Rule";
-	public static final String SCRIPT_LANGUAGE = "SCRIPT";
+    public static final String RULE = "Rule";
+    public static final String SCRIPT_LANGUAGE = "SCRIPT";
 
    /**
      * Execute rules in Magic Box rule language.
@@ -51,6 +51,6 @@ public class ScriptExecutorActivity extends DefaultActivityImpl implements Scrip
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
-    	}
+        }
     }
 }

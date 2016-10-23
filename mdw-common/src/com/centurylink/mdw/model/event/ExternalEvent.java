@@ -21,7 +21,7 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
     private XmlPath xpath;
 
     public ExternalEvent(){
-    	xpath = null;
+        xpath = null;
     }
 
     public ExternalEvent(Long id, String name, String handler) {
@@ -31,31 +31,31 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
         xpath = null;
     }
 
-	/**
-	 * @return the eventData
-	 */
-	public String getEventHandler() {
-		return eventHandler;
-	}
-	/**
-	 * @param eventData the eventData to set
-	 */
-	public void setEventHandler(String eventHandler) {
-		this.eventHandler = eventHandler;
-	}
+    /**
+     * @return the eventData
+     */
+    public String getEventHandler() {
+        return eventHandler;
+    }
+    /**
+     * @param eventData the eventData to set
+     */
+    public void setEventHandler(String eventHandler) {
+        this.eventHandler = eventHandler;
+    }
 
-	/**
-	 * @return the eventName
-	 */
-	public String getEventName() {
-		return eventName;
-	}
-	/**
-	 * @param eventName the eventName to set
-	 */
-	public void setEventName(String eventName) {
-		this.eventName = eventName;
-	}
+    /**
+     * @return the eventName
+     */
+    public String getEventName() {
+        return eventName;
+    }
+    /**
+     * @param eventName the eventName to set
+     */
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
 
     public Long getId() {
         return id;
@@ -65,10 +65,10 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
         this.id = id;
     }
 
-	public XmlPath getXpath() throws XmlException {
-		if (xpath==null) xpath = new XmlPath(eventName);
-		return xpath;
-	}
+    public XmlPath getXpath() throws XmlException {
+        if (xpath==null) xpath = new XmlPath(eventName);
+        return xpath;
+    }
 
     public String getSimpleName() {
         String simpleName;

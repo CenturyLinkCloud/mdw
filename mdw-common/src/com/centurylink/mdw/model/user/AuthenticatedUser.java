@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.user;
 
@@ -117,12 +117,12 @@ public class AuthenticatedUser extends User implements SelfSerializable
   }
 
   public String[] getGroupNameAndRoles() {
-	  String[] nameAndRoles = new String[getWorkgroups().length];
-	  for (int i = 0; i < getWorkgroups().length; i++)
-	  {
-		nameAndRoles[i] = getWorkgroups()[i].getNameAndRolesAsString();
-	  }
-	  return nameAndRoles;
+      String[] nameAndRoles = new String[getWorkgroups().length];
+      for (int i = 0; i < getWorkgroups().length; i++)
+      {
+        nameAndRoles[i] = getWorkgroups()[i].getNameAndRolesAsString();
+      }
+      return nameAndRoles;
   }
 
   /**
@@ -187,16 +187,16 @@ public class AuthenticatedUser extends User implements SelfSerializable
     Map roles = new HashMap();
 
     if (getWorkgroups() != null) {
-    	for (Workgroup group : getWorkgroups()) {
-    		if (group.getRoles()!=null) {
-    			for (String role : group.getRoles()) {
-    		        roles.put(role, new Boolean(true));
-    			}
-    		}
-    		// special treatment of Site Admin like a role
-    		if (group.getName().equals(Workgroup.SITE_ADMIN_GROUP))
-    		  roles.put(Workgroup.SITE_ADMIN_GROUP, new Boolean(true));
-    	}
+        for (Workgroup group : getWorkgroups()) {
+            if (group.getRoles()!=null) {
+                for (String role : group.getRoles()) {
+                    roles.put(role, new Boolean(true));
+                }
+            }
+            // special treatment of Site Admin like a role
+            if (group.getName().equals(Workgroup.SITE_ADMIN_GROUP))
+              roles.put(Workgroup.SITE_ADMIN_GROUP, new Boolean(true));
+        }
     }
     return roles;
   }
@@ -217,27 +217,27 @@ public class AuthenticatedUser extends User implements SelfSerializable
     return otherUser.getCuid().equals(getCuid());
   }
 
-  	/**
-  	 * Currently this method is only used for testing SelfSerializable.
-  	 * Need to complete it if it is really needed
-  	 */
-	@Override
-	public void fromString(String str) {
-		String[] fields = str.split(",[\\n\\r\\s]*");
-		for (String field : fields) {
-			int k = field.indexOf(":");
-			if (k>0) {
-				String name = field.substring(0,k).trim();
-				String value = field.substring(k+1).trim();
-				if (name.equals("cuid")) {
-					setCuid(value);
-				}
-			}
-		}
+      /**
+       * Currently this method is only used for testing SelfSerializable.
+       * Need to complete it if it is really needed
+       */
+    @Override
+    public void fromString(String str) {
+        String[] fields = str.split(",[\\n\\r\\s]*");
+        for (String field : fields) {
+            int k = field.indexOf(":");
+            if (k>0) {
+                String name = field.substring(0,k).trim();
+                String value = field.substring(k+1).trim();
+                if (name.equals("cuid")) {
+                    setCuid(value);
+                }
+            }
+        }
 
-	}
+    }
 
-	// these are only used for the samples demo
+    // these are only used for the samples demo
     private String _firstName;
     public String getFirstName() { return _firstName; }
     public void setFirstName(String s) { _firstName = s; }

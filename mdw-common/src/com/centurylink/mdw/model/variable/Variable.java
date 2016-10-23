@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.variable;
 
@@ -18,7 +18,7 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
     public static final String[] VariableCategories =
         {"Local", "Input", "Output", "Input/Output", "Static"};
     public static final String[] DisplayModes =
-    	{"Required", "Optional", "Read Only", "Hidden", "Excluded"};
+        {"Required", "Optional", "Read Only", "Hidden", "Excluded"};
 
     public static final int CAT_LOCAL = 0;
     public static final int CAT_INPUT = 1;
@@ -86,7 +86,7 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
     }
 
     public String getVariableType() {
-    	return variableType;
+        return variableType;
     }
 
     public void setVariableType(String vartype) {
@@ -188,14 +188,14 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
      * Important note:  for backward compatibility and other historical reasons,
      * variables stored in relational form (5.0 and prior) uses
      * two fields in VARIABLE_MAPPING table to control display mode:
-	 * 	- Read Only:  VARIABLE_DATA_SOURCE is 'workflow'
-	 *  - Optional: VARIABLE_DATA_SOURCE is 'task_user', and VARIABLE_DATA_OPT_IND is 1
-	 *	- Required: VARIABLE_DATA_SOURCE is 'task_user', and VARIABLE_DATA_OPT_IND is 0
-	 *  - Not Displayed: no variable mapping exist
-	 * Additionally, display mode is only used for variables mapped to tasks;
-	 * for variables mapped to processes, VARIABLE_DATA_OPT_IND is used to store
-	 * variable category.
-	 *
+     *     - Read Only:  VARIABLE_DATA_SOURCE is 'workflow'
+     *  - Optional: VARIABLE_DATA_SOURCE is 'task_user', and VARIABLE_DATA_OPT_IND is 1
+     *    - Required: VARIABLE_DATA_SOURCE is 'task_user', and VARIABLE_DATA_OPT_IND is 0
+     *  - Not Displayed: no variable mapping exist
+     * Additionally, display mode is only used for variables mapped to tasks;
+     * for variables mapped to processes, VARIABLE_DATA_OPT_IND is used to store
+     * variable category.
+     *
      * @return  Returns display mode code
      */
     public Integer getDisplayMode() {
@@ -237,17 +237,17 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
         return this.getVariableName().compareTo(other.getVariableName());
     }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getName() {
-		return this.variableName;
-	}
+    public String getName() {
+        return this.variableName;
+    }
 
     public boolean isInput() {
         return getVariableCategory() == CAT_INPUT || getVariableCategory() == CAT_INOUT;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.task;
 
@@ -32,7 +32,7 @@ public class TaskTemplate extends Asset implements Jsonable {
     public static final String AUTOFORM = "Autoform";
 
     private String taskName;
-	private Long taskId;
+    private Long taskId;
     private Integer taskTypeId;
     private String taskCategory;
     private List<Variable> variables;
@@ -91,117 +91,117 @@ public class TaskTemplate extends Asset implements Jsonable {
     public void setTaskTypeId(Integer pType){
         this.taskTypeId = pType;
     }
-	public Long getTaskId() {
-		return taskId;
-	}
-	public void setTaskId(Long taskId) {
-		this.taskId = taskId;
-	}
-	public String getLogicalId() {
-		return logicalId;
-	}
-	public void setLogicalId(String logicalId) {
-		this.logicalId = logicalId;
-	}
-	public String getTaskName() {
-		return taskName;
-	}
-	public void setTaskName(String taskName) {
-		this.taskName = taskName;
-	}
+    public Long getTaskId() {
+        return taskId;
+    }
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
+    }
+    public String getLogicalId() {
+        return logicalId;
+    }
+    public void setLogicalId(String logicalId) {
+        this.logicalId = logicalId;
+    }
+    public String getTaskName() {
+        return taskName;
+    }
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
     public String getTaskCategory() {
-		return taskCategory;
-	}
-	public void setTaskCategory(String category) {
-		this.taskCategory = category;
-	}
+        return taskCategory;
+    }
+    public void setTaskCategory(String category) {
+        this.taskCategory = category;
+    }
 
-	public List<String> getWorkgroups() {
-	    return getUserGroups();
-	}
-	public List<String> getUserGroups() {
-		return this.getGroups(TaskAttributeConstant.GROUPS);
-	}
+    public List<String> getWorkgroups() {
+        return getUserGroups();
+    }
+    public List<String> getUserGroups() {
+        return this.getGroups(TaskAttributeConstant.GROUPS);
+    }
 
-	public boolean isForWorkgroup(String group) {
-	    for (String workgroup : getWorkgroups()) {
-	        if (workgroup.equals(group))
-	            return true;
-	    }
-	    return false;
-	}
+    public boolean isForWorkgroup(String group) {
+        for (String workgroup : getWorkgroups()) {
+            if (workgroup.equals(group))
+                return true;
+        }
+        return false;
+    }
 
-	public List<String> getNoticeGroups() {
+    public List<String> getNoticeGroups() {
       return this.getGroups(TaskAttributeConstant.NOTICE_GROUPS);
-	}
+    }
 
-	private List<String> getGroups(String groupAttributeName) {
-	  List<String> groups = new ArrayList<String>();
+    private List<String> getGroups(String groupAttributeName) {
+      List<String> groups = new ArrayList<String>();
       String groupsString = this.getAttribute(groupAttributeName);
       if (groupsString!=null && groupsString.length()>0) {
         for (String group : groupsString.split("#"))
           groups.add(group);
       }
       return groups;
-	}
+    }
 
-	public void setWorkgroups(List<String> workgroups) {
-	    setUserGroups(workgroups);
-	}
-	public void setUserGroups(List<String> userGroups) {
-		if (userGroups==null || userGroups.size()==0) {
-	    	this.setAttribute(TaskAttributeConstant.GROUPS, null);
-		} else {
-			StringBuffer sb = new StringBuffer();
-			boolean first = true;
-			for (String grp : userGroups) {
-				if (first) first = false;
-				else sb.append('#');
-				sb.append(grp);
-			}
-			this.setAttribute(TaskAttributeConstant.GROUPS, sb.toString());
-		}
-	}
+    public void setWorkgroups(List<String> workgroups) {
+        setUserGroups(workgroups);
+    }
+    public void setUserGroups(List<String> userGroups) {
+        if (userGroups==null || userGroups.size()==0) {
+            this.setAttribute(TaskAttributeConstant.GROUPS, null);
+        } else {
+            StringBuffer sb = new StringBuffer();
+            boolean first = true;
+            for (String grp : userGroups) {
+                if (first) first = false;
+                else sb.append('#');
+                sb.append(grp);
+            }
+            this.setAttribute(TaskAttributeConstant.GROUPS, sb.toString());
+        }
+    }
 
     public List<Variable> getVariables() {
-		return variables;
-	}
-	public void setVariables(List<Variable> pVars) {
-		this.variables = pVars;
-	}
+        return variables;
+    }
+    public void setVariables(List<Variable> pVars) {
+        this.variables = pVars;
+    }
 
-	public String getComment() {
-		return getAttribute(TaskAttributeConstant.DESCRIPTION);
-	}
-	public void setComment(String comments) {
-		setAttribute(TaskAttributeConstant.DESCRIPTION, comments);
-	}
+    public String getComment() {
+        return getAttribute(TaskAttributeConstant.DESCRIPTION);
+    }
+    public void setComment(String comments) {
+        setAttribute(TaskAttributeConstant.DESCRIPTION, comments);
+    }
 
-	public int getSlaSeconds() {
-		String sla = getAttribute(TaskAttributeConstant.TASK_SLA);
-    	if (sla==null || sla.length()==0) return 0;
-    	return Integer.parseInt(sla);
-	}
+    public int getSlaSeconds() {
+        String sla = getAttribute(TaskAttributeConstant.TASK_SLA);
+        if (sla==null || sla.length()==0) return 0;
+        return Integer.parseInt(sla);
+    }
 
-	public void setSlaSeconds(int slaSeconds) {
-	   	this.setAttribute(TaskAttributeConstant.TASK_SLA, Integer.toString(slaSeconds));
-	}
+    public void setSlaSeconds(int slaSeconds) {
+           this.setAttribute(TaskAttributeConstant.TASK_SLA, Integer.toString(slaSeconds));
+    }
 
-	public int getAlertIntervalSeconds() {
+    public int getAlertIntervalSeconds() {
         String alertIntervalString = getAttribute(TaskAttributeConstant.ALERT_INTERVAL);
         return StringHelper.isEmpty(alertIntervalString) ? 0 : Integer.parseInt(alertIntervalString);
-	}
+    }
 
-	public void setAlertIntervalSeconds(int alertIntervalSeconds) {
+    public void setAlertIntervalSeconds(int alertIntervalSeconds) {
       this.setAttribute(TaskAttributeConstant.ALERT_INTERVAL, Integer.toString(alertIntervalSeconds));
     }
 
     public String getCustomPage() {
-    	return getAttribute(TaskAttributeConstant.CUSTOM_PAGE);
+        return getAttribute(TaskAttributeConstant.CUSTOM_PAGE);
     }
 
     public void setCustomPage(String page) {
-    	setAttribute(TaskAttributeConstant.CUSTOM_PAGE, page);
+        setAttribute(TaskAttributeConstant.CUSTOM_PAGE, page);
     }
 
     public boolean isHasCustomPage() {
@@ -217,22 +217,22 @@ public class TaskTemplate extends Asset implements Jsonable {
     }
 
     public String getFormName() {
-    	return getAttribute(TaskAttributeConstant.FORM_NAME);
+        return getAttribute(TaskAttributeConstant.FORM_NAME);
     }
 
     public void setFormName(String v) {
-    	setAttribute(TaskAttributeConstant.FORM_NAME, v);
+        setAttribute(TaskAttributeConstant.FORM_NAME, v);
     }
 
     public boolean isGeneralTask() {
-    	return getAttribute(TaskAttributeConstant.FORM_NAME) != null;
+        return getAttribute(TaskAttributeConstant.FORM_NAME) != null;
     }
 
     public boolean isAutoformTask() {
         if (isHasCustomPage())
           return false;
-    	String formName = getAttribute(TaskAttributeConstant.FORM_NAME);
-    	return AUTOFORM.equalsIgnoreCase(formName);
+        String formName = getAttribute(TaskAttributeConstant.FORM_NAME);
+        return AUTOFORM.equalsIgnoreCase(formName);
     }
 
     /**
@@ -241,7 +241,7 @@ public class TaskTemplate extends Asset implements Jsonable {
      * @return boolean results
      */
     public boolean isGroupMapped(String pGroupName){
-    	List<String> userGroups = this.getUserGroups();
+        List<String> userGroups = this.getUserGroups();
         for(String g : userGroups){
             if(g.equals(pGroupName)) return true;
         }
@@ -266,54 +266,54 @@ public class TaskTemplate extends Asset implements Jsonable {
     }
 
     public String getUserGroupsAsString() {
-    	return getAttribute(TaskAttributeConstant.GROUPS);
+        return getAttribute(TaskAttributeConstant.GROUPS);
     }
 
     private static Variable findVariable(List<Variable> list, Variable var) {
-    	if (list==null) return null;
-    	for (Variable one : list) {
-    		if (var.getVariableName().equals(one.getVariableName())) return one;
-    	}
-    	return null;
+        if (list==null) return null;
+        for (Variable one : list) {
+            if (var.getVariableName().equals(one.getVariableName())) return one;
+        }
+        return null;
     }
 
     public void setUserGroupsFromString(String str) {
-    	setAttribute(TaskAttributeConstant.GROUPS, str);
+        setAttribute(TaskAttributeConstant.GROUPS, str);
     }
 
     public static String getVariablesAsString(List<Variable> processVariables, List<Variable> variables) {
-    	if (processVariables==null) return null;
+        if (processVariables==null) return null;
         StringBuffer sb = new StringBuffer();
         boolean firstRow = true;
         // first get variables already specified in the task
         if (variables!=null) {
-	        for (Variable taskVar : variables) {
-	            Variable var = findVariable(processVariables, taskVar);
-	            if (var==null) continue;	// remove variables not in process definition
-	            if (firstRow) firstRow = false;
-	            else sb.append(ROW_DELIMITER);
-	            sb.append(var.getVariableName()).append(FIELD_DELIMITER);
-	            sb.append(taskVar.getVariableReferredAs()).append(FIELD_DELIMITER);
-	            if (taskVar.getDisplayMode().equals(Variable.DATA_READONLY))
-	                sb.append(TaskActivity.VARIABLE_DISPLAY_READONLY);
-	            else if (Variable.DATA_OPTIONAL.equals(taskVar.getDisplayMode()))
-	            	sb.append(TaskActivity.VARIABLE_DISPLAY_OPTIONAL);
-	            else if (Variable.DATA_HIDDEN.equals(taskVar.getDisplayMode()))
-	            	sb.append(TaskActivity.VARIABLE_DISPLAY_HIDDEN);
-	            else sb.append(TaskActivity.VARIABLE_DISPLAY_REQUIRED);
-	            sb.append(FIELD_DELIMITER);
-	            if (taskVar.getDisplaySequence()==null) sb.append("0");
-	            else sb.append(taskVar.getDisplaySequence().toString());
-	            sb.append(FIELD_DELIMITER);
-	            sb.append((taskVar.getDescription()==null)?"":taskVar.getDescription());
-	            sb.append(FIELD_DELIMITER);
-	            sb.append(var.getVariableType());
-	        }
+            for (Variable taskVar : variables) {
+                Variable var = findVariable(processVariables, taskVar);
+                if (var==null) continue;    // remove variables not in process definition
+                if (firstRow) firstRow = false;
+                else sb.append(ROW_DELIMITER);
+                sb.append(var.getVariableName()).append(FIELD_DELIMITER);
+                sb.append(taskVar.getVariableReferredAs()).append(FIELD_DELIMITER);
+                if (taskVar.getDisplayMode().equals(Variable.DATA_READONLY))
+                    sb.append(TaskActivity.VARIABLE_DISPLAY_READONLY);
+                else if (Variable.DATA_OPTIONAL.equals(taskVar.getDisplayMode()))
+                    sb.append(TaskActivity.VARIABLE_DISPLAY_OPTIONAL);
+                else if (Variable.DATA_HIDDEN.equals(taskVar.getDisplayMode()))
+                    sb.append(TaskActivity.VARIABLE_DISPLAY_HIDDEN);
+                else sb.append(TaskActivity.VARIABLE_DISPLAY_REQUIRED);
+                sb.append(FIELD_DELIMITER);
+                if (taskVar.getDisplaySequence()==null) sb.append("0");
+                else sb.append(taskVar.getDisplaySequence().toString());
+                sb.append(FIELD_DELIMITER);
+                sb.append((taskVar.getDescription()==null)?"":taskVar.getDescription());
+                sb.append(FIELD_DELIMITER);
+                sb.append(var.getVariableType());
+            }
         }
         // now add process variables not specified in the task as not-displayed
         for (Variable var : processVariables) {
             Variable taskVar = findVariable(variables, var);
-            if (taskVar!=null) continue;	// already handled above
+            if (taskVar!=null) continue;    // already handled above
             if (firstRow) firstRow = false;
             else sb.append(ROW_DELIMITER);
             sb.append(var.getVariableName()).append(FIELD_DELIMITER);
@@ -334,49 +334,49 @@ public class TaskTemplate extends Asset implements Jsonable {
     }
 
     public void setVariablesFromString(String str, List<Variable> processVariables) {
-    	variables = new ArrayList<Variable>();
-    	if (str == null) return;
-    	List<String[]> parsed = StringHelper.parseTable(str, FIELD_DELIMITER, ROW_DELIMITER, 6);
-    	for (String[] one : parsed) {
-    		if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
-    		Variable taskVar = new Variable();
-    		taskVar.setVariableName(one[0]);
-    		Variable var = findVariable(processVariables, taskVar);
-    		if (var!=null) taskVar.setVariableType(var.getVariableType());
-    		if (one[3].isEmpty())
-    		    taskVar.setDisplaySequence(new Integer(0));
-    		else
-    		    taskVar.setDisplaySequence(new Integer(one[3]));
-    		if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_READONLY)) {
-    			taskVar.setDisplayMode(Variable.DATA_READONLY);
-    		} else if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_OPTIONAL)) {
-    			taskVar.setDisplayMode(Variable.DATA_OPTIONAL);
-    		} else if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_HIDDEN)) {
-    			taskVar.setDisplayMode(Variable.DATA_HIDDEN);
-    		} else {
-    			taskVar.setDisplayMode(Variable.DATA_REQUIRED);
-    		}
-    		if (var!=null) taskVar.setVariableId(var.getVariableId());
-    		taskVar.setVariableReferredAs(one[1]);
-    		taskVar.setDescription(one[4]);		// reused as index key
-    		if (StringHelper.isEmpty(taskVar.getVariableType())) {  // should have been set based on proc var type
+        variables = new ArrayList<Variable>();
+        if (str == null) return;
+        List<String[]> parsed = StringHelper.parseTable(str, FIELD_DELIMITER, ROW_DELIMITER, 6);
+        for (String[] one : parsed) {
+            if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
+            Variable taskVar = new Variable();
+            taskVar.setVariableName(one[0]);
+            Variable var = findVariable(processVariables, taskVar);
+            if (var!=null) taskVar.setVariableType(var.getVariableType());
+            if (one[3].isEmpty())
+                taskVar.setDisplaySequence(new Integer(0));
+            else
+                taskVar.setDisplaySequence(new Integer(one[3]));
+            if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_READONLY)) {
+                taskVar.setDisplayMode(Variable.DATA_READONLY);
+            } else if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_OPTIONAL)) {
+                taskVar.setDisplayMode(Variable.DATA_OPTIONAL);
+            } else if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_HIDDEN)) {
+                taskVar.setDisplayMode(Variable.DATA_HIDDEN);
+            } else {
+                taskVar.setDisplayMode(Variable.DATA_REQUIRED);
+            }
+            if (var!=null) taskVar.setVariableId(var.getVariableId());
+            taskVar.setVariableReferredAs(one[1]);
+            taskVar.setDescription(one[4]);        // reused as index key
+            if (StringHelper.isEmpty(taskVar.getVariableType())) {  // should have been set based on proc var type
                 if (StringHelper.isEmpty(one[5])) taskVar.setVariableType(String.class.getName());
                 else taskVar.setVariableType(one[5]);
-    		}
-    		int i, n = variables.size();
-			for (i=0; i<n; i++) {
-				Variable next = variables.get(i);
-				if (taskVar.getDisplaySequence().intValue()<next.getDisplaySequence().intValue())
-					break;
-			}
-			if (i<n) variables.add(i, taskVar);
-			else variables.add(taskVar);
-    	}
+            }
+            int i, n = variables.size();
+            for (i=0; i<n; i++) {
+                Variable next = variables.get(i);
+                if (taskVar.getDisplaySequence().intValue()<next.getDisplaySequence().intValue())
+                    break;
+            }
+            if (i<n) variables.add(i, taskVar);
+            else variables.add(taskVar);
+        }
     }
 
     public void setVariablesFromAttribute() {
-    	String str = this.getAttribute(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
-    	setVariablesFromString(str, null);
+        String str = this.getAttribute(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
+        setVariablesFromString(str, null);
     }
 
     public static String updateVariableInString(String curString, List<Variable> processVariables) {

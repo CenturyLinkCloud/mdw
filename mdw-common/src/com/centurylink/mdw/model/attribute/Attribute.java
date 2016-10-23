@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.attribute;
 
@@ -17,9 +17,9 @@ public class Attribute implements Serializable, Comparable<Attribute> {
     }
 
     public Attribute(String name, String value) {
-    	this.id = null;
-    	this.name = name;
-    	this.value = value;
+        this.id = null;
+        this.name = name;
+        this.value = value;
     }
 
     public Attribute(Long id, String name, String value) {

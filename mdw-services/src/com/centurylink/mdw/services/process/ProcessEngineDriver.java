@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.services.process;
 
@@ -51,21 +51,21 @@ public class ProcessEngineDriver {
 
     private static int default_performance_level_regular = 0;
     private static int default_performance_level_service = 0;
-	private static String useTransactionOnExcecute = "not_loaded";
+    private static String useTransactionOnExcecute = "not_loaded";
 
-	private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private Exception lastException;	// used by service process to throw exception back to event handler
-    private Long mainProcessInstanceId;	// used by service process to remember main process instance ID which caller may query
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private Exception lastException;    // used by service process to throw exception back to event handler
+    private Long mainProcessInstanceId;    // used by service process to remember main process instance ID which caller may query
     private int eventConsumeRetrySleep = 2;
 
-	/**
+    /**
      * @param engineId the ID for this engine driver. When it is null,
      * it is generated internally.
      * @throws ServiceLocatorException
      */
     public ProcessEngineDriver() throws ServiceLocatorException {
-		if (default_performance_level_regular==0)
-		    loadDefaultPerformanceLevel();
+        if (default_performance_level_regular==0)
+            loadDefaultPerformanceLevel();
         eventConsumeRetrySleep = PropertyManager.getIntegerProperty(PropertyNames.MDW_INTERNAL_EVENT_CONSUME_RETRY_SLEEP, 2);
     }
 
@@ -97,12 +97,12 @@ public class ProcessEngineDriver {
     }
 
     private boolean isRecursiveCall(ProcessInstance originatingInstance,
-    		Process processVO, Long embeddedProcId) {
-		if (processVO.getProcessId().equals(originatingInstance.getProcessId())) {
-			if (originatingInstance.getOwner().equals(OwnerType.MAIN_PROCESS_INSTANCE)) {
-				return embeddedProcId.toString().equals(originatingInstance.getComment());
-			} else return false;
-		} else return false;
+            Process processVO, Long embeddedProcId) {
+        if (processVO.getProcessId().equals(originatingInstance.getProcessId())) {
+            if (originatingInstance.getOwner().equals(OwnerType.MAIN_PROCESS_INSTANCE)) {
+                return embeddedProcId.toString().equals(originatingInstance.getComment());
+            } else return false;
+        } else return false;
     }
 
     /**
@@ -116,11 +116,11 @@ public class ProcessEngineDriver {
             Process processVO, InternalEvent messageDoc, Integer eventType)
       throws ProcessException {
         try {
-        	if (logger.isInfoEnabled())
-        		logger.info(logtag(processVO.getProcessId(), processInstVO.getId(),
-        			messageDoc.getWorkId(), messageDoc.getWorkInstanceId()),
-        			"Inherited Event - type=" + eventType + ", compcode="
-        			+ messageDoc.getCompletionCode());
+            if (logger.isInfoEnabled())
+                logger.info(logtag(processVO.getProcessId(), processInstVO.getId(),
+                    messageDoc.getWorkId(), messageDoc.getWorkInstanceId()),
+                    "Inherited Event - type=" + eventType + ", compcode="
+                    + messageDoc.getCompletionCode());
             String compCode = messageDoc.getCompletionCode();
             ProcessInstance originatingInstance = processInstVO;
             Process embeddedProcdef = processVO.findEmbeddedProcess(eventType, compCode);
@@ -132,8 +132,8 @@ public class ProcessEngineDriver {
             if (embeddedProcdef != null && isRecursiveCall(originatingInstance, processVO, embeddedProcdef.getProcessId())) {
                 logger.info("Invoking embedded process recursively - not allowed");
             } else if (embeddedProcdef != null) {
-            	Long secondaryOwnerId = null;
-            	String secondaryOwnerType = null;
+                Long secondaryOwnerId = null;
+                String secondaryOwnerType = null;
                 if (!eventType.equals(EventType.ABORT)) {
                     long secondOwnerId = messageDoc.getWorkInstanceId();
                     if (secondOwnerId > 0) {
@@ -148,28 +148,28 @@ public class ProcessEngineDriver {
                                 engine.updateVariableInstance(exceptionVar);
                         }
                     } else {
-                    	if (eventType.equals(EventType.ERROR)) {
-                    		logger.warn("Creating fallout embedded process without activity instance as secondary owner");
-                    		logger.warn("--- completion code " + messageDoc.getCompletionCode());
-	                        logger.warn("--- trans inst ID " + messageDoc.getTransitionInstanceId());
-	                        logger.warn("--- work ID " + messageDoc.getWorkId());
-	                        String[] stack = this.getStackTrace();
-	                        for (int i=0; i<stack.length; i++) {
-	                            logger.warn("--- stack " + i + ": " + stack[i]);
-	                        }
-                    	}
+                        if (eventType.equals(EventType.ERROR)) {
+                            logger.warn("Creating fallout embedded process without activity instance as secondary owner");
+                            logger.warn("--- completion code " + messageDoc.getCompletionCode());
+                            logger.warn("--- trans inst ID " + messageDoc.getTransitionInstanceId());
+                            logger.warn("--- work ID " + messageDoc.getWorkId());
+                            String[] stack = this.getStackTrace();
+                            for (int i=0; i<stack.length; i++) {
+                                logger.warn("--- stack " + i + ": " + stack[i]);
+                            }
+                        }
                         messageDoc.setSecondaryOwnerType(null);
                     }
                 } else messageDoc.setSecondaryOwnerType(null);
                 String ownerType = OwnerType.MAIN_PROCESS_INSTANCE;
                 ProcessInstance procInst = engine.createProcessInstance(
-                		embeddedProcdef.getProcessId(), ownerType, processInstVO.getId(),
-                		secondaryOwnerType, secondaryOwnerId, processInstVO.getMasterRequestId(), null);
+                        embeddedProcdef.getProcessId(), ownerType, processInstVO.getId(),
+                        secondaryOwnerType, secondaryOwnerId, processInstVO.getMasterRequestId(), null);
                 engine.startProcessInstance(procInst, 0);
             } else if (eventType.equals(EventType.ABORT)) {
-            	// abort the root process instance
-            	InternalEvent event = InternalEvent.createProcessAbortMessage(processInstVO);
-            	engine.abortProcessInstance(event);
+                // abort the root process instance
+                InternalEvent event = InternalEvent.createProcessAbortMessage(processInstVO);
+                engine.abortProcessInstance(event);
             }
             else {
                 logger.info("WorkTransition has not been defined for event of type " + eventType);
@@ -182,211 +182,211 @@ public class ProcessEngineDriver {
     }
 
     private void retryActivityStartWhenInstanceExists(ProcessExecutor engine,
-    		InternalEvent event, ProcessInstance pi) {
-    	int count = event.getDeliveryCount();
-		String av = PropertyManager.getProperty(PropertyNames.MDW_ACTIVITY_ACTIVE_MAX_RETRY);
-		int max_retry = 5;
-    	if (av!=null) {
-    		// delay some seconds to avoid race condition
-	    	try {
-	    		max_retry = Integer.parseInt(av);
-				if (max_retry<0) max_retry = 0;
-				else if (max_retry>20) max_retry = 20;
-			} catch (Exception e) {
-			}
-    	}
-		int initial_delay = 5;
-		if (count<max_retry) {
-    		int delayInSeconds = initial_delay;
-			count++;
-    		event.setDeliveryCount(count);
-    		for (int i=0; i<count; i++) delayInSeconds = delayInSeconds*2;
-    		String msg = "Active instance exists, retry in " + delayInSeconds + " seconds";
-    		logger.info(logtag(pi.getProcessId(),pi.getId(),event.getWorkId(),0L),msg);
-    		try {
-	    		String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + pi.getId()
-					+ "start" + event.getWorkId();
-				engine.sendDelayedInternalEvent(event, delayInSeconds, msgid, false);
-			} catch (MDWException e) {
-				msg = "Failed to send retry jms message";
-				logger.exception(logtag(pi.getProcessId(),pi.getId(),event.getWorkId(),0L),
-						msg, new Exception(msg));
-			}
-		} else {
-			String msg = "Active instance exists - fail after " + max_retry + " retries";
-			logger.exception(logtag(pi.getProcessId(),pi.getId(),event.getWorkId(),0L),
-					msg, new Exception(msg));
-			// only log exception w/o creating a fall out task. Do we need to?
-		}
+            InternalEvent event, ProcessInstance pi) {
+        int count = event.getDeliveryCount();
+        String av = PropertyManager.getProperty(PropertyNames.MDW_ACTIVITY_ACTIVE_MAX_RETRY);
+        int max_retry = 5;
+        if (av!=null) {
+            // delay some seconds to avoid race condition
+            try {
+                max_retry = Integer.parseInt(av);
+                if (max_retry<0) max_retry = 0;
+                else if (max_retry>20) max_retry = 20;
+            } catch (Exception e) {
+            }
+        }
+        int initial_delay = 5;
+        if (count<max_retry) {
+            int delayInSeconds = initial_delay;
+            count++;
+            event.setDeliveryCount(count);
+            for (int i=0; i<count; i++) delayInSeconds = delayInSeconds*2;
+            String msg = "Active instance exists, retry in " + delayInSeconds + " seconds";
+            logger.info(logtag(pi.getProcessId(),pi.getId(),event.getWorkId(),0L),msg);
+            try {
+                String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + pi.getId()
+                    + "start" + event.getWorkId();
+                engine.sendDelayedInternalEvent(event, delayInSeconds, msgid, false);
+            } catch (MDWException e) {
+                msg = "Failed to send retry jms message";
+                logger.exception(logtag(pi.getProcessId(),pi.getId(),event.getWorkId(),0L),
+                        msg, new Exception(msg));
+            }
+        } else {
+            String msg = "Active instance exists - fail after " + max_retry + " retries";
+            logger.exception(logtag(pi.getProcessId(),pi.getId(),event.getWorkId(),0L),
+                    msg, new Exception(msg));
+            // only log exception w/o creating a fall out task. Do we need to?
+        }
     }
 
     private void resumeActivity(ProcessExecutor engine, InternalEvent event,
-    		ProcessInstance procInst, boolean resumeOnHold) {
-    	Long actInstId = event.getWorkInstanceId();
-    	ActivityRuntime ar = null;
-    	try {
+            ProcessInstance procInst, boolean resumeOnHold) {
+        Long actInstId = event.getWorkInstanceId();
+        ActivityRuntime ar = null;
+        try {
             ar = engine.resumeActivityPrepare(procInst, event, resumeOnHold);
             if (ar.getStartCase()!=ActivityRuntime.RESUMECASE_NORMAL) return;
             boolean finished;
             if (ar.getActivity() instanceof SuspendibleActivity) {
-            	if ("true".equalsIgnoreCase(useTransactionOnExcecute)) {
-                	finished = engine.resumeActivityExecute(ar, event, resumeOnHold);
-            	} else {
-					if (resumeOnHold) finished = ((SuspendibleActivity)ar.activity).resumeWaiting(event);
-		    		else finished = ((SuspendibleActivity)ar.activity).resume(event);
-				}
+                if ("true".equalsIgnoreCase(useTransactionOnExcecute)) {
+                    finished = engine.resumeActivityExecute(ar, event, resumeOnHold);
+                } else {
+                    if (resumeOnHold) finished = ((SuspendibleActivity)ar.activity).resumeWaiting(event);
+                    else finished = ((SuspendibleActivity)ar.activity).resume(event);
+                }
             } else finished = true;
             engine.resumeActivityFinish(ar, finished, event, resumeOnHold);
         } catch (Exception e) {
             logger.severeException("Resume failed", e);
             lastException = e;
             engine.resumeActivityException(procInst, actInstId,
-            		ar==null?null:ar.getActivity(), e);
+                    ar==null?null:ar.getActivity(), e);
         }
     }
 
     private void executeActivity(ProcessExecutor engine, InternalEvent event, ProcessInstance procInst)
     {
-    	ActivityRuntime ar = null;
-		try {
-			// Step 1. check, create and prepare activity instance
-			ar = engine.prepareActivityInstance(event, procInst);
-			switch (ar.getStartCase()) {
-			case ActivityRuntime.STARTCASE_PROCESS_TERMINATED:
-				logger.info("ProcessInstance is already terminated. ProcessInstanceId = "
-						+ ar.getProcessInstance().getId());
-				break;
-			case ActivityRuntime.STARTCASE_ERROR_IN_PREPARE:
-				// error already reported
-				break;
-			case ActivityRuntime.STARTCASE_INSTANCE_EXIST:
-        		retryActivityStartWhenInstanceExists(engine, event, ar.getProcessInstance());
-				break;
-			case ActivityRuntime.STARTCASE_SYNCH_COMPLETE:
-				logger.info(logtag(ar.getProcessInstance().getProcessId(),
-						ar.getProcessInstance().getId(),ar.getActivityInstance().getDefinitionId(),
-						ar.getActivityInstance().getId()),
-						"The synchronization activity is already completed");
-				break;
-			case ActivityRuntime.STARTCASE_SYNCH_HOLD:
-				logger.info(logtag(ar.getProcessInstance().getProcessId(),
-						ar.getProcessInstance().getId(),ar.getActivityInstance().getDefinitionId(),
-						ar.getActivityInstance().getId()),
-						"The synchronization activity is on-hold - ignore incoming transition");
-				break;
-			case ActivityRuntime.STARTCASE_SYNCH_WAITING:
-				event.setWorkInstanceId(ar.getActivityInstance().getId());
-				event.setEventType(EventType.RESUME);
-				resumeActivity(engine, event, procInst, false);
-				break;
-			case ActivityRuntime.STARTCASE_RESUME_WAITING:
-        		event.setWorkInstanceId(ar.getActivityInstance().getId());
-        		event.setEventType(EventType.RESUME);
-        		resumeActivity(engine, event, procInst, true);
-				break;
-			case ActivityRuntime.STARTCASE_NORMAL:
-			default:
-				// Step 2. invoke execute() of the activity
-			    String resCode = ar.activity.notifyMonitors(WorkStatus.LOGMSG_EXECUTE);
-			    if (resCode == null || resCode.equals("(EXECUTE_ACTIVITY)")) {
-			        // proceed with normal activity execution
-    				if ("not_loaded".equals(useTransactionOnExcecute)) {
-                		useTransactionOnExcecute = PropertyManager.getProperty(PropertyNames.MDW_ENGINE_USE_TRANSACTION);
-                	}
-                	if ("true".equalsIgnoreCase(useTransactionOnExcecute))
-    					engine.executeActivityInstance(ar.getActivity());
-    				else {
-    				    if (ar.getActivity().getTimer() != null)
-    				        ar.getActivity().executeTimed(engine);
-    				    else
-    				        ar.getActivity().execute(engine);
-    				}
-			    }
-			    else {
-			        // bypass execution due to monitor
-			        if (!"null".equals(resCode))
-			            ar.getActivity().setReturnCode(resCode);
-			        if (ar.getActivity() instanceof SuspendibleActivity) {
-			            engine.finishActivityInstance(ar.getActivity(), ar.getProcessInstance(), ar.getActivityInstance(), event, true);
-			            return;
-			        }
-			    }
-				// Step 3. finish activity (complete, suspend or others) or process
-				engine.finishActivityInstance(ar.getActivity(),
-						ar.getProcessInstance(), ar.getActivityInstance(), event, false);
-				break;
+        ActivityRuntime ar = null;
+        try {
+            // Step 1. check, create and prepare activity instance
+            ar = engine.prepareActivityInstance(event, procInst);
+            switch (ar.getStartCase()) {
+            case ActivityRuntime.STARTCASE_PROCESS_TERMINATED:
+                logger.info("ProcessInstance is already terminated. ProcessInstanceId = "
+                        + ar.getProcessInstance().getId());
+                break;
+            case ActivityRuntime.STARTCASE_ERROR_IN_PREPARE:
+                // error already reported
+                break;
+            case ActivityRuntime.STARTCASE_INSTANCE_EXIST:
+                retryActivityStartWhenInstanceExists(engine, event, ar.getProcessInstance());
+                break;
+            case ActivityRuntime.STARTCASE_SYNCH_COMPLETE:
+                logger.info(logtag(ar.getProcessInstance().getProcessId(),
+                        ar.getProcessInstance().getId(),ar.getActivityInstance().getDefinitionId(),
+                        ar.getActivityInstance().getId()),
+                        "The synchronization activity is already completed");
+                break;
+            case ActivityRuntime.STARTCASE_SYNCH_HOLD:
+                logger.info(logtag(ar.getProcessInstance().getProcessId(),
+                        ar.getProcessInstance().getId(),ar.getActivityInstance().getDefinitionId(),
+                        ar.getActivityInstance().getId()),
+                        "The synchronization activity is on-hold - ignore incoming transition");
+                break;
+            case ActivityRuntime.STARTCASE_SYNCH_WAITING:
+                event.setWorkInstanceId(ar.getActivityInstance().getId());
+                event.setEventType(EventType.RESUME);
+                resumeActivity(engine, event, procInst, false);
+                break;
+            case ActivityRuntime.STARTCASE_RESUME_WAITING:
+                event.setWorkInstanceId(ar.getActivityInstance().getId());
+                event.setEventType(EventType.RESUME);
+                resumeActivity(engine, event, procInst, true);
+                break;
+            case ActivityRuntime.STARTCASE_NORMAL:
+            default:
+                // Step 2. invoke execute() of the activity
+                String resCode = ar.activity.notifyMonitors(WorkStatus.LOGMSG_EXECUTE);
+                if (resCode == null || resCode.equals("(EXECUTE_ACTIVITY)")) {
+                    // proceed with normal activity execution
+                    if ("not_loaded".equals(useTransactionOnExcecute)) {
+                        useTransactionOnExcecute = PropertyManager.getProperty(PropertyNames.MDW_ENGINE_USE_TRANSACTION);
+                    }
+                    if ("true".equalsIgnoreCase(useTransactionOnExcecute))
+                        engine.executeActivityInstance(ar.getActivity());
+                    else {
+                        if (ar.getActivity().getTimer() != null)
+                            ar.getActivity().executeTimed(engine);
+                        else
+                            ar.getActivity().execute(engine);
+                    }
+                }
+                else {
+                    // bypass execution due to monitor
+                    if (!"null".equals(resCode))
+                        ar.getActivity().setReturnCode(resCode);
+                    if (ar.getActivity() instanceof SuspendibleActivity) {
+                        engine.finishActivityInstance(ar.getActivity(), ar.getProcessInstance(), ar.getActivityInstance(), event, true);
+                        return;
+                    }
+                }
+                // Step 3. finish activity (complete, suspend or others) or process
+                engine.finishActivityInstance(ar.getActivity(),
+                        ar.getProcessInstance(), ar.getActivityInstance(), event, false);
+                break;
 
-			}
+            }
         } catch (Exception ex) {
-        	lastException = ex;
-        	engine.failActivityInstance(event, procInst,
-                    event.getWorkId(),		// act ID
+            lastException = ex;
+            engine.failActivityInstance(event, procInst,
+                    event.getWorkId(),        // act ID
                     (ar==null || ar.getActivityInstance()==null) ? 0L : ar.getActivityInstance().getId(),
                     ar==null?null:ar.getActivity(), ex);
-		}
+        }
     }
 
     private void handleDelay(ProcessExecutor engine, InternalEvent event,
-    		ProcessInstance processInstance) throws Exception
-	{
-		if (!processInstanceIsActive(processInstance)) return;
+            ProcessInstance processInstance) throws Exception
+    {
+        if (!processInstanceIsActive(processInstance)) return;
 
-		if (OwnerType.SLA.equals(event.getSecondaryOwnerType())) {
-			// new way to handle SLA through JMS message delay rather than timer demon
-			Long actInstId = event.getWorkInstanceId();
-		    ActivityInstance ai = engine.getActivityInstance(actInstId);
-		    if (ai.getStatusCode()!=WorkStatus.STATUS_WAITING.intValue()) {
-		    	// ignore the message when the status is not waiting.
-		    	return;
-		    }
-		    String tag = logtag(processInstance.getProcessId(), processInstance.getId(),
-		    		ai.getDefinitionId(), actInstId);
-		    logger.info(tag, "Activity in waiting status times out");
+        if (OwnerType.SLA.equals(event.getSecondaryOwnerType())) {
+            // new way to handle SLA through JMS message delay rather than timer demon
+            Long actInstId = event.getWorkInstanceId();
+            ActivityInstance ai = engine.getActivityInstance(actInstId);
+            if (ai.getStatusCode()!=WorkStatus.STATUS_WAITING.intValue()) {
+                // ignore the message when the status is not waiting.
+                return;
+            }
+            String tag = logtag(processInstance.getProcessId(), processInstance.getId(),
+                    ai.getDefinitionId(), actInstId);
+            logger.info(tag, "Activity in waiting status times out");
 
-		    Integer actInstStatus = WorkStatus.STATUS_CANCELLED;
-		    Process procdef = getProcessDefinition(processInstance);
-		    Activity activity = procdef.getActivityVO(ai.getDefinitionId());
-		    String status = activity.getAttribute(WorkAttributeConstant.STATUS_AFTER_TIMEOUT);
-		    if (status!=null) {
-		    	for (int i=0; i<WorkStatus.allStatusNames.length; i++) {
-		    		if (status.equalsIgnoreCase(WorkStatus.allStatusNames[i])) {
-		    			actInstStatus = WorkStatus.allStatusCodes[i];
-		    			break;
-		    		}
-		    	}
-		    }
-		    if (!actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
-		    	// deregister event wait instances when status to be set is COMPLETED or HOLD;
-		    	 engine.cancelEventWaitInstances(ai.getId());
-		    }
+            Integer actInstStatus = WorkStatus.STATUS_CANCELLED;
+            Process procdef = getProcessDefinition(processInstance);
+            Activity activity = procdef.getActivityVO(ai.getDefinitionId());
+            String status = activity.getAttribute(WorkAttributeConstant.STATUS_AFTER_TIMEOUT);
+            if (status!=null) {
+                for (int i=0; i<WorkStatus.allStatusNames.length; i++) {
+                    if (status.equalsIgnoreCase(WorkStatus.allStatusNames[i])) {
+                        actInstStatus = WorkStatus.allStatusCodes[i];
+                        break;
+                    }
+                }
+            }
+            if (!actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
+                // deregister event wait instances when status to be set is COMPLETED or HOLD;
+                 engine.cancelEventWaitInstances(ai.getId());
+            }
 
-		    if (actInstStatus.equals(WorkStatus.STATUS_CANCELLED)) {
-		    	String msg = "Cancelled due to time out";
-		    	engine.cancelActivityInstance(ai, processInstance, msg);
-		    } else if (actInstStatus.equals(WorkStatus.STATUS_HOLD)) {
-		    	engine.holdActivityInstance(ai, processInstance.getProcessId());
-		    } // else keep in WAITING status
+            if (actInstStatus.equals(WorkStatus.STATUS_CANCELLED)) {
+                String msg = "Cancelled due to time out";
+                engine.cancelActivityInstance(ai, processInstance, msg);
+            } else if (actInstStatus.equals(WorkStatus.STATUS_HOLD)) {
+                engine.holdActivityInstance(ai, processInstance.getProcessId());
+            } // else keep in WAITING status
 
-		}
+        }
 
-		Process processVO = getProcessDefinition(processInstance);
-		List<Transition> workTransitionVOs = processVO.getWorkTransitions(event.getWorkId(),
-				EventType.DELAY, event.getCompletionCode());
-		if (CollectionUtil.isNotEmpty(workTransitionVOs)) {
-			engine.createTransitionInstances(processInstance, workTransitionVOs,
-					event.isProcess()?null:event.getWorkInstanceId());
-		} else {
-			handleInheritedEvent(engine, processInstance, processVO, event, EventType.DELAY);
-		}
-	}
+        Process processVO = getProcessDefinition(processInstance);
+        List<Transition> workTransitionVOs = processVO.getWorkTransitions(event.getWorkId(),
+                EventType.DELAY, event.getCompletionCode());
+        if (CollectionUtil.isNotEmpty(workTransitionVOs)) {
+            engine.createTransitionInstances(processInstance, workTransitionVOs,
+                    event.isProcess()?null:event.getWorkInstanceId());
+        } else {
+            handleInheritedEvent(engine, processInstance, processVO, event, EventType.DELAY);
+        }
+    }
 
     private ProcessInstance findProcessInstance(ProcessExecutor engine,
-    		InternalEvent event) throws ProcessException, DataAccessException {
-    	Long procInstId;
-    	if (event.isProcess()) procInstId = event.getWorkInstanceId();	// can be null or populated for process start message
-    	else procInstId = event.getOwnerId();
-		if (procInstId==null) return null;		// must be process start event
-		return engine.getProcessInstance(procInstId);
+            InternalEvent event) throws ProcessException, DataAccessException {
+        Long procInstId;
+        if (event.isProcess()) procInstId = event.getWorkInstanceId();    // can be null or populated for process start message
+        else procInstId = event.getOwnerId();
+        if (procInstId==null) return null;        // must be process start event
+        return engine.getProcessInstance(procInstId);
     }
 
     /**
@@ -397,191 +397,191 @@ public class ProcessEngineDriver {
     public void processEvents(String msgid, String textMessage) {
         try {
             if (logger.isDebugEnabled()) logger.debug("executeFlow: " + textMessage);
-        	InternalEvent event = new InternalEvent(textMessage);
-        	// a. find the process instance (looking for memory only first, then regular)
-        	Long procInstId;
-        	ProcessInstance procInst;
-        	if (event.isProcess()) {
-        		if (event.getEventType().equals(EventType.FINISH)) {
-        			procInstId = null;	// not needed, and for remote process returns, will not be able to find it
-        		} else {
-        			procInstId = event.getWorkInstanceId();
-        		}
-        	} else procInstId = event.getOwnerId();
-        	if (procInstId!=null) {
-            	EngineDataAccess temp_edao = EngineDataAccessCache.getInstance(false, 9);
-            	procInst = temp_edao.getProcessInstance(procInstId);
-            	if (procInst==null) {
-            		TransactionWrapper transaction = null;
-            		EngineDataAccessDB edbao = new EngineDataAccessDB();
-            		try {
-            			transaction = edbao.startTransaction();
-            			procInst = edbao.getProcessInstance(procInstId);
-            		}
-            		catch (SQLException ex) {
-            		    if (("Failed to load process instance: " + procInstId).equals(ex.getMessage())) {
-            		        if (ApplicationContext.isDevelopment()) {
-            		            logger.severe("Unable to load process instance id=" + procInstId + ".  Was this instance deleted?");
-            		            return;
-            		        }
-            		        else {
-            		            throw ex;
-            		        }
-            		    }
-            		}
-            		finally {
-            			edbao.stopTransaction(transaction);
-            		}
-            	}
-    		} else procInst = null;
-        	// b. now determine performance level here
-        	int performance_level;
-        	if (procInst==null) {		// must be process start message
-        		if (event.isProcess() && event.getEventType().equals(EventType.START)) {
-        			Process procdef = getProcessDefinition(event.getWorkId());
-        			performance_level = procdef.getPerformanceLevel();
-        		} else performance_level = 0;
-        	} else {
-        		Process procdef = getProcessDefinition(procInst.getProcessId());
-        		if (procdef == null) {
-        		    String msg = "Unable to load process id " + procInst.getProcessId() + " (instance id=" + procInst.getId() + ") for " + msgid;
-        		    if (ApplicationContext.isFileBasedAssetPersist() && ApplicationContext.isDevelopment()) {
-        		        // referential integrity not always enforced for VCS assets
-        		        if (PropertyManager.getBooleanProperty(PropertyNames.MDW_INTERNAL_EVENT_DEV_CLEANUP, true)) {
-            		        logger.severe(msg + " (event will be deleted)");
-            		        EngineDataAccess edao = EngineDataAccessCache.getInstance(false, default_performance_level_regular);
-            		        InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
-            		        ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
-            		        engine.deleteInternalEvent(msgid);
-            		        return;
-        		        }
-        		        else {
-        		            logger.severe(msg);
-        		        }
-        		    }
-        		    else {
-        		        throw new WorkflowException(msg);
-        		    }
-        		}
-            	performance_level = procdef.getPerformanceLevel();
-        	}
-    		if (performance_level<=0) performance_level = default_performance_level_regular;
-    		// c. create engine
-        	EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
-    		InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
+            InternalEvent event = new InternalEvent(textMessage);
+            // a. find the process instance (looking for memory only first, then regular)
+            Long procInstId;
+            ProcessInstance procInst;
+            if (event.isProcess()) {
+                if (event.getEventType().equals(EventType.FINISH)) {
+                    procInstId = null;    // not needed, and for remote process returns, will not be able to find it
+                } else {
+                    procInstId = event.getWorkInstanceId();
+                }
+            } else procInstId = event.getOwnerId();
+            if (procInstId!=null) {
+                EngineDataAccess temp_edao = EngineDataAccessCache.getInstance(false, 9);
+                procInst = temp_edao.getProcessInstance(procInstId);
+                if (procInst==null) {
+                    TransactionWrapper transaction = null;
+                    EngineDataAccessDB edbao = new EngineDataAccessDB();
+                    try {
+                        transaction = edbao.startTransaction();
+                        procInst = edbao.getProcessInstance(procInstId);
+                    }
+                    catch (SQLException ex) {
+                        if (("Failed to load process instance: " + procInstId).equals(ex.getMessage())) {
+                            if (ApplicationContext.isDevelopment()) {
+                                logger.severe("Unable to load process instance id=" + procInstId + ".  Was this instance deleted?");
+                                return;
+                            }
+                            else {
+                                throw ex;
+                            }
+                        }
+                    }
+                    finally {
+                        edbao.stopTransaction(transaction);
+                    }
+                }
+            } else procInst = null;
+            // b. now determine performance level here
+            int performance_level;
+            if (procInst==null) {        // must be process start message
+                if (event.isProcess() && event.getEventType().equals(EventType.START)) {
+                    Process procdef = getProcessDefinition(event.getWorkId());
+                    performance_level = procdef.getPerformanceLevel();
+                } else performance_level = 0;
+            } else {
+                Process procdef = getProcessDefinition(procInst.getProcessId());
+                if (procdef == null) {
+                    String msg = "Unable to load process id " + procInst.getProcessId() + " (instance id=" + procInst.getId() + ") for " + msgid;
+                    if (ApplicationContext.isFileBasedAssetPersist() && ApplicationContext.isDevelopment()) {
+                        // referential integrity not always enforced for VCS assets
+                        if (PropertyManager.getBooleanProperty(PropertyNames.MDW_INTERNAL_EVENT_DEV_CLEANUP, true)) {
+                            logger.severe(msg + " (event will be deleted)");
+                            EngineDataAccess edao = EngineDataAccessCache.getInstance(false, default_performance_level_regular);
+                            InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
+                            ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
+                            engine.deleteInternalEvent(msgid);
+                            return;
+                        }
+                        else {
+                            logger.severe(msg);
+                        }
+                    }
+                    else {
+                        throw new WorkflowException(msg);
+                    }
+                }
+                performance_level = procdef.getPerformanceLevel();
+            }
+            if (performance_level<=0) performance_level = default_performance_level_regular;
+            // c. create engine
+            EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
+            InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
             ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
-    		if (msgid!=null) {
-    			boolean success = engine.deleteInternalEvent(msgid);
-    			if (!success) {
-    				// retry two times to get around race condition (internal event inserted
-    				// into EVENT_INSTANCE table but not committed yet)
-    				int retries = 0;
-    				while (!success && retries<2) {
-    					logger.debug("Failed to consume internal event " + msgid + " - retry in 2 seconds");
-    					Thread.sleep(eventConsumeRetrySleep * 1000);
-    					retries++;
-    					success = engine.deleteInternalEvent(msgid);
-    				}
-    			}
-    			if (!success) {
-    				logger.warn("Fail to consume internal event " + msgid + " - assuming the event is already processed by another thread");
-    				return;	// already processed;
-    			}
-    		}
-    		if (performance_level>=9) msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
-    		else if (performance_level>=3) msgBroker.setCacheOption(InternalMessenger.CACHE_ON);
-    		// d. process event(s)
-        	if (performance_level>=3) {
-        		// TODO cache proc inst
-        		processEvent(engine, event, procInst);
-            	while ((event=msgBroker.getNextMessageFromQueue(engine))!=null) {
-            		procInst = this.findProcessInstance(engine, event);
-            		processEvent(engine, event, procInst);
-    			}
-        	} else {
-        		processEvent(engine, event, procInst);
-        	}
-		} catch (XmlException e) {
-			logger.severeException("Unparsable xml message: " + textMessage, e);
-		} catch (Throwable ex) {
-			logger.severeException(ex.getMessage(), ex);
-		}
+            if (msgid!=null) {
+                boolean success = engine.deleteInternalEvent(msgid);
+                if (!success) {
+                    // retry two times to get around race condition (internal event inserted
+                    // into EVENT_INSTANCE table but not committed yet)
+                    int retries = 0;
+                    while (!success && retries<2) {
+                        logger.debug("Failed to consume internal event " + msgid + " - retry in 2 seconds");
+                        Thread.sleep(eventConsumeRetrySleep * 1000);
+                        retries++;
+                        success = engine.deleteInternalEvent(msgid);
+                    }
+                }
+                if (!success) {
+                    logger.warn("Fail to consume internal event " + msgid + " - assuming the event is already processed by another thread");
+                    return;    // already processed;
+                }
+            }
+            if (performance_level>=9) msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
+            else if (performance_level>=3) msgBroker.setCacheOption(InternalMessenger.CACHE_ON);
+            // d. process event(s)
+            if (performance_level>=3) {
+                // TODO cache proc inst
+                processEvent(engine, event, procInst);
+                while ((event=msgBroker.getNextMessageFromQueue(engine))!=null) {
+                    procInst = this.findProcessInstance(engine, event);
+                    processEvent(engine, event, procInst);
+                }
+            } else {
+                processEvent(engine, event, procInst);
+            }
+        } catch (XmlException e) {
+            logger.severeException("Unparsable xml message: " + textMessage, e);
+        } catch (Throwable ex) {
+            logger.severeException(ex.getMessage(), ex);
+        }
     }
 
     private void processEvent(ProcessExecutor engine,
-    		InternalEvent event, ProcessInstance procInst) {
+            InternalEvent event, ProcessInstance procInst) {
         try {
-        	if (event.isProcess()) {
-        		if (event.getEventType().equals(EventType.START)) {
-        			if (procInst==null) {
-        				procInst = engine.createProcessInstance(
-        						event.getWorkId(), event.getOwnerType(), event.getOwnerId(),
-        						event.getSecondaryOwnerType(), event.getSecondaryOwnerId(),
-        						event.getMasterRequestId(), event.getParameters());
-        			}
-        			engine.startProcessInstance(procInst, 0);
-    	        } else if (event.getEventType().equals(EventType.FINISH)) {
-    	        	// do not check status - process is already in completed status
-    	        	engine.handleProcessFinish(event);
-    	        } else if (event.getEventType().equals(EventType.ABORT)) {
-		            if (!processInstanceIsActive(procInst)) return;
-    	            engine.abortProcessInstance(event);
-    	        }
-        	} else {
-	            if (!processInstanceIsActive(procInst)) return;
-        		if (event.getEventType().equals(EventType.START)) {
-        			this.executeActivity(engine, event, procInst);
-    	        } else if (event.getEventType().equals(EventType.RESUME)) {
-    	        	resumeActivity(engine, event, procInst, false);
-    	        } else if (event.getEventType().equals(EventType.DELAY)) {
-    	        	handleDelay(engine, event, procInst);
-    	        } else {
-    	            Process processVO = getProcessDefinition(procInst);
-    	            procInst.setProcessName(processVO.getProcessName());
-    	            List<Transition> workTransitionVOs = processVO.getWorkTransitions(event.getWorkId(),
-    	            		event.getEventType(), event.getCompletionCode());
-    	            if (CollectionUtil.isNotEmpty(workTransitionVOs)) {
-    	            	engine.createTransitionInstances(procInst, workTransitionVOs,
-    	            			event.isProcess()?null:event.getWorkInstanceId());
-    	            } else if (event.getEventType().equals(EventType.FINISH)) {
-    	                    // do nothing
-    	            } else if (event.getEventType().equals(EventType.ERROR)) {
-    	            	if (!processVO.isEmbeddedExceptionHandler()) {
-    	            		engine.updateProcessInstanceStatus(procInst.getId(), WorkStatus.STATUS_WAITING);
-    	            		if (!engine.isInService()) {
-    	            			handleInheritedEvent(engine, procInst, processVO, event, EventType.ERROR);
-    	            		}
-    	            	} else {
-    	            		logger.info("Error occurred inside an error handler!!!");
-    	            	}
-    	            } else if (event.getEventType().equals(EventType.CORRECT)) {
-    	            	handleInheritedEvent(engine, procInst, processVO, event, EventType.CORRECT);
-    	            } else if (event.getEventType().equals(EventType.ABORT)) {
-    	            	handleInheritedEvent(engine, procInst, processVO, event, EventType.ABORT);
-    	            }
-    	        }
-        	}
+            if (event.isProcess()) {
+                if (event.getEventType().equals(EventType.START)) {
+                    if (procInst==null) {
+                        procInst = engine.createProcessInstance(
+                                event.getWorkId(), event.getOwnerType(), event.getOwnerId(),
+                                event.getSecondaryOwnerType(), event.getSecondaryOwnerId(),
+                                event.getMasterRequestId(), event.getParameters());
+                    }
+                    engine.startProcessInstance(procInst, 0);
+                } else if (event.getEventType().equals(EventType.FINISH)) {
+                    // do not check status - process is already in completed status
+                    engine.handleProcessFinish(event);
+                } else if (event.getEventType().equals(EventType.ABORT)) {
+                    if (!processInstanceIsActive(procInst)) return;
+                    engine.abortProcessInstance(event);
+                }
+            } else {
+                if (!processInstanceIsActive(procInst)) return;
+                if (event.getEventType().equals(EventType.START)) {
+                    this.executeActivity(engine, event, procInst);
+                } else if (event.getEventType().equals(EventType.RESUME)) {
+                    resumeActivity(engine, event, procInst, false);
+                } else if (event.getEventType().equals(EventType.DELAY)) {
+                    handleDelay(engine, event, procInst);
+                } else {
+                    Process processVO = getProcessDefinition(procInst);
+                    procInst.setProcessName(processVO.getProcessName());
+                    List<Transition> workTransitionVOs = processVO.getWorkTransitions(event.getWorkId(),
+                            event.getEventType(), event.getCompletionCode());
+                    if (CollectionUtil.isNotEmpty(workTransitionVOs)) {
+                        engine.createTransitionInstances(procInst, workTransitionVOs,
+                                event.isProcess()?null:event.getWorkInstanceId());
+                    } else if (event.getEventType().equals(EventType.FINISH)) {
+                            // do nothing
+                    } else if (event.getEventType().equals(EventType.ERROR)) {
+                        if (!processVO.isEmbeddedExceptionHandler()) {
+                            engine.updateProcessInstanceStatus(procInst.getId(), WorkStatus.STATUS_WAITING);
+                            if (!engine.isInService()) {
+                                handleInheritedEvent(engine, procInst, processVO, event, EventType.ERROR);
+                            }
+                        } else {
+                            logger.info("Error occurred inside an error handler!!!");
+                        }
+                    } else if (event.getEventType().equals(EventType.CORRECT)) {
+                        handleInheritedEvent(engine, procInst, processVO, event, EventType.CORRECT);
+                    } else if (event.getEventType().equals(EventType.ABORT)) {
+                        handleInheritedEvent(engine, procInst, processVO, event, EventType.ABORT);
+                    }
+                }
+            }
         } catch (Throwable ex) {
             logger.severeException("Fatal exception in executeFlow - cannot generate fallout task", ex);
         }
     }
 
-	private void addDocumentToCache(ProcessExecutor engine, Long docid, String type, String content) {
-    	if (content!=null) {
-    		if (docid.longValue()==0L) {
-    			try {
-					engine.createDocument(type, OwnerType.LISTENER_REQUEST, 0L, content);
-				} catch (DataAccessException e) {
-					// should never happen, as this is cache only
-				}
-    		} else {
-    	    	Document docvo = new Document();
-    	    	docvo.setContent(content);
-    	    	docvo.setDocumentId(docid);
-    	    	docvo.setDocumentType(type);
-    			engine.addDocumentToCache(docvo);
-    		}
-    	}
+    private void addDocumentToCache(ProcessExecutor engine, Long docid, String type, String content) {
+        if (content!=null) {
+            if (docid.longValue()==0L) {
+                try {
+                    engine.createDocument(type, OwnerType.LISTENER_REQUEST, 0L, content);
+                } catch (DataAccessException e) {
+                    // should never happen, as this is cache only
+                }
+            } else {
+                Document docvo = new Document();
+                docvo.setContent(content);
+                docvo.setDocumentId(docid);
+                docvo.setDocumentType(type);
+                engine.addDocumentToCache(docvo);
+            }
+        }
     }
 
     /**
@@ -619,11 +619,11 @@ public class ProcessEngineDriver {
      * @param masterRequest content of the request event
      * @param parameters Input parameter bindings for the process instance to be created
      * @param responseVarName the name of the variable where the response is to be obtained.
-     * 		If you leave this null, the response will be taken from "response"
-     * 		if one is defined, and null otherwise
+     *         If you leave this null, the response will be taken from "response"
+     *         if one is defined, and null otherwise
      * @param performance_level the performance level to be used to run the process.
-     * 		When a 0 is passed in, the default performance level for service processes will be used,
-     * 		unless the performance level attribute is configured for the process.
+     *         When a 0 is passed in, the default performance level for service processes will be used,
+     *         unless the performance level attribute is configured for the process.
      * @return response message, which is obtained from the variable named ie responseVarName
      *      of the process.
      * @throws Exception
@@ -633,7 +633,7 @@ public class ProcessEngineDriver {
             Map<String,String> parameters, String responseVarName, int performance_level,
             String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception
     {
-    	long startMilli = System.currentTimeMillis();
+        long startMilli = System.currentTimeMillis();
         if (performance_level<=0) performance_level = getProcessDefinition(processId).getPerformanceLevel();
         if (performance_level<=0) performance_level = default_performance_level_service;
         EngineDataAccess edao = EngineDataAccessCache.getInstance(true, performance_level);
@@ -658,15 +658,15 @@ public class ProcessEngineDriver {
             }
         }
         ProcessInstance mainProcessInst = executeServiceProcess(engine, processId,
-        		ownerType, ownerId, masterRequestId, parameters, secondaryOwnerType, secondaryOwnerId, headers);
-    	boolean completed = mainProcessInst.getStatusCode().equals(WorkStatus.STATUS_COMPLETED);
-    	String resp = completed?engine.getSynchronousProcessResponse(mainProcessInst.getId(), responseVarName):null;
-    	long stopMilli = System.currentTimeMillis();
-    	logger.info("Synchronous process executed in " +
-    			((stopMilli-startMilli)/1000.0) + " seconds at performance level " + performance_level);
-    	if (completed) return resp;
-    	if (lastException==null) throw new Exception("Process instance not completed");
-    	throw lastException;
+                ownerType, ownerId, masterRequestId, parameters, secondaryOwnerType, secondaryOwnerId, headers);
+        boolean completed = mainProcessInst.getStatusCode().equals(WorkStatus.STATUS_COMPLETED);
+        String resp = completed?engine.getSynchronousProcessResponse(mainProcessInst.getId(), responseVarName):null;
+        long stopMilli = System.currentTimeMillis();
+        logger.info("Synchronous process executed in " +
+                ((stopMilli-startMilli)/1000.0) + " seconds at performance level " + performance_level);
+        if (completed) return resp;
+        if (lastException==null) throw new Exception("Process instance not completed");
+        throw lastException;
     }
 
     /**
@@ -685,7 +685,7 @@ public class ProcessEngineDriver {
             Long parentProcInstId, String masterRequestId, Map<String,String> parameters,
             int performance_level) throws Exception
     {
-    	long startMilli = System.currentTimeMillis();
+        long startMilli = System.currentTimeMillis();
         if (performance_level<=0) performance_level = getProcessDefinition(processId).getPerformanceLevel();
         if (performance_level<=0) performance_level = default_performance_level_service;
         EngineDataAccess edao = EngineDataAccessCache.getInstance(true, performance_level);
@@ -693,15 +693,15 @@ public class ProcessEngineDriver {
         msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, true);
         ProcessInstance mainProcessInst = executeServiceProcess(engine, processId,
-        		OwnerType.PROCESS_INSTANCE, parentProcInstId, masterRequestId, parameters, null, null, null);
-       	boolean completed = mainProcessInst.getStatusCode().equals(WorkStatus.STATUS_COMPLETED);
-    	Map<String,String> resp = completed?engine.getOutPutParameters(mainProcessInst.getId(), processId):null;
-    	long stopMilli = System.currentTimeMillis();
-    	logger.info("Synchronous process executed in " +
-    			((stopMilli-startMilli)/1000.0) + " seconds at performance level " + performance_level);
-    	if (completed) return resp;
-    	if (lastException==null) throw new Exception("Process instance not completed");
-    	throw lastException;
+                OwnerType.PROCESS_INSTANCE, parentProcInstId, masterRequestId, parameters, null, null, null);
+           boolean completed = mainProcessInst.getStatusCode().equals(WorkStatus.STATUS_COMPLETED);
+        Map<String,String> resp = completed?engine.getOutPutParameters(mainProcessInst.getId(), processId):null;
+        long stopMilli = System.currentTimeMillis();
+        logger.info("Synchronous process executed in " +
+                ((stopMilli-startMilli)/1000.0) + " seconds at performance level " + performance_level);
+        if (completed) return resp;
+        if (lastException==null) throw new Exception("Process instance not completed");
+        throw lastException;
     }
 
     /**
@@ -719,59 +719,59 @@ public class ProcessEngineDriver {
     private ProcessInstance executeServiceProcess(ProcessExecutor engine, Long processId,
             String ownerType, Long ownerId, String masterRequestId, Map<String,String> parameters,
             String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
-    	Process procdef = getProcessDefinition(processId);
-    	Long startActivityId = procdef.getStartActivity().getActivityId();
+        Process procdef = getProcessDefinition(processId);
+        Long startActivityId = procdef.getStartActivity().getActivityId();
         if (masterRequestId == null)
             masterRequestId = genMasterRequestId();
         ProcessInstance mainProcessInst = engine.createProcessInstance(
-        		processId, ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
-    			masterRequestId, parameters);
+                processId, ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
+                masterRequestId, parameters);
         mainProcessInstanceId = mainProcessInst.getId();
         engine.updateProcessInstanceStatus(mainProcessInst.getId(), WorkStatus.STATUS_PENDING_PROCESS);
-    	if (OwnerType.DOCUMENT.equals(ownerType)) {
-        	setOwnerDocumentProcessInstanceId(engine, ownerId, mainProcessInst.getId(), masterRequestId);
-        	bindRequestVariable(procdef, ownerId, engine, mainProcessInst);
-    	}
-    	if (headers != null) {
-    	    bindRequestHeadersVariable(procdef, headers, engine, mainProcessInst);
-    	}
+        if (OwnerType.DOCUMENT.equals(ownerType)) {
+            setOwnerDocumentProcessInstanceId(engine, ownerId, mainProcessInst.getId(), masterRequestId);
+            bindRequestVariable(procdef, ownerId, engine, mainProcessInst);
+        }
+        if (headers != null) {
+            bindRequestHeadersVariable(procdef, headers, engine, mainProcessInst);
+        }
         logger.info(logtag(processId, mainProcessInst.getId(), masterRequestId),
                 WorkStatus.LOGMSG_PROC_START + " - " + procdef.getProcessName() + "/" + procdef.getVersionString());
         engine.notifyMonitors(mainProcessInst, WorkStatus.LOGMSG_PROC_START);
         // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
         InternalEvent event = InternalEvent.createActivityStartMessage(startActivityId,
-        		mainProcessInst.getId(), 0L, masterRequestId, EventType.EVENTNAME_START);
-    	InternalMessenger msgBroker = engine.getInternalMessenger();
-    	lastException = null;
-    	processEvent(engine, event, mainProcessInst);
+                mainProcessInst.getId(), 0L, masterRequestId, EventType.EVENTNAME_START);
+        InternalMessenger msgBroker = engine.getInternalMessenger();
+        lastException = null;
+        processEvent(engine, event, mainProcessInst);
         while ((event=msgBroker.getNextMessageFromQueue(engine))!=null) {
-    		ProcessInstance procInst = this.findProcessInstance(engine, event);
-        	processEvent(engine, event, procInst);
+            ProcessInstance procInst = this.findProcessInstance(engine, event);
+            processEvent(engine, event, procInst);
         }
         mainProcessInst = engine.getProcessInstance(mainProcessInst.getId());
         return mainProcessInst;
     }
 
     public Long getMainProcessInstanceId() {
-    	return mainProcessInstanceId;
+        return mainProcessInstanceId;
     }
 
     private void setOwnerDocumentProcessInstanceId(ProcessExecutor engine,
-    		Long msgDocId, Long procInstId, String masterRequestId) {
-    	// update document's process instance id attribute
-    	try {
-    		if (msgDocId.longValue()!=0L)
-    			engine.updateDocumentInfo(new DocumentReference(msgDocId),
-    					null, masterRequestId, null);
-    	} catch (Exception e) {
-    		// this is possible for race condition - document was just created
-    		logger.warn("Failed to update document for process instance id");
-    	}
+            Long msgDocId, Long procInstId, String masterRequestId) {
+        // update document's process instance id attribute
+        try {
+            if (msgDocId.longValue()!=0L)
+                engine.updateDocumentInfo(new DocumentReference(msgDocId),
+                        null, masterRequestId, null);
+        } catch (Exception e) {
+            // this is possible for race condition - document was just created
+            logger.warn("Failed to update document for process instance id");
+        }
     }
 
-	private void bindRequestVariable(Process procdef,
-			Long reqdocId, ProcessExecutor engine, ProcessInstance pi)
-	throws DataAccessException {
+    private void bindRequestVariable(Process procdef,
+            Long reqdocId, ProcessExecutor engine, ProcessInstance pi)
+    throws DataAccessException {
         Variable requestVO = procdef.getVariable(VariableConstants.REQUEST);
         if (requestVO==null) return;
         int cat = requestVO.getVariableCategory();
@@ -780,13 +780,13 @@ public class ProcessEngineDriver {
         if (!VariableTranslator.isDocumentReferenceVariable(vartype)) return;
         List<VariableInstance> viList = pi.getVariables();
         if (viList!=null) {
-        	for (VariableInstance vi : viList) {
-        		if (vi.getName().equals(VariableConstants.REQUEST)) return;
-        	}
+            for (VariableInstance vi : viList) {
+                if (vi.getName().equals(VariableConstants.REQUEST)) return;
+            }
         }
         DocumentReference docref = new DocumentReference(reqdocId);
         engine.createVariableInstance(pi, VariableConstants.REQUEST, docref);
-	}
+    }
 
     private void bindRequestHeadersVariable(Process procdef, Map<String,String> headers,
             ProcessExecutor engine, ProcessInstance pi) throws DataAccessException {
@@ -844,23 +844,23 @@ public class ProcessEngineDriver {
      * @throws Exception
      */
     public Long startProcess(Long processId, String masterRequestId, String ownerType,
-			Long ownerId, Map<String,String> vars,
-			String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
+            Long ownerId, Map<String,String> vars,
+            String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
         Process procdef = getProcessDefinition(processId);
         int performance_level = procdef.getPerformanceLevel();
         if (performance_level<=0) performance_level = default_performance_level_regular;
-    	EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
-		InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
-		// do not set internal messenger with cache options, as this engine does not process it directly
+        EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
+        InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
+        // do not set internal messenger with cache options, as this engine does not process it directly
         if (masterRequestId == null)
             masterRequestId = genMasterRequestId();
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
         ProcessInstance processInst = engine.createProcessInstance(processId,
-        		ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
-        		masterRequestId, vars);
+                ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
+                masterRequestId, vars);
         if (ownerType.equals(OwnerType.DOCUMENT)) {
-        	setOwnerDocumentProcessInstanceId(engine, ownerId, processInst.getId(), masterRequestId);
-        	bindRequestVariable(procdef, ownerId, engine, processInst);
+            setOwnerDocumentProcessInstanceId(engine, ownerId, processInst.getId(), masterRequestId);
+            bindRequestVariable(procdef, ownerId, engine, processInst);
         }
         if (headers != null) {
             bindRequestHeadersVariable(procdef, headers, engine, processInst);
@@ -870,7 +870,7 @@ public class ProcessEngineDriver {
         int delay = PropertyManager.getIntegerProperty(PropertyNames.MDW_PROCESS_LAUNCH_DELAY, 2);
         engine.startProcessInstance(processInst, delay);
         return processInst.getId();
-	}
+    }
 
     /**
      * Start a process from middle - for development use only
@@ -885,75 +885,75 @@ public class ProcessEngineDriver {
      * @return
      * @throws Exception
      */
-	public Long startProcessFromActivity(Long processId, Long activityId, String masterRequestId,
-			String ownerType, Long ownerId, Map<String,String> vars, Long packageId) throws Exception {
+    public Long startProcessFromActivity(Long processId, Long activityId, String masterRequestId,
+            String ownerType, Long ownerId, Map<String,String> vars, Long packageId) throws Exception {
         Process procdef = getProcessDefinition(processId);
         int performance_level = procdef.getPerformanceLevel();
         if (performance_level<=0) performance_level = default_performance_level_regular;
-    	EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
-		InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
+        EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
+        InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         Long procInstId;
         if (masterRequestId == null)
             masterRequestId = genMasterRequestId();
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
         ProcessInstance processInst = engine.createProcessInstance(
-        		procdef.getProcessId(), ownerType, ownerId, null, null,
-        		masterRequestId, vars);
+                procdef.getProcessId(), ownerType, ownerId, null, null,
+                masterRequestId, vars);
         logger.info(logtag(processId, processInst.getId(), masterRequestId),
-        		WorkStatus.LOGMSG_PROC_START + " - " + procdef.getProcessName() + "/" + procdef.getVersionString());
+                WorkStatus.LOGMSG_PROC_START + " - " + procdef.getProcessName() + "/" + procdef.getVersionString());
         engine.notifyMonitors(processInst, WorkStatus.LOGMSG_PROC_START);
-    	if (ownerType.equals(OwnerType.DOCUMENT))
-    		setOwnerDocumentProcessInstanceId(engine, ownerId, processInst.getId(), masterRequestId);
+        if (ownerType.equals(OwnerType.DOCUMENT))
+            setOwnerDocumentProcessInstanceId(engine, ownerId, processInst.getId(), masterRequestId);
         engine.updateProcessInstanceStatus(processInst.getId(), WorkStatus.STATUS_PENDING_PROCESS);
         // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
         InternalEvent evMsg = InternalEvent.createActivityStartMessage(activityId,
-	        		processInst.getId(), null, masterRequestId, null);
+                    processInst.getId(), null, masterRequestId, null);
         engine.sendInternalEvent(evMsg);
         procInstId = processInst.getId();
         return procInstId;
-	}
-
-	private String logtag(Long procId, Long procInstId, String masterRequestId) {
-    	StringBuffer sb = new StringBuffer();
-    	sb.append("p");
-    	sb.append(procId);
-    	sb.append(".");
-    	sb.append(procInstId);
-    	sb.append(" m.");
-    	sb.append(masterRequestId);
-    	return sb.toString();
-    }
-	private String logtag(Long procId, Long procInstId, Long actId, Long actInstId) {
-    	StringBuffer sb = new StringBuffer();
-    	sb.append("p");
-    	sb.append(procId);
-    	sb.append(".");
-    	sb.append(procInstId);
-    	sb.append(" a");
-    	sb.append(actId);
-    	sb.append(".");
-    	sb.append(actInstId);
-    	return sb.toString();
     }
 
-	private void loadDefaultPerformanceLevel() {
-		String pv = PropertyManager.getProperty(PropertyNames.MDW_PERFORMANCE_LEVEL_REGULAR);
-		if (pv != null)
-			default_performance_level_regular = Integer.parseInt(pv);
-		pv = PropertyManager.getProperty(PropertyNames.MDW_PERFORMANCE_LEVEL_SERVICE);
-		if (pv != null)
-			default_performance_level_service = Integer.parseInt(pv);
-	}
+    private String logtag(Long procId, Long procInstId, String masterRequestId) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("p");
+        sb.append(procId);
+        sb.append(".");
+        sb.append(procInstId);
+        sb.append(" m.");
+        sb.append(masterRequestId);
+        return sb.toString();
+    }
+    private String logtag(Long procId, Long procInstId, Long actId, Long actInstId) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("p");
+        sb.append(procId);
+        sb.append(".");
+        sb.append(procInstId);
+        sb.append(" a");
+        sb.append(actId);
+        sb.append(".");
+        sb.append(actInstId);
+        return sb.toString();
+    }
 
-	private Process getProcessDefinition(Long processId) {
+    private void loadDefaultPerformanceLevel() {
+        String pv = PropertyManager.getProperty(PropertyNames.MDW_PERFORMANCE_LEVEL_REGULAR);
+        if (pv != null)
+            default_performance_level_regular = Integer.parseInt(pv);
+        pv = PropertyManager.getProperty(PropertyNames.MDW_PERFORMANCE_LEVEL_SERVICE);
+        if (pv != null)
+            default_performance_level_service = Integer.parseInt(pv);
+    }
+
+    private Process getProcessDefinition(Long processId) {
         return ProcessCache.getProcess(processId);
-	}
+    }
 
     private Process getProcessDefinition(ProcessInstance procinst) {
-    	Process procdef = ProcessCache.getProcess(procinst.getProcessId());
-    	if (procinst.isEmbedded())
-    		procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
-    	return procdef;
+        Process procdef = ProcessCache.getProcess(procinst.getProcessId());
+        if (procinst.isEmbedded())
+            procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
+        return procdef;
     }
 
     private String genMasterRequestId() {

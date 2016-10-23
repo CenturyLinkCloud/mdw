@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.activity.types;
 
@@ -56,7 +56,7 @@ public interface SuspendibleActivity {
      *
      *
      */
-	boolean resume(InternalEvent eventMessageDoc)
+    boolean resume(InternalEvent eventMessageDoc)
     throws ActivityException;
 
     /**
@@ -77,7 +77,7 @@ public interface SuspendibleActivity {
      * in case the event is already arrived.
      *
      */
-	boolean resumeWaiting(InternalEvent event)
-	throws ActivityException;
+    boolean resumeWaiting(InternalEvent event)
+    throws ActivityException;
 
 }

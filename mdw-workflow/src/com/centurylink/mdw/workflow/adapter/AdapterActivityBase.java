@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.adapter;
 
@@ -53,7 +53,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
 
     private static Random random = null;
 
-	/**
+    /**
      * Subclasses do not have to but may override this method.
      * If you do override this method, you have to include
      * call to this super method.
@@ -65,23 +65,23 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
      * invoke() and closeConnection()
      *
      * History note:
-	 * 1. "Connector" was used only to verify legality of Adapter,
-	 *    so no longer needed
-	 * 2. "Adapter" was a separate interface. We combine it with
-	 *    this class. For that, every adapter like this must implement
-	 *    - stubAdapter
-	 *    - invokeAdapter
-	 *    - isSynchronous
-	 *    - saveResponse (for asynchronous adapter used with synchronous protocol)
-	 * 3. Removed pooling for Connector and Adapter
-	 *
-	 */
+     * 1. "Connector" was used only to verify legality of Adapter,
+     *    so no longer needed
+     * 2. "Adapter" was a separate interface. We combine it with
+     *    this class. For that, every adapter like this must implement
+     *    - stubAdapter
+     *    - invokeAdapter
+     *    - isSynchronous
+     *    - saveResponse (for asynchronous adapter used with synchronous protocol)
+     * 3. Removed pooling for Connector and Adapter
+     *
+     */
     @Override
     public void execute() throws ActivityException {
         Object requestData = this.getRequestData();
         Object responseData = null;
         Object connection = null;
-    	StubHelper stubber = new StubHelper();
+        StubHelper stubber = new StubHelper();
         boolean stubMode = stubber.isStubbing() || isStubMode();
         boolean logging = doLogging();
         try {
@@ -90,16 +90,16 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
             if (stubMode) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
-            		responseData = stubber.getStubResponse(getMasterRequestId(), requestData.toString());
-            		if (MAKE_ACTUAL_CALL.equals(responseData)) {
-                    	loginfo("Stub server instructs to get real response");
-            			connection = this.openConnection();
-            			responseData = doInvoke(connection, requestData);
-            		}
-            		else {
-            		    loginfo("Response received from stub server");
-            		}
-            	}
+                    responseData = stubber.getStubResponse(getMasterRequestId(), requestData.toString());
+                    if (MAKE_ACTUAL_CALL.equals(responseData)) {
+                        loginfo("Stub server instructs to get real response");
+                        connection = this.openConnection();
+                        responseData = doInvoke(connection, requestData);
+                    }
+                    else {
+                        loginfo("Response received from stub server");
+                    }
+                }
                 else {
                     responseData = this.getStubResponse(requestData);
                 }
@@ -249,8 +249,8 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
             // if process is invoked sync style, no need to retry due to connection failure
             Process procVO = getProcessDefinition();
             if (procVO.getProcessType().equals(ProcessVisibilityConstant.SERVICE)) {
-            	super.setReturnCode("ERROR:");
-            	return;
+                super.setReturnCode("ERROR:");
+                return;
             }
             isErrorRetryable = true;
         } else {
@@ -289,7 +289,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
             return null;
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
-            		isResponse?OwnerType.ADAPTOR_RESPONSE:OwnerType.ADAPTOR_REQUEST,
+                    isResponse?OwnerType.ADAPTOR_RESPONSE:OwnerType.ADAPTOR_REQUEST,
                     this.getActivityInstanceId());
             return docref.getDocumentId();
         } catch (Exception ex) {
@@ -503,7 +503,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
      * from code, rather than as part of process execution flow.
      * If logging is desired, extenders should override logMessage().
      *
-     * @param attrs	attributes to be passed to configure the activity.
+     * @param attrs    attributes to be passed to configure the activity.
      *
      * @param request request message
      * @return response message
@@ -511,7 +511,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
      * @throws ConnectionException
      */
     public Object directInvoke(ActivityRuntimeContext runtimeContext, Object request)
-    		throws AdapterException, ConnectionException {
+            throws AdapterException, ConnectionException {
 
         prepare(runtimeContext);
 

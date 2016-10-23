@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.task;
 
@@ -7,7 +7,7 @@ import com.centurylink.mdw.model.StatusCode;
 
 public class TaskState extends StatusCode {
 
-	public static final Integer STATE_OPEN = new Integer(1);	// means not in jeopardy
+    public static final Integer STATE_OPEN = new Integer(1);    // means not in jeopardy
     public static final Integer STATE_ALERT = new Integer(2);
     public static final Integer STATE_JEOPARDY = new Integer(3);
     public static final Integer STATE_CLOSED = new Integer(4);

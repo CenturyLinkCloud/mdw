@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.sync;
 
@@ -44,45 +44,45 @@ public class SynchronizationActivity extends AbstractWait implements com.century
      * @throws ActivityException
      */
     public  void  execute() throws ActivityException{
-    	isSynchronized = checkIfSynchronized();
-    	if (!isSynchronized) {
-    		EventWaitInstance received = registerWaitEvents(false, true);
-    		if (received!=null)
-    			resume(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
-    	}
+        isSynchronized = checkIfSynchronized();
+        if (!isSynchronized) {
+            EventWaitInstance received = registerWaitEvents(false, true);
+            if (received!=null)
+                resume(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
+        }
     }
 
     protected boolean checkIfSynchronized() throws ActivityException {
-    	String syncExpression = getAttributeValue(WorkAttributeConstant.SYNC_EXPRESSION);
-    	boolean yes;
+        String syncExpression = getAttributeValue(WorkAttributeConstant.SYNC_EXPRESSION);
+        boolean yes;
         try {
-        	ProcessExecutor engine = getEngine();
-        	Process procdef = getProcessDefinition();
-    		Map<String,String> idToEscapedName = new HashMap<String,String>();	// for backward compatibility
-        	List<Transition> incomingTransitions =
-        		getIncomingTransitions(procdef, this.getActivityId(), idToEscapedName);
-        	engine.determineCompletedTransitions(getProcessInstanceId(), incomingTransitions);
-        	if (StringHelper.isEmpty(syncExpression)) {
-        		yes = true;
-        		for (Transition one : incomingTransitions) {
-        			if (!one.getEventType().equals(EventType.FINISH)) {
-        				yes = false;
-        			}
-        		}
-        	} else {
-        		String[] syncedActivityIds = new String[incomingTransitions.size()];
-        		List<String> completedActivities = new ArrayList<String>();
-        		for (int i=0; i<syncedActivityIds.length; i++) {
-        			Transition sync = incomingTransitions.get(i);
-        			syncedActivityIds[i] = sync.getCompletionCode();
-        			if (sync.getEventType().equals(EventType.FINISH))
-        				completedActivities.add(syncedActivityIds[i]);
-        		}
-        		SyncExpressionEvaluator syncExpressionEval =
-        			new SyncExpressionEvaluator(syncedActivityIds, syncExpression, idToEscapedName);
-        		yes = syncExpressionEval.evaluate(completedActivities, getParameters());
-        	}
-        	return yes;
+            ProcessExecutor engine = getEngine();
+            Process procdef = getProcessDefinition();
+            Map<String,String> idToEscapedName = new HashMap<String,String>();    // for backward compatibility
+            List<Transition> incomingTransitions =
+                getIncomingTransitions(procdef, this.getActivityId(), idToEscapedName);
+            engine.determineCompletedTransitions(getProcessInstanceId(), incomingTransitions);
+            if (StringHelper.isEmpty(syncExpression)) {
+                yes = true;
+                for (Transition one : incomingTransitions) {
+                    if (!one.getEventType().equals(EventType.FINISH)) {
+                        yes = false;
+                    }
+                }
+            } else {
+                String[] syncedActivityIds = new String[incomingTransitions.size()];
+                List<String> completedActivities = new ArrayList<String>();
+                for (int i=0; i<syncedActivityIds.length; i++) {
+                    Transition sync = incomingTransitions.get(i);
+                    syncedActivityIds[i] = sync.getCompletionCode();
+                    if (sync.getEventType().equals(EventType.FINISH))
+                        completedActivities.add(syncedActivityIds[i]);
+                }
+                SyncExpressionEvaluator syncExpressionEval =
+                    new SyncExpressionEvaluator(syncedActivityIds, syncExpression, idToEscapedName);
+                yes = syncExpressionEval.evaluate(completedActivities, getParameters());
+            }
+            return yes;
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -96,37 +96,37 @@ public class SynchronizationActivity extends AbstractWait implements com.century
      * @return the escaped activity name
      */
     private String escape(String rawActivityName) {
-    	boolean lastIsUnderScore = false;
-    	StringBuffer sb = new StringBuffer();
-    	for (int i=0; i<rawActivityName.length(); i++) {
-    		char ch = rawActivityName.charAt(i);
-    		if (Character.isLetterOrDigit(ch)) {
-    			sb.append(ch);
-    			lastIsUnderScore = false;
-    		} else if (!lastIsUnderScore) {
-    			sb.append(UNDERSCORE);
-    			lastIsUnderScore = true;
-    		}
-    	}
-    	return sb.toString();
+        boolean lastIsUnderScore = false;
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<rawActivityName.length(); i++) {
+            char ch = rawActivityName.charAt(i);
+            if (Character.isLetterOrDigit(ch)) {
+                sb.append(ch);
+                lastIsUnderScore = false;
+            } else if (!lastIsUnderScore) {
+                sb.append(UNDERSCORE);
+                lastIsUnderScore = true;
+            }
+        }
+        return sb.toString();
     }
 
     /**
      * reuse WorkTransitionVO for sync info
      */
     private List<Transition> getIncomingTransitions(Process procdef, Long activityId,
-    		Map<String,String> idToEscapedName) {
-    	List<Transition> incomingTransitions = new ArrayList<Transition>();
+            Map<String,String> idToEscapedName) {
+        List<Transition> incomingTransitions = new ArrayList<Transition>();
         for (Transition trans : procdef.getTransitions()) {
             if (trans.getToWorkId().equals(activityId)) {
-            	Transition sync = new Transition();
-            	sync.setWorkTransitionId(trans.getWorkTransitionId());
-            	Activity act = procdef.getActivityVO(trans.getFromWorkId());
-            	String logicalId = act.getLogicalId();
-            	// id to escaped name map is for backward compatibility
-            	idToEscapedName.put(logicalId, escape(act.getActivityName()));
-            	sync.setCompletionCode(logicalId);
-            	incomingTransitions.add(sync);
+                Transition sync = new Transition();
+                sync.setWorkTransitionId(trans.getWorkTransitionId());
+                Activity act = procdef.getActivityVO(trans.getFromWorkId());
+                String logicalId = act.getLogicalId();
+                // id to escaped name map is for backward compatibility
+                idToEscapedName.put(logicalId, escape(act.getActivityName()));
+                sync.setCompletionCode(logicalId);
+                incomingTransitions.add(sync);
             }
         }
         return incomingTransitions;
@@ -141,11 +141,11 @@ public class SynchronizationActivity extends AbstractWait implements com.century
      }
 
     private boolean resume(String message, String completionCode) throws ActivityException {
-    	// process non-sync message
-    	this.setReturnCode(completionCode);
-    	processOtherMessage(message);
-    	handleEventCompletionCode();
-    	return true;
+        // process non-sync message
+        this.setReturnCode(completionCode);
+        processOtherMessage(message);
+        handleEventCompletionCode();
+        return true;
     }
 
     /**
@@ -164,73 +164,73 @@ public class SynchronizationActivity extends AbstractWait implements com.century
      * @throws ActivityException
      */
     protected void processOtherMessage(String messageString)
-    	throws ActivityException {
+        throws ActivityException {
     }
 
     private boolean isOtherEvent(InternalEvent eventMessageDoc) {
-    	return OwnerType.DOCUMENT.equals(eventMessageDoc.getSecondaryOwnerType());
+        return OwnerType.DOCUMENT.equals(eventMessageDoc.getSecondaryOwnerType());
     }
 
-	public final boolean resume(InternalEvent eventMessageDoc)
-			throws ActivityException {
-		TransactionWrapper transaction = null;
-		try {
-			transaction = startTransaction();
-	    	Integer status = super.lockActivityInstance();
-	    	if (!status.equals(WorkStatus.STATUS_WAITING)) {
-	    		this.setReturnCode("true");		// this is only used when !isSynchronized
-	    		return false;
-	    	} else if (isOtherEvent(eventMessageDoc)) {
-	         	String messageString = this.getMessageFromEventMessage(eventMessageDoc);
-	         	return resume(messageString, eventMessageDoc.getCompletionCode());
-	    	} else {
-	    		this.setReturnCode(null);
-	    		isSynchronized = this.checkIfSynchronized();
-	        	if (isSynchronized) {
-	        		try {
-	        			// Need to set status complete earlier, so that other threads can see it.
-	        			// will be set to complete status again in completeActivityInstance(), but that is fine
-						this.getEngine().setActivityInstanceStatus(this.getActivityInstance(),
-								WorkStatus.STATUS_COMPLETED, null);
-					} catch (Exception e) {
-						super.logexception("Failed to set activity instance status complete in Synchronization activity", e);
-					}
-	        		super.deregisterEvents();
-	        	}
-	        	return isSynchronized;
-	    	}
-		} finally {
-			stopTransaction(transaction);
-		}
-	}
+    public final boolean resume(InternalEvent eventMessageDoc)
+            throws ActivityException {
+        TransactionWrapper transaction = null;
+        try {
+            transaction = startTransaction();
+            Integer status = super.lockActivityInstance();
+            if (!status.equals(WorkStatus.STATUS_WAITING)) {
+                this.setReturnCode("true");        // this is only used when !isSynchronized
+                return false;
+            } else if (isOtherEvent(eventMessageDoc)) {
+                 String messageString = this.getMessageFromEventMessage(eventMessageDoc);
+                 return resume(messageString, eventMessageDoc.getCompletionCode());
+            } else {
+                this.setReturnCode(null);
+                isSynchronized = this.checkIfSynchronized();
+                if (isSynchronized) {
+                    try {
+                        // Need to set status complete earlier, so that other threads can see it.
+                        // will be set to complete status again in completeActivityInstance(), but that is fine
+                        this.getEngine().setActivityInstanceStatus(this.getActivityInstance(),
+                                WorkStatus.STATUS_COMPLETED, null);
+                    } catch (Exception e) {
+                        super.logexception("Failed to set activity instance status complete in Synchronization activity", e);
+                    }
+                    super.deregisterEvents();
+                }
+                return isSynchronized;
+            }
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
 
-	public boolean resumeWaiting(InternalEvent eventMessageDoc)
-			throws ActivityException {
-		// check if it is synchronized at this time
-		TransactionWrapper transaction = null;
-		try {
-			transaction = startTransaction();
-	    	super.lockActivityInstance();
-	    	isSynchronized = this.checkIfSynchronized();
-	    	if (isSynchronized) return true;
-			EventWaitInstance received = registerWaitEvents(true, true);
-	    	if (received!=null) {
-	 			boolean done = resume(getExternalEventInstanceDetails(received.getMessageDocumentId()),
-	 					received.getCompletionCode());
-	 			if (done) eventMessageDoc.setCompletionCode(this.getReturnCode());
-	 	    	return done;
-	 		} else {
-	 			return false;
-	 		}
-		} finally {
-			stopTransaction(transaction);
-		}
-	}
+    public boolean resumeWaiting(InternalEvent eventMessageDoc)
+            throws ActivityException {
+        // check if it is synchronized at this time
+        TransactionWrapper transaction = null;
+        try {
+            transaction = startTransaction();
+            super.lockActivityInstance();
+            isSynchronized = this.checkIfSynchronized();
+            if (isSynchronized) return true;
+            EventWaitInstance received = registerWaitEvents(true, true);
+            if (received!=null) {
+                 boolean done = resume(getExternalEventInstanceDetails(received.getMessageDocumentId()),
+                         received.getCompletionCode());
+                 if (done) eventMessageDoc.setCompletionCode(this.getReturnCode());
+                 return done;
+             } else {
+                 return false;
+             }
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
 
-	@Override
-	public boolean needSuspend() {
-	    return !isSynchronized;
-	}
+    @Override
+    public boolean needSuspend() {
+        return !isSynchronized;
+    }
 
 
 }

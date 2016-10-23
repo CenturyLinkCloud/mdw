@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.timer.startup;
 
@@ -23,20 +23,20 @@ public class ScheduledEventMonitor extends TimerTask {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     /**
-	 * Invoked periodically by the timer thread
-	 */
+     * Invoked periodically by the timer thread
+     */
     @Override
-	public void run() {
+    public void run() {
         try {
             ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
             int batch_size = PropertyManager.getIntegerProperty(PropertyNames.SCHEDULED_EVENTS_BATCH_SIZE, 1000);
             int count = 0;
-        	Date now = new Date(DatabaseAccess.getCurrentTime());
+            Date now = new Date(DatabaseAccess.getCurrentTime());
             logger.log(LogLevel.TRACE, "Processing scheduled events at: " + now);
             ScheduledEvent event = queue.getNextReadyEvent(now);
             while (event!=null && count < batch_size) {
                 count++;
-            	queue.processEvent(event, now);
+                queue.processEvent(event, now);
                 event = queue.getNextReadyEvent(now);
             }
         }

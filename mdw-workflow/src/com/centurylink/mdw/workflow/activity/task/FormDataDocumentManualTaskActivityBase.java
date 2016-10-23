@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.task;
 import java.util.ArrayList;
@@ -128,43 +128,43 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
             Integer actInstStatus = super.handleEventCompletionCode();
             if (actInstStatus.equals(WorkStatus.STATUS_CANCELLED)) {
                 try {
-                	ServiceLocator.getTaskManager().
+                    ServiceLocator.getTaskManager().
                         cancelTasksOfActivityInstance(getActivityInstanceId(), getProcessInstanceId());
                 } catch (Exception e) {
                     logger.severeException("Failed to cancel task instance - process moves on", e);
                 }
             } else if (actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
-            	try {
-            		FormDataDocument formdata = this.getFormDataDocumentFromVariable();
-            		getEngine().createEventWaitInstance(
-            				this.getActivityInstanceId(),
-            				getEventName(formdata),
-            				null, true, true);
-				} catch (Exception e) {
-					logger.severeException("Failed to re-register task action listening", e);
-				}
-				// unsolicited event listening is already registered by handleEventCompletionCode
+                try {
+                    FormDataDocument formdata = this.getFormDataDocumentFromVariable();
+                    getEngine().createEventWaitInstance(
+                            this.getActivityInstanceId(),
+                            getEventName(formdata),
+                            null, true, true);
+                } catch (Exception e) {
+                    logger.severeException("Failed to re-register task action listening", e);
+                }
+                // unsolicited event listening is already registered by handleEventCompletionCode
             }
             return true;
         }
     }
 
     protected boolean messageIsTaskAction(String messageString) throws ActivityException {
-    	if (messageString.startsWith("{")) {
-    		JSONObject jsonobj;
-			try {
-				jsonobj = new JSONObject(messageString);
-	    		JSONObject meta = jsonobj.has("META")?jsonobj.getJSONObject("META"):null;
-	    		if (meta==null || !meta.has(FormDataDocument.META_ACTION)) return false;
-	    		String action = meta.getString(FormDataDocument.META_ACTION);
-	    		return action!=null && action.startsWith("@");
-	    	} catch (JSONException e) {
-				throw new ActivityException(0, "Failed to parse JSON message", e);
-			}
-    	} else {
-    		int k = messageString.indexOf("FORMDATA");
-    		return k>0 && k<8;
-    	}
+        if (messageString.startsWith("{")) {
+            JSONObject jsonobj;
+            try {
+                jsonobj = new JSONObject(messageString);
+                JSONObject meta = jsonobj.has("META")?jsonobj.getJSONObject("META"):null;
+                if (meta==null || !meta.has(FormDataDocument.META_ACTION)) return false;
+                String action = meta.getString(FormDataDocument.META_ACTION);
+                return action!=null && action.startsWith("@");
+            } catch (JSONException e) {
+                throw new ActivityException(0, "Failed to parse JSON message", e);
+            }
+        } else {
+            int k = messageString.indexOf("FORMDATA");
+            return k>0 && k<8;
+        }
     }
 
     protected void processTaskAction(String messageString)
@@ -178,27 +178,27 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
             action = callurl.getAction();
             if (compCode==null) compCode = datadoc.getMetaValue(FormConstants.URLARG_COMPLETION_CODE);
             if (compCode==null) compCode = callurl.getParameter(FormConstants.URLARG_COMPLETION_CODE);
-        	String subaction = datadoc.getMetaValue(FormConstants.URLARG_ACTION);
-        	if (subaction==null) subaction = callurl.getParameter(FormConstants.URLARG_ACTION);
+            String subaction = datadoc.getMetaValue(FormConstants.URLARG_ACTION);
+            if (subaction==null) subaction = callurl.getParameter(FormConstants.URLARG_ACTION);
             if (this.getProcessInstance().isEmbedded()) {
-            	if (subaction==null)
-            		subaction = compCode;
+                if (subaction==null)
+                    subaction = compCode;
                 if (action.equals("@CANCEL_TASK")) {
-                	if (TaskAction.ABORT.equalsIgnoreCase(subaction))
-                		compCode = EventType.EVENTNAME_ABORT + ":process";
-                	else compCode = EventType.EVENTNAME_ABORT;
+                    if (TaskAction.ABORT.equalsIgnoreCase(subaction))
+                        compCode = EventType.EVENTNAME_ABORT + ":process";
+                    else compCode = EventType.EVENTNAME_ABORT;
                 } else {    // FormConstants.ACTION_COMPLETE_TASK
-                	if (TaskAction.RETRY.equalsIgnoreCase(subaction))
-                		compCode = TaskAction.RETRY;
-                	else if (compCode==null) compCode = EventType.EVENTNAME_FINISH;
+                    if (TaskAction.RETRY.equalsIgnoreCase(subaction))
+                        compCode = TaskAction.RETRY;
+                    else if (compCode==null) compCode = EventType.EVENTNAME_FINISH;
                     else compCode = EventType.EVENTNAME_FINISH + ":" + compCode;
                 }
-                	this.setProcessInstanceCompletionCode(compCode);
-                	setReturnCode(null);
+                    this.setProcessInstanceCompletionCode(compCode);
+                    setReturnCode(null);
             } else {
                 if (action.equals("@CANCEL_TASK")) {
                     if (TaskAction.ABORT.equalsIgnoreCase(subaction))
-                    	compCode = WorkStatus.STATUSNAME_CANCELLED + "::" + EventType.EVENTNAME_ABORT;
+                        compCode = WorkStatus.STATUSNAME_CANCELLED + "::" + EventType.EVENTNAME_ABORT;
                     else compCode = WorkStatus.STATUSNAME_CANCELLED + "::";
                     setReturnCode(compCode);
                 } else {    // FormConstants.ACTION_COMPLETE_TASK
@@ -216,7 +216,7 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
         boolean done;
         EventWaitInstance received;
         try {
-        	// re-register wait events
+            // re-register wait events
             FormDataDocument formdata = this.getFormDataDocumentFromVariable();
             received = getEngine().createEventWaitInstance(
                     this.getActivityInstanceId(),
@@ -264,8 +264,8 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
     }
 
     protected final void fillInDataFromProcessVariables(FormDataDocument formdatadoc)
-    		throws ActivityException {
-    	DomDocument formdoc = loadForm();
+            throws ActivityException {
+        DomDocument formdoc = loadForm();
         fillInData(formdatadoc, formdoc.getRootNode());
     }
 

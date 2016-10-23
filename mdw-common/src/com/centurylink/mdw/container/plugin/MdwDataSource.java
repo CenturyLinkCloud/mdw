@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.container.plugin;
 
@@ -12,18 +12,18 @@ import com.centurylink.mdw.container.DataSourceProvider;
 
 public class MdwDataSource implements DataSourceProvider {
 
-	private static HashMap<String,DataSource> dataSources;
-	
-	public DataSource getDataSource(String dataSourceName) throws NamingException {
-		DataSource dataSource = dataSources.get(dataSourceName);
-		if (dataSource==null)
-			throw new NamingException("Data source is not found: " + dataSourceName);
-		return dataSource;
-	}
-	
-	public void setDataSource(String dataSourceName, DataSource dataSource) {
-		if (dataSources==null) dataSources = new HashMap<String,DataSource>();
-		dataSources.put(dataSourceName, dataSource);
-	}
+    private static HashMap<String,DataSource> dataSources;
+    
+    public DataSource getDataSource(String dataSourceName) throws NamingException {
+        DataSource dataSource = dataSources.get(dataSourceName);
+        if (dataSource==null)
+            throw new NamingException("Data source is not found: " + dataSourceName);
+        return dataSource;
+    }
+    
+    public void setDataSource(String dataSourceName, DataSource dataSource) {
+        if (dataSources==null) dataSources = new HashMap<String,DataSource>();
+        dataSources.put(dataSourceName, dataSource);
+    }
 
 }

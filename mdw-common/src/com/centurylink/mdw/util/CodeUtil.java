@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.util;
 
@@ -10,7 +10,7 @@ import com.centurylink.mdw.util.file.FileHelper;
 
 public class CodeUtil {
 
-    public static final String HEADER_COMMENT = "/**\r\n * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.\r\n */\r\n";
+    public static final String HEADER_COMMENT = "/**\r\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\r\n */\r\n";
 
     /**
      * @param args h c:/workspaces/mdw (for adding standard header comments to *.java)

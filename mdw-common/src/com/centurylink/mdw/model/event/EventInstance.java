@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.event;
 
@@ -19,13 +19,13 @@ public class EventInstance implements Serializable {
     // scheduled jobs (a.k.a timer tasks)
     public static final Integer STATUS_SCHEDULED_JOB = 5;
     // internal event - including following 3 types:
-    //	  a) delayed message:
-    //			consumeDate is not null, reference can be null or others,
-    //			event name is often InternalEvent.<actInstId> when the event is for notifying an activity instance
-    //			or InternalEvent.<procInstId>start<activityId> when the event is to start an activity instance
-    //	  b) resume message due to connection pool down:
-    //			consumerDate is null, reference is "pool:poolname", event name is InternalEvent.<actInstId>
-    //	  c) active message: consumeDate is null, reference is "active"
+    //      a) delayed message:
+    //            consumeDate is not null, reference can be null or others,
+    //            event name is often InternalEvent.<actInstId> when the event is for notifying an activity instance
+    //            or InternalEvent.<procInstId>start<activityId> when the event is to start an activity instance
+    //      b) resume message due to connection pool down:
+    //            consumerDate is null, reference is "pool:poolname", event name is InternalEvent.<actInstId>
+    //      c) active message: consumeDate is null, reference is "active"
     public static final Integer STATUS_INTERNAL_EVENT = 7;
     // certified messages
     public static final Integer STATUS_CERTIFIED_MESSAGE = 6;
@@ -56,7 +56,7 @@ public class EventInstance implements Serializable {
     private String auxdata;
     private String reference;
 
-	private List<EventWaitInstance> waiters;	// for CACHE_ONLY engine mode only
+    private List<EventWaitInstance> waiters;    // for CACHE_ONLY engine mode only
 
     public EventInstance(){
     }
@@ -110,12 +110,12 @@ public class EventInstance implements Serializable {
     }
 
     public String getComments() {
-		return comments;
-	}
+        return comments;
+    }
 
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
 
     public int getPreserveSeconds() {
         return preserveSeconds;
@@ -125,21 +125,21 @@ public class EventInstance implements Serializable {
         this.preserveSeconds = preserveSeconds;
     }
 
-	public String getAuxdata() {
-		return auxdata;
-	}
+    public String getAuxdata() {
+        return auxdata;
+    }
 
-	public void setAuxdata(String auxdata) {
-		this.auxdata = auxdata;
-	}
+    public void setAuxdata(String auxdata) {
+        this.auxdata = auxdata;
+    }
 
-	public String getReference() {
-		return reference;
-	}
+    public String getReference() {
+        return reference;
+    }
 
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
 
     public boolean isExisting() {
         return existing;
@@ -150,48 +150,48 @@ public class EventInstance implements Serializable {
     }
 
     public List<EventWaitInstance> getWaiters() {
-    	return this.waiters;
+        return this.waiters;
     }
 
     public void setWaiters(List<EventWaitInstance> waiters) {
-    	this.waiters = waiters;
+        this.waiters = waiters;
     }
 
     public static String getStatusName(Integer status) {
-    	if (status.equals(STATUS_WAITING)) return "Waiting";
-    	else if (status.equals(STATUS_ARRIVED)) return "Arrived";
-    	else if (status.equals(STATUS_CONSUMED)) return "Consumed-multiple";
-    	else if (status.equals(STATUS_WAITING_MULTIPLE)) return "Waiting-multiple";
-    	else if (status.equals(STATUS_FLAG)) return "Flag";
-    	else if (status.equals(STATUS_CERTIFIED_MESSAGE)) return "Certified Message";
-    	else if (status.equals(STATUS_INTERNAL_EVENT)) return "Internal Event";
-    	else if (status.equals(STATUS_SCHEDULED_JOB)) return "Scheduled Job";
-    	else if (status.equals(STATUS_CERTIFIED_MESSAGE_CANCEL)) return "CM - Cancelled";
-    	else if (status.equals(STATUS_CERTIFIED_MESSAGE_DELIVERED)) return "CM - Delivered";
-    	else if (status.equals(STATUS_CERTIFIED_MESSAGE_RECEIVED)) return "CM - Received";
-    	else if (status.equals(STATUS_CERTIFIED_MESSAGE_HOLD)) return "CM - on hold";
-    	else return "Unknown";
+        if (status.equals(STATUS_WAITING)) return "Waiting";
+        else if (status.equals(STATUS_ARRIVED)) return "Arrived";
+        else if (status.equals(STATUS_CONSUMED)) return "Consumed-multiple";
+        else if (status.equals(STATUS_WAITING_MULTIPLE)) return "Waiting-multiple";
+        else if (status.equals(STATUS_FLAG)) return "Flag";
+        else if (status.equals(STATUS_CERTIFIED_MESSAGE)) return "Certified Message";
+        else if (status.equals(STATUS_INTERNAL_EVENT)) return "Internal Event";
+        else if (status.equals(STATUS_SCHEDULED_JOB)) return "Scheduled Job";
+        else if (status.equals(STATUS_CERTIFIED_MESSAGE_CANCEL)) return "CM - Cancelled";
+        else if (status.equals(STATUS_CERTIFIED_MESSAGE_DELIVERED)) return "CM - Delivered";
+        else if (status.equals(STATUS_CERTIFIED_MESSAGE_RECEIVED)) return "CM - Received";
+        else if (status.equals(STATUS_CERTIFIED_MESSAGE_HOLD)) return "CM - on hold";
+        else return "Unknown";
     }
 
     public static Integer getStatusCodeFromName(String v) {
-    	if (v.equalsIgnoreCase("Waiting")) return STATUS_WAITING;
-    	else if (v.equalsIgnoreCase("Arrived")) return STATUS_ARRIVED;
-    	else if (v.equalsIgnoreCase("Consumed-multiple")) return STATUS_CONSUMED;
-    	else if (v.equalsIgnoreCase("Waiting-multiple")) return STATUS_WAITING_MULTIPLE;
-    	else if (v.equalsIgnoreCase("Flag")) return STATUS_FLAG;
-    	else if (v.equalsIgnoreCase("Certified Message")) return STATUS_CERTIFIED_MESSAGE;
-    	else if (v.equalsIgnoreCase("Internal Event")) return STATUS_INTERNAL_EVENT;
-    	else if (v.equalsIgnoreCase("Scheduled Job")) return STATUS_SCHEDULED_JOB;
-    	else if (v.equalsIgnoreCase("CM - Cancelled")) return STATUS_CERTIFIED_MESSAGE_CANCEL;
-    	else if (v.equalsIgnoreCase("CM - Delivered")) return STATUS_CERTIFIED_MESSAGE_DELIVERED;
-    	else if (v.equalsIgnoreCase("CM - Received")) return STATUS_CERTIFIED_MESSAGE_RECEIVED;
-    	else if (v.equalsIgnoreCase("CM - on hold")) return STATUS_CERTIFIED_MESSAGE_HOLD;
-    	else return null;
+        if (v.equalsIgnoreCase("Waiting")) return STATUS_WAITING;
+        else if (v.equalsIgnoreCase("Arrived")) return STATUS_ARRIVED;
+        else if (v.equalsIgnoreCase("Consumed-multiple")) return STATUS_CONSUMED;
+        else if (v.equalsIgnoreCase("Waiting-multiple")) return STATUS_WAITING_MULTIPLE;
+        else if (v.equalsIgnoreCase("Flag")) return STATUS_FLAG;
+        else if (v.equalsIgnoreCase("Certified Message")) return STATUS_CERTIFIED_MESSAGE;
+        else if (v.equalsIgnoreCase("Internal Event")) return STATUS_INTERNAL_EVENT;
+        else if (v.equalsIgnoreCase("Scheduled Job")) return STATUS_SCHEDULED_JOB;
+        else if (v.equalsIgnoreCase("CM - Cancelled")) return STATUS_CERTIFIED_MESSAGE_CANCEL;
+        else if (v.equalsIgnoreCase("CM - Delivered")) return STATUS_CERTIFIED_MESSAGE_DELIVERED;
+        else if (v.equalsIgnoreCase("CM - Received")) return STATUS_CERTIFIED_MESSAGE_RECEIVED;
+        else if (v.equalsIgnoreCase("CM - on hold")) return STATUS_CERTIFIED_MESSAGE_HOLD;
+        else return null;
     }
 
     public static String getStatusName(String statusValueString) {
-    	int status = Integer.parseInt(statusValueString);
-    	return getStatusName(status);
+        int status = Integer.parseInt(statusValueString);
+        return getStatusName(status);
     }
 
 }

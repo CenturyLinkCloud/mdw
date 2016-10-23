@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.cache.impl;
 
@@ -23,9 +23,9 @@ import com.centurylink.mdw.model.variable.VariableType;
 public class VariableTypeCache implements PreloadableCache {
 
     private static HashMap<String,VariableType> myCache
-    	= new HashMap<String,VariableType>();
+        = new HashMap<String,VariableType>();
     private static HashMap<Long,VariableType> yourCache
-    	= new HashMap<Long,VariableType>();
+        = new HashMap<Long,VariableType>();
 
     public void initialize(Map<String,String> params) {}
 
@@ -40,13 +40,13 @@ public class VariableTypeCache implements PreloadableCache {
 
     }
 
-	public void clearCache() {
-		 myCache.clear();
+    public void clearCache() {
+         myCache.clear();
          yourCache.clear();
-	}
+    }
 
     public synchronized void refreshCache() throws CachingException {
-     //   	 clearCache();
+     //        clearCache();
              loadCache();
     }
 
@@ -55,13 +55,13 @@ public class VariableTypeCache implements PreloadableCache {
     }
 
     public static String getTypeName(Long typeId) {
-    	VariableType vo = yourCache.get(typeId);
-    	return vo==null?null:vo.getVariableType();
+        VariableType vo = yourCache.get(typeId);
+        return vo==null?null:vo.getVariableType();
     }
 
     public static Long getTypeId(String typeName) {
-    	VariableType vo = myCache.get(typeName);
-    	return vo==null?null:vo.getVariableTypeId();
+        VariableType vo = myCache.get(typeName);
+        return vo==null?null:vo.getVariableTypeId();
     }
 
     public static void loadCache(List<VariableType> types) throws DataAccessException {

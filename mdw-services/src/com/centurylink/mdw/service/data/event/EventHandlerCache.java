@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.service.data.event;
 
@@ -22,7 +22,7 @@ public class EventHandlerCache implements PreloadableCache {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static HashMap<String,List<ExternalEvent>> myCache =
-    	new HashMap<String,List<ExternalEvent>>();
+        new HashMap<String,List<ExternalEvent>>();
     private static ExternalEvent defaultEventHandler = null;
 
     public EventHandlerCache(){
@@ -32,10 +32,10 @@ public class EventHandlerCache implements PreloadableCache {
     public void initialize(Map<String,String> params) {}
 
     /**
-	 * Method that clears the cache
+     * Method that clears the cache
      * @return ObjectCache
-	 */
-	public void clearCache(){
+     */
+    public void clearCache(){
         myCache.clear();
     }
 
@@ -50,11 +50,11 @@ public class EventHandlerCache implements PreloadableCache {
 
     public static synchronized ExternalEvent getDefaultEventHandler(){
         if (defaultEventHandler==null) {
-        	defaultEventHandler = new ExternalEvent();
-        	defaultEventHandler.setEventName("DefaultEventHandler");
-        	defaultEventHandler.setEventHandler("com.centurylink.mdw.listener.DefaultEventHandler");
-        	defaultEventHandler.setPackageName("com.centurylink.mdw.base");
-        	defaultEventHandler.setId(new Long(0));
+            defaultEventHandler = new ExternalEvent();
+            defaultEventHandler.setEventName("DefaultEventHandler");
+            defaultEventHandler.setEventHandler("com.centurylink.mdw.listener.DefaultEventHandler");
+            defaultEventHandler.setPackageName("com.centurylink.mdw.base");
+            defaultEventHandler.setId(new Long(0));
         }
         return defaultEventHandler;
     }
@@ -88,28 +88,28 @@ public class EventHandlerCache implements PreloadableCache {
         HashMap<String,List<ExternalEvent>> myCacheTemp = new HashMap<String,List<ExternalEvent>>();
         try {
             ProcessLoader loader = DataAccess.getProcessLoader();
-    		List<ExternalEvent> all = loader.loadExternalEvents();
-    		for (ExternalEvent e : all) {
-    			if (e.getEventName().equals("DefaultEventHandler")) {
-    				defaultEventHandler = e;
-    				continue;
-    			}
-    			try{
-    				XmlPath xpath = e.getXpath();
-    				List<ExternalEvent> bucket = myCacheTemp.get(xpath.getHashBucket());
-    				if (bucket==null) {
-    					bucket = new ArrayList<ExternalEvent>();
-    					myCacheTemp.put(xpath.getHashBucket(), bucket);
-    				}
-    				bucket.add(e);
-    			} catch (Exception ex) {
-    				logger.severeException("Cannot parse event pattern '" + e.getEventName() + "'", ex);
-    			}
-    		}
-    		myCache = myCacheTemp;
-    	} catch(Exception ex){
-    		throw new CachingException(-1, ex.getMessage(), ex);
-    	}
+            List<ExternalEvent> all = loader.loadExternalEvents();
+            for (ExternalEvent e : all) {
+                if (e.getEventName().equals("DefaultEventHandler")) {
+                    defaultEventHandler = e;
+                    continue;
+                }
+                try{
+                    XmlPath xpath = e.getXpath();
+                    List<ExternalEvent> bucket = myCacheTemp.get(xpath.getHashBucket());
+                    if (bucket==null) {
+                        bucket = new ArrayList<ExternalEvent>();
+                        myCacheTemp.put(xpath.getHashBucket(), bucket);
+                    }
+                    bucket.add(e);
+                } catch (Exception ex) {
+                    logger.severeException("Cannot parse event pattern '" + e.getEventName() + "'", ex);
+                }
+            }
+            myCache = myCacheTemp;
+        } catch(Exception ex){
+            throw new CachingException(-1, ex.getMessage(), ex);
+        }
     }
 
 

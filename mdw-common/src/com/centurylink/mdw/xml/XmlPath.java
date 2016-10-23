@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.xml;
 
@@ -92,7 +92,7 @@ public class XmlPath {
     }
     
     public String getHashBucket() {
-    	return path_seg.name==null?"*":path_seg.name;	// either a root element name or *
+        return path_seg.name==null?"*":path_seg.name;    // either a root element name or *
     }
     
     public static String getRootNodeName(Document reqdoc) {

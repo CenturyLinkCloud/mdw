@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.util;
 
@@ -49,9 +49,9 @@ public class JMSServices {
     private MessageProducer mdwMessageProducer;
 
     private JMSServices(NamingProvider namingProvider, JmsProvider jmsProvider) {
-    	this.namingProvider = namingProvider;
-    	this.jmsProvider = jmsProvider;
-    	logger = LoggerUtil.getStandardLogger();
+        this.namingProvider = namingProvider;
+        this.jmsProvider = jmsProvider;
+        logger = LoggerUtil.getStandardLogger();
         queueCache = new Hashtable<String,Queue>();
         queueConnFactoryCache = new Hashtable<String,QueueConnectionFactory>();
         topicConnFactoryCache = new Hashtable<String,TopicConnectionFactory>();
@@ -71,18 +71,18 @@ public class JMSServices {
     }
 
     public static JMSServices getInstance() {
-    	if (instance == null)
-    	    instance = new JMSServices(ApplicationContext.getNamingProvider(), ApplicationContext.getJmsProvider());
-    	return instance;
+        if (instance == null)
+            instance = new JMSServices(ApplicationContext.getNamingProvider(), ApplicationContext.getJmsProvider());
+        return instance;
     }
 
     public boolean initialized() {
-    	return namingProvider!=null;
+        return namingProvider!=null;
     }
 
     public void initialize(NamingProvider namingProvider, JmsProvider jmsProvider) {
-    	this.namingProvider = namingProvider;
-    	this.jmsProvider = jmsProvider;
+        this.namingProvider = namingProvider;
+        this.jmsProvider = jmsProvider;
     }
 
     /**
@@ -106,7 +106,7 @@ public class JMSServices {
      * @throws ServiceLocatorException
      */
     public void sendTextMessage(String contextUrl, String queueName, String message,
-    		int delaySeconds, String correlationId)
+            int delaySeconds, String correlationId)
     throws NamingException, JMSException, ServiceLocatorException {
         if (logger.isDebugEnabled())
             logger.debug("Send JMS message: " + message);
@@ -166,14 +166,14 @@ public class JMSServices {
     public QueueConnectionFactory getQueueConnectionFactory(String contextUrl)
     throws ServiceLocatorException {
         QueueConnectionFactory factory = (QueueConnectionFactory)
-        	queueConnFactoryCache.get(contextUrl==null?THIS_SERVER:contextUrl);
+            queueConnFactoryCache.get(contextUrl==null?THIS_SERVER:contextUrl);
         if (factory == null) {
             try {
                 factory = jmsProvider.getQueueConnectionFactory(namingProvider, contextUrl);
-            	if (contextUrl==null)
-            		queueConnFactoryCache.put(THIS_SERVER, factory);
-            	else
-            		queueConnFactoryCache.put(contextUrl, factory);
+                if (contextUrl==null)
+                    queueConnFactoryCache.put(THIS_SERVER, factory);
+                else
+                    queueConnFactoryCache.put(contextUrl, factory);
             }
             catch (Exception ex) {
                 throw new ServiceLocatorException(-1, ex.getMessage(), ex);
@@ -229,14 +229,14 @@ public class JMSServices {
     public TopicConnectionFactory getTopicConnectionFactory(String contextUrl)
     throws ServiceLocatorException {
         TopicConnectionFactory factory = (TopicConnectionFactory)
-        	topicConnFactoryCache.get(contextUrl==null?THIS_SERVER:contextUrl);
+            topicConnFactoryCache.get(contextUrl==null?THIS_SERVER:contextUrl);
         if (factory == null) {
             try {
                 factory = jmsProvider.getTopicConnectionFactory(namingProvider, contextUrl);
-            	if (contextUrl == null)
-            		topicConnFactoryCache.put(THIS_SERVER, factory);
-            	else
-            		topicConnFactoryCache.put(contextUrl, factory);
+                if (contextUrl == null)
+                    topicConnFactoryCache.put(THIS_SERVER, factory);
+                else
+                    topicConnFactoryCache.put(contextUrl, factory);
             }
             catch (Exception ex) {
                 throw new ServiceLocatorException(-1, ex.getMessage(), ex);
@@ -252,7 +252,7 @@ public class JMSServices {
         }
         catch (Exception ex) {
             throw new ServiceLocatorException(-1, ex.getMessage(), ex);
-		}
+        }
     }
 
     /**
@@ -339,7 +339,7 @@ public class JMSServices {
     }
 
     public String invoke(String contextUrl, String reqqueue_name, String request,
-    		int timeoutSeconds, String correlationId)
+            int timeoutSeconds, String correlationId)
     throws NamingException, JMSException, ServiceLocatorException {
 
         QueueConnection connection = null;
@@ -348,7 +348,7 @@ public class JMSServices {
         Queue reqqueue = null;
         Queue respqueue = null;
         try {
-        	if (logger.isDebugEnabled()) logger.debug("Invoke jms request message: " + request);
+            if (logger.isDebugEnabled()) logger.debug("Invoke jms request message: " + request);
             QueueConnectionFactory connectionFactory = getQueueConnectionFactory(contextUrl);
             connection = connectionFactory.createQueueConnection();
             session = connection.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);
@@ -372,15 +372,15 @@ public class JMSServices {
             sender.send(textMessage);
             MessageConsumer consumer = session.createConsumer(respqueue);
             textMessage = (TextMessage)consumer.receive(timeoutSeconds*1000);
-        	if (textMessage==null) {
-        		throw new JMSException("Synchronous JMS call times out while waiting for response");
-        	} else {
-        		return textMessage.getText();
-        	}
+            if (textMessage==null) {
+                throw new JMSException("Synchronous JMS call times out while waiting for response");
+            } else {
+                return textMessage.getText();
+            }
         }
 //        catch(ServiceLocatorException ex) {
-//        	ex.printStackTrace();	// cannot use logger for chicken-egg issue
-//        	JMSException jmsEx = new JMSException(ex.getMessage());
+//            ex.printStackTrace();    // cannot use logger for chicken-egg issue
+//            JMSException jmsEx = new JMSException(ex.getMessage());
 //            jmsEx.setLinkedException(ex);
 //            throw jmsEx;
 //        }

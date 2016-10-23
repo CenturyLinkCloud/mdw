@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.cache;
 
@@ -7,7 +7,7 @@ import com.centurylink.mdw.common.MDWException;
 
 public class CachingException extends MDWException {
 
-	public CachingException(String message) {
+    public CachingException(String message) {
         super(message);
     }
 

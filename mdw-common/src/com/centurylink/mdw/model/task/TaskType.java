@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.task;
 
@@ -11,7 +11,7 @@ public interface TaskType  {
 
     public static final Integer TASK_TYPE_WORKFLOW = new Integer(1);
     
-	// GUI is for task manager created independent tasks in MDW 3/4
+    // GUI is for task manager created independent tasks in MDW 3/4
     public static final Integer TASK_TYPE_GUI = new Integer(2);
     
     // MDW 5.1 style tasks, where task definition is treated as templates.

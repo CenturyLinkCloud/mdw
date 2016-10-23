@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.process;
 
@@ -30,22 +30,22 @@ public class ProcessFinishActivity extends DefaultActivityImpl
      * Default constructor with params
      */
     public ProcessFinishActivity(){
-    	super();
+        super();
     }
 
     public String getProcessCompletionCode() {
-    	String av = this.getAttributeValue(ATTRIBUTE_TERMINATION_ACTION);
-    	if (av==null) return null;
-    	if (av.equals(ATTRVALUE_COMPLETE_PROCESS)) {
-    		av = this.getAttributeValue(ATTRIBUTE_COMPLETION_CODE);
-    		return EventType.EVENTNAME_FINISH + (av==null?"":(":" + av));
-    	} else if (av.equals(ATTRVALUE_CANCEL_PROCESS)) {
-    		return EventType.EVENTNAME_ABORT + ":process";
-    	} else return null;
+        String av = this.getAttributeValue(ATTRIBUTE_TERMINATION_ACTION);
+        if (av==null) return null;
+        if (av.equals(ATTRVALUE_COMPLETE_PROCESS)) {
+            av = this.getAttributeValue(ATTRIBUTE_COMPLETION_CODE);
+            return EventType.EVENTNAME_FINISH + (av==null?"":(":" + av));
+        } else if (av.equals(ATTRVALUE_CANCEL_PROCESS)) {
+            return EventType.EVENTNAME_ABORT + ":process";
+        } else return null;
     }
 
     public boolean doNotNotifyCaller() {
-    	return "true".equalsIgnoreCase(this.getAttributeValue(ATTRIBUTE_NO_NOTIFY));
+        return "true".equalsIgnoreCase(this.getAttributeValue(ATTRIBUTE_NO_NOTIFY));
     }
 
 }

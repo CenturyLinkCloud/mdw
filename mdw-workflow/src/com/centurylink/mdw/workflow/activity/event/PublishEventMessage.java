@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.event;
 
@@ -16,35 +16,35 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 @Tracked(LogLevel.TRACE)
 public class PublishEventMessage extends DefaultActivityImpl {
 
-	public static final String ATTRIBUTE_EVENT_NAME = "Event Name";
-	public static final String ATTRIBUTE_MESSAGE = "Message";
+    public static final String ATTRIBUTE_EVENT_NAME = "Event Name";
+    public static final String ATTRIBUTE_MESSAGE = "Message";
 
-	private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-	@Override
-	public void execute() throws ActivityException {
-		try {
-			signal(getEventName(), getEventMessage(), getEventDelay());
-		}
-		catch (Exception ex) {
-		    logger.severeException(ex.getMessage(), ex);
-			throw new ActivityException(-1, "Failed to publish event message", ex);
-		}
-	}
+    @Override
+    public void execute() throws ActivityException {
+        try {
+            signal(getEventName(), getEventMessage(), getEventDelay());
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            throw new ActivityException(-1, "Failed to publish event message", ex);
+        }
+    }
 
-	protected String getEventName() {
+    protected String getEventName() {
         String eventName = getAttributeValue(ATTRIBUTE_EVENT_NAME);
         return translatePlaceHolder(eventName);
-	}
+    }
 
-	protected String getEventMessage() {
+    protected String getEventMessage() {
         String message = this.getAttributeValue(ATTRIBUTE_MESSAGE);
         if (message == null)
               message = "Empty";
         return translatePlaceHolder(message);
-	}
+    }
 
-	protected int getEventDelay() {
+    protected int getEventDelay() {
         int delay = 2;
         String av = getProperty(PropertyNames.ACTIVITY_RESUME_DELAY);
         if (av!=null) {
@@ -57,14 +57,14 @@ public class PublishEventMessage extends DefaultActivityImpl {
             }
         }
         return delay;
-	}
+    }
 
-	protected final void signal(String eventName, String eventMessage, int delay) throws Exception {
+    protected final void signal(String eventName, String eventMessage, int delay) throws Exception {
         DocumentReference docref = this.createDocument(String.class.getName(),
-        		eventMessage, OwnerType.INTERNAL_EVENT, this.getActivityInstanceId());
+                eventMessage, OwnerType.INTERNAL_EVENT, this.getActivityInstanceId());
         super.loginfo("Publish message, event=" + eventName +
-        		", id=" + docref.getDocumentId() + ", message=" + eventMessage);
+                ", id=" + docref.getDocumentId() + ", message=" + eventMessage);
         getEngine().notifyProcess(eventName, docref.getDocumentId(), eventMessage, delay);
-	}
+    }
 
 }

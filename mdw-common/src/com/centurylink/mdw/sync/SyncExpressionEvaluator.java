@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.sync;
 
@@ -54,7 +54,7 @@ public class SyncExpressionEvaluator {
      * @return result of the evaluation
      */
     @SuppressWarnings("unchecked")
-	public boolean evaluate(List<String> completedActivities, List<VariableInstance> variableInstances)
+    public boolean evaluate(List<String> completedActivities, List<VariableInstance> variableInstances)
     throws SynchronizationException {
         if (syncedActivityIds == null || syncedActivityIds.length == 0)
             return true;
@@ -66,7 +66,7 @@ public class SyncExpressionEvaluator {
             if (syncedActivityIds != null && completedActivities != null) {
                 // set the sync values
                 for (String syncedActivityId : syncedActivityIds) {
-                	Boolean isCompleted = completedActivities.contains(syncedActivityId);
+                    Boolean isCompleted = completedActivities.contains(syncedActivityId);
                     jc.getVars().put(syncedActivityId, isCompleted);
                     // the following is for backward compatibility where escaped activity names are used
                     String escapedName = idToEscapedName.get(syncedActivityId);

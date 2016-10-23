@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.monitor;
 
@@ -11,9 +11,9 @@ import java.util.Date;
 
 public class ServiceLevelAgreement implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static final String OWNER_PROCESS =  OwnerType.PROCESS;
+    public static final String OWNER_PROCESS =  OwnerType.PROCESS;
     public static final String OWNER_ACTIVITY =  OwnerType.ACTIVITY;
     public static final String OWNER_ACTIVITY_IMPLEMENTOR =  OwnerType.ACTIVITY_IMPLEMENTOR;
     public static final String OWNER_TASK = OwnerType.TASK;

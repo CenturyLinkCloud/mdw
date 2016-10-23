@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.event;
 
@@ -22,42 +22,42 @@ import com.centurylink.mdw.model.workflow.ProcessInstance;
 
 public class InternalEvent {
 
-	private boolean isProcess;
-	private Long workId;
-	private Long transitionInstanceId;
-	private Integer eventType;
-	private String ownerType;
-	private Long ownerId;
-	private String masterRequestId;
-	private String completionCode;
-	private Long workInstanceId;
+    private boolean isProcess;
+    private Long workId;
+    private Long transitionInstanceId;
+    private Integer eventType;
+    private String ownerType;
+    private Long ownerId;
+    private String masterRequestId;
+    private String completionCode;
+    private Long workInstanceId;
 
-	private String secondaryOwnerType;
-	private Long secondaryOwnerId;
-	private Map<String,String> parameters;
-	private int messageDelay;
-	private String statusMessage;
-	private int deliveryCount;
+    private String secondaryOwnerType;
+    private Long secondaryOwnerId;
+    private Map<String,String> parameters;
+    private int messageDelay;
+    private String statusMessage;
+    private int deliveryCount;
 
-	private String messageId;
+    private String messageId;
 
-	private InternalEvent() {
-		isProcess = false;
-		messageDelay = 0;
-		statusMessage = null;
-		parameters = null;
-		secondaryOwnerType = null;
-		deliveryCount = 0;
-		setMessageId(null);
-	}
+    private InternalEvent() {
+        isProcess = false;
+        messageDelay = 0;
+        statusMessage = null;
+        parameters = null;
+        secondaryOwnerType = null;
+        deliveryCount = 0;
+        setMessageId(null);
+    }
 
-	public InternalEvent(String xmlMessage) throws XmlException {
-		this();
-		EventMessageDocument messageEventDoc = EventMessageDocument.Factory.parse(xmlMessage, Compatibility.namespaceOptions());
-		fromEventMessageDocument(messageEventDoc);
-	}
+    public InternalEvent(String xmlMessage) throws XmlException {
+        this();
+        EventMessageDocument messageEventDoc = EventMessageDocument.Factory.parse(xmlMessage, Compatibility.namespaceOptions());
+        fromEventMessageDocument(messageEventDoc);
+    }
 
-	private void fromEventMessageDocument(EventMessageDocument msgDoc) {
+    private void fromEventMessageDocument(EventMessageDocument msgDoc) {
         EventMessage aMsg = msgDoc.getEventMessage();
         isProcess = aMsg.getWorkType().equals(WorkTypeDocument.WorkType.PROCESS);
         eventType = EventType.getEventTypeFromName(aMsg.getEventType().toString());
@@ -74,10 +74,10 @@ public class InternalEvent {
         completionCode = aMsg.getWorkCompletionCode();
         EventParameters params = aMsg.getEventParameters();
         if (params!=null && !params.isNil()) {
-        	parameters = new HashMap<String,String>();
-        	for (Parameter param : params.getParameterList()) {
-        		parameters.put(param.getName(), param.getStringValue());
-        	}
+            parameters = new HashMap<String,String>();
+            for (Parameter param : params.getParameterList()) {
+                parameters.put(param.getName(), param.getStringValue());
+            }
         }
         messageDelay = aMsg.getMessageDelay();
         statusMessage = aMsg.getStatusMessage();
@@ -94,8 +94,8 @@ public class InternalEvent {
         for (String name : pParams.keySet()) {
              String val = pParams.get(name);
              if(val == null){
-				 continue;
-			 }
+                 continue;
+             }
              Parameter evParam = evParams.addNewParameter();
              evParam.setName(name);
              evParam.setStringValue(val);
@@ -106,70 +106,70 @@ public class InternalEvent {
 
     // procInstId is populated when the process instance is already created. o/w null
     public static InternalEvent createProcessStartMessage(
-    		Long processId, String parentType, Long parentId,
-    		String masterRequestId, Long procInstId,
-    		String secondaryOwnerType, Long secondaryOwnerId) {
-    	InternalEvent event = new InternalEvent();
-    	event.isProcess = true;
-    	event.workId = processId;
-    	event.eventType = EventType.START;
-    	event.ownerType = parentType;
-    	event.ownerId = parentId;
-    	event.masterRequestId = masterRequestId;
-    	event.workInstanceId = procInstId;
-//    	event.parameters = params;
-    	event.secondaryOwnerType = secondaryOwnerType;
-    	event.secondaryOwnerId = secondaryOwnerId;
-    	return event;
+            Long processId, String parentType, Long parentId,
+            String masterRequestId, Long procInstId,
+            String secondaryOwnerType, Long secondaryOwnerId) {
+        InternalEvent event = new InternalEvent();
+        event.isProcess = true;
+        event.workId = processId;
+        event.eventType = EventType.START;
+        event.ownerType = parentType;
+        event.ownerId = parentId;
+        event.masterRequestId = masterRequestId;
+        event.workInstanceId = procInstId;
+//        event.parameters = params;
+        event.secondaryOwnerType = secondaryOwnerType;
+        event.secondaryOwnerId = secondaryOwnerId;
+        return event;
     }
 
     public static InternalEvent createProcessFinishMessage(ProcessInstance processInst){
-    	InternalEvent event = new InternalEvent();
-    	event.isProcess = true;
-    	event.workId = processInst.getOwner().equals(OwnerType.MAIN_PROCESS_INSTANCE) ?
-    			new Long(processInst.getComment()) : processInst.getProcessId();
-    	event.transitionInstanceId = null;
-    	event.eventType = EventType.FINISH;
-    	event.ownerType = processInst.getOwner();
-    	event.ownerId = processInst.getOwnerId();
-    	event.workInstanceId = processInst.getId();
-    	event.masterRequestId = processInst.getMasterRequestId();
-    	return event;
+        InternalEvent event = new InternalEvent();
+        event.isProcess = true;
+        event.workId = processInst.getOwner().equals(OwnerType.MAIN_PROCESS_INSTANCE) ?
+                new Long(processInst.getComment()) : processInst.getProcessId();
+        event.transitionInstanceId = null;
+        event.eventType = EventType.FINISH;
+        event.ownerType = processInst.getOwner();
+        event.ownerId = processInst.getOwnerId();
+        event.workInstanceId = processInst.getId();
+        event.masterRequestId = processInst.getMasterRequestId();
+        return event;
     }
 
     public static InternalEvent createProcessAbortMessage(ProcessInstance processInst){
-    	InternalEvent event = new InternalEvent();
-    	event.isProcess = true;
-    	event.workInstanceId = processInst.getId();
-    	return event;
+        InternalEvent event = new InternalEvent();
+        event.isProcess = true;
+        event.workInstanceId = processInst.getId();
+        return event;
     }
 
     public static InternalEvent createActivityDelayMessage(ActivityInstance actInst,
-    		String masterRequestId) {
-    	InternalEvent event = new InternalEvent();
-    	event.workId = actInst.getDefinitionId();
-    	event.transitionInstanceId = null;
-    	event.eventType = EventType.DELAY;
-    	event.ownerType = OwnerType.PROCESS_INSTANCE;
-    	event.ownerId = actInst.getOwnerId();
-    	event.workInstanceId = actInst.getId();
-    	event.masterRequestId = masterRequestId;
-    	event.secondaryOwnerType = OwnerType.SLA;	// just an indicator for new style
-    	event.secondaryOwnerId = 1L;
-    	return event;
+            String masterRequestId) {
+        InternalEvent event = new InternalEvent();
+        event.workId = actInst.getDefinitionId();
+        event.transitionInstanceId = null;
+        event.eventType = EventType.DELAY;
+        event.ownerType = OwnerType.PROCESS_INSTANCE;
+        event.ownerId = actInst.getOwnerId();
+        event.workInstanceId = actInst.getId();
+        event.masterRequestId = masterRequestId;
+        event.secondaryOwnerType = OwnerType.SLA;    // just an indicator for new style
+        event.secondaryOwnerId = 1L;
+        return event;
     }
 
     public static InternalEvent createActivityStartMessage(
-    		Long actId, Long procInstId, Long transInstId, String masterRequestId, String compCode){
-    	InternalEvent event = new InternalEvent();
-    	event.workId = actId;
-    	event.transitionInstanceId = transInstId;
-    	event.eventType = EventType.START;
-    	event.ownerType = OwnerType.PROCESS_INSTANCE;
-    	event.ownerId = procInstId;
-    	event.masterRequestId = masterRequestId;
-    	if (compCode!=null) event.completionCode = compCode;
-    	return event;
+            Long actId, Long procInstId, Long transInstId, String masterRequestId, String compCode){
+        InternalEvent event = new InternalEvent();
+        event.workId = actId;
+        event.transitionInstanceId = transInstId;
+        event.eventType = EventType.START;
+        event.ownerType = OwnerType.PROCESS_INSTANCE;
+        event.ownerId = procInstId;
+        event.masterRequestId = masterRequestId;
+        if (compCode!=null) event.completionCode = compCode;
+        return event;
     }
 
     public static InternalEvent createActivityErrorMessage(
@@ -200,148 +200,148 @@ public class InternalEvent {
      * @return
      */
     public static InternalEvent createActivityNotifyMessage(ActivityInstance ai,
-    		Integer eventType, String masterRequestId, String compCode)
-//    		Long actId, Long actInstId, Long procInstId,
-//    		, String statusMessage)
+            Integer eventType, String masterRequestId, String compCode)
+//            Long actId, Long actInstId, Long procInstId,
+//            , String statusMessage)
     {
-    	InternalEvent event = new InternalEvent();
-    	event.workId = ai.getDefinitionId();
-    	event.transitionInstanceId = null;
-    	event.eventType = eventType;
-    	event.ownerType = OwnerType.PROCESS_INSTANCE;
-    	event.ownerId = ai.getOwnerId();
-    	event.masterRequestId = masterRequestId;
-    	event.workInstanceId = ai.getId();
-    	event.completionCode = compCode;
-    	return event;
+        InternalEvent event = new InternalEvent();
+        event.workId = ai.getDefinitionId();
+        event.transitionInstanceId = null;
+        event.eventType = eventType;
+        event.ownerType = OwnerType.PROCESS_INSTANCE;
+        event.ownerId = ai.getOwnerId();
+        event.masterRequestId = masterRequestId;
+        event.workInstanceId = ai.getId();
+        event.completionCode = compCode;
+        return event;
     }
 
-	public Long getWorkId() {
-		return workId;
-	}
+    public Long getWorkId() {
+        return workId;
+    }
 
-	public void setWorkId(Long workId) {
-		this.workId = workId;
-	}
+    public void setWorkId(Long workId) {
+        this.workId = workId;
+    }
 
-	public Integer getEventType() {
-		return eventType;
-	}
+    public Integer getEventType() {
+        return eventType;
+    }
 
-	public void setEventType(Integer eventType) {
-		this.eventType = eventType;
-	}
+    public void setEventType(Integer eventType) {
+        this.eventType = eventType;
+    }
 
-	public String getOwnerType() {
-		return ownerType;
-	}
+    public String getOwnerType() {
+        return ownerType;
+    }
 
-	public void setOwnerType(String ownerType) {
-		this.ownerType = ownerType;
-	}
+    public void setOwnerType(String ownerType) {
+        this.ownerType = ownerType;
+    }
 
-	public Long getOwnerId() {
-		return ownerId;
-	}
+    public Long getOwnerId() {
+        return ownerId;
+    }
 
-	public void setOwnerId(Long ownerId) {
-		this.ownerId = ownerId;
-	}
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
 
-	public String getMasterRequestId() {
-		return masterRequestId;
-	}
+    public String getMasterRequestId() {
+        return masterRequestId;
+    }
 
-	public void setMasterRequestId(String masterRequestId) {
-		this.masterRequestId = masterRequestId;
-	}
+    public void setMasterRequestId(String masterRequestId) {
+        this.masterRequestId = masterRequestId;
+    }
 
-	public String getCompletionCode() {
-		return completionCode;
-	}
+    public String getCompletionCode() {
+        return completionCode;
+    }
 
-	public void setCompletionCode(String completionCode) {
-		this.completionCode = completionCode;
-	}
+    public void setCompletionCode(String completionCode) {
+        this.completionCode = completionCode;
+    }
 
-	public String getSecondaryOwnerType() {
-		return secondaryOwnerType;
-	}
+    public String getSecondaryOwnerType() {
+        return secondaryOwnerType;
+    }
 
-	public void setSecondaryOwnerType(String secondaryOwnerType) {
-		this.secondaryOwnerType = secondaryOwnerType;
-	}
+    public void setSecondaryOwnerType(String secondaryOwnerType) {
+        this.secondaryOwnerType = secondaryOwnerType;
+    }
 
-	public Long getSecondaryOwnerId() {
-		return secondaryOwnerId;
-	}
+    public Long getSecondaryOwnerId() {
+        return secondaryOwnerId;
+    }
 
-	public void setSecondaryOwnerId(Long secondaryOwnerId) {
-		this.secondaryOwnerId = secondaryOwnerId;
-	}
+    public void setSecondaryOwnerId(Long secondaryOwnerId) {
+        this.secondaryOwnerId = secondaryOwnerId;
+    }
 
-	public Map<String, String> getParameters() {
-		return parameters;
-	}
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
 
-	public void setParameters(Map<String, String> parameters) {
-		this.parameters = parameters;
-	}
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
 
-	public void addParameter(String name, String value) {
-		if (parameters==null) parameters = new HashMap<String,String>();
-		parameters.put(name, value);
-	}
+    public void addParameter(String name, String value) {
+        if (parameters==null) parameters = new HashMap<String,String>();
+        parameters.put(name, value);
+    }
 
-	public int getMessageDelay() {
-		return messageDelay;
-	}
+    public int getMessageDelay() {
+        return messageDelay;
+    }
 
-	public void setMessageDelay(int messageDelay) {
-		this.messageDelay = messageDelay;
-	}
+    public void setMessageDelay(int messageDelay) {
+        this.messageDelay = messageDelay;
+    }
 
-	public Long getTransitionInstanceId() {
-		return transitionInstanceId;
-	}
+    public Long getTransitionInstanceId() {
+        return transitionInstanceId;
+    }
 
-	public void setTransitionInstanceId(Long transitionInstanceId) {
-		this.transitionInstanceId = transitionInstanceId;
-	}
+    public void setTransitionInstanceId(Long transitionInstanceId) {
+        this.transitionInstanceId = transitionInstanceId;
+    }
 
-	public Long getWorkInstanceId() {
-		return workInstanceId;
-	}
+    public Long getWorkInstanceId() {
+        return workInstanceId;
+    }
 
-	public void setWorkInstanceId(Long workInstanceId) {
-		this.workInstanceId = workInstanceId;
-	}
+    public void setWorkInstanceId(Long workInstanceId) {
+        this.workInstanceId = workInstanceId;
+    }
 
-	public String getStatusMessage() {
-		return statusMessage;
-	}
+    public String getStatusMessage() {
+        return statusMessage;
+    }
 
-	public void setStatusMessage(String statusMessage) {
-		this.statusMessage = statusMessage;
-	}
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
 
-	public int getDeliveryCount() {
-		return deliveryCount;
-	}
+    public int getDeliveryCount() {
+        return deliveryCount;
+    }
 
-	public void setDeliveryCount(int deliveryCount) {
-		this.deliveryCount = deliveryCount;
-	}
+    public void setDeliveryCount(int deliveryCount) {
+        this.deliveryCount = deliveryCount;
+    }
 
-	public boolean isProcess() {
-		return isProcess;
-	}
+    public boolean isProcess() {
+        return isProcess;
+    }
 
-	public void setProcess(boolean isProcess) {
-		this.isProcess = isProcess;
-	}
+    public void setProcess(boolean isProcess) {
+        this.isProcess = isProcess;
+    }
 
-	private EventMessageDocument toEventMessageDocument() {
+    private EventMessageDocument toEventMessageDocument() {
 
         EventMessageDocument msgDoc = EventMessageDocument.Factory.newInstance();
         EventMessage aMsg = msgDoc.addNewEventMessage();
@@ -355,12 +355,12 @@ public class InternalEvent {
         aMsg.setWorkType(isProcess?WorkTypeDocument.WorkType.PROCESS:WorkTypeDocument.WorkType.ACTIVITY);
         aMsg.setWorkInstanceId(workInstanceId!=null?workInstanceId.longValue():0L);
         if (secondaryOwnerType!=null && secondaryOwnerId!=null) {
-        	aMsg.setSecondaryWorkOwnerId(secondaryOwnerId.longValue());
-        	aMsg.setSecondaryWorkOwnerType(secondaryOwnerType);
+            aMsg.setSecondaryWorkOwnerId(secondaryOwnerId.longValue());
+            aMsg.setSecondaryWorkOwnerType(secondaryOwnerType);
         }
         if (completionCode!=null) aMsg.setWorkCompletionCode(completionCode);
         if (parameters!=null && !parameters.isEmpty()) {
-        	EventParameters params = createEventParameters(parameters);
+            EventParameters params = createEventParameters(parameters);
             aMsg.setEventParameters(params);
         }
         if (messageDelay!=0) aMsg.setMessageDelay(messageDelay);
@@ -369,23 +369,23 @@ public class InternalEvent {
         return msgDoc;
     }
 
-	public String toXml() {
-		EventMessageDocument msgDoc = this.toEventMessageDocument();
-		return msgDoc.xmlText((new XmlOptions()).setUseDefaultNamespace());
-	}
+    public String toXml() {
+        EventMessageDocument msgDoc = this.toEventMessageDocument();
+        return msgDoc.xmlText((new XmlOptions()).setUseDefaultNamespace());
+    }
 
-	@Override
-	public String toString() {
-		return toXml();
-	}
+    @Override
+    public String toString() {
+        return toXml();
+    }
 
-	public void setMessageId(String messageId) {
-		this.messageId = messageId;
-	}
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
 
-	public String getMessageId() {
-		return messageId;
-	}
+    public String getMessageId() {
+        return messageId;
+    }
 
 }
 

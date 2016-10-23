@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.util;
 
@@ -20,10 +20,10 @@ public class TransactionUtil {
     private static ThreadLocal<Connection> currentConnection;
 
     public static TransactionUtil getInstance() {
-    	if (instance==null) {
-    		instance = new TransactionUtil();
-    		currentConnection = new ThreadLocal<Connection>();
-    	}
+        if (instance==null) {
+            instance = new TransactionUtil();
+            currentConnection = new ThreadLocal<Connection>();
+        }
         return instance;
     }
     
@@ -35,7 +35,7 @@ public class TransactionUtil {
             return getTransactionManager().getTransaction();
         }
         catch (Exception ex) {
-        	StandardLogger logger = LoggerUtil.getStandardLogger();
+            StandardLogger logger = LoggerUtil.getStandardLogger();
             logger.severeException(ex.getMessage(), ex);
             return null;
         }
@@ -45,16 +45,16 @@ public class TransactionUtil {
      * Returns transaction manager
      */
     public TransactionManager getTransactionManager() {
-    	TransactionManager transMgr = null;
-    	try {
-    		String jndiName = ApplicationContext.getNamingProvider().getTransactionManagerName();
-    		Object txMgr = ApplicationContext.getNamingProvider().lookup(null, jndiName, TransactionManager.class);
-    		transMgr = (TransactionManager)txMgr;
-    	} catch (Exception ex) {
-        	StandardLogger logger = LoggerUtil.getStandardLogger();
-    		logger.severeException(ex.getMessage(), ex);
-    	}
-    	return transMgr;
+        TransactionManager transMgr = null;
+        try {
+            String jndiName = ApplicationContext.getNamingProvider().getTransactionManagerName();
+            Object txMgr = ApplicationContext.getNamingProvider().lookup(null, jndiName, TransactionManager.class);
+            transMgr = (TransactionManager)txMgr;
+        } catch (Exception ex) {
+            StandardLogger logger = LoggerUtil.getStandardLogger();
+            logger.severeException(ex.getMessage(), ex);
+        }
+        return transMgr;
     }
     
 //    /**
@@ -62,35 +62,35 @@ public class TransactionUtil {
 //     */
 //    public UserTransaction createTransaction() {
 //        try {
-//        	String jndiName = ApplicationContext.getNamingProvider().getUserTransactionName();
-//        	UserTransaction userTrans = (UserTransaction)ApplicationContext.getNamingProvider()
-//        		.lookup(null, jndiName, UserTransaction.class);
-//        	userTrans.begin();
-//        	return userTrans;
+//            String jndiName = ApplicationContext.getNamingProvider().getUserTransactionName();
+//            UserTransaction userTrans = (UserTransaction)ApplicationContext.getNamingProvider()
+//                .lookup(null, jndiName, UserTransaction.class);
+//            userTrans.begin();
+//            return userTrans;
 //        } catch (Exception ex) {
-//        	StandardLogger logger = LoggerUtil.getStandardLogger();
+//            StandardLogger logger = LoggerUtil.getStandardLogger();
 //            logger.severeException(ex.getMessage(), ex);
 //            return null;
 //        }
 //    }
     
-	public boolean isInTransaction() throws SystemException {
-		TransactionManager transManager = getTransactionManager();
-		return (transManager.getStatus()==Status.STATUS_ACTIVE);
-	}
-	
-	public Connection getCurrentConnection() {
-		return currentConnection.get();
-	}
-	
-	public void setCurrentConnection(Connection connection) {
-		currentConnection.set(connection);
-	}
-	
-	public static void clearCurrentConnection() {
-	    if (currentConnection != null) {
-	      currentConnection.remove();
-	    }
-	}
+    public boolean isInTransaction() throws SystemException {
+        TransactionManager transManager = getTransactionManager();
+        return (transManager.getStatus()==Status.STATUS_ACTIVE);
+    }
+    
+    public Connection getCurrentConnection() {
+        return currentConnection.get();
+    }
+    
+    public void setCurrentConnection(Connection connection) {
+        currentConnection.set(connection);
+    }
+    
+    public static void clearCurrentConnection() {
+        if (currentConnection != null) {
+          currentConnection.remove();
+        }
+    }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.event;
 
@@ -12,7 +12,7 @@ public class EventWaitInstance implements Serializable {
     private Long messageDocumentId;
 
     public EventWaitInstance(){
-    	messageDocumentId = null;
+        messageDocumentId = null;
     }
 
     public Long getActivityInstanceId() {
@@ -31,13 +31,13 @@ public class EventWaitInstance implements Serializable {
         this.completionCode = completionCode;
     }
 
-	public Long getMessageDocumentId() {
-		return messageDocumentId;
-	}
+    public Long getMessageDocumentId() {
+        return messageDocumentId;
+    }
 
-	public void setMessageDocumentId(Long messageDocumentId) {
-		this.messageDocumentId = messageDocumentId;
-	}
+    public void setMessageDocumentId(Long messageDocumentId) {
+        this.messageDocumentId = messageDocumentId;
+    }
 
 
 

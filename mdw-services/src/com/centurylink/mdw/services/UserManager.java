@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.services;
 
@@ -14,21 +14,21 @@ import com.centurylink.mdw.model.user.User;
 
 public interface UserManager {
 
-	/**
-	 * Load the user from database using CUID
-	 * @param userName CUID of the user
-	 * @return the user object, or null if the user does not exist
-	 * @throws DataAccessException when there is database access failure
-	 */
+    /**
+     * Load the user from database using CUID
+     * @param userName CUID of the user
+     * @return the user object, or null if the user does not exist
+     * @throws DataAccessException when there is database access failure
+     */
     public User getUser(String userName)
     throws DataAccessException;
 
-	/**
-	 * Load the user from database using user ID
-	 * @param userId database ID of the user
-	 * @return the user object, or null if no user entry with this ID exists
-	 * @throws DataAccessException when there is database access failure
-	 */
+    /**
+     * Load the user from database using user ID
+     * @param userId database ID of the user
+     * @return the user object, or null if no user entry with this ID exists
+     * @throws DataAccessException when there is database access failure
+     */
     public User getUser(Long userId)
     throws UserException, DataAccessException;
 
@@ -37,7 +37,7 @@ public interface UserManager {
      * The users in the group is also loaded.
      * @param groupName
      * @param loadRolesForUsers when it is true, load also roles of the users
-     * 			within the group
+     *             within the group
      * @return the group object, or null if the group does not exist
      * @throws UserException
      * @throws DataAccessException
@@ -50,7 +50,7 @@ public interface UserManager {
      * The users in the group is also loaded.
      * @param groupName
      * @param loadRolesForUsers when it is true, load also roles of the users
-     * 			within the group
+     *             within the group
      * @return the group object, or null if the group does not exist
      * @throws UserException
      * @throws DataAccessException
@@ -135,7 +135,7 @@ public interface UserManager {
      * Returns all the groups.
      *
      * @param includeDeleted when this is true, the groups
-     * 		that are deleted (end-dated in the database) are also included
+     *         that are deleted (end-dated in the database) are also included
      * @return the groups
      */
     public List<Workgroup> getUserGroups(boolean includeDeleted)
@@ -160,15 +160,15 @@ public interface UserManager {
     /**
      * Query for users
      * @param whereCondition a SQL expression that will
-     * 		be included after "where". If it is null,
-     * 		no where clause will be used and the query returns
-     * 		all entries in database (pagination is still applicable)
+     *         be included after "where". If it is null,
+     *         no where clause will be used and the query returns
+     *         all entries in database (pagination is still applicable)
      * @param withGroups if true, each returned user
-     * 		object will include the list of groups the user
-     * 		is a member of, along with roles within the group
+     *         object will include the list of groups the user
+     *         is a member of, along with roles within the group
      * @param startIndex start index for pagination. The first row has index 0
-     * 		if the value passed in is negative, return all users satisfying the query
-     * 		without pagination
+     *         if the value passed in is negative, return all users satisfying the query
+     *         without pagination
      * @param endIndex end index for pagination; ignored when startIndex is negative
      * @param sortOn the column name on which the sorting is performed
      * @return a list of users matching the query
@@ -176,7 +176,7 @@ public interface UserManager {
      * @throws DataAccessException
      */
     public List<User> queryUsers(String whereCondition,
-    		boolean withGroups, int startIndex, int endIndex, String sortOn)
+            boolean withGroups, int startIndex, int endIndex, String sortOn)
     throws UserException, DataAccessException;
 
     /**
@@ -271,8 +271,8 @@ public interface UserManager {
      * Updates a role. Name and description can be changed.
      *
      * @param role content to be updated. The ID field, is used
-     * 		to identify which role to update, and name and description
-     * 		are to be modified.
+     *         to identify which role to update, and name and description
+     *         are to be modified.
      */
     public void updateUserRole(Role role)
     throws UserException, DataAccessException;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.listener;
 
@@ -13,13 +13,13 @@ import com.centurylink.mdw.common.MDWException;
 
 public class ListenerException extends MDWException implements Serializable{
 
-	// CONSTANTS ------------------------------------------------------
+    // CONSTANTS ------------------------------------------------------
 
-	// CLASS VARIABLES ------------------------------------------------
+    // CLASS VARIABLES ------------------------------------------------
     public static final long serialVersionUID = 1L;
-	// INSTANCE VARIABLES ---------------------------------------------
+    // INSTANCE VARIABLES ---------------------------------------------
 
-	// CONSTRUCTORS ---------------------------------------------------
+    // CONSTRUCTORS ---------------------------------------------------
     public ListenerException(String pMessage){
         super(pMessage);
     }
@@ -42,11 +42,11 @@ public class ListenerException extends MDWException implements Serializable{
         super(pCode, pMessage, pTh);
 
     }
-	// PUBLIC AND PROTECTED METHODS -----------------------------------
+    // PUBLIC AND PROTECTED METHODS -----------------------------------
 
-	// PRIVATE METHODS ------------------------------------------------
+    // PRIVATE METHODS ------------------------------------------------
 
-	// ACCESSOR METHODS -----------------------------------------------
+    // ACCESSOR METHODS -----------------------------------------------
 
-	// INNER CLASSES --------------------------------------------------
+    // INNER CLASSES --------------------------------------------------
 }

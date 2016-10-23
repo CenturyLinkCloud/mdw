@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.timer.process;
 
@@ -21,7 +21,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
  * Clean up old database entries from processes that are older than a specified amount
  */
 public class ScheduledProcessStart extends ExternalEventHandlerBase
-		implements ScheduledJob {
+        implements ScheduledJob {
 
     private static final String PROCESS_NAME = "ProcessName";
 
@@ -34,21 +34,21 @@ public class ScheduledProcessStart extends ExternalEventHandlerBase
     public void run(CallURL args) {
 
         logger = LoggerUtil.getStandardLogger();
-    	String processName = args.getParameters().remove(PROCESS_NAME);
+        String processName = args.getParameters().remove(PROCESS_NAME);
 
         try {
-        	Long processId = super.getProcessId(processName);
-        	ProcessEngineDriver driver = new ProcessEngineDriver();
-        	SimpleDateFormat sdf = new SimpleDateFormat("yyMMddHHmmss");
-        	String timetag = sdf.format(new Date(DatabaseAccess.getCurrentTime()));
-        	String masterRequestId = "ScheduledProcess."+processName+"."+timetag;
-        	Long procInstId = driver.startProcess(processId, masterRequestId,
-        			OwnerType.SYSTEM, new Long(timetag), args.getParameters(), null, null, null);
-        	logger.info("[ScheduledProcessStart] Started " + processName
-        			+ " Process Instance ID = " + procInstId);
+            Long processId = super.getProcessId(processName);
+            ProcessEngineDriver driver = new ProcessEngineDriver();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyMMddHHmmss");
+            String timetag = sdf.format(new Date(DatabaseAccess.getCurrentTime()));
+            String masterRequestId = "ScheduledProcess."+processName+"."+timetag;
+            Long procInstId = driver.startProcess(processId, masterRequestId,
+                    OwnerType.SYSTEM, new Long(timetag), args.getParameters(), null, null, null);
+            logger.info("[ScheduledProcessStart] Started " + processName
+                    + " Process Instance ID = " + procInstId);
         } catch (Exception ex) {
-        	logger.severeException("[ScheduledProcessStart] Error in starting "
-        			+ processName, ex);
+            logger.severeException("[ScheduledProcessStart] Error in starting "
+                    + processName, ex);
         }
     }
 
@@ -56,11 +56,11 @@ public class ScheduledProcessStart extends ExternalEventHandlerBase
      * This is not used - the class extends ExternalEventHandlerBase
      * only to get access to convenient methods
      */
-	@Override
-	public String handleEventMessage(String msg, Object msgdoc,
-			Map<String, String> metainfo) throws EventHandlerException {
-		return null;
-	}
+    @Override
+    public String handleEventMessage(String msg, Object msgdoc,
+            Map<String, String> metainfo) throws EventHandlerException {
+        return null;
+    }
 
 
 }

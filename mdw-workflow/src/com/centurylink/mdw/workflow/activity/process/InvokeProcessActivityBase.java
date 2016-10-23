@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.workflow.activity.process;
 
@@ -29,33 +29,33 @@ import com.centurylink.mdw.workflow.activity.AbstractWait;
  */
 
 public abstract class InvokeProcessActivityBase extends AbstractWait
-		implements InvokeProcessActivity {
+        implements InvokeProcessActivity {
 
-	public final boolean resumeWaiting(InternalEvent msg)
-			throws ActivityException {
-		TransactionWrapper transaction = null;
-		try {
-			transaction = startTransaction();
-			lockActivityInstance();
-			if (allSubProcessCompleted()) {
-				return true;
-			} else {
-				EventWaitInstance received = registerWaitEvents(true, true);
-				if (received!=null) {
-					this.setReturnCode(received.getCompletionCode());
-					processOtherMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
-					handleEventCompletionCode();
-					return true;
-				} else return false;
-			}
-		} catch (Exception e) {
-			throw new ActivityException(-1, e.getMessage(), e);
-		} finally {
-			stopTransaction(transaction);
-		}
-	}
+    public final boolean resumeWaiting(InternalEvent msg)
+            throws ActivityException {
+        TransactionWrapper transaction = null;
+        try {
+            transaction = startTransaction();
+            lockActivityInstance();
+            if (allSubProcessCompleted()) {
+                return true;
+            } else {
+                EventWaitInstance received = registerWaitEvents(true, true);
+                if (received!=null) {
+                    this.setReturnCode(received.getCompletionCode());
+                    processOtherMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
+                    handleEventCompletionCode();
+                    return true;
+                } else return false;
+            }
+        } catch (Exception e) {
+            throw new ActivityException(-1, e.getMessage(), e);
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
 
-	abstract protected boolean allSubProcessCompleted() throws Exception;
+    abstract protected boolean allSubProcessCompleted() throws Exception;
 
     /**
      * This method is invoked to process a received event (other than subprocess termination).
@@ -73,7 +73,7 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
      * @throws ActivityException
      */
     protected void processOtherMessage(String msg)
-    	throws ActivityException {
+        throws ActivityException {
     }
 
     /**
@@ -86,90 +86,90 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
     }
 
     boolean resume_on_other_event(String msg, String compCode)
-			throws ActivityException {
-    	TransactionWrapper transaction = null;
-    	try {
-    		transaction = startTransaction();
-    		lockActivityInstance();
-    		this.setReturnCode(compCode);
-    		processOtherMessage(msg);
-    		handleEventCompletionCode();
-    		return true;
-		} finally {
-    		stopTransaction(transaction);
-    	}
+            throws ActivityException {
+        TransactionWrapper transaction = null;
+        try {
+            transaction = startTransaction();
+            lockActivityInstance();
+            this.setReturnCode(compCode);
+            processOtherMessage(msg);
+            handleEventCompletionCode();
+            return true;
+        } finally {
+            stopTransaction(transaction);
+        }
     }
 
     abstract boolean resume_on_process_finish(InternalEvent msg, Integer status)
-	throws ActivityException;
+    throws ActivityException;
 
     public final boolean resume(InternalEvent msg)
-	    throws ActivityException {
-    	TransactionWrapper transaction = null;
-		try {
-			transaction = startTransaction();
-			Integer status = lockActivityInstance();
-			if (msg.isProcess()) {
-				boolean done = resume_on_process_finish(msg, status);
-				if (done) onFinish();
-				return done;
-			} else {
-		     	String messageString = this.getMessageFromEventMessage(msg);
-		     	this.setReturnCode(msg.getCompletionCode());
-	    		processOtherMessage(messageString);
-	    		handleEventCompletionCode();
-	    		return true;
-			}
-		} finally {
-			stopTransaction(transaction);
-		}
-	}
+        throws ActivityException {
+        TransactionWrapper transaction = null;
+        try {
+            transaction = startTransaction();
+            Integer status = lockActivityInstance();
+            if (msg.isProcess()) {
+                boolean done = resume_on_process_finish(msg, status);
+                if (done) onFinish();
+                return done;
+            } else {
+                 String messageString = this.getMessageFromEventMessage(msg);
+                 this.setReturnCode(msg.getCompletionCode());
+                processOtherMessage(messageString);
+                handleEventCompletionCode();
+                return true;
+            }
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
 
     protected boolean allowInput(Variable childVar) {
-    	int varCat = childVar.getVariableCategory().intValue();
-    	if (varCat==Variable.CAT_INPUT || varCat==Variable.CAT_INOUT
-    			|| varCat==Variable.CAT_STATIC) return true;
-    	else return false;
+        int varCat = childVar.getVariableCategory().intValue();
+        if (varCat==Variable.CAT_INPUT || varCat==Variable.CAT_INOUT
+                || varCat==Variable.CAT_STATIC) return true;
+        else return false;
     }
 
     protected String evaluateBindingValue(Variable childVar, String v) {
-    	if (v!=null && v.length()>0) {
-    		int varCat = childVar.getVariableCategory().intValue();
-			if (varCat!=Variable.CAT_STATIC) {
-				if (valueIsVariable(v)) {
-					VariableInstance varinst = this.getVariableInstance(v.substring(1));
-					v = varinst==null?null:varinst.getStringValue();
-				} else {
-					try {
-					    if (valueIsJavaExpression(v)) {
+        if (v!=null && v.length()>0) {
+            int varCat = childVar.getVariableCategory().intValue();
+            if (varCat!=Variable.CAT_STATIC) {
+                if (valueIsVariable(v)) {
+                    VariableInstance varinst = this.getVariableInstance(v.substring(1));
+                    v = varinst==null?null:varinst.getStringValue();
+                } else {
+                    try {
+                        if (valueIsJavaExpression(v)) {
                             Object obj = evaluateExpression(getActivityId().toString(), JAVA_EL, v);
                             v = obj == null ? null : obj.toString();
-					    }
-					} catch (Exception e) {
-						logger.warnException("Failed to evaluate the expression '" + v + "'", e);
-						// treat v as it is
-					}
-				}
-			} // else v is static value
-		}
-    	return v;
+                        }
+                    } catch (Exception e) {
+                        logger.warnException("Failed to evaluate the expression '" + v + "'", e);
+                        // treat v as it is
+                    }
+                }
+            } // else v is static value
+        }
+        return v;
     }
 
     protected Map<String,String> getOutputParameters(Long subprocInstId, Long subprocId)
-    	throws SQLException, ProcessException, DataAccessException {
-    	Process subprocDef = ProcessCache.getProcess(subprocId);
-    	Map<String,String> params = null;
-    	for (Variable var : subprocDef.getVariables()) {
-    		if (var.getVariableCategory().intValue()==Variable.CAT_OUTPUT
-    				|| var.getVariableCategory().intValue()==Variable.CAT_INOUT) {
-    			VariableInstance vio = getEngine().getVariableInstance(subprocInstId, var.getVariableName());
-    			if (vio!=null) {
-    				if (params==null) params = new HashMap<String,String>();
-    				params.put(var.getVariableName(), vio.getStringValue());
-    			}
-    		}
-    	}
-    	return params;
+        throws SQLException, ProcessException, DataAccessException {
+        Process subprocDef = ProcessCache.getProcess(subprocId);
+        Map<String,String> params = null;
+        for (Variable var : subprocDef.getVariables()) {
+            if (var.getVariableCategory().intValue()==Variable.CAT_OUTPUT
+                    || var.getVariableCategory().intValue()==Variable.CAT_INOUT) {
+                VariableInstance vio = getEngine().getVariableInstance(subprocInstId, var.getVariableName());
+                if (vio!=null) {
+                    if (params==null) params = new HashMap<String,String>();
+                    params.put(var.getVariableName(), vio.getStringValue());
+                }
+            }
+        }
+        return params;
     }
 
     /**

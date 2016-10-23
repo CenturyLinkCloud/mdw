@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.listener.tibco;
 
@@ -18,7 +18,7 @@ public class MDWBusListener extends BusProcessor {
     protected static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public MDWBusListener(){
-		super();
+        super();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class MDWBusListener extends BusProcessor {
         BusMessage respMsg = prepareResponse(busMsg, resp);
         if (logger.isDebugEnabled()) {
             if (this.getStatusCapsule() != null) {
-            	logger.debug("BUS queue Length: " + this.queue.getQueueSize());
+                logger.debug("BUS queue Length: " + this.queue.getQueueSize());
             }
             if (respMsg!=null) logger.debug("BUS sends response: " + resp);
         }
@@ -44,14 +44,14 @@ public class MDWBusListener extends BusProcessor {
     }
     
     protected BusMessage prepareResponse(BusMessage pRequest, String pData) {
-    	BusMessage responseMsg = null;
+        BusMessage responseMsg = null;
         try {
             if (pRequest.getReplyToTopic() == null || pRequest.getReplyToTopic().length() == 0) {
                 logger.warn("No ReplyTo topic in the Bus message. Unable to send response");
             } else {
-            	responseMsg = pRequest.createResponse();
-            	responseMsg.setReplyToTopic(responseMsg.getReplyToTopic());
-            	responseMsg.set(pData);
+                responseMsg = pRequest.createResponse();
+                responseMsg.setReplyToTopic(responseMsg.getReplyToTopic());
+                responseMsg.set(pData);
             }
         } catch (Exception e) {
             logger.severeException(e.getMessage(), e);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.service.action;
 
@@ -38,28 +38,28 @@ public class NotifyScriptChannelActivity extends ExternalEventHandlerBase
   public String handleEventMessage(String request, Object xmlBean, Map<String,String> metaInfo)
       throws EventHandlerException
   {
-	 logger.info("\nInside NotifyScriptChannelActivity.handleEventMessage() :" + request);
+     logger.info("\nInside NotifyScriptChannelActivity.handleEventMessage() :" + request);
 
-	 if (logger.isDebugEnabled())
+     if (logger.isDebugEnabled())
       logger.debug("Event Request:\n" + request);
 
      String resourceID = "";
      String response = "";
      String ownerID = "" ;
      ActionRequestDocument xmlbean = (ActionRequestDocument)
-     		((XmlObject)xmlBean).changeType(ActionRequestDocument.type);
+             ((XmlObject)xmlBean).changeType(ActionRequestDocument.type);
      for (Parameter param : xmlbean.getActionRequest().getAction().getParameterList()) {
        if (param.getName().equals("RESPONSE"))
-    	   response = param.getStringValue();
+           response = param.getStringValue();
        else if (param.getName().equals("ID")) {
             resourceID = param.getStringValue();
         }  else if (param.getName().equals("OWNER_ID")) {
-        	ownerID = param.getStringValue();
+            ownerID = param.getStringValue();
         }
     }
 
     try {
-    	EventManager eventMgr = ServiceLocator.getEventManager();
+        EventManager eventMgr = ServiceLocator.getEventManager();
         String eventName = "SCRIPT_CHANNEL_ACTIVITY:" + ownerID + "_" + resourceID;
         Long eventInstId = new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
         eventMgr.notifyProcess(eventName, eventInstId, request, 0);

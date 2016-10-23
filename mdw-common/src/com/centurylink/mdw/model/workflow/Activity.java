@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.model.workflow;
 
@@ -32,90 +32,90 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
     }
 
     public Activity(Long pActId, String pActName, String pDesc, String pActImplClass, List<Attribute> pAttribs){
-    	this.activityId = pActId;
-    	this.activityName = pActName;
-    	this.activityDescription = pDesc;
-    	this.implementorClassName = pActImplClass;
-    	this.attributes = pAttribs;
+        this.activityId = pActId;
+        this.activityName = pActName;
+        this.activityDescription = pDesc;
+        this.implementorClassName = pActImplClass;
+        this.attributes = pAttribs;
     }
 
     /**
-	 * @return the activityId
-	 */
-	public Long getActivityId() {
-		return activityId;
-	}
-
-	/**
-	 * @param activityId the activityId to set
-	 */
-	public void setActivityId(Long activityId) {
-		this.activityId = activityId;
-	}
-
-	/**
-	 * @return the activityName
-	 */
-	public String getActivityName() {
-		return activityName;
-	}
-
-	/**
-	 * @param activityName the activityName to set
-	 */
-	public void setActivityName(String activityName) {
-		this.activityName = activityName;
-	}
+     * @return the activityId
+     */
+    public Long getActivityId() {
+        return activityId;
+    }
 
     /**
-	 * @return the activityDescription
-	 */
-	public String getActivityDescription() {
-		return activityDescription;
-	}
+     * @param activityId the activityId to set
+     */
+    public void setActivityId(Long activityId) {
+        this.activityId = activityId;
+    }
 
-	/**
-	 * @param activityDescription the activityName to set
-	 */
-	public void setActivityDescription(String activityDescription) {
-		this.activityDescription = activityDescription;
-	}
+    /**
+     * @return the activityName
+     */
+    public String getActivityName() {
+        return activityName;
+    }
 
-	/**
-	 * @return the attributes
-	 */
-	public List<Attribute> getAttributes() {
-		return attributes;
-	}
+    /**
+     * @param activityName the activityName to set
+     */
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
+    }
 
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(List<Attribute> attributes) {
-		this.attributes = attributes;
-	}
+    /**
+     * @return the activityDescription
+     */
+    public String getActivityDescription() {
+        return activityDescription;
+    }
 
-	public Long[] getSynchronzingIds() {
-		return synchronzingIds;
-	}
+    /**
+     * @param activityDescription the activityName to set
+     */
+    public void setActivityDescription(String activityDescription) {
+        this.activityDescription = activityDescription;
+    }
 
-	public void setSynchronzingIds(Long[] pIds) {
-		this.synchronzingIds = pIds;
-	}
+    /**
+     * @return the attributes
+     */
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
 
-	/**
-	 * @return the implementorClassName
-	 */
-	public String getImplementorClassName() {
-		return implementorClassName;
-	}
+    /**
+     * @param attributes the attributes to set
+     */
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
+    }
 
-	/**
-	 * @param implementorClassName the implementorClassName to set
-	 */
-	public void setImplementorClassName(String implementorClassName) {
-		this.implementorClassName = implementorClassName;
-	}
+    public Long[] getSynchronzingIds() {
+        return synchronzingIds;
+    }
+
+    public void setSynchronzingIds(Long[] pIds) {
+        this.synchronzingIds = pIds;
+    }
+
+    /**
+     * @return the implementorClassName
+     */
+    public String getImplementorClassName() {
+        return implementorClassName;
+    }
+
+    /**
+     * @param implementorClassName the implementorClassName to set
+     */
+    public void setImplementorClassName(String implementorClassName) {
+        this.implementorClassName = implementorClassName;
+    }
 
     public void addSynchronizationId(Long pId){
         List<Long> temp = null;
@@ -142,12 +142,12 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
      * Method that returns the sla
      */
     public int getSlaSeconds(){
-    	String sla = this.getAttribute(WorkAttributeConstant.SLA);
-    	if (sla==null || sla.length()==0) return 0;
-    	String unit = this.getAttribute(WorkAttributeConstant.SLA_UNITS);
-    	if (StringHelper.isEmpty(unit)) unit = this.getAttribute(WorkAttributeConstant.SLA_UNIT);
-    	if (StringHelper.isEmpty(unit)) unit = ServiceLevelAgreement.INTERVAL_HOURS;
-    	return ServiceLevelAgreement.unitsToSeconds(sla, unit);
+        String sla = this.getAttribute(WorkAttributeConstant.SLA);
+        if (sla==null || sla.length()==0) return 0;
+        String unit = this.getAttribute(WorkAttributeConstant.SLA_UNITS);
+        if (StringHelper.isEmpty(unit)) unit = this.getAttribute(WorkAttributeConstant.SLA_UNIT);
+        if (StringHelper.isEmpty(unit)) unit = ServiceLevelAgreement.INTERVAL_HOURS;
+        return ServiceLevelAgreement.unitsToSeconds(sla, unit);
     }
 
     public int getSla() {
@@ -158,13 +158,13 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
      * method that sets the sla
      */
     public void setSlaSeconds(int slaSeconds){
-    	String unit = this.getAttribute(WorkAttributeConstant.SLA_UNITS);
-    	if (StringHelper.isEmpty(unit)) this.getAttribute(WorkAttributeConstant.SLA_UNIT);
-    	if (StringHelper.isEmpty(unit)) {
-    		unit = ServiceLevelAgreement.INTERVAL_MINUTES;
-        	setAttribute(WorkAttributeConstant.SLA_UNIT, unit);
-    	}
-    	setAttribute(WorkAttributeConstant.SLA, ServiceLevelAgreement.secondsToUnits(slaSeconds, unit));
+        String unit = this.getAttribute(WorkAttributeConstant.SLA_UNITS);
+        if (StringHelper.isEmpty(unit)) this.getAttribute(WorkAttributeConstant.SLA_UNIT);
+        if (StringHelper.isEmpty(unit)) {
+            unit = ServiceLevelAgreement.INTERVAL_MINUTES;
+            setAttribute(WorkAttributeConstant.SLA_UNIT, unit);
+        }
+        setAttribute(WorkAttributeConstant.SLA, ServiceLevelAgreement.secondsToUnits(slaSeconds, unit));
     }
 
     public void setSla(int sla) {
@@ -201,7 +201,7 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
     }
 
     public String getLogicalId() {
-    	return getAttribute(WorkAttributeConstant.LOGICAL_ID);
+        return getAttribute(WorkAttributeConstant.LOGICAL_ID);
     }
 
     public String getReferenceId() {
