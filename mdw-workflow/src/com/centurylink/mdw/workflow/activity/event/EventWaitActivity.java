@@ -94,7 +94,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
             // this information is needed to display in designer only
             // same is true for GeneralManualTaskActivity
             this.createDocument(String.class.getName(), responseData,
-                    OwnerType.ADAPTOR_RESPONSE, getActivityInstanceId());
+                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
         } catch (Exception ex) {
             logger.severeException("Failed to log message", ex);
         }

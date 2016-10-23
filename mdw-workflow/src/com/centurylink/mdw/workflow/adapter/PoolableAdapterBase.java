@@ -120,7 +120,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
         if (request instanceof String)
             return (String)request;
         else if (request instanceof Document)
-            return VariableTranslator.realToString(Document.class.getName(), request);
+            return VariableTranslator.realToString(getPackage(), Document.class.getName(), request);
         else if (request instanceof XmlObject)
             return ((XmlObject)request).xmlText();
         else
@@ -140,11 +140,6 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
                 return (attr!=null && attr.equalsIgnoreCase("true"));
             } else return true;
         } else return false;
-    }
-
-    protected boolean isCertified() {
-        String attr = this.getAttributeValue(PROP_SYNCHRONOUS_RESPONSE);
-        return (attr!=null && attr.equalsIgnoreCase("Certified"));
     }
 
     /**
@@ -179,7 +174,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
         String varname = this.getAttributeValue(RESPONSE_VARIABLE);
         if (varname==null) return;
         String vartype = this.getParameterType(varname);
-        if (VariableTranslator.isDocumentReferenceVariable(vartype))
+        if (VariableTranslator.isDocumentReferenceVariable(getPackage(), vartype))
             this.setParameterValueAsDocument(varname, vartype, response);
         else this.setParameterValue(varname, response);
     }
@@ -461,7 +456,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
     protected Long logMessage(String message, boolean isResponse) {
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
-                    isResponse?OwnerType.ADAPTOR_RESPONSE:OwnerType.ADAPTOR_REQUEST,
+                    isResponse ? OwnerType.ADAPTER_RESPONSE : OwnerType.ADAPTER_REQUEST,
                     this.getActivityInstanceId());
             return docref.getDocumentId();
         } catch (Exception ex) {

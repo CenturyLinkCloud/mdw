@@ -3,9 +3,6 @@
  */
 package com.centurylink.mdw.workflow.adapter.jms;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -29,10 +26,7 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.model.monitor.CertifiedMessage;
 import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.services.event.CertifiedMessageManager;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.JMSServices;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -61,7 +55,6 @@ public class JmsAdapter extends AdapterActivityBase {
     private QueueConnection qConnection;
     private QueueSession qSession;
     private Queue queue;
-    private Long requestLoggingId;
 
     @Autowired
     @Qualifier("jmsTemplate")
@@ -83,11 +76,6 @@ public class JmsAdapter extends AdapterActivityBase {
         return (attr!=null && attr.equalsIgnoreCase("true"));
     }
 
-    private boolean isCertified() {
-        String attr = this.getAttributeValue(SYNCHRONOUS_RESPONSE);
-        return (attr!=null && attr.equalsIgnoreCase("Certified"));
-    }
-
     /**
      * The method is used by {@link #openConnection()} to obtain the queue name.
      * The default implementation returns the value of the attribute "Queue Name",
@@ -101,13 +89,6 @@ public class JmsAdapter extends AdapterActivityBase {
         return this.getAttributeValueSmart(REQUEST_QUEUE_NAME);
     }
 
-    @Override
-    protected Long logMessage(String message, boolean isResponse) {
-        Long docid = super.logMessage(message, isResponse);
-        if (!isResponse) requestLoggingId = docid;
-        return docid;
-    }
-
     /**
      * The method overrides the one in the super class to perform
      * JMS specific functions.
@@ -117,20 +98,6 @@ public class JmsAdapter extends AdapterActivityBase {
         throws AdapterException, ConnectionException
     {
         try {
-            if (this.isCertified()) {
-                Long docid;
-                if (requestLoggingId==null) {
-                    DocumentReference docref = super.createDocument(XmlObject.class.getName(),
-                            requestData, OwnerType.ACTIVITY_INSTANCE_REQUEST, this.getActivityInstanceId());
-                    docid = docref.getDocumentId();
-                } else docid = requestLoggingId;
-                CertifiedMessageManager queue = (CertifiedMessageManager)conn;
-                Map<String,String> props = new HashMap<String,String>();
-                props.put(CertifiedMessage.PROP_PROTOCOL, CertifiedMessage.PROTOCOL_MDW2MDW);
-                props.put(CertifiedMessage.PROP_JNDI_URL, getAttributeValueSmart(SERVER_URL));
-                queue.sendTextMessage(props, (String)requestData, docid, logtag());
-                return null;
-            }
             Object result;
 
             if (jmsSenderReceiver != null) {
@@ -188,12 +155,8 @@ public class JmsAdapter extends AdapterActivityBase {
                 }
                 else
                     result = null;
-
-
             }
             else {
-
-
                 QueueSession qSession = (QueueSession)conn;
                 Queue replyQueue;
                 boolean replyIsTemporaryQueue = false;
@@ -287,10 +250,6 @@ public class JmsAdapter extends AdapterActivityBase {
      */
     @Override
     protected Object openConnection() throws ConnectionException {
-        if (this.isCertified()) {
-            requestLoggingId = null;
-            return CertifiedMessageManager.getSingleton();
-        }
         qConnection = null;
         qSession = null;
         queue = null;
@@ -330,7 +289,7 @@ public class JmsAdapter extends AdapterActivityBase {
         if (request instanceof DocumentReference) request = getDocumentContent((DocumentReference)request);
         if (request instanceof String) return request;
         else if (request instanceof Document) return
-            VariableTranslator.realToString(Document.class.getName(), request);
+            VariableTranslator.realToString(getPackage(), Document.class.getName(), request);
         else if (request instanceof XmlObject) return ((XmlObject)request).xmlText();
         else throw new ActivityException(
                 "Cannot handle request of type " + request.getClass().getName());

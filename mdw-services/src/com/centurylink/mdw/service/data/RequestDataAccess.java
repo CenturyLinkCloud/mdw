@@ -220,9 +220,9 @@ public class RequestDataAccess extends CommonDataAccess {
             String responseQuery = "select document_id, create_dt";
             if (withResponseContent)
                 responseQuery += ", content";
-            if (OwnerType.ADAPTOR_REQUEST.equals(ownerType) && ownerId != null) {
+            if (OwnerType.ADAPTER_REQUEST.equals(ownerType) && ownerId != null) {
                 request.setOutbound(true);
-                responseQuery += " from document where owner_type='" + OwnerType.ADAPTOR_RESPONSE + "' and owner_id = ?";
+                responseQuery += " from document where owner_type='" + OwnerType.ADAPTER_RESPONSE + "' and owner_id = ?";
                 responseRs = db.runSelect(responseQuery, ownerId);
             }
             else if (OwnerType.LISTENER_REQUEST.equals(ownerType)) {
@@ -362,7 +362,7 @@ public class RequestDataAccess extends CommonDataAccess {
             // This join takes forever on MySQL, so a separate query is used to populate response info:
             // -- left join document d2 on (d2.owner_id = d.document_id)
             if (query.getMax() != Query.MAX_ALL && !activityIds.isEmpty()) {
-                ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.ADAPTOR_RESPONSE, activityIds), null);
+                ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.ADAPTER_RESPONSE, activityIds), null);
                 while (respRs.next()) {
                     Request request = requestMap.get(respRs.getLong("owner_id"));
                     if (request != null) {
@@ -388,7 +388,7 @@ public class RequestDataAccess extends CommonDataAccess {
 
     private String getOutboundRequestsWhere(Query query) {
         StringBuilder clause = new StringBuilder();
-        clause.append("where d.owner_type = '" + OwnerType.ADAPTOR_REQUEST + "'\n");
+        clause.append("where d.owner_type = '" + OwnerType.ADAPTER_REQUEST + "'\n");
 
         String find = query.getFind();
         Long id = query.getLongFilter("id");

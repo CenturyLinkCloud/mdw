@@ -710,8 +710,10 @@ public class EventManagerBean implements EventManager {
         try {
             transaction = edao.startTransaction();
             Document docvo = new Document();
-            if (doc instanceof String) docvo.setContent((String)doc);
-            else docvo.setObject(doc, type);
+            if (doc instanceof String)
+                docvo.setContent((String)doc);
+            else
+                docvo.setObject(doc, type);
             docvo.setDocumentType(type);
             docvo.setOwnerType(ownerType);
             docvo.setOwnerId(ownerId);

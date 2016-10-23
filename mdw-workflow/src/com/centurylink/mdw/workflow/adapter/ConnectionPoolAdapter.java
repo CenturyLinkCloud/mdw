@@ -4,26 +4,19 @@
 package com.centurylink.mdw.workflow.adapter;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import org.apache.xmlbeans.XmlObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.InternalEvent;
-import com.centurylink.mdw.model.monitor.CertifiedMessage;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.services.event.CertifiedMessageManager;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.pooling.AdapterConnectionPool;
 import com.centurylink.mdw.services.pooling.ConnectionPoolRegistration;
@@ -40,7 +33,6 @@ public class ConnectionPoolAdapter extends PoolableAdapterBase implements Suspen
 
     public static final String POOL_NAME = "Connection Pool";
 
-    private Long requestLoggingId;
     private int exceptionCode;
     private AdapterConnectionPool pool;
     private boolean fromResume = false;
@@ -70,33 +62,7 @@ public class ConnectionPoolAdapter extends PoolableAdapterBase implements Suspen
     {
         String result;
 
-        if (this.isCertified()) {
-            try {
-                Long docid;
-                if (requestLoggingId==null) {
-                    DocumentReference docref = super.createDocument(XmlObject.class.getName(),
-                            requestData, OwnerType.ACTIVITY_INSTANCE_REQUEST,
-                            this.getActivityInstanceId());
-                    docid = docref.getDocumentId();
-                } else docid = requestLoggingId;
-                CertifiedMessageManager queue = CertifiedMessageManager.getSingleton();
-                Map<String,String> props = new HashMap<String,String>();
-                props.put(CertifiedMessage.PROP_PROTOCOL, CertifiedMessage.PROTOCOL_POOL);
-                props.put(CertifiedMessage.PROP_POOL_NAME, pool.getName());
-                String v;
-                v = getProperty(AdapterActivity.PROP_TIMEOUT, pool, AdapterConnectionPool.PROP_TIMEOUT);
-                if (!StringHelper.isEmpty(v)) props.put(CertifiedMessage.PROP_TIMEOUT, v);
-                v = getProperty(AdapterActivity.PROP_RETRY_INTERVAL, pool, AdapterConnectionPool.PROP_RETRY_INTERVAL);
-                if (!StringHelper.isEmpty(v)) props.put(CertifiedMessage.PROP_RETRY_INTERVAL, v);
-                v = getProperty(AdapterActivity.PROP_MAX_TRIES, pool, AdapterConnectionPool.PROP_MAX_TRIES);
-                if (!StringHelper.isEmpty(v)) props.put(CertifiedMessage.PROP_MAX_TRIES, v);
-                if (meta_data!=null) props.putAll(meta_data);
-                queue.sendTextMessage(props, (String)requestData, docid, logtag());
-                result = null;
-            } catch (Exception e) {
-                throw new ConnectionException(ConnectionException.CONNECTION_DOWN, e.getMessage(), e);
-            }
-        } else if (this.isSynchronous()) {
+        if (this.isSynchronous()) {
             PooledAdapterConnection connection = (PooledAdapterConnection)conn;
             result = connection.invoke((String)requestData, timeout, meta_data);
         } else {
@@ -109,11 +75,8 @@ public class ConnectionPoolAdapter extends PoolableAdapterBase implements Suspen
 
     @Override
     public Object openConnection() throws ConnectionException,AdapterException {
-        requestLoggingId = null;
         exceptionCode = 0;
-        if (this.isCertified()) {
-            return this;
-        } else if (fromResume) {
+        if (fromResume) {
             return pool.getReservedConnection(logtag(), this.getActivityInstanceId());
         } else {
             return pool.getConnection(logtag(), this.getActivityInstanceId());
@@ -122,17 +85,6 @@ public class ConnectionPoolAdapter extends PoolableAdapterBase implements Suspen
 
     @Override
     public void closeConnection(Object connection) {
-        if (!this.isCertified()) {
-            PooledAdapterConnection conn = (PooledAdapterConnection)connection;
-            conn.returnConnection(exceptionCode);
-        }
-    }
-
-    @Override
-    protected Long logMessage(String message, boolean isResponse) {
-        Long docid = super.logMessage(message, isResponse);
-        if (!isResponse) requestLoggingId = docid;
-        return docid;
     }
 
     private String getProperty(String attrName, AdapterConnectionPool pool, String poolPropName) {

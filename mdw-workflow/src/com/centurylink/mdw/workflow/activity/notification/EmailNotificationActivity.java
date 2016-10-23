@@ -96,7 +96,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
                 templatedEmail.setRuntimeContext(this.getRuntimeContext());
 
                 JSONObject emailJson = templatedEmail.buildEmailJson();
-                createDocument(JSONObject.class.getName(), emailJson, OwnerType.ACTIVITY_INSTANCE_REQUEST, getActivityInstanceId());
+                createDocument(JSONObject.class.getName(), emailJson, OwnerType.NOTIFICATION_ACTIVITY, getActivityInstanceId());
                 templatedEmail.sendEmail(emailJson);
             }
             catch (MessagingException ex) {

@@ -666,16 +666,9 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                     if ("Inbound Requests".equals(request))
                         ownerTypes.add(OwnerType.LISTENER_REQUEST);
                     else if ("Outbound Requests".equals(request))
-                        ownerTypes.add(OwnerType.ADAPTOR_REQUEST);
+                        ownerTypes.add(OwnerType.ADAPTER_REQUEST);
                 }
             }
-
-//            select count(d.owner_type) as ct, d.created, d.owner_type
-//            from (select DATE_FORMAT(start_dt,'%d-%M-%Y') as created, owner_type from document
-//               where start_dt >= STR_TO_DATE('10-Jun-2016','%d-%M-%Y')
-//               and owner_type in ('LISTENER_REQUEST','ADAPTOR_REQUEST')) d
-//            group by created, owner_type
-//            order by STR_TO_DATE(created, '%d-%M-%Y') desc
 
             StringBuilder sql = new StringBuilder();
             if (ownerTypes != null)
@@ -719,7 +712,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                     String ownerType = rs.getString("owner_type");
                     if (OwnerType.LISTENER_REQUEST.equals(ownerType))
                         requestCount.setType("Inbound Requests");
-                    else if (OwnerType.ADAPTOR_REQUEST.equals(ownerType))
+                    else if (OwnerType.ADAPTER_REQUEST.equals(ownerType))
                         requestCount.setType("Outbound Requests");
                 }
                 requestCounts.add(requestCount);

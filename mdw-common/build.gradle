@@ -72,6 +72,8 @@ dependencies {
                
     // doc store
     compile group: "org.mongodb", name: "mongodb-driver", version: "3.3.0"
+    compile group: "org.mongodb", name: "mongodb-driver-core", version: "3.3.0"
+    compile group: "org.mongodb", name: "bson", version: "3.3.0"
     
     // TODO: proprietary dependencies
     compile group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"

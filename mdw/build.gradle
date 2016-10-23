@@ -31,7 +31,7 @@ task publishFormal {
 subprojects {
     apply plugin: "java"
     
-    sourceCompatibility = 1.7
+    sourceCompatibility = 1.8
     version = "${mdwVersion}"
 
     libsDirName = "../../${mdwOutputDir}"

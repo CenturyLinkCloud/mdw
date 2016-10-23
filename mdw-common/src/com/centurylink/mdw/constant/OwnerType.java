@@ -31,24 +31,17 @@ public interface OwnerType {
     public static final String USER_GROUP = "USER_GROUP";
     public static final String USER_GROUP_MAP = "USER_GROUP_MAP";
 
-//    public static final String EXTERNAL_EVENT = "EXTERNAL_EVENT";
-//    public static final String EXTERNAL_EVENT_INSTANCE = "EXTERNAL_EVENT_INSTANCE";
     public static final String INTERNAL_EVENT = "INTERNAL_EVENT";
 
     public static final String VARIABLE_INSTANCE = "VARIABLE_INSTANCE";
 
-    public static final String ADAPTOR_REQUEST = "ADAPTOR_REQUEST"; // owner ID is activity instance ID
-    public static final String ADAPTOR_RESPONSE = "ADAPTOR_RESPONSE"; // owner ID is activity instance ID
-    public static final String LISTENER_REQUEST = "LISTENER_REQUEST";   // owner ID is event handler ID
+    public static final String ADAPTER_REQUEST = "ADAPTER_REQUEST"; // owner ID is activity instance ID
+    public static final String ADAPTER_RESPONSE = "ADAPTER_RESPONSE"; // owner ID is activity instance ID
+    public static final String LISTENER_REQUEST = "LISTENER_REQUEST";   // owner ID is processInstanceId (if present)
     public static final String LISTENER_RESPONSE = "LISTENER_RESPONSE"; // owner ID is the document ID of LISTENER_REQUEST
 
-    // the following 4 constances are for MDW 4.* only
-    public static final String ACTIVITY_INSTANCE_REQUEST = "ACTIVITY_INST_REQ";
-    public static final String ACTIVITY_INSTANCE_RESPONSE = "ACTIVITY_INST_RESP";
-    public static final String EXTERNAL_EVENT_INSTANCE_REQUEST = "EXTERNAL_EVENT_INST_REQ";
-    public static final String EXTERNAL_EVENT_INSTANCE_RESPONSE = "EXTERNAL_EVENT_INST_RESP";
+    public static final String NOTIFICATION_ACTIVITY = "NOTIFICATION_ACTIVITY"; // owner ID is activity instance ID
 
-    public static final String LANE = "LANE";
     public static final String PACKAGE = "PACKAGE";
 
     public static final String DOCUMENT = "DOCUMENT";

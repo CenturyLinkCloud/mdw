@@ -30,9 +30,9 @@ public class IntegerListTranslator extends DocumentReferenceTranslator {
 
     @SuppressWarnings("unchecked")
     public String realToString(Object object) throws TranslationException {
-        List<Integer> stringList = (List<Integer>)object;
+        List<Integer> intList = (List<Integer>)object;
         JSONArray jsonArray = new JSONArray();
-        for (Integer integer : stringList)
+        for (Integer integer : intList)
             jsonArray.put(integer);
         return jsonArray.toString();
     }

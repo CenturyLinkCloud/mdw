@@ -758,11 +758,11 @@ public class ProcessEngineDriver {
 
     private void setOwnerDocumentProcessInstanceId(ProcessExecutor engine,
             Long msgDocId, Long procInstId, String masterRequestId) {
-        // update document's process instance id attribute
+        // update document's OWNER_ID with the processInstanceId (OWNER_TYPE will stay LISTENER_REQUEST)
         try {
-            if (msgDocId.longValue()!=0L)
+            if (msgDocId.longValue() != 0L)
                 engine.updateDocumentInfo(new DocumentReference(msgDocId),
-                        null, masterRequestId, null);
+                        null, null, procInstId);
         } catch (Exception e) {
             // this is possible for race condition - document was just created
             logger.warn("Failed to update document for process instance id");

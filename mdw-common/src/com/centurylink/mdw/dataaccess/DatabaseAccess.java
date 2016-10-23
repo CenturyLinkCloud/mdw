@@ -24,6 +24,8 @@ import com.centurylink.mdw.constant.ApplicationConstants;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.util.log.LoggerUtil;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 
 public class DatabaseAccess {
 
@@ -39,9 +41,29 @@ public class DatabaseAccess {
     protected ResultSet rs;
     protected int queryTimeout;  // Clients can set the timeout if desired.  Default is no timeout.
 
-    private boolean isMySQL;  // also true for MariaDB
+    /**
+     * Also is true for MariaDB
+     */
+    private boolean isMySQL;
+    public boolean isMySQL() {
+        return isMySQL;
+    }
+
+    public boolean isOracle() {
+        return !isMySQL;
+    }
+
     private boolean isMariaDB;
+    public boolean isMariaDB() {
+        return isMariaDB;
+    }
+
     private boolean isEmbedded;
+
+    private MongoDatabase mongoDb;
+    public MongoDatabase getMongoDb() {
+        return mongoDb;
+    }
 
     /**
      *
@@ -91,6 +113,13 @@ public class DatabaseAccess {
             }
         }
 
+        String mongoHost = PropertyManager.getProperty("mdw.mongodb.host");
+        if (mongoHost != null) {
+            int mongoPort = PropertyManager.getIntegerProperty("mdw.mongodb.port", 27017);
+            @SuppressWarnings("resource")
+            MongoClient mongoClient = new MongoClient(mongoHost, mongoPort);
+            mongoDb = mongoClient.getDatabase("mdw");
+        }
     }
 
     public DatabaseAccess(String dbName, Map<String,String> connectParams) {
@@ -416,25 +445,6 @@ public class DatabaseAccess {
      */
     public void setConnection(Connection conn) {
         connection = conn;
-    }
-
-    /**
-     * Also is true for MariaDB
-     */
-    public boolean isMySQL() {
-        return isMySQL;
-    }
-
-    public boolean isAnsiSQL() {
-        return isMySQL;
-    }
-
-    public boolean isMariaDB() {
-        return isMariaDB;
-    }
-
-    public boolean isOracle() {
-        return !isMySQL;
     }
 
     public long getDatabaseTime() throws SQLException {

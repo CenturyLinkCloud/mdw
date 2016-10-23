@@ -277,6 +277,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         return createDocument(doc, null);
     }
 
+    boolean hasMongo() { return false; }
     public Long createDocument(Document doc, Package pkg) throws SQLException {
         Long docId = db.isMySQL() ? null : getNextId("MDW_COMMON_INST_ID_SEQ");
         String query = "insert into DOCUMENT " +
@@ -290,7 +291,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         if (db.isMySQL())
             docId = db.runInsertReturnId(query, args);
         else
-            db.runUpdate(query, args);
+            db.runUpdate(query, String.valueOf(args));
         doc.setDocumentId(docId);
         if (hasMongo()) {
             // TODO

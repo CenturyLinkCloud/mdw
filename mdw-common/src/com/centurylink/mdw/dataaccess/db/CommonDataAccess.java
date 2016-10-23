@@ -32,6 +32,9 @@ import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.CodeTimer;
+import com.mongodb.BasicDBObject;
+import com.mongodb.client.MongoCollection;
 
 public class CommonDataAccess {
 
@@ -43,8 +46,6 @@ public class CommonDataAccess {
     protected DatabaseAccess db;
     private int databaseVersion;
     private int supportedVersion;
-
-    private boolean hasMongo;
 
     public CommonDataAccess() {
         this(null, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
@@ -62,10 +63,6 @@ public class CommonDataAccess {
 
     public int getSupportedVersion() {
         return supportedVersion;
-    }
-
-    public boolean hasMongo() {
-        return hasMongo;
     }
 
     /**
@@ -421,12 +418,20 @@ public class CommonDataAccess {
             vo.setDocumentType(rs.getString("DOCUMENT_TYPE"));
             vo.setOwnerType(rs.getString("OWNER_TYPE"));
             vo.setOwnerId(rs.getLong("OWNER_ID"));
-            boolean inMongo = hasMongo();
-            if (hasMongo()) {
-                // TODO
-                inMongo = false;
+            boolean foundInMongo = false;
+            if (db.getMongoDb() != null) {
+                CodeTimer timer = new CodeTimer("Load mongodb doc", true);
+                MongoCollection<?> mongoCollection = db.getMongoDb().getCollection(vo.getOwnerType());
+                BasicDBObject mongoQuery = new BasicDBObject();
+                mongoQuery.put("_id", vo.getDocumentId());
+                Object c = mongoCollection.find(mongoQuery).limit(1).first();
+                if (c != null) {
+                    vo.setObject(c, vo.getDocumentType());
+                    foundInMongo = true;
+                }
+                timer.stopAndLogTiming(null);
             }
-            if (!inMongo) {
+            if (!foundInMongo) {
                 query = "select CONTENT from DOCUMENT_CONTENT where DOCUMENT_ID = ?";
                 rs = db.runSelect(query, documentId);
                 if (rs.next())
