@@ -451,8 +451,6 @@ public class Package implements Serializable, Jsonable {
                     return PropertyManager.getProperty(propertyName);
                 }
             };
-            // defaultPackage.setPackageName(DEFAULT_PACKAGE_NAME);
-            // should leave package name to null - other places assume it
         }
         return defaultPackage;
     }

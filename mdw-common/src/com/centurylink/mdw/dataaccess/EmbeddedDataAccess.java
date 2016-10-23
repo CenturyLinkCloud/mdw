@@ -32,12 +32,11 @@ public class EmbeddedDataAccess {
 
     public void create(String url, String user, String password, String assetLoc, String baseLoc, String dataLoc) throws DataAccessException {
         // implementors must be in this package
-        Package pkg = PackageCache.getPackage(EmbeddedDb.DB_ASSET_PACKAGE);
-        if (pkg == null)
-            throw new DataAccessException("Missing required asset package: " + EmbeddedDb.DB_ASSET_PACKAGE);
-
         String embeddedDbClass = EmbeddedDb.DB_ASSET_PACKAGE + "." + EMBEDDED_DB_CLASS;
         try {
+            Package pkg = PackageCache.getPackage(EmbeddedDb.DB_ASSET_PACKAGE);
+            if (pkg == null)
+                throw new DataAccessException("Missing required asset package: " + EmbeddedDb.DB_ASSET_PACKAGE);
             cloudClassLoader = pkg.getCloudClassLoader();
             embeddedDb = cloudClassLoader.loadClass(embeddedDbClass).asSubclass(EmbeddedDb.class).newInstance();
             embeddedDb.init(url, user, password, assetLoc, baseLoc, dataLoc);

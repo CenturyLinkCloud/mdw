@@ -97,9 +97,9 @@ public class PackageCache implements PreloadableCache {
     public static Package getProcessPackage(Long processId) {
         try {
             if (processId != null) {
-                for (Package packageVO : getPackageList()) {
-                  if (packageVO.containsProcess(processId))
-                      return packageVO;
+                for (Package pkg : getPackageList()) {
+                  if (pkg.containsProcess(processId))
+                      return pkg;
                 }
             }
             return Package.getDefaultPackage();
@@ -116,9 +116,9 @@ public class PackageCache implements PreloadableCache {
      */
     public static Package getTaskTemplatePackage(Long taskId) {
         try {
-            for (Package packageVO : getPackageList()) {
-              if (packageVO.containsTaskTemplate(taskId))
-                  return packageVO;
+            for (Package pkg : getPackageList()) {
+              if (pkg.containsTaskTemplate(taskId))
+                  return pkg;
             }
             return Package.getDefaultPackage();
         }
@@ -133,18 +133,9 @@ public class PackageCache implements PreloadableCache {
      * (Returns the first match so does not support the same asset in multiple packages).
      */
     public static Package getAssetPackage(Long assetId) throws CachingException {
-        for (Package packageVO : getPackageList()) {
-            if (packageVO.containsAsset(assetId))
-                return packageVO;
-        }
-        return null;
-    }
-
-    public static Package getPackageVO(String packageName) throws CachingException {
-        for (Package packageVO : getPackageList()) {
-            if (packageVO.getPackageName().equals(packageName)) {
-                return packageVO;
-            }
+        for (Package pkg : getPackageList()) {
+            if (pkg.containsAsset(assetId))
+                return pkg;
         }
         return null;
     }
@@ -153,11 +144,11 @@ public class PackageCache implements PreloadableCache {
         int lastDot = assetName.lastIndexOf('.');
         if (lastDot == -1) {
             // default package
-            return getDefaultPackageVO();
+            return getDefaultPackage();
         }
         else {
             String packageName = assetName.substring(0, lastDot);
-            return getPackageVO(packageName);
+            return getPackage(packageName);
         }
     }
 
@@ -167,7 +158,7 @@ public class PackageCache implements PreloadableCache {
      * @return
      * @throws CachingException
      */
-    public static List<Package> getAllPackageVOs(String packageName) throws CachingException {
+    public static List<Package> getAllPackages(String packageName) throws CachingException {
         List<Package> allPackages = new ArrayList<Package>();
         for (Package packageVO : getPackageList()) {
             if (packageVO.getPackageName().equals(packageName)) {
@@ -195,37 +186,28 @@ public class PackageCache implements PreloadableCache {
         }
     }
 
-    public static Package getPackage(String packageName) {
-        try {
-            if (packageName == null || packageName.isEmpty() || packageName.equals(Package.getDefaultPackage().getPackageName()))
-                return Package.getDefaultPackage();
-
-            for (Package packageVO : getPackageList()) {
-                if (packageVO.getPackageName().equals(packageName)) {
-                    return packageVO;
-                }
-            }
-            return null;
-        }
-        catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            return null;
-        }
-    }
-
-    public static Package getDefaultPackageVO() throws CachingException {
+    public static Package getPackage(String packageName) throws CachingException {
         for (Package packageVO : getPackageList()) {
-            if (packageVO.getPackageName() == null)
-              return packageVO;
+            if (packageVO.getPackageName().equals(packageName)) {
+                return packageVO;
+            }
         }
         return null;
     }
 
-    private static Package loadPackage(Package packageVO) throws CachingException {
+    public static Package getDefaultPackage() throws CachingException {
+        for (Package pkg : getPackageList()) {
+            if (pkg.getPackageName() == null)
+              return pkg;
+        }
+        return null;
+    }
+
+    private static Package loadPackage(Package pkg) throws CachingException {
         try {
             ProcessLoader loader = DataAccess.getProcessLoader();
             // populate attributes from attribute table
-            Package loaded = loader.loadPackage(packageVO.getId(), false);
+            Package loaded = loader.loadPackage(pkg.getId(), false);
             // retrieve to avoid deadlock waiting for AssetVOCache
             Asset assetVO = loader.getAssetForOwner(OwnerType.PACKAGE, loaded.getPackageId());
             if (assetVO != null && assetVO.getStringContent() != null) {

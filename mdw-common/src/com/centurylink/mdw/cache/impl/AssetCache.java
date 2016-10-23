@@ -134,7 +134,7 @@ public class AssetCache implements PreloadableCache {
             // Get asset from package based on asset version spec
             if (spec.getPackageName() != null) {
                 // get all the versions of packages based on package name
-                List<Package> allPackgeVOs = PackageCache.getAllPackageVOs(spec.getPackageName());
+                List<Package> allPackgeVOs = PackageCache.getAllPackages(spec.getPackageName());
                 for (Package pkgVO : allPackgeVOs) {
                     for (Asset asset : pkgVO.getAssets()) {
                         if (spec.getName().equals(asset.getName())) {
@@ -213,7 +213,7 @@ public class AssetCache implements PreloadableCache {
             String pkgName = key.getName().substring(0, delimIdx);
             String assetName = key.getName().substring(delimIdx + 1);
             try {
-                Package pkgVO = PackageCache.getPackageVO(pkgName);
+                Package pkgVO = PackageCache.getPackage(pkgName);
                 if (pkgVO != null) {
                     for (Asset asset : pkgVO.getAssets()) {
                         if (asset.getName().equals(assetName))

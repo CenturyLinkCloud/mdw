@@ -92,7 +92,7 @@ public abstract class ServiceRequestHandler implements ExternalEventHandler, Pac
                 serviceClassName = defaultImplPackage + "." + logicalName.replaceAll(" ", "").replaceAll("-", "");
             int lastDot = serviceClassName.lastIndexOf('.');
             String packageName = serviceClassName.substring(0, lastDot);
-            Package packageVO = PackageCache.getPackageVO(packageName);
+            Package packageVO = PackageCache.getPackage(packageName);
             if (packageVO == null)
                 packageVO = PackageCache.getPackage(logicalName); // new jax-rs style pathing
 

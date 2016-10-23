@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.RequestRoutingStrategy;
@@ -43,12 +44,18 @@ public class RoutingServiceMonitor implements ServiceMonitor {
             return null;
 
         // If GET request, check exclusion_list property of routing package
+        String pkgName = this.getClass().getName().substring(0,this.getClass().getName().lastIndexOf('.'));
         if ("GET".equalsIgnoreCase(headers.get(Listener.METAINFO_HTTP_METHOD))) {
-            Package pkg = PackageCache.getPackage(this.getClass().getName().substring(0,this.getClass().getName().lastIndexOf('.')));
-            String[] exclusions = pkg.getProperty("ExclusionRoutingList").split(",");
-            for (String path : exclusions) {
-                if (headers.get(Listener.METAINFO_REQUEST_PATH).toLowerCase().contains(path.toLowerCase()))
-                    return null;
+            try {
+                Package pkg = PackageCache.getPackage(pkgName);
+                String[] exclusions = pkg.getProperty("ExclusionRoutingList").split(",");
+                for (String path : exclusions) {
+                    if (headers.get(Listener.METAINFO_REQUEST_PATH).toLowerCase().contains(path.toLowerCase()))
+                        return null;
+                }
+            }
+            catch (CachingException ex) {
+                logger.severeException("Error getting routing package: " + pkgName, ex);
             }
         }
 

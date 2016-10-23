@@ -277,11 +277,11 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                 int lastDot = className.lastIndexOf('.');
                 if (lastDot == -1)  {
                     // default package
-                    currentPackage = PackageCache.getDefaultPackageVO();
+                    currentPackage = PackageCache.getDefaultPackage();
                 }
                 else {
                     String packageName = className.substring(0, lastDot);
-                    currentPackage = PackageCache.getPackageVO(packageName);
+                    currentPackage = PackageCache.getPackage(packageName);
                 }
             }
 

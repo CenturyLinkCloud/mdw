@@ -115,7 +115,7 @@ public class TaskTemplateCache implements PreloadableCache {
         TaskTemplate taskTemplate = templateVersions.get(assetVersionSpec.toString());
         if (taskTemplate == null) {
             if (assetVersionSpec.getPackageName() != null) {
-                List<Package> pkgVOs = PackageCache.getAllPackageVOs(assetVersionSpec.getPackageName());
+                List<Package> pkgVOs = PackageCache.getAllPackages(assetVersionSpec.getPackageName());
                 for (Package pkgVO : pkgVOs) {
                     for (TaskTemplate template : pkgVO.getTaskTemplates()) {
                         if (assetVersionSpec.getName().equals(template.getName())) {

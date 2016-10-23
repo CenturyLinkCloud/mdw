@@ -5,6 +5,7 @@ package com.centurylink.mdw.workflow.task.strategy;
 
 import org.drools.KnowledgeBase;
 
+import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.model.workflow.Package;
@@ -72,11 +73,16 @@ public abstract class RulesBasedStrategy extends ParameterizedStrategy {
         int lastSlash = kbNameStr.lastIndexOf('/');
         String pkg = lastSlash == -1 ? null : kbNameStr.substring(0, lastSlash) ;
 
-        Package pkgVO = PackageCache.getPackage(pkg);
-        if (pkgVO == null)
-            throw new StrategyException("Unable to get package name from strategy: " + kbAttributeName +" value="+kbNameStr);
-        // return the cloud class loader by default, unless the bundle spec is set
-        return pkgVO.getClassLoader();
+        try {
+            Package pkgVO = PackageCache.getPackage(pkg);
+            if (pkgVO == null)
+                throw new StrategyException("Unable to get package name from strategy: " + kbAttributeName +" value="+kbNameStr);
+            // return the cloud class loader by default, unless the bundle spec is set
+            return pkgVO.getClassLoader();
+        }
+        catch (CachingException ex) {
+            throw new StrategyException("Error getting strategy package: " + pkg, ex);
+        }
     }
 
     protected abstract String getKnowledgeBaseAttributeName();
