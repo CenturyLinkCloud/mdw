@@ -38,6 +38,12 @@ public class JavaObjectTranslator extends DocumentReferenceTranslator {
                         try {
                             return CompiledJavaCache.getResourceClass(desc.getName(), getClass().getClassLoader(), getPackage());
                         }
+                        catch (ClassNotFoundException ex){
+                            if (getPackage()  != null && getPackage().getCloudClassLoader() != null)
+                                return getPackage().getCloudClassLoader().loadClass(desc.getName());
+                            else
+                                throw ex;
+                        }
                         catch (MdwJavaException ex) {
                             throw new ClassNotFoundException(desc.getName(), ex);
                         }
