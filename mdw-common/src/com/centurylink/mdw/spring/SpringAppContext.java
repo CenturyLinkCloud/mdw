@@ -62,7 +62,7 @@ public class SpringAppContext implements CacheEnabled, CacheService {
     public synchronized ApplicationContext getApplicationContext() throws IOException {
         if (springAppContext == null) {
             String springContextFile = SPRING_CONTEXT_FILE;
-            Resource resource = new ByteArrayResource(FileHelper.getConfigFile(springContextFile, true).getBytes());
+            Resource resource = new ByteArrayResource(FileHelper.readConfig(springContextFile, true).getBytes());
             springAppContext = new GenericXmlApplicationContext();
             springAppContext.load(resource);
             springAppContext.refresh();

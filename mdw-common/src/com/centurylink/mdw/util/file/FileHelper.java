@@ -383,8 +383,8 @@ public final class FileHelper {
         return classLoader.getResourceAsStream(path);
     }
 
-    public static String getConfigFile(String filepath) throws IOException {
-        return getConfigFile(filepath, true);
+    public static String readConfig(String filepath) throws IOException {
+        return readConfig(filepath, true);
     }
 
     /**
@@ -393,7 +393,7 @@ public final class FileHelper {
      * @return
      * @throws IOException
      */
-    public static String getConfigFile(String filepath, boolean useMDWConfigLocation) throws IOException {
+    public static String readConfig(String filepath, boolean useMDWConfigLocation) throws IOException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         InputStream inStream = null;
 

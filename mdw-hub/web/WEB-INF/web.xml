@@ -11,10 +11,18 @@
   </listener>
     
   <filter>
+    <filter-name>AccessFilter</filter-name>
+    <filter-class>com.centurylink.mdw.hub.servlet.AccessFilter</filter-class>
+  </filter>
+  <filter>
     <filter-name>CustomContentFilter</filter-name>
     <filter-class>com.centurylink.mdw.hub.servlet.CustomContentFilter</filter-class>
   </filter>
 
+  <filter-mapping>
+    <filter-name>AccessFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>  
   <filter-mapping>
     <filter-name>CustomContentFilter</filter-name>
     <url-pattern>/*</url-pattern>
@@ -23,6 +31,11 @@
   <servlet>
     <servlet-name>RootServlet</servlet-name>
     <servlet-class>com.centurylink.mdw.hub.servlet.RootServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>ErrorServlet</servlet-name>
+    <servlet-class>com.centurylink.mdw.hub.servlet.ErrorServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet>
@@ -65,6 +78,10 @@
     <url-pattern>/root.js</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
+    <servlet-name>ErrorServlet</servlet-name>
+    <url-pattern>/error</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
     <servlet-name>CustomContentServlet</servlet-name>
     <url-pattern>/customContent/*</url-pattern>
   </servlet-mapping>
@@ -103,18 +120,7 @@
 
   <error-page>
     <error-code>500</error-code>
-    <location>/error.html</location>
+    <location>/error</location>
   </error-page>
   
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Login</web-resource-name>
-      <url-pattern>/login</url-pattern>
-      <http-method>GET</http-method>
-      <http-method>POST</http-method>
-    </web-resource-collection>    
-    <user-data-constraint>
-      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-    </user-data-constraint>
-  </security-constraint>
 </web-app>
