@@ -35,9 +35,9 @@ public class Mdw {
     public String getHubUser() { return hubUser; }
     public void setHubUser(String user) { this.hubUser = user; }
 
-    private String loginPage;
-    public String getLoginPage() { return loginPage; }
-    public void setLoginPage(String page) { this.loginPage = page; }
+    private String authMethod;
+    public String getAuthMethod() { return authMethod; }
+    public void setAuthMethod(String authMethod) { this.authMethod = authMethod; }
 
     Mdw(String version, String build, String hubRoot, String servicesRoot, File assetRoot, String overridePackage) {
         this.version = version;

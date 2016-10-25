@@ -67,7 +67,7 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   $scope.$on("$locationChangeStart", function(event, next, current) {
     if ($scope.authUser.cuid == 'guest' && !authUser.guestAccessAllowed($location.url())) {
       document.cookie = 'mdw.redirect=' + encodeURIComponent(window.location.href) + ';path=/';
-      window.location.href = $mdwHubRoot + $mdwLoginPage;
+      window.location.href = $mdwHubRoot + "/login";
       event.preventDefault();
     }
   });  
@@ -130,7 +130,7 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   $scope.isDebug = 'true' === util.urlParams().mdwDebug;
 
   $scope.login = function() {
-    window.location.href = $mdwHubRoot + $mdwLoginPage;
+    window.location.href = $mdwHubRoot + "/login";
   };
 
   $scope.logout = function() {
@@ -430,7 +430,7 @@ angular.element(document).ready(function() {
     else {
       // redirect to login
       document.cookie = 'mdw.redirect=' + encodeURIComponent(window.location.href) + ';path=/';
-      window.location.href = $mdwHubRoot + $mdwLoginPage;
+      window.location.href = $mdwHubRoot + "/login";
     }
   });
 });

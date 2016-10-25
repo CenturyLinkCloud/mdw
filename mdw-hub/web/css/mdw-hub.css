@@ -267,6 +267,10 @@ a.mdw_groupLink:hover {
   border: 1px solid #719ece;
   box-shadow: 0 0 5px #719ece;
 }
+.mdw_login {
+	width: 250px;
+	maxlength: 30;
+}
 .mdw_button {
 	width: 100%;
 	padding: 4px;

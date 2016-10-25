@@ -18,7 +18,6 @@ import org.json.JSONArray;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.AuthConstants;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.system.SysInfo;
 import com.centurylink.mdw.model.system.SysInfoCategory;
@@ -54,11 +53,6 @@ public class WebAppContext {
                     hubUser = PropertyManager.getProperty("mdw.hub.user"); // compatibility
                 mdw.setHubUser(hubUser);
             }
-
-            if (isDev || AuthConstants.getOAuthTokenLocation() != null || AuthConstants.isMdwLdapAuth())
-                mdw.setLoginPage("/login");
-            else
-                mdw.setLoginPage("/authentication/login.jsf");
         }
         return mdw;
     }

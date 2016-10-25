@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.AuthExcludePattern;
 import com.centurylink.mdw.auth.MdwSecurityException;
+import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -39,11 +40,11 @@ public class AccessFilter implements Filter {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static List<InetAddress> upstreamHosts; // null means not restricted
+    private static String authMethod = "oauth";
+    private static String authUserHeader;
     private static List<AuthExcludePattern> authExclusions = new ArrayList<AuthExcludePattern>();
     private static Map<String,String> responseHeaders;
-
     private static boolean devMode;
-    private static String authUserHeader;
     private static boolean allowAnyAuthenticatedUser;
     private static int sessionTimeoutSecs;
     private static boolean logResponseTimes;
@@ -64,6 +65,12 @@ public class AccessFilter implements Filter {
                 for (Object ip : upstreamHostsList)
                     upstreamHosts.add(InetAddress.getByName(ip.toString()));
             }
+
+            // authMethod
+            String authMethodVal = yamlLoader.get("authMethod", topMap);
+            if (authMethodVal != null)
+                authMethod = authMethodVal;
+            WebAppContext.getMdw().setAuthMethod(authMethod);
 
             // authUserHeader
             authUserHeader = yamlLoader.get("authUserHeader", topMap);
@@ -124,7 +131,7 @@ public class AccessFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) resp;
         HttpSession session = request.getSession();
 
-        String path = request.getServletPath() + request.getPathInfo();
+        String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
 
         try {
             if (upstreamHosts != null && !devMode) {
@@ -139,6 +146,11 @@ public class AccessFilter implements Filter {
                 if (sessionTimeoutSecs > 0)
                     session.setMaxInactiveInterval(1800);
             }
+
+            if (logHeaders)
+                logRequestHeaders(request);
+            if (logParameters)
+                logRequestParams(request);
 
             // check authentication
             AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
@@ -163,15 +175,13 @@ public class AccessFilter implements Filter {
                 }
                 else {
                     // user not authenticated
-                    if (!isAuthExclude(path))
-                        throw new MdwSecurityException("Authentication required");
+                    if (!isAuthExclude(path)) {
+                        // redirect to login page
+                        response.sendRedirect(request.getContextPath() + "/login");
+                        return;
+                    }
                 }
             }
-
-            if (logHeaders)
-                logRequestHeaders(request);
-            if (logParameters)
-                logRequestParams(request);
 
             if (responseHeaders != null || logHeaders) {
                 chain.doFilter(request, new ResponseWrapper(response));

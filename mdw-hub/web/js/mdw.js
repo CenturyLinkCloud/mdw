@@ -8,8 +8,6 @@ mdwMod.factory('mdw', function() {
     // $mdwVersion and $mdwHubRoot are set in logical root.js -- See RootServlet.java
     version: $mdwVersion,
     build: $mdwBuild,
-    loginPage: $mdwLoginPage,
-    tasksUi: $mdwTasksUi,
     roots: {
       services: $mdwServicesRoot,
       hub: $mdwHubRoot
