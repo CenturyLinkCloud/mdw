@@ -48,7 +48,6 @@
 -Djavax.net.ssl.trustStore=c:/workspaces/mdw6/mdw/deploy/certs/CenturyLinkQCA.jks  
 -Djava.net.preferIPv4Stack=true  
 -Xms512m -Xmx1024m -XX:MaxPermSize=256m
-   ```
  - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
  - Check MDWHub access:  
    http://localhost:8080/mdw
@@ -57,13 +56,11 @@
    **Note**: on Linux it's required to set the MySQL system variable lower_case_table_names to 1:  
    http://dev.mysql.com/doc/refman/5.0/en/server-system-variables.html#sysvar_lower_case_table_names
  - Download the following scripts from here and run them in this order:
-   ```
-create_tables.sql
-create_indexes.sql
-add_fkeys.sql
-baseline_inserts.sql -- this script inserts a basic set of reference data into some of the tables created above
-seed_users.sql -- **Note**: Edit seed_users.sql to add yourself as a user
-   ```
+       create_tables.sql
+       create_indexes.sql
+       add_fkeys.sql
+       baseline_inserts.sql -- this script inserts a basic set of reference data into some of the tables created above
+       seed_users.sql -- **Note**: Edit seed_users.sql to add yourself as a user
 
 6. Chrome and Postman
  - Install Chrome and the Postman Chrome App for REST service testing
