@@ -39,14 +39,14 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
   $scope.serviceFullPath = $routeParams.servicePath;
   if ($routeParams.serviceSubPath)
     $scope.serviceFullPath += '/' + $routeParams.serviceSubPath;
-  $scope.serviceApi = ServiceApis.get({servicePath: $routeParams.servicePath}, function success(serviceDef) {
+  $scope.serviceApi = ServiceApis.get({servicePath: $routeParams.servicePath, serviceSubPath: $routeParams.serviceSubPath}, function success(serviceDef) {
     var path = $routeParams.servicePath;
     $scope.serviceApi.servicePath = $routeParams.servicePath;
     if ($routeParams.serviceSubPath)
       $scope.serviceApi.serviceSubPath = $routeParams.serviceSubPath;
     console.log("$routeParams.serviceSubPath: " + $routeParams.serviceSubPath);
     $scope.serviceApi.jsonContent = serviceDef.raw;
-    ServiceApis.get({servicePath: path + '.yaml' }, function(serviceDef) {
+    ServiceApis.get({servicePath: path, serviceSubPath: $routeParams.serviceSubPath, ext: '.yaml' }, function(serviceDef) {
       $scope.serviceApi.yamlContent = serviceDef.raw;
       // hack the swagger-editor local storage cache to avoid retrieving twice
       var swaggerEditorCache = $window.localStorage['ngStorage-SwaggerEditorCache'];
@@ -123,7 +123,7 @@ servicesMod.controller('CombinedServiceController', ['$scope', '$routeParams', '
 }]);
 
 servicesMod.factory('ServiceApis', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.hub + '/api/:servicePath/:serviceSubPath', {}, {
+  return $resource(mdw.roots.hub + '/api/:servicePath/:serviceSubPath:ext', {}, {
     get: { 
       method: 'GET',
       transformResponse: function(data, headers) {
