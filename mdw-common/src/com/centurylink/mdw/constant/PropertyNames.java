@@ -130,9 +130,6 @@ public class PropertyNames {
     public static final String MDW_SERVER_PROXY = "mdw.server.proxy";
 
     public static final String MDW_HUB_URL = "mdw.hub.url";
-    public static final String MDW_DEV_USER = "mdw.dev.user";
-    public static final String MDW_LOGIN = "mdw.login"; // ct or oauth or something else
-    public static final String MDW_SERVICE_USER = "mdw.service.user";
     public static final String MDW_DEFAULT_RENDERING_ENGINE = "mdw.default.rendering.engine";
     public static final String MDW_HUB_VIEW_DEF = "mdw.hub.view.definition";
     public static final String MDW_HUB_ACTION_DEF = "mdw.hub.action.definition";

@@ -35,7 +35,8 @@
    Select the mdw project and double-click the "buildAll" task
    
 4. Run on Tomcat in Eclipse
- - Edit mdw.properties to suit your environment.
+ - Edit mdw/config/mdw.properties to suit your environment.
+ - Edit mdw/config/access.yaml to set devUser to yourself.
  - In Eclipse Servers view, right-click and select New > Server  
    **Important**: Select the Apache > Tomcat 7.0 (MDW) runtime
  - Select the mdw-hub module in the Add/Remove wizard page

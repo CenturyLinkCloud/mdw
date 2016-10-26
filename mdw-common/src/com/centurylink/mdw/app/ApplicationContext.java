@@ -464,25 +464,34 @@ public class ApplicationContext {
         return "true".equalsIgnoreCase(System.getProperty("mdw.service.api.open"));
     }
 
+    private static String devUser;
+    /**
+     * Can only be set once (by AccessFilter) at deploy time.
+     */
+    public static void setDevUser(String user) {
+        if (devUser == null)
+            devUser = user;
+    }
     public static String getDevUser() {
-        if (isDevelopment()) {
-            String devUser = PropertyManager.getProperty(PropertyNames.MDW_DEV_USER);
-            if (devUser == null) // compatibility fallback
-                devUser = PropertyManager.getProperty("mdw.hub.user");
+        if (isDevelopment())
             return devUser;
-        }
-        else {
+        else
             return null;
-        }
     }
 
+    private static String serviceUser;
+    /**
+     * Can only be set once (by AccessFilter) at deploy time.
+     */
+    public static void setServiceUser(String user) {
+        if (serviceUser == null)
+            serviceUser = user;
+    }
     public static String getServiceUser() {
-        if (isServiceApiOpen()) {
-            return PropertyManager.getProperty(PropertyNames.MDW_SERVICE_USER);
-        }
-        else {
+        if (isServiceApiOpen())
+            return serviceUser;
+        else
             return null;
-        }
     }
 
     public static boolean isWar() {

@@ -2,12 +2,24 @@
 # unless running in dev mode (-Dmdw.runtime.env=dev).
 upstreamHosts:
   - 127.0.0.1
+  
 # Auth methods supported include ct (ClearTrust Web Agent) 
 # or oauth (OAuth2).  Default is oauth.
 authMethod: ct
+
 # This is the header we trust to specify the authenticated user id.
 # NOTE: This is only secure when upstreamHosts is enforced.
 authUserHeader: ct-remote-user
+
+# Allows access to all UI functions and Service APIs permitted for this
+# user without authenticating.  Requires "-Dmdw.runtime.env=dev" system property.
+devUser: mdwapp
+
+# Allows access to all Service APIs permitted for this user without
+# authenticating.  Useful when UI access is through login, but service access
+# should be wide open.  Requires "-Dmdw.service.api.open=true" system property.
+# serviceUser: mdwapp
+
 # Auth exclusions are patterns that can be accessed directly
 # without authentication even when running with protection 
 # (upstreamHosts != null & not in dev mode). 
@@ -24,13 +36,17 @@ authExclusions:
   - '/services/*'
   - '/Services/*'
   - '/api/*'
+  
 # Headers appended to all HTTP servlet responses.
 responseHeaders:
   X-UA-Compatible: IE=Edge
+  
 # Session timeout in seconds (if not specified, container will govern).
 sessionTimeout: 3600
+
 # Allowing any authenticated user means even those not in mdw's db.
 allowAnyAuthenticatedUser: false
+
 # Special options for logging
 loggingOptions:
   logResponseTimes: false

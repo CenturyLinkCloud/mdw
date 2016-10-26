@@ -46,11 +46,9 @@ public class WebAppContext {
             initMdwBuildVersion();
             mdw = new Mdw(mdwVersion, mdwBuild, hubRoot, servicesRoot, assetRoot, overridePackage);
 
-            boolean isDev = "dev".equals(System.getProperty("runtimeEnv"));
+            boolean isDev = "dev".equals(System.getProperty("mdw.runtime.env"));
             if (isDev) {
-                String hubUser = PropertyManager.getProperty(PropertyNames.MDW_DEV_USER);
-                if (hubUser == null)
-                    hubUser = PropertyManager.getProperty("mdw.hub.user"); // compatibility
+                String hubUser = ApplicationContext.getDevUser();
                 mdw.setHubUser(hubUser);
             }
         }

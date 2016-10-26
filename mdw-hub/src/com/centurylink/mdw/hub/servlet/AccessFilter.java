@@ -58,6 +58,11 @@ public class AccessFilter implements Filter {
             YamlLoader yamlLoader = new YamlLoader(new String(FileHelper.readConfig(ACCESS_CONFIG_FILE).getBytes()));
             Map<?,?> topMap = yamlLoader.getRequiredMap("", yamlLoader.getTop(), "");
 
+            if (devMode)
+                ApplicationContext.setDevUser(yamlLoader.get("devUser", topMap));
+            if (ApplicationContext.isServiceApiOpen())
+                ApplicationContext.setServiceUser(yamlLoader.get("serviceUser", topMap));
+
             // upstreamHosts
             List<?> upstreamHostsList = yamlLoader.getList("upstreamHosts", topMap);
             if (upstreamHostsList != null) {
@@ -176,9 +181,8 @@ public class AccessFilter implements Filter {
                 else {
                     // user not authenticated
                     if (!isAuthExclude(path)) {
-                        // redirect to login page
-                        response.sendRedirect(request.getContextPath() + "/login");
-                        return;
+                        // redirect to login page is performed upstream (CT web agent or OAuth)
+                        throw new MdwSecurityException("Authentication required");
                     }
                 }
             }
