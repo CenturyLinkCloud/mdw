@@ -30,6 +30,7 @@ import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.StringHelper;
 
 import io.swagger.annotations.Api;

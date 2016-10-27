@@ -21,6 +21,7 @@ import com.centurylink.mdw.model.workflow.Solution;
 import com.centurylink.mdw.model.workflow.Solution.MemberType;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SolutionServices;
+import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

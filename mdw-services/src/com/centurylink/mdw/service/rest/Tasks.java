@@ -47,6 +47,7 @@ import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.UserServices;
 import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.services.task.AllowableTaskActions;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.JsonUtil;

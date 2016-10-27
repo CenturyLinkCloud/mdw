@@ -17,6 +17,7 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.JsonUtil;
 
 import io.swagger.annotations.Api;

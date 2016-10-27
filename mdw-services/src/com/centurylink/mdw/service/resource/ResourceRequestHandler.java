@@ -21,7 +21,7 @@ import com.centurylink.mdw.service.Resource;
 import com.centurylink.mdw.service.ResourceRequestDocument;
 import com.centurylink.mdw.service.ResourceRequestDocument.ResourceRequest;
 import com.centurylink.mdw.service.handler.ServiceRequestHandler;
-import com.centurylink.mdw.service.rest.JsonRestService;
+import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.ResourceFormatter.Format;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;

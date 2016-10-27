@@ -17,6 +17,7 @@ import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

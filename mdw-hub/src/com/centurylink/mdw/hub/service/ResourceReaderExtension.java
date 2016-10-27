@@ -13,7 +13,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
-import com.centurylink.mdw.service.rest.RestService;
+import com.centurylink.mdw.services.rest.RestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -50,6 +50,7 @@ public class ResourceReaderExtension implements ReaderExtension {
     }
 
     public static final String BASE_REST_PKG = "com.centurylink.mdw.services.rest";
+
     @Override
     public String getHttpMethod(ReaderContext context, Method method) {
         ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);

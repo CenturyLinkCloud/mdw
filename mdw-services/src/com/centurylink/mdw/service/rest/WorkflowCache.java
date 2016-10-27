@@ -19,6 +19,7 @@ import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.cache.CacheRegistration;
+import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.startup.StartupException;
 
 import io.swagger.annotations.Api;

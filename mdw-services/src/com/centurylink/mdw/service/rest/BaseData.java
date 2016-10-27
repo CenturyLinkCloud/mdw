@@ -21,6 +21,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.variable.VariableType;
+import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

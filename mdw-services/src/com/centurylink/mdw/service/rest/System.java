@@ -18,6 +18,7 @@ import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.services.SystemServices.SysInfoType;
+import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
