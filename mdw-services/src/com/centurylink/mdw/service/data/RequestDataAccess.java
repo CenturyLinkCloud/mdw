@@ -194,9 +194,7 @@ public class RequestDataAccess extends CommonDataAccess {
     public Request getRequest(Long id, boolean withContent, boolean withResponseContent)
     throws DataAccessException {
         try {
-            String query = "select create_dt, owner_type, owner_id, process_inst_id";
-            if (withContent)
-                query += ", content";
+            String query = "select create_dt, owner_type, owner_id";
             query += " from document where document_id = ?";
             db.openConnection();
             ResultSet rs = db.runSelect(query, id);
@@ -206,11 +204,15 @@ public class RequestDataAccess extends CommonDataAccess {
             if (rs.next()) {
                 request = new Request(id);
                 request.setCreated(rs.getTimestamp("create_dt"));
-                request.setProcessInstanceId(rs.getLong("process_inst_id"));
                 ownerType = rs.getString("owner_type");
                 ownerId = rs.getLong("owner_id");
-                if (withContent)
-                    request.setContent(rs.getString("content"));
+                if (withContent) {
+                    // TODO mongo
+                    query = "select content from document_content where document_id = ?";
+                    rs = db.runSelect(query, id);
+                    if (rs.next())
+                        request.setContent(rs.getString("content"));
+                }
             }
             else {
                 return null;
@@ -218,8 +220,6 @@ public class RequestDataAccess extends CommonDataAccess {
 
             ResultSet responseRs = null;
             String responseQuery = "select document_id, create_dt";
-            if (withResponseContent)
-                responseQuery += ", content";
             if (OwnerType.ADAPTER_REQUEST.equals(ownerType) && ownerId != null) {
                 request.setOutbound(true);
                 responseQuery += " from document where owner_type='" + OwnerType.ADAPTER_RESPONSE + "' and owner_id = ?";
@@ -232,8 +232,13 @@ public class RequestDataAccess extends CommonDataAccess {
             if (responseRs != null && responseRs.next()) {
                 request.setResponseId(responseRs.getLong("document_id"));
                 request.setResponded(responseRs.getTimestamp("create_dt"));
-                if (withResponseContent)
-                    request.setResponseContent(responseRs.getString("content"));
+                if (withResponseContent) {
+                    // TODO mongo
+                    query = "select content from document_content where document_id = ?";
+                    responseRs = db.runSelect(query, id);
+                    if (responseRs.next())
+                        request.setResponseContent(responseRs.getString("content"));
+                }
             }
 
             return request;
@@ -319,6 +324,9 @@ public class RequestDataAccess extends CommonDataAccess {
         else if (id != null && id > 0) {
             clause.append(" and d.document_id = " + id + "\n");
         }
+        else if (query.getFilter("ownerId") != null) {
+            clause.append(" and d.owner_id = " + query.getLongFilter("ownerId") + "\n");
+        }
 
         return clause.toString();
     }
@@ -397,6 +405,9 @@ public class RequestDataAccess extends CommonDataAccess {
         }
         else if (id != null && id > 0) {
             clause.append(" and d.document_id = " + id + "\n");
+        }
+        else if (query.getFilter("ownerId") != null) {
+            clause.append(" and d.owner_id = " + query.getLongFilter("ownerId") + "\n");
         }
         else {
             Long[] ownerIds = query.getLongArrayFilter("ownerIds");

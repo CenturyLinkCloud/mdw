@@ -173,10 +173,6 @@ public class AccessFilter implements Filter {
                         if (!allowAnyAuthenticatedUser)
                             throw new MdwSecurityException("User not authorized: " + authUser);
                     }
-                    else {
-                        logger.info("Authenticated User: " + user.getCuid());
-                        logger.mdwDebug("Auth User Details:\n" + user);
-                    }
                 }
                 else {
                     // user not authenticated

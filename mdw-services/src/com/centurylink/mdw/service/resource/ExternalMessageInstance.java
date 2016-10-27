@@ -8,21 +8,53 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.JsonService;
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.request.RequestList;
+import com.centurylink.mdw.services.RequestServices;
+import com.centurylink.mdw.services.ServiceLocator;
 
+/**
+ * Needed by Designer.
+ */
 public class ExternalMessageInstance implements JsonService {
 
     public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        String activityId = (String)parameters.get("activityId");
-        if (activityId == null)
-            throw new ServiceException("Missing parameter: activityId");
-        String activityInstId = (String)parameters.get("activityInstId");
-        if (activityInstId == null)
+        String activityInstIdStr = (String)parameters.get("activityInstId");
+        if (activityInstIdStr == null)
             throw new ServiceException("Missing parameter: activityInstId");
+        Long activityInstId = new Long(activityInstIdStr);
+        String eventInstId = (String)parameters.get("eventInstId");
+        Long requestId = eventInstId == null ? null : new Long(eventInstId);
 
-        // TODO: needed by Designer
+        try {
+            JSONObject json = new JSONObject();
+            RequestServices requestServices = ServiceLocator.getRequestServices();
+            Query query = new Query();
+            if (requestId == null) {
+                // adapter/event-wait activity
+                query.setFilter("type", RequestList.OUTBOUND_REQUESTS);
+                query.setFilter("ownerId", activityInstId);
+                RequestList reqList = requestServices.getRequests(query);
+                if (!reqList.getItems().isEmpty()) {
+                    Request request = reqList.getItems().get(0);
+                    request = requestServices.getRequest(request.getId());
+                    json.put("request", request.getContent());
+                    json.put("response", requestServices.getRequestResponse(request.getId()).getResponseContent());
+                }
 
-        return new JSONObject().toString();
+            } else {
+                // start activity
+                Request request = requestServices.getRequest(requestId);
+                json.put("request", request.getContent());
+                json.put("response", requestServices.getRequestResponse(request.getId()).getResponseContent());
+            }
+            return json.toString(2);
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
     }
 
     public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {

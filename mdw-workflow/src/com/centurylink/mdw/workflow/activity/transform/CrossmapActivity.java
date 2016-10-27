@@ -66,13 +66,14 @@ public class CrossmapActivity extends DefaultActivityImpl {
             if (inputObj == null)
                 throw new ActivityException("Input variable is null: " + inputAttr);
             Slurper slurper;
-            if (inputTrans instanceof JsonTranslator) {
-                JSONObject input = ((JsonTranslator)inputTrans).toJson(inputObj);
-                slurper = new JsonSlurper(inputVar.getName(), input.toString());
-            }
-            else if (inputTrans instanceof DomDocumentTranslator) {
+            // XML is always tried first since XML can now be represented as JSON
+            if (inputTrans instanceof DomDocumentTranslator) {
                 Document input = ((DomDocumentTranslator)inputTrans).toDomDocument(inputObj);
                 slurper = new XmlSlurper(inputVar.getName(), DomHelper.toXml((Document)input));
+            }
+            else if (inputTrans instanceof JsonTranslator) {
+                JSONObject input = ((JsonTranslator)inputTrans).toJson(inputObj);
+                slurper = new JsonSlurper(inputVar.getName(), input.toString());
             }
             else {
                 throw new ActivityException("Unsupported input variable type: " + inputVar.getVariableType());
@@ -88,21 +89,21 @@ public class CrossmapActivity extends DefaultActivityImpl {
             com.centurylink.mdw.variable.VariableTranslator outputTrans
                 = VariableTranslator.getTranslator(getPackage(), outputVar.getVariableType());
             Builder builder;
-            if (outputTrans instanceof JsonTranslator)
-                builder = new JsonBuilder(outputVar.getName());
-            else if (outputTrans instanceof DomDocumentTranslator)
+            if (outputTrans instanceof DomDocumentTranslator)
                 builder = new XmlBuilder(outputVar.getName());
+            else if (outputTrans instanceof JsonTranslator)
+                builder = new JsonBuilder(outputVar.getName());
             else
                 throw new ActivityException("Unsupported output variable type: " + outputVar.getVariableType());
 
             runScript(mapperScript.getStringContent(), slurper, builder);
 
-            if (outputTrans instanceof JsonTranslator) {
-                Object output = ((JsonTranslator)outputTrans).fromJson(new JSONObject(builder.getString()));
+            if (outputTrans instanceof DomDocumentTranslator) {
+                Object output = ((DomDocumentTranslator)outputTrans).fromDomNode(DomHelper.toDomDocument(builder.getString()));
                 setVariableValue(outputVar.getName(), output);
             }
-            else if (outputTrans instanceof DomDocumentTranslator) {
-                Object output = ((DomDocumentTranslator)outputTrans).fromDomNode(DomHelper.toDomDocument(builder.getString()));
+            else if (outputTrans instanceof JsonTranslator) {
+                Object output = ((JsonTranslator)outputTrans).fromJson(new JSONObject(builder.getString()));
                 setVariableValue(outputVar.getName(), output);
             }
 
