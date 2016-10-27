@@ -4,7 +4,7 @@
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
-          /{{serviceFullPath}}        
+          /{{serviceApi.apiPath}}        
         </div>
       </div>
       <div class="mdw-tabbed-section">
@@ -12,8 +12,8 @@
           <uib-tab heading="JSON">
             <div class="mdw-inner-content">
               <div class="mdw-resource-heading">
-                <a href="{{serviceApi.apiBase}}/{{serviceFullPath}}.json">
-                  {{serviceApi.apiBase}}/{{serviceFullPath}}.json
+                <a href="{{serviceApi.apiBase}}/{{serviceApi.apiPath}}.json">
+                  {{serviceApi.apiBase}}/{{serviceApi.apiPath}}.json
                 </a>
               </div>
               <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="serviceApi.jsonContent | highlight:'json' | unsafe"></code></pre>
@@ -22,8 +22,8 @@
           <uib-tab heading="YAML">
             <div class="mdw-inner-content">
               <div class="mdw-resource-heading">
-                <a href="{{serviceApi.apiBase}}/{{serviceFullPath}}.yaml">
-                  {{serviceApi.apiBase}}/{{serviceFullPath}}.yaml
+                <a href="{{serviceApi.apiBase}}/{{serviceApi.apiPath}}.yaml">
+                  {{serviceApi.apiBase}}/{{serviceApi.apiPath}}.yaml
                 </a>
               </div>
               <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="serviceApi.yamlContent | highlight:'yaml' | unsafe"></code></pre>

@@ -116,9 +116,9 @@ public class ResourceReaderExtension implements ReaderExtension {
             Package pkg = method.getDeclaringClass().getPackage();
             if (p != null && "MDW".equals(pkg.getImplementationTitle())) {
                 if (p.startsWith("/"))
-                    p = "/" + pkg.getName() + p;
+                    p = "/" + pkg.getName().replace('.', '/') + p;
                 else
-                    p = "/" + pkg.getName() + "/" + p;
+                    p = "/" + pkg.getName().replace('.', '/') + "/" + p;
             }
 
             if (apiOperation != null) {

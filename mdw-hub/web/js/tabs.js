@@ -7,12 +7,6 @@ tabsSvc.factory('tabs', ['mdw', function(mdw) {
   return {
     def: [
       {
-        id: 'tasksTab',
-        label: 'Tasks',     
-        url: '#/tasks',
-        routes: ['/tasks']
-      },
-      {
         id: 'dashboardTab',
         label: 'Dashboard',
         url: '#/dashboard/processes',
@@ -30,6 +24,12 @@ tabsSvc.factory('tabs', ['mdw', function(mdw) {
         url: '#/service',
         routes: ['/service', '/httpHelper'],
         guestAccess: true
+      },
+      {
+        id: 'tasksTab',
+        label: 'Tasks',     
+        url: '#/tasks',
+        routes: ['/tasks']
       },
       {
         id: 'adminTab',

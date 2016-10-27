@@ -63,6 +63,8 @@ public class ServiceApiServlet extends HttpServlet {
             else
                 svcPath = root;
 
+            svcPath = svcPath.replace('.', '/');
+
             try {
                 MdwScanner scanner = new MdwScanner(svcPath, !"false".equals(request.getParameter(PRETTY_PRINT_PARAM)));
                 Swagger swagger = new Swagger();

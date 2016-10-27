@@ -235,17 +235,17 @@ routesSvc.factory('routes', function() {
         path: '/service/:servicePath',
         templateUrl: 'service/swagger.html',
         controller: 'ServiceController'
-      },      
-      {
-        path: '/service/:servicePath/:serviceSubPath',
-        templateUrl: 'service/swagger.html',
-        controller: 'ServiceController'
       },
-      {
-        path: '/service/:servicePath/:serviceSubPath/:serviceSub2',
-        templateUrl: 'service/swagger.html',
-        controller: 'ServiceController'
-      },
+//      {
+//        path: '/service/:servicePath/:serviceSubPath',
+//        templateUrl: 'service/swagger.html',
+//        controller: 'ServiceController'
+//      },
+//      {
+//        path: '/service/:servicePath/:serviceSubPath/:serviceSub2',
+//        templateUrl: 'service/swagger.html',
+//        controller: 'ServiceController'
+//      },
       {
         path: '/serviceCombined',
         templateUrl: 'service/swagger.html?combined',

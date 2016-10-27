@@ -52,7 +52,7 @@ adminApp.config(['$routeProvider', function($routeProvider) {
     }
   }
   $routeProvider.otherwise({
-    redirectTo: '/tasks'
+    redirectTo: '/dashboard/processes'
   });
 }]);
 

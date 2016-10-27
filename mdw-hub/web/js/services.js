@@ -15,10 +15,12 @@ servicesMod.controller('ServicesController', ['$scope', 'mdw', 'ServiceApis',
       var slashCurly = pathName.indexOf('/{');
       if (slashCurly > 0)
         barePath = pathName.substring(0, slashCurly);
+      barePath = '/' + barePath.substring(1).replace(/\//g, '.');
       
       var serviceApi = $scope.serviceApis[barePath];
       if (!serviceApi)
         serviceApi = {};
+      serviceApi.label = barePath.replace(/\./g, '/');
       $scope.serviceApis[barePath] = serviceApi;
       
       var pathVal = paths[pathName];
@@ -37,16 +39,11 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
                                               function($scope, $routeParams, $sce, $window, mdw, ServiceApis, Assets, Asset) {
 
   $scope.serviceFullPath = $routeParams.servicePath;
-  if ($routeParams.serviceSubPath)
-    $scope.serviceFullPath += '/' + $routeParams.serviceSubPath;
-  $scope.serviceApi = ServiceApis.get({servicePath: $routeParams.servicePath, serviceSubPath: $routeParams.serviceSubPath}, function success(serviceDef) {
-    var path = $routeParams.servicePath;
-    $scope.serviceApi.servicePath = $routeParams.servicePath;
-    if ($routeParams.serviceSubPath)
-      $scope.serviceApi.serviceSubPath = $routeParams.serviceSubPath;
-    console.log("$routeParams.serviceSubPath: " + $routeParams.serviceSubPath);
+  $scope.serviceApi = ServiceApis.get({servicePath: $routeParams.servicePath, ext: '.json'}, function success(serviceDef) {
+    $scope.serviceApi.servicePath = $routeParams.servicePath; // service path is logical path (with dots separating subpaths)
+    $scope.serviceApi.apiPath = $routeParams.servicePath.replace(/\./g, '/'); // api path is actual service path
     $scope.serviceApi.jsonContent = serviceDef.raw;
-    ServiceApis.get({servicePath: path, serviceSubPath: $routeParams.serviceSubPath, ext: '.yaml' }, function(serviceDef) {
+    ServiceApis.get({servicePath: $routeParams.servicePath, ext: '.yaml' }, function(serviceDef) {
       $scope.serviceApi.yamlContent = serviceDef.raw;
       // hack the swagger-editor local storage cache to avoid retrieving twice
       var swaggerEditorCache = $window.localStorage['ngStorage-SwaggerEditorCache'];
@@ -65,14 +62,14 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
         var pkgs = pkgList.packages;
         pkgs.forEach(function(pkg) {
           if (pkg.name.endsWith('api.samples')) {
-            if ((!$scope.serviceApi.serviceSubPath && pkg.name == 'com.centurylink.mdw.services.api.samples') || 
+            if (pkg.name == 'com.centurylink.mdw.services.api.samples' || 
                   pkg.name.substring(0, pkg.name.length - 12) === $scope.serviceApi.servicePath) {
               console.log('finding api samples in: ' + pkg.name);
               Assets.get({packageName: pkg.name},
                 function(pkgData) {
                   for (var i = 0; i < pkgData.assets.length; i++) {
                     var asset = pkgData.assets[i];
-                    var svcPathRoot = ($scope.serviceApi.serviceSubPath ? $scope.serviceApi.serviceSubPath : $scope.serviceApi.servicePath) + '_';
+                    var svcPathRoot = $scope.serviceApi.servicePath + '_';
                     if (asset.name.startsWith(svcPathRoot)) {
                       console.log('  ' + asset.name);
                       $scope.serviceApi.samplePackageName = pkg.name;
@@ -112,19 +109,19 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
 servicesMod.controller('CombinedServiceController', ['$scope', '$routeParams', '$sce', 'mdw', 'ServiceApis', 
                                                       function($scope, $routeParams, $sce, mdw, ServiceApis) {
  
- $scope.serviceApi = ServiceApis.get({servicePath: 'swagger'}, function success(serviceDef) {
+ $scope.serviceApi = ServiceApis.get({servicePath: 'swagger', ext: '.json'}, function success(serviceDef) {
    var path = 'swagger';
    $scope.serviceApi.servicePath = 'swagger';
    $scope.serviceApi.jsonContent = serviceDef.raw;
-   ServiceApis.get({servicePath: path + '.yaml' }, function(serviceDef) {
+   ServiceApis.get({servicePath: path, ext: '.yaml' }, function(serviceDef) {
        $scope.serviceApi.yamlContent = serviceDef.raw;
      });
  });
 }]);
 
 servicesMod.factory('ServiceApis', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.hub + '/api/:servicePath/:serviceSubPath:ext', {}, {
-    get: { 
+  return $resource(mdw.roots.hub + '/api/:servicePath:ext', {}, {
+    get: {
       method: 'GET',
       transformResponse: function(data, headers) {
         var contentType = headers()['content-type'];
@@ -140,7 +137,16 @@ servicesMod.factory('ServiceApis', ['$resource', 'mdw', function($resource, mdw)
         serviceDef.raw = data;
         return serviceDef;
       }
-    }
+    },
+    interceptor: {
+      request: function(config) {
+        console.log('config.url: ' + config.url);
+        return config;
+      },
+      response: function(x) {
+        console.log('response interceptor');
+      }
+    },    
   });
 }]);
 

@@ -73,7 +73,7 @@ public class MdwScanner implements Scanner {
                     String path = jsonServiceClass.getName().replace('.', '/');
                     Path pathAnnotation = jsonServiceClass.getAnnotation(Path.class);
                     if (pathAnnotation != null && pathAnnotation.value() != null) {
-                        path = jsonServiceClass.getPackage().getName();
+                        path = jsonServiceClass.getPackage().getName().replace('.', '/');
                         if (!pathAnnotation.value().startsWith("/"))
                             path += "/";
                         path += pathAnnotation.value();

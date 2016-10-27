@@ -121,11 +121,9 @@ userSvc.factory('authUser', ['$http', 'mdw', 'tabs', function($http, mdw, tabs) 
               oneActive = true;
           }
           if (!oneActive) {
-            var defaultTab = this.tabs.filter(function(tab) {
-              return tab.id == 'tasksTab';
-            });
-            if (defaultTab.length > 0)
-              defaultTab[0].active = 'true';
+            var defaultTab = this.tabs[0];
+            if (defaultTab)
+              defaultTab.active = 'true';
           }
           for (var i = 0; i < this.tabs.length; i++) { // jshint ignore:line
             var userTab = user.tabs[i];
