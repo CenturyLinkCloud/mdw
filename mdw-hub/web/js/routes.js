@@ -227,37 +227,27 @@ routesSvc.factory('routes', function() {
         templateUrl: 'layout/service-nav.html'
       },
       {
-        path: '/service',
+        path: '/serviceApi',
         templateUrl: 'service/services.html',
         controller: 'ServicesController'
       },
       {
-        path: '/service/:servicePath',
+        path: '/serviceApi/:servicePath',
         templateUrl: 'service/swagger.html',
         controller: 'ServiceController'
       },
-//      {
-//        path: '/service/:servicePath/:serviceSubPath',
-//        templateUrl: 'service/swagger.html',
-//        controller: 'ServiceController'
-//      },
-//      {
-//        path: '/service/:servicePath/:serviceSubPath/:serviceSub2',
-//        templateUrl: 'service/swagger.html',
-//        controller: 'ServiceController'
-//      },
       {
-        path: '/serviceCombined',
+        path: '/serviceApiCombined',
         templateUrl: 'service/swagger.html?combined',
         controller: 'CombinedServiceController'
       },
       {
-        path: '/service/requests',
+        path: '/serviceRequests',
         templateUrl: 'requests/requests.html',
         controller: 'RequestsController'
       },
       {
-        path: '/service/requests/:requestId',
+        path: '/serviceRequests/:requestId',
         templateUrl: 'requests/request.html',
         controller: 'RequestController'
       },

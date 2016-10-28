@@ -137,16 +137,7 @@ servicesMod.factory('ServiceApis', ['$resource', 'mdw', function($resource, mdw)
         serviceDef.raw = data;
         return serviceDef;
       }
-    },
-    interceptor: {
-      request: function(config) {
-        console.log('config.url: ' + config.url);
-        return config;
-      },
-      response: function(x) {
-        console.log('response interceptor');
-      }
-    },    
+    }
   });
 }]);
 

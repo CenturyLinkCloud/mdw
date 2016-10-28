@@ -8,7 +8,7 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
   
 
   // is this in the context of the Services tab
-  $scope.context = $location.path().startsWith('/service/') ? 'service' : 'workflow';
+  $scope.context = $location.path().startsWith('/service') ? 'service' : 'workflow';
   $scope.defaultType = $scope.context == 'service' ? 'inboundRequests' : 'masterRequests';
   
   // two-way bound to/from directive

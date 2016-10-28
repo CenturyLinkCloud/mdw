@@ -21,8 +21,8 @@ tabsSvc.factory('tabs', ['mdw', function(mdw) {
       {
         id: 'serviceTab',
         label: 'Services',
-        url: '#/service',
-        routes: ['/service', '/httpHelper'],
+        url: '#/serviceApi',
+        routes: ['/serviceApi', '/serviceRequests', '/httpHelper'],
         guestAccess: true
       },
       {

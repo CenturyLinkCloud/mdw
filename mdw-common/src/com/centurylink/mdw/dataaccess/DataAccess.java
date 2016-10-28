@@ -28,7 +28,7 @@ public class DataAccess {
     public static boolean isPackageLevelAuthorization = true;
 
     public static ProcessPersister getProcessPersister() throws DataAccessException {
-        return getProcessPersister(currentSchemaVersion, supportedSchemaVersion, new DatabaseAccess(null),null);
+        return getProcessPersister(currentSchemaVersion, supportedSchemaVersion, new DatabaseAccess(null));
     }
 
     /**
