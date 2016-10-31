@@ -13,11 +13,11 @@ import com.centurylink.mdw.services.ServiceLocator;
 
 public class Attributes implements JsonService {
 
-    public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        String ownerType = (String)parameters.get("ownerType");
+    public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
+        String ownerType = (String)metaInfo.get("ownerType");
         if (ownerType == null)
             throw new ServiceException("Missing parameter: ownerType");
-        String ownerId = (String)parameters.get("ownerId");
+        String ownerId = (String)metaInfo.get("ownerId");
         if (ownerId == null)
             throw new ServiceException("Missing parameter: ownerId");
 
@@ -33,7 +33,7 @@ public class Attributes implements JsonService {
         }
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        return getJson(parameters, metaInfo);
+    public String getText(Object obj, Map<String,String> metaInfo) throws ServiceException {
+        return getJson((JSONObject)obj, metaInfo);
     }
 }

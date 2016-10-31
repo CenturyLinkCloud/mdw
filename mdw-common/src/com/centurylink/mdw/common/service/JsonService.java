@@ -5,6 +5,8 @@ package com.centurylink.mdw.common.service;
 
 import java.util.Map;
 
+import org.json.JSONObject;
+
 public interface JsonService extends TextService, RegisteredService {
-    public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException;
+    public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException;
 }

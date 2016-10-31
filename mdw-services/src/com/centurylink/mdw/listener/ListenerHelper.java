@@ -9,17 +9,13 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.app.Compatibility;
-import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
-import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.MDWException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
@@ -29,18 +25,16 @@ import com.centurylink.mdw.event.EventHandlerRegistry;
 import com.centurylink.mdw.event.ExternalEventHandler;
 import com.centurylink.mdw.event.ExternalEventHandlerErrorResponse;
 import com.centurylink.mdw.event.UnparseableMessageException;
-import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.model.workflow.PackageAware;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.PackageAware;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.ServiceMonitor;
-import com.centurylink.mdw.service.action.ActionRequestHandler;
 import com.centurylink.mdw.service.data.event.EventHandlerCache;
-import com.centurylink.mdw.service.resource.ResourceRequestHandler;
+import com.centurylink.mdw.service.handler.ServiceRequestHandler;
 import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -78,86 +72,60 @@ public class ListenerHelper {
 
     static final String START_PROCESS_HANDLER = "START_PROCESS";
     static final String NOTIFY_PROCESS_HANDLER = "NOTIFY_PROCESS";
-    static final String RESOURCE_REQUEST = "ResourceRequest";
-    static final String ACTION_REQUEST = "ActionRequest";
 
-    private ExternalEvent findEventHandler(XmlObject xmlBean, Map<String, String> metaInfo) throws XmlException {
-        String rootname = XmlPath.getRootNodeName(xmlBean);
-        if (rootname.startsWith("_mdw_"))
-            return null; // internal request
-        List<ExternalEvent> bucket = EventHandlerCache.getExternalEvents(rootname);
-        if (bucket != null) {
-            if ("ActionRequest".equals(rootname) || isRestPostPutDelete(metaInfo)) {
-                // compatibility for ESOWF -- prefer qualified matches
-                ExternalEvent frameworkActionHandler = null;
-                for (ExternalEvent e : bucket) {
-                    String v = e.getXpath().evaluate(xmlBean);
-                    if (v != null) {
-                        if ("ActionRequest".equals(e.getEventName()))
-                            frameworkActionHandler = e;
-                        else
+    private ExternalEvent findEventHandler(String request, Object requestDoc, Map<String,String> metaInfo)
+    throws XmlException, JSONException {
+        if (requestDoc instanceof XmlObject) {
+            XmlObject xmlBean = (XmlObject) requestDoc;
+            String rootname = XmlPath.getRootNodeName(xmlBean);
+            if (rootname.startsWith("_mdw_"))
+                return null; // internal request
+            List<ExternalEvent> bucket = EventHandlerCache.getExternalEvents(rootname);
+            if (bucket != null) {
+                if ("ActionRequest".equals(rootname)) {
+                    // compatibility for ESOWF -- prefer qualified matches
+                    ExternalEvent frameworkActionHandler = null;
+                    for (ExternalEvent e : bucket) {
+                        String v = e.getXpath().evaluate(xmlBean);
+                        if (v != null) {
+                            if ("ActionRequest".equals(e.getEventName()))
+                                frameworkActionHandler = e;
+                            else
+                                return e;
+                        }
+                    }
+                    if (frameworkActionHandler != null)
+                        return frameworkActionHandler;
+                }
+                else {
+                    for (ExternalEvent e : bucket) {
+                        String v = e.getXpath().evaluate(xmlBean);
+                        if (v != null)
                             return e;
                     }
                 }
-                if (frameworkActionHandler != null)
-                    return frameworkActionHandler;
             }
-            else {
+            bucket = EventHandlerCache.getExternalEvents("*");
+            if (bucket != null) {
                 for (ExternalEvent e : bucket) {
-                    String v = e.getXpath().evaluate(xmlBean);
+                    String v = XmlPath.evaluate(xmlBean, e.getEventName());
                     if (v != null)
                         return e;
                 }
             }
         }
-        bucket = EventHandlerCache.getExternalEvents("*");
-        if (bucket != null) {
-            for (ExternalEvent e : bucket) {
-                String v = XmlPath.evaluate(xmlBean, e.getEventName());
-                if (v != null)
-                    return e;
-            }
-        }
 
-        // bootstrap to make services available before packages imported
-        String rootNodeName = XmlPath.getRootNodeName(xmlBean);
-        if (RESOURCE_REQUEST.equals(rootNodeName))
-            return new ExternalEvent(0L, RESOURCE_REQUEST, ResourceRequestHandler.class.getName());
-        else if (ACTION_REQUEST.equals(rootNodeName))
-            return new ExternalEvent(0L, ACTION_REQUEST, ActionRequestHandler.class.getName());
+        if (isForFallbackHandler(request))
+            return EventHandlerCache.fallbackHandler;
         else
-            return EventHandlerCache.getDefaultEventHandler();
+            return EventHandlerCache.serviceHandler;
     }
 
-    private ExternalEvent findEventHandlerJson(JSONObject jsonobj, Map<String, String> metaInfo) throws JSONException {
-        String eventHandlerSpec = null;
-        JSONObject meta = jsonobj.has("META") ? jsonobj.getJSONObject("META") : null;
-        if (meta != null && meta.has(FormDataDocument.META_ACTION))
-            eventHandlerSpec = meta.getString(FormDataDocument.META_ACTION);
-        if (eventHandlerSpec == null && jsonobj.has("function"))
-            eventHandlerSpec = jsonobj.getString("function");
-        boolean isActionRequest = false;
-        if (eventHandlerSpec == null) {
-            isActionRequest = jsonobj.has("Action") || jsonobj.has("action") || isRestPostPutDelete(metaInfo);
-            if (isActionRequest)
-                eventHandlerSpec = "com.centurylink.mdw.service.action.ActionRequestHandler";
-        }
-        if (eventHandlerSpec == null)
-            throw new JSONException("Neither function nor ActionRequest provided in json query");
-        ExternalEvent handler = new ExternalEvent();
-        handler.setEventHandler(eventHandlerSpec);
-        if (isActionRequest) {
-            handler.setEventName("ActionRequest");
-        }
-        else {
-            handler.setEventName("JSONEvent");
-        }
-        handler.setId(new Long(0));
-        handler.setPackageName("com.centurylink.mdw.base");
-        return handler;
+    private boolean isForFallbackHandler(String request) {
+        return request != null && request.startsWith("<_mdw");
     }
 
-    private String parseHandlerSpec(String spec, Map<String, String> metainfo) {
+    private String parseHandlerSpec(String spec, Map<String,String> metainfo) {
         int k = spec.indexOf('?');
         if (k < 0)
             return spec.trim();
@@ -172,13 +140,6 @@ public class ListenerHelper {
         return clsname;
     }
 
-    private boolean isRestPostPutDelete(Map<String,String> metaInfo) {
-        return "REST".equals(metaInfo.get(Listener.METAINFO_PROTOCOL)) &&
-                 ("PUT".equals(metaInfo.get(Listener.METAINFO_HTTP_METHOD)) ||
-                  "POST".equals(metaInfo.get(Listener.METAINFO_HTTP_METHOD)) ||
-                  "DELETE".equals(metaInfo.get(Listener.METAINFO_HTTP_METHOD)));
-    }
-
     /**
      * This method is provided to listeners to handle external messages in a
      * protocol-independent way. The method performs the following things:
@@ -186,7 +147,7 @@ public class ListenerHelper {
      * <li>It parses the request message into generic XML bean</li>
      * <li>It determines an external event handler based on their configuration
      * and the content of the message. If a matching external event handler is
-     * not found, {@link DefaultEventHandler} will be used.</li>
+     * not found, {@link FallbackEventHandler} will be used.</li>
      * <li>It logs the message in DOCUMENT table with owner type
      * LISTENER_REQUEST</li>
      * <li>It invokes the event handler.</li>
@@ -216,7 +177,7 @@ public class ListenerHelper {
      *         they can be customized more easily. If it is certain that the
      *         listeners receiving the message will never need to respond, the
      *         response message can be set to null (by external event handlers).
-     * @see DefaultEventHandler
+     * @see FallbackEventHandler
      */
     public String processEvent(String request, Map<String,String> metaInfo) {
         String altResponse = null;
@@ -229,7 +190,7 @@ public class ListenerHelper {
                     request = altRequest;
             }
 
-            if (persistMessage(metaInfo))
+            if (!StringHelper.isEmpty(request) && persistMessage(metaInfo))
                 eeid = createRequestDocument(request, 0L);
 
             for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
@@ -264,7 +225,7 @@ public class ListenerHelper {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            return createServiceResponse(ex, metaInfo);
+            return createErrorResponse(request, metaInfo, ex);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -274,29 +235,18 @@ public class ListenerHelper {
                     return altResponse;  // TODO: persist onError's altResponse?
             }
 
-            return createStandardResponse(ex, metaInfo.get(Listener.METAINFO_REQUEST_ID));
+            return createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage()));
         }
-
-        // TODO refactor the following logic into a DefaultServiceHandler impl (MDW 6)
 
         // Parse the incoming message
         Object msgdoc = getParsedMessage(request, metaInfo);
-        if (msgdoc == null) {
-            // Unable to parse, so create an Error response using a Registered Default Event handler if required
-            return createErrorResponse(request, metaInfo);
-        }
-
         ExternalEventHandler handler = null;
         try {
             // find event handler specification
-            ExternalEvent eventHandler;
-            if (msgdoc instanceof JSONObject)
-                eventHandler = findEventHandlerJson((JSONObject)msgdoc, metaInfo);
-            else
-                eventHandler = findEventHandler((XmlObject)msgdoc, metaInfo);
+            ExternalEvent eventHandler = findEventHandler(request, msgdoc, metaInfo);
 
             if (eventHandler == null) {
-                DefaultEventHandler defaultHandler = new DefaultEventHandler();
+                FallbackEventHandler defaultHandler = new FallbackEventHandler();
                 return defaultHandler.handleSpecialEventMessage((XmlObject) msgdoc);
             }
 
@@ -313,15 +263,15 @@ public class ListenerHelper {
                 clsname = NotifyWaitingActivityEventHandler.class.getName();
             }
 
-            if (clsname.equals(DefaultEventHandler.class.getName())) {
-                handler = new DefaultEventHandler();
+            if (clsname.equals(FallbackEventHandler.class.getName())) {
+                handler = new FallbackEventHandler();
             }
             else {
                 String packageName = metaInfo.get(Listener.METAINFO_PACKAGE_NAME);
                 if (packageName == null)
                     packageName = eventHandler.getPackageName(); // currently only populated for VCS assets
                 Package pkg = PackageCache.getPackage(packageName);
-                if (pkg == null && (ActionRequestHandler.class.getName().equals(clsname) || ResourceRequestHandler.class.getName().equals(clsname))) {
+                if (pkg == null && ServiceRequestHandler.class.getName().equals(clsname)) {
                     // can happen during bootstrap scenario -- just try regular reflection
                     handler = Class.forName(clsname).asSubclass(ExternalEventHandler.class).newInstance();
                 }
@@ -350,7 +300,7 @@ public class ListenerHelper {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            return createServiceResponse(ex, metaInfo);
+            return createErrorResponse(request, metaInfo, ex);
         }
         catch (Exception e) {
             logger.severeException("Exception in ListenerHelper.processEvent()", e);
@@ -365,7 +315,7 @@ public class ListenerHelper {
                 return ((ExternalEventHandlerErrorResponse)handler).createErrorResponse(request, metaInfo, e);
             }
             else {
-                return createStandardResponse(e, metaInfo.get(Listener.METAINFO_REQUEST_ID));
+                return createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage()));
             }
         }
     }
@@ -398,7 +348,7 @@ public class ListenerHelper {
      * @param metaInfo
      * @return String with the error response
      */
-    private String createErrorResponse(String request, Map<String,String> metaInfo) {
+    public String createErrorResponse(String request, Map<String,String> metaInfo, ServiceException ex) {
         /**
          * First check for a default event handler custom error response
          */
@@ -407,54 +357,37 @@ public class ListenerHelper {
             return errorResponseHandler.createErrorResponse(request, metaInfo,
                     new UnparseableMessageException("Unable to parse request : " + request));
         }
-        /**
-         * No custom error response needed, so just send standard MDW status
-         * message
-         */
-        if (isJson(request)) {
-            return createStandardResponseJson(RETURN_STATUS_FAILURE, "Cannot parse request",
-                    metaInfo.get(Listener.METAINFO_REQUEST_ID));
+
+        String contentType = metaInfo.get(Listener.METAINFO_CONTENT_TYPE);
+        if (contentType == null && request != null && !request.isEmpty())
+            contentType = request.trim().startsWith("{") ? Listener.CONTENT_TYPE_JSON : Listener.CONTENT_TYPE_XML;
+        if (contentType == null)
+            contentType = Listener.CONTENT_TYPE_XML; // compatibility
+
+        StatusMessage statusMsg = new StatusMessage();
+        statusMsg.setCode(ex.getErrorCode());
+        statusMsg.setMessage(ex.getMessage());
+        if (contentType.equals(Listener.CONTENT_TYPE_JSON)) {
+            return statusMsg.getJsonString();
         }
         else {
-            return createStandardResponse(RETURN_STATUS_FAILURE, "Cannot parse request",
-                    metaInfo.get(Listener.METAINFO_REQUEST_ID));
+            return statusMsg.getXml();
         }
     }
 
-    /**
-     * <p>
-     * Performs the following:
-     * <li>Looks up any defined DefaultEventHandler to determine the error
-     * message to send back</li>
-     * <li>If one is found, then return any custom response</li>
-     * </p>
-     *
-     * @param request
-     * @param jsonMessage
-     * @param metaInfo
-     * @return String with the error response
-     */
-    public String createAuthenticationErrorResponse(String request, Map<String,String> metaInfo) {
+    public String createAckResponse(String request, Map<String,String> metaInfo) {
+        String contentType = metaInfo.get(Listener.METAINFO_CONTENT_TYPE);
+        if (contentType == null && request != null && !request.isEmpty())
+            contentType = request.trim().startsWith("{") ? Listener.CONTENT_TYPE_JSON : Listener.CONTENT_TYPE_XML;
+        if (contentType == null)
+            contentType = Listener.CONTENT_TYPE_XML; // compatibility
 
-        String authenticationFailedMessage = metaInfo.get(Listener.AUTHENTICATION_FAILED);
-        /**
-         * First check for a default event handler custom error response
-         */
-        ExternalEventHandlerErrorResponse errorResponseHandler = getDefaultEventHandlerService();
-        if (errorResponseHandler != null) {
-            return errorResponseHandler.createErrorResponse(request, metaInfo,
-                    new UnparseableMessageException(authenticationFailedMessage));
-        }
-        /**
-         * No custom error response needed, so just send standard MDW status message
-         */
-        if (request.trim().charAt(0) == '{') {
-            return createStandardResponseJson(RETURN_STATUS_FAILURE, authenticationFailedMessage,
-                    metaInfo.get(Listener.METAINFO_REQUEST_ID));
+        StatusMessage statusMsg = new StatusMessage();
+        if (contentType.equals(Listener.CONTENT_TYPE_JSON)) {
+            return statusMsg.getJsonString();
         }
         else {
-            return createStandardResponse(RETURN_STATUS_FAILURE, authenticationFailedMessage,
-                    metaInfo.get(Listener.METAINFO_REQUEST_ID));
+            return statusMsg.getXml();
         }
     }
 
@@ -465,6 +398,8 @@ public class ListenerHelper {
      * @return
      */
     private Object getParsedMessage(String request, Map<String,String> metaInfo) {
+        if (request == null)
+            return null;
         boolean jsonMessage = request.charAt(0) == '{';
         Object msgdoc = null;
         if (jsonMessage) {
@@ -500,112 +435,6 @@ public class ListenerHelper {
             }
         }
         return null;
-    }
-
-    public String createStandardResponse(Exception e, String requestId) {
-        // check for mdwexception and add code rather than just -1
-        int code = RETURN_STATUS_FAILURE;
-        if (e instanceof MDWException)
-            code = ((MDWException) e).getErrorCode();
-        String msg = e.getMessage();
-        if (msg == null)
-            msg = e.getClass().getName();
-        return createStandardResponse(code, msg, requestId);
-    }
-
-    public String createServiceResponse(ServiceException ex, Map<String,String> headers) {
-        String contentType = headers.get(Listener.METAINFO_CONTENT_TYPE);
-        if (contentType == null)
-            contentType = headers.get(Listener.METAINFO_CONTENT_TYPE.toLowerCase());
-        StatusMessage statusMsg = new StatusMessage(ex.getErrorCode(), ex.getMessage());
-        headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getErrorCode()));
-        if (Listener.CONTENT_TYPE_XML.equals(contentType))
-            return statusMsg.toXml();
-        else
-            return statusMsg.toJson();
-    }
-
-    /**
-     * This method is provided to the listeners if they need to create a
-     * standard MDW acknowledgment message in XML.
-     *
-     * The standard message looks like:
-     *
-     * <pre>
-     *    &lt;MDWStatusMessage&gt;
-     *       &lt;StatusCode&gt;0&lt;/StatusCode&gt;
-     *       &lt;StatusMessage&gt;This is an optional message describing the status&lt;/StatusMessage&gt;
-     *       &lt;RequestID&gt;this is any ID used to correlate the request message&lt;/RequestID&gt;
-     *    &lt;/MDWStatusMessage&gt;
-     * </pre>
-     *
-     * @param statusCode
-     *            an integer. Typically 0 means successful and other values are
-     *            considered error code.
-     * @param statusMessage
-     *            optional message to describe the status or error in English.
-     * @param requestId
-     *            an ID for the requester to correlate the response message.
-     *            Optional.
-     * @return the response message as an XML string
-     */
-    public String createStandardResponse(int statusCode, String statusMessage, String requestId) {
-
-
-        MDWStatusMessageDocument responseDoc = MDWStatusMessageDocument.Factory.newInstance();
-        MDWStatusMessage statusMsg = responseDoc.addNewMDWStatusMessage();
-        statusMsg.setStatusCode(statusCode);
-        if (statusMessage != null)
-            statusMsg.setStatusMessage(statusMessage);
-        if (requestId != null)
-            statusMsg.setRequestID(requestId);
-        return responseDoc
-                .xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2));
-    }
-
-    /**
-     * This method is provided to the listeners if they need to create a
-     * standard MDW acknowledgment message in JSON
-     *
-     * The standard message looks like:
-     *
-     * <pre>
-     *   { "StatusCode" : 0,
-     *     "StatusMessage" : "This is an optional message describing the status",
-     *     "RequestID" : "this is any ID used to correlate the request message" }
-     * </pre>
-     *
-     * @param statusCode
-     *            an integer. Typically 0 means successful and other values are
-     *            considered error code.
-     * @param statusMessage
-     *            optional message to describe the status or error in English.
-     * @param requestId
-     *            an ID for the requester to correlate the response message.
-     *            Optional.
-     * @return the response message as an XML string
-     */
-    public String createStandardResponseJson(int statusCode, String statusMessage,
-            String requestId) {
-        JSONObject responseObj = new JSONObject();
-        String response;
-        try {
-            responseObj.put("StatusCode", statusCode);
-            if (statusMessage != null)
-                responseObj.put("StatusMessage", statusMessage);
-            MDWStatusMessageDocument responseDoc = MDWStatusMessageDocument.Factory.newInstance();
-            MDWStatusMessage statusMsg = responseDoc.addNewMDWStatusMessage();
-            statusMsg.setStatusCode(statusCode);
-            if (statusMessage != null)
-                statusMsg.setStatusMessage(statusMessage);
-            if (requestId != null)
-                responseObj.put("RequestID", requestId);
-            response = responseObj.toString();
-        }
-        catch (JSONException e) {
-            response = "{\"ERROR\":\"error in generating JSON response\"}";
-        }
-        return response;
     }
 
     private XmlObject parseXmlBean(String request) {

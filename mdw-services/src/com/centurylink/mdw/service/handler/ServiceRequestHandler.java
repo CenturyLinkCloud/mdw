@@ -5,7 +5,9 @@ package com.centurylink.mdw.service.handler;
 
 import java.util.Map;
 
-import org.json.JSONException;
+import org.apache.xmlbeans.XmlObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.JsonService;
@@ -17,20 +19,177 @@ import com.centurylink.mdw.common.service.XmlService;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.ExternalEventHandler;
+import com.centurylink.mdw.listener.RegressionTestEventHandler;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.workflow.PackageAware;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.PackageAware;
+import com.centurylink.mdw.service.Action;
+import com.centurylink.mdw.service.ActionRequestDocument;
+import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
+import com.centurylink.mdw.service.Parameter;
+import com.centurylink.mdw.service.action.InstanceLevelActionHandler;
+import com.centurylink.mdw.service.resource.AppSummary;
+import com.centurylink.mdw.service.rest.Users;
+import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.ResourceFormatter.Format;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.xml.XmlPath;
 
-public abstract class ServiceRequestHandler implements ExternalEventHandler, PackageAware {
+public class ServiceRequestHandler implements ExternalEventHandler, PackageAware {
 
-    protected static final String REST_SERVICE_PROVIDER_PACKAGE = "com.centurylink.mdw.service.rest";
-
-    protected String requestId;
+    protected static final String MDW_REST_SERVICE_PROVIDER_PACKAGE = "com.centurylink.mdw.service.rest";
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private Package pkg;
     public Package getPackage() { return pkg; }
     public void setPackage(Package pkg) { this.pkg = pkg; }
+
+    @Override
+    public String handleEventMessage(String request, Object requestObj, Map<String,String> metaInfo)
+    throws EventHandlerException {
+
+        TextService service = null;
+        String path = metaInfo.get(Listener.METAINFO_REQUEST_PATH);
+
+        Format format = getFormat(metaInfo);
+
+        try {
+            // compatibility
+            if ("GetAppSummary".equals(path)) {
+                service = new AppSummary();
+            }
+            else if ("User".equals(path)) {
+                service = new Users();
+            }
+
+            if (requestObj instanceof XmlObject) {
+                // XML request
+                metaInfo.put(Listener.METAINFO_CONTENT_TYPE, "text/xml");
+                if ("ActionRequest".equals(XmlPath.getRootNodeName((XmlObject)requestObj))) {
+
+                    ActionRequestDocument actionRequestDoc = (ActionRequestDocument) ((XmlObject)requestObj).changeType(ActionRequestDocument.type);
+                    ActionRequest actionRequest = actionRequestDoc.getActionRequest();
+
+                    Action action = actionRequest.getAction();
+                    if (action == null || action.getName() == null)
+                        throw new EventHandlerException("Missing Action in request");
+                    // compatibility for regression test handler
+                    if (action.getName().equals("RegressionTest")) {
+                        RegressionTestEventHandler handler = new RegressionTestEventHandler();
+                        return handler.handleEventMessage(request, requestObj, metaInfo);
+                    }
+                    // compatibility for instance level handler
+                    if (action.getName().equals("PerformInstanceLevelAction")) {
+                        InstanceLevelActionHandler handler = new InstanceLevelActionHandler();
+                        return handler.handleEventMessage(request, requestObj, metaInfo);
+                    }
+
+                    // compatibility for individually-registered handlers
+                    if (action.getName().equals("RefreshProcessCache"))
+                        action.setName("RefreshCache");
+                    else if (action.getName().equals("SaveConfig"))
+                        action.setName("SaveConfig");
+
+                    for (Parameter param : actionRequest.getAction().getParameterList())
+                        metaInfo.put(param.getName(), param.getStringValue());
+                    requestObj = actionRequest.getContent();
+
+                    metaInfo.put(Listener.METAINFO_REQUEST_PATH, action.getName());
+                }
+            }
+            else if (requestObj instanceof JSONObject) {
+                // JSON request
+                metaInfo.put(Listener.METAINFO_CONTENT_TYPE, "application/json");
+                JSONObject jsonObj = (JSONObject) requestObj;
+                String action = null;
+                if ((jsonObj.has("Action") && jsonObj.get("Action") instanceof JSONObject) ||
+                        (jsonObj.has("action") && jsonObj.get("action") instanceof JSONObject)) {
+                    JSONObject actionObj = jsonObj.has("Action") ? jsonObj.getJSONObject("Action") : jsonObj.getJSONObject("action");
+                    if (actionObj.has("name")) {
+                        action = actionObj.getString("name");
+                        if (actionObj.has("parameters")) {
+                            Object paramsObj = actionObj.get("parameters");
+                            if (paramsObj instanceof JSONArray) {
+                                JSONArray params = (JSONArray) paramsObj;
+                                // TODO: does this ever really work?
+                                for (int i = 0; i < params.length(); i++) {
+                                    JSONObject param = params.getJSONObject(i);
+                                    String paramName = JSONObject.getNames(param)[0];
+                                    String value = param.getString(paramName);
+                                    metaInfo.put(paramName, value);
+                                }
+                            }
+                            else {
+                                // params is a JSONObject
+                                JSONObject params = (JSONObject) paramsObj;
+                                String[] names = JSONObject.getNames(params);
+                                if (names != null) {
+                                    for (String name : names)
+                                        metaInfo.put(name, params.getString(name));
+                                }
+                            }
+                        }
+                        // top level entity
+                        String[] jsonNames = JSONObject.getNames(jsonObj);
+                        if (jsonNames != null) {
+                            if (jsonNames.length > 1) {
+                                for (int i = 0; i < jsonNames.length; i++) {
+                                    String paramName = jsonNames[i];
+                                    if (!paramName.equals("Action") && !paramName.equals("action")) {
+                                        JSONObject value = jsonObj.getJSONObject(paramName);
+                                        requestObj = value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (action != null)
+                        metaInfo.put(Listener.METAINFO_REQUEST_PATH, action);
+                }
+            }
+
+            if (service == null) {
+                service = getServiceInstance(metaInfo);
+                if (service == null)
+                    return createErrorResponse("Unable to handle service request: " + path, format);
+            }
+
+            if (format == Format.json || (service instanceof JsonService && !(service instanceof XmlService))) {
+                JsonService jsonService = (JsonService) service;
+                String downloadFormat = metaInfo.get(Listener.METAINFO_DOWNLOAD_FORMAT);
+                if (downloadFormat != null && !(downloadFormat.equals(Listener.DOWNLOAD_FORMAT_JSON)
+                        || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_XML) || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_TEXT))) {
+                    // binary download format requires export
+                    if (!(jsonService instanceof JsonRestService))
+                        throw new ServiceException(ServiceException.BAD_REQUEST, "Export not supported for " + jsonService.getClass());
+                    return ((JsonRestService)jsonService).export(downloadFormat, metaInfo);
+                }
+                else {
+                    metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_JSON);
+                    return jsonService.getJson((JSONObject)requestObj, metaInfo);
+                }
+            }
+            else if (format == Format.xml) {
+                metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_XML);
+                XmlService xmlService = (XmlService) service;
+                return xmlService.getXml((XmlObject)requestObj, metaInfo);
+            }
+            else {
+                metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_TEXT);
+                return service.getText(requestObj, metaInfo);
+            }
+        }
+        catch (ServiceException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getErrorCode()));
+            return createResponse(ex.getErrorCode(), ex.getMessage(), format);
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            return createErrorResponse(ex, format);
+        }
+    }
 
     protected String createErrorResponse(int code, String message, Format format) throws EventHandlerException {
         return createResponse(code, message, format);
@@ -62,82 +221,89 @@ public abstract class ServiceRequestHandler implements ExternalEventHandler, Pac
         statusMessage.setCode(code);
         if (message != null)
             statusMessage.setMessage(message);
-        if (requestId != null)
-            statusMessage.setRequestId(requestId);
         if (format == Format.xml)
             return statusMessage.getXml();
-        else if (format == Format.json) {
-            try {
-                return statusMessage.getJson().toString(2);
-            }
-            catch (JSONException ex) {
-                throw new EventHandlerException(code, ex.getMessage(), ex);
-            }
-        }
-        else {
+        else if (format == Format.json)
+            return statusMessage.getJsonString();
+        else
             return "ERROR " + (code == 0 ? "" : code) + ": " + message;
-        }
     }
 
     /**
      * Returns the service instance, consulting the service registry if necessary.
      */
-    protected TextService getServiceInstance(String defaultImplPackage, String logicalName, Map<String,String> headers) throws ServiceException {
+    protected TextService getServiceInstance(Map<String,String> headers) throws ServiceException {
         try {
-            String format = headers.get(Listener.METAINFO_FORMAT);
-            String serviceClassName;
-            if (logicalName.indexOf('.') > 0)
-                serviceClassName = logicalName;  // old-style full-package-path custom
-            else
-                serviceClassName = defaultImplPackage + "." + logicalName.replaceAll(" ", "").replaceAll("-", "");
-            int lastDot = serviceClassName.lastIndexOf('.');
-            String packageName = serviceClassName.substring(0, lastDot);
-            Package packageVO = PackageCache.getPackage(packageName);
-            if (packageVO == null)
-                packageVO = PackageCache.getPackage(logicalName); // new jax-rs style pathing
-
-            Class<? extends TextService> serviceClass;
-
-            if (packageVO == null) {
-                // normal classloader
-                serviceClass = Class.forName(serviceClassName).asSubclass(TextService.class);
+            String[] pathSegments = headers.get(Listener.METAINFO_REQUEST_PATH).split("/");
+            String contentType = headers.get(Listener.METAINFO_CONTENT_TYPE);
+            String serviceClassName = MDW_REST_SERVICE_PROVIDER_PACKAGE + "." + pathSegments[0];
+            try {
+                // normal classloader -- built-in service
+                Class<? extends TextService> serviceClass = Class.forName(serviceClassName).asSubclass(TextService.class);
+                return serviceClass.newInstance();
             }
-            else {
-                // Not handling Format.text as TextService is not a Registered Service
-                Class<? extends RegisteredService> serviceType = Format.json.toString().equals(format) ? JsonService.class : XmlService.class;
+            catch (ClassNotFoundException ex) {
+                // try dynamic based on annotations eg: MyServices/Employees/dxoakes
+                Class<? extends RegisteredService> serviceType = Listener.CONTENT_TYPE_JSON.equals(contentType) ? JsonService.class : XmlService.class;
                 MdwServiceRegistry registry = MdwServiceRegistry.getInstance();
-                TextService service = (TextService) registry.getDynamicService(packageVO, serviceType, serviceClassName);
-                if (service == null) {
-                    // new-style jax-rs based on annotations eg: MyServices/Employees/dxoakes
-                    String requestPath = headers.get(Listener.METAINFO_REQUEST_PATH);
-                    if (requestPath != null && requestPath.startsWith(logicalName + "/") && requestPath.length() > logicalName.length() + 1) {
-                        String subPath = requestPath.substring(logicalName.length() + 1);
-                        String resPath = subPath;
-                        int slash = resPath.indexOf('/');
-                        if (slash > 0)
-                            resPath = subPath.substring(0, slash);
-
-                        // try resPath with and without leading slash
-                        service = (TextService) registry.getDynamicServiceForPath(packageVO, serviceType, "/" + resPath);
-                        if (service == null)
-                            service = (TextService) registry.getDynamicServiceForPath(packageVO, serviceType, resPath);
-                        if (service == null && Format.xml.toString().equals(format)) { // forgive missing header for browser requests
-                            service = (TextService) registry.getDynamicServiceForPath(packageVO, JsonService.class, "/" + resPath);
-                            if (service == null)
-                                service = (TextService) registry.getDynamicServiceForPath(packageVO, JsonService.class, resPath);
-                        }
-                        if (service == null)
-                            throw new ServiceException("Dynamic Java " + format + " service not found for path: " + resPath);
+                String pkgName = null;
+                for (int i = 0; i < pathSegments.length - 1; i++) {
+                    String pathSegment = pathSegments[i];
+                    if (i == 0)
+                        pkgName = pathSegment;
+                    else
+                        pkgName += "." + pathSegment;
+                    Package pkg = PackageCache.getPackage(pkgName);
+                    if (pkg != null) {
+                        // give it a shot
+                        TextService service = (TextService)registry.getDynamicServiceForPath(pkg, serviceType, "/" + pathSegments[i + 1]);
+                        if (service != null)
+                            return service;
                     }
                 }
-                if (service == null)
-                    throw new ServiceException("Dynamic Java " + format + " service not found: " + serviceClassName);
-                return service;
+                if (pathSegments.length == 1) {
+                    // fall back to old-style REST handlers
+                    String cl = pathSegments[0];
+                    try {
+                        Class<? extends TextService> serviceClass = Class.forName("com.centurylink.mdw.service.resource." + cl).asSubclass(TextService.class);
+                        return serviceClass.newInstance();
+                    }
+                    catch (ClassNotFoundException cnfe) {
+                        Class<? extends TextService> serviceClass = Class.forName("com.centurylink.mdw.service.action." + cl).asSubclass(TextService.class);
+                        return serviceClass.newInstance();
+                    }
+                }
+                return null;
             }
-            return serviceClass.newInstance();
         }
         catch (Exception ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
+    }
+
+    protected Format getFormat(Map<String,String> metaInfo) {
+        Format format = Format.xml;
+        String formatParam = (String) metaInfo.get("format");
+        if (formatParam != null) {
+            if (formatParam.equals("json"))
+                format = Format.json;
+            else if (formatParam.equals("text"))
+                format = Format.text;
+        }
+        else {
+            if (Listener.CONTENT_TYPE_JSON.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE)) || Listener.CONTENT_TYPE_JSON.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE.toLowerCase()))) {
+                format = Format.json;
+            }
+            else if (Listener.CONTENT_TYPE_TEXT.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE)) || Listener.CONTENT_TYPE_TEXT.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE.toLowerCase()))) {
+                format = Format.text;
+            }
+            if (Listener.CONTENT_TYPE_JSON.equals(metaInfo.get(Listener.METAINFO_ACCEPT)) || Listener.CONTENT_TYPE_JSON.equals(metaInfo.get(Listener.METAINFO_ACCEPT.toLowerCase()))) {
+                format = Format.json;
+            }
+            else if (Listener.CONTENT_TYPE_TEXT.equals(metaInfo.get(Listener.METAINFO_ACCEPT)) || Listener.CONTENT_TYPE_TEXT.equals(metaInfo.get(Listener.METAINFO_ACCEPT.toLowerCase()))) {
+                format = Format.text;
+            }
+        }
+        return format;
     }
 }

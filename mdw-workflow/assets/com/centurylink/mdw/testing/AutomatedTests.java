@@ -5,6 +5,8 @@ package com.centurylink.mdw.testing;
 
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -16,7 +18,7 @@ import com.centurylink.mdw.test.TestCase;
 @RegisteredService(JsonService.class)
 public class AutomatedTests implements JsonService {
 
-    public String getJson(Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
+    public String getJson(JSONObject json, Map<String,String> headers) throws ServiceException {
         TestingServices testServices = ServiceLocator.getTestingServices();
         String testCaseName = headers.get(Listener.METAINFO_RESOURCE_SUBPATH);
         try {
@@ -35,7 +37,7 @@ public class AutomatedTests implements JsonService {
         }
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
-        return getJson(parameters, headers);
+    public String getText(Object request, Map<String,String> headers) throws ServiceException {
+        return getJson((JSONObject)request, headers);
     }
 }

@@ -30,11 +30,11 @@ dependencies {
     compile group: "commons-jexl", name: "commons-jexl", version: "1.1"
     compile group: "bouncycastle", name: "bcprov-jdk15", version: "140"
     compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri") }
-    compile group: "com.sun.el", name: "el-impl", version: "1.0"
     compile group: "junit", name: "junit", version: "4.8.1"
     compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
     compile group: "com.jcraft", name: "jsch", version: "0.1.51" // for jgit
     compile group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "1.2.2"
+    compile group: "com.sun.el", name: "el-impl", version: "1.0"
     
     // swagger
     compile group: "io.swagger", name: "swagger-annotations", version: "1.5.4"
@@ -55,7 +55,6 @@ dependencies {
     compile group: "org.springframework.amqp", name: "spring-amqp", version: "1.4.4.RELEASE"
     compile group: "org.springframework.amqp", name: "spring-rabbit", version: "1.4.4.RELEASE"
     compile group: "org.springframework.retry", name: "spring-retry", version: "1.0.2.RELEASE"
-    compile group: "org.apache.jackrabbit", name: "jackrabbit-webdav", version: "2.4.1"
     compile group: "org.apache.commons", name: "com.springsource.org.apache.commons.dbcp", version: "1.2.2"
 
     // cucumber
@@ -75,9 +74,8 @@ dependencies {
     compile group: "org.mongodb", name: "mongodb-driver-core", version: "3.3.0"
     compile group: "org.mongodb", name: "bson", version: "3.3.0"
     
-    // TODO: proprietary dependencies
+    // TODO: remove mbeng
     compile group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"
-    compile group: "com.oracle", name: "ojdbc6", version: "12.1.0.2.0"
 }
 
 clean {

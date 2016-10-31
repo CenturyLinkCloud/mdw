@@ -5,8 +5,8 @@ package com.centurylink.mdw.common.service;
 
 import java.util.Map;
 
-public interface XmlService extends TextService, RegisteredService {
-    public static final String CONTENT = "content";
+import org.apache.xmlbeans.XmlObject;
 
-    public String getXml(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException;
+public interface XmlService extends TextService, RegisteredService {
+    public String getXml(XmlObject xml, Map<String,String> metaInfo) throws ServiceException;
 }

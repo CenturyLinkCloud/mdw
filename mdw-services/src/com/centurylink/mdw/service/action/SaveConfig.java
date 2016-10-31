@@ -5,6 +5,7 @@ package com.centurylink.mdw.service.action;
 
 import java.util.Map;
 
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
 import com.centurylink.mdw.bpm.ConfigurationChangeRequestDocument;
@@ -21,11 +22,11 @@ public class SaveConfig implements XmlService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    public String getXml(Map<String,Object> parameters, Map<String,String> metaInfo)
+    public String getXml(XmlObject request, Map<String,String> metaInfo)
     throws ServiceException {
 
-        String fileName = parameters.get("filename") == null ? null : parameters.get("filename").toString();
-        String contents = parameters.get("contents") == null ? null : parameters.get("contents").toString();
+        String fileName = metaInfo.get("filename") == null ? null : metaInfo.get("filename").toString();
+        String contents = metaInfo.get("contents") == null ? null : metaInfo.get("contents").toString();
 
         try {
           ConfigurationChangeRequestDocument doc = ConfigurationChangeRequestDocument.Factory.newInstance();
@@ -63,9 +64,9 @@ public class SaveConfig implements XmlService {
         return new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2);
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo)
+    public String getText(Object obj, Map<String,String> metaInfo)
     throws ServiceException {
-        return getXml(parameters, metaInfo);
+        return getXml((XmlObject)obj, metaInfo);
     }
 
 }

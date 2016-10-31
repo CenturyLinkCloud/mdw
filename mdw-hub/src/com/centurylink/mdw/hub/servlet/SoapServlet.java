@@ -8,7 +8,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,7 +16,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.MessageFactory;
@@ -40,12 +38,12 @@ import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.util.AuthUtils;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -56,7 +54,7 @@ import com.centurylink.mdw.xml.DomHelper;
  * pulled out of the SOAP envelope and forwarded to the MDW external event
  * handler mechanism.
  */
-public class SoapServlet extends HttpServlet {
+public class SoapServlet extends ServiceServlet {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -74,13 +72,11 @@ public class SoapServlet extends HttpServlet {
 
         if (request.getServletPath().endsWith(RPC_SERVICE_PATH)
                 || RPC_SERVICE_PATH.equals(request.getPathInfo())) {
-            Asset rpcWsdlAsset = AssetCache
-                    .getAsset(Package.MDW + "/MdwRpcWebService.wsdl", Asset.WSDL);
+            Asset rpcWsdlAsset = AssetCache.getAsset(Package.MDW + "/MdwRpcWebService.wsdl", Asset.WSDL);
             response.setContentType("text/xml");
             response.getWriter().print(substituteRuntimeWsdl(rpcWsdlAsset.getStringContent()));
         }
-        else if (request.getPathInfo() == null
-                || request.getPathInfo().equalsIgnoreCase("mdw.wsdl")) {
+        else if (request.getPathInfo() == null || request.getPathInfo().equalsIgnoreCase("mdw.wsdl")) {
             // forward to general wsdl
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("/mdw.wsdl");
             requestDispatcher.forward(request, response);
@@ -110,8 +106,7 @@ public class SoapServlet extends HttpServlet {
             }
         }
         else {
-            ServletException ex = new ServletException(
-                    "HTTP GET not supported for URL: " + request.getRequestURL());
+            ServletException ex = new ServletException("HTTP GET not supported for URL: " + request.getRequestURL());
             logger.severeException(ex.getMessage(), ex);
             throw ex;
         }
@@ -120,7 +115,7 @@ public class SoapServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        CodeTimer timer = new CodeTimer("SoapListenerServlet.doPost()", true);
+        CodeTimer timer = new CodeTimer("SoapServlet.doPost()", true);
 
         InputStream reqInputStream = request.getInputStream();
         // read the POST request contents
@@ -129,12 +124,12 @@ public class SoapServlet extends HttpServlet {
             logger.mdwDebug("SOAP Listener POST Request:\n" + requestString);
         }
 
-        Map<String, String> metaInfo = buildMetaInfo(request);
+        Map<String,String> metaInfo = buildMetaInfo(request);
+
         String responseString = null;
         MessageFactory factory = null;
         String soapVersion = SOAPConstants.SOAP_1_1_PROTOCOL;
         try {
-
             SOAPMessage message = null;
             SOAPBody body = null;
             try {
@@ -164,7 +159,6 @@ public class SoapServlet extends HttpServlet {
                 message = factory.createMessage(null, reqInputStream);
                 body = message.getSOAPBody();
                 // Only 2 versions, so let any exceptions bubble up
-
             }
             Node childElem = null;
             Iterator<?> it = body.getChildElements();
@@ -204,15 +198,13 @@ public class SoapServlet extends HttpServlet {
                 requestXml = DomHelper.toXml(childElem);
             }
 
-            metaInfo = addMetaInfo(metaInfo, message);
+            metaInfo = addSoapMetaInfo(metaInfo, message);
             ListenerHelper helper = new ListenerHelper();
 
-            if (!AuthUtils.authenticate(metaInfo, AuthUtils.HTTP_BASIC_AUTHENTICATION)) {
-                responseString = createSoapFaultResponse(soapVersion, String.valueOf(-1),
-                        (String) metaInfo.get(Listener.AUTHENTICATION_FAILED));
+            try {
+               authenticate(request, metaInfo);
             }
-            else {
-
+            catch (ServiceException ex) {
                 String handlerResponse = helper.processEvent(requestXml, metaInfo);
 
                 try {
@@ -227,7 +219,7 @@ public class SoapServlet extends HttpServlet {
                                 String.valueOf(responseMsg.getStatusCode()),
                                 responseMsg.getStatusMessage());
                 }
-                catch (XmlException ex) {
+                catch (XmlException xex) {
                     if (Listener.METAINFO_ERROR_RESPONSE_VALUE
                             .equalsIgnoreCase(metaInfo.get(Listener.METAINFO_ERROR_RESPONSE))) {
                         // Support for custom error response
@@ -262,12 +254,15 @@ public class SoapServlet extends HttpServlet {
             logger.mdwDebug("SOAP Listener Servlet POST Response:\n" + responseString);
         }
 
-        if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) != null)
+        if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) != null) {
             response.setContentType(metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
-        else if (metaInfo.get("Content-Type") != null)
-            response.setContentType(metaInfo.get("Content-Type"));
-        else
-            response.setContentType("application/soap+xml");
+        }
+        else {
+            if (soapVersion.equals(SOAPConstants.SOAP_1_1_PROTOCOL))
+                response.setContentType(Listener.CONTENT_TYPE_XML);
+            else
+                response.setContentType("application/soap+xml");
+        }
 
         response.getOutputStream().print(responseString);
 
@@ -326,10 +321,6 @@ public class SoapServlet extends HttpServlet {
             substituted.append(wsdl.substring(index, matcher.start()));
             String propName = match.substring(2, match.length() - 1);
             String value = PropertyManager.getProperty(propName);
-            if (value == null && "mdw.services.url".equals(propName)) {
-                // try old-school services.url property
-                value = PropertyManager.getProperty("MDWFramework.MDWDesigner/services.url");
-            }
             if (value != null)
                 substituted.append(value);
             index = matcher.end();
@@ -338,42 +329,7 @@ public class SoapServlet extends HttpServlet {
         return substituted.toString();
     }
 
-    protected Map<String, String> buildMetaInfo(HttpServletRequest request) {
-        Map<String, String> metaInfo = new HashMap<String, String>();
-        metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_SOAP);
-        metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
-        metaInfo.put(Listener.METAINFO_REQUEST_URL, request.getRequestURL().toString());
-        metaInfo.put(Listener.METAINFO_HTTP_METHOD, request.getMethod());
-        metaInfo.put(Listener.METAINFO_REMOTE_HOST, request.getRemoteHost());
-        metaInfo.put(Listener.METAINFO_REMOTE_ADDR, request.getRemoteAddr());
-        metaInfo.put(Listener.METAINFO_REMOTE_PORT, String.valueOf(request.getRemotePort()));
-
-        if (request.getPathInfo() != null) {
-            String requestPath = request.getPathInfo().substring(1);
-            if (requestPath.startsWith("SOAP/"))
-                requestPath = requestPath.substring(5);
-            metaInfo.put(Listener.METAINFO_REQUEST_PATH, requestPath);
-        }
-        if (request.getMethod().equalsIgnoreCase("GET")) {
-            Enumeration<?> paramNames = request.getParameterNames();
-            while (paramNames.hasMoreElements()) {
-                String key = (String) paramNames.nextElement();
-                if (!Listener.AUTHENTICATED_USER_HEADER.equals(key))
-                    metaInfo.put(key, request.getParameter(key).toString());
-            }
-        }
-        if (request.getQueryString() != null)
-            metaInfo.put(Listener.METAINFO_REQUEST_QUERY_STRING, request.getQueryString());
-        Enumeration<?> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = (String) headerNames.nextElement();
-            if (!Listener.AUTHENTICATED_USER_HEADER.equals(headerName))
-                metaInfo.put(headerName, request.getHeader(headerName));
-        }
-        return metaInfo;
-    }
-
-    protected Map<String, String> addMetaInfo(Map<String, String> metaInfo, SOAPMessage soapMessage)
+    protected Map<String,String> addSoapMetaInfo(Map<String, String> metaInfo, SOAPMessage soapMessage)
             throws SOAPException {
         SOAPHeader soapHeader = soapMessage.getSOAPHeader();
         if (soapHeader == null) {

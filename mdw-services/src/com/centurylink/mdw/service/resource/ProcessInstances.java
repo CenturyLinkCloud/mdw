@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
@@ -42,23 +44,23 @@ public class ProcessInstances implements JsonService {
         "orderBy",
         "format"});
 
-    public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
+    public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
 
         try {
             ProcessServices processServices = ServiceLocator.getProcessServices();
-            Object callHierarchyFor = parameters.get("callHierarchyFor");
+            Object callHierarchyFor = metaInfo.get("callHierarchyFor");
             if (callHierarchyFor != null) {
                 long instanceId = Long.parseLong(callHierarchyFor.toString());
                 LinkedProcessInstance linkedInstance = processServices.getCallHierearchy(instanceId);
                 return linkedInstance.getJson().toString(2);
             }
             else {
-                Map<String,String> criteria = getCriteria(parameters);
-                Map<String,String> variables = getVariables(parameters);
+                Map<String,String> criteria = getCriteria(metaInfo);
+                Map<String,String> variables = getVariables(metaInfo);
 
-                int pageIndex = parameters.get("pageIndex") == null ? 0 : Integer.parseInt((String)parameters.get("pageIndex"));
-                int pageSize = parameters.get("pageSize") == null ? 0 : Integer.parseInt((String)parameters.get("pageSize"));
-                String orderBy = (String)parameters.get("orderBy");
+                int pageIndex = metaInfo.get("pageIndex") == null ? 0 : Integer.parseInt((String)metaInfo.get("pageIndex"));
+                int pageSize = metaInfo.get("pageSize") == null ? 0 : Integer.parseInt((String)metaInfo.get("pageSize"));
+                String orderBy = (String)metaInfo.get("orderBy");
 
                 ProcessList procList = processServices.getInstances(criteria, variables, pageIndex, pageSize, orderBy);
                 return procList.getJson().toString(2);
@@ -69,11 +71,11 @@ public class ProcessInstances implements JsonService {
         }
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        return getJson(parameters, metaInfo);
+    public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
+        return getJson((JSONObject)requestObj, metaInfo);
     }
 
-    private Map<String,String> getCriteria(Map<String,Object> params) {
+    private Map<String,String> getCriteria(Map<String,String> params) {
         Map<String,String> criteria = new HashMap<String,String>();
         for (String key : params.keySet()) {
             if (processParams.contains(key))
@@ -82,7 +84,7 @@ public class ProcessInstances implements JsonService {
         return criteria.isEmpty() ? null : criteria;
     }
 
-    private Map<String,String> getVariables(Map<String,Object> params) {
+    private Map<String,String> getVariables(Map<String,String> params) {
         Map<String,String> variables = new HashMap<String,String>();
         for (String key : params.keySet()) {
             if (!processParams.contains(key) && !standardParams.contains(key)) {

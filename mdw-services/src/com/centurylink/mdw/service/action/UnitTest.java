@@ -24,15 +24,14 @@ public class UnitTest implements JsonService {
 
     public static final String SCRIPT = "Script";
 
-    public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        JSONObject jsonObject = (JSONObject) parameters.get(SCRIPT);
-        if (jsonObject == null)
+    public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
+        if (request == null)
             throw new ServiceException("Missing parameter: " + SCRIPT);
         String testName = null;
         try {
-            testName = jsonObject.getString("name");
+            testName = request.getString("name");
             logger.info("Executing unit test: " + testName);
-            String groovy = jsonObject.getString("groovy");
+            String groovy = request.getString("groovy");
 
             Binding binding = new Binding();
             binding.setVariable("unitTest", this);
@@ -57,8 +56,8 @@ public class UnitTest implements JsonService {
         }
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        return getJson(parameters, metaInfo);
+    public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
+        return getJson((JSONObject)requestObj, metaInfo);
     }
 
     private String createAssertionErrorResponse(String testName, AssertionError err) throws JSONException {

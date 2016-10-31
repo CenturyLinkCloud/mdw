@@ -19,9 +19,9 @@ public class DeleteProcessInstances implements JsonService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
+    public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
         try {
-            String procId = (String)parameters.get("processId");
+            String procId = (String)metaInfo.get("processId");
             if (procId != null) {
                 ProcessServices processServices = ServiceLocator.getProcessServices();
                 int count = processServices.deleteProcessInstances(new Long(procId));
@@ -29,10 +29,9 @@ public class DeleteProcessInstances implements JsonService {
                     logger.debug("Deleted " + count + " process instances for process id: " + procId);
             }
             else {
-                JSONObject jsonObject = (JSONObject) parameters.get(ProcessList.PROCESS_INSTANCES);
-                if (jsonObject == null)
+                if (request == null)
                     throw new ServiceException("Missing parameter: either 'processId' or '" + ProcessList.PROCESS_INSTANCES + "' required.");
-                ProcessList processList = new ProcessList(ProcessList.PROCESS_INSTANCES, jsonObject);
+                ProcessList processList = new ProcessList(ProcessList.PROCESS_INSTANCES, request);
                 ProcessServices processServices = ServiceLocator.getProcessServices();
                 processServices.deleteProcessInstances(processList);
                 if (logger.isDebugEnabled())
@@ -46,8 +45,8 @@ public class DeleteProcessInstances implements JsonService {
         }
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        return getJson(parameters, metaInfo);
+    public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
+        return getJson((JSONObject)requestObj, metaInfo);
     }
 
 }

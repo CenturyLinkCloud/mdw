@@ -27,7 +27,7 @@ import io.swagger.annotations.Api;
 @Api(hidden=true)
 public abstract class JsonRestService extends RestService implements JsonService {
 
-    public String getJson(Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
+    public String getJson(JSONObject json, Map<String,String> headers) throws ServiceException {
         String path = headers.get(Listener.METAINFO_REQUEST_PATH);
         try {
             JSONObject response;
@@ -38,10 +38,9 @@ public abstract class JsonRestService extends RestService implements JsonService
                 response = service(path, null, headers);
             }
             else {
-                JSONObject content = (JSONObject)parameters.get("content");
-                User user = authorize(path, content, headers);
-                response = service(path, content, headers);
-                auditLog(getUserAction(user, path, content, headers));
+                User user = authorize(path, json, headers);
+                response = service(path, json, headers);
+                auditLog(getUserAction(user, path, json, headers));
             }
             if (response == null)
                 return null;
@@ -102,7 +101,7 @@ public abstract class JsonRestService extends RestService implements JsonService
         throw new ServiceException(ServiceException.NOT_ALLOWED, "DELETE not implemented");
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
+    public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
         throw new ServiceException(ServiceException.BAD_REQUEST, metaInfo.get(Listener.METAINFO_REQUEST_PATH) + " requires JSON content type");
     }
 

@@ -5,6 +5,7 @@ package com.centurylink.mdw.service.resource;
 
 import java.util.Map;
 
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,11 +34,11 @@ public class DocumentValue implements TextService, XmlService, JsonService {
     /**
      * Gets the straight value as text.
      */
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        Document docVO = getDocumentVO(parameters);
+    public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
+        Document docVO = getDocumentVO(metaInfo);
         if (docVO.getDocumentType().equals(Object.class.getName())) {
-            Object obj = VariableTranslator.realToObject(getPackageVO(docVO), "java.lang.Object", docVO.getContent());
-            return obj.toString();
+            Object docObj = VariableTranslator.realToObject(getPackageVO(docVO), "java.lang.Object", docVO.getContent());
+            return docObj.toString();
         }
         return docVO.getContent();
     }
@@ -45,8 +46,8 @@ public class DocumentValue implements TextService, XmlService, JsonService {
     /**
      * Gets the type info.
      */
-    public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        Document docVO = getDocumentVO(parameters);
+    public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
+        Document docVO = getDocumentVO(metaInfo);
         JSONObject json = new JSONObject();
         try {
             json.put("className", docVO.getDocumentType());
@@ -66,8 +67,8 @@ public class DocumentValue implements TextService, XmlService, JsonService {
     /**
      * Gets the type info.
      */
-    public String getXml(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        Document docVO = getDocumentVO(parameters);
+    public String getXml(XmlObject request, Map<String,String> metaInfo) throws ServiceException {
+        Document docVO = getDocumentVO(metaInfo);
         Resource resDoc = Resource.Factory.newInstance();
         Parameter className = resDoc.addNewParameter();
         className.setName("className");
@@ -83,7 +84,7 @@ public class DocumentValue implements TextService, XmlService, JsonService {
         return resDoc.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2));
     }
 
-    private Document getDocumentVO(Map<String,Object> parameters) throws ServiceException {
+    private Document getDocumentVO(Map<String,String> parameters) throws ServiceException {
         try {
             Object docId = parameters.get(PARAM_DOC_ID);
             if (docId == null)

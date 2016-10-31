@@ -20,12 +20,12 @@ import com.centurylink.mdw.services.ServiceLocator;
  */
 public class ExternalMessageInstance implements JsonService {
 
-    public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        String activityInstIdStr = (String)parameters.get("activityInstId");
+    public String getJson(JSONObject requestJson, Map<String,String> metaInfo) throws ServiceException {
+        String activityInstIdStr = (String)metaInfo.get("activityInstId");
         if (activityInstIdStr == null)
             throw new ServiceException("Missing parameter: activityInstId");
         Long activityInstId = new Long(activityInstIdStr);
-        String eventInstId = (String)parameters.get("eventInstId");
+        String eventInstId = (String)metaInfo.get("eventInstId");
         Long requestId = eventInstId == null ? null : new Long(eventInstId);
 
         try {
@@ -57,7 +57,7 @@ public class ExternalMessageInstance implements JsonService {
         }
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        return getJson(parameters, metaInfo);
+    public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
+        return getJson((JSONObject)requestObj, metaInfo);
     }
 }

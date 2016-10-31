@@ -50,7 +50,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    public String handleEventMessage(String msg, Object xmlBean, Map<String, String> metaInfo)
+    public String handleEventMessage(String msg, Object xmlBean, Map<String,String> metaInfo)
     throws EventHandlerException {
 
         try {

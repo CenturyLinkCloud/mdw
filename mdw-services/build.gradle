@@ -4,9 +4,10 @@ dependencies {
     compile project(":mdw-common")
     compile group: "javax.xml", name: "jaxrpc-api", version: "1.1"
     compile group: "javax.connector", name: "connector", version: "1.5"
-    compile group: "expect4j", name: "expect4j", version: "1.1.0"
     compile group: "commons-pool", name: "commons-pool", version: "1.5.4"
-    compile group: "junit", name: "junit", version: "4.8.1"    
+    compile group: "junit", name: "junit", version: "4.8.1"
+    
+    // TODO proprietary dependencies
     compile group: "com.qwest.bus", name: "bus-all", version: "2.1.2.1"
     compile group: "com.ibm", name: "com.ibm.mq", version: "7.0.1.9"
     compile group: "com.ibm", name: "com.ibm.mq.jmqi", version: "7.0.1.9"

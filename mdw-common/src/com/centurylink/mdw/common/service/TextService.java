@@ -6,5 +6,5 @@ package com.centurylink.mdw.common.service;
 import java.util.Map;
 
 public interface TextService {
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException;
+    public String getText(Object content, Map<String,String> metaInfo) throws ServiceException;
 }

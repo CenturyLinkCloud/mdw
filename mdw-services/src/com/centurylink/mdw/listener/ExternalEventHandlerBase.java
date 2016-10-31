@@ -10,13 +10,13 @@ import org.apache.xmlbeans.XmlObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.ExternalEventHandler;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.EventInstance;
-import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Package;
@@ -205,18 +205,19 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
      * @param e The exception that triggers the response message. This should be null
      *      if the message is for simple acknowledgment rather than for reporting an
      *      exception
-     * @param message ???
+     * @param request request String
      * @param msgdoc parsed object such XML Bean and JSON object if it is possible to parse the external message
-     * @param metainfo
+     * @param metaInfo protocol headers
      * @return
      */
-    protected String createResponseMessage(Exception e, String message, Object msgdoc, Map<String,String> metainfo) {
+    protected String createResponseMessage(Exception e, String request, Object msgdoc, Map<String,String> metaInfo) {
         ListenerHelper helper = new ListenerHelper();
-        if (e==null) return helper.createStandardResponse(0, message==null?"SUCCESS":message,
-                    metainfo.get(Listener.METAINFO_REQUEST_ID));
-        else return helper.createStandardResponse(-1,
-                message==null?e.getMessage():message,
-                    metainfo.get(Listener.METAINFO_REQUEST_ID));
+        if (e instanceof ServiceException)
+            return helper.createErrorResponse(request, metaInfo, (ServiceException)e);
+        else if (e != null)
+            return helper.createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage()));
+        else
+            return helper.createAckResponse(request, metaInfo);
     }
 
     /**

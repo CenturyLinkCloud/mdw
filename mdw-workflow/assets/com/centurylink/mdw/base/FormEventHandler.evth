@@ -1,4 +1,0 @@
-{
-  "handlerClass": "com.centurylink.mdw.listener.FormEventHandler",
-  "path": "FORMDATA"
-}

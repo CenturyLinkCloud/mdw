@@ -7,16 +7,16 @@ tabsSvc.factory('tabs', ['mdw', function(mdw) {
   return {
     def: [
       {
-        id: 'dashboardTab',
-        label: 'Dashboard',
-        url: '#/dashboard/processes',
-        routes: ['/dashboard/processes', 'dashboard/requests', 'dashboard/tasks', '/dashboard/activities']
-      },
-      {
         id: 'workflowTab',
         label: 'Workflow',
         url: '#/workflow/processes',
         routes: ['/workflow', '/solutions']
+      },
+      {
+        id: 'dashboardTab',
+        label: 'Dashboard',
+        url: '#/dashboard/processes',
+        routes: ['/dashboard/processes', 'dashboard/requests', 'dashboard/tasks', '/dashboard/activities']
       },
       {
         id: 'serviceTab',

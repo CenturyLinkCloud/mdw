@@ -1,4 +1,0 @@
-{
-  "handlerClass": "com.centurylink.mdw.listener.DefaultEventHandler",
-  "path": "DefaultEventHandler"
-}

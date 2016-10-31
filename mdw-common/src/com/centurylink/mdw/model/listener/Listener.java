@@ -11,20 +11,22 @@ package com.centurylink.mdw.model.listener;
 
 public interface Listener {
 
+    // tomcat makes headers lower-case, so we'll start out that way
+    public static final String METAINFO_REQUEST_ID = "request-id";
+    public static final String METAINFO_MDW_REQUEST_ID = "mdw-request-id";
+    public static final String METAINFO_CORRELATION_ID = "correlation-id";
+    public static final String METAINFO_CONTENT_TYPE = "Content-Type";
+    public static final String METAINFO_ACCEPT = "Accept";
+
     public static final String METAINFO_PROTOCOL = "Protocol";
     public static final String METAINFO_SERVICE_CLASS = "ServiceClass";
-    public static final String METAINFO_REQUEST_ID = "RequestID";
-    public static final String METAINFO_HEX_REQUEST_ID = "HexadecimalRequestID";
     public static final String METAINFO_START_ACTIVITY_ID = "StartActivityID";
     public static final String METAINFO_PROCESS_NAME = "ProcessName";
     public static final String METAINFO_EVENT_NAME = "EventName";
     public static final String METAINFO_EVENT_MESSAGE = "EventMessage";
     public static final String METAINFO_EVENT_ID = "EventID";
     public static final String METAINFO_DOCUMENT_ID = "DocumentID";
-    public static final String METAINFO_CORRELATION_ID = "CorrelationId";
     public static final String METAINFO_HEX_CORRELATION_ID = "HexadecimalCorrelationID";
-    public static final String METAINFO_MASTER_REQUEST_ID = "MasterRequestID";
-    public static final String METAINFO_REQUEST_CATEGORY = "RequestCategory";
     public static final String METAINFO_PACKAGE_NAME = "PackageName";
     public static final String METAINFO_NO_PERSISTENCE = "NoPersistence";
     //Custom Error Response
@@ -46,11 +48,6 @@ public interface Listener {
     public static final String METAINFO_REQUEST_PATH = "RequestPath";
     public static final String METAINFO_RESOURCE_SUBPATH = "ResourceSubPath"; // after any '/' in RequestPath
 
-    public static final String REQUEST_CATEGORY_CREATE = "Create";
-    public static final String REQUEST_CATEGORY_READ = "Read";
-    public static final String REQUEST_CATEGORY_UPDATE = "Update";
-    public static final String REQUEST_CATEGORY_DELETE = "Delete";
-
     public static final String AUTHORIZATION_HEADER_NAME = "Authorization";
     // Will be populated when authentication happens
     public static final String AUTHENTICATED_USER_HEADER = "AuthenticatedUser";
@@ -58,7 +55,6 @@ public interface Listener {
     public static final String AUTHENTICATION_FAILED = "AuthenticationFailed";
     public static final String AUTHORIZATION_WORKGROUP = "AuthorizationWorkgroup";
 
-    public static final String METAINFO_FORMAT = "Format"; // TODO: just use content-type
     public static final String METAINFO_DOWNLOAD_FORMAT = "DownloadFormat";
     public static final String DOWNLOAD_FORMAT_EXCEL = "xlsx";
     public static final String DOWNLOAD_FORMAT_ZIP = "zip";
@@ -66,7 +62,6 @@ public interface Listener {
     public static final String DOWNLOAD_FORMAT_XML = "xml";
     public static final String DOWNLOAD_FORMAT_TEXT = "text";
     public static final String METAINFO_ZIP_CONTENT = "ZipContent";
-    public static final String METAINFO_CONTENT_TYPE = "ContentType";
     public static final String METAINFO_REQUEST_URL = "RequestURL";
     public static final String METAINFO_REQUEST_QUERY_STRING = "RequestQueryString";
     public static final String METAINFO_HTTP_METHOD = "HttpMethod";

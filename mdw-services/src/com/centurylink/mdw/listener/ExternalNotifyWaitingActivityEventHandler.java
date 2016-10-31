@@ -16,7 +16,7 @@ import com.centurylink.mdw.model.listener.Listener;
 public class ExternalNotifyWaitingActivityEventHandler extends ExternalEventHandlerBase {
 
     public String handleEventMessage(
-            String message, Object msgdoc, Map<String, String> metainfo)
+            String message, Object msgdoc, Map<String,String> metainfo)
             throws EventHandlerException {
         String response;
         try {
@@ -41,7 +41,8 @@ public class ExternalNotifyWaitingActivityEventHandler extends ExternalEventHand
 
             response = createResponseMessage(null, "NOTIFICATION STATUS CODE " + status, msgdoc, metainfo);
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             response = createResponseMessage(e, null, msgdoc, metainfo);
         }
         return response;

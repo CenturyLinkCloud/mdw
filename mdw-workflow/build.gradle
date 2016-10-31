@@ -12,16 +12,12 @@ dependencies {
 	compile group: "org.drools", name: "drools-decisiontables", version: "5.6.0.Final"
 	compile group: "org.drools", name: "drools-compiler", version: "5.6.0.Final"
     compile group: "org.drools", name: "knowledge-api", version: "5.6.0.Final"
-	compile group: "org.mvel", name: "mvel2", version: "2.1.8.Final"
-    compile group: "org.antlr", name: "antlr-runtime", version: "3.3"
 	
-    compile group: "oro", name: "oro", version: "2.0.8"
     compile group: "javax.connector", name: "connector", version: "1.5"
     compile group: "junit", name: "junit", version:"4.8.1"
     
-    // Salesforce adapter dependencies
-    compile group: "com.force.api", name: "force-wsc", version: "22.0.0"
-    compile group: "com.salesforce", name: "sfa-output", version: "1.6.0"
+    compile group: "expect4j", name: "expect4j", version: "1.1.0"
+    compile group: "oro", name: "oro", version: "2.0.8"
     
     // TODO: proprietary dependencies
     compile group: "com.qwest.bus", name: "bus-all", version: "2.1.2.1"

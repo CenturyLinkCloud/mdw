@@ -12,6 +12,9 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.xmlbeans.XmlObject;
+import org.json.JSONObject;
+
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -22,18 +25,18 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.service.ApplicationSummaryDocument;
 import com.centurylink.mdw.service.ApplicationSummaryDocument.ApplicationSummary;
+import com.centurylink.mdw.service.DbInfo;
+import com.centurylink.mdw.service.Repository;
 import com.centurylink.mdw.util.ResourceFormatter;
 import com.centurylink.mdw.util.ResourceFormatter.Format;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.service.DbInfo;
-import com.centurylink.mdw.service.Repository;
 
 public class AppSummary implements XmlService, JsonService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    public String getXml(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
+    public String getXml(XmlObject request, Map<String,String> metaInfo) throws ServiceException {
         ResourceFormatter formatter = new ResourceFormatter(Format.xml, 2);
         try {
             return formatter.format(getAppSummaryDoc());
@@ -43,7 +46,7 @@ public class AppSummary implements XmlService, JsonService {
         }
     }
 
-    public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
+    public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
         ResourceFormatter formatter = new ResourceFormatter(Format.json, 2);
         try {
             return formatter.format(getAppSummaryDoc());
@@ -53,8 +56,11 @@ public class AppSummary implements XmlService, JsonService {
         }
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        return getXml(parameters, metaInfo);
+    public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
+        if (requestObj instanceof JSONObject)
+            return getJson((JSONObject)requestObj, metaInfo);
+        else
+            return getXml((XmlObject)requestObj, metaInfo);
     }
 
 

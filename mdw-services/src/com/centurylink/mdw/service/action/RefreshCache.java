@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
 import com.centurylink.mdw.app.ApplicationContext;
@@ -33,7 +34,7 @@ public class RefreshCache implements XmlService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    public String getXml(Map<String,Object> parameters, Map<String,String> metaInfo)
+    public String getXml(XmlObject request, Map<String,String> metaInfo)
     throws ServiceException {
         try {
             boolean refreshProps = true;
@@ -41,7 +42,7 @@ public class RefreshCache implements XmlService {
             boolean refreshSingleCache = false;
             String singleCacheName = null;
 
-            Object refreshType = parameters.get("RefreshType");
+            Object refreshType = metaInfo.get("RefreshType");
             if ("Properties".equals(refreshType)) {
                 refreshAllCaches = false;
             }
@@ -55,8 +56,8 @@ public class RefreshCache implements XmlService {
                 refreshProps = false;
             }
 
-            if (parameters.get("CacheName") != null) {
-                singleCacheName = parameters.get("CacheName").toString();
+            if (metaInfo.get("CacheName") != null) {
+                singleCacheName = metaInfo.get("CacheName").toString();
             }
 
             if (refreshProps) {
@@ -69,8 +70,8 @@ public class RefreshCache implements XmlService {
 
             if (refreshAllCaches) {
                 List<String> excludedFormats = null;
-                if (parameters.get("ExcludedFormats") != null)
-                    excludedFormats = Arrays.asList(parameters.get("ExcludedFormats").toString().split(","));
+                if (metaInfo.get("ExcludedFormats") != null)
+                    excludedFormats = Arrays.asList(metaInfo.get("ExcludedFormats").toString().split(","));
                 CacheRegistration.getInstance().refreshCaches(excludedFormats);
                 logger.info("Cache refresh complete.");
             }
@@ -81,17 +82,17 @@ public class RefreshCache implements XmlService {
                 new CacheRegistration().refreshCache(singleCacheName);
             }
 
-            if (parameters.get("GlobalRefresh") != null && Boolean.parseBoolean(parameters.get("GlobalRefresh").toString())) {
+            if (metaInfo.get("GlobalRefresh") != null && Boolean.parseBoolean(metaInfo.get("GlobalRefresh").toString())) {
                 // pass the message on to other servers (minus the global flag)
                 ActionRequestDocument actionRequestDoc = ActionRequestDocument.Factory.newInstance();
                 ActionRequest actionRequest = actionRequestDoc.addNewActionRequest();
                 Action action = actionRequest.addNewAction();
                 action.setName("RefreshProcessCache");
-                for (String paramName : parameters.keySet()) {
+                for (String paramName : metaInfo.keySet()) {
                     if (!paramName.equals("GlobalRefresh")) {
                         Parameter parameter = action.addNewParameter();
                         parameter.setName(paramName);
-                        parameter.setStringValue(parameters.get(paramName).toString());
+                        parameter.setStringValue(metaInfo.get(paramName).toString());
                     }
                 }
                 for (URL serviceUrl : getOtherServerUrls(requestUrl)) {
@@ -155,7 +156,7 @@ public class RefreshCache implements XmlService {
         return new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2);
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        return getXml(parameters, metaInfo);
+    public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
+        return getXml((XmlObject)requestObj, metaInfo);
     }
 }

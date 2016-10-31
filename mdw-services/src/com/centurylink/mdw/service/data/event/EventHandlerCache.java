@@ -23,7 +23,6 @@ public class EventHandlerCache implements PreloadableCache {
 
     private static HashMap<String,List<ExternalEvent>> myCache =
         new HashMap<String,List<ExternalEvent>>();
-    private static ExternalEvent defaultEventHandler = null;
 
     public EventHandlerCache(){
         super();
@@ -48,42 +47,30 @@ public class EventHandlerCache implements PreloadableCache {
       return myCache.get(bucket);
     }
 
-    public static synchronized ExternalEvent getDefaultEventHandler(){
-        if (defaultEventHandler==null) {
-            defaultEventHandler = new ExternalEvent();
-            defaultEventHandler.setEventName("DefaultEventHandler");
-            defaultEventHandler.setEventHandler("com.centurylink.mdw.listener.DefaultEventHandler");
-            defaultEventHandler.setPackageName("com.centurylink.mdw.base");
-            defaultEventHandler.setId(new Long(0));
-        }
-        return defaultEventHandler;
+    public static ExternalEvent fallbackHandler = new ExternalEvent();
+    static {
+        fallbackHandler.setEventName("FallbackHandler");
+        fallbackHandler.setEventHandler("com.centurylink.mdw.listener.FallbackEventHandler");
+        fallbackHandler.setPackageName("com.centurylink.mdw.base");
+        fallbackHandler.setId(new Long(0));
     }
 
-    /**
-     * Method that re loads the Cache(s)
-     * @throws CachingException
-     *
-     */
+    public static ExternalEvent serviceHandler = new ExternalEvent();
+    static {
+        serviceHandler.setEventName("ServiceHandler");
+        serviceHandler.setEventHandler("com.centurylink.mdw.service.handler.ServiceRequestHandler");
+        serviceHandler.setPackageName("com.centurylink.mdw.base");
+        serviceHandler.setId(new Long(0));
+    }
+
     public synchronized void refreshCache() throws CachingException {
-    //        clearCache();
-            loadCache();
+        loadCache();
     }
 
-
-    /**
-     * Method that loads the Cache(s)
-     * @throws CachingException
-     *
-     */
     public void loadCache() throws CachingException {
         load();
     }
 
-    /**
-     * Method that loads the Cache(s)
-     * @throws CachingException
-     *
-     */
     private synchronized void load() throws CachingException {
         HashMap<String,List<ExternalEvent>> myCacheTemp = new HashMap<String,List<ExternalEvent>>();
         try {
@@ -91,7 +78,7 @@ public class EventHandlerCache implements PreloadableCache {
             List<ExternalEvent> all = loader.loadExternalEvents();
             for (ExternalEvent e : all) {
                 if (e.getEventName().equals("DefaultEventHandler")) {
-                    defaultEventHandler = e;
+                    fallbackHandler = e;
                     continue;
                 }
                 try{

@@ -139,6 +139,16 @@ public class StatusMessage extends XmlBeanWrapper implements Jsonable {
     }
 
     @ApiModelProperty(hidden=true)
+    public String getJsonString() {
+        try {
+            return getJson().toString(2);
+        }
+        catch (JSONException ex) {
+            return "{ \"status\": {  \"code\": " + getCode() + ", \"message\": \"" + getMessage() + "\" } }";
+        }
+    }
+
+    @ApiModelProperty(hidden=true)
     public String getJsonName() { return "status"; }
 
     public String toXml() {

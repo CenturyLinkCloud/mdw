@@ -6,47 +6,33 @@ package com.centurylink.mdw.hub.servlet;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.xmlbeans.XmlOptions;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.user.AuthenticatedUser;
-import com.centurylink.mdw.service.Parameter;
-import com.centurylink.mdw.service.Resource;
-import com.centurylink.mdw.service.ResourceRequestDocument;
-import com.centurylink.mdw.service.ResourceRequestDocument.ResourceRequest;
-import com.centurylink.mdw.util.AuthUtils;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
-public class RestServlet extends HttpServlet {
+public class RestServlet extends ServiceServlet {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        CodeTimer timer = new CodeTimer("RestfulServicesServlet.doGet()", true);
-
-        if (logger.isMdwDebugEnabled()) {
-            logger.mdwDebug("RESTful Service GET Request:\n" + request.getRequestURI() + (request.getQueryString() == null ? "" : ("?" + request.getQueryString())));
-        }
+        CodeTimer timer = new CodeTimer("RestServlet.doGet()", true);
 
         if (request.getPathInfo() == null) {
             // redirect to html documentation
@@ -60,72 +46,48 @@ public class RestServlet extends HttpServlet {
             return;
         }
 
-        ResourceRequestDocument resourceRequestDocument = ResourceRequestDocument.Factory.newInstance();
-        ResourceRequest resourceRequest = resourceRequestDocument.addNewResourceRequest();
-        Resource resource = resourceRequest.addNewResource();
-        String path = request.getPathInfo().substring(1);
-        int slash = path.indexOf('/');
-        if (slash > 0)
-            resource.setName(path.substring(0, slash));
-        else
-            resource.setName(path);
-        for (Iterator<?> keysIter = request.getParameterMap().keySet().iterator(); keysIter.hasNext(); ) {
-            String key = (String) keysIter.next();
-            String value = request.getParameter(key);
-            if (!Listener.AUTHENTICATED_USER_HEADER.equals(key)) { // do not allow this to be injected
-              Parameter parameter = resource.addNewParameter();
-              parameter.setName(key);
-              parameter.setStringValue(value);
-            }
-        }
-        String requestString = resourceRequestDocument.xmlText(getXmlOptions());
-        ListenerHelper helper = new ListenerHelper();
         Map<String,String> metaInfo = buildMetaInfo(request);
-        metaInfo.put(Listener.METAINFO_REQUEST_CATEGORY, Listener.REQUEST_CATEGORY_READ);
+        try {
+            String responseString = handleRequest(request, response, metaInfo);
 
-        String responseString = handleAuthentication(request.getSession(), requestString, metaInfo, helper);
-        if (responseString == null) // valid or no auth requested
-            responseString = helper.processEvent(requestString, metaInfo);
-
-        if (metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null)
-            response.setStatus(Integer.parseInt(metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE)));
-
-        String downloadFormat = metaInfo.get(Listener.METAINFO_DOWNLOAD_FORMAT);
-        if (downloadFormat != null) {
-            response.setContentType(Listener.CONTENT_TYPE_DOWNLOAD);
-            String fileName = path.substring(0).replace('/', '-') + "." + downloadFormat;
-            response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-            if (downloadFormat.equals(Listener.DOWNLOAD_FORMAT_JSON) || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_XML) || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_TEXT)) {
-                response.getOutputStream().write(responseString.getBytes());
+            String downloadFormat = metaInfo.get(Listener.METAINFO_DOWNLOAD_FORMAT);
+            if (downloadFormat != null) {
+                response.setContentType(Listener.CONTENT_TYPE_DOWNLOAD);
+                String fileName = request.getPathInfo().substring(1).replace('/', '-') + "." + downloadFormat;
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+                if (downloadFormat.equals(Listener.DOWNLOAD_FORMAT_JSON)
+                        || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_XML)
+                        || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_TEXT)) {
+                    response.getOutputStream().write(responseString.getBytes());
+                }
+                else {
+                    // for binary content string response will have been Base64
+                    // encoded
+                    response.getOutputStream()
+                            .write(Base64.decodeBase64(responseString.getBytes()));
+                }
             }
             else {
-                // for binary content string response will have been Base64 encoded
-                response.getOutputStream().write(Base64.decodeBase64(responseString.getBytes()));
+                if ("/System/sysInfo".equals(request.getPathInfo())
+                        && "application/json".equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE))) {
+                    responseString = WebAppContext.addContextInfo(responseString, request);
+                }
+                response.getOutputStream().print(responseString);
             }
         }
-        else {
-            if (logger.isMdwDebugEnabled()) {
-                logger.mdwDebug("RESTful Service GET Response:\n" + responseString);
-            }
-            if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) == null)
-                response.setContentType("text/xml");
-            else
-                response.setContentType(metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
-
-            if ("System/sysInfo".equals(path) && "application/json".equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE))) {
-                responseString = WebAppContext.addContextInfo(responseString, request);
-            }
-
-            response.getOutputStream().print(responseString);
+        catch (ServiceException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            response.sendError(ex.getErrorCode(), createErrorResponseMessage(request, metaInfo, ex));
         }
-
-        timer.stopAndLogTiming("");
+        finally {
+            timer.stopAndLogTiming("");
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        CodeTimer timer = new CodeTimer("RestfulServicesServlet.doPost()", true);
+        CodeTimer timer = new CodeTimer("RestServlet.doPost()", true);
 
         if (request.getPathInfo() != null && request.getPathInfo().startsWith("/SOAP")) {
             // forward to SOAP servlet
@@ -134,29 +96,115 @@ public class RestServlet extends HttpServlet {
             return;
         }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        StringBuffer requestBuffer = new StringBuffer(request.getContentLength());
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            requestBuffer.append(line).append('\n');
-        }
-
-        // read the POST request contents
-        String requestString = requestBuffer.toString();
-        if (logger.isMdwDebugEnabled()) {
-            logger.mdwDebug("REST Service POST Request:\n" + requestString);
-        }
-
-        ListenerHelper helper = new ListenerHelper();
         Map<String,String> metaInfo = buildMetaInfo(request);
-        String responseString = handleAuthentication(request.getSession(), requestString, metaInfo, helper);
-        if (responseString == null) // valid or no auth requested
-            responseString = helper.processEvent(requestString, metaInfo);
+        try {
+            String responseString = handleRequest(request, response, metaInfo);
+            response.getOutputStream().print(responseString);
+        }
+        catch (ServiceException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            response.sendError(ex.getErrorCode(), createErrorResponseMessage(request, metaInfo, ex));
+        }
+        finally {
+            timer.stopAndLogTiming("");
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        CodeTimer timer = new CodeTimer("RestServlet.doPut()", true);
+
+        Map<String,String> metaInfo = buildMetaInfo(request);
+        try {
+            String responseString = handleRequest(request, response, metaInfo);
+            response.getOutputStream().print(responseString);
+        }
+        catch (ServiceException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            response.sendError(ex.getErrorCode(), createErrorResponseMessage(request, metaInfo, ex));
+        }
+        finally {
+            timer.stopAndLogTiming("");
+        }
+    }
+
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        CodeTimer timer = new CodeTimer("RestServlet.doDelete()", true);
+
+        Map<String,String> metaInfo = buildMetaInfo(request);
+        try {
+            String responseString = handleRequest(request, response, metaInfo);
+            response.getOutputStream().print(responseString);
+        }
+        catch (ServiceException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            response.sendError(ex.getErrorCode(), createErrorResponseMessage(request, metaInfo, ex));
+        }
+        finally {
+            timer.stopAndLogTiming("");
+        }
+    }
+
+    protected void doPatch(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        CodeTimer timer = new CodeTimer("RestServlet.doPatch()", true);
+
+        Map<String,String> metaInfo = buildMetaInfo(request);
+        try {
+            String responseString = handleRequest(request, response, metaInfo);
+            response.getOutputStream().print(responseString);
+        }
+        catch (ServiceException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            response.sendError(ex.getErrorCode(), createErrorResponseMessage(request, metaInfo, ex));
+        }
+        finally {
+            timer.stopAndLogTiming("");
+        }
+    }
+
+    @Override
+    public void service(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        if ("PATCH".equalsIgnoreCase(request.getMethod())) {
+            doPatch(request, response);
+        }
+        else {
+            super.service(request, response);
+        }
+    }
+
+    protected String handleRequest(HttpServletRequest request, HttpServletResponse response, Map<String,String> metaInfo)
+            throws ServiceException, IOException {
 
         if (logger.isMdwDebugEnabled()) {
-            logger.mdwDebug("REST Service POST Response:\n" + responseString);
+            logger.mdwDebug(getClass().getSimpleName() + " " + request.getMethod() + ":\n   "
+              + request.getRequestURI() + (request.getQueryString() == null ? "" : ("?" + request.getQueryString())));
         }
 
+        String requestString = null;
+        if (request.getContentLength() > 0) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+            StringBuffer requestBuffer = new StringBuffer(request.getContentLength());
+            String line;
+            while ((line = reader.readLine()) != null)
+                requestBuffer.append(line).append('\n');
+
+            // log request
+            requestString = requestBuffer.toString();
+            if (logger.isMdwDebugEnabled()) {
+                logger.mdwDebug(getClass().getSimpleName() + " " + request.getMethod() + " Request:\n" + requestString);
+            }
+        }
+
+        authenticate(request, metaInfo);
+        Set<String> reqHeaderKeys = metaInfo.keySet();
+        String responseString = new ListenerHelper().processEvent(requestString, metaInfo);
+        populateResponseHeaders(reqHeaderKeys, metaInfo, response);
         if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) == null)
             response.setContentType("text/xml");
         else
@@ -165,171 +213,11 @@ public class RestServlet extends HttpServlet {
         if (metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null)
             response.setStatus(Integer.parseInt(metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE)));
 
-        // TODO: more general way to handle response headers
-        // tomcat changes all header keys to lower case
-        if (metaInfo.containsKey(Listener.METAINFO_MASTER_REQUEST_ID))
-            response.setHeader(Listener.METAINFO_MASTER_REQUEST_ID, metaInfo.get(Listener.METAINFO_MASTER_REQUEST_ID));
-        if (metaInfo.containsKey(Listener.METAINFO_CORRELATION_ID))
-            response.setHeader(Listener.METAINFO_CORRELATION_ID, metaInfo.get(Listener.METAINFO_CORRELATION_ID));
-
-        response.getOutputStream().print(responseString);
-        timer.stopAndLogTiming("");
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        CodeTimer timer = new CodeTimer("RestfulServicesServlet.doPut()", true);
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        StringBuffer requestBuffer = new StringBuffer(request.getContentLength());
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            requestBuffer.append(line).append('\n');
-        }
-
-        // read the PUT request contents
-        String requestString = requestBuffer.toString();
         if (logger.isMdwDebugEnabled()) {
-            logger.mdwDebug("RESTful Service PUT Request:\n" + requestString);
+            logger.mdwDebug(getClass().getSimpleName() + " " + request.getMethod() + " Response:\n" + responseString);
         }
 
-        ListenerHelper helper = new ListenerHelper();
-        Map<String,String> metaInfo = buildMetaInfo(request);
-        metaInfo.put(Listener.METAINFO_REQUEST_CATEGORY, Listener.REQUEST_CATEGORY_UPDATE);
-
-        String responseString = handleAuthentication(request.getSession(), requestString, metaInfo, helper);
-        if (responseString == null) // valid or no auth requested
-            responseString = helper.processEvent(requestString, metaInfo);
-
-        if (logger.isMdwDebugEnabled()) {
-            logger.mdwDebug("RESTful Service PUT Response:\n" + responseString);
-        }
-
-        if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) == null)
-            response.setContentType("text/xml");
-        else
-            response.setContentType(metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
-
-        if (metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null)
-          response.setStatus(Integer.parseInt(metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE)));
-
-        response.getOutputStream().print(responseString);
-        timer.stopAndLogTiming("");
+        return responseString;
     }
-
-
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        CodeTimer timer = new CodeTimer("RestfulServicesServlet.doDelete()", true);
-
-        if (logger.isMdwDebugEnabled()) {
-            logger.mdwDebug("RESTful Service DELETE Request:\n" + request.getRequestURI());
-         }
-
-        if (request.getPathInfo() == null)
-            return;
-
-        ListenerHelper helper = new ListenerHelper();
-        Map<String,String> metaInfo = buildMetaInfo(request);
-        metaInfo.put(Listener.METAINFO_REQUEST_CATEGORY, Listener.REQUEST_CATEGORY_DELETE);
-
-        String responseString = handleAuthentication(request.getSession(), "{}", metaInfo, helper);
-        if (responseString == null) // valid or no auth requested
-            responseString = helper.processEvent("{}", metaInfo);
-        if (logger.isMdwDebugEnabled()) {
-           logger.mdwDebug("RESTful Service DELETE Response:\n" + responseString);
-        }
-
-        if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) == null)
-            response.setContentType("text/xml");
-        else
-            response.setContentType(metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
-
-        if (metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null)
-          response.setStatus(Integer.parseInt(metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE)));
-
-        response.getOutputStream().print(responseString);
-        timer.stopAndLogTiming("");
-    }
-
-    private Map<String,String> buildMetaInfo(HttpServletRequest request) {
-        Map<String,String> metaInfo = new HashMap<String,String>();
-        metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_REST);
-        metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
-        metaInfo.put(Listener.METAINFO_REQUEST_URL, request.getRequestURL().toString());
-        metaInfo.put(Listener.METAINFO_HTTP_METHOD, request.getMethod());
-        metaInfo.put(Listener.METAINFO_REMOTE_HOST, request.getRemoteHost());
-        metaInfo.put(Listener.METAINFO_REMOTE_ADDR, request.getRemoteAddr());
-        metaInfo.put(Listener.METAINFO_REMOTE_PORT, String.valueOf(request.getRemotePort()));
-
-        if (request.getPathInfo() != null) {
-            String requestPath = request.getPathInfo().substring(1);
-            if (requestPath.startsWith("REST/"))
-                requestPath = requestPath.substring(5);
-            metaInfo.put(Listener.METAINFO_REQUEST_PATH, requestPath);
-        }
-        if (request.getMethod().equalsIgnoreCase("GET")) {
-            Enumeration<?> paramNames = request.getParameterNames();
-            while (paramNames.hasMoreElements()) {
-                String key = (String) paramNames.nextElement();
-                if (!Listener.AUTHENTICATED_USER_HEADER.equals(key)) // do not allow this to be injected
-                    metaInfo.put(key, request.getParameter(key).toString());
-            }
-        }
-        if (request.getQueryString() != null)
-            metaInfo.put(Listener.METAINFO_REQUEST_QUERY_STRING, request.getQueryString());
-        Enumeration<?> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = (String) headerNames.nextElement();
-            if (!Listener.AUTHENTICATED_USER_HEADER.equals(headerName)) // do not allow this to be injected
-                metaInfo.put(headerName, request.getHeader(headerName));
-        }
-        return metaInfo;
-    }
-
-    private XmlOptions getXmlOptions() {
-        return new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2);
-    }
-
-    private String handleAuthentication(HttpSession session, String request, Map<String,String> headers, ListenerHelper helper) {
-        String error = null;
-        headers.remove(Listener.AUTHENTICATED_USER_HEADER); // only we should populate this
-        if (headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME) || headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase())) {
-            // perform http basic auth
-            if (!AuthUtils.authenticate(headers, AuthUtils.HTTP_BASIC_AUTHENTICATION)) {
-                error = helper.createAuthenticationErrorResponse(request, headers);
-                headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
-            }
-        }
-        else {
-            // check for user authenticated in session
-            AuthenticatedUser user = (AuthenticatedUser)session.getAttribute("authenticatedUser");
-            if (user != null)
-                headers.put(Listener.AUTHENTICATED_USER_HEADER, user.getCuid());
-        }
-
-        if (ApplicationContext.isDevelopment() && headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
-            // auth failed or not provided but allow dev override
-            if (ApplicationContext.getDevUser() != null) {
-                headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getDevUser());
-                if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
-                    headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
-                error = null;
-            }
-        }
-        else if (ApplicationContext.isServiceApiOpen() && headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
-          // auth failed or not provided but allow service user override
-          if (ApplicationContext.getServiceUser() != null) {
-              headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getServiceUser());
-              if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
-                  headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
-              error = null;
-          }
-        }
-        return error;
-    }
-
 
 }

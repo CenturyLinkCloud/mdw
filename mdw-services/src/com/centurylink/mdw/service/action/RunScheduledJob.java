@@ -5,6 +5,8 @@ package com.centurylink.mdw.service.action;
 
 import java.util.Map;
 
+import org.apache.xmlbeans.XmlObject;
+
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.XmlService;
@@ -20,31 +22,12 @@ public class RunScheduledJob implements XmlService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    public String getXml(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        String className = null;
-        String jobArgs = null;
-        for (String paramName : parameters.keySet()) {
-            Object value = parameters.get(paramName);
-            if (paramName.equals(JOB_CLASS_NAME))
-                className = (String) value;
-            else if (!paramName.equals(CONTENT)) {
-                if (jobArgs == null)
-                    jobArgs = "?";
-                else
-                    jobArgs += "&";
-                jobArgs += paramName + "=" + value.toString();
-            }
-        }
-
+    public String getXml(XmlObject request, Map<String,String> metaInfo) throws ServiceException {
+        String className = metaInfo.get(JOB_CLASS_NAME);
         if (className == null)
             throw new ServiceException("Missing parameter to RunScheduledJob: " + JOB_CLASS_NAME);
 
-        CallURL url;
-        if (jobArgs == null)
-            url = new CallURL(className);
-        else
-            url = new CallURL(className + jobArgs);
-
+        CallURL url = new CallURL(className);
         try {
             ScheduledJob job = MdwServiceRegistry.getInstance().getScheduledJob(className);
             if (job == null) {
@@ -64,7 +47,7 @@ public class RunScheduledJob implements XmlService {
         }
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        return getXml(parameters, metaInfo);
+    public String getText(Object obj, Map<String,String> metaInfo) throws ServiceException {
+        return getXml((XmlObject)obj, metaInfo);
     }
 }

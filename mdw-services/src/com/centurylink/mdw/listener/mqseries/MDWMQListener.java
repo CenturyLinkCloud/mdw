@@ -44,6 +44,9 @@ import com.ibm.mq.constants.MQConstants;
 
 public class MDWMQListener {
 
+    public static final String METAINFO_HEX_REQUEST_ID = "HexadecimalRequestID";
+    public static final String METAINFO_CORRELATION_ID = "CorrelationID";
+
     public static final String MQPOOL_CLASS_NAME = "className";
     public static final String HOST_NAME = "host";
     public static final String PORT = "port";;
@@ -99,7 +102,7 @@ public class MDWMQListener {
     Hashtable<String, Object> props = new Hashtable<String, Object>();
 
     // STANDALONE private StandaloneLogger logger;
-    /* WITHENGINE */private StandardLogger logger;
+    private StandardLogger logger;
 
     protected MQQueueManager qMgr;
     private boolean _terminating;
@@ -108,7 +111,7 @@ public class MDWMQListener {
 
     public void init(String listenerName, Properties parameters) {
         // STANDALONE logger = StandaloneLogger.getSingleton();
-        /* WITHENGINE */logger = LoggerUtil.getStandardLogger();
+        logger = LoggerUtil.getStandardLogger();
 
         logger.info("Starting MQ Listener name = " + listenerName);
 
@@ -364,17 +367,16 @@ public class MDWMQListener {
             if (xmlWrapper != null)
                 msgTxt = wrapXml(msgTxt, xmlWrapper);
             Map<String, String> metaInfo = new HashMap<String, String>();
-            /* WITHENGINE */metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_MQSERIES);
-            /* WITHENGINE */metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
-            /* WITHENGINE */metaInfo.put(Listener.METAINFO_HEX_REQUEST_ID, hexMsgId);
-            /* WITHENGINE */metaInfo.put(Listener.METAINFO_HEX_CORRELATION_ID,
+            metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_MQSERIES);
+            metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
+            metaInfo.put(METAINFO_HEX_REQUEST_ID, hexMsgId);
+            metaInfo.put(Listener.METAINFO_HEX_CORRELATION_ID,
                     byteArrayToHexString(request.correlationId));
-            /* WITHENGINE */metaInfo.put(Listener.METAINFO_REQUEST_ID, new String(request.messageId));
-            /* WITHENGINE */metaInfo.put(Listener.METAINFO_CORRELATION_ID, new String(request.correlationId));
-            /* WITHENGINE */metaInfo.put("ReplyToQueueName", request.replyToQueueName);
-            /* WITHENGINE */ListenerHelper helper = new ListenerHelper();
-            /* WITHENGINE */String response = helper.processEvent(msgTxt, metaInfo);
-            // STANDALONE String response = null;
+            metaInfo.put(Listener.METAINFO_REQUEST_ID, new String(request.messageId));
+            metaInfo.put(METAINFO_CORRELATION_ID, new String(request.correlationId));
+            metaInfo.put("ReplyToQueueName", request.replyToQueueName);
+            ListenerHelper helper = new ListenerHelper();
+            String response = helper.processEvent(msgTxt, metaInfo);
 
             if (need_response) {
                 mqPut1(response, request);

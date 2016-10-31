@@ -21,8 +21,8 @@ public class SystemInfo implements TextService {
     public static final String TYPE_MEM_INFO = "memoryInfo";
     public static final String TYPE_TOP_OUTPUT = "topOutput";
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        String infoType = parameters.get(PARAM_INFO_TYPE) == null ? null : parameters.get(PARAM_INFO_TYPE).toString();
+    public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
+        String infoType = metaInfo.get(PARAM_INFO_TYPE) == null ? null : metaInfo.get(PARAM_INFO_TYPE).toString();
         if (infoType == null) {
             throw new ServiceException("Missing parameter: 'type' is required.");
         }

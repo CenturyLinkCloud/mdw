@@ -97,7 +97,7 @@ public class ProcessStartEventHandler extends ExternalEventHandlerBase {
     /**
      * This method is invoked by handleEventMessage() to obtain master request ID.
      * The default implementation does the following:
-     *    - If "MasterRequestID" is defined in metaInfo, then takes its value
+     *    - If "mdw-request-id" is defined in metaInfo, then takes its value
      *      performs place holder translation
      *      ({@link #placeHolderTranslation(String, Map, XmlObject)}), and returns it
      *    - otherwise, return the external event instance ID
@@ -109,9 +109,7 @@ public class ProcessStartEventHandler extends ExternalEventHandlerBase {
      * @return
      */
     protected String getMasterRequestId(XmlObject msgdoc, Map<String,String> metaInfo) {
-        String masterRequestId = metaInfo.get(Listener.METAINFO_MASTER_REQUEST_ID);
-        if (masterRequestId == null) // Tomcat makes HTTP Request Headers lower case
-            masterRequestId = metaInfo.get(Listener.METAINFO_MASTER_REQUEST_ID.toLowerCase());
+        String masterRequestId = metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID);
         if (masterRequestId == null)
             masterRequestId = metaInfo.get(Listener.METAINFO_DOCUMENT_ID);
         else masterRequestId = this.placeHolderTranslation(masterRequestId, metaInfo, msgdoc);

@@ -15,12 +15,11 @@ import com.centurylink.mdw.services.UserServices;
 
 public class AuditLog implements JsonService {
 
-    public String getJson(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
+    public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
         try {
-            JSONObject jsonObject = (JSONObject) parameters.get("userAction");
-            if (jsonObject == null)
+            if (request == null)
                 throw new ServiceException("Missing parameter: 'userAction'.");
-            UserAction userAction = new UserAction(jsonObject);
+            UserAction userAction = new UserAction(request);
             UserServices userServices = ServiceLocator.getUserServices();
             userServices.auditLog(userAction);
             return null;  // success
@@ -30,7 +29,7 @@ public class AuditLog implements JsonService {
         }
     }
 
-    public String getText(Map<String,Object> parameters, Map<String,String> metaInfo) throws ServiceException {
-        return getJson(parameters, metaInfo);
+    public String getText(Object request, Map<String,String> metaInfo) throws ServiceException {
+        return getJson((JSONObject)request, metaInfo);
     }
 }
