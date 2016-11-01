@@ -87,7 +87,7 @@ public class RefreshCache implements XmlService {
                 ActionRequestDocument actionRequestDoc = ActionRequestDocument.Factory.newInstance();
                 ActionRequest actionRequest = actionRequestDoc.addNewActionRequest();
                 Action action = actionRequest.addNewAction();
-                action.setName("RefreshProcessCache");
+                action.setName("RefreshCache");
                 for (String paramName : metaInfo.keySet()) {
                     if (!paramName.equals("GlobalRefresh")) {
                         Parameter parameter = action.addNewParameter();

@@ -55,7 +55,7 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
         Format format = getFormat(metaInfo);
 
         try {
-            // compatibility START
+            // compatibility - START
             if ("GetAppSummary".equals(path)) {
                 service = new AppSummary();
             }
@@ -67,7 +67,6 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
                 // XML request
                 metaInfo.put(Listener.METAINFO_CONTENT_TYPE, "text/xml");
                 if ("ActionRequest".equals(XmlPath.getRootNodeName((XmlObject)requestObj))) {
-
                     ActionRequestDocument actionRequestDoc = (ActionRequestDocument) ((XmlObject)requestObj).changeType(ActionRequestDocument.type);
                     ActionRequest actionRequest = actionRequestDoc.getActionRequest();
 
@@ -84,12 +83,6 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
                         InstanceLevelActionHandler handler = new InstanceLevelActionHandler();
                         return handler.handleEventMessage(request, requestObj, metaInfo);
                     }
-
-                    // compatibility for individually-registered handlers
-                    if (action.getName().equals("RefreshProcessCache"))
-                        action.setName("RefreshCache");
-                    else if (action.getName().equals("SaveConfig"))
-                        action.setName("SaveConfig");
 
                     for (Parameter param : actionRequest.getAction().getParameterList())
                         metaInfo.put(param.getName(), param.getStringValue());

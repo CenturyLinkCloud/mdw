@@ -63,7 +63,7 @@ public class RoutingServiceMonitor implements ServiceMonitor {
         if ("WorkflowCache".equalsIgnoreCase(headers.get(Listener.METAINFO_REQUEST_PATH)) ||
             "GitVcs".equalsIgnoreCase(headers.get(Listener.METAINFO_REQUEST_PATH)) ||
             (request.toString().length() < 200 && request.toString().contains("ActionRequest") &&
-            (request.toString().contains("RefreshCache") || request.toString().contains("RefreshProcessCache"))) ) {
+            request.toString().contains("RefreshCache")) ) {
             return null;
         }
 
