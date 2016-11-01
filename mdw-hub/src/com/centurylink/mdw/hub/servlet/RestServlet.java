@@ -5,7 +5,7 @@ package com.centurylink.mdw.hub.servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -187,9 +187,9 @@ public class RestServlet extends ServiceServlet {
         }
 
         String requestString = null;
-        if (request.getContentLength() > 0) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-            StringBuffer requestBuffer = new StringBuffer(request.getContentLength());
+        if (!"GET".equalsIgnoreCase(request.getMethod()) && !"DELETE".equalsIgnoreCase(request.getMethod())) {
+            BufferedReader reader = request.getReader();
+            StringBuffer requestBuffer = new StringBuffer(request.getContentLength() < 0 ? 0 : request.getContentLength());
             String line;
             while ((line = reader.readLine()) != null)
                 requestBuffer.append(line).append('\n');
@@ -202,7 +202,7 @@ public class RestServlet extends ServiceServlet {
         }
 
         authenticate(request, metaInfo);
-        Set<String> reqHeaderKeys = metaInfo.keySet();
+        Set<String> reqHeaderKeys = new HashSet<String>(metaInfo.keySet());
         String responseString = new ListenerHelper().processEvent(requestString, metaInfo);
         populateResponseHeaders(reqHeaderKeys, metaInfo, response);
         if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) == null)

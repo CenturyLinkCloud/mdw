@@ -15,6 +15,8 @@ public interface Listener {
     public static final String METAINFO_REQUEST_ID = "request-id";
     public static final String METAINFO_MDW_REQUEST_ID = "mdw-request-id";
     public static final String METAINFO_CORRELATION_ID = "correlation-id";
+    public static final String METAINFO_DOCUMENT_ID = "document-id";
+
     public static final String METAINFO_CONTENT_TYPE = "Content-Type";
     public static final String METAINFO_ACCEPT = "Accept";
 
@@ -25,7 +27,6 @@ public interface Listener {
     public static final String METAINFO_EVENT_NAME = "EventName";
     public static final String METAINFO_EVENT_MESSAGE = "EventMessage";
     public static final String METAINFO_EVENT_ID = "EventID";
-    public static final String METAINFO_DOCUMENT_ID = "DocumentID";
     public static final String METAINFO_HEX_CORRELATION_ID = "HexadecimalCorrelationID";
     public static final String METAINFO_PACKAGE_NAME = "PackageName";
     public static final String METAINFO_NO_PERSISTENCE = "NoPersistence";

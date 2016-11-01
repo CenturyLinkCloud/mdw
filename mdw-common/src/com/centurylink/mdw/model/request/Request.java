@@ -84,7 +84,8 @@ public class Request implements Jsonable {
     }
 
     public Request(JSONObject json) throws JSONException {
-        id = json.getLong("id");
+        if (json.has("id"))
+            id = json.getLong("id");
         if (json.has("created"))
             created = StringHelper.stringToDate(json.getString("created"));
         if (json.has("responded"))
@@ -119,7 +120,8 @@ public class Request implements Jsonable {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
-        json.put("id", id);
+        if (id > 0)
+            json.put("id", id);
         if (created != null)
             json.put("created", StringHelper.dateToString(created));
         if (responded != null)

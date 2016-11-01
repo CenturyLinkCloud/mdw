@@ -253,7 +253,6 @@ public class ListenerHelper {
             // parse handler specification - must before checking persistence flag
             String clsname = parseHandlerSpec(eventHandler.getEventHandler(), metaInfo);
             metaInfo.put(Listener.METAINFO_DOCUMENT_ID, eeid.toString());
-            metaInfo.put(Listener.METAINFO_EVENT_ID, eventHandler.getId().toString());
 
             // invoke event handler
             if (clsname.equals(START_PROCESS_HANDLER)) {
@@ -363,6 +362,8 @@ public class ListenerHelper {
             contentType = request.trim().startsWith("{") ? Listener.CONTENT_TYPE_JSON : Listener.CONTENT_TYPE_XML;
         if (contentType == null)
             contentType = Listener.CONTENT_TYPE_XML; // compatibility
+
+        metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getErrorCode()));
 
         StatusMessage statusMsg = new StatusMessage();
         statusMsg.setCode(ex.getErrorCode());

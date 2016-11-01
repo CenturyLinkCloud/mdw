@@ -55,7 +55,7 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
         Format format = getFormat(metaInfo);
 
         try {
-            // compatibility
+            // compatibility START
             if ("GetAppSummary".equals(path)) {
                 service = new AppSummary();
             }
@@ -148,6 +148,7 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
                         metaInfo.put(Listener.METAINFO_REQUEST_PATH, action);
                 }
             }
+            // compatibility - END
 
             if (service == null) {
                 service = getServiceInstance(metaInfo);
@@ -167,17 +168,29 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
                 }
                 else {
                     metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_JSON);
-                    return jsonService.getJson((JSONObject)requestObj, metaInfo);
+                    String json = jsonService.getJson((JSONObject)requestObj, metaInfo);
+                    if (json == null)
+                        return createSuccessResponse(Format.json);
+                    else
+                        return json;
                 }
             }
             else if (format == Format.xml) {
                 metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_XML);
                 XmlService xmlService = (XmlService) service;
-                return xmlService.getXml((XmlObject)requestObj, metaInfo);
+                String xml = xmlService.getXml((XmlObject)requestObj, metaInfo);
+                if (xml == null)
+                    return createSuccessResponse(Format.xml);
+                else
+                    return xml;
             }
             else {
                 metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_TEXT);
-                return service.getText(requestObj, metaInfo);
+                String text = service.getText(requestObj, metaInfo);
+                if (text == null)
+                    return createSuccessResponse(Format.text);
+                else
+                    return text;
             }
         }
         catch (ServiceException ex) {
@@ -295,12 +308,6 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
                 format = Format.json;
             }
             else if (Listener.CONTENT_TYPE_TEXT.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE)) || Listener.CONTENT_TYPE_TEXT.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE.toLowerCase()))) {
-                format = Format.text;
-            }
-            if (Listener.CONTENT_TYPE_JSON.equals(metaInfo.get(Listener.METAINFO_ACCEPT)) || Listener.CONTENT_TYPE_JSON.equals(metaInfo.get(Listener.METAINFO_ACCEPT.toLowerCase()))) {
-                format = Format.json;
-            }
-            else if (Listener.CONTENT_TYPE_TEXT.equals(metaInfo.get(Listener.METAINFO_ACCEPT)) || Listener.CONTENT_TYPE_TEXT.equals(metaInfo.get(Listener.METAINFO_ACCEPT.toLowerCase()))) {
                 format = Format.text;
             }
         }

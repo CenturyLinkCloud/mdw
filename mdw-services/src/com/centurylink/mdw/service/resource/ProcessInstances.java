@@ -56,7 +56,7 @@ public class ProcessInstances implements JsonService {
             }
             else {
                 Map<String,String> criteria = getCriteria(metaInfo);
-                Map<String,String> variables = getVariables(metaInfo);
+                Map<String,String> variables = null; // TODO getVariables(metaInfo);
 
                 int pageIndex = metaInfo.get("pageIndex") == null ? 0 : Integer.parseInt((String)metaInfo.get("pageIndex"));
                 int pageSize = metaInfo.get("pageSize") == null ? 0 : Integer.parseInt((String)metaInfo.get("pageSize"));

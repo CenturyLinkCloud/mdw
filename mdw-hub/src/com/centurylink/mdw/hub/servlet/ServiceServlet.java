@@ -34,18 +34,26 @@ public abstract class ServiceServlet extends HttpServlet {
         for (String key : metaInfo.keySet()) {
             if (!Listener.AUTHENTICATED_USER_HEADER.equals(key)
                     && !Listener.METAINFO_HTTP_STATUS_CODE.equals(key)
+                    && !Listener.METAINFO_ACCEPT.equals(key)
                     && !Listener.METAINFO_CONTENT_TYPE.equals(key)
                     && !Listener.METAINFO_DOWNLOAD_FORMAT.equals(key)
                     && !requestHeaderKeys.contains(key))
                 response.setHeader(key, metaInfo.get(key));
         }
+
+        // these always get populated if present
+        if (metaInfo.get(Listener.METAINFO_REQUEST_ID) != null)
+            response.setHeader(Listener.METAINFO_REQUEST_ID, metaInfo.get(Listener.METAINFO_REQUEST_ID));
+        if (metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID) != null)
+            response.setHeader(Listener.METAINFO_MDW_REQUEST_ID, metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID));
+        if (metaInfo.get(Listener.METAINFO_CORRELATION_ID) != null)
+            response.setHeader(Listener.METAINFO_CORRELATION_ID, metaInfo.get(Listener.METAINFO_CORRELATION_ID));
+        if (metaInfo.get(Listener.METAINFO_DOCUMENT_ID) != null)
+            response.setHeader(Listener.METAINFO_DOCUMENT_ID, metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
     }
 
     protected Map<String,String> buildMetaInfo(HttpServletRequest request) {
         Map<String,String> metaInfo = new HashMap<String,String>();
-        metaInfo.put(Listener.METAINFO_CONTENT_TYPE, request.getContentType());
-        if (request.getHeader("Accept") != null)
-            metaInfo.put(Listener.METAINFO_CONTENT_TYPE, request.getHeader("Accept"));
         metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_REST);
         metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
         metaInfo.put(Listener.METAINFO_REQUEST_URL, request.getRequestURL().toString());
@@ -60,20 +68,44 @@ public abstract class ServiceServlet extends HttpServlet {
                 requestPath = requestPath.substring(5);
             metaInfo.put(Listener.METAINFO_REQUEST_PATH, requestPath);
         }
-        Enumeration<?> paramNames = request.getParameterNames();
-        while (paramNames.hasMoreElements()) {
-            String key = (String) paramNames.nextElement();
-            if (!Listener.AUTHENTICATED_USER_HEADER.equals(key)) // do not allow this to be injected
-                metaInfo.put(key, request.getParameter(key).toString());
-        }
+
         if (request.getQueryString() != null)
             metaInfo.put(Listener.METAINFO_REQUEST_QUERY_STRING, request.getQueryString());
+
+        // default to incoming content-type (but overridden by accept header below)
+        String contentType = request.getContentType();
+        // only set content type for known types
+        if (Listener.CONTENT_TYPE_JSON.equals(contentType) || Listener.CONTENT_TYPE_XML.equals(contentType)
+                || Listener.CONTENT_TYPE_TEXT.equals(contentType)) {
+            metaInfo.put(Listener.METAINFO_CONTENT_TYPE, contentType);
+        }
+
         Enumeration<?> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = (String) headerNames.nextElement();
             if (!Listener.AUTHENTICATED_USER_HEADER.equals(headerName)) // do not allow this to be injected
                 metaInfo.put(headerName, request.getHeader(headerName));
+            if (Listener.METAINFO_ACCEPT.equalsIgnoreCase(headerName)) {
+                String accept = request.getHeader(Listener.METAINFO_ACCEPT);
+                if (Listener.CONTENT_TYPE_JSON.equals(accept) || Listener.CONTENT_TYPE_XML.equals(accept)
+                        || Listener.CONTENT_TYPE_TEXT.equals(accept)) {
+                    contentType = request.getHeader(headerName);
+                }
+            }
         }
+
+        // getting parameters for POST consumes request reader
+        if (!"POST".equalsIgnoreCase(request.getMethod())
+                && !"PUT".equalsIgnoreCase(request.getMethod())
+                && !"PATCH".equalsIgnoreCase(request.getMethod())) {
+            Enumeration<?> paramNames = request.getParameterNames();
+            while (paramNames.hasMoreElements()) {
+                String key = (String) paramNames.nextElement();
+                if (!Listener.AUTHENTICATED_USER_HEADER.equals(key)) // do not allow this to be injected
+                    metaInfo.put(key, request.getParameter(key).toString());
+            }
+        }
+
         return metaInfo;
     }
 
