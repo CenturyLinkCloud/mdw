@@ -43,9 +43,6 @@ taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http
       $scope.task.dueInSeconds = -1;
   };
   
-  $scope.refreshWorkflowImage = function() {
-    $route.reload();
-  };
 }]);
 
 // task values

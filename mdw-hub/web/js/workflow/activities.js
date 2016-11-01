@@ -193,9 +193,6 @@ activityMod.controller('ActivityController', ['$scope', '$http', '$route', '$uib
     $scope.item = $scope.activity; // for activityItem template
    });
    
-  $scope.refreshWorkflowImage = function() {
-     $route.reload();
-  };   
   $scope.getSelectedActivitiesMessage = function() {
        return 'Do you want to perform the selected action on this activity?';
   };

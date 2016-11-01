@@ -203,41 +203,43 @@ public class SoapServlet extends ServiceServlet {
 
             try {
                authenticate(request, metaInfo);
+               String handlerResponse = helper.processEvent(requestXml, metaInfo);
+
+               try {
+                   // standard response indicates a potential problem
+                   MDWStatusMessageDocument responseDoc = MDWStatusMessageDocument.Factory
+                           .parse(handlerResponse, Compatibility.namespaceOptions());
+                   MDWStatusMessage responseMsg = responseDoc.getMDWStatusMessage();
+                   if ("SUCCESS".equals(responseMsg.getStatusMessage()))
+                       responseString = createSoapResponse(soapVersion, handlerResponse);
+                   else
+                       responseString = createSoapFaultResponse(soapVersion,
+                               String.valueOf(responseMsg.getStatusCode()),
+                               responseMsg.getStatusMessage());
+               }
+               catch (XmlException xex) {
+                   if (Listener.METAINFO_ERROR_RESPONSE_VALUE
+                           .equalsIgnoreCase(metaInfo.get(Listener.METAINFO_ERROR_RESPONSE))) {
+                       // Support for custom error response
+                       responseString = handlerResponse;
+                   }
+                   else {
+                       // not parseable as standard response doc (a good thing)
+                       if (oldStyleRpcRequest) {
+                           responseString = createOldStyleSoapResponse(soapVersion,
+                                   "<m:invokeWebServiceResponse xmlns:m=\"http://mdw.qwest.com/listener/webservice\"><Response>"
+                                           + StringEscapeUtils.escapeXml(handlerResponse)
+                                           + "</Response></m:invokeWebServiceResponse>");
+                       }
+                       else {
+                           responseString = createSoapResponse(soapVersion, handlerResponse);
+                       }
+                   }
+               }
             }
             catch (ServiceException ex) {
-                String handlerResponse = helper.processEvent(requestXml, metaInfo);
-
-                try {
-                    // standard response indicates a potential problem
-                    MDWStatusMessageDocument responseDoc = MDWStatusMessageDocument.Factory
-                            .parse(handlerResponse, Compatibility.namespaceOptions());
-                    MDWStatusMessage responseMsg = responseDoc.getMDWStatusMessage();
-                    if ("SUCCESS".equals(responseMsg.getStatusMessage()))
-                        responseString = createSoapResponse(soapVersion, handlerResponse);
-                    else
-                        responseString = createSoapFaultResponse(soapVersion,
-                                String.valueOf(responseMsg.getStatusCode()),
-                                responseMsg.getStatusMessage());
-                }
-                catch (XmlException xex) {
-                    if (Listener.METAINFO_ERROR_RESPONSE_VALUE
-                            .equalsIgnoreCase(metaInfo.get(Listener.METAINFO_ERROR_RESPONSE))) {
-                        // Support for custom error response
-                        responseString = handlerResponse;
-                    }
-                    else {
-                        // not parseable as standard response doc (a good thing)
-                        if (oldStyleRpcRequest) {
-                            responseString = createOldStyleSoapResponse(soapVersion,
-                                    "<m:invokeWebServiceResponse xmlns:m=\"http://mdw.qwest.com/listener/webservice\"><Response>"
-                                            + StringEscapeUtils.escapeXml(handlerResponse)
-                                            + "</Response></m:invokeWebServiceResponse>");
-                        }
-                        else {
-                            responseString = createSoapResponse(soapVersion, handlerResponse);
-                        }
-                    }
-                }
+                logger.severeException(ex.getMessage(), ex);
+                responseString = createSoapFaultResponse(soapVersion, String.valueOf(ex.getErrorCode()), ex.getMessage());
             }
         }
         catch (Exception ex) {
