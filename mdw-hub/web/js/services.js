@@ -63,7 +63,7 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
         pkgs.forEach(function(pkg) {
           if (pkg.name.endsWith('api.samples')) {
             if (pkg.name == 'com.centurylink.mdw.services.api.samples' || 
-                  pkg.name.substring(0, pkg.name.length - 12) === $scope.serviceApi.servicePath) {
+                  $scope.serviceApi.servicePath.startsWith(pkg.name.substring(0, pkg.name.length - 12))) {
               console.log('finding api samples in: ' + pkg.name);
               Assets.get({packageName: pkg.name},
                 function(pkgData) {

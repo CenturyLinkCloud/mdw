@@ -51,7 +51,7 @@ public class JsonUtil {
         else {
             InputStream stream = FileHelper.readFile(name, classLoader);
             if (stream == null)
-                stream = FileHelper.readFile(name + ".json", classLoader);
+                stream = FileHelper.readFile(name, classLoader);
             if (stream == null) {
                 return null;
             }

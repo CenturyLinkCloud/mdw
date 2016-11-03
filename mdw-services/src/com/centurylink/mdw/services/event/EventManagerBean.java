@@ -500,7 +500,7 @@ public class EventManagerBean implements EventManager {
             return edao.getProcessInstance(procInstId);
 
         } catch (SQLException e) {
-            throw new ProcessException(0, "Failed to remove event waits", e);
+            throw new ProcessException(0, "Failed to get process instance", e);
         } finally {
             edao.stopTransaction(transaction);
         }

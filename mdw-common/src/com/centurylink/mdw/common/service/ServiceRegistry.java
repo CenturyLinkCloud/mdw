@@ -57,7 +57,7 @@ public class ServiceRegistry {
                 return drs;
             }
             catch (Exception ex) {
-                logger.severeException("Failed to get the dynamic registered service : " + className +" \n "+ex.getMessage(), ex);
+                logger.severeException("Failed to get the dynamic registered service : " + className +" \n " + ex.getMessage(), ex);
             }
         }
         return null;

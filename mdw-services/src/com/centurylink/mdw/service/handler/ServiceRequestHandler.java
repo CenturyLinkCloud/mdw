@@ -58,6 +58,8 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
             // compatibility - START
             if ("GetAppSummary".equals(path)) {
                 service = new AppSummary();
+                format = Format.xml;
+                metaInfo.put(Listener.METAINFO_CONTENT_TYPE, "text/xml");
             }
             else if ("User".equals(path)) {
                 service = new Users();
@@ -65,6 +67,7 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
 
             if (requestObj instanceof XmlObject) {
                 // XML request
+                format = Format.xml;
                 metaInfo.put(Listener.METAINFO_CONTENT_TYPE, "text/xml");
                 if ("ActionRequest".equals(XmlPath.getRootNodeName((XmlObject)requestObj))) {
                     ActionRequestDocument actionRequestDoc = (ActionRequestDocument) ((XmlObject)requestObj).changeType(ActionRequestDocument.type);
@@ -93,6 +96,7 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
             }
             else if (requestObj instanceof JSONObject) {
                 // JSON request
+                format = Format.json;
                 metaInfo.put(Listener.METAINFO_CONTENT_TYPE, "application/json");
                 JSONObject jsonObj = (JSONObject) requestObj;
                 String action = null;
@@ -146,7 +150,7 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
             if (service == null) {
                 service = getServiceInstance(metaInfo);
                 if (service == null)
-                    return createErrorResponse("Unable to handle service request: " + path, format);
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Unable to handle service request: " + path);
             }
 
             if (format == Format.json || (service instanceof JsonService && !(service instanceof XmlService))) {
@@ -287,21 +291,31 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
         }
     }
 
+    /**
+     * Default format is now JSON.
+     */
     protected Format getFormat(Map<String,String> metaInfo) {
-        Format format = Format.xml;
+        Format format = Format.json;
+        metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_JSON);
         String formatParam = (String) metaInfo.get("format");
         if (formatParam != null) {
-            if (formatParam.equals("json"))
-                format = Format.json;
-            else if (formatParam.equals("text"))
+            if (formatParam.equals("xml")) {
+                format = Format.xml;
+                metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_XML);
+            }
+            else if (formatParam.equals("text")) {
                 format = Format.text;
+                metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_TEXT);
+            }
         }
         else {
-            if (Listener.CONTENT_TYPE_JSON.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE)) || Listener.CONTENT_TYPE_JSON.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE.toLowerCase()))) {
-                format = Format.json;
+            if (Listener.CONTENT_TYPE_XML.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE)) || Listener.CONTENT_TYPE_XML.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE.toLowerCase()))) {
+                format = Format.xml;
+                metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_XML);
             }
             else if (Listener.CONTENT_TYPE_TEXT.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE)) || Listener.CONTENT_TYPE_TEXT.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE.toLowerCase()))) {
                 format = Format.text;
+                metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_JSON);
             }
         }
         return format;

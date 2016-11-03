@@ -15,8 +15,10 @@ import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.TextService;
 import com.centurylink.mdw.common.service.XmlService;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.Parameter;
@@ -106,7 +108,17 @@ public class DocumentValue implements TextService, XmlService, JsonService {
     private Package getPackageVO(Document docVO) throws ServiceException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
-            ProcessInstance procInstVO = eventMgr.getProcessInstance(docVO.getOwnerId());
+            Long procInstId = null;
+            if (docVO.getOwnerType().equals(OwnerType.VARIABLE_INSTANCE)) {
+                VariableInstance varInstInf = eventMgr.getVariableInstance(docVO.getOwnerId());
+                procInstId = varInstInf.getProcessInstanceId();
+            }
+            else if (docVO.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
+                procInstId = docVO.getOwnerId();
+            }
+            if (procInstId == null)
+                return null;
+            ProcessInstance procInstVO = eventMgr.getProcessInstance(procInstId);
             return PackageCache.getProcessPackage(procInstVO.getProcessId());
         }
         catch (Exception ex) {

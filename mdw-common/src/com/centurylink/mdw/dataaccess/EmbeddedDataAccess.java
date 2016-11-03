@@ -83,7 +83,7 @@ public class EmbeddedDataAccess {
 
             // seed users
             try {
-                String usersJson = JsonUtil.read("seed_users");
+                String usersJson = JsonUtil.read("seed_users.json");
                 if (usersJson != null) {
                     logger.info("Loading seed users into " + EMBEDDED_DB_CLASS);
                     JSONObject usersObj = new JSONObject(usersJson);

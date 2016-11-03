@@ -167,7 +167,6 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
             db.source("create_indexes.sql", user, password, dbName);
             db.source("add_fkeys.sql", user, password, dbName);
             db.source("baseline_inserts.sql", user, password, dbName);
-            db.source("create_solutions.sql", user, password, dbName);
         }
         catch (Exception ex) {
             throw new SQLException("Error creating MDW db schema: " + ex, ex);
