@@ -25,6 +25,8 @@
    File > Import > General > Existing Projects into Workspace
    
 2b. Install NPM and BOWER (One-time step)
+ - Install NodeJS:
+   https://nodejs.org/en/download/current
  - Open cmd prompt
  - cd to mdw-hub project directory
  - type npm install
