@@ -5,39 +5,40 @@ package com.centurylink.mdw.testing;
 
 import java.util.Map;
 
+import javax.ws.rs.Path;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
+import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.test.TestCase;
 
-@RegisteredService(JsonService.class)
-public class AutomatedTests implements JsonService {
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
-    public String getJson(JSONObject json, Map<String,String> headers) throws ServiceException {
+@Path("/AutomatedTests")
+@Api("Automated tests support")
+public class AutomatedTests extends JsonRestService {
+
+    @Path("/{testCase}")
+    @ApiOperation(value="If {testCase} asset path not specified, returns all cases",
+        response=TestCase.class, responseContainer="List")
+    public JSONObject get(String path, Map<String,String> headers)
+    throws ServiceException, JSONException {
         TestingServices testServices = ServiceLocator.getTestingServices();
-        String testCaseName = headers.get(Listener.METAINFO_RESOURCE_SUBPATH);
-        try {
-            if (testCaseName == null) {
-                return testServices.getTestCases().getJson().toString(2);
-            }
-            else {
-                TestCase testCase = testServices.getTestCase(testCaseName);
-                if (testCase == null)
-                    throw new ServiceException(404, "Test case not found: " + testCaseName);
-                return testCase.getJson().toString(2);
-            }
+        String[] segments = getSegments(path);
+        if (segments.length == 7) {
+            String testCasePath = segments[5] + '/' + segments[6];
+            TestCase testCase = testServices.getTestCase(testCasePath);
+            if (testCase == null)
+                throw new ServiceException(404, "Test case not found: " + testCasePath);
+            return testCase.getJson();
         }
-        catch (Exception ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+        else {
+            return testServices.getTestCases().getJson();
         }
-    }
-
-    public String getText(Object request, Map<String,String> headers) throws ServiceException {
-        return getJson((JSONObject)request, headers);
     }
 }

@@ -245,7 +245,7 @@ testingMod.factory('TestCase', ['$resource', 'mdw', function($resource, mdw) {
 }]);
 
 testingMod.factory('AutomatedTests', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/Services/com.centurylink.mdw.testing.AutomatedTests/:packageName/:testCaseName', mdw.serviceParams(), {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName', mdw.serviceParams(), {
     get: { method: 'GET', isArray: false }
   });
 }]);
