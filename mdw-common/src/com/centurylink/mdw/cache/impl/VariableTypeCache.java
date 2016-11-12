@@ -35,7 +35,7 @@ public class VariableTypeCache implements PreloadableCache {
             List<VariableType> types = loader.getVariableTypes();
             loadCache(types);
         } catch(Exception ex){
-            throw new CachingException(-1, ex.getMessage(), ex);
+            throw new CachingException(ex.getMessage(), ex);
         }
 
     }

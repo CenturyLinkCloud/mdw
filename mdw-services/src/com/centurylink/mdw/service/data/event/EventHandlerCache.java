@@ -95,7 +95,7 @@ public class EventHandlerCache implements PreloadableCache {
             }
             myCache = myCacheTemp;
         } catch(Exception ex){
-            throw new CachingException(-1, ex.getMessage(), ex);
+            throw new CachingException(ex.getMessage(), ex);
         }
     }
 

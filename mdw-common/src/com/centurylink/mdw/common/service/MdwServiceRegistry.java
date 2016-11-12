@@ -7,12 +7,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.centurylink.mdw.container.EmbeddedDbExtension;
 import com.centurylink.mdw.model.monitor.ScheduledJob;
 
 public class MdwServiceRegistry extends ServiceRegistry {
 
-    public static final List<String> mdwServices = new ArrayList<String>(Arrays.asList(new String[] {JsonService.class.getName(), XmlService.class.getName(),
-            ScheduledJob.class.getName(), RequestRoutingStrategy.class.getName()}));
+    public static final List<String> mdwServices = new ArrayList<String>(Arrays.asList(new String[] {
+            JsonService.class.getName(),
+            XmlService.class.getName(),
+            ScheduledJob.class.getName(),
+            RequestRoutingStrategy.class.getName(),
+            EmbeddedDbExtension.class.getName()}));
 
     protected MdwServiceRegistry(List<Class<? extends RegisteredService>> serviceInterfaces) {
         super(serviceInterfaces);
@@ -26,6 +31,7 @@ public class MdwServiceRegistry extends ServiceRegistry {
             services.add(XmlService.class);
             services.add(ScheduledJob.class);
             services.add(RequestRoutingStrategy.class);
+            services.add(EmbeddedDbExtension.class);
             instance = new MdwServiceRegistry(services);
         }
         return instance;
@@ -100,4 +106,7 @@ public class MdwServiceRegistry extends ServiceRegistry {
         return requestRoutingStrategiesPrioritized;
     }
 
+    public List<EmbeddedDbExtension> getEmbeddedDbExtensions() {
+        return getDynamicServices(EmbeddedDbExtension.class);
+    }
 }

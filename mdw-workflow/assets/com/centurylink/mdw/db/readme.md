@@ -86,5 +86,11 @@ and *Variables* topics).
 
 If you decide that you really do need to maintain a custom db, then you'll need to create an
 asset package dedicated to this purpose.  This is where you'll keep the SQL scripts for creating
-your db tables and populating any required reference data.
+your tables and populating any required reference data.  In this package you also need a Dynamic
+Java class that implements EmbeddedDbExtension.  Provided that you add the @RegisteredService
+annotation as illustrated below, the *create* method of your implementation will be invoked by
+MDW when it first creates the db.  **Note**: this is only invoked when the data directory described
+above is empty or missing.
+
+
 

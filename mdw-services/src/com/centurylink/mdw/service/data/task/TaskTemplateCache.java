@@ -59,7 +59,7 @@ public class TaskTemplateCache implements PreloadableCache {
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
-            throw new CachingException(-1, ex.getMessage(), ex);
+            throw new CachingException(ex.getMessage(), ex);
         }
     }
 

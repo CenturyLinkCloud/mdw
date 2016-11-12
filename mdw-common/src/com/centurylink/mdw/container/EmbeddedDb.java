@@ -35,4 +35,5 @@ public interface EmbeddedDb extends RegisteredService {
 
     public void insertUser(User user) throws SQLException;
 
+    public String getDriverClass();
 }

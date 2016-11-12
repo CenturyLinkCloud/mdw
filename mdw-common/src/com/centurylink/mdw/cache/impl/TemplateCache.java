@@ -81,7 +81,7 @@ public class TemplateCache implements CacheEnabled, CacheService {
                 return new Template(0L, templateName, path.endsWith(".xhtml") ? Format.Facelet : Format.HTML, contents);
             }
             catch (IOException ex) {
-                throw new CachingException(-1, "Unable to read template file: " + url, ex);
+                throw new CachingException("Unable to read template file: " + url, ex);
             }
         }
     }

@@ -76,7 +76,7 @@ public class PackageCache implements PreloadableCache {
             return packageListTemp;
         }
         catch (DataAccessException ex) {
-            throw new CachingException(-1, ex.getMessage(), ex);
+            throw new CachingException(ex.getMessage(), ex);
         }
     }
 
@@ -224,7 +224,7 @@ public class PackageCache implements PreloadableCache {
             return loaded;
         }
         catch (Exception ex) {
-            throw new CachingException(-1, ex.getMessage(), ex);
+            throw new CachingException(ex.getMessage(), ex);
         }
     }
 }

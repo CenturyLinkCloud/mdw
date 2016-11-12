@@ -486,7 +486,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                 logger.debug("Time to load Java cache: " + (System.currentTimeMillis() - before) + " ms");
         }
         catch (Exception ex) {
-            throw new CachingException(-1, ex.getMessage(), ex);
+            throw new CachingException(ex.getMessage(), ex);
         }
     }
 

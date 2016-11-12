@@ -139,7 +139,6 @@ public class ApplicationContext {
                 if (jmsProvider == null) {
                     // use below to avoid build time dependency
                     jmsProvider = Class.forName("com.centurylink.mdw.container.plugin.activemq.ActiveMqJms").asSubclass(JmsProvider.class).newInstance();
-                    logger.severe("Cannot inject JmsProvider.  No service reference found");
                 }
             }
             else {

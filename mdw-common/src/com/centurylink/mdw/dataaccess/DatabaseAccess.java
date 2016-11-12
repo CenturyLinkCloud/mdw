@@ -33,7 +33,8 @@ public class DatabaseAccess {
     private static String INTERNAL_DATA_SOURCE = null;
     private static Long db_time_diff = null;
 
-    private static EmbeddedDataAccess embeddedDb;
+    private static EmbeddedDataAccess embedded;
+    public static EmbeddedDataAccess getEmbedded() { return embedded; }
 
     protected Map<String,String> connectParams;
     protected Connection connection;
@@ -136,7 +137,7 @@ public class DatabaseAccess {
     }
 
     private static synchronized void checkAndStartEmbeddedDb() throws SQLException {
-        if (embeddedDb == null) {
+        if (embedded == null) {
             String url = PropertyManager.getProperty(PropertyNames.MDW_DB_URL);
             String user = PropertyManager.getProperty(PropertyNames.MDW_DB_USERNAME);
             String password = PropertyManager.getProperty(PropertyNames.MDW_DB_PASSWORD);
@@ -149,10 +150,10 @@ public class DatabaseAccess {
             String dataLoc = PropertyManager.getProperty(PropertyNames.MDW_DB_DATA_LOC);
             if (dataLoc == null)
                 dataLoc = assetLoc + "/../data/mdw";
-            embeddedDb = new EmbeddedDataAccess();
+            embedded = new EmbeddedDataAccess();
             try {
-                embeddedDb.create(url, user, password, assetLoc, baseLoc, dataLoc);
-                embeddedDb.run();
+                embedded.create(url, user, password, assetLoc, baseLoc, dataLoc);
+                embedded.run();
             }
             catch (DataAccessException ex) {
                 throw new SQLException(ex.getMessage(), ex);

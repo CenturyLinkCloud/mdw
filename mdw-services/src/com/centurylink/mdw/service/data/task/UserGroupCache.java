@@ -294,7 +294,7 @@ public class UserGroupCache implements PreloadableCache, CacheService {
                 userAttributeNames.add(User.PHONE_NUMBER);
         }
         catch (Exception ex) {
-            throw new CachingException(-1, ex.getMessage(), ex);
+            throw new CachingException(ex.getMessage(), ex);
         }
         finally {
             timer.stopAndLogTiming("UserGroupCache.load()");
@@ -307,7 +307,7 @@ public class UserGroupCache implements PreloadableCache, CacheService {
             return userManager.getUserRole(name);
         }
         catch (Exception ex) {
-            throw new CachingException(-1, ex.getMessage(), ex);
+            throw new CachingException(ex.getMessage(), ex);
         }
     }
 
@@ -317,7 +317,7 @@ public class UserGroupCache implements PreloadableCache, CacheService {
             return userManager.getUserGroup(name, false);
         }
         catch (Exception ex) {
-            throw new CachingException(-1, ex.getMessage(), ex);
+            throw new CachingException(ex.getMessage(), ex);
         }
     }
 
@@ -327,7 +327,7 @@ public class UserGroupCache implements PreloadableCache, CacheService {
             return userManager.getUser(cuid);
         }
         catch (Exception ex) {
-            throw new CachingException(-1, ex.getMessage(), ex);
+            throw new CachingException(ex.getMessage(), ex);
         }
     }
 
@@ -337,7 +337,7 @@ public class UserGroupCache implements PreloadableCache, CacheService {
             return userManager.getUser(id);
         }
         catch (Exception ex) {
-            throw new CachingException(-1, ex.getMessage(), ex);
+            throw new CachingException(ex.getMessage(), ex);
         }
     }
 }

@@ -155,7 +155,7 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
                 kbaseMap = kbaseMapTemp;
             }
             catch (Exception ex) {
-                throw new CachingException(-1, ex.getMessage(), ex);
+                throw new CachingException(ex.getMessage(), ex);
             }
         }
         else
