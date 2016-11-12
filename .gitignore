@@ -2,3 +2,4 @@
 .recommenders/
 RemoteSystemsTempFiles/
 Servers/
+npm-debug.log
