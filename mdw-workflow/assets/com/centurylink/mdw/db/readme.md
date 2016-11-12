@@ -9,12 +9,13 @@ instance that's automatically created the first time you start your server.
 ## Setup
 After importing this package, to enable MDW's embedded db, set the following value in mdw.properties
 (this example is for a local development Tomcat instance running on port 8080):
-`mdw.db.embedded.server=localhost:8080`
+```mdw.db.embedded.server=localhost:8080```
  
 Then set your db connection info in mdw.properties to use the embedded MariaDB on a port of your 
-choosing:`mdw.database.driver=org.mariadb.jdbc.Driver  
+choosing:
+```mdw.database.driver=org.mariadb.jdbc.Driver  
 mdw.database.url=jdbc:mariadb://localhost:3308/mdw  
 mdw.database.username=mdw  
-mdw.database.password=mdw`
+mdw.database.password=mdw```
 
 In this example, on first startup 
