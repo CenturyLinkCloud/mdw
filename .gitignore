@@ -1,5 +1,6 @@
 .metadata/
 .recommenders/
+.JETEmitters/
 RemoteSystemsTempFiles/
 Servers/
 npm-debug.log
