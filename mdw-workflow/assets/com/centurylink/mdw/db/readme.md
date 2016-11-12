@@ -1,4 +1,4 @@
-## **Embedded DB**
+# Embedded DB
 
 ## Purpose
 MDW uses a relational database for persisting runtime state.
