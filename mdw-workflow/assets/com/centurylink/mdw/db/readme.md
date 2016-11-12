@@ -1,3 +1,5 @@
+## **Embedded DB**
+
 ## Purpose
 MDW uses a relational database for persisting runtime state.
 The most convenient way to provision this database is to import and enable
