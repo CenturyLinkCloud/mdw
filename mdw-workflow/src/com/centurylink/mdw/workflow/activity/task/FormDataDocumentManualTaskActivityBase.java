@@ -18,6 +18,7 @@ import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.task.TaskAction;
+import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
@@ -26,6 +27,7 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.Transition;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -135,10 +137,13 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
                 }
             } else if (actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
                 try {
-                    FormDataDocument formdata = this.getFormDataDocumentFromVariable();
+                	TaskManager taskMgr = ServiceLocator.getTaskManager();
+                    TaskInstance taskInst = taskMgr.getTaskInstanceByActivityInstanceId(this.getActivityInstanceId(), this.getProcessInstanceId());
+                    String eventName = FormConstants.TASK_CORRELATION_ID_PREFIX + taskInst.getTaskInstanceId().toString();
+
                     getEngine().createEventWaitInstance(
                             this.getActivityInstanceId(),
-                            getEventName(formdata),
+                            eventName,
                             null, true, true);
                 } catch (Exception e) {
                     logger.severeException("Failed to re-register task action listening", e);
@@ -217,10 +222,13 @@ public abstract class FormDataDocumentManualTaskActivityBase extends AbstractWai
         EventWaitInstance received;
         try {
             // re-register wait events
-            FormDataDocument formdata = this.getFormDataDocumentFromVariable();
+        	TaskManager taskMgr = ServiceLocator.getTaskManager();
+            TaskInstance taskInst = taskMgr.getTaskInstanceByActivityInstanceId(this.getActivityInstanceId(), this.getProcessInstanceId());
+            String eventName = FormConstants.TASK_CORRELATION_ID_PREFIX + taskInst.getTaskInstanceId().toString();
+
             received = getEngine().createEventWaitInstance(
                     this.getActivityInstanceId(),
-                    getEventName(formdata),
+                    eventName,
                     null, true, false);
             if (received==null) received = registerWaitEvents(false,true);
         } catch (Exception e) {
