@@ -12,11 +12,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
 
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.container.EmbeddedDb;
-import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.util.file.FileHelper;
 
 import ch.vorburger.mariadb4j.DB;
@@ -259,6 +260,41 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
     };
 
     protected String getAssetContent(String asset) {
-        return  AssetCache.getAsset(EmbeddedDb.DB_ASSET_PACKAGE + "/" + asset).getStringContent();
+        return AssetCache.getAsset(EmbeddedDb.DB_ASSET_PACKAGE + "/" + asset).getStringContent();
     }
+
+    public void source(String contents) throws SQLException {
+        Scanner s = new Scanner(contents);
+        s.useDelimiter("(;(\r)?\n)|(--\n)");
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            Class.forName(getDriverClass());
+            connection = DriverManager.getConnection(url, this.user, password);
+            statement = connection.createStatement();
+            while (s.hasNext()) {
+                String line = s.next();
+                if (line.startsWith("/*!") && line.endsWith("*/")) {
+                    int i = line.indexOf(' ');
+                    line = line.substring(i + 1, line.length() - " */".length());
+                }
+
+                if (line.trim().length() > 0) {
+                    statement.execute(line);
+                }
+            }
+        }
+        catch (ClassNotFoundException ex) {
+            throw new SQLException("Cannot locate JDBC driver class", ex);
+        }
+
+        finally {
+            s.close();
+            if (statement != null)
+                statement.close();
+            if (connection != null)
+                connection.close();
+        }
+    }
+
 }

@@ -25,6 +25,7 @@ public interface EmbeddedDbExtension extends RegisteredService {
         for (Asset asset : pkg.getAssets()) {
             if (sqlSourceAssets == null)
                 sqlSourceAssets = new ArrayList<String>();
+            if (".sql".equals(asset.getFileExtension()))
             sqlSourceAssets.add(pkg.getName() + "/" + asset.getName());
         }
 

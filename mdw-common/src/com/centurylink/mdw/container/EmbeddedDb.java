@@ -33,6 +33,8 @@ public interface EmbeddedDb extends RegisteredService {
      */
     public void createMdwSchema() throws SQLException;
 
+    public void source(String contents) throws Exception;
+
     public void insertUser(User user) throws SQLException;
 
     public String getDriverClass();

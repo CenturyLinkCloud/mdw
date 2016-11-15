@@ -3,9 +3,6 @@
  */
 package com.centurylink.mdw.dataaccess;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -33,9 +30,6 @@ public class EmbeddedDataAccess {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private String url;
-    private String user;
-    private String password;
     private EmbeddedDb embeddedDb;
     private ClassLoader cloudClassLoader;
     private Thread shutdownHook;
@@ -43,9 +37,6 @@ public class EmbeddedDataAccess {
     private boolean extensionsNeedInitialization;
 
     public void create(String url, String user, String password, String assetLoc, String baseLoc, String dataLoc) throws DataAccessException {
-        this.url = url;
-        this.user = user;
-        this.password = password;
         String embeddedDbClass = EmbeddedDb.DB_ASSET_PACKAGE + "." + MDW_EMBEDDED_DB_CLASS;
         try {
             Package pkg = PackageCache.getPackage(EmbeddedDb.DB_ASSET_PACKAGE);
@@ -126,27 +117,18 @@ public class EmbeddedDataAccess {
                 logger.info("Initializing embedded db extension: " + ext);
                 List<String> sources = ext.getSqlSourceAssets();
                 if (sources != null) {
-                    Connection connection = null;
                     try {
-                        Class.forName(embeddedDb.getDriverClass());
-                        connection = DriverManager.getConnection(url, user, password);
-
                         for (String source : sources) {
-                            PreparedStatement preparedStatement = null;
-                            String asset = source;
-                            if (asset.indexOf('/') == -1)
-                                asset = ext.getClass().getPackage().getName() + "/" + asset;
-                            String sql = AssetCache.getAsset(asset).getStringContent();
-                            preparedStatement = connection.prepareStatement(sql);
-                            preparedStatement.executeUpdate();
+                            String assetPath = source;
+                            if (source.indexOf('/') == -1)
+                                assetPath = ext.getClass().getPackage().getName() + "/" + source;
+                            logger.info("Sourcing asset sql script: " + assetPath);
+                            String contents = AssetCache.getAsset(assetPath).getStringContent();
+                            embeddedDb.source(contents);
                         }
                     }
                     catch (Exception ex) {
                         throw new SQLException("Error processing db extension " + ext.getClass(), ex);
-                    }
-                    finally {
-                        if (connection != null)
-                            connection.close();
                     }
                 }
                 ext.initialize();
@@ -154,5 +136,4 @@ public class EmbeddedDataAccess {
             extensionsNeedInitialization = false;
         }
     }
-
 }
