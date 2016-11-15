@@ -1,4 +1,4 @@
-#Fri Oct 21 17:29:00 MDT 2016
+#Fri Nov 11 15:52:13 IST 2016
 A\ Custom\ Task.task=1
 An\ AutoForm\ Task.task=1
 Another\ Custom\ Task.task=1
@@ -17,7 +17,7 @@ Manual\ task\ that\ also\ waits\ for\ event.task=1
 ManualTaskServices.proc=5
 MyTaskIndexProvider.java=4
 MyTaskModel.java=2
-SubtaskStrategy.java=1
+SubtaskStrategy.java=3
 Subtasks.proc=2
 Task\ and\ Event\ Fallout.task=1
 TaskAutoAssign.proc=3

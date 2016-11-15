@@ -21,15 +21,24 @@ process: # 13754
   variable: # 20935
     name: responseDoc
     value: |
-      <ser:ApplicationSummary xmlns:ser="http://mdw.centurylink.com/services">
-        <ApplicationName>MDW</ApplicationName>
-        <Version>${~6.*}</Version>
-        <MdwVersion>${~6.*}</MdwVersion>
-        <MdwBuild>${~201.*}</MdwBuild>
-        <MdwHubUrl>http://localhost:8080/mdw</MdwHubUrl>
-        <ServicesUrl>http://localhost:8080/mdw</ServicesUrl>
-        <DbInfo jdbcUrl="jdbc:mysql://localhost:3306/mdw6" user="mdw6"/>
-        <Container>Tomcat</Container>
-        <Database>MySQL</Database>
-        <Repository provider="Git" url="https://github.com/CenturyLinkCloud/MDW.git" branch="master" commit="${~.*}"/>
-      </ser:ApplicationSummary>
+      {"ser:ApplicationSummary": {
+        "ApplicationName": "mdw-demo",
+        "Container": "Tomcat",
+        "Database": "MySQL",
+        "DbInfo": {
+          "jdbcUrl": "jdbc:mysql://localhost:3308/mdw",
+          "user": "mdw"
+        },
+        "MdwBuild": "${~201.*}",
+        "MdwHubUrl": "http://localhost:8080/mdw",
+        "MdwVersion": "${~6.*}",
+        "Repository": {
+          "branch": "master",
+          "commit": "${~.*}",
+          "provider": "Git",
+          "url": "http://ne1itcprhas51.corp.intranet/mdw/mdw-demo.git"
+        },
+        "ServicesUrl": "http://localhost:8080/mdw",
+        "Version": "Unknown",
+        "xmlns:ser": "http://mdw.centurylink.com/services"
+      }}
