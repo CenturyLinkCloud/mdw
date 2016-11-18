@@ -221,7 +221,7 @@
     {
       "attributes": {
         "RETURN_CODE": "BTN",
-        "Rule": "BTN = \"ABORT:\";\n",
+        "Rule": "return \"ABORT:\";\n",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=1524,y=366,w=24,h=24"
       },
@@ -762,5 +762,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "3.31"
+  "version": "3.32"
 }
