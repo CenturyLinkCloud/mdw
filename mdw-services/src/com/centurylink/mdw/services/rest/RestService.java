@@ -31,6 +31,7 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -149,10 +150,13 @@ public abstract class RestService {
     protected void propagatePost(String request, Map<String,String> headers)
     throws ServiceException, IOException {
         String requestUrl = headers.get(Listener.METAINFO_REQUEST_URL);
+        String queryStr = "";
+        if (!StringHelper.isEmpty(headers.get(Listener.METAINFO_REQUEST_QUERY_STRING)))
+            queryStr = "?" + headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
         if (requestUrl == null)
             throw new ServiceException("Missing header: " + Listener.METAINFO_REQUEST_URL);
         for (URL serviceUrl : getOtherServerUrls(requestUrl)) {
-            HttpHelper httpHelper = new HttpHelper(serviceUrl);
+            HttpHelper httpHelper = new HttpHelper(new URL(serviceUrl + queryStr));
             httpHelper.setHeaders(headers);
             validateResponse(httpHelper.post(request));
         }
@@ -161,13 +165,15 @@ public abstract class RestService {
     protected List<URL> getOtherServerUrls(String requestUrl) throws IOException {
 
         List<URL> serverUrls = new ArrayList<URL>();
-        List<String> serverList = ApplicationContext.getCompleteServerList();
-        for (String serverHost : serverList) {
-            String serviceUrl = "http://" + serverHost;
-            URL thisUrl = new URL(requestUrl);
+        URL thisUrl = new URL(requestUrl);
+        // Due to different domains for same servers in some environments (host1.ne1.savvis.net and host1.dev.intranet), compare host names sans domain
+        String thisHost = thisUrl.getHost().indexOf(".") > 0 ? thisUrl.getHost().substring(0, thisUrl.getHost().indexOf(".")) : thisUrl.getHost();
+        for (String serverHost : ApplicationContext.getCompleteServerList()) {
+            String serviceUrl = "http://" + serverHost + thisUrl.getPath();
             URL otherUrl = new URL(serviceUrl);
-            if (!(thisUrl.getHost().equals(otherUrl.getHost())) || thisUrl.getPort() != otherUrl.getPort())
-                serverUrls.add(new URL(serviceUrl + thisUrl.getPath()));
+            String otherHost = otherUrl.getHost().indexOf(".") > 0 ? otherUrl.getHost().substring(0, otherUrl.getHost().indexOf(".")) : otherUrl.getHost();
+            if (!(thisHost.equalsIgnoreCase(otherHost)) || thisUrl.getPort() != otherUrl.getPort())
+                serverUrls.add(otherUrl);
         }
         return serverUrls;
     }
