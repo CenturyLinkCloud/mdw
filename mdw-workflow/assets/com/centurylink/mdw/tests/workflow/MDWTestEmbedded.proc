@@ -108,31 +108,16 @@
     },
     {
       "attributes": {
-        "Rule": "$SetInMain = \"Ah hah!\";",
-        "SCRIPT": "MagicBox",
-        "WORK_DISPLAY_INFO": "x=350,y=585,w=100,h=60"
-      },
-      "id": "A6",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "sync arm2\n(delay 2 min)",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=486,ly=566,type=Elbow,xs=454&494,ys=615&554"},
-        "event": "FINISH",
-        "id": "T12",
-        "to": "A2"
-      }]
-    },
-    {
-      "attributes": {
         "Output Documents": "launcher",
         "Rule": "table launcher \n    with argument, result, retcode\n    option key=argument;\nvariable index;\ndo $index = 0;\ndo new (1, \"\", \"START\") in $launcher;\ndo new (2, \"\", \"START\") in $launcher;\ndo new (3, \"\", \"START\") in $launcher;\n",
-        "WORK_DISPLAY_INFO": "x=285,y=870,w=100,h=60"
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=286,y=870,w=100,h=60"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
       "name": "set up arg table",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=412,ly=901,type=Elbow,xs=389&433,ys=901&901"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=412,ly=901,type=Elbow,xs=390&433,ys=901&901"},
         "event": "FINISH",
         "id": "T20",
         "to": "A11"
@@ -285,17 +270,6 @@
         },
         {
           "attributes": {
-            "TRANSITION_DELAY": "2",
-            "TRANSITION_DISPLAY_INFO": "lx=269,ly=596,type=ElbowH,xs=96&203&203&346,ys=562&562&623&623",
-            "TRANSITION_RETRY_COUNT": "0"
-          },
-          "event": "FINISH",
-          "id": "T10",
-          "resultCode": "sync-wait",
-          "to": "A6"
-        },
-        {
-          "attributes": {
             "TRANSITION_DELAY": "0",
             "TRANSITION_DISPLAY_INFO": "lx=254,ly=681,type=ElbowH,xs=96&202&202&350,ys=562&562&708&708",
             "TRANSITION_RETRY_COUNT": "0"
@@ -315,15 +289,41 @@
         {
           "attributes": {
             "TRANSITION_DELAY": "0",
-            "TRANSITION_DISPLAY_INFO": "lx=123,ly=879,type=ElbowH,xs=96&220&220&281,ys=571&571&909&909",
+            "TRANSITION_DISPLAY_INFO": "lx=124,ly=879,type=ElbowH,xs=96&220&220&282,ys=571&571&909&909",
             "TRANSITION_RETRY_COUNT": "0"
           },
           "event": "FINISH",
           "id": "T18",
           "resultCode": "subproc-hold",
           "to": "A4"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "2",
+            "TRANSITION_DISPLAY_INFO": "lx=294,ly=598,type=Elbow,xs=96&368,ys=561&629"
+          },
+          "event": "FINISH",
+          "id": "T26",
+          "resultCode": "sync-wait",
+          "to": "A22"
         }
       ]
+    },
+    {
+      "attributes": {
+        "Rule": "SetInMain = \"Ah hah!\";",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=372,y=599,w=100,h=60"
+      },
+      "id": "A22",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "sync arm2\r\n(delay 2 min)",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=486,ly=592,type=Elbow,xs=476&494,ys=629&554"},
+        "event": "FINISH",
+        "id": "T27",
+        "to": "A2"
+      }]
     }
   ],
   "attributes": {
@@ -458,5 +458,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.10"
+  "version": "0.11"
 }
