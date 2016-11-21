@@ -53,7 +53,8 @@
 -Dmdw.config.location=c:/workspaces/mdw6/mdw/config  
 -Djavax.net.ssl.trustStore=c:/workspaces/mdw6/mdw/deploy/certs/CenturyLinkQCA.jks  
 -Djava.net.preferIPv4Stack=true  
--Xms512m -Xmx1024m -XX:MaxPermSize=256m```
+-Xms512m -Xmx1024m -XX:MaxPermSize=256m
+```
 
  - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
  - Check MDWHub access:  
