@@ -16,7 +16,8 @@
        http://dadacoalition.org/yedit
  - Tomcat 7 or 8:
      - https://tomcat.apache.org/download-70.cgi
-2. Get the Source Code
+	 
+1. Get the Source Code
  - Command-line Git:  
    `git clone https://github.com/CenturyLinkCloud/MDW.git`
  - Or in Eclipse:  
@@ -24,7 +25,7 @@
  - Import the project into your Eclipse workspace:  
    File > Import > General > Existing Projects into Workspace
    
-2b. Install NPM and BOWER (One-time step)
+1. Set up npm and Bower (One-time step)
  - Install NodeJS:
    https://nodejs.org/en/download/current
  - Open cmd prompt
@@ -32,11 +33,11 @@
  - type npm install
  - type bower install
  
-3. Build the Project
+1. Build the Project
  - Window > Show View > Other > Gradle (STS) > Gradle Tasks
    Select the mdw project and double-click the "buildAll" task
    
-4. Run on Tomcat in Eclipse
+1. Run on Tomcat in Eclipse
  - Edit mdw/config/mdw.properties to suit your environment.
  - Edit mdw/config/access.yaml to set devUser to yourself.
  - In Eclipse Servers view, right-click and select New > Server  
@@ -55,7 +56,7 @@
  - Check MDWHub access:  
    http://localhost:8080/mdw
    
-5. MySQL Setup  
+1. MySQL Setup  
    **Note**: on Linux it's required to set the MySQL system variable lower_case_table_names to 1:  
    http://dev.mysql.com/doc/refman/5.0/en/server-system-variables.html#sysvar_lower_case_table_names
  - Download the following scripts from here and run them in this order:
