@@ -31,10 +31,9 @@
 1. Set up npm and Bower (One-time step)
  - Install NodeJS:
    https://nodejs.org/en/download/current
- - Open cmd prompt
- - cd to mdw-hub project directory
- - type `npm install`
- - type `bower install`
+ - Open a command prompt in the mdw-hub project directory
+ - run `npm install`
+ - run `bower install`
  
 1. Build the Project
  - Window > Show View > Other > Gradle (STS) > Gradle Tasks
@@ -47,7 +46,7 @@
  - Edit mdw/config/mdw.properties to suit your environment.
  - Edit mdw/config/access.yaml to set devUser to yourself.
  - In Eclipse Servers view, right-click and select New > Server  
-   **Important**: Select the Apache > Tomcat 7.0 (MDW) runtime
+   **Important**: Select the Apache > Tomcat 7.0 or 8.0 (MDW) runtime
  - Select the mdw-hub module in the Add/Remove wizard page
  - Double-click on the server and set the startup timeout to something large (like 3600s)
  - Under MDW Server Options set the following Java Options (appropriate for your workspace):
