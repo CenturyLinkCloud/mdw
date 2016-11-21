@@ -40,8 +40,8 @@
  - Window > Show View > Other > Gradle (STS) > Gradle Tasks
    Select the mdw project and double-click the "buildAll" task
 
-1. Use [Embedded DB](/CenturyLinkCloud/MDW/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md)
-   or set up an external MySQL database as described in [this readme](/CenturyLinkCloud/MDW/blob/master/mdw/database/mysql/readme.txt)
+1. Use [Embedded DB](/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md)
+   or set up an external MySQL database as described in [this readme](/blob/master/mdw/database/mysql/readme.txt)
    
 1. Deploy on Tomcat in Eclipse
  - Edit mdw/config/mdw.properties to suit your environment.
