@@ -33,8 +33,8 @@
    https://nodejs.org/en/download/current
  - Open cmd prompt
  - cd to mdw-hub project directory
- - type npm install
- - type bower install
+ - type `npm install`
+ - type `bower install`
  
 1. Build the Project
  - Window > Show View > Other > Gradle (STS) > Gradle Tasks
