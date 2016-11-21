@@ -39,8 +39,11 @@
 1. Build the Project
  - Window > Show View > Other > Gradle (STS) > Gradle Tasks
    Select the mdw project and double-click the "buildAll" task
+
+1. Use [Embedded DB](/CenturyLinkCloud/MDW/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md)
+   or set up an external MySQL database as described in [this readme](/CenturyLinkCloud/MDW/blob/master/mdw/database/mysql/readme.txt)
    
-1. Run on Tomcat in Eclipse
+1. Deploy on Tomcat in Eclipse
  - Edit mdw/config/mdw.properties to suit your environment.
  - Edit mdw/config/access.yaml to set devUser to yourself.
  - In Eclipse Servers view, right-click and select New > Server  
@@ -56,13 +59,11 @@
 -Xms512m -Xmx1024m -XX:MaxPermSize=256m
 ```
 
+1. Run
  - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
  - Check MDWHub access:  
    http://localhost:8080/mdw
    
-1. Use [Embedded DB](/CenturyLinkCloud/MDW/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md)
-   or set up an external MySQL database as described in [this readme](/CenturyLinkCloud/MDW/blob/master/mdw/database/mysql/readme.txt)
-
 1. Code Format
  - Java, Groovy, Javascript and JSON:
    The Eclipse code formatters are version-controlled in .settings/org.eclipse.jdt.core.prefs, so as long as you're up-to-date with Git you should automatically have the correct settings. If you want to use them for another project, you can download and import them from these formatter files:  
