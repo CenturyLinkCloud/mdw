@@ -48,6 +48,7 @@
  - Select the mdw-hub module in the Add/Remove wizard page
  - Double-click on the server and set the startup timeout to something large (like 3600s)
  - Under MDW Server Options set the following Java Options (appropriate for your workspace):
+ 
 ```-Dmdw.runtime.env=dev  
 -Dmdw.config.location=c:/workspaces/mdw6/mdw/config  
 -Djavax.net.ssl.trustStore=c:/workspaces/mdw6/mdw/deploy/certs/CenturyLinkQCA.jks  
