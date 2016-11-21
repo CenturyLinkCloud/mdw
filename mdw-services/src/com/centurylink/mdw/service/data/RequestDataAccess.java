@@ -227,7 +227,7 @@ public class RequestDataAccess extends CommonDataAccess {
             }
             else if (OwnerType.LISTENER_REQUEST.equals(ownerType)) {
                 responseQuery += " from document where owner_type='" + OwnerType.LISTENER_RESPONSE + "' and owner_id = ?";
-                responseRs = db.runSelect(responseQuery, id);
+                responseRs = db.runSelect(responseQuery, ownerId);
             }
             if (responseRs != null && responseRs.next()) {
                 request.setResponseId(responseRs.getLong("document_id"));
@@ -235,7 +235,7 @@ public class RequestDataAccess extends CommonDataAccess {
                 if (withResponseContent) {
                     // TODO mongo
                     query = "select content from document_content where document_id = ?";
-                    responseRs = db.runSelect(query, id);
+                    responseRs = db.runSelect(query, request.getResponseId());
                     if (responseRs.next())
                         request.setResponseContent(responseRs.getString("content"));
                 }
