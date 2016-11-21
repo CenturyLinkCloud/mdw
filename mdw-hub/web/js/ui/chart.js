@@ -142,7 +142,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
   };
   $scope.updateDates = function() {
     // ending today unless specified in filter
-    var d = $scope.filter.ending;
+    var d = new Date($scope.filter.ending.getTime());
     for (var h = 0; h < $scope.days; h++) {
       $scope.labels.unshift(util.monthAndDay(d));
       $scope.dates.unshift(util.serviceDate(d));
