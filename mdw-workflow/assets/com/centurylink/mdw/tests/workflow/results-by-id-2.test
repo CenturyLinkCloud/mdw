@@ -1,0 +1,12 @@
+// results-by-id-2
+// note: requires designer >= 9.0.0
+
+start process("ResultsOrdering") {
+    variables = [ delay1: 20, delay2: 10, delay3: 5 ]
+}
+
+wait process
+
+verify process {
+    resultsById = true
+}
