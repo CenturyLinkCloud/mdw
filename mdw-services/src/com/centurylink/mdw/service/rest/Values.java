@@ -4,6 +4,7 @@
 package com.centurylink.mdw.service.rest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Path;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -26,6 +28,13 @@ import io.swagger.annotations.ApiOperation;
 @Path("/Values")
 @Api("Runtime values")
 public class Values extends JsonRestService {
+
+    @Override
+    public List<String> getRoles(String path) {
+        List<String> roles = super.getRoles(path);
+        roles.add(Role.PROCESS_EXECUTION);
+        return roles;
+    }
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
