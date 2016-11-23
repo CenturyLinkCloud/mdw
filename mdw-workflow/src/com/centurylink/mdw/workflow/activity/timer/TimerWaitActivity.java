@@ -132,10 +132,7 @@ public class TimerWaitActivity extends AbstractWait {
         } catch (PropertyException e) {
             throw new ActivityException(-1, "failed to evaluate time expression", e);
         }
-        retTime = StringHelper.getInteger(timeAttr, 0);
-        if (retTime*factor < DEFAULT_WAIT) {
-            retTime = DEFAULT_WAIT;
-        }
+        retTime = StringHelper.getInteger(timeAttr, DEFAULT_WAIT);
         return retTime*factor;
     }
 

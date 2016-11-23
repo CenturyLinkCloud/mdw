@@ -12,7 +12,8 @@
       ],
       "Common": [
         "Process Execution",
-        "Process Design"
+        "Process Design",
+        "Task Execution"
       ]
     },
     {
@@ -29,7 +30,8 @@
       ],
       "Common": [
         "Process Execution",
-        "Process Design"
+        "Process Design",
+        "Task Execution"
       ],
       "Site Admin": [
         "User Admin"
@@ -49,7 +51,8 @@
       ],
       "Common": [
         "Process Execution",
-        "Process Design"
+        "Process Design",
+        "Task Execution"
       ],
       "Site Admin": [
         "User Admin"
@@ -69,7 +72,8 @@
       ],
       "Common": [
         "Process Execution",
-        "Process Design"
+        "Process Design",
+        "Task Execution"
       ],
       "Site Admin": [
         "User Admin"

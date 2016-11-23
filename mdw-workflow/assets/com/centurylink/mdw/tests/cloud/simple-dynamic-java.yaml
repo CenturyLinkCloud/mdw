@@ -14,7 +14,7 @@ process: # 13616
     status: Completed
   variable: # 20644
     name: completionDate
-    value: Fri Dec 25 00:00:00 ${~.}ST 2015
+    value: Fri Dec 25 00:00:00 ${~...} 2015
   variable: # 20645
     name: dispensation
     value: <dispensation outcome="Escalation"/>
@@ -59,7 +59,7 @@ process: # 13615
     status: Completed
   variable: # 20639
     name: completionDate
-    value: Fri Dec 25 00:00:00 IST 2015
+    value: Fri Dec 25 00:00:00 ${~...} 2015
   variable: # 20640
     name: dispensation
     value: <dispensation outcome="Acknowledgment"/>

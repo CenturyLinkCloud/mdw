@@ -217,7 +217,7 @@ public abstract class RestService {
      * Override if toString() on content is not meaningful.
      */
     protected String getEntityDescription(String path, Object content, Map<String,String> headers) {
-        return content.toString();
+        return content == null ? "" : content.toString();
     }
 
     protected Action getAction(String path, Object content, Map<String,String> headers) {

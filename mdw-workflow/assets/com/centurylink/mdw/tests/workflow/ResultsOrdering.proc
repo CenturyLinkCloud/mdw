@@ -1,0 +1,163 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=243,y=29,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=45,ly=44,type=Elbow,xs=239&114,ys=49&188"},
+          "event": "FINISH",
+          "id": "T1",
+          "to": "A3"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=273,ly=89,type=Elbow,xs=273&273,ys=73&106"},
+          "event": "FINISH",
+          "id": "T3",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=392,ly=117,type=Elbow,xs=307&458,ys=49&184"},
+          "event": "FINISH",
+          "id": "T5",
+          "to": "A6"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "${delay1}",
+        "Unit": "Seconds",
+        "WORK_DISPLAY_INFO": "x=64,y=192,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Timer 1",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=146,ly=264,type=Elbow,xs=118&118,ys=256&297"},
+        "event": "FINISH",
+        "id": "T8",
+        "to": "A9"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "${delay2}",
+        "Unit": "Seconds",
+        "WORK_DISPLAY_INFO": "x=229,y=110,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Timer 2",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=274,ly=182,type=Elbow,xs=282&282,ys=174&200"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A10"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=260,y=397,w=60,h=40"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "${delay3}",
+        "Unit": "Seconds",
+        "WORK_DISPLAY_INFO": "x=408,y=188,w=100,h=60"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Timer 3",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=459,ly=273,type=Elbow,xs=459&459,ys=252&295"},
+        "event": "FINISH",
+        "id": "T10",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "Synced Activities": "Timer 1#Timer 2",
+        "WORK_DISPLAY_INFO": "x=243,y=288,w=100,h=60"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
+      "name": "Sync",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=290,ly=370,type=Elbow,xs=290&290,ys=352&393"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=88,y=301,w=60,h=40"},
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "Dummy 1",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=196,ly=321,type=Elbow,xs=152&239,ys=321&321"},
+        "event": "FINISH",
+        "id": "T12",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=252,y=204,w=60,h=40"},
+      "id": "A10",
+      "implementor": "com.centurylink.mdwdemo.DemoActivity",
+      "name": "Dummy 2",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=282,ly=266,type=Elbow,xs=282&282,ys=248&284"},
+        "event": "FINISH",
+        "id": "T9",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=429,y=299,w=60,h=40"},
+      "id": "A11",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "Dummy 3",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=387,ly=319,type=Elbow,xs=425&347,ys=319&319"},
+        "event": "FINISH",
+        "id": "T11",
+        "to": "A8"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=21,y=12,w=147,h=27"
+  },
+  "variables": {
+    "delay1": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    },
+    "delay2": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    },
+    "delay3": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    }
+  },
+  "version": "0.2"
+}
