@@ -74,6 +74,26 @@
       "Site Admin": [
         "User Admin"
       ]
+    },
+    {
+      "name": "Naveena Bellamkonda",
+      "cuid": "aa88955",
+      "attributes": {
+        "emailAddress": "naveena.bellamkonda@centurylink.com",
+        "phoneNumber": "9916117043"
+      },      
+      "groups": [
+        "Common",
+        "MDW Support",
+        "Site Admin"
+      ],
+      "Common": [
+        "Process Execution",
+        "Process Design"
+      ],
+      "Site Admin": [
+        "User Admin"
+      ]
     }
   ]
 }
