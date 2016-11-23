@@ -14,22 +14,6 @@
     },
     {
       "attributes": {
-        "Rule": "document resultdoc;\n\n& $resultdoc = \"Result\";\n$resultdoc.n = $n;\n$resultdoc.nplus1 = $n + 1;\n$resultdoc.cube = $ncube;",
-        "SCRIPT": "MagicBox",
-        "WORK_DISPLAY_INFO": "x=393,y=100,w=102,h=71"
-      },
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "create output\ndocument",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=568,ly=137,type=Elbow,xs=499&621,ys=137&137"},
-        "event": "FINISH",
-        "id": "T2",
-        "to": "A33"
-      }]
-    },
-    {
-      "attributes": {
         "DoNotNotifyCaller": "false",
         "WORK_DISPLAY_INFO": "x=625,y=117,w=60,h=40"
       },
@@ -47,10 +31,27 @@
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
       "name": "Calculate cube",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=421,ly=127,type=Elbow,xs=307&389,ys=141&141"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=360,ly=142,type=Elbow,xs=307&412,ys=142&142"},
         "event": "FINISH",
-        "id": "T1",
-        "to": "A1"
+        "id": "T28",
+        "to": "A35"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "resultdoc",
+        "Rule": "import groovy.xml.MarkupBuilder;\r\ndef stringWriter = new StringWriter();\r\ndef docBuilder = new MarkupBuilder(stringWriter);\r\ndocBuilder.Result {\r\n\t\tn(n)\r\n\t\tnplus1(n+1)\r\n\t\tcube(ncube)\r\n\t\r\n}\r\nresultdoc = stringWriter.toString();\r\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=416,y=113,w=100,h=60"
+      },
+      "id": "A35",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "create output\r\ndocument",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=571,ly=137,type=Elbow,xs=520&621,ys=137&137"},
+        "event": "FINISH",
+        "id": "T29",
+        "to": "A33"
       }]
     }
   ],
@@ -73,5 +74,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "0.5"
+  "version": "0.6"
 }
