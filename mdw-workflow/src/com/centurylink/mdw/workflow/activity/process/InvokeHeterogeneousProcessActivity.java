@@ -243,7 +243,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             }
             if (v!=null && v.length()>0) {
                 if (passDocumentContent) {
-                    if (VariableTranslator.isDocumentReferenceVariable(childVar.getVariableType())
+                    if (VariableTranslator.isDocumentReferenceVariable(getPackage(), childVar.getVariableType())
                             && v.startsWith("DOCUMENT:")) {
                         v = super.getDocumentContent(new DocumentReference(v));
                     }
@@ -281,8 +281,10 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             super.logexception("InvokeHeterogeneousProcessActivity: cannot get variable instance", ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
-        if (done && status.equals(WorkStatus.STATUS_HOLD)) done = false;
-        if (done) super.deregisterEvents();
+        if (done && status.equals(WorkStatus.STATUS_HOLD))
+            done = false;
+        if (done)
+            deregisterEvents();
         return done;
     }
 
@@ -399,7 +401,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             Variable var = procdef.getVariable(varname);
             if (var!=null) {
                 Object value0;
-                if (passDocContent && VariableTranslator.isDocumentReferenceVariable(var.getVariableType())) {
+                if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getVariableType())) {
                     if (StringHelper.isEmpty(value)) value0 = null;
                     else if (value.startsWith("DOCUMENT:"))
                         value0 = VariableTranslator.toObject(var.getVariableType(), value);

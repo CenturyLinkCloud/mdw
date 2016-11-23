@@ -420,6 +420,7 @@ public class CommonDataAccess {
             vo.setOwnerId(rs.getLong("OWNER_ID"));
             boolean foundInMongo = false;
             if (db.getMongoDb() != null) {
+                // TODO: handle forUpdate == true
                 CodeTimer timer = new CodeTimer("Load mongodb doc", true);
                 MongoCollection<?> mongoCollection = db.getMongoDb().getCollection(vo.getOwnerType());
                 BasicDBObject mongoQuery = new BasicDBObject();
@@ -432,7 +433,7 @@ public class CommonDataAccess {
                 timer.stopAndLogTiming(null);
             }
             if (!foundInMongo) {
-                query = "select CONTENT from DOCUMENT_CONTENT where DOCUMENT_ID = ?";
+                query = "select CONTENT from DOCUMENT_CONTENT where DOCUMENT_ID = ?" + (forUpdate ? " for update" : "");
                 rs = db.runSelect(query, documentId);
                 if (rs.next())
                     vo.setContent(rs.getString("CONTENT"));
