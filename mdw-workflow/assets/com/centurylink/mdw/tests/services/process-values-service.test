@@ -2,7 +2,7 @@ import com.centurylink.mdw.common.utilities.JsonUtil
 import org.json.JSONObject
 
 // process-values-service
-// NOTE: requires Designer 8.9.6 for HTTP headers support
+// NOTE: requires designer 9.0.0
 start process("ProcessValues") {
     variables = [ dateVar: Date.parse("MM-dd-yyyy HH:mm:ss", "09-01-2016 13:52:01"),
                   stringVar: "Hello",
@@ -28,8 +28,9 @@ response = get http("services/Processes/${procInst.id}/values") {
   headers = [ Accept: "application/json" ]
 }
 assert response.code == 200
-response.expected = asset("process-values.json").text
-verify response
+verify response {
+    expected = asset("process-values.json").text
+}
 
 // individual values
 response = get http("services/Processes/${procInst.id}/values/stringVar") {
