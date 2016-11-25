@@ -40,7 +40,7 @@
     {
       "attributes": {
         "Output Documents": "resultdoc",
-        "Rule": "import groovy.xml.MarkupBuilder;\r\ndef stringWriter = new StringWriter();\r\ndef docBuilder = new MarkupBuilder(stringWriter);\r\ndocBuilder.Result {\r\n\t\tn(n)\r\n\t\tnplus1(n+1)\r\n\t\tcube(ncube)\r\n\t\r\n}\r\nresultdoc = stringWriter.toString();\r\n",
+        "Rule": "import groovy.xml.MarkupBuilder;\r\n\r\ndef stringWriter = new StringWriter();\r\ndef docBuilder = new MarkupBuilder(stringWriter);\r\ndocBuilder.Result {\r\n\t\tn(n)\r\n\t\tnplus1(n+1)\r\n\t\tcube(ncube)\r\n\t\r\n}\r\nresultdoc = stringWriter.toString();",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=416,y=113,w=100,h=60"
       },
@@ -71,7 +71,7 @@
     },
     "resultdoc": {
       "category": "OUTPUT",
-      "type": "org.w3c.dom.Document"
+      "type": "com.centurylink.mdw.model.StringDocument"
     }
   },
   "version": "0.6"
