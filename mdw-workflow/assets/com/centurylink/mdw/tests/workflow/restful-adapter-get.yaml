@@ -22,7 +22,7 @@ process: # 13754
     name: responseDoc
     value: |
       {"ser:ApplicationSummary": {
-        "ApplicationName": "mdw-demo",
+        "ApplicationName": "${~mdw.*}",
         "Container": "Tomcat",
         "Database": "MySQL",
         "DbInfo": {
@@ -36,7 +36,7 @@ process: # 13754
           "branch": "master",
           "commit": "${~.*}",
           "provider": "Git",
-          "url": "http://ne1itcprhas51.corp.intranet/mdw/mdw-demo.git"
+          "url": "${~http.*}"
         },
         "ServicesUrl": "http://localhost:8080/mdw",
         "Version": "Unknown",
