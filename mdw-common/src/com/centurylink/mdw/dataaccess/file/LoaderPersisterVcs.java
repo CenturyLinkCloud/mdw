@@ -1103,12 +1103,12 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     public List<Process> findCallingProcesses(Process subproc) throws DataAccessException {
         List<Process> callers = new ArrayList<Process>();
         try {
-            Pattern singleProcPattern = Pattern.compile(".*Attribute Name=\"processname\" Value=\"[^\"]*" + subproc.getName() + "\".*", Pattern.DOTALL);
-            Pattern multiProcPattern = Pattern.compile(".*Attribute Name=\"processmap\" Value=\"[^\"]*" + subproc.getName() + "[^>]*.*", Pattern.DOTALL);
+            Pattern singleProcPattern = Pattern.compile("^.*\"processname\": \".*" + subproc.getName() + ".*\"", Pattern.MULTILINE);
+            Pattern multiProcPattern = Pattern.compile("^.*\"processmap\": \".*" + subproc.getName() + ".*\"", Pattern.MULTILINE);
             for (PackageDir pkgDir : getPackageDirs()) {
                 for (File procFile : pkgDir.listFiles(procFileFilter)) {
-                    String xml = new String(read(procFile));
-                    if (singleProcPattern.matcher(xml).matches() || multiProcPattern.matcher(xml).matches()) {
+                    String json = new String(read(procFile));
+                    if (singleProcPattern.matcher(json).find() || multiProcPattern.matcher(json).find()) {
                         Process procVO = loadProcess(pkgDir, pkgDir.getAssetFile(procFile), true);
                         for (Activity activity : procVO.getActivities()) {
                             if (activityInvokesProcess(activity, subproc) && !callers.contains(procVO))
@@ -1142,11 +1142,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     public List<Process> getProcessListForImplementor(Long implementorId, String implementorClass) throws DataAccessException {
         List<Process> processes = new ArrayList<Process>();
         try {
-            String implDecl = "Implementation=\"" + implementorClass + "\"";  // crude but fast
+            String implDecl = "\"implementor\": \"" + implementorClass + "\"";  // crude but fast
             for (PackageDir pkgDir : getPackageDirs()) {
                 for (File procFile : pkgDir.listFiles(procFileFilter)) {
-                    String xml = new String(read(procFile));
-                    if (xml.contains(implDecl))
+                    String json = new String(read(procFile));
+                    if (json.contains(implDecl))
                         processes.add(loadProcess(pkgDir, pkgDir.getAssetFile(procFile), false));
                 }
             }
