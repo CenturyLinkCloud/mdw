@@ -29,3 +29,13 @@ constantsMod.constant('DOCUMENT_TYPES', {
   'com.centurylink.mdw.common.service.Jsonable': 'json',
   'org.yaml.snakeyaml.Yaml': 'yaml'
 });
+
+constantsMod.constant('WORKFLOW_STATUSES', [
+   {status: 'Pending', color: 'blue'},
+   {status: 'In Progress', color: 'green'},
+   {status: 'Failed', color: 'red'},
+   {status: 'Completed', color: 'black'},
+   {status: 'Canceled', color: 'darkgray'},
+   {status: 'Hold', color: 'cyan'},
+   {status: 'Waiting', color: 'yellow'}
+ ]);

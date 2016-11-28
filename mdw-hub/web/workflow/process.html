@@ -7,6 +7,12 @@
           <a class="mdw-ghost" ng-href="#/packages/{{process.packageName}}">
             {{process.packageName}}</a>/{{process.name}} &nbsp;{{process.id}}
         </div>
+        <div class="mdw-heading-actions">
+          <button type="button" class="btn mdw-btn" uib-popover-template="'workflow/legend.html'" 
+              popover-placement="left-top" pop-click>
+            <span class="glyphicon glyphicon-info-sign" style="font-size:16px"></span>
+          </button>        
+        </div>
       </div>
       <div class="mdw-section">
         <mdw-workflow process="process" render-state="true"

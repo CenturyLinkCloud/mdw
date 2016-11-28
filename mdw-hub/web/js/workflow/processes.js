@@ -89,14 +89,16 @@ processMod.controller('ProcessesController', ['$scope', '$http', 'mdw', 'util', 
 }]);
 
 processMod.controller('ProcessController', 
-    ['$scope', '$route', '$routeParams', 'mdw', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES',
-     function($scope, $route, $routeParams, mdw, Process, ProcessSummary, DOCUMENT_TYPES) {
+    ['$scope', '$route', '$routeParams', 'mdw', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
+     function($scope, $route, $routeParams, mdw, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
   
   $scope.retrieveProcess = function() {
     $scope.process = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'summary'}, function() {
       ProcessSummary.set($scope.process);
     });    
   };
+  
+  $scope.workflowStatuses = WORKFLOW_STATUSES;
   
   if ($route.current.originalPath.endsWith('/values') || $routeParams.name) {
     if ($routeParams.name) {

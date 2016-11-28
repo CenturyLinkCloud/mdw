@@ -3,8 +3,8 @@
 
 var stepMod = angular.module('mdwStep', ['mdw']);
 
-stepMod.factory('Step', ['mdw', 'util', 'DC',
-                         function(mdw, util, DC) {
+stepMod.factory('Step', ['mdw', 'util', 'DC', 'WORKFLOW_STATUSES',
+                         function(mdw, util, DC, WORKFLOW_STATUSES) {
   
   var Step = function(activity) {
     this.activity = activity;
@@ -15,17 +15,8 @@ stepMod.factory('Step', ['mdw', 'util', 'DC',
   Step.OLD_INST_W = 4;
   Step.MAX_INSTS = 10;
   
-  Step.STATUSES = [
-    {status: 'Unknown', color: 'transparent'},
-    {status: 'Pending', color: 'blue'},
-    {status: 'In Progress', color: 'green'},
-    {status: 'Failed', color: 'red'},
-    {status: 'Completed', color: 'black'},
-    {status: 'Canceled', color: 'darkgray'},
-    {status: 'Hold', color: 'cyan'},
-    {status: 'Waiting', color: 'yellow'}
-  ];
-
+  Step.STATUSES = [{status: 'Unknown', color: 'transparent'}].concat(WORKFLOW_STATUSES);
+  
   Step.prototype.draw = function(diagram) {
     var activity = this.workflowObj = this.activity;
     var shape;

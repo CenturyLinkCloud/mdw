@@ -675,8 +675,26 @@
 }
 
 .mdw-workflow {
+	
 }
 .mdw-canvas {
+	
+}
+.mdw-legend {
+  list-style-type: none;
+  position: relative;
+  left: -50px;
+  font-weight: bold;	
+}
+.mdw-legend > li {
+	display: flex;
+}
+.mdw-legend-item {
+	height: 20px;
+	width: 30px;
+	border: 1px solid lightgray;
+	border-radius: 5px;
+	margin: 10px;
 }
 .mdw-inspector {
   /* display: none is set in style */
