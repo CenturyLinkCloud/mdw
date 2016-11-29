@@ -1,8 +1,8 @@
 applications:
-- name: mdw-admin
+- name: mdw
   instances: 1
-  host: mdwadmin
-  path: ../mdw/deploy/app/mdw-admin-6.0.038-SNAPSHOT.war
+  host: mdw
+  path: ../mdw/deploy/app/mdw-6.0.01-SNAPSHOT.war
   buildpack: java_buildpack
 
 env:

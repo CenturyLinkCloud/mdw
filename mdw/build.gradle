@@ -91,7 +91,7 @@ task javadocs(type: Javadoc) {
     classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath})
     title = "MDW 6 API JavaDocs"
     maxMemory = "256m"
-    options.links "http://docs.oracle.com/javase/7/docs/api/"
+    options.links "http://docs.oracle.com/javase/8/docs/api/"
     options.bottom "<i>Copyright &#169; 2016 CenturyLink, Inc.</i>"
     destinationDir = file('../mdw-hub/web/javadoc')
 }
