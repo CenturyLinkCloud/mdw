@@ -12,7 +12,7 @@
           <span class="mdw-heading-sub" ng-if="pkgList.vcsBranch && !pkgList.vcsRemoteUrl">({{pkgList.vcsBranch}})</span>
         </div>
         <!-- actions currently only supported for Git  -->
-        <div class="mdw-heading-actions" ng-if="pkgList.vcsBranch">
+        <div class="mdw-heading-actions">
           <button type="button" class="btn btn-primary mdw-btn" ng-disabled="pkgList.getSelected().length <= 0"
             uib-popover-template="'assets/exportMenu.html'" popover-placement="left" pop-click>
             <span class="glyphicon glyphicon-download-alt"></span> Export
