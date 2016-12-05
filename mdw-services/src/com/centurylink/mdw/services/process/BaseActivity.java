@@ -74,6 +74,7 @@ public abstract class BaseActivity implements GeneralActivity {
     public static final String GROOVY = "Groovy";
     public static final String JAVA_EL = "javax.el";
     public static final String OUTPUTDOCS = "Output Documents";
+    public static final String DISABLED = "disabled";
 
     private Long workTransitionInstanceId;
     private String returnCode;
@@ -201,10 +202,15 @@ public abstract class BaseActivity implements GeneralActivity {
 
     void execute(ProcessExecutor engine) throws ActivityException {
         this.engine = engine;
-        initialize(_runtimeContext);
-        Object ret = execute(_runtimeContext);
-        if (ret != null)
-            setReturnCode(String.valueOf(ret));
+        if (isDisabled()) {
+            loginfo("Skipping disabled activity: " + getActivityName());
+        }
+        else {
+            initialize(_runtimeContext);
+            Object ret = execute(_runtimeContext);
+            if (ret != null)
+                setReturnCode(String.valueOf(ret));
+        }
     }
 
     void executeTimed(ProcessExecutor engine) throws ActivityException {
@@ -1476,5 +1482,14 @@ public abstract class BaseActivity implements GeneralActivity {
            return substitutionResult.getOutput();
        }
        return in;
+   }
+
+   protected boolean isDisabled() throws ActivityException {
+       try {
+           return "true".equalsIgnoreCase(getAttributeValueSmart(DISABLED));
+       }
+       catch (PropertyException ex) {
+           throw new ActivityException(ex.getMessage(), ex);
+       }
    }
 }
