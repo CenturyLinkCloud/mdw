@@ -107,3 +107,12 @@ task versions << {
     println GradleVersion.current().prettyPrint()
     println "MDW Version: ${mdwVersion}"
 }
+
+// deploy a build for testing on lxdenvmtc143
+task deployTomcatMdwDev(type: GradleBuild) {
+	buildFile = "deploy.gradle"
+	tasks = ["deployMdw"]
+	startParameter.projectProperties = [deployWarDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/webapps",
+										tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/bin",
+										testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
+}
