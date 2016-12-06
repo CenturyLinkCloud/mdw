@@ -9,6 +9,7 @@ import java.util.Properties;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.model.Response;
 
 /**
  * This class is an interface for defining poolable adapters
@@ -82,7 +83,7 @@ public interface PoolableAdapter {
             String request, int timeout, Map<String,String> headers)
     throws AdapterException,ConnectionException;
 
-    String doInvoke(Object connection,
+    Response doInvoke(Object connection,
             String request, int timeout, Map<String,String> headers)
     throws AdapterException,ConnectionException;
 
@@ -118,11 +119,5 @@ public interface PoolableAdapter {
      */
     String onFailure(Throwable errorCause)
     throws AdapterException,ConnectionException;
-
-//    /**
-//     * returns portion of the pagelet description for implementors
-//     * @return
-//     */
-//    String getDescriptorInserts();
 
 }

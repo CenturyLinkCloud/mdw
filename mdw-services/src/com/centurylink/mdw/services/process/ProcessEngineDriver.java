@@ -762,7 +762,7 @@ public class ProcessEngineDriver {
         try {
             if (msgDocId.longValue() != 0L)
                 engine.updateDocumentInfo(new DocumentReference(msgDocId),
-                        null, null, procInstId);
+                        null, null, procInstId, null, null);
         } catch (Exception e) {
             // this is possible for race condition - document was just created
             logger.warn("Failed to update document for process instance id");
