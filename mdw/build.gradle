@@ -116,3 +116,9 @@ task deployTomcatMdwDev(type: GradleBuild) {
 										tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/bin",
 										testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
 }
+
+task testTomcatMdwdev(type: GradleBuild) {
+  buildFile = "test.gradle"
+  tasks = ["autoTestAndPublish"]
+  startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}"]
+}
