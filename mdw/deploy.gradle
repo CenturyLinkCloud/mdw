@@ -116,6 +116,6 @@ startTomcat.mustRunAfter(stopTomcat, deployAssets, deployMdwWar, deployJavadocs,
 task deployWarOnly(dependsOn: [deleteWars, deployMdwWar, deployJavadocs]) << {
 }
 
-task deployMdw(dependsOn: [stopTomcat, deleteAssets, deleteWars, deployAssets, deployMdwWar, deployJavadocs, deployMdwDemo, startTomcat]) << {
+task deployMdw(dependsOn: [stopTomcat, deleteAssets, deleteWars, deployAssets, deployMdwWar, deployMdwDemo, startTomcat]) << {
 	println "*** MDW build ${mdwVersion} published to ${deployAssetDir}, ${deployWarDir} ***"
 }
