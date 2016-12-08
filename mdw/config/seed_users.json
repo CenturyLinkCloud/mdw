@@ -17,6 +17,27 @@
       ]
     },
     {
+      "name": "PabitraKumar Behera",
+      "cuid": "ab68052",
+      "attributes": {
+        "emailAddress": "pabitrakumar.behera@centurylink.com",
+        "phoneNumber": "80-735-83525"
+      },          
+      "groups": [
+        "Common",
+        "MDW Support",
+        "Site Admin"
+      ],
+      "Common": [
+        "Process Execution",
+        "Process Design",
+        "Task Execution"
+      ],
+      "Site Admin": [
+        "User Admin"
+      ]            
+    },
+    {
       "name": "Donald Oakes",
       "cuid": "dxoakes",
       "attributes": {
