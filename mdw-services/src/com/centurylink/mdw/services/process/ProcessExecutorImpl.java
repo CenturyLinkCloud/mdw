@@ -190,15 +190,25 @@ class ProcessExecutorImpl {
         return var;
     }
 
-    DocumentReference createDocument(String type, String ownerType, Long ownerId, Object doc) throws DataAccessException {
+    DocumentReference createDocument(String type, String ownerType, Long ownerId,
+            Object doc) throws DataAccessException {
+        return createDocument(type, ownerType, ownerId, null, null, doc);
+    }
+
+    DocumentReference createDocument(String type, String ownerType, Long ownerId,
+            Integer statusCode, String statusMessage, Object doc) throws DataAccessException {
         DocumentReference docref = null;
         try {
             Document docvo = new Document();
-            if (doc instanceof String) docvo.setContent((String)doc);
-            else docvo.setObject(doc, type);
+            if (doc instanceof String)
+                docvo.setContent((String)doc);
+            else
+                docvo.setObject(doc, type);
             docvo.setDocumentType(type);
             docvo.setOwnerType(ownerType);
             docvo.setOwnerId(ownerId);
+            docvo.setStatusCode(statusCode);
+            docvo.setStatusMessage(statusMessage);
             edao.createDocument(docvo);
             docref = new DocumentReference(docvo.getDocumentId());
         } catch (Exception e) {
@@ -327,12 +337,19 @@ class ProcessExecutorImpl {
     }
 
     void updateDocumentInfo(DocumentReference docref, String documentType, String ownerType,
-            Long ownerId) throws DataAccessException {
+            Long ownerId, Integer statusCode, String statusMessage) throws DataAccessException {
         try {
             Document docvo = edao.getDocument(docref.getDocumentId(), false);
-            if (documentType!=null) docvo.setDocumentType(documentType);
-            if (ownerType!=null) docvo.setOwnerType(ownerType);
-            if (ownerId!=null) docvo.setOwnerId(ownerId);
+            if (documentType != null)
+                docvo.setDocumentType(documentType);
+            if (ownerType != null)
+                docvo.setOwnerType(ownerType);
+            if (ownerId != null)
+                docvo.setOwnerId(ownerId);
+            if (statusCode != null)
+                docvo.setStatusCode(statusCode);
+            if (statusMessage != null)
+                docvo.setStatusMessage(statusMessage);
             edao.updateDocumentInfo(docvo);
         } catch (SQLException e) {
             throw new DataAccessException(-1, e.getMessage(), e);
