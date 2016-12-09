@@ -302,7 +302,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
         try {
             init();
             if (!StringHelper.isEmpty(requestData) && doLogging())
-                logMessage(requestData, false);
+                logRequest(requestData);
             if (isStubbing) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
@@ -325,7 +325,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
                 connection = this.openConnection();
                 responseData = doInvoke(connection, requestData, getTimeoutForResponse(), getRequestHeaders());
             }
-            if (responseData.isEmpty() && (logging || !isSynchronous())) {
+            if (!responseData.isEmpty() && (logging || !isSynchronous())) {
                 logResponse(responseData);
             }
             onSuccess(responseData.getContent());
@@ -461,11 +461,22 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
         return do_logging==null||do_logging.equalsIgnoreCase("true");
     }
 
-    protected Long logMessage(String message, boolean isResponse) {
+
+    protected Long logRequest(String message) {
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
-                    isResponse ? OwnerType.ADAPTER_RESPONSE : OwnerType.ADAPTER_REQUEST,
-                    this.getActivityInstanceId());
+                    OwnerType.ADAPTER_REQUEST, getActivityInstanceId());
+            return docref.getDocumentId();
+        } catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            return null;
+        }
+    }
+
+    protected Long logResponse(String message) {
+        try {
+            DocumentReference docref = createDocument(String.class.getName(), message,
+                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -476,7 +487,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
     protected Long logResponse(Response response) {
         try {
             DocumentReference docref = createDocument(String.class.getName(), response.getContent(),
-                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
+                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId(), response.getStatusCode(), response.getStatusMessage());
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

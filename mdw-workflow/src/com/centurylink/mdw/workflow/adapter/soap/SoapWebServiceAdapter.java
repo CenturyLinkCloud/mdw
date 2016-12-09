@@ -140,7 +140,7 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
         }
         catch (IOException ex) {
             if (httpHelper != null && httpHelper.getResponse() != null)
-                logMessage(httpHelper.getResponse(), true);
+                logResponse(httpHelper.getResponse());
             this.logexception(ex.getMessage(), ex);
             throw new ConnectionException(-1, ex.getMessage(), ex);
         }

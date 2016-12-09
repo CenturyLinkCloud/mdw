@@ -115,7 +115,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
         }
         catch (IOException ex) {
             if (httpHelper != null && httpHelper.getResponse() != null)
-                logMessage(httpHelper.getResponse(), true);
+                logResponse(httpHelper.getResponse());
             /**
              * Plugs into automatic retrying
              */
