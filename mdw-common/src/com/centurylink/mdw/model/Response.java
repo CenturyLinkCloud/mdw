@@ -22,7 +22,7 @@ public class Response {
     }
 
     public boolean isEmpty() {
-        return content != null && !content.isEmpty();
+        return content == null || content.isEmpty();
     }
 
 }

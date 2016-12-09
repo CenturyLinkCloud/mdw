@@ -159,7 +159,7 @@ public class MultiRestServiceAdapter extends RestServiceAdapter {
         }
         sb.append("\r\n</RESTResponseList>");
         if (savedException != null) {
-            logMessage(sb.toString(), true);
+            logResponse(sb.toString());
             throw new ConnectionException(-1, savedException.getMessage(), savedException);
         }
 
