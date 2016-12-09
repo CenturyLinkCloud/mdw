@@ -27,6 +27,7 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -306,9 +307,8 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
             if (isStubbing) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
-                    // TODO: stubber full Response
-                    responseData = new Response(stubber.getStubResponse(getMasterRequestId(), requestData));
-                    if (MAKE_ACTUAL_CALL.equals(responseData)) {
+                    responseData = stubber.getStubResponse(getMasterRequestId(), requestData);
+                    if (((AdapterStubResponse)responseData).isPassthrough()) {
                         loginfo("Stub server instructs to get real response");
                         isStubbing = false;
                         connection = this.openConnection();

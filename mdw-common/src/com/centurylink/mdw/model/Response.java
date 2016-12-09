@@ -3,7 +3,12 @@
  */
 package com.centurylink.mdw.model;
 
-public class Response {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.centurylink.mdw.common.service.Jsonable;
+
+public class Response implements Jsonable {
 
     private String content;
     public String getContent() { return content; }
@@ -21,8 +26,34 @@ public class Response {
         this.content = content;
     }
 
+    public Response(JSONObject json) throws JSONException {
+        if (json.has("content"))
+            this.content = json.getString("content");
+        if (json.has("statusCode"))
+            this.statusCode = json.getInt("statusCode");
+        if (json.has("statusMessage"))
+            this.statusMessage = json.getString("statusMessage");
+    }
+
     public boolean isEmpty() {
         return content == null || content.isEmpty();
     }
+
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        if (content != null)
+            json.put("content", content);
+        if (statusCode != null)
+            json.put("statusCode", statusCode);
+        if (statusMessage != null)
+            json.put("statusMessage", statusMessage);
+        return json;
+    }
+
+    public String getJsonName() {
+        return "response";
+    }
+
+
 
 }

@@ -97,15 +97,13 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
-        JSONObject contextJson = new JSONObject();
-        contextJson.put("activity", getActivity().getJson());
-        contextJson.put("activityInstance", getActivityInstance().getJson());
-        contextJson.put("process", getPackage().getName() + "/" + getProcess().getName());
-        json.put(getJsonName(), contextJson);
+        json.put("activity", getActivity().getJson());
+        json.put("activityInstance", getActivityInstance().getJson());
+        json.put("process", getPackage().getName() + "/" + getProcess().getName());
         return json;
     }
 
     public String getJsonName() {
-        return "ActivityRuntimeContext";
+        return "activityRuntimeContext";
     }
 }
