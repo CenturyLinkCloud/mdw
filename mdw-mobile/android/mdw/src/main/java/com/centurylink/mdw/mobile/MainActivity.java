@@ -15,15 +15,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
 import android.net.Uri;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.centurylink.mdw.mobile.R;
+import com.centurylink.mdw.mobile.app.Settings;
+
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private Settings settings;
+    private Toolbar toolbar;
 
     private WebView webView;
     protected WebView getWebView() { return webView; }
@@ -32,7 +39,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -44,6 +51,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        settings = new Settings(getApplicationContext());
+
         webView = (WebView) findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -52,12 +61,30 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setSupportZoom(true);
+        // webView.getSettings().setBuiltInZoomControls(true);
+        // allow debugging with chrome dev tools
+        WebView.setWebContentsDebuggingEnabled(true);
+
+        // do not cache in debug
+        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webView.getSettings().setAppCacheEnabled(false);
+        webView.clearCache(true);
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        String url = "http://www.google.com";
+        URL url = settings.getServerUrl();
+        Log.i(TAG, "Loading URL: " + url);
+        webView.loadUrl(url.toString());
+
+        // String url = settings.getServerUrl() + "/#/workflow";
 //        try {
 //            webView.loadUrl(url);
 //        } catch (Exception ex) {
@@ -92,6 +119,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
@@ -105,19 +133,24 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         String url = "login";
-        if (id == R.id.nav_tasks) {
-            url = "http://www.google.com";
-            webView.loadUrl(url);
+        if (id == R.id.nav_workflow) {
+            toolbar.setTitle("MDW: " + getString(R.string.title_workflow));
+            loadPath("workflow/processes");
         } else if (id == R.id.nav_dashboard) {
-
-        } else if (id == R.id.nav_workflow) {
-
+            toolbar.setTitle("MDW: " + getString(R.string.title_dashboard));
+            loadPath("dashboard/processes");
         } else if (id == R.id.nav_services) {
-
+            toolbar.setTitle("MDW: " + getString(R.string.title_services));
+            loadPath("serviceApi");
+        } else if (id == R.id.nav_tasks) {
+            toolbar.setTitle("MDW: " + getString(R.string.title_tasks));
+            loadPath("tasks");
         } else if (id == R.id.nav_admin) {
-
-        } else if (id == R.id.nav_send) {
-
+            toolbar.setTitle("MDW: " + getString(R.string.title_admin));
+            loadPath("users");
+        } else if (id == R.id.nav_system) {
+            toolbar.setTitle("MDW: " + getString(R.string.title_system));
+            loadPath("system/sysInfo");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -125,5 +158,11 @@ public class MainActivity extends AppCompatActivity
 
 
         return true;
+    }
+
+    private void loadPath(String path) {
+        String url = settings.getServerUrl() + "/#/" + path;
+        Log.i(TAG, "Loading URL: " + url);
+        webView.loadUrl(url);
     }
 }

@@ -1,0 +1,9 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/title_prefs_server">
+        <EditTextPreference
+            android:key="server_url"
+            android:title="@string/title_prefs_server_url"
+            android:dialogTitle="@string/title_prefs_server_url"
+            android:dialogMessage="@string/message_prefs_server_url" />
+    </PreferenceCategory>
+</PreferenceScreen>

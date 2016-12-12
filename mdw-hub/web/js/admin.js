@@ -127,6 +127,7 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   };
   
   $scope.isMobile = util.isMobile() || 'true' === util.urlParams().mdwMobile;
+  console.log('isMobile: ' + $scope.isMobile);
   $scope.isDebug = 'true' === util.urlParams().mdwDebug;
 
   $scope.login = function() {
