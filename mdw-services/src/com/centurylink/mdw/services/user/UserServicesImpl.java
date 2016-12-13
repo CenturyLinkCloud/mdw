@@ -79,6 +79,8 @@ public class UserServicesImpl implements UserServices {
     public User getUser(String cuid) throws DataAccessException {
         try {
             User user = UserGroupCache.getUser(cuid);
+            if (user == null)
+                throw new CachingException("");
             // add empty attributes
             if (user.getAttributes() == null)
                 user.setAttributes(new HashMap<String,String>());
