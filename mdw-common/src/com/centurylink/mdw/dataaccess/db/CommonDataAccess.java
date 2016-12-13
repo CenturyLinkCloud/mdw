@@ -33,8 +33,8 @@ import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Projections.*;
 
 public class CommonDataAccess {
 
@@ -421,12 +421,14 @@ public class CommonDataAccess {
             boolean foundInMongo = false;
             if (db.getMongoDb() != null) {
                 CodeTimer timer = new CodeTimer("Load mongodb doc", true);
-                MongoCollection<?> mongoCollection = db.getMongoDb().getCollection(vo.getOwnerType());
-                BasicDBObject mongoQuery = new BasicDBObject();
-                mongoQuery.put("_id", vo.getDocumentId());
-                Object c = mongoCollection.find(mongoQuery).limit(1).first();
+                MongoCollection<org.bson.Document> mongoCollection = db.getMongoDb().getCollection(vo.getOwnerType());
+                org.bson.Document mongoQuery = new org.bson.Document("_id", vo.getDocumentId());
+                org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                 if (c != null) {
-                    vo.setObject(c, vo.getDocumentType());
+                    if ("true".equals(c.getString("isJSON")))
+                        vo.setContent(c.get("CONTENT", org.bson.Document.class).toJson());
+                    else
+                        vo.setContent(c.getString("CONTENT"));
                     foundInMongo = true;
                 }
                 timer.stopAndLogTiming(null);

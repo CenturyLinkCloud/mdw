@@ -39,6 +39,10 @@ import com.centurylink.mdw.model.workflow.TransitionStatus;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.util.StringHelper;
+import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Filters.*;
+
+
 
 /**
  * TODO: Remove non-engine-related data access from this class.
@@ -277,7 +281,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         return createDocument(doc, null);
     }
 
-    boolean hasMongo() { return false; }
+    boolean hasMongo() { return (db != null && db.getMongoDb() != null); }
     public Long createDocument(Document doc, Package pkg) throws SQLException {
         Long docId = db.isMySQL() ? null : getNextId("MDW_COMMON_INST_ID_SEQ");
         String query = "insert into DOCUMENT " +
@@ -294,7 +298,20 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             db.runUpdate(query, String.valueOf(args));
         doc.setDocumentId(docId);
         if (hasMongo()) {
-            // TODO
+            MongoCollection<org.bson.Document> collection = db.getMongoDb().getCollection(doc.getOwnerType());
+            org.bson.Document myDoc = null;
+            if (doc.getContent(pkg).trim().startsWith("{") && doc.getContent(pkg).trim().endsWith("}")) {
+                try {
+                    org.bson.Document myJsonDoc = org.bson.Document.parse(doc.getContent(pkg)); // Parse JSON to create BSON CONTENT Document
+                    if (!myJsonDoc.isEmpty())
+                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("_id", docId).append("isJSON", "true"); // Plus append _id and isJSON:true field
+                }
+                catch (Throwable ex) {myDoc=null;}  // Assume not JSON then
+            }
+            if (myDoc == null)   // Create BSON document with Raw content if it wasn't JSON, plus append _id and isJSON:false
+                myDoc = new org.bson.Document("CONTENT", doc.getContent(pkg)).append("_id", docId).append("isJSON", "false");
+
+            collection.insertOne(myDoc);
         }
         else {
             // store in DOCUMENT_CONTENT
@@ -308,12 +325,30 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     }
 
     public void updateDocumentContent(Long documentId, String content) throws SQLException {
+        String selectQuery = "select OWNER_TYPE from DOCUMENT where DOCUMENT_ID = ?";
+        String owner_type = "";
+        ResultSet rs = db.runSelect(selectQuery, documentId);
+        if (rs.next())
+            owner_type = rs.getString("OWNER_TYPE");
+
         String query = "update DOCUMENT set MODIFY_DT = " + now() + " where DOCUMENT_ID = ?";
         db.runUpdate(query, documentId);
-        boolean inMongo = hasMongo();
-        if (hasMongo()) {
-            // TODO
-            inMongo = false;  // not found (compatibility)
+        boolean inMongo = false;  // not found (compatibility)
+        if (hasMongo() && owner_type.length() > 0) {
+            MongoCollection<org.bson.Document> collection = db.getMongoDb().getCollection(owner_type);
+            org.bson.Document myDoc = null;
+            if (content.trim().startsWith("{") && content.trim().endsWith("}")) {
+                try {
+                    org.bson.Document myJsonDoc = org.bson.Document.parse(content); // Parse JSON to create BSON CONTENT Document
+                    if (!myJsonDoc.isEmpty())
+                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("isJSON", "true"); // Plus append isJSON:true field
+                }
+                catch (Throwable ex) {myDoc=null;}  // Assume not JSON then
+            }
+            if (myDoc == null)   // Create BSON document with Raw content if it wasn't JSON plus append isJSON:false
+                myDoc = new org.bson.Document("CONTENT", content).append("isJSON", "false");
+            if (collection.findOneAndReplace(eq("_id", documentId), myDoc) != null)
+                inMongo = true;
         }
 
         if (!inMongo) {
@@ -323,6 +358,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             args[1] = documentId;
             db.runUpdate(query, args);
         }
+
     }
 
     public void updateDocumentInfo(Document docvo) throws SQLException {

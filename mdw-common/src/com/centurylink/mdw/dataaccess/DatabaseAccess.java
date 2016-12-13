@@ -61,6 +61,7 @@ public class DatabaseAccess {
 
     private boolean isEmbedded;
 
+    private MongoClient mongoClient;
     private MongoDatabase mongoDb;
     public MongoDatabase getMongoDb() {
         return mongoDb;
@@ -112,14 +113,6 @@ public class DatabaseAccess {
             catch (SQLException ex) {
                 LoggerUtil.getStandardLogger().severeException("Failed to start embedded DB: " + INTERNAL_DATA_SOURCE, ex);
             }
-        }
-
-        String mongoHost = PropertyManager.getProperty("mdw.mongodb.host");
-        if (mongoHost != null) {
-            int mongoPort = PropertyManager.getIntegerProperty("mdw.mongodb.port", 27017);
-            @SuppressWarnings("resource")
-            MongoClient mongoClient = new MongoClient(mongoHost, mongoPort);
-            mongoDb = mongoClient.getDatabase("mdw");
         }
     }
 
@@ -231,7 +224,35 @@ public class DatabaseAccess {
             }
         }
         connection.setAutoCommit(false);
+
+        // Check for MongoDB and open connection
+        openMongoDbConnection();
+
         return connection;
+    }
+
+    private void openMongoDbConnection() {
+     // Check for MongoDB and open connection
+        if (mongoClient == null) {
+            String mongoHost = PropertyManager.getProperty("mdw.mongodb.host");
+            if (mongoHost != null) {
+                int mongoPort = PropertyManager.getIntegerProperty("mdw.mongodb.port", 27017);
+                mongoClient = new MongoClient(mongoHost, mongoPort);
+                mongoDb = mongoClient.getDatabase("mdw");
+            }
+        }
+    }
+
+    private void closeMongoDbConnection() {
+        if (mongoClient != null) {
+            try {
+                mongoClient.close();
+            }
+            catch (Throwable e) {}
+            finally {
+                mongoClient = null;
+            }
+        }
     }
 
     public void commit() throws SQLException {
@@ -260,6 +281,7 @@ public class DatabaseAccess {
             }
         } catch (Throwable e) {
         }
+        closeMongoDbConnection();
     }
 
     public boolean isDefaultDatabase() {
@@ -291,6 +313,7 @@ public class DatabaseAccess {
             return !connection.isClosed();
         } catch (SQLException e) {
             connection = null;
+            closeMongoDbConnection();
             return false;
         }
     }
@@ -446,6 +469,7 @@ public class DatabaseAccess {
      */
     public void setConnection(Connection conn) {
         connection = conn;
+        openMongoDbConnection();
     }
 
     public long getDatabaseTime() throws SQLException {
@@ -515,5 +539,10 @@ public class DatabaseAccess {
 
     public String toString() {
         return database_name;
+    }
+
+    // This is to close MongoDb connection when Object is being destroyed by GC
+    protected void finalize( ) throws Throwable {
+        closeMongoDbConnection();
     }
 }
