@@ -6,7 +6,9 @@ masterRequestId = "tester-" + System.currentTimeMillis()
 
 // test send response with substitutions
 send asset("tester-ping.xml")
-verify response asset("tester-pong.xml")
+verify response {
+    expected = asset("tester-pong.xml").text
+}
 
 // test launch process with substitutions
 // helloMessage referenced through placeholder in expected result

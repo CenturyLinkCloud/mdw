@@ -28,6 +28,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     public static final String ENDPOINT_URI = "EndpointUri";  // includes the resource path
     public static final String HEADERS_VARIABLE = "HeadersVariable";
 
+
     /**
      * Returns an HttpURLConnection based on the configured endpoint, which
      * includes the resource path. Override for HTTPS or other connection type.
@@ -85,7 +86,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     @Override
     public String invoke(Object conn, String request, int timeout, Map<String, String> headers)
     throws ConnectionException, AdapterException {
-        HttpHelper  httpHelper = null;
+        HttpHelper httpHelper = null;
         try {
             httpHelper = getHttpHelper(conn);
 
@@ -114,7 +115,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
         }
         catch (IOException ex) {
             if (httpHelper != null && httpHelper.getResponse() != null)
-                logMessage(httpHelper.getResponse(), true);
+                logResponse(httpHelper.getResponse());
             /**
              * Plugs into automatic retrying
              */
@@ -203,12 +204,9 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     public Map<String,String> getResponseHeaders() { return super.getResponseHeaders(); }
     protected void setResponseHeaders(Map<String,String> headers) { super.setResponseHeaders(headers); }
 
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.adapter.HeaderAwareAdapter#invoke(java.lang.Object, java.lang.Object, java.util.Map)
-     */
     @Override
     public Object invoke(Object pConnection, Object requestData, Map<String, String> requestHeaders)
-            throws AdapterException, ConnectionException {
+    throws AdapterException, ConnectionException {
         return invoke(pConnection,(String)requestData, 0, requestHeaders );
     }
 

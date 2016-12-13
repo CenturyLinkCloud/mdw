@@ -187,7 +187,8 @@ public class RestServlet extends ServiceServlet {
         }
 
         String requestString = null;
-        if (!"GET".equalsIgnoreCase(request.getMethod()) && !"DELETE".equalsIgnoreCase(request.getMethod())) {
+        // DELETE can have a body in some container
+        if (!"GET".equalsIgnoreCase(request.getMethod())) {
             BufferedReader reader = request.getReader();
             StringBuffer requestBuffer = new StringBuffer(request.getContentLength() < 0 ? 0 : request.getContentLength());
             String line;

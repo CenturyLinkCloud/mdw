@@ -74,6 +74,7 @@ public abstract class BaseActivity implements GeneralActivity {
     public static final String GROOVY = "Groovy";
     public static final String JAVA_EL = "javax.el";
     public static final String OUTPUTDOCS = "Output Documents";
+    public static final String DISABLED = "disabled";
 
     private Long workTransitionInstanceId;
     private String returnCode;
@@ -201,10 +202,15 @@ public abstract class BaseActivity implements GeneralActivity {
 
     void execute(ProcessExecutor engine) throws ActivityException {
         this.engine = engine;
-        initialize(_runtimeContext);
-        Object ret = execute(_runtimeContext);
-        if (ret != null)
-            setReturnCode(String.valueOf(ret));
+        if (isDisabled()) {
+            loginfo("Skipping disabled activity: " + getActivityName());
+        }
+        else {
+            initialize(_runtimeContext);
+            Object ret = execute(_runtimeContext);
+            if (ret != null)
+                setReturnCode(String.valueOf(ret));
+        }
     }
 
     void executeTimed(ProcessExecutor engine) throws ActivityException {
@@ -575,10 +581,10 @@ public abstract class BaseActivity implements GeneralActivity {
     protected DocumentReference setParameterValueAsDocument(String name, String varType, Object value)
     throws ActivityException {
         DocumentReference docref = (DocumentReference)this.getParameterValue(name);
-        if (docref==null) {
+        if (docref == null) {
             docref = createDocument(varType, value, OwnerType.VARIABLE_INSTANCE, new Long(0));
             Long varInstId = this.setParameterValue(name, docref);
-            this.updateDocumentInfo(docref, null, OwnerType.VARIABLE_INSTANCE, varInstId);
+            updateDocumentInfo(docref, null, OwnerType.VARIABLE_INSTANCE, varInstId);
         } else {
             updateDocumentContent(docref, value, varType);
         }
@@ -975,6 +981,11 @@ public abstract class BaseActivity implements GeneralActivity {
         return docvo == null ? null : docvo.getObject(type, getPackage());
     }
 
+    protected DocumentReference createDocument(String docType, Object document, String ownerType,
+            Long ownerId) throws ActivityException {
+        return createDocument(docType, document, ownerType, ownerId, null, null);
+    }
+
     /**
      * Create a new document, persisted in database, and return a document
      * reference object, to be bound to a variable.
@@ -985,11 +996,12 @@ public abstract class BaseActivity implements GeneralActivity {
      *      other possible types are LISTENER_REQUEST, LISTENER_RESPONSE,
      *      ADAPTOR_REQUEST, ADAPTOR_RESPONSE
      * @param ownerId ID of the owner, dependent on owner type.
-     * @return document reference object
-     * @throws ActivityException
+     * @param statusCode
+     * @param statusMessage
+     * @return document reference
      */
-    protected DocumentReference createDocument(String docType, Object document, String ownerType, Long ownerId)
-            throws ActivityException {
+    protected DocumentReference createDocument(String docType, Object document, String ownerType,
+            Long ownerId, Integer statusCode, String statusMessage) throws ActivityException {
         DocumentReference docref;
         try {
             if (!(document instanceof String)) {
@@ -997,7 +1009,7 @@ public abstract class BaseActivity implements GeneralActivity {
                 document = VariableTranslator.realToString(getPackage(), docType, document);
             }
 
-            docref = engine.createDocument(docType, ownerType, ownerId, document);
+            docref = engine.createDocument(docType, ownerType, ownerId, statusCode, statusMessage, document);
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
@@ -1026,24 +1038,25 @@ public abstract class BaseActivity implements GeneralActivity {
         }
     }
 
+    protected void updateDocumentInfo(DocumentReference docref, String documentType,
+            String ownerType, Long ownerId) throws ActivityException {
+        updateDocumentInfo(docref, documentType, ownerType, ownerId, null, null);
+    }
+
     /**
      * Update document information (everything but document content itself).
      * The method will update only the arguments that have non-null values.
-     * @param docref
-     * @param documentType
-     * @param ownerType
-     * @param ownerId
-     * @throws ActivityException
      */
     protected void updateDocumentInfo(DocumentReference docref, String documentType,
-            String ownerType, Long ownerId) throws ActivityException {
+            String ownerType, Long ownerId, Integer statusCode, String statusMessage) throws ActivityException {
         try {
-            engine.updateDocumentInfo(docref, documentType, ownerType, ownerId);
+            engine.updateDocumentInfo(docref, documentType, ownerType, ownerId, statusCode, statusMessage);
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
     }
+
 
     /**
      * Open a database connection.
@@ -1476,5 +1489,14 @@ public abstract class BaseActivity implements GeneralActivity {
            return substitutionResult.getOutput();
        }
        return in;
+   }
+
+   protected boolean isDisabled() throws ActivityException {
+       try {
+           return "true".equalsIgnoreCase(getAttributeValueSmart(DISABLED));
+       }
+       catch (PropertyException ex) {
+           throw new ActivityException(ex.getMessage(), ex);
+       }
    }
 }

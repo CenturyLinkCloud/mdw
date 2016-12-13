@@ -1,0 +1,121 @@
+apply plugin: "java"
+
+repositories {
+    maven {
+        url devRepoUrl
+    }
+}
+
+configurations {
+    deploy
+}
+
+dependencies {
+	deploy group: "com.centurylink.mdw", name: "mdw-designer-core", version: "${mdwDesignerVersion}"
+	deploy files("../${mdwOutputDir}/mdw-common-${mdwVersion}.jar")
+	deploy files("../${mdwOutputDir}/mdw-schemas-${mdwVersion}.jar")
+	deploy group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
+}
+
+task stopTomcat(type: ServerStop) {
+	workingDir tomcatBinDir
+	
+	if (System.properties["os.name"].startsWith("Windows"))
+		commandLine "stop.bat"
+	else
+		commandLine "./stop.sh"
+	
+	ignoreExitValue true
+	verifyUrl testServerUrl
+}
+
+task deleteAssets(type: Delete) {
+	delete deployAssetDir
+}
+deleteAssets.mustRunAfter stopTomcat
+
+task deleteMdwDemo(type: Delete) {
+	delete ".temp/mdwdemo"
+}
+
+task cloneMdwDemo(type: GitClone) {
+	dependsOn deleteMdwDemo
+	def gitUrl = new URL(mdwDemoGitUrl)
+	fromUrl gitUrl
+	into ".temp/mdwdemo"
+	trustedHost gitUrl.host
+}
+cloneMdwDemo.mustRunAfter(deleteMdwDemo, deleteAssets)
+
+task deployMdwDemo(type: Copy) {
+	dependsOn cloneMdwDemo
+	from(".temp/mdwdemo/workflow/assets") {
+	}
+	into deployAssetDir
+}
+
+task deployAssets(type: Copy) {
+	from "../${mdwAssetRoot}"
+	into deployAssetDir
+}
+deployAssets.mustRunAfter deployMdwDemo
+
+task deleteWars(type: Delete) {
+	delete "${deployWarDir}/mdw.war"
+	delete "${deployWarDir}/mdw"
+}
+deleteWars.mustRunAfter stopTomcat
+
+task deployMdwWar(type: Copy) {
+    from "../mdw/deploy/app"
+    into "${deployWarDir}"
+    include "mdw-${mdwVersion}.war"
+    rename("mdw-${mdwVersion}.war", "mdw.war")
+}
+deployMdwWar.mustRunAfter deleteWars
+
+
+task addJavadocsToWar(type: Jar) {
+	destinationDir file(deployWarDir)
+	archiveName "mdw.war"
+	from zipTree("${deployWarDir}/mdw-${mdwVersion}.war")
+	from("../mdw-hub/web") {
+		include "javadoc/**"
+	}
+}
+
+task deployJavadocs(type: Delete) {
+	dependsOn addJavadocsToWar
+	delete file("${deployWarDir}/mdw-${mdwVersion}.war")
+}
+deployJavadocs.mustRunAfter deployMdwWar
+
+
+// doesn't work on windows (blocks build task thread)
+// http://forums.gradle.org/gradle/topics/exec_task_issues_details
+task startTomcat(type: ServerStart) {
+    workingDir tomcatBinDir
+    if (System.properties["os.name"].startsWith("Windows"))
+        commandLine "start.bat"
+    else
+        commandLine "./start.sh"
+        
+    verifyUrl testServerUrl
+    timeout 90
+    
+    // store the output instead of printing to the console:
+    standardOutput = errorOutput = new ByteArrayOutputStream()
+    // extension method startTomcat.output() can be used to obtain the output:
+    ext.output = {
+      return standardOutput.toString()
+    }
+}
+startTomcat.mustRunAfter(stopTomcat, deployAssets, deployMdwWar, deployJavadocs, deployMdwDemo)
+
+// no tomcat or assets
+task deployWarOnly(dependsOn: [deleteWars, deployMdwWar, deployJavadocs]) << {
+}
+
+task deployMdw(dependsOn: [stopTomcat, deleteAssets, deleteWars, deployAssets, deployMdwWar, startTomcat]) << {
+	println "*** MDW build ${mdwVersion} published to ${deployAssetDir}, ${deployWarDir} ***"
+}

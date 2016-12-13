@@ -405,11 +405,11 @@ public class ProcessExecutor {
     ///////////////////////////////////////
 
     public void updateDocumentInfo(DocumentReference docref,
-            String documentType, String ownerType, Long ownerId ) throws DataAccessException {
+            String documentType, String ownerType, Long ownerId, Integer statusCode, String statusMessage) throws DataAccessException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
-            engineImpl.updateDocumentInfo(docref, documentType, ownerType, ownerId);
+            engineImpl.updateDocumentInfo(docref, documentType, ownerType, ownerId, statusCode, statusMessage);
         } finally {
             stopTransaction(transaction);
         }
@@ -481,11 +481,16 @@ public class ProcessExecutor {
     }
 
     public DocumentReference createDocument(String type, String ownerType, Long ownerId, Object doc)
-     throws DataAccessException {
+    throws DataAccessException {
+        return createDocument(type, ownerType, ownerId, null, null, doc);
+    }
+
+    public DocumentReference createDocument(String type, String ownerType, Long ownerId, Integer statusCode, String statusMessage, Object doc)
+    throws DataAccessException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
-            return engineImpl.createDocument(type, ownerType, ownerId, doc);
+            return engineImpl.createDocument(type, ownerType, ownerId, statusCode, statusMessage, doc);
         } finally {
             stopTransaction(transaction);
         }

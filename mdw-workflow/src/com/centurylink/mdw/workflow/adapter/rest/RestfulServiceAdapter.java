@@ -17,6 +17,7 @@ import com.centurylink.mdw.adapter.HeaderAwareAdapter;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
@@ -277,5 +278,16 @@ public class RestfulServiceAdapter extends AdapterActivityBase implements Header
     private Map<String,String> responseHeaders;
     public Map<String,String> getResponseHeaders() { return responseHeaders; }
     protected void setResponseHeaders(Map<String,String> headers) { this.responseHeaders = headers; }
+
+    @Override
+    protected Response getResponse(Object connection, Object responseObject) throws IOException {
+        Response response = super.getResponse(connection, responseObject);
+        if (connection instanceof HttpURLConnection) {
+            HttpURLConnection httpConn = (HttpURLConnection) connection;
+            response.setStatusCode(httpConn.getResponseCode());
+            response.setStatusMessage(httpConn.getResponseMessage());
+        }
+        return response;
+    }
 
 }

@@ -78,8 +78,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
 
     public ActivityRuntimeContext(JSONObject json) throws JSONException {
         super(null, null, null);
-        JSONObject contextJson = json.getJSONObject(getJsonName());
-        String procPath = contextJson.getString("process");
+        String procPath = json.getString("process");
         int slash = procPath.indexOf("/");
         if (slash > 0) {
             packageVO = new Package();
@@ -91,21 +90,21 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
             processVO = new Process();
             processVO.setName(procPath);
         }
-        this.activityVO = new Activity(contextJson.getJSONObject("activity"));
-        this.activityInstanceVO = new ActivityInstance(contextJson.getJSONObject("activityInstance"));
+        this.activityVO = new Activity(json.getJSONObject("activity"));
+        this.activityInstanceVO = new ActivityInstance(json.getJSONObject("activityInstance"));
+        this.processInstanceVO = new ProcessInstance(json.getJSONObject("processInstance"));
     }
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
-        JSONObject contextJson = new JSONObject();
-        contextJson.put("activity", getActivity().getJson());
-        contextJson.put("activityInstance", getActivityInstance().getJson());
-        contextJson.put("process", getPackage().getName() + "/" + getProcess().getName());
-        json.put(getJsonName(), contextJson);
+        json.put("activity", getActivity().getJson());
+        json.put("activityInstance", getActivityInstance().getJson());
+        json.put("process", getPackage().getName() + "/" + getProcess().getName());
+        json.put("processInstance", getProcessInstance().getJson());
         return json;
     }
 
     public String getJsonName() {
-        return "ActivityRuntimeContext";
+        return "activityRuntimeContext";
     }
 }

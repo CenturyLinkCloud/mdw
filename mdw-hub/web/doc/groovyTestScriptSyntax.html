@@ -414,11 +414,14 @@ start process("com.centurylink.mdw.tests/MyProcess") {
         },
         activity("MySubProcess:A3") { // subproc logical id
             // no need to return null for default transition
+            // NOTE: this only works when variables/sleep not specified
         }]
 }        
 </pre>
 <p><span style="text-decoration:underline">Note:</span> Activity stubbing requires MDW workflow package
-com.centurylink.mdw.testing to be imported into the environment where the test cases are run.</p>
+com.centurylink.mdw.testing to be imported into the environment where the test cases are run.  For adapter
+activities, it's still usually better to use <a href="#stubAdapterResponse">Adapter Stubbing</a> since this
+actually populates the request and response documents.</p>
 
 <p>Sometimes its useful to stub all timer waits in a test case.  For that, you can implement a custom closure
 to be executed which determines whether each activity is stubbed.  Here's an example that automatically stubs

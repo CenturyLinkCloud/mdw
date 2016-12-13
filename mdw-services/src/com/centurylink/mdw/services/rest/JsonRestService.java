@@ -64,6 +64,8 @@ public abstract class JsonRestService extends RestService implements JsonService
             return put(path, content, headers);
         else if ("DELETE".equals(method))
             return delete(path, content, headers);
+        else if ("PATCH".equals(method))
+            return patch(path, content, headers);
         else
             throw new ServiceException(ServiceException.NOT_ALLOWED, method + " not implemented");
     }
@@ -99,6 +101,14 @@ public abstract class JsonRestService extends RestService implements JsonService
     @DELETE
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers) throws ServiceException, JSONException {
         throw new ServiceException(ServiceException.NOT_ALLOWED, "DELETE not implemented");
+    }
+
+    /**
+     * Incrementally update an existing entity.
+     */
+    @PUT
+    public JSONObject patch(String path, JSONObject content, Map<String,String> headers) throws ServiceException, JSONException {
+        throw new ServiceException(ServiceException.NOT_ALLOWED, "PATCH not implemented");
     }
 
     public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {

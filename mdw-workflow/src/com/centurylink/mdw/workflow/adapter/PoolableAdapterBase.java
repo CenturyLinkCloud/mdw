@@ -19,13 +19,17 @@ import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.AdapterInvocationError;
 import com.centurylink.mdw.adapter.PoolableAdapter;
 import com.centurylink.mdw.adapter.SimulationResponse;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.event.AdapterStubRequest;
+import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -46,9 +50,8 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
  * This class is the common super class for poolable adapters.
  */
 @Tracked(LogLevel.TRACE)
-//public abstract class AdapterActivityBasePlus extends AdapterActivityBase {
 public abstract class PoolableAdapterBase extends DefaultActivityImpl
-    implements AdapterActivity, PoolableAdapter,  AdapterInvocationError {
+implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
     static final String PROP_RETRY_EXCEPTIONS = "RETRY_EXCEPTIONS";
     private static Random random = null;
     boolean isStubbing;        // expose only to allow CompositeSynchronousAdapter to access
@@ -224,7 +227,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
             throw (AdapterException)errorCause;
         if (errorCause instanceof ConnectionException)
             throw (ConnectionException)errorCause;
-        throw new AdapterException(AdapterActivityBase.APPLICATION_ERROR, errorCause.getMessage(), errorCause);
+        throw new AdapterException(ServiceException.INTERNAL_ERROR, errorCause.getMessage(), errorCause);
     }
 
     /**
@@ -294,7 +297,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
     public void execute() throws ActivityException {
         String requestData = getRequestData();
         // when connection pool is down
-        String responseData = null;
+        Response responseData = null;
         Object connection = null;
         StubHelper stubber = new StubHelper();
         isStubbing = stubber.isStubbing() || isStubMode();
@@ -302,40 +305,48 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
         try {
             init();
             if (!StringHelper.isEmpty(requestData) && doLogging())
-                logMessage(requestData, false);
+                logRequest(requestData);
             if (isStubbing) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
-                    responseData = stubber.getStubResponse(getMasterRequestId(), requestData);
-                    if (MAKE_ACTUAL_CALL.equals(responseData)) {
+                    AdapterStubRequest stubRequest = new AdapterStubRequest(getMasterRequestId(), requestData);
+                    responseData = stubber.getStubResponse(getMasterRequestId(), stubRequest.getJson().toString(2));
+                    if (((AdapterStubResponse)responseData).isPassthrough()) {
                         loginfo("Stub server instructs to get real response");
                         isStubbing = false;
-                        connection = this.openConnection();
+                        connection = openConnection();
                         responseData = doInvoke(connection, requestData, getTimeoutForResponse(), getRequestHeaders());
                     } else {
                         loginfo("Response received from stub server");
                     }
-                } else responseData = (String)this.getStubResponse(requestData);
-            } else {
+                }
+                else {
+                    responseData = getStubbedResponse(requestData);
+                }
+            }
+            else {
                 connection = this.openConnection();
                 responseData = doInvoke(connection, requestData, getTimeoutForResponse(), getRequestHeaders());
             }
-            if (!StringHelper.isEmpty(responseData) && (logging||!isSynchronous()))
-                logMessage(responseData, true);
-            onSuccess(responseData);
+            if (!responseData.isEmpty() && (logging || !isSynchronous())) {
+                logResponse(responseData);
+            }
+            onSuccess(responseData.getContent());
             if (hasPostScript())
                 executePostScript();
         } catch (Throwable ex) {
             handleException(ex);
         } finally {
-            if (connection != null) closeConnection(connection);
+            if (connection != null) {
+                closeConnection(connection);
+            }
         }
     }
 
     protected int getErrorCode(Throwable ex) {
         if (ex instanceof AdapterException) return ((AdapterException)ex).getErrorCode();
         if (ex instanceof ConnectionException) return ((ConnectionException)ex).getCode();
-        return AdapterActivityBase.APPLICATION_ERROR;
+        return ServiceException.INTERNAL_ERROR;
     }
 
     /**
@@ -453,11 +464,33 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
         return do_logging==null||do_logging.equalsIgnoreCase("true");
     }
 
-    protected Long logMessage(String message, boolean isResponse) {
+
+    protected Long logRequest(String message) {
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
-                    isResponse ? OwnerType.ADAPTER_RESPONSE : OwnerType.ADAPTER_REQUEST,
-                    this.getActivityInstanceId());
+                    OwnerType.ADAPTER_REQUEST, getActivityInstanceId());
+            return docref.getDocumentId();
+        } catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            return null;
+        }
+    }
+
+    protected Long logResponse(String message) {
+        try {
+            DocumentReference docref = createDocument(String.class.getName(), message,
+                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
+            return docref.getDocumentId();
+        } catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            return null;
+        }
+    }
+
+    protected Long logResponse(Response response) {
+        try {
+            DocumentReference docref = createDocument(String.class.getName(), response.getContent(),
+                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId(), response.getStatusCode(), response.getStatusMessage());
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -480,13 +513,12 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
         return unfiltered;
     }
 
-    /**
-     * Return stubbed response from external system.
-     *
-     * @param requestData
-     * @return
-     */
-    protected String getStubResponse(String requestData) {
+    protected Response getStubbedResponse(String requestData) {
+        // compatibility
+        String resp = getStubResponse(requestData);
+        if (resp != null)
+            return new Response(resp);
+
         List<SimulationResponse> responses = new ArrayList<SimulationResponse>();
         for (Attribute attr : this.getAttributes()) {
             if (attr.getAttributeName().startsWith(WorkAttributeConstant.SIMULATION_RESPONSE)) {
@@ -495,49 +527,68 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
             }
         }
         String unfilteredResponse = null;
-        if (responses.size()==0) unfilteredResponse = null;
-        else if (responses.size()==1) {
+        String returnCode = null;
+        if (responses.size() == 0) {
+            unfilteredResponse = null;
+        }
+        else if (responses.size() == 1) {
             unfilteredResponse = responses.get(0).getResponse();
-        } else {    // randomly pick a response based on chances
+            returnCode = responses.get(0).getReturnCode();
+        }
+        else {    // randomly pick a response based on chances
             int total_chances = 0;
             for (SimulationResponse r : responses) {
                 total_chances += r.getChance().intValue();
             }
-            if (random==null) random = new Random();
+            if (random == null)
+                random = new Random();
             int ran = random.nextInt(total_chances);
             int k = 0;
             for (SimulationResponse r : responses) {
-                if (ran>=k && ran<k+r.getChance().intValue()) {
+                if (ran >= k && ran < k + r.getChance().intValue()) {
                     unfilteredResponse = r.getResponse();
+                    returnCode = r.getReturnCode();
                     break;
                 }
                 k += r.getChance().intValue();
             }
         }
-        return filterStubResponse(unfilteredResponse, requestData);
+        Response response = new Response(filterStubResponse(unfilteredResponse, requestData));
+        if (returnCode != null) {
+            try {
+                response.setStatusCode(Integer.parseInt(returnCode));
+            }
+            catch (NumberFormatException ex) {
+            }
+        }
+        return response;
+    }
+
+
+    /**
+     * @deprecated Use {@link #getStubbedResponse(String) getStubbedResponse}
+     */
+    @Deprecated
+    protected String getStubResponse(String requestData) {
+        return null;
     }
 
     /**
      * This method is used for directly invoke the adapter activity
      * from code, rather than as part of process execution flow.
-     *
-     * @param attrs    attributes to be passed to configure the activity.
-     *
-     * @param request request message
-     * @return response message
-     * @throws AdapterException
-     * @throws ConnectionException
      */
-    public String directInvoke(Properties props, String request, int timeout, Map<String,String> meta_data)
+    public Response directInvoke(Properties props, String request, int timeout, Map<String,String> meta_data)
             throws AdapterException, ConnectionException {
         init(props);
-        if (logger==null) logger = LoggerUtil.getStandardLogger();
+        if (logger == null)
+            logger = LoggerUtil.getStandardLogger();
         Object connection = null;
         try {
             connection = openConnection();
             return doInvoke(connection, request, timeout, meta_data);
         } finally {
-            if (connection != null) closeConnection(connection);
+            if (connection != null)
+                closeConnection(connection);
         }
     }
 
@@ -587,7 +638,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
     }
 
     @Override
-    public String doInvoke(Object connection, String request, int timeout,
+    public Response doInvoke(Object connection, String request, int timeout,
             Map<String,String> headers) throws AdapterException, ConnectionException {
         // TODO change method signature in MDW 6 to avoid try/catch
         try {
@@ -605,21 +656,32 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
             for (AdapterMonitor monitor : monitors) {
                 altResponse = (String)monitor.onInvoke(runtimeContext, request, headers);
                 if (altResponse != null)
-                    return altResponse;
+                    return new Response(altResponse); // TODO monitor full Response
             }
 
-            String response = invoke(connection, request, timeout, headers);
+            String responseStr = invoke(connection, request, timeout, headers);
 
             for (AdapterMonitor monitor : monitors) {
-                altResponse = (String)monitor.onResponse(runtimeContext, response, getResponseHeaders());
+                altResponse = (String)monitor.onResponse(runtimeContext, responseStr, getResponseHeaders());
                 if (altResponse != null)
-                    response = altResponse;
+                    responseStr = altResponse; // TODO monitor full Response
             }
-            return response;
+
+            return getResponse(connection, responseStr);
+        }
+        catch (IOException ex) {
+            throw new AdapterException(ex.getMessage(), ex);
         }
         catch (ActivityException ex) {
             throw new AdapterException(ex.getMessage(), ex);
         }
+    }
+
+    /**
+     * Override to set protocol response status/message.
+     */
+    protected Response getResponse(Object connection, String responseString) throws IOException {
+        return new Response(responseString);
     }
 
     /**

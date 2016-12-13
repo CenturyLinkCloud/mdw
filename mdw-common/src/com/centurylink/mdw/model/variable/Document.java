@@ -17,6 +17,8 @@ public class Document implements Serializable {
     private String documentType;
     private String ownerType;
     private Long ownerId;
+    private Integer statusCode;
+    private String statusMessage;
     private String content;        // content in string format
     private Object object;        // content in object format
 
@@ -93,6 +95,18 @@ public class Document implements Serializable {
     }
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
+    }
+    public Integer getStatusCode() {
+        return statusCode;
+    }
+    public void setStatusCode(Integer code) {
+        this.statusCode = code;
+    }
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+    public void setStatusMessage(String message) {
+        this.statusMessage = message;
     }
 
     @Deprecated

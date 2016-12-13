@@ -1,0 +1,97 @@
+// run the MDW automated tests before publishing a build 
+
+repositories {
+    maven {
+        url devRepoUrl
+    }           
+    maven {
+      url archivaDevUrl
+  }
+}
+
+configurations {
+    test
+}
+
+dependencies {
+    test group: "com.centurylink.mdw", name: "mdw-designer-core", version: "${mdwDesignerVersion}"
+    test group: "com.centurylink.mdw", name: "mdw-common", version: "5.5.38"
+    test group: "com.centurylink.mdw", name: "mdw-schemas", version: "5.5.38"
+    test group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"
+    test group: "sirrus", name: "sirrus", version: "1.0"
+    test group: "com.rsa.jsafe", name: "JsafeJCE", version: "1.0"
+    test group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0ctl"
+    test group: "com.qwest.appsec", name: "AccessControl", version: "6.8"
+    test group: "org.json", name: "json", version: "20090211"
+    test group: "commons-lang", name: "commons-lang", version: "2.4"
+    test group: "commons-codec", name: "commons-codec", version: "1.3"
+    test group: "com.oracle", name: "ojdbc6", version: "12.1.0.2.0"
+    test group: "org.apache.ant", name: "ant", version: "1.8.2"
+    test group: "org.apache.ant", name: "ant-junit", version: "1.8.2"
+    test group: "javax.jms", name: "jms", version: "1.1.1"
+    test(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri") }
+    test group: "org.codehaus.groovy", name: "groovy-all", version: "2.3.6"
+    test group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
+    test group: "javax.el", name: "el-api", version: "1.0"
+    test group: "com.sun.el", name: "el-impl", version: "1.0"
+    test group: "org.yaml", name: "snakeyaml", version: "1.16"
+}
+
+task functionTests() << {
+    ant.taskdef(
+        name: "autotest", 
+        classname: "com.centurylink.mdw.designer.testing.AutoTestAntTask", 
+        classpath: configurations.test.asPath)
+    ant.autotest(
+        suiteName: "mdw",
+        baseDir: "../mdw-workflow/assets",
+        includes: "**/*.test",
+        excludes: "com/centurylink/mdw/tests/load/*",
+        serverUrl: testServerUrl,
+        workflowDir: "../mdw-workflow/assets",
+        testResultsDir: "../mdw-workflow/testResults",
+        testResultsBaseUrl: "${testResultsBaseUrl}",
+        testResultsSummaryFile: "../mdw-workflow/testResults/mdw-function-test-results.xml",
+        threadCount: 5,
+        intervalSecs: 2,        
+        sslTrustStore: "./deploy/certs/CenturyLinkQCA.jks",
+        user: "mdwapp",
+        password: "ldap_012",
+        stubbing: true,
+        verbose: false,
+        failOnError: false)
+}
+
+task formatFunctionTestResults(dependsOn: functionTests) << {
+    ant.taskdef(
+        name:"testReport", 
+        classname: "com.centurylink.mdw.ant.taskdef.AutoTestReport", 
+        classpath: configurations.test.asPath)
+    ant.testReport(
+        todir: "../mdw-workflow/testResults",
+        testOutputFile: "../mdw-workflow/testResults/mdw-function-test-results.xml", 
+        xslFile: "../mdw-workflow/assets/com/centurylink/mdw/testing/function-test-results.xsl",
+        emailRecipients: "mdw.development@centurylink.com") {
+            report(todir: "../mdw-workflow/testResults", format: "noframes")
+        }
+    ant.move(
+        file: "../mdw-workflow/testResults/junit-noframes.html",
+        tofile: "../mdw-workflow/testResults/mdw-function-test-results.html")
+}
+
+task publishFunctionTestResults(type: Copy) {
+    dependsOn(formatFunctionTestResults)
+    from "../mdw-workflow/testResults"
+    into "${testResultsPublishDir}"
+    include "mdw-function-test-results.html"
+    rename("mdw-function-test-results.html", "mdw-function-test-results-${mdwVersion}.html")
+}
+
+task autoTest(dependsOn: [functionTests]) << {
+    println "*** MDW ${mdwVersion} automated test execution ***"
+}
+
+task autoTestAndPublish(dependsOn: [publishFunctionTestResults]) << {
+    println "*** MDW ${mdwVersion} automated test execution ***"
+    println "    Function Test results summary: " + functionTestPublishUrl + "-${mdwVersion}.html"
+}

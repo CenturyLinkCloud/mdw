@@ -81,7 +81,7 @@ public abstract class RestService {
                         if (workgroups != null && !userInGroups(user, workgroups)) {
                             // Put a decent message if it's a workgroups issue
                             throw new AuthorizationException(HTTP_401_UNAUTHORIZED,
-                                        "User: " + userId + " not authorized for groups " + workgroups + " for " + this.getClass().getSimpleName() + "/" + path);
+                                        "User: " + userId + " not authorized for groups " + workgroups + " for: " + path);
                         }
                         return user;
                     }
@@ -89,7 +89,7 @@ public abstract class RestService {
                 }
             }
             throw new AuthorizationException(HTTP_401_UNAUTHORIZED,
-                    "User: " + userId + " not authorized for: " + this.getClass().getSimpleName() + "/" + path);
+                    "User: " + userId + " not authorized for: " + path);
         }
         catch (CachingException ex) {
             throw new AuthorizationException(ex.getMessage(), ex);

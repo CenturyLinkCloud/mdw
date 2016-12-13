@@ -285,13 +285,15 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     public Long createDocument(Document doc, Package pkg) throws SQLException {
         Long docId = db.isMySQL() ? null : getNextId("MDW_COMMON_INST_ID_SEQ");
         String query = "insert into DOCUMENT " +
-            "(DOCUMENT_ID, CREATE_DT, DOCUMENT_TYPE, OWNER_TYPE, OWNER_ID) " +
-            "values (?, " + now() + ", ?, ?, ?)";
-        Object[] args = new Object[4];
+            "(DOCUMENT_ID, CREATE_DT, DOCUMENT_TYPE, OWNER_TYPE, OWNER_ID, STATUS_CODE, STATUS_MESSAGE) " +
+            "values (?, " + now() + ", ?, ?, ?, ?, ?)";
+        Object[] args = new Object[6];
         args[0] = docId;
         args[1] = doc.getDocumentType();
         args[2] = doc.getOwnerType();
         args[3] = doc.getOwnerId();
+        args[4] = doc.getStatusCode();
+        args[5] = doc.getStatusMessage();
         if (db.isMySQL())
             docId = db.runInsertReturnId(query, args);
         else
@@ -362,12 +364,14 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     }
 
     public void updateDocumentInfo(Document docvo) throws SQLException {
-        String query = "update DOCUMENT set DOCUMENT_TYPE=?, OWNER_TYPE=?, OWNER_ID=? where DOCUMENT_ID=?";
-        Object[] args = new Object[4];
+        String query = "update DOCUMENT set DOCUMENT_TYPE=?, OWNER_TYPE=?, OWNER_ID=?, STATUS_CODE=?, STATUS_MESSAGE=? where DOCUMENT_ID=?";
+        Object[] args = new Object[6];
         args[0] = docvo.getDocumentType();
         args[1] = docvo.getOwnerType();
         args[2] = docvo.getOwnerId();
         args[3] = docvo.getDocumentId();
+        args[4] = docvo.getStatusCode();
+        args[5] = docvo.getStatusMessage();
         db.runUpdate(query, args);
     }
 

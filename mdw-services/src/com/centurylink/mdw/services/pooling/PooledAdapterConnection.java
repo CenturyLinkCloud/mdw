@@ -12,7 +12,7 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 
 /**
  * An instance of this class represents a connection in a connection pool.
- * 
+ *
  * From the connection to the external systems point of view,
  * the pooled connections can implement one of the two styles:
  *  a) one-connection-for-all: keep the same connection for all usage.
@@ -21,16 +21,16 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
  *  b) one-connection-per-call: create a connection on each call. In this style,
  *      the invoke() method here invokes openConnection() and closeConnection()
  *      of the adapter around its invoke() method.
- * 
+ *
  *
  */
 public class PooledAdapterConnection extends PooledConnection {
-    
+
     private AdapterConnectionPool pool;
     private PoolableAdapter adapter;
     private Object connection;        // object returned by openConnection, typically the same as adapter
     private boolean one_connection_for_all;
-    
+
     /**
      * @throws Exception
      */
@@ -47,21 +47,21 @@ public class PooledAdapterConnection extends PooledConnection {
     public void destroy() {
         if (one_connection_for_all) adapter.closeConnection(connection);
     }
-    
+
     /**
      * This is used in the client code using the connection.
      * You must invoke this method when the call is finished,
      * to return the connection to the pool.
-     * It is recommended to put this call in the "finally" 
+     * It is recommended to put this call in the "finally"
      * arm of a "try" construct that get the connection,
      * to ensure the connection is always returned.
      */
     public final void returnConnection(int exceptionCode) {
         pool.returnToPool(this, exceptionCode);
     }
-    
+
     /**
-     * 
+     *
      * @param message
      * @param timeout
      * @param metainfo per-call meta data such as correlation ID
@@ -69,22 +69,22 @@ public class PooledAdapterConnection extends PooledConnection {
      * @throws ConnectionException when there is a retriable error
      * @throws AdapterException when there is a non-retriable error
      */
-    public String invoke(String message, int timeout, Map<String,String> metainfo) 
+    public String invoke(String message, int timeout, Map<String,String> metainfo)
     throws ConnectionException, AdapterException {
         if (one_connection_for_all) {
-            return adapter.doInvoke(connection, message, timeout, metainfo);
+            return adapter.doInvoke(connection, message, timeout, metainfo).getContent();
         } else {
             Object connection = null;
             try {
                 connection = adapter.openConnection();
-                String response = adapter.doInvoke(connection, message, timeout, metainfo);
+                String response = adapter.doInvoke(connection, message, timeout, metainfo).getContent();
                 return response;
             } finally {
                 if (connection!=null) adapter.closeConnection(connection);
             }
         }
     }
-    
+
     /**
      * This method is used for auto-shutdown and restart.
      * @return true if the connection is up, and false if it is still down.
@@ -104,5 +104,5 @@ public class PooledAdapterConnection extends PooledConnection {
             }
         }
     }
-    
+
 }
