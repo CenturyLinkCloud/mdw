@@ -1,4 +1,6 @@
 // groovy-return-vals
 start process("GroovyReturnVals")
 wait process
-verify process
+verify process {
+    resultsById = true
+}
