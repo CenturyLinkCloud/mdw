@@ -19,6 +19,7 @@ import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.AdapterInvocationError;
 import com.centurylink.mdw.adapter.PoolableAdapter;
 import com.centurylink.mdw.adapter.SimulationResponse;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
@@ -27,6 +28,7 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
@@ -225,7 +227,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
             throw (AdapterException)errorCause;
         if (errorCause instanceof ConnectionException)
             throw (ConnectionException)errorCause;
-        throw new AdapterException(AdapterActivityBase.APPLICATION_ERROR, errorCause.getMessage(), errorCause);
+        throw new AdapterException(ServiceException.INTERNAL_ERROR, errorCause.getMessage(), errorCause);
     }
 
     /**
@@ -307,11 +309,12 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
             if (isStubbing) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
-                    responseData = stubber.getStubResponse(getMasterRequestId(), requestData);
+                    AdapterStubRequest stubRequest = new AdapterStubRequest(getMasterRequestId(), requestData);
+                    responseData = stubber.getStubResponse(getMasterRequestId(), stubRequest.getJson().toString(2));
                     if (((AdapterStubResponse)responseData).isPassthrough()) {
                         loginfo("Stub server instructs to get real response");
                         isStubbing = false;
-                        connection = this.openConnection();
+                        connection = openConnection();
                         responseData = doInvoke(connection, requestData, getTimeoutForResponse(), getRequestHeaders());
                     } else {
                         loginfo("Response received from stub server");
@@ -343,7 +346,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
     protected int getErrorCode(Throwable ex) {
         if (ex instanceof AdapterException) return ((AdapterException)ex).getErrorCode();
         if (ex instanceof ConnectionException) return ((ConnectionException)ex).getCode();
-        return AdapterActivityBase.APPLICATION_ERROR;
+        return ServiceException.INTERNAL_ERROR;
     }
 
     /**
@@ -584,7 +587,8 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
             connection = openConnection();
             return doInvoke(connection, request, timeout, meta_data);
         } finally {
-            if (connection != null) closeConnection(connection);
+            if (connection != null)
+                closeConnection(connection);
         }
     }
 

@@ -52,7 +52,7 @@ public class HttpServiceAdapter extends PoolableAdapterBase {
             response.setStatusCode(httpConn.getResponseCode());
             response.setStatusMessage(httpConn.getResponseMessage());
         }
-        return new Response(responseString);
+        return response;
     }
 
 

@@ -11,7 +11,6 @@ import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.Response;
-import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.soccom.SoccomClient;
@@ -37,7 +36,7 @@ public class StubHelper {
             String port = spec.length > 1 ? spec[1] : AdapterActivity.DEFAULT_STUBBER_PORT;
             int timeoutSecs = spec.length > 2 ? Integer.parseInt(spec[2]) : AdapterActivity.DEFAULT_STUBBER_TIMEOUT;
             client = new SoccomClient(host, port, null);
-            client.putreq(new AdapterStubRequest(masterRequestId, request).getJson().toString(2));
+            client.putreq(request);
             String responseString = client.getresp(timeoutSecs);
             JSONObject json = new JSONObject(responseString);
             Response response;

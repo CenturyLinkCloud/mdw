@@ -1,6 +1,8 @@
 // soap-listener
 send message("SOAP") {
-    payload = file("GetEmployeeSoap.xml").text
+    payload = asset("GetEmployeeSoap.xml").text
 }
 
-verify response file("GetEmployeeResponseSoap.xml")
+verify response {
+    asset("GetEmployeeResponseSoap.xml").text
+}

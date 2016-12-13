@@ -30,7 +30,7 @@ public class ActivityStubRequest implements Jsonable {
         JSONObject json = new JSONObject();
         JSONObject stubRequestJson = new JSONObject();
         if (runtimeContext != null)
-            json.put("runtimeContext", runtimeContext.getJson());
+            stubRequestJson.put("runtimeContext", runtimeContext.getJson());
         json.put(JSON_NAME, stubRequestJson);
         return json;
     }

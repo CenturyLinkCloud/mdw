@@ -42,7 +42,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
     protected Process processVO;
     public Process getProcess() { return processVO; }
 
-    private ProcessInstance processInstanceVO;
+    protected ProcessInstance processInstanceVO;
     public ProcessInstance getProcessInstance() { return processInstanceVO; }
 
     /**

@@ -3,6 +3,7 @@
  */
 package com.centurylink.mdw.workflow.adapter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,13 +15,17 @@ import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.AdapterInvocationError;
 import com.centurylink.mdw.adapter.HeaderAwareAdapter;
 import com.centurylink.mdw.adapter.SimulationResponse;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.event.AdapterStubRequest;
+import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Process;
@@ -49,10 +54,6 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
     protected static final String REQUEST_XSD = "REQUEST_XSD";
     protected static final String RESPONSE_XSD = "RESPONSE_XSD";
 
-    protected static final int APPLICATION_ERROR = 41371;  // try to be unique
-
-    private static Random random = null;
-
     /**
      * Subclasses do not have to but may override this method.
      * If you do override this method, you have to include
@@ -79,39 +80,42 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
     @Override
     public void execute() throws ActivityException {
         Object requestData = this.getRequestData();
-        Object responseData = null;
+        Response responseData = null;
         Object connection = null;
         StubHelper stubber = new StubHelper();
         boolean stubMode = stubber.isStubbing() || isStubMode();
         boolean logging = doLogging();
         try {
+            String requestString = externalRequestToString(requestData);
             if (logging && requestData != null)
-                logMessage(externalRequestToString(requestData), false);
+                logRequest(requestString);
             if (stubMode) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
-                    responseData = stubber.getStubResponse(getMasterRequestId(), requestData.toString());
-                    if (MAKE_ACTUAL_CALL.equals(responseData)) {
+                    AdapterStubRequest stubRequest = new AdapterStubRequest(getMasterRequestId(), requestString);
+                    responseData = stubber.getStubResponse(getMasterRequestId(), stubRequest.getJson().toString(2));
+                    if (((AdapterStubResponse)responseData).isPassthrough()) {
                         loginfo("Stub server instructs to get real response");
-                        connection = this.openConnection();
+                        connection = openConnection();
                         responseData = doInvoke(connection, requestData);
                     }
                     else {
                         loginfo("Response received from stub server");
+                        responseData.setObject(responseData.getContent()); // populate object
                     }
                 }
                 else {
-                    responseData = this.getStubResponse(requestData);
+                    responseData = getStubbedResponse(requestData);
                 }
             }
             else {
                 connection = this.openConnection();
                 responseData = doInvoke(connection, requestData);
             }
-            if (logging && responseData != null)
-                logMessage(externalResponseToString(responseData), true);
-            handleAdapterSuccess(responseData);
-            executePostScript(responseData);
+            if (logging && !responseData.isEmpty())
+                logResponse(responseData.getContent());
+            handleAdapterSuccess(responseData.getObject());
+            executePostScript(responseData.getObject());
         } catch (Exception ex) {
             this.handleAdapterInvocationError(ex);
         } finally {
@@ -243,8 +247,12 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
             isErrorRetryable = adEx.isRetryableError();
             if (adEx.getErrorCode() != 0) {
                 errorCode = adEx.getErrorCode();
-            } else errorCode = APPLICATION_ERROR;
-        } else if (errorCause instanceof ConnectionException) {
+            }
+            else {
+                errorCode = ServiceException.INTERNAL_ERROR;
+            }
+        }
+        else if (errorCause instanceof ConnectionException) {
             errorCode = ((ConnectionException)errorCause).getCode();
             // if process is invoked sync style, no need to retry due to connection failure
             Process procVO = getProcessDefinition();
@@ -253,10 +261,12 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
                 return;
             }
             isErrorRetryable = true;
-        } else {
-            errorCode = APPLICATION_ERROR;
+        }
+        else {
+            errorCode = ServiceException.INTERNAL_ERROR;
             isErrorRetryable = false;
         }
+
         if (isErrorRetryable) {
             super.setReturnCode(ActivityResultCodeConstant.RESULT_RETRY);
         }
@@ -284,13 +294,32 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
          return "Adapter invocation exception";
     }
 
-    protected Long logMessage(String message, boolean isResponse) {
-        if (message == null || message.isEmpty())
-            return null;
+    protected Long logRequest(String message) {
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
-                    isResponse ? OwnerType.ADAPTER_RESPONSE : OwnerType.ADAPTER_REQUEST,
-                    this.getActivityInstanceId());
+                    OwnerType.ADAPTER_REQUEST, getActivityInstanceId());
+            return docref.getDocumentId();
+        } catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            return null;
+        }
+    }
+
+    protected Long logResponse(String message) {
+        try {
+            DocumentReference docref = createDocument(String.class.getName(), message,
+                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
+            return docref.getDocumentId();
+        } catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            return null;
+        }
+    }
+
+    protected Long logResponse(Response response) {
+        try {
+            DocumentReference docref = createDocument(String.class.getName(), response.getContent(),
+                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId(), response.getStatusCode(), response.getStatusMessage());
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -316,7 +345,8 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
      * @return serialized form of the response
      */
     protected String externalResponseToString(Object responseData) {
-        if (responseData==null) return null;
+        if (responseData == null)
+            return null;
         return responseData.toString();
     }
 
@@ -337,12 +367,27 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
     }
 
     /**
-     * Return stubbed response from external system.
-     *
-     * @param requestData
-     * @return
+     * @deprecated Use {@link #getStubbedResponse(String) getStubbedResponse}
      */
-    protected Object getStubResponse(Object requestData) {
+    @Deprecated
+    protected String getStubResponse(String requestData) {
+        return null;
+    }
+
+    private static Random random = null;
+    /**
+     * Return stubbed response from external system.
+     */
+    protected Response getStubbedResponse(Object requestObject) {
+        // compatibility
+        String resp = getStubResponse(externalRequestToString(requestObject));
+        if (resp != null) {
+            Response oldStubbed = new Response();
+            oldStubbed.setObject(resp);
+            oldStubbed.setContent(externalResponseToString(resp));
+            return oldStubbed;
+        }
+
         List<SimulationResponse> responses = new ArrayList<SimulationResponse>();
         for (Attribute attr : this.getAttributes()) {
             if (attr.getAttributeName().startsWith(WorkAttributeConstant.SIMULATION_RESPONSE)) {
@@ -351,26 +396,43 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
             }
         }
         String unfilteredResponse = null;
-        if (responses.size()==0) unfilteredResponse = null;
-        else if (responses.size()==1) {
+        String returnCode = null;
+        if (responses.size() == 0) {
+            unfilteredResponse = null;
+        }
+        else if (responses.size() == 1) {
             unfilteredResponse = responses.get(0).getResponse();
-        } else {    // randomly pick a response based on chances
+            returnCode = responses.get(0).getReturnCode();
+        }
+        else {    // randomly pick a response based on chances
             int total_chances = 0;
             for (SimulationResponse r : responses) {
                 total_chances += r.getChance().intValue();
             }
-            if (random==null) random = new Random();
+            if (random == null)
+                random = new Random();
             int ran = random.nextInt(total_chances);
             int k = 0;
             for (SimulationResponse r : responses) {
-                if (ran>=k && ran<k+r.getChance().intValue()) {
+                if (ran >= k && ran < k + r.getChance().intValue()) {
                     unfilteredResponse = r.getResponse();
                     break;
                 }
                 k += r.getChance().intValue();
             }
         }
-        return filter(unfilteredResponse, requestData);
+        Response response = new Response();
+        String filtered = filter(unfilteredResponse, requestObject);
+        response.setObject(filtered);
+        response.setContent(filtered);
+        if (returnCode != null) {
+            try {
+                response.setStatusCode(Integer.parseInt(returnCode));
+            }
+            catch (NumberFormatException ex) {
+            }
+        }
+        return response;
     }
 
     /**
@@ -430,7 +492,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
     protected abstract Object invoke(Object pConnection, Object request)
     throws AdapterException,ConnectionException;
 
-    private Object doInvoke(Object connection, Object request)
+    private Response doInvoke(Object connection, Object request)
             throws AdapterException, ConnectionException {
         // TODO change method signature in MDW 6 to avoid try/catch
         try {
@@ -451,8 +513,13 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
             Object altResponse = null;
             for (AdapterMonitor monitor : monitors) {
                 altResponse = monitor.onInvoke(runtimeContext, request, headers);
-                if (altResponse != null)
-                    return altResponse;
+                if (altResponse != null) {
+                    // TODO monitor full Response
+                    Response alt = new Response();
+                    alt.setObject(altResponse);
+                    alt.setContent(externalResponseToString(altResponse));
+                    return alt;
+                }
             }
 
             Object response;
@@ -467,15 +534,32 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
 
             for (AdapterMonitor monitor : monitors) {
                 altResponse = monitor.onResponse(getRuntimeContext(), response, responseHeaders);
-                if (altResponse != null)
+                if (altResponse != null) {
+                    // TODO monitor full Response
                     response = altResponse;
+                }
             }
-            return response;
+
+            return getResponse(connection, response);
+        }
+        catch (IOException ex) {
+            throw new AdapterException(ex.getMessage(), ex);
         }
         catch (ActivityException ex) {
             throw new AdapterException(ex.getMessage(), ex);
         }
     }
+
+    /**
+     * Override to set protocol response status/message.
+     */
+    protected Response getResponse(Object connection, Object responseObject) throws IOException {
+        Response response = new Response();
+        response.setObject(responseObject);
+        response.setContent(externalResponseToString(responseObject));
+        return response;
+    }
+
 
     /**
      * Open a connection to the external system.
@@ -510,14 +594,14 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
      * @throws AdapterException
      * @throws ConnectionException
      */
-    public Object directInvoke(ActivityRuntimeContext runtimeContext, Object request)
+    public Response directInvoke(ActivityRuntimeContext runtimeContext, Object request)
             throws AdapterException, ConnectionException {
 
         prepare(runtimeContext);
 
         if (isStubMode()) {
             logger.info("Adapter is running in StubMode. AdapterName:" + this.getClass().getName());
-            return getStubResponse(request);
+            return getStubbedResponse(request);
         }
         else {
             Object connection = null;
@@ -525,13 +609,17 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
                 connection = openConnection();
                 if (doLogging()){
                      String requestString = externalRequestToString(request);
-                     logMessage(requestString, false);
+                     logRequest(requestString);
                 }
-                Object response = invoke(connection, request);
-                if (response != null && doLogging()) {
-                     String responseString = externalResponseToString(response);
-                     logMessage(responseString, true);
+                Object responseObj = invoke(connection, request);
+                String responseString = externalResponseToString(responseObj);
+                if (responseObj != null && doLogging()) {
+                     responseString = externalResponseToString(responseObj);
+                     logResponse(responseString);
                 }
+                Response response = new Response();
+                response.setObject(responseObj);
+                response.setContent(responseString);
                 return response;
             }
             finally {

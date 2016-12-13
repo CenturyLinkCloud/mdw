@@ -1,4 +1,4 @@
-#Tue Nov 15 12:08:04 IST 2016
+#Mon Dec 12 17:36:31 MST 2016
 A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=2
 CrossmapTest.proc=1
@@ -190,7 +190,7 @@ test-subprocess-variable.test=3
 test-subprocess-variable.yaml=2
 tester-ping.xml=2
 tester-pong.xml=2
-tester-substitution.test=2
+tester-substitution.test=3
 tester-substitution.yaml=1
 timer-wait-activity-order.test=1
 timer-wait-activity-order.yaml=1

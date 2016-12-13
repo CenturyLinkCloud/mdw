@@ -28,8 +28,9 @@ public class TestCaseActivityMonitor implements ActivityMonitor {
     public String onExecute(ActivityRuntimeContext runtimeContext) {
         if (stubber.isStubbing()) {
             try {
-                String stubRequest = runtimeContext.getJson().toString(2);
-                ActivityStubResponse stubResponse = (ActivityStubResponse)stubber.getStubResponse(runtimeContext.getMasterRequestId(), stubRequest);
+                ActivityStubRequest stubRequest = new ActivityStubRequest(runtimeContext);
+                ActivityStubResponse stubResponse = (ActivityStubResponse) stubber.getStubResponse(
+                        runtimeContext.getMasterRequestId(), stubRequest.getJson().toString(2));
                 if (stubResponse.isPassthrough()) {
                     runtimeContext.logInfo("Stubber executing activity: " + runtimeContext.getActivityLogicalId());
                     return null;

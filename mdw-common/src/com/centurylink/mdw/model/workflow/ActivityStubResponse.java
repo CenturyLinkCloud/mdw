@@ -42,10 +42,10 @@ public class ActivityStubResponse extends Response implements Jsonable {
             delay = json.getInt("delay");
         else if (json.has("sleep"))
             delay = json.getInt("sleep");
-        if (json.has("passthrough"))
-            passthrough = json.getBoolean("passthrough");
         if (json.has("variables"))
             variables = JsonUtil.getMap(json.getJSONObject("variables"));
+        if (json.has("passthrough"))
+            passthrough = json.getBoolean("passthrough");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -54,10 +54,10 @@ public class ActivityStubResponse extends Response implements Jsonable {
             json.put("resultCode", resultCode);
         if (delay > 0)
             json.put("delay", delay);
-        if (passthrough)
-            json.put("passthrough", passthrough);
         if (variables != null)
             json.put("variables", JsonUtil.getJson(variables));
+        if (passthrough)
+            json.put("passthrough", passthrough);
         return json;
     }
 

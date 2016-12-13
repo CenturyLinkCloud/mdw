@@ -14,6 +14,13 @@ public class Response implements Jsonable {
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
+    /**
+     * Response content as object (for non-Poolable Adapter).
+     */
+    private Object object;
+    public Object getObject() { return object; }
+    public void setObject(Object object) { this.object = object; }
+
     private Integer statusCode;
     public Integer getStatusCode() { return statusCode; }
     public void setStatusCode(Integer code) { this.statusCode = code; }
@@ -21,6 +28,9 @@ public class Response implements Jsonable {
     private String statusMessage;
     public String getStatusMessage() { return statusMessage; }
     public void setStatusMessage(String message) { this.statusMessage = message; }
+
+    public Response() {
+    }
 
     public Response(String content) {
         this.content = content;
