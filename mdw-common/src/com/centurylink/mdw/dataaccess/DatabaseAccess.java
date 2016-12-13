@@ -25,6 +25,8 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
 public class DatabaseAccess {
@@ -61,10 +63,9 @@ public class DatabaseAccess {
 
     private boolean isEmbedded;
 
-    private MongoClient mongoClient;
-    private MongoDatabase mongoDb;
-    public MongoDatabase getMongoDb() {
-        return mongoDb;
+    private static MongoClient mongoClient;
+    public static MongoDatabase getMongoDb() {
+        return mongoClient.getDatabase("mdw");
     }
 
     /**
@@ -114,6 +115,9 @@ public class DatabaseAccess {
                 LoggerUtil.getStandardLogger().severeException("Failed to start embedded DB: " + INTERNAL_DATA_SOURCE, ex);
             }
         }
+
+        // Check for MongoDB and open client
+        openMongoDbClient();
     }
 
     public DatabaseAccess(String dbName, Map<String,String> connectParams) {
@@ -225,32 +229,21 @@ public class DatabaseAccess {
         }
         connection.setAutoCommit(false);
 
-        // Check for MongoDB and open connection
-        openMongoDbConnection();
-
         return connection;
     }
 
-    private void openMongoDbConnection() {
-     // Check for MongoDB and open connection
+    private static synchronized void openMongoDbClient() {
         if (mongoClient == null) {
             String mongoHost = PropertyManager.getProperty("mdw.mongodb.host");
             if (mongoHost != null) {
                 int mongoPort = PropertyManager.getIntegerProperty("mdw.mongodb.port", 27017);
-                mongoClient = new MongoClient(mongoHost, mongoPort);
-                mongoDb = mongoClient.getDatabase("mdw");
-            }
-        }
-    }
-
-    private void closeMongoDbConnection() {
-        if (mongoClient != null) {
-            try {
-                mongoClient.close();
-            }
-            catch (Throwable e) {}
-            finally {
-                mongoClient = null;
+                int maxConnections = PropertyManager.getIntegerProperty("mdw.mongodb.poolsize", PropertyManager.getIntegerProperty("mdw.database.poolsize", 100));
+                MongoClientOptions.Builder options = MongoClientOptions.builder();
+                options.socketKeepAlive(true);
+                if (maxConnections > 100)
+                    options.connectionsPerHost(maxConnections);
+                mongoClient = new MongoClient(new ServerAddress(mongoHost, mongoPort), options.build());
+                LoggerUtil.getStandardLogger().info(mongoClient.getMongoClientOptions().toString());
             }
         }
     }
@@ -281,7 +274,6 @@ public class DatabaseAccess {
             }
         } catch (Throwable e) {
         }
-        closeMongoDbConnection();
     }
 
     public boolean isDefaultDatabase() {
@@ -313,7 +305,6 @@ public class DatabaseAccess {
             return !connection.isClosed();
         } catch (SQLException e) {
             connection = null;
-            closeMongoDbConnection();
             return false;
         }
     }
@@ -469,7 +460,6 @@ public class DatabaseAccess {
      */
     public void setConnection(Connection conn) {
         connection = conn;
-        openMongoDbConnection();
     }
 
     public long getDatabaseTime() throws SQLException {
@@ -539,10 +529,5 @@ public class DatabaseAccess {
 
     public String toString() {
         return database_name;
-    }
-
-    // This is to close MongoDb connection when Object is being destroyed by GC
-    protected void finalize( ) throws Throwable {
-        closeMongoDbConnection();
     }
 }

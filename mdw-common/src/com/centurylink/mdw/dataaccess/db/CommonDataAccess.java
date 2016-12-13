@@ -17,6 +17,8 @@ import javax.sql.XAConnection;
 import javax.transaction.Status;
 import javax.transaction.TransactionManager;
 
+import org.bson.json.JsonWriterSettings;
+
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DataAccessOfflineException;
@@ -419,14 +421,14 @@ public class CommonDataAccess {
             vo.setOwnerType(rs.getString("OWNER_TYPE"));
             vo.setOwnerId(rs.getLong("OWNER_ID"));
             boolean foundInMongo = false;
-            if (db.getMongoDb() != null) {
+            if (DatabaseAccess.getMongoDb() != null) {
                 CodeTimer timer = new CodeTimer("Load mongodb doc", true);
-                MongoCollection<org.bson.Document> mongoCollection = db.getMongoDb().getCollection(vo.getOwnerType());
+                MongoCollection<org.bson.Document> mongoCollection = DatabaseAccess.getMongoDb().getCollection(vo.getOwnerType());
                 org.bson.Document mongoQuery = new org.bson.Document("_id", vo.getDocumentId());
                 org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                 if (c != null) {
-                    if ("true".equals(c.getString("isJSON")))
-                        vo.setContent(c.get("CONTENT", org.bson.Document.class).toJson());
+                    if (c.getBoolean("isJSON", false))
+                        vo.setContent(c.get("CONTENT", org.bson.Document.class).toJson(new JsonWriterSettings(true)));
                     else
                         vo.setContent(c.getString("CONTENT"));
                     foundInMongo = true;

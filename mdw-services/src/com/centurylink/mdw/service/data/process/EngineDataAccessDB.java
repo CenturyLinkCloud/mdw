@@ -281,7 +281,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         return createDocument(doc, null);
     }
 
-    boolean hasMongo() { return (db != null && db.getMongoDb() != null); }
+    boolean hasMongo() { return (DatabaseAccess.getMongoDb() != null); }
     public Long createDocument(Document doc, Package pkg) throws SQLException {
         Long docId = db.isMySQL() ? null : getNextId("MDW_COMMON_INST_ID_SEQ");
         String query = "insert into DOCUMENT " +
@@ -300,18 +300,18 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             db.runUpdate(query, String.valueOf(args));
         doc.setDocumentId(docId);
         if (hasMongo()) {
-            MongoCollection<org.bson.Document> collection = db.getMongoDb().getCollection(doc.getOwnerType());
+            MongoCollection<org.bson.Document> collection = DatabaseAccess.getMongoDb().getCollection(doc.getOwnerType());
             org.bson.Document myDoc = null;
             if (doc.getContent(pkg).trim().startsWith("{") && doc.getContent(pkg).trim().endsWith("}")) {
                 try {
                     org.bson.Document myJsonDoc = org.bson.Document.parse(doc.getContent(pkg)); // Parse JSON to create BSON CONTENT Document
                     if (!myJsonDoc.isEmpty())
-                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("_id", docId).append("isJSON", "true"); // Plus append _id and isJSON:true field
+                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("_id", docId).append("isJSON", true); // Plus append _id and isJSON:true field
                 }
                 catch (Throwable ex) {myDoc=null;}  // Assume not JSON then
             }
             if (myDoc == null)   // Create BSON document with Raw content if it wasn't JSON, plus append _id and isJSON:false
-                myDoc = new org.bson.Document("CONTENT", doc.getContent(pkg)).append("_id", docId).append("isJSON", "false");
+                myDoc = new org.bson.Document("CONTENT", doc.getContent(pkg)).append("_id", docId).append("isJSON", false);
 
             collection.insertOne(myDoc);
         }
@@ -337,18 +337,18 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         db.runUpdate(query, documentId);
         boolean inMongo = false;  // not found (compatibility)
         if (hasMongo() && owner_type.length() > 0) {
-            MongoCollection<org.bson.Document> collection = db.getMongoDb().getCollection(owner_type);
+            MongoCollection<org.bson.Document> collection = DatabaseAccess.getMongoDb().getCollection(owner_type);
             org.bson.Document myDoc = null;
             if (content.trim().startsWith("{") && content.trim().endsWith("}")) {
                 try {
                     org.bson.Document myJsonDoc = org.bson.Document.parse(content); // Parse JSON to create BSON CONTENT Document
                     if (!myJsonDoc.isEmpty())
-                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("isJSON", "true"); // Plus append isJSON:true field
+                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("isJSON", true); // Plus append isJSON:true field
                 }
                 catch (Throwable ex) {myDoc=null;}  // Assume not JSON then
             }
             if (myDoc == null)   // Create BSON document with Raw content if it wasn't JSON plus append isJSON:false
-                myDoc = new org.bson.Document("CONTENT", content).append("isJSON", "false");
+                myDoc = new org.bson.Document("CONTENT", content).append("isJSON", false);
             if (collection.findOneAndReplace(eq("_id", documentId), myDoc) != null)
                 inMongo = true;
         }
