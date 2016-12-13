@@ -4,5 +4,5 @@ send message("SOAP") {
 }
 
 verify response {
-    asset("GetEmployeeResponseSoap.xml").text
+    expected = asset("GetEmployeeResponseSoap.xml").text
 }
