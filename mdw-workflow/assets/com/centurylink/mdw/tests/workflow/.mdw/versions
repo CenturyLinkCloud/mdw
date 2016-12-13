@@ -1,4 +1,4 @@
-#Mon Dec 12 17:36:31 MST 2016
+#Tue Dec 13 12:09:25 MST 2016
 A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=2
 CrossmapTest.proc=1
@@ -113,8 +113,8 @@ event-wait-timeout-2.test=2
 event-wait-timeout-2.yaml=1
 event-wait-waiting-before-start.test=1
 event-wait-waiting-before-start.yaml=1
-groovy-return-vals.test=1
-groovy-return-vals.yaml=1
+groovy-return-vals.test=2
+groovy-return-vals.yaml=2
 javascript-1.test=1
 javascript-1.yaml=1
 jsonToJson.groovy=1
@@ -154,7 +154,7 @@ send-message-verify-process.test=1
 send-rest-message-verify-process.test=1
 service-heteroproc-parallel-action.xml=2
 service-heteroproc-parallel-response.xml=1
-service-heteroproc-parallel.test=5
+service-heteroproc-parallel.test=6
 service-heteroproc-parallel.yaml=3
 service-heteroproc-sequential.test=1
 service-heteroproc-sequential.yaml=2
