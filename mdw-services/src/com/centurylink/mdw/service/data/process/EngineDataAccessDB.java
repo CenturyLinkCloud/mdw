@@ -369,9 +369,9 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         args[0] = docvo.getDocumentType();
         args[1] = docvo.getOwnerType();
         args[2] = docvo.getOwnerId();
-        args[3] = docvo.getDocumentId();
-        args[4] = docvo.getStatusCode();
-        args[5] = docvo.getStatusMessage();
+        args[3] = docvo.getStatusCode();
+        args[4] = docvo.getStatusMessage();
+        args[5] = docvo.getDocumentId();
         db.runUpdate(query, args);
     }
 

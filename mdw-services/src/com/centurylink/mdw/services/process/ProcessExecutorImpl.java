@@ -240,8 +240,10 @@ class ProcessExecutorImpl {
     void updateDocumentContent(DocumentReference docref, Object doc, String type) throws DataAccessException {
         try {
             Document docvo = edao.getDocument(docref.getDocumentId(), false);
-            if (doc instanceof String) docvo.setContent((String)doc);
-            else docvo.setObject(doc, type);
+            if (doc instanceof String)
+                docvo.setContent((String)doc);
+            else
+                docvo.setObject(doc, type);
             edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent());
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update document content", e);
@@ -1933,9 +1935,12 @@ class ProcessExecutorImpl {
                                         throw new ProcessException("Process '" + processVO.getLabel() + "' has no such input variable defined: " + varName);
                                     if (processInstance.getVariable(varName) != null)
                                         throw new ProcessException("Process '" + processVO.getLabel() + "' input variable already populated: " + varName);
-                                    if (varVO.isDocument()) {
-                                        DocumentReference docRef = createDocument(varVO.getVariableType(), OwnerType.VARIABLE_INSTANCE, new Long(0), updated.get(varName));
+                                    if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), varVO.getVariableType())) {
+                                        DocumentReference docRef = createDocument(varVO.getVariableType(), OwnerType.VARIABLE_INSTANCE, new Long(0),
+                                                updated.get(varName));
                                         VariableInstance varInst = createVariableInstance(processInstance, varName, docRef);
+                                        updateDocumentInfo(docRef, processVO.getVariable(varInst.getName()).getVariableType(), OwnerType.VARIABLE_INSTANCE,
+                                                varInst.getInstanceId(), null, null);
                                         processInstance.getVariables().add(varInst);
                                     }
                                     else {
