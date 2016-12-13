@@ -68,12 +68,12 @@ testingMod.controller('TestsController', ['$scope', 'AutomatedTests', 'TestExec'
     for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
       for (var j = 0; j < $scope.testCaseList.packages[i].testCases.length; j++) {
         if ($scope.testCaseList.packages[i].testCases[j].selected)
-        testsToRun[i] = { name: $scope.testCaseList.packages[i].testCases[j].name };
+          testsToRun[i] = { 'package': $scope.testCaseList.packages[i].name, name: $scope.testCaseList.packages[i].testCases[j].name };
       }
   }
     
     var testExec = {
-        suite: 'hello',
+        suite: 'Automated Tests',
         testCases: testsToRun
     };
     
