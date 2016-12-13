@@ -20,6 +20,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.centurylink.mdw.mobile.R;
+import com.centurylink.mdw.mobile.app.BadSettingsException;
 import com.centurylink.mdw.mobile.app.Settings;
 
 import java.net.URL;
@@ -80,9 +81,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        URL url = settings.getServerUrl();
-        Log.i(TAG, "Loading URL: " + url);
-        webView.loadUrl(url.toString());
+        try {
+            URL url = settings.getServerUrl();
+            Log.i(TAG, "Loading URL: " + url);
+            webView.loadUrl(url.toString());
+        } catch (BadSettingsException ex) {
+            Log.e(TAG, ex.getMessage(), ex);
+            Snackbar.make(webView, ex.toString(), Snackbar.LENGTH_LONG).show();
+        }
 
         // String url = settings.getServerUrl() + "/#/workflow";
 //        try {

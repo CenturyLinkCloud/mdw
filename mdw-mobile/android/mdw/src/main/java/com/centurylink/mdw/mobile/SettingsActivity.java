@@ -12,15 +12,19 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.MenuItem;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 
 
+import com.centurylink.mdw.mobile.app.BadSettingsException;
 import com.centurylink.mdw.mobile.app.Settings;
 
 public class SettingsActivity extends Activity {
+
+    private static final String TAG = SettingsActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,12 @@ public class SettingsActivity extends Activity {
                     return true;
                 }
             });
-            pref.setSummary(settings.getServerUrl().toString());
+
+            try {
+                pref.setSummary(settings.getServerUrl().toString());
+            } catch (BadSettingsException ex) {
+                Log.e(TAG, ex.getMessage(), ex);
+            }
         }
     }
 }
