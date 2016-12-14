@@ -25,6 +25,7 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -72,6 +73,8 @@ public abstract class RestService {
             String workgroup = headers.get(Listener.AUTHORIZATION_WORKGROUP);
             List<String> roles = getRoles(path);
             if (roles != null) {
+                if (roles.contains(Role.ANY))
+                    return user;
                 for (String role : roles) {
                     if ((workgroup == null && user.hasRole(role)) || (workgroup != null && user.hasRole(workgroup, role))) {
                         List<Workgroup> workgroups = getRequiredWorkgroups(content);
