@@ -9,6 +9,7 @@ process: # 13431
       Real
       Lookup?
     status: Completed
+    result: false
   activity: # 3 "2016-02-17 18:11:35"
     name: Lookup
     status: Completed

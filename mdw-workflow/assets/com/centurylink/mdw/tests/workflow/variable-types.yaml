@@ -14,33 +14,27 @@ process: # 21607
     name: inputJsonable
     value: |
       {
-        "_type": "com.centurylink.mdw.tests.workflow.Person",
-        "person": {
-          "firstName": "linus",
-          "lastName": "Torvalds"
-        }
+        "firstName": "linus",
+        "lastName": "Torvalds"
       }
   variable: # 39634
     name: inputYaml
     value: |
-      !!com.centurylink.mdw.tests.workflow.Person {
-        firstName: isaac,
-        lastName: Richards
-      }
+      {"status": {
+        "code": -1,
+        "message": "java.lang.ClassCastException: com.centurylink.mdw.tests.workflow.Person cannot be cast to com.centurylink.mdw.model.ExecutionPlan"
+      }}
   variable: # 39636
     name: localJsonable
     value: |
       {
-        "_type": "com.centurylink.mdw.tests.workflow.Person",
-        "person": {
-          "firstName": "donald",
-          "lastName": "oakes"
-        }
+        "firstName": "donald",
+        "lastName": "oakes"
       }
   variable: # 39637
     name: localYaml
     value: |
-      !!com.centurylink.mdw.tests.workflow.Person {
-        firstName: manoj,
-        lastName: agrawal
-      }
+      {"status": {
+        "code": -1,
+        "message": "java.lang.ClassCastException: com.centurylink.mdw.tests.workflow.Person cannot be cast to com.centurylink.mdw.model.ExecutionPlan"
+      }}

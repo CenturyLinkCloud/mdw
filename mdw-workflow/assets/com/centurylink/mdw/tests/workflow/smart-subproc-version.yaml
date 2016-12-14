@@ -27,6 +27,7 @@ process: # 13425
       Test
       Case?
     status: Completed
+    result: single
   activity: # 3 "2016-02-17 18:04:30"
     name: Invoke Single
     status: Completed

@@ -7,6 +7,7 @@ process: # 13552
   activity: # 8 "2016-02-19 14:52:30"
     name: which case?
     status: Completed
+    result: sequential
   activity: # 3 "2016-02-19 14:52:30"
     name: |
       create
@@ -36,25 +37,28 @@ process: # 13552
     name: execplan
     value: |
       <bpm:ProcessExecutionPlan xmlns:bpm="http://mdw.centurylink.com/bpm">
-        <bpm:SubprocessInstance>
-          <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
-          <bpm:InstanceId>${~\\d+}</bpm:InstanceId><bpm:StatusCode>4</bpm:StatusCode>
-          <bpm:Parameter Name="argument">11</bpm:Parameter>
-          <bpm:Parameter Name="result">121</bpm:Parameter>
-        </bpm:SubprocessInstance>
-        <bpm:SubprocessInstance>
-          <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
-          <bpm:InstanceId>${~\\d+}</bpm:InstanceId><bpm:StatusCode>4</bpm:StatusCode>
-          <bpm:Parameter Name="argument">13</bpm:Parameter>
-          <bpm:Parameter Name="result">169</bpm:Parameter>
-        </bpm:SubprocessInstance>
-        <bpm:SubprocessInstance>
-          <bpm:LogicalProcessName>SubProcess2</bpm:LogicalProcessName>
-          <bpm:InstanceId>${~\\d+}</bpm:InstanceId><bpm:StatusCode>4</bpm:StatusCode>
-          <bpm:Parameter Name="n">3</bpm:Parameter>
-          <bpm:Parameter Name="ncube">$ncube</bpm:Parameter>
-          <bpm:Parameter Name="resultdoc">$docFromSubproc</bpm:Parameter>
-        </bpm:SubprocessInstance>
+          <bpm:SubprocessInstance>
+              <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:StatusCode>4</bpm:StatusCode>
+              <bpm:Parameter Name="argument">11</bpm:Parameter>
+              <bpm:Parameter Name="result">121</bpm:Parameter>
+          </bpm:SubprocessInstance>
+          <bpm:SubprocessInstance>
+              <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:StatusCode>4</bpm:StatusCode>
+              <bpm:Parameter Name="argument">13</bpm:Parameter>
+              <bpm:Parameter Name="result">169</bpm:Parameter>
+          </bpm:SubprocessInstance>
+          <bpm:SubprocessInstance>
+              <bpm:LogicalProcessName>SubProcess2</bpm:LogicalProcessName>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:StatusCode>4</bpm:StatusCode>
+              <bpm:Parameter Name="n">3</bpm:Parameter>
+              <bpm:Parameter Name="ncube">$ncube</bpm:Parameter>
+              <bpm:Parameter Name="resultdoc">$docFromSubproc</bpm:Parameter>
+          </bpm:SubprocessInstance>
       </bpm:ProcessExecutionPlan>
   variable: # 20354
     name: ncube
@@ -63,21 +67,21 @@ process: # 13552
     name: request
     value: |
       <ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
-        <Action Name="RegressionTest">
-          <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
-          <Parameter name="ProcessName">MDWTestHeterogeneousProcessCall</Parameter>
-          <Parameter name="testcase">sequential</Parameter>
-          <Parameter name="PerformanceLevel">3</Parameter>
-        </Action>
+          <Action Name="RegressionTest">
+              <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+              <Parameter name="ProcessName">MDWTestHeterogeneousProcessCall</Parameter>
+              <Parameter name="testcase">sequential</Parameter>
+              <Parameter name="PerformanceLevel">3</Parameter>
+          </Action>
       </ser:ActionRequest>
   variable: # 20357
     name: response
     value: |
       <Response>
-        <ncube>27</ncube>
-        <result>121</result>
-        <result>169</result>
-        <nplus1>4</nplus1>
+          <ncube>27</ncube>
+          <result>121</result>
+          <result>169</result>
+          <nplus1>4</nplus1>
       </Response>
   variable: # 20356
     name: result

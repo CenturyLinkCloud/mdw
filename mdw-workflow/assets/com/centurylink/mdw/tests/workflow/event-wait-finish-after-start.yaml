@@ -7,6 +7,7 @@ process: # 13650
   activity: # 5 "2016-02-22 13:17:14"
     name: which case?
     status: Completed
+    result: correct-waiting-on-wait
   activity: # 24 "2016-02-22 13:17:14"
     name: Wait for some event
     status: Completed

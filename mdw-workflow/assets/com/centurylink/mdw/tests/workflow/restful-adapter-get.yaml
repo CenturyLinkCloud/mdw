@@ -7,6 +7,7 @@ process: # 13754
   activity: # 7 "2016-02-23 11:22:23"
     name: Request Type
     status: Completed
+    result: GET
   activity: # 8 "2016-02-23 11:22:23"
     name: |
       RESTful

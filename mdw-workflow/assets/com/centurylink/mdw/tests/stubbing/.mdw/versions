@@ -1,4 +1,4 @@
-#Wed Sep 14 15:10:51 MDT 2016
+#Wed Dec 14 13:33:57 MST 2016
 EmployeeLookup.xml=1
 EmployeeLookupResponse.xml=1
 EmployeeLookupResponseSubst.xml=2
@@ -9,11 +9,11 @@ TestActivityStubSubproc.proc=2
 TestAdapterStub.proc=5
 activity-stubbing-closer.test=1
 activity-stubbing-closure.test=2
-activity-stubbing-closure.yaml=1
+activity-stubbing-closure.yaml=2
 activity-stubbing-embedded.test=2
-activity-stubbing-embedded.yaml=1
+activity-stubbing-embedded.yaml=2
 activity-stubbing.test=2
-activity-stubbing.yaml=3
+activity-stubbing.yaml=5
 adapter-stub-echo.test=2
 adapter-stub-echo.yaml=1
 adapter-stub-substitutions.test=3

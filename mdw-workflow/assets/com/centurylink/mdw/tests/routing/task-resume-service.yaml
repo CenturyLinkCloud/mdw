@@ -7,6 +7,7 @@ process: # 14898
   activity: # 3 "2016-03-10 17:15:43"
     name: custom
     status: Completed
+    result: true
   activity: # 5 "2016-03-10 17:15:43"
     name: |
       custom task for 
@@ -33,6 +34,7 @@ process: # 14897
   activity: # 3 "2016-03-10 17:13:32"
     name: custom
     status: Completed
+    result: false
   activity: # 4 "2016-03-10 17:13:34"
     name: |
       autoform task

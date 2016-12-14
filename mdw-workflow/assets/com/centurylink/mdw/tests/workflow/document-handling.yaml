@@ -1,23 +1,25 @@
-process: # 13593
+process: # 10158
   name: DocumentChange
   instance: 1
-  activity: # 1 "2016-02-22 11:13:53"
+  activity: # 1 "2016-12-14 13:08:13"
     name: Start
     status: Completed
-  activity: # 6 "2016-02-22 11:13:53"
+  activity: # 6 "2016-12-14 13:08:13"
     name: |
       Create
       Java Objects
     status: Completed
-  activity: # 4 "2016-02-22 11:13:53"
+  activity: # 4 "2016-12-14 13:08:13"
     name: Outcome
     status: Completed
-  activity: # 5 "2016-02-22 11:13:54"
+    result: nochange
+  activity: # 5 "2016-12-14 13:08:13"
     name: |
       Change
       Non-Output Docs
     status: Failed
-  variable: # 20512
+    result: com.centurylink.mdw.activity.ActivityException: Attempt to change value of non-output document 'changedXmlBean'...
+  variable: # 10476
     name: changedDomDoc
     value: |
       <EightiesMusic>
@@ -28,38 +30,34 @@ process: # 13593
               <Artist>The Clash</Artist>
           </Album>
       </EightiesMusic>
-  variable: # 20514
+  variable: # 10474
     name: changedFormDataDoc
     value: |
       <FORMDATA JSON_COMPLIANT="true" NAME="FORMDATA">
-        <SUBFORM NAME="META">
-          <FIELD NAME="FORM_DATA_VARIABLE_NAME">acpFormDataDoc</FIELD>
-          <FIELD NAME="FORM">dpea/AssignCorePort.xhtml</FIELD>
-          <FIELD NAME="ACTIVITY_INSTANCE_ID">963403</FIELD>
-          <FIELD NAME="NAME">607241</FIELD>
-          <FIELD NAME="PROCESS_INSTANCE_ID">810714</FIELD>
-          <FIELD NAME="DUE_IN_SECONDS">8</FIELD>
-          <FIELD NAME="ACTION">@RESPOND_TASK</FIELD>
-        </SUBFORM>
-        <FIELD NAME="assignCorePortReqType">Core CLLI</FIELD>
-        <FIELD NAME="assignCorePortReqParam">BLLVWAGL03W</FIELD>
+          <SUBFORM NAME="META">
+              <FIELD NAME="FORM_DATA_VARIABLE_NAME">acpFormDataDoc</FIELD>
+              <FIELD NAME="FORM">dpea/AssignCorePort.xhtml</FIELD>
+              <FIELD NAME="ACTIVITY_INSTANCE_ID">963403</FIELD>
+              <FIELD NAME="NAME">607241</FIELD>
+              <FIELD NAME="PROCESS_INSTANCE_ID">810714</FIELD>
+              <FIELD NAME="DUE_IN_SECONDS">8</FIELD>
+              <FIELD NAME="ACTION">@RESPOND_TASK</FIELD>
+          </SUBFORM>
+          <FIELD NAME="assignCorePortReqType">Core CLLI</FIELD>
+          <FIELD NAME="assignCorePortReqParam">BLLVWAGL03W</FIELD>
       </FORMDATA>
-  variable: # 20516
+  variable: # 10478
     name: changedGroovyNode
     value: |
       <EightiesMusic>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>
-            Talking Heads
-          </Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>
-            The Clash
-          </Artist>
-        </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
       </EightiesMusic>
-  variable: # 20522
+  variable: # 10482
     name: changedJavaObject
     value: |
       cuid: dxoakes,
@@ -70,7 +68,7 @@ process: # 13593
       notificationPrefrence: null,
       allowable actions:
       workgroups
-  variable: # 20508
+  variable: # 10470
     name: changedJson
     value: |
       {"house": {
@@ -86,33 +84,32 @@ process: # 13593
           }
         ]
       }}
-  variable: # 20509
+  variable: # 10479
     name: changedStringDoc
     value: Now is the time for all good men to come to the aid of their country.
-  variable: # 20518
+  variable: # 10475
     name: changedXmlBean
     value: |
       <EightiesMusic>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>Talking Heads</Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>The Clash</Artist>
-        </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
       </EightiesMusic>
-  variable: # 20521
+  variable: # 10469
     name: changedXmlBeanWrapper
     value: |
-      com.centurylink.mdw.common.service.types.ActionRequestMessage
-<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
-        <Action name="beZen">
-          <Parameter name="priority">URGENT</Parameter>
-        </Action>
+      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+          <Action name="beZen">
+              <Parameter name="priority">URGENT</Parameter>
+          </Action>
       </mdw:ActionRequest>
-  variable: # 20513
+  variable: # 10480
     name: outcome
     value: nochange
-  variable: # 20519
+  variable: # 10477
     name: unchangedDomDoc
     value: |
       <EightiesMusic>
@@ -123,38 +120,34 @@ process: # 13593
               <Artist>The Clash</Artist>
           </Album>
       </EightiesMusic>
-  variable: # 20515
+  variable: # 10481
     name: unchangedFormDataDoc
     value: |
       <FORMDATA JSON_COMPLIANT="true" NAME="FORMDATA">
-        <SUBFORM NAME="META">
-          <FIELD NAME="FORM_DATA_VARIABLE_NAME">acpFormDataDoc</FIELD>
-          <FIELD NAME="FORM">dpea/AssignCorePort.xhtml</FIELD>
-          <FIELD NAME="ACTIVITY_INSTANCE_ID">963403</FIELD>
-          <FIELD NAME="NAME">607241</FIELD>
-          <FIELD NAME="PROCESS_INSTANCE_ID">810714</FIELD>
-          <FIELD NAME="DUE_IN_SECONDS">8</FIELD>
-          <FIELD NAME="ACTION">@RESPOND_TASK</FIELD>
-        </SUBFORM>
-        <FIELD NAME="assignCorePortReqType">Core CLLI</FIELD>
-        <FIELD NAME="assignCorePortReqParam">BLLVWAGL03W</FIELD>
+          <SUBFORM NAME="META">
+              <FIELD NAME="FORM_DATA_VARIABLE_NAME">acpFormDataDoc</FIELD>
+              <FIELD NAME="FORM">dpea/AssignCorePort.xhtml</FIELD>
+              <FIELD NAME="ACTIVITY_INSTANCE_ID">963403</FIELD>
+              <FIELD NAME="NAME">607241</FIELD>
+              <FIELD NAME="PROCESS_INSTANCE_ID">810714</FIELD>
+              <FIELD NAME="DUE_IN_SECONDS">8</FIELD>
+              <FIELD NAME="ACTION">@RESPOND_TASK</FIELD>
+          </SUBFORM>
+          <FIELD NAME="assignCorePortReqType">Core CLLI</FIELD>
+          <FIELD NAME="assignCorePortReqParam">BLLVWAGL03W</FIELD>
       </FORMDATA>
-  variable: # 20520
+  variable: # 10468
     name: unchangedGroovyNode
     value: |
       <EightiesMusic>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>
-            Talking Heads
-          </Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>
-            The Clash
-          </Artist>
-        </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
       </EightiesMusic>
-  variable: # 20524
+  variable: # 10483
     name: unchangedJavaObject
     value: |
       cuid: dxoakes,
@@ -165,7 +158,7 @@ process: # 13593
       notificationPrefrence: null,
       allowable actions:
       workgroups
-  variable: # 20517
+  variable: # 10471
     name: unchangedJson
     value: |
       {"house": {
@@ -181,49 +174,49 @@ process: # 13593
           }
         ]
       }}
-  variable: # 20510
+  variable: # 10473
     name: unchangedXmlBean
     value: |
       <EightiesMusic>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>Talking Heads</Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>The Clash</Artist>
-        </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
       </EightiesMusic>
-  variable: # 20511
+  variable: # 10472
     name: unchangedXmlBeanWrapper
     value: |
-      com.centurylink.mdw.common.service.types.ActionRequestMessage
-<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
-        <Action name="beZen">
-          <Parameter name="priority">URGENT</Parameter>
-        </Action>
+      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+          <Action name="beZen">
+              <Parameter name="priority">URGENT</Parameter>
+          </Action>
       </mdw:ActionRequest>
-process: # 13592
+process: # 10157
   name: DocumentChange
   instance: 2
-  activity: # 1 "2016-02-22 11:13:53"
+  activity: # 1 "2016-12-14 13:07:58"
     name: Start
     status: Completed
-  activity: # 6 "2016-02-22 11:13:53"
+  activity: # 6 "2016-12-14 13:07:58"
     name: |
       Create
       Java Objects
     status: Completed
-  activity: # 4 "2016-02-22 11:13:53"
+  activity: # 4 "2016-12-14 13:07:58"
     name: Outcome
     status: Completed
-  activity: # 3 "2016-02-22 11:13:54"
+    result: change
+  activity: # 3 "2016-12-14 13:07:58"
     name: |
       Change
       Output Docs
     status: Completed
-  activity: # 2 "2016-02-22 11:13:54"
+  activity: # 2 "2016-12-14 13:07:59"
     name: Stop
     status: Completed
-  variable: # 20498
+  variable: # 10460
     name: changedDomDoc
     value: |
       <EightiesMusic>
@@ -237,43 +230,37 @@ process: # 13592
               <Artist>The Cure</Artist>
           </Album>
       </EightiesMusic>
-  variable: # 20500
+  variable: # 10458
     name: changedFormDataDoc
     value: |
       <FORMDATA JSON_COMPLIANT="true" NAME="FORMDATA">
-        <SUBFORM NAME="META">
-          <FIELD NAME="FORM_DATA_VARIABLE_NAME">acpFormDataDoc</FIELD>
-          <FIELD NAME="FORM">dpea/AssignCorePort.xhtml</FIELD>
-          <FIELD NAME="ACTIVITY_INSTANCE_ID">963403</FIELD>
-          <FIELD NAME="NAME">607241</FIELD>
-          <FIELD NAME="PROCESS_INSTANCE_ID">810714</FIELD>
-          <FIELD NAME="DUE_IN_SECONDS">8</FIELD>
-          <FIELD NAME="ACTION">@RESPOND_TASK</FIELD>
-        </SUBFORM>
-        <FIELD NAME="assignCorePortReqType">Core CLLI</FIELD>
-        <FIELD NAME="assignCorePortReqParam">BLLVWAGL03W</FIELD>
+          <SUBFORM NAME="META">
+              <FIELD NAME="FORM_DATA_VARIABLE_NAME">acpFormDataDoc</FIELD>
+              <FIELD NAME="FORM">dpea/AssignCorePort.xhtml</FIELD>
+              <FIELD NAME="ACTIVITY_INSTANCE_ID">963403</FIELD>
+              <FIELD NAME="NAME">607241</FIELD>
+              <FIELD NAME="PROCESS_INSTANCE_ID">810714</FIELD>
+              <FIELD NAME="DUE_IN_SECONDS">8</FIELD>
+              <FIELD NAME="ACTION">@RESPOND_TASK</FIELD>
+          </SUBFORM>
+          <FIELD NAME="assignCorePortReqType">Core CLLI</FIELD>
+          <FIELD NAME="assignCorePortReqParam">BLLVWAGL03W</FIELD>
       </FORMDATA>
-  variable: # 20502
+  variable: # 10462
     name: changedGroovyNode
     value: |
       <EightiesMusic>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>
-            Talking Heads
-          </Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>
-            The Clash
-          </Artist>
-        </Album>
-        <Album year="1980" name="Sound Affects">
-          <Artist>
-            The Jam
-          </Artist>
-        </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
+          <Album name="Sound Affects" year="1980">
+              <Artist>The Jam</Artist>
+          </Album>
       </EightiesMusic>
-  variable: # 20523
+  variable: # 10466
     name: changedJavaObject
     value: |
       cuid: sidhug,
@@ -284,7 +271,7 @@ process: # 13592
       notificationPrefrence: null,
       allowable actions:
       workgroups
-  variable: # 20494
+  variable: # 10454
     name: changedJson
     value: |
       {"house": {
@@ -304,37 +291,36 @@ process: # 13592
           }
         ]
       }}
-  variable: # 20495
+  variable: # 10463
     name: changedStringDoc
     value: Early to bed, early to rise; makes a man healthy, wealthy and wise.
-  variable: # 20504
+  variable: # 10459
     name: changedXmlBean
     value: |
       <EightiesMusic>
-        <Album name="Special Beat Service" year="1982">
-          <Artist>The English Beat</Artist>
-        </Album>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>Talking Heads</Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>The Clash</Artist>
-        </Album>
+          <Album name="Special Beat Service" year="1982">
+              <Artist>The English Beat</Artist>
+          </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
       </EightiesMusic>
-  variable: # 20507
+  variable: # 10453
     name: changedXmlBeanWrapper
     value: |
-      com.centurylink.mdw.common.service.types.ActionRequestMessage
-<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
-        <Action name="beZen">
-          <Parameter name="priority">URGENT</Parameter>
-          <Parameter name="frequency" type="java.lang.String">EVERYDAY</Parameter>
-        </Action>
+      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+          <Action name="beZen">
+              <Parameter name="priority">URGENT</Parameter>
+              <Parameter name="frequency" type="java.lang.String">EVERYDAY</Parameter>
+          </Action>
       </mdw:ActionRequest>
-  variable: # 20499
+  variable: # 10464
     name: outcome
     value: change
-  variable: # 20505
+  variable: # 10461
     name: unchangedDomDoc
     value: |
       <EightiesMusic>
@@ -345,38 +331,34 @@ process: # 13592
               <Artist>The Clash</Artist>
           </Album>
       </EightiesMusic>
-  variable: # 20501
+  variable: # 10465
     name: unchangedFormDataDoc
     value: |
       <FORMDATA JSON_COMPLIANT="true" NAME="FORMDATA">
-        <SUBFORM NAME="META">
-          <FIELD NAME="FORM_DATA_VARIABLE_NAME">acpFormDataDoc</FIELD>
-          <FIELD NAME="FORM">dpea/AssignCorePort.xhtml</FIELD>
-          <FIELD NAME="ACTIVITY_INSTANCE_ID">963403</FIELD>
-          <FIELD NAME="NAME">607241</FIELD>
-          <FIELD NAME="PROCESS_INSTANCE_ID">810714</FIELD>
-          <FIELD NAME="DUE_IN_SECONDS">8</FIELD>
-          <FIELD NAME="ACTION">@RESPOND_TASK</FIELD>
-        </SUBFORM>
-        <FIELD NAME="assignCorePortReqType">Core CLLI</FIELD>
-        <FIELD NAME="assignCorePortReqParam">BLLVWAGL03W</FIELD>
+          <SUBFORM NAME="META">
+              <FIELD NAME="FORM_DATA_VARIABLE_NAME">acpFormDataDoc</FIELD>
+              <FIELD NAME="FORM">dpea/AssignCorePort.xhtml</FIELD>
+              <FIELD NAME="ACTIVITY_INSTANCE_ID">963403</FIELD>
+              <FIELD NAME="NAME">607241</FIELD>
+              <FIELD NAME="PROCESS_INSTANCE_ID">810714</FIELD>
+              <FIELD NAME="DUE_IN_SECONDS">8</FIELD>
+              <FIELD NAME="ACTION">@RESPOND_TASK</FIELD>
+          </SUBFORM>
+          <FIELD NAME="assignCorePortReqType">Core CLLI</FIELD>
+          <FIELD NAME="assignCorePortReqParam">BLLVWAGL03W</FIELD>
       </FORMDATA>
-  variable: # 20506
+  variable: # 10452
     name: unchangedGroovyNode
     value: |
       <EightiesMusic>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>
-            Talking Heads
-          </Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>
-            The Clash
-          </Artist>
-        </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
       </EightiesMusic>
-  variable: # 20525
+  variable: # 10467
     name: unchangedJavaObject
     value: |
       cuid: dxoakes,
@@ -387,7 +369,7 @@ process: # 13592
       notificationPrefrence: null,
       allowable actions:
       workgroups
-  variable: # 20503
+  variable: # 10455
     name: unchangedJson
     value: |
       {"house": {
@@ -403,23 +385,22 @@ process: # 13592
           }
         ]
       }}
-  variable: # 20496
+  variable: # 10457
     name: unchangedXmlBean
     value: |
       <EightiesMusic>
-        <Album name="Stop Making Sense" year="1984">
-          <Artist>Talking Heads</Artist>
-        </Album>
-        <Album name="London Calling" year="1980">
-          <Artist>The Clash</Artist>
-        </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
       </EightiesMusic>
-  variable: # 20497
+  variable: # 10456
     name: unchangedXmlBeanWrapper
     value: |
-      com.centurylink.mdw.common.service.types.ActionRequestMessage
-<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
-        <Action name="beZen">
-          <Parameter name="priority">URGENT</Parameter>
-        </Action>
+      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+          <Action name="beZen">
+              <Parameter name="priority">URGENT</Parameter>
+          </Action>
       </mdw:ActionRequest>

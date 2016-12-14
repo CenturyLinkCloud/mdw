@@ -7,6 +7,7 @@ process: # 13736
   activity: # 13 "2016-02-23 10:58:23"
     name: case?
     status: Completed
+    result: GetOrder
   activity: # 6 "2016-02-23 10:58:23"
     name: Get OrderId
     status: Completed

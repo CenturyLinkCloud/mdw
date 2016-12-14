@@ -7,9 +7,11 @@ process: # 15261
   activity: # 4 "2016-04-01 16:09:47"
     name: Perform Validation
     status: Completed
+    result: true
   activity: # 8 "2016-04-01 16:09:47"
     name: Check Employee
     status: Completed
+    result: true
   activity: # 14 "2016-04-01 16:09:47"
     name: Set Variables
     status: Completed

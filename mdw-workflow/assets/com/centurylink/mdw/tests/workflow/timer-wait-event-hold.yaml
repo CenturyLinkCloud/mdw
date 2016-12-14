@@ -7,6 +7,7 @@ process: # 13853
   activity: # 42 "2016-02-23 19:42:07"
     name: which case?
     status: Completed
+    result: hold
   activity: # 45 "2016-02-23 19:42:07"
     name: |
       Timer and Event

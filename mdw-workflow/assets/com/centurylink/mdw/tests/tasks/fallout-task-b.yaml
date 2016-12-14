@@ -7,9 +7,11 @@ process: # 13475
   activity: # 33 "2016-02-18 16:23:23"
     name: multiple processes ?
     status: Completed
+    result: task_action_B
   activity: # 13 "2016-02-18 16:23:23"
     name: Scripts with syntax error
     status: Completed
+    result: com.centurylink.mdw.activity.ActivityException: No script executor property value found: mdw.script.executor.magicbox...
   activity: # 24 "2016-02-18 16:24:13"
     name: Dummy Resume B
     status: Completed

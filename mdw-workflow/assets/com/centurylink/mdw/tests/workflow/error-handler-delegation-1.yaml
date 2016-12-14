@@ -7,6 +7,7 @@ process: # 13619
   activity: # 33 "2016-02-22 12:22:38"
     name: multiple processes ?
     status: Completed
+    result: error handler delegation
   activity: # 15 "2016-02-22 12:22:38"
     name: Create argument
     status: Completed
@@ -52,9 +53,11 @@ process: # 13620
   activity: # 26 "2016-02-22 12:22:38"
     name: Throw an Exception
     status: Cancelled
+    result: java.lang.RuntimeException: Help me, I'm an error...
   activity: # 26 "2016-02-22 12:23:08"
     name: Throw an Exception
     status: Completed
+    result: java.lang.RuntimeException: Help me, I'm an error...
   activity: # 29 "2016-02-22 12:23:28"
     name: Alternate path
     status: Completed

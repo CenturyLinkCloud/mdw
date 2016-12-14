@@ -16,7 +16,7 @@ process: # 13598
     name: requestDoc
     value: |
       <mdw:GetEmployee xmlns:mdw="http://mdw.centurylink.com/serviceTypes">
-        <mdw:workstationId>dxoakes</mdw:workstationId>
+          <mdw:workstationId>dxoakes</mdw:workstationId>
       </mdw:GetEmployee>
   variable: # 20567
     name: responseDoc

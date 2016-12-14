@@ -1,4 +1,4 @@
-#Fri Nov 11 15:52:13 IST 2016
+#Wed Dec 14 13:35:01 MST 2016
 A\ Custom\ Task.task=1
 An\ AutoForm\ Task.task=1
 Another\ Custom\ Task.task=1
@@ -28,18 +28,18 @@ TaskResumeLocal.proc=3
 autoform\ task\ for\ local\ resume.task=1
 custom\ task\ for\ local\ resume.task=1
 fallout-task-b.test=1
-fallout-task-b.yaml=1
+fallout-task-b.yaml=2
 fallout-task-default.test=1
-fallout-task-default.yaml=1
+fallout-task-default.yaml=2
 manual-task-fallout.test=1
-manual-task-fallout.yaml=1
+manual-task-fallout.yaml=2
 manual-task-services.test=2
 masterTaskForSubtasks.task=3
 put.test=2
 subtaskA.task=1
 subtaskB.task=1
 supp-pre-arrived-task-event.test=1
-supp-pre-arrived-task-event.yaml=1
+supp-pre-arrived-task-event.yaml=2
 task-action-service.test=4
 task-action-service.yaml=1
 task-and-event-wait.test=1

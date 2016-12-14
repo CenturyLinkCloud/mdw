@@ -1,60 +1,61 @@
-process: # 13792
+process: # 10284
   name: SqlAdapter
   instance: 1
-  activity: # 1 "2016-02-23 13:17:43"
+  activity: # 1 "2016-12-14 13:39:22"
     name: Start
     status: Completed
-  activity: # 3 "2016-02-23 13:17:43"
+  activity: # 2 "2016-12-14 13:40:22"
+    name: Stop
+    status: Completed
+  activity: # 3 "2016-12-14 13:39:22"
     name: |
       Query Using
       JDBC URL
     status: Completed
-  activity: # 10 "2016-02-23 13:17:43"
-    name: Wait 10s
-    status: Completed
-  activity: # 9 "2016-02-23 13:17:43"
-    name: Wait 60s
-    status: Completed
-  activity: # 5 "2016-02-23 13:17:43"
-    name: Sync
-    status: Completed
-  activity: # 4 "2016-02-23 13:18:13"
+  activity: # 4 "2016-12-14 13:39:32"
     name: |
       Query Multiple Params,
       Multiple Results
     status: Completed
-  activity: # 6 "2016-02-23 13:18:43"
+  activity: # 5 "2016-12-14 13:39:22"
+    name: Sync
+    status: Completed
+  activity: # 6 "2016-12-14 13:40:22"
     name: |
       Update
       User Name
     status: Completed
-  activity: # 7 "2016-02-23 13:18:43"
+  activity: # 7 "2016-12-14 13:40:22"
     name: |
       Select User
       And Bind Name
     status: Completed
-  activity: # 8 "2016-02-23 13:18:43"
+    result: Don Oakes
+  activity: # 8 "2016-12-14 13:40:22"
     name: |
       Reset
       User Name
     status: Completed
-  activity: # 2 "2016-02-23 13:18:43"
-    name: Stop
+  activity: # 9 "2016-12-14 13:39:22"
+    name: Wait 60s
     status: Completed
-  variable: # 21114
+  activity: # 10 "2016-12-14 13:39:22"
+    name: Wait 10s
+    status: Completed
+  variable: # 10816
     name: mdwSupportUsers
     value: Donald Oakes~Manoj Agrawal
-  variable: # 21112
+  variable: # 10814
     name: userCuid
     value: dxoakes
-  variable: # 21111
+  variable: # 10813
     name: userCuids
     value: dxoakes~aa56486
-  variable: # 21113
+  variable: # 10815
     name: userDocument
     value: |
       <user:user xmlns:user="http://mdw.centurylink.com/user">
-        <user:firstName>Donald</user:firstName>
-        <user:lastName>Oakes</user:lastName>
-        <user:cuid>dxoakes</user:cuid>
+          <user:firstName>Donald</user:firstName>
+          <user:lastName>Oakes</user:lastName>
+          <user:cuid>dxoakes</user:cuid>
       </user:user>

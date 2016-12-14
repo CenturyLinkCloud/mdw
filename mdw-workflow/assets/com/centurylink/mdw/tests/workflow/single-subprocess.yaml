@@ -1,63 +1,64 @@
-process: # 13487
+process: # 10118
   name: MDWTestMainProcess
   instance: 1
-  activity: # 6 "2016-02-18 16:34:17"
+  activity: # 6 "2016-12-14 11:50:05"
     name: Process Start
     status: Completed
-  activity: # 33 "2016-02-18 16:34:17"
+  activity: # 33 "2016-12-14 11:50:05"
     name: multiple processes ?
     status: Completed
-  activity: # 23 "2016-02-18 16:34:17"
+    result: SingleSubProcess
+  activity: # 23 "2016-12-14 11:50:05"
     name: Set input argument
     status: Completed
-  activity: # 22 "2016-02-18 16:34:17"
+  activity: # 22 "2016-12-14 11:50:05"
     name: Invoke single process
     status: Completed
-  activity: # 26 "2016-02-18 16:36:17"
+  activity: # 26 "2016-12-14 11:51:05"
     name: Display result
     status: Completed
-  activity: # 11 "2016-02-18 16:36:17"
+  activity: # 11 "2016-12-14 11:51:05"
     name: Process Finish
     status: Completed
-  variable: # 20148
+  variable: # 10301
     name: N
     value: 7
-  variable: # 20147
+  variable: # 10300
     name: processCase
     value: SingleSubProcess
-  variable: # 20154
+  variable: # 10334
     name: Sum
     value: 49
-  variable: # 20149
+  variable: # 10302
     name: xmldata
     value: |
       <ROOT>
-         <MINUTES>2</MINUTES>
+          <MINUTES>2</MINUTES>
       </ROOT>
-process: # 13488
+process: # 10119
   name: MDWTestSubProcess
   instance: 1
-  activity: # 34 "2016-02-18 16:34:17"
+  activity: # 34 "2016-12-14 11:50:05"
     name: Start
     status: Completed
-  activity: # 31 "2016-02-18 16:34:17"
+  activity: # 31 "2016-12-14 11:50:05"
     name: Calculate sqaure
     status: Completed
-  activity: # 32 "2016-02-18 16:34:17"
+  activity: # 32 "2016-12-14 11:50:05"
     name: Wait for a while
     status: Completed
-  activity: # 33 "2016-02-18 16:36:17"
+  activity: # 33 "2016-12-14 11:51:05"
     name: Finish
     status: Completed
-  variable: # 20150
+  variable: # 10303
     name: argument
     value: 7
-  variable: # 20152
+  variable: # 10305
     name: result
     value: 49
-  variable: # 20151
+  variable: # 10304
     name: testxml
     value: |
       <ROOT>
-         <MINUTES>2</MINUTES>
+          <MINUTES>2</MINUTES>
       </ROOT>

@@ -20,7 +20,6 @@ process: # 13586
   variable: # 20463
     name: actionRequest
     value: |
-      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       <ActionRequest xmlns:ns2="http://mdw.centurylink.com/services">
           <Action Name="updatedAction">
               <Parameter name="appName">MDW</Parameter>
@@ -30,16 +29,14 @@ process: # 13586
   variable: # 20462
     name: assetDefinedJaxb
     value: |
-      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-      <JaxbAsset xmlns:ns2="http://mdw.centurylink.com/services" requiredAttribute="x" optionalAttribute="updatedOptionalAttr">
+      <JaxbAsset optionalAttribute="updatedOptionalAttr" requiredAttribute="x" xmlns:ns2="http://mdw.centurylink.com/services">
           <RequiredElement>inputDocRequiredElement</RequiredElement>
           <OptionalElement>updatedOptionalElem</OptionalElement>
       </JaxbAsset>
   variable: # 20464
     name: locallyCreatedJaxb
     value: |
-      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-      <JaxbAsset xmlns:ns2="http://mdw.centurylink.com/services" requiredAttribute="from" optionalAttribute="mdw">
+      <JaxbAsset optionalAttribute="mdw" requiredAttribute="from" xmlns:ns2="http://mdw.centurylink.com/services">
           <RequiredElement>hello</RequiredElement>
           <OptionalElement>jaxb</OptionalElement>
       </JaxbAsset>
@@ -74,7 +71,6 @@ process: # 13585
   variable: # 20460
     name: actionRequest
     value: |
-      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       <ActionRequest xmlns:ns2="http://mdw.centurylink.com/services">
           <Action Name="updatedAction">
               <Parameter name="appName">MDW</Parameter>
@@ -84,8 +80,7 @@ process: # 13585
   variable: # 20461
     name: assetDefinedJaxbIn
     value: |
-      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-      <JaxbAsset xmlns:ns2="http://mdw.centurylink.com/services" requiredAttribute="x" optionalAttribute="updatedOptionalAttr">
+      <JaxbAsset optionalAttribute="updatedOptionalAttr" requiredAttribute="x" xmlns:ns2="http://mdw.centurylink.com/services">
           <RequiredElement>inputDocRequiredElement</RequiredElement>
           <OptionalElement>updatedOptionalElem</OptionalElement>
       </JaxbAsset>

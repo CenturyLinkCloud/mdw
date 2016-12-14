@@ -1,4 +1,4 @@
-#Tue Nov 22 14:40:24 MST 2016
+#Wed Dec 14 13:29:28 MST 2016
 Acknowledger.java=5
 Custom\ Category\ Task.task=1
 CustomBaseData.proc=5
@@ -13,7 +13,7 @@ ReflectChildDocUpdate.proc=3
 SimpleDynamicJava.proc=6
 acknowledge.xml=2
 child-process-doc-update.test=1
-child-process-doc-update.yaml=3
+child-process-doc-update.yaml=4
 cloud-activity-impls.test=0
 cloud-activity-impls.yaml=1
 custom-base-data.test=5
@@ -25,9 +25,9 @@ escalate.xml=2
 jaxb-action-request.xml=2
 jaxb-asset.xml=2
 jaxb-document.test=3
-jaxb-document.yaml=7
+jaxb-document.yaml=8
 jms-adapter-cloud-async.test=1
-jms-adapter-cloud-async.yaml=1
+jms-adapter-cloud-async.yaml=2
 simple-dynamic-java.test=2
-simple-dynamic-java.yaml=5
+simple-dynamic-java.yaml=9
 testContext.spring=6

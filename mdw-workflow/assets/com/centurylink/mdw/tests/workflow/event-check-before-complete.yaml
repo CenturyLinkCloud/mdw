@@ -9,6 +9,7 @@ process: # 13635
       Event Check 
       Activity
     status: Completed
+    result: CORRECT:
   activity: # 2 "2016-02-22 12:48:40"
     name: Stop
     status: Completed

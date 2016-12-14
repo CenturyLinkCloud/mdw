@@ -7,9 +7,11 @@ process: # 13779
   activity: # 8 "2016-02-23 12:49:55"
     name: Script Flavor?
     status: Completed
+    result: Unknown
   activity: # 10 "2016-02-23 12:49:55"
     name: Unknown
     status: Completed
+    result: com.centurylink.mdw.activity.ActivityException: Script content has not been defined...
   activity: # 11 "2016-02-23 12:49:55"
     name: New Process Finish
     status: Completed

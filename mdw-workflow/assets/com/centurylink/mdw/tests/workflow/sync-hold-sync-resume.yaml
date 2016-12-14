@@ -7,6 +7,7 @@ process: # 13835
   activity: # 5 "2016-02-23 18:40:04"
     name: which case?
     status: Completed
+    result: sync-wait
   activity: # 12 "2016-02-23 18:40:04"
     name: Sync arm1
     status: Completed

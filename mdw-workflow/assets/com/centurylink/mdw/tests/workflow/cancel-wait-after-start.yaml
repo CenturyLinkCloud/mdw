@@ -7,9 +7,11 @@ process: # 13466
   activity: # 5 "2016-02-18 15:58:20"
     name: which case?
     status: Completed
+    result: cancel-on-event
   activity: # 25 "2016-02-18 15:58:20"
     name: Wait for 3 min
     status: Cancelled
+    result: Cancelled upon resume
   variable: # 20120
     name: testCase
     value: cancel-on-event

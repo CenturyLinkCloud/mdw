@@ -7,6 +7,7 @@ process: # 13651
   activity: # 5 "2016-02-22 13:18:26"
     name: which case?
     status: Completed
+    result: finish-resume-on-wait
   activity: # 9 "2016-02-22 13:18:26"
     name: Wait for some event
     status: Completed

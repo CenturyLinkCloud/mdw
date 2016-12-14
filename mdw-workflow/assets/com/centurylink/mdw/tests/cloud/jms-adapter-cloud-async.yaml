@@ -7,9 +7,11 @@ process: # 13674
   activity: # 4 "2016-02-22 15:20:05"
     name: Synchronous?
     status: Completed
+    result: Asynchronous
   activity: # 9 "2016-02-22 15:20:05"
     name: Platform?
     status: Completed
+    result: Cloud
   activity: # 8 "2016-02-22 15:20:05"
     name: |
       Asynchronous Cloud

@@ -7,9 +7,11 @@ process: # 13652
   activity: # 5 "2016-02-22 13:19:17"
     name: which case?
     status: Completed
+    result: custom-finish-event-on-event-wait
   activity: # 22 "2016-02-22 13:19:17"
     name: Wait for some event
     status: Completed
+    result: custom-finish
   activity: # 7 "2016-02-22 13:19:17"
     name: Stop
     status: Completed

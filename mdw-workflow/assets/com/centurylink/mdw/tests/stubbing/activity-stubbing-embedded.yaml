@@ -7,9 +7,11 @@ process: # 13196
   activity: # 11 "2016-02-17 12:47:48"
     name: Path
     status: Completed
+    result: various
   activity: # 3 "2016-02-17 12:47:48"
     name: Stubbed Script
     status: Completed
+    result: com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'TestActivityStubv0_5_StubbedScript_3'...
   activity: # 5 "2016-02-17 12:47:48"
     name: Finish
     status: Completed

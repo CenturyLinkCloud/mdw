@@ -7,6 +7,7 @@ process: # 13781
   activity: # 33 "2016-02-23 12:54:17"
     name: multiple processes ?
     status: Completed
+    result: ServiceOrder
   activity: # 17 "2016-02-23 12:54:17"
     name: Read order
     status: Completed
@@ -18,7 +19,10 @@ process: # 13781
     status: Completed
   variable: # 21090
     name: order
-    value: <Order><orderId>30/KQGS/662822//CTRL</orderId></Order>
+    value: |
+      <Order>
+          <orderId>30/KQGS/662822//CTRL</orderId>
+      </Order>
   variable: # 21092
     name: orderId
     value: 30/KQGS/662822//CTRL

@@ -7,6 +7,7 @@ process: # 16584
   activity: # 33 "2016-07-29 12:34:36"
     name: multiple processes ?
     status: Completed
+    result: DocumentBinding
   activity: # 34 "2016-07-29 12:34:42"
     name: Invoke service lvl9 process
     status: Completed

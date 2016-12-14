@@ -7,9 +7,11 @@ process: # 13750
   activity: # 33 "2016-02-23 11:16:05"
     name: multiple processes ?
     status: Completed
+    result: AbortEvent
   activity: # 12 "2016-02-23 11:16:05"
     name: Raise ABORT event
     status: Completed
+    result: ABORT:
   variable: # 20930
     name: processCase
     value: AbortEvent

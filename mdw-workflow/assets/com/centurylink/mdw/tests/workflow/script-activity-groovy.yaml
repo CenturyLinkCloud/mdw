@@ -1,35 +1,39 @@
-process: # 17089
+process: # 10103
   name: ScriptTest
   instance: 1
-  activity: # 3 "2016-08-03 14:44:28"
+  activity: # 3 "2016-12-14 11:48:38"
     name: Start
     status: Completed
-  activity: # 8 "2016-08-03 14:44:28"
+  activity: # 8 "2016-12-14 11:48:38"
     name: Script Flavor?
     status: Completed
-  activity: # 7 "2016-08-03 14:44:28"
+    result: Groovy
+  activity: # 7 "2016-12-14 11:48:38"
     name: Groovy
     status: Completed
-  activity: # 9 "2016-08-03 14:44:29"
+    result: groovyOutcome
+  activity: # 9 "2016-12-14 11:48:38"
     name: Access Library
     status: Completed
-  activity: # 6 "2016-08-03 14:44:29"
+    result: Valid
+  activity: # 6 "2016-12-14 11:48:38"
     name: Looking Good?
     status: Completed
-  activity: # 1 "2016-08-03 14:44:29"
+    result: Yep
+  activity: # 1 "2016-12-14 11:48:39"
     name: Still Okay?
     status: Completed
-  activity: # 2 "2016-08-03 14:44:29"
+    result: Sure
+  activity: # 2 "2016-12-14 11:48:39"
     name: Stop
     status: Completed
-  variable: # 28334
+  variable: # 10245
     name: bystanderDomDoc
     value: <xml>I won't change</xml>
-
-  variable: # 28337
+  variable: # 10246
     name: bystanderXmlBean
     value: <xml>I won't change</xml>
-  variable: # 28339
+  variable: # 10258
     name: createdDomDoc
     value: |
       <records>
@@ -38,19 +42,19 @@ process: # 17089
               <aspect type="Sedan">Not too big</aspect>
           </car>
       </records>
-  variable: # 28340
+  variable: # 10257
     name: createdInt
     value: 8
-  variable: # 28341
+  variable: # 10259
     name: createdString
     value: createdStringValue
-  variable: # 28342
+  variable: # 10260
     name: createdXmlBean
     value: |
       <createdXmlBean>
-        <innerElement attr="attrVal"/>
+          <innerElement attr="attrVal"/>
       </createdXmlBean>
-  variable: # 28335
+  variable: # 10248
     name: modifiedDomDoc
     value: |
       <records>
@@ -60,18 +64,18 @@ process: # 17089
           </car>
           <newCar shiny="new"/>
       </records>
-  variable: # 28333
+  variable: # 10243
     name: modifiedInt
     value: 12
-  variable: # 28338
+  variable: # 10249
     name: modifiedString
     value: HereIsAString has been modified
-  variable: # 28331
+  variable: # 10242
     name: modifiedXmlBean
     value: <xmlBeanToBeModified>MODIFIED</xmlBeanToBeModified>
-  variable: # 28336
+  variable: # 10244
     name: scriptFlavor
     value: Groovy
-  variable: # 28332
+  variable: # 10247
     name: telephoneNumbers
     value: 303-555-7861~303-555-1952

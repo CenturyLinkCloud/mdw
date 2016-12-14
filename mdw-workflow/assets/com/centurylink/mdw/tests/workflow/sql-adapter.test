@@ -5,4 +5,6 @@ start process("SqlAdapter") {
 wait process {
     timeout = 120
 }
-verify process
+verify process {
+    resultsById = true
+}

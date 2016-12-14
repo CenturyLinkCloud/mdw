@@ -72,6 +72,7 @@ process: # 13400
       Test
       Case?
     status: Completed
+    result: multiple
   activity: # 8 "2016-02-17 17:53:12"
     name: Create Plan
     status: Completed
@@ -88,25 +89,28 @@ process: # 13400
     name: executionPlan
     value: |
       <bpm:ProcessExecutionPlan xmlns:bpm="http://mdw.centurylink.com/bpm">
-        <bpm:SubprocessInstance>
-          <bpm:LogicalProcessName>SmartProcessChild</bpm:LogicalProcessName>
-          <bpm:InstanceId>${~[0-9]*}</bpm:InstanceId><bpm:StatusCode>4</bpm:StatusCode>
-          <bpm:Parameter Name="inputVar">child11</bpm:Parameter>
-          <bpm:Parameter Name="procName">SmartProcessChild</bpm:Parameter>
-          <bpm:Parameter Name="procVer">2.3</bpm:Parameter>
-        </bpm:SubprocessInstance>
-        <bpm:SubprocessInstance>
-          <bpm:LogicalProcessName>SmartProcessChild</bpm:LogicalProcessName>
-          <bpm:InstanceId>${~[0-9]*}</bpm:InstanceId><bpm:StatusCode>4</bpm:StatusCode>
-          <bpm:Parameter Name="inputVar">child12</bpm:Parameter>
-        </bpm:SubprocessInstance>
-        <bpm:SubprocessInstance>
-          <bpm:LogicalProcessName>SmartProcessChild2</bpm:LogicalProcessName>
-          <bpm:InstanceId>${~[0-9]*}</bpm:InstanceId><bpm:StatusCode>4</bpm:StatusCode>
-          <bpm:Parameter Name="inputVar">$subprocInputVar</bpm:Parameter>
-          <bpm:Parameter Name="procName">SmartProcessChild2</bpm:Parameter>
-          <bpm:Parameter Name="procVer">0.3</bpm:Parameter>
-        </bpm:SubprocessInstance>
+          <bpm:SubprocessInstance>
+              <bpm:LogicalProcessName>SmartProcessChild</bpm:LogicalProcessName>
+              <bpm:InstanceId>${~[0-9]*}</bpm:InstanceId>
+              <bpm:StatusCode>4</bpm:StatusCode>
+              <bpm:Parameter Name="inputVar">child11</bpm:Parameter>
+              <bpm:Parameter Name="procName">SmartProcessChild</bpm:Parameter>
+              <bpm:Parameter Name="procVer">2.3</bpm:Parameter>
+          </bpm:SubprocessInstance>
+          <bpm:SubprocessInstance>
+              <bpm:LogicalProcessName>SmartProcessChild</bpm:LogicalProcessName>
+              <bpm:InstanceId>${~[0-9]*}</bpm:InstanceId>
+              <bpm:StatusCode>4</bpm:StatusCode>
+              <bpm:Parameter Name="inputVar">child12</bpm:Parameter>
+          </bpm:SubprocessInstance>
+          <bpm:SubprocessInstance>
+              <bpm:LogicalProcessName>SmartProcessChild2</bpm:LogicalProcessName>
+              <bpm:InstanceId>${~[0-9]*}</bpm:InstanceId>
+              <bpm:StatusCode>4</bpm:StatusCode>
+              <bpm:Parameter Name="inputVar">$subprocInputVar</bpm:Parameter>
+              <bpm:Parameter Name="procName">SmartProcessChild2</bpm:Parameter>
+              <bpm:Parameter Name="procVer">0.3</bpm:Parameter>
+          </bpm:SubprocessInstance>
       </bpm:ProcessExecutionPlan>
   variable: # 19992
     name: multipleSubprocName

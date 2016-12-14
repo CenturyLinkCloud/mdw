@@ -1,7 +1,7 @@
 {
   "created": "11-17-2015 20:40:36",
   "createdBy": "aa56486",
-  "id": "test1002",
+  "id": "${masterRequestId}-test1002",
   "members": {"tasks": [
     {
       "description": "Testing variable display and entry.",

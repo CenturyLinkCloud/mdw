@@ -9,6 +9,7 @@ process: # 13697
       Throw
       Exception
     status: Failed
+    result: com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'FalloutTaskTestv0_2_ThrowException_3'...
 process: # 13699
   name: FalloutTaskTest Exception Handler
   instance: 1

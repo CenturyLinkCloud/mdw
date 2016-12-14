@@ -25,6 +25,7 @@ process: # 13805
   activity: # 2 "2016-02-23 14:01:07"
     name: Force Error
     status: Completed
+    result: com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'SubprocessFromEmbeddedv0_1_ForceError_2'...
   activity: # 3 "2016-02-23 14:01:09"
     name: Stop
     status: Completed

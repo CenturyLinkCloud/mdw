@@ -4,10 +4,14 @@ name = "Donald"
 helloMessage = "Hello, " + name
 masterRequestId = "tester-" + System.currentTimeMillis()
 
-// test send response with substitutions
-send asset("tester-ping.xml")
+// test send/response with substitutions
+response = post http("services/Ping") {
+    user  = 'mdwapp'
+    password = 'ldap_012'
+    payload = asset("tester-ping.json").text
+}
 verify response {
-    expected = asset("tester-pong.xml").text
+    expected = asset("tester-pong.json").text
 }
 
 // test launch process with substitutions

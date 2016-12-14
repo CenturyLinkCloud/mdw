@@ -27,6 +27,7 @@ process: # 13408
       Test
       Case?
     status: Completed
+    result: oldStyle
   activity: # 10 "2016-02-17 17:58:04"
     name: Compatibility
     status: Completed
