@@ -38,12 +38,6 @@ public class ProcessInstances implements JsonService {
         "endDateTo",
         "endDateto" });
 
-    private static List<String> standardParams = Arrays.asList(new String[] {
-        "pageIndex",
-        "pageSize",
-        "orderBy",
-        "format"});
-
     public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
 
         try {
@@ -82,16 +76,6 @@ public class ProcessInstances implements JsonService {
                 criteria.put(key, (String)params.get(key));
         }
         return criteria.isEmpty() ? null : criteria;
-    }
-
-    private Map<String,String> getVariables(Map<String,String> params) {
-        Map<String,String> variables = new HashMap<String,String>();
-        for (String key : params.keySet()) {
-            if (!processParams.contains(key) && !standardParams.contains(key)) {
-                variables.put(key, (String)params.get(key));
-            }
-        }
-        return variables.isEmpty() ? null : variables;
     }
 
 }
