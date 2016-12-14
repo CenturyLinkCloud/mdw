@@ -4,6 +4,6 @@
   <webProject name="mdw-hub" deployDir="deploy" />
   <mdwFramework version="6.0.01-SNAPSHOT"/>
   <server host="localhost" port="8080" container="Tomcat"/>
-  <repository provider="Git" localPath="assets"/>
-  <database jdbcUrl="jdbc:mysql://10.180.11.159:3306/mdw?user=mdwapp&amp;password=dpuWZEGpJ+Vq1jMGpCprtqorDxXw1x9x"/>
+  <repository provider="Git" branch="master" localPath="assets"/>
+  <database jdbcUrl="jdbc:mysql://localhost:3308/mdw?user=mdw&amp;password=wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x"/>
 </mdw-workflow>
