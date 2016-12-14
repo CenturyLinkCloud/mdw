@@ -5,6 +5,7 @@ package com.centurylink.mdw.service.resource;
 
 import java.util.Map;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONException;
@@ -13,22 +14,20 @@ import org.json.JSONObject;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.TextService;
-import com.centurylink.mdw.common.service.XmlService;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.service.Parameter;
-import com.centurylink.mdw.service.Resource;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.SelfSerializable;
 import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
 
-public class DocumentValue implements TextService, XmlService, JsonService {
+public class DocumentValue implements JsonService {
 
     public static final String PARAM_DOC_ID = "id";
     public static final String PARAM_DOC_TYPE = "type";
@@ -37,56 +36,46 @@ public class DocumentValue implements TextService, XmlService, JsonService {
      * Gets the straight value as text.
      */
     public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
-        Document docVO = getDocumentVO(metaInfo);
-        if (docVO.getDocumentType().equals(Object.class.getName())) {
-            Object docObj = VariableTranslator.realToObject(getPackageVO(docVO), "java.lang.Object", docVO.getContent());
-            return docObj.toString();
-        }
-        return docVO.getContent();
+        return getJson((JSONObject)requestObj, metaInfo);
     }
 
     /**
-     * Gets the type info.
+     * Gets document content in String-serialized form.
+     * For XML and JSON doc vars, this reparses and serializes to ensure consistent formatting.
      */
     public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
-        Document docVO = getDocumentVO(metaInfo);
+        Document doc = getDocument(metaInfo);
         JSONObject json = new JSONObject();
         try {
-            json.put("className", docVO.getDocumentType());
+            json.put("className", doc.getDocumentType());
             json.put("isUpdateable", "true");
-            if (docVO.getDocumentType().equals(Object.class.getName())) {
-                Object obj = VariableTranslator.realToObject(getPackageVO(docVO), "java.lang.Object", docVO.getContent());
+            Package pkg = getPackage(doc);
+            if (doc.getDocumentType().equals(Object.class.getName())) {
+                Object obj = VariableTranslator.realToObject(pkg, "java.lang.Object", doc.getContent(pkg));
                 json.put("className", obj.getClass().getName());
                 json.put("isUpdateable", String.valueOf(obj instanceof SelfSerializable));
             }
-            return docVO.getContent();
+            com.centurylink.mdw.variable.VariableTranslator trans = VariableTranslator.getTranslator(pkg, doc.getDocumentType());
+            if (trans instanceof XmlDocumentTranslator) {
+                org.w3c.dom.Document domDoc = ((XmlDocumentTranslator)trans).toDomDocument(doc.getObject(doc.getDocumentType(), pkg));
+                XmlObject xmlBean = XmlObject.Factory.parse(domDoc);
+                return xmlBean.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(4));
+            }
+            else if (trans instanceof JsonTranslator) {
+                JSONObject jsonObj = ((JsonTranslator)trans).toJson(doc.getObject(doc.getDocumentType(), pkg));
+                return jsonObj.toString(2);
+            }
+            return doc.getContent(pkg);
         }
         catch (JSONException ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
-    }
-
-    /**
-     * Gets the type info.
-     */
-    public String getXml(XmlObject request, Map<String,String> metaInfo) throws ServiceException {
-        Document docVO = getDocumentVO(metaInfo);
-        Resource resDoc = Resource.Factory.newInstance();
-        Parameter className = resDoc.addNewParameter();
-        className.setName("className");
-        className.setStringValue(docVO.getDocumentType());
-        Parameter updateable = resDoc.addNewParameter();
-        updateable.setName("isUpdateable");
-        updateable.setStringValue("true");
-        if (docVO.getDocumentType().equals(Object.class.getName())) {
-            Object obj = VariableTranslator.realToObject(getPackageVO(docVO), "java.lang.Object", docVO.getContent());
-            className.setStringValue(obj.getClass().getName());
-            updateable.setStringValue(String.valueOf(obj instanceof SelfSerializable));
+        catch (XmlException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
         }
-        return resDoc.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2));
     }
 
-    private Document getDocumentVO(Map<String,String> parameters) throws ServiceException {
+    private Document getDocument(Map<String,String> parameters) throws ServiceException {
         try {
             Object docId = parameters.get(PARAM_DOC_ID);
             if (docId == null)
@@ -105,21 +94,26 @@ public class DocumentValue implements TextService, XmlService, JsonService {
         }
     }
 
-    private Package getPackageVO(Document docVO) throws ServiceException {
+    private Package getPackage(Document docVO) throws ServiceException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
-            Long procInstId = null;
             if (docVO.getOwnerType().equals(OwnerType.VARIABLE_INSTANCE)) {
                 VariableInstance varInstInf = eventMgr.getVariableInstance(docVO.getOwnerId());
-                procInstId = varInstInf.getProcessInstanceId();
+                Long procInstId = varInstInf.getProcessInstanceId();
+                ProcessInstance procInstVO = eventMgr.getProcessInstance(procInstId);
+                if (procInstVO != null)
+                    return PackageCache.getProcessPackage(procInstVO.getProcessId());
             }
             else if (docVO.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
-                procInstId = docVO.getOwnerId();
+                Long procInstId = docVO.getOwnerId();
+                ProcessInstance procInstVO = eventMgr.getProcessInstance(procInstId);
+                if (procInstVO != null)
+                    return PackageCache.getProcessPackage(procInstVO.getProcessId());
             }
-            if (procInstId == null)
-                return null;
-            ProcessInstance procInstVO = eventMgr.getProcessInstance(procInstId);
-            return PackageCache.getProcessPackage(procInstVO.getProcessId());
+            else if (docVO.getOwnerType().equals("Designer")) { // test case, etc
+                return PackageCache.getProcessPackage(docVO.getOwnerId());
+            }
+            return null;
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
