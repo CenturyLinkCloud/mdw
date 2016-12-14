@@ -28,7 +28,10 @@ public class PropertyNames {
     public static final String MDW_DB_BASE_LOC = "mdw.db.base.location";
     public static final String MDW_DB_DATA_LOC = "mdw.db.data.location";
     public static final String MDW_DB_EMBEDDED_HOST_PORT = "mdw.db.embedded.server";
-
+    // for MongoDB
+    public static final String MDW_MONGODB_HOST = "mdw.mongodb.host";
+    public static final String MDW_MONGODB_PORT = "mdw.mongodb.port";
+    public static final String MDW_MONGODB_POOLSIZE = "mdw.mongodb.poolsize";
     // file system
     public static final String MDW_FS_USER = "mdw.file.system.user";
     public static final String MDW_FS_PASSWORD = "mdw.file.system.password";

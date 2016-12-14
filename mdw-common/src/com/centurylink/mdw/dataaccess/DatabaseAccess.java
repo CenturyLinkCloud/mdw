@@ -23,6 +23,7 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.ApplicationConstants;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -63,9 +64,13 @@ public class DatabaseAccess {
 
     private boolean isEmbedded;
 
+    private static boolean isMongoDB = false;
     private static MongoClient mongoClient;
     public static MongoDatabase getMongoDb() {
-        return mongoClient.getDatabase("mdw");
+        if (mongoClient == null)
+            return null;
+        else
+            return mongoClient.getDatabase("mdw");
     }
 
     /**
@@ -116,8 +121,11 @@ public class DatabaseAccess {
             }
         }
 
-        // Check for MongoDB and open client
-        openMongoDbClient();
+        if (!StringHelper.isEmpty(PropertyManager.getProperty(PropertyNames.MDW_MONGODB_HOST)))
+            isMongoDB = true;
+
+        if (isMongoDB && mongoClient == null)  // Check and open client for MongoDB
+            openMongoDbClient();
     }
 
     public DatabaseAccess(String dbName, Map<String,String> connectParams) {
@@ -234,17 +242,17 @@ public class DatabaseAccess {
 
     private static synchronized void openMongoDbClient() {
         if (mongoClient == null) {
-            String mongoHost = PropertyManager.getProperty("mdw.mongodb.host");
-            if (mongoHost != null) {
-                int mongoPort = PropertyManager.getIntegerProperty("mdw.mongodb.port", 27017);
-                int maxConnections = PropertyManager.getIntegerProperty("mdw.mongodb.poolsize", PropertyManager.getIntegerProperty("mdw.database.poolsize", 100));
-                MongoClientOptions.Builder options = MongoClientOptions.builder();
-                options.socketKeepAlive(true);
-                if (maxConnections > 100)
-                    options.connectionsPerHost(maxConnections);
-                mongoClient = new MongoClient(new ServerAddress(mongoHost, mongoPort), options.build());
-                LoggerUtil.getStandardLogger().info(mongoClient.getMongoClientOptions().toString());
-            }
+            String mongoHost = PropertyManager.getProperty(PropertyNames.MDW_MONGODB_HOST);
+            int mongoPort = PropertyManager.getIntegerProperty(PropertyNames.MDW_MONGODB_PORT, 27017);
+            int maxConnections = PropertyManager.getIntegerProperty(PropertyNames.MDW_MONGODB_POOLSIZE, PropertyManager.getIntegerProperty(PropertyNames.MDW_DB_POOLSIZE, 100));
+
+            MongoClientOptions.Builder options = MongoClientOptions.builder();
+            options.socketKeepAlive(true);
+            if (maxConnections > 100)  // MongoClient default is 100 max connections per host
+                options.connectionsPerHost(maxConnections);
+
+            mongoClient = new MongoClient(new ServerAddress(mongoHost, mongoPort), options.build());
+            LoggerUtil.getStandardLogger().info(mongoClient.getMongoClientOptions().toString());
         }
     }
 
