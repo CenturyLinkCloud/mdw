@@ -28,6 +28,7 @@ public class Role implements Serializable, Comparable<Role>, Jsonable  {
     public static final String SUPERVISOR = "Supervisor";
     public static final String TASK_EXECUTION = "Task Execution";
     public static final String VIEW_ONLY = "View Only";     // only needed when user does not have any other role
+    public static final String ANY = "Any";  // used to designate that any user is authorized
 
     public static final String ALL = "All";        // has all roles applicable to the group
 
