@@ -52,7 +52,7 @@ import com.centurylink.mdw.xml.XmlPath;
 
 /**
  * Used for old-school (non-service) event handling.
- * Mostly for MDW internal use.
+ * Strictly for MDW internal use.
  */
 public class FallbackEventHandler implements ExternalEventHandler {
 

@@ -399,7 +399,7 @@ public class ListenerHelper {
      * @return
      */
     private Object getParsedMessage(String request, Map<String,String> metaInfo) {
-        if (request == null)
+        if (request == null || request.isEmpty())
             return null;
         boolean jsonMessage = request.charAt(0) == '{';
         Object msgdoc = null;
