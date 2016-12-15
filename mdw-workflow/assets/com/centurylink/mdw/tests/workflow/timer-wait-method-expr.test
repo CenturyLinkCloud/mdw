@@ -1,0 +1,13 @@
+// timer-wait-method-expr
+start process("MDWTestTimerWait") {
+    variables = [testCase: "methodExpression"]
+}
+sleep 60
+// should be too late for adjusted delaySeconds
+notify event("fireAfterSixty-${masterRequestId}") {
+    message = "ignored"
+}
+wait process {
+    timeout = 10 // should already be finished
+}
+verify process

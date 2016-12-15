@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.event.EventType;
@@ -34,7 +35,6 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     private Integer exitStatus;
     public static final String RECEIVED_MESSAGE_DOC_VAR = "rcvdMsgDocVar";
 
-
     /**
      * Method that executes the logic based on the work
      */
@@ -46,22 +46,24 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
             boolean toFinish = handleCompletionCode();
             if (toFinish && exitStatus==null)
                 exitStatus = WorkStatus.STATUS_COMPLETED;
-        } else {
-            // set timeouts
-            int timeout = getTimeoutSeconds();
-            if (timeout > 0) {
-                loginfo("set activity timeout as " + timeout + " seconds");
-                InternalEvent delayMsg = InternalEvent.createActivityDelayMessage(getActivityInstance(),
-                        getMasterRequestId());
-                try {
+        }
+        else {
+            try {
+                // set timeouts
+                int timeout = getTimeoutSeconds();
+                if (timeout > 0) {
+                    loginfo("set activity timeout as " + timeout + " seconds");
+                    InternalEvent delayMsg = InternalEvent.createActivityDelayMessage(getActivityInstance(), getMasterRequestId());
                     getEngine().sendDelayedInternalEvent(delayMsg, timeout,
                             ScheduledEvent.INTERNAL_EVENT_PREFIX+getActivityInstanceId()+"timeout", false);
-                } catch (MDWException e) {
-                    throw new ActivityException(0, "Failed to set timeout", e);
                 }
+            }
+            catch (MDWException e) {
+                throw new ActivityException(0, "Failed to set timeout", e);
             }
         }
     }
+
     protected boolean isEventRecurring(String completionCode) {
         for (String[] eventSpec : getWaitEventSpecs()) {
             if (completionCode.equals(eventSpec[1])
@@ -71,12 +73,15 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
         return false;
     }
 
-    protected int getTimeoutSeconds() {
-        String sla = this.getAttributeValue(WorkAttributeConstant.SLA);
-        if (sla==null || sla.length()==0) return 0;
+    protected int getTimeoutSeconds() throws PropertyException {
+        String sla = getAttributeValueSmart(WorkAttributeConstant.SLA);
+        if (sla == null || sla.length() == 0)
+            return 0;
         String unit = getAttributeValue(WorkAttributeConstant.SLA_UNITS);
-        if (StringHelper.isEmpty(unit)) unit = getAttributeValue(WorkAttributeConstant.SLA_UNIT);
-        if (StringHelper.isEmpty(unit)) unit = ServiceLevelAgreement.INTERVAL_HOURS;
+        if (StringHelper.isEmpty(unit))
+            unit = getAttributeValue(WorkAttributeConstant.SLA_UNIT);
+        if (StringHelper.isEmpty(unit))
+            unit = ServiceLevelAgreement.INTERVAL_HOURS;
         return ServiceLevelAgreement.unitsToSeconds(sla, unit);
     }
 
