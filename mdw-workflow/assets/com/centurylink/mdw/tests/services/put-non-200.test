@@ -1,0 +1,10 @@
+// test PUT with non-200 response
+def response = put http("services/Requests/1234") {
+    payload = "{}"
+}
+assert response.code == 405 // Not Allowed
+
+response = put http("services/Workgroups/NotExist") {
+    payload = '{"name": "NotExist"}'
+}
+assert response.code == 404 // Not Found

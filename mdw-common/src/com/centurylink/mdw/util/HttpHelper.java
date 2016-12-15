@@ -4,7 +4,6 @@
 package com.centurylink.mdw.util;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -13,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -266,12 +264,12 @@ public class HttpHelper {
         }
     }
 
-   /**
-    * Submit an HTTP PUT request with a String value
-    * @param file the file to be uploaded
-    * @return string with the response from the server
-    */
-    public String put(String content) throws IOException {
+    /**
+     * Perform an HTTP PUT request to the URL.
+     * @param content bytes
+     * @return string containing the response from the server
+     */
+    public byte[] putBytes(byte[] content) throws IOException {
 
         if (connection == null)
             connection = (HttpURLConnection) url.openConnection();
@@ -284,41 +282,26 @@ public class HttpHelper {
              */
             connection.setRequestProperty("Content-Type", "application/octet-stream");
         }
-        connection.setRequestMethod("PUT");
+
         connection.setDoOutput(true);
+        connection.setRequestMethod("PUT");
 
-        BufferedWriter outWriter = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-        ByteArrayInputStream bais = new ByteArrayInputStream(content.getBytes());
-        BufferedReader inReader = new BufferedReader(new InputStreamReader(bais));
+        OutputStream os = connection.getOutputStream();
+        os.write(content);
 
-        String in = null;
-        while ((in = inReader.readLine()) != null)
-        {
-            outWriter.write(in + "\n");
-        }
+        readInput(connection);
+        os.close();
+        return response;
+    }
 
-        inReader.close();
-        outWriter.close();
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuffer responseBuffer = new StringBuffer();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            responseBuffer.append(line).append('\n');
-        }
-
-        reader.close();
-
-        connection.disconnect();
-
-        responseCode = connection.getResponseCode();
-        if (responseCode < 200 || responseCode >= 300)
-        {
-            String response = connection.getResponseMessage();
-            throw new IOException("Error uploading file: " + responseCode + " -- " + response);
-        }
-
-        return responseBuffer.toString();
+   /**
+    * Submit an HTTP PUT request with a String value
+    * @param file the file to be uploaded
+    * @return string with the response from the server
+    */
+    public String put(String content) throws IOException {
+        putBytes(content.getBytes());
+        return getResponse();
      }
 
     /**
@@ -385,25 +368,38 @@ public class HttpHelper {
      * @return the string response from the server
      */
     public String delete() throws IOException {
+        return delete(null);
+    }
+
+    public String delete(String content) throws IOException {
+        deleteBytes(content == null ? null : content.getBytes());
+        return getResponse();
+    }
+
+    /**
+     * Perform an HTTP DELETE request to the URL.
+     * @param content bytes (not usually populated)
+     * @return string containing the response from the server
+     */
+    public byte[] deleteBytes(byte[] content) throws IOException {
+
         if (connection == null)
             connection = (HttpURLConnection) url.openConnection();
 
         prepareConnection(connection);
-
-        connection.setDoOutput(false);
         connection.setRequestMethod("DELETE");
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuffer responseBuffer = new StringBuffer();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            responseBuffer.append(line).append('\n');
+        OutputStream os = null;
+        if (content != null) {
+            connection.setDoOutput(true);
+            os = connection.getOutputStream();
+            os.write(content);
         }
 
-        reader.close();
-        connection.disconnect();
-
-        return responseBuffer.toString();
+        readInput(connection);
+        if (os != null)
+           os.close();
+        return response;
     }
 
     public String mkcol() throws IOException {
