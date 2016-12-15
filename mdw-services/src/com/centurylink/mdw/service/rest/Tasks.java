@@ -87,7 +87,10 @@ public class Tasks extends JsonRestService implements JsonExportable {
             if (workGrpsJsonArr != null) {
                 groups = new ArrayList<Workgroup>();
                 for (int i = 0; i < workGrpsJsonArr.length(); i++) {
-                    groups.add(userServices.getWorkgroup(workGrpsJsonArr.getString(i)));
+                    Workgroup workgroup = userServices.getWorkgroup(workGrpsJsonArr.getString(i));
+                    if (workgroup == null)
+                        throw new DataAccessException("Workgroup not found: " + workGrpsJsonArr.getString(i));
+                    groups.add(workgroup);
                 }
             }
         }

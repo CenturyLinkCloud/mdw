@@ -230,7 +230,10 @@ public class UserDataAccess extends UserDataAccessDb {
                      if (rs.next()) group.setParentGroup(rs.getString(1));
                  }
                  return group;
-             } else return null;
+             }
+             else {
+                 return null;
+             }
         } catch(Exception ex){
             throw new DataAccessException(-1, "Failed to get user group", ex);
         } finally {

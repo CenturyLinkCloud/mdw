@@ -207,9 +207,7 @@ public class UserGroupCache implements PreloadableCache, CacheService {
                 group = groupsByName.get(name);
                 if (group == null) {
                     group = loadWorkgroup(name);
-                    if (group == null)
-                        throw new CachingException("Cannot find workgroup: " + name);
-                    else
+                    if (group != null)
                         groupsByName.put(name, group);
                 }
             }

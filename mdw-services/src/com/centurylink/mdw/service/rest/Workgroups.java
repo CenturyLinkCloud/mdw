@@ -61,11 +61,17 @@ public class Workgroups extends JsonRestService {
             if (groupName == null) // check parameter
                 groupName = getParameters(headers).get("name");
             if (groupName != null) {
-                return userServices.getWorkgroup(groupName).getJson();
+                Workgroup group = userServices.getWorkgroup(groupName);
+                if (group == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Workgroup not found: " + groupName);
+                return group.getJson();
             }
             else {
                 return userServices.getWorkgroups().getJson();
             }
+        }
+        catch (ServiceException ex) {
+            throw ex;
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
@@ -132,10 +138,12 @@ public class Workgroups extends JsonRestService {
     throws ServiceException, JSONException {
 
         UserServices userServices = ServiceLocator.getUserServices();
-        Workgroup workgroup = new Workgroup(content);
         String name = getSegment(path, 1);
         if (name == null)
             throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing path segment: {name}");
+        if (!content.has("name"))
+            throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing required property: name");
+        Workgroup workgroup = new Workgroup(content);
         try {
             Workgroup existing = userServices.getWorkgroup(name);
             if (existing == null)
@@ -164,7 +172,10 @@ public class Workgroups extends JsonRestService {
         UserServices userServices = ServiceLocator.getUserServices();
         try {
             if (rel == null) {
-              userServices.deleteWorkgroup(name);
+                Workgroup workgroup = userServices.getWorkgroup(name);
+                if (workgroup == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Workgroup not found: " + name);
+                userServices.deleteWorkgroup(name);
             }
             else if (rel.equals("users")) {
                 String cuid = getSegment(path, 3);

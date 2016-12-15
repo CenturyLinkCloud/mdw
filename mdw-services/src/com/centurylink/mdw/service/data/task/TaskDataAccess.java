@@ -68,13 +68,6 @@ public class TaskDataAccess extends CommonDataAccess {
         " ti.PRIORITY," +
         " ti.MASTER_REQUEST_ID";
 
-    private static String TASK_INSTANCE_SELECT_ADDITONAL =
-        " ui.CUID, pi.MASTER_REQUEST_ID," +
-        " (select ai.STATUS_MESSAGE from activity_instance ai " +
-        "  where pi.secondary_owner ='ACTIVITY_INSTANCE' and ai.activity_instance_id = pi.secondary_owner_id) TASK_MESSAGE, " +
-        " (select w.WORK_NAME from activity_instance ai, work w " +
-        "  where pi.secondary_owner ='ACTIVITY_INSTANCE' and ai.activity_instance_id = pi.secondary_owner_id and ai.activity_id = w.work_id) ACTIVITY_NAME ";
-
     private static String TASK_INSTANCE_SELECT =
         "distinct " + TASK_INSTANCE_SELECT_SHALLOW + ", " +
         " ti.TASK_INSTANCE_OWNER_ID as PROCESS_INSTANCE_ID," +

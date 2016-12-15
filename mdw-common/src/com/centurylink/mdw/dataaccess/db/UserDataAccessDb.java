@@ -46,7 +46,10 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
                  loadGroupsRolesForUser(user);
                  loadAttributesForUser(user);
                  return user;
-             } else return null;
+             }
+             else {
+                 return null;
+             }
         } catch(Exception ex){
             throw new DataAccessException(-1, "Failed to get user: " + userName, ex);
         } finally {
