@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.translator.impl.YamlTranslator;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.variable.Document;
@@ -56,7 +57,7 @@ public class DocumentValue implements JsonService {
                 json.put("isUpdateable", String.valueOf(obj instanceof SelfSerializable));
             }
             com.centurylink.mdw.variable.VariableTranslator trans = VariableTranslator.getTranslator(pkg, doc.getDocumentType());
-            if (trans instanceof XmlDocumentTranslator) {
+            if (trans instanceof XmlDocumentTranslator && !(trans instanceof YamlTranslator)) {
                 org.w3c.dom.Document domDoc = ((XmlDocumentTranslator)trans).toDomDocument(doc.getObject(doc.getDocumentType(), pkg));
                 XmlObject xmlBean = XmlObject.Factory.parse(domDoc);
                 return xmlBean.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(4));
