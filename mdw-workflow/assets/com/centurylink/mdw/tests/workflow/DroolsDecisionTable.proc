@@ -24,7 +24,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
       "name": "Setup XMLBean",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=181,ly=202,type=Elbow,xs=181&181,ys=187&218"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=182,ly=202,type=Elbow,xs=182&182,ys=187&218"},
         "event": "FINISH",
         "id": "T4",
         "to": "A1"
@@ -39,21 +39,21 @@
         "RuleVersionVar": "ruleVersion",
         "Rules Language": "Drools",
         "Stateful": "FALSE",
-        "WORK_DISPLAY_INFO": "x=133,y=222,w=105,h=72"
+        "WORK_DISPLAY_INFO": "x=134,y=222,w=105,h=72"
       },
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.rules.DroolsDecisionTableActivity",
       "name": "Drools \r\nDecision Table",
       "transitions": [
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=67,ly=297,type=Elbow,xs=129&57,ys=258&344"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=67,ly=297,type=Elbow,xs=130&57,ys=258&344"},
           "event": "FINISH",
           "id": "T1",
           "resultCode": "WESTERN",
           "to": "A4"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=263,ly=296,type=Elbow,xs=242&325,ys=258&353"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=264,ly=296,type=Elbow,xs=243&325,ys=258&353"},
           "event": "FINISH",
           "id": "T3",
           "resultCode": "EASTERN",
