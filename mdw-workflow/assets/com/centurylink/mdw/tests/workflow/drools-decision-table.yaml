@@ -29,7 +29,7 @@ process: # 13605
     value: Western
   variable: # 20593
     name: ruleVersion
-    value: drools-orderRoutingDecisionTable.xlsx v2
+    value: drools-orderRoutingDecisionTable.xlsx v1
   variable: # 20594
     name: workgroup
     value: Cheapskates
