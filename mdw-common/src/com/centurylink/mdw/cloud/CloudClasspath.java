@@ -14,6 +14,7 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.util.ClasspathUtil;
+import com.centurylink.mdw.util.StringHelper;
 
 // TODO add the jars in PropertyNames.MDW_JAR_LIBRARY_PATH
 public class CloudClasspath {
@@ -82,9 +83,14 @@ public class CloudClasspath {
                     tomcatWebAppDir = new File(configDir.getParentFile() + FILE_SEP + "apps");
             }
             if (tomcatWebAppDir.isDirectory()) {
-                tomcatWebAppJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(tomcatWebAppDir, true)));
-                tomcatMdwWebInfClasses = new File(tomcatWebAppDir + FILE_SEP + "mdw" + FILE_SEP + "WEB-INF" + FILE_SEP + "classes");
+                String mdwWarName = PropertyManager.getProperty(PropertyNames.MDW_WAR_NAME);
+                if(StringHelper.isEmpty(mdwWarName))
+                    mdwWarName = "mdw";
+                File mdwWebInfDir = new File(tomcatWebAppDir + FILE_SEP + mdwWarName + FILE_SEP + "WEB-INF");
+                tomcatWebAppJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(mdwWebInfDir, true)));
+                tomcatMdwWebInfClasses = new File(mdwWebInfDir + FILE_SEP + "classes");
             }
+
             // tomcat base
             File tomcatBaseLib = new File(catalinaBase + FILE_SEP + "lib");
             if (tomcatBaseLib.isDirectory())

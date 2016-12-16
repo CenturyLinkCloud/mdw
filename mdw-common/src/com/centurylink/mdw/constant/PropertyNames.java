@@ -71,6 +71,7 @@ public class PropertyNames {
     public static final String MDW_TEMP_DIR = "mdw.temp.dir";
 
     public static final String APPLICATION_NAME = "mdw.application.name";
+    public static final String MDW_WAR_NAME = "mdw.war.name";
     public static final String TASK_MANAGER_URL_OLD = "MDWFramework.TaskManagerWeb/task.manager.url";
     public static final String TASK_MANAGER_URL = "mdw.task.manager.url";
     public static final String TASK_MANAGER_WELCOME_PATH = "MDWFramework.TaskManagerWeb/task.manager.welcome.path";
