@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +60,10 @@ public class HttpHelper {
     private long maxBytes = -1;
     public long getMaxBytes() { return maxBytes; }
     public void setMaxBytes(long max) { this.maxBytes = max; }
+
+    private Proxy proxy;
+    public Proxy getProxy() { return proxy; }
+    public void setProxy(Proxy proxy) { this.proxy = proxy; }
 
 
     /**
@@ -157,8 +162,12 @@ public class HttpHelper {
      */
     public byte[] postBytes(byte[] content) throws IOException {
 
-        if (connection == null)
-            connection = (HttpURLConnection) url.openConnection();
+        if (connection == null) {
+            if (proxy == null)
+                connection = (HttpURLConnection) url.openConnection();
+            else
+                connection = (HttpURLConnection) url.openConnection(proxy);
+        }
 
         prepareConnection(connection);
 
@@ -182,8 +191,12 @@ public class HttpHelper {
      * @return the string response from the server
      */
     public byte[] getBytes() throws IOException {
-        if (connection == null)
-            connection = (HttpURLConnection) url.openConnection();
+        if (connection == null) {
+            if (proxy == null)
+                connection = (HttpURLConnection) url.openConnection();
+            else
+                connection = (HttpURLConnection) url.openConnection(proxy);
+        }
 
         prepareConnection(connection);
 
@@ -271,8 +284,12 @@ public class HttpHelper {
      */
     public byte[] putBytes(byte[] content) throws IOException {
 
-        if (connection == null)
-            connection = (HttpURLConnection) url.openConnection();
+        if (connection == null) {
+            if (proxy == null)
+                connection = (HttpURLConnection) url.openConnection();
+            else
+                connection = (HttpURLConnection) url.openConnection(proxy);
+        }
 
         prepareConnection(connection);
 
@@ -312,8 +329,12 @@ public class HttpHelper {
      */
     public String put(File file) throws IOException {
 
-        if (connection == null)
-            connection = (HttpURLConnection) url.openConnection();
+        if (connection == null) {
+            if (proxy == null)
+                connection = (HttpURLConnection) url.openConnection();
+            else
+                connection = (HttpURLConnection) url.openConnection(proxy);
+        }
 
         prepareConnection(connection);
 
@@ -383,8 +404,12 @@ public class HttpHelper {
      */
     public byte[] deleteBytes(byte[] content) throws IOException {
 
-        if (connection == null)
-            connection = (HttpURLConnection) url.openConnection();
+        if (connection == null) {
+            if (proxy == null)
+                connection = (HttpURLConnection) url.openConnection();
+            else
+                connection = (HttpURLConnection) url.openConnection(proxy);
+        }
 
         prepareConnection(connection);
         connection.setRequestMethod("DELETE");
@@ -403,8 +428,12 @@ public class HttpHelper {
     }
 
     public String mkcol() throws IOException {
-        if (connection == null)
-            connection = (HttpURLConnection) url.openConnection();
+        if (connection == null) {
+            if (proxy == null)
+                connection = (HttpURLConnection) url.openConnection();
+            else
+                connection = (HttpURLConnection) url.openConnection(proxy);
+        }
 
         prepareConnection(connection);
 

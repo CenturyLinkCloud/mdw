@@ -4,6 +4,7 @@
 package com.centurylink.mdw.workflow.adapter.rest;
 
 import java.io.IOException;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -29,12 +30,16 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     public static final String HEADERS_VARIABLE = "HeadersVariable";
 
 
+    @Override
+    public Object openConnection() throws ConnectionException {
+        return openConnection(null);
+    }
+
     /**
      * Returns an HttpURLConnection based on the configured endpoint, which
      * includes the resource path. Override for HTTPS or other connection type.
      */
-    @Override
-    public Object openConnection() throws ConnectionException {
+    public Object openConnection(Proxy proxy) throws ConnectionException {
         try {
             String endpointUri = getEndpointUri();
             Map<String,String> params = getRequestParameters();
@@ -53,7 +58,10 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 endpointUri += query;
             }
             URL url = new URL(endpointUri);
-            return url.openConnection();
+            if (proxy == null)
+                return url.openConnection();
+            else
+                return url.openConnection(proxy);
         }
         catch (Exception ex) {
             throw new ConnectionException(ConnectionException.CONNECTION_DOWN, ex.getMessage(), ex);
