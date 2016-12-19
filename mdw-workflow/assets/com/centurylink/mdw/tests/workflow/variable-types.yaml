@@ -20,9 +20,9 @@ process: # 21607
   variable: # 39634
     name: inputYaml
     value: |
-      !!com.centurylink.mdw.tests.workflow.Person {
-        firstName: isaac,
-        lastName: Richards
+      {
+        "firstName": "isaac",
+        "lastName": "Richards"
       }
   variable: # 39636
     name: localJsonable
@@ -34,7 +34,7 @@ process: # 21607
   variable: # 39637
     name: localYaml
     value: |
-      !!com.centurylink.mdw.tests.workflow.Person {
-        firstName: manoj,
-        lastName: agrawal
+      {
+        "firstName": "manoj",
+        "lastName": "agrawal"
       }
