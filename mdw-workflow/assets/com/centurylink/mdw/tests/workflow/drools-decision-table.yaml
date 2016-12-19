@@ -12,6 +12,7 @@ process: # 13605
       Drools 
       Decision Table
     status: Completed
+    result: WESTERN
   activity: # 4 "2016-02-22 11:52:09"
     name: Stop
     status: Completed
