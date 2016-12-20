@@ -20,14 +20,14 @@
     "angular-sanitize": "1.4.7",
     "bootstrap-css-only": "~3.3.4",
     "angular-ui-grid": "3.0.7",
-    "angular-websocket": "1.0.14",
     "highlightjs": "~9.3.0",
     "iframe-resizer": "~3.5.3",
     "jsdiff": "~2.2.0",
     "diff2html": "~1.1.3",
     "jasmine": "~2.3.4",
     "angular-mocks": "1.4.7",
-    "Chart.js": "~2.1.4"
+    "Chart.js": "~2.1.4",
+    "angular-websocket": "~2.0.0"
   },
   "keywords": [
     "mdw"

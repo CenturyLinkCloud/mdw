@@ -1,12 +1,16 @@
-// Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
+// Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var testingMod = angular.module('testing', ['ngResource', 'mdw']);
 
-testingMod.controller('TestsController', ['$scope', 'AutomatedTests', 'TestExec',
-                                        function($scope, AutomatedTests, TestExec) {
+testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'AutomatedTests', 'TestExec',
+                                         function($scope, $websocket, mdw, AutomatedTests, TestExec) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
+    $scope.processTestCases();
+  });
+  
+  $scope.processTestCases = function() {
     $scope.testCaseList.packages.sort(function(p1, p2) {
       return p1.name.localeCompare(p2.name);
     });
@@ -19,7 +23,7 @@ testingMod.controller('TestsController', ['$scope', 'AutomatedTests', 'TestExec'
         return tc1.name.localeCompare(tc2.name);
       });
     });
-  });
+  };
   
   $scope.passed = function() {
     return $scope.forStatus('Passed');
@@ -88,8 +92,14 @@ testingMod.controller('TestsController', ['$scope', 'AutomatedTests', 'TestExec'
     function(error) {
       $scope.testExecMessage = error.data.status.message;
     });
-    
   };
+  
+  $scope.dataStream = $websocket(mdw.autoTestWebSocketUrl);
+  $scope.dataStream.onMessage(function(message) {
+    // console.log("TESTS JSON: " + message.data);
+    $scope.testCaseList = JSON.parse(message.data);
+    $scope.processTestCases();
+  });
   
 }]);
 
@@ -255,3 +265,22 @@ testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
     run: { method: 'POST' }
   });
 }]);
+
+//testingMod.factory('TestData', function($websocket, mdw) {
+//  // open a WebSocket connection
+//  var dataStream = $websocket(mdw.autoTestWebSocketUrl);
+//
+//  var testCases = null;
+//
+//  dataStream.onMessage(function(message) {
+//    testCases = JSON.parse(message.data);
+//  });
+//
+//  return {
+//    getTestCases: function() {
+//      return testCases;
+//    }
+//  };
+//
+//  return methods;
+//});

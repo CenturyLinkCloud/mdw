@@ -18,5 +18,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="assets/com/centurylink/mdw/testing/Java-WebSocket-1.3.0.jar" sourcepath="/Java-WebSocket"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

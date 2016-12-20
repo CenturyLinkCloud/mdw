@@ -167,6 +167,7 @@ public class PropertyNames {
     public static final String MDW_TEST_RESULTS_LOCATION = "mdw.test.results.location";
     public static final String MDW_FUNCTION_TESTS_SUMMARY_FILE = "mdw.function.tests.summary.file";
     public static final String MDW_FEATURE_TESTS_SUMMARY_FILE = "mdw.feature.tests.summary.file";
+    public static final String MDW_AUTOTEST_WEBSOCKET_URL = "mdw.autotest.websocket.url";
 
     // Ldap configuration
     public static final String LDAP_PROTOCOL = "LDAP/Protocol";

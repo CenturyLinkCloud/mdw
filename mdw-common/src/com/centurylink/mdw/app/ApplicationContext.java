@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -616,5 +617,31 @@ public class ApplicationContext {
                 hubOverrideRoot = new File(assetRoot + "/" + getHubOverridePackage().replace('.', '/'));
         }
         return hubOverrideRoot;
+    }
+
+    private static int autoTestWebSocketPort;
+    public static int getAutoTestWebSocketPort() {
+        if (autoTestWebSocketPort == 0) {
+            String url = PropertyManager.getProperty(PropertyNames.MDW_AUTOTEST_WEBSOCKET_URL);
+            if (url != null) {
+                try {
+                    int lastColon = url.lastIndexOf(':');
+                    if (lastColon == -1)
+                        throw new MalformedURLException("Cannot find port in websocket URL: " + url);
+                    int slash = url.indexOf('/', lastColon + 1);
+                    if (slash > 0)
+                        autoTestWebSocketPort = Integer.parseInt(url.substring(lastColon + 1, slash));
+                    else
+                        autoTestWebSocketPort = Integer.parseInt(url.substring(lastColon + 1));
+                }
+                catch (Exception ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                }
+            }
+            else {
+                autoTestWebSocketPort = 8282;
+            }
+        }
+        return autoTestWebSocketPort;
     }
  }

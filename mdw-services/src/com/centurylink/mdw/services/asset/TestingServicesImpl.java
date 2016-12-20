@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +24,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.TestingServices;
@@ -64,7 +65,9 @@ public class TestingServicesImpl implements TestingServices {
             }
             testCaseList.getTestCases().add(pkgTests);
         }
-        addStatusInfo(allTests);
+        long lastMod = addStatusInfo(allTests);
+        if (lastMod != -1)
+            testCaseList.setRetrieveDate(new Date(lastMod));
         return testCaseList;
     }
 
@@ -79,17 +82,23 @@ public class TestingServicesImpl implements TestingServices {
         }
     }
 
-    private void addStatusInfo(List<TestCase> testCases) {
+    /**
+     * Returns the last modified timestamp for the results file.
+     */
+    private long addStatusInfo(List<TestCase> testCases) {
         try {
             if (!testCases.isEmpty()) {
                 File suiteResults = getTestResultsFile(testCases.get(0).getAsset().getExtension());
-                if (suiteResults != null && suiteResults.isFile())
+                if (suiteResults != null && suiteResults.isFile()) {
                     processResultsFile(suiteResults, testCases);
+                    return suiteResults.lastModified();
+                }
             }
         }
         catch (Exception ex) {
             logger.severeException("Unable to get status info for testCases", ex);
         }
+        return -1;
     }
 
     private void addStatusInfo(TestCase testCase) {
@@ -169,6 +178,11 @@ public class TestingServicesImpl implements TestingServices {
                         if (currentTestCase != null) {
                             currentTestCase.setStatus(TestCase.Status.Errored);
                             currentTestCase.setMessage(attrs.getValue("message"));
+                        }
+                    }
+                    else if (qName.equals("running")) {
+                        if (currentTestCase != null) {
+                            currentTestCase.setStatus(TestCase.Status.InProgress);
                         }
                     }
                 }

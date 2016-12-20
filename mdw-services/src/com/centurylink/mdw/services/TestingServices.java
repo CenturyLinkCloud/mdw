@@ -33,4 +33,5 @@ public interface TestingServices {
      */
     public File getTestResultsDir() throws IOException;
 
+    public File getTestResultsFile(String format) throws IOException;
 }

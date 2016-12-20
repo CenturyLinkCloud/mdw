@@ -39,6 +39,10 @@ public class Mdw {
     public String getAuthMethod() { return authMethod; }
     public void setAuthMethod(String authMethod) { this.authMethod = authMethod; }
 
+    private String autoTestWebSocketUrl;
+    public String getAutoTestWebSocketUrl() { return autoTestWebSocketUrl; }
+    public void setAutoTestWebSocketUrl(String url) { this.autoTestWebSocketUrl = url; }
+
     Mdw(String version, String build, String hubRoot, String servicesRoot, File assetRoot, String overridePackage) {
         this.version = version;
         this.build = build;
