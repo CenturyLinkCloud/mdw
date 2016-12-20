@@ -7,9 +7,11 @@ process: # 13609
   activity: # 139 "2016-02-22 11:55:29"
     name: Geography
     status: Completed
+    result: EastWest
   activity: # 137 "2016-02-22 11:55:29"
     name: EastWest DecisionTable
     status: Completed
+    result: WESTERN
   activity: # 143 "2016-02-22 11:55:29"
     name: Stop
     status: Completed

@@ -9,6 +9,7 @@ process: # 13603
       Apply Order 
       Routing
     status: Completed
+    result: EASTERN
   activity: # 2 "2016-02-22 11:42:24"
     name: Stop
     status: Completed
