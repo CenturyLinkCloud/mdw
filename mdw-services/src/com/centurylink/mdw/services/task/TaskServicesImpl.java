@@ -417,6 +417,10 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
+    public void performTaskAction(UserTaskAction taskAction) throws ServiceException {
+        performTaskAction(taskAction);
+    }
+
     public void performTaskAction(UserTaskAction taskAction, Query query) throws ServiceException {
         String action = taskAction.getTaskAction();
         String userCuid = taskAction.getUser();
@@ -462,7 +466,7 @@ public class TaskServicesImpl implements TaskServices {
                 validator.validateAction(taskAction);
 
                 taskMgr.performActionOnTaskInstance(action, instanceId, user.getId(), assigneeId, comment,
-                        destination, false, !query.getBooleanFilter("disableEndpoint"));
+                        destination, false, query != null && !query.getBooleanFilter("disableEndpoint"));
 
                 if (logger.isDebugEnabled())
                     logger.debug("Performed action: " + action + " on task instance: " + instanceId);

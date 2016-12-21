@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
-package com.centurylink.mdw.services.asset;
+package com.centurylink.mdw.services.test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -29,9 +31,11 @@ import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.TestingServices;
+import com.centurylink.mdw.services.asset.AssetServicesImpl;
 import com.centurylink.mdw.test.PackageTests;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseList;
+import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -65,6 +69,7 @@ public class TestingServicesImpl implements TestingServices {
             }
             testCaseList.getTestCases().add(pkgTests);
         }
+        testCaseList.setCount(testCaseList.getTestCases().size());
         long lastMod = addStatusInfo(allTests);
         if (lastMod != -1)
             testCaseList.setRetrieveDate(new Date(lastMod));
@@ -253,6 +258,10 @@ public class TestingServicesImpl implements TestingServices {
     }
 
     public File getTestResultsDir() throws IOException {
+        return getMainResultsDir(); // call through to static method
+    }
+
+    public static File getMainResultsDir() throws IOException {
         File resultsDir = null;
         String resultsLoc = PropertyManager.getProperty(PropertyNames.MDW_TEST_RESULTS_LOCATION);
         if (resultsLoc == null) {
@@ -260,7 +269,7 @@ public class TestingServicesImpl implements TestingServices {
             if (gitLocalPath != null)
                 resultsLoc = gitLocalPath + "/testResults";
             else {
-                File assetRoot = assetServices.getAssetRoot();
+                File assetRoot = ApplicationContext.getAssetRoot();
                 String rootPath = assetRoot.toString().replace('\\', '/');
                 if (rootPath.endsWith("mdw-workflow/assets"))
                     resultsLoc = assetRoot.getParentFile() + "/testResults";
@@ -295,6 +304,35 @@ public class TestingServicesImpl implements TestingServices {
         }
 
         return summaryFile == null ? null : new File(resultsDir + "/" + summaryFile);
+    }
+
+    public void executeCase(TestCase testCase) {
+
+    }
+
+    public void executeCases(TestCaseList testCaseList) {
+
+    }
+
+    public void runTests(List<TestCase> testCases) throws ServiceException {
+        runTests(testCases, new TestExecConfig());
+    }
+
+    public void runTests(List<TestCase> testCases, TestExecConfig config) throws ServiceException {
+        for (TestCase tc : testCases) {
+            if (tc.getName().endsWith(Asset.getFileExtension(Asset.FEATURE)))
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Cucumber test cases currently not supported: " + tc.getPath());
+            // initialize case
+            tc.setStatus(null);
+        }
+
+        // TODO TestExec ThreadPool threadPool = new ThreadPool(config.getThreadCount());
+        HashMap<String,Process> processCache = new HashMap<String,Process>();
+
+//        LogMessageMonitor monitor = new LogMessageMonitor();
+//        if (monitor != null)
+//            monitor.start(true);
+
     }
 
 }

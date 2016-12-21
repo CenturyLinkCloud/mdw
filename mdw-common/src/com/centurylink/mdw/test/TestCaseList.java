@@ -4,6 +4,7 @@
 package com.centurylink.mdw.test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +37,24 @@ public class TestCaseList implements Jsonable {
 
     public TestCaseList(File assetRoot) {
         this.assetRoot = assetRoot;
+    }
+
+    public TestCaseList(File assetRoot, JSONObject json) throws JSONException {
+        if (json.has("suite"))
+            this.suite = json.getString("suite");
+        if (json.has("assetRoot"))
+            this.assetRoot = new File(json.getString("assetRoot"));
+        if (json.has("retrieveDate"))
+            this.retrieveDate = StringHelper.serviceStringToDate(json.getString("retrieveDate"));
+        if (json.has("count"))
+            this.count = json.getInt("count");
+        if (json.has("packages")) {
+            JSONArray pkgsArr = json.getJSONArray("packages");
+            this.testCases = new ArrayList<PackageTests>();
+            for (int i = 0; i < pkgsArr.length(); i++) {
+                this.testCases.add(new PackageTests(assetRoot, pkgsArr.getJSONObject(i)));
+            }
+        }
     }
 
     public JSONObject getJson() throws JSONException {

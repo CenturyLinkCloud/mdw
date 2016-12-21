@@ -68,20 +68,29 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'Automa
   };
   
   $scope.runTests = function() {
-    var testsToRun = [];
+    var execTestPkgs = [];
+    var pkgObj;
     for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
       for (var j = 0; j < $scope.testCaseList.packages[i].testCases.length; j++) {
-        if ($scope.testCaseList.packages[i].testCases[j].selected)
-          testsToRun[i] = { 'package': $scope.testCaseList.packages[i].name, name: $scope.testCaseList.packages[i].testCases[j].name };
+        if ($scope.testCaseList.packages[i].testCases[j].selected) {
+          var pkgName = $scope.testCaseList.packages[i].name;
+          pkgObj = null;
+          for (var k = 0; k < execTestPkgs.length; k++) {
+            if (execTestPkgs[k].name == pkgName) {
+              pkgObj = execTestPkgs[k];
+              break;
+            }
+          }
+          if (!pkgObj) {
+            pkgObj = {name: pkgName, version: $scope.testCaseList.packages[i].version, testCases: []}
+            execTestPkgs.push(pkgObj);
+          }
+          pkgObj.testCases.push({name: $scope.testCaseList.packages[i].testCases[j].name});
+        }
       }
-  }
+    }
     
-    var testExec = {
-        suite: 'Automated Tests',
-        testCases: testsToRun
-    };
-    
-    TestExec.run({}, testExec, function(data) {
+    TestExec.run({}, {packages: execTestPkgs}, function(data) {
       if (data.status.code !== 0) {
         $scope.testExecMessage = data.status.message;
       }
@@ -265,22 +274,3 @@ testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
     run: { method: 'POST' }
   });
 }]);
-
-//testingMod.factory('TestData', function($websocket, mdw) {
-//  // open a WebSocket connection
-//  var dataStream = $websocket(mdw.autoTestWebSocketUrl);
-//
-//  var testCases = null;
-//
-//  dataStream.onMessage(function(message) {
-//    testCases = JSON.parse(message.data);
-//  });
-//
-//  return {
-//    getTestCases: function() {
-//      return testCases;
-//    }
-//  };
-//
-//  return methods;
-//});

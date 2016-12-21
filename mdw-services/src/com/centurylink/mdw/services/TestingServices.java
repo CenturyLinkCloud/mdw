@@ -34,4 +34,15 @@ public interface TestingServices {
     public File getTestResultsDir() throws IOException;
 
     public File getTestResultsFile(String format) throws IOException;
+
+    /**
+     * Asynchronously executes a single test.  Call getTestCase() for status.
+     */
+    public void executeCase(TestCase testCase) throws ServiceException;
+
+    /**
+     * Asynchronously executes list of tests.  Call getTestCases() for status.
+     */
+    public void executeCases(TestCaseList testCaseList) throws ServiceException;
+
 }

@@ -4,7 +4,6 @@
 package com.centurylink.mdw.model.asset;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -694,18 +693,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             extensionToLanguage.put(".task", TASK);
         }
         return extensionToLanguage;
-    }
-
-    public void write(File destFile) throws IOException {
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(destFile);
-            fos.write(getContent());
-        }
-        finally {
-            if (fos != null)
-                fos.close();
-        }
     }
 
     /**

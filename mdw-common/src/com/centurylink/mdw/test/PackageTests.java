@@ -3,6 +3,8 @@
  */
 package com.centurylink.mdw.test;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,6 +26,18 @@ public class PackageTests implements Jsonable {
 
     public PackageTests(PackageDir pkgDir) {
         this.packageDir = pkgDir;
+    }
+
+    public PackageTests(File assetRoot, JSONObject json) throws JSONException {
+        String pkgName = json.getString("name");
+        this.packageDir = new PackageDir(assetRoot, pkgName, null);
+        if (json.has("testCases")) {
+            JSONArray tcArr = json.getJSONArray("testCases");
+            this.testCases = new ArrayList<TestCase>();
+            for (int i = 0; i < tcArr.length(); i++) {
+                this.testCases.add(new TestCase(assetRoot, tcArr.getJSONObject(i)));
+            }
+        }
     }
 
     public JSONObject getJson() throws JSONException {

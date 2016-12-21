@@ -10,13 +10,18 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.test.TestCase;
+import com.centurylink.mdw.test.TestCaseList;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Path("/AutomatedTests")
@@ -28,17 +33,44 @@ public class AutomatedTests extends JsonRestService {
         response=TestCase.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
-        TestingServices testServices = ServiceLocator.getTestingServices();
-        String[] segments = getSegments(path);
-        if (segments.length == 7) {
-            String testCasePath = segments[5] + '/' + segments[6];
-            TestCase testCase = testServices.getTestCase(testCasePath);
-            if (testCase == null)
-                throw new ServiceException(404, "Test case not found: " + testCasePath);
-            return testCase.getJson();
+        TestCase singleCase = getTestCase(getSegments(path));
+        if (singleCase != null) {
+            return singleCase.getJson();
         }
         else {
-            return testServices.getTestCases().getJson();
+            return ServiceLocator.getTestingServices().getTestCases().getJson();
         }
     }
+
+    /**
+     * For executing test case(s).
+     */
+    @Override
+    @Path("/exec/{testCase}")
+    @ApiOperation(value="Executes a test case or a list of cases.", response=StatusMessage.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="TestCaseList", paramType="body", dataType="com.centurylink.mdw.test.TestCaseList")})
+    public JSONObject post(String path, JSONObject content, Map<String,String> headers)
+    throws ServiceException, JSONException {
+        TestCase singleCase = getTestCase(getSegments(path));
+        if (singleCase != null) {
+            ServiceLocator.getTestingServices().executeCase(singleCase);
+        }
+        else {
+            TestingServices testingServices = ServiceLocator.getTestingServices();
+            testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content));
+        }
+        return null;
+    }
+
+    private TestCase getTestCase(String[] segments) throws ServiceException {
+        if (segments.length != 7)
+            return null;
+        String testCasePath = segments[5] + '/' + segments[6];
+        TestCase testCase = ServiceLocator.getTestingServices().getTestCase(testCasePath);
+        if (testCase == null)
+            throw new ServiceException(404, "Test case not found: " + testCasePath);
+        return testCase;
+    }
+
 }

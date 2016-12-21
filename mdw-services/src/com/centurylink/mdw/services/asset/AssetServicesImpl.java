@@ -120,10 +120,6 @@ public class AssetServicesImpl implements AssetServices {
         return versionControlGit;
     }
 
-    public byte[] getAssetContent(String assetPath) throws ServiceException {
-        return AssetCache.getAsset(assetPath).getStringContent().getBytes();
-    }
-
     /**
      * Returns all the assets for the specified package.
      * Works only for VCS assets.  Does not use the AssetVOCache.
