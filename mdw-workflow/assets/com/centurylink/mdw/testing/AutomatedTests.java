@@ -3,6 +3,7 @@
  */
 package com.centurylink.mdw.testing;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.ws.rs.Path;
@@ -18,6 +19,7 @@ import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseList;
+import com.centurylink.mdw.test.TestExecConfig;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -52,13 +54,20 @@ public class AutomatedTests extends JsonRestService {
         @ApiImplicitParam(name="TestCaseList", paramType="body", dataType="com.centurylink.mdw.test.TestCaseList")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
+        TestExecConfig config = new TestExecConfig(); // TODO
+        String user = getAuthUser(headers);
         TestCase singleCase = getTestCase(getSegments(path));
-        if (singleCase != null) {
-            ServiceLocator.getTestingServices().executeCase(singleCase);
+        try {
+            if (singleCase != null) {
+                ServiceLocator.getTestingServices().executeCase(singleCase, user, config);
+            }
+            else {
+                TestingServices testingServices = ServiceLocator.getTestingServices();
+                testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
+            }
         }
-        else {
-            TestingServices testingServices = ServiceLocator.getTestingServices();
-            testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content));
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
         }
         return null;
     }

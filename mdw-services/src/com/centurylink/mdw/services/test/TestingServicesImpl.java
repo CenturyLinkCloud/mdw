@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -247,6 +246,11 @@ public class TestingServicesImpl implements TestingServices {
                             currentTestCase.setMessage(attrs.getValue("message"));
                         }
                     }
+                    else if (qName.equals("running")) {
+                        if (currentTestCase != null) {
+                            currentTestCase.setStatus(TestCase.Status.InProgress);
+                        }
+                    }
                 }
             });
         }
@@ -306,33 +310,22 @@ public class TestingServicesImpl implements TestingServices {
         return summaryFile == null ? null : new File(resultsDir + "/" + summaryFile);
     }
 
-    public void executeCase(TestCase testCase) {
+    public void executeCase(TestCase testCase, String user, TestExecConfig config) throws ServiceException, IOException {
 
     }
 
-    public void executeCases(TestCaseList testCaseList) {
-
-    }
-
-    public void runTests(List<TestCase> testCases) throws ServiceException {
-        runTests(testCases, new TestExecConfig());
-    }
-
-    public void runTests(List<TestCase> testCases, TestExecConfig config) throws ServiceException {
-        for (TestCase tc : testCases) {
-            if (tc.getName().endsWith(Asset.getFileExtension(Asset.FEATURE)))
-                throw new ServiceException(ServiceException.BAD_REQUEST, "Cucumber test cases currently not supported: " + tc.getPath());
-            // initialize case
-            tc.setStatus(null);
+    public void executeCases(TestCaseList testCaseList, String user, TestExecConfig config) throws ServiceException, IOException {
+        List<TestCase> testCases = new ArrayList<TestCase>();
+        for (PackageTests pkgTests : testCaseList.getTestCases()) {
+            for (TestCase pkgTest : pkgTests.getTestCases()) {
+                if (pkgTest.getName().endsWith(Asset.getFileExtension(Asset.FEATURE)))
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Cucumber test cases currently not supported: " + pkgTest.getPath());
+                testCases.add(readTestCase(pkgTest.getPath()));
+            }
         }
-
-        // TODO TestExec ThreadPool threadPool = new ThreadPool(config.getThreadCount());
-        HashMap<String,Process> processCache = new HashMap<String,Process>();
-
-//        LogMessageMonitor monitor = new LogMessageMonitor();
-//        if (monitor != null)
-//            monitor.start(true);
-
+        TestRunner runner = new TestRunner(testCaseList.getSuite(), testCases, user, getTestResultsFile(null), config);
+        new Thread(runner).start();
     }
+
 
 }

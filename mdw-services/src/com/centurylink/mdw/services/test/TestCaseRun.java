@@ -39,7 +39,6 @@ import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.UserTaskAction;
-import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
@@ -68,6 +67,7 @@ import com.centurylink.mdw.test.TestCaseResponse;
 import com.centurylink.mdw.test.TestCaseTask;
 import com.centurylink.mdw.test.TestCompare;
 import com.centurylink.mdw.test.TestException;
+import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.test.TestFailedException;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -77,83 +77,74 @@ import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
-public class TestCaseRun {
+public class TestCaseRun implements Runnable {
 
     private TestCase testCase;
     public TestCase getTestCase() { return testCase; }
 
+    private String user;
+    private File resultsDir;
+
+    private int runNumber;
+    public int getRunNumber() { return runNumber; }
+
     private String masterRequestId;
     public String getMasterRequestId() { return masterRequestId; }
     public void setMasterRequestId(String masterRequestId) { this.masterRequestId = masterRequestId; }
+
+    private LogMessageMonitor monitor;
+    private Map<String,Process> processCache;
+
+    private TestExecConfig config;
+
+    public boolean isLoadTest() { return config.isLoadTest(); }
+    public boolean isVerbose() { return config.isVerbose(); }
+    public boolean isStubbing() { return config.isStubbing(); }
+    public boolean isCreateReplace() { return config.isCreateReplace(); }
+
+    private PrintStream log = System.out;
+    public PrintStream getLog() { return log; }
+    public void setLog(PrintStream outStream) { this.log = outStream; }
+
+    private PreFilter preFilter = null;
+    PreFilter getPreFilter() { return preFilter; }
+    void setPreFilter(PreFilter preFilter) { this.preFilter = preFilter; }
 
     TestCaseProcess testCaseProcess;
 
     private List<ProcessInstance> processInstances;
     public List<ProcessInstance> getProcessInstances() { return processInstances; }
 
-
-    private LogMessageMonitor monitor;
-
-    private Map<String,Process> processCache;
     private String message;
     private boolean oneThreadPerCase;
     private boolean passed;
-    private boolean createReplace;
-    private boolean loadTest;
-    public boolean isLoadTest() { return loadTest; }
-    private int runNumber;
-    public int getRunNumber() { return runNumber; }
-    private boolean verbose;
-    public boolean isVerbose() { return verbose; }
-    private boolean stubbing;
-    public boolean isStubbing() { return stubbing; }
-
-    private PrintStream log = System.out;
-    public PrintStream getLog() { return log; }
-    public void setLog(PrintStream outStream) { this.log = outStream; }
-
-    private static File mainResultsDir;
-    private File resultsDir;
 
     private WorkflowServices workflowServices;
     private TaskServices taskServices;
 
-    private PreFilter preFilter = null;
-    PreFilter getPreFilter() { return preFilter; }
-    void setPreFilter(PreFilter preFilter) { this.preFilter = preFilter; }
-
-    private User user;
-
-    public TestCaseRun(TestCase testCase, User user, int run, String masterRequestId,
-            LogMessageMonitor monitor, Map<String,Process> processCache,
-            boolean loadTest, boolean oneThreadPerCase)
-    throws IOException {
+    public TestCaseRun(TestCase testCase, String user, File mainResultsDir, int run, String masterRequestId,
+            LogMessageMonitor monitor, Map<String,Process> processCache, TestExecConfig config) throws IOException {
         this.testCase = testCase;
         this.user = user;
+        this.resultsDir = new File(mainResultsDir + "/" + testCase.getPackage());
         this.runNumber = run;
         this.masterRequestId = masterRequestId;
         this.monitor = monitor;
         this.processCache = processCache;
-        this.loadTest = loadTest;
-        this.oneThreadPerCase = oneThreadPerCase && !loadTest;
+        this.config = config;
+        this.oneThreadPerCase = !config.isLoadTest();
 
-        if (mainResultsDir == null)
-            mainResultsDir = TestingServicesImpl.getMainResultsDir();
-        this.resultsDir = new File(mainResultsDir + "/" + testCase.getPackage().replace('.', '/'));
+        if (!resultsDir.exists()) {
+            if (!resultsDir.mkdirs())
+                throw new IOException("Cannot create test results directory: " + resultsDir);
+        }
+
+        this.log = new PrintStream(mainResultsDir + "/" + testCase.getExecuteLog());
+        if (isVerbose())
+            log.format("===== prepare case %s (id=%s)\r\n", testCase.getPath(), masterRequestId);
 
         this.workflowServices = ServiceLocator.getWorkflowServices();
         this.taskServices = ServiceLocator.getTaskServices();
-    }
-
-    public void prepareTest(boolean createReplace, File resultDir, boolean verbose, boolean singleServer, boolean stubbing, PrintStream log) {
-        this.createReplace = createReplace;
-        this.verbose = verbose;
-        this.stubbing = stubbing;
-        if (!resultDir.exists())
-            resultDir.mkdirs();
-        this.log = log;
-        if (verbose)
-            log.format("===== prepare case %s (id=%s)\r\n", testCase.getPath(), masterRequestId);
     }
 
     public void startExecution() {
@@ -187,11 +178,12 @@ public class TestCaseRun {
         }
         catch (Throwable ex) {
             finishExecution(ex);
+            System.out.println("FINISH: " + testCase.getPath() + ": " + testCase.getStatus());
         }
     }
 
     void startProcess(TestCaseProcess process) throws TestException {
-        if (verbose)
+        if (isVerbose())
             log.println("starting process " + process.getLabel() + "...");
         this.testCaseProcess = process;
         try {
@@ -201,9 +193,12 @@ public class TestCaseRun {
             if (resFile.isFile())
                 resFile.delete();
 
-            Process vo = process.getProcess();
+            Process proc = process.getProcess();
             Map<String,String> params = process.getParams();
-            // workflowServices.launchProcess();  // TODO TestExec
+            if (proc.isService())
+                workflowServices.invokeServiceProcess(proc, masterRequestId, params);
+            else
+                workflowServices.launchProcess(proc, masterRequestId, params);
         }
         catch (Exception ex) {
             throw new TestException("Failed to start " + process.getLabel(), ex);
@@ -216,10 +211,10 @@ public class TestCaseRun {
             throw new TestException("Not supported for load tests");
         try {
             List<Process> processVos = new ArrayList<Process>();
-            if (verbose)
+            if (isVerbose())
                 log.println("loading runtime data for processes:");
             for (TestCaseProcess process : processes) {
-                if (verbose)
+                if (isVerbose())
                     log.println("  - " + process.getLabel());
                 processVos.add(process.getProcess());
             }
@@ -244,16 +239,15 @@ public class TestCaseRun {
     }
 
     protected List<ProcessInstance> loadResults(List<Process> processes, Asset expectedResults, boolean orderById)
-    throws DataAccessException, IOException {
+    throws DataAccessException, IOException, ServiceException {
         List<ProcessInstance> mainProcessInsts = new ArrayList<ProcessInstance>();
         Map<String,List<ProcessInstance>> fullProcessInsts = new TreeMap<String,List<ProcessInstance>>();
         Map<String,String> fullActivityNameMap = new HashMap<String,String>();
         for (Process proc : processes) {
-            Map<String,String> criteria = new HashMap<String,String>();
-            criteria.put("masterRequestId", masterRequestId);
-            criteria.put("processId", proc.getId().toString());
-            List<ProcessInstance> procInstList = new ArrayList<ProcessInstance>(); // TODO TestExec workflowServices.getProcessInstanceList(criteria, 1, 100, proc, null).getItems();
-            int n = procInstList.size();
+            Query query = new Query();
+            query.setFilter("masterRequestId", masterRequestId);
+            query.setFilter("processId", proc.getId().toString());
+            List<ProcessInstance> procInstList = workflowServices.getProcesses(query).getProcesses();
             Map<Long,String> activityNameMap = new HashMap<Long,String>();
             for (Activity act : proc.getActivities()) {
                 activityNameMap.put(act.getActivityId(), act.getActivityName());
@@ -268,7 +262,7 @@ public class TestCaseRun {
                 }
             }
             for (ProcessInstance procInst : procInstList) {
-                procInst = new ProcessInstance(); // TODO TestExec workflowServices.getProcessInstanceAll(procInst.getId(), proc);
+                procInst = workflowServices.getProcess(procInst.getId());
                 mainProcessInsts.add(procInst);
                 List<ProcessInstance> procInsts = fullProcessInsts.get(proc.getName());
                 if (procInsts == null)
@@ -276,15 +270,13 @@ public class TestCaseRun {
                 procInsts.add(procInst);
                 fullProcessInsts.put(proc.getName(), procInsts);
                 if (proc.getSubProcesses() != null) {
-                    criteria.clear();
-                    criteria.put("owner", OwnerType.MAIN_PROCESS_INSTANCE);
-                    criteria.put("ownerId", procInst.getId().toString());
-                    criteria.put("processId", proc.getProcessId().toString());
-                    List<ProcessInstance> embeddedProcInstList =
-                        new ArrayList<ProcessInstance>(); // TODO TestExec WorkflowServices.getProcessInstanceList(criteria, 0, QueryRequest.ALL_ROWS, proc, null).getItems();
-                    int m = embeddedProcInstList.size();
+                    Query q = new Query();
+                    q.setFilter("owner", OwnerType.MAIN_PROCESS_INSTANCE);
+                    q.setFilter("ownerId", procInst.getId().toString());
+                    q.setFilter("processId", proc.getProcessId().toString());
+                    List<ProcessInstance> embeddedProcInstList = workflowServices.getProcesses(q).getProcesses();
                     for (ProcessInstance embeddedProcInst : embeddedProcInstList) {
-                        ProcessInstance fullChildInfo = new ProcessInstance(); // TODO TestExec workflowServices.getProcessInstanceAll(embeddedProcInst.getId(),proc);
+                        ProcessInstance fullChildInfo = workflowServices.getProcess(embeddedProcInst.getId());
                         String childProcName = "unknown_subproc_name";
                         for (Process subproc : proc.getSubProcesses()) {
                             if (subproc.getProcessId().toString().equals(embeddedProcInst.getComment())) {
@@ -299,14 +291,12 @@ public class TestCaseRun {
                             pis = new ArrayList<ProcessInstance>();
                         pis.add(fullChildInfo);
                         fullProcessInsts.put(childProcName, pis);
-                        m--;
                     }
                 }
-                n--;
             }
         }
         String newLine = "\n";
-        if (!createReplace) {
+        if (!isCreateReplace()) {
             // try to determine newline chars from expectedResultsFile
             if (expectedResults.getRawFile().exists()) {
                 if (expectedResults.getStringContent().indexOf("\r\n") >= 0)
@@ -314,12 +304,12 @@ public class TestCaseRun {
             }
         }
         String yaml = translateToYaml(fullProcessInsts, fullActivityNameMap, orderById, newLine);
-        if (createReplace) {
+        if (isCreateReplace()) {
             log.println("creating expected results: " + expectedResults);
             FileHelper.writeToFile(expectedResults.toString(), yaml, false);
         }
         String fileName = resultsDir + "/" + expectedResults.getName();
-        if (verbose)
+        if (isVerbose())
             log.println("creating actual results file: " + fileName);
         FileHelper.writeToFile(fileName, yaml, false);
         // set friendly statuses
@@ -397,10 +387,10 @@ public class TestCaseRun {
 
         try {
             List<Process> processVos = new ArrayList<Process>();
-            if (verbose)
+            if (isVerbose())
                 log.println("loading runtime data for processes:");
             for (TestCaseProcess process : processes) {
-                if (verbose)
+                if (isVerbose())
                     log.println("  - " + process.getLabel());
                 processVos.add(process.getProcess());
             }
@@ -435,7 +425,7 @@ public class TestCaseRun {
         }
         else {
             TestCaseFile actualResultsFile = new TestCaseFile(resultsDir + "/" + resultsAsset.getName());
-            if (verbose)
+            if (isVerbose())
                 log.println("... compare " + resultsAsset + " with " + actualResultsFile + "\r\n");
             if (!actualResultsFile.exists()) {
                 message = "Actual results not found: " + actualResultsFile;
@@ -443,7 +433,7 @@ public class TestCaseRun {
                 passed = false;
             }
             else {
-                if (verbose) {
+                if (isVerbose()) {
                     log.println("expected:");
                     log.println(resultsAsset.getStringContent());
                     log.println("actual:");
@@ -517,7 +507,7 @@ public class TestCaseRun {
     TestCaseResponse sendMessage(TestCaseMessage message) throws TestException {
         if (isLoadTest()) // special subst for CSV
             message.setPayload(message.getPayload().replaceAll("#\\{", "#\\{\\$"));
-        if (verbose) {
+        if (isVerbose()) {
             log.println("sending " + message.getProtocol() + " message...");
             log.println("message payload:");
             log.println(message.getPayload());
@@ -530,7 +520,7 @@ public class TestCaseRun {
             HttpHelper httpHelper = new HttpHelper(new URL(endpoint));
             httpHelper.setHeaders(getDefaultMessageHeaders());
             String actual = httpHelper.post(message.getPayload());
-            if (verbose) {
+            if (isVerbose()) {
                 log.println("response:");
                 log.println(actual);
             }
@@ -553,7 +543,7 @@ public class TestCaseRun {
     }
 
     TestCaseResponse http(TestCaseHttp http) throws TestException {
-        if (verbose) {
+        if (isVerbose()) {
             log.println("http " + http.getMethod() + " request to " + http.getUri());
         }
 
@@ -613,7 +603,7 @@ public class TestCaseRun {
                 }
             }
 
-            if (verbose) {
+            if (isVerbose()) {
                 log.println("http response:");
                 log.println(actual);
             }
@@ -631,7 +621,7 @@ public class TestCaseRun {
     void wait(TestCaseProcess process) throws TestException {
         if (process.getTimeout() == 0)
             throw new TestException("Missing property 'timeout' for process wait command");
-        if (verbose)
+        if (isVerbose())
             log.println("waiting for process: " + process.getLabel() + " (timeout=" + process.getTimeout() + "s)...");
         String waitKey = getWaitKey(process.getProcess(), process.getActivityLogicalId(), process.getStatus());
         performWait(waitKey, process.getTimeout());
@@ -648,7 +638,7 @@ public class TestCaseRun {
                 log.println("wait command times out after: " + timeout + "s");
             } else {
                 Thread.sleep(2000);  // to get around race condition
-                if (verbose)
+                if (isVerbose())
                     log.println("wait command satisfied: " + key);
             }
         } catch (InterruptedException e) {
@@ -682,7 +672,7 @@ public class TestCaseRun {
         if (!passed)
             return false;
         try {
-            if (verbose) {
+            if (isVerbose()) {
                 log.println("expected response:");
                 log.println(response.getExpected());
                 log.println("actual response:");
@@ -698,7 +688,7 @@ public class TestCaseRun {
     protected boolean executeVerifyResponse(String expected, String actual, String reference)
     throws TestException,IOException,DataAccessException,ParseException {
         expected = expected.replaceAll("\r", "");
-        if (verbose)
+        if (isVerbose())
             log.println("comparing response...");
         if (actual != null) {
             actual = actual.replaceAll("\r", "");
@@ -708,7 +698,7 @@ public class TestCaseRun {
             if (firstDiffLine != 0) {
                 passed = false;
                 message = "response differs from line: " + firstDiffLine;
-                if (!verbose)  { // otherwise it was logged previously
+                if (!isVerbose())  { // otherwise it was logged previously
                   log.format("+++++ " + message + "\r\n");
                   log.format("Actual response: %s\r\n", actual);
                 }
@@ -719,14 +709,14 @@ public class TestCaseRun {
     }
 
     void performTaskAction(TestCaseTask task) throws TestException {
-        if (verbose)
+        if (isVerbose())
             log.println("performing " + task.getOutcome() + " on task '" + task.getName() + "'");
 
         Query query = new Query();
         query.setFilter("masterRequestId", masterRequestId);
         query.setFilter("name", task.getName());
         try {
-            TaskList taskList = taskServices.getTasks(query, user.getCuid());
+            TaskList taskList = taskServices.getTasks(query, user);
             List<TaskInstance> taskInstances = taskList.getTasks();
             if (taskInstances.isEmpty())
                 throw new TestException("Cannot find task instances: " + query);
@@ -738,7 +728,7 @@ public class TestCaseRun {
 
             UserTaskAction taskAction = new UserTaskAction();
             taskAction.setAction(task.getName());
-            taskAction.setUser(user.getCuid());
+            taskAction.setUser(user);
             taskAction.setTaskInstanceId(task.getId());
             // TODO task variables
             taskServices.performTaskAction(taskAction);
@@ -749,14 +739,19 @@ public class TestCaseRun {
     }
 
     void notifyEvent(TestCaseEvent event) throws TestException {
-        if (verbose)
+        if (isVerbose())
             log.println("notifying event: '" + event.getId() + "'");
 
-        // TODO testExec workflowServices.notify(event.getId(), event.getMessage(), event.getProcessName(), event.getActivityLogicalId());
+        try {
+            workflowServices.notify(event.getId(), event.getMessage(), 0);
+        }
+        catch (ServiceException ex) {
+            throw new TestException("Unable to notifyEvent: " + ex.getMessage());
+        }
     }
 
     void sleep(int seconds) {
-        if (verbose)
+        if (isVerbose())
             log.println("sleeping " + seconds + " seconds...");
 
         if (oneThreadPerCase) {
@@ -814,7 +809,7 @@ public class TestCaseRun {
                             }
                             activityStubResponse.setVariables(responseVariables);
                         }
-                        if (verbose)
+                        if (isVerbose())
                             log.println("Stubbing activity " + activityRuntimeContext.getProcess().getProcessName() + ":" +
                                     activityRuntimeContext.getActivityLogicalId() + " with result code: " + resultCode);
                         return activityStubResponse.getJson().toString(2);
@@ -833,7 +828,7 @@ public class TestCaseRun {
                 String requestContent = adapterStubRequest == null ? request : adapterStubRequest.getContent();
                 if (adapterStub.getMatcher().call(requestContent)) {
                     String stubbedResponseContent = adapterStub.getResponder().call(requestContent);
-                    if (verbose)
+                    if (isVerbose())
                         log.println("Stubbing response with: " + stubbedResponseContent);
                     int delay = 0;
                     if (adapterStub.getDelay() > 0)
@@ -848,7 +843,7 @@ public class TestCaseRun {
                     return stubResponse.getJson().toString(2);
                 }
             }
-            if (verbose)
+            if (isVerbose())
                 log.println("Stubbing response with: " + AdapterActivity.MAKE_ACTUAL_CALL);
             if (adapterStubRequest != null) {
                 // mdw6+
@@ -906,7 +901,7 @@ public class TestCaseRun {
         }
         TestCase.Status status = testCase.getStatus();
         Date endDate = new Date();
-        if (verbose) {
+        if (isVerbose()) {
             long seconds = (endDate.getTime() - testCase.getStart().getTime()) / 1000;
             if (status == TestCase.Status.Errored)
                 log.println("===== case " + testCase.getPath() + " Errored after " + seconds + " seconds");

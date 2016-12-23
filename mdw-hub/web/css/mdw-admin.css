@@ -345,6 +345,12 @@
 .mdw-okay:hover {
   color: #2e7d32;
 }
+.mdw-running {
+  color: #286090;
+}
+.mdw-running:hover {
+  color: #286090;
+}
 .mdw-item-icon {
   margin-right: 10px;
 }
@@ -379,6 +385,13 @@
 }
 .mdw-item-sub-value {
   font-weight: bold;
+}
+.mdw-item-substat {
+	margin-left: 8px;
+  margin-top: 1px;
+  margin-bottom: 0;
+  font-size: 12px;
+  font-family: monospace;
 }
 .mdw-item-content {
   padding: 10px;

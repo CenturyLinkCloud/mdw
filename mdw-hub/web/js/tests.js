@@ -3,8 +3,8 @@
 
 var testingMod = angular.module('testing', ['ngResource', 'mdw']);
 
-testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'AutomatedTests', 'TestExec',
-                                         function($scope, $websocket, mdw, AutomatedTests, TestExec) {
+testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util', 'AutomatedTests', 'TestExec',
+                                         function($scope, $websocket, mdw, util, AutomatedTests, TestExec) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
     $scope.processTestCases();
@@ -82,7 +82,7 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'Automa
             }
           }
           if (!pkgObj) {
-            pkgObj = {name: pkgName, version: $scope.testCaseList.packages[i].version, testCases: []}
+            pkgObj = {name: pkgName, version: $scope.testCaseList.packages[i].version, testCases: []};
             execTestPkgs.push(pkgObj);
           }
           pkgObj.testCases.push({name: $scope.testCaseList.packages[i].testCases[j].name});
@@ -103,13 +103,16 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'Automa
     });
   };
   
-  $scope.dataStream = $websocket(mdw.autoTestWebSocketUrl);
-  $scope.dataStream.onMessage(function(message) {
-    // console.log("TESTS JSON: " + message.data);
-    $scope.testCaseList = JSON.parse(message.data);
-    $scope.processTestCases();
-  });
+  $scope.acceptUpdates = function() {
+    $scope.dataStream = $websocket(mdw.autoTestWebSocketUrl);
+    $scope.dataStream.onMessage(function(message) {
+      console.log("GOT UPDATE..." + message.data);
+      $scope.testCaseList = JSON.parse(message.data);
+      $scope.processTestCases();
+    });
+  };
   
+  $scope.acceptUpdates();
 }]);
 
 testingMod.controller('TestController', ['$scope', '$routeParams', '$q', 'AutomatedTests', 'TestCase',
@@ -270,7 +273,7 @@ testingMod.factory('AutomatedTests', ['$resource', 'mdw', function($resource, md
 }]);
 
 testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/Services/com.centurylink.mdw.testing.TestExec', mdw.serviceParams(), {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/exec', mdw.serviceParams(), {
     run: { method: 'POST' }
   });
 }]);

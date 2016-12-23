@@ -35,7 +35,7 @@ public class PackageTests implements Jsonable {
             JSONArray tcArr = json.getJSONArray("testCases");
             this.testCases = new ArrayList<TestCase>();
             for (int i = 0; i < tcArr.length(); i++) {
-                this.testCases.add(new TestCase(assetRoot, tcArr.getJSONObject(i)));
+                this.testCases.add(new TestCase(assetRoot, pkgName, tcArr.getJSONObject(i)));
             }
         }
     }

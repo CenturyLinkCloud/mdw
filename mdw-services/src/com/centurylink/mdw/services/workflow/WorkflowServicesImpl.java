@@ -26,23 +26,24 @@ import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
 import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetHeader;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.user.UserAction.Action;
-import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Document;
-import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityCount;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
-import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
 import com.centurylink.mdw.model.workflow.ActivityList;
-import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessCount;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
@@ -50,10 +51,11 @@ import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -769,6 +771,37 @@ public class WorkflowServicesImpl implements WorkflowServices {
             return null;
         }
         catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    public Long launchProcess(Process process, String masterRequestId, Map<String,String> params) throws ServiceException {
+        try {
+            ProcessEngineDriver driver = new ProcessEngineDriver();
+            return driver.startProcess(process.getId(), masterRequestId, OwnerType.DOCUMENT, 0L, params, null);
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    public String invokeServiceProcess(Process process, String masterRequestId, Map<String,String> params) throws ServiceException {
+        try {
+            ProcessEngineDriver driver = new ProcessEngineDriver();
+            String masterRequest = params == null ? null : params.get("request");
+            return driver.invokeService(process.getId(), OwnerType.DOCUMENT, 0L, masterRequestId, masterRequest, params, null, null);
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    public Integer notify(String event, String message, int delay) throws ServiceException {
+        try {
+            EventManager eventManager = ServiceLocator.getEventManager();
+            return eventManager.notifyProcess(event, 0L, message, delay);
+        }
+        catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }

@@ -97,6 +97,10 @@ public class Process extends Asset implements Jsonable {
         this.subProcesses = pSubProcesses;
     }
 
+    public boolean isService() {
+        return ProcessVisibilityConstant.SERVICE.equals(getProcessType());
+    }
+
     /**
      * checks if the passed in workId is
      * Activity

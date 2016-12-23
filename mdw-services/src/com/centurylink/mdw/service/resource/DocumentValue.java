@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.common.translator.impl.YamlTranslator;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -24,7 +25,6 @@ import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.translator.JsonTranslator;
-import com.centurylink.mdw.translator.SelfSerializable;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
 
@@ -51,18 +51,17 @@ public class DocumentValue implements JsonService {
             json.put("className", doc.getDocumentType());
             json.put("isUpdateable", "true");
             Package pkg = getPackage(doc);
-            if (doc.getDocumentType().equals(Object.class.getName())) {
-                Object obj = VariableTranslator.realToObject(pkg, "java.lang.Object", doc.getContent(pkg));
-                json.put("className", obj.getClass().getName());
-                json.put("isUpdateable", String.valueOf(obj instanceof SelfSerializable));
-            }
             com.centurylink.mdw.variable.VariableTranslator trans = VariableTranslator.getTranslator(pkg, doc.getDocumentType());
-            if (trans instanceof XmlDocumentTranslator && !(trans instanceof YamlTranslator)) {
+            if (trans instanceof JavaObjectTranslator) {
+                Object obj = doc.getObject(Object.class.getName(), pkg);
+                return obj.toString();
+            }
+            else if (trans instanceof XmlDocumentTranslator && !(trans instanceof YamlTranslator)) {
                 org.w3c.dom.Document domDoc = ((XmlDocumentTranslator)trans).toDomDocument(doc.getObject(doc.getDocumentType(), pkg));
                 XmlObject xmlBean = XmlObject.Factory.parse(domDoc);
                 return xmlBean.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(4));
             }
-            else if (trans instanceof JsonTranslator) {
+            else if (trans instanceof JsonTranslator && !(trans instanceof YamlTranslator)) {
                 JSONObject jsonObj = ((JsonTranslator)trans).toJson(doc.getObject(doc.getDocumentType(), pkg));
                 return jsonObj.toString(2);
             }
@@ -98,6 +97,8 @@ public class DocumentValue implements JsonService {
     private Package getPackage(Document docVO) throws ServiceException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
+            if (docVO.getOwnerId() == 0) // sdwf request headers
+                return null;
             if (docVO.getOwnerType().equals(OwnerType.VARIABLE_INSTANCE)) {
                 VariableInstance varInstInf = eventMgr.getVariableInstance(docVO.getOwnerId());
                 Long procInstId = varInstInf.getProcessInstanceId();

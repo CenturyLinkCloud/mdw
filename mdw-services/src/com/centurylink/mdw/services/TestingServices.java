@@ -9,6 +9,7 @@ import java.io.IOException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseList;
+import com.centurylink.mdw.test.TestExecConfig;
 
 public interface TestingServices {
 
@@ -38,11 +39,11 @@ public interface TestingServices {
     /**
      * Asynchronously executes a single test.  Call getTestCase() for status.
      */
-    public void executeCase(TestCase testCase) throws ServiceException;
+    public void executeCase(TestCase testCase, String user, TestExecConfig config) throws ServiceException, IOException;
 
     /**
      * Asynchronously executes list of tests.  Call getTestCases() for status.
      */
-    public void executeCases(TestCaseList testCaseList) throws ServiceException;
+    public void executeCases(TestCaseList testCaseList, String user, TestExecConfig config) throws ServiceException, IOException;
 
 }

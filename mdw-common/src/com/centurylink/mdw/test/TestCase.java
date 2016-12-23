@@ -25,11 +25,12 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
      * Null means not executed.
      */
     public enum Status {
+        Waiting,
         InProgress,
         Errored,
         Failed,
         Passed,
-        Stopped // ?
+        Stopped // terminated by user
     }
 
     public TestCase(String pkg, AssetInfo asset) {
@@ -54,6 +55,11 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
     private Status status;
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
+
+    public boolean isFinished() {
+        return getStatus() != null && getStatus() != Status.Waiting
+                && getStatus() != Status.InProgress;
+    }
 
     private Date start;
     public Date getStart() { return start; }
@@ -82,8 +88,9 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
     public String getExecuteLog() { return executeLog; }
     public void setExecuteLog(String executeLog) { this.executeLog = executeLog; }
 
-    public TestCase(File assetRoot, JSONObject json) throws JSONException {
-        this.asset = new AssetInfo(assetRoot, json.getString("name"));
+    public TestCase(File assetRoot, String pkg, JSONObject json) throws JSONException {
+        this.asset = new AssetInfo(assetRoot, pkg + "/" + json.getString("name"));
+        this.pkg = pkg;
         if (json.has("start"))
             this.start = StringHelper.serviceStringToDate(json.getString("start"));
         if (json.has("end"))

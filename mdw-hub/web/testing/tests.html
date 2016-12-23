@@ -43,9 +43,11 @@
               <span ng-if="testCase.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
               <span ng-if="testCase.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>
               <span ng-if="testCase.status == 'Errored'" class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span>
+              <span ng-if="testCase.status == 'InProgress'" class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running"></span>
               <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}">
                 {{testCase.baseName}}
               </a>
+              <span class="mdw-item-substat" ng-if="testCase.start">Ran {{testCase.start}}</span>
             </div>
           </li>
         </ul>

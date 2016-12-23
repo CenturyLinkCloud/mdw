@@ -133,4 +133,10 @@ public interface WorkflowServices {
 
     public List<ActivityImplementor> getImplementors() throws ServiceException;
     public ActivityImplementor getImplementor(String className) throws ServiceException;
+
+    // TODO: these services are not fully thought-through
+    public Long launchProcess(Process process, String masterRequestId, Map<String,String> params) throws ServiceException;
+    public String invokeServiceProcess(Process process, String masterRequestId, Map<String,String> params) throws ServiceException;
+    public Integer notify(String event, String message, int delay) throws ServiceException;
+
 }
