@@ -24,6 +24,15 @@ import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+/**
+ * TODO: user clicks Run without selecting anything results in this:
+ * java.net.SocketException: Socket is closed
+ *   at java.net.ServerSocket.setSoTimeout(ServerSocket.java:651)
+ *   at com.centurylink.mdw.soccom.SoccomServer.start_sub(SoccomServer.java:115)
+ *   at com.centurylink.mdw.soccom.SoccomServer.access$0(SoccomServer.java:109)
+ *   at com.centurylink.mdw.soccom.SoccomServer$1.run(SoccomServer.java:99)
+ *
+ */
 public class TestRunner implements Runnable {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -37,8 +46,7 @@ public class TestRunner implements Runnable {
     private TestExecConfig config;
 
     private Map<String,Process> processCache;
-    private Map<String,String> testCaseStatuses;
-    private Map<String,TestCaseRun> activeRuns;
+    private Map<String,TestCase.Status> testCaseStatuses;
 
     public TestRunner(String suiteName, List<TestCase> testCases, String user, File resultsFile, TestExecConfig config) {
         this.suiteName = suiteName;
@@ -52,8 +60,7 @@ public class TestRunner implements Runnable {
 
         ThreadPoolProvider threadPool = ApplicationContext.getThreadPoolProvider();
         processCache = new HashMap<String,Process>();
-        testCaseStatuses = new HashMap<String,String>();
-        activeRuns = new HashMap<String,TestCaseRun>();
+        testCaseStatuses = new HashMap<String,TestCase.Status>();
 
         try {
             if (monitor == null || monitor.isClosed()) {
@@ -65,77 +72,54 @@ public class TestRunner implements Runnable {
                 String masterRequestId = user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
                 TestCaseRun run = new TestCaseRun(testCase, user, resultsFile.getParentFile(), 0, masterRequestId, monitor, processCache, config);
 
-                activeRuns.put(testCase.getPath(), run);
-
-                System.out.println("RUN: " + testCase.getPath() + ": " + testCase.getStatus());
-
                 if (!threadPool.execute(ThreadPoolProvider.WORKER_TESTING, getClass().getSimpleName(), run))
                     throw new IllegalStateException("No available thread: " + ThreadPoolProvider.WORKER_TESTING);
-                updateResults();
+                if (updateResults())
+                    return;
 
                 try {
                     Thread.sleep(config.getInterval() * 1000);
-                    System.out.println("INTERVAL: " + testCase.getPath() + ": " + testCase.getStatus());
-
                 }
                 catch (InterruptedException e) {
-                    System.out.println("IEX ONE");
                 }
             }
 
-            synchronized (activeRuns) {
-                while (activeRuns.size() > 0) {
-                    try {
-                        System.out.println("WHILE...");
-                        updateResults();
-                        Thread.sleep(PAUSE);
-                        activeRuns.wait();
-                        System.out.println("AFTER...");
-                    }
-                    catch (InterruptedException e) {
-                        System.out.println("IEX TWO");
-                    }
+            while (!updateResults()) {
+                try {
+                    Thread.sleep(PAUSE);
                 }
-
-                System.out.println("NEVER ONE?");
-
-                updateResults();
+                catch (InterruptedException e) {
+                }
             }
-
-            System.out.println("NEVER TWO?");
-            updateResults();
         }
         catch (IOException ex) {
             logger.severeException(ex.getMessage(), ex);
         }
         finally {
-            System.out.println("FINALLY");
-
             if (monitor != null)
                 monitor.shutdown();
         }
     }
 
-    private synchronized void updateResults() throws IOException {
+    /**
+     * Returns true if all done.
+     */
+    private synchronized boolean updateResults() throws IOException {
+        boolean allDone = true;
         for (TestCase testCase : testCases) {
-            String oldStatus = testCaseStatuses.get(testCase.getPath());
-            boolean statusChanged = oldStatus == null || !oldStatus.equals(testCase.getStatus());
-            testCaseStatuses.put(testCase.getPath(), testCase.getStatus() == null ? null : testCase.getStatus().toString());
+            if (!testCase.isFinished())
+                allDone = false;
+            Status oldStatus = testCaseStatuses.get(testCase.getPath());
+            boolean statusChanged = oldStatus != testCase.getStatus();
+            testCaseStatuses.put(testCase.getPath(), testCase.getStatus());
             if (statusChanged) {
                 writeTestCaseResults(testCase);
-                if (testCase.isFinished()) {
-                    System.out.println("REMOVE: " + testCase.getPath() + ": " + testCase.getStatus());
-                    synchronized (activeRuns) {
-                        activeRuns.remove(testCase.getPath());
-                        activeRuns.notifyAll();
-                    }
-                }
             }
         }
+        return allDone;
     }
 
     public void writeTestCaseResults(TestCase exeTestCase) throws IOException {
-        System.out.println("WRITE: " + exeTestCase.getPath() + ": " + exeTestCase.getStatus());
 
         int errors = 0;
         int failures = 0;

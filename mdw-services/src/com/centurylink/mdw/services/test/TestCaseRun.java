@@ -178,7 +178,6 @@ public class TestCaseRun implements Runnable {
         }
         catch (Throwable ex) {
             finishExecution(ex);
-            System.out.println("FINISH: " + testCase.getPath() + ": " + testCase.getStatus());
         }
     }
 

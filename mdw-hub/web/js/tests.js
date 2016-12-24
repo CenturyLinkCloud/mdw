@@ -106,7 +106,6 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
   $scope.acceptUpdates = function() {
     $scope.dataStream = $websocket(mdw.autoTestWebSocketUrl);
     $scope.dataStream.onMessage(function(message) {
-      console.log("GOT UPDATE..." + message.data);
       $scope.testCaseList = JSON.parse(message.data);
       $scope.processTestCases();
     });

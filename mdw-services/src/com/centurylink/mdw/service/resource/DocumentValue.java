@@ -94,10 +94,13 @@ public class DocumentValue implements JsonService {
         }
     }
 
+    /**
+     * TODO: many places fail to set the ownerId for documents owned by VARIABLE_INSTANCE
+     */
     private Package getPackage(Document docVO) throws ServiceException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
-            if (docVO.getOwnerId() == 0) // sdwf request headers
+            if (docVO.getOwnerId() == 0) // eg: sdwf request headers
                 return null;
             if (docVO.getOwnerType().equals(OwnerType.VARIABLE_INSTANCE)) {
                 VariableInstance varInstInf = eventMgr.getVariableInstance(docVO.getOwnerId());
