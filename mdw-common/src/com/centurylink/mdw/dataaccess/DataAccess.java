@@ -182,36 +182,35 @@ public class DataAccess {
                             }
                             else {
                                 String localCommit = vcGit.getCommit();
-                                File tempDir = new File(PropertyNames.MDW_TEMP_DIR);
-                                ProgressMonitor progressMonitor = new SystemOutProgressMonitor();
-                                VcsArchiver archiver = new VcsArchiver(ApplicationContext.getAssetRoot(), tempDir, vcGit, progressMonitor);
-
-                                String strGitAutoPull = PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL);
-                                boolean gitAutoPull = strGitAutoPull == null ? false : Boolean.parseBoolean(strGitAutoPull);
-
                                 if (localCommit != null) {
                                     String remoteCommit = vcGit.getRemoteCommit(branch);
-                                    if (!localCommit.equals(remoteCommit)){
+                                    if (!localCommit.equals(remoteCommit))
                                         LoggerUtil.getStandardLogger().severe("**** WARNING: Git commit: " + localCommit + " does not match remote HEAD commit: " + remoteCommit);
+                                }
 
-                                        if (logger.isDebugEnabled()) {
-                                            // log actual diffs at debug level
-                                            GitDiffs diffs = vcGit.getDiffs(branch, assetPath);
-                                            if (!diffs.isEmpty()) {
-                                                logger.severe("**** WARNING: Local Git repository is out-of-sync with respect to remote branch: "
-                                                        + branch + "\n(" + gitLocal.getAbsolutePath() + ")");
-                                                logger.debug("Differences:\n============\n" + diffs);
-                                            }
-                                        }
-                                        if (gitAutoPull) {
-                                            // importing all assets
-                                            logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")");
-                                            archiver.backup();
-                                            vcGit.sparseCheckout(branch, assetPath);
-                                            archiver.archive();
-                                        }
+                                if (logger.isDebugEnabled()) {
+                                    // log actual diffs at debug level
+                                    GitDiffs diffs = vcGit.getDiffs(branch, assetPath);
+                                    if (!diffs.isEmpty()) {
+                                        logger.severe("**** WARNING: Local Git repository is out-of-sync with respect to remote branch: " + branch
+                                                + "\n(" + gitLocal.getAbsolutePath() + ")");
+                                        logger.debug("Differences:\n============\n" + diffs);
                                     }
                                 }
+                                
+                                String strGitAutoPull = PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL);
+                                boolean gitAutoPull = strGitAutoPull == null ? false : Boolean.parseBoolean(strGitAutoPull);
+                                if (gitAutoPull) {
+                                    // force checkout all assets
+                                    File tempDir = new File(PropertyNames.MDW_TEMP_DIR);
+                                    ProgressMonitor progressMonitor = new SystemOutProgressMonitor();
+                                    VcsArchiver archiver = new VcsArchiver(ApplicationContext.getAssetRoot(), tempDir, vcGit, progressMonitor);
+                                    logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")");
+                                    archiver.backup();
+                                    vcGit.sparseCheckout(branch, assetPath);
+                                    archiver.archive();
+                                }
+                                
                             }
                         }
                         else {
