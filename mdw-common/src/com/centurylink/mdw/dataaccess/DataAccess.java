@@ -197,7 +197,7 @@ public class DataAccess {
                                         logger.debug("Differences:\n============\n" + diffs);
                                     }
                                 }
-                                
+
                                 String strGitAutoPull = PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL);
                                 boolean gitAutoPull = strGitAutoPull == null ? false : Boolean.parseBoolean(strGitAutoPull);
                                 if (gitAutoPull) {
@@ -205,12 +205,11 @@ public class DataAccess {
                                     File tempDir = new File(PropertyNames.MDW_TEMP_DIR);
                                     ProgressMonitor progressMonitor = new SystemOutProgressMonitor();
                                     VcsArchiver archiver = new VcsArchiver(ApplicationContext.getAssetRoot(), tempDir, vcGit, progressMonitor);
-                                    logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")");
+                                    logger.severe("**** Performing Git Auto-Pull (Overwrites existing assets): " + vcGit + " (branch: " + branch + ")");
                                     archiver.backup();
                                     vcGit.sparseCheckout(branch, assetPath);
                                     archiver.archive();
                                 }
-                                
                             }
                         }
                         else {
