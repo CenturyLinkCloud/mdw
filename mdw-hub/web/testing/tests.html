@@ -2,22 +2,23 @@
   <div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/admin-nav.html'"></div>
   <div class="col-md-10">
     <div class="panel panel-default mdw-panel">
-      <div class="panel-heading mdw-heading">
+      <div class="panel-heading mdw-heading" style="padding-left:20px;">
         <div class="mdw-heading-checklist">
           <input type="checkbox" ng-model="selectedState.all" ng-change="toggleAll()" ng-if="authUser.hasRole('Process Execution')"></input>
           Automated Tests
           <span ng-if="testCaseList.testCases" class="mdw-heading-sub"> ({{testCaseList.testCases.length}})</span>
         </div>
         <div ng-if="testCaseList.packages" class="mdw-heading-summary">
-          <span class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span> = {{passed().length}} 
-          <span class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span> = {{failed().length}} 
-          <span class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span> = {{errored().length}}
+          <span class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running" title="Running"></span> = {{running().length}} 
+          <span class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay" title="Passed"></span> = {{passed().length}} 
+          <span class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn" title="Failed"></span> = {{failed().length}} 
+          <span class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn" title="Errored"></span> = {{errored().length}}
         </div>
         <div class="mdw-heading-actions">
           <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Site Admin')" ng-click="settings()">
             <span class="glyphicon glyphicon-cog"></span>
           </button> 
-          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Execution')" ng-click="runTests()">
+          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Execution')" ng-disabled="running().length > 0" ng-click="runTests()">
             <span class="glyphicon glyphicon-play"></span> Run
           </button> 
         </div>
@@ -40,14 +41,14 @@
             <div>
               <input type="checkbox" ng-model="testCase.selected" ng-change="packageOff(pkg)" ng-if="authUser.hasRole('Process Execution')"></input>
               <span ng-if="!testCase.status" class="glyphicon glyphicon-ok-sign mdw-test-status" style="visibility:hidden"></span>
+              <span ng-if="testCase.status == 'InProgress'" class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running"></span>
               <span ng-if="testCase.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
               <span ng-if="testCase.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>
               <span ng-if="testCase.status == 'Errored'" class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span>
-              <span ng-if="testCase.status == 'InProgress'" class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running"></span>
               <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}">
                 {{testCase.baseName}}
               </a>
-              <span class="mdw-item-substat" ng-if="testCase.start">Ran {{testCase.start}}</span>
+              <span class="mdw-item-substat" ng-if="testCase.start"> {{testCase.start}}</span>
             </div>
           </li>
         </ul>

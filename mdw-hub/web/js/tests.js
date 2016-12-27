@@ -25,6 +25,9 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
     });
   };
   
+  $scope.running = function() {
+    return $scope.forStatus('InProgress');
+  };
   $scope.passed = function() {
     return $scope.forStatus('Passed');
   };
@@ -106,8 +109,35 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
   $scope.acceptUpdates = function() {
     $scope.dataStream = $websocket(mdw.autoTestWebSocketUrl);
     $scope.dataStream.onMessage(function(message) {
-      $scope.testCaseList = JSON.parse(message.data);
-      $scope.processTestCases();
+      var newTestCaseList = JSON.parse(message.data);
+      newTestCaseList.packages.forEach(function(newPkg) {
+        var oldPkg = null;
+        for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
+          if ($scope.testCaseList.packages[i].name == newPkg.name) {
+            oldPkg = $scope.testCaseList.packages[i];
+            break;
+          }
+        }
+        if (oldPkg) {
+          newPkg.testCases.forEach(function(newTestCase) {
+            var oldTestCase = null;
+            for (var j = 0; j < oldPkg.testCases.length; j++) {
+              if (oldPkg.testCases[j].name == newTestCase.name) {
+                oldTestCase = oldPkg.testCases[j];
+                break;
+              }
+            }
+            if (oldTestCase) {
+              oldTestCase.status = newTestCase.status;
+              oldTestCase.start = newTestCase.start;
+              oldTestCase.end = newTestCase.end;
+              oldTestCase.message = newTestCase.message;
+              oldTestCase.expected = newTestCase.expected;
+              oldTestCase.actual = newTestCase.actual;
+            }
+          });
+        }
+      });
     });
   };
   
