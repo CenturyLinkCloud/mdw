@@ -5,7 +5,6 @@ package com.centurylink.mdw.test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -15,7 +14,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 
-public class PackageTests implements Jsonable {
+public class PackageTests implements Jsonable, Comparable<PackageTests> {
 
     private PackageDir packageDir;
     public PackageDir getPackageDir() { return packageDir; }
@@ -57,7 +56,7 @@ public class PackageTests implements Jsonable {
         return "PackageTests";
     }
 
-    public void sort() {
-        Collections.sort(testCases);
+    public int compareTo(PackageTests other) {
+        return this.packageDir.getName().compareToIgnoreCase(other.packageDir.getName());
     }
 }

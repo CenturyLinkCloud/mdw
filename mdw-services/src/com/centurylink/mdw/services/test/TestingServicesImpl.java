@@ -6,8 +6,10 @@ package com.centurylink.mdw.services.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.json.JSONObject;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -54,7 +57,7 @@ public class TestingServicesImpl implements TestingServices {
 
     public TestCaseList getTestCases(String format) throws ServiceException {
         TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
-        testCaseList.setTestCases(new ArrayList<PackageTests>());
+        testCaseList.setPackageTests(new ArrayList<PackageTests>());
         List<TestCase> allTests = new ArrayList<TestCase>();
         Map<String,List<AssetInfo>> pkgAssets = assetServices.getAssetsOfType(format);
         for (String pkgName : pkgAssets.keySet()) {
@@ -66,12 +69,14 @@ public class TestingServicesImpl implements TestingServices {
                 pkgTests.getTestCases().add(testCase);
                 allTests.add(testCase);
             }
-            testCaseList.getTestCases().add(pkgTests);
+            testCaseList.getPackageTests().add(pkgTests);
         }
-        testCaseList.setCount(testCaseList.getTestCases().size());
+        testCaseList.setCount(testCaseList.getPackageTests().size());
         long lastMod = addStatusInfo(allTests);
         if (lastMod != -1)
             testCaseList.setRetrieveDate(new Date(lastMod));
+        // sort
+        Collections.sort(testCaseList.getPackageTests());
         return testCaseList;
     }
 
@@ -92,10 +97,13 @@ public class TestingServicesImpl implements TestingServices {
     private long addStatusInfo(List<TestCase> testCases) {
         try {
             if (!testCases.isEmpty()) {
-                File suiteResults = getTestResultsFile(testCases.get(0).getAsset().getExtension());
-                if (suiteResults != null && suiteResults.isFile()) {
-                    processResultsFile(suiteResults, testCases);
-                    return suiteResults.lastModified();
+                File resultsFile = getTestResultsFile(testCases.get(0).getAsset().getExtension());
+                if (resultsFile != null && resultsFile.isFile()) {
+                    if (resultsFile.getName().endsWith(".xml"))
+                        processResultsFileXml(resultsFile, testCases);
+                    else
+                        processResultsFile(resultsFile, testCases);
+                    return resultsFile.lastModified();
                 }
             }
         }
@@ -107,9 +115,13 @@ public class TestingServicesImpl implements TestingServices {
 
     private void addStatusInfo(TestCase testCase) {
         try {
-            File suiteResults = getTestResultsFile(testCase.getAsset().getExtension());
-            if (suiteResults != null && suiteResults.isFile())
-                processResultsFile(suiteResults, testCase);
+            File resultsFile = getTestResultsFile(testCase.getAsset().getExtension());
+            if (resultsFile != null && resultsFile.isFile()) {
+                if (resultsFile.getName().endsWith(".xml"))
+                    processResultsFileXml(resultsFile, testCase);
+                else
+                    processResultsFile(resultsFile, testCase);
+            }
         }
         catch (Exception ex) {
             logger.severeException("Unable to get status info for testCase: " + testCase.getName(), ex);
@@ -139,7 +151,35 @@ public class TestingServicesImpl implements TestingServices {
         return testCase;
     }
 
-    private void processResultsFile(File resultsFile, final List<TestCase> testCases) throws Exception {
+    private void processResultsFile(File resultsFile, List<TestCase> testCases) throws Exception {
+        String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
+        TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
+        for (TestCase testCase : testCases) {
+            TestCase caseFromFile = testCaseList.getTestCase(testCase.getPath());
+            if (caseFromFile != null) {
+                addInfo(testCase, caseFromFile);
+            }
+        }
+    }
+
+    private void processResultsFile(File resultsFile, final TestCase testCase) throws Exception {
+        String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
+        TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
+        TestCase caseFromFile = testCaseList.getTestCase(testCase.getPath());
+        if (caseFromFile != null) {
+            addInfo(testCase, caseFromFile);
+        }
+    }
+
+    private void addInfo(TestCase testCase, TestCase sourceCase) {
+        testCase.setStatus(sourceCase.getStatus());
+        testCase.setStart(sourceCase.getStart());
+        testCase.setEnd(sourceCase.getEnd());
+        testCase.setMessage(sourceCase.getMessage());
+    }
+
+
+    private void processResultsFileXml(File resultsFile, final List<TestCase> testCases) throws Exception {
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(resultsFile);
@@ -199,7 +239,7 @@ public class TestingServicesImpl implements TestingServices {
         }
     }
 
-    private void processResultsFile(File resultsFile, final TestCase testCase) throws Exception {
+    private void processResultsFileXml(File resultsFile, final TestCase testCase) throws Exception {
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(resultsFile);
@@ -298,34 +338,36 @@ public class TestingServicesImpl implements TestingServices {
         String summaryFile = null;
         if (format == null || Asset.getFileExtension(Asset.TEST).equals("." + format)) {
             summaryFile = PropertyManager.getProperty(PropertyNames.MDW_FUNCTION_TESTS_SUMMARY_FILE);
-            if (summaryFile == null)
-                summaryFile = "mdw-function-test-results.xml";
+            if (summaryFile == null) {
+                summaryFile = "mdw-function-test-results.json";
+                // fall back to old XML results
+                if (!new File(resultsDir + "/" + summaryFile).exists() && new File(resultsDir + "/mdw-function-test-results.xml").exists())
+                    summaryFile = "mdw-function-test-results.xml";
+            }
         }
         else if (Asset.getFileExtension(Asset.FEATURE).equals("." + format)) {
             summaryFile = PropertyManager.getProperty(PropertyNames.MDW_FEATURE_TESTS_SUMMARY_FILE);
-            if (summaryFile == null)
-                summaryFile = "mdw-cucumber-test-results.xml";
+            if (summaryFile == null) {
+                summaryFile = "mdw-cucumber-test-results.json";
+                // fall back to old XML results
+                if (!new File(resultsDir + "/" + summaryFile).exists() && new File(resultsDir + "/mdw-cucumber-test-results.xml").exists())
+                    summaryFile = "mdw-cucumber-test-results.xml";
+            }
         }
 
         return summaryFile == null ? null : new File(resultsDir + "/" + summaryFile);
     }
 
     public void executeCase(TestCase testCase, String user, TestExecConfig config) throws ServiceException, IOException {
-
+        // TODO: execute single case
     }
 
     public void executeCases(TestCaseList testCaseList, String user, TestExecConfig config) throws ServiceException, IOException {
-        List<TestCase> testCases = new ArrayList<TestCase>();
-        for (PackageTests pkgTests : testCaseList.getTestCases()) {
-            for (TestCase pkgTest : pkgTests.getTestCases()) {
-                if (pkgTest.getName().endsWith(Asset.getFileExtension(Asset.FEATURE)))
-                    throw new ServiceException(ServiceException.BAD_REQUEST, "Cucumber test cases currently not supported: " + pkgTest.getPath());
-                testCases.add(readTestCase(pkgTest.getPath()));
-            }
+        for (TestCase testCase : testCaseList.getTestCases()) {
+            if (testCase.getName().endsWith(Asset.getFileExtension(Asset.FEATURE)))
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Cucumber test cases currently not supported: " + testCase.getPath());
         }
-        TestRunner runner = new TestRunner(testCaseList.getSuite(), testCases, user, getTestResultsFile(null), config);
+        TestRunner runner = new TestRunner(testCaseList, user, getTestResultsFile(null), config);
         new Thread(runner).start();
     }
-
-
 }

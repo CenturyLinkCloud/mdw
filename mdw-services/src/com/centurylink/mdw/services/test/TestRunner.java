@@ -6,6 +6,7 @@ package com.centurylink.mdw.services.test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,23 +16,21 @@ import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCase.Status;
+import com.centurylink.mdw.test.TestCaseList;
 import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
- * TODO: user clicks Run without selecting anything results in this:
- * java.net.SocketException: Socket is closed
- *   at java.net.ServerSocket.setSoTimeout(ServerSocket.java:651)
- *   at com.centurylink.mdw.soccom.SoccomServer.start_sub(SoccomServer.java:115)
- *   at com.centurylink.mdw.soccom.SoccomServer.access$0(SoccomServer.java:109)
- *   at com.centurylink.mdw.soccom.SoccomServer$1.run(SoccomServer.java:99)
- *
+ * Test runner for in-container execution.
  */
 public class TestRunner implements Runnable {
 
@@ -39,8 +38,7 @@ public class TestRunner implements Runnable {
     private static final int PAUSE = 2500;
     private static LogMessageMonitor monitor;
 
-    private String suiteName;
-    private List<TestCase> testCases;
+    private TestCaseList testCaseList;
     private String user;
     private File resultsFile;
     private TestExecConfig config;
@@ -48,9 +46,8 @@ public class TestRunner implements Runnable {
     private Map<String,Process> processCache;
     private Map<String,TestCase.Status> testCaseStatuses;
 
-    public TestRunner(String suiteName, List<TestCase> testCases, String user, File resultsFile, TestExecConfig config) {
-        this.suiteName = suiteName;
-        this.testCases = testCases;
+    public TestRunner(TestCaseList testCaseList, String user, File resultsFile, TestExecConfig config) {
+        this.testCaseList = testCaseList;
         this.user = user;
         this.resultsFile = resultsFile;
         this.config = config;
@@ -68,10 +65,10 @@ public class TestRunner implements Runnable {
                 monitor.start(true);
             }
 
-            for (TestCase testCase : testCases) {
+            for (TestCase testCase : testCaseList.getTestCases()) {
                 String masterRequestId = user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
                 TestCaseRun run = new TestCaseRun(testCase, user, resultsFile.getParentFile(), 0, masterRequestId, monitor, processCache, config);
-
+                logger.info(" -> Executing test: " + testCase.getPath());
                 if (!threadPool.execute(ThreadPoolProvider.WORKER_TESTING, getClass().getSimpleName(), run))
                     throw new IllegalStateException("No available thread: " + ThreadPoolProvider.WORKER_TESTING);
                 if (updateResults())
@@ -84,15 +81,15 @@ public class TestRunner implements Runnable {
                 }
             }
 
-            while (!updateResults()) {
+            do {
                 try {
-                    Thread.sleep(PAUSE);
+                    Thread.sleep(PAUSE); // pause at least once to too-quick socket shutdown
                 }
                 catch (InterruptedException e) {
                 }
-            }
+            } while (!updateResults());
         }
-        catch (IOException ex) {
+        catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
         }
         finally {
@@ -104,30 +101,52 @@ public class TestRunner implements Runnable {
     /**
      * Returns true if all done.
      */
-    private synchronized boolean updateResults() throws IOException {
+    private synchronized boolean updateResults() throws JSONException, IOException {
         boolean allDone = true;
-        for (TestCase testCase : testCases) {
+        for (TestCase testCase : testCaseList.getTestCases()) {
             if (!testCase.isFinished())
                 allDone = false;
             Status oldStatus = testCaseStatuses.get(testCase.getPath());
             boolean statusChanged = oldStatus != testCase.getStatus();
             testCaseStatuses.put(testCase.getPath(), testCase.getStatus());
             if (statusChanged) {
-                writeTestCaseResults(testCase);
+                if (resultsFile.getName().endsWith(".xml"))
+                    writeTestResultsXml(testCase);
+                else
+                    writeTestResults(testCase);
             }
         }
         return allDone;
     }
 
-    public void writeTestCaseResults(TestCase exeTestCase) throws IOException {
+    public void writeTestResults(TestCase exeTestCase) throws JSONException, IOException {
+        if (!resultsFile.exists())
+            writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
+        String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
+        TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
+        TestCase testCase = testCaseList.getTestCase(exeTestCase.getPath());
+        if (testCase == null)
+            testCase = testCaseList.addTestCase(exeTestCase);
+        if (testCase != null) {
+            testCase.setStatus(exeTestCase.getStatus());
+            testCase.setStart(exeTestCase.getStart());
+            testCase.setEnd(exeTestCase.getEnd());
+            testCase.setMessage(exeTestCase.getMessage());
+            testCaseList.setCount(testCaseList.getTestCases().size());
+            writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
+        }
+    }
 
+    public void writeTestResultsXml(TestCase exeTestCase) throws IOException {
+
+        List<TestCase> testCases = testCaseList.getTestCases();
         int errors = 0;
         int failures = 0;
         int completed = 0;
 
         StringBuffer suiteBuf = new StringBuffer();
         suiteBuf.append("<testsuite ");
-        suiteBuf.append("name=\"").append(suiteName).append("\" ");
+        suiteBuf.append("name=\"").append(testCaseList.getSuite()).append("\" ");
         suiteBuf.append("tests=\"").append(testCases.size()).append("\" ");
 
         StringBuffer results = new StringBuffer();
@@ -188,6 +207,8 @@ public class TestRunner implements Runnable {
     }
 
     private void writeFile(File file, byte[] contents) throws IOException {
+        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs())
+            throw new IOException("Unable to create directory: " + file.getParentFile());
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(file);

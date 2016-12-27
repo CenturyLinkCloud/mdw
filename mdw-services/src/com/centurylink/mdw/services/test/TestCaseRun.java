@@ -139,7 +139,7 @@ public class TestCaseRun implements Runnable {
                 throw new IOException("Cannot create test results directory: " + resultsDir);
         }
 
-        this.log = new PrintStream(mainResultsDir + "/" + testCase.getExecuteLog());
+        this.log = new PrintStream(resultsDir + "/" + testCase.getAsset().getRootName() + ".log");
         if (isVerbose())
             log.format("===== prepare case %s (id=%s)\r\n", testCase.getPath(), masterRequestId);
 

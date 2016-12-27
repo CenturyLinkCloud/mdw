@@ -7,23 +7,13 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
                                          function($scope, $websocket, mdw, util, AutomatedTests, TestExec) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
-    $scope.processTestCases();
-  });
-  
-  $scope.processTestCases = function() {
-    $scope.testCaseList.packages.sort(function(p1, p2) {
-      return p1.name.localeCompare(p2.name);
-    });
     $scope.testCaseList.packages.forEach(function(pkg) {
       pkg.selected = false;
       pkg.testCases.forEach(function(tc) {
         tc.baseName = tc.name.substring(0, tc.name.lastIndexOf('.'));
       });
-      pkg.testCases.sort(function(tc1, tc2) {
-        return tc1.name.localeCompare(tc2.name);
-      });
     });
-  };
+  });
   
   $scope.running = function() {
     return $scope.forStatus('InProgress');
