@@ -775,21 +775,24 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Long launchProcess(Process process, String masterRequestId, Map<String,String> params) throws ServiceException {
+    public Long launchProcess(Process process, String masterRequestId, String ownerType,
+            Long ownerId, Map<String, String> params) throws ServiceException {
         try {
             ProcessEngineDriver driver = new ProcessEngineDriver();
-            return driver.startProcess(process.getId(), masterRequestId, OwnerType.DOCUMENT, 0L, params, null);
+            return driver.startProcess(process.getId(), masterRequestId, ownerType, ownerId, params, null);
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 
-    public String invokeServiceProcess(Process process, String masterRequestId, Map<String,String> params) throws ServiceException {
+    public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
+            Long ownerId, Map<String, String> params) throws ServiceException {
         try {
             ProcessEngineDriver driver = new ProcessEngineDriver();
             String masterRequest = params == null ? null : params.get("request");
-            return driver.invokeService(process.getId(), OwnerType.DOCUMENT, 0L, masterRequestId, masterRequest, params, null, null);
+            return driver.invokeService(process.getId(), ownerType, ownerId, masterRequestId,
+                    masterRequest, params, null, null);
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);

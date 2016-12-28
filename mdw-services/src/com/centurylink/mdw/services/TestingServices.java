@@ -48,5 +48,4 @@ public interface TestingServices {
 
     public TestExecConfig getTestExecConfig() throws ServiceException;
     public void setTestExecConfig(TestExecConfig config) throws ServiceException;
-
 }

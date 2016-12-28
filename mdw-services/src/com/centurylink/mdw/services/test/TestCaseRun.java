@@ -195,9 +195,9 @@ public class TestCaseRun implements Runnable {
             Process proc = process.getProcess();
             Map<String,String> params = process.getParams();
             if (proc.isService())
-                workflowServices.invokeServiceProcess(proc, masterRequestId, params);
+                workflowServices.invokeServiceProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
             else
-                workflowServices.launchProcess(proc, masterRequestId, params);
+                workflowServices.launchProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
         }
         catch (Exception ex) {
             throw new TestException("Failed to start " + process.getLabel(), ex);
