@@ -14,11 +14,12 @@
           <span class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn" title="Failed"></span> = {{failed().length}} 
           <span class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn" title="Errored"></span> = {{errored().length}}
         </div>
-        <div class="mdw-heading-actions">
-          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Site Admin')" ng-click="settings()">
+        <div class="mdw-heading-actions" ng-if="authUser.hasRole('Process Execution')">
+          <button type="button" class="btn btn-primary mdw-btn" pop-click popover-placement="left" uib-popover-template="'testing/config.html'" 
+            ng-if="authUser.hasRole('Site Admin')">
             <span class="glyphicon glyphicon-cog"></span>
           </button> 
-          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Execution')" ng-disabled="running().length > 0" ng-click="runTests()">
+          <button type="button" class="btn btn-primary mdw-btn" ng-disabled="running().length > 0" ng-click="runTests()">
             <span class="glyphicon glyphicon-play"></span> Run
           </button> 
         </div>

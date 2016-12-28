@@ -496,7 +496,7 @@ public class TestCaseRun implements Runnable {
 
     Asset getAsset(String path) throws TestException {
         try {
-            return AssetCache.getAsset(path);
+            return AssetCache.getAsset(path.indexOf('/') > 0 ? path : getTestCase().getPackage() + '/' + path);
         }
         catch (Exception ex) {
             throw new TestException("Cannot load " + path, ex);

@@ -10,7 +10,7 @@ import com.centurylink.mdw.common.service.Jsonable;
 
 public class TestExecConfig implements Jsonable {
 
-    private boolean verbose;
+    private boolean verbose = true;
     public boolean isVerbose() { return verbose; }
     public void setVerbose(boolean verbose) { this.verbose = verbose; }
 
@@ -26,7 +26,7 @@ public class TestExecConfig implements Jsonable {
     public boolean isStubbing() { return stubbing; }
     public void setStubbing(boolean stubbing) { this.stubbing = stubbing; }
 
-    private int interval; // seconds
+    private int interval = 2; // seconds
     public int getInterval() { return interval; }
     public void setInterval(int interval) { this.interval = interval; }
 

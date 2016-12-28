@@ -370,4 +370,8 @@ public class TestingServicesImpl implements TestingServices {
         TestRunner runner = new TestRunner(testCaseList, user, getTestResultsFile(null), config);
         new Thread(runner).start();
     }
+
+    private static TestExecConfig testExecConfig = new TestExecConfig(); // default options
+    public TestExecConfig getTestExecConfig() { return testExecConfig; }
+    public void setTestExecConfig(TestExecConfig config) { testExecConfig = config; }
 }

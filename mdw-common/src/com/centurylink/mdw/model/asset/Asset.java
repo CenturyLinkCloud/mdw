@@ -753,4 +753,20 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public String getJsonName() {
         return getName();
     }
+
+    /**
+     * Methods for Groovy access (eg: autotest cases).
+     */
+    public boolean exists() {
+        return getRawFile() != null && getRawFile().exists();
+    }
+    public File file() {
+        return getRawFile();
+    }
+    public String getText() throws IOException {
+        return text();
+    }
+    public String text() throws IOException {
+        return getStringContent();
+    }
 }

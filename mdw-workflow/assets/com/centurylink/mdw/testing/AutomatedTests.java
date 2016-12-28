@@ -35,7 +35,10 @@ public class AutomatedTests extends JsonRestService {
         response=TestCase.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
-        TestCase singleCase = getTestCase(getSegments(path));
+        String[] segments = getSegments(path);
+        if (segments.length == 6 && "config".equals(segments[5]))
+            return ServiceLocator.getTestingServices().getTestExecConfig().getJson();
+        TestCase singleCase = getTestCase(segments);
         if (singleCase != null) {
             return singleCase.getJson();
         }
@@ -54,15 +57,15 @@ public class AutomatedTests extends JsonRestService {
         @ApiImplicitParam(name="TestCaseList", paramType="body", dataType="com.centurylink.mdw.test.TestCaseList")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        TestExecConfig config = new TestExecConfig(); // TODO
+        TestingServices testingServices = ServiceLocator.getTestingServices();
+        TestExecConfig config = testingServices.getTestExecConfig();
         String user = getAuthUser(headers);
         TestCase singleCase = getTestCase(getSegments(path));
         try {
             if (singleCase != null) {
-                ServiceLocator.getTestingServices().executeCase(singleCase, user, config);
+                testingServices.executeCase(singleCase, user, config);
             }
             else {
-                TestingServices testingServices = ServiceLocator.getTestingServices();
                 testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
             }
         }
@@ -82,4 +85,18 @@ public class AutomatedTests extends JsonRestService {
         return testCase;
     }
 
+    /**
+     * Put test exec config.
+     */
+    @Override
+    @Path("/config")
+    @ApiOperation(value="Update test exec config.", response=StatusMessage.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="TestExecConfig", paramType="body", dataType="com.centurylink.mdw.test.TestExecConfig")})
+    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
+    throws ServiceException, JSONException {
+        TestingServices testingServices = ServiceLocator.getTestingServices();
+        testingServices.setTestExecConfig(new TestExecConfig(content));
+        return null;
+    }
 }

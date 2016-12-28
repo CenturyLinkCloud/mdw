@@ -3,8 +3,8 @@
 
 var testingMod = angular.module('testing', ['ngResource', 'mdw']);
 
-testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util', 'AutomatedTests', 'TestExec',
-                                         function($scope, $websocket, mdw, util, AutomatedTests, TestExec) {
+testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util', 'AutomatedTests', 'TestExec', 'TestConfig',
+                                         function($scope, $websocket, mdw, util, AutomatedTests, TestExec, TestConfig) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
     $scope.testCaseList.packages.forEach(function(pkg) {
@@ -14,6 +14,8 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
       });
     });
   });
+
+  $scope.config = TestConfig.get();
   
   $scope.running = function() {
     return $scope.forStatus('InProgress');
@@ -83,16 +85,18 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
       }
     }
     
-    TestExec.run({}, {packages: execTestPkgs}, function(data) {
-      if (data.status.code !== 0) {
-        $scope.testExecMessage = data.status.message;
-      }
-      else {
-        $scope.testExecMessage = null;
-      }
-    }, 
-    function(error) {
-      $scope.testExecMessage = error.data.status.message;
+    TestConfig.put({}, $scope.config, function success() {
+      TestExec.run({}, {packages: execTestPkgs}, function(data) {
+        if (data.status.code !== 0) {
+          $scope.testExecMessage = data.status.message;
+        }
+        else {
+          $scope.testExecMessage = null;
+        }
+      }, 
+      function(error) {
+        $scope.testExecMessage = error.data.status.message;
+      });
     });
   };
   
@@ -294,5 +298,12 @@ testingMod.factory('AutomatedTests', ['$resource', 'mdw', function($resource, md
 testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/exec', mdw.serviceParams(), {
     run: { method: 'POST' }
+  });
+}]);
+
+testingMod.factory('TestConfig', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/config', mdw.serviceParams(), {
+    get: { method: 'GET', isArray: false },
+    put: { method: 'PUT' }
   });
 }]);
