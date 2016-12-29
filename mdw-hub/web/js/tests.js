@@ -135,7 +135,8 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
     });
   };
   
-  $scope.acceptUpdates();
+  if (mdw.autoTestWebSocketUrl != '${mdw.autoTestWebSocketUrl}')
+    $scope.acceptUpdates();  // substituted value should be websocket url
 }]);
 
 testingMod.controller('TestController', ['$scope', '$routeParams', '$q', 'AutomatedTests', 'TestCase',
