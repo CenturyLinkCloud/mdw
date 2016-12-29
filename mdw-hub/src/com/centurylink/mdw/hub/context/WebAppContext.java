@@ -54,6 +54,9 @@ public class WebAppContext {
 
             String webSocketUrl = PropertyManager.getProperty(PropertyNames.MDW_AUTOTEST_WEBSOCKET_URL);
             mdw.setAutoTestWebSocketUrl(webSocketUrl);
+
+            String webToolsUrl = PropertyManager.getProperty(PropertyNames.WEBTOOLS_URL);
+            mdw.setWebToolsRoot(webToolsUrl);
         }
         return mdw;
     }

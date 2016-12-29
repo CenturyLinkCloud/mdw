@@ -22,6 +22,10 @@ public class Mdw {
     private String servicesRoot;
     public String getServicesRoot() { return servicesRoot; }
 
+    private String webToolsRoot;
+    public String getWebToolsRoot() { return webToolsRoot; }
+    public void setWebToolsRoot(String webToolsRoot) { this.webToolsRoot = webToolsRoot; }
+
     private File assetRoot;
     public File getAssetRoot() { return assetRoot; }
 

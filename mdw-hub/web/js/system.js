@@ -7,6 +7,7 @@ sysMod.controller('SystemController', ['$scope', 'mdw', 'System',
                                         function($scope, mdw, System) {
   
   $scope.sysInfoCategories = System.get({sysInfoType: 'sysInfo'});
+  $scope.filepanelUrl = mdw.roots.webTools + '/system/filepanel/index.jsf';
   
 }]);
 

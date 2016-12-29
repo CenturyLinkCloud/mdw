@@ -11,7 +11,8 @@ mdwMod.factory('mdw', function() {
     autoTestWebSocketUrl: $mdwAutoTestWebSocketUrl,
     roots: {
       services: $mdwServicesRoot,
-      hub: $mdwHubRoot
+      hub: $mdwHubRoot,
+      webTools: $mdwWebToolsRoot
     },
     serviceParams: function() {
       return { 
