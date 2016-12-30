@@ -188,6 +188,7 @@ public class WebAppContext {
         Enumeration<?> attrNames = context.getAttributeNames();
         while (attrNames.hasMoreElements()) {
             String attrName = (String)attrNames.nextElement();
+            if (!"org.apache.tomcat.util.scan.MergedWebXml".equals(attrName) && !"org.apache.catalina.jsp_classpath".equals(attrName))
             attrInfo.addSysInfo(new SysInfo(attrName, String.valueOf(context.getAttribute(attrName))));
         }
         containerInfos.add(attrInfo);
