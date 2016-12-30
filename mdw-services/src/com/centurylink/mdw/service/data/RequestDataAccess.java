@@ -55,7 +55,7 @@ public class RequestDataAccess extends CommonDataAccess {
             }
 
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
-            q.append("select ").append(PROC_INST_COLS).append(", d.document_id, d.create_dt, d.owner_type\n");
+            q.append("select ").append(PROC_INST_COLS).append(", d.document_id, d.create_dt, d.owner_type, d.status_code, d.status_message\n");
             q.append("from process_instance pi, document d\n");
 
             q.append(where).append(buildOrderBy(query));
@@ -69,6 +69,8 @@ public class RequestDataAccess extends CommonDataAccess {
                 ProcessInstance pi = buildProcessInstance(rs);
                 Request request = new Request(rs.getLong("d.document_id"));
                 request.setCreated(rs.getTimestamp("d.create_dt"));
+                request.setStatusCode(rs.getInt("d.status_code"));
+                request.setStatusMessage(rs.getString("d.status_message"));
                 request.setMasterRequestId(pi.getMasterRequestId());
                 request.setProcessInstanceId(pi.getId());
                 request.setProcessId(pi.getProcessId());
@@ -194,7 +196,7 @@ public class RequestDataAccess extends CommonDataAccess {
     public Request getRequest(Long id, boolean withContent, boolean withResponseContent)
     throws DataAccessException {
         try {
-            String query = "select create_dt, owner_type, owner_id";
+            String query = "select create_dt, owner_type, owner_id, status_code, status_message";
             query += " from document where document_id = ?";
             db.openConnection();
             ResultSet rs = db.runSelect(query, id);
@@ -204,6 +206,8 @@ public class RequestDataAccess extends CommonDataAccess {
             if (rs.next()) {
                 request = new Request(id);
                 request.setCreated(rs.getTimestamp("create_dt"));
+                request.setStatusCode(rs.getInt("status_code"));
+                request.setStatusMessage(rs.getString("status_message"));
                 ownerType = rs.getString("owner_type");
                 ownerId = rs.getLong("owner_id");
                 if (withContent) {
@@ -268,7 +272,7 @@ public class RequestDataAccess extends CommonDataAccess {
             total = countRs.getInt(1);
 
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
-            q.append("select d.document_id, d.create_dt\n");
+            q.append("select d.document_id, d.create_dt, d.status_code, d.status_message\n");
             q.append("from document d\n");
             q.append(where).append(buildOrderBy(query));
             q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
@@ -280,6 +284,8 @@ public class RequestDataAccess extends CommonDataAccess {
             while (rs.next()) {
                 Request request = new Request(rs.getLong("d.document_id"));
                 request.setCreated(rs.getTimestamp("d.create_dt"));
+                request.setStatusCode(rs.getInt("d.status_code"));
+                request.setStatusMessage(rs.getString("d.status_message"));
                 requestMap.put(request.getId(), request);
                 requests.add(request);
                 requestIds.add(request.getId());
@@ -348,7 +354,7 @@ public class RequestDataAccess extends CommonDataAccess {
             total = countRs.getInt(1);
 
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
-            q.append("select d.document_id, d.create_dt, d.owner_id\n");
+            q.append("select d.document_id, d.create_dt, d.owner_id, d.status_code, d.status_message\n");
             q.append("from document d\n");
             q.append(where).append(buildOrderBy(query));
             q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
@@ -361,6 +367,8 @@ public class RequestDataAccess extends CommonDataAccess {
                 Long activityId = rs.getLong("owner_id");
                 Request request = new Request(rs.getLong("document_id"));
                 request.setCreated(rs.getTimestamp("create_dt"));
+                request.setStatusCode(rs.getInt("status_code"));
+                request.setStatusMessage(rs.getString("status_message"));
                 request.setOutbound(true);
                 requestMap.put(activityId, request);
                 requests.add(request);
