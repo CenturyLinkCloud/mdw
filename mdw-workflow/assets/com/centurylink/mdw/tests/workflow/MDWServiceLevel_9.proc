@@ -79,6 +79,9 @@
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "SERVICE",
     "PerformanceLevel": "9",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=50,y=50,w=185,h=27"
   },
   "variables": {
@@ -91,5 +94,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.2"
+  "version": "0.3"
 }

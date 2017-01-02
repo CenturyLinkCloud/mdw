@@ -38,6 +38,9 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=50,y=50,w=169,h=27"
   },
   "variables": {
@@ -58,5 +61,5 @@
       "type": "java.util.Map<String,String>"
     }
   },
-  "version": "0.2"
+  "version": "0.3"
 }
