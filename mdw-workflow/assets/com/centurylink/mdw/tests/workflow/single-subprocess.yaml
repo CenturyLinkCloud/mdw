@@ -1,64 +1,38 @@
-process: # 10118
+process: # 10206
   name: MDWTestMainProcess
   instance: 1
-  activity: # 6 "2016-12-14 11:50:05"
+  activity: # 6 "2017-01-02 18:55:56"
     name: Process Start
     status: Completed
-  activity: # 33 "2016-12-14 11:50:05"
+  activity: # 33 "2017-01-02 18:55:56"
     name: multiple processes ?
     status: Completed
     result: SingleSubProcess
-  activity: # 23 "2016-12-14 11:50:05"
+  activity: # 23 "2017-01-02 18:55:56"
     name: Set input argument
     status: Completed
-  activity: # 22 "2016-12-14 11:50:05"
+  activity: # 22 "2017-01-02 18:55:58"
     name: Invoke single process
-    status: Completed
-  activity: # 26 "2016-12-14 11:51:05"
-    name: Display result
-    status: Completed
-  activity: # 11 "2016-12-14 11:51:05"
-    name: Process Finish
-    status: Completed
-  variable: # 10301
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException: Exception in InvokeSubProcessActivity...
+  variable: # 10439
     name: N
     value: 7
-  variable: # 10300
+  variable: # 10438
     name: processCase
     value: SingleSubProcess
-  variable: # 10334
-    name: Sum
-    value: 49
-  variable: # 10302
+  variable: # 10440
     name: xmldata
     value: |
       <ROOT>
           <MINUTES>2</MINUTES>
       </ROOT>
-process: # 10119
-  name: MDWTestSubProcess
+process: # 10212
+  name: MDWTestMainProcess Exception Handler
   instance: 1
-  activity: # 34 "2016-12-14 11:50:05"
-    name: Start
+  activity: # 29 "2017-01-02 18:56:17"
+    name: Process Start
     status: Completed
-  activity: # 31 "2016-12-14 11:50:05"
-    name: Calculate sqaure
-    status: Completed
-  activity: # 32 "2016-12-14 11:50:05"
-    name: Wait for a while
-    status: Completed
-  activity: # 33 "2016-12-14 11:51:05"
-    name: Finish
-    status: Completed
-  variable: # 10303
-    name: argument
-    value: 7
-  variable: # 10305
-    name: result
-    value: 49
-  variable: # 10304
-    name: testxml
-    value: |
-      <ROOT>
-          <MINUTES>2</MINUTES>
-      </ROOT>
+  activity: # 28 "2017-01-02 18:56:17"
+    name: My fallout task
+    status: Waiting

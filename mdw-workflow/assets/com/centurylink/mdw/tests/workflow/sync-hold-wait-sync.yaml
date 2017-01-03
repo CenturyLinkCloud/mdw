@@ -1,42 +1,42 @@
-process: # 13836
+process: # 10275
   name: MDWTestEmbedded
   instance: 1
-  activity: # 13 "2016-02-23 18:40:06"
+  activity: # 13 "2017-01-03 12:10:02"
     name: Start
     status: Completed
-  activity: # 5 "2016-02-23 18:40:06"
+  activity: # 5 "2017-01-03 12:10:02"
     name: which case?
     status: Completed
     result: sync-wait
-  activity: # 12 "2016-02-23 18:40:06"
+  activity: # 12 "2017-01-03 12:10:02"
     name: Sync arm1
     status: Completed
-  activity: # 2 "2016-02-23 18:40:06"
+  activity: # 2 "2017-01-03 12:10:03"
     name: Synch with Wait
     status: Completed
-  activity: # 6 "2016-02-23 18:42:06"
+  activity: # 22 "2017-01-03 12:12:02"
     name: |
       sync arm2
       (delay 2 min)
     status: Completed
-  activity: # 7 "2016-02-23 18:42:06"
+  activity: # 7 "2017-01-03 12:12:04"
     name: Stop
     status: Completed
-  variable: # 21162
+  variable: # 10650
     name: SetInMain
     value: Ah hah!
-  variable: # 21160
+  variable: # 10643
     name: testCase
     value: sync-wait
-process: # 13837
+process: # 10280
   name: MDWTestEmbedded Correction Handler
   instance: 1
-  activity: # 20 "2016-02-23 18:40:36"
+  activity: # 20 "2017-01-03 12:10:33"
     name: Start
     status: Completed
-  activity: # 19 "2016-02-23 18:40:36"
+  activity: # 19 "2017-01-03 12:10:33"
     name: wait 1 min
     status: Completed
-  activity: # 21 "2016-02-23 18:41:36"
+  activity: # 21 "2017-01-03 12:11:34"
     name: Stop
     status: Completed

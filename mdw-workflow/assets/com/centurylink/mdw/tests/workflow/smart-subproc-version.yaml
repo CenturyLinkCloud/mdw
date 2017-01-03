@@ -1,56 +1,38 @@
-process: # 13426
-  name: SmartProcessChild
-  instance: 1
-  activity: # 1 "2016-02-17 18:04:30"
-    name: Start
-    status: Completed
-  activity: # 3 "2016-02-17 18:04:30"
-    name: Set Info
-    status: Completed
-  activity: # 2 "2016-02-17 18:04:30"
-    name: Stop
-    status: Completed
-  variable: # 20062
-    name: procName
-    value: SmartProcessChild
-  variable: # 20063
-    name: procVer
-    value: 2.3
-process: # 13425
+process: # 10265
   name: SmartProcessParent
   instance: 1
-  activity: # 1 "2016-02-17 18:04:30"
+  activity: # 1 "2017-01-03 11:59:33"
     name: Start
     status: Completed
-  activity: # 5 "2016-02-17 18:04:30"
+  activity: # 5 "2017-01-03 11:59:33"
     name: |
       Test
       Case?
     status: Completed
     result: single
-  activity: # 3 "2016-02-17 18:04:30"
+  activity: # 3 "2017-01-03 11:59:33"
     name: Invoke Single
     status: Completed
-  activity: # 7 "2016-02-17 18:04:30"
+  activity: # 7 "2017-01-03 11:59:35"
     name: |
       Invoke Single
       Old
     status: Completed
-  activity: # 2 "2016-02-17 18:04:30"
+  activity: # 2 "2017-01-03 11:59:36"
     name: Stop
     status: Completed
-  variable: # 20064
+  variable: # 10623
     name: singleSubprocName
     value: SmartProcessChild
-  variable: # 20068
+  variable: # 10629
     name: singleSubprocNameOld
     value: SmartProcessChild
-  variable: # 20065
+  variable: # 10622
     name: singleSubprocVer
     value: 2.3
-  variable: # 20069
+  variable: # 10628
     name: singleSubprocVerOld
     value: 1.1
-  variable: # 20061
+  variable: # 10614
     name: testCase
     value: single

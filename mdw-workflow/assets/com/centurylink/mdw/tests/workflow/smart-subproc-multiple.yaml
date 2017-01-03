@@ -1,97 +1,34 @@
-process: # 13402
-  name: SmartProcessChild
-  instance: 1
-  activity: # 1 "2016-02-17 17:53:14"
-    name: Start
-    status: Completed
-  activity: # 3 "2016-02-17 17:53:14"
-    name: Set Info
-    status: Completed
-  activity: # 2 "2016-02-17 17:53:14"
-    name: Stop
-    status: Completed
-  variable: # 19984
-    name: inputVar
-    value: child12
-  variable: # 19988
-    name: procName
-    value: SmartProcessChild
-  variable: # 19989
-    name: procVer
-    value: 2.3
-process: # 13401
-  name: SmartProcessChild
-  instance: 2
-  activity: # 1 "2016-02-17 17:53:13"
-    name: Start
-    status: Completed
-  activity: # 3 "2016-02-17 17:53:13"
-    name: Set Info
-    status: Completed
-  activity: # 2 "2016-02-17 17:53:13"
-    name: Stop
-    status: Completed
-  variable: # 19983
-    name: inputVar
-    value: child11
-  variable: # 19986
-    name: procName
-    value: SmartProcessChild
-  variable: # 19987
-    name: procVer
-    value: 2.3
-process: # 13403
-  name: SmartProcessChild2
-  instance: 1
-  activity: # 1 "2016-02-17 17:53:15"
-    name: Start
-    status: Completed
-  activity: # 3 "2016-02-17 17:53:15"
-    name: Set Ver Info
-    status: Completed
-  activity: # 2 "2016-02-17 17:53:15"
-    name: Stop
-    status: Completed
-  variable: # 19985
-    name: inputVar
-    value: testInput
-  variable: # 19990
-    name: procName
-    value: SmartProcessChild2
-  variable: # 19991
-    name: procVer
-    value: 0.3
-process: # 13400
+process: # 10263
   name: SmartProcessParent
   instance: 1
-  activity: # 1 "2016-02-17 17:53:12"
+  activity: # 1 "2017-01-03 11:59:32"
     name: Start
     status: Completed
-  activity: # 5 "2016-02-17 17:53:12"
+  activity: # 5 "2017-01-03 11:59:32"
     name: |
       Test
       Case?
     status: Completed
     result: multiple
-  activity: # 8 "2016-02-17 17:53:12"
+  activity: # 8 "2017-01-03 11:59:32"
     name: Create Plan
     status: Completed
-  activity: # 4 "2016-02-17 17:53:12"
+  activity: # 4 "2017-01-03 11:59:34"
     name: Invoke Multiple
     status: Completed
-  activity: # 9 "2016-02-17 17:53:15"
+  activity: # 9 "2017-01-03 11:59:39"
     name: Assign Output
     status: Completed
-  activity: # 2 "2016-02-17 17:53:15"
+  activity: # 2 "2017-01-03 11:59:40"
     name: Stop
     status: Completed
-  variable: # 19982
+  variable: # 10617
     name: executionPlan
     value: |
       <bpm:ProcessExecutionPlan xmlns:bpm="http://mdw.centurylink.com/bpm">
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SmartProcessChild</bpm:LogicalProcessName>
-              <bpm:InstanceId>${~[0-9]*}</bpm:InstanceId>
+              <bpm:InstanceId>10268</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="inputVar">child11</bpm:Parameter>
               <bpm:Parameter Name="procName">SmartProcessChild</bpm:Parameter>
@@ -99,34 +36,34 @@ process: # 13400
           </bpm:SubprocessInstance>
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SmartProcessChild</bpm:LogicalProcessName>
-              <bpm:InstanceId>${~[0-9]*}</bpm:InstanceId>
+              <bpm:InstanceId>10269</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="inputVar">child12</bpm:Parameter>
           </bpm:SubprocessInstance>
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SmartProcessChild2</bpm:LogicalProcessName>
-              <bpm:InstanceId>${~[0-9]*}</bpm:InstanceId>
+              <bpm:InstanceId>10270</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="inputVar">$subprocInputVar</bpm:Parameter>
               <bpm:Parameter Name="procName">SmartProcessChild2</bpm:Parameter>
               <bpm:Parameter Name="procVer">0.3</bpm:Parameter>
           </bpm:SubprocessInstance>
       </bpm:ProcessExecutionPlan>
-  variable: # 19992
+  variable: # 10635
     name: multipleSubprocName
     value: SmartProcessChild
-  variable: # 19993
+  variable: # 10637
     name: multipleSubprocName2
     value: SmartProcessChild2
-  variable: # 19994
+  variable: # 10638
     name: multipleSubprocVer
     value: 2.3
-  variable: # 19995
+  variable: # 10636
     name: multipleSubprocVer2
     value: 0.3
-  variable: # 19980
+  variable: # 10611
     name: subprocInputVar
     value: testInput
-  variable: # 19981
+  variable: # 10612
     name: testCase
     value: multiple

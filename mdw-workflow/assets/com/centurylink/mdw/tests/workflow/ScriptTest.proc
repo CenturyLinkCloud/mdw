@@ -171,6 +171,7 @@
     "NodeStyle": "Icon",
     "PROCESS_VISIBILITY": "PUBLIC",
     "START_TRANSITION_ID": "2334952",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=27,y=20,w=93,h=27"
   },
   "subprocesses": [{
@@ -260,5 +261,5 @@
       "type": "java.lang.String[]"
     }
   },
-  "version": "0.18"
+  "version": "0.20"
 }
