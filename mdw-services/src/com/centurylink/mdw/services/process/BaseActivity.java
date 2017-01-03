@@ -583,7 +583,7 @@ public abstract class BaseActivity implements GeneralActivity {
         DocumentReference docref = (DocumentReference)this.getParameterValue(name);
         if (docref == null) {
             docref = createDocument(varType, value, OwnerType.VARIABLE_INSTANCE, new Long(0));
-            Long varInstId = this.setParameterValue(name, docref);
+            Long varInstId = setParameterValue(name, docref);
             updateDocumentInfo(docref, null, OwnerType.VARIABLE_INSTANCE, varInstId);
         } else {
             updateDocumentContent(docref, value, varType);

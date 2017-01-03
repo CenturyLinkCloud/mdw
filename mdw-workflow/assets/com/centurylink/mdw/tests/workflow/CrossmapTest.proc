@@ -62,6 +62,9 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=45,y=38,w=131,h=27"
   },
   "textNotes": [{
@@ -95,5 +98,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "0.1"
+  "version": "0.2"
 }

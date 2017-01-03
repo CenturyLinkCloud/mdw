@@ -26,15 +26,6 @@ public interface AssetServices {
     public void clearVersionControl();
 
     /**
-     * Retrieves the contents of a workflow asset.
-     * @param asset - Qualified name (including workflow package: 'MyPackage/MyText.txt').
-     *                File extension is required, and must designate a format supported by MDW.
-     * @return byte array with the contents
-     */
-    public byte[] getAssetContent(String asset) throws ServiceException;
-
-
-    /**
      * Returns the list of workflow packages.  Does not include archived packages.
      * Includes Git information if available.
      */

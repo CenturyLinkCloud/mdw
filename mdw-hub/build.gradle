@@ -29,7 +29,7 @@ dependencies {
     compile group: "org.apache.poi", name: "poi-all", version: "3.9"
     compile group: "org.apache.xbean", name: "xbean-spring", version: "3.6"
     providedCompile group: "junit", name: "junit", version: "4.8.1"
-    
+        
     // swagger
     compile group: "io.swagger", name: "swagger-servlet", version: "1.5.4"
 

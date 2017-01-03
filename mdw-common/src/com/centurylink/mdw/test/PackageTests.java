@@ -3,7 +3,8 @@
  */
 package com.centurylink.mdw.test;
 
-import java.util.Collections;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -13,7 +14,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 
-public class PackageTests implements Jsonable {
+public class PackageTests implements Jsonable, Comparable<PackageTests> {
 
     private PackageDir packageDir;
     public PackageDir getPackageDir() { return packageDir; }
@@ -24,6 +25,18 @@ public class PackageTests implements Jsonable {
 
     public PackageTests(PackageDir pkgDir) {
         this.packageDir = pkgDir;
+    }
+
+    public PackageTests(File assetRoot, JSONObject json) throws JSONException {
+        String pkgName = json.getString("name");
+        this.packageDir = new PackageDir(assetRoot, pkgName, null);
+        if (json.has("testCases")) {
+            JSONArray tcArr = json.getJSONArray("testCases");
+            this.testCases = new ArrayList<TestCase>();
+            for (int i = 0; i < tcArr.length(); i++) {
+                this.testCases.add(new TestCase(assetRoot, pkgName, tcArr.getJSONObject(i)));
+            }
+        }
     }
 
     public JSONObject getJson() throws JSONException {
@@ -43,7 +56,7 @@ public class PackageTests implements Jsonable {
         return "PackageTests";
     }
 
-    public void sort() {
-        Collections.sort(testCases);
+    public int compareTo(PackageTests other) {
+        return this.packageDir.getName().compareToIgnoreCase(other.packageDir.getName());
     }
 }

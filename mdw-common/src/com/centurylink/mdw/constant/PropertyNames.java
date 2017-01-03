@@ -59,7 +59,7 @@ public class PropertyNames {
     public static final String MDW_PERFORMANCE_LEVEL_REGULAR = "mdw.performance.level.regular";
     public static final String MDW_ENGINE_USE_TRANSACTION = "mdw.engine.use.transaction";
     public static final String MDW_STUB_SERVER = "mdw.stub.server"; // used internally, set by regression tester "<host>:<port>:<timeout>";
-    public static final String MDW_TASKMGR_CALLENGINE_METHOD = "mdw.taskmanager.callengine.method";
+    public static final String WEBTOOLS_URL = "mdw.webtools.url";
     public static final String FILEPANEL_ROOT_DIRS = "mdw.filepanel.root.dirs";
     public static final String FILEPANEL_CONFIG_DIRS = "mdw.filepanel.config.dirs";
     public static final String FILEPANEL_EXCLUDE_PATTERNS = "mdw.filepanel.exclude.patterns";
@@ -160,6 +160,7 @@ public class PropertyNames {
     public static final String MDW_GIT_PASSWORD = "mdw.git.password";
     public static final String MDW_GIT_BRANCH = "mdw.git.branch";
     public static final String MDW_GIT_TRUSTED_HOST = "mdw.git.trusted.host";
+    public static final String MDW_GIT_AUTO_PULL = "mdw.git.auto.pull";
     // Task with these status will not be cancelled when process instance completes
     public static final String FINAL_TASK_STATUSES = "mdw.task.statuses.final";
 
@@ -167,6 +168,7 @@ public class PropertyNames {
     public static final String MDW_TEST_RESULTS_LOCATION = "mdw.test.results.location";
     public static final String MDW_FUNCTION_TESTS_SUMMARY_FILE = "mdw.function.tests.summary.file";
     public static final String MDW_FEATURE_TESTS_SUMMARY_FILE = "mdw.feature.tests.summary.file";
+    public static final String MDW_AUTOTEST_WEBSOCKET_URL = "mdw.autotest.websocket.url";
 
     // Ldap configuration
     public static final String LDAP_PROTOCOL = "LDAP/Protocol";

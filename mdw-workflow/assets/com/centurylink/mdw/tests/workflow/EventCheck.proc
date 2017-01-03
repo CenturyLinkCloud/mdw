@@ -42,6 +42,9 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=50,y=50,w=110,h=27"
   },
   "subprocesses": [
@@ -165,5 +168,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "0.4"
+  "version": "0.5"
 }

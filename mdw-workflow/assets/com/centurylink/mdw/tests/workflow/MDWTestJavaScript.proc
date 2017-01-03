@@ -54,7 +54,10 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
     "START_TRANSITION_ID": "2330344",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=29,y=25,w=179,h=27"
   },
   "variables": {
@@ -83,5 +86,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.3"
+  "version": "0.4"
 }

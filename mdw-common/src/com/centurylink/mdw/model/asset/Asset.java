@@ -4,7 +4,6 @@
 package com.centurylink.mdw.model.asset;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -696,18 +695,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         return extensionToLanguage;
     }
 
-    public void write(File destFile) throws IOException {
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(destFile);
-            fos.write(getContent());
-        }
-        finally {
-            if (fos != null)
-                fos.close();
-        }
-    }
-
     /**
      * Takes into account special rules due to multiple languages per extension.
      */
@@ -765,5 +752,21 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
 
     public String getJsonName() {
         return getName();
+    }
+
+    /**
+     * Methods for Groovy access (eg: autotest cases).
+     */
+    public boolean exists() {
+        return getRawFile() != null && getRawFile().exists();
+    }
+    public File file() {
+        return getRawFile();
+    }
+    public String getText() throws IOException {
+        return text();
+    }
+    public String text() throws IOException {
+        return getStringContent();
     }
 }

@@ -6,6 +6,7 @@ package com.centurylink.mdw.dataaccess;
 import java.io.File;
 import java.io.IOException;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.db.UserDataAccessDb;
@@ -13,12 +14,15 @@ import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.dataaccess.file.RuntimeDataAccessVcs;
+import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.dataaccess.file.WrappedBaselineData;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.DesignatedHostSslVerifier;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.ProgressMonitor;
+import com.centurylink.mdw.util.timer.SystemOutProgressMonitor;
 
 public class DataAccess {
 
@@ -192,6 +196,19 @@ public class DataAccess {
                                                 + "\n(" + gitLocal.getAbsolutePath() + ")");
                                         logger.debug("Differences:\n============\n" + diffs);
                                     }
+                                }
+
+                                String strGitAutoPull = PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL);
+                                boolean gitAutoPull = strGitAutoPull == null ? false : Boolean.parseBoolean(strGitAutoPull);
+                                if (gitAutoPull) {
+                                    // force checkout all assets
+                                    File tempDir = new File(PropertyNames.MDW_TEMP_DIR);
+                                    ProgressMonitor progressMonitor = new SystemOutProgressMonitor();
+                                    VcsArchiver archiver = new VcsArchiver(ApplicationContext.getAssetRoot(), tempDir, vcGit, progressMonitor);
+                                    logger.severe("**** Performing Git Auto-Pull (Overwrites existing assets): " + vcGit + " (branch: " + branch + ")");
+                                    archiver.backup();
+                                    vcGit.sparseCheckout(branch, assetPath);
+                                    archiver.archive();
                                 }
                             }
                         }

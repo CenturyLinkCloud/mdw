@@ -46,9 +46,6 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
         this.keep_alive_time = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_KEEP_ALIVE, 300);
     }
 
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.container.plugins.TestInterface#start()
-     */
     public void start() {
         logger = LoggerUtil.getStandardLogger();
         workers = new HashMap<String,Worker>();
@@ -57,6 +54,7 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
         loadWorker(WORKER_LISTENER);
         loadWorker(WORKER_SCHEDULER);
         loadWorker(WORKER_MONITOR);
+        loadWorker(WORKER_TESTING);
         adjustThreads();
         BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<Runnable>(work_queue_size);
         ThreadFactory thread_factory = new MyThreadFactory();
@@ -66,9 +64,6 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
         thread_pool.allowCoreThreadTimeOut(true);
     }
 
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.container.plugins.TestInterface#stop()
-     */
     public synchronized void stop() {
         if (thread_pool.isTerminating() || thread_pool.isTerminated()) return;
         thread_pool.shutdown();
@@ -89,11 +84,14 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
         int curWorks;   // curThreads + queued
         int totalSubmits;
         int totalRejects;
+
+        Worker(String name) {
+            this.name = name;
+        }
     }
 
     private void loadWorker(String workerName) {
-        Worker one = new Worker();
-        one.name = workerName;
+        Worker one = new Worker(workerName);
         one.minThreads = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_WORKER+"."+one.name+".min_threads", 0);
         one.maxThreads = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_WORKER+"."+one.name+".max_threads", (int)Math.floor((max_threads+work_queue_size)*0.9));
         one.curThreads = 0;
@@ -117,8 +115,7 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
             max_threads = core_threads;
             logger.info("Adjust max threads to " + max_threads);
         }
-        defaultWorker = new Worker();
-        defaultWorker.name = "DefaultWorker";
+        defaultWorker = new Worker("DefaultWorker");
         defaultWorker.minThreads = 0;
         defaultWorker.maxThreads = max_threads-core_threads;
         defaultWorker.curThreads = 0;
@@ -127,13 +124,11 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
 
     private Worker getWorker(String workerName) {
         Worker worker = workers.get(workerName);
-        if (worker==null) worker = defaultWorker;
+        if (worker == null)
+            worker = defaultWorker;
         return worker;
     }
 
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.container.plugins.TestInterface#hasAvailableThread(java.lang.String)
-     */
     public boolean hasAvailableThread(String workerName) {
         Worker worker = getWorker(workerName);
         return (worker.curWorks < worker.maxThreads &&

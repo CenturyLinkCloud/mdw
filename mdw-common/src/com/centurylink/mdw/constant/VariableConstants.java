@@ -24,7 +24,5 @@ public class VariableConstants {
     public static final String REQUEST_HEADERS = "requestHeaders";
     public static final String RESPONSE = "response";
     public static final String RESPONSE_HEADERS = "responseHeaders";
-    public static final String MDW_UTIL_MAP = "MDWUtilMap";
-    public static final String PACKAGE_ID = "PackageId";
 
 }

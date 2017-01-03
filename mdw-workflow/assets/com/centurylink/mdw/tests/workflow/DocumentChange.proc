@@ -99,7 +99,10 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
     "START_TRANSITION_ID": "2346077",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=14,y=15,w=161,h=27"
   },
   "variables": {
@@ -172,5 +175,5 @@
       "type": "com.centurylink.mdw.xml.XmlBeanWrapper"
     }
   },
-  "version": "0.6"
+  "version": "0.7"
 }

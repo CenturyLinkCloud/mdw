@@ -4,7 +4,6 @@
 package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
-import com.centurylink.mdw.services.asset.TestingServicesImpl;
 import com.centurylink.mdw.services.event.EventManagerBean;
 import com.centurylink.mdw.services.history.HistoryServicesImpl;
 import com.centurylink.mdw.services.process.ProcessManagerBean;
@@ -13,6 +12,7 @@ import com.centurylink.mdw.services.request.RequestServicesImpl;
 import com.centurylink.mdw.services.system.SystemServicesImpl;
 import com.centurylink.mdw.services.task.TaskManagerBean;
 import com.centurylink.mdw.services.task.TaskServicesImpl;
+import com.centurylink.mdw.services.test.TestingServicesImpl;
 import com.centurylink.mdw.services.user.UserManagerBean;
 import com.centurylink.mdw.services.user.UserServicesImpl;
 import com.centurylink.mdw.services.workflow.ProcessServicesImpl;

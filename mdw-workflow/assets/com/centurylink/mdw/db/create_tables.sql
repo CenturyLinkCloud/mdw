@@ -207,7 +207,7 @@ CREATE TABLE EVENT_INSTANCE
 (
   EVENT_NAME                    VARCHAR(512),
   DOCUMENT_ID                   BIGINT,
-  STATUS_CD                     TINYINT     NOT NULL,
+  STATUS_CD                     SMALLINT     NOT NULL,
   CREATE_DT                     TIMESTAMP    NOT NULL,
   CONSUME_DT                    DATETIME,
   PRESERVE_INTERVAL             INT,

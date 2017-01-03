@@ -95,6 +95,19 @@
   color: #808080;
   margin-bottom: 0;
 }
+.mdw-config {
+	color: #6b6b6b;
+	display: block;
+}
+.mdw-config input[type="checkbox"] {
+	position: relative;
+	top: 2px;
+	margin-right: 1px;
+}
+.mdw-config input[type="number"] {
+	margin-left: 5px;
+	width: 40px;
+}
 .mdw-heading {
   font-weight: bold;
   background-color: #eceff1 !important;
@@ -345,6 +358,12 @@
 .mdw-okay:hover {
   color: #2e7d32;
 }
+.mdw-running {
+  color: #286090;
+}
+.mdw-running:hover {
+  color: #286090;
+}
 .mdw-item-icon {
   margin-right: 10px;
 }
@@ -379,6 +398,13 @@
 }
 .mdw-item-sub-value {
   font-weight: bold;
+}
+.mdw-item-substat {
+	margin-left: 8px;
+  margin-top: 1px;
+  margin-bottom: 0;
+  font-size: 12px;
+  font-family: monospace;
 }
 .mdw-item-content {
   padding: 10px;

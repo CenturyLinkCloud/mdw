@@ -257,6 +257,11 @@ routesSvc.factory('routes', function() {
         controller: 'RequestController'
       },
       {
+        path: '/service/requests/:requestId',
+        templateUrl: 'requests/request.html',
+        controller: 'RequestController'
+      },
+      {
         path: '/service/responses/:requestId',
         templateUrl: 'requests/response.html',
         controller: 'RequestController'

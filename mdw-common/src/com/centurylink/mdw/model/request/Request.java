@@ -79,6 +79,14 @@ public class Request implements Jsonable {
     public boolean isOutbound() { return outbound; }
     public void setOutbound(boolean ob) { this.outbound = ob; }
 
+    private Integer statusCode;
+    public Integer getStatusCode() { return statusCode; }
+    public void setStatusCode(Integer code) { this.statusCode = code; }
+
+    private String statusMessage;
+    public String getStatusMessage() { return statusMessage; }
+    public void setStatusMessage(String message) { this.statusMessage = message; }
+
     public Request(Long id) {
         this.id = id;
     }
@@ -116,6 +124,10 @@ public class Request implements Jsonable {
             content = json.getString("content");
         if (json.has("responseContent"))
             responseContent = json.getString("responseContent");
+        if (json.has("statusCode"))
+            statusCode = json.getInt("statusCode");
+        if (json.has("statusMessage"))
+            statusMessage = json.getString("statusMessage");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -152,6 +164,10 @@ public class Request implements Jsonable {
             json.put("content", content);
         if (responseContent != null)
             json.put("responseContent", responseContent);
+        if (statusCode != null)
+            json.put("statusCode", statusCode);
+        if (statusMessage != null)
+            json.put("statusMessage", statusMessage);
         return json;
     }
 

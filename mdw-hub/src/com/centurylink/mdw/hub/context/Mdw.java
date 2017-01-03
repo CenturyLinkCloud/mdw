@@ -22,6 +22,10 @@ public class Mdw {
     private String servicesRoot;
     public String getServicesRoot() { return servicesRoot; }
 
+    private String webToolsRoot;
+    public String getWebToolsRoot() { return webToolsRoot; }
+    public void setWebToolsRoot(String webToolsRoot) { this.webToolsRoot = webToolsRoot; }
+
     private File assetRoot;
     public File getAssetRoot() { return assetRoot; }
 
@@ -38,6 +42,10 @@ public class Mdw {
     private String authMethod;
     public String getAuthMethod() { return authMethod; }
     public void setAuthMethod(String authMethod) { this.authMethod = authMethod; }
+
+    private String autoTestWebSocketUrl;
+    public String getAutoTestWebSocketUrl() { return autoTestWebSocketUrl; }
+    public void setAutoTestWebSocketUrl(String url) { this.autoTestWebSocketUrl = url; }
 
     Mdw(String version, String build, String hubRoot, String servicesRoot, File assetRoot, String overridePackage) {
         this.version = version;

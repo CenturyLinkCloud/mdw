@@ -8,9 +8,11 @@ mdwMod.factory('mdw', function() {
     // $mdwVersion and $mdwHubRoot are set in logical root.js -- See RootServlet.java
     version: $mdwVersion,
     build: $mdwBuild,
+    autoTestWebSocketUrl: $mdwAutoTestWebSocketUrl,
     roots: {
       services: $mdwServicesRoot,
-      hub: $mdwHubRoot
+      hub: $mdwHubRoot,
+      webTools: $mdwWebToolsRoot
     },
     serviceParams: function() {
       return { 

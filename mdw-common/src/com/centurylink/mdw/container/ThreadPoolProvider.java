@@ -14,6 +14,7 @@ public interface ThreadPoolProvider {
     String WORKER_SCHEDULER = "Scheduler";
     String WORKER_MONITOR = "Monitor";
     String WORKER_DEFAULT = "Default";
+    String WORKER_TESTING = "Testing";
 
     void start();
 

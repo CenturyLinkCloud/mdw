@@ -51,6 +51,12 @@ public class WebAppContext {
                 String hubUser = ApplicationContext.getDevUser();
                 mdw.setHubUser(hubUser);
             }
+
+            String webSocketUrl = PropertyManager.getProperty(PropertyNames.MDW_AUTOTEST_WEBSOCKET_URL);
+            mdw.setAutoTestWebSocketUrl(webSocketUrl);
+
+            String webToolsUrl = PropertyManager.getProperty(PropertyNames.WEBTOOLS_URL);
+            mdw.setWebToolsRoot(webToolsUrl);
         }
         return mdw;
     }
@@ -182,6 +188,7 @@ public class WebAppContext {
         Enumeration<?> attrNames = context.getAttributeNames();
         while (attrNames.hasMoreElements()) {
             String attrName = (String)attrNames.nextElement();
+            if (!"org.apache.tomcat.util.scan.MergedWebXml".equals(attrName) && !"org.apache.catalina.jsp_classpath".equals(attrName))
             attrInfo.addSysInfo(new SysInfo(attrName, String.valueOf(context.getAttribute(attrName))));
         }
         containerInfos.add(attrInfo);

@@ -3,6 +3,9 @@
  */
 package com.centurylink.mdw.test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Date;
 
 import org.json.JSONException;
@@ -22,10 +25,12 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
      * Null means not executed.
      */
     public enum Status {
+        Waiting,
         InProgress,
         Errored,
         Failed,
-        Passed
+        Passed,
+        Stopped // terminated by user
     }
 
     public TestCase(String pkg, AssetInfo asset) {
@@ -50,6 +55,11 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
     private Status status;
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
+
+    public boolean isFinished() {
+        return getStatus() != null && getStatus() != Status.Waiting
+                && getStatus() != Status.InProgress;
+    }
 
     private Date start;
     public Date getStart() { return start; }
@@ -77,6 +87,25 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
     private String executeLog;
     public String getExecuteLog() { return executeLog; }
     public void setExecuteLog(String executeLog) { this.executeLog = executeLog; }
+
+    public TestCase(File assetRoot, String pkg, JSONObject json) throws JSONException {
+        this.asset = new AssetInfo(assetRoot, pkg + "/" + json.getString("name"));
+        this.pkg = pkg;
+        if (json.has("start"))
+            this.start = StringHelper.serviceStringToDate(json.getString("start"));
+        if (json.has("end"))
+            this.end = StringHelper.serviceStringToDate(json.getString("end"));
+        if (json.has("status"))
+            this.status = Status.valueOf(json.getString("status"));
+        if (json.has("message"))
+            this.message = json.getString("message");
+        if (json.has("expected"))
+            this.expected = json.getString("expected");
+        if (json.has("actual"))
+            this.actual = json.getString("actual");
+        if (json.has("executeLog"))
+            this.executeLog = json.getString("executeLog");
+    }
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
@@ -106,5 +135,33 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
     public int compareTo(TestCase other) {
         return this.getAsset().compareTo(other.getAsset());
     }
+
+    public File file() {
+        return asset.getFile();
+    }
+
+    public String getText() throws IOException {
+        return text();
+    }
+
+    public String text() throws IOException {
+        return new String(read(file()));
+    }
+
+    private byte[] read(File file) throws IOException {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+            byte[] bytes = new byte[(int) file.length()];
+            fis.read(bytes);
+            return bytes;
+        }
+        finally {
+            if (fis != null)
+                fis.close();
+        }
+    }
+
+
 
 }

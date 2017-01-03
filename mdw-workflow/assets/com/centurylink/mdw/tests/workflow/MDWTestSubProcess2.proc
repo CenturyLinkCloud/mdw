@@ -95,9 +95,11 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
     "START_TRANSITION_ID": "2326876",
     "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=43,y=29,w=202,h=27"
   },
-  "version": "0.8"
+  "version": "0.9"
 }

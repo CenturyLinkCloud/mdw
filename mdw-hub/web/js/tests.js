@@ -1,26 +1,25 @@
-// Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
+// Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var testingMod = angular.module('testing', ['ngResource', 'mdw']);
 
-testingMod.controller('TestsController', ['$scope', 'AutomatedTests', 'TestExec',
-                                        function($scope, AutomatedTests, TestExec) {
+testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util', 'AutomatedTests', 'TestExec', 'TestConfig',
+                                         function($scope, $websocket, mdw, util, AutomatedTests, TestExec, TestConfig) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
-    $scope.testCaseList.packages.sort(function(p1, p2) {
-      return p1.name.localeCompare(p2.name);
-    });
     $scope.testCaseList.packages.forEach(function(pkg) {
       pkg.selected = false;
       pkg.testCases.forEach(function(tc) {
         tc.baseName = tc.name.substring(0, tc.name.lastIndexOf('.'));
       });
-      pkg.testCases.sort(function(tc1, tc2) {
-        return tc1.name.localeCompare(tc2.name);
-      });
     });
   });
+
+  $scope.config = TestConfig.get();
   
+  $scope.running = function() {
+    return $scope.forStatus('InProgress');
+  };
   $scope.passed = function() {
     return $scope.forStatus('Passed');
   };
@@ -64,33 +63,80 @@ testingMod.controller('TestsController', ['$scope', 'AutomatedTests', 'TestExec'
   };
   
   $scope.runTests = function() {
-    var testsToRun = [];
+    var execTestPkgs = [];
+    var pkgObj;
     for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
       for (var j = 0; j < $scope.testCaseList.packages[i].testCases.length; j++) {
-        if ($scope.testCaseList.packages[i].testCases[j].selected)
-          testsToRun[i] = { 'package': $scope.testCaseList.packages[i].name, name: $scope.testCaseList.packages[i].testCases[j].name };
+        if ($scope.testCaseList.packages[i].testCases[j].selected) {
+          var pkgName = $scope.testCaseList.packages[i].name;
+          pkgObj = null;
+          for (var k = 0; k < execTestPkgs.length; k++) {
+            if (execTestPkgs[k].name == pkgName) {
+              pkgObj = execTestPkgs[k];
+              break;
+            }
+          }
+          if (!pkgObj) {
+            pkgObj = {name: pkgName, version: $scope.testCaseList.packages[i].version, testCases: []};
+            execTestPkgs.push(pkgObj);
+          }
+          pkgObj.testCases.push({name: $scope.testCaseList.packages[i].testCases[j].name});
+        }
       }
-  }
+    }
     
-    var testExec = {
-        suite: 'Automated Tests',
-        testCases: testsToRun
-    };
-    
-    TestExec.run({}, testExec, function(data) {
-      if (data.status.code !== 0) {
-        $scope.testExecMessage = data.status.message;
-      }
-      else {
-        $scope.testExecMessage = null;
-      }
-    }, 
-    function(error) {
-      $scope.testExecMessage = error.data.status.message;
+    TestConfig.put({}, $scope.config, function success() {
+      TestExec.run({}, {packages: execTestPkgs}, function(data) {
+        if (data.status.code !== 0) {
+          $scope.testExecMessage = data.status.message;
+        }
+        else {
+          $scope.testExecMessage = null;
+        }
+      }, 
+      function(error) {
+        $scope.testExecMessage = error.data.status.message;
+      });
     });
-    
   };
   
+  $scope.acceptUpdates = function() {
+    $scope.dataStream = $websocket(mdw.autoTestWebSocketUrl);
+    $scope.dataStream.onMessage(function(message) {
+      var newTestCaseList = JSON.parse(message.data);
+      newTestCaseList.packages.forEach(function(newPkg) {
+        var oldPkg = null;
+        for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
+          if ($scope.testCaseList.packages[i].name == newPkg.name) {
+            oldPkg = $scope.testCaseList.packages[i];
+            break;
+          }
+        }
+        if (oldPkg) {
+          newPkg.testCases.forEach(function(newTestCase) {
+            var oldTestCase = null;
+            for (var j = 0; j < oldPkg.testCases.length; j++) {
+              if (oldPkg.testCases[j].name == newTestCase.name) {
+                oldTestCase = oldPkg.testCases[j];
+                break;
+              }
+            }
+            if (oldTestCase) {
+              oldTestCase.status = newTestCase.status;
+              oldTestCase.start = newTestCase.start;
+              oldTestCase.end = newTestCase.end;
+              oldTestCase.message = newTestCase.message;
+              oldTestCase.expected = newTestCase.expected;
+              oldTestCase.actual = newTestCase.actual;
+            }
+          });
+        }
+      });
+    });
+  };
+  
+  if (mdw.autoTestWebSocketUrl != '${mdw.autoTestWebSocketUrl}')
+    $scope.acceptUpdates();  // substituted value should be websocket url
 }]);
 
 testingMod.controller('TestController', ['$scope', '$routeParams', '$q', 'AutomatedTests', 'TestCase',
@@ -251,7 +297,14 @@ testingMod.factory('AutomatedTests', ['$resource', 'mdw', function($resource, md
 }]);
 
 testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/Services/com.centurylink.mdw.testing.TestExec', mdw.serviceParams(), {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/exec', mdw.serviceParams(), {
     run: { method: 'POST' }
+  });
+}]);
+
+testingMod.factory('TestConfig', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/config', mdw.serviceParams(), {
+    get: { method: 'GET', isArray: false },
+    put: { method: 'PUT' }
   });
 }]);

@@ -70,6 +70,7 @@ public interface TaskServices {
 
     public TaskRuntimeContext getRuntimeContext(Long instanceId) throws ServiceException;
 
+    public void performTaskAction(UserTaskAction taskAction) throws ServiceException;
     public void performTaskAction(UserTaskAction taskAction, Query query) throws ServiceException;
 
     /**

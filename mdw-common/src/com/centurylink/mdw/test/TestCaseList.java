@@ -4,6 +4,7 @@
 package com.centurylink.mdw.test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,14 +29,64 @@ public class TestCaseList implements Jsonable {
     public int getCount() { return count; }
     public void setCount(int ct) { this.count = ct; }
 
-    private List<PackageTests> testCases;
-    public List<PackageTests> getTestCases() { return testCases; }
-    public void setTestCases(List<PackageTests> testCases) { this.testCases = testCases; }
+    private List<PackageTests> packageTests;
+    public List<PackageTests> getPackageTests() { return packageTests; }
+    public void setPackageTests(List<PackageTests> packageTests) { this.packageTests = packageTests; }
+
+    public List<TestCase> getTestCases() {
+        List<TestCase> testCases = new ArrayList<TestCase>();
+        for (PackageTests pkgTestCases : getPackageTests()) {
+            for (TestCase testCase : pkgTestCases.getTestCases()) {
+                testCases.add(testCase);
+            }
+        }
+        return testCases;
+    }
+
+    public TestCase getTestCase(String path) {
+        for (PackageTests pkgTests : packageTests) {
+            if (path.startsWith(pkgTests.getPackageDir().getPackageName() + "/")) {
+                for (TestCase pkgTest : pkgTests.getTestCases()) {
+                    if (pkgTest.getPath().equals(path))
+                        return pkgTest;
+                }
+            }
+        }
+        return null;
+    }
+
+    public TestCase addTestCase(TestCase testCase) {
+        for (PackageTests pkgTests : packageTests) {
+            if (testCase.getPath().startsWith(pkgTests.getPackageDir().getPackageName() + "/")) {
+                pkgTests.getTestCases().add(testCase);
+                return testCase;
+            }
+        }
+        return null;
+    }
 
     private File assetRoot;
 
     public TestCaseList(File assetRoot) {
         this.assetRoot = assetRoot;
+    }
+
+    public TestCaseList(File assetRoot, JSONObject json) throws JSONException {
+        if (json.has("suite"))
+            this.suite = json.getString("suite");
+        if (json.has("assetRoot"))
+            this.assetRoot = new File(json.getString("assetRoot"));
+        if (json.has("retrieveDate"))
+            this.retrieveDate = StringHelper.serviceStringToDate(json.getString("retrieveDate"));
+        if (json.has("count"))
+            this.count = json.getInt("count");
+        if (json.has("packages")) {
+            JSONArray pkgsArr = json.getJSONArray("packages");
+            this.packageTests = new ArrayList<PackageTests>();
+            for (int i = 0; i < pkgsArr.length(); i++) {
+                this.packageTests.add(new PackageTests(assetRoot, pkgsArr.getJSONObject(i)));
+            }
+        }
     }
 
     public JSONObject getJson() throws JSONException {
@@ -47,8 +98,8 @@ public class TestCaseList implements Jsonable {
         json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
         json.put("count", count);
         JSONArray array = new JSONArray();
-        if (testCases != null) {
-            for (PackageTests packageTests : testCases)
+        if (packageTests != null) {
+            for (PackageTests packageTests : packageTests)
                 array.put(packageTests.getJson());
         }
         json.put("packages", array);
