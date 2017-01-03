@@ -1,25 +1,25 @@
-process: # 13852
+process: # 10220
   name: MDWTestTimerWait
   instance: 1
-  activity: # 43 "2016-02-23 19:42:05"
+  activity: # 43 "2017-01-03 10:13:34"
     name: Start
     status: Completed
-  activity: # 42 "2016-02-23 19:42:05"
+  activity: # 42 "2017-01-03 10:13:34"
     name: which case?
     status: Completed
     result: cancel
-  activity: # 48 "2016-02-23 19:42:05"
+  activity: # 48 "2017-01-03 10:13:35"
     name: |
       Timer and Event
       Wait - cancel
     status: Cancelled
     result: Cancelled upon resume
-  activity: # 50 "2016-02-23 19:42:35"
+  activity: # 50 "2017-01-03 10:14:03"
     name: wait for 60s
     status: Completed
-  activity: # 46 "2016-02-23 19:43:35"
+  activity: # 46 "2017-01-03 10:15:06"
     name: Stop
     status: Completed
-  variable: # 21177
+  variable: # 10469
     name: testCase
     value: cancel

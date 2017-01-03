@@ -1,33 +1,33 @@
-process: # 13431
+process: # 10201
   name: FindEmployee
   instance: 1
-  activity: # 1 "2016-02-17 18:11:35"
+  activity: # 1 "2017-01-02 18:54:02"
     name: Start
     status: Completed
-  activity: # 5 "2016-02-17 18:11:35"
+  activity: # 5 "2017-01-02 18:54:02"
     name: |
       Real
       Lookup?
     status: Completed
     result: false
-  activity: # 3 "2016-02-17 18:11:35"
+  activity: # 3 "2017-01-02 18:54:02"
     name: Lookup
     status: Completed
-  activity: # 2 "2016-02-17 18:11:35"
+  activity: # 2 "2017-01-02 18:54:03"
     name: Stop
     status: Completed
-  variable: # 20079
+  variable: # 10422
     name: requestHeaders
-    value: ${~.*} # ignore this value
-  variable: # 20081
+    value: RequestPath=REST~content-length=70~ProcessName=com.centurylink.mdw.tests.services/FindEmployee~RemotePort=63991~RequestURL=http://localhost:8080/mdw/Services/REST~RemoteAddr=127.0.0.1~AuthenticatedUser=ab68052~pragma=no-cache~accept=text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2~ServiceClass=com.centurylink.mdw.hub.servlet.RestServlet~RemoteHost=127.0.0.1~masterrequestid=ab68052-170102-185356023~host=localhost:8080~connection=keep-alive~content-type=application/x-www-form-urlencoded~Protocol=REST~mdw-request-id=ab68052-170102-185356023~cache-control=no-cache~HttpMethod=POST~user-agent=Java/1.8.0_92~document-id=11785
+  variable: # 10424
     name: response
     value: |
       <GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
                 <sapId>DHO115360</sapId>
-                <workstationId>${~d.}oakes</workstationId>
-                <firstName>${~Don.*}</firstName>
-                <lastName>${~O.*s}</lastName>
+                <workstationId>dxoakes</workstationId>
+                <firstName>Donald</firstName>
+                <lastName>Oakes</lastName>
               </GetEmployeeResponse>
-  variable: # 20080
+  variable: # 10423
     name: workstationId
     value: dxoakes

@@ -195,6 +195,9 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=21,y=21,w=101,h=27"
   },
   "variables": {
@@ -215,5 +218,5 @@
       "type": "org.apache.xmlbeans.XmlObject"
     }
   },
-  "version": "0.4"
+  "version": "0.5"
 }

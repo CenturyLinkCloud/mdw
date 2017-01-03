@@ -114,7 +114,10 @@
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "SERVICE",
     "PerformanceLevel": "3",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
     "START_TRANSITION_ID": "2346892",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=38,y=31,w=131,h=27"
   },
   "variables": {
@@ -147,5 +150,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.15"
+  "version": "0.16"
 }
