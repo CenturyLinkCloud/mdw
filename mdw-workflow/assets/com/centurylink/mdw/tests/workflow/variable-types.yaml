@@ -1,37 +1,37 @@
-process: # 21607
+process: # 10224
   name: VariableTypes
   instance: 1
-  activity: # 1 "2016-09-16 19:02:49"
+  activity: # 1 "2017-01-03 10:22:03"
     name: Start
     status: Completed
-  activity: # 3 "2016-09-16 19:02:49"
+  activity: # 3 "2017-01-03 10:22:03"
     name: Update Vars
     status: Completed
-  activity: # 2 "2016-09-16 19:02:49"
+  activity: # 2 "2017-01-03 10:22:04"
     name: Stop
     status: Completed
-  variable: # 39635
+  variable: # 10476
     name: inputJsonable
     value: |
       {
         "firstName": "linus",
         "lastName": "Torvalds"
       }
-  variable: # 39634
+  variable: # 10477
     name: inputYaml
     value: |
       !!com.centurylink.mdw.tests.workflow.Person {
         firstName: isaac,
         lastName: Richards
       }
-  variable: # 39636
+  variable: # 10478
     name: localJsonable
     value: |
       {
         "firstName": "donald",
         "lastName": "oakes"
       }
-  variable: # 39637
+  variable: # 10479
     name: localYaml
     value: |
       !!com.centurylink.mdw.tests.workflow.Person {

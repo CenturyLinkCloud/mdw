@@ -1,49 +1,31 @@
-process: # 13802
-  name: SubprocessForEmbedded
-  instance: 1
-  activity: # 88 "2016-02-23 14:17:48"
-    name: Start
-    status: Completed
-  activity: # 90 "2016-02-23 14:17:48"
-    name: Assign Var Vals
-    status: Completed
-  activity: # 89 "2016-02-23 14:17:48"
-    name: Stop
-    status: Completed
-  variable: # 21133
-    name: fromParent
-    value: incoming
-  variable: # 21134
-    name: toParent
-    value: returnedValue
-process: # 13805
+process: # 10277
   name: SubprocessFromEmbedded
   instance: 1
-  activity: # 1 "2016-02-23 14:01:07"
+  activity: # 1 "2017-01-03 12:10:03"
     name: Start
     status: Completed
-  activity: # 2 "2016-02-23 14:01:07"
+  activity: # 2 "2017-01-03 12:10:03"
     name: Force Error
     status: Completed
-    result: com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'SubprocessFromEmbeddedv0_1_ForceError_2'...
-  activity: # 3 "2016-02-23 14:01:09"
+    result: com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'SubprocessFromEmbeddedv0_2_ForceError_2'...
+  activity: # 3 "2017-01-03 12:10:06"
     name: Stop
     status: Completed
-  variable: # 21128
+  variable: # 10644
     name: passToSub
     value: incoming
-  variable: # 21131
+  variable: # 10648
     name: receiveFromSub
     value: returnedValue
-process: # 13803
+process: # 10278
   name: SubprocessFromEmbedded Exception Handler
   instance: 1
-  activity: # 5 "2016-02-23 14:01:09"
+  activity: # 5 "2017-01-03 12:10:04"
     name: Start
     status: Completed
-  activity: # 4 "2016-02-23 14:01:09"
+  activity: # 4 "2017-01-03 12:10:05"
     name: Subprocess From Embedded
     status: Completed
-  activity: # 6 "2016-02-23 14:01:09"
+  activity: # 6 "2017-01-03 12:10:06"
     name: Stop
     status: Completed

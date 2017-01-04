@@ -1,35 +1,35 @@
-process: # 10104
+process: # 10259
   name: ScriptTest
   instance: 1
-  activity: # 3 "2016-12-14 11:48:40"
+  activity: # 3 "2017-01-03 11:29:31"
     name: Start
     status: Completed
-  activity: # 8 "2016-12-14 11:48:40"
+  activity: # 8 "2017-01-03 11:29:31"
     name: Script Flavor?
     status: Completed
     result: JavaScript
-  activity: # 4 "2016-12-14 11:48:40"
+  activity: # 4 "2017-01-03 11:29:31"
     name: JavaScript
     status: Completed
     result: javaScriptOutcome
-  activity: # 6 "2016-12-14 11:48:41"
+  activity: # 6 "2017-01-03 11:29:33"
     name: Looking Good?
     status: Completed
     result: Yep
-  activity: # 1 "2016-12-14 11:48:41"
+  activity: # 1 "2017-01-03 11:29:33"
     name: Still Okay?
     status: Completed
     result: Sure
-  activity: # 2 "2016-12-14 11:48:41"
+  activity: # 2 "2017-01-03 11:29:33"
     name: Stop
     status: Completed
-  variable: # 10253
+  variable: # 10590
     name: bystanderDomDoc
     value: <xml>I won't change</xml>
-  variable: # 10254
+  variable: # 10591
     name: bystanderXmlBean
     value: <xml>I won't change</xml>
-  variable: # 10262
+  variable: # 10604
     name: createdDomDoc
     value: |
       <records>
@@ -38,19 +38,19 @@ process: # 10104
               <aspect type="Sedan">Not too big</aspect>
           </car>
       </records>
-  variable: # 10261
+  variable: # 10602
     name: createdInt
     value: 8
-  variable: # 10263
+  variable: # 10605
     name: createdString
     value: createdStringValue
-  variable: # 10264
+  variable: # 10607
     name: createdXmlBean
     value: |
       <createdXmlBean>
           <innerElement attr="attrVal"/>
       </createdXmlBean>
-  variable: # 10255
+  variable: # 10592
     name: modifiedDomDoc
     value: |
       <records>
@@ -60,15 +60,15 @@ process: # 10104
           </car>
           <newCar shiny="new"/>
       </records>
-  variable: # 10251
+  variable: # 10588
     name: modifiedInt
     value: 16
-  variable: # 10256
+  variable: # 10593
     name: modifiedString
     value: MyStringToModify has been modified
-  variable: # 10250
+  variable: # 10587
     name: modifiedXmlBean
     value: <xmlBeanToBeModified>MODIFIED</xmlBeanToBeModified>
-  variable: # 10252
+  variable: # 10589
     name: scriptFlavor
     value: JavaScript

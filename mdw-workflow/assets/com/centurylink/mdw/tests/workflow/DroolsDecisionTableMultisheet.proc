@@ -123,7 +123,10 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
     "START_TRANSITION_ID": "2345034",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=37,y=22,w=276,h=27"
   },
   "variables": {

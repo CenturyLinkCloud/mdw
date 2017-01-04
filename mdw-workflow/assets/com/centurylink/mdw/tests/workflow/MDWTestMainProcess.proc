@@ -624,7 +624,10 @@
     "ERROR_PROCESS_ID": "282656",
     "ERROR_TRANSITION_ID": "192269",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
     "START_TRANSITION_ID": "2325977",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=50,y=40,w=199,h=27"
   },
   "subprocesses": [

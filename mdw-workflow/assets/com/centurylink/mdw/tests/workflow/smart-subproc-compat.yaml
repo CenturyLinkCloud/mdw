@@ -1,39 +1,21 @@
-process: # 13409
-  name: SmartProcessChildCompat
-  instance: 1
-  activity: # 1 "2016-02-17 17:58:04"
-    name: Start
-    status: Completed
-  activity: # 3 "2016-02-17 17:58:04"
-    name: Set Info
-    status: Completed
-  activity: # 2 "2016-02-17 17:58:04"
-    name: Stop
-    status: Completed
-  variable: # 20013
-    name: procName
-    value: SmartProcessChildCompat
-  variable: # 20014
-    name: procVer
-    value: 10.2
-process: # 13408
+process: # 10264
   name: SmartProcessParent
   instance: 1
-  activity: # 1 "2016-02-17 17:58:04"
+  activity: # 1 "2017-01-03 11:59:32"
     name: Start
     status: Completed
-  activity: # 5 "2016-02-17 17:58:04"
+  activity: # 5 "2017-01-03 11:59:32"
     name: |
       Test
       Case?
     status: Completed
     result: oldStyle
-  activity: # 10 "2016-02-17 17:58:04"
+  activity: # 10 "2017-01-03 11:59:32"
     name: Compatibility
     status: Completed
-  activity: # 11 "2016-02-17 17:58:04"
+  activity: # 11 "2017-01-03 11:59:34"
     name: Stop
     status: Completed
-  variable: # 20012
+  variable: # 10613
     name: testCase
     value: oldStyle

@@ -1,26 +1,26 @@
-process: # 13750
+process: # 10203
   name: MDWTestMainProcess
   instance: 1
-  activity: # 6 "2016-02-23 11:16:05"
+  activity: # 6 "2017-01-02 18:54:15"
     name: Process Start
     status: Completed
-  activity: # 33 "2016-02-23 11:16:05"
+  activity: # 33 "2017-01-02 18:54:15"
     name: multiple processes ?
     status: Completed
     result: AbortEvent
-  activity: # 12 "2016-02-23 11:16:05"
+  activity: # 12 "2017-01-02 18:54:17"
     name: Raise ABORT event
     status: Completed
     result: ABORT:
-  variable: # 20930
+  variable: # 10430
     name: processCase
     value: AbortEvent
-process: # 13751
+process: # 10204
   name: MDWTestMainProcess Cancellation Handler
   instance: 1
-  activity: # 31 "2016-02-23 11:16:05"
+  activity: # 31 "2017-01-02 18:54:17"
     name: Start
     status: Completed
-  activity: # 32 "2016-02-23 11:16:05"
+  activity: # 32 "2017-01-02 18:54:18"
     name: Stop
     status: Completed

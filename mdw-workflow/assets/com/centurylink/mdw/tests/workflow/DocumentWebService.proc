@@ -46,6 +46,9 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=30,y=29,w=200,h=27"
   },
   "variables": {
@@ -58,5 +61,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "0.6"
+  "version": "0.7"
 }

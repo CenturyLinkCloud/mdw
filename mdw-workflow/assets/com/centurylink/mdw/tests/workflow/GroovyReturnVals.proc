@@ -105,12 +105,15 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
     "START_TRANSITION_ID": "2322854",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=44,y=20,w=166,h=27"
   },
   "variables": {"returnVal": {
     "category": "LOCAL",
     "type": "java.lang.String"
   }},
-  "version": "0.6"
+  "version": "0.7"
 }

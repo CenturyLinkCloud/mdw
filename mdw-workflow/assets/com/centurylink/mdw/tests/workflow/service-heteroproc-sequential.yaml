@@ -1,31 +1,31 @@
-process: # 13552
+process: # 10235
   name: MDWTestHeterogeneousProcessCall
   instance: 1
-  activity: # 1 "2016-02-19 14:52:30"
+  activity: # 1 "2017-01-03 10:41:48"
     name: Start
     status: Completed
-  activity: # 8 "2016-02-19 14:52:30"
+  activity: # 8 "2017-01-03 10:41:48"
     name: which case?
     status: Completed
     result: sequential
-  activity: # 3 "2016-02-19 14:52:30"
+  activity: # 3 "2017-01-03 10:41:48"
     name: |
       create
       execution plan
       - sequential
     status: Completed
-  activity: # 4 "2016-02-19 14:52:30"
+  activity: # 4 "2017-01-03 10:41:54"
     name: |
       invoke heterogeneous
       processes - sequential
     status: Completed
-  activity: # 5 "2016-02-19 14:52:30"
+  activity: # 11 "2017-01-03 10:41:57"
     name: Set result variables
     status: Completed
-  activity: # 2 "2016-02-19 14:52:30"
+  activity: # 2 "2017-01-03 10:41:58"
     name: Stop
     status: Completed
-  variable: # 20355
+  variable: # 10515
     name: docFromSubproc
     value: |
       <Result>
@@ -33,48 +33,48 @@ process: # 13552
         <nplus1>4</nplus1>
         <cube>27</cube>
       </Result>
-  variable: # 20346
+  variable: # 10507
     name: execplan
     value: |
       <bpm:ProcessExecutionPlan xmlns:bpm="http://mdw.centurylink.com/bpm">
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
-              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:InstanceId>10236</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="argument">11</bpm:Parameter>
               <bpm:Parameter Name="result">121</bpm:Parameter>
           </bpm:SubprocessInstance>
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
-              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:InstanceId>10237</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="argument">13</bpm:Parameter>
               <bpm:Parameter Name="result">169</bpm:Parameter>
           </bpm:SubprocessInstance>
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess2</bpm:LogicalProcessName>
-              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:InstanceId>10238</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="n">3</bpm:Parameter>
               <bpm:Parameter Name="ncube">$ncube</bpm:Parameter>
               <bpm:Parameter Name="resultdoc">$docFromSubproc</bpm:Parameter>
           </bpm:SubprocessInstance>
       </bpm:ProcessExecutionPlan>
-  variable: # 20354
+  variable: # 10516
     name: ncube
     value: 27
-  variable: # 20344
+  variable: # 10505
     name: request
     value: |
       <ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
           <Action Name="RegressionTest">
-              <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+              <Parameter name="MasterRequestId">tester-1483420178004</Parameter>
               <Parameter name="ProcessName">MDWTestHeterogeneousProcessCall</Parameter>
               <Parameter name="testcase">sequential</Parameter>
               <Parameter name="PerformanceLevel">3</Parameter>
           </Action>
       </ser:ActionRequest>
-  variable: # 20357
+  variable: # 10518
     name: response
     value: |
       <Response>
@@ -83,76 +83,9 @@ process: # 13552
           <result>169</result>
           <nplus1>4</nplus1>
       </Response>
-  variable: # 20356
+  variable: # 10517
     name: result
     value: 121
-  variable: # 20345
+  variable: # 10506
     name: testcase
     value: sequential
-process: # 13554
-  name: MDWTestSubProcess3
-  instance: 1
-  activity: # 34 "2016-02-19 14:52:30"
-    name: Start
-    status: Completed
-  activity: # 31 "2016-02-19 14:52:30"
-    name: Calculate sqaure
-    status: Completed
-  activity: # 33 "2016-02-19 14:52:30"
-    name: Finish
-    status: Completed
-  variable: # 20348
-    name: argument
-    value: 13
-  variable: # 20351
-    name: result
-    value: 169
-process: # 13553
-  name: MDWTestSubProcess3
-  instance: 2
-  activity: # 34 "2016-02-19 14:52:30"
-    name: Start
-    status: Completed
-  activity: # 31 "2016-02-19 14:52:30"
-    name: Calculate sqaure
-    status: Completed
-  activity: # 33 "2016-02-19 14:52:30"
-    name: Finish
-    status: Completed
-  variable: # 20347
-    name: argument
-    value: 11
-  variable: # 20350
-    name: result
-    value: 121
-process: # 13555
-  name: MDWTestSubProcess4
-  instance: 1
-  activity: # 34 "2016-02-19 14:52:30"
-    name: Start
-    status: Completed
-  activity: # 31 "2016-02-19 14:52:30"
-    name: Calculate cube
-    status: Completed
-  activity: # 1 "2016-02-19 14:52:30"
-    name: |
-      create output
-      document
-    status: Completed
-  activity: # 33 "2016-02-19 14:52:30"
-    name: Finish
-    status: Completed
-  variable: # 20349
-    name: n
-    value: 3
-  variable: # 20352
-    name: ncube
-    value: 27
-  variable: # 20353
-    name: resultdoc
-    value: |
-      <Result>
-        <n>3</n>
-        <nplus1>4</nplus1>
-        <cube>27</cube>
-      </Result>

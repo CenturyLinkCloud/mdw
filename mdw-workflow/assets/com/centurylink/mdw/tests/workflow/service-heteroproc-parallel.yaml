@@ -1,31 +1,31 @@
-process: # 13536
+process: # 10246
   name: MDWTestHeterogeneousProcessCall
   instance: 1
-  activity: # 1 "2016-02-19 13:55:23"
+  activity: # 1 "2017-01-03 11:19:49"
     name: Start
     status: Completed
-  activity: # 8 "2016-02-19 13:55:23"
+  activity: # 8 "2017-01-03 11:19:49"
     name: which case?
     status: Completed
     result: parallel
-  activity: # 9 "2016-02-19 13:55:23"
+  activity: # 9 "2017-01-03 11:19:49"
     name: |
       create
       execution plan
       - parallel
     status: Completed
-  activity: # 6 "2016-02-19 13:55:23"
+  activity: # 6 "2017-01-03 11:19:51"
     name: |
       invoke heterogeneous
       processes - parallel
     status: Completed
-  activity: # 5 "2016-02-19 13:55:24"
+  activity: # 11 "2017-01-03 11:19:53"
     name: Set result variables
     status: Completed
-  activity: # 2 "2016-02-19 13:55:24"
+  activity: # 2 "2017-01-03 11:19:55"
     name: Stop
     status: Completed
-  variable: # 20299
+  variable: # 10551
     name: docFromSubproc
     value: |
       <Result>
@@ -33,48 +33,48 @@ process: # 13536
         <nplus1>4</nplus1>
         <cube>27</cube>
       </Result>
-  variable: # 20290
+  variable: # 10543
     name: execplan
     value: |
       <bpm:ProcessExecutionPlan xmlns:bpm="http://mdw.centurylink.com/bpm">
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
-              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:InstanceId>10250</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="argument">11</bpm:Parameter>
               <bpm:Parameter Name="result">121</bpm:Parameter>
           </bpm:SubprocessInstance>
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
-              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:InstanceId>10249</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="argument">13</bpm:Parameter>
               <bpm:Parameter Name="result">169</bpm:Parameter>
           </bpm:SubprocessInstance>
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess2</bpm:LogicalProcessName>
-              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:InstanceId>10248</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="n">3</bpm:Parameter>
               <bpm:Parameter Name="ncube">$ncube</bpm:Parameter>
               <bpm:Parameter Name="resultdoc">$docFromSubproc</bpm:Parameter>
           </bpm:SubprocessInstance>
       </bpm:ProcessExecutionPlan>
-  variable: # 20298
+  variable: # 10552
     name: ncube
     value: 27
-  variable: # 20289
+  variable: # 10540
     name: request
     value: |
       <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
           <Action Name="RegressionTest">
-              <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+              <Parameter name="MasterRequestId">ab68052-170103-111943364</Parameter>
               <Parameter name="ProcessName">MDWTestHeterogeneousProcessCall</Parameter>
               <Parameter name="testcase">parallel</Parameter>
               <Parameter name="PerformanceLevel">3</Parameter>
           </Action>
       </mdw:ActionRequest>
-  variable: # 20301
+  variable: # 10555
     name: response
     value: |
       <Response>
@@ -83,9 +83,9 @@ process: # 13536
           <result>169</result>
           <nplus1>4</nplus1>
       </Response>
-  variable: # 20300
+  variable: # 10554
     name: result
     value: 121
-  variable: # 20288
+  variable: # 10539
     name: testcase
     value: parallel

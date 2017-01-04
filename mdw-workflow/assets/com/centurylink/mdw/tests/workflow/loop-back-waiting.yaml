@@ -1,36 +1,33 @@
-process: # 13694
+process: # 10200
   name: MDWTestLoopBackWaiting
   instance: 1
-  activity: # 2 "2016-02-22 18:53:20"
+  activity: # 2 "2017-01-02 18:53:59"
     name: Start
     status: Completed
-  activity: # 4 "2016-02-22 18:53:20"
+  activity: # 4 "2017-01-02 18:53:59"
     name: Loop Control
     status: Completed
     result: BACK
-  activity: # 4 "2016-02-22 18:54:20"
+  activity: # 4 "2017-01-02 18:54:59"
     name: Loop Control
     status: Completed
     result: TEMP
-  activity: # 3 "2016-02-22 18:54:20"
+  activity: # 3 "2017-01-02 18:54:59"
     name: Loop Back
     status: Completed
     result: BACK
-  activity: # 4 "2016-02-22 18:54:20"
+  activity: # 4 "2017-01-02 18:55:00"
     name: Loop Control
     status: Completed
     result: BACK
-  activity: # 4 "2016-02-22 18:55:20"
+  activity: # 4 "2017-01-02 18:56:00"
     name: Loop Control
     status: Completed
     result: BACK
-  activity: # 4 "2016-02-22 18:56:20"
+  activity: # 4 "2017-01-02 18:57:02"
     name: Loop Control
-    status: Completed
-    result: DONE
-  activity: # 1 "2016-02-22 18:56:20"
-    name: Stop
-    status: Completed
-  variable: # 20762
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException...
+  variable: # 10421
     name: n
-    value: 6
+    value: 5

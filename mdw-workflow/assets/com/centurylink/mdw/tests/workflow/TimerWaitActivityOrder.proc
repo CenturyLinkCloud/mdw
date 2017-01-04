@@ -99,11 +99,14 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=29,y=21,w=210,h=27"
   },
   "variables": {"cumulativeResult": {
     "category": "INPUT",
     "type": "java.lang.String"
   }},
-  "version": "0.2"
+  "version": "0.3"
 }

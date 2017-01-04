@@ -75,6 +75,8 @@
     "ERROR_TRANSITION_ID": "68528",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
     "START_TRANSITION_ID": "2327302",
     "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=38,y=63,w=248,h=27"
@@ -135,5 +137,5 @@
       "type": "java.lang.String"
     }}
   }],
-  "version": "0.9"
+  "version": "0.10"
 }

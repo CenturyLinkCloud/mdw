@@ -1,57 +1,55 @@
-process: # 10284
+process: # 10239
   name: SqlAdapter
   instance: 1
-  activity: # 1 "2016-12-14 13:39:22"
+  activity: # 1 "2017-01-03 10:42:19"
     name: Start
     status: Completed
-  activity: # 2 "2016-12-14 13:40:22"
-    name: Stop
-    status: Completed
-  activity: # 3 "2016-12-14 13:39:22"
+  activity: # 3 "2017-01-03 10:42:19"
     name: |
       Query Using
       JDBC URL
     status: Completed
-  activity: # 4 "2016-12-14 13:39:32"
+  activity: # 4 "2017-01-03 10:42:29"
     name: |
       Query Multiple Params,
       Multiple Results
     status: Completed
-  activity: # 5 "2016-12-14 13:39:22"
+  activity: # 5 "2017-01-03 10:42:21"
     name: Sync
-    status: Completed
-  activity: # 6 "2016-12-14 13:40:22"
+    status: Waiting
+  activity: # 6 "2017-01-03 10:43:35"
     name: |
       Update
       User Name
     status: Completed
-  activity: # 7 "2016-12-14 13:40:22"
+  activity: # 7 "2017-01-03 10:43:35"
     name: |
       Select User
       And Bind Name
     status: Completed
     result: Don Oakes
-  activity: # 8 "2016-12-14 13:40:22"
+  activity: # 8 "2017-01-03 10:43:36"
     name: |
       Reset
       User Name
-    status: Completed
-  activity: # 9 "2016-12-14 13:39:22"
+    status: Failed
+    result: com.centurylink.mdw.services.ProcessException...
+  activity: # 9 "2017-01-03 10:42:19"
     name: Wait 60s
     status: Completed
-  activity: # 10 "2016-12-14 13:39:22"
+  activity: # 10 "2017-01-03 10:42:19"
     name: Wait 10s
     status: Completed
-  variable: # 10816
+  variable: # 10522
     name: mdwSupportUsers
     value: Donald Oakes~Manoj Agrawal
-  variable: # 10814
+  variable: # 10520
     name: userCuid
     value: dxoakes
-  variable: # 10813
+  variable: # 10519
     name: userCuids
     value: dxoakes~aa56486
-  variable: # 10815
+  variable: # 10521
     name: userDocument
     value: |
       <user:user xmlns:user="http://mdw.centurylink.com/user">
