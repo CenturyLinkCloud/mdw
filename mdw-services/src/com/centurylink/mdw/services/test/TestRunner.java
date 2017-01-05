@@ -110,12 +110,12 @@ public class TestRunner implements Runnable {
             boolean statusChanged = oldStatus != testCase.getStatus();
             testCaseStatuses.put(testCase.getPath(), testCase.getStatus());
             if (statusChanged) {
-                if (resultsFile.getName().endsWith(".json"))
-                    writeTestResultsJSON(testCase);
-                else if (resultsFile.getName().endsWith(".xml"))
+                if (statusChanged) {
+                    if (resultsFile.getName().endsWith(".xml"))
                         writeTestResultsXml(testCase);
                     else
-                    writeTestResults(testCase);
+                        writeTestResults(testCase);
+                }
             }
         }
         return allDone;
@@ -207,81 +207,6 @@ public class TestRunner implements Runnable {
 
         writeFile(resultsFile, suiteBuf.toString().getBytes());
     }
-
-
-    public void writeTestResultsJSON(TestCase exeTestCase) throws IOException {
-
-        List<TestCase> testCases = testCaseList.getTestCases();
-        int errors = 0;
-        int failures = 0;
-        int completed = 0;
-
-        StringBuffer suiteBuf = new StringBuffer();
-        suiteBuf.append("\"testsuite\": [ ");
-        suiteBuf.append("name=\"").append(testCaseList.getSuite()).append("\" ");
-        suiteBuf.append("tests=\"").append(testCases.size()).append("\" ");
-
-        StringBuffer results = new StringBuffer();
-        for (TestCase testCase : testCases) {
-            results.append("  \"testcase\": [{");
-            results.append("\"name=\" : \"").append(testCase.getPath()).append("\" ,");
-            Date start = testCase.getStart();
-            if (start != null) {
-                Calendar startCal = Calendar.getInstance();
-                startCal.setTime(start);
-                results.append("\"timestamp=\":\"").append(DatatypeConverter.printDateTime(startCal))
-                        .append("\" ,");
-                Date end = testCase.getEnd();
-                if (end != null) {
-                    long ms = end.getTime() - start.getTime();
-                    results.append("\"time=\" :\"").append(ms / 1000).append("\" ,");
-                }
-            }
-            if (testCase.isFinished()) {
-                completed++;
-            }
-            if (testCase.getStatus() == Status.Errored) {
-                errors++;
-                results.append("]\n");
-                results.append("    error[ ");
-                if (testCase.getMessage() != null)
-                    results.append("\"message=\" :\"").append(testCase.getMessage()).append("\" ");
-                results.append("]");
-                results.append("  }\n");
-            }
-            else if (testCase.getStatus() == Status.Failed) {
-                failures++;
-                results.append("]\n");
-                results.append("    \"failure \" :\"");
-                if (testCase.getMessage() != null)
-                    results.append("message=\"").append(testCase.getMessage()).append("\" ");
-                results.append("]\n");
-                results.append("  }\n");
-            }
-            else if (testCase.getStatus() == Status.InProgress) {
-                failures++;
-                results.append("]\n");
-                results.append("    \"running \"\n");
-                results.append("  }\n");
-            }
-            else {
-                results.append("]\n");
-            }
-        }
-        suiteBuf.append("\"completed=\": \"").append(completed).append("\" ");
-        suiteBuf.append("\"errors=\": \"").append(errors).append("\" ");
-        suiteBuf.append("\"failures=\":\"").append(failures).append("\" ");
-        suiteBuf.append("]\n");
-        suiteBuf.append(results);
-        suiteBuf.append("}");
-
-        writeFile(resultsFile, suiteBuf.toString().getBytes());
-    }
-
-
-
-
-
 
 
     private void writeFile(File file, byte[] contents) throws IOException {
