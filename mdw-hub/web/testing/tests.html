@@ -6,7 +6,7 @@
         <div class="mdw-heading-checklist">
           <input type="checkbox" ng-model="selectedState.all" ng-change="toggleAll()" ng-if="authUser.hasRole('Process Execution')"></input>
           Automated Tests
-          <span ng-if="testCaseList.testCases" class="mdw-heading-sub"> ({{testCaseList.testCases.length}})</span>
+          <span ng-if="testCaseCount > 0" class="mdw-heading-sub"> ({{testCaseCount}})</span>
         </div>
         <div ng-if="testCaseList.packages" class="mdw-heading-summary">
           <span class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running" title="Running"></span> = {{running().length}} 

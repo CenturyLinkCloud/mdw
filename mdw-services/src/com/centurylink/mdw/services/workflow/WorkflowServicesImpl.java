@@ -816,6 +816,105 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    public void setVariable(Long processInstanceId, String varName, Object value) throws ServiceException {
+        ProcessRuntimeContext runtimeContext = getContext(processInstanceId);
+        if (runtimeContext == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + processInstanceId);
+        setVariable(runtimeContext, varName, value);
+    }
+
+    public void setVariable(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
+        Variable var = context.getProcess().getVariable(varName);
+        if (var == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process variable not defined: " + varName);
+        String type = var.getVariableType();
+        if (VariableTranslator.isDocumentReferenceVariable(context.getPackage(), type)) {
+            setDocumentValue(context, varName, value);
+        }
+        else {
+            try {
+                VariableInstance varInst = context.getProcessInstance().getVariable(varName);
+                WorkflowDataAccess workflowDataAccess = getWorkflowDao();
+                if (varInst == null) {
+                    varInst = new VariableInstance();
+                    varInst.setName(varName);
+                    varInst.setVariableId(var.getVariableId());
+                    varInst.setType(type);
+                    if (value instanceof String)
+                        varInst.setStringValue((String)value);
+                    else
+                        varInst.setData(value);
+                    workflowDataAccess.createVariable(context.getProcessInstanceId(), varInst);
+                }
+                else {
+                    if (value instanceof String)
+                        varInst.setStringValue((String)value);
+                    else
+                        varInst.setData(value);
+                    workflowDataAccess.updateVariable(varInst);
+                }
+            }
+            catch (SQLException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error updating "
+                        + varName + " for process: " + context.getProcessInstanceId());
+            }
+        }
+    }
+
+    public void setVariables(Long processInstanceId, Map<String,Object> values) throws ServiceException {
+        ProcessRuntimeContext runtimeContext = getContext(processInstanceId);
+        if (runtimeContext == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + processInstanceId);
+        setVariables(runtimeContext, values);
+    }
+
+    public void setVariables(ProcessRuntimeContext context, Map<String,Object> values) throws ServiceException {
+        for (String name : values.keySet()) {
+            setVariable(context, name, values.get(name));
+        }
+    }
+
+    public void setDocumentValue(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
+        VariableInstance varInst = context.getProcessInstance().getVariable(varName);
+        if (varInst == null) {
+            createDocument(context, varName, value);
+        }
+        else {
+            updateDocument(context, varName, value);
+        }
+    }
+
+    /**
+     * TODO: Many places fail to set the ownerId for documents owned by VARIABLE_INSTANCE,
+     * and these need to be updated to use this method.
+     */
+    public void createDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
+        String type = context.getProcess().getVariable(varName).getVariableType();
+        EventManager eventMgr = ServiceLocator.getEventManager();
+        Long procInstId = context.getProcessInstanceId();
+        try {
+            Long docId = eventMgr.createDocument(type, OwnerType.PROCESS_INSTANCE, procInstId, value, context.getPackage());
+            VariableInstance varInst = eventMgr.setVariableInstance(procInstId, varName, new DocumentReference(docId));
+            eventMgr.updateDocumentInfo(docId, type, OwnerType.VARIABLE_INSTANCE, varInst.getInstanceId());
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating document for process: " + procInstId);
+        }
+    }
+
+    public void updateDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
+        EventManager eventMgr = ServiceLocator.getEventManager();
+        VariableInstance varInst = context.getProcessInstance().getVariable(varName);
+        if (varInst == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, varName + " not found for process: " + context.getProcessInstanceId());
+        try {
+            eventMgr.updateDocumentContent(varInst.getDocumentId(), value, varInst.getType(), context.getPackage());
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error updating document: " + varInst.getDocumentId());
+        }
+    }
+
     public String getDocumentStringValue(Long id) throws ServiceException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
@@ -848,9 +947,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    /**
-     * TODO: many places fail to set the ownerId for documents owned by VARIABLE_INSTANCE
-     */
     private Package getPackage(Document docVO) throws ServiceException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
@@ -878,4 +974,5 @@ public class WorkflowServicesImpl implements WorkflowServices {
             throw new ServiceException(ex.getMessage(), ex);
         }
     }
+
 }

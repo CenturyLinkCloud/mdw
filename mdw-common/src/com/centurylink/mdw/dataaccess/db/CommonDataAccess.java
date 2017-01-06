@@ -3,6 +3,10 @@
  */
 package com.centurylink.mdw.dataaccess.db;
 
+import static com.mongodb.client.model.Projections.excludeId;
+import static com.mongodb.client.model.Projections.fields;
+import static com.mongodb.client.model.Projections.include;
+
 import java.net.ConnectException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,6 +23,7 @@ import javax.transaction.TransactionManager;
 
 import org.bson.json.JsonWriterSettings;
 
+import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DataAccessOfflineException;
@@ -27,6 +32,7 @@ import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
@@ -36,7 +42,6 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 import com.mongodb.client.MongoCollection;
-import static com.mongodb.client.model.Projections.*;
 
 public class CommonDataAccess {
 
@@ -778,6 +783,57 @@ public class CommonDataAccess {
         finally {
             db.closeConnection();
         }
+    }
+
+    public Long createVariable(Long processInstanceId, VariableInstance variableInstance) throws SQLException {
+        try {
+            db.openConnection();
+            Long varInstId = createVariable0(processInstanceId, variableInstance);
+            db.commit();
+            return varInstId;
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    protected Long createVariable0(Long processInstanceId, VariableInstance variableInstance) throws SQLException {
+        Long varInstId = db.isMySQL() ? null : getNextId("VARIABLE_INST_ID_SEQ");
+        String query = "insert into VARIABLE_INSTANCE " +
+            "(VARIABLE_INST_ID, VARIABLE_ID, PROCESS_INST_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID, " +
+            "CREATE_DT, CREATE_USR) values (?, ?, ?, ?, ?, ?, "+now()+",'MDWEngine')";
+        Object[] args = new Object[6];
+        args[0] = varInstId;
+        args[1] = variableInstance.getVariableId();
+        args[2] = processInstanceId;
+        args[3] = variableInstance.getStringValue();
+        args[4] = variableInstance.getName();
+        args[5] = VariableTypeCache.getTypeId(variableInstance.getType());
+        if (db.isMySQL())
+            varInstId = db.runInsertReturnId(query, args);
+        else
+            db.runUpdate(query, args);
+        variableInstance.setInstanceId(varInstId);
+        return varInstId;
+    }
+
+    public void updateVariable(VariableInstance variableInstance) throws SQLException {
+        try {
+            db.openConnection();
+            updateVariable0(variableInstance);
+            db.commit();
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    protected void updateVariable0(VariableInstance variableInstance) throws SQLException {
+        String query = "update VARIABLE_INSTANCE set VARIABLE_VALUE=?, MOD_DT=" + now() + " where VARIABLE_INST_ID=?";
+        Object[] args = new Object[2];
+        args[0] = variableInstance.getStringValue();
+        args[1] = variableInstance.getInstanceId();
+        db.runUpdate(query, args);
     }
 
     /**

@@ -79,14 +79,17 @@ public class TestRunner implements Runnable {
             for (TestCase testCase : testCaseList.getTestCases()) {
                 String masterRequestId = user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
                 TestCaseRun run = new TestCaseRun(testCase, user, resultsFile.getParentFile(), 0, masterRequestId, monitor, processCache, config);
-                logger.info(" -> Executing test: " + testCase.getPath());
-                if (!threadPool.execute(ThreadPoolProvider.WORKER_TESTING, getClass().getSimpleName(), run))
-                    throw new IllegalStateException("No available thread: " + ThreadPoolProvider.WORKER_TESTING);
-                try {
-                    Thread.sleep(config.getInterval() * 1000); // pause first to avoid too-quick socket shutdown
-                }
-                catch (InterruptedException e) {
-                }
+
+                do {
+                    logger.severe("Test execution awaiting available thread...");
+                    try {
+                        Thread.sleep(config.getInterval() * 1000); // pause at least once to avoid too-quick socket shutdown
+                    }
+                    catch (InterruptedException e) {
+                    }
+                } while (!threadPool.execute(ThreadPoolProvider.WORKER_TESTING, getClass().getSimpleName(), run));
+
+                logger.debug(" -> Executing test: " + testCase.getPath());
 
                 if (updateResults())
                     return;
@@ -154,6 +157,7 @@ public class TestRunner implements Runnable {
             testCase.setEnd(exeTestCase.getEnd());
             testCase.setMessage(exeTestCase.getMessage());
             testCaseList.setCount(testCaseList.getTestCases().size());
+            testCaseList.sort();
             writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
         }
     }

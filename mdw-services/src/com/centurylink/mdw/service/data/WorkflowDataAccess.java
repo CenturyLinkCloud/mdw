@@ -16,6 +16,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
+import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.model.workflow.WorkStatus;
@@ -80,12 +81,14 @@ public class WorkflowDataAccess extends CommonDataAccess {
         long instanceId = query.getLongFilter("instanceId");
         if (instanceId > 0)
             return "where pi.process_instance_id = " + instanceId + "\n"; // ignore other criteria
-        String masterRequestId = query.getFilter("masterRequestId");
-        if (masterRequestId != null)
-            return "where pi.master_request_id = '" + masterRequestId + "'\n"; // ignore other criteria
 
         StringBuilder sb = new StringBuilder();
         sb.append("where 1 = 1 ");
+
+        // masterRequestId
+        String masterRequestId = query.getFilter("masterRequestId");
+        if (masterRequestId != null)
+            sb.append(" and pi.master_request_id = '" + masterRequestId + "'\n");
 
         String owner = query.getFilter("owner");
         if (owner == null) {
@@ -145,4 +148,11 @@ public class WorkflowDataAccess extends CommonDataAccess {
         return sb.toString();
     }
 
+    public void updateVariable(VariableInstance var) throws SQLException {
+        String query = "update VARIABLE_INSTANCE set VARIABLE_VALUE=?, MOD_DT=" + now() + " where VARIABLE_INST_ID=?";
+        Object[] args = new Object[2];
+        args[0] = var.getStringValue();
+        args[1] = var.getInstanceId();
+        db.runUpdate(query, args);
+    }
 }

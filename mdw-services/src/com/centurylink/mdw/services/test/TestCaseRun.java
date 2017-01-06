@@ -728,10 +728,12 @@ public class TestCaseRun implements Runnable {
             task.setId(taskInstance.getTaskInstanceId());
 
             UserTaskAction taskAction = new UserTaskAction();
-            taskAction.setAction(task.getName());
+            taskAction.setAction(task.getOutcome());
             taskAction.setUser(user);
             taskAction.setTaskInstanceId(task.getId());
-            // TODO task variables
+            if (task.getVariables() != null) {
+                workflowServices.setVariables(taskInstance.getOwnerId(), task.getVariables());
+            }
             taskServices.performTaskAction(taskAction);
         }
         catch (ServiceException ex) {

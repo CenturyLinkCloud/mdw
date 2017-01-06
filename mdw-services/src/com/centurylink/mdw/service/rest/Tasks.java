@@ -323,7 +323,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                         UserTaskAction taskAction = new UserTaskAction(content, segTwo);
                         if (taskAction.getTaskInstanceId() == null || taskInstanceId != taskAction.getTaskInstanceId())
                             throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (instanceId): " + taskAction.getTaskInstanceId() + " is not: " + taskInstanceId);
-                        taskServices.performTaskAction(taskAction, query);
+                        taskServices.performTaskAction(taskAction);
                         return null;
                     }
                     catch (IllegalArgumentException ex2) {
@@ -336,7 +336,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                         UserTaskAction taskAction = new UserTaskAction(content, segOne);
                         if (!segOne.equals(taskAction.getAction().toString()))
                             throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (action): '" + taskAction.getAction() + "' is not: '" + segOne + "'");
-                        taskServices.performTaskAction(taskAction, query);
+                        taskServices.performTaskAction(taskAction);
                         return null;
                     }
                     catch (IllegalArgumentException ex2) {

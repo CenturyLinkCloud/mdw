@@ -7,10 +7,12 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
                                          function($scope, $websocket, mdw, util, AutomatedTests, TestsExec, TestConfig) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
+    $scope.testCaseCount = 0;
     $scope.testCaseList.packages.forEach(function(pkg) {
       pkg.selected = false;
       pkg.testCases.forEach(function(tc) {
         tc.baseName = tc.name.substring(0, tc.name.lastIndexOf('.'));
+        $scope.testCaseCount++;
       });
     });
   });
