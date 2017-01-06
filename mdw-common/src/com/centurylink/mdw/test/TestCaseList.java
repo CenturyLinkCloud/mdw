@@ -34,6 +34,23 @@ public class TestCaseList implements Jsonable {
     public List<PackageTests> getPackageTests() { return packageTests; }
     public void setPackageTests(List<PackageTests> packageTests) { this.packageTests = packageTests; }
 
+    public PackageTests getPackageTests(String packageName) {
+        if (packageTests != null) {
+            for (PackageTests pkgTests : packageTests) {
+                if (pkgTests.getPackageDir().getPackageName().equals(packageName))
+                    return pkgTests;
+            }
+        }
+        return null;
+    }
+
+    public void addPackageTests(PackageTests pkgTests) {
+        if (packageTests == null) {
+            packageTests = new ArrayList<PackageTests>();
+        }
+        packageTests.add(pkgTests);
+    }
+
     public List<TestCase> getTestCases() {
         List<TestCase> testCases = new ArrayList<TestCase>();
         for (PackageTests pkgTestCases : getPackageTests()) {

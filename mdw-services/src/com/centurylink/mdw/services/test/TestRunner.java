@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,10 +24,12 @@ import org.json.JSONObject;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
+import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
+import com.centurylink.mdw.test.PackageTests;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCase.Status;
 import com.centurylink.mdw.test.TestCaseList;
@@ -136,6 +139,12 @@ public class TestRunner implements Runnable {
             writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
         String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
         TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
+        PackageTests pkgTests = testCaseList.getPackageTests(exeTestCase.getPackage());
+        if (pkgTests == null) {
+            pkgTests = new PackageTests(new PackageDir(ApplicationContext.getAssetRoot(), exeTestCase.getPackage(), null));
+            pkgTests.setTestCases(new ArrayList<TestCase>());
+            testCaseList.addPackageTests(pkgTests);
+        }
         TestCase testCase = testCaseList.getTestCase(exeTestCase.getPath());
         if (testCase == null)
             testCase = testCaseList.addTestCase(exeTestCase);
