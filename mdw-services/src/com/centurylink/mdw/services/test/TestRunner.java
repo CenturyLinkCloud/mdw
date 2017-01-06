@@ -6,6 +6,7 @@ package com.centurylink.mdw.services.test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -20,8 +21,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.services.ProcessException;
+import com.centurylink.mdw.services.messenger.InternalMessenger;
+import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCase.Status;
 import com.centurylink.mdw.test.TestCaseList;
@@ -65,29 +70,34 @@ public class TestRunner implements Runnable {
                 monitor.start(true);
             }
 
+            // socket client
+            setLogWatchState(true);
+
             for (TestCase testCase : testCaseList.getTestCases()) {
                 String masterRequestId = user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
                 TestCaseRun run = new TestCaseRun(testCase, user, resultsFile.getParentFile(), 0, masterRequestId, monitor, processCache, config);
                 logger.info(" -> Executing test: " + testCase.getPath());
                 if (!threadPool.execute(ThreadPoolProvider.WORKER_TESTING, getClass().getSimpleName(), run))
                     throw new IllegalStateException("No available thread: " + ThreadPoolProvider.WORKER_TESTING);
-                if (updateResults())
-                    return;
-
                 try {
-                    Thread.sleep(config.getInterval() * 1000);
+                    Thread.sleep(config.getInterval() * 1000); // pause first to avoid too-quick socket shutdown
                 }
                 catch (InterruptedException e) {
                 }
+
+                if (updateResults())
+                    return;
             }
 
             do {
                 try {
-                    Thread.sleep(PAUSE); // pause at least once to too-quick socket shutdown
+                    Thread.sleep(PAUSE); // pause at least once to avoid too-quick socket shutdown
                 }
                 catch (InterruptedException e) {
                 }
             } while (!updateResults());
+
+            setLogWatchState(false);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -221,6 +231,16 @@ public class TestRunner implements Runnable {
             if (fos != null)
                 fos.close();
         }
+    }
+
+    private void setLogWatchState(boolean on) throws JSONException, ProcessException, UnknownHostException {
+        JSONObject json = new JSONObject();
+        json.put("ACTION", "REFRESH_PROPERTY");
+        json.put("NAME", PropertyNames.MDW_LOGGING_WATCHER);
+        json.put("VALUE", on ? "127.0.0.1" : "");
+        InternalMessenger messenger = MessengerFactory.newInternalMessenger();
+        messenger.broadcastMessage(json.toString());
+
     }
 
 }

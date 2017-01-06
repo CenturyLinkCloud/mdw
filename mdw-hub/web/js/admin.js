@@ -251,7 +251,7 @@ adminApp.directive('navLink', ['$document', '$route', '$location',
   };
 }]);
 
-// programmatic route navigation
+// programmatic route navigation -- actually use $location.path('/users')
 adminApp.directive('mdwRoute', ['$location', function($location) {
   return {
     restrict: 'A',

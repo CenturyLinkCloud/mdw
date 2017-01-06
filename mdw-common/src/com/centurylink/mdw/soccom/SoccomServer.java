@@ -20,13 +20,13 @@ import java.util.StringTokenizer;
 
 public class SoccomServer extends ServerSocket {
 
-    private boolean _shutdown;
-    private Thread main_thread;
+    private boolean shutdown;
+    private Thread mainThread;
     private SimpleDateFormat df;
     private PrintStream log;
-    private int thread_count = 0;
-    private Hashtable<String, ServerThread> threads;
-    protected int max_threads = 0;
+    private int threadCount = 0;
+    private Hashtable<String,ServerThread> threads;
+    protected int maxThreads = 0;
 
     // when max_threads is 0, there is no thread control
     // when max_threads is 1, use single thread model
@@ -46,9 +46,9 @@ public class SoccomServer extends ServerSocket {
     }
 
     public synchronized void shutdown() {
-        _shutdown = true;
-        if (main_thread != null)
-            main_thread.interrupt();
+        shutdown = true;
+        if (mainThread != null)
+            mainThread.interrupt();
         try {
             this.close();
         } catch (IOException e) {
@@ -64,93 +64,105 @@ public class SoccomServer extends ServerSocket {
         }
     }
 
-    private synchronized int change_thread_count(boolean add) {
+    private synchronized int changeThreadCount(boolean add) {
         if (add)
-            thread_count++;
+            threadCount++;
         else
-            thread_count--;
-        return thread_count;
+            threadCount--;
+        return threadCount;
     }
 
-    int add_thread(String thread_id, ServerThread thread) {
-        threads.put(thread_id, thread);
-        return change_thread_count(true);
+    /**
+     * @param threadId
+     * @param thread
+     * @return
+     */
+    int addThread(String threadId, ServerThread thread) {
+        threads.put(threadId, thread);
+        return changeThreadCount(true);
     }
 
-    void remove_thread(String thread_id, ServerThread thread) {
-        threads.remove(thread_id);
-        change_thread_count(false);
+    void removeThread(String threadId, ServerThread thread) {
+        threads.remove(threadId);
+        changeThreadCount(false);
     }
 
-    private void shutdown_threads() {
+    private void shutdownThreads() {
         Enumeration<ServerThread> en = threads.elements();
         ServerThread thread;
         while (en.hasMoreElements()) {
             thread = en.nextElement();
-            logline(null, "Interrupt thread " + thread.thread_id);
+            logline(null, "Interrupt thread " + thread.threadId);
             thread.interrupt();
         }
     }
 
     public void start(boolean useNewThread) {
         if (useNewThread) {
-            main_thread = new Thread() {
+            mainThread = new Thread() {
                 public void run() {
-                    start_sub();
+                    startSub();
                 }
             };
-            main_thread.start();
+            mainThread.start();
         } else {
-            main_thread = Thread.currentThread();
-            start_sub();
+            mainThread = Thread.currentThread();
+            startSub();
         }
     }
 
-    private void start_sub() {
+    private void startSub() {
         ServerThread thread;
-        _shutdown = false;
+        shutdown = false;
         threads = new Hashtable<String, ServerThread>();
-        while (!_shutdown) {
+        while (!shutdown) {
             try {
                 setSoTimeout(0);
                 Socket socket = accept();
-                if (_shutdown) {
+                if (shutdown) {
                     // accept returns a default socket 0.0.0.0 instead of
                     // raising an InterruptedIOException, when shutdown()
                     // is called. Seems to be a bug in Java 1.3.
                     logline(null, "Server shuts down here");
-                } else if (connect_proc(socket)) {
+                }
+                else if (connectProc(socket)) {
                     socket.setSoTimeout(120 * 1000);
-                    if (max_threads == 1) {
+                    if (maxThreads == 1) {
                         try {
-                            process_message(socket.getInputStream(), socket
+                            processMessage(socket.getInputStream(), socket
                                     .getOutputStream(), "main", false);
                             socket.close();
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                             logline("main", "Exception: " + e);
                         }
-                    } else {
-                        if (max_threads > 1 && thread_count >= max_threads) {
+                    }
+                    else {
+                        if (maxThreads > 1 && threadCount >= maxThreads) {
                             logline(null, "MAXIMUM NUMBER OF THREADS REACHED");
                             thread = new ServerThread(socket, this, true);
-                        } else {
+                        }
+                        else {
                             thread = new ServerThread(socket, this, false);
                         }
                         thread.start();
                     }
-                } else {
+                }
+                else {
                     logline(null, "Reject connection request from "
                             + socket.getInetAddress());
                     socket.close();
                 }
-            } catch (InterruptedIOException e) {
-                if (_shutdown)
+            }
+            catch (InterruptedIOException e) {
+                if (shutdown)
                     logline(null, "Server shuts down");
                 else
                     logline(null, "Exception: " + e);
-            } catch (IOException e) {
-                if (_shutdown) {
+            }
+            catch (IOException e) {
+                if (shutdown) {
                     logline(null, "Server shuts down");
                 }
                 else {
@@ -160,29 +172,29 @@ public class SoccomServer extends ServerSocket {
             }
         }
         // call user shutdown processor
-        shutdown_proc();
+        shutdownProc();
         // need to kill all active thread
-        shutdown_threads();
+        shutdownThreads();
     }
 
-    protected boolean connect_proc(Socket socket) {
+    protected boolean connectProc(Socket socket) {
         return true;
     }
 
-    protected void disconnect_proc(Socket socket) {
+    protected void disconnectProc(Socket socket) {
     }
 
-    protected void shutdown_proc() {
+    protected void shutdownProc() {
     }
 
-    protected void putresp(String thread_id, OutputStream out, String msgid,
+    protected void putResp(String thread_id, OutputStream out, String msgid,
             String msg) throws IOException {
         byte msgbytes[] = SoccomMessage.makeMessage(msg, msgid);
         logline(thread_id, "SEND: " + new String(msgbytes));
         out.write(msgbytes);
     }
 
-    protected void putresp_vheader(String thread_id, OutputStream out,
+    protected void putRespVheader(String thread_id, OutputStream out,
             String msgid, String endIndicator) throws IOException,
             SoccomException {
         if (endIndicator.length() != 4)
@@ -193,7 +205,7 @@ public class SoccomServer extends ServerSocket {
         out.write(msgbytes);
     }
 
-    protected void putresp_vline(String thread_id, OutputStream out, String msg)
+    protected void putRespVline(String thread_id, OutputStream out, String msg)
             throws IOException, SoccomException {
         int length = msg.length();
         if (msg.charAt(length - 1) == '\n') {
@@ -206,7 +218,7 @@ public class SoccomServer extends ServerSocket {
         out.write(msgbytes);
     }
 
-    protected void putresp_vfooter(String thread_id, OutputStream out,
+    protected void putRespVfooter(String thread_id, OutputStream out,
             String endIndicator) throws IOException, SoccomException {
         if (endIndicator.length() != 4)
             throw new SoccomException(SoccomException.ENDM_LENGTH);
@@ -216,39 +228,41 @@ public class SoccomServer extends ServerSocket {
         out.write(msgbytes);
     }
 
-    protected void request_proc(String thread_id, String msgid, byte[] msg,
-            int msgsize, OutputStream out) throws IOException, SoccomException {
-        String msgstr = new String(msg, 0, msgsize);
+    protected void requestProc(String threadId, String msgId, byte[] msg, int msgSize,
+            OutputStream out) throws IOException, SoccomException {
+        String msgstr = new String(msg, 0, msgSize);
         if (msgstr.length() >= 5 && msgstr.substring(0, 5).equals("SLEEP")) {
             int seconds = Integer.parseInt(msgstr.substring(6));
             try {
                 if (seconds >= 0) {
                     Thread.sleep(seconds * 1000);
-                } else {
+                }
+                else {
                     boolean hangup = false;
                     while (!hangup) {
                         Thread.sleep(-seconds * 1000);
-                        hangup = client_hangup();
+                        hangup = clientHangup();
                         if (hangup)
-                            logline(thread_id, "client hang-up");
+                            logline(threadId, "client hang-up");
                     }
                 }
-            } catch (InterruptedException e) {
             }
-            putresp(thread_id, out, msgid, msgstr);
-        } else if (msgstr.length() >= 8
-                && msgstr.substring(0, 8).equals("BUSYLOOP")) {
+            catch (InterruptedException e) {
+            }
+            putResp(threadId, out, msgId, msgstr);
+        }
+        else if (msgstr.length() >= 8 && msgstr.substring(0, 8).equals("BUSYLOOP")) {
             int count = Integer.parseInt(msgstr.substring(9));
             for (int i = 0; i < count; i++) {
                 System.out.println(" loop " + i + " of " + count);
                 if (Thread.interrupted()) {
-                    logline(thread_id, "Thread interrupted");
+                    logline(threadId, "Thread interrupted");
                     break;
                 }
             }
-            putresp(thread_id, out, msgid, msgstr);
-        } else if (msgstr.length() >= 12
-                && msgstr.substring(0, 12).equals("_TEST_COMBIN")) {
+            putResp(threadId, out, msgId, msgstr);
+        }
+        else if (msgstr.length() >= 12 && msgstr.substring(0, 12).equals("_TEST_COMBIN")) {
             /*
              * test combination of sending/receiving line-by-line or as a whole.
              * Spec has 4 characters as follows: 1. for client send: W - as a
@@ -260,20 +274,22 @@ public class SoccomServer extends ServerSocket {
             String testspec = msgstr.substring(13, 17);
             if (testspec.charAt(2) == 'L') {
                 StringTokenizer st = new StringTokenizer(msgstr, "\n");
-                putresp_vheader(thread_id, out, msgid, "****");
+                putRespVheader(threadId, out, msgId, "****");
                 while (st.hasMoreTokens()) {
-                    putresp_vline(thread_id, out, st.nextToken());
+                    putRespVline(threadId, out, st.nextToken());
                 }
-                putresp_vfooter(thread_id, out, "****");
-            } else {
-                putresp(thread_id, out, msgid, msgstr);
+                putRespVfooter(threadId, out, "****");
             }
-        } else if (msgstr.length() >= 6
-                && msgstr.substring(0, 6).equals("_TEST_")) {
+            else {
+                putResp(threadId, out, msgId, msgstr);
+            }
+        }
+        else if (msgstr.length() >= 6 && msgstr.substring(0, 6).equals("_TEST_")) {
             msgstr = "_RESP_" + msgstr.substring(6);
-            putresp(thread_id, out, msgid, msgstr);
-        } else {
-            putresp(thread_id, out, msgid, msgstr);
+            putResp(threadId, out, msgId, msgstr);
+        }
+        else {
+            putResp(threadId, out, msgId, msgstr);
         }
     }
 
@@ -290,20 +306,20 @@ public class SoccomServer extends ServerSocket {
         return n;
     }
 
-    boolean process_message(InputStream in, OutputStream out, String thread_id,
-            boolean excess_thread) throws SoccomException, Exception {
-        byte[] _header = new byte[SoccomMessage.HEADER_SIZE];
+    boolean processMessage(InputStream in, OutputStream out, String threadId,
+            boolean excessThread) throws SoccomException, Exception {
+        byte[] header = new byte[SoccomMessage.HEADER_SIZE];
         int n;
-        n = in.read(_header, 0, SoccomMessage.HEADER_SIZE);
+        n = in.read(header, 0, SoccomMessage.HEADER_SIZE);
         if (n != SoccomMessage.HEADER_SIZE) {
             if (n == -1)
                 return true;
             else
                 throw new Exception("Header imcomplete: " + n);
         }
-        String sizestr = new String(_header, SoccomMessage.MSGSIZE_OFFSET, 8);
+        String sizestr = new String(header, SoccomMessage.MSGSIZE_OFFSET, 8);
         if (sizestr.equals("SHUTDOWN")) {
-            logline(thread_id, "request shut down");
+            logline(threadId, "request shut down");
             shutdown();
             return true;
         }
@@ -323,7 +339,8 @@ public class SoccomServer extends ServerSocket {
                 } else
                     break;
             } while (!line_read);
-        } else {
+        }
+        else {
             size = Integer.parseInt(sizestr);
             buffer = new byte[size];
             int got = 0;
@@ -337,23 +354,24 @@ public class SoccomServer extends ServerSocket {
                     throw new SoccomException(SoccomException.RECV_ERROR);
             }
         }
-        String msgid = new String(_header, 0, SoccomMessage.MSGID_SIZE);
-        logline(thread_id, "RECV: " + new String(_header));
-        logline(thread_id, " msg: " + new String(buffer, 0, size));
-        if (excess_thread) {
-            putresp(thread_id, out, msgid, "ERROR: NO MORE CONNECTION ALLOWED");
+        String msgid = new String(header, 0, SoccomMessage.MSGID_SIZE);
+        logline(threadId, "RECV: " + new String(header));
+        logline(threadId, " msg: " + new String(buffer, 0, size));
+        if (excessThread) {
+            putResp(threadId, out, msgid, "ERROR: NO MORE CONNECTION ALLOWED");
             return true;
-        } else {
-            request_proc(thread_id, msgid, buffer, size, out);
+        }
+        else {
+            requestProc(threadId, msgid, buffer, size, out);
             return false;
         }
     }
 
-    protected boolean client_hangup() {
+    protected boolean clientHangup() {
         ServerThread thread = (ServerThread) Thread.currentThread();
         boolean hangup;
         try {
-            thread._socket.setSoTimeout(1);
+            thread.socket.setSoTimeout(1);
             int n = thread.in.read();
             hangup = (n == -1);
         } catch (SocketTimeoutException e) {

@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
@@ -18,6 +20,8 @@ import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
+import com.centurylink.mdw.common.translator.impl.YamlTranslator;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -56,6 +60,9 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
+import com.centurylink.mdw.translator.JsonTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -806,6 +813,69 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    public String getDocumentStringValue(Long id) throws ServiceException {
+        try {
+            EventManager eventMgr = ServiceLocator.getEventManager();
+            Document doc = eventMgr.getDocumentVO(new Long(id.toString()));
+            if (doc.getDocumentType() == null)
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Unable to determine document type.");
+
+            Package pkg = getPackage(doc);
+            com.centurylink.mdw.variable.VariableTranslator trans = VariableTranslator.getTranslator(pkg, doc.getDocumentType());
+            if (trans instanceof JavaObjectTranslator) {
+                Object obj = doc.getObject(Object.class.getName(), pkg);
+                return obj.toString();
+            }
+            else if (trans instanceof XmlDocumentTranslator && !(trans instanceof YamlTranslator)) {
+                org.w3c.dom.Document domDoc = ((XmlDocumentTranslator)trans).toDomDocument(doc.getObject(doc.getDocumentType(), pkg));
+                XmlObject xmlBean = XmlObject.Factory.parse(domDoc);
+                return xmlBean.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(4));
+            }
+            else if (trans instanceof JsonTranslator && !(trans instanceof YamlTranslator)) {
+                JSONObject jsonObj = ((JsonTranslator)trans).toJson(doc.getObject(doc.getDocumentType(), pkg));
+                return jsonObj.toString(2);
+            }
+            return doc.getContent(pkg);
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error retrieving document: " + id, ex);
+        }
+    }
+
+    /**
+     * TODO: many places fail to set the ownerId for documents owned by VARIABLE_INSTANCE
+     */
+    private Package getPackage(Document docVO) throws ServiceException {
+        try {
+            EventManager eventMgr = ServiceLocator.getEventManager();
+            if (docVO.getOwnerId() == 0) // eg: sdwf request headers
+                return null;
+            if (docVO.getOwnerType().equals(OwnerType.VARIABLE_INSTANCE)) {
+                VariableInstance varInstInf = eventMgr.getVariableInstance(docVO.getOwnerId());
+                Long procInstId = varInstInf.getProcessInstanceId();
+                ProcessInstance procInstVO = eventMgr.getProcessInstance(procInstId);
+                if (procInstVO != null)
+                    return PackageCache.getProcessPackage(procInstVO.getProcessId());
+            }
+            else if (docVO.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
+                Long procInstId = docVO.getOwnerId();
+                ProcessInstance procInstVO = eventMgr.getProcessInstance(procInstId);
+                if (procInstVO != null)
+                    return PackageCache.getProcessPackage(procInstVO.getProcessId());
+            }
+            else if (docVO.getOwnerType().equals("Designer")) { // test case, etc
+                return PackageCache.getProcessPackage(docVO.getOwnerId());
+            }
+            return null;
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ex.getMessage(), ex);
         }
     }
 }

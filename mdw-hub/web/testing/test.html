@@ -9,8 +9,8 @@
             ng-class="{'glyphicon-ok-sign':testCase.status == 'Passed', 'glyphicon-remove-sign':testCase.status == 'Failed', 'glyphicon-exclamation-sign':testCase.status=='Errored'}"></span>
           {{testCasePackage}}&nbsp;/&nbsp;{{testCase.baseName}}
         </div>
-        <div class="mdw-heading-actions">
-          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Execution')" ng-click="runTests()">
+        <div class="mdw-heading-actions" ng-if="authUser.hasRole('Process Execution')">
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="runTest(testCasePackage, testCase.name)">
             <span class="glyphicon glyphicon-play"></span> Run
           </button> 
         </div>

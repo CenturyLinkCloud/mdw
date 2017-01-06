@@ -5,6 +5,7 @@ package com.centurylink.mdw.test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -99,8 +100,8 @@ public class TestCaseList implements Jsonable {
         json.put("count", count);
         JSONArray array = new JSONArray();
         if (packageTests != null) {
-            for (PackageTests packageTests : packageTests)
-                array.put(packageTests.getJson());
+            for (PackageTests pkgTests : packageTests)
+                array.put(pkgTests.getJson());
         }
         json.put("packages", array);
         return json;
@@ -108,6 +109,10 @@ public class TestCaseList implements Jsonable {
 
     public String getJsonName() {
         return "AutomatedTests";
+    }
+
+    public void sort() {
+        Collections.sort(getPackageTests());
     }
 
 }

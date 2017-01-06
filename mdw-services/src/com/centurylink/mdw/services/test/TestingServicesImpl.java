@@ -28,10 +28,12 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.services.AssetServices;
+import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
 import com.centurylink.mdw.test.PackageTests;
@@ -359,7 +361,18 @@ public class TestingServicesImpl implements TestingServices {
     }
 
     public void executeCase(TestCase testCase, String user, TestExecConfig config) throws ServiceException, IOException {
-        // TODO: execute single case
+        AssetServices assetServices = ServiceLocator.getAssetServices();
+        PackageDir pkgDir = assetServices.getPackage(testCase.getPackage());
+        PackageTests pkgTests = new PackageTests(pkgDir);
+        List<PackageTests> packageTests = new ArrayList<PackageTests>();
+        packageTests.add(pkgTests);
+        List<TestCase> testCases = new ArrayList<TestCase>();
+        testCases.add(testCase);
+        pkgTests.setTestCases(testCases);
+        TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
+        testCaseList.setPackageTests(packageTests);
+        testCaseList.setCount(1);
+        executeCases(testCaseList, user, config);
     }
 
     public void executeCases(TestCaseList testCaseList, String user, TestExecConfig config) throws ServiceException, IOException {

@@ -57,6 +57,6 @@ public class PackageTests implements Jsonable, Comparable<PackageTests> {
     }
 
     public int compareTo(PackageTests other) {
-        return this.packageDir.getName().compareToIgnoreCase(other.packageDir.getName());
+        return this.packageDir.getPackageName().compareToIgnoreCase(other.packageDir.getPackageName());
     }
 }

@@ -39,6 +39,7 @@ import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.UserTaskAction;
+import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
@@ -361,7 +362,7 @@ public class TestCaseRun implements Runnable {
                     try {
                         String val = var.getStringValue();
                         if (var.isDocument()) {
-                            val = workflowServices.getProcessValue(procInst.getId(), var.getName()).getValue();
+                            val = workflowServices.getDocumentStringValue(new DocumentReference(val).getDocumentId());
                             procInst.getVariable().put(var.getName(), val); // pre-populate document values
                         }
                         yaml.appendMulti("      ", val).newLine();
@@ -635,7 +636,8 @@ public class TestCaseRun implements Runnable {
             Object stillthere = monitor.remove(key);
             if (stillthere != null) {
                 log.println("wait command times out after: " + timeout + "s");
-            } else {
+            }
+            else {
                 Thread.sleep(2000);  // to get around race condition
                 if (isVerbose())
                     log.println("wait command satisfied: " + key);

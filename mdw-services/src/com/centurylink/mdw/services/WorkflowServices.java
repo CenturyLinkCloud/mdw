@@ -142,4 +142,12 @@ public interface WorkflowServices {
 
     public Integer notify(String event, String message, int delay) throws ServiceException;
 
+
+    /**
+     * Converts a document to a string, applying a consistent format for XML and JSON.
+     * Use when comparing document values (such as in Automated Tests).
+     */
+    public String getDocumentStringValue(Long id) throws ServiceException;
+
+
 }

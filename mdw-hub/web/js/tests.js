@@ -3,8 +3,8 @@
 
 var testingMod = angular.module('testing', ['ngResource', 'mdw']);
 
-testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util', 'AutomatedTests', 'TestExec', 'TestConfig',
-                                         function($scope, $websocket, mdw, util, AutomatedTests, TestExec, TestConfig) {
+testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util', 'AutomatedTests', 'TestsExec', 'TestConfig',
+                                         function($scope, $websocket, mdw, util, AutomatedTests, TestsExec, TestConfig) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
     $scope.testCaseList.packages.forEach(function(pkg) {
@@ -86,16 +86,16 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
     }
     
     TestConfig.put({}, $scope.config, function success() {
-      TestExec.run({}, {packages: execTestPkgs}, function(data) {
+      TestsExec.run({}, {packages: execTestPkgs}, function(data) {
         if (data.status.code !== 0) {
-          $scope.testExecMessage = data.status.message;
+          $scope.testsExecMessage = data.status.message;
         }
         else {
-          $scope.testExecMessage = null;
+          $scope.testsExecMessage = null;
         }
       }, 
       function(error) {
-        $scope.testExecMessage = error.data.status.message;
+        $scope.testsExecMessage = error.data.status.message;
       });
     });
   };
@@ -139,8 +139,8 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
     $scope.acceptUpdates();  // substituted value should be websocket url
 }]);
 
-testingMod.controller('TestController', ['$scope', '$routeParams', '$q', 'AutomatedTests', 'TestCase',
-                                         function($scope, $routeParams, $q, AutomatedTests, TestCase) {
+testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$location', 'AutomatedTests', 'TestCase', 'TestExec',
+                                         function($scope, $routeParams, $q, $location, AutomatedTests, TestCase, TestExec) {
   $scope.testCase = AutomatedTests.get({packageName: $routeParams.packageName, testCaseName: $routeParams.testCaseName}, function(testCaseData) {
     
     $scope.testCasePackage = $routeParams.packageName;
@@ -176,7 +176,19 @@ testingMod.controller('TestController', ['$scope', '$routeParams', '$q', 'Automa
     }
   });
   
-  $scope.selectResource = function(resource) {
+  $scope.runTest = function(testPkg, testName) {
+    TestExec.run({packageName: testPkg, testCaseName: testName }, {}, function(data) {
+      if (data.status.code !== 0) {
+        $scope.testExecMessage = data.status.message;
+      }
+      else {
+        $scope.testExecMessage = null;
+        $location.path('/tests');        
+      }
+    }, 
+    function(error) {
+      $scope.testExecMessage = error.data.status.message;
+    });
   };
 }]);
 
@@ -296,8 +308,14 @@ testingMod.factory('AutomatedTests', ['$resource', 'mdw', function($resource, md
   });
 }]);
 
-testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
+testingMod.factory('TestsExec', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/exec', mdw.serviceParams(), {
+    run: { method: 'POST' }
+  });
+}]);
+
+testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName', mdw.serviceParams(), {
     run: { method: 'POST' }
   });
 }]);
