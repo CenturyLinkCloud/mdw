@@ -2,8 +2,8 @@
 import groovy.json.JsonSlurper
 import org.json.JSONObject
 import org.json.JSONArray
-import com.centurylink.mdw.common.utilities.JsonUtil
-import com.centurylink.mdw.model.value.project.Solution
+import com.centurylink.mdw.util.JsonUtil
+import com.centurylink.mdw.model.workflow.Solution
 
 def id1 = 'sol-' + masterRequestId + '_1'
 def name1 = 'Test: ' + id1

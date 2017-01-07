@@ -43,6 +43,14 @@ public class StartupRegistry extends ServiceRegistry {
         return super.getDynamicServices(StartupService.class);
     }
 
+    public StartupService getDynamicStartupService(String className) {
+        for (StartupService startupService : getDynamicStartupServices()) {
+            if (startupService.getClass().getName().equals(className))
+                return startupService;
+        }
+        return null;
+    }
+
     private void addDynamicStartupServices() {
         Set<String> dynamicStartupServices = DynamicJavaServiceRegistry.getRegisteredServices(StartupService.class.getName());
         if (dynamicStartupServices != null)

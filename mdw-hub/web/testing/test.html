@@ -21,7 +21,7 @@
             <div class="mdw-inner-content">
               <div class="mdw-resource-heading">{{testCase.name}}</div>
               <pre class="mdw-line-nums">{{testCase.commands.lineNumbers}}</pre>
-              <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="testCase.commands.content | highlight:testCase.language | links:testCasePackage | unsafe"></code></pre>
+              <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="testCase.commands.content | highlight:testCase.language | assetLinks:testCasePackage | unsafe"></code></pre>
             </div>
           </uib-tab>
           <uib-tab heading="Results" ng-if="testCase.expected">
@@ -35,7 +35,7 @@
               <div class="col-md-6 mdw-split-right" ng-if="testCase.actualResults">
                 <div class="mdw-resource-heading">Actual Results</div>
                 <pre class="mdw-line-nums">{{testCase.actualResults.lineNumbers}}</pre>
-                <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="testCase.actualResults.content | yamlDiff:testCase.expectedResults.content | unsafe"></code></pre>
+                <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="testCase.actualResults.content | yamlDiff:testCase.expectedResults.content | instanceLinks | unsafe"></code></pre>
               </div>
             </div>
           </uib-tab>

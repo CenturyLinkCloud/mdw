@@ -1,10 +1,10 @@
 // Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
-var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ui.bootstrap', 'chart.js', 
- 'mdwChart', 'mdwActions', 'mdwList', 'mdwPanel', 'mdwWorkflow', 'mdwStep', 'mdwLink', 'mdwSubflow', 'mdwNote', 
- 'mdwInspector', 'mdwInspectorTabs', 'authUser', 'mdw', 'util', 'constants', 'routes', 'users', 'groups', 'roles', 
- 'assets', 'testing', 'tasks', 'task', 'processes', 'activities', 'requests', 'services', 'system',
+var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ngCookies', 'ui.bootstrap', 
+ 'chart.js', 'mdwChart', 'mdwActions', 'mdwList', 'mdwPanel', 'mdwWorkflow', 'mdwStep', 'mdwLink', 'mdwSubflow', 
+ 'mdwNote', 'mdwInspector', 'mdwInspectorTabs', 'authUser', 'mdw', 'util', 'constants', 'routes', 'users', 'groups', 
+ 'roles', 'assets', 'testing', 'tasks', 'task', 'processes', 'activities', 'requests', 'services', 'system',
  'solutions', 'history', 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
 ]);
 
@@ -251,7 +251,6 @@ adminApp.directive('navLink', ['$document', '$route', '$location',
   };
 }]);
 
-// programmatic route navigation -- actually use $location.path('/users')
 adminApp.directive('mdwRoute', ['$location', function($location) {
   return {
     restrict: 'A',

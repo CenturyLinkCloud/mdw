@@ -10,10 +10,9 @@ import com.centurylink.mdw.startup.StartupClass;
  * Implemented by workflow bundles that perform startup functionality (especially custom listeners).
  */
 public interface StartupService extends StartupClass, RegisteredService {
-    
+
     public boolean isEnabled();
 
     @Override
     public void onStartup() throws StartupException;
-    
 }

@@ -6,6 +6,7 @@ package com.centurylink.mdw.services.test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -25,7 +26,9 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
+import com.centurylink.mdw.listeners.startup.StartupRegistry;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.provider.StartupService;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
@@ -78,7 +81,7 @@ public class TestRunner implements Runnable {
         }
     }
 
-    public TestRunner(TestCaseList testCaseList, String user, File resultsFile, TestExecConfig config) {
+    public void init(TestCaseList testCaseList, String user, File resultsFile, TestExecConfig config) {
         this.testCaseList = testCaseList;
         this.user = user;
         this.resultsFile = resultsFile;
@@ -103,10 +106,7 @@ public class TestRunner implements Runnable {
             setLogWatchState(true);
 
             // clear statutes for selected tests
-            for (TestCase testCase : testCaseList.getTestCases()) {
-                testCase.setStatus(null);
-            }
-            updateResults();
+            initResults();
 
             for (TestCase testCase : testCaseList.getTestCases()) {
                 String masterRequestId = user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
@@ -147,11 +147,26 @@ public class TestRunner implements Runnable {
         }
     }
 
+    private void initResults() throws JSONException, IOException {
+        for (TestCase testCase : testCaseList.getTestCases()) {
+            testCase.setStatus(null);
+            testCaseStatuses.put(testCase.getPath(), null);
+            if (resultsFile.getName().endsWith(".xml")) {
+                writeTestResultsXml(testCase);
+            }
+            else {
+                TestCaseList testCaseList = writeTestResults(testCase);
+                updateWebSocket(testCaseList);
+            }
+        }
+    }
+
     /**
      * Returns true if all done.
      */
     private synchronized boolean updateResults() throws JSONException, IOException {
         boolean allDone = true;
+        TestCaseList fullTestCaseList = null;
         for (TestCase testCase : testCaseList.getTestCases()) {
             if (!testCase.isFinished())
                 allDone = false;
@@ -159,40 +174,61 @@ public class TestRunner implements Runnable {
             boolean statusChanged = oldStatus != testCase.getStatus();
             testCaseStatuses.put(testCase.getPath(), testCase.getStatus());
             if (statusChanged) {
-                if (statusChanged) {
-                    if (resultsFile.getName().endsWith(".xml"))
-                        writeTestResultsXml(testCase);
-                    else
-                        writeTestResults(testCase);
+                if (resultsFile.getName().endsWith(".xml")) {
+                    writeTestResultsXml(testCase);
+                }
+                else {
+                    fullTestCaseList = writeTestResults(testCase);
                 }
             }
         }
+        if (allDone && fullTestCaseList != null)
+            updateWebSocket(fullTestCaseList);
         return allDone;
     }
 
-    public void writeTestResults(TestCase exeTestCase) throws JSONException, IOException {
+    /**
+     * force immediate update through WebSocket
+     */
+    private void updateWebSocket(TestCaseList testCaseList) {
+
+        StartupService webSocketServer = StartupRegistry.getInstance()
+                .getDynamicStartupService("com.centurylink.mdw.testing.WebSocketServer");
+        if (webSocketServer != null) {
+            try {
+                Method m = webSocketServer.getClass().getMethod("send", new Class[]{String.class});
+                m.invoke(webSocketServer, new Object[]{testCaseList.getJson().toString(2)});
+            }
+            catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
+            }
+        }
+    }
+
+    public TestCaseList writeTestResults(TestCase exeTestCase) throws JSONException, IOException {
         if (!resultsFile.exists())
             writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
         String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
-        TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
-        PackageTests pkgTests = testCaseList.getPackageTests(exeTestCase.getPackage());
+        TestCaseList fullTestCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
+        PackageTests pkgTests = fullTestCaseList.getPackageTests(exeTestCase.getPackage());
         if (pkgTests == null) {
             pkgTests = new PackageTests(new PackageDir(ApplicationContext.getAssetRoot(), exeTestCase.getPackage(), null));
             pkgTests.setTestCases(new ArrayList<TestCase>());
-            testCaseList.addPackageTests(pkgTests);
+            fullTestCaseList.addPackageTests(pkgTests);
         }
-        TestCase testCase = testCaseList.getTestCase(exeTestCase.getPath());
+        TestCase testCase = fullTestCaseList.getTestCase(exeTestCase.getPath());
         if (testCase == null)
-            testCase = testCaseList.addTestCase(exeTestCase);
+            testCase = fullTestCaseList.addTestCase(exeTestCase);
         if (testCase != null) {
             testCase.setStatus(exeTestCase.getStatus());
             testCase.setStart(exeTestCase.getStart());
             testCase.setEnd(exeTestCase.getEnd());
             testCase.setMessage(exeTestCase.getMessage());
-            testCaseList.setCount(testCaseList.getTestCases().size());
-            testCaseList.sort();
-            writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
+            fullTestCaseList.setCount(fullTestCaseList.getTestCases().size());
+            fullTestCaseList.sort();
+            writeFile(resultsFile, fullTestCaseList.getJson().toString(2).getBytes());
         }
+        return fullTestCaseList;
     }
 
     public void writeTestResultsXml(TestCase exeTestCase) throws IOException {

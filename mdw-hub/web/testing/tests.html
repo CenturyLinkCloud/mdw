@@ -32,10 +32,10 @@
           <div class="mdw-heading-checklist">
             <input type="checkbox" ng-model="pkg.selected" ng-change="togglePackage(pkg)" ng-if="authUser.hasRole('Process Execution')"></input>
             {{pkg.name}} v{{pkg.version}}
-            <a href="#/tests" ng-if="!pkg.collapsed" ng-click="pkg.collapsed = true">
+            <a href="#/tests" ng-if="!pkg.collapsed" ng-click="collapse(pkg)">
               <span class="glyphicon glyphicon-chevron-up mdw-action-icon button button-primary"></span>
             </a> 
-            <a href="#/tests" ng-if="pkg.collapsed" ng-click="pkg.collapsed = false">
+            <a href="#/tests" ng-if="pkg.collapsed" ng-click="expand(pkg)">
               <span class="glyphicon glyphicon-chevron-down mdw-action-icon button button-primary"></span>
             </a> 
           </div>

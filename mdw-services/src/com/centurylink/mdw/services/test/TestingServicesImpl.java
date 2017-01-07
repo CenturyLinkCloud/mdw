@@ -145,11 +145,11 @@ public class TestingServicesImpl implements TestingServices {
                 if (resultsDir != null) {
                     if (new File(resultsDir + "/" + pkg + "/" + pkgAsset.getName()).isFile())
                         testCase.setActual(pkg + "/" + pkgAsset.getName());
-                    if (new File(resultsDir + "/" + pkg + "/" + pkgAsset.getRootName() + ".log").isFile())
-                        testCase.setExecuteLog(pkg + "/" + pkgAsset.getRootName() + ".log");
                 }
             }
         }
+        if (new File(resultsDir + "/" + pkg + "/" + testCaseAsset.getRootName() + ".log").isFile())
+            testCase.setExecuteLog(pkg + "/" + testCaseAsset.getRootName() + ".log");
         return testCase;
     }
 
@@ -382,11 +382,13 @@ public class TestingServicesImpl implements TestingServices {
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Cucumber test cases currently not supported: " + testCase.getPath());
         }
         if (testRunner == null) {
-            testRunner = new TestRunner(testCaseList, user, getTestResultsFile(null), config);
+            testRunner = new TestRunner();
         }
         else if (testRunner.isRunning()) {
              throw new ServiceException(ServiceException.FORBIDDEN, "Automated tests already running");
         }
+
+        testRunner.init(testCaseList, user, getTestResultsFile(null), config);
         new Thread(testRunner).start();
     }
 

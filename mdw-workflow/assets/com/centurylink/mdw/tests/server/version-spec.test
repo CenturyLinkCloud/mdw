@@ -2,6 +2,8 @@
 import static com.centurylink.mdw.model.asset.AssetVersionSpec.parse;
 import com.centurylink.mdw.model.workflow.Process;
 
+println 'testing asset version spec processing...'
+
 assert onServer
 
 def myProcV_1 = new Process()

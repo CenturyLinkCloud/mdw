@@ -3,8 +3,9 @@
 
 var testingMod = angular.module('testing', ['ngResource', 'mdw']);
 
-testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util', 'AutomatedTests', 'TestsExec', 'TestsCancel', 'TestConfig',
-                                         function($scope, $websocket, mdw, util, AutomatedTests, TestsExec, TestsCancel, TestConfig) {
+testingMod.controller('TestsController', 
+    ['$scope', '$websocket', '$cookieStore', 'mdw', 'util', 'AutomatedTests', 'TestsExec', 'TestsCancel', 'TestConfig',
+    function($scope, $websocket, $cookieStore, mdw, util, AutomatedTests, TestsExec, TestsCancel, TestConfig) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
     $scope.testCaseCount = 0;
@@ -14,6 +15,7 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
         tc.baseName = tc.name.substring(0, tc.name.lastIndexOf('.'));
         $scope.testCaseCount++;
       });
+      $scope.applyPkgCollapsedState();
     });
   });
 
@@ -65,6 +67,39 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
   $scope.packageOff = function(pkg) {
     pkg.selected = false;
     $scope.selectedState.all = false;
+  };
+  
+  $scope.collapse = function(pkg) {
+    pkg.collapsed = true;
+    $scope.savePkgCollapsedState();
+  };
+  $scope.expand = function(pkg) {
+    pkg.collapsed = false;
+    $scope.savePkgCollapsedState();
+  };
+  $scope.savePkgCollapsedState = function() {
+    var st = {};
+    $scope.testCaseList.packages.forEach(function(pkg) {
+      if (pkg.collapsed)
+        st[pkg.name] = true;
+    });
+    $cookieStore.put('pkgCollapsedState', st);
+  };
+  $scope.applyPkgCollapsedState = function() {
+    var st = $cookieStore.get('pkgCollapsedState');
+    if (st) {
+      util.getProperties(st).forEach(function(pkgName) {
+        var col = st[pkgName];
+        if (col == true) {
+          for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
+            if (pkgName == $scope.testCaseList.packages[i].name) {
+              $scope.testCaseList.packages[i].collapsed = true;
+              break;
+            }
+          }
+        }
+      });
+    }
   };
   
   $scope.runTests = function() {
@@ -211,7 +246,7 @@ testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$locat
   };
 }]);
 
-testingMod.filter('links', function($sce) {
+testingMod.filter('assetLinks', function($sce) {
   return function(input, pkg) {
     if (input) {
       var start = '<span class="hljs-string">"';
@@ -234,6 +269,28 @@ testingMod.filter('links', function($sce) {
             match = regex.exec(line);
           }
           output += line.substring(stop) + '\n';
+        }
+        else {
+          output += line + '\n';
+        }
+      });
+      return output;
+    }
+    
+    return input;
+  };
+}).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
+
+testingMod.filter('instanceLinks', function($sce) {
+  return function(input) {
+    if (input) {
+      var start = '<span class="mdw-diff-ignored"># ';
+      var end = '</span>';
+      var output = '';
+      input.getLines().forEach(function(line) {
+        if (line.startsWith('process: ' + start)) {
+          var procInstId = line.substring(start.length + 9, line.length - end.length);
+          output += 'process: ' + start + '<a href="#/workflow/processes/' +  procInstId + '">' + procInstId + '</a>' + end + '\n';
         }
         else {
           output += line + '\n';

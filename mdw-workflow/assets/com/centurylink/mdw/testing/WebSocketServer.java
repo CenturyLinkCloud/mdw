@@ -80,6 +80,11 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
         }
     }
 
+    private static WebSocketServer instance;
+    public static WebSocketServer getInstance() {
+        return instance;
+    }
+
     @Override
     public void onStartup() throws StartupException {
         WebSocketImpl.DEBUG = logger.isMdwDebugEnabled();
@@ -107,12 +112,12 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
                     }
                 }
             }).start();
+            instance = this;
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new StartupException(ex.getMessage(), ex);
         }
-
     }
 
     @Override

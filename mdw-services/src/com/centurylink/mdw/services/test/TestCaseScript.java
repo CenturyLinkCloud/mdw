@@ -42,6 +42,8 @@ import groovy.util.slurpersupport.GPathResult;
 
 public abstract class TestCaseScript extends Script {
 
+    public boolean isOnServer() { return true; }  // always true for server-run testing
+
     // values for placeholder access
     public String getMasterRequestId() {
         return getTestCaseRun().getMasterRequestId();

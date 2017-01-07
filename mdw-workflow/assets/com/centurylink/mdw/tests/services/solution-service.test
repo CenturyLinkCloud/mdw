@@ -1,4 +1,4 @@
-import com.centurylink.mdw.model.value.project.Solution
+import com.centurylink.mdw.model.workflow.Solution
 import org.json.JSONObject
 
 // solution-service

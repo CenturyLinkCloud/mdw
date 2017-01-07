@@ -247,6 +247,7 @@ public class TestCaseRun implements Runnable {
             Query query = new Query();
             query.setFilter("masterRequestId", masterRequestId);
             query.setFilter("processId", proc.getId().toString());
+            query.setDescending(true);
             List<ProcessInstance> procInstList = workflowServices.getProcesses(query).getProcesses();
             Map<Long,String> activityNameMap = new HashMap<Long,String>();
             for (Activity act : proc.getActivities()) {
@@ -716,15 +717,14 @@ public class TestCaseRun implements Runnable {
         Query query = new Query();
         query.setFilter("masterRequestId", masterRequestId);
         query.setFilter("name", task.getName());
+        query.setDescending(true);
         try {
             TaskList taskList = taskServices.getTasks(query, user);
             List<TaskInstance> taskInstances = taskList.getTasks();
             if (taskInstances.isEmpty())
                 throw new TestException("Cannot find task instances: " + query);
-            else if (taskInstances.size() > 1)
-                throw new TestException("Multiple matching tasks: " + query);
 
-            TaskInstance taskInstance = taskInstances.get(0);
+            TaskInstance taskInstance = taskInstances.get(0); // latest
             task.setId(taskInstance.getTaskInstanceId());
 
             UserTaskAction taskAction = new UserTaskAction();
