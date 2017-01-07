@@ -54,6 +54,30 @@ public class TestRunner implements Runnable {
     private Map<String,Process> processCache;
     private Map<String,TestCase.Status> testCaseStatuses;
 
+    private boolean running;
+    public boolean isRunning() {
+        return running;
+    }
+    public void terminate() {
+        if (running) {
+            running = false;
+            if (testCaseList != null) {
+                try {
+                    Thread.sleep(PAUSE * 2);
+                    for (TestCase testCase : testCaseList.getTestCases()) {
+                        if (testCase.getStatus() == Status.InProgress)
+                            testCase.setStatus(Status.Stopped);
+                    }
+                    updateResults();
+                }
+                catch (Exception ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                }
+            }
+
+        }
+    }
+
     public TestRunner(TestCaseList testCaseList, String user, File resultsFile, TestExecConfig config) {
         this.testCaseList = testCaseList;
         this.user = user;
@@ -67,6 +91,8 @@ public class TestRunner implements Runnable {
         processCache = new HashMap<String,Process>();
         testCaseStatuses = new HashMap<String,TestCase.Status>();
 
+        running = true;
+
         try {
             if (monitor == null || monitor.isClosed()) {
                 monitor = new LogMessageMonitor();
@@ -75,6 +101,12 @@ public class TestRunner implements Runnable {
 
             // socket client
             setLogWatchState(true);
+
+            // clear statutes for selected tests
+            for (TestCase testCase : testCaseList.getTestCases()) {
+                testCase.setStatus(null);
+            }
+            updateResults();
 
             for (TestCase testCase : testCaseList.getTestCases()) {
                 String masterRequestId = user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
@@ -87,7 +119,7 @@ public class TestRunner implements Runnable {
                     }
                     catch (InterruptedException e) {
                     }
-                } while (!threadPool.execute(ThreadPoolProvider.WORKER_TESTING, getClass().getSimpleName(), run));
+                } while (running && !threadPool.execute(ThreadPoolProvider.WORKER_TESTING, getClass().getSimpleName(), run));
 
                 logger.debug(" -> Executing test: " + testCase.getPath());
 
@@ -101,7 +133,7 @@ public class TestRunner implements Runnable {
                 }
                 catch (InterruptedException e) {
                 }
-            } while (!updateResults());
+            } while (running && !updateResults());
 
             setLogWatchState(false);
         }
@@ -109,6 +141,7 @@ public class TestRunner implements Runnable {
             logger.severeException(ex.getMessage(), ex);
         }
         finally {
+            running = false;
             if (monitor != null)
                 monitor.shutdown();
         }
@@ -182,8 +215,7 @@ public class TestRunner implements Runnable {
             if (start != null) {
                 Calendar startCal = Calendar.getInstance();
                 startCal.setTime(start);
-                results.append("timestamp=\"").append(DatatypeConverter.printDateTime(startCal))
-                        .append("\" ");
+                results.append("timestamp=\"").append(DatatypeConverter.printDateTime(startCal)).append("\" ");
                 Date end = testCase.getEnd();
                 if (end != null) {
                     long ms = end.getTime() - start.getTime();

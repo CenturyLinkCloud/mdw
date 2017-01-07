@@ -43,8 +43,14 @@ public interface TestingServices {
 
     /**
      * Asynchronously executes list of tests.  Call getTestCases() for status.
+     * Only one automated test execution can be run in a JVM.
      */
     public void executeCases(TestCaseList testCaseList, String user, TestExecConfig config) throws ServiceException, IOException;
+
+    /**
+     * Cancel currently running tests.
+     */
+    public void cancelTestExecution(String user) throws ServiceException;
 
     public TestExecConfig getTestExecConfig() throws ServiceException;
     public void setTestExecConfig(TestExecConfig config) throws ServiceException;

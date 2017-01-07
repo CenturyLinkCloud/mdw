@@ -3,8 +3,8 @@
 
 var testingMod = angular.module('testing', ['ngResource', 'mdw']);
 
-testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util', 'AutomatedTests', 'TestsExec', 'TestConfig',
-                                         function($scope, $websocket, mdw, util, AutomatedTests, TestsExec, TestConfig) {
+testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util', 'AutomatedTests', 'TestsExec', 'TestsCancel', 'TestConfig',
+                                         function($scope, $websocket, mdw, util, AutomatedTests, TestsExec, TestsCancel, TestConfig) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
     $scope.testCaseCount = 0;
@@ -30,6 +30,9 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
   };
   $scope.errored = function() {
     return $scope.forStatus('Errored');
+  };
+  $scope.stopped = function() {
+    return $scope.forStatus('Stopped');
   };
   $scope.forStatus = function(status) {
     var matched = [];
@@ -101,6 +104,20 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
       });
     });
   };
+  
+  $scope.cancelTests = function() {
+    TestsCancel.run({}, {}, function(data) {
+      if (data.status.code !== 0) {
+        $scope.testExecMessage = data.status.message;
+      }
+      else {
+        $scope.testExecMessage = null;
+      }
+    }, 
+    function(error) {
+      $scope.testExecMessage = error.data.status.message;
+    });
+  };  
   
   $scope.acceptUpdates = function() {
     $scope.dataStream = $websocket(mdw.autoTestWebSocketUrl);
@@ -318,6 +335,12 @@ testingMod.factory('TestsExec', ['$resource', 'mdw', function($resource, mdw) {
 
 testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName', mdw.serviceParams(), {
+    run: { method: 'POST' }
+  });
+}]);
+
+testingMod.factory('TestsCancel', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/cancel', mdw.serviceParams(), {
     run: { method: 'POST' }
   });
 }]);

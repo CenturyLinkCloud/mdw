@@ -375,13 +375,26 @@ public class TestingServicesImpl implements TestingServices {
         executeCases(testCaseList, user, config);
     }
 
+    private static TestRunner testRunner;
     public void executeCases(TestCaseList testCaseList, String user, TestExecConfig config) throws ServiceException, IOException {
         for (TestCase testCase : testCaseList.getTestCases()) {
             if (testCase.getName().endsWith(Asset.getFileExtension(Asset.FEATURE)))
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Cucumber test cases currently not supported: " + testCase.getPath());
         }
-        TestRunner runner = new TestRunner(testCaseList, user, getTestResultsFile(null), config);
-        new Thread(runner).start();
+        if (testRunner == null) {
+            testRunner = new TestRunner(testCaseList, user, getTestResultsFile(null), config);
+        }
+        else if (testRunner.isRunning()) {
+             throw new ServiceException(ServiceException.FORBIDDEN, "Automated tests already running");
+        }
+        new Thread(testRunner).start();
+    }
+
+    public void cancelTestExecution(String user) throws ServiceException {
+        if (testRunner == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Automated tests not running");
+        testRunner.terminate();
+        logger.info("Test execution canceled by: " + user);
     }
 
     private static TestExecConfig testExecConfig = new TestExecConfig(); // default options
