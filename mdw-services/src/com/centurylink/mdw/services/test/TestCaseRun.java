@@ -298,16 +298,20 @@ public class TestCaseRun implements Runnable {
         }
         String newLine = "\n";
         if (!isCreateReplace()) {
-            // try to determine newline chars from expectedResultsFile
-            if (expectedResults.getRawFile().exists()) {
+            if (expectedResults == null || expectedResults.getRawFile() == null || !expectedResults.getRawFile().exists()) {
+                throw new IOException("Expected results file not found for " + testCase.getPath());
+            }
+            else {
+                // try to determine newline chars from expectedResultsFile
                 if (expectedResults.getStringContent().indexOf("\r\n") >= 0)
                     newLine = "\r\n";
             }
         }
         String yaml = translateToYaml(fullProcessInsts, fullActivityNameMap, orderById, newLine);
         if (isCreateReplace()) {
-            log.println("creating expected results: " + expectedResults);
-            FileHelper.writeToFile(expectedResults.toString(), yaml, false);
+            log.println("creating expected results: " + expectedResults.getRawFile());
+            FileHelper.writeToFile(expectedResults.getRawFile().toString(), yaml, false);
+            expectedResults.setStringContent(yaml);
         }
         String fileName = resultsDir + "/" + expectedResults.getName();
         if (isVerbose())
