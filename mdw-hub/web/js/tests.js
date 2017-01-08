@@ -90,7 +90,7 @@ testingMod.controller('TestsController',
     if (st) {
       util.getProperties(st).forEach(function(pkgName) {
         var col = st[pkgName];
-        if (col == true) {
+        if (col === true) {
           for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
             if (pkgName == $scope.testCaseList.packages[i].name) {
               $scope.testCaseList.packages[i].collapsed = true;
