@@ -127,8 +127,6 @@ public class TestRunner implements Runnable {
             // clear statutes for selected tests
             initResults();
 
-            Thread.sleep(config.getInterval() * 1000); // pause at least once to avoid too-quick socket shutdown
-
             for (TestCase testCase : testCaseList.getTestCases()) {
                 if (!running)
                     return;

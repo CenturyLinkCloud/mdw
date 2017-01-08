@@ -812,8 +812,6 @@ public class TestCaseRun implements Runnable {
             }
         }
 
-        log.println("Stubbing activity " + activityRuntimeContext.getProcess().getProcessName() + ":" +
-                activityRuntimeContext.getActivityLogicalId() + " with result: PASSTHROUGH");
         ActivityStubResponse passthroughResponse = new ActivityStubResponse();
         passthroughResponse.setPassthrough(true);
         return passthroughResponse;

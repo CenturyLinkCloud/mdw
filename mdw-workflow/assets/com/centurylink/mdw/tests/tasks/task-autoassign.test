@@ -1,7 +1,6 @@
 // task-autoassign
-// NOTE: this will fail until Designer 8.9.1 which adds HTTP auth support
-import com.centurylink.mdw.common.task.TaskList
-import com.centurylink.mdw.model.value.task.TaskActionVO
+import com.centurylink.mdw.task.types.TaskList
+import com.centurylink.mdw.model.task.UserTaskAction
 
 start process("TaskAutoAssign") {
     variables = [ stringAssignee: "aa56486",
@@ -37,7 +36,7 @@ assert autoAssignedFromJaxbElem && autoAssignedFromJaxbElem.assigneeCuid == 'dxo
 assert autoAssignedFromJaxbAttr && autoAssignedFromJaxbAttr.assigneeCuid == 'aa56486'
 
 // update assignees 
-def taskAction = new TaskActionVO();
+def taskAction = new UserTaskAction();
 taskAction.taskInstanceId = autoAssignedTask.taskInstanceId
 taskAction.taskAction = 'Assign'
 taskAction.assignee = 'dxoakes'
