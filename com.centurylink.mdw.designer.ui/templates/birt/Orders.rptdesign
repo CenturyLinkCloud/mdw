@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.6.1.v20100902 Build &lt;2.6.1.v20100915-1750></property>
+    <text-property name="title">Order List</text-property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/simple_listing.gif</property>
+    <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.simplelisting</property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <parameters>
+        <scalar-parameter name="start_date" id="29">
+            <text-property name="promptText">Start Date</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">2010-12-01</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="end_date" id="30">
+            <text-property name="promptText">End Date</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">2010-12-15</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="workflow_instance_environment" id="59">
+            <text-property name="helpText">Select the workflow project where the runtime data for the report will be pulled from.</text-property>
+            <text-property name="promptText">Runtime Data From</text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataSetName">Workflow Environments DataSet</property>
+            <expression name="valueExpr" type="javascript">dataSetRow["WORKFLOW_ENVIRONMENT_NAME"]</expression>
+            <expression name="labelExpr" type="javascript">dataSetRow["WORKFLOW_ENVIRONMENT_NAME"]</expression>
+            <expression name="sortByColumn">dataSetRow["WORKFLOW_ENVIRONMENT_NAME"]</expression>
+            <property name="sortDirection">asc</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">list-box</property>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="source_system" id="98">
+            <text-property name="promptText">Source System</text-property>
+            <property name="valueType">dynamic</property>
+            <property name="isRequired">false</property>
+            <property name="dataSetName">Source Systems DataSet</property>
+            <expression name="valueExpr" type="javascript">dataSetRow["SOURCE_SYSTEM"]</expression>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">list-box</property>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="design_environment_jdbc_url" id="51">
+            <property name="hidden">true</property>
+            <text-property name="promptText">Workflow Project</text-property>
+            <property name="valueType">static</property>
+            <expression name="sortByColumn">dataSetRow["WORKFLOW_ENVIRONMENT_NAME"]</expression>
+            <property name="sortDirection">asc</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">jdbc:oracle:thin:mdw/mdw@mdwdevdb.dev.qintra.com:1594:mdwdev</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="state" id="136">
+            <text-property name="promptText">State</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList">
+                <structure>
+                    <property name="value">CO</property>
+                    <property name="label">Colorado</property>
+                </structure>
+                <structure>
+                    <property name="value">AZ</property>
+                    <property name="label">Arizona</property>
+                </structure>
+                <structure>
+                    <property name="value">IA</property>
+                    <property name="label">Iowa</property>
+                </structure>
+                <structure>
+                    <property name="value">IL</property>
+                    <property name="label">Illinois</property>
+                </structure>
+                <structure>
+                    <property name="value">ID</property>
+                    <property name="label">Idaho</property>
+                </structure>
+                <structure>
+                    <property name="value">MN</property>
+                    <property name="label">Minnesota</property>
+                </structure>
+                <structure>
+                    <property name="value">MT</property>
+                    <property name="label">Montana</property>
+                </structure>
+                <structure>
+                    <property name="value">ND</property>
+                    <property name="label">North Dakota</property>
+                </structure>
+                <structure>
+                    <property name="value">NE</property>
+                    <property name="label">Nebraska</property>
+                </structure>
+                <structure>
+                    <property name="value">NM</property>
+                    <property name="label">New Mexico</property>
+                </structure>
+                <structure>
+                    <property name="value">OR</property>
+                    <property name="label">Oregon</property>
+                </structure>
+                <structure>
+                    <property name="value">SD</property>
+                    <property name="label">South Dakota</property>
+                </structure>
+                <structure>
+                    <property name="value">UT</property>
+                    <property name="label">Utah</property>
+                </structure>
+                <structure>
+                    <property name="value">WA</property>
+                    <property name="label">Washington</property>
+                </structure>
+                <structure>
+                    <property name="value">WY</property>
+                    <property name="label">Wyoming</property>
+                </structure>
+            </list-property>
+            <property name="paramType">simple</property>
+            <property name="controlType">list-box</property>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="BAM DataSource" id="27">
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>contentBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>metadataBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+            </list-property>
+            <property name="odaDriverClass">oracle.jdbc.driver.OracleDriver</property>
+            <property name="odaURL">${workflowProject.mdwDataSource.jdbcUrl}</property>
+            <property name="odaUser">${workflowProject.mdwDataSource.dbUser}</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">${workflowProject.mdwDataSource.dbPasswordBase64}</encrypted-property>
+            <property name="odaJndiName">MDWDataSource</property>
+        </oda-data-source>
+        <script-data-source name="Orders DataSource" id="43"/>
+        <script-data-source name="Workflow DataSource" id="54"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="Workflow Environments DataSet" id="58">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">WORKFLOW_ENVIRONMENT_NAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">WORKFLOW_ENVIRONMENT_NAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">WORKFLOW_ENVIRONMENT_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Workflow DataSource</property>
+            <method name="open"><![CDATA[workflowEnvNames = MdwFunctions.getWorkflowEnvironmentNames();
+totalRows = workflowEnvNames.size();
+currentRow = 0;]]></method>
+            <method name="fetch"><![CDATA[if(currentRow >= totalRows)
+{
+  return false;
+}
+
+row["WORKFLOW_ENVIRONMENT_NAME"] = workflowEnvNames.get(currentRow);
+currentRow = currentRow + 1;
+return true;]]></method>
+        </script-data-set>
+        <script-data-set name="Orders DataSet" id="60">
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">start_date</property>
+                    <property name="dataType">date</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue" type="javascript">params["start_date"].value</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">end_date</property>
+                    <property name="dataType">date</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue" type="javascript">params["end_date"].value</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">workflow_instance_environment</property>
+                    <property name="dataType">string</property>
+                    <property name="position">3</property>
+                    <expression name="defaultValue" type="javascript">params["workflow_instance_environment"].value</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">MASTER_REQUEST_ID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">MASTER_REQUEST_ROWID</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">SOURCE_SYSTEM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">REQUEST_TIME</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">RECORD_TIME</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">aqcbNumber</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">DeviceClli</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">ProcessInstanceId</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">State</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Orders DataSource</property>
+            <method name="open"><![CDATA[var attributes = new Array();  // dynamic number of attributes
+
+// state attribute
+attributes[0] = new Array(2);
+attributes[0][0] = 'State';
+attributes[0][1] = params["state"].value;
+
+// device clli
+// attributes[1] = new Array(2);
+// attributes[1][0] = 'DeviceClli';
+// attributes[1][1] = 'CLSPCOMAU91';
+
+var json = MdwFunctions.fetchOrdersWithAttributes(params["workflow_instance_environment"].value, params["start_date"].value, params["end_date"].value, params["source_system"].value, attributes);
+masterRequests = eval('(' + json + ')').masterRequests; 
+totalRows = masterRequests.length;
+currentRow = 0;]]></method>
+            <method name="describe"><![CDATA[var attrNames = MdwFunctions.getAttributeNames(params["workflow_instance_environment"].value, params["start_date"].value, params["end_date"].value);
+addDataSetColumn('MASTER_REQUEST_ID', 'STRING');
+addDataSetColumn('MASTER_REQUEST_ROWID', 'INTEGER');
+addDataSetColumn('SOURCE_SYSTEM', 'STRING');
+addDataSetColumn('REQUEST_TIME', 'DATE');
+addDataSetColumn('RECORD_TIME', 'DATE');
+for (var i = 0; i < attrNames.size(); i++)
+{
+  addDataSetColumn(attrNames.get(i), 'STRING');
+}
+return true;
+]]></method>
+            <method name="fetch"><![CDATA[if(currentRow >= totalRows)
+{
+  return false;
+}
+row['MASTER_REQUEST_ID'] = masterRequests[currentRow].masterRequestId;
+row['MASTER_REQUEST_ROWID'] = parseInt(masterRequests[currentRow].rowId);
+row['SOURCE_SYSTEM'] = masterRequests[currentRow].sourceSystem;
+row['REQUEST_TIME'] = masterRequests[currentRow].requestTime;
+row['RECORD_TIME'] = masterRequests[currentRow].recordTime;
+for (var i = 0; i < masterRequests[currentRow].attributes.length; i++)
+{
+  var attr = masterRequests[currentRow].attributes[i];
+  row[attr.name] = attr.value;
+}
+currentRow = currentRow + 1;
+return true;]]></method>
+        </script-data-set>
+        <script-data-set name="Source Systems DataSet" id="99">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">0</property>
+                    <property name="name">SOURCE_SYSTEM</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">SOURCE_SYSTEM</property>
+                    <text-property name="displayName">Source System</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">SOURCE_SYSTEM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Orders DataSource</property>
+            <method name="open"><![CDATA[sourceSystems = MdwFunctions.getSourceSystems(params["workflow_instance_environment"].value);
+totalRows = sourceSystems.size();
+currentRow = 0;]]></method>
+            <method name="fetch"><![CDATA[if(currentRow >= totalRows)
+{
+  return false;
+}
+
+row["SOURCE_SYSTEM"] = sourceSystems.get(currentRow);
+currentRow = currentRow + 1;
+return true;]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="report" id="24">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="crosstab-cell" id="25">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="26">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="leftMargin">0.25in</property>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="100">
+            <property name="dataSet">Orders DataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">MASTER_REQUEST_ID</property>
+                    <text-property name="displayName">MASTER_REQUEST_ID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["MASTER_REQUEST_ID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SOURCE_SYSTEM</property>
+                    <text-property name="displayName">SOURCE_SYSTEM</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["SOURCE_SYSTEM"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">RECORD_TIME</property>
+                    <text-property name="displayName">RECORD_TIME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["RECORD_TIME"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">DeviceClli</property>
+                    <text-property name="displayName">DeviceClli</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["DeviceClli"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">State</property>
+                    <text-property name="displayName">State</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["State"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">aqcbNumber</property>
+                    <text-property name="displayName">aqcbNumber</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["aqcbNumber"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ProcessInstanceId</property>
+                    <text-property name="displayName">ProcessInstanceId</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ProcessInstanceId"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="119">
+                <property name="width">1.6770833333333333in</property>
+            </column>
+            <column id="120">
+                <property name="width">1.5625in</property>
+            </column>
+            <column id="121"/>
+            <column id="122">
+                <property name="width">1.5416666666666667in</property>
+            </column>
+            <column id="123">
+                <property name="width">1.6041666666666667in</property>
+            </column>
+            <header>
+                <row id="101">
+                    <cell id="102">
+                        <label id="126">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Order Number</text-property>
+                        </label>
+                    </cell>
+                    <cell id="103">
+                        <label id="128">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Source System</text-property>
+                        </label>
+                    </cell>
+                    <cell id="104">
+                        <label id="130">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Received</text-property>
+                        </label>
+                    </cell>
+                    <cell id="105">
+                        <label id="132">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Device CLLI</text-property>
+                        </label>
+                    </cell>
+                    <cell id="106">
+                        <label id="134">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">State</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="107">
+                    <cell id="108">
+                        <data id="127">
+                            <property name="resultSetColumn">MASTER_REQUEST_ID</property>
+                            <list-property name="action">
+                                <structure>
+                                    <property name="linkType">hyperlink</property>
+                                    <property name="toolTip">Order Progress</property>
+                                    <expression name="uri" type="javascript">MdwFunctions.getReportsWebAppUrl(params["design_environment_jdbc_url"].value) + "?mdwReport=Order%20Progress&amp;workflow_instance_environment=" + params["workflow_instance_environment"].value + "&amp;master_request_id=" + row["MASTER_REQUEST_ID"];</expression>
+                                    <property name="targetWindow">_self</property>
+                                </structure>
+                            </list-property>
+                        </data>
+                    </cell>
+                    <cell id="109">
+                        <data id="129">
+                            <property name="resultSetColumn">SOURCE_SYSTEM</property>
+                        </data>
+                    </cell>
+                    <cell id="110">
+                        <data id="131">
+                            <property name="resultSetColumn">RECORD_TIME</property>
+                        </data>
+                    </cell>
+                    <cell id="111">
+                        <data id="133">
+                            <property name="resultSetColumn">DeviceClli</property>
+                        </data>
+                    </cell>
+                    <cell id="112">
+                        <data id="135">
+                            <property name="resultSetColumn">State</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="113">
+                    <cell id="114"/>
+                    <cell id="115"/>
+                    <cell id="116"/>
+                    <cell id="117"/>
+                    <cell id="118"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

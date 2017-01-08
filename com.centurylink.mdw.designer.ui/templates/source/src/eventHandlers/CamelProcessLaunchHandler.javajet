@@ -1,0 +1,70 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.preferences.model.* com.centurylink.mdw.plugin.codegen.meta.*"
+        class="CamelProcessLaunchHandlerJavaEmitter" %>
+<% Map map = (Map) argument;
+   EventHandler eventHandler = (EventHandler) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<%=mdwSettings.getCopyrightNotice()%>
+
+package <%=eventHandler.getJavaPackage()%>;
+
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.camel.Message;
+import com.centurylink.mdw.camel.MdwCamelException;
+import com.centurylink.mdw.camel.process.DefaultProcessLaunchHandler;
+<%
+if (eventHandler.isCreateDocument())
+{
+%>
+import com.centurylink.mdw.model.value.variable.DocumentReference;
+<%
+}
+%>
+
+/**
+ * Camel process launch handler for incoming requests.
+ * See the MDW Camel Demo project for a complete working example.
+ */
+public class <%=eventHandler.getClassName()%> extends DefaultProcessLaunchHandler
+{
+  @Override
+  public String getRequestDocumentType(Message request) throws MdwCamelException
+  {
+    // default is determined by the "request" input variable type in your process
+    return super.getRequestDocumentType(request);
+  }
+
+  /**
+   * Chance to process/extract/convert the raw incoming request.
+   */
+  @Override
+  public Object initializeRequestDocument(Message request) throws MdwCamelException
+  {
+    return super.initializeRequestDocument(request);
+  }
+
+  @Override
+  public String getMasterRequestId(Message request)
+  {
+    // default looks for a request header value
+    return super.getMasterRequestId(request);
+  }
+
+  @Override
+  public Map<String,Object> getProcessParameters(Message request)
+  {
+    Map<String,Object> params = new HashMap<String,Object>();
+    params.put("myVar", "myValue");
+<%    
+if (eventHandler.isCreateDocument())
+{
+%>
+    // <%=eventHandler.getDocumentVariable()%> could have been parsed in initializeRequestDocument() and stored as a member
+    DocumentReference docRef = null; // createDocument(docType, myDoc, OwnerType.LISTENER_REQUEST, eventInstanceId, new Long(0), null, null);
+    params.put("<%=eventHandler.getDocumentVariable()%>", docRef);
+<%
+}
+%>
+    return params;
+  }
+}

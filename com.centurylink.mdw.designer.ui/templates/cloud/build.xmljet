@@ -1,0 +1,70 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.project.model.* com.centurylink.mdw.plugin.preferences.model.*"
+        class="CloudBuildXmlEmitter" %>
+<% Map map = (Map) argument;
+   WorkflowProject workflowProject = (WorkflowProject) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="buildConfig" >
+
+  <property file="./deploy/env/env.properties.${env}" />
+  <property file="./deploy/env/project.properties" />
+  
+  <path id="project.classpath">
+    <fileset dir="${container.home}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${java.home}/../lib" includes="tools.jar" />    
+  </path>
+  
+  <!-- config targets -->
+  <target name="cleanConfig">
+    <delete failonerror="false">
+      <fileset dir="${server.config.dir}" />
+    </delete>
+  </target>
+  
+  <target name="buildConfig">
+    <property environment="environment" />
+    <!-- copy properties -->
+    <copy todir="${server.config.dir}">
+      <fileset dir="${deploy.dir}/config" includes="*.*" excludes="build.xml,*.jks,*.gif,*.jpg,*.png,*.tmpl,services.py" />
+        <filterset>
+          <filtersfile file="${deploy.dir}/env/env.properties.${env}"/>
+          <filter token="ENVIRONMENT" value="${env}" />
+          <filter token="USER_NAME" value="${environment.USERNAME}" />
+          <filter token="DOMAIN_HOME" value="<%=workflowProject.getServerSettings().getServerLocWithFwdSlashes()%>" />
+          <filter token="TASKMGR_CONTEXTROOT" value="<%=workflowProject.getTaskManagerContextRoot()%>" />
+          <filter token="MDWWEB_CONTEXTROOT" value="<%=workflowProject.getWebContextRoot()%>" />
+          <filter token="DESIGNERWEB_CONTEXTROOT" value="<%=workflowProject.getDesignerWebContextRoot()%>" />
+          <filter token="GROUP_SEP" value="/" />
+        </filterset>
+    </copy>
+    <copy todir="${server.config.dir}">
+      <fileset dir="${deploy.dir}/config" includes="*.jks,*.gif,*.jpg,*.png" />
+    </copy>   
+  </target>
+  
+<%
+if (workflowProject.getServerSettings().isWebLogic())
+{
+%>
+  <target name="configureWLS" depends="buildConfig">
+    <property name="abs.server.config.path" location="${server.config.dir}"/>
+    <exec executable="${abs.server.config.path}/runConfigWLS.cmd" dir="${abs.server.config.path}">
+      <arg value="configureWLS.py" />
+    </exec>
+  </target>
+  
+  <target name="deployEAR" depends="buildConfig">
+    <property name="abs.server.config.path" location="${server.config.dir}"/>
+    <exec executable="${abs.server.config.path}/runConfigWLS.cmd" dir="${abs.server.config.path}">
+      <arg value="deployEar.py" />
+    </exec>
+  </target>
+  
+  <target name="setupAndDeploy" depends="configureWLS,deployEAR" />
+  
+<%
+}
+%>
+</project>

@@ -1,0 +1,27 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.project.model.* com.centurylink.mdw.plugin.preferences.model.*"
+        class="CloudApplicationXmlEmitter" %>
+<% Map map = (Map) argument;
+   WorkflowProject workflowProject = (WorkflowProject) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<?xml version="1.0" encoding="UTF-8"?>
+<application id="mdwFramework" version="1.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd">
+  <display-name>MDWFramework</display-name>
+  <module id="MDWWeb">
+    <web>
+      <web-uri>MDWWeb.war</web-uri>
+      <context-root><%=workflowProject.getWebContextRoot()%></context-root>
+    </web>
+  </module>
+  <module id="MDWDesignerWeb">
+    <web>
+      <web-uri>MDWDesignerWeb.war</web-uri>
+      <context-root><%=workflowProject.getDesignerWebContextRoot()%></context-root>
+    </web>
+  </module>
+  <module id="MDWTaskManagerWeb">
+    <web>
+      <web-uri>MDWTaskManagerWeb.war</web-uri>
+      <context-root><%=workflowProject.getTaskManagerContextRoot()%></context-root>
+    </web>
+  </module>
+</application>

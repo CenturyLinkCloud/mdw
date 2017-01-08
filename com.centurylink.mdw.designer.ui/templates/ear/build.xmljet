@@ -1,0 +1,151 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.project.model.* com.centurylink.mdw.plugin.preferences.model.*"
+        class="EarProjectBuildXmlEmitter" %>
+<% Map map = (Map) argument;
+   WorkflowProject workflowProject = (WorkflowProject) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="<%=workflowProject.getEarProjectName()%>" default="build" >
+
+  <property file="deploy/env/env.properties.${env}" />
+  <property file="deploy/env/project.properties" />
+  
+  <path id="project.classpath">
+    <pathelement location="build/classes" />
+    <fileset dir="${app.lib.dir}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${ear.content.dir}">
+      <include name="**/*.jar" />
+      <include name="**/*.war" />
+    </fileset>
+    <fileset dir="${container.home}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${java.home}/../lib" includes="tools.jar" />    
+  </path>
+  
+  <target name="build" depends="buildConfig,build<%=workflowProject.getSourceProjectName()%>">
+    <antcall target="refreshWorkspace" />    
+  </target>
+
+  <!-- Target that creates the EAR -->
+  <target name="buildEAR" depends="buildConfig,build<%=workflowProject.getSourceProjectName()%>">
+  	<mkdir dir="${app.build.dir}" />
+<%
+if (workflowProject.isEjbSourceProject())
+{
+%>
+    <copy file="${app.generated.lib.dir}/<%=workflowProject.getSourceProjectName()%>.jar" todir="${ear.content.dir}"/>
+<%
+}
+else
+{
+%>
+    <copy file="${app.generated.lib.dir}/<%=workflowProject.getSourceProjectName()%>.jar" todir="${app.lib.dir}"/>
+<%
+}
+%>      	
+    <ear destfile="${app.build.dir}/${output.file}" basedir="EarContent" appxml="EarContent/META-INF/application.xml" />
+  </target>
+  
+  <!-- config targets -->
+  <target name="cleanConfig">
+    <delete failonerror="false">
+      <fileset dir="${server.config.dir}" />
+    </delete>
+  </target>
+  
+  <target name="buildConfig">
+    <property environment="environment" />
+    <echo message="USER_NAME is set to = ${environment.USERNAME}" />
+    <!-- copy properties -->
+    <copy todir="${server.config.dir}">
+      <fileset dir="${ear.deploy.dir}/config" includes="*.*" excludes="build.xml,*.jks,*.gif,*.jpg,*.png,*.tmpl,services.py" />
+        <filterset>
+          <filtersfile file="deploy/env/env.properties.${env}"/>
+          <filter token="ENVIRONMENT" value="${env}" />
+      	  <filter token="USER_NAME" value="${environment.USERNAME}" />
+        </filterset>
+    </copy>
+<%
+if (workflowProject.getServerSettings().isWebLogic())
+{
+%>
+    <copy todir="${server.config.dir}/wlsdeploy">
+      <fileset dir="${ear.deploy.dir}/config" includes="services.py" />
+        <filterset>
+          <filtersfile file="deploy/env/env.properties.${env}"/>
+          <filter token="ENVIRONMENT" value="${env}" />
+      	  <filter token="USER_NAME" value="${environment.USERNAME}" />
+        </filterset>
+    </copy>
+<%
+}
+%>
+    <copy todir="${server.config.dir}">
+      <fileset dir="${ear.deploy.dir}/config" includes="*.jks,*.gif,*.jpg,*.png" />
+    </copy>  	
+  </target> 
+ 
+  <!-- <%=workflowProject.getSourceProjectName()%> -->
+  <target name="clean<%=workflowProject.getSourceProjectName()%>">
+    <ant dir="../<%=workflowProject.getSourceProjectName()%>" antfile="build.xml" target="clean" />
+  </target>
+  <target name="build<%=workflowProject.getSourceProjectName()%>">
+    <ant dir="../<%=workflowProject.getSourceProjectName()%>" antfile="build.xml" target="build" />
+  </target>
+	
+  <target name="buildRelease">
+    <antcall target="checkout<%=workflowProject.getSourceProjectName()%>" />
+    <antcall target="buildEAR" />
+    <ant antfile="release_build.xml" target="release" />
+  </target>
+
+  <target name="checkout<%=workflowProject.getSourceProjectName()%>">
+    <delete dir="${app.dir}/<%=workflowProject.getSourceProjectName()%>" />
+    <cvs cvsRoot="${cvs.root}" command="checkout" package="<%=workflowProject.getSourceProjectName()%>" dest="${app.dir}" />
+  </target>
+
+<%
+if (workflowProject.getServerSettings().isWebLogic())
+{
+%>
+  <target name="configWLSstart">
+    <move failonerror="false" file="${server.dir}/startWebLogic.cmd" tofile="${server.dir}/startWebLogic.cmd.bak" />
+    <copy file="${ear.deploy.dir}/config/startWebLogic.cmd.tmpl" tofile="${server.dir}/startWebLogic.cmd" />
+    <replace
+       file="${server.dir}/startWebLogic.cmd"
+       token="@domaindir@"
+       value="${server.dir}" />
+    <replace
+       file="${server.dir}/startWebLogic.cmd"
+       token="@applibdir@"
+       value="${app.lib.dir}" />
+    <replace
+       file="${server.dir}/startWebLogic.cmd"
+       token="@appsubdir@"
+       value="${SERVER_APP_SUBDIR}" />       
+  </target>
+  
+  <target name="configureWLS" depends="buildConfig">
+    <property name="abs.server.config.path" location="${server.config.dir}"/>
+    <exec executable="${abs.server.config.path}/runConfigWLS.cmd" dir="${abs.server.config.path}">
+      <arg value="configureWLS.py" />
+    </exec>
+  </target>
+  
+  <target name="deployEAR" depends="buildConfig">
+    <property name="abs.server.config.path" location="${server.config.dir}"/>
+    <exec executable="${abs.server.config.path}/runConfigWLS.cmd" dir="${abs.server.config.path}">
+      <arg value="deployEar.py" />
+    </exec>
+  </target>
+<%
+}
+%>  
+  <target name="refreshWorkspace" if="eclipse.running">  
+    <eclipse.convertPath fileSystemPath=".." property="resourcePath"/>
+    <eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
+  </target>
+    
+</project>

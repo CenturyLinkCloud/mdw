@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="MDWDesignerRCP" default="buildProduct">
+
+  <!-- TODO: gradle build -->
+  <property file="../com.centurylink.mdw.designer/gradle.properties" />
+
+  <property name="eclipse.home" value="e:/eclipse_4.5.2"/>
+  <property file="build.properties"/>
+  <property name="baseLocation" value="${eclipse.home}"/>
+  <!-- by default, check for deltapack co-located with eclipse -->
+  <property name="deltapack" value="e:/eclipse_deltapack_4.5.2"/>
+  <property name="p2.director.log" value="./p2.director.log"/>
+
+  <target name="buildProduct">
+
+    <!-- Check that we have a deltapack -->
+    <available property="haveDeltaPack" file="${deltapack}"/>
+    <fail unless="haveDeltaPack" message="The deltapack is required to build this product." />
+
+    <antcall target="deleteGenerated" />
+    
+    <property name="builder" value="${basedir}" />
+    <property name="buildDirectory" value="${basedir}/buildDirectory"/>
+    <property name="pluginPath" value="${basedir}/..${path.separator}${deltapack}" />
+    <property name="buildTempFolder" value="${buildDirectory}" />
+
+    <ant antfile="${eclipse.pdebuild.scripts}/productBuild/productBuild.xml" />
+
+     <!-- restores the plugin help dir which is removed for some reason -->
+    <copy overwrite="true" file="../com.centurylink.mdw.designer.ui/updateSite/plugins/com.centurylink.mdw.designer.ui_${plugin.version}.jar" toDir="buildDirectory/buildRepo/plugins" />
+
+    <move todir="${basedir}">
+      <fileset dir="${buildDirectory}/${buildLabel}" includes="*.zip"/>
+    </move>
+  </target>
+  
+  <target name="deleteGenerated">
+    <delete dir="${eclipse.home}/\${builder}" />
+    <delete dir="../com.centurylink.mdw.designer.feature/feature.temp.folder" />
+    <delete file="../com.centurylink.mdw.designer.feature/build.xml" />
+    <delete dir="buildDirectory" />
+    <delete file="javaCompiler...args" />
+    <delete file="build.xml" />
+    <delete file="mdw-win32.win32.x86.zip" />
+    <delete file="mdw-win32.win32.x86_64.zip" />
+  </target>
+  
+</project>

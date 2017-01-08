@@ -1,0 +1,82 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.preferences.model.* com.centurylink.mdw.plugin.codegen.meta.*"
+        class="BusServiceAdapterJavaEmitter52" %>
+<% Map map = (Map) argument;
+   AdapterActivity adapterActivity = (AdapterActivity) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<%=mdwSettings.getCopyrightNotice()%>
+
+package <%=adapterActivity.getJavaPackage()%>;
+
+import java.util.Map;
+
+import com.qwest.mdw.connector.adapter.AdapterException;
+import com.qwest.mdw.connector.adapter.ConnectionException;
+import com.qwest.mdw.workflow.activity.ControlledActivityException;
+import com.qwest.mdw.workflow.activity.impl.PoolableTibcoBusAdapter;
+
+/**
+ * Bus Service Adapter Activity.
+ */
+public class <%=adapterActivity.getClassName()%> extends PoolableTibcoBusAdapter
+{
+  /**
+   * The object returned here is made available to the invoke() method.
+   * Typically this will be a string containing the request xml.
+   */
+  @Override
+  protected String getRequestData() throws ControlledActivityException
+  {
+    // the default behavior of the superclass is to pull the request data
+    // from the variable whose name is identified by the config attribute REQUEST_VARIABLE
+    return super.getRequestData();
+  }
+
+  /**
+   * Override to specify additional Bus request named fields (beyond the default DATA element)
+   * @return a map containing name/value pairs
+   */
+  @Override
+  protected Map<String,String> getRequestHeaders()
+  {
+    // TODO Auto-generated method stub
+    return super.getRequestHeaders();
+  }
+
+  /**
+   * Performs the work of invoking the Bus service.
+   * The only reason to override this is to control whether error conditions are retryable
+   * by throwing either ConnectionException or AdapterException as appropriate.
+   * 
+   * @param connection the connection object created in openConnection()
+   * @param requestData the requestData populated in getRequestData()
+   * @return object representing the service response
+   */
+  @Override
+  public String invoke(Object connection, String request, int timeout, Map<String, String> metainfo)
+  throws ConnectionException, AdapterException
+  {
+    return super.invoke(connection, request, timeout, metainfo);
+  }
+
+  /**
+   * Overriding this method affords the opportunity to parse the response and populate
+   * process variables as needed.
+   */
+  @Override
+  public void onSuccess(String response)
+  throws ControlledActivityException, ConnectionException, AdapterException
+  {
+    // the default behavior of the superclass is to persist the response string
+    // in the variable whose name is identified by the config attribute RESPONSE_VARIABLE
+    super.onSuccess(response);
+  }
+
+  /**
+   * @see com.qwest.mdw.workflow.activity.impl.PoolableAdapterBase#onFailure(java.lang.Throwable)
+   */
+  @Override
+  public String onFailure(Throwable errorCause) throws AdapterException, ConnectionException
+  {
+    return super.onFailure(errorCause);
+  }
+}

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:rich="http://richfaces.org/rich"
+  xmlns:t="http://myfaces.apache.org/tomahawk"
+  xmlns:mdw="http://www.centurylink.com/mdw/jsf">
+  <ui:composition>
+  
+    <body>
+  
+      <table cellpadding="0" cellspacing="0" style="height:50px;margin-bottom:8px;border-style:groove;">
+        <tr>
+          <td style="width:100%;margin-left:5px;white-space:nowrap;">
+            <img src="${image:mdw.png}" alt="MDW" />
+            <img src="${image:hub.png}" alt="Hub" />
+          </td>
+          <td style="padding-right:5px;white-space:nowrap;">
+            <img src="${image:ctl.png}" alt="CenturyLink (TM)" />
+          </td>
+        </tr>
+      </table>
+
+    <div style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:12px;clear:left;margin:10px;">
+      <span style="color:#094D9C;"><b>A new task has been opened for your workgroup:</b></span><br/>
+      <b>"#{task.name}"</b><hr align="left"/>
+      #{task.description}<hr align="left"/>
+      <ul type="square" style="padding:0px;margin-top:0px;">
+        <li>Order Number: #{task.orderId}</li>
+        <li>Task ID: #{task.taskInstanceId}</li>
+        <li>Due Date: #{task.dueDate}</li>
+      </ul>
+      
+      <br/><br/>
+      To view or act on this task, click on the following link:<br/>
+      <a href="#{task.taskInstanceUrl}">#{task.taskInstanceUrl}</a>
+    </div>
+  
+    <div style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:10px;clear:left;margin:10px;">
+      Please do not reply to this automatically-generated e-mail.
+    </div>
+    
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding-top:15px;">
+      <tr>
+        <td align="center">
+          <span style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9px;color:#999999;clear:left;margin:5px;width:600px;">
+            <br/><br/>
+            <strong>CONFIDENTIAL</strong><br/>
+            Copyright &#169; 2011 CenturyLink, Inc. - All Rights Reserved.
+          </span>
+        </td>
+      </tr>
+    </table>
+    
+    </body>
+
+  </ui:composition>
+</html>
