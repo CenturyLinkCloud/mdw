@@ -14,7 +14,6 @@ public interface ThreadPoolProvider {
     String WORKER_SCHEDULER = "Scheduler";
     String WORKER_MONITOR = "Monitor";
     String WORKER_DEFAULT = "Default";
-    String WORKER_TESTING = "Testing";
 
     void start();
 
@@ -25,5 +24,4 @@ public interface ThreadPoolProvider {
     boolean execute(String workerName, String assignee, Runnable command);
 
     String currentStatus();
-
 }

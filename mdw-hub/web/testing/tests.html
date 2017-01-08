@@ -44,7 +44,7 @@
           <li ng-repeat="testCase in pkg.testCases" ng-class="{'mdw-last-item': $last}">
             <div>
               <input type="checkbox" ng-model="testCase.selected" ng-change="packageOff(pkg)" ng-if="authUser.hasRole('Process Execution')"></input>
-              <span ng-if="!testCase.status" class="glyphicon glyphicon-ok-sign mdw-test-status" style="visibility:hidden"></span>
+              <span ng-if="!testCase.status || testCase.status == 'Stopped'" class="glyphicon glyphicon-ok-sign mdw-test-status" style="visibility:hidden"></span>
               <span ng-if="testCase.status == 'InProgress'" class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running"></span>
               <span ng-if="testCase.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
               <span ng-if="testCase.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>

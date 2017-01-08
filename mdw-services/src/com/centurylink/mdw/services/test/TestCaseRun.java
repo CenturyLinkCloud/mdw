@@ -23,7 +23,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.xmlbeans.XmlException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.app.ApplicationContext;
@@ -71,6 +70,7 @@ import com.centurylink.mdw.test.TestException;
 import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.test.TestFailedException;
 import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
 
 import groovy.lang.Binding;
@@ -636,7 +636,7 @@ public class TestCaseRun implements Runnable {
             }
             Object stillthere = monitor.remove(key);
             if (stillthere != null) {
-                log.println("wait command times out after: " + timeout + "s");
+                log.println("wait command times out after: " + timeout + "s at: " + StringHelper.dateToString(new Date()));
             }
             else {
                 Thread.sleep(2000);  // to get around race condition
@@ -778,86 +778,76 @@ public class TestCaseRun implements Runnable {
      * Default implementation to substitute values from request as super.getStubResponse();
      * Users can provide their own implementation as a Groovy closure.
      */
-    public String getStubResponse(String masterRequestId, String request, int run) throws JSONException {
-
-        JSONObject requestJson = new JSONObject(request);
-        ActivityStubRequest activityStubRequest = new ActivityStubRequest(requestJson);
-        ActivityRuntimeContext activityRuntimeContext = activityStubRequest.getRuntimeContext();
-        AdapterStubRequest adapterStubRequest = null;
-        if (requestJson.has(AdapterStubRequest.JSON_NAME))
-            adapterStubRequest = new AdapterStubRequest(requestJson);
-
-        if (activityRuntimeContext != null) {
-            // activity stubbing
-            if (testCaseProcess != null && testCaseProcess.getActivityStubs() != null) {
-                for (TestCaseActivityStub activityStub : testCaseProcess.getActivityStubs()) {
-                    if (activityStub.getMatcher().call(activityRuntimeContext)) {
-                        Closure<String> completer = activityStub.getCompleter();
-                        completer.setResolveStrategy(Closure.DELEGATE_FIRST);
-                        completer.setDelegate(activityStub);
-                        String resultCode = completer.call(request);
-                        ActivityStubResponse activityStubResponse = new ActivityStubResponse();
-                        activityStubResponse.setResultCode(resultCode);
-                        if (activityStub.getSleep() > 0)
-                            activityStubResponse.setDelay(activityStub.getSleep());
-                        else if (activityStub.getDelay() > 0)
-                            activityStubResponse.setDelay(activityStub.getDelay());
-                        if (activityStub.getVariables() != null) {
-                            Map<String,String> responseVariables = new HashMap<String,String>();
-                            Map<String,Object> variables = activityStub.getVariables();
-                            for (String name : variables.keySet()) {
-                                Object value = variables.get(name);
-                                // TODO: handle non-string objects
-                                responseVariables.put(name, value.toString());
-                            }
-                            activityStubResponse.setVariables(responseVariables);
+    public ActivityStubResponse getStubResponse(ActivityStubRequest request) throws JSONException {
+        // activity stubbing
+        ActivityRuntimeContext activityRuntimeContext = request.getRuntimeContext();
+        if (testCaseProcess != null && testCaseProcess.getActivityStubs() != null) {
+            for (TestCaseActivityStub activityStub : testCaseProcess.getActivityStubs()) {
+                if (activityStub.getMatcher().call(activityRuntimeContext)) {
+                    Closure<String> completer = activityStub.getCompleter();
+                    completer.setResolveStrategy(Closure.DELEGATE_FIRST);
+                    completer.setDelegate(activityStub);
+                    String resultCode = completer.call(request.getJson().toString(2));
+                    ActivityStubResponse activityStubResponse = new ActivityStubResponse();
+                    activityStubResponse.setResultCode(resultCode);
+                    if (activityStub.getSleep() > 0)
+                        activityStubResponse.setDelay(activityStub.getSleep());
+                    else if (activityStub.getDelay() > 0)
+                        activityStubResponse.setDelay(activityStub.getDelay());
+                    if (activityStub.getVariables() != null) {
+                        Map<String,String> responseVariables = new HashMap<String,String>();
+                        Map<String,Object> variables = activityStub.getVariables();
+                        for (String name : variables.keySet()) {
+                            Object value = variables.get(name);
+                            // TODO: handle non-string objects
+                            responseVariables.put(name, value.toString());
                         }
-                        if (isVerbose())
-                            log.println("Stubbing activity " + activityRuntimeContext.getProcess().getProcessName() + ":" +
-                                    activityRuntimeContext.getActivityLogicalId() + " with result code: " + resultCode);
-                        return activityStubResponse.getJson().toString(2);
+                        activityStubResponse.setVariables(responseVariables);
                     }
-                }
-            }
-
-            // passthrough
-            ActivityStubResponse activityStubResponse = new ActivityStubResponse();
-            activityStubResponse.setPassthrough(true);
-            return activityStubResponse.getJson().toString(2);
-        }
-        else {
-            // adapter stubbing
-            for (TestCaseAdapterStub adapterStub : adapterStubs) {
-                String requestContent = adapterStubRequest == null ? request : adapterStubRequest.getContent();
-                if (adapterStub.getMatcher().call(requestContent)) {
-                    String stubbedResponseContent = adapterStub.getResponder().call(requestContent);
                     if (isVerbose())
-                        log.println("Stubbing response with: " + stubbedResponseContent);
-                    int delay = 0;
-                    if (adapterStub.getDelay() > 0)
-                        delay = adapterStub.getDelay();
-                    else if (adapterStub.getSleep() > 0)
-                        delay = adapterStub.getSleep();
-
-                    AdapterStubResponse stubResponse = new AdapterStubResponse(stubbedResponseContent);
-                    stubResponse.setDelay(delay);
-                    stubResponse.setStatusCode(adapterStub.getStatusCode());
-                    stubResponse.setStatusMessage(adapterStub.getStatusMessage());
-                    return stubResponse.getJson().toString(2);
+                        log.println("Stubbing activity " + activityRuntimeContext.getProcess().getProcessName() + ":" +
+                                activityRuntimeContext.getActivityLogicalId() + " with result code: " + resultCode);
+                    return activityStubResponse;
                 }
             }
-            if (isVerbose())
-                log.println("Stubbing response with: " + AdapterActivity.MAKE_ACTUAL_CALL);
-            if (adapterStubRequest != null) {
-                // mdw6+
-                AdapterStubResponse stubResponse = new AdapterStubResponse(AdapterActivity.MAKE_ACTUAL_CALL);
-                stubResponse.setPassthrough(true);
-                return stubResponse.getJson().toString(2);
-            }
-            else {
-                return AdapterActivity.MAKE_ACTUAL_CALL;
+        }
+
+        log.println("Stubbing activity " + activityRuntimeContext.getProcess().getProcessName() + ":" +
+                activityRuntimeContext.getActivityLogicalId() + " with result: PASSTHROUGH");
+        ActivityStubResponse passthroughResponse = new ActivityStubResponse();
+        passthroughResponse.setPassthrough(true);
+        return passthroughResponse;
+    }
+
+    /**
+     * Callback method invoked from stub server when notified from server.
+     * Default implementation to substitute values from request as super.getStubResponse();
+     * Users can provide their own implementation as a Groovy closure.
+     */
+    public AdapterStubResponse getStubResponse(AdapterStubRequest request) throws JSONException {
+        // adapter stubbing
+        for (TestCaseAdapterStub adapterStub : adapterStubs) {
+            if (adapterStub.getMatcher().call(request.getContent())) {
+                String stubbedResponseContent = adapterStub.getResponder().call(request.getContent());
+                if (isVerbose())
+                    log.println("Stubbing response with: " + stubbedResponseContent);
+                int delay = 0;
+                if (adapterStub.getDelay() > 0)
+                    delay = adapterStub.getDelay();
+                else if (adapterStub.getSleep() > 0)
+                    delay = adapterStub.getSleep();
+
+                AdapterStubResponse stubResponse = new AdapterStubResponse(stubbedResponseContent);
+                stubResponse.setDelay(delay);
+                stubResponse.setStatusCode(adapterStub.getStatusCode());
+                stubResponse.setStatusMessage(adapterStub.getStatusMessage());
+                return stubResponse;
             }
         }
+
+        AdapterStubResponse passthroughResponse = new AdapterStubResponse(AdapterActivity.MAKE_ACTUAL_CALL);
+        passthroughResponse.setPassthrough(true);
+        return passthroughResponse;
     }
 
     public void finishExecution(Throwable e) {

@@ -56,12 +56,11 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
 
     @Override
     public void onError(WebSocket websocket, Exception ex) {
-        // TODO Auto-generated method stub
+        ex.printStackTrace();
     }
 
     @Override
     public void onMessage(WebSocket websocket, String message) {
-        // TODO Auto-generated method stub
     }
 
 
@@ -78,11 +77,6 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
                 conn.send(text);
             }
         }
-    }
-
-    private static WebSocketServer instance;
-    public static WebSocketServer getInstance() {
-        return instance;
     }
 
     @Override
@@ -112,7 +106,6 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
                     }
                 }
             }).start();
-            instance = this;
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

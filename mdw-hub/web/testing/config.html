@@ -1,7 +1,12 @@
 <div>
   <label class="mdw-config">
-    <input type="checkbox" ng-model="config.verbose">
-    Verbose
+    Threads
+    <input type="number" max="20" min="1" ng-model="config.threads">
+  </label>
+  <label class="mdw-config">
+    Interval&nbsp;
+    <input type="number" max="60" min="1" ng-model="config.interval">
+    sec
   </label>
   <label class="mdw-config">
     <input type="checkbox" ng-model="config.stubbing">
@@ -12,11 +17,11 @@
     Load Test
   </label>
   <label class="mdw-config">
-    <input type="checkbox" ng-model="config.createReplace">
-    Create/Replace
+    <input type="checkbox" ng-model="config.verbose">
+    Verbose
   </label>
   <label class="mdw-config">
-    Interval (sec)
-    <input type="number" max="60" min="1" ng-model="config.interval">
+    <input type="checkbox" ng-model="config.createReplace">
+    Create/Replace
   </label>
 </div>
