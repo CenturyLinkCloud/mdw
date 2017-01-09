@@ -20,39 +20,37 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
 import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.task.TaskAction;
-import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.model.task.TaskCount;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.task.TaskTemplate;
-import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
-import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.Transition;
 import com.centurylink.mdw.model.workflow.TransitionInstance;
+import com.centurylink.mdw.observer.task.TaskValuesProvider;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
-import com.centurylink.mdw.model.workflow.Transition;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskException;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.TaskServices;
+import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.task.SubTask;
 import com.centurylink.mdw.task.types.TaskList;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -360,13 +358,22 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
+    /**
+     * Update task values.
+     */
     public void applyValues(Long instanceId, Map<String,String> values) throws ServiceException {
         try {
+            // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
             TaskManager taskMgr = ServiceLocator.getTaskManager();
             TaskRuntimeContext runtimeContext = taskMgr.getTaskRuntimeContext(taskMgr.getTaskInstance(instanceId));
+            TaskValuesProvider valuesProvider;
+            if (runtimeContext.getTaskTemplate().isAutoformTask())
+                valuesProvider = new AutoFormTaskValuesProvider();
+            else
+                valuesProvider = new CustomTaskValuesProvider();
             if (runtimeContext.getTaskTemplate().isAutoformTask()) {
-                EventManager eventMgr = ServiceLocator.getEventManager();
-                new AutoFormTaskValuesProvider().apply(runtimeContext, values);
+                WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+                valuesProvider.apply(runtimeContext, values);
                 Map<String,Object> newValues = new HashMap<String,Object>();
                 for (String name : values.keySet()) {
                     if (runtimeContext.isExpression(name)) {
@@ -383,30 +390,8 @@ public class TaskServicesImpl implements TaskServices {
                 }
                 for (String name : newValues.keySet()) {
                     Object newValue = newValues.get(name);
-                    Variable var = runtimeContext.getProcess().getVariable(name);
-                    if (var == null)
-                        throw new ServiceException(ServiceException.BAD_REQUEST, "Process Variable not found: " + name);
-                    String type = var.getVariableType();
-                    if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), type)) {
-                        String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), type, newValue);
-                        VariableInstance varInst = runtimeContext.getProcessInstance().getVariable(name);
-                        if (varInst == null) {
-                            Long procInstId = runtimeContext.getProcessInstanceId();
-                            Long docId = eventMgr.createDocument(type, OwnerType.PROCESS_INSTANCE, procInstId, stringValue);
-                            eventMgr.setVariableInstance(procInstId, name, new DocumentReference(docId));
-                        }
-                        else {
-                            DocumentReference docRef = (DocumentReference) varInst.getData();
-                            eventMgr.updateDocumentContent(docRef.getDocumentId(), stringValue, type);
-                        }
-                    }
-                    else {
-                        eventMgr.setVariableInstance(runtimeContext.getProcessInstanceId(), name, newValue);
-                    }
+                    workflowServices.setVariable(runtimeContext, name, newValue);
                 }
-            }
-            else {
-                // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
             }
         }
         catch (DataAccessException ex) {
@@ -418,10 +403,6 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public void performTaskAction(UserTaskAction taskAction) throws ServiceException {
-        performTaskAction(taskAction);
-    }
-
-    public void performTaskAction(UserTaskAction taskAction, Query query) throws ServiceException {
         String action = taskAction.getTaskAction();
         String userCuid = taskAction.getUser();
         try {
@@ -466,7 +447,7 @@ public class TaskServicesImpl implements TaskServices {
                 validator.validateAction(taskAction);
 
                 taskMgr.performActionOnTaskInstance(action, instanceId, user.getId(), assigneeId, comment,
-                        destination, false, query != null && !query.getBooleanFilter("disableEndpoint"));
+                        destination, true, false);
 
                 if (logger.isDebugEnabled())
                     logger.debug("Performed action: " + action + " on task instance: " + instanceId);

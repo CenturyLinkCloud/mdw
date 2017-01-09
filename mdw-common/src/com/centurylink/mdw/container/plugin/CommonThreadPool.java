@@ -54,7 +54,6 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
         loadWorker(WORKER_LISTENER);
         loadWorker(WORKER_SCHEDULER);
         loadWorker(WORKER_MONITOR);
-        loadWorker(WORKER_TESTING);
         adjustThreads();
         BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<Runnable>(work_queue_size);
         ThreadFactory thread_factory = new MyThreadFactory();

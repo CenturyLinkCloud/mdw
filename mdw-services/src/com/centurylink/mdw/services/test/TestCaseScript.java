@@ -42,6 +42,8 @@ import groovy.util.slurpersupport.GPathResult;
 
 public abstract class TestCaseScript extends Script {
 
+    public boolean isOnServer() { return true; }  // always true for server-run testing
+
     // values for placeholder access
     public String getMasterRequestId() {
         return getTestCaseRun().getMasterRequestId();
@@ -214,7 +216,11 @@ public abstract class TestCaseScript extends Script {
     public Asset getDefaultExpectedResults(TestCaseProcess process) throws TestException {
         String testAssetName = getTestCaseRun().getTestCase().getName();
         String resultsAssetName = testAssetName.substring(0, testAssetName.lastIndexOf('.')) + Asset.getFileExtension(Asset.YAML);
-        return asset(resultsAssetName);
+        Asset expectedResults = new Asset();
+        expectedResults.setName(resultsAssetName);
+        String testAssetFile = getTestCaseRun().getTestCase().getAsset().getFile().toString();
+        expectedResults.setRawFile(new File(testAssetFile.substring(0, testAssetFile.lastIndexOf('.')) + Asset.getFileExtension(Asset.YAML)));
+        return expectedResults;
     }
 
     public TestCaseResponse send(String payload) throws TestException {

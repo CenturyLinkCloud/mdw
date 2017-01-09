@@ -3,15 +3,19 @@
 
 var testingMod = angular.module('testing', ['ngResource', 'mdw']);
 
-testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util', 'AutomatedTests', 'TestExec', 'TestConfig',
-                                         function($scope, $websocket, mdw, util, AutomatedTests, TestExec, TestConfig) {
+testingMod.controller('TestsController', 
+    ['$scope', '$websocket', '$cookieStore', 'mdw', 'util', 'AutomatedTests', 'TestsExec', 'TestsCancel', 'TestConfig',
+    function($scope, $websocket, $cookieStore, mdw, util, AutomatedTests, TestsExec, TestsCancel, TestConfig) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
+    $scope.testCaseCount = 0;
     $scope.testCaseList.packages.forEach(function(pkg) {
       pkg.selected = false;
       pkg.testCases.forEach(function(tc) {
         tc.baseName = tc.name.substring(0, tc.name.lastIndexOf('.'));
+        $scope.testCaseCount++;
       });
+      $scope.applyPkgCollapsedState();
     });
   });
 
@@ -28,6 +32,9 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
   };
   $scope.errored = function() {
     return $scope.forStatus('Errored');
+  };
+  $scope.stopped = function() {
+    return $scope.forStatus('Stopped');
   };
   $scope.forStatus = function(status) {
     var matched = [];
@@ -62,6 +69,39 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
     $scope.selectedState.all = false;
   };
   
+  $scope.collapse = function(pkg) {
+    pkg.collapsed = true;
+    $scope.savePkgCollapsedState();
+  };
+  $scope.expand = function(pkg) {
+    pkg.collapsed = false;
+    $scope.savePkgCollapsedState();
+  };
+  $scope.savePkgCollapsedState = function() {
+    var st = {};
+    $scope.testCaseList.packages.forEach(function(pkg) {
+      if (pkg.collapsed)
+        st[pkg.name] = true;
+    });
+    $cookieStore.put('pkgCollapsedState', st);
+  };
+  $scope.applyPkgCollapsedState = function() {
+    var st = $cookieStore.get('pkgCollapsedState');
+    if (st) {
+      util.getProperties(st).forEach(function(pkgName) {
+        var col = st[pkgName];
+        if (col === true) {
+          for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
+            if (pkgName == $scope.testCaseList.packages[i].name) {
+              $scope.testCaseList.packages[i].collapsed = true;
+              break;
+            }
+          }
+        }
+      });
+    }
+  };
+  
   $scope.runTests = function() {
     var execTestPkgs = [];
     var pkgObj;
@@ -86,19 +126,33 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
     }
     
     TestConfig.put({}, $scope.config, function success() {
-      TestExec.run({}, {packages: execTestPkgs}, function(data) {
+      TestsExec.run({}, {packages: execTestPkgs}, function(data) {
         if (data.status.code !== 0) {
-          $scope.testExecMessage = data.status.message;
+          $scope.testsExecMessage = data.status.message;
         }
         else {
-          $scope.testExecMessage = null;
+          $scope.testsExecMessage = null;
         }
       }, 
       function(error) {
-        $scope.testExecMessage = error.data.status.message;
+        $scope.testsExecMessage = error.data.status.message;
       });
     });
   };
+  
+  $scope.cancelTests = function() {
+    TestsCancel.run({}, {}, function(data) {
+      if (data.status.code !== 0) {
+        $scope.testExecMessage = data.status.message;
+      }
+      else {
+        $scope.testExecMessage = null;
+      }
+    }, 
+    function(error) {
+      $scope.testExecMessage = error.data.status.message;
+    });
+  };  
   
   $scope.acceptUpdates = function() {
     $scope.dataStream = $websocket(mdw.autoTestWebSocketUrl);
@@ -139,8 +193,8 @@ testingMod.controller('TestsController', ['$scope', '$websocket', 'mdw', 'util',
     $scope.acceptUpdates();  // substituted value should be websocket url
 }]);
 
-testingMod.controller('TestController', ['$scope', '$routeParams', '$q', 'AutomatedTests', 'TestCase',
-                                         function($scope, $routeParams, $q, AutomatedTests, TestCase) {
+testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$location', 'AutomatedTests', 'TestCase', 'TestExec',
+                                         function($scope, $routeParams, $q, $location, AutomatedTests, TestCase, TestExec) {
   $scope.testCase = AutomatedTests.get({packageName: $routeParams.packageName, testCaseName: $routeParams.testCaseName}, function(testCaseData) {
     
     $scope.testCasePackage = $routeParams.packageName;
@@ -176,11 +230,23 @@ testingMod.controller('TestController', ['$scope', '$routeParams', '$q', 'Automa
     }
   });
   
-  $scope.selectResource = function(resource) {
+  $scope.runTest = function(testPkg, testName) {
+    TestExec.run({packageName: testPkg, testCaseName: testName }, {}, function(data) {
+      if (data.status.code !== 0) {
+        $scope.testExecMessage = data.status.message;
+      }
+      else {
+        $scope.testExecMessage = null;
+        $location.path('/tests');        
+      }
+    }, 
+    function(error) {
+      $scope.testExecMessage = error.data.status.message;
+    });
   };
 }]);
 
-testingMod.filter('links', function($sce) {
+testingMod.filter('assetLinks', function($sce) {
   return function(input, pkg) {
     if (input) {
       var start = '<span class="hljs-string">"';
@@ -203,6 +269,28 @@ testingMod.filter('links', function($sce) {
             match = regex.exec(line);
           }
           output += line.substring(stop) + '\n';
+        }
+        else {
+          output += line + '\n';
+        }
+      });
+      return output;
+    }
+    
+    return input;
+  };
+}).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
+
+testingMod.filter('instanceLinks', function($sce) {
+  return function(input) {
+    if (input) {
+      var start = '<span class="mdw-diff-ignored"># ';
+      var end = '</span>';
+      var output = '';
+      input.getLines().forEach(function(line) {
+        if (line.startsWith('process: ' + start)) {
+          var procInstId = line.substring(start.length + 9, line.length - end.length);
+          output += 'process: ' + start + '<a href="#/workflow/processes/' +  procInstId + '">' + procInstId + '</a>' + end + '\n';
         }
         else {
           output += line + '\n';
@@ -296,8 +384,20 @@ testingMod.factory('AutomatedTests', ['$resource', 'mdw', function($resource, md
   });
 }]);
 
-testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
+testingMod.factory('TestsExec', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/exec', mdw.serviceParams(), {
+    run: { method: 'POST' }
+  });
+}]);
+
+testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName', mdw.serviceParams(), {
+    run: { method: 'POST' }
+  });
+}]);
+
+testingMod.factory('TestsCancel', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/cancel', mdw.serviceParams(), {
     run: { method: 'POST' }
   });
 }]);

@@ -6,22 +6,41 @@ package com.centurylink.mdw.services.test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.xml.bind.DatatypeConverter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.container.ThreadPoolProvider;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.file.PackageDir;
+import com.centurylink.mdw.listeners.startup.StartupRegistry;
+import com.centurylink.mdw.model.event.AdapterStubRequest;
+import com.centurylink.mdw.model.event.AdapterStubResponse;
+import com.centurylink.mdw.model.workflow.ActivityStubRequest;
+import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.provider.StartupService;
+import com.centurylink.mdw.services.ProcessException;
+import com.centurylink.mdw.services.messenger.InternalMessenger;
+import com.centurylink.mdw.services.messenger.MessengerFactory;
+import com.centurylink.mdw.services.test.StubServer.Stubber;
+import com.centurylink.mdw.test.PackageTests;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCase.Status;
 import com.centurylink.mdw.test.TestCaseList;
@@ -38,6 +57,7 @@ public class TestRunner implements Runnable {
     private static final int PAUSE = 2500;
     private static LogMessageMonitor monitor;
 
+    private ExecutorService threadPool; // using common thread pool causes deadlock
     private TestCaseList testCaseList;
     private String user;
     private File resultsFile;
@@ -45,8 +65,33 @@ public class TestRunner implements Runnable {
 
     private Map<String,Process> processCache;
     private Map<String,TestCase.Status> testCaseStatuses;
+    private Map<String,TestCaseRun> masterRequestRuns;
 
-    public TestRunner(TestCaseList testCaseList, String user, File resultsFile, TestExecConfig config) {
+    private boolean running;
+    public boolean isRunning() {
+        return running;
+    }
+    public void terminate() {
+        if (running) {
+            running = false;
+            if (testCaseList != null) {
+                try {
+                    Thread.sleep(PAUSE * 2);
+                    for (TestCase testCase : testCaseList.getTestCases()) {
+                        if (testCase.getStatus() == Status.InProgress)
+                            testCase.setStatus(Status.Stopped);
+                    }
+                    updateResults();
+                }
+                catch (Exception ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                }
+            }
+
+        }
+    }
+
+    public void init(TestCaseList testCaseList, String user, File resultsFile, TestExecConfig config) {
         this.testCaseList = testCaseList;
         this.user = user;
         this.resultsFile = resultsFile;
@@ -55,9 +100,12 @@ public class TestRunner implements Runnable {
 
     public void run() {
 
-        ThreadPoolProvider threadPool = ApplicationContext.getThreadPoolProvider();
+        threadPool = Executors.newFixedThreadPool(config.getThreads());
         processCache = new HashMap<String,Process>();
         testCaseStatuses = new HashMap<String,TestCase.Status>();
+        masterRequestRuns = new HashMap<String,TestCaseRun>();
+
+        running = true;
 
         try {
             if (monitor == null || monitor.isClosed()) {
@@ -65,36 +113,69 @@ public class TestRunner implements Runnable {
                 monitor.start(true);
             }
 
+            // socket client
+            setLogWatchState(true);
+
+            if (StubServer.isRunning())
+                StubServer.stop();
+            if (config.isStubbing())
+                StubServer.start(new TestStubber());
+
+            // stubbing
+            setStubServerState(config.isStubbing());
+
+            // clear statutes for selected tests
+            initResults();
+
             for (TestCase testCase : testCaseList.getTestCases()) {
-                String masterRequestId = user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
-                TestCaseRun run = new TestCaseRun(testCase, user, resultsFile.getParentFile(), 0, masterRequestId, monitor, processCache, config);
-                logger.info(" -> Executing test: " + testCase.getPath());
-                if (!threadPool.execute(ThreadPoolProvider.WORKER_TESTING, getClass().getSimpleName(), run))
-                    throw new IllegalStateException("No available thread: " + ThreadPoolProvider.WORKER_TESTING);
-                if (updateResults())
+                if (!running)
                     return;
 
-                try {
-                    Thread.sleep(config.getInterval() * 1000);
-                }
-                catch (InterruptedException e) {
-                }
+                String masterRequestId = user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
+                TestCaseRun run = new TestCaseRun(testCase, user, resultsFile.getParentFile(), 0, masterRequestId, monitor, processCache, config);
+                masterRequestRuns.put(masterRequestId, run);
+
+                logger.debug(" -> Executing test: " + testCase.getPath());
+                threadPool.execute(run);
+
+                if (updateResults() || !running)
+                    return;
+
+                Thread.sleep(config.getInterval() * 1000);
             }
 
+            // wait for all tests to finish
             do {
-                try {
-                    Thread.sleep(PAUSE); // pause at least once to too-quick socket shutdown
-                }
-                catch (InterruptedException e) {
-                }
-            } while (!updateResults());
+                Thread.sleep(PAUSE); // pause at least once to avoid too-quick socket shutdown
+            } while (!updateResults() && running);
+
+            setLogWatchState(false);
+            setStubServerState(false);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
         }
         finally {
+            running = false;
+            threadPool.shutdown();
+            if (StubServer.isRunning())
+                StubServer.stop();
             if (monitor != null)
                 monitor.shutdown();
+        }
+    }
+
+    private void initResults() throws JSONException, IOException {
+        for (TestCase testCase : testCaseList.getTestCases()) {
+            testCase.setStatus(null);
+            testCaseStatuses.put(testCase.getPath(), null);
+            if (resultsFile.getName().endsWith(".xml")) {
+                writeTestResultsXml(testCase);
+            }
+            else {
+                TestCaseList testCaseList = writeTestResults(testCase);
+                updateWebSocket(testCaseList);
+            }
         }
     }
 
@@ -102,7 +183,9 @@ public class TestRunner implements Runnable {
      * Returns true if all done.
      */
     private synchronized boolean updateResults() throws JSONException, IOException {
+
         boolean allDone = true;
+        TestCaseList fullTestCaseList = null;
         for (TestCase testCase : testCaseList.getTestCases()) {
             if (!testCase.isFinished())
                 allDone = false;
@@ -110,33 +193,61 @@ public class TestRunner implements Runnable {
             boolean statusChanged = oldStatus != testCase.getStatus();
             testCaseStatuses.put(testCase.getPath(), testCase.getStatus());
             if (statusChanged) {
-                if (statusChanged) {
-                    if (resultsFile.getName().endsWith(".xml"))
-                        writeTestResultsXml(testCase);
-                    else
-                        writeTestResults(testCase);
+                if (resultsFile.getName().endsWith(".xml")) {
+                    writeTestResultsXml(testCase);
+                }
+                else {
+                    fullTestCaseList = writeTestResults(testCase);
                 }
             }
         }
+        if (allDone && fullTestCaseList != null)
+            updateWebSocket(fullTestCaseList);
         return allDone;
     }
 
-    public void writeTestResults(TestCase exeTestCase) throws JSONException, IOException {
+    /**
+     * force immediate update through WebSocket
+     */
+    private void updateWebSocket(TestCaseList testCaseList) {
+
+        StartupService webSocketServer = StartupRegistry.getInstance()
+                .getDynamicStartupService("com.centurylink.mdw.testing.WebSocketServer");
+        if (webSocketServer != null) {
+            try {
+                Method m = webSocketServer.getClass().getMethod("send", new Class[]{String.class});
+                m.invoke(webSocketServer, new Object[]{testCaseList.getJson().toString(2)});
+            }
+            catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
+            }
+        }
+    }
+
+    public TestCaseList writeTestResults(TestCase exeTestCase) throws JSONException, IOException {
         if (!resultsFile.exists())
             writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
         String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
-        TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
-        TestCase testCase = testCaseList.getTestCase(exeTestCase.getPath());
+        TestCaseList fullTestCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
+        PackageTests pkgTests = fullTestCaseList.getPackageTests(exeTestCase.getPackage());
+        if (pkgTests == null) {
+            pkgTests = new PackageTests(new PackageDir(ApplicationContext.getAssetRoot(), exeTestCase.getPackage(), null));
+            pkgTests.setTestCases(new ArrayList<TestCase>());
+            fullTestCaseList.addPackageTests(pkgTests);
+        }
+        TestCase testCase = fullTestCaseList.getTestCase(exeTestCase.getPath());
         if (testCase == null)
-            testCase = testCaseList.addTestCase(exeTestCase);
+            testCase = fullTestCaseList.addTestCase(exeTestCase);
         if (testCase != null) {
             testCase.setStatus(exeTestCase.getStatus());
             testCase.setStart(exeTestCase.getStart());
             testCase.setEnd(exeTestCase.getEnd());
             testCase.setMessage(exeTestCase.getMessage());
-            testCaseList.setCount(testCaseList.getTestCases().size());
-            writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
+            fullTestCaseList.setCount(fullTestCaseList.getTestCases().size());
+            fullTestCaseList.sort();
+            writeFile(resultsFile, fullTestCaseList.getJson().toString(2).getBytes());
         }
+        return fullTestCaseList;
     }
 
     public void writeTestResultsXml(TestCase exeTestCase) throws IOException {
@@ -159,8 +270,7 @@ public class TestRunner implements Runnable {
             if (start != null) {
                 Calendar startCal = Calendar.getInstance();
                 startCal.setTime(start);
-                results.append("timestamp=\"").append(DatatypeConverter.printDateTime(startCal))
-                        .append("\" ");
+                results.append("timestamp=\"").append(DatatypeConverter.printDateTime(startCal)).append("\" ");
                 Date end = testCase.getEnd();
                 if (end != null) {
                     long ms = end.getTime() - start.getTime();
@@ -223,4 +333,43 @@ public class TestRunner implements Runnable {
         }
     }
 
+    private void setLogWatchState(boolean on) throws JSONException, ProcessException, UnknownHostException {
+        JSONObject json = new JSONObject();
+        json.put("ACTION", "REFRESH_PROPERTY");
+        json.put("NAME", PropertyNames.MDW_LOGGING_WATCHER);
+        json.put("VALUE", on ? InetAddress.getLocalHost().getHostAddress() : "");
+        InternalMessenger messenger = MessengerFactory.newInternalMessenger();
+        messenger.broadcastMessage(json.toString());
+    }
+
+    private void setStubServerState(boolean on) throws JSONException, ProcessException, UnknownHostException {
+        JSONObject json = new JSONObject();
+        json.put("ACTION", "REFRESH_PROPERTY");
+        json.put("NAME", PropertyNames.MDW_STUB_SERVER);
+        json.put("VALUE", on ?  InetAddress.getLocalHost().getHostAddress() : "");
+        InternalMessenger messenger = MessengerFactory.newInternalMessenger();
+        messenger.broadcastMessage(json.toString());
+    }
+
+    private class TestStubber implements Stubber {
+        public ActivityStubResponse processRequest(ActivityStubRequest request) throws JSONException {
+            TestCaseRun run = masterRequestRuns.get(request.getRuntimeContext().getMasterRequestId());
+            if (run == null) {
+                ActivityStubResponse activityStubResponse = new ActivityStubResponse();
+                activityStubResponse.setPassthrough(true);
+                return activityStubResponse;
+            }
+            return run.getStubResponse(request);
+        }
+
+        public AdapterStubResponse processRequest(AdapterStubRequest request) throws JSONException {
+            TestCaseRun run = masterRequestRuns.get(request.getMasterRequestId());
+            if (run == null) {
+                AdapterStubResponse stubResponse = new AdapterStubResponse(AdapterActivity.MAKE_ACTUAL_CALL);
+                stubResponse.setPassthrough(true);
+                return stubResponse;
+            }
+            return run.getStubResponse(request);
+        }
+    }
 }

@@ -3,6 +3,10 @@
  */
 package com.centurylink.mdw.service.data;
 
+import static com.mongodb.client.model.Projections.excludeId;
+import static com.mongodb.client.model.Projections.fields;
+import static com.mongodb.client.model.Projections.include;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -11,6 +15,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.bson.json.JsonWriterSettings;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
@@ -23,6 +29,8 @@ import com.centurylink.mdw.model.request.RequestList;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.util.timer.CodeTimer;
+import com.mongodb.client.MongoCollection;
 
 public class RequestDataAccess extends CommonDataAccess {
 
@@ -211,11 +219,27 @@ public class RequestDataAccess extends CommonDataAccess {
                 ownerType = rs.getString("owner_type");
                 ownerId = rs.getLong("owner_id");
                 if (withContent) {
-                    // TODO mongo
-                    query = "select content from document_content where document_id = ?";
-                    rs = db.runSelect(query, id);
-                    if (rs.next())
-                        request.setContent(rs.getString("content"));
+                    boolean foundInMongo = false;
+                    if (DatabaseAccess.getMongoDb() != null) {
+                        CodeTimer timer = new CodeTimer("Load mongodb doc", true);
+                        MongoCollection<org.bson.Document> mongoCollection = DatabaseAccess.getMongoDb().getCollection(ownerType);
+                        org.bson.Document mongoQuery = new org.bson.Document("_id", id);
+                        org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
+                        if (c != null) {
+                            if (c.getBoolean("isJSON", false))
+                                request.setContent(c.get("CONTENT", org.bson.Document.class).toJson(new JsonWriterSettings(true)));
+                            else
+                                request.setContent(c.getString("CONTENT"));
+                            foundInMongo = true;
+                        }
+                        timer.stopAndLogTiming(null);
+                    }
+                    if (!foundInMongo) {
+                        query = "select content from document_content where document_id = ?";
+                        rs = db.runSelect(query, id);
+                        if (rs.next())
+                            request.setContent(rs.getString("content"));
+                    }
                 }
             }
             else {
@@ -224,24 +248,43 @@ public class RequestDataAccess extends CommonDataAccess {
 
             ResultSet responseRs = null;
             String responseQuery = "select document_id, create_dt";
+            String responseOwnerType = null;
             if (OwnerType.ADAPTER_REQUEST.equals(ownerType) && ownerId != null) {
+                responseOwnerType = OwnerType.ADAPTER_RESPONSE;
                 request.setOutbound(true);
-                responseQuery += " from document where owner_type='" + OwnerType.ADAPTER_RESPONSE + "' and owner_id = ?";
+                responseQuery += " from document where owner_type='" + responseOwnerType + "' and owner_id = ?";
                 responseRs = db.runSelect(responseQuery, ownerId);
             }
             else if (OwnerType.LISTENER_REQUEST.equals(ownerType)) {
-                responseQuery += " from document where owner_type='" + OwnerType.LISTENER_RESPONSE + "' and owner_id = ?";
+                responseOwnerType = OwnerType.LISTENER_RESPONSE;
+                responseQuery += " from document where owner_type='" + responseOwnerType + "' and owner_id = ?";
                 responseRs = db.runSelect(responseQuery, ownerId);
             }
             if (responseRs != null && responseRs.next()) {
                 request.setResponseId(responseRs.getLong("document_id"));
                 request.setResponded(responseRs.getTimestamp("create_dt"));
                 if (withResponseContent) {
-                    // TODO mongo
-                    query = "select content from document_content where document_id = ?";
-                    responseRs = db.runSelect(query, request.getResponseId());
-                    if (responseRs.next())
-                        request.setResponseContent(responseRs.getString("content"));
+                    boolean foundInMongo = false;
+                    if (DatabaseAccess.getMongoDb() != null) {
+                        CodeTimer timer = new CodeTimer("Load mongodb doc", true);
+                        MongoCollection<org.bson.Document> mongoCollection = DatabaseAccess.getMongoDb().getCollection(responseOwnerType);
+                        org.bson.Document mongoQuery = new org.bson.Document("_id", request.getResponseId());
+                        org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
+                        if (c != null) {
+                            if (c.getBoolean("isJSON", false))
+                                request.setContent(c.get("CONTENT", org.bson.Document.class).toJson(new JsonWriterSettings(true)));
+                            else
+                                request.setContent(c.getString("CONTENT"));
+                            foundInMongo = true;
+                        }
+                        timer.stopAndLogTiming(null);
+                    }
+                    if (!foundInMongo) {
+                        query = "select content from document_content where document_id = ?";
+                        responseRs = db.runSelect(query, request.getResponseId());
+                        if (responseRs.next())
+                            request.setResponseContent(responseRs.getString("content"));
+                    }
                 }
             }
 

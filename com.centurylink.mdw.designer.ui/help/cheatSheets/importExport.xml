@@ -1,0 +1,107 @@
+<cheatsheet
+  title="Importing, Exporting and Versioning">
+  <intro>
+    <description>
+      Note: This Cheat Sheet applies to the original XML export/import mechanism.  If using VCS-based asset persistence,
+      see the document under Eclipse Help > Help Contents > MDW Designer Help > Designer/Process Definition > Asset Persistence.
+      <br/><br/>
+      The mechanism provided by MDW for migrating process changes and workflow assets between environments
+      consists of an export/import procedure.  Understanding MDW process versioning is critical to correct
+      usage of the import/export functionality.  MDW process versions and assets are incremented at the
+      discretion of whoever designs and saves the process or resource.  These process versions are consistent
+      across environments, so version 1.1 of MyProcess in Test/QA should be identical to version
+      1.1 of MyProcess in Production.  This version synchronization can be defeated by editing and
+      saving processes directly in non-development environments, so this should be avoided.  Best
+      practice is to design your processes entirely in a Development environment, and then export
+      them to version-controlled XML files which can be imported into other environments.
+      <br/><br/>
+      In order to export your processes and workflow assets, you must arrange them into
+      packages.  In the Eclipse Process Explorer view, this is as simple as dragging and dropping them
+      into the desired packages.  Like process versions, package versions are consistent across disparate
+      environments.  However, unlike process versions, the user does not explicitly control the incrementing
+      of package version numbers.  Whenever a package is exported, it is flagged internally as a checkpoint.
+      After this, any changes to the package or its processes will result in a new version of the package
+      (with the old version being automatically saved in the project archive).
+      You can manually force a package version to be incremented by right-clicking on the package in
+      Process Explorer and selecting "Increment Version" from the menu.
+      <br/><br/>
+      The MDW plug-in provides a straightforward user interface for exporting and importing process definitions.
+      The following steps walk you through the process of exporting from a development environment and importing
+      to another environment such as Test/QA.
+    </description>
+  </intro>
+  <item
+    title="Exporting from Your Development Environment"
+    skip="true">
+    <description>
+      Exporting of processes and workflow assets is performed at the package level.  If your processes
+      are currently in the default package, they must be moved to a named package to be exported.  To create
+      a named package, make sure your current perspective in Eclipse is the MDW Designer perspective.  Then
+      either click on the "New Package" toolbar icon at the top of Process Explorer, or right-click on the workflow project
+      in Process Explorer and select New > MDW Package.  Once the new package has been created, you can drag and
+      drop your processes, assets, and event handlers into it. 
+      <br/><br/> 
+      To launch the Export Wizard, right click on the package in Process Explorer and select Export... from the menu.
+      The wizard will prompt you for a location and filename where the exported package definition will be saved.
+      Once the export file has been created, it can be checked into version control prior to importing into another environment.
+      <br/><br/>
+      Note: In the Eclipse export procedure, the activity implementors referenced by your processes are automatically
+      determined at the time of export, and are included in the resulting XML. 
+    </description>
+  </item>
+  <item
+    title="Tagging Package Versions"
+    skip="true">
+    <description>
+      As with most version control systems, in MDW you have the ability to tag specific workflow package versions.
+      In practice this is most useful for associating designated package versions with a particular software release.
+      For example, you might tag Package A v0.3 and Package B v0.5 as R1 to indicate that these are part of 
+      Release 1 of your application. 
+      <br/><br/> 
+      To tag package versions, right-click on the selected packages in Process Explorer and select Tag Version... from the menu.
+      You'll be presented with a dialog confirming the selected packages where you can type in the tag value to associate.
+      If the selected packages are not already flagged as exported, tagging will automatically set this flag to true 
+      (indicating) that any future changes to the package will force the package version to increment.
+    </description>
+  </item>  
+  <item
+    title="Importing into Remote Environments"
+    skip="true">
+    <description>
+      To be able to import process definitions into an environment in Eclipse, you'll need to have it configured as a 
+      Remote Project (see the cheat sheet entitled "Remote Projects" for information on how to set up this access).
+      Once the remote project shows up in your Process Explorer view, you can right-click on the project and select
+      Import..., which will launch the Import Wizard.  Note: the Import option will not appear in your
+      right-click menu if you are not authorized to make process modifications in the target environment.  Modifications
+      are permitted for users belonging to the "Process Design" role.  Maintaining user groups and roles is accomplished
+      using MDW Task Manager, which can be launched by right-clicking on the workflow project and selecting MDW Web > Task Manager.
+      <br/><br/>
+      Typically MDW external event handlers are configured to launch the latest active process definition in a particular
+      environment, so newly-launched processes should automatically use the newly-imported process definition.  In-flight
+      process instances will continue to execute in accordance with the process definition which was in effect at the time
+      they were launched.  As mentioned above, the previously active process and package definitions are not automatically
+      deleted, so they will continue to be accessible to in-flight process instances.
+      <br/><br/>
+      Note: In addition to this manual import procedure there is also a command-line utility available to facilitate
+      automated import into a given environment.  The file com.centurylink.mdw.designer.core_x.x.x.jar from your Eclipse 
+      plugins directory has all the necessary classes for this purpose.  Here's an example Windows batch file that illustrates
+      how to perform the import from the command line:
+      <br/><br/>
+      @echo off
+      <br/><br/>
+      rem extract classes and lib directories from com.centurylink.mdw.designer.core_x.x.x.jar into pwd
+      <br/><br/>
+      rem arguments: &lt;user&gt; &lt;password&gt; &lt;jdbcUrl|fileBasedRootDir&gt; &lt;xmlFile&gt; &lt;overwrite=(true|FALSE)&gt;
+      <br/><br/>
+      set CLASSPATH=.\com.centurylink.mdw.designer.core_8.3.8.jar;.\classes;.\lib\mbeng-7.1.0.jar;.\lib\xbean-2.4.0_ctl.jar;.\lib\AccessControl-6.8.jar;.\lib\log4j-1.2.15.jar;.\lib\ct_runtime_api-6.0.2.49.jar;.\lib\jsafeJCE-6.0.2.49.jar;.\lib\ojdbc6-11.2.0.3.jar;.\lib\mdw-schemas-5.2.jar;.\lib\json-20090211.jar
+      <br/><br/>
+      java com.centurylink.mdw.designer.Importer mdwapp ldap_012 jdbc:oracle:thin:mdw/mdw@mdwdevdb.dev.qintra.com:1594:mdwdev "e:\temp\Export Import-1.1.04.xml" overwrite=true
+      <br/><br/>
+      rem (Note: The imported XML location can also be a URL pointing to an XML file hosted in a maven repository).
+      rem (Note: For File/VCS-Based Assets replace the JDBC URL with the base directory for asset storage). 
+    </description>
+    <onCompletion>
+      You've successfully exported and imported an MDW workflow package.
+    </onCompletion>
+  </item>
+</cheatsheet>

@@ -60,17 +60,23 @@ public class AutomatedTests extends JsonRestService {
         TestingServices testingServices = ServiceLocator.getTestingServices();
         TestExecConfig config = testingServices.getTestExecConfig();
         String user = getAuthUser(headers);
-        TestCase singleCase = getTestCase(getSegments(path));
-        try {
-            if (singleCase != null) {
-                testingServices.executeCase(singleCase, user, config);
-            }
-            else {
-                testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
-            }
+        String[] segments = getSegments(path);
+        if (segments[5].equals("cancel")) {
+            testingServices.cancelTestExecution(user);
         }
-        catch (IOException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+        else {
+            TestCase singleCase = getTestCase(segments);
+            try {
+                if (singleCase != null) {
+                    testingServices.executeCase(singleCase, user, config);
+                }
+                else {
+                    testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
+                }
+            }
+            catch (IOException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+            }
         }
         return null;
     }

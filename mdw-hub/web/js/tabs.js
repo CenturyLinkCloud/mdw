@@ -10,7 +10,7 @@ tabsSvc.factory('tabs', ['mdw', function(mdw) {
         id: 'workflowTab',
         label: 'Workflow',
         url: '#/workflow/processes',
-        routes: ['/workflow', '/solutions']
+        routes: ['/workflow', '/solutions', '/workflow/processes']
       },
       {
         id: 'dashboardTab',

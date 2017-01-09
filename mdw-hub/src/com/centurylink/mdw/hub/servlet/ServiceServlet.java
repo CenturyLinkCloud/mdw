@@ -112,11 +112,8 @@ public abstract class ServiceServlet extends HttpServlet {
     protected void authenticate(HttpServletRequest request, Map<String,String> headers) throws ServiceException {
         headers.remove(Listener.AUTHENTICATED_USER_HEADER); // only we should populate this
         if (headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME) || headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase())) {
-            // perform http basic auth
-            if (!AuthUtils.authenticate(headers, AuthUtils.HTTP_BASIC_AUTHENTICATION)) {
-                headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
-                throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
-            }
+            // perform http basic auth, which populatest the auth user header
+            AuthUtils.authenticate(headers, AuthUtils.HTTP_BASIC_AUTHENTICATION);
         }
         else {
             // check for user authenticated in session
@@ -125,21 +122,27 @@ public abstract class ServiceServlet extends HttpServlet {
                 headers.put(Listener.AUTHENTICATED_USER_HEADER, user.getCuid());
         }
 
-        if (ApplicationContext.isDevelopment() && headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
-            // auth failed or not provided but allow dev override
-            if (ApplicationContext.getDevUser() != null) {
-                headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getDevUser());
-                if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
-                    headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
+        if (headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
+            if (ApplicationContext.isDevelopment() && headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
+                // auth failed or not provided but allow dev override
+                if (ApplicationContext.getDevUser() != null) {
+                    headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getDevUser());
+                    if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
+                        headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
+                }
             }
-        }
-        else if (ApplicationContext.isServiceApiOpen() && headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
-          // auth failed or not provided but allow service user override
-          if (ApplicationContext.getServiceUser() != null) {
-              headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getServiceUser());
-              if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
-                  headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
-          }
+            else if (ApplicationContext.isServiceApiOpen() && headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
+              // auth failed or not provided but allow service user override
+              if (ApplicationContext.getServiceUser() != null) {
+                  headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getServiceUser());
+                  if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
+                      headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
+              }
+            }
+            else {
+                headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
+                throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
+            }
         }
     }
 

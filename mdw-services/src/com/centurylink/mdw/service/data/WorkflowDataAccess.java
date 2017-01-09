@@ -80,12 +80,14 @@ public class WorkflowDataAccess extends CommonDataAccess {
         long instanceId = query.getLongFilter("instanceId");
         if (instanceId > 0)
             return "where pi.process_instance_id = " + instanceId + "\n"; // ignore other criteria
-        String masterRequestId = query.getFilter("masterRequestId");
-        if (masterRequestId != null)
-            return "where pi.master_request_id = '" + masterRequestId + "'\n"; // ignore other criteria
 
         StringBuilder sb = new StringBuilder();
         sb.append("where 1 = 1 ");
+
+        // masterRequestId
+        String masterRequestId = query.getFilter("masterRequestId");
+        if (masterRequestId != null)
+            sb.append(" and pi.master_request_id = '" + masterRequestId + "'\n");
 
         String owner = query.getFilter("owner");
         if (owner == null) {

@@ -1,0 +1,9 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.project.model.* com.centurylink.mdw.plugin.preferences.model.*"
+        class="CloudApplicationPropertiesXmlEmitter" %>
+<% Map map = (Map) argument;
+   WorkflowProject workflowProject = (WorkflowProject) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<?xml version="1.0" encoding="UTF-8"?>
+<ApplicationProperties xmlns="http://mdw.qwest.com/XMLSchema">
+  <!-- this file is replaced by mdw.properties -->
+</ApplicationProperties>

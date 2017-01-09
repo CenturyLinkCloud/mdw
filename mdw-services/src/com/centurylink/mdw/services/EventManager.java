@@ -14,13 +14,13 @@ import com.centurylink.mdw.model.monitor.CertifiedMessage;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.monitor.UnscheduledEvent;
 import com.centurylink.mdw.model.user.UserAction;
-import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.TransitionInstance;
 import com.centurylink.mdw.services.event.ServiceHandler;
 import com.centurylink.mdw.services.event.WorkflowHandler;
@@ -147,7 +147,11 @@ public interface EventManager {
     public Document getDocumentVO(Long documentId)
     throws DataAccessException;
 
+    @Deprecated
     public void updateDocumentContent(Long docid, Object doc, String type)
+    throws DataAccessException;
+
+    public void updateDocumentContent(Long docid, Object doc, String type, Package pkg)
     throws DataAccessException;
 
     public void updateDocumentInfo(Long docid, String documentType, String ownerType, Long ownerId)

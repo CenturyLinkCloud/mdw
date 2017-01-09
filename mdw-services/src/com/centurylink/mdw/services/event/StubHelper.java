@@ -3,6 +3,8 @@
  */
 package com.centurylink.mdw.services.event;
 
+import java.net.InetAddress;
+
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
@@ -32,7 +34,7 @@ public class StubHelper {
         SoccomClient client = null;
         try {
             String[] spec = stubServerSpec.split(":");
-            String host = spec.length > 0 ? spec[0] : AdapterActivity.DEFAULT_STUBBER_HOST;
+            String host = spec.length > 0 ? spec[0] : InetAddress.getLocalHost().getHostAddress();
             String port = spec.length > 1 ? spec[1] : AdapterActivity.DEFAULT_STUBBER_PORT;
             int timeoutSecs = spec.length > 2 ? Integer.parseInt(spec[2]) : AdapterActivity.DEFAULT_STUBBER_TIMEOUT;
             client = new SoccomClient(host, port, null);

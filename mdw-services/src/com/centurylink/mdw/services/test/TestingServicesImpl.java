@@ -28,10 +28,12 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.services.AssetServices;
+import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
 import com.centurylink.mdw.test.PackageTests;
@@ -143,11 +145,11 @@ public class TestingServicesImpl implements TestingServices {
                 if (resultsDir != null) {
                     if (new File(resultsDir + "/" + pkg + "/" + pkgAsset.getName()).isFile())
                         testCase.setActual(pkg + "/" + pkgAsset.getName());
-                    if (new File(resultsDir + "/" + pkg + "/" + pkgAsset.getRootName() + ".log").isFile())
-                        testCase.setExecuteLog(pkg + "/" + pkgAsset.getRootName() + ".log");
                 }
             }
         }
+        if (new File(resultsDir + "/" + pkg + "/" + testCaseAsset.getRootName() + ".log").isFile())
+            testCase.setExecuteLog(pkg + "/" + testCaseAsset.getRootName() + ".log");
         return testCase;
     }
 
@@ -359,16 +361,42 @@ public class TestingServicesImpl implements TestingServices {
     }
 
     public void executeCase(TestCase testCase, String user, TestExecConfig config) throws ServiceException, IOException {
-        // TODO: execute single case
+        AssetServices assetServices = ServiceLocator.getAssetServices();
+        PackageDir pkgDir = assetServices.getPackage(testCase.getPackage());
+        PackageTests pkgTests = new PackageTests(pkgDir);
+        List<PackageTests> packageTests = new ArrayList<PackageTests>();
+        packageTests.add(pkgTests);
+        List<TestCase> testCases = new ArrayList<TestCase>();
+        testCases.add(testCase);
+        pkgTests.setTestCases(testCases);
+        TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
+        testCaseList.setPackageTests(packageTests);
+        testCaseList.setCount(1);
+        executeCases(testCaseList, user, config);
     }
 
+    private static TestRunner testRunner;
     public void executeCases(TestCaseList testCaseList, String user, TestExecConfig config) throws ServiceException, IOException {
         for (TestCase testCase : testCaseList.getTestCases()) {
             if (testCase.getName().endsWith(Asset.getFileExtension(Asset.FEATURE)))
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Cucumber test cases currently not supported: " + testCase.getPath());
         }
-        TestRunner runner = new TestRunner(testCaseList, user, getTestResultsFile(null), config);
-        new Thread(runner).start();
+        if (testRunner == null) {
+            testRunner = new TestRunner();
+        }
+        else if (testRunner.isRunning()) {
+             throw new ServiceException(ServiceException.FORBIDDEN, "Automated tests already running");
+        }
+
+        testRunner.init(testCaseList, user, getTestResultsFile(null), config);
+        new Thread(testRunner).start();
+    }
+
+    public void cancelTestExecution(String user) throws ServiceException {
+        if (testRunner == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Automated tests not running");
+        testRunner.terminate();
+        logger.info("Test execution canceled by: " + user);
     }
 
     private static TestExecConfig testExecConfig = new TestExecConfig(); // default options

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Designer / Process Definition" link_to="toc.xml#designer">
+  <topic label="Processes" href="help/doc/process.html">
+  </topic>
+  <topic label="Variables" href="help/doc/variable.html">
+  </topic>
+  <topic label="Workflow Assets" href="help/doc/workflowAssets.html">
+  </topic>
+  <topic label="Asset Persistence" href="help/doc/assetPersistence.html">
+  </topic>
+  <topic label="Process Start Activity" href="help/doc/ProcessStartActivity.html">
+  </topic>
+  <topic label="Process Finish Activity" href="help/doc/ProcessFinishActivity.html">
+  </topic>
+  <topic label="Event Wait Activity" href="help/doc/EventWaitActivity.html">
+  </topic>
+  <topic label="Invoke Subprocess Activity" href="help/doc/InvokeSubProcessActivity.html">
+  </topic>
+  <topic label="Invoke Multiple Subprocesses" href="help/doc/InvokeMultipleSubprocesses.html">
+  </topic>
+  <topic label="Synchronization Activity" href="help/doc/synchronization.html">
+  </topic>
+  <topic label="Script Activity" href="help/doc/scriptActivity.html">
+  </topic>
+  <topic label="Drools Activity" href="help/doc/droolsActivities.html">
+  </topic>
+  <topic label="Timer Wait Activity" href="help/doc/TimerWaitActivity.html">
+  </topic> 
+  <topic label="JMS Adapter Activity" href="help/doc/JmsAdapter.html">
+  </topic> 
+  <topic label="Synchronous Bus Adapter Activity" href="help/doc/SynchronousBusAdapter.html">
+  </topic> 
+  <topic label="Document Web Service Adapter Activity" href="help/doc/DocWebServiceAdapter.html">
+  </topic> 
+  <topic label="RPC Web Service Adapter Activity" href="help/doc/MDWWebServiceAdapter.html">
+  </topic> 
+  <topic label="RESTful Adapter Activity" href="help/doc/RestfulAdapter.html">
+  </topic>
+  <topic label="OSGi Service Adapter" href="help/doc/OsgiServiceAdapter.html">
+  </topic> 
+  <topic label="Composite Synchronous Adapter Activity" href="help/doc/CompositeSynchronousAdapter.html">
+  </topic> 
+  <topic label="Document Transform Activity" href="help/doc/documentTransform.html">
+  </topic> 
+  <topic label="Notification Activity" href="help/doc/notification.html">
+  </topic> 
+  <topic label="LDAP Adapter Activity" href="help/doc/LdapAdapter.html">
+  </topic> 
+  <topic label="SQL Adapter Activity" href="help/doc/sqlAdapter.html">
+  </topic> 
+  <topic label="Dynamic Java Activity" href="help/doc/dynamicJavaActivity.html">
+  </topic> 
+  <topic label="File Writer Activity" href="help/doc/FileWriterActivity.html">
+  </topic> 
+  <topic label="Crossmap Activity" href="help/doc/crossmap.html">
+  </topic> 
+  <topic label="Magic Box Rule Language" href="help/mbengdoc/language.html">
+  </topic>
+  <topic label="Custom Attributes" href="help/doc/customAttributes.html">
+  </topic>
+  <topic label="Workflow Package Configuration" href="help/doc/packageConfig.html">
+  </topic>
+</toc>

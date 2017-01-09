@@ -257,7 +257,7 @@ CREATE TABLE DOCUMENT
   OWNER_ID            BIGINT          NOT NULL,
   CREATE_DT           TIMESTAMP       NOT NULL,
   MODIFY_DT           DATETIME,
-  STATUS_CODE         TINYINT,
+  STATUS_CODE         SMALLINT,
   STATUS_MESSAGE      VARCHAR(1000)
 ) auto_increment=10000;
 

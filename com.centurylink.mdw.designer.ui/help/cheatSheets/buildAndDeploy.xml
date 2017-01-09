@@ -1,0 +1,157 @@
+<cheatsheet
+  title="Workflow Project Build and Deploy">
+  <intro>
+    <description>
+      MDW Workflow projects leverage Eclipse incremental builds to allow fast 
+      turnaround during local development.
+      <br/><br/>
+      These steps provide a quick rundown of the routine you can follow to efficiently build 
+      and deploy your workflow project.
+    </description>
+  </intro>
+  <item
+    title="Build and Deploy on a JavaEE Server"
+    href="/org.eclipse.jst.j2ee.doc.user/topics/cjearproj.html"
+    skip="true">
+    <description>
+      <b>Perform an Ant Build</b>
+      <br/><br/>
+      If you've just refreshed from source control, or you've made changes to your EJB interfaces 
+      or XSDs, you'll probably need to perform a full Ant build.  This is not usually necessary 
+      during iterative development.
+      <br/><br/>
+      Show the Ant View: Window > Show View > Ant.
+      Then drag your EAR project's build.xml file into the Ant View.
+      Expand the build file outline and double-click the "build" target.
+      <br/><br/>
+      To keep Eclipse in-sync with your file system, select your Source and EAR 
+      projects in Package Explorer, right click and select Refresh. 
+      <br/><br/>
+      <b>Perform an Eclipse Incremental Build</b>
+      <br/><br/>
+      During routine development iterations you can save a great deal of time by performing
+      incremental Eclipse builds.
+      <br/><br/>
+      You may elect to enable Eclipse autobuild (Window > Preferences > General > Workspace > Build automatically).      
+      If you have autobuild turned on, Eclipse will build whenever a file is saved.  The drawback of this 
+      is that it can slow down your editing when you intend to make many changes before attempting
+      to compile.  A workable arrangement is to disable autobuild and enable "Save automatically
+      before build" (on the same preference page as autobuild).  That way ctrl-b will save all your dirty editors and kick off a build.
+      <br/><br/>
+      Some workflow projects contain artifacts that Eclipse has trouble validating.  In this case you
+      can configure Eclipse to skip this validation when building (right-click on the project in
+      Package Explorer and select Properties > Validation > Enable project specific settings
+      and uncheck the applicable Validator options).
+      <br/><br/> 
+      <b>Deploy Your Workflow App EAR Project</b>
+      <br/><br/>
+      The Eclipse Web Tools Platform provides the ability to deploy your enterprise apps using a consistent
+      mechanism regardless of your container vendor.  For example: if the vendor is Oracle,
+      the container may be WebLogic Server.  Your compiled application code and web artifacts are deployed
+      in-place via pointers in a special staging location in your workspace.  This enables you to deploy
+      your local changes with just a few mouse clicks in most cases.  
+      <br/><br/>
+      The workflow EAR project is the entity that gets targeted for deployment.  If you followed the
+      steps in the MDW Dev Startup Guide, you will have created a WebLogic Server domain and associated it
+      with your EAR project.  Assuming your domain exists, you can display it in Eclipse Servers view via:
+      Window > Show View > Other > Server > Servers.  Then right-click on the domain and select
+      Add and Remove Projects.
+      <br/><br/>
+      Once you've made your current deployment obsolete by performing an Eclipse build, you'll notice
+      that in Servers view your domain shows a status of "Republish".  If your server's already running
+      you can republish by right-clicking it and selecting Publish from the context menu.  If not,
+      you will automatically trigger a republish by starting the server via the "Run" icon in its toolbar.
+      <br/><br/>
+      Note: this procedure assumes that you followed the recommendation to "Never publish automatically" when
+      adding your domain to Servers view.  Automatic publishing can quickly become a nuisance because it will
+      trigger an often time-consuming deployment whenever a build is performed.  You can change this
+      setting by double-clicking on the server and selecting the appropriate option under "Publishing".
+      Another useful option here is to "Always start WebLogic Server in debug mode" which will save you
+      having to restart your server if you decide you want to stop at a breakpoint.
+      <br/><br/>
+      When running in debug mode, hot-code replacement is available in Eclipse.  When stepping through your
+      workflow project source code you may discover a bug that's easily fixable.  In that case you can make the
+      changes in the Eclipse Java editor and save and recompile, and the changes may be applied without any need
+      to redeploy.  If necessary the debugger may step back in the code stack to a point where the changes can
+      be applied in a consistent manner.  It should be noted that structural changes such as method renaming
+      cannot be applied via hot-code replacement.    
+    </description>
+    <onCompletion>
+      You've successfully built and deployed your workflow app.
+    </onCompletion>
+  </item>
+  <item
+    title="Build and Deploy on an OSGi Server"
+    href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Tutorials/MdwServiceMixCookbook.html"
+    skip="true">
+    <description>
+      <b>Install the MDW OSGi Bundles in ServiceMix</b>
+      <br/><br/>
+      The precondition to installing the MDW bundles in ServiceMix is to install the framework dependencies.
+      This can be accomplished by typing the following commands on the Karaf command line:
+      <br/>
+        &gt; features:addUrl mvn:com.centurylink.mdw/mdw/5.X.XX/xml/dependencies<br/>
+        &gt; features:install mdw-dependencies
+      <br/><br/>
+      Once the dependencies are installed, you can install the MDW bundles as follows:
+      <br/>
+        &gt; features:addUrl mvn:com.centurylink.mdw/mdw/5.X.XX/xml/features<br/>
+        &gt; features:install mdw
+      <br/><br/>    
+      <b>Perform a Maven Build</b>
+      <br/><br/>
+      For running Maven builds you'll want to have the M2E plugin installed in Eclipse
+      (http://eclipse.org/m2e).
+      <br/><br/>
+      For certain situations, especially when you have generated source code artifacts such as CXF client stubs,
+      you may benefit from having the Maven Build Helper Connector installed.
+      This can be done through the Eclipse menu (Window > Preferences > Maven > Discovery > Open Catalog > buildhelper). 
+      <br/><br/>
+      To perform a Maven build, right-click on your workflow project's pom.xml file in Package Explorer view and select Run As > Maven Build.
+      The first time you perform a build you'll be prompted to select a Maven goal.  A good choice is usually "package".
+      The build produces your OSGi bundle jar file in the target directory of your project.
+      You can inspect the generated jar file in this directory along with its MANIFEST.MF to get a feel for how
+      an OSGi bundle is packaged.  By default the Maven build also merges the mdw property file template
+      (src/main/resources/deploy/config/com.centurylink.mdw.cfg) with your environment-specific settings 
+      (src/main/resources/deploy/env.properties.dev), and writes the output to the etc directory of your ServiceMix instance.
+      This configuration file is required by the MDW Framework runtime engine.  
+      <br/><br/>
+      Note: sometimes it's possible for your Eclipse project dependencies to get out-of-sync with your Maven dependencies.
+      A symptom of this situation could be that your Eclipse Problems view indicates that your project has missing dependencies or can't find class definitions, causing compilation errors.
+      To rectify this you can right-click on the project and select Maven > Update Project Configuration.
+      <br/><br/>
+      <b>Deploy Your Workflow App OSGi Bundle</b>
+      <br/><br/>
+      The easiest way to dynamically deploy your workflow OSGi bundle into ServiceMix is to copy it into the "deploy"
+      directory in your container instance.  Once you've copied your jar file from the "target" directory into the "deploy" directory,
+      you should see output like the following in your Server Console view:<br/>
+      Registering com.centurylink.mdw.common.provider.ActivityProvider with unique alias 'myservicemixActivities' from bundle com.centurylink.myservicemix
+      <br/><br/>
+      Note: for subsequent server startups, to prevent premature deployment of your workflow bundle (before the MDW bundles have successfully deployed), 
+      it's a good idea to set a bundle startup level in ServiceMix.  The syntax from the Karaf command line is as follows:<br/>
+      &gt; bundle-level [bundle_id] 90<br/>
+      This one-time step sets your bundle's startup level to 90, greater than the range of startup levels specified in the MDW feature install file.
+      Note: Anytime you delete the bundle jar file from the deploy directory (rather than overwriting), this setting is forgotten.
+      <br/><br/>
+      <b>Debugging Your OSGi Bundle Source Code</b>
+      <br/><br/>
+      MDW provides the Server Runner utility to start and stop ServiceMix.  To configure Server Runner, right click on your workflow project
+      in Package Explorer view and select Properties > MDW Workflow > MDW Server.  If you enable "Run in Debug Mode" ServiceMix will be passed
+      the appropriate debug options during startup.  Then you can configure an Eclipse Debug Launch Configuration to connect and debug your code.
+      To create a Launch Configuration, note the Debug Port in the MDW Server preferences and then from the menu Select Run > Debug Configurations....
+      Select the Remove Java Application category and click the toolbar button for a new configuration.
+      Name the configuration appropriately and set the Host to "localhost" and the Port to match your selected MDW Server debug port.
+      Click the Debug button to attach to your running server so that your breakpoints will be hit and you can step through code and evaluate variables.
+      <br/><br/>         
+      When attached in debug mode, hot-code replacement is available in Eclipse.  When stepping through your
+      workflow project source code you may discover a bug that's easily fixable.  In that case you can make the
+      changes in the Eclipse Java editor and save and recompile, and the changes may be applied without any need
+      to redeploy.  If necessary the debugger may step back in the code stack to a point where the changes can
+      be applied in a consistent manner.  It should be noted that structural changes such as method renaming
+      cannot be applied via hot-code replacement.    
+    </description>
+    <onCompletion>
+      You've successfully exported and imported an MDW workflow package.
+    </onCompletion>
+  </item>  
+</cheatsheet>

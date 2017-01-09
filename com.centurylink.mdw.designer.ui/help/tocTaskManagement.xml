@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="MDWHub" link_to="toc.xml#taskManagement"> 
+  <topic label="Manual Task Templates" href="help/doc/taskTemplates.html"> 
+  </topic>
+  <topic label="Custom Web" href="help/doc/customWeb.html">
+  </topic>
+  <topic label="MDWHub Development" href="help/doc/hubdev.html"> 
+  </topic>
+	<topic label="Defining Task Actions" href="help/doc/taskAction.html">
+	</topic>
+  <topic label="Task Notices" href="help/doc/taskNotices.html">
+  </topic>
+  <topic label="Workgroup Routing" href="help/doc/taskRouting.html">
+  </topic>
+  <topic label="MDWHub User Guide" href="http://cshare.ad.qintra.com/sites/MDW/User%20Documentation/MdwHubUserGuide.doc"> 
+  </topic>	
+</toc>

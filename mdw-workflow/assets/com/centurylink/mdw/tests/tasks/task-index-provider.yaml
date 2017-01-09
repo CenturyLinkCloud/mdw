@@ -9,11 +9,13 @@ process: # 13702
       Custom
       ?
     status: Completed
+    result: true    
   activity: # 6 "2016-02-23 09:39:22"
     name: |
       Provider
       ?
     status: Completed
+    result: true    
   activity: # 7 "2016-02-23 09:39:22"
     name: Another Custom Task
     status: Completed

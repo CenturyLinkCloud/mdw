@@ -39,15 +39,15 @@ import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.monitor.UnscheduledEvent;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
-import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Document;
-import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Activity;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.TransitionInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
@@ -208,12 +208,16 @@ public class EventManagerBean implements EventManager {
             if (VariableTranslator.isDocumentReferenceVariable(varInst.getType())) {
                 DocumentReference docref = (DocumentReference)varInst.getData();
                 Document docvo = edao.getDocument(docref.getDocumentId(), false);
-                if (pVariableData instanceof String) docvo.setContent((String)pVariableData);
-                else docvo.setObject(pVariableData, varInst.getType());
+                if (pVariableData instanceof String)
+                    docvo.setContent((String)pVariableData);
+                else
+                    docvo.setObject(pVariableData, varInst.getType());
                 edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent());
             } else {
-                if (pVariableData instanceof String) varInst.setStringValue((String)pVariableData);
-                else varInst.setData(pVariableData);
+                if (pVariableData instanceof String)
+                    varInst.setStringValue((String)pVariableData);
+                else
+                    varInst.setData(pVariableData);
                 edao.updateVariableInstance(varInst);
             }
         } catch (SQLException e) {
@@ -236,8 +240,10 @@ public class EventManagerBean implements EventManager {
             transaction = edao.startTransaction();
             VariableInstance varInst = edao.getVariableInstance(procInstId, name);
             if (varInst != null) {
-                if (value instanceof String) varInst.setStringValue((String)value);
-                else varInst.setData(value);
+                if (value instanceof String)
+                    varInst.setStringValue((String)value);
+                else
+                    varInst.setData(value);
                 edao.updateVariableInstance(varInst);
             } else {
                 if (value != null) {
@@ -660,6 +666,11 @@ public class EventManagerBean implements EventManager {
 
     public void updateDocumentContent(Long docid, Object doc, String type)
     throws DataAccessException {
+        updateDocumentContent(docid, doc, type, null);
+    }
+
+    public void updateDocumentContent(Long docid, Object doc, String type, Package pkg)
+    throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -667,7 +678,7 @@ public class EventManagerBean implements EventManager {
             Document docvo = edao.getDocument(docid, false);
             if (doc instanceof String) docvo.setContent((String)doc);
             else docvo.setObject(doc, type);
-            edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent());
+            edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent(pkg));
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update document content", e);
         } finally {

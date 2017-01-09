@@ -56,12 +56,11 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
 
     @Override
     public void onError(WebSocket websocket, Exception ex) {
-        // TODO Auto-generated method stub
+        ex.printStackTrace();
     }
 
     @Override
     public void onMessage(WebSocket websocket, String message) {
-        // TODO Auto-generated method stub
     }
 
 
@@ -112,7 +111,6 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
             logger.severeException(ex.getMessage(), ex);
             throw new StartupException(ex.getMessage(), ex);
         }
-
     }
 
     @Override

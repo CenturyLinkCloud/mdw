@@ -142,4 +142,21 @@ public interface WorkflowServices {
 
     public Integer notify(String event, String message, int delay) throws ServiceException;
 
+
+    public void setVariable(Long processInstanceId, String varName, Object value) throws ServiceException;
+    public void setVariable(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
+    public void setVariables(Long processInstanceId, Map<String,Object> values) throws ServiceException;
+    public void setVariables(ProcessRuntimeContext context, Map<String,Object> values) throws ServiceException;
+    public void setDocumentValue(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
+    public void createDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
+    public void updateDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
+
+
+    /**
+     * Converts a document to a string, applying a consistent format for XML and JSON.
+     * Use when comparing document values (such as in Automated Tests).
+     */
+    public String getDocumentStringValue(Long id) throws ServiceException;
+
+
 }

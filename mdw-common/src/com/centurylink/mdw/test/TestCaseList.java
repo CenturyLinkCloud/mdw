@@ -5,6 +5,7 @@ package com.centurylink.mdw.test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,23 @@ public class TestCaseList implements Jsonable {
     private List<PackageTests> packageTests;
     public List<PackageTests> getPackageTests() { return packageTests; }
     public void setPackageTests(List<PackageTests> packageTests) { this.packageTests = packageTests; }
+
+    public PackageTests getPackageTests(String packageName) {
+        if (packageTests != null) {
+            for (PackageTests pkgTests : packageTests) {
+                if (pkgTests.getPackageDir().getPackageName().equals(packageName))
+                    return pkgTests;
+            }
+        }
+        return null;
+    }
+
+    public void addPackageTests(PackageTests pkgTests) {
+        if (packageTests == null) {
+            packageTests = new ArrayList<PackageTests>();
+        }
+        packageTests.add(pkgTests);
+    }
 
     public List<TestCase> getTestCases() {
         List<TestCase> testCases = new ArrayList<TestCase>();
@@ -99,8 +117,8 @@ public class TestCaseList implements Jsonable {
         json.put("count", count);
         JSONArray array = new JSONArray();
         if (packageTests != null) {
-            for (PackageTests packageTests : packageTests)
-                array.put(packageTests.getJson());
+            for (PackageTests pkgTests : packageTests)
+                array.put(pkgTests.getJson());
         }
         json.put("packages", array);
         return json;
@@ -108,6 +126,10 @@ public class TestCaseList implements Jsonable {
 
     public String getJsonName() {
         return "AutomatedTests";
+    }
+
+    public void sort() {
+        Collections.sort(getPackageTests());
     }
 
 }

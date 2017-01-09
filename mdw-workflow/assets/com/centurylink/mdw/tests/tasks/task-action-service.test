@@ -1,6 +1,6 @@
 // task-action-service
-import com.centurylink.mdw.model.value.task.TaskActionVO
-import com.centurylink.mdw.common.utilities.JsonUtil
+import com.centurylink.mdw.model.task.UserTaskAction
+import com.centurylink.mdw.util.JsonUtil
 import groovy.json.JsonSlurper
 
 start process("ManualTaskServices") {
@@ -20,7 +20,7 @@ def taskInstVO = new JsonSlurper().parseText(response.content)
 assert taskInstVO.assigneeId != null
 
 // Release
-def taskAction = new TaskActionVO()
+def taskAction = new UserTaskAction()
 taskAction.taskInstanceId = taskInst.id
 taskAction.taskAction = 'Release' 
 taskAction.user = 'mdwapp'
@@ -38,7 +38,7 @@ taskInstVO = new JsonSlurper().parseText(response.content)
 assert taskInstVO.assigneeId == null
     
 // Claim
-taskAction = new TaskActionVO()
+taskAction = new UserTaskAction()
 taskAction.taskInstanceId = taskInst.id
 taskAction.taskAction = 'Claim'
 taskAction.user = 'mdwapp'
@@ -56,7 +56,7 @@ taskInstVO = new JsonSlurper().parseText(response.content)
 assert taskInstVO.assigneeId == 'mdwapp'
 
 // Forward (without comment)
-taskAction = new TaskActionVO()
+taskAction = new UserTaskAction()
 taskAction.taskInstanceId = taskInst.id
 taskAction.taskAction = 'Forward'
 taskAction.user = 'mdwapp'
@@ -86,7 +86,7 @@ assert taskInstVO.workgroups == ['Developers']
 assert taskInstVO.comments == taskAction.comment
 
 // Assign
-taskAction = new TaskActionVO()
+taskAction = new UserTaskAction()
 taskAction.taskInstanceId = taskInst.id
 taskAction.taskAction = 'Assign'
 taskAction.user = 'mdwapp'
@@ -105,7 +105,7 @@ taskInstVO = new JsonSlurper().parseText(response.content)
 assert taskInstVO.assigneeId == 'mdwapp'
 
 // Complete (without required attributeTwo)
-taskAction = new TaskActionVO()
+taskAction = new UserTaskAction()
 taskAction.taskInstanceId = taskInst.id
 taskAction.taskAction = 'Complete'
 taskAction.user = 'mdwapp'
@@ -130,7 +130,7 @@ response = put http("services/Tasks/${taskInst.id}/values") {
 assert response.code == 200
 
 // Complete (should succeed)
-taskAction = new TaskActionVO()
+taskAction = new UserTaskAction()
 taskAction.taskInstanceId = taskInst.id
 taskAction.taskAction = 'Complete'
 taskAction.user = 'mdwapp'

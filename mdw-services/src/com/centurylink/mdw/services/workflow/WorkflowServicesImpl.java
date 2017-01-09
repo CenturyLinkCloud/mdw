@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
@@ -18,6 +20,8 @@ import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
+import com.centurylink.mdw.common.translator.impl.YamlTranslator;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -56,6 +60,9 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
+import com.centurylink.mdw.translator.JsonTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -808,4 +815,164 @@ public class WorkflowServicesImpl implements WorkflowServices {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
+
+    public void setVariable(Long processInstanceId, String varName, Object value) throws ServiceException {
+        ProcessRuntimeContext runtimeContext = getContext(processInstanceId);
+        if (runtimeContext == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + processInstanceId);
+        setVariable(runtimeContext, varName, value);
+    }
+
+    public void setVariable(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
+        Variable var = context.getProcess().getVariable(varName);
+        if (var == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process variable not defined: " + varName);
+        String type = var.getVariableType();
+        if (VariableTranslator.isDocumentReferenceVariable(context.getPackage(), type)) {
+            setDocumentValue(context, varName, value);
+        }
+        else {
+            try {
+                VariableInstance varInst = context.getProcessInstance().getVariable(varName);
+                WorkflowDataAccess workflowDataAccess = getWorkflowDao();
+                if (varInst == null) {
+                    varInst = new VariableInstance();
+                    varInst.setName(varName);
+                    varInst.setVariableId(var.getVariableId());
+                    varInst.setType(type);
+                    if (value instanceof String)
+                        varInst.setStringValue((String)value);
+                    else
+                        varInst.setData(value);
+                    workflowDataAccess.createVariable(context.getProcessInstanceId(), varInst);
+                }
+                else {
+                    if (value instanceof String)
+                        varInst.setStringValue((String)value);
+                    else
+                        varInst.setData(value);
+                    workflowDataAccess.updateVariable(varInst);
+                }
+            }
+            catch (SQLException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error updating "
+                        + varName + " for process: " + context.getProcessInstanceId());
+            }
+        }
+    }
+
+    public void setVariables(Long processInstanceId, Map<String,Object> values) throws ServiceException {
+        ProcessRuntimeContext runtimeContext = getContext(processInstanceId);
+        if (runtimeContext == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + processInstanceId);
+        setVariables(runtimeContext, values);
+    }
+
+    public void setVariables(ProcessRuntimeContext context, Map<String,Object> values) throws ServiceException {
+        for (String name : values.keySet()) {
+            setVariable(context, name, values.get(name));
+        }
+    }
+
+    public void setDocumentValue(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
+        VariableInstance varInst = context.getProcessInstance().getVariable(varName);
+        if (varInst == null) {
+            createDocument(context, varName, value);
+        }
+        else {
+            updateDocument(context, varName, value);
+        }
+    }
+
+    /**
+     * TODO: Many places fail to set the ownerId for documents owned by VARIABLE_INSTANCE,
+     * and these need to be updated to use this method.
+     */
+    public void createDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
+        String type = context.getProcess().getVariable(varName).getVariableType();
+        EventManager eventMgr = ServiceLocator.getEventManager();
+        Long procInstId = context.getProcessInstanceId();
+        try {
+            Long docId = eventMgr.createDocument(type, OwnerType.PROCESS_INSTANCE, procInstId, value, context.getPackage());
+            VariableInstance varInst = eventMgr.setVariableInstance(procInstId, varName, new DocumentReference(docId));
+            eventMgr.updateDocumentInfo(docId, type, OwnerType.VARIABLE_INSTANCE, varInst.getInstanceId());
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating document for process: " + procInstId);
+        }
+    }
+
+    public void updateDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
+        EventManager eventMgr = ServiceLocator.getEventManager();
+        VariableInstance varInst = context.getProcessInstance().getVariable(varName);
+        if (varInst == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, varName + " not found for process: " + context.getProcessInstanceId());
+        try {
+            eventMgr.updateDocumentContent(varInst.getDocumentId(), value, varInst.getType(), context.getPackage());
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error updating document: " + varInst.getDocumentId());
+        }
+    }
+
+    public String getDocumentStringValue(Long id) throws ServiceException {
+        try {
+            EventManager eventMgr = ServiceLocator.getEventManager();
+            Document doc = eventMgr.getDocumentVO(new Long(id.toString()));
+            if (doc.getDocumentType() == null)
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Unable to determine document type.");
+
+            Package pkg = getPackage(doc);
+            com.centurylink.mdw.variable.VariableTranslator trans = VariableTranslator.getTranslator(pkg, doc.getDocumentType());
+            if (trans instanceof JavaObjectTranslator) {
+                Object obj = doc.getObject(Object.class.getName(), pkg);
+                return obj.toString();
+            }
+            else if (trans instanceof XmlDocumentTranslator && !(trans instanceof YamlTranslator)) {
+                org.w3c.dom.Document domDoc = ((XmlDocumentTranslator)trans).toDomDocument(doc.getObject(doc.getDocumentType(), pkg));
+                XmlObject xmlBean = XmlObject.Factory.parse(domDoc);
+                return xmlBean.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(4));
+            }
+            else if (trans instanceof JsonTranslator && !(trans instanceof YamlTranslator)) {
+                JSONObject jsonObj = ((JsonTranslator)trans).toJson(doc.getObject(doc.getDocumentType(), pkg));
+                return jsonObj.toString(2);
+            }
+            return doc.getContent(pkg);
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error retrieving document: " + id, ex);
+        }
+    }
+
+    private Package getPackage(Document docVO) throws ServiceException {
+        try {
+            EventManager eventMgr = ServiceLocator.getEventManager();
+            if (docVO.getOwnerId() == 0) // eg: sdwf request headers
+                return null;
+            if (docVO.getOwnerType().equals(OwnerType.VARIABLE_INSTANCE)) {
+                VariableInstance varInstInf = eventMgr.getVariableInstance(docVO.getOwnerId());
+                Long procInstId = varInstInf.getProcessInstanceId();
+                ProcessInstance procInstVO = eventMgr.getProcessInstance(procInstId);
+                if (procInstVO != null)
+                    return PackageCache.getProcessPackage(procInstVO.getProcessId());
+            }
+            else if (docVO.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
+                Long procInstId = docVO.getOwnerId();
+                ProcessInstance procInstVO = eventMgr.getProcessInstance(procInstId);
+                if (procInstVO != null)
+                    return PackageCache.getProcessPackage(procInstVO.getProcessId());
+            }
+            else if (docVO.getOwnerType().equals("Designer")) { // test case, etc
+                return PackageCache.getProcessPackage(docVO.getOwnerId());
+            }
+            return null;
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
+
 }

@@ -27,7 +27,8 @@
     "jasmine": "~2.3.4",
     "angular-mocks": "1.4.7",
     "Chart.js": "~2.1.4",
-    "angular-websocket": "~2.0.0"
+    "angular-websocket": "~2.0.0",
+    "angular-cookies": "1.4.7"
   },
   "keywords": [
     "mdw"

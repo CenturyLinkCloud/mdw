@@ -1,0 +1,110 @@
+<%@ jet package="translated" imports="java.util.* com.centurylink.mdw.plugin.project.model.* com.centurylink.mdw.plugin.preferences.model.*"
+        class="RemotePomXmlEmitter" %>
+<% Map map = (Map) argument;
+   WorkflowProject workflowProject = (WorkflowProject) map.get("model");
+   MdwSettings mdwSettings = (MdwSettings) map.get("settings");%>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId><%=workflowProject.getDefaultSourceCodePackage()%></groupId>
+  <artifactId><%=workflowProject.getSourceProjectName().toLowerCase().replace(' ', '.')%></artifactId>
+  <version>1.0.01</version>
+  <name>Framework OSGi</name>
+  
+  <properties>
+    <mdw.version><%=workflowProject.getMdwVersion()%></mdw.version>
+  </properties>
+  
+  <repositories>
+    <repository>
+      <id>archiva.mdw</id>
+      <url><%=mdwSettings.getMdwReleasesUrl()%></url>
+    </repository>
+    <repository>
+      <id>archiva.dev</id>
+      <url>http://archiva.corp.intranet/archiva/repository/development</url>
+    </repository>
+<%
+if (workflowProject.isSnapshotMdwVersion())
+{
+%>
+    <repository>
+      <id>archiva.snapshots</id>
+      <url>http://archiva.corp.intranet/archiva/repository/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+<%
+}
+%>
+  </repositories>
+
+  <build>    
+    <sourceDirectory><%=mdwSettings.getTempResourceLocation()%></sourceDirectory>
+    <testSourceDirectory><%=mdwSettings.getTempResourceLocation()%></testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source><%=workflowProject.getJavaVersion()%></source>
+          <target><%=workflowProject.getJavaVersion()%></target>
+        </configuration>
+      </plugin>
+    </plugins>    
+  </build>
+    
+  <dependencies>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>mdw-schemas</artifactId>
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>mdw-common</artifactId>
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>mdw-services</artifactId>
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>mdw-listeners</artifactId>
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>mdw-workflow</artifactId>
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>mdwweb-jsf2</artifactId>
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>taskmgr</artifactId>
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>mdwhub</artifactId>
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.faces</groupId>
+      <artifactId>javax.faces-api</artifactId>
+      <version>2.2</version>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.xmlbeans</groupId>
+      <artifactId>xmlbeans</artifactId>
+      <version>2.4.0</version>
+    </dependency>    
+  </dependencies>
+</project>

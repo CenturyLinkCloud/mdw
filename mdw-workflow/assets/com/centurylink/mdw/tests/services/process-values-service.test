@@ -1,4 +1,4 @@
-import com.centurylink.mdw.common.utilities.JsonUtil
+import com.centurylink.mdw.util.JsonUtil
 import org.json.JSONObject
 
 // process-values-service
