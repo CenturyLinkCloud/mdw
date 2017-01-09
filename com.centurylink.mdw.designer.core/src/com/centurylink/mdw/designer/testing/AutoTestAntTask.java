@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -286,10 +287,18 @@ public class AutoTestAntTask extends MatchingTask {
             DirectoryScanner scanner = getDirectoryScanner(workflowDir);
             scanner.scan();
 
-            // TODO: if original results file exists and is JSON, parse it and merge with TestCaseList created below
-            testCaseList = new TestCaseList(workflowDir);
-            testCaseList.setPackageTests(new ArrayList<PackageTests>());
 
+            String jsonString = null;
+            TestCaseList testCaseList = null;
+            if (testResultsSummaryFile.exists() && testResultsSummaryFile.getName().endsWith(".json")) {
+                jsonString = new String(Files.readAllBytes(testResultsSummaryFile.toPath()));
+                if(!jsonString.isEmpty())//avoid creating testcase list if empty json file presents
+                     testCaseList = new TestCaseList(workflowDir, new JSONObject(jsonString));
+            }
+            if(testCaseList == null) {
+                testCaseList = new TestCaseList(workflowDir);
+                testCaseList.setPackageTests(new ArrayList<PackageTests>());
+            }
             String workflowPath = workflowDir.toString().replace('\\', '/');
             String[] caseFilePaths = scanner.getIncludedFiles();
             for (String caseFilePath : caseFilePaths) {
@@ -444,7 +453,7 @@ public class AutoTestAntTask extends MatchingTask {
             }
 
             if (testResultsSummaryFile.getName().endsWith(".json") && testCaseList != null) {
-                writeTestCaseResults();
+                writeTestCaseResults(testCase);
             }
             else {
                 writeTestCaseResultsXml();
@@ -529,9 +538,18 @@ public class AutoTestAntTask extends MatchingTask {
         writeFile(testResultsSummaryFile, suiteBuf.toString().getBytes());
     }
 
-    public void writeTestCaseResults() throws IOException {
-        // TODO: update result status, start, end, message
+    public void writeTestCaseResults(TestCase execTestCase) throws IOException {
         try {
+            com.centurylink.mdw.test.TestCase testCase = testCaseList.getTestCase(execTestCase.getPath());
+            if (testCase != null) {
+                testCase.setStatus(execTestCase.getCaseStatus());
+                testCase.setStart(execTestCase.getStartDate());
+                testCase.setEnd(execTestCase.getEndDate());
+                testCase.setMessage(execTestCase.getMessage());
+            }
+
+            testCaseList.setCount(testCaseList.getTestCases().size());
+
             writeFile(testResultsSummaryFile, testCaseList.getJson().toString(2).getBytes());
         }
         catch (JSONException ex) {
