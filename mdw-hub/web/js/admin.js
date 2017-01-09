@@ -345,6 +345,12 @@ adminApp.filter('highlight', function($sce) {
 }).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
 
 adminApp.filter('markdown', function($sce) {
+  marked.setOptions({
+    highlight: function (code) {
+      return hljs.highlightAuto(code).value;
+    }
+  });
+  
   return function(input) {
     if (input)
         return marked(input);
