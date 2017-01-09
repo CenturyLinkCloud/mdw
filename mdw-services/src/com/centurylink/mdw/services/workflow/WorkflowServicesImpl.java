@@ -52,6 +52,7 @@ import com.centurylink.mdw.model.workflow.ProcessCount;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -824,6 +825,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public void setVariable(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
+        Integer statusCode = context.getProcessInstance().getStatusCode();
+        if (WorkStatus.STATUS_COMPLETED.equals(statusCode) || WorkStatus.STATUS_CANCELLED.equals(statusCode)
+                || WorkStatus.STATUS_FAILED.equals(statusCode)) {
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Cannot set value for process in final status: " + statusCode);
+        }
         Variable var = context.getProcess().getVariable(varName);
         if (var == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process variable not defined: " + varName);

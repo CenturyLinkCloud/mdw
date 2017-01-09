@@ -15,29 +15,33 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.JsonExportable;
 import com.centurylink.mdw.common.service.JsonArray;
+import com.centurylink.mdw.common.service.JsonExportable;
 import com.centurylink.mdw.common.service.JsonListMap;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessCount;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
-import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.StringHelper;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Path("/Processes")
-@Api("MDW process instances")
+@Api("MDW process instances and values")
 public class Processes extends JsonRestService implements JsonExportable {
 
     @Override
@@ -169,6 +173,42 @@ public class Processes extends JsonRestService implements JsonExportable {
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    @Path("/{instanceId}/values")
+    @ApiOperation(value="Update value(s) for a process instance",
+        notes="Values are created or updated based on the passed JSON object.", response=StatusMessage.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="Values", paramType="body", dataType="java.util.Map")})
+    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        String id = getSegment(path, 1);
+        if (id == null)
+            throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing path segment: {instanceId}");
+        try {
+            Long instanceId = Long.parseLong(id);
+            if ("values".equals(getSegment(path, 2))) {
+                Map<String,String> values = JsonUtil.getMap(content);
+                WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+                for (String varName : values.keySet()) {
+                    workflowServices.setVariable(instanceId, varName, values.get(varName));
+                }
+                return null;
+            }
+            else {
+                throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing path segment: values");
+            }
+        }
+        catch (NumberFormatException ex) {
+            throw new ServiceException(HTTP_400_BAD_REQUEST, "Invalid instance id: " + id);
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ex.getMessage(), ex);
         }
     }
 
