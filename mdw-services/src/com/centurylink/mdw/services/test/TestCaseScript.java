@@ -216,11 +216,17 @@ public abstract class TestCaseScript extends Script {
     public Asset getDefaultExpectedResults(TestCaseProcess process) throws TestException {
         String testAssetName = getTestCaseRun().getTestCase().getName();
         String resultsAssetName = testAssetName.substring(0, testAssetName.lastIndexOf('.')) + Asset.getFileExtension(Asset.YAML);
-        Asset expectedResults = new Asset();
-        expectedResults.setName(resultsAssetName);
-        String testAssetFile = getTestCaseRun().getTestCase().getAsset().getFile().toString();
-        expectedResults.setRawFile(new File(testAssetFile.substring(0, testAssetFile.lastIndexOf('.')) + Asset.getFileExtension(Asset.YAML)));
-        return expectedResults;
+        if (getTestCaseRun().isCreateReplace()) {
+            // asset will be created
+            Asset expectedResults = new Asset();
+            expectedResults.setName(resultsAssetName);
+            String testAssetFile = getTestCaseRun().getTestCase().getAsset().getFile().toString();
+            expectedResults.setRawFile(new File(testAssetFile.substring(0, testAssetFile.lastIndexOf('.')) + Asset.getFileExtension(Asset.YAML)));
+            return expectedResults;
+        }
+        else {
+            return asset(resultsAssetName);
+        }
     }
 
     public TestCaseResponse send(String payload) throws TestException {

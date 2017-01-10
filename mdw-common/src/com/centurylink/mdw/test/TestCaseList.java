@@ -130,6 +130,10 @@ public class TestCaseList implements Jsonable {
 
     public void sort() {
         Collections.sort(getPackageTests());
+        for (PackageTests pkgTests : getPackageTests()) {
+            if (pkgTests.getTestCases() != null)
+                Collections.sort(pkgTests.getTestCases());
+        }
     }
 
 }
