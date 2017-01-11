@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +77,7 @@ public class TestingServicesImpl implements TestingServices {
         if (lastMod != -1)
             testCaseList.setRetrieveDate(new Date(lastMod));
         // sort
-        Collections.sort(testCaseList.getPackageTests());
+        testCaseList.sort();
         return testCaseList;
     }
 
