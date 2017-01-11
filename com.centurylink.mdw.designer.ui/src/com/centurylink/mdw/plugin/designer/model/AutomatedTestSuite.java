@@ -439,10 +439,12 @@ public class AutomatedTestSuite extends WorkflowElement
     String jsonString = null;
     File resultsFile = getProject().getFunctionTestResultsFile();
     TestCaseList testCaseList = null;
+    //if resultFile exists, create a  test case list from the existing results
     if (resultsFile.exists())
      jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
     if(jsonString!=null && !jsonString.isEmpty())
            testCaseList = new TestCaseList(getProject().getAssetDir(), new JSONObject(jsonString));
+    //if resultFile does not exist, create a new test case list
     if(testCaseList == null) {
       testCaseList = new TestCaseList(getProject().getAssetDir());
       testCaseList.setPackageTests(new ArrayList<PackageTests>());
