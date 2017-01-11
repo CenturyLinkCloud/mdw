@@ -457,6 +457,7 @@ public class AutomatedTestSuite extends WorkflowElement
         for (AutomatedTestCase autoTestCase : pkg.getTestCases())
         {
           com.centurylink.mdw.test.TestCase testCase = testCaseList.getTestCase(exeTestCase.getPath());
+          //If testcase does not present in the list, create a new one
           if(testCase == null)
             testCase = new com.centurylink.mdw.test.TestCase(pkg.getName(), new AssetInfo(autoTestCase.getRawFile()));
           if(pkgTests == null){
