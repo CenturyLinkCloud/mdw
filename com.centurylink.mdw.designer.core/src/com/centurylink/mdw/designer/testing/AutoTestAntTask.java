@@ -292,10 +292,11 @@ public class AutoTestAntTask extends MatchingTask {
             TestCaseList testCaseList = null;
             if (testResultsSummaryFile.exists() && testResultsSummaryFile.getName().endsWith(".json")) {
                 jsonString = new String(Files.readAllBytes(testResultsSummaryFile.toPath()));
-                if(!jsonString.isEmpty())//avoid creating testcase list if empty json file presents
+                if(jsonString!=null && !jsonString.isEmpty())//avoid creating testcase list if empty json file presents
                      testCaseList = new TestCaseList(workflowDir, new JSONObject(jsonString));
             }
             if(testCaseList == null) {
+                log("creating new testlist ");
                 testCaseList = new TestCaseList(workflowDir);
                 testCaseList.setPackageTests(new ArrayList<PackageTests>());
             }
@@ -451,8 +452,11 @@ public class AutoTestAntTask extends MatchingTask {
 
                 completedCases++;
             }
+            log("Inside Update Results"+testCaseList.toString());
 
             if (testResultsSummaryFile.getName().endsWith(".json") && testCaseList != null) {
+                log("Inside Update Results writing results ");
+
                 writeTestCaseResults(testCase);
             }
             else {
@@ -547,9 +551,7 @@ public class AutoTestAntTask extends MatchingTask {
                 testCase.setEnd(execTestCase.getEndDate());
                 testCase.setMessage(execTestCase.getMessage());
             }
-
             testCaseList.setCount(testCaseList.getTestCases().size());
-
             writeFile(testResultsSummaryFile, testCaseList.getJson().toString(2).getBytes());
         }
         catch (JSONException ex) {
