@@ -6,6 +6,7 @@ package com.centurylink.mdw.plugin.designer.model;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.List;
 import javax.xml.bind.DatatypeConverter;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.designer.testing.TestCase;
@@ -434,20 +436,34 @@ public class AutomatedTestSuite extends WorkflowElement
 
   public void writeTestResults(AutomatedTestCase exeTestCase) throws JSONException, IOException
   {
-    TestCaseList testCaseList = new TestCaseList(getProject().getAssetDir());
-    testCaseList.setPackageTests(new ArrayList<PackageTests>());
-
+    String jsonString = null;
+    File resultsFile = getProject().getFunctionTestResultsFile();
+    TestCaseList testCaseList = null;
+    if (resultsFile.exists())
+     jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
+    if(jsonString!=null && !jsonString.isEmpty())
+           testCaseList = new TestCaseList(getProject().getAssetDir(), new JSONObject(jsonString));
+    if(testCaseList == null) {
+      testCaseList = new TestCaseList(getProject().getAssetDir());
+      testCaseList.setPackageTests(new ArrayList<PackageTests>());
+    }
     for (WorkflowPackage pkg : getProject().getTopLevelUserVisiblePackages())
     {
       if (pkg.getTestCases() != null && !pkg.getTestCases().isEmpty())
       {
-        PackageDir pkgDir = new PackageDir(getProject().getAssetDir(), pkg.getPackageVO(), null);
-        PackageTests pkgTests = new PackageTests(pkgDir);
-        pkgTests.setTestCases(new ArrayList<com.centurylink.mdw.test.TestCase>());
+        PackageTests pkgTests = testCaseList.getPackageTests(pkg.getName());
         for (AutomatedTestCase autoTestCase : pkg.getTestCases())
         {
-          com.centurylink.mdw.test.TestCase testCase = new com.centurylink.mdw.test.TestCase(pkg.getName(), new AssetInfo(autoTestCase.getRawFile()));
-          pkgTests.getTestCases().add(testCase);
+          com.centurylink.mdw.test.TestCase testCase = testCaseList.getTestCase(exeTestCase.getPath());
+          if(testCase == null)
+            testCase = new com.centurylink.mdw.test.TestCase(pkg.getName(), new AssetInfo(autoTestCase.getRawFile()));
+          if(pkgTests == null){
+            PackageDir pkgDir = new PackageDir(getProject().getAssetDir(), pkg.getPackageVO(), null);
+            pkgTests = new PackageTests(pkgDir);
+            pkgTests.setTestCases(new ArrayList<com.centurylink.mdw.test.TestCase>());
+          }
+          if(testCase.getPackage().equals(pkg.getName()) && !pkgTests.getTestCases().contains(testCase))
+            pkgTests.getTestCases().add(testCase);
           if (exeTestCase.getPath().equals(autoTestCase.getPath()))
           {
             getProject().fireTestCaseStatusChange(autoTestCase, autoTestCase.getStatus());
@@ -457,13 +473,11 @@ public class AutomatedTestSuite extends WorkflowElement
             testCase.setMessage(exeTestCase.getMessage());
           }
         }
-
-        testCaseList.getPackageTests().add(pkgTests);
-        testCaseList.setCount(testCaseList.getCount() + pkg.getTestCases().size());
+        if(!testCaseList.getPackageTests().contains(pkgTests))
+          testCaseList.getPackageTests().add(pkgTests);
       }
     }
-
-    File resultsFile = getProject().getFunctionTestResultsFile();
+    testCaseList.setCount(testCaseList.getTestCases().size());
     PluginUtil.writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
   }
 
