@@ -523,7 +523,7 @@ public class TestCaseRun implements Runnable {
             if (Listener.METAINFO_PROTOCOL_SOAP.equals(message.getProtocol()))
                 endpoint += "/SOAP";
             HttpHelper httpHelper = new HttpHelper(new URL(endpoint));
-            httpHelper.setHeaders(getDefaultMessageHeaders());
+            httpHelper.setHeaders(getDefaultMessageHeaders(message.getPayload()));
             String actual = httpHelper.post(message.getPayload());
             if (isVerbose()) {
                 log.println("response:");
@@ -538,10 +538,16 @@ public class TestCaseRun implements Runnable {
         }
     }
 
-    protected Map<String,String> getDefaultMessageHeaders() {
+    /**
+     * Not for HTTP method but for general sendMessage().
+     */
+    protected Map<String,String> getDefaultMessageHeaders(String payload) {
         if (getMasterRequestId() != null) {
             Map<String,String> headers = new HashMap<String,String>();
             headers.put("mdw-request-id", getMasterRequestId());
+            if (payload != null && payload.startsWith("{"))
+                headers.put("Content-Type", "application/json");
+
             return headers;
         }
         return null;
@@ -571,8 +577,15 @@ public class TestCaseRun implements Runnable {
             else
                 helper = new HttpHelper(new URL(url));
 
-            if (http.getMessage() != null && http.getMessage().getHeaders() != null)
-                helper.setHeaders(http.getMessage().getHeaders());
+            Map<String,String> headers = new HashMap<String,String>();
+            if (http.getMessage() != null) {
+                if (http.getMessage().getPayload() != null && http.getMessage().getPayload().startsWith("{"))
+                    headers.put("Content-Type", "application/json");
+                if (http.getMessage().getHeaders() != null)
+                    headers.putAll(http.getMessage().getHeaders());
+            }
+            if (!headers.isEmpty())
+                helper.setHeaders(headers);
 
             if (http.getConnectTimeout() > 0)
                 helper.setConnectTimeout(http.getConnectTimeout());
