@@ -28,6 +28,27 @@ INSERT INTO DOCUMENT_CONTENT (DOCUMENT_ID, CONTENT) SELECT DOCUMENT_ID, CONTENT 
 -- ON  d.DOCUMENT_ID > dc.offset
 -- ORDER BY d.DOCUMENT_ID LIMIT 100000;
 
+-- Alternatively, do the below to create stored procedure to repeat statement above automatically.  
+-- This works as is when using Quantum plugin in Eclipse.
+-- If using native mySQL client shell, remove the '\' before each ';' and add a statement to change delimeter before and after the code block
+-- "delimiter ;;" (before) and "delimiter ;" (after) and then add the extra ; (so you have ;; at end of each line)
+
+-- DROP PROCEDURE IF EXISTS copyDocumentContent;  
+-- CREATE PROCEDURE copyDocumentContent(p1 INT)  
+-- BEGIN  
+-- DECLARE d_count INT\;  
+-- DECLARE dc_count INT DEFAULT 0\;  
+-- SELECT COUNT(DOCUMENT_ID) INTO d_count FROM DOCUMENT\;  
+-- REPEAT  
+-- INSERT INTO DOCUMENT_CONTENT (DOCUMENT_ID, CONTENT) SELECT DOCUMENT_ID, CONTENT FROM DOCUMENT AS d   
+-- JOIN (SELECT COALESCE(MAX(DOCUMENT_ID), 0) AS offset FROM DOCUMENT_CONTENT) AS dc   
+-- ON d.DOCUMENT_ID > dc.offset   
+-- ORDER BY d.DOCUMENT_ID LIMIT p1\;
+-- SELECT COUNT(DOCUMENT_ID) INTO dc_count FROM DOCUMENT_CONTENT\;
+-- UNTIL dc_count >= d_count END REPEAT\;
+-- END;       
+-- CALL copyDocumentContent(100000);
+
 -- iff the copy was successful, drop the CONTENT column from DOCUMENT table as a manual step.   
 -- Make sure you validate row counts from both tables BEFORE dropping the CONTENT column from DOCUMENT
 
