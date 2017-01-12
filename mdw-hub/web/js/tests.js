@@ -73,8 +73,20 @@ testingMod.controller('TestsController',
     pkg.collapsed = true;
     $scope.savePkgCollapsedState();
   };
+  $scope.collapseAll = function() {
+    $scope.testCaseList.packages.forEach(function(pkg) {
+      pkg.collapsed = true;
+    });
+    $scope.savePkgCollapsedState();
+  };
   $scope.expand = function(pkg) {
     pkg.collapsed = false;
+    $scope.savePkgCollapsedState();
+  };
+  $scope.expandAll = function() {
+    $scope.testCaseList.packages.forEach(function(pkg) {
+      pkg.collapsed = false;
+    });
     $scope.savePkgCollapsedState();
   };
   $scope.savePkgCollapsedState = function() {
