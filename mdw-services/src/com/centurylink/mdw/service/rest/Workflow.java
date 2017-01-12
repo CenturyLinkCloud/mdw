@@ -11,8 +11,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
@@ -45,12 +47,27 @@ public class Workflow extends JsonRestService {
             String[] segments = getSegments(path);
             if (segments.length < 3)
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Path segments {packageName}/{processName} are required");
-            String assetPath = segments[1] + "/" + segments[2];
-            Process process = workflowServices.getProcessDefinition(assetPath, getQuery(path, headers));
-            JSONObject json = process.getJson(); // does not include name or package
-            json.put("name", process.getName());
-            json.put("packageName", process.getPackageName());
-            return json;
+            if (getQuery(path, headers).getBooleanFilter("summary")) {
+                Process process;
+                if (segments.length == 4)
+                    process = ProcessCache.getProcess(segments[2], Asset.parseVersion(segments[3]));
+                else
+                    process = ProcessCache.getProcess(segments[2], 0);
+                JSONObject json = new JSONObject();
+                json.put("id", process.getId());
+                json.put("name", process.getName());
+                json.put("package", process.getPackageName());
+                json.put("version", process.getVersionString());
+                return json;
+            }
+            else {
+                String assetPath = segments[1] + "/" + segments[2];
+                Process process = workflowServices.getProcessDefinition(assetPath, getQuery(path, headers));
+                JSONObject json = process.getJson(); // does not include name or package
+                json.put("name", process.getName());
+                json.put("packageName", process.getPackageName());
+                return json;
+            }
         }
         catch (ServiceException ex) {
             throw ex;

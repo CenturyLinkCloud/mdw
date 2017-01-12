@@ -3,9 +3,8 @@
 
 var processMod = angular.module('processes', ['mdw']);
 
-processMod.controller('ProcessesController', ['$scope', '$http', 'mdw', 'util', 'PROCESS_STATUSES',
-                                              function($scope, $http, mdw, util, PROCESS_STATUSES) {
-  
+processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams', 'mdw', 'util', 'PROCESS_STATUSES',
+                                              function($scope, $http, $routeParams, mdw, util, PROCESS_STATUSES) {
   // two-way bound to/from directive
   $scope.processList = {};
   $scope.processFilter = { 
@@ -18,6 +17,23 @@ processMod.controller('ProcessesController', ['$scope', '$http', 'mdw', 'util', 
   // pseudo-status [Active] means non-final
   $scope.allStatuses = ['[Active]'].concat(PROCESS_STATUSES);
   
+  // preselected procDef
+  if ($routeParams.procPkg && $routeParams.proc) {
+    $scope.processFilter.master = false;
+    $scope.processFilter.status = null;
+    var workflowSpec = $routeParams.procPkg + '/' + $routeParams.proc;
+    $scope.typeaheadMatchSelection = $routeParams.proc;
+    if ($routeParams.procVer) {
+      workflowSpec += ' v' + $routeParams.procVer;
+      $scope.processFilter.definition = workflowSpec;
+      $scope.typeaheadMatchSelection += ' v' + $routeParams.procVer;
+    }
+    else {
+      $scope.typeaheadMatchSelection = null;
+    }
+  }
+    
+  
   $scope.$on('page-retrieved', function(event, processList) {
     // start date and end date, adjusted for db offset
     var dbDate = new Date(processList.retrieveDate);
@@ -27,8 +43,6 @@ processMod.controller('ProcessesController', ['$scope', '$http', 'mdw', 'util', 
         processInstance.endDate = util.formatDateTime(util.correctDbDate(new Date(processInstance.endDate), dbDate));
     });
   });  
-  
-  $scope.typeaheadMatchSelection = null;
   
   // instanceId, masterRequestId, processName, packageName
   $scope.findTypeaheadMatches = function(typed) {

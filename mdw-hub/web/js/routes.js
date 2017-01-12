@@ -129,6 +129,11 @@ routesSvc.factory('routes', function() {
         controller: 'ProcessesController'
       },
       {
+        path: '/workflow/processes/:procPkg/:proc/:procVer',
+        templateUrl: 'workflow/processes.html',
+        controller: 'ProcessesController'
+      },
+      {
         path: '/workflow/processes/:instanceId',
         templateUrl: 'workflow/process.html',
         controller: 'ProcessController'

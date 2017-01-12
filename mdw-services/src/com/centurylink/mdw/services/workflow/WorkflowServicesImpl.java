@@ -674,6 +674,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             throw new ServiceException(500, ex.getMessage(), ex);
         }
     }
+
     public ActivityList getActivityDefinitions(Query query) throws ServiceException {
         try {
             String find = query.getFind();

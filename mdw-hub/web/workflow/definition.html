@@ -7,6 +7,11 @@
           <a class="mdw-ghost" ng-href="#/packages/{{processDef.packageName}}">
             {{process.packageName}}</a>/{{process.name}} {{process.version ? ' v' + process.version : ''}}
         </div>
+        <div class="mdw-heading-actions">
+          <a ng-href="#/workflow/processes/{{process.packageName}}/{{process.name}}/{{process.version}}" class="btn btn-primary mdw-btn" title="Instances">
+            <span class="glyphicon glyphicon-align-justify mdw-icon-btn"></span>
+          </a>            
+        </div>        
       </div>
       <div class="mdw-section">
         <mdw-workflow process="process" 
