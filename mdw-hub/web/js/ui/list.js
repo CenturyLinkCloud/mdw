@@ -32,7 +32,15 @@ listMod.controller('MdwListController', ['$scope', '$http', '$location', 'mdw', 
       
       // retrieve the item list
       $scope.url = mdw.roots.services + $scope.serviceUrl + '?app=mdw-admin' + '&start=' + $scope.items.length + '&max=' + $scope.max;
-      $scope.url += $scope.getFilterQuery();
+      var urlParams = util.urlParams();
+      if (util.isEmpty(urlParams)) {
+        $scope.url += $scope.getFilterQuery();
+      }
+      else {
+        util.getProperties(urlParams).forEach(function(key) {
+          $scope.url += '&' + key + '=' + urlParams[key];
+        });
+      }
       
       $http.get($scope.url).error(function(data, status) {
         console.log('HTTP ' + status + ': ' + $scope.url);
