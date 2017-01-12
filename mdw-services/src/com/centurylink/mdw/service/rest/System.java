@@ -3,7 +3,6 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,21 +35,19 @@ public class System extends JsonRestService {
         response=SysInfoCategory.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         SystemServices systemServices = ServiceLocator.getSystemServices();
-        List<SysInfoCategory> categories =new ArrayList<SysInfoCategory>();
         String[] segments = getSegments(path);
         if (segments.length == 2) {
             JSONArray jsonArr = new JSONArray();
-
-            if (segments[1].equalsIgnoreCase("System")){
-                categories = systemServices.getSysInfoCategories(SysInfoType.System);
-
+            try {
+                SysInfoType type = SysInfoType.valueOf(segments[1]);
+                List<SysInfoCategory> categories = systemServices.getSysInfoCategories(type);
+                for (SysInfoCategory category : categories)
+                    jsonArr.put(category.getJson());
+                return new JsonArray(jsonArr).getJson();
             }
-            else if (segments[1].equalsIgnoreCase("Thread")){
-                categories = systemServices.getSysInfoCategories(SysInfoType.Thread);
+            catch (IllegalArgumentException ex) {
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported SysInfoType: " + segments[1]);
             }
-            for (SysInfoCategory category : categories)
-                jsonArr.put(category.getJson());
-            return new JsonArray(jsonArr).getJson();
         }
         else {
             return new JSONObject(); // TODO
