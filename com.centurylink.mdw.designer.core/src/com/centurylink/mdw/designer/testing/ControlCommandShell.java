@@ -155,14 +155,14 @@ public class ControlCommandShell {
         try {
             String protocol = cmd.getWord(1);
             String message = cmd.getWord(2);
-            response = dao.sendMessage(protocol, message, getMessageHeaders());
+            response = dao.sendMessage(protocol, message, getDefaultMessageHeaders());
             log.println("Response: " + response);
         } catch (Exception e) {
             throw new TestException(cmd, "failed to send message", e);
         }
     }
 
-    protected Map<String,String> getMessageHeaders() {
+    protected Map<String,String> getDefaultMessageHeaders() {
         return null;
     }
 

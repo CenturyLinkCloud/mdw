@@ -295,9 +295,11 @@ public class TestCaseRun extends ControlCommandShell implements Threadable {
         stepsCompleted++;
     }
 
-    protected Map<String,String> getMessageHeaders() {
+    protected Map<String,String> getDefaultMessageHeaders(String payload) {
         if (getMasterRequestId() != null) {
             Map<String,String> headers = new HashMap<String,String>();
+            if (payload != null && payload.startsWith("{"))
+                headers.put("Content-Type", "application/json");
             headers.put("MasterRequestID", getMasterRequestId());
             headers.put("mdw-request-id", getMasterRequestId());
             return headers;
@@ -982,9 +984,9 @@ public class TestCaseRun extends ControlCommandShell implements Threadable {
         message = filter.applyFilters(map, refdoc);
         String server = getNextServer();
         if (server==null)
-            return dao.sendMessage(protocol, message, getMessageHeaders());
+            return dao.sendMessage(protocol, message, getDefaultMessageHeaders());
         else
-            return dao.engineCall(dao.getPeerServerUrl(server), message, getMessageHeaders());
+            return dao.engineCall(dao.getPeerServerUrl(server), message, getDefaultMessageHeaders());
     }
 
     private void addActionParameter(com.centurylink.mdw.service.Action action, String name, String value) {
@@ -1034,7 +1036,7 @@ public class TestCaseRun extends ControlCommandShell implements Threadable {
                 request = msgdoc.xmlText();
             String server = getNextServer();
             if (server==null)
-                response = dao.sendMessage("DefaultProtocol", request, getMessageHeaders());
+                response = dao.sendMessage("DefaultProtocol", request, getDefaultMessageHeaders());
             else
                 response = dao.engineCall(dao.getPeerServerUrl(server), request);
             log.println("Response: " + response);
