@@ -62,42 +62,43 @@ public class SystemServicesImpl implements SystemServices {
     public SysInfoCategory getThreadDump() {
         List<SysInfo> threadDumps = new ArrayList<SysInfo>();
         Map<Thread, StackTraceElement[]> threads = Thread.getAllStackTraces();
-        threadDumps.add(new SysInfo("Total Threads", "(" + new Date() + "): " + threads.size()));
+        threadDumps.add(new SysInfo("Total Threads", "(" + new Date() + ") " + threads.size()));
         threadDumps.add(new SysInfo("", "------------------------------------------------"));
 
         for (Thread thread : threads.keySet()) {
-            threadDumps.add(new SysInfo(thread.getName(), "(priority=" + thread.getPriority() + " group=" + thread.getThreadGroup()+ " state=" + thread.getState() + " id=" + thread.getId() + ")"));
+            SysInfo threadSysInfo = new SysInfo(thread.getName(), "(priority=" + thread.getPriority() + " group=" + thread.getThreadGroup()+ " state=" + thread.getState() + " id=" + thread.getId() + ")");
+            threadDumps.add(threadSysInfo);
             StackTraceElement[] elements = threads.get(thread);
             if (elements != null) {
                 for (StackTraceElement element : elements) {
-                    threadDumps.add(new SysInfo("    at ",element  + "\n"));
+                    threadSysInfo.addSysInfo(new SysInfo("at ",element  + ""));
                 }
             }
 
             try {
                 ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
                 if (threadBean.isThreadCpuTimeSupported() && threadBean.isThreadCpuTimeEnabled()) {
-                    threadDumps.add(new SysInfo("  Thread CPU Time (ms): ",
-                            threadBean.getThreadCpuTime(thread.getId()) + "\n"));
-                    threadDumps.add(new SysInfo("  Thread User Time (ms): ",
-                            threadBean.getThreadUserTime(thread.getId()) + "\n"));
+                    threadSysInfo.addSysInfo(new SysInfo("Thread CPU Time (ms)",
+                            threadBean.getThreadCpuTime(thread.getId()) + ""));
+                    threadSysInfo.addSysInfo(new SysInfo("Thread User Time (ms)",
+                            threadBean.getThreadUserTime(thread.getId()) + ""));
                 }
                 ThreadInfo threadInfo = threadBean.getThreadInfo(thread.getId());
                 if (threadInfo != null) {
                     if (threadBean.isThreadContentionMonitoringSupported()
                             && threadBean.isThreadContentionMonitoringEnabled()) {
-                        threadDumps.add(new SysInfo("  Blocked Count: " , threadInfo.getBlockedCount() + "\n"));
-                        threadDumps.add(new SysInfo("  Blocked Time (ms): " , threadInfo.getBlockedTime() + "\n"));
+                        threadSysInfo.addSysInfo(new SysInfo("Blocked Count" , threadInfo.getBlockedCount() + ""));
+                        threadSysInfo.addSysInfo(new SysInfo("Blocked Time (ms)" , threadInfo.getBlockedTime() + ""));
                     }
                     if (threadInfo.getLockName() != null) {
-                        threadDumps.add(new SysInfo("  Lock Name: ", threadInfo.getLockName() + "\n"));
-                        threadDumps.add(new SysInfo("  Lock Owner: " , threadInfo.getLockOwnerName() + "\n"));
-                        threadDumps.add(new SysInfo("  Lock Owner Thread ID: " , threadInfo.getLockOwnerId() + "\n"));
+                        threadSysInfo.addSysInfo(new SysInfo("Lock Name", threadInfo.getLockName() ));
+                        threadSysInfo.addSysInfo(new SysInfo("Lock Owner" , threadInfo.getLockOwnerName()));
+                        threadSysInfo.addSysInfo(new SysInfo("Lock Owner Thread ID" , threadInfo.getLockOwnerId() + ""));
                     }
-                    threadDumps.add(new SysInfo("  Waited Count: " , threadInfo.getWaitedCount() + "\n"));
-                    threadDumps.add(new SysInfo("  Waited Time (ms): " , threadInfo.getWaitedTime() + "\n"));
-                    threadDumps.add(new SysInfo("  Is In Native: " , threadInfo.isInNative() + "\n"));
-                    threadDumps.add(new SysInfo("  Is Suspended: " , threadInfo.isSuspended() + "\n"));
+                    threadSysInfo.addSysInfo(new SysInfo("Waited Coun" , threadInfo.getWaitedCount() + ""));
+                    threadSysInfo.addSysInfo(new SysInfo("Waited Time (ms)" , threadInfo.getWaitedTime() + ""));
+                    threadSysInfo.addSysInfo(new SysInfo("Is In Native", threadInfo.isInNative() + ""));
+                    threadSysInfo.addSysInfo(new SysInfo("Is Suspended" , threadInfo.isSuspended() + ""));
                 }
             }
             catch (Exception ex) {
@@ -110,15 +111,14 @@ public class SystemServicesImpl implements SystemServices {
             long[] blockedThreadIds = threadBean.findMonitorDeadlockedThreads();
 
             if (blockedThreadIds != null) {
-                String blocked = "Blocked Thread IDs : ";
+                String blocked = "Blocked Thread IDs";
                 for (long id : blockedThreadIds)
                     blocked += id + " ";
-                threadDumps.add(new SysInfo(blocked , "\n"));
+                threadDumps.add(new SysInfo(blocked , ""));
             }
 
-            threadDumps.add(new SysInfo("Thread Count: " , threadBean.getThreadCount() + "\n"));
-            threadDumps.add(new SysInfo("Peak Thread Count: " , threadBean.getPeakThreadCount() + "\n"));
-            threadDumps.add(new SysInfo("\n", "" ));
+            threadDumps.add(new SysInfo("Thread Count" , threadBean.getThreadCount() + ""));
+            threadDumps.add(new SysInfo("Peak Thread Count" , threadBean.getPeakThreadCount() + ""));
             System.out.println(threadDumps.toString());
         }
         catch (Exception ex) {
