@@ -3,10 +3,14 @@
 
 var sysMod = angular.module('system', ['ngResource', 'mdw']);
 
-sysMod.controller('SystemController', ['$scope', 'mdw', 'System',
-                                        function($scope, mdw, System) {
+sysMod.controller('SystemController', ['$scope', '$routeParams', 'mdw', 'System',
+                                        function($scope, $routeParams, mdw, System) {
   
-  $scope.sysInfoCategories = System.get({sysInfoType: 'sysInfo'});
+  $scope.sysInfoType = $routeParams.sysInfoType;
+  if (typeof $scope.sysInfoType === 'undefined') {
+    $scope.sysInfoType = 'System';
+  }
+  $scope.sysInfoCategories = System.get({sysInfoType: $scope.sysInfoType});
   $scope.filepanelUrl = mdw.roots.webTools + '/system/filepanel/index.jsf?user=' + $scope.authUser.cuid;
   
 }]);

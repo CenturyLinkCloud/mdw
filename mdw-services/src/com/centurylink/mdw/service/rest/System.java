@@ -3,6 +3,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,11 +36,18 @@ public class System extends JsonRestService {
         response=SysInfoCategory.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         SystemServices systemServices = ServiceLocator.getSystemServices();
-
+        List<SysInfoCategory> categories =new ArrayList<SysInfoCategory>();
         String[] segments = getSegments(path);
         if (segments.length == 2) {
             JSONArray jsonArr = new JSONArray();
-            List<SysInfoCategory> categories = systemServices.getSysInfoCategories(SysInfoType.System);
+
+            if (segments[1].equalsIgnoreCase("System")){
+                categories = systemServices.getSysInfoCategories(SysInfoType.System);
+
+            }
+            else if (segments[1].equalsIgnoreCase("Thread")){
+                categories = systemServices.getSysInfoCategories(SysInfoType.Thread);
+            }
             for (SysInfoCategory category : categories)
                 jsonArr.put(category.getJson());
             return new JsonArray(jsonArr).getJson();
