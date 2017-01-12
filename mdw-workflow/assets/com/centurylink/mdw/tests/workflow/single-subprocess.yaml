@@ -1,38 +1,64 @@
-process: # 10206
+process: # 10294
   name: MDWTestMainProcess
   instance: 1
-  activity: # 6 "2017-01-02 18:55:56"
+  activity: # 6 "2017-01-12 12:54:30"
     name: Process Start
     status: Completed
-  activity: # 33 "2017-01-02 18:55:56"
+  activity: # 33 "2017-01-12 12:54:30"
     name: multiple processes ?
     status: Completed
     result: SingleSubProcess
-  activity: # 23 "2017-01-02 18:55:56"
+  activity: # 23 "2017-01-12 12:54:30"
     name: Set input argument
     status: Completed
-  activity: # 22 "2017-01-02 18:55:58"
+  activity: # 22 "2017-01-12 12:54:31"
     name: Invoke single process
-    status: Failed
-    result: com.centurylink.mdw.activity.ActivityException: Exception in InvokeSubProcessActivity...
-  variable: # 10439
+    status: Completed
+  activity: # 26 "2017-01-12 12:55:33"
+    name: Display result
+    status: Completed
+  activity: # 11 "2017-01-12 12:55:33"
+    name: Process Finish
+    status: Completed
+  variable: # 10716
     name: N
     value: 7
-  variable: # 10438
+  variable: # 10715
     name: processCase
     value: SingleSubProcess
-  variable: # 10440
+  variable: # 10746
+    name: Sum
+    value: 49
+  variable: # 10720
     name: xmldata
     value: |
       <ROOT>
           <MINUTES>2</MINUTES>
       </ROOT>
-process: # 10212
-  name: MDWTestMainProcess Exception Handler
+process: # 10297
+  name: MDWTestSubProcess
   instance: 1
-  activity: # 29 "2017-01-02 18:56:17"
-    name: Process Start
+  activity: # 34 "2017-01-12 12:54:31"
+    name: Start
     status: Completed
-  activity: # 28 "2017-01-02 18:56:17"
-    name: My fallout task
-    status: Waiting
+  activity: # 31 "2017-01-12 12:54:31"
+    name: Calculate sqaure
+    status: Completed
+  activity: # 32 "2017-01-12 12:54:32"
+    name: Wait for a while
+    status: Completed
+  activity: # 33 "2017-01-12 12:55:32"
+    name: Finish
+    status: Completed
+  variable: # 10723
+    name: argument
+    value: 7
+  variable: # 10725
+    name: result
+    value: 49
+  variable: # 10724
+    name: testxml
+    value: |
+      <ROOT>
+          <MINUTES>2</MINUTES>
+      </ROOT>

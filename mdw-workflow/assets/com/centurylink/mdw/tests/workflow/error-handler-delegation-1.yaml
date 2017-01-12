@@ -1,46 +1,66 @@
-process: # 10192
+process: # 10285
   name: MDWTestMainProcess
   instance: 1
-  activity: # 6 "2017-01-02 18:31:52"
+  activity: # 6 "2017-01-12 12:54:21"
     name: Process Start
     status: Completed
-  activity: # 33 "2017-01-02 18:31:53"
+  activity: # 33 "2017-01-12 12:54:21"
     name: multiple processes ?
     status: Completed
     result: error handler delegation
-  activity: # 15 "2017-01-02 18:31:53"
+  activity: # 15 "2017-01-12 12:54:21"
     name: Create argument
     status: Completed
-  activity: # 10 "2017-01-02 18:31:54"
+  activity: # 10 "2017-01-12 12:54:21"
     name: Invoke process that errs
     status: Completed
-  activity: # 11 "2017-01-02 18:32:58"
+  activity: # 11 "2017-01-12 12:55:33"
     name: Process Finish
     status: Completed
-  variable: # 10419
+  variable: # 10710
     name: processCase
     value: error handler delegation
-process: # 10198
+process: # 10306
   name: MDWTestMainProcess Exception Handler
   instance: 1
-  activity: # 29 "2017-01-02 18:32:27"
+  activity: # 29 "2017-01-12 12:55:01"
     name: Process Start
     status: Completed
-  activity: # 28 "2017-01-02 18:32:27"
+  activity: # 28 "2017-01-12 12:55:01"
     name: My fallout task
     status: Completed
-  activity: # 30 "2017-01-02 18:32:58"
+  activity: # 30 "2017-01-12 12:55:31"
     name: Process Finish
     status: Completed
-process: # 10195
+process: # 10289
   name: MDWTestMainProcess Exception Handler
   instance: 2
-  activity: # 29 "2017-01-02 18:31:55"
+  activity: # 29 "2017-01-12 12:54:22"
     name: Process Start
     status: Completed
-  activity: # 28 "2017-01-02 18:31:55"
+  activity: # 28 "2017-01-12 12:54:23"
     name: My fallout task
     status: Completed
-  activity: # 30 "2017-01-02 18:32:27"
+  activity: # 30 "2017-01-12 12:55:00"
     name: Process Finish
+    status: Completed
+process: # 10287
+  name: MDWTestSubProcess2
+  instance: 1
+  activity: # 30 "2017-01-12 12:54:22"
+    name: Start
+    status: Completed
+  activity: # 26 "2017-01-12 12:54:22"
+    name: Throw an Exception
+    status: Cancelled
+    result: java.lang.RuntimeException: Help me, I'm an error...
+  activity: # 26 "2017-01-12 12:55:00"
+    name: Throw an Exception
+    status: Completed
+    result: java.lang.RuntimeException: Help me, I'm an error...
+  activity: # 29 "2017-01-12 12:55:32"
+    name: Alternate path
+    status: Completed
+  activity: # 28 "2017-01-12 12:55:32"
+    name: Stop
     status: Completed

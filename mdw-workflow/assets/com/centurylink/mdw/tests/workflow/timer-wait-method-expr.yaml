@@ -1,9 +1,29 @@
-process: # 10222
+process: # 10305
   name: MDWTestTimerWait
   instance: 1
-  activity: # 43 "2017-01-03 10:13:37"
+  activity: # 43 "2017-01-12 12:54:51"
     name: Start
     status: Completed
-  variable: # 10472
+  activity: # 42 "2017-01-12 12:54:51"
+    name: which case?
+    status: Completed
+    result: methodExpression
+  activity: # 51 "2017-01-12 12:54:51"
+    name: |
+      Create
+      TimerBean
+    status: Completed
+  activity: # 52 "2017-01-12 12:54:52"
+    name: |
+      Wait via
+      Method Expr
+    status: Completed
+  activity: # 53 "2017-01-12 12:55:13"
+    name: Stop
+    status: Completed
+  variable: # 10743
     name: testCase
     value: methodExpression
+  variable: # 10745
+    name: timerBean
+    value: { timerDelaySeconds: 120 }
