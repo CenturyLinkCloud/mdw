@@ -7,6 +7,12 @@
           <input type="checkbox" ng-model="selectedState.all" ng-change="toggleAll()" ng-if="authUser.hasRole('Process Execution')"></input>
           Automated Tests
           <span ng-if="testCaseCount > 0" class="mdw-heading-sub"> ({{testCaseCount}})</span>
+          <a href="" ng-click="collapseAll()">
+            <span class="glyphicon glyphicon-chevron-up mdw-action-icon button button-primary"></span>
+          </a> 
+          <a href="" ng-click="expandAll()">
+            <span class="glyphicon glyphicon-chevron-down mdw-action-icon button button-primary"></span>
+          </a> 
         </div>
         <div ng-if="testCaseList.packages" class="mdw-heading-summary">
           <span class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running" title="Running"></span> = {{running().length}} 
