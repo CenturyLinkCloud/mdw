@@ -12,10 +12,9 @@
       ],
       "Common": [
         "Process Execution",
-        "Process Design",
-        "Task Execution"
+        "Process Design"
       ]
-    },
+    },  
     {
       "name": "Donald Oakes",
       "cuid": "dxoakes",
@@ -30,8 +29,7 @@
       ],
       "Common": [
         "Process Execution",
-        "Process Design",
-        "Task Execution"
+        "Process Design"
       ],
       "Site Admin": [
         "User Admin"
@@ -43,48 +41,6 @@
       "attributes": {
         "emailAddress": "manoj.agrawal@centurylink.com",
         "phoneNumber": "303-992-9980"
-      },      
-      "groups": [
-        "Common",
-        "MDW Support",
-        "Site Admin"
-      ],
-      "Common": [
-        "Process Execution",
-        "Process Design",
-        "Task Execution"
-      ],
-      "Site Admin": [
-        "User Admin"
-      ]
-    },
-    {
-      "name": "Jack Brojde",
-      "cuid": "jbrojde",
-      "attributes": {
-        "emailAddress": "jack.brojde@centurylink.com",
-        "phoneNumber": "303-992-8497"
-      },      
-      "groups": [
-        "Common",
-        "MDW Support",
-        "Site Admin"
-      ],
-      "Common": [
-        "Process Execution",
-        "Process Design",
-        "Task Execution"
-      ],
-      "Site Admin": [
-        "User Admin"
-      ]
-    },
-    {
-      "name": "Naveena Bellamkonda",
-      "cuid": "aa88955",
-      "attributes": {
-        "emailAddress": "naveena.bellamkonda@centurylink.com",
-        "phoneNumber": "9916117043"
       },      
       "groups": [
         "Common",

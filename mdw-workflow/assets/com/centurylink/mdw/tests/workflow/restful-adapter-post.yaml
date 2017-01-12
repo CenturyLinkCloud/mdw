@@ -1,24 +1,36 @@
-process: # 10234
+process: # 10293
   name: RestfulServiceAdapter
   instance: 1
-  activity: # 1 "2017-01-03 10:40:41"
+  activity: # 1 "2017-01-12 12:54:29"
     name: Start
     status: Completed
-  activity: # 7 "2017-01-03 10:40:41"
+  activity: # 7 "2017-01-12 12:54:29"
     name: Request Type
     status: Completed
     result: POST
-  activity: # 9 "2017-01-03 10:40:41"
+  activity: # 9 "2017-01-12 12:54:29"
     name: |
       RESTful
       Action Request
-    status: In Progress
-  variable: # 10501
+    status: Completed
+  activity: # 5 "2017-01-12 12:54:32"
+    name: Stop
+    status: Completed
+  variable: # 10714
     name: httpMethod
     value: POST
-  variable: # 10502
+  variable: # 10717
     name: requestDoc
     value: |
       <tns:GetEmployee xmlns:tns="http://mdw.centurylink.com/serviceTypes">
           <tns:workstationId>dxoakes</tns:workstationId>
       </tns:GetEmployee>
+  variable: # 10726
+    name: responseDoc
+    value: |
+      <GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
+                <sapId>DHO115360</sapId>
+                <workstationId>dxoakes</workstationId>
+                <firstName>Donald</firstName>
+                <lastName>Oakes</lastName>
+              </GetEmployeeResponse>

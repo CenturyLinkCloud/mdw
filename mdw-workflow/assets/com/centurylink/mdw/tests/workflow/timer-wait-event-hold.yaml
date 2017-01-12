@@ -1,22 +1,24 @@
-process: # 10219
+process: # 10308
   name: MDWTestTimerWait
   instance: 1
-  activity: # 43 "2017-01-03 10:13:34"
+  activity: # 43 "2017-01-12 13:00:05"
     name: Start
     status: Completed
-  activity: # 42 "2017-01-03 10:13:34"
+  activity: # 42 "2017-01-12 13:00:05"
     name: which case?
     status: Completed
     result: hold
-  activity: # 45 "2017-01-03 10:13:35"
+  activity: # 45 "2017-01-12 13:00:05"
     name: |
       Timer and Event
       Wait - hold
-    status: Failed
-    result: java.lang.NullPointerException...
-  activity: # 47 "2017-01-03 10:14:01"
+    status: Completed
+  activity: # 47 "2017-01-12 13:00:25"
     name: wait for 1 min
     status: Completed
-  variable: # 10468
+  activity: # 46 "2017-01-12 13:02:06"
+    name: Stop
+    status: Completed
+  variable: # 10747
     name: testCase
     value: hold

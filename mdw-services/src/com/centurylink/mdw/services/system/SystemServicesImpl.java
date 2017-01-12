@@ -3,6 +3,9 @@
  */
 package com.centurylink.mdw.services.system;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -13,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import com.centurylink.mdw.app.ApplicationContext;
@@ -37,7 +41,7 @@ public class SystemServicesImpl implements SystemServices {
             sysInfoCats.add(getMdwProperties());
         }
         else if (type == SysInfoType.Thread) {
-
+            sysInfoCats.add(getThreadDump());
         }
         else if (type == SysInfoType.JMS) {
 
@@ -50,6 +54,78 @@ public class SystemServicesImpl implements SystemServices {
         }
 
         return sysInfoCats;
+    }
+
+    /**
+     * @return
+     */
+    public SysInfoCategory getThreadDump() {
+        List<SysInfo> threadDumps = new ArrayList<SysInfo>();
+        Map<Thread, StackTraceElement[]> threads = Thread.getAllStackTraces();
+        threadDumps.add(new SysInfo("Total Threads", "(" + new Date() + ") " + threads.size()));
+        threadDumps.add(new SysInfo("", "------------------------------------------------"));
+
+        for (Thread thread : threads.keySet()) {
+            SysInfo threadSysInfo = new SysInfo(thread.getName(), "(priority=" + thread.getPriority() + " group=" + thread.getThreadGroup()+ " state=" + thread.getState() + " id=" + thread.getId() + ")");
+            threadDumps.add(threadSysInfo);
+            StackTraceElement[] elements = threads.get(thread);
+            if (elements != null) {
+                for (StackTraceElement element : elements) {
+                    threadSysInfo.addSysInfo(new SysInfo("at ",element  + ""));
+                }
+            }
+
+            try {
+                ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+                if (threadBean.isThreadCpuTimeSupported() && threadBean.isThreadCpuTimeEnabled()) {
+                    threadSysInfo.addSysInfo(new SysInfo("Thread CPU Time (ms)",
+                            threadBean.getThreadCpuTime(thread.getId()) + ""));
+                    threadSysInfo.addSysInfo(new SysInfo("Thread User Time (ms)",
+                            threadBean.getThreadUserTime(thread.getId()) + ""));
+                }
+                ThreadInfo threadInfo = threadBean.getThreadInfo(thread.getId());
+                if (threadInfo != null) {
+                    if (threadBean.isThreadContentionMonitoringSupported()
+                            && threadBean.isThreadContentionMonitoringEnabled()) {
+                        threadSysInfo.addSysInfo(new SysInfo("Blocked Count" , threadInfo.getBlockedCount() + ""));
+                        threadSysInfo.addSysInfo(new SysInfo("Blocked Time (ms)" , threadInfo.getBlockedTime() + ""));
+                    }
+                    if (threadInfo.getLockName() != null) {
+                        threadSysInfo.addSysInfo(new SysInfo("Lock Name", threadInfo.getLockName() ));
+                        threadSysInfo.addSysInfo(new SysInfo("Lock Owner" , threadInfo.getLockOwnerName()));
+                        threadSysInfo.addSysInfo(new SysInfo("Lock Owner Thread ID" , threadInfo.getLockOwnerId() + ""));
+                    }
+                    threadSysInfo.addSysInfo(new SysInfo("Waited Coun" , threadInfo.getWaitedCount() + ""));
+                    threadSysInfo.addSysInfo(new SysInfo("Waited Time (ms)" , threadInfo.getWaitedTime() + ""));
+                    threadSysInfo.addSysInfo(new SysInfo("Is In Native", threadInfo.isInNative() + ""));
+                    threadSysInfo.addSysInfo(new SysInfo("Is Suspended" , threadInfo.isSuspended() + ""));
+                }
+            }
+            catch (Exception ex) {
+                // don't let an exception here interfere with display of stack info
+            }
+        }
+
+        try {
+            ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+            long[] blockedThreadIds = threadBean.findMonitorDeadlockedThreads();
+
+            if (blockedThreadIds != null) {
+                String blocked = "Blocked Thread IDs";
+                for (long id : blockedThreadIds)
+                    blocked += id + " ";
+                threadDumps.add(new SysInfo(blocked , ""));
+            }
+
+            threadDumps.add(new SysInfo("Thread Count" , threadBean.getThreadCount() + ""));
+            threadDumps.add(new SysInfo("Peak Thread Count" , threadBean.getPeakThreadCount() + ""));
+            System.out.println(threadDumps.toString());
+        }
+        catch (Exception ex) {
+            // don't let an exception here interfere with display of stack info
+        }
+
+        return new SysInfoCategory("Thread Dump", threadDumps);
     }
 
     public SysInfoCategory getSystemInfo() {
