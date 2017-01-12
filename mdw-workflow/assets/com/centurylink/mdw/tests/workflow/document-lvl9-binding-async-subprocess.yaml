@@ -1,25 +1,34 @@
-process: # 16584
+process: # 10284
   name: MDWTestMainProcess
   instance: 1
-  activity: # 6 "2016-07-29 12:34:33"
+  activity: # 6 "2017-01-12 12:54:19"
     name: Process Start
     status: Completed
-  activity: # 33 "2016-07-29 12:34:36"
+  activity: # 33 "2017-01-12 12:54:19"
     name: multiple processes ?
     status: Completed
     result: DocumentBinding
-  activity: # 34 "2016-07-29 12:34:42"
+  activity: # 34 "2017-01-12 12:54:19"
     name: Invoke service lvl9 process
     status: Completed
-  activity: # 11 "2016-07-29 12:34:45"
+  activity: # 11 "2017-01-12 12:54:20"
     name: Process Finish
     status: Completed
-  variable: # 26981
+  variable: # 10709
     name: processCase
     value: DocumentBinding
-process: # 16585
+process: # 10286
   name: RpcWebService
   instance: 1
-  variable: # 26982
+  activity: # 1 "2017-01-12 12:54:20"
+    name: Start
+    status: Completed
+  activity: # 3 "2017-01-12 12:54:20"
+    name: |
+      Invoke Employee
+      Service
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException: Failed to get document...
+  variable: # 10711
     name: requestDoc
-    value: Some special variable value in here!
+    value:  "DOCUMENT:11713"
