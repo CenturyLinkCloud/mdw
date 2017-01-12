@@ -2,8 +2,7 @@
 'use strict';
 
 var utilMod = angular.module('util', []);
-
-utilMod.factory('util', function() {
+utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
   return {
     months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     dayMs: 24 * 3600 * 1000, 
@@ -110,6 +109,16 @@ utilMod.factory('util', function() {
     },
     isEmpty: function(obj) {
       return !obj || (Object.keys(obj).length === 0 && obj.constructor === Object);
-    }
+    },
+    getMdwProperties: function() {
+      return this.mdwProperties;
+    },
+    loadMdwProperties: function() {
+      var thisUtil = this;
+      var promise = $http.get(mdw.roots.services + '/services/Values/SYSTEM/mdwProperties?app=mdw-admin').then(function (response) {
+        thisUtil.mdwProperties = response.data;
+      });
+      return promise;      
+    }    
   };
-});
+}]);
