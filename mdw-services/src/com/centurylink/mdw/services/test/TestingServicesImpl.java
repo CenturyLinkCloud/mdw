@@ -28,6 +28,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
+import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
@@ -85,9 +86,18 @@ public class TestingServicesImpl implements TestingServices {
         try {
             TestCase testCase = readTestCase(path);
             addStatusInfo(testCase);
+            AssetServices assetServices = ServiceLocator.getAssetServices();
+            VersionControlGit vcGit = (VersionControlGit) assetServices.getVersionControl();
+            if (vcGit != null) {
+                testCase.getAsset()
+                    .setCommitInfo(vcGit.getCommitInfo(
+                            vcGit.getRelativePath(new File(assetServices.getAssetRoot() + "/"
+                                    + testCase.getPackage().replace('.', '/') + "/"
+                                    + testCase.getAsset().getName()))));
+            }
             return testCase;
         }
-        catch (IOException ex) {
+        catch (Exception ex) {
             throw new ServiceException("IO Error reading test case: " + path, ex);
         }
     }

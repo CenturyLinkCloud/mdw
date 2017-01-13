@@ -124,6 +124,8 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
             json.put("actual", actual);
         if (executeLog != null)
             json.put("executeLog", executeLog);
+        if (asset.getCommitInfo() != null)
+            json.put("commitInfo", asset.getCommitInfo().getJson());
 
         return json;
     }

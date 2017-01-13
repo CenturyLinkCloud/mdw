@@ -76,6 +76,10 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
     private File file;
     public File getFile() { return file; }
 
+    private CommitInfo commitInfo;
+    public CommitInfo getCommitInfo() { return commitInfo; }
+    public void setCommitInfo(CommitInfo info) { this.commitInfo = info; }
+
     public AssetInfo(File file) {
         this.file = file;
     }
@@ -134,6 +138,8 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
             asset.put("vcsDiffType", getVcsDiffType());
         if (vcsDiffType != null)
             asset.put("vcsDiff", vcsDiffType);
+        if (commitInfo != null)
+            asset.put("commitInfo", commitInfo.getJson());
         return asset;
     }
 

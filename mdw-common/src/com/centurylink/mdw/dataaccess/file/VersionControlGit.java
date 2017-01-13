@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -45,6 +46,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.ObjectStream;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.notes.Note;
@@ -69,6 +71,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
+import com.centurylink.mdw.model.asset.CommitInfo;
 import com.centurylink.mdw.util.file.FileHelper;
 
 /**
@@ -659,8 +662,27 @@ public class VersionControlGit implements VersionControl {
         return diffs;
     }
 
-    public ObjectStream getRemoteContentStream(String branch, String path) throws Exception {
+    /**
+     * Does not fetch.
+     */
+    public CommitInfo getCommitInfo(String path) throws Exception {
+        Iterator<RevCommit> revCommits = git.log().addPath(path).setMaxCount(1).call().iterator();
+        if (revCommits.hasNext()) {
+            RevCommit revCommit = revCommits.next();
+            CommitInfo commitInfo = new CommitInfo(revCommit.getId().name());
+            PersonIdent committerIdent = revCommit.getCommitterIdent();
+            commitInfo.setCommitter(committerIdent.getName());
+            commitInfo.setEmail(committerIdent.getEmailAddress());
+            if ((commitInfo.getCommitter() == null || commitInfo.getCommitter().isEmpty()) && commitInfo.getEmail() != null)
+                commitInfo.setCommitter(commitInfo.getEmail());
+            commitInfo.setDate(committerIdent.getWhen());
+            commitInfo.setMessage(revCommit.getShortMessage());
+            return commitInfo;
+        }
+        return null;
+    }
 
+    public ObjectStream getRemoteContentStream(String branch, String path) throws Exception {
         ObjectId id = localRepo.resolve("refs/remotes/origin/" + branch);
         ObjectReader reader = localRepo.newObjectReader();
         try {
