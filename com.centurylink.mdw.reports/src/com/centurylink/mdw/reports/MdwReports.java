@@ -110,7 +110,7 @@ public class MdwReports extends Plugin
 
   public static String formatArgs(Object[] args)
   {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     for (int i = 0; i < args.length; i++)
     {
       sb.append(args[i]);

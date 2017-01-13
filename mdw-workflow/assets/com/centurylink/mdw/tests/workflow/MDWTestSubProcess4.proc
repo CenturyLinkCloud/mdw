@@ -58,9 +58,6 @@
   "attributes": {
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "SLA": "20",
-    "SLA_UNIT": "Minutes",
-    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=41,y=30,w=202,h=27"
   },
   "variables": {

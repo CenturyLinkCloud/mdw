@@ -439,12 +439,10 @@ public class AutomatedTestSuite extends WorkflowElement
     String jsonString = null;
     File resultsFile = getProject().getFunctionTestResultsFile();
     TestCaseList testCaseList = null;
-    //if resultFile exists, create a  test case list from the existing results
     if (resultsFile.exists())
      jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
     if(jsonString!=null && !jsonString.isEmpty())
            testCaseList = new TestCaseList(getProject().getAssetDir(), new JSONObject(jsonString));
-    //if resultFile does not exist, create a new test case list
     if(testCaseList == null) {
       testCaseList = new TestCaseList(getProject().getAssetDir());
       testCaseList.setPackageTests(new ArrayList<PackageTests>());
@@ -457,7 +455,6 @@ public class AutomatedTestSuite extends WorkflowElement
         for (AutomatedTestCase autoTestCase : pkg.getTestCases())
         {
           com.centurylink.mdw.test.TestCase testCase = testCaseList.getTestCase(exeTestCase.getPath());
-          //If testcase does not present in the list, create a new one
           if(testCase == null)
             testCase = new com.centurylink.mdw.test.TestCase(pkg.getName(), new AssetInfo(autoTestCase.getRawFile()));
           if(pkgTests == null){

@@ -44,7 +44,6 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=31,y=26,w=144,h=27"
   },
   "variables": {
@@ -57,5 +56,5 @@
       "type": "com.centurylink.mdw.model.StringDocument"
     }
   },
-  "version": "0.6"
+  "version": "0.4"
 }

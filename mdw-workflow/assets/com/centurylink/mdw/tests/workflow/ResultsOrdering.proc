@@ -143,7 +143,6 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=21,y=12,w=147,h=27"
   },
   "variables": {
@@ -160,5 +159,5 @@
       "type": "java.lang.Integer"
     }
   },
-  "version": "0.5"
+  "version": "0.3"
 }
