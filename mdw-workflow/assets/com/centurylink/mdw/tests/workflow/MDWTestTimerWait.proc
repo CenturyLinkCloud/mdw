@@ -277,8 +277,6 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "SLA": "20",
-    "SLA_UNIT": "Minutes",
     "START_TRANSITION_ID": "2327820",
     "TRANSITION_RETRY_COUNT": "-1",
     "Transition with no Label": "Acts as Default",
@@ -294,5 +292,5 @@
       "type": "java.lang.Object"
     }
   },
-  "version": "1.4"
+  "version": "1.3"
 }

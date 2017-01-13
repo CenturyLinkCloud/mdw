@@ -147,9 +147,6 @@
   ],
   "attributes": {
     "NodeStyle": "BoxIcon",
-    "SLA": "20",
-    "SLA_UNIT": "Minutes",
-    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=11,y=13,w=202,h=27"
   },
   "variables": {
@@ -170,5 +167,5 @@
       "type": "com.centurylink.mdw.model.StringDocument"
     }
   },
-  "version": "0.21"
+  "version": "0.20"
 }

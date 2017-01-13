@@ -42,7 +42,6 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=28,y=21,w=147,h=27"
   },
   "textNotes": [{
@@ -54,5 +53,5 @@
     "category": "LOCAL",
     "type": "java.lang.String"
   }},
-  "version": "0.4"
+  "version": "0.2"
 }

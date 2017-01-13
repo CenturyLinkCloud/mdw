@@ -41,9 +41,6 @@
   "attributes": {
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "SLA": "20",
-    "SLA_UNIT": "Minutes",
-    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=34,y=24,w=202,h=27"
   },
   "variables": {
@@ -64,5 +61,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "0.5"
+  "version": "0.4"
 }
