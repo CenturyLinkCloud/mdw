@@ -121,9 +121,6 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "SLA": "20",
-    "SLA_UNIT": "Minutes",
-    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=25,y=32,w=189,h=27"
   },
   "variables": {
@@ -172,5 +169,5 @@
       "type": "com.centurylink.mdw.model.StringDocument"
     }
   },
-  "version": "0.7"
+  "version": "0.6"
 }

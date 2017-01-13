@@ -80,15 +80,12 @@
     "ERROR_PROCESS_ID": "262002",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "SLA": "20",
-    "SLA_UNIT": "Minutes",
     "START_TRANSITION_ID": "2325804",
-    "Transition with no Label": "Acts as Default",
     "WORK_DISPLAY_INFO": "x=27,y=26,w=239,h=27"
   },
   "variables": {"n": {
     "category": "INPUT",
     "type": "java.lang.Integer"
   }},
-  "version": "0.5"
+  "version": "0.4"
 }
