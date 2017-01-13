@@ -28,10 +28,6 @@ public class MdwBaselineData implements BaselineData {
             variableTypes.add(new VariableType(103L, "java.lang.Integer", "com.centurylink.mdw.common.translator.impl.IntegerTranslator"));
             variableTypes.add(new VariableType(104L, "java.lang.Boolean", "com.centurylink.mdw.common.translator.impl.BooleanTranslator"));
             variableTypes.add(new VariableType(105L, "java.util.Date", "com.centurylink.mdw.common.translator.impl.DateTranslator"));
-            variableTypes.add(new VariableType(106L, "java.lang.String[]", "com.centurylink.mdw.common.translator.impl.StringArrayTranslator"));
-            variableTypes.add(new VariableType(107L, "java.lang.Integer[]", "com.centurylink.mdw.common.translator.impl.IntegerArrayTranslator"));
-            variableTypes.add(new VariableType(108L, "java.lang.Long[]", "com.centurylink.mdw.common.translator.impl.LongArrayTranslator"));
-            variableTypes.add(new VariableType(109L, "java.util.Map", "com.centurylink.mdw.common.translator.impl.StringMapTranslator"));
             variableTypes.add(new VariableType(110L, "java.net.URI", "com.centurylink.mdw.common.translator.impl.URITranslator"));
 
             // collections types
@@ -48,7 +44,6 @@ public class MdwBaselineData implements BaselineData {
             variableTypes.add(new VariableType(205L, "groovy.util.Node", "com.centurylink.mdw.common.translator.impl.GroovyNodeTranslator"));
             variableTypes.add(new VariableType(206L, "com.centurylink.mdw.xml.XmlBeanWrapper", "com.centurylink.mdw.common.translator.impl.XmlBeanWrapperTranslator"));
             variableTypes.add(new VariableType(207L, "com.centurylink.mdw.model.StringDocument", "com.centurylink.mdw.common.translator.impl.StringDocumentTranslator"));
-            variableTypes.add(new VariableType(208L, "com.centurylink.mdw.model.FormDataDocument", "com.centurylink.mdw.common.translator.impl.FormDataDocumentTranslator"));
             variableTypes.add(new VariableType(209L, "com.centurylink.mdw.model.HTMLDocument", "com.centurylink.mdw.common.translator.impl.HtmlDocumentTranslator"));
             variableTypes.add(new VariableType(210L, "javax.xml.bind.JAXBElement", "com.centurylink.mdw.jaxb.JaxbElementTranslator"));
             variableTypes.add(new VariableType(211L, "com.centurylink.mdw.common.service.Jsonable", "com.centurylink.mdw.common.translator.impl.JsonableTranslator"));
