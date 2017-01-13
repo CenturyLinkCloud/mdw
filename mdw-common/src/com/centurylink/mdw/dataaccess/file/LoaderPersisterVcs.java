@@ -276,6 +276,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     public void copyPkg(File fromPkgDir, File toPkgDir) throws IOException {
             if (!toPkgDir.mkdirs())
                 throw new IOException("Unable to create directory: " + toPkgDir);
+            if (fromPkgDir.listFiles() == null)
+                throw new IOException("Cannot copy from invalid directory: " + fromPkgDir);
             for (File oldSub : fromPkgDir.listFiles()) {
                 if (oldSub.isDirectory() && oldSub.getName().equals(".mdw"))
                     copy(oldSub, new File(toPkgDir + "/" + oldSub.getName()));
