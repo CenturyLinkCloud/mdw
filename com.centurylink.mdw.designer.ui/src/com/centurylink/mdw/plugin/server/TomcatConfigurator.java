@@ -56,7 +56,10 @@ public class TomcatConfigurator extends ServerConfigurator
     String[] env = new String[3];
     env[0] = "JAVA_HOME=" + getServerSettings().getJdkHome();
     env[1] = "CATALINA_HOME=" + getServerSettings().getHomeWithFwdSlashes();
-    env[2] = "JAVA_OPTS=-DruntimeEnv=dev -Dmdw.config.location=" + getServerSettings().getHomeWithFwdSlashes() + "/mdw/config"
+    String runtimeEnvProp = "-Dmdw.runtime.env=dev";
+    if (!getServerSettings().getProject().checkRequiredVersion(6, 0))
+      runtimeEnvProp = "-DruntimeEnv=dev";
+    env[2] = "JAVA_OPTS=" + runtimeEnvProp + " -Dmdw.config.location=" + getServerSettings().getHomeWithFwdSlashes() + "/mdw/config"
            + (getServerSettings().getJavaOptions() == null ? "" : getServerSettings().getJavaOptions());
     if (debug)
       env[2] += " -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=" + getServerSettings().getDebugPort();

@@ -115,7 +115,7 @@ public class TomcatServerBehavior extends org.eclipse.jst.server.tomcat.core.int
   protected String getDefaultJavaOptions()
   {
     WorkflowProject project = getProject();
-    return "-DruntimeEnv=dev\n"
+    return (project.checkRequiredVersion(6, 0) ? "-Dmdw.runtime.env=dev\n" : "-DruntimeEnv=dev\n")
       + "-Dmdw.config.location=" + (project == null ? "null" : project.getProjectDir()) + System.getProperty("file.separator") + "config\n"
       + "-Xms512m -Xmx1024m -XX:MaxPermSize=256m";
   }
