@@ -664,6 +664,25 @@ public class PluginDataAccess
       {
         if (MdwPlugin.getActiveWorkbenchWindow() != null)
         designerDataModel.reloadVariableTypes(designerDataAccess);
+        if (workflowProject.checkRequiredVersion(5, 5))
+        {
+          List<VariableTypeVO> cleanedUpVarTypes = new ArrayList<VariableTypeVO>();
+          for (VariableTypeVO varType : designerDataModel.getVariableTypes())
+          {
+            switch (varType.getVariableType())
+            {
+              case "java.lang.String[]":
+              case "java.lang.Integer[]":
+              case "java.lang.Long[]":
+              case "java.util.Map":
+              case "com.centurylink.mdw.model.FormDataDocument":
+                break;
+              default:
+                cleanedUpVarTypes.add(varType);
+            }
+          }
+          designerDataModel.setVariableTypes(cleanedUpVarTypes);
+        }
         varTypes = designerDataModel.getVariableTypes();
         Collections.sort(varTypes, new Comparator<VariableTypeVO>()
         {
