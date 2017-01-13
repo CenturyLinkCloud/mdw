@@ -307,7 +307,7 @@ public class AutoTestAntTask extends MatchingTask {
                 File caseFile = new File(workflowPath + "/" + casePath);
                 PackageTests pkgTests = testCaseList.getPackageTests(pkgName);
                 if (pkgTests == null) {
-                    pkgTests = new PackageTests(new PackageDir(workflowDir, caseFile.getParentFile(), null));
+                    pkgTests = new PackageTests(new PackageDir(workflowDir, caseFile.getParentFile(), pkgName));
                     pkgTests.setTestCases(new ArrayList<com.centurylink.mdw.test.TestCase>());
                     testCaseList.getPackageTests().add(pkgTests);
                 }
