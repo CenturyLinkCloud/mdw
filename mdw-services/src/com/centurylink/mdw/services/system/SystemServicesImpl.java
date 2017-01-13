@@ -22,6 +22,8 @@ import java.util.Properties;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.PropertyUtil;
+import com.centurylink.mdw.container.ThreadPoolProvider;
+import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.system.SysInfo;
 import com.centurylink.mdw.model.system.SysInfoCategory;
@@ -42,6 +44,7 @@ public class SystemServicesImpl implements SystemServices {
         }
         else if (type == SysInfoType.Thread) {
             sysInfoCats.add(getThreadDump());
+            sysInfoCats.add(getPoolStatus());
         }
         else if (type == SysInfoType.JMS) {
 
@@ -56,13 +59,9 @@ public class SystemServicesImpl implements SystemServices {
         return sysInfoCats;
     }
 
-    /**
-     * @return
-     */
     public SysInfoCategory getThreadDump() {
         List<SysInfo> threadDumps = new ArrayList<SysInfo>();
         Map<Thread, StackTraceElement[]> threads = Thread.getAllStackTraces();
-        String dump = "";
         threadDumps.add(new SysInfo("Total Threads", "(" + new Date() + ") " + threads.size()));
         for (Thread thread : threads.keySet()) {
             StringBuffer output = new StringBuffer();
@@ -79,7 +78,6 @@ public class SystemServicesImpl implements SystemServices {
                 }
             }
             output.append("\n");
-
             try {
                 ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
                 if (threadBean.isThreadCpuTimeSupported() && threadBean.isThreadCpuTimeEnabled()) {
@@ -112,7 +110,6 @@ public class SystemServicesImpl implements SystemServices {
             }
             threadDumps.add(new SysInfo(thread.getName(),  output.toString()));
         }
-
         try {
             StringBuffer mxBeanOutput = new StringBuffer();
             ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
@@ -124,18 +121,14 @@ public class SystemServicesImpl implements SystemServices {
                     blocked += id + " ";
                 mxBeanOutput.append(blocked + "\n");
             }
-
             mxBeanOutput.append("\nThread Count: " + threadBean.getThreadCount() + "\n");
             mxBeanOutput.append("Peak Thread Count: " + threadBean.getPeakThreadCount());
-            dump = mxBeanOutput.toString();
             threadDumps.add(new SysInfo("Thread MXBean",  mxBeanOutput.toString()));
-
-            System.out.println(dump);
+            System.out.println(mxBeanOutput.toString());
         }
         catch (Exception ex) {
             // don't let an exception here interfere with display of stack info
         }
-
         return new SysInfoCategory("Thread Dump", threadDumps);
     }
 
@@ -271,4 +264,14 @@ public class SystemServicesImpl implements SystemServices {
         return new SysInfoCategory("MDW Properties", mdwPropInfos);
     }
 
+    private SysInfoCategory getPoolStatus() {
+        ThreadPoolProvider threadPool = ApplicationContext.getThreadPoolProvider();
+        List<SysInfo> poolStatus = new ArrayList<SysInfo>();
+        if (!(threadPool instanceof CommonThreadPool)) {
+            poolStatus.add(new SysInfo ("Error getting thread pool status" , "ThreadPoolProvider is not MDW CommonThreadPool"));
+        }
+        else
+            poolStatus.add(new SysInfo ("Current Status" , ((CommonThreadPool)threadPool).currentStatus()));
+        return new SysInfoCategory("Pool Status", poolStatus);
+    }
 }
