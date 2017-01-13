@@ -217,6 +217,9 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
               val.value = val.full.getLines()[0] + ' ...';
               val.extended = true;
             }
+            else if (val.value.indexOf('${props[') >= 0 || val.value.indexOf('#{props[') >= 0) {
+              val.extended = true;
+            }
             if (spec) {
               if (spec.alias)
                 val.name = spec.alias;
@@ -252,7 +255,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
                 val.value = val.asset.path;
                 if (val.asset.version)
                   val.value += ' ' + val.asset.version;
-                val.asset.url = $scope.adminBase + '#/asset/' + val.asset.path;
+                val.asset.url = '#/asset/' + val.asset.path;
               }
             }
             if (!tabInfo[prop + '_assetVersion'] && prop != 'processversion')
@@ -334,8 +337,33 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
   
   $scope.drillIn = function(tabValue) {
     $scope.drilledValue = tabValue;
+    if (tabValue && tabValue.value) {
+      var propStart = tabValue.value.indexOf('${props[');
+      if (propStart < 0)
+        propStart = tabValue.value.indexOf('#{props[');
+      if (propStart >= 0) {
+        var propEnd = tabValue.value.indexOf('}', 9);
+        if (propEnd > propStart + 10) {
+          $scope.drilledValue.full = tabValue.value + ' --> ';
+          var propName = tabValue.value.substring(propStart + 9, propEnd - 2);
+          var mdwProps = util.getMdwProperties();
+          if (mdwProps) {
+            if (propStart > 0)
+              $scope.drilledValue.full += tabValue.value.substring(0, propStart);
+            $scope.drilledValue.full += mdwProps[propName] + tabValue.value.substring(propEnd + 1);
+          }
+          else {
+            util.loadMdwProperties().then(function(response) {
+              mdwProps = util.getMdwProperties();
+              if (propStart > 0)
+                $scope.drilledValue.full += tabValue.value.substring(0, propStart);
+              $scope.drilledValue.full += mdwProps[propName] + tabValue.value.substring(propEnd + 1);
+            });
+          }
+        }
+      }
+    }
   };
-  
 }]);
 
 inspectMod.factory('Inspector', ['mdw', 'util', function(mdw, util) {
@@ -348,9 +376,6 @@ inspectMod.factory('Inspector', ['mdw', 'util', function(mdw, util) {
     },
     getObj: function() {
       return this.obj;
-    },
-    setAdminBase: function(baseUrl) {
-      this.adminBase = baseUrl;
     },
     listen: function(listener) {
       this.listener = listener;

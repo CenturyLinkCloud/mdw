@@ -17,11 +17,6 @@ workflowMod.controller('MdwWorkflowController',
     else {
       $scope.hubBase = $scope.serviceBase;
     }
-    if ($scope.hubBase.endsWith('/MDWHub'))
-      $scope.adminBase = $scope.hubBase.substring(0, $scope.hubBase.length - 7) + '/mdw-admin';
-    else
-      $scope.adminBase = $scope.hubBase.substring(0, $scope.hubBase.length - 4) + '/mdw-admin'; 
-    Inspector.setAdminBase($scope.adminBase); 
     
     $scope.canvas = canvas;
     if ($scope.process.$promise) {

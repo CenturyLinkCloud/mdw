@@ -1,0 +1,20 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/system-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">Thread Info</div>
+      </div>
+      <ul class="mdw-list">
+        <li ng-repeat="sysInfoCategory in sysInfoCategories">
+          <div class="mdw-sys-info" >
+            <div ng-repeat="sysInfo in sysInfoCategory.sysInfos">
+             <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="sysInfo.name + ':' + sysInfo.value | highlight | unsafe"></code>
+             </pre>
+           </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -94,7 +94,7 @@ public class GroovyTestCaseRun extends TestCaseRun {
                 script.put("groovy", groovyScript);
                 actionRequest.put("Script", script);
 
-                String response = dao.sendMessage("REST", actionRequest.toString(2), getMessageHeaders());
+                String response = dao.sendMessage("REST", actionRequest.toString(2), getDefaultMessageHeaders());
                 JSONObject responseMsg = new JSONObject(response);
                 JSONObject status = responseMsg.getJSONObject("status");
                 if (status.getInt("code") != 0) {
@@ -362,8 +362,15 @@ public class GroovyTestCaseRun extends TestCaseRun {
             else
                 helper = new HttpHelper(new URL(url));
 
-            if (http.getMessage() != null && http.getMessage().getHeaders() != null)
-                helper.setHeaders(http.getMessage().getHeaders());
+            Map<String,String> headers = new HashMap<String,String>();
+            if (http.getMessage() != null) {
+                if (http.getMessage().getPayload() != null && http.getMessage().getPayload().startsWith("{"))
+                    headers.put("Content-Type", "application/json");
+                if (http.getMessage().getHeaders() != null)
+                    headers.putAll(http.getMessage().getHeaders());
+            }
+            if (!headers.isEmpty())
+                helper.setHeaders(headers);
 
             if (http.getConnectTimeout() > 0)
                 helper.setConnectTimeout(http.getConnectTimeout());

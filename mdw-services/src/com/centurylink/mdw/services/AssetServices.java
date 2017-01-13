@@ -54,5 +54,4 @@ public interface AssetServices {
      * @param assetPath - myPackage/myAsset.ext
      */
     public AssetInfo getAsset(String assetPath) throws ServiceException;
-
 }

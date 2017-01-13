@@ -232,6 +232,15 @@
   margin-top: 3px;
   margin-left: -16px;
 }
+.mdw-commit {
+	color: #333;
+	margin-left: 5px;
+  font-weight: normal;
+}
+.mdw-commit-date {
+  margin-left: 2px; 
+	font-size: 12px;
+}
 .mdw-panel {
   clear: both;
   border-bottom: none;

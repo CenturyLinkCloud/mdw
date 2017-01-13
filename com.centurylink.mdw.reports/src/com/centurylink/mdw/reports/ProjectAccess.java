@@ -32,7 +32,7 @@ public class ProjectAccess
   public static final String SETTINGS_FILE = "com.centurylink.mdw.plugin.xml";
   public static final String LEGACY_SETTINGS_FILE = "com.qwest.mdw.plugin.attributes";
 
-  private List<WorkflowApplication> localProjectWorkflowApps = new ArrayList<WorkflowApplication>();
+  private List<WorkflowApplication> localProjectWorkflowApps = new ArrayList<>();
   public List<WorkflowApplication> getLocalProjectWorkflowApps() { return localProjectWorkflowApps; }
 
   /**
@@ -40,7 +40,7 @@ public class ProjectAccess
    */
   public List<WorkflowApplication> findWorkflowApps()
   {
-    List<WorkflowApplication> apps = new ArrayList<WorkflowApplication>();
+    List<WorkflowApplication> apps = new ArrayList<>();
 
     for (IProject project : getWorkspaceRoot().getProjects())
     {

@@ -285,6 +285,16 @@ routesSvc.factory('routes', function() {
         path: '/system/sysInfo',
         templateUrl: 'system/sysInfo.html',
         controller: 'SystemController'
+      },
+      {
+        path: '/system/sysInfo/:sysInfoType',
+        templateUrl: 'system/sysInfo.html',
+        controller: 'SystemController'
+      },
+      {
+        path: '/system/threadInfo/:sysInfoType',
+        templateUrl: 'system/threadInfo.html',
+        controller: 'SystemController'
       }
    ]
   };

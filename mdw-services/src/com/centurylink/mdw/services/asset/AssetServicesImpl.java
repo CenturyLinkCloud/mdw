@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.bpm.PackageDocument;
-import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -393,16 +392,21 @@ public class AssetServicesImpl implements AssetServices {
     }
 
     private void addVersionControlInfo(AssetInfo asset) throws ServiceException {
+        CodeTimer timer = new CodeTimer("addVersionControlInfo(AssetInfo)", true);
         try {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
             if (versionControl != null) {
                 String assetVcPath = versionControl.getRelativePath(asset.getFile());
+                asset.setCommitInfo(versionControl.getCommitInfo(assetVcPath));
                 GitDiffs diffs = versionControl.getDiffs(gitBranch, assetVcPath);
                 asset.setVcsDiffType(diffs.getDiffType(assetVcPath));
             }
         }
         catch (Exception ex) {
             logger.severeException("Unable to retrieve Git information for asset packages", ex);
+        }
+        finally {
+            timer.stopAndLogTiming(null);
         }
     }
 

@@ -9,6 +9,9 @@
           <span class="mdw-diff" ng-if="asset.vcsDiff == 'DIFFERENT'">*</span>
           <span class="mdw-diff" ng-if="asset.vcsDiff == 'EXTRA'"><sup>+</sup></span>
           <span class="mdw-diff" ng-if="asset.vcsDiff == 'MISSING'"><sup>-</sup></span>
+          <span class="mdw-commit" ng-if="asset.commitInfo" title="{{asset.commitInfo.message}}"> ({{asset.commitInfo.committer}} 
+            <span class="mdw-commit-date">{{asset.commitInfo.date}}</span>)
+          </span>
           <a class="btn btn-primary mdw-btn" ng-if="asset.language == 'proc' && asset.view == 'content' && asset.content" 
              ng-href="#/workflow/processes/{{packageName}}/{{assetName}}/{{asset.version}}" title="Instances" style="margin-left:10px;padding:1px 4px 0 4px;">
             <span class="glyphicon glyphicon-menu-hamburger"></span>

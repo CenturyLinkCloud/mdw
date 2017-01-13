@@ -34,6 +34,8 @@ import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.system.SysInfo;
+import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.variable.Document;
@@ -147,8 +149,23 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public Map<String,String> getValues(String ownerType, String ownerId) throws ServiceException {
         try {
-            CommonDataAccess dao = new CommonDataAccess();
-            return dao.getValues(ownerType, ownerId);
+            if (OwnerType.SYSTEM.equals(ownerType)) {
+                if ("mdwProperties".equals(ownerId)) {
+                    Map<String,String> mdwProps = new HashMap<String,String>();
+                    SysInfoCategory cat = ServiceLocator.getSystemServices().getMdwProperties();
+                    for (SysInfo sysInfo : cat.getSysInfos()) {
+                        mdwProps.put(sysInfo.getName(), sysInfo.getValue());
+                    }
+                    return mdwProps;
+                }
+                else {
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported System values: " + ownerId);
+                }
+            }
+            else {
+                CommonDataAccess dao = new CommonDataAccess();
+                return dao.getValues(ownerType, ownerId);
+            }
         }
         catch (SQLException ex) {
             throw new ServiceException(ex.getMessage(), ex);

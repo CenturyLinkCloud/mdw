@@ -35,14 +35,19 @@ public class System extends JsonRestService {
         response=SysInfoCategory.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         SystemServices systemServices = ServiceLocator.getSystemServices();
-
         String[] segments = getSegments(path);
         if (segments.length == 2) {
             JSONArray jsonArr = new JSONArray();
-            List<SysInfoCategory> categories = systemServices.getSysInfoCategories(SysInfoType.System);
-            for (SysInfoCategory category : categories)
-                jsonArr.put(category.getJson());
-            return new JsonArray(jsonArr).getJson();
+            try {
+                SysInfoType type = segments[1].equals("sysInfo") ? SysInfoType.System : SysInfoType.valueOf(segments[1]);
+                List<SysInfoCategory> categories = systemServices.getSysInfoCategories(type);
+                for (SysInfoCategory category : categories)
+                    jsonArr.put(category.getJson());
+                return new JsonArray(jsonArr).getJson();
+            }
+            catch (IllegalArgumentException ex) {
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported SysInfoType: " + segments[1]);
+            }
         }
         else {
             return new JSONObject(); // TODO
