@@ -115,13 +115,6 @@ public class PackageDir extends File {
         this.archiveDir = new File(storageDir + "/" + ARCHIVE_SUBDIR);
         this.versionControl = versionControl;
     }
-    //added for Ant task
-    public PackageDir(File storageDir, File pkgNode, String packageName) {
-        super(pkgNode.toString());
-        this.storageDir = storageDir;
-        this.archiveDir = new File(storageDir + "/" + ARCHIVE_SUBDIR);
-        this.pkgName = packageName;
-    }
 
     /**
      * For newly-created packages.
