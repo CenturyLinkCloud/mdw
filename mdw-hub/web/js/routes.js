@@ -295,6 +295,11 @@ routesSvc.factory('routes', function() {
         path: '/system/threadInfo/:sysInfoType',
         templateUrl: 'system/threadInfo.html',
         controller: 'SystemController'
+      },
+      {
+        path: '/system/caches',
+        templateUrl: 'system/caches.html',
+        controller: 'SystemController'
       }
    ]
   };
