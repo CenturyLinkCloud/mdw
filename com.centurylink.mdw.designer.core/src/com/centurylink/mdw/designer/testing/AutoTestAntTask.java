@@ -291,7 +291,7 @@ public class AutoTestAntTask extends MatchingTask {
             String jsonString = null;
             if (testResultsSummaryFile.exists() && testResultsSummaryFile.getName().endsWith(".json")) {
                 jsonString = new String(Files.readAllBytes(testResultsSummaryFile.toPath()));
-                if(jsonString!=null && !jsonString.isEmpty())//avoid creating testcase list if empty json file presents
+                if(jsonString!=null && !jsonString.isEmpty())
                      testCaseList = new TestCaseList(workflowDir, new JSONObject(jsonString));
             }
             if(testCaseList == null) {
