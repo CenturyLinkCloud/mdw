@@ -129,11 +129,6 @@ routesSvc.factory('routes', function() {
         controller: 'ProcessesController'
       },
       {
-        path: '/workflow/processes/:procPkg/:proc/:procVer',
-        templateUrl: 'workflow/processes.html',
-        controller: 'ProcessesController'
-      },
-      {
         path: '/workflow/processes/:instanceId',
         templateUrl: 'workflow/process.html',
         controller: 'ProcessController'
@@ -147,6 +142,11 @@ routesSvc.factory('routes', function() {
         path: '/workflow/processes/:instanceId/values/:name',
         templateUrl: 'workflow/value.html',
         controller: 'ProcessController'
+      },
+      {
+        path: '/workflow/processes/:procPkg/:proc/:procVer',
+        templateUrl: 'workflow/processes.html',
+        controller: 'ProcessesController'
       },
       {
         path: '/workflow/definition/:packageName/:processName',
