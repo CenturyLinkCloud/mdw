@@ -6,10 +6,10 @@
         <div class="mdw-heading-label">Refresh Cache</div>
       </div>
       <div style="text-align: center;">
-        <button type="button" class="btn btn-success" ng-if="authUser.hasRole('Process Execution')" ng-click="cacheRefresh(true)">
+        <button type="button" class="btn btn-success" ng-if="authUser.hasRole('Process Design')" ng-click="cacheRefresh(true)">
           <span class="glyphicon glyphicon-globe"></span> Refresh Global
         </button>
-        <button type="button" class="btn btn-success" ng-if="authUser.hasRole('Process Execution')" ng-click="cacheRefresh(false)">
+        <button type="button" class="btn btn-success" ng-if="authUser.hasRole('Process Design')" ng-click="cacheRefresh(false)">
           <span class="glyphicon glyphicon-refresh"></span> Refresh Local
         </button>
     </div>
