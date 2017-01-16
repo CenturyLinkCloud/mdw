@@ -13,50 +13,50 @@ import com.centurylink.mdw.common.service.Jsonable;
  */
 public class Person implements Jsonable {
 
-	private String firstName;
+    private String firstName;
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setFirstName(String first) {
-		this.firstName = first;
-	}
+    public void setFirstName(String first) {
+        this.firstName = first;
+    }
 
-	private String lastName;
+    private String lastName;
 
-	public String getLastName() {
-		return lastName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setLastName(String last) {
-		this.lastName = last;
-	}
+    public void setLastName(String last) {
+        this.lastName = last;
+    }
 
-	/**
-	 * no-arg constructor required for yaml
-	 */
-	public Person() {
-	}
+    /**
+     * no-arg constructor required for yaml
+     */
+    public Person() {
+    }
 
-	/**
-	 * Jsonable requires this constructor
-	 */
-	public Person(JSONObject json) throws JSONException {
-		firstName = json.getString("firstName");
-		lastName = json.getString("lastName");
-	}
+    /**
+     * Jsonable requires this constructor
+     */
+    public Person(JSONObject json) throws JSONException {
+        firstName = json.getString("firstName");
+        lastName = json.getString("lastName");
+    }
 
-	@Override
-	public JSONObject getJson() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("firstName", firstName);
-		json.put("lastName", lastName);
-		return json;
-	}
+    @Override
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("firstName", firstName);
+        json.put("lastName", lastName);
+        return json;
+    }
 
-	@Override
-	public String getJsonName() {
-		return "person";
-	}
+    @Override
+    public String getJsonName() {
+        return "person";
+    }
 }
