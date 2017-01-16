@@ -3,8 +3,8 @@
 
 var sysMod = angular.module('system', ['ngResource', 'mdw']);
 
-sysMod.controller('SystemController', ['$scope', '$routeParams', 'WorkflowCache', 'mdw', 'System',
-                                        function($scope, $routeParams, WorkflowCache, mdw, System) {
+sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'WorkflowCache', 'mdw', 'System',
+                                        function($scope, $routeParams, $location, WorkflowCache, mdw, System) {
   
   $scope.sysInfoType = $routeParams.sysInfoType;
   if (typeof $scope.sysInfoType === 'undefined') {
