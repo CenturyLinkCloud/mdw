@@ -1,6 +1,45 @@
-process: # 10312
+process: # 10229
   name: RestfulServiceAdapter
   instance: 1
-  variable: # 10752
+  activity: # 1 "2017-01-03 10:40:19"
+    name: Start
+    status: Completed
+  activity: # 7 "2017-01-03 10:40:19"
+    name: Request Type
+    status: Completed
+    result: GET
+  activity: # 8 "2017-01-03 10:40:26"
+    name: |
+      RESTful
+      Resource Request
+    status: Completed
+  activity: # 6 "2017-01-03 10:40:27"
+    name: Stop
+    status: Completed
+  variable: # 10486
     name: httpMethod
     value: GET
+  variable: # 10491
+    name: responseDoc
+    value: |
+      {"ser:ApplicationSummary": {
+        "ApplicationName": "mdw6",
+        "Container": "Tomcat",
+        "Database": "MySQL",
+        "DbInfo": {
+          "jdbcUrl": "jdbc:mysql://localhost:3308/mdw",
+          "user": "mdw"
+        },
+        "MdwBuild": "2017-01-02 15:14:09",
+        "MdwHubUrl": "http://localhost:8080/mdw",
+        "MdwVersion": "6.0.01-SNAPSHOT",
+        "Repository": {
+          "branch": "master",
+          "commit": "",
+          "provider": "Git",
+          "url": "https://github.com/CenturyLinkCloud/MDW.git"
+        },
+        "ServicesUrl": "http://localhost:8080/mdw",
+        "Version": "Unknown",
+        "xmlns:ser": "http://mdw.centurylink.com/services"
+      }}
