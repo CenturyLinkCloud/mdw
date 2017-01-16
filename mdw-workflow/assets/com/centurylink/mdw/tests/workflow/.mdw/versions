@@ -1,4 +1,4 @@
-#Thu Jan 12 14:30:10 IST 2017
+#Mon Jan 16 11:09:35 IST 2017
 A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=2
 CrossmapTest.proc=2
@@ -28,7 +28,7 @@ MDWTestSubProcess4.proc=6
 MDWTestSuppsEmbedded.proc=9
 MDWTestTimerWait.proc=1004
 MDWTestVariables.proc=3
-Person.java=2
+Person.java=3
 PopulateVar.java=2
 PrePostGroovyScript.proc=7
 RestfulServiceAdapter.proc=21
@@ -50,7 +50,7 @@ TestEmbedded.task=1
 TimerBean.java=1
 TimerWaitActivityOrder.proc=3
 TnValidator.groovy=3
-VariableTypes.proc=6
+VariableTypes.proc=7
 activity-exception.test=3
 activity-exception.yaml=4
 activityExceptionFallout.task=2

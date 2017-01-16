@@ -23,21 +23,21 @@ process: # 10229
     name: responseDoc
     value: |
       {"ser:ApplicationSummary": {
-        "ApplicationName": "mdw6",
+        "ApplicationName": "${~mdw.*}",
         "Container": "Tomcat",
         "Database": "MySQL",
         "DbInfo": {
           "jdbcUrl": "jdbc:mysql://localhost:3308/mdw",
           "user": "mdw"
         },
-        "MdwBuild": "2017-01-02 15:14:09",
+        "MdwBuild": "${~201.*}",
         "MdwHubUrl": "http://localhost:8080/mdw",
-        "MdwVersion": "6.0.01-SNAPSHOT",
+        "MdwVersion": "${~6.*}",
         "Repository": {
           "branch": "master",
-          "commit": "",
+          "commit": "${~.*}",
           "provider": "Git",
-          "url": "https://github.com/CenturyLinkCloud/MDW.git"
+          "url": "${~http.*}"
         },
         "ServicesUrl": "http://localhost:8080/mdw",
         "Version": "Unknown",
