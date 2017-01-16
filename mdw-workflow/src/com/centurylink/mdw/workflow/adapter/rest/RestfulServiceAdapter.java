@@ -50,12 +50,12 @@ public class RestfulServiceAdapter extends AdapterActivityBase implements Header
 	@Override
 	protected Object openConnection() throws ConnectionException {
 		try {
-			String endpointUri = getEndpointUri();
+			StringBuilder endpointUri = new StringBuilder(getEndpointUri());
 			Map<String, String> params = getRequestParameters();
 			if (params != null && !params.isEmpty()) {
 				StringBuilder query = new StringBuilder();
+				String encoding = getUrlEncoding();
 				for (String name : params.keySet()) {
-					String encoding = getUrlEncoding();
 					if (encoding == null) {
 						query.append(name).append("=").append(params.get(name));
 
@@ -64,10 +64,10 @@ public class RestfulServiceAdapter extends AdapterActivityBase implements Header
 								.append(URLEncoder.encode(params.get(name), encoding));
 					}
 				}
-				endpointUri += endpointUri.indexOf('?') < 0 ? '?' : '&';
-				endpointUri += query.substring(1);
+				endpointUri .append( endpointUri.toString().indexOf('?') < 0 ? '?' : '&');
+				endpointUri.append(query.substring(1));
 			}
-			URL url = new URL(endpointUri);
+			URL url = new URL(endpointUri.toString());
 			return url.openConnection();
 		} catch (Exception ex) {
 			throw new ConnectionException(ConnectionException.CONNECTION_DOWN, ex.getMessage(), ex);
@@ -126,8 +126,7 @@ public class RestfulServiceAdapter extends AdapterActivityBase implements Header
 			if (headers != null)
 				httpHelper.setHeaders(headers);
 
-			String httpMethod = getHttpMethod();
-			switch (httpMethod) {
+			switch (getHttpMethod()) {
 			case "GET":
 				return httpHelper.get();
 			case "POST":
@@ -137,7 +136,7 @@ public class RestfulServiceAdapter extends AdapterActivityBase implements Header
 			case "DELETE":
 				return httpHelper.delete();
 			default:
-				throw new AdapterException("Unsupported HTTP Method: " + httpMethod);
+				throw new AdapterException("Unsupported HTTP Method: " + getHttpMethod());
 			}
 		} catch (IOException ex) {
 			AdapterException adapEx = new AdapterException(-1, ex.getMessage(), ex);

@@ -14,4 +14,4 @@ process: # 10262
     status: Completed
   variable: # 10610
     name: mrid
-    value: ab68052-170103-113103656
+    value: ${masterRequestId}
