@@ -39,21 +39,21 @@ process: # 10246
       <bpm:ProcessExecutionPlan xmlns:bpm="http://mdw.centurylink.com/bpm">
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
-              <bpm:InstanceId>10250</bpm:InstanceId>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="argument">11</bpm:Parameter>
               <bpm:Parameter Name="result">121</bpm:Parameter>
           </bpm:SubprocessInstance>
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
-              <bpm:InstanceId>10249</bpm:InstanceId>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="argument">13</bpm:Parameter>
               <bpm:Parameter Name="result">169</bpm:Parameter>
           </bpm:SubprocessInstance>
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess2</bpm:LogicalProcessName>
-              <bpm:InstanceId>10248</bpm:InstanceId>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="n">3</bpm:Parameter>
               <bpm:Parameter Name="ncube">$ncube</bpm:Parameter>
@@ -68,7 +68,7 @@ process: # 10246
     value: |
       <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
           <Action Name="RegressionTest">
-              <Parameter name="MasterRequestId">ab68052-170103-111943364</Parameter>
+              <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
               <Parameter name="ProcessName">MDWTestHeterogeneousProcessCall</Parameter>
               <Parameter name="testcase">parallel</Parameter>
               <Parameter name="PerformanceLevel">3</Parameter>
