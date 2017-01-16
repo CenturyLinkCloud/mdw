@@ -28,10 +28,6 @@ public class MdwBaselineData implements BaselineData {
             variableTypes.add(new VariableType(103L, "java.lang.Integer", "com.centurylink.mdw.common.translator.impl.IntegerTranslator"));
             variableTypes.add(new VariableType(104L, "java.lang.Boolean", "com.centurylink.mdw.common.translator.impl.BooleanTranslator"));
             variableTypes.add(new VariableType(105L, "java.util.Date", "com.centurylink.mdw.common.translator.impl.DateTranslator"));
-            variableTypes.add(new VariableType(106L, "java.lang.String[]", "com.centurylink.mdw.common.translator.impl.StringArrayTranslator"));
-            variableTypes.add(new VariableType(107L, "java.lang.Integer[]", "com.centurylink.mdw.common.translator.impl.IntegerArrayTranslator"));
-            variableTypes.add(new VariableType(108L, "java.lang.Long[]", "com.centurylink.mdw.common.translator.impl.LongArrayTranslator"));
-            variableTypes.add(new VariableType(109L, "java.util.Map", "com.centurylink.mdw.common.translator.impl.StringMapTranslator"));
             variableTypes.add(new VariableType(110L, "java.net.URI", "com.centurylink.mdw.common.translator.impl.URITranslator"));
 
             // collections types
