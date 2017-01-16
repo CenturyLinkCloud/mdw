@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/system-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">Refresh Cache</div>
+      </div>
+      <div style="text-align: center;">
+        <button type="button" class="btn btn-success" ng-if="authUser.hasRole('Process Execution')" ng-click="cacheRefresh(true)">
+          <span class="glyphicon glyphicon-globe"></span> Refresh Global
+        </button>
+        <button type="button" class="btn btn-success" ng-if="authUser.hasRole('Process Execution')" ng-click="cacheRefresh(false)">
+          <span class="glyphicon glyphicon-refresh"></span> Refresh Local
+        </button>
+    </div>
+    </div>
+  </div>
+</div>

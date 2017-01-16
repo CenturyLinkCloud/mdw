@@ -1,10 +1,10 @@
-// Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
+// Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var sysMod = angular.module('system', ['ngResource', 'mdw']);
 
-sysMod.controller('SystemController', ['$scope', '$routeParams', 'mdw', 'System',
-                                        function($scope, $routeParams, mdw, System) {
+sysMod.controller('SystemController', ['$scope', '$routeParams', 'WorkflowCache', 'mdw', 'System',
+                                        function($scope, $routeParams, WorkflowCache, mdw, System) {
   
   $scope.sysInfoType = $routeParams.sysInfoType;
   if (typeof $scope.sysInfoType === 'undefined') {
@@ -13,6 +13,11 @@ sysMod.controller('SystemController', ['$scope', '$routeParams', 'mdw', 'System'
   $scope.sysInfoCategories = System.get({sysInfoType: $scope.sysInfoType});
   $scope.filepanelUrl = mdw.roots.webTools + '/system/filepanel/index.jsf?user=' + $scope.authUser.cuid;
   
+  $scope.cacheRefresh = function(refreshType) {
+    // leave cache error logging to the server side
+      WorkflowCache.refresh({}, { distributed: refreshType});
+    $location.path('/packages');
+  };
 }]);
 
 sysMod.factory('System', ['$resource', 'mdw', function($resource, mdw) {

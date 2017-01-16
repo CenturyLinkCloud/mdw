@@ -1,4 +1,4 @@
-// Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
+// Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var routesSvc = angular.module('routes', []);
@@ -295,7 +295,13 @@ routesSvc.factory('routes', function() {
         path: '/system/threadInfo/:sysInfoType',
         templateUrl: 'system/threadInfo.html',
         controller: 'SystemController'
+      },
+      {
+        path: '/system/caches',
+        templateUrl: 'system/caches.html',
+        controller: 'SystemController'
       }
+
    ]
   };
 });
