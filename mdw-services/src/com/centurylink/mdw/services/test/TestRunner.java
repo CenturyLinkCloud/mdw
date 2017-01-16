@@ -173,8 +173,7 @@ public class TestRunner implements Runnable {
                 writeTestResultsXml(testCase);
             }
             else {
-                TestCaseList testCaseList = writeTestResults(testCase);
-                updateWebSocket(testCaseList);
+                writeTestResults(testCase);
             }
         }
     }
@@ -185,7 +184,6 @@ public class TestRunner implements Runnable {
     private synchronized boolean updateResults() throws JSONException, IOException {
 
         boolean allDone = true;
-        TestCaseList fullTestCaseList = null;
         for (TestCase testCase : testCaseList.getTestCases()) {
             if (!testCase.isFinished())
                 allDone = false;
@@ -197,31 +195,12 @@ public class TestRunner implements Runnable {
                     writeTestResultsXml(testCase);
                 }
                 else {
-                    fullTestCaseList = writeTestResults(testCase);
+                    writeTestResults(testCase);
                 }
             }
         }
-        if (allDone && fullTestCaseList != null)
-            updateWebSocket(fullTestCaseList);
+
         return allDone;
-    }
-
-    /**
-     * force immediate update through WebSocket
-     */
-    private void updateWebSocket(TestCaseList testCaseList) {
-
-        StartupService webSocketServer = StartupRegistry.getInstance()
-                .getDynamicStartupService("com.centurylink.mdw.testing.WebSocketServer");
-        if (webSocketServer != null) {
-            try {
-                Method m = webSocketServer.getClass().getMethod("send", new Class[]{String.class});
-                m.invoke(webSocketServer, new Object[]{testCaseList.getJson().toString(2)});
-            }
-            catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
-            }
-        }
     }
 
     public TestCaseList writeTestResults(TestCase exeTestCase) throws JSONException, IOException {
