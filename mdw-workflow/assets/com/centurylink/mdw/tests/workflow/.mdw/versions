@@ -1,4 +1,4 @@
-#Mon Jan 16 11:09:35 IST 2017
+#Mon Jan 16 16:55:25 IST 2017
 A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=2
 CrossmapTest.proc=2
@@ -211,6 +211,6 @@ timer-wait-with-event-cancel.test=1
 timer-wait-with-event-hold.test=1
 timer-wait-with-event-wait.test=1
 variable-types.test=3
-variable-types.yaml=5 Auto-created
+variable-types.yaml=6 Auto-created
 xslt-transform-request.xml=1
 xslt-transform.test=3
