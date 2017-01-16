@@ -99,7 +99,8 @@ public class PackageDir extends File {
                     throw new DataAccessException("Package name in " + pkgFile + " is not '" + pkgNameFromDir + "'");
             }
             logicalDir = new File("/" + pkgName + " v" + pkgVersion);
-            pkgId = versionControl.getId(logicalDir);
+            if(versionControl!=null)
+                pkgId = versionControl.getId(logicalDir);
         }
         catch (DataAccessException ex) {
             throw ex;
