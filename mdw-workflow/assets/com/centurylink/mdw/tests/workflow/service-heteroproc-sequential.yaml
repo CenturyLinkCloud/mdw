@@ -39,21 +39,21 @@ process: # 10235
       <bpm:ProcessExecutionPlan xmlns:bpm="http://mdw.centurylink.com/bpm">
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
-              <bpm:InstanceId>10236</bpm:InstanceId>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="argument">11</bpm:Parameter>
               <bpm:Parameter Name="result">121</bpm:Parameter>
           </bpm:SubprocessInstance>
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess1</bpm:LogicalProcessName>
-              <bpm:InstanceId>10237</bpm:InstanceId>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="argument">13</bpm:Parameter>
               <bpm:Parameter Name="result">169</bpm:Parameter>
           </bpm:SubprocessInstance>
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SubProcess2</bpm:LogicalProcessName>
-              <bpm:InstanceId>10238</bpm:InstanceId>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="n">3</bpm:Parameter>
               <bpm:Parameter Name="ncube">$ncube</bpm:Parameter>
@@ -68,7 +68,7 @@ process: # 10235
     value: |
       <ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
           <Action Name="RegressionTest">
-              <Parameter name="MasterRequestId">tester-1483420178004</Parameter>
+              <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
               <Parameter name="ProcessName">MDWTestHeterogeneousProcessCall</Parameter>
               <Parameter name="testcase">sequential</Parameter>
               <Parameter name="PerformanceLevel">3</Parameter>
@@ -89,3 +89,70 @@ process: # 10235
   variable: # 10506
     name: testcase
     value: sequential
+process: # 10205
+  name: MDWTestSubProcess3
+  instance: 1
+  activity: # 34 "2017-01-16 16:48:23"
+    name: Start
+    status: Completed
+  activity: # 31 "2017-01-16 16:48:23"
+    name: Calculate sqaure
+    status: Completed
+  activity: # 33 "2017-01-16 16:48:24"
+    name: Finish
+    status: Completed
+  variable: # 10497
+    name: argument
+    value: 13
+  variable: # 10500
+    name: result
+    value: 169
+process: # 10204
+  name: MDWTestSubProcess3
+  instance: 2
+  activity: # 34 "2017-01-16 16:48:23"
+    name: Start
+    status: Completed
+  activity: # 31 "2017-01-16 16:48:23"
+    name: Calculate sqaure
+    status: Completed
+  activity: # 33 "2017-01-16 16:48:24"
+    name: Finish
+    status: Completed
+  variable: # 10496
+    name: argument
+    value: 11
+  variable: # 10499
+    name: result
+    value: 121
+process: # 10206
+  name: MDWTestSubProcess4
+  instance: 1
+  activity: # 34 "2017-01-16 16:48:23"
+    name: Start
+    status: Completed
+  activity: # 31 "2017-01-16 16:48:23"
+    name: Calculate cube
+    status: Completed
+  activity: # 35 "2017-01-16 16:48:24"
+    name: |
+      create output
+      document
+    status: Completed
+  activity: # 33 "2017-01-16 16:48:24"
+    name: Finish
+    status: Completed
+  variable: # 10498
+    name: n
+    value: 3
+  variable: # 10501
+    name: ncube
+    value: 27
+  variable: # 10502
+    name: resultdoc
+    value: |
+      <Result>
+        <n>3</n>
+        <nplus1>4</nplus1>
+        <cube>27</cube>
+      </Result>
