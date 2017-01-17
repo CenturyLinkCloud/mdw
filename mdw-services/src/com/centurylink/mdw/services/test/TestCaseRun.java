@@ -93,6 +93,10 @@ public class TestCaseRun implements Runnable {
     public String getMasterRequestId() { return masterRequestId; }
     public void setMasterRequestId(String masterRequestId) { this.masterRequestId = masterRequestId; }
 
+    private MasterRequestListener masterRequestListener;
+    public void setMasterRequestListener(MasterRequestListener listener) { masterRequestListener = listener; }
+    MasterRequestListener getMasterRequestListener() { return masterRequestListener; }
+
     private LogMessageMonitor monitor;
     private Map<String,Process> processCache;
 

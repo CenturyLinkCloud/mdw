@@ -6,7 +6,6 @@ package com.centurylink.mdw.services.test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -17,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,13 +29,11 @@ import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.listeners.startup.StartupRegistry;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.workflow.ActivityStubRequest;
 import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.provider.StartupService;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
@@ -51,7 +49,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 /**
  * Test runner for in-container execution.
  */
-public class TestRunner implements Runnable {
+public class TestRunner implements Runnable, MasterRequestListener {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static final int PAUSE = 2500;
@@ -103,7 +101,7 @@ public class TestRunner implements Runnable {
         threadPool = Executors.newFixedThreadPool(config.getThreads());
         processCache = new HashMap<String,Process>();
         testCaseStatuses = new HashMap<String,TestCase.Status>();
-        masterRequestRuns = new HashMap<String,TestCaseRun>();
+        masterRequestRuns = new ConcurrentHashMap<>();
 
         running = true;
 
@@ -134,6 +132,7 @@ public class TestRunner implements Runnable {
                 String masterRequestId = user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
                 TestCaseRun run = new TestCaseRun(testCase, user, resultsFile.getParentFile(), 0, masterRequestId, monitor, processCache, config);
                 masterRequestRuns.put(masterRequestId, run);
+                run.setMasterRequestListener(this);
 
                 logger.debug(" -> Executing test: " + testCase.getPath());
                 threadPool.execute(run);
@@ -312,6 +311,14 @@ public class TestRunner implements Runnable {
         }
     }
 
+    @Override
+    public void syncMasterRequestId(String oldId, String newId) {
+        TestCaseRun run = masterRequestRuns.remove(oldId);
+        if (run != null) {
+            masterRequestRuns.put(newId, run);
+        }
+    }
+
     private void setLogWatchState(boolean on) throws JSONException, ProcessException, UnknownHostException {
         JSONObject json = new JSONObject();
         json.put("ACTION", "REFRESH_PROPERTY");
@@ -351,4 +358,5 @@ public class TestRunner implements Runnable {
             return run.getStubResponse(request);
         }
     }
+
 }

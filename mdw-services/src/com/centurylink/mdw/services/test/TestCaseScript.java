@@ -57,10 +57,15 @@ public abstract class TestCaseScript extends Script {
     private void syncMasterRequestId() {
         if (getBinding().hasVariable("masterRequestId")) {
             Object defined = getBinding().getVariable("masterRequestId");
-            if (!getMasterRequestId().equals(defined))
-                setMasterRequestId(String.valueOf(defined));
-            if (getTestCaseRun().isVerbose())
-              getTestCaseRun().getLog().println("masterRequestId: " + getMasterRequestId());
+            TestCaseRun run = getTestCaseRun();
+            if (!run.getMasterRequestId().equals(defined)) {
+                String old = run.getMasterRequestId();
+                run.setMasterRequestId(String.valueOf(defined));
+                if (run.getMasterRequestListener() != null)
+                    run.getMasterRequestListener().syncMasterRequestId(old, run.getMasterRequestId());
+                if (run.isVerbose())
+                  run.getLog().println("masterRequestId: " + getMasterRequestId());
+            }
         }
     }
 
@@ -373,6 +378,7 @@ public abstract class TestCaseScript extends Script {
     }
 
     public TestCaseAdapterStub stub(TestCaseAdapterStub adapterStub) throws TestException {
+        syncMasterRequestId();
         getTestCaseRun().addAdapterStub(adapterStub);
         return adapterStub;
     }
