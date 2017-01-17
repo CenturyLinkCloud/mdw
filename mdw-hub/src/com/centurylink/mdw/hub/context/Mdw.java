@@ -43,9 +43,17 @@ public class Mdw {
     public String getAuthMethod() { return authMethod; }
     public void setAuthMethod(String authMethod) { this.authMethod = authMethod; }
 
+    private String authTokenLoc;
+    public String getAuthTokenLoc() { return authTokenLoc; }
+    public void setAuthTokenLoc(String authTokenLoc) { this.authTokenLoc = authTokenLoc; }
+
     private String autoTestWebSocketUrl;
     public String getAutoTestWebSocketUrl() { return autoTestWebSocketUrl; }
     public void setAutoTestWebSocketUrl(String url) { this.autoTestWebSocketUrl = url; }
+
+    private boolean allowAnyAuthenticatedUser;
+    public boolean isAllowAnyAuthenticatedUser() { return allowAnyAuthenticatedUser; }
+    public void setAllowAnyAuthenticatedUser(boolean allow) { this.allowAnyAuthenticatedUser = allow; }
 
     Mdw(String version, String build, String hubRoot, String servicesRoot, File assetRoot, String overridePackage) {
         this.version = version;

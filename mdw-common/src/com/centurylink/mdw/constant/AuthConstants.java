@@ -11,12 +11,20 @@ public class AuthConstants {
     // For OAuth authentication
     public static final String OAUTH_TOKEN_LOCATION_SYS_PROP = "mdw.oauth.token.location";
     public static final String OAUTH_TOKEN_LOCATION_ENV_VAR = "MDW_OAUTH_TOKEN_LOCATION";
+    private static String authTokenLoc;
     public static String getOAuthTokenLocation() {
-        String tokenLoc = System.getProperty(OAUTH_TOKEN_LOCATION_SYS_PROP);
-        if (tokenLoc == null)
-            tokenLoc = System.getenv(OAUTH_TOKEN_LOCATION_ENV_VAR);
-        return tokenLoc;
+        if (authTokenLoc == null) {
+            String tokenLoc = System.getProperty(OAUTH_TOKEN_LOCATION_SYS_PROP);
+            if (tokenLoc == null)
+                tokenLoc = System.getenv(OAUTH_TOKEN_LOCATION_ENV_VAR);
+            authTokenLoc = tokenLoc;
+        }
+        return authTokenLoc;
     }
+    public static final void setAuthTokenLoc(String tokenLoc) {
+        authTokenLoc = tokenLoc;
+    }
+
     // For OAuth session token
     public static final String OAUTH_TOKEN_SESSION = "mdw_oauth_token";
 

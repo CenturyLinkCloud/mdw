@@ -42,6 +42,7 @@ public class AccessFilter implements Filter {
     private static List<InetAddress> upstreamHosts; // null means not restricted
     private static String authMethod = "oauth";
     private static String authUserHeader;
+    private static String authTokenLoc;
     private static List<AuthExcludePattern> authExclusions = new ArrayList<AuthExcludePattern>();
     private static Map<String,String> responseHeaders;
     private static boolean devMode;
@@ -80,6 +81,10 @@ public class AccessFilter implements Filter {
             // authUserHeader
             authUserHeader = yamlLoader.get("authUserHeader", topMap);
 
+            // authTokenLoc
+            authTokenLoc = yamlLoader.get("authTokenLoc", topMap);
+            WebAppContext.getMdw().setAuthTokenLoc(authTokenLoc);
+
             // authExclusions
             List<?> authExclusionsList = yamlLoader.getList("authExclusions", topMap);
             if (authExclusionsList != null) {
@@ -103,6 +108,8 @@ public class AccessFilter implements Filter {
             // allowAnyAuthenticadUser
             String allowAnyAuthUserStr = yamlLoader.get("authUserHeader", topMap);
             allowAnyAuthenticatedUser = "true".equalsIgnoreCase(allowAnyAuthUserStr);
+            if (allowAnyAuthenticatedUser)
+                WebAppContext.getMdw().setAllowAnyAuthenticatedUser(allowAnyAuthenticatedUser);
 
             Map<?,?> optionsMap = yamlLoader.getMap("loggingOptions", topMap);
             if (optionsMap != null) {
@@ -157,14 +164,20 @@ public class AccessFilter implements Filter {
             if (logParameters)
                 logRequestParams(request);
 
+            String authUser = null;
+            if (authUserHeader != null) {
+                authUser = request.getHeader(authUserHeader);
+            }
+
             // check authentication
             AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
-            if (user == null || user.getCuid() == null) {
-                String authUser = null;
-                if (authUserHeader != null)
-                    authUser = request.getHeader(authUserHeader);
-                if (authUser == null && devMode)
-                    authUser = ApplicationContext.getDevUser();
+            if (user == null || user.getCuid() == null || (authUser != null && !user.getCuid().equals(authUser))) {
+                if (devMode) {
+                    if (authUser == null) // otherwise honor the header to support auth even in dev mode
+                        authUser = ApplicationContext.getDevUser();
+                    ApplicationContext.setDevUser(authUser);
+                    WebAppContext.getMdw().setHubUser(authUser);
+                }
                 if (authUser != null && authUser.length() > 0) {
                     // load the user
                     user = ServiceLocator.getUserManager().loadUser(authUser);
@@ -177,8 +190,14 @@ public class AccessFilter implements Filter {
                 else {
                     // user not authenticated
                     if (!isAuthExclude(path)) {
-                        // redirect to login page is performed upstream (CT web agent or OAuth)
-                        throw new MdwSecurityException("Authentication required");
+                        if ("ct".equals(authMethod)) {
+                            // redirect to login page is performed upstream (CT web agent)
+                            throw new MdwSecurityException("Authentication required");
+                        }
+                        else {
+                            response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+                            return;
+                        }
                     }
                 }
             }

@@ -105,7 +105,7 @@ public class OAuthAuthenticator implements Authenticator {
                 if (logger.isDebugEnabled()) {
                     logger.debug("OAuthAuthenticator...got response =" + response);
                 }
-                logger.info("OAuthAuthenticator...response access token "
+                logger.debug("OAuthAuthenticator...response access token "
                         + response.getParam("access_token"));
             }
             else {
