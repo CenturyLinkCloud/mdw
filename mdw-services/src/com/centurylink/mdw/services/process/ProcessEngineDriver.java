@@ -49,9 +49,11 @@ import com.centurylink.mdw.util.log.StandardLogger;
 
 public class ProcessEngineDriver {
 
-    private static int default_performance_level_regular = 0;
-    private static int default_performance_level_service = 0;
-    private static String useTransactionOnExcecute = "not_loaded";
+    public static final int DEFAULT_PERFORMANCE_LEVEL = 3;
+
+    private static Integer default_performance_level_regular;
+    private static Integer default_performance_level_service;
+    private static String useTransactionOnExecute = "not_loaded";
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private Exception lastException;    // used by service process to throw exception back to event handler
@@ -64,7 +66,7 @@ public class ProcessEngineDriver {
      * @throws ServiceLocatorException
      */
     public ProcessEngineDriver() throws ServiceLocatorException {
-        if (default_performance_level_regular==0)
+        if (default_performance_level_regular == null)
             loadDefaultPerformanceLevel();
         eventConsumeRetrySleep = PropertyManager.getIntegerProperty(PropertyNames.MDW_INTERNAL_EVENT_CONSUME_RETRY_SLEEP, 2);
     }
@@ -229,7 +231,7 @@ public class ProcessEngineDriver {
             if (ar.getStartCase()!=ActivityRuntime.RESUMECASE_NORMAL) return;
             boolean finished;
             if (ar.getActivity() instanceof SuspendibleActivity) {
-                if ("true".equalsIgnoreCase(useTransactionOnExcecute)) {
+                if ("true".equalsIgnoreCase(useTransactionOnExecute)) {
                     finished = engine.resumeActivityExecute(ar, event, resumeOnHold);
                 } else {
                     if (resumeOnHold) finished = ((SuspendibleActivity)ar.activity).resumeWaiting(event);
@@ -290,10 +292,10 @@ public class ProcessEngineDriver {
                 String resCode = ar.activity.notifyMonitors(WorkStatus.LOGMSG_EXECUTE);
                 if (resCode == null || resCode.equals("(EXECUTE_ACTIVITY)")) {
                     // proceed with normal activity execution
-                    if ("not_loaded".equals(useTransactionOnExcecute)) {
-                        useTransactionOnExcecute = PropertyManager.getProperty(PropertyNames.MDW_ENGINE_USE_TRANSACTION);
+                    if ("not_loaded".equals(useTransactionOnExecute)) {
+                        useTransactionOnExecute = PropertyManager.getProperty(PropertyNames.MDW_ENGINE_USE_TRANSACTION);
                     }
-                    if ("true".equalsIgnoreCase(useTransactionOnExcecute))
+                    if ("true".equalsIgnoreCase(useTransactionOnExecute))
                         engine.executeActivityInstance(ar.getActivity());
                     else {
                         if (ar.getActivity().getTimer() != null)
@@ -940,9 +942,13 @@ public class ProcessEngineDriver {
         String pv = PropertyManager.getProperty(PropertyNames.MDW_PERFORMANCE_LEVEL_REGULAR);
         if (pv != null)
             default_performance_level_regular = Integer.parseInt(pv);
+        else
+            default_performance_level_regular = DEFAULT_PERFORMANCE_LEVEL;
         pv = PropertyManager.getProperty(PropertyNames.MDW_PERFORMANCE_LEVEL_SERVICE);
         if (pv != null)
             default_performance_level_service = Integer.parseInt(pv);
+        else
+            default_performance_level_service = DEFAULT_PERFORMANCE_LEVEL;
     }
 
     private Process getProcessDefinition(Long processId) {
