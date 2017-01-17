@@ -3,7 +3,7 @@
   <div class="col-md-10">
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
-        <div class="mdw-heading-label">Refresh Cache</div>
+        <div class="mdw-heading-label">Refresh Cache</div>        
       </div>
       <div style="text-align: center;">
         <button type="button" class="btn btn-success" ng-if="authUser.hasRole('Process Design')" ng-click="cacheRefresh(true)">
@@ -12,7 +12,10 @@
         <button type="button" class="btn btn-success" ng-if="authUser.hasRole('Process Design')" ng-click="cacheRefresh(false)">
           <span class="glyphicon glyphicon-refresh"></span> Refresh Local
         </button>
-    </div>
+      </div>
+      <div class="mdw-form-footer">
+          <div class="mdw-message mdw-form-message">{{refreshMessage}}</div>
+      </div>
     </div>
   </div>
 </div>
