@@ -24,10 +24,10 @@
     {
       "attributes": {
         "WORK_DISPLAY_INFO": "x=323,y=115,w=183,h=59",
-        "processname": "com.centurylink.mdw.tests.workflow/RpcWebService",
-        "processversion": "[0.4,1)",
+        "processname": "com.centurylink.mdw.tests.workflow/SmartProcessChild",
+        "processversion": "[2.4,3)",
         "synchronous": "FALSE",
-        "variables": "requestDoc=${myvar}"
+        "variables": "inputVar=${myvar}"
       },
       "id": "A3",
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
@@ -94,5 +94,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.3"
+  "version": "0.4"
 }
