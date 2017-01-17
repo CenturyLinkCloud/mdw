@@ -146,8 +146,8 @@
     {
       "attributes": {
         "WORK_DISPLAY_INFO": "x=139,y=217,w=100,h=60",
-        "processname": "SmartProcessChildCompat",
-        "processversion": "10002",
+        "processname": "com.centurylink.mdw.tests.workflow/SmartProcessChildCompat",
+        "processversion": "[10.3,11)",
         "synchronous": "TRUE"
       },
       "id": "A10",
