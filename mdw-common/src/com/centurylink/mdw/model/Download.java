@@ -10,6 +10,9 @@ import com.centurylink.mdw.common.service.Jsonable;
 
 public class Download implements Jsonable {
 
+    /**
+     * Empty URL means no download available.
+     */
     private String url;
     public String getUrl() { return url; }
     public void setUrl(String url) { this.url = url; }
@@ -23,7 +26,8 @@ public class Download implements Jsonable {
     }
 
     public Download(JSONObject json) throws JSONException {
-        url = json.getString("url");
+        if (json.has("url"))
+            url = json.getString("url");
         if (json.has("file"))
             file = json.getString("file");
     }
