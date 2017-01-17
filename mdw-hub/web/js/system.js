@@ -5,7 +5,8 @@ var sysMod = angular.module('system', ['ngResource', 'mdw']);
 
 sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'WorkflowCache', 'mdw', 'System',
                                         function($scope, $routeParams, $location, WorkflowCache, mdw, System) {
-  
+  $scope.refreshMessage = 'Please click one of the buttons';
+
   $scope.sysInfoType = $routeParams.sysInfoType;
   if (typeof $scope.sysInfoType === 'undefined') {
     $scope.sysInfoType = 'System';
@@ -15,8 +16,15 @@ sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'W
   
   $scope.cacheRefresh = function(refreshType) {
     // leave cache error logging to the server side
-      WorkflowCache.refresh({}, { distributed: refreshType});
-    $location.path('/packages');
+      WorkflowCache.refresh({}, { distributed: refreshType}).$promise.then(function success(response) {
+        console.log('Success response:' + response.status.message);
+        $scope.refreshMessage = response.status.message;
+        $location.path('/system/caches');
+      }, function error(response) {
+        console.log('Error response' + response.status.message);
+        $scope.refreshMessage = response.status.message;
+        $location.path('/system/caches');
+      });
   };
 }]);
 
