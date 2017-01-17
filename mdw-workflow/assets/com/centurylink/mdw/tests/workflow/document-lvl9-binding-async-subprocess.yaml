@@ -31,4 +31,4 @@ process: # 10286
     result: com.centurylink.mdw.activity.ActivityException: Failed to get document...
   variable: # 10711
     name: requestDoc
-    value:  "DOCUMENT:11713"
+    value:  ${~\".*:\\d+\"}
