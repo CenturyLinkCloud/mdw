@@ -79,10 +79,10 @@ public class WorkflowCache extends JsonRestService {
                 propagatePost(content, headers);
         }
         catch (StartupException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
         }
         catch (IOException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
         }
 
         return null;
