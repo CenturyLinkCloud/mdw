@@ -36,6 +36,7 @@ authExclusions:
   - '/services/*'
   - '/Services/*'
   - '/api/*'
+  - '/bower_components/bootstrap-css-only/css/*'
   
 # Headers appended to all HTTP servlet responses.
 responseHeaders:
