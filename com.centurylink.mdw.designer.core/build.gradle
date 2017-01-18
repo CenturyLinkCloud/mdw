@@ -22,8 +22,8 @@ task cleanMdwCommon(type: Delete) {
 // gets schemas and common
 task getMdwCommon(type: Copy) {
     dependsOn(copyCompatibilityMappings, cleanMdwCommon)
-    from zipTree("../${mdwOutputDir}/mdw-schemas-${mdwVersion}.jar").matching{exclude "META-INF/**"}
-    from zipTree("../${mdwOutputDir}/mdw-common-${mdwVersion}.jar").matching{exclude "META-INF/**"}
+    from zipTree("${mdwOutputDir}/mdw-schemas-${mdwVersion}.jar").matching{exclude "META-INF/**"}
+    from zipTree("${mdwOutputDir}/mdw-common-${mdwVersion}.jar").matching{exclude "META-INF/**"}
     into "./classes"
 }
 
@@ -85,7 +85,7 @@ jar {
 // copy classes after eclipse build (schemas need to generate the jar)
 task devGetMdwCommon(type: Copy) {
     dependsOn copyCompatibilityMappings
-    from "../mdw-common/build/classes"
+    from "${mdwOutputDir}/../../../mdw-common/build/classes"
     include "**/*.class"
     into "./classes"
 }
