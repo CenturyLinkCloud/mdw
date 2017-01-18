@@ -293,12 +293,15 @@ public class DesignerProxy
               String json = restfulServer.invokeResourceService(pkgDownloadServicePath);
 
               Download download = new Download(new JSONObject(json));
-              URL url = new URL(download.getUrl());
-              IFolder tempFolder = project.getTempFolder();
-              IFile tempFile = tempFolder.getFile(download.getFile());
-              IProgressMonitor subMonitor = new SubProgressMonitor(((SwtProgressMonitor)progressMonitor).getWrappedMonitor(), 5);
-              PluginUtil.downloadIntoProject(project.getSourceProject(), url, tempFolder, tempFile, "Download Packages", subMonitor);
-              PluginUtil.unzipProjectResource(project.getSourceProject(), tempFile, null, project.getAssetFolder(), subMonitor);
+              if (!StringHelper.isEmpty(download.getUrl()))
+              {
+                URL url = new URL(download.getUrl());
+                IFolder tempFolder = project.getTempFolder();
+                IFile tempFile = tempFolder.getFile(download.getFile());
+                IProgressMonitor subMonitor = new SubProgressMonitor(((SwtProgressMonitor)progressMonitor).getWrappedMonitor(), 5);
+                PluginUtil.downloadIntoProject(project.getSourceProject(), url, tempFolder, tempFile, "Download Packages", subMonitor);
+                PluginUtil.unzipProjectResource(project.getSourceProject(), tempFile, null, project.getAssetFolder(), subMonitor);
+              }
             }
           }
           catch (ZipException ze)
@@ -2591,6 +2594,7 @@ public class DesignerProxy
       }
       testCase.setMasterRequestId(masterRequestId);
       TestCaseRun run;
+
       if (testCase.isGherkin())
         run = new GherkinTestCaseLaunch(testCase.getTestCase(), runNum, masterRequestId, new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, testCase.isLoadTest(), true, testCase.getProject().isOldNamespaces(), project);
       else if (testCase.isGroovy())
