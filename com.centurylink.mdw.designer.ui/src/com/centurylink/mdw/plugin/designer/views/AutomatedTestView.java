@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.internal.junit.ui.CounterPanel;
@@ -52,6 +53,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.designer.testing.LoadTestLogMonitor;
 import com.centurylink.mdw.designer.testing.LogMessageMonitor;
+import com.centurylink.mdw.designer.testing.MasterRequestListener;
 import com.centurylink.mdw.designer.testing.StubServer;
 import com.centurylink.mdw.designer.testing.StubServer.Stubber;
 import com.centurylink.mdw.designer.testing.TestCase;
@@ -83,7 +85,7 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 import com.centurylink.mdw.plugin.launch.AutomatedTestLaunchShortcut;
 
 @SuppressWarnings("restriction")
-public class AutomatedTestView extends TestRunnerViewPart implements IMenuListener
+public class AutomatedTestView extends TestRunnerViewPart implements IMenuListener, MasterRequestListener
 {
   public static final String VIEW_ID = "mdw.views.launch.automatedTest";
   private boolean locked;
@@ -292,6 +294,7 @@ public class AutomatedTestView extends TestRunnerViewPart implements IMenuListen
             TestCaseRun testCaseRun = designerProxy.prepareTestCase(testCase, 0, resultDir, testSuite.isCreateReplaceResults(), testSuite.isVerbose(), log, monitor, testSuite.isSingleServer(), testSuite.isStubbing());
 
             masterRequestRunMap.put(testCaseRun.getMasterRequestId(), testCaseRun);
+            testCaseRun.setMasterRequestListener(AutomatedTestView.this);
 
             threadPool.execute(testCaseRun);
 
@@ -517,7 +520,7 @@ public class AutomatedTestView extends TestRunnerViewPart implements IMenuListen
     actionGroup.enableRerunAction(false);
     actionGroup.enableStopAction(true);
 
-    masterRequestRunMap = new HashMap<String,TestCaseRun>();
+    masterRequestRunMap = new ConcurrentHashMap<String,TestCaseRun>();
 
     for (AutomatedTestCase testCase : testSuite.getTestCases()) {
       testCase.setStatus(TestCase.STATUS_NOT_RUN);
@@ -1083,6 +1086,16 @@ public class AutomatedTestView extends TestRunnerViewPart implements IMenuListen
         PluginMessages.uiError(ex, "Test Stubber", testSuite.getProject());
         return null;
       }
+    }
+  }
+
+  @Override
+  public void syncMasterRequestId(String oldId, String newId)
+  {
+    TestCaseRun run = masterRequestRunMap.remove(oldId);
+    if (run != null)
+    {
+      masterRequestRunMap.put(newId, run);
     }
   }
 }

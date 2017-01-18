@@ -86,6 +86,9 @@ public class TestCaseRun extends ControlCommandShell implements Threadable {
     PreFilter getPreFilter() { return preFilter; }
     void setPreFilter(PreFilter preFilter) { this.preFilter = preFilter; }
 
+    private MasterRequestListener masterRequestListener;
+    public void setMasterRequestListener(MasterRequestListener listener) { masterRequestListener = listener; }
+    MasterRequestListener getMasterRequestListener() { return masterRequestListener; }
 
     public TestCaseRun(TestCase testcase, int run, String masterRequestId,
             DesignerDataAccess dao, LogMessageMonitor monitor,
