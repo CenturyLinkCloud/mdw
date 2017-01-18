@@ -18,15 +18,15 @@ process: # 10201
     status: Completed
   variable: # 10422
     name: requestHeaders
-    value: RequestPath=REST~content-length=70~ProcessName=com.centurylink.mdw.tests.services/FindEmployee~RemotePort=63991~RequestURL=http://localhost:8080/mdw/Services/REST~RemoteAddr=127.0.0.1~AuthenticatedUser=ab68052~pragma=no-cache~accept=text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2~ServiceClass=com.centurylink.mdw.hub.servlet.RestServlet~RemoteHost=127.0.0.1~masterrequestid=ab68052-170102-185356023~host=localhost:8080~connection=keep-alive~content-type=application/x-www-form-urlencoded~Protocol=REST~mdw-request-id=ab68052-170102-185356023~cache-control=no-cache~HttpMethod=POST~user-agent=Java/1.8.0_92~document-id=11785
+    value: ${~RequestPath.*id=\\d+}
   variable: # 10424
     name: response
     value: |
       <GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
                 <sapId>DHO115360</sapId>
-                <workstationId>dxoakes</workstationId>
-                <firstName>Donald</firstName>
-                <lastName>Oakes</lastName>
+               <workstationId>${~d.}oakes</workstationId>
+                <firstName>${~Don.*}</firstName>
+                <lastName>${~O.*s}</lastName>
               </GetEmployeeResponse>
   variable: # 10423
     name: workstationId
