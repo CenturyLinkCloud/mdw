@@ -4,8 +4,8 @@
 var testingMod = angular.module('testing', ['ngResource', 'mdw']);
 
 testingMod.controller('TestsController', 
-    ['$scope', '$websocket', '$cookieStore', '$interval', 'mdw', 'util', 'AutomatedTests', 'TestsExec', 'TestsCancel', 'TestConfig',
-    function($scope, $websocket, $cookieStore, $interval, mdw, util, AutomatedTests, TestsExec, TestsCancel, TestConfig) {
+    ['$scope', '$websocket', '$cookieStore', '$interval', '$timeout', 'mdw', 'util', 'AutomatedTests', 'TestsExec', 'TestsCancel', 'TestConfig',
+    function($scope, $websocket, $cookieStore, $interval, $timeout, mdw, util, AutomatedTests, TestsExec, TestsCancel, TestConfig) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
     $scope.testCaseCount = 0;
@@ -144,10 +144,12 @@ testingMod.controller('TestsController',
         }
         else {
           $scope.testsExecMessage = null;
-          if (mdw.autoTestWebSocketUrl === '${mdw.autoTestWebSocketUrl}') {
-            // websocket disabled -- use polling
-            $scope.pollForUpdates(true);
-          }
+          // immediately update
+          $timeout(function() {
+            var newTestCaseList = AutomatedTests.get({}, function success() {
+              $scope.applyUpdate(newTestCaseList);
+            });
+          }, 500);
         }
       }, 
       function(error) {
@@ -179,11 +181,9 @@ testingMod.controller('TestsController',
   };
   
   $scope.pollForUpdates = function() {
-    var stop = $interval(function() {
+    $interval(function() {
       var newTestCaseList = AutomatedTests.get({}, function success() {
         $scope.applyUpdate(newTestCaseList);
-        if ($scope.running().length === 0)
-          $interval.cancel(stop);
       });
     }, 5000);
   };
@@ -221,6 +221,9 @@ testingMod.controller('TestsController',
   
   if (mdw.autoTestWebSocketUrl != '${mdw.autoTestWebSocketUrl}') {
     $scope.acceptUpdates();  // substituted value should be websocket url
+  }
+  else {
+    $scope.pollForUpdates(); // no ws configured
   }
 }]);
 
