@@ -18,7 +18,7 @@ process: # 10201
     status: Completed
   variable: # 10422
     name: requestHeaders
-    value: ${~RequestPath.*id=\\d+}
+    value: ${~RequestPath.*document-id=\\d+}
   variable: # 10424
     name: response
     value: |
