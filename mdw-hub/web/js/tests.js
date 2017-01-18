@@ -4,8 +4,8 @@
 var testingMod = angular.module('testing', ['ngResource', 'mdw']);
 
 testingMod.controller('TestsController', 
-    ['$scope', '$websocket', '$cookieStore', 'mdw', 'util', 'AutomatedTests', 'TestsExec', 'TestsCancel', 'TestConfig',
-    function($scope, $websocket, $cookieStore, mdw, util, AutomatedTests, TestsExec, TestsCancel, TestConfig) {
+    ['$scope', '$websocket', '$cookieStore', '$interval', 'mdw', 'util', 'AutomatedTests', 'TestsExec', 'TestsCancel', 'TestConfig',
+    function($scope, $websocket, $cookieStore, $interval, mdw, util, AutomatedTests, TestsExec, TestsCancel, TestConfig) {
 
   $scope.testCaseList = AutomatedTests.get({}, function success() {
     $scope.testCaseCount = 0;
@@ -144,6 +144,10 @@ testingMod.controller('TestsController',
         }
         else {
           $scope.testsExecMessage = null;
+          if (mdw.autoTestWebSocketUrl === '${mdw.autoTestWebSocketUrl}') {
+            // websocket disabled -- use polling
+            $scope.pollForUpdates(true);
+          }
         }
       }, 
       function(error) {
@@ -170,39 +174,54 @@ testingMod.controller('TestsController',
     $scope.dataStream = $websocket(mdw.autoTestWebSocketUrl);
     $scope.dataStream.onMessage(function(message) {
       var newTestCaseList = JSON.parse(message.data);
-      newTestCaseList.packages.forEach(function(newPkg) {
-        var oldPkg = null;
-        for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
-          if ($scope.testCaseList.packages[i].name == newPkg.name) {
-            oldPkg = $scope.testCaseList.packages[i];
-            break;
-          }
-        }
-        if (oldPkg) {
-          newPkg.testCases.forEach(function(newTestCase) {
-            var oldTestCase = null;
-            for (var j = 0; j < oldPkg.testCases.length; j++) {
-              if (oldPkg.testCases[j].name == newTestCase.name) {
-                oldTestCase = oldPkg.testCases[j];
-                break;
-              }
-            }
-            if (oldTestCase) {
-              oldTestCase.status = newTestCase.status;
-              oldTestCase.start = newTestCase.start;
-              oldTestCase.end = newTestCase.end;
-              oldTestCase.message = newTestCase.message;
-              oldTestCase.expected = newTestCase.expected;
-              oldTestCase.actual = newTestCase.actual;
-            }
-          });
-        }
-      });
+      $scope.applyUpdate(newTestCaseList);
     });
   };
   
-  if (mdw.autoTestWebSocketUrl != '${mdw.autoTestWebSocketUrl}')
+  $scope.pollForUpdates = function() {
+    var stop = $interval(function() {
+      var newTestCaseList = AutomatedTests.get({}, function success() {
+        $scope.applyUpdate(newTestCaseList);
+        if ($scope.running().length === 0)
+          $interval.cancel(stop);
+      });
+    }, 5000);
+  };
+  
+  $scope.applyUpdate = function(newTestCaseList) {
+    newTestCaseList.packages.forEach(function(newPkg) {
+      var oldPkg = null;
+      for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
+        if ($scope.testCaseList.packages[i].name == newPkg.name) {
+          oldPkg = $scope.testCaseList.packages[i];
+          break;
+        }
+      }
+      if (oldPkg) {
+        newPkg.testCases.forEach(function(newTestCase) {
+          var oldTestCase = null;
+          for (var j = 0; j < oldPkg.testCases.length; j++) {
+            if (oldPkg.testCases[j].name == newTestCase.name) {
+              oldTestCase = oldPkg.testCases[j];
+              break;
+            }
+          }
+          if (oldTestCase) {
+            oldTestCase.status = newTestCase.status;
+            oldTestCase.start = newTestCase.start;
+            oldTestCase.end = newTestCase.end;
+            oldTestCase.message = newTestCase.message;
+            oldTestCase.expected = newTestCase.expected;
+            oldTestCase.actual = newTestCase.actual;
+          }
+        });
+      }
+    });
+  };
+  
+  if (mdw.autoTestWebSocketUrl != '${mdw.autoTestWebSocketUrl}') {
     $scope.acceptUpdates();  // substituted value should be websocket url
+  }
 }]);
 
 testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$location', 'AutomatedTests', 'TestCase', 'TestExec',
