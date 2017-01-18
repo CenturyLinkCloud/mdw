@@ -181,7 +181,7 @@ testingMod.controller('TestsController',
   };
   
   $scope.pollForUpdates = function() {
-    $interval(function() {
+    $scope.poller = $interval(function() {
       var newTestCaseList = AutomatedTests.get({}, function success() {
         $scope.applyUpdate(newTestCaseList);
       });
@@ -225,6 +225,11 @@ testingMod.controller('TestsController',
   else {
     $scope.pollForUpdates(); // no ws configured
   }
+  
+  $scope.$on('$destroy', function() {
+    if ($scope.poller)
+      $interval.cancel($scope.poller);
+  });  
 }]);
 
 testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$location', 'AutomatedTests', 'TestCase', 'TestExec',
