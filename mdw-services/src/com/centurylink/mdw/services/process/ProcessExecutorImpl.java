@@ -423,7 +423,7 @@ class ProcessExecutorImpl {
     throws DataAccessException {
         try {
             int count = getDataAccess().deleteEventInstance(eventName);
-            return count>0;
+            return count > 0;
         } catch (SQLException e) {
             throw new DataAccessException(0, "Failed to delete internal event" + eventName, e);
         }

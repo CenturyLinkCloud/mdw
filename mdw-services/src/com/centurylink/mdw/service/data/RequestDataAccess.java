@@ -204,7 +204,7 @@ public class RequestDataAccess extends CommonDataAccess {
     public Request getRequest(Long id, boolean withContent, boolean withResponseContent)
     throws DataAccessException {
         try {
-            String query = "select create_dt, owner_type, owner_id, status_code, status_message";
+            String query = "select create_dt, owner_type, owner_id";
             query += " from document where document_id = ?";
             db.openConnection();
             ResultSet rs = db.runSelect(query, id);
@@ -214,8 +214,6 @@ public class RequestDataAccess extends CommonDataAccess {
             if (rs.next()) {
                 request = new Request(id);
                 request.setCreated(rs.getTimestamp("create_dt"));
-                request.setStatusCode(rs.getInt("status_code"));
-                request.setStatusMessage(rs.getString("status_message"));
                 ownerType = rs.getString("owner_type");
                 ownerId = rs.getLong("owner_id");
                 if (withContent) {
@@ -247,7 +245,7 @@ public class RequestDataAccess extends CommonDataAccess {
             }
 
             ResultSet responseRs = null;
-            String responseQuery = "select document_id, create_dt";
+            String responseQuery = "select document_id, create_dt, status_code, status_message";
             String responseOwnerType = null;
             if (OwnerType.ADAPTER_REQUEST.equals(ownerType) && ownerId != null) {
                 responseOwnerType = OwnerType.ADAPTER_RESPONSE;
@@ -263,6 +261,9 @@ public class RequestDataAccess extends CommonDataAccess {
             if (responseRs != null && responseRs.next()) {
                 request.setResponseId(responseRs.getLong("document_id"));
                 request.setResponded(responseRs.getTimestamp("create_dt"));
+                request.setStatusCode(responseRs.getInt("status_code"));
+                request.setStatusMessage(responseRs.getString("status_message"));
+
                 if (withResponseContent) {
                     boolean foundInMongo = false;
                     if (DatabaseAccess.getMongoDb() != null) {

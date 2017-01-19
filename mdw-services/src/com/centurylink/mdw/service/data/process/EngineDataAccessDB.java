@@ -473,7 +473,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     }
 
     public int deleteEventInstance(String eventName) throws SQLException {
-        String query = "delete from EVENT_INSTANCE where EVENT_NAME=?";
+        String query = "delete from EVENT_INSTANCE where EVENT_NAME = ?";
         return db.runUpdate(query, eventName);
     }
 
