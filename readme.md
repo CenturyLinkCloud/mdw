@@ -74,7 +74,7 @@
    These have to be configured manually in Eclipse.  For all formats we use **spaces instead of tabs**.
    The following screenshots illustrate how to set these:  
      - XML:  
-     ![xml formatter](http://lxdenvmtc143.dev.qintra.com:7021/Environment/xmlformat.png)  
+     [xml formatter](http://lxdenvmtc143.dev.qintra.com:7021/Environment/xmlformat.png)  
      - HTML:  
      ![html formatter](http://lxdenvmtc143.dev.qintra.com:7021/Environment/htmlformat.png)  
      - YAML:  
