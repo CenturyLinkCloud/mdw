@@ -76,6 +76,6 @@
      - XML:  
      [xml formatter](http://lxdenvmtc143.dev.qintra.com:7021/Environment/xmlformat.png)  
      - HTML:  
-     ![html formatter](http://lxdenvmtc143.dev.qintra.com:7021/Environment/htmlformat.png)  
+     [html formatter](http://lxdenvmtc143.dev.qintra.com:7021/Environment/htmlformat.png)  
      - YAML:  
-     ![yaml formatter](http://lxdenvmtc143.dev.qintra.com:7021/Environment/yamlformat.png)
+     [yaml formatter](http://lxdenvmtc143.dev.qintra.com:7021/Environment/yamlformat.png)
