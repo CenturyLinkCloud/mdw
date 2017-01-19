@@ -141,5 +141,4 @@ public class HttpServiceAdapter extends PoolableAdapterBase {
         }
     }
 
-
 }

@@ -309,7 +309,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
             if (isStubbing) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
-                    AdapterStubRequest stubRequest = new AdapterStubRequest(getMasterRequestId(), requestData);
+                    AdapterStubRequest stubRequest = getStubRequest(requestData);
                     responseData = stubber.getStubResponse(getMasterRequestId(), stubRequest.getJson().toString(2));
                     if (((AdapterStubResponse)responseData).isPassthrough()) {
                         loginfo("Stub server instructs to get real response");
@@ -341,6 +341,10 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
                 closeConnection(connection);
             }
         }
+    }
+
+    protected AdapterStubRequest getStubRequest(String requestContent) throws AdapterException {
+        return new AdapterStubRequest(getMasterRequestId(), requestContent);
     }
 
     protected int getErrorCode(Throwable ex) {

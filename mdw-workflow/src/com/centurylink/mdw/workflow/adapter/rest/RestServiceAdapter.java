@@ -15,6 +15,7 @@ import com.centurylink.mdw.adapter.HeaderAwareAdapter;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.HttpHelper;
@@ -211,6 +212,20 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
 
     public Map<String,String> getResponseHeaders() { return super.getResponseHeaders(); }
     protected void setResponseHeaders(Map<String,String> headers) { super.setResponseHeaders(headers); }
+
+    @Override
+    protected AdapterStubRequest getStubRequest(String requestContent) throws AdapterException {
+        AdapterStubRequest stubRequest = super.getStubRequest(requestContent);
+        try {
+            stubRequest.setUrl(getEndpointUri());
+            stubRequest.setMethod(getHttpMethod());
+            stubRequest.setHeaders(getRequestHeaders());
+        }
+        catch (Exception ex) {
+            throw new AdapterException(500, ex.getMessage(), ex, false);
+        }
+        return stubRequest;
+    }
 
     @Override
     public Object invoke(Object pConnection, Object requestData, Map<String, String> requestHeaders)

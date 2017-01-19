@@ -18,6 +18,7 @@ import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
@@ -88,6 +89,19 @@ public class RestfulServiceAdapter extends AdapterActivityBase implements Header
 
     protected String getUrlEncoding() {
         return "UTF-8";
+    }
+
+    @Override
+    protected AdapterStubRequest getStubRequest(String requestContent) throws AdapterException {
+        AdapterStubRequest stubRequest = super.getStubRequest(requestContent);
+        try {
+            stubRequest.setUrl(getEndpointUri());
+            stubRequest.setMethod(getHttpMethod());
+        }
+        catch (Exception ex) {
+            throw new AdapterException(500, ex.getMessage(), ex, false);
+        }
+        return stubRequest;
     }
 
     /**

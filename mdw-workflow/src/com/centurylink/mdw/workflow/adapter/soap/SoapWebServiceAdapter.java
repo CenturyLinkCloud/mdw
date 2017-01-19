@@ -26,6 +26,7 @@ import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.StringDocument;
+import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
@@ -314,4 +315,20 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
             return "Adapter Invocation Exception";
         }
     }
+
+    @Override
+    protected AdapterStubRequest getStubRequest(String requestContent) throws AdapterException {
+        AdapterStubRequest stubRequest = super.getStubRequest(requestContent);
+        try {
+            stubRequest.setUrl(getWsdlUrl());
+            stubRequest.setMethod("POST");
+            stubRequest.setHeaders(getRequestHeaders());
+        }
+        catch (Exception ex) {
+            throw new AdapterException(500, ex.getMessage(), ex, false);
+        }
+        return stubRequest;
+    }
+
+
 }

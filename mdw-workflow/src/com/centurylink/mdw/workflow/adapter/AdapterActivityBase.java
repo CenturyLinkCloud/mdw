@@ -92,7 +92,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
             if (stubMode) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
-                    AdapterStubRequest stubRequest = new AdapterStubRequest(getMasterRequestId(), requestString);
+                    AdapterStubRequest stubRequest = getStubRequest(requestString);
                     responseData = stubber.getStubResponse(getMasterRequestId(), stubRequest.getJson().toString(2));
                     if (((AdapterStubResponse)responseData).isPassthrough()) {
                         loginfo("Stub server instructs to get real response");
@@ -121,6 +121,10 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
         } finally {
             if (connection != null) closeConnection(connection);
         }
+    }
+
+    protected AdapterStubRequest getStubRequest(String requestContent) throws AdapterException {
+        return new AdapterStubRequest(getMasterRequestId(), requestContent);
     }
 
     /**
