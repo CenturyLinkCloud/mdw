@@ -29,6 +29,8 @@ make the following examples more readable since they'll appear syntax-highlighte
   <li><a href="#verifyProcessResults">Verify Process Results</a></li>
   <li><a href="#verifyMessageResponse">Verify a Message Response</a></li>
   <li><a href="#stubAdapterResponse">Stub an Adapter Response</a></li>
+  <li><a href="#stubEndpointResponse">Stub an Endpoint Response</a></li>
+  <li><a href="#stubSubstitutions">Stub Substitutions</a></li>
   <li><a href="#stubActivity">Stub Any Activity</a></li>
   <li><a href="#unitTests">Unit Tests</a></li>
 </ul>
@@ -364,8 +366,24 @@ stub adapter(jsonMatcher) {
 }
 </pre>
 
-<h4><a id="stubSubstitutions">Stub Substitutions</a></h4>
-<p>Expressions in the stubbed response are automatically processed using Groovy variable substitutions.  So, for
+<h3><a id="stubEndpointResponse">Stub an Endpoint Response</a></h3>
+<p>In mdw6 there is a more flexible option for stubbing adapters.  Whereas the <code>stub adapter</code> option allows you
+to control stubbing according to the request payload, <code>stub endpoint</code> give you the ability to consider other factors
+such as the endpoint URL and HTTP method.  Instead of a string, the input into the <code>stub endpoint</code> matching closure
+is an instance of <a href="../javadoc/com/centurylink/mdw/model/event/AdapterStubRequest.html">AdapterStubRequest</a>.
+So, for example, to stub a specific REST endpoint URL, you could do something like this:
+<pre>
+stub endpoint({ request ->
+    request.method == 'POST' && request.url.endsWith("e911ServiceProfile/phoneNumber/${tn}")
+}) {
+    response = asset("sd.v1.api.samples/e911_PostResponse.json").text
+    statusCode = 202
+    statusMessage = 'Accepted'
+}
+</pre>
+
+<h3><a id="stubSubstitutions">Stub Substitutions</a></h3>
+<p>Expressions in a stubbed response are automatically processed using Groovy variable substitutions.  So, for
 example, the following stub response in EmployeeLookupResponse.xml will contain the actual master request ID at runtime:</p>
 <pre>
 &lt;EmployeeLookupResponse>

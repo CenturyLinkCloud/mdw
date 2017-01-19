@@ -159,7 +159,7 @@ public class TestCaseRun implements Runnable {
         testCase.setStart(new Date());
         log.format("===== execute case %s\r\n", testCase.getPath());
         for (File file : resultsDir.listFiles()) {
-            if (file.getName().startsWith("R_")) {
+            if (file.getName().endsWith(Asset.getFileExtension(Asset.YAML))) {
                 file.delete();
             }
         }
@@ -846,7 +846,14 @@ public class TestCaseRun implements Runnable {
     public AdapterStubResponse getStubResponse(AdapterStubRequest request) throws JSONException {
         // adapter stubbing
         for (TestCaseAdapterStub adapterStub : adapterStubs) {
-            if (adapterStub.getMatcher().call(request.getContent())) {
+            boolean match = false;
+            if (adapterStub.isEndpoint()) {
+                match = adapterStub.getMatcher().call(request);
+            }
+            else {
+                match = adapterStub.getMatcher().call(request.getContent());
+            }
+            if (match) {
                 String stubbedResponseContent = adapterStub.getResponder().call(request.getContent());
                 if (isVerbose())
                     log.println("Stubbing response with: " + stubbedResponseContent);
