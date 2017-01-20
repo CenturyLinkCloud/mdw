@@ -288,12 +288,19 @@ testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$locat
 testingMod.filter('assetLinks', function($sce) {
   return function(input, pkg) {
     if (input) {
-      var start = '<span class="hljs-string">"';
-      var end = '"</span>';
-      var regex = new RegExp('(.*?)(asset|process|file)\\(' + start + '(.*?)' + end + '\\)', 'g');
+      var start = '<span class="hljs-string">';
+      var end = '</span>';
+      // regex for both single and double quotes
+      var regex1 = new RegExp('(.*?)(asset|process|file)\\(' + start + '\'(.*?)\'' + end + '\\)', 'g');
+      var regex2 = new RegExp('(.*?)(asset|process|file)\\(' + start + '"(.*?)"' + end + '\\)', 'g');
       var output = '';
       input.getLines().forEach(function(line) {
+        var regex = regex1;
         var match = regex.exec(line);
+        if (match === null) {
+          regex = regex2;
+          match = regex.exec(line);
+        }
         if (match !== null) {
           var stop;
           while (match !== null) {
@@ -303,7 +310,8 @@ testingMod.filter('assetLinks', function($sce) {
               path = pkg + '/' + path;
             if (match[2] == 'process')
               path += '.proc';
-            output += match[1] + match[2] + '(' + start + '<a href="#/asset/' + path + '">' + match[3] + '</a>' + end + ')';
+            var quot = regex == regex2 ? '"' : "'";
+            output += match[1] + match[2] + '(' + start + quot + '<a href="#/asset/' + path + '">' + match[3] + '</a>' + quot + end + ')';
             stop = match.index + match[0].length;
             match = regex.exec(line);
           }
