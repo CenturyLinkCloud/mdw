@@ -138,12 +138,13 @@ testingMod.controller('TestsController',
     }
     
     TestConfig.put({}, $scope.config, function success() {
+      mdw.messages = null;
       TestsExec.run({}, {packages: execTestPkgs}, function(data) {
         if (data.status.code !== 0) {
-          $scope.testsExecMessage = data.status.message;
+          mdw.messages = data.status.message;
         }
         else {
-          $scope.testsExecMessage = null;
+          mdw.messages = null;
           // immediately update
           $timeout(function() {
             var newTestCaseList = AutomatedTests.get({}, function success() {
@@ -153,8 +154,11 @@ testingMod.controller('TestsController',
         }
       }, 
       function(error) {
-        $scope.testsExecMessage = error.data.status.message;
+        mdw.messages = error.data.status.message;
       });
+    },
+    function(error) {
+      mdw.messages = error.data.status.message;
     });
   };
   
