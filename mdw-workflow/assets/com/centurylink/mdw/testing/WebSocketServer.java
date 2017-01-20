@@ -56,7 +56,7 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
 
     @Override
     public void onError(WebSocket websocket, Exception ex) {
-        ex.printStackTrace();
+        ex.printStackTrace(); // TODO
     }
 
     @Override
