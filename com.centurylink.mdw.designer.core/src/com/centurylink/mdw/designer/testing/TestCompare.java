@@ -5,9 +5,9 @@ package com.centurylink.mdw.designer.testing;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 
 public class TestCompare {
 
@@ -30,7 +30,7 @@ public class TestCompare {
                 expectedContent = preFilter.apply(expectedContent);
             expectedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(expectedContent.getBytes())));
 
-            actualReader = new BufferedReader(new FileReader(actual.text().replace("\\n", "\n")));
+            actualReader = new BufferedReader(new StringReader(actual.text().replace("\\n", "\n")));
             int i = 1;
             String expectedLine = null;
             while ((expectedLine = expectedReader.readLine()) != null) {
