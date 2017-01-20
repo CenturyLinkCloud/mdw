@@ -5,10 +5,9 @@ package com.centurylink.mdw.test;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 
 import com.centurylink.mdw.model.asset.Asset;
 
@@ -24,7 +23,7 @@ public class TestCompare {
      * Return value of zero means no diffs found.
      * Non-zero indicates the 1-based line number of the first difference.
      */
-    public int doCompare(Asset expected, File actual) throws IOException {
+    public int doCompare(Asset expected, TestCaseFile actual) throws IOException {
         BufferedReader expectedReader = null;
         BufferedReader actualReader = null;
         try {
@@ -32,7 +31,7 @@ public class TestCompare {
             if (preFilter != null)
                 expectedContent = preFilter.apply(expectedContent);
             expectedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(expectedContent.getBytes())));
-            actualReader = new BufferedReader(new FileReader(actual));
+            actualReader = new BufferedReader(new StringReader(actual.text().replace("\\n", "\n")));
             int i = 1;
             String expectedLine = null;
             while ((expectedLine = expectedReader.readLine()) != null) {
