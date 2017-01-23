@@ -37,6 +37,8 @@ public class SpringAppContext implements CacheEnabled, CacheService {
 
     public static final String SPRING_CONTEXT_FILE = "spring/application-context.xml";
 
+    private static final Object pkgContextLock = new Object();
+
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     /**
@@ -53,6 +55,13 @@ public class SpringAppContext implements CacheEnabled, CacheService {
     }
 
     public void shutDown() {
+        if (packageContexts != null) {
+            synchronized (pkgContextLock) {
+                for (MdwCloudAppContext appContext : packageContexts.values())
+                    appContext.close();
+            }
+        }
+
         if (springAppContext != null) {
             springAppContext.close();
         }
@@ -76,7 +85,9 @@ public class SpringAppContext implements CacheEnabled, CacheService {
         ApplicationContext appContext = getApplicationContext();
         if (pkg != null) {
             if (packageContexts == null) {
-                packageContexts = loadPackageContexts(appContext);
+                synchronized (pkgContextLock) {
+                    packageContexts = loadPackageContexts(appContext);
+                }
             }
             MdwCloudAppContext pkgContext = packageContexts.get(pkg.getName());
             if (pkgContext != null)
@@ -86,7 +97,9 @@ public class SpringAppContext implements CacheEnabled, CacheService {
     }
 
     public void loadPackageContexts() throws IOException {
-        packageContexts = loadPackageContexts(getApplicationContext());
+        synchronized (pkgContextLock) {
+            packageContexts = loadPackageContexts(getApplicationContext());
+        }
     }
 
     public Map<String,MdwCloudAppContext> loadPackageContexts(ApplicationContext parent) throws IOException {
@@ -172,14 +185,18 @@ public class SpringAppContext implements CacheEnabled, CacheService {
             Map<String,? extends BaselineData> beans = getApplicationContext().getBeansOfType(BaselineData.class);
             if (beans != null)
                 baselineDatas.addAll(beans.values());
-            if (packageContexts == null)
-                packageContexts = loadPackageContexts(getApplicationContext());
 
-            for (ApplicationContext pkgContext : packageContexts.values()) {
-                beans = pkgContext.getBeansOfType(BaselineData.class);
-                if (beans != null)
-                    baselineDatas.addAll(beans.values());
+            synchronized (pkgContextLock) {
+                if (packageContexts == null)
+                    packageContexts = loadPackageContexts(getApplicationContext());
+
+                for (ApplicationContext pkgContext : packageContexts.values()) {
+                    beans = pkgContext.getBeansOfType(BaselineData.class);
+                    if (beans != null)
+                        baselineDatas.addAll(beans.values());
+                }
             }
+
             BaselineData mdwBaselineData = null;
             BaselineData injectedBaselineData = null;
             for (BaselineData baselineData : baselineDatas) {
@@ -257,6 +274,8 @@ public class SpringAppContext implements CacheEnabled, CacheService {
 
     @Override
     public void clearCache() {
-        packageContexts = null;
+        synchronized (pkgContextLock) {
+            packageContexts = null;
+        }
     }
 }
