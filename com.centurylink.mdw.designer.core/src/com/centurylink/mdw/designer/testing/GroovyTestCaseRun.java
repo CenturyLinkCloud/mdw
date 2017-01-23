@@ -573,7 +573,14 @@ public class GroovyTestCaseRun extends TestCaseRun {
             // adapter stubbing
             for (TestCaseAdapterStub adapterStub : adapterStubs) {
                 String requestContent = adapterStubRequest == null ? request : adapterStubRequest.getContent();
-                if (adapterStub.getMatcher().call(requestContent)) {
+                boolean match = false;
+                if (adapterStub.isEndpoint() && adapterStubRequest!=null) {
+                    match = adapterStub.getMatcher().call(adapterStubRequest);
+                }
+                else {
+                    match = adapterStub.getMatcher().call(requestContent);
+                }
+                if (match) {
                     String stubbedResponseContent = adapterStub.getResponder().call(requestContent);
                     if (verbose)
                         log.println("Stubbing response with: " + stubbedResponseContent);

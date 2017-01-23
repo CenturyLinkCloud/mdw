@@ -361,6 +361,16 @@ public abstract class GroovyTestCaseScript extends Script {
         return adapterStub;
     }
 
+    public TestCaseAdapterStub endpoint(Closure<Boolean> matcher, Closure<?> init) throws TestException {
+        return endpoint(matcher, null, init);
+    }
+
+    public TestCaseAdapterStub endpoint(Closure<Boolean> matcher, Closure<String> responder, Closure<?> init) throws TestException {
+        TestCaseAdapterStub adapterStub = adapter(matcher, null, init);
+        adapterStub.setEndpoint(true);
+        return adapterStub;
+    }
+
     public TestCaseAdapterStub adapter(Closure<Boolean> matcher, Closure<?> init) throws TestException {
         return adapter(matcher, null, init);
     }

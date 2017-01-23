@@ -24,6 +24,13 @@ public class TestCaseAdapterStub {
     public void setResponse(String response) { this.response = response; }
 
     /**
+     * Endpoint true means "stub endpoint" instead of "stub adapter".  See docs.
+     */
+    private boolean endpoint;
+    public boolean isEndpoint() { return endpoint; }
+    public void setEndpoint(boolean endpoint) { this.endpoint = endpoint; }
+
+    /**
      * Represents a server-side sleep.  Support either "sleep" or "delay" syntax.
      */
     private int delay;
