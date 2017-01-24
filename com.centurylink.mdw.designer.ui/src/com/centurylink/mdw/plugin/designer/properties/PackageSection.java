@@ -9,13 +9,14 @@ import java.util.List;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
 
+import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.user.UserGroupVO;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.designer.model.ElementChangeEvent;
-import com.centurylink.mdw.plugin.designer.model.ElementChangeListener;
-import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
-import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 import com.centurylink.mdw.plugin.designer.model.ElementChangeEvent.ChangeType;
+import com.centurylink.mdw.plugin.designer.model.ElementChangeListener;
+import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
+import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 import com.centurylink.mdw.plugin.designer.properties.convert.DateConverter;
 import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.ValueChangeListener;
@@ -50,7 +51,7 @@ public class PackageSection extends PropertySection implements ElementChangeList
     namePropertyEditor.setValue(workflowPackage.getName());
 
     schemaVersionPropertyEditor.setElement(workflowPackage);
-    schemaVersionPropertyEditor.setValue(workflowPackage.getSchemaVersion());
+    schemaVersionPropertyEditor.setValue(RuleSetVO.formatVersion(workflowPackage.getSchemaVersion()));
 
     lastModifiedPropertyEditor.setElement(workflowPackage);
     lastModifiedPropertyEditor.setValue(workflowPackage.getModifyDate());

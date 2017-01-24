@@ -133,7 +133,7 @@ public class DesignerDataAccess  {
 
     public DesignerDataAccess(Server server, List<Server> server_list, String cuid, boolean oldNamespaces)
             throws DataAccessException,RemoteException {
-        this(server, server_list, cuid, null, oldNamespaces, false);
+        this(server, server_list, cuid, null, oldNamespaces, false, DataAccess.currentSchemaVersion);
     }
 
     /**
@@ -150,7 +150,9 @@ public class DesignerDataAccess  {
      * @param connectParams database connection parameters
      * @throws DataAccessException
      */
-    public DesignerDataAccess(Server server, List<Server> server_list, String cuid, Map<String,String> connectParams, boolean oldNamespaces, boolean remoteRetrieve) throws DataAccessException,RemoteException {
+    public DesignerDataAccess(Server server, List<Server> server_list, String cuid,
+            Map<String, String> connectParams, boolean oldNamespaces, boolean remoteRetrieve, int schemaVersion)
+    throws DataAccessException, RemoteException {
         current_server = new Server(server);
         this.server_list = server_list;
         this.cuid = cuid;
@@ -168,8 +170,7 @@ public class DesignerDataAccess  {
         else
             mode = Mode.NO_DATABASE;
         if (mode == Mode.VCS) {
-            dbSchemaVersion = DataAccess.currentSchemaVersion;
-            dbSupportedSchemaVersion = DataAccess.supportedSchemaVersion = DataAccess.currentSchemaVersion;
+            DataAccess.currentSchemaVersion = DataAccess.supportedSchemaVersion = dbSupportedSchemaVersion = dbSchemaVersion = schemaVersion;
             baselineData = new MdwBaselineData();
             // user auth access directly through db is still supported to avoid confusion (TODO prefs)
             DatabaseAccess db = new DatabaseAccess(current_server.getDatabaseUrl(), connectParams);
@@ -198,7 +199,8 @@ public class DesignerDataAccess  {
             // exception, so using ojdbc14.jar instead
             DatabaseAccess db = new DatabaseAccess(current_server.getDatabaseUrl(), connectParams);
             int[] versions = DataAccess.getDatabaseSchemaVersion(db);
-            if (mode==Mode.THROUGH_SERVER) versions = getServerSchemaVersion();
+            if (mode == Mode.THROUGH_SERVER)
+                versions = getServerSchemaVersion();
             dbSchemaVersion = versions[0];
             dbSupportedSchemaVersion = versions[1];
             DataAccess.supportedSchemaVersion = dbSupportedSchemaVersion;

@@ -178,10 +178,11 @@ public class MainFrame extends JFrame implements WindowListener {
     /**
      * Uses 50% of progressMonitor.
      */
-    public void startSession(String cuid, Server server, ProgressMonitor progressMonitor, Map<String,String> connectParams, boolean oldNamespaces, boolean remoteRetrieve)
-	throws NamingException, RemoteException, DataAccessException {
+    public void startSession(String cuid, Server server, ProgressMonitor progressMonitor,
+            Map<String, String> connectParams, boolean oldNamespaces, boolean remoteRetrieve, int schemaVersion)
+    throws NamingException, RemoteException, DataAccessException {
 	    this.cuid = cuid;
-		dao = new DesignerDataAccess(server, server_list, this.cuid, connectParams, oldNamespaces, remoteRetrieve);
+		dao = new DesignerDataAccess(server, server_list, this.cuid, connectParams, oldNamespaces, remoteRetrieve, schemaVersion);
 		model = new DesignerDataModel();
 		pages = new HashMap<Class<?>,DesignerPage>();
 		iconFactory.setDesignerDataAccess(dao);

@@ -52,7 +52,6 @@ public class WorkflowPackage extends WorkflowElement implements Versionable, Att
   public void setProject(WorkflowProject workflowProject)
   {
     super.setProject(workflowProject);
-    this.setSchemaVersion(workflowProject.getDesignerProxy().getPluginDataAccess().getSchemaVersion());
   }
 
   public WorkflowPackage getPackage()
@@ -358,6 +357,8 @@ public class WorkflowPackage extends WorkflowElement implements Versionable, Att
   {
     this.packageVO = packageVO;
     setProject(wfProject);
+    if (packageVO.getSchemaVersion() == 0)
+      packageVO.setSchemaVersion(wfProject.getDesignerProxy().getPluginDataAccess().getSchemaVersion());
   }
 
   public WorkflowPackage(WorkflowPackage cloneFrom)
@@ -476,8 +477,6 @@ public class WorkflowPackage extends WorkflowElement implements Versionable, Att
   {
     packageVO.setSchemaVersion(version);
   }
-
-
 
   @Override
   public String getLabel()
