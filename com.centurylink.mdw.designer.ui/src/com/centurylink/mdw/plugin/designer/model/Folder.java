@@ -21,11 +21,16 @@ public class Folder extends WorkflowElement implements Comparable<Folder>
   {
     return children != null && children.size() > 0;
   }
-  public void addChild(WorkflowElement child)
+
+  public void addChild(WorkflowElement child) {
+    addChild(children == null ? 0 : children.size(), child);
+  }
+
+  public void addChild(int position, WorkflowElement child)
   {
     if (children == null)
       children = new ArrayList<WorkflowElement>();
-    children.add(child);
+    children.add(position, child);
     if (child instanceof Folder)
       ((Folder)child).parent = this;
     else if (child instanceof File)

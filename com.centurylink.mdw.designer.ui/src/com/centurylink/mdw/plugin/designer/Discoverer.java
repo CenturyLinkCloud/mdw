@@ -68,6 +68,8 @@ public class Discoverer
     String content = httpHelper.get();
     if (content.startsWith("<!"))
       content = content.substring(content.indexOf("\n") + 1);
+    if (content.contains("&nbsp;"))
+      content = content.replaceAll("&nbsp;", "").replace("<HR size=\"1\" noshade=\"noshade\">", "");
     if (!parent.hasParent() && httpHelper.getRedirect() != null)
       parent.setName(httpHelper.getRedirect().toString());
     try
@@ -81,14 +83,17 @@ public class Discoverer
         String latestDir = null;
         for (String link : links)
         {
-          if (link.matches("[0-9.]*/"))
+          if (!link.endsWith("-SNAPSHOT/")) // snapshots excluded from "latest only"
           {
-            if ((latestDir == null || latestDir.compareTo(link) < 0))
-              latestDir = link;
-          }
-          else
-          {
-            latestLinks.add(link);
+            if (link.matches("[0-9.]*/"))
+            {
+              if ((latestDir == null || latestDir.compareTo(link) < 0))
+                latestDir = link;
+            }
+            else
+            {
+              latestLinks.add(link);
+            }
           }
         }
 
@@ -100,13 +105,16 @@ public class Discoverer
 
       for (String link : links)
       {
-        if (link.endsWith("/"))
+        if (link.endsWith("/") && (MdwPlugin.getSettings().isIncludePreviewBuilds() || !link.endsWith("-SNAPSHOT/")))
         {
           // directory
           if (!parent.hasParent())
             progressMonitor.subTask("Scanning " + link);
           Folder child = new Folder(link.substring(0, link.length() - 1));
-          parent.addChild(child);
+          if (link.matches("[0-9.]*/"))
+            parent.addChild(0, child);
+          else
+            parent.addChild(child);
           crawlForPackageFiles(child);
           if (!parent.hasParent()) // topLevel
             progressMonitor.worked(80/topLevelFolders);
@@ -115,7 +123,7 @@ public class Discoverer
         {
           // XML or JSON file
           File child = new File(parent, link);
-          parent.addChild(child);
+          parent.addChild(0, child);
           child.setUrl(new URL(getFullUrl(child)));
         }
       }
@@ -179,35 +187,38 @@ public class Discoverer
       {
         if (qName.equals("html"))
           inHtml = true;
-        else if (qName.equals("ul"))
+        else if (qName.equals("ul") || qName.equals("tr"))  // New Apache format uses "tr" and "td", instead of "ul" and "li" elements
           inUl = true;
-        else if (qName.equals("li"))
+        else if (qName.equals("li") || qName.equals("td"))
           inLi = true;
         else if (qName.equals("a"))
           inA = true;
 
-        if (inHtml && inUl && inLi && inA)
+        if (inHtml && inUl && inLi && inA && href == null)
           href = attrs.getValue("href");
-        else
-          href = null;
       }
 
       public void endElement(String uri, String localName, String qName) throws SAXException
       {
-        if (qName.equals("a") && inHtml && inUl && inLi && href != null && (href.equals(a) || href.equals(a + "/")))
+
+        if (qName.equals("a") && inHtml && inUl && inLi && href != null && (href.equals(a) || href.equals(a + "/") || href.substring(href.lastIndexOf("/", href.length()-2)+1).equals(a)))
         {
           if (!href.startsWith("/") && !href.startsWith("../")) // parent directories
             urls.add(href);
+          else if (!href.substring(href.lastIndexOf("/", href.length()-2)+1).startsWith("/"))  // For new Apache directory listing format
+            urls.add(href.substring(href.lastIndexOf("/", href.length()-2)+1));
         }
 
         if (qName.equals("html"))
           inHtml = false;
-        else if (qName.equals("ul"))
+        else if (qName.equals("ul") || qName.equals("tr"))
           inUl = false;
-        else if (qName.equals("li"))
+        else if (qName.equals("li") || qName.equals("td"))
           inLi = false;
-        else if (qName.equals("a"))
+        else if (qName.equals("a")) {
           inA = false;
+          href = null;
+        }
       }
 
       public void characters(char[] ch, int start, int length) throws SAXException

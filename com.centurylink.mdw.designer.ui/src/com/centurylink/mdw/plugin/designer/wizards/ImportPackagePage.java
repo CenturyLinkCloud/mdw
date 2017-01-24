@@ -216,7 +216,7 @@ public class ImportPackagePage extends WizardPage
     gd = new GridData(GridData.BEGINNING);
     gd.horizontalSpan = 2;
     latestVersionsCheckbox.setLayoutData(gd);
-    latestVersionsCheckbox.setText("Show only the latest versions");
+    latestVersionsCheckbox.setText("Show only latest released versions");
     latestVersionsCheckbox.setSelection(true);
 
     new Label(radioGroup, SWT.NONE);
