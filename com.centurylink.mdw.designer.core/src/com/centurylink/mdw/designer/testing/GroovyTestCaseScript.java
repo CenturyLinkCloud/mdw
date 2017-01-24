@@ -19,6 +19,7 @@ import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.qwest.mbeng.MbengException;
 import com.qwest.mbeng.XmlPath;
 
+import groovy.json.JsonSlurper;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
@@ -389,11 +390,18 @@ public abstract class GroovyTestCaseScript extends Script {
             adapterStub.setResponder(new Closure<String>(this, adapterStub) {
                 @Override
                 public String call(Object request) {
+                    // binding for request
                     if (adapterStub.getResponse().indexOf("${") >= 0) {
                         try {
-                            GPathResult gpathRequest = new XmlSlurper().parseText(request.toString());
                             Binding binding = getBinding();
-                            binding.setVariable("request", gpathRequest);
+                            if (request.toString().startsWith("{")) {
+                                Object req = new JsonSlurper().parseText(request.toString());
+                                binding.setVariable("request", req);
+                            }
+                            else {
+                                GPathResult gpathRequest = new XmlSlurper().parseText(request.toString());
+                                binding.setVariable("request", gpathRequest);
+                            }
                             CompilerConfiguration compilerCfg = new CompilerConfiguration();
                             compilerCfg.setScriptBaseClass(DelegatingScript.class.getName());
                             GroovyShell shell = new GroovyShell(GroovyTestCaseScript.class.getClassLoader(), binding, compilerCfg);
