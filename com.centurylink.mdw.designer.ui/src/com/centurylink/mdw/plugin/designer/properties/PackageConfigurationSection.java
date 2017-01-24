@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -348,6 +348,8 @@ public class PackageConfigurationSection extends PropertySection implements IFil
       {
         try
         {
+          if (workflowPackage.getMetaContent() != null && workflowPackage.getMetaContent().trim().startsWith("{"))
+            workflowPackage.getPackageVO().setAttributes(workflowPackage.getPackageVO().getMetaAttributes());
           getDesignerProxy().savePackage(workflowPackage);
           dirty = false;
           getDesignerProxy().getCacheRefresh().fireRefresh(false);
@@ -464,7 +466,7 @@ public class PackageConfigurationSection extends PropertySection implements IFil
     gd.verticalIndent = 15;
     propBtnGroup.setLayoutData(gd);
 
-    // add
+    // add prop
     addButton = new Button(propBtnGroup, SWT.PUSH | SWT.CENTER);
     addButton.setText("Add");
     GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
@@ -485,7 +487,7 @@ public class PackageConfigurationSection extends PropertySection implements IFil
       }
     });
 
-    // delete
+    // delete prop
     deleteButton = new Button(propBtnGroup, SWT.PUSH | SWT.CENTER);
     deleteButton.setText("Delete");
     gridData = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
@@ -512,7 +514,7 @@ public class PackageConfigurationSection extends PropertySection implements IFil
     gd.verticalIndent = 10;
     envBtnGroup.setLayoutData(gd);
 
-    // new env
+    // add env
     newEnvButton = new Button(envBtnGroup, SWT.PUSH | SWT.CENTER);
     newEnvButton.setText("Add...");
     gridData = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
@@ -530,6 +532,7 @@ public class PackageConfigurationSection extends PropertySection implements IFil
           if (propertyRows.isEmpty())
             propertyRows.add(new PropertyRow("new.property"));
           propertyRows.get(0).envValues.put(inputDlg.getInput(), "");
+          tableViewer.setInput(propertyRows);
           updateModel();
           setSelection(workflowPackage);
         }
@@ -682,7 +685,7 @@ public class PackageConfigurationSection extends PropertySection implements IFil
   class PropertyRow implements Comparable<PropertyRow>
   {
     private String propName;
-    private Map<String,String> envValues = new HashMap<String,String>();
+    private Map<String,String> envValues = new LinkedHashMap<String,String>();
 
     public PropertyRow(String propName)
     {
