@@ -91,14 +91,14 @@ public class Package implements Serializable, Jsonable {
     public List<Attribute> getAttributes(String attributeGroup) {
         if (attributes == null)
             return null;
-        List<Attribute> groupAttributes = new ArrayList<Attribute>();
+        List<Attribute> groupAttributes = new ArrayList<>();
         for (Attribute attribute : attributes) {
             if (attributeGroup == null) {
                 if (attribute.getAttributeGroup() == null)
-                    attributes.add(attribute);
+                    groupAttributes.add(attribute);
             }
             else if (attributeGroup.equals(attribute.getAttributeGroup())) {
-                attributes.add(attribute);
+                groupAttributes.add(attribute);
             }
         }
         return groupAttributes;
