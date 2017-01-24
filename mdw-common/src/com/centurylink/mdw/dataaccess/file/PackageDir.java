@@ -16,6 +16,7 @@ import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.Package;
 
 import io.swagger.annotations.ApiModel;
@@ -53,6 +54,11 @@ public class PackageDir extends File {
     public String getPackageVersion() { return pkgVersion; }
     public void setPackageVersion(String version) { this.pkgVersion = version; }
 
+    private String schemaVersion;
+    @ApiModelProperty(name="schemaVersion")
+    public String getSchemaVersion() { return schemaVersion; }
+    public void setSchemaVersion(String version) { this.schemaVersion = version; }
+
     private long pkgId;
     public long getId() { return pkgId; }
 
@@ -73,6 +79,7 @@ public class PackageDir extends File {
                 Package pkgVo = new Package(new JSONObject(new String(bytes)));
                 pkgName = pkgVo.getName();
                 pkgVersion = pkgVo.getVersionString();
+                schemaVersion = Asset.formatVersion(pkgVo.getSchemaVersion());
             }
             finally {
                 if (fis != null)
@@ -99,7 +106,7 @@ public class PackageDir extends File {
                     throw new DataAccessException("Package name in " + pkgFile + " is not '" + pkgNameFromDir + "'");
             }
             logicalDir = new File("/" + pkgName + " v" + pkgVersion);
-            if(versionControl!=null)
+            if (versionControl != null)
                 pkgId = versionControl.getId(logicalDir);
         }
         catch (DataAccessException ex) {
@@ -126,6 +133,7 @@ public class PackageDir extends File {
         this.pkgId = packageVo.getId() == null ? versionControl.getId(logicalDir) : packageVo.getId();
         this.pkgName = packageVo.getName();
         this.pkgVersion = Package.formatVersion(packageVo.getVersion());
+        this.schemaVersion = Asset.formatVersion(packageVo.getSchemaVersion());
     }
 
     /**

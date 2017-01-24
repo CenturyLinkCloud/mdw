@@ -153,6 +153,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     protected PackageDir createPackage(Package packageVo) throws DataAccessException, IOException {
+        if (packageVo.getSchemaVersion() == 0)
+            packageVo.setSchemaVersion(DataAccess.currentSchemaVersion);
         PackageDir pkgDir = new PackageDir(storageDir, packageVo, versionControl);
         getPackageDirs().add(0, pkgDir);
         return pkgDir;
@@ -338,6 +340,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
         packageVO.setName(pkgDir.getPackageName());
         packageVO.setVersion(Package.parseVersion(pkgDir.getPackageVersion()));
+        packageVO.setSchemaVersion(Package.parseVersion(pkgDir.getSchemaVersion()));
         packageVO.setId(versionControl.getId(pkgDir.getLogicalDir()));
         packageVO.setSchemaVersion(DataAccess.currentSchemaVersion);
 

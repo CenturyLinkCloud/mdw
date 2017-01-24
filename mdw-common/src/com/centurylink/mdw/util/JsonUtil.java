@@ -175,7 +175,7 @@ public class JsonUtil {
                     while (groupKeys.hasNext()) {
                         String groupKey = groupKeys.next().toString();
                         Attribute attr = new Attribute(groupKey, groupJson.getString(groupKey));
-                        attr.setAttributeGroup(groupKey);
+                        attr.setAttributeGroup(key);
                         attributes.add(attr);
                     }
                 }
