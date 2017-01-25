@@ -33,19 +33,8 @@
 
   <repositories>
     <repository>
-      <id>archiva.mdw</id>
+      <id>mdw.dev.repo</id>
       <url><%=mdwSettings.getMdwReleasesUrl()%></url>
-    </repository>
-    <repository>
-      <id>archiva.dev</id>
-      <url>http://archiva.corp.intranet/archiva/repository/development</url>
-    </repository>
-    <repository>
-      <id>archiva.snapshots</id>
-      <url>http://archiva.corp.intranet/archiva/repository/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
     </repository>
   </repositories>
 

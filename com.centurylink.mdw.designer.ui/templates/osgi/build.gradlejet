@@ -24,21 +24,8 @@ sourceSets {
     
 repositories {
     maven {
-        url "http://archiva.corp.intranet/archiva/repository/development"
+        url "<%=mdwSettings.getMdwReleasesUrl()%>"
     }
-    maven {
-        url "http://archiva.corp.intranet/archiva/repository/mdw"
-    }
-<%
-if (workflowProject.isSnapshotMdwVersion())
-{
-%>
-    maven {
-        url "http://archiva.corp.intranet/archiva/repository/snapshots"
-    }
-<%
-}
-%>
 }
 
 task copyMeta(type: Copy) {
