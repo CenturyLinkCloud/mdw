@@ -10,15 +10,16 @@ import java.util.Map;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.model.workflow.ProcessCount;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessList;
-import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.model.workflow.ActivityCount;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
 import com.centurylink.mdw.model.workflow.ActivityList;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessCount;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessList;
+import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 
 public interface WorkflowServices {
 
@@ -139,9 +140,12 @@ public interface WorkflowServices {
 
     public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
             Long ownerId, Map<String, String> params) throws ServiceException;
+    public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+            Map<String,Object> parameters, Map<String,String> headers) throws ServiceException;
 
     public Integer notify(String event, String message, int delay) throws ServiceException;
-
+    public Integer notify(Package runtimePackage, String eventName, Object eventMessage) throws ServiceException ;
+    public Integer notify(Package runtimePackage, String eventName, Object eventMessage, int delay) throws ServiceException;
 
     public void setVariable(Long processInstanceId, String varName, Object value) throws ServiceException;
     public void setVariable(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
@@ -157,6 +161,8 @@ public interface WorkflowServices {
      * Use when comparing document values (such as in Automated Tests).
      */
     public String getDocumentStringValue(Long id) throws ServiceException;
+
+    public String getDocType(Object docObj);
 
 
 }
