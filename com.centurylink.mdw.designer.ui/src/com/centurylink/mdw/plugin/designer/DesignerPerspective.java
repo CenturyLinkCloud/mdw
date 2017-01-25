@@ -62,8 +62,6 @@ public class DesignerPerspective implements IPerspectiveFactory
     layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet");
     layout.addShowViewShortcut(ProcessInstanceListView.VIEW_ID);
     layout.addShowViewShortcut(AutomatedTestView.VIEW_ID);
-    layout.addShowViewShortcut("org.eclipse.birt.report.designer.ui.views.data.DataView");
-    layout.addShowViewShortcut("org.eclipse.birt.report.designer.ui.attributes.AttributeView");
     layout.addShowViewShortcut("org.eclipse.gef.ui.palette_view");
 
     // new wizard shortcuts
@@ -99,14 +97,12 @@ public class DesignerPerspective implements IPerspectiveFactory
     // place process explorer to left of the editor area.
     IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT, (float) 0.25, editorArea);
     left.addView(ProcessExplorerView.VIEW_ID);
-    left.addPlaceholder("org.eclipse.birt.report.designer.ui.views.data.DataView");
 
     // place properties view below
     IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, (float) 0.75, editorArea);
     bottom.addView("org.eclipse.ui.views.PropertySheet");
     bottom.addView(ProcessInstanceListView.VIEW_ID);
     bottom.addView(AutomatedTestView.VIEW_ID);
-    bottom.addPlaceholder("org.eclipse.birt.report.designer.ui.attributes.AttributeView");
 
     // place designer toolbox to the right
     IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, (float) 0.75, editorArea);

@@ -33,7 +33,6 @@ dependencies {
     // swagger
     compile group: "io.swagger", name: "swagger-servlet", version: "1.5.4"
 
-    compile group: "org.apache.activemq", name: "activemq-all", version: "5.10.0"
     compile group: "commons-dbcp", name: "commons-dbcp", version: "1.4"
     
     // if a workflow needs these licensed dependencies they'll have to work around this
@@ -105,8 +104,6 @@ war {
     webXml = file("web/WEB-INF/web.xml")
     exclude "**/.*ignore";
     rootSpec.exclude "WEB-INF/web.xml"  // specified above
-    rootSpec.exclude "WEB-INF/lib/birt/**"
-    rootSpec.exclude "WEB-INF/lib/com.centurylink.mdw.reports_*.jar"
     rootSpec.exclude "javadoc/**" // hosted only in dev env
     rootSpec.exclude "doc/tutorials/**" // hosted on sharepoint
     rootSpec.exclude "doc/environment/**" // hosted on sharepoint

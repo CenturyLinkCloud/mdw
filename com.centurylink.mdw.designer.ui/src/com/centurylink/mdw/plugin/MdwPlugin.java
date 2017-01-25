@@ -267,19 +267,6 @@ public class MdwPlugin extends AbstractUIPlugin
     }
   }
 
-  public static boolean workspaceHasBirtSupport()
-  {
-    try
-    {
-      Class.forName("org.eclipse.birt.report.data.oda.jdbc.JDBCDriverManager");
-      return true;
-    }
-    catch (ClassNotFoundException ex)
-    {
-      return false;
-    }
-  }
-
   private static Boolean rcp;
   public static boolean isRcp()
   {
@@ -304,14 +291,5 @@ public class MdwPlugin extends AbstractUIPlugin
       prefsStore.setToDefault(name);
     else
       prefsStore.setValue(name, value);
-  }
-
-  public static boolean isPreJuno()
-  {
-    if (isRcp())
-      return false;
-
-    String platformVer = Platform.getProduct().getDefiningBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
-    return platformVer.startsWith("3");
   }
 }

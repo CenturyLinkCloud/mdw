@@ -2,8 +2,8 @@
 
 ### Developer Setup
 1. Prerequisites
- - Eclipse Mars for JavaEE Developers:  
-   http://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/mars2
+ - Eclipse Neon for JavaEE Developers:  
+   http://www.eclipse.org/downloads
  - Required Plugins:
      - MDW Designer:   
        [http://cshare.ad.qintra.com/sites/MDW/Developer Resources/Designer Plugin Install.html](http://cshare.ad.qintra.com/sites/MDW/Developer Resources/Designer Plugin Install.html)
@@ -11,18 +11,20 @@
        http://dist.springsource.com/release/TOOLS/gradle
  - Recommended Plugins:
      - Groovy:   
-       http://dist.springsource.org/snapshot/GRECLIPSE/e4.5
+       http://dist.springsource.org/snapshot/GRECLIPSE/e4.6
      - Yaml:   
        http://dadacoalition.org/yedit
  - Tomcat 7 or 8:
-     - https://tomcat.apache.org/download-80.cgi
+     - https://tomcat.apache.org
+	 - This workaround is needed for Tomcat 8.5:
+	   http://balusc.omnifaces.org/2016/07/integrating-tomcat-85x-and-tomee-7x-in.html
  - Chrome and Postman
      - https://www.google.com/chrome
 	 - https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop
 	 
 1. Get the Source Code
  - Command-line Git:  
-   `git clone https://github.com/CenturyLinkCloud/MDW.git`
+   `git clone https://github.com/CenturyLinkCloud/MDW.git mdw6`
  - in Eclipse:  
    Import the project into your Eclipse workspace:  
    File > Import > General > Existing Projects into Workspace
@@ -79,3 +81,19 @@
      [html formatter](http://lxdenvmtc143.dev.qintra.com:7021/Environment/htmlformat.png)  
      - YAML:  
      [yaml formatter](http://lxdenvmtc143.dev.qintra.com:7021/Environment/yamlformat.png)
+
+1. Designer Development
+ - The designer codebase is contained in the following projects:
+   - com.centurylink.mdw.designer (gradle parent)
+   - com.centurylink.mdw.designer.core
+   - com.centurylink.mdw.designer.feature
+   - com.centurylink.mdw.designer.rcp
+   - com.centurylink.mdw.designer.ui
+ - Build Designer
+   - These projects use the MDW 5.5 versions of mdw-common as mdw-schemas as dependencies, so to you need these MDW 5.5 projects locally or to have their jars available through a repository.
+   - Assuming you've got the MDW 5.5 source code locally, in com.centurylink.mdw.designer/gradle.properties, set mdwVersion and mdwOutputDir to point to this location.
+   - (One time) Run an MDW 5.5 build in its workspace and then in com.centurylink.mdw.designer.core, run the gradle task getMdwCommon to copy in the 5.5 dependencies.
+   - (Subsequently) When changes are made to common code in MDW 5.5 and an Eclipse build is performed in that workspace, running devGetMdwCommon will incrementally copy these.
+   - Now an Eclipse build of the Designer projects should show no errors.
+ - Debug Designer
+   - To run through Eclipse, right-click on project com.centurylink.mdw.designer.ui and select Debug As > Eclipse Application.

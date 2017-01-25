@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.jdt.internal.ui.preferences.PreferencesAccess;
 import org.eclipse.jdt.internal.ui.preferences.formatter.FormatterProfileManager;
 import org.eclipse.jdt.internal.ui.preferences.formatter.FormatterProfileStore;
@@ -151,7 +152,7 @@ public class WorkspaceConfigurator implements IWorkspaceRunnable
       {
         return new String[] { InstanceScope.SCOPE, ConfigurationScope.SCOPE };
       }
-      public Map<?,?> getMapping(String scope)
+      public Map<String,PreferenceFilterEntry[]> getMapping(String scope)
       {
         return null;
       }

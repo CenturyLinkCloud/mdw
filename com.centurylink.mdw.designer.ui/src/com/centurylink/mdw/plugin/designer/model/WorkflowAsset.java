@@ -44,8 +44,8 @@ import com.centurylink.mdw.common.utilities.FileHelper;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 import com.centurylink.mdw.model.value.attribute.CustomAttributeVO;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.model.value.user.UserRoleVO;
 import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
+import com.centurylink.mdw.model.value.user.UserRoleVO;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.PluginUtil;
@@ -469,16 +469,7 @@ public class WorkflowAsset extends WorkflowElement implements AttributeHolder, V
       return null;
 
     IWorkbenchPage activePage = MdwPlugin.getActivePage();
-    try
-    {
-      return activePage.findEditor(assetFileEditor.getEditorInput());
-    }
-    catch (NullPointerException ex)
-    {
-      // birt bug
-      PluginMessages.log(ex);
-      return null;
-    }
+    return activePage.findEditor(assetFileEditor.getEditorInput());
   }
 
   public boolean isRawEdit()

@@ -1,6 +1,5 @@
 dependencies {
     compile project(":com.centurylink.mdw.designer.core")
-    compile project(":com.centurylink.mdw.reports")
     compile fileTree(dir: "lib", includes: ["*.jar"])
     compile fileTree(dir: "${eclipseDir}/plugins", includes: ["**/*.jar"], excludes: ["**/*.source*.jar", "com.centurylink.mdw.*.jar"])
 }
@@ -101,17 +100,14 @@ task jarFeature(type: Jar) {
     include "feature.xml"
 }
 
-task updateDesignerVersion(dependsOn: [':com.centurylink.mdw.designer.core:updateDesignerVersion',
-    ':com.centurylink.mdw.reports:updateDesignerVersion']) << {
+task updateDesignerVersion(dependsOn: [':com.centurylink.mdw.designer.core:updateDesignerVersion']) << {
     File manifestFile = new File("./META-INF/MANIFEST.MF")
     ant.replaceregexp(file: manifestFile, match: "Bundle-Version:.*", replace: "Bundle-Version: ${version}", byline: true)
     ant.replaceregexp(file: manifestFile, match: "com.centurylink.mdw.designer.core;bundle-version=\".*\"", replace: "com.centurylink.mdw.designer.core;bundle-version=\"${version}\"", byline: true)
-    ant.replaceregexp(file: manifestFile, match: "com.centurylink.mdw.reports;bundle-version=\".*\"", replace: "com.centurylink.mdw.reports;bundle-version=\"${version}\"", byline: true)
  
     File featureFile = new File("./updateSite/features/feature.xml")
     ant.replaceregexp(file: featureFile, match: "label=\"MDW Designer\" version=\".*\"", replace: "label=\"MDW Designer\" version=\"${version}\"", byline: true)
     ant.replaceregexp(file: featureFile, match: "id=\"com.centurylink.mdw.designer.core\" version=\".*\"", replace: "id=\"com.centurylink.mdw.designer.core\" version=\"${version}\"", byline: true)
-    ant.replaceregexp(file: featureFile, match: "id=\"com.centurylink.mdw.reports\" version=\".*\"", replace: "id=\"com.centurylink.mdw.reports\" version=\"${version}\"", byline: true)
     ant.replaceregexp(file: featureFile, match: "id=\"com.centurylink.mdw.designer.ui\" version=\".*\"", replace: "id=\"com.centurylink.mdw.designer.ui\" version=\"${version}\"", byline: true)
     
     File siteFile = new File("./updateSite/site.xml")

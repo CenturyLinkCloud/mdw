@@ -36,9 +36,9 @@
                 </ex-property>
             </list-property>
             <property name="odaDriverClass">oracle.jdbc.driver.OracleDriver</property>
-            <property name="odaURL">${workflowProject.mdwDataSource.jdbcUrl}</property>
-            <property name="odaUser">${workflowProject.mdwDataSource.dbUser}</property>
-            <encrypted-property name="odaPassword" encryptionID="base64">${workflowProject.mdwDataSource.dbPasswordBase64}</encrypted-property>
+            <property name="odaURL">${project.mdwDataSource.jdbcUrl}</property>
+            <property name="odaUser">${project.mdwDataSource.dbUser}</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">${project.mdwDataSource.dbPasswordBase64}</encrypted-property>
         </oda-data-source>
     </data-sources>
     <data-sets>

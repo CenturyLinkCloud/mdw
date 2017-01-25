@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="src" path="/com.centurylink.mdw.designer.core"/>
-	<classpathentry exported="true" kind="src" path="/com.centurylink.mdw.reports"/>
 	<classpathentry exported="true" kind="lib" path="lib/opal-1.0.3.jar" sourcepath="/opal"/>
 	<classpathentry exported="true" kind="lib" path="lib/bndlib-1.50.0.jar"/>
 	<classpathentry kind="lib" path="lib/dp-1.1.0.jar"/>

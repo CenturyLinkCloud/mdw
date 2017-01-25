@@ -191,7 +191,6 @@ public class ProcessExplorerActionGroup extends ActionGroup
   private IAction mdwHubAction;
   private IAction taskManagerAction;
   private IAction webToolsAction;
-  private IAction reportsListAction;
   private IAction sortToolbarAction;
   private IAction filterToolbarAction;
   private IAction eventManagerAction;
@@ -291,7 +290,6 @@ public class ProcessExplorerActionGroup extends ActionGroup
     mdwHubAction = createMdwHubAction();
     taskManagerAction = createTaskManagerAction();
     webToolsAction = createWebToolsAction();
-    reportsListAction = createReportsListAction();
     sortToolbarAction = createSortToolbarAction();
     filterToolbarAction = createFilterToolbarAction();
 
@@ -538,24 +536,24 @@ public class ProcessExplorerActionGroup extends ActionGroup
         if (createApplies(WorkflowAsset.class, selection))
         {
           newMenu.add(new Separator());
+          newMenu.add(newCamelRouteAction);
+          newMenu.add(newJarFileAction);
+          newMenu.add(newJavaSourceAction);
+          newMenu.add(newJsonAction);
           newMenu.add(newPageAction);
           newMenu.add(newReportAction);
           newMenu.add(newRuleAction);
-          newMenu.add(newWordDocAction);
           newMenu.add(newScriptAction);
-          newMenu.add(newJavaSourceAction);
-          newMenu.add(newCamelRouteAction);
-          newMenu.add(newTemplateAction);
-          newMenu.add(newWebResourceAction);
-          newMenu.add(newXmlDocAction);
           newMenu.add(newSpringConfigAction);
-          newMenu.add(newJarFileAction);
-          newMenu.add(newTextResourceAction);
-          newMenu.add(newYamlAction);
-          newMenu.add(newJsonAction);
           if (selection.getFirstElement() instanceof WorkflowElement && ((WorkflowElement)selection.getFirstElement()).getProject().isFilePersist())
             newMenu.add(newTaskTemplateAction);
+          newMenu.add(newTemplateAction);
           newMenu.add(newTestCaseAction);
+          newMenu.add(newTextResourceAction);
+          newMenu.add(newWebResourceAction);
+          newMenu.add(newWordDocAction);
+          newMenu.add(newXmlDocAction);
+          newMenu.add(newYamlAction);
           newMenu.add(new Separator());
         }
 
@@ -753,7 +751,6 @@ public class ProcessExplorerActionGroup extends ActionGroup
               webMenu.add(taskManagerAction);
               webMenu.add(webToolsAction);
             }
-            webMenu.add(reportsListAction);
           }
         }
       }
@@ -2148,34 +2145,6 @@ public class ProcessExplorerActionGroup extends ActionGroup
     };
     WebLaunchAction launchAction = WebLaunchActions.getLaunchAction(null, WebApp.WebTools);
     action.setId(MdwMenuManager.MDW_MENU_PREFIX + "launch.web.tools");
-    action.setText(launchAction.getLabel());
-    action.setImageDescriptor(launchAction.getImageDescriptor());
-    return action;
-  }
-
-  private IAction createReportsListAction()
-  {
-    IAction action = new Action()
-    {
-      public void run()
-      {
-        if (webLaunchApplies(getSelection()))
-        {
-          if (getSelection().getFirstElement() instanceof WorkflowProject)
-          {
-            WorkflowProject project = (WorkflowProject) getSelection().getFirstElement();
-            WebLaunchActions.getLaunchAction(project, WebApp.Reports).launch(project);
-          }
-          else if (getSelection().getFirstElement() instanceof WorkflowPackage)
-          {
-            WorkflowPackage pkg = (WorkflowPackage) getSelection().getFirstElement();
-            WebLaunchActions.getLaunchAction(pkg.getProject(), WebApp.Reports).launch(pkg);
-          }
-        }
-      }
-    };
-    WebLaunchAction launchAction = WebLaunchActions.getLaunchAction(null, WebApp.Reports);
-    action.setId(MdwMenuManager.MDW_MENU_PREFIX + "launch.reports");
     action.setText(launchAction.getLabel());
     action.setImageDescriptor(launchAction.getImageDescriptor());
     return action;

@@ -10,10 +10,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -68,21 +64,6 @@ public class PropertySection extends org.eclipse.ui.views.properties.tabbed.Abst
 
     // create the composite to hold the widgets
     composite = createComposite(parent);
-    if (MdwPlugin.isPreJuno())
-    {
-      composite.addPaintListener(new PaintListener()
-      {
-        public void paintControl(PaintEvent e)
-        {
-          // needed because some editors set property page background to white
-          Composite parent = composite.getParent();
-          Rectangle clientRect = parent.getClientArea();
-          parent.setBackground(new Color(composite.getDisplay(), 212, 208, 200));
-          parent.drawBackground(e.gc, clientRect.x, clientRect.y, clientRect.width, clientRect.height, 0, 0);
-        }
-      });
-    }
-
     drawWidgets(composite, selection);
 
     PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, MdwPlugin.getPluginId() + ".properties_help");

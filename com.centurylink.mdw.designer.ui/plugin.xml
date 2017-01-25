@@ -96,15 +96,6 @@
                id="com.centurylink.mdw.plugin.actions.WebToolsAction">
          </action>
          <action
-               label="Reports List"
-               style="pulldown"
-               icon="icons/report.gif"
-               class="com.centurylink.mdw.plugin.actions.ReportsListAction"
-               tooltip="Reports List"
-               toolbarPath="mdwGroup1"
-               id="com.centurylink.mdw.plugin.actions.ReportsListAction">
-         </action>
-         <action
                label="Task Manager"
                style="pulldown"
                icon="icons/taskmgr.gif"
@@ -691,14 +682,6 @@
             </separator>
          </menu>
          <action
-               id="mdw.workflow.reportsList"
-               label="Reports List"
-               icon="icons/report.gif"
-               class="com.centurylink.mdw.plugin.actions.ReportsListAction"
-               menubarPath="mdw.projectWebMenu/projectWebGroup"
-               enablesFor="1">
-         </action>
-         <action
                id="mdw.workflow.mdwWeb"
                label="Web Tools"
                icon="icons/webtools.gif"
@@ -737,14 +720,6 @@
                name="projectHubGroup">
             </separator>
          </menu>
-         <action
-               id="mdw.workflow.reportsList"
-               label="Reports List"
-               icon="icons/report.gif"
-               class="com.centurylink.mdw.plugin.actions.ReportsListAction"
-               menubarPath="mdw.projectHubMenu/projectWebGroup"
-               enablesFor="1">
-         </action>
          <action
                id="mdw.workflow.mdwHub"
                label="MDW Hub"
@@ -2162,12 +2137,6 @@
        description="JSF Webapp allowing unlimited MDW Task Manager customization."
        class="com.centurylink.mdw.plugin.project.extensions.CustomTaskManager" />
      <mdwExtensionModule
-       id="birtReporting"
-       name="BIRT Reporting"
-       version="3.7.2"
-       description="Adds BIRT libraries along with MDW reporting extensions."
-       class="com.centurylink.mdw.plugin.project.extensions.BirtReporting" />
-     <mdwExtensionModule
        id="saxonLibs"
        name="Saxon XSLT/XPath Support"
        version="9"
@@ -2192,12 +2161,6 @@
        requiredMdwVersion="5.2"
        description="Use Apache ActiveMQ as your JMS provider."
        class="com.centurylink.mdw.plugin.project.extensions.LibExtension" />
-     <mdwExtensionModule
-       id="mdwBirtReports"
-       name="MDW BIRT Reports"
-       requiredMdwVersion="5.5"
-       description="Adds MDW Reports module with BIRT libraries."
-       class="com.centurylink.mdw.plugin.project.extensions.MdwBirtReports" />
      <mdwExtensionModule
        id="adminUiExtension"
        name="Admin UI"

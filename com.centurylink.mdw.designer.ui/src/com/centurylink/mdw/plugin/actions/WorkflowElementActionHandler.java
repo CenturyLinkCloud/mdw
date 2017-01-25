@@ -452,28 +452,6 @@ public class WorkflowElementActionHandler
       template.openFile(new NullProgressMonitor());
       new TemplateRunDialog(getShell(), template).open();
     }
-    else if (element instanceof Report)
-    {
-      Report report = (Report) element;
-      IEditorPart editorPart = report.getFileEditor();
-      if (editorPart != null)
-      {
-        try
-        {
-          if (editorPart.isDirty())
-          {
-            if (MessageDialog.openQuestion(getShell(), "Run Report", "Save report '" + report.getName() + "' before running?"))
-              editorPart.doSave(new NullProgressMonitor());
-          }
-        }
-        catch (NullPointerException ex)
-        {
-          // birt bug
-          PluginMessages.log(ex);
-        }
-      }
-      report.run();
-    }
     else if (element instanceof Page)
     {
       Page page = (Page) element;
@@ -918,16 +896,7 @@ public class WorkflowElementActionHandler
           {
             if (asset.getFileEditor() != null)
             {
-              IEditorInput editorInput = null;
-              try
-              {
-                editorInput = asset.getFileEditor().getEditorInput();
-              }
-              catch (NullPointerException ex)
-              {
-                // birt bug
-                PluginMessages.log(ex);
-              }
+              IEditorInput editorInput = asset.getFileEditor().getEditorInput();
 
               if (editorInput != null)
                 closeOpenEditor(editorInput, false);
@@ -1007,16 +976,7 @@ public class WorkflowElementActionHandler
       WorkflowAsset asset = (WorkflowAsset) element;
       if (asset.getFileEditor() != null)
       {
-        IEditorPart assetEditor = null;
-        try
-        {
-          assetEditor = findOpenEditor(asset.getFileEditor().getEditorInput());
-        }
-        catch (NullPointerException ex)
-        {
-          // birt bug
-          PluginMessages.log(ex);
-        }
+        IEditorPart assetEditor = findOpenEditor(asset.getFileEditor().getEditorInput());
         if (assetEditor != null)
         {
           String message = "'" + asset.getName() + "' is currently open in an editor.\nPlease save and close before renaming.";

@@ -39,9 +39,6 @@ osgi.instance.area.default=@user.home/workspace
  - Copy org.eclipse.epf.common.win32.win32.x86_1.5.0.v20150508_0328.jar from com.centurylink.mdw.designer/thirdParty/plugins
    into the plugins directory for HTML editor support
    (TODO automate)
- - Copy ojdbc6.jar/mysql-connector-java-5.1.29.jar/mariadb-java-client-1.2.3.jar
-   into plugins/org.eclipse.birt.report.data.oda.jdbc_4.5.0.v201506092134/drivers
-   (TODO this is probably not okay for Open Source -- figure out alternative)
  - Create dropins folder
  - Copy in the appropriate jre directory depending on architecture (jdk_1.8 64 bit or 32 bit) 
 

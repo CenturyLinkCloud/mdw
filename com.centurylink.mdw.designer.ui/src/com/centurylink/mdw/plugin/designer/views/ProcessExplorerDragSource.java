@@ -110,18 +110,11 @@ public class ProcessExplorerDragSource extends DragSourceAdapter
       IEditorPart tempFileEditor = asset.getFileEditor();
       if (tempFileEditor != null)
       {
-        try
+        if (findOpenEditor(tempFileEditor.getEditorInput()) != null)
         {
-          if (findOpenEditor(tempFileEditor.getEditorInput()) != null)
-          {
-            String message = "'" + asset.getLabel() + "' is currently open in an editor.\nPlease save and close before dragging.";
-            MessageDialog.openError(MdwPlugin.getShell(), "Process Explorer", message);
-            return false;
-          }
-        }
-        catch (NullPointerException ex)
-        {
-          // birt bug
+          String message = "'" + asset.getLabel() + "' is currently open in an editor.\nPlease save and close before dragging.";
+          MessageDialog.openError(MdwPlugin.getShell(), "Process Explorer", message);
+          return false;
         }
       }
       return dragArchived || !asset.isArchived();

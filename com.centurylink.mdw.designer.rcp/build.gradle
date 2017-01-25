@@ -2,7 +2,6 @@
 dependencies {
     compile project(":com.centurylink.mdw.designer.core")
     compile project(":com.centurylink.mdw.designer.ui")
-    compile project(":com.centurylink.mdw.reports")
 }
 
 task cleanCompile(type: Delete) {
@@ -18,7 +17,6 @@ task updateDesignerVersion << {
     ant.replaceregexp(file: manifestFile, match: "Bundle-Version:.*", replace: "Bundle-Version: ${version}", byline: true)
     ant.replaceregexp(file: manifestFile, match: "com.centurylink.mdw.designer.core;bundle-version=\".*\"", replace: "com.centurylink.mdw.designer.core;bundle-version=\"${version}\"", byline: true)
     ant.replaceregexp(file: manifestFile, match: "com.centurylink.mdw.designer.ui;bundle-version=\".*\"", replace: "com.centurylink.mdw.designer.ui;bundle-version=\"${version}\"", byline: true)
-    ant.replaceregexp(file: manifestFile, match: "com.centurylink.mdw.reports;bundle-version=\".*\"", replace: "com.centurylink.mdw.reports;bundle-version=\"${version}\"", byline: true)
     
     File pluginXMLFile = new File("./plugin.xml")
     ant.replaceregexp(file: pluginXMLFile, match: "Model-Driven Workflow&#x0A;Version .*&#x0A;Copyright", replace: "Model-Driven Workflow&#x0A;Version ${version}&#x0A;Copyright", byline: true)

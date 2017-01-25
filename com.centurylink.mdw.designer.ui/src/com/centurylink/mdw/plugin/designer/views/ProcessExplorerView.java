@@ -49,7 +49,6 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 import com.centurylink.mdw.plugin.designer.properties.TabbedPropertySheetPage;
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
-import com.centurylink.mdw.reports.MdwReports;
 
 public class ProcessExplorerView extends ViewPart implements ITabbedPropertySheetPageContributor, IMenuListener
 {
@@ -219,9 +218,6 @@ public class ProcessExplorerView extends ViewPart implements ITabbedPropertyShee
       if (!project.isFilePersist())
         actionHandler.syncOpenEditors(project);
     }
-
-    // refresh the reports plug-in so that new projects are available in workflow env list
-    MdwReports.getInstance().clear();
   }
 
   public void refreshTree()
