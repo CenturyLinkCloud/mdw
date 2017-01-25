@@ -175,12 +175,22 @@ public class NewPackagePage extends WizardPage
     groupLabel.setVisible(is558);
     groupCombo.setVisible(is558);
 
-    boolean is5537 = project.checkRequiredVersion(5, 5, 37);
-    getWizard().setJson(is5537);
-    jsonFormatRadio.setSelection(is5537);
-    xmlFormatRadio.setSelection(!is5537);
-    formatRadioGroup.setEnabled(is5537);
-    jsonFormatRadio.setEnabled(is5537);
+    if (project.checkRequiredVersion(6, 0))
+    {
+      getWizard().setJson(true);
+      jsonFormatRadio.setSelection(true);
+      xmlFormatRadio.setSelection(false);
+      xmlFormatRadio.setEnabled(false);
+    }
+    else
+    {
+      boolean is5537 = project.checkRequiredVersion(5, 5, 37);
+      getWizard().setJson(is5537);
+      jsonFormatRadio.setSelection(is5537);
+      xmlFormatRadio.setSelection(!is5537);
+      formatRadioGroup.setEnabled(is5537);
+      jsonFormatRadio.setEnabled(is5537);
+    }
   }
 
   private void populateGroupCombo()

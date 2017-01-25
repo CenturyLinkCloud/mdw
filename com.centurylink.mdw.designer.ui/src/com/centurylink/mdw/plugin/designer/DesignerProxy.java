@@ -274,7 +274,7 @@ public class DesignerProxy
               WorkflowProjectManager.getInstance().save(project); // save the discovered branch
               if (progressMonitor != null)
                 progressMonitor.progress(10);
-              if (project.checkRequiredVersion(5, 5, 34) && !project.checkRequiredVersion(6, 0))
+              if (project.checkRequiredVersion(5, 5, 34))
                 pkgDownloadServicePath = "Packages?format=json&nonVersioned=true";
             }
             else
