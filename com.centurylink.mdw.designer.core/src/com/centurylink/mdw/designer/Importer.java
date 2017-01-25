@@ -52,7 +52,7 @@ public class Importer {
             System.out.println("Example Usage: ");
             System.out.println("java com.centurylink.mdw.designer.Importer appcuid apppassword "
                     + "jdbc:oracle:thin:mdwdemo/mdwdemo@mdwdevdb.dev.qintra.com:1594:mdwdev (or /path/to/root/storage) "
-                    + "http://archiva.corp.intranet/archiva/repository/mdw/com/centurylink/mdw/assets/camel/5.5.11/com.centurylink.mdw.camel-5.5.11.xml "
+                    + "http://lxdenvmtc143.dev.qintra.com:7021/maven/repository/mdw/com/centurylink/mdw/assets/camel/5.5.11/com.centurylink.mdw.camel-5.5.11.xml "
                     + "overwrite=true");
             System.exit(0);
         }

@@ -4,9 +4,6 @@ repositories {
     maven {
         url devRepoUrl
     }           
-    maven {
-      url archivaDevUrl
-  }
 }
 
 configurations {

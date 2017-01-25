@@ -14,8 +14,8 @@ Here's an example Bash shell script for executing the MDW GitImporter from the c
 <pre>
 #!/bin/bash
 MDW_VERSION=5.5.08-SNAPSHOT
-MDW_REPO=http://archiva.corp.intranet/archiva/repository/snapshots
-LIBS_REPO=http://archiva.corp.intranet/archiva/repository/development
+MDW_REPO=http://lxdenvmtc143.dev.qintra.com:7021/maven/repository
+LIBS_REPO=http://lxdenvmtc143.dev.qintra.com:7021/maven/repository
 PROPS_FILE=/foss/foss-ews/instances/mdwapp/current/mdw/config/mdw.properties
 
 wget ${MDW_REPO}/com/centurylink/mdw/mdw-common/${MDW_VERSION}/mdw-common-${MDW_VERSION}.jar -Omdw-common.jar
