@@ -4,7 +4,7 @@ dependencies {
 }
 
 task copyCompatibilityMappings(type: Copy) {
-    from "../mdw-common/src/META-INF/mdw"
+    from "${mdwOutputDir}/../../../mdw-common/src/META-INF/mdw"
     include "namespaces.map"
     include "variable-translators.map"
     include "variable-types.map"

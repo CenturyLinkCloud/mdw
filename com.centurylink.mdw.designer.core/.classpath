@@ -7,7 +7,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/org.apache.oltu.oauth2.common-1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/el-api-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/el-impl-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="classes" />
+	<classpathentry exported="true" kind="lib" path="classes" sourcepath="E:/workspaces/MDW/mdw-common"/>
 	<classpathentry exported="true" kind="lib" path="lib/AccessControl-6.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/activation-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bcprov-jdk15-144.jar"/>
