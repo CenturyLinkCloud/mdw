@@ -79,7 +79,7 @@ public class Attributes extends JsonRestService {
     @Path("/{ownerType}/{ownerId}")
     @ApiOperation(value="Update attributes for an ownerType and ownerId", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Attributes", paramType="body")})
+        @ApiImplicitParam(name="Attributes", paramType="body", required=true)})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         String ownerType = getSegment(path, 1);
@@ -110,7 +110,7 @@ public class Attributes extends JsonRestService {
     @Path("/{ownerType}/{ownerId}")
     @ApiOperation(value="Set attributes for an ownerType and ownerId", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Attributes", paramType="body")})
+        @ApiImplicitParam(name="Attributes", paramType="body", required=true)})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         String ownerType = getSegment(path, 1);

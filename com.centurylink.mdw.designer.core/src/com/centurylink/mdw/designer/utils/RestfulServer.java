@@ -222,6 +222,20 @@ public class RestfulServer extends Server {
         return httpHelper.post(request);
     }
 
+    public String delete(String path, String request) throws IOException {
+        return delete(path, request, null, null);
+    }
+
+    public String delete(String path, String request, String user, String password) throws IOException {
+        String url = getServiceUrl();
+        if (path != null)
+            url += "/" + path;
+        HttpHelper httpHelper = new HttpHelper(new URL(url), user, password);
+        httpHelper.setConnectTimeout(getConnectTimeout());
+        httpHelper.setReadTimeout(getReadTimeout());
+        return httpHelper.delete(request);
+    }
+
     public MDWStatusMessageDocument invokeService(String request, String user, String password)
     throws DataAccessException, RemoteException {
         String response = null;

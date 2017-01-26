@@ -166,12 +166,22 @@ public class RuntimeDataAccessRest extends ServerAccessRest implements RuntimeDa
             for (Long id : processInstanceIds)
                 instances.add(new ProcessInstanceVO(id));
             ProcessList processList = new ProcessList(ProcessList.PROCESS_INSTANCES, instances);
-            ActionRequestMessage actionRequest = new ActionRequestMessage();
-            actionRequest.setAction("DeleteProcessInstances");
-            actionRequest.addParameter("appName", "MDW Designer");
-            JSONObject msgJson = actionRequest.getJson();
-            msgJson.put(processList.getJsonName(), processList.getJson());
-            invokeActionService(msgJson.toString(2));
+            if (getServer().getSchemaVersion() >= 6000) {
+                try {
+                    getServer().delete("Processes", processList.getJson().toString(2));
+                }
+                catch (IOException ex) {
+                    throw new DataAccessOfflineException("Unable to connect to " + getServer().getServiceUrl(), ex);
+                }
+            }
+            else {
+                ActionRequestMessage actionRequest = new ActionRequestMessage();
+                actionRequest.setAction("DeleteProcessInstances");
+                actionRequest.addParameter("appName", "MDW Designer");
+                JSONObject msgJson = actionRequest.getJson();
+                msgJson.put(processList.getJsonName(), processList.getJson());
+                invokeActionService(msgJson.toString(2));
+            }
             return processList.getCount();
         }
         catch (XmlException ex) {
@@ -184,11 +194,21 @@ public class RuntimeDataAccessRest extends ServerAccessRest implements RuntimeDa
 
     public int deleteProcessInstancesForProcess(Long processId) throws DataAccessException {
         try {
-            ActionRequestMessage actionRequest = new ActionRequestMessage();
-            actionRequest.setAction("DeleteProcessInstances");
-            actionRequest.addParameter("appName", "MDW Designer");
-            actionRequest.addParameter("processId", String.valueOf(processId));
-            invokeActionService(actionRequest.getJson().toString(2));
+            if (getServer().getSchemaVersion() >= 6000) {
+                try {
+                    getServer().delete("Processes?processId=" + processId, null);
+                }
+                catch (IOException ex) {
+                    throw new DataAccessOfflineException("Unable to connect to " + getServer().getServiceUrl(), ex);
+                }
+            }
+            else {
+                ActionRequestMessage actionRequest = new ActionRequestMessage();
+                actionRequest.setAction("DeleteProcessInstances");
+                actionRequest.addParameter("appName", "MDW Designer");
+                actionRequest.addParameter("processId", String.valueOf(processId));
+                invokeActionService(actionRequest.getJson().toString(2));
+            }
             return 0; // not used
         }
         catch (Exception ex) {

@@ -132,6 +132,8 @@ public abstract class RestService {
 
 
     /**
+     * TODO: pass HTTP Method
+     *
      * A user who belongs to any role in the returned list is allowed
      * to perform this action/method.  Override to open access beyond Site Admin.
      * @param path

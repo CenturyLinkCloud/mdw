@@ -4,6 +4,7 @@
 package com.centurylink.mdw.service.rest;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.user.Role;
@@ -30,11 +32,14 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessCount;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
+import com.centurylink.mdw.services.ProcessServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -45,6 +50,8 @@ import io.swagger.annotations.ApiOperation;
 @Api("MDW process instances and values")
 public class Processes extends JsonRestService implements JsonExportable {
 
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
         return Entity.ProcessInstance;
@@ -53,7 +60,7 @@ public class Processes extends JsonRestService implements JsonExportable {
     @Override
     public List<String> getRoles(String path) {
         List<String> roles = super.getRoles(path);
-        roles.add(Role.PROCESS_EXECUTION);
+        roles.add(Role.ANY); // TODO: for now this is needed for Designer access
         return roles;
     }
 
@@ -217,6 +224,62 @@ public class Processes extends JsonRestService implements JsonExportable {
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
+
+
+    /**
+     * Used by Designer to delete process instance(s).
+     * TODO: delete values
+     */
+    @Path("/{instanceId}")
+    @ApiOperation(value="Delete process instance(s)",
+        notes="If instanceId is missing, body content with list of instanceIds is expected.", response=StatusMessage.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="instanceIds", paramType="body", dataType="com.centurylink.mdw.model.workflow.ProcessList"),
+        @ApiImplicitParam(name="processId", paramType="query")})
+    public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        Query query = new Query(path, headers);
+        try {
+            String procId = query.getFilter("processId");
+            if (procId != null) {
+                ProcessServices processServices = ServiceLocator.getProcessServices();
+                int count = processServices.deleteProcessInstances(new Long(procId));
+                if (logger.isDebugEnabled())
+                    logger.debug("Deleted " + count + " process instances for process id: " + procId);
+            }
+            else {
+                String instanceId = getSegment(path, 1);
+                ProcessList processList;
+                if (instanceId == null) {
+                    // expect content
+                    processList = new ProcessList(ProcessList.PROCESS_INSTANCES, content);
+                }
+                else {
+                    List<ProcessInstance> list = new ArrayList<>();
+                    list.add(new ProcessInstance(Long.parseLong(instanceId)));
+                    processList = new ProcessList(ProcessList.PROCESS_INSTANCES, list);
+                }
+
+                ProcessServices processServices = ServiceLocator.getProcessServices();
+                processServices.deleteProcessInstances(processList);
+                if (logger.isDebugEnabled())
+                    logger.debug("Deleted " + processList.getCount() + " process instances");
+            }
+
+            return null;
+        }
+        catch (NumberFormatException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.BAD_REQUEST, ex.getMessage());
+        }
+        catch (ParseException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.BAD_REQUEST, ex.getMessage());
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 
