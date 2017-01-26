@@ -40,6 +40,11 @@ public class RestfulServer extends Server {
         setMdwWebUrl(mdwWebUrl);
     }
 
+    public RestfulServer(String database, String user, String mdwWebUrl, int schemaVersion) {
+        super(database, user, schemaVersion);
+        setMdwWebUrl(mdwWebUrl);
+    }
+
     public RestfulServer(RestfulServer cloneFrom) {
         super(cloneFrom);
     }
@@ -201,6 +206,10 @@ public class RestfulServer extends Server {
 
     public MDWStatusMessageDocument invokeService(String request) throws DataAccessException, RemoteException {
         return invokeService(request, null, null);
+    }
+
+    public String post(String path, String request) throws IOException {
+        return post(path, request, null, null);
     }
 
     public String post(String path, String request, String user, String password) throws IOException {

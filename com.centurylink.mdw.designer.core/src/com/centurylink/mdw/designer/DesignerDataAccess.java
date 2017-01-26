@@ -133,7 +133,7 @@ public class DesignerDataAccess  {
 
     public DesignerDataAccess(Server server, List<Server> server_list, String cuid, boolean oldNamespaces)
             throws DataAccessException,RemoteException {
-        this(server, server_list, cuid, null, oldNamespaces, false, DataAccess.currentSchemaVersion);
+        this(server, server_list, cuid, null, oldNamespaces, false);
     }
 
     /**
@@ -151,7 +151,7 @@ public class DesignerDataAccess  {
      * @throws DataAccessException
      */
     public DesignerDataAccess(Server server, List<Server> server_list, String cuid,
-            Map<String, String> connectParams, boolean oldNamespaces, boolean remoteRetrieve, int schemaVersion)
+            Map<String, String> connectParams, boolean oldNamespaces, boolean remoteRetrieve)
     throws DataAccessException, RemoteException {
         current_server = new Server(server);
         this.server_list = server_list;
@@ -170,7 +170,7 @@ public class DesignerDataAccess  {
         else
             mode = Mode.NO_DATABASE;
         if (mode == Mode.VCS) {
-            DataAccess.currentSchemaVersion = DataAccess.supportedSchemaVersion = dbSupportedSchemaVersion = dbSchemaVersion = schemaVersion;
+            DataAccess.currentSchemaVersion = DataAccess.supportedSchemaVersion = dbSupportedSchemaVersion = dbSchemaVersion = current_server.getSchemaVersion();
             baselineData = new MdwBaselineData();
             // user auth access directly through db is still supported to avoid confusion (TODO prefs)
             DatabaseAccess db = new DatabaseAccess(current_server.getDatabaseUrl(), connectParams);

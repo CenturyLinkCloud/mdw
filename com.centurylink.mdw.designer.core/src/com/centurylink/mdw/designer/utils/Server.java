@@ -43,12 +43,20 @@ public class Server {
     private String mdwWebUrl;
     private String user;
 
+    private int schemaVersion; // only populated for VCS assets
+    public int getSchemaVersion() { return schemaVersion; }
+
     public Server() {
     }
 
     public Server(String databaseUrl, String user) {
         this.databaseUrl = databaseUrl;
         this.user = user;
+    }
+    public Server(String databaseUrl, String user, int schemaVersion) {
+        this.databaseUrl = databaseUrl;
+        this.user = user;
+        this.schemaVersion = schemaVersion;
     }
     public Server(Server copy) {
         name = copy.name;
@@ -61,6 +69,7 @@ public class Server {
         taskManagerUrl = copy.taskManagerUrl;
         mdwWebUrl = copy.mdwWebUrl;
         user = copy.user;
+        schemaVersion = copy.schemaVersion;
     }
 
     private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;

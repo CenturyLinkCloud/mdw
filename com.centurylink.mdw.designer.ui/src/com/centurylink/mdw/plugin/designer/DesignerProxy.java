@@ -219,11 +219,11 @@ public class DesignerProxy
       User user = project.getUser();
       if (user == null)
         handleLazyUserAuth();
-      int schemaVersion = 0; // only populated for VCS assets
       if (project.getPersistType() == WorkflowProject.PersistType.Git)
       {
         String jdbcUrl = project.getMdwDataSource().getJdbcUrlWithCredentials();
-        restfulServer = new RestfulServer(jdbcUrl, project.getUser().getUsername(), project.getServiceUrl());
+        int schemaVersion = project.getMdwMajorVersion() * 1000 + project.getMdwMinorVersion() * 100;
+        restfulServer = new RestfulServer(jdbcUrl, project.getUser().getUsername(), project.getServiceUrl(), schemaVersion);
         VcsRepository gitRepo = project.getMdwVcsRepository();
         versionControl = new VersionControlGit();
         String gitUser = null;
@@ -326,8 +326,6 @@ public class DesignerProxy
             throw new DataAccessOfflineException("Server appears to be offline: " + ex.getMessage(), ex);
           }
         }
-        // for VCS, schemaVersion is determined here
-        schemaVersion = project.getMdwMajorVersion() * 1000 + project.getMdwMinorVersion() * 100;
       }
       else if (project.getPersistType() == WorkflowProject.PersistType.None)
       {
@@ -357,7 +355,7 @@ public class DesignerProxy
       boolean remoteRetrieve = project.isFilePersist() && project.checkRequiredVersion(5, 5, 19);
       restfulServer.setConnectTimeout(MdwPlugin.getSettings().getHttpConnectTimeout());
       restfulServer.setReadTimeout(MdwPlugin.getSettings().getHttpReadTimeout());
-      mainFrame.startSession(project.getUser().getUsername(), restfulServer, progressMonitor, connProps, oldNamespaces, remoteRetrieve, schemaVersion);
+      mainFrame.startSession(project.getUser().getUsername(), restfulServer, progressMonitor, connProps, oldNamespaces, remoteRetrieve);
       restfulServer.setDataModel(mainFrame.getDataModel());
       mainFrame.dao.setCurrentServer(restfulServer);
       dataAccess = new PluginDataAccess(project, mainFrame.getDataModel(), mainFrame.dao);

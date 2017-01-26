@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.service.ActionRequest;
 import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.dataaccess.DataAccessOfflineException;
 import com.centurylink.mdw.dataaccess.ProcessImporter;
 import com.centurylink.mdw.designer.utils.RestfulServer;
 import com.centurylink.mdw.model.data.task.TaskCategory;
@@ -93,15 +94,27 @@ public class WorkflowAccessRest extends ServerAccessRest {
 
     public void updateAttributes(String ownerType, long ownerId, Map<String,String> attributes) throws DataAccessException {
         try {
-            Map<String,String> params = getStandardParams();
-            params.put("ownerType", ownerType);
-            params.put("ownerId", String.valueOf(ownerId));
-            ActionRequest actionRequest = new ActionRequest("UpdateAttributes", params);
             JSONObject attrsJson = new JSONObject();
             for (String name : attributes.keySet())
                 attrsJson.put(name, attributes.get(name));
-            actionRequest.addJson("attributes", attrsJson);
-            invokeActionService(actionRequest.getJson().toString(2));
+
+            if (getServer().getSchemaVersion() >= 6000) {
+                try {
+                    getServer().post("Attributes/" + ownerType + "/" + ownerId, attrsJson.toString(2));
+                }
+                catch (IOException ex) {
+                    throw new DataAccessOfflineException("Unable to connect to " + getServer().getServiceUrl(), ex);
+                }
+            }
+            else
+            {
+                Map<String,String> params = getStandardParams();
+                params.put("ownerType", ownerType);
+                params.put("ownerId", String.valueOf(ownerId));
+                ActionRequest actionRequest = new ActionRequest("UpdateAttributes", params);
+                actionRequest.addJson("attributes", attrsJson);
+                invokeActionService(actionRequest.getJson().toString(2));
+            }
         }
         catch (JSONException ex) {
             throw new DataAccessException(ex.getMessage(), ex);

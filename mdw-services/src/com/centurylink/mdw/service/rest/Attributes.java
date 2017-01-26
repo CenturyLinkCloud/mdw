@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Path;
@@ -13,22 +13,27 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.JsonUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-/**
- * TODO: Incorporate UpdateAttributes and deprecate that class.
- */
 @Path("/Attributes")
 @Api("Design-time attributes")
 public class Attributes extends JsonRestService {
+
+    @Override
+    public List<String> getRoles(String path) {
+        List<String> roles = super.getRoles(path);
+        roles.add(Role.ANY); // TODO: for now this is needed for Designer access
+        return roles;
+    }
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
@@ -68,21 +73,7 @@ public class Attributes extends JsonRestService {
     }
 
     /**
-     * Create attributes for owner type and id.
-     */
-    @Override
-    @Path("/{ownerType}/{ownerId}")
-    @ApiOperation(value="Create attributes for an ownerType and ownerId", response=StatusMessage.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name="Attributes", paramType="body")})
-    public JSONObject post(String path, JSONObject content, Map<String,String> headers)
-    throws ServiceException, JSONException {
-        return put(path, content, headers);
-    }
-
-    /**
-     * Update attributes for owner type and id.
-     * Existing attributes are always overwritten.
+     * Update attributes owner type and id (does not delete existing ones).
      */
     @Override
     @Path("/{ownerType}/{ownerId}")
@@ -91,42 +82,54 @@ public class Attributes extends JsonRestService {
         @ApiImplicitParam(name="Attributes", paramType="body")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        Map<String,String> parameters = getParameters(headers);
         String ownerType = getSegment(path, 1);
         if (ownerType == null)
-            ownerType = parameters.get("ownerType");
-        if (ownerType == null)
-            throw new ServiceException("Missing parameter: ownerType");
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing pathSegment: ownerType");
         String ownerId = getSegment(path, 2);
         if (ownerId == null)
-            ownerId = parameters.get("ownerId");
-        if (ownerId == null)
-            throw new ServiceException("Missing parameter: ownerId");
-        String updateOnly = getSegment(path, 3);
-        if (updateOnly == null)
-            updateOnly = parameters.get("updateOnly");
-        if (content == null)
-            throw new ServiceException("Missing JSON object: attributes");
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing pathSegment: ownerId");
 
         try {
-            Map<String,String> attrs = new HashMap<String,String>();
-            String[] names = JSONObject.getNames(content);
-            if (names != null) {
-                for (String name : names)
-                  attrs.put(name, content.getString(name));
-            }
-            WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-
-            if (updateOnly != null) {
-                // Update attribute only, without deleting all other attributes for that ownerId
-                workflowServices.updateAttributes(ownerType, Long.parseLong(ownerId), attrs);
-            } else {
-                workflowServices.setAttributes(ownerType, Long.parseLong(ownerId), attrs);
-            }
+            Map<String,String> attrs = JsonUtil.getMap(content);
+            ServiceLocator.getWorkflowServices().updateAttributes(ownerType, Long.parseLong(ownerId), attrs);
             return null;
         }
+        catch (NumberFormatException ex) {
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid ownerId: " + ownerId);
+        }
         catch (JSONException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Set attributes for owner type and id.
+     * Existing attributes are always overwritten.
+     */
+    @Override
+    @Path("/{ownerType}/{ownerId}")
+    @ApiOperation(value="Set attributes for an ownerType and ownerId", response=StatusMessage.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="Attributes", paramType="body")})
+    public JSONObject post(String path, JSONObject content, Map<String,String> headers)
+    throws ServiceException, JSONException {
+        String ownerType = getSegment(path, 1);
+        if (ownerType == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing pathSegment: ownerType");
+        String ownerId = getSegment(path, 2);
+        if (ownerId == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing pathSegment: ownerId");
+
+        try {
+            Map<String,String> attrs = JsonUtil.getMap(content);
+            ServiceLocator.getWorkflowServices().setAttributes(ownerType, Long.parseLong(ownerId), attrs);
+            return null;
+        }
+        catch (NumberFormatException ex) {
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid ownerId: " + ownerId);
+        }
+        catch (JSONException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 
