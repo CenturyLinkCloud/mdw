@@ -34,7 +34,7 @@ osgi.splashPath=platform:/base/plugins/com.centurylink.mdw.plugin.rcp
 osgi.instance.area.default=@user.home/workspace
  - Change the activate flag to true for dropins as follows in bundles.info (configuration/org.eclipse.equinox.simpleconfigurator)
      org.eclipse.equinox.p2.reconciler.dropins,1.1.300.v20150423-1455,plugins/org.eclipse.equinox.p2.reconciler.dropins_1.1.300.v20150423-1455.jar,4,true
- - Copy org.eclipse.ui.win32_3.2.500.v20150423-0822.jar from eclipse_4.5.2/plugins into the plugins directory for in-place editor support
+ - Copy org.eclipse.ui.win32_3.2.500.v20150423-0822.jar from eclipse_4.6.2/plugins into the plugins directory for in-place editor support
    (TODO try automating by adding to feature.xml)
  - Create dropins folder
  - Copy in the appropriate jre directory depending on architecture (jdk_1.8 64 bit or 32 bit) 
@@ -51,7 +51,6 @@ Upload the following files to the /prod/ecom2/local/apps/MdwRcp directory on lxd
    - buildDirectory/buildRepo/content.xml
    - buildDirectory/buildRepo/features/com.centurylink.mdw.designer.feature_X.X.X.jar
    - buildDirectory/buildRepo/plugins/com.centurylink.mdw.designer.core_X.X.X.jar
-   - buildDirectory/buildRepo/plugins/com.centurylink.mdw.designer.reports_X.X.X.jar
    - buildDirectory/buildRepo/plugins/com.centurylink.mdw.designer.ui_X.X.X.jar
    - buildDirectory/buildRepo/plugins/com.centurylink.mdw.designer.rcp_X.X.X.jar
    - buildDirectory/buildRepo/binary/com.centurylink.mdw.designer.rcp_root.win32.win32.x86_X.X.X

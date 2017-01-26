@@ -14,7 +14,7 @@ public class VcsRepository
   public static final String DEFAULT_USER = "";
   public static final String DEFAULT_PASSWORD = "";
   public static final String DEFAULT_BRANCH = "master";
-  public static final String DEFAULT_LOCAL_PATH = "workflow/assets";
+  public static final String DEFAULT_LOCAL_PATH = "assets";
 
   public static final String PROVIDER_GIT = "Git";
 
@@ -42,6 +42,8 @@ public class VcsRepository
   {
     if (!hasRemoteRepository())
       return null;
+    if (user == null) // public repo
+      return repositoryUrl;
     int slashSlash = repositoryUrl.indexOf("//");
     return repositoryUrl.substring(0, slashSlash + 2) + user + ":" + password + "@" + repositoryUrl.substring(slashSlash + 2);
   }

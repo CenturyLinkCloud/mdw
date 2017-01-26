@@ -29,6 +29,7 @@ public class DocumentationSection extends PropertySection implements IFilter
   private ArtifactEditor artifactEditor;
   private PropertyEditor referenceIdEditor;
   private PropertyEditor sequenceIdEditor;
+  private PropertyEditor webEditor;
 
   private String language = DocumentationEditorValueProvider.MARKDOWN;
 
@@ -59,6 +60,11 @@ public class DocumentationSection extends PropertySection implements IFilter
     {
       sequenceIdEditor.dispose();
       sequenceIdEditor = null;
+    }
+    if (webEditor != null)
+    {
+      webEditor.dispose();
+      webEditor = null;
     }
 
     // artifact editor
@@ -126,6 +132,24 @@ public class DocumentationSection extends PropertySection implements IFilter
       referenceIdEditor.setElement(selection);
       referenceIdEditor.setEditable(!selection.isReadOnly());
       referenceIdEditor.setValue(element.getAttribute(WorkAttributeConstant.REFERENCE_ID));
+    }
+
+    if (DocumentationEditorValueProvider.MARKDOWN.equals(language))
+    {
+      webEditor = new PropertyEditor(element, PropertyEditor.TYPE_WEB);
+      webEditor.addValueChangeListener(new ValueChangeListener()
+      {
+        public void propertyValueChanged(Object newValue)
+        {
+          String value = (String) newValue;
+          System.out.println("NEW VALUE: " + value);
+        }
+      });
+      webEditor.render(composite);
+
+      webEditor.setElement(element);
+      webEditor.setValue("http://localhost:8081/mdw");
+      webEditor.setEditable(!element.isReadOnly());
     }
 
     composite.layout(true);

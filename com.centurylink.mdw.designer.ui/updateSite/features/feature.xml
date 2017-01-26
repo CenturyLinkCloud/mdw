@@ -22,10 +22,6 @@
          unpack="false"/>
 
    <plugin
-         id="com.centurylink.mdw.reports" version="9.0.2"
-         unpack="false"/>
-
-   <plugin
          id="com.centurylink.mdw.designer.ui" version="9.0.2"
          unpack="false"/>
 

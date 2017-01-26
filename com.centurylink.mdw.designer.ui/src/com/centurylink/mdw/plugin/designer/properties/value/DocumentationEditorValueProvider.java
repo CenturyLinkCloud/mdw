@@ -65,7 +65,8 @@ public class DocumentationEditorValueProvider extends ArtifactEditorValueProvide
   public String getEditLinkLabel()
   {
     boolean hasContent = element.getAttribute(getAttributeName()) != null;
-    return "<A>Open Documentation</A>" + (hasContent ? " *" : "");
+    String action = element.isReadOnly() ? "View" : "Edit";
+    return "<A>" + action + " Documentation</A>" + (hasContent ? " *" : "");
   }
 
   public List<String> getLanguageOptions()

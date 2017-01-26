@@ -17,7 +17,6 @@ public class WebLaunchActions
   {
     TaskManager,
     WebTools,
-    Reports,
     MdwHub
   }
 
@@ -42,8 +41,6 @@ public class WebLaunchActions
         return new WebLaunchAction(WebApp.TaskManager, "Task Manager", "taskmgr.gif", project == null ? null : project.getTaskManagerMyTasksPath());
       case WebTools:
         return new WebLaunchAction(WebApp.WebTools, "Web Tools", "webtools.gif", project == null ? null : project.getSystemInfoPath());
-      case Reports:
-        return new WebLaunchAction(WebApp.Reports, "Reports List", "report.gif", project == null ? null : project.getReportsListPath());
       case MdwHub:
         return new WebLaunchAction(WebApp.MdwHub, "MDW Hub", "hub.gif", project == null ? null : project.getMyTasksPath());
       default:
@@ -88,8 +85,6 @@ public class WebLaunchActions
         baseUrl = project.getTaskManagerUrl();
       else if (webApp == WebApp.WebTools)
         baseUrl = project.getWebToolsUserAccessUrl();
-      else if (webApp == WebApp.Reports)
-        baseUrl = project.getReportsUrl();
       else if (webApp == WebApp.MdwHub)
         baseUrl = project.getMdwHubUrl();
       Program.launch(baseUrl + addSessionParams(urlPath));
@@ -113,8 +108,6 @@ public class WebLaunchActions
         baseUrl = project.getTaskManagerUrl();
       else if (webApp == WebApp.WebTools)
         baseUrl = project.getWebToolsUserAccessUrl();
-      else if (webApp == WebApp.Reports)
-        baseUrl = project.getReportsUrl();
       else if (webApp == WebApp.MdwHub)
         baseUrl = project.getMdwHubUrl();
       Program.launch(baseUrl + addSessionParams(urlPath));

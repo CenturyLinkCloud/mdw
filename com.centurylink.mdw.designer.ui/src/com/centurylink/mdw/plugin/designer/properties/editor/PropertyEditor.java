@@ -14,6 +14,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -85,6 +86,7 @@ public class PropertyEditor
   public static final String TYPE_BAM_MESSAGE = "BAM_MESSAGE";
   public static final String TYPE_SEPARATOR = "SEPARATOR";
   public static final String TYPE_PARAMETERIZED_COMBO = "PARAMETERIZED_COMBO";
+  public static final String TYPE_WEB = "WEB";
 
   public static final String DATE_FORMAT = "EEE MMM dd HH:mm:ss zzz yyyy";
 
@@ -538,6 +540,10 @@ public class PropertyEditor
     {
       ((ParameterizedCombo)widget).setInput(valueConverter.toModelValue(newValue));
     }
+    else if (type.equals(TYPE_WEB))
+    {
+      ((Browser)widget).setUrl(newValue);
+    }
   }
 
   private void updateRadioButtons(String newValue)
@@ -785,6 +791,8 @@ public class PropertyEditor
       widget = createSeparator(parent);
     else if (type.equals(TYPE_PARAMETERIZED_COMBO))
       widget = createParameterizedCombo(parent);
+    else if (type.equals(TYPE_WEB))
+      widget = createBrowser(parent);
   }
 
   public void setEnabled(boolean enabled)
@@ -1475,10 +1483,21 @@ public class PropertyEditor
     return timer;
   }
 
+  private Browser createBrowser(Composite parent)
+  {
+    Browser browser = new Browser(parent, SWT.BORDER | this.style);
+    GridData gridData = new GridData(GridData.FILL_BOTH);
+    gridData.horizontalSpan = COLUMNS;
+    gridData.verticalIndent = 5;
+    browser.setLayoutData(gridData);
+    if (value != null)
+        browser.setUrl(value);
+    return browser;
+  }
+
   private ValueConverter valueConverter;
   public ValueConverter getValueConverter() { return valueConverter; }
   public void setValueConverter(ValueConverter vc) { this.valueConverter = vc; }
-
 
   private ListenerList valueChangeListeners = new ListenerList();
   public void addValueChangeListener(ValueChangeListener listener)

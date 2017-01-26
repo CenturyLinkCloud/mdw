@@ -21,8 +21,6 @@ In com.centurylink.mdw.designer:
 Upload the following files to /prod/ecom2/local/apps/MdwPlugin(or Preview) on lxdenvmtc143.dev.qintra.com:
   com.centurylink.mdw.designer.core/updateSite:
     plugins/com.centurylink.mdw.designer.core_X.X.X.jar
-  com.centurylink.mdw.reports/updateSite:
-    plugins/com.centurylink.mdw.reports_X.X.X.jar
   com.centurylink.mdw.designer.ui/updateSite:
     site.xml
     plugins/com.centurylink.mdw.designer.ui_X.X.X.jar

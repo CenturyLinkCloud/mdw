@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
 import com.centurylink.mdw.dataaccess.DataAccessOfflineException;
+import com.centurylink.mdw.designer.DataUnavailableException;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.designer.SwtProgressMonitor;
@@ -93,7 +94,12 @@ public class ProcessExplorerContentProvider implements ITreeContentProvider, Ele
         }
         catch (InvocationTargetException itx)
         {
-          if (itx.getCause() instanceof DataAccessOfflineException)
+          if (itx.getCause() instanceof DataUnavailableException)
+          {
+            PluginMessages.log(itx);
+            MessageDialog.openWarning(MdwPlugin.getShell(), "Load Workflow Project", itx.getCause().getMessage());
+          }
+          else if (itx.getCause() instanceof DataAccessOfflineException)
           {
             PluginMessages.log(itx);
             MessageDialog.openError(MdwPlugin.getShell(), "Load Workflow Project", itx.getCause().getMessage());

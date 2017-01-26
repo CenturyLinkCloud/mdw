@@ -1016,39 +1016,6 @@ public class WorkflowProject extends WorkflowElement implements Comparable<Workf
     return matchingFiles.toArray(new File[0]);
   }
 
-  private String reportsContextRoot;
-  public void setReportsContextRoot(String reportsContextRoot) { this.reportsContextRoot = reportsContextRoot; }
-  public String getReportsContextRoot()
-  {
-    if (reportsContextRoot != null)
-      return reportsContextRoot;  // this is the case for remote projects
-
-    return getContextRoot("MDWReports");
-  }
-
-  public String getReportsUrl()
-  {
-    if (isOsgi())
-    {
-      if (isRemote())
-      {
-        String url = getRemoteAppSummary(true).getReportsUrl();
-        if (url == null)
-          url = getServerSettings().getUrlBase() + "/MDWReports";
-        return url;
-      }
-      else
-      {
-        return getServerSettings().getUrlBase() + "/" + getReportsContextRoot();
-      }
-    }
-    else
-    {
-      // JavaEE reports are deployed with MDWWeb
-      return getWebToolsUserAccessUrl();
-    }
-  }
-
   private String webContextRoot;
   public void setWebContextRoot(String webContextRoot) { this.webContextRoot = webContextRoot; }
   public String getWebContextRoot()
@@ -1191,11 +1158,6 @@ public class WorkflowProject extends WorkflowElement implements Comparable<Workf
   public String getSystemInfoPath()
   {
     return "/system/systemInformation.jsf";
-  }
-
-  public String getReportsListPath()
-  {
-    return "/reports/reportsList.jsf";
   }
 
   public IFolder getWebContentFolder()

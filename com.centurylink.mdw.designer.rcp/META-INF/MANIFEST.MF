@@ -28,7 +28,6 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.ant.core;bundle-version="3.2.200",
  org.eclipse.datatools.connectivity.oda.design.ui;bundle-version="3.2.9",
  com.centurylink.mdw.designer.core;bundle-version="9.0.2",
- com.centurylink.mdw.reports;bundle-version="9.0.2",
  com.centurylink.mdw.designer.ui;bundle-version="9.0.2",
  com.centurylink.tools;bundle-version="1.0.0";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

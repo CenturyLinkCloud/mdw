@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
-import com.centurylink.mdw.plugin.actions.WebLaunchActions;
-import com.centurylink.mdw.plugin.actions.WebLaunchActions.WebApp;
-import com.centurylink.mdw.plugin.actions.WebLaunchActions.WebLaunchAction;
 
 public class Report extends WorkflowAsset
 {
@@ -58,10 +55,4 @@ public class Report extends WorkflowAsset
     return reportLanguages;
   }
 
-  public void run()
-  {
-    WebLaunchAction launchAction = WebLaunchActions.getLaunchAction(getProject(), WebApp.Reports);
-    String packagePrefix = isInDefaultPackage() ? "" : (getPackage().getName() + "/");
-    launchAction.launch(getProject(), "/reports/birt.jsf?mdwReport=" + packagePrefix + getName());
-  }
 }

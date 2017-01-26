@@ -128,8 +128,6 @@ public class GitRepositoryPage extends WizardPage implements IFacetWizardPage
       return true; // page may not be used
     return checkStringNoWhitespace(getRepository().getRepositoryUrl())
       && checkString(getRepository().getBranch())
-      && checkStringNoWhitespace(getRepository().getUser())
-      && checkStringNoWhitespace(getRepository().getPassword())
       && checkString(getRepository().getLocalPath());
   }
 
@@ -186,7 +184,8 @@ public class GitRepositoryPage extends WizardPage implements IFacetWizardPage
     {
       public void modifyText(ModifyEvent e)
       {
-        getRepository().setUser(gitUserTextField.getText().trim());
+        String text = gitUserTextField.getText().trim();
+        getRepository().setUser(text.isEmpty() ? null : text);
         handleFieldChanged();
       }
     });
@@ -205,7 +204,8 @@ public class GitRepositoryPage extends WizardPage implements IFacetWizardPage
     {
       public void modifyText(ModifyEvent e)
       {
-        getRepository().setPassword(gitPasswordTextField.getText().trim());
+        String text = gitPasswordTextField.getText().trim();
+        getRepository().setPassword(text.isEmpty() ? null : text);
         handleFieldChanged();
       }
     });
