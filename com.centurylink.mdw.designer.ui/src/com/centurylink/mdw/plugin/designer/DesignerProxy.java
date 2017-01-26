@@ -4,6 +4,7 @@
 package com.centurylink.mdw.plugin.designer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ConnectException;
@@ -61,6 +62,7 @@ import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.VersionControlDummy;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.dataaccess.version4.DBMappingUtil;
+import com.centurylink.mdw.designer.DataUnavailableException;
 import com.centurylink.mdw.designer.DesignerDataAccess;
 import com.centurylink.mdw.designer.MainFrame;
 import com.centurylink.mdw.designer.display.Graph;
@@ -300,8 +302,18 @@ public class DesignerProxy
                 IFolder tempFolder = project.getTempFolder();
                 IFile tempFile = tempFolder.getFile(download.getFile());
                 IProgressMonitor subMonitor = new SubProgressMonitor(((SwtProgressMonitor)progressMonitor).getWrappedMonitor(), 5);
-                PluginUtil.downloadIntoProject(project.getSourceProject(), url, tempFolder, tempFile, "Download Packages", subMonitor);
-                PluginUtil.unzipProjectResource(project.getSourceProject(), tempFile, null, project.getAssetFolder(), subMonitor);
+                try
+                {
+                  PluginUtil.downloadIntoProject(project.getSourceProject(), url, tempFolder, tempFile, "Download Packages", subMonitor);
+                  PluginUtil.unzipProjectResource(project.getSourceProject(), tempFile, null, project.getAssetFolder(), subMonitor);
+                }
+                catch (FileNotFoundException ex)
+                {
+                  if (isGit)
+                    throw new DataUnavailableException("Extra/Archived packages not retrieved: " + ex.getMessage(), ex);
+                  else
+                    throw ex;
+                }
               }
             }
           }
