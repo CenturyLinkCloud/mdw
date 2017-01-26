@@ -34,16 +34,34 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
 
     private static final int SLEEP = 5000;
 
+    private static WebSocketServer instance = null;
+
     private TestingServices testServices;
     private TestCaseList testCaseList;
     private File resultsFile;
 
     public WebSocketServer() {
         super(new InetSocketAddress(ApplicationContext.getAutoTestWebSocketPort()));
+
+        if (instance == null)
+            instance = this;
     }
 
     public WebSocketServer(InetSocketAddress address) {
         super(address);
+
+        if (instance == null)
+            instance = this;
+    }
+
+    /**
+     * Use this method to access the singleton of WebSocketServer
+     */
+    public static synchronized WebSocketServer getInstance() {
+        if (instance == null)  // This should never happen since it's instanciated by StartupListener (dynamicStartupService)
+            instance = new WebSocketServer();
+
+        return instance;
     }
 
     @Override
@@ -84,7 +102,7 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
         WebSocketImpl.DEBUG = logger.isMdwDebugEnabled();
         try {
             testServices = ServiceLocator.getTestingServices();
-            start();
+            getInstance().start();
             logger.info("WebSocketServer started on port: " + getPort());
             new Thread(new Runnable() {
                 public void run() {
@@ -96,7 +114,7 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
                                 if (testCaseList == null || testCaseList.getRetrieveDate() == null
                                         || resultsFile.lastModified() > testCaseList.getRetrieveDate().getTime()) {
                                     testCaseList = testServices.getTestCases();
-                                    send(testCaseList.getJson().toString(2));
+                                    getInstance().send(testCaseList.getJson().toString(2));
                                 }
                             }
                         }
@@ -116,7 +134,7 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer i
     @Override
     public void onShutdown() {
         try {
-            stop();
+            getInstance().stop();
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
