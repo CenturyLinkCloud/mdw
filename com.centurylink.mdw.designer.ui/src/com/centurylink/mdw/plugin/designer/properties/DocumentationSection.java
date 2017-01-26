@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.plugin.designer.properties;
 
@@ -7,19 +7,17 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.swt.widgets.Composite;
 
-import com.centurylink.mdw.plugin.MdwPlugin;
-import com.centurylink.mdw.plugin.PluginMessages;
+import com.centurylink.mdw.common.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.plugin.designer.model.Activity;
 import com.centurylink.mdw.plugin.designer.model.EmbeddedSubProcess;
-import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
+import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.designer.properties.editor.ArtifactEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
-import com.centurylink.mdw.plugin.designer.properties.editor.RichTextEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.ValueChangeListener;
 import com.centurylink.mdw.plugin.designer.properties.value.ArtifactEditorValueProvider;
 import com.centurylink.mdw.plugin.designer.properties.value.DocumentationEditorValueProvider;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
 
 public class DocumentationSection extends PropertySection implements IFilter
 {
@@ -28,40 +26,23 @@ public class DocumentationSection extends PropertySection implements IFilter
   private WorkflowElement element;
   public WorkflowElement getElement() { return element; }
 
-  private PropertyEditor richTextEditor;
   private ArtifactEditor artifactEditor;
   private PropertyEditor referenceIdEditor;
   private PropertyEditor sequenceIdEditor;
 
-  boolean alreadyHtml;
-  boolean alreadyWord;
+  private String language = DocumentationEditorValueProvider.MARKDOWN;
 
   public void setSelection(WorkflowElement selection)
   {
-    boolean epfSupport = false;
-    try
-    {
-      Class.forName("org.eclipse.epf.richtext.RichTextEditor");
-      epfSupport = true;
-    }
-    catch (ClassNotFoundException ex)
-    {
-    }
-    catch (Throwable t)
-    {
-      PluginMessages.log(t);
-    }
-
     element = selection;
-    alreadyHtml = false;
-    alreadyWord = false;
     String attrVal = element.getAttribute(ATTR);
     if (attrVal != null && !attrVal.isEmpty())
     {
-      if (attrVal.startsWith("<html>"))
-        alreadyHtml = true;
-      else
-        alreadyWord = true;
+      if (attrVal.length() >= 8) {
+        byte[] first4 = RuleSetVO.decode(attrVal.substring(0, 8));
+        if (first4[0] == 68 && first4[1] == 35 && first4[2] == 17 && first4[3] == 0)
+          language = DocumentationEditorValueProvider.MS_WORD;
+      }
     }
 
     if (artifactEditor != null)
@@ -79,96 +60,72 @@ public class DocumentationSection extends PropertySection implements IFilter
       sequenceIdEditor.dispose();
       sequenceIdEditor = null;
     }
-    if (richTextEditor != null)
-    {
-      richTextEditor.dispose();
-      richTextEditor = null;
-    }
 
-    if ((MdwPlugin.getSettings().isMsWordDocumentationEditing() && !alreadyHtml) || alreadyWord)
+    // artifact editor
+    ArtifactEditorValueProvider valueProvider = new DocumentationEditorValueProvider(selection)
     {
-
-      // artifact editor
-      ArtifactEditorValueProvider valueProvider = new DocumentationEditorValueProvider(selection, epfSupport)
+      @Override
+      public void languageChanged(String newLanguage)
       {
-        @Override
-        public void languageChanged(String newLanguage)
+        super.languageChanged(newLanguage);
+        boolean proceed = true;
+        String attrVal = element.getAttribute(ATTR);
+        if (attrVal != null && !attrVal.isEmpty() && !language.equals(newLanguage))
+          proceed = MessageDialog.openConfirm(getShell(), "Confirm Format", "Proceed with switch to " + newLanguage + " format? (" + language + " formatted content will be lost.)");
+
+        if (proceed)
         {
-          super.languageChanged(newLanguage);
-          if ("HTML".equals(newLanguage))
-          {
-            boolean proceed = true;
-            if (alreadyWord)
-              proceed = MessageDialog.openConfirm(getShell(), "Confirm Format", "Proceed with switch to HTML format? (Word-formatted content will be lost.)");
-            if (proceed)
-            {
-              element.setAttribute(getAttributeName(), "<html></html>");
-              setSelection(element);
-            }
-            else
-            {
-              artifactEditor.setLanguage("MS Word");
-            }
-          }
+          language = newLanguage;
+          element.setAttribute(getAttributeName(), " ");
+          setSelection(element);
         }
-      };
-      artifactEditor = new ArtifactEditor(selection, valueProvider, "Format");
-      artifactEditor.render(composite);
-
-      artifactEditor.setElement(selection);
-      artifactEditor.setEditable(!selection.isReadOnly());
-
-      if (element instanceof Activity || element instanceof EmbeddedSubProcess)
-      {
-        // reference ID text field
-        sequenceIdEditor = new PropertyEditor(element, PropertyEditor.TYPE_TEXT);
-        sequenceIdEditor.setLabel("Sequence Number");
-        sequenceIdEditor.setWidth(100);
-        sequenceIdEditor.setVerticalIndent(5);
-        sequenceIdEditor.render(composite);
-        sequenceIdEditor.setElement(selection);
-        sequenceIdEditor.setValue(element instanceof EmbeddedSubProcess ? ((EmbeddedSubProcess)element).getSequenceId() : ((Activity)element).getSequenceId());
-        sequenceIdEditor.setEditable(false);
-
-        // reference ID text field
-        referenceIdEditor = new PropertyEditor(element, PropertyEditor.TYPE_TEXT);
-        referenceIdEditor.setLabel("Reference ID");
-        referenceIdEditor.setWidth(100);
-        referenceIdEditor.setComment("Optional (select Reference ID element order when exporting)");
-        referenceIdEditor.addValueChangeListener(new ValueChangeListener()
+        else
         {
-          public void propertyValueChanged(Object newValue)
-          {
-            element.setAttribute(WorkAttributeConstant.REFERENCE_ID, (String)newValue);
-          }
-        });
-        referenceIdEditor.render(composite);
-        referenceIdEditor.setElement(selection);
-        referenceIdEditor.setEditable(!selection.isReadOnly());
-        referenceIdEditor.setValue(element.getAttribute(WorkAttributeConstant.REFERENCE_ID));
+          artifactEditor.setLanguage(language);
+        }
       }
-    }
-    else
+
+      @Override
+      public String getLanguage()
+      {
+        return language;
+      }
+    };
+    artifactEditor = new ArtifactEditor(selection, valueProvider, "Format");
+    artifactEditor.render(composite);
+
+    artifactEditor.setElement(selection);
+    artifactEditor.setEditable(!selection.isReadOnly());
+    artifactEditor.setLanguage(language);
+
+    if (element instanceof Activity || element instanceof EmbeddedSubProcess)
     {
-      richTextEditor = new RichTextEditor(element);
-      richTextEditor.addValueChangeListener(new ValueChangeListener()
+      // reference ID text field
+      sequenceIdEditor = new PropertyEditor(element, PropertyEditor.TYPE_TEXT);
+      sequenceIdEditor.setLabel("Sequence Number");
+      sequenceIdEditor.setWidth(100);
+      sequenceIdEditor.setVerticalIndent(5);
+      sequenceIdEditor.render(composite);
+      sequenceIdEditor.setElement(selection);
+      sequenceIdEditor.setValue(element instanceof EmbeddedSubProcess ? ((EmbeddedSubProcess)element).getSequenceId() : ((Activity)element).getSequenceId());
+      sequenceIdEditor.setEditable(false);
+
+      // reference ID text field
+      referenceIdEditor = new PropertyEditor(element, PropertyEditor.TYPE_TEXT);
+      referenceIdEditor.setLabel("Reference ID");
+      referenceIdEditor.setWidth(100);
+      referenceIdEditor.setComment("Optional (select Reference ID element order when exporting)");
+      referenceIdEditor.addValueChangeListener(new ValueChangeListener()
       {
         public void propertyValueChanged(Object newValue)
         {
-          String value = (String) newValue;
-          if (element instanceof WorkflowProcess)
-            ((WorkflowProcess)element).setAttribute(ATTR, value);
-          else if (element instanceof Activity)
-            ((Activity)element).setAttribute(ATTR, value);
-          else if (element instanceof EmbeddedSubProcess)
-            ((EmbeddedSubProcess)element).setAttribute(ATTR, value);
+          element.setAttribute(WorkAttributeConstant.REFERENCE_ID, (String)newValue);
         }
       });
-      richTextEditor.render(composite);
-
-      richTextEditor.setElement(element);
-      richTextEditor.setValue(element.getAttribute(ATTR));
-      richTextEditor.setEditable(!element.isReadOnly());
+      referenceIdEditor.render(composite);
+      referenceIdEditor.setElement(selection);
+      referenceIdEditor.setEditable(!selection.isReadOnly());
+      referenceIdEditor.setValue(element.getAttribute(WorkAttributeConstant.REFERENCE_ID));
     }
 
     composite.layout(true);

@@ -27,7 +27,6 @@ import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
  */
 public class ProcessDesignPreferencePage extends PreferencePage implements PreferenceConstants
 {
-  private Button msWordDocumentationCheckbox;
   private Button allowAssetNamesWithoutExtensionsCheckbox;
   private Button inPlaceLabelEditingCheckbox;
   private Button compareConflictingAssetsCheckbox;
@@ -66,9 +65,6 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
 
     // compare conflicting assets during import
     compareConflictingAssetsCheckbox = createCheckbox(parent, "Compare Conflicting Assets during Import (MDW >= 5.2)", 3);
-
-    // ms word documentation
-    msWordDocumentationCheckbox = createCheckbox(parent, "Use MS Word for Editing Documentation", 3);
 
     // internal editor for excel
     embeddedEditorForExcelCheckbox = createCheckbox(parent, "Use Embedded Editor for Excel Spreadsheet Assets", 3);
@@ -174,7 +170,6 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
   {
     IPreferenceStore store = getPreferenceStore();
 
-    store.setValue(PREFS_MS_WORD_DOCUMENTATION, msWordDocumentationCheckbox.getSelection());
     store.setValue(PREFS_ALLOW_ASSETS_WITHOUT_EXTENSIONS, allowAssetNamesWithoutExtensionsCheckbox.getSelection());
     store.setValue(PREFS_IN_PLACE_LABEL_EDITING, inPlaceLabelEditingCheckbox.getSelection());
     store.setValue(PREFS_COMPARE_CONFLICTING_ASSETS, compareConflictingAssetsCheckbox.getSelection());
@@ -195,7 +190,6 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
   protected void initializeValues()
   {
     IPreferenceStore store = getPreferenceStore();
-    msWordDocumentationCheckbox.setSelection(store.getBoolean(PREFS_MS_WORD_DOCUMENTATION));
     allowAssetNamesWithoutExtensionsCheckbox.setSelection(store.getBoolean(PREFS_ALLOW_ASSETS_WITHOUT_EXTENSIONS));
     inPlaceLabelEditingCheckbox.setSelection(store.getBoolean(PREFS_IN_PLACE_LABEL_EDITING));
     compareConflictingAssetsCheckbox.setSelection(store.getBoolean(PREFS_COMPARE_CONFLICTING_ASSETS));
@@ -219,7 +213,6 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
   {
     IPreferenceStore store = getPreferenceStore();
 
-    msWordDocumentationCheckbox.setSelection(store.getDefaultBoolean(PREFS_MS_WORD_DOCUMENTATION));
     allowAssetNamesWithoutExtensionsCheckbox.setSelection(store.getDefaultBoolean(PREFS_ALLOW_ASSETS_WITHOUT_EXTENSIONS));
     inPlaceLabelEditingCheckbox.setSelection(store.getDefaultBoolean(PREFS_IN_PLACE_LABEL_EDITING));
     compareConflictingAssetsCheckbox.setSelection(store.getDefaultBoolean(PREFS_COMPARE_CONFLICTING_ASSETS));

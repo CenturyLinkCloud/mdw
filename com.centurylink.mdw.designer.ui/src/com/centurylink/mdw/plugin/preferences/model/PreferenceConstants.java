@@ -29,7 +29,6 @@ public interface PreferenceConstants
   public static final String PREFS_CURRENT_CODE_FORMATTER = "MdwCurrentCodeFormatter";
 
   public static final String PREFS_ALLOW_ASSETS_WITHOUT_EXTENSIONS = "MdwAllowAssetNamesWithoutExtensions";
-  public static final String PREFS_MS_WORD_DOCUMENTATION = "MdwMsWordDocumentation";
   public static final String PREFS_IN_PLACE_LABEL_EDITING = "MdwInPlaceLabelEditing";
   public static final String PREFS_COMPARE_CONFLICTING_ASSETS = "MdwCompareConflictingAssets";
   public static final String PREFS_ALLOW_DELETE_ARCHIVED_PROCESSES = "AllowDeleteArchivedProcesses";

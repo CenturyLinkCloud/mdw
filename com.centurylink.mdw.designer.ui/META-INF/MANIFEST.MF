@@ -53,7 +53,6 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.egit.ui;bundle-version="3.2.0",
  org.eclipse.wst.xml.core;bundle-version="1.1.502";resolution:=optional,
  org.eclipse.m2e.core;bundle-version="1.0.100";resolution:=optional,
- org.eclipse.epf.richtext;resolution:=optional,
  org.codehaus.groovy.eclipse;bundle-version="2.1.1";resolution:=optional;visibility:=reexport,
  org.codehaus.groovy.eclipse.core;bundle-version="2.1.1";resolution:=optional;visibility:=reexport,
  org.codehaus.groovy.eclipse.ui;bundle-version="2.1.1";resolution:=optional;visibility:=reexport,
@@ -62,7 +61,8 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  com.centurylink.mdw.designer.core;bundle-version="9.0.2",
  org.eclipse.emf.ecore;bundle-version="2.10.0",
  javax.xml.ws;bundle-version="2.1.0",
- org.apache.xmlrpc;bundle-version="3.0.0"
+ org.apache.xmlrpc;bundle-version="3.0.0",
+ org.eclipse.jface.text;bundle-version="3.9.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,

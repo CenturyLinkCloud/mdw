@@ -64,6 +64,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public static final String FEATURE = "FEATURE";
     public static final String YAML = "YAML";
     public static final String TASK = "TASK";
+    public static final String MARKDOWN = "MARKDOWN";
     public static final String GENERAL_ALPHA = "GENERAL_ALPHA";
     public static final String GENERAL_BINARY = "GENERAL_BINARY";
 
@@ -637,6 +638,8 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             languageToExtension.put("YAML", ".yaml");
             languageToExtension.put("JSON", ".json");
             languageToExtension.put("TASK", ".task");
+            languageToExtension.put("MARKDOWN", ".md");
+            languageToExtension.put("Markdown", ".md");
         }
         return languageToExtension;
     }
@@ -691,6 +694,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             extensionToLanguage.put(".yaml", YAML);
             extensionToLanguage.put(".json", JSON);
             extensionToLanguage.put(".task", TASK);
+            extensionToLanguage.put(".md", MARKDOWN);
         }
         return extensionToLanguage;
     }

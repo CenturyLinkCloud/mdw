@@ -68,10 +68,6 @@ public class MdwSettings implements PreferenceConstants
   public String getCopyrightNotice() { return copyrightNotice; }
   public void setCopyrightNotice(String s) { copyrightNotice = s; }
 
-  private boolean msWordDocumentationEditing = true;
-  public boolean isMsWordDocumentationEditing() { return msWordDocumentationEditing; }
-  public void setMsWordDocumentationEditing(boolean b) { msWordDocumentationEditing = b; }
-
   private boolean inPlaceLabelEditing;
   public boolean isInPlaceLabelEditing() { return inPlaceLabelEditing; }
   public void setInPlaceLabelEditing(boolean b) { inPlaceLabelEditing = b; }
@@ -193,7 +189,6 @@ public class MdwSettings implements PreferenceConstants
     setCopyrightNotice(store.getString(PREFS_COPYRIGHT_NOTICE));
     if (getCopyrightNotice().length() == 0)
       setCopyrightNotice(store.getDefaultString(PREFS_COPYRIGHT_NOTICE));
-    setMsWordDocumentationEditing(store.getBoolean(PREFS_MS_WORD_DOCUMENTATION));
     setInPlaceLabelEditing(store.getBoolean(PREFS_IN_PLACE_LABEL_EDITING));
     setCompareConflictingAssetsDuringImport(store.getBoolean(PREFS_COMPARE_CONFLICTING_ASSETS));
     setAllowDeleteArchivedProcesses(store.getBoolean(PREFS_ALLOW_DELETE_ARCHIVED_PROCESSES));
@@ -260,7 +255,6 @@ public class MdwSettings implements PreferenceConstants
     store.setDefault(PREFS_READONLY_BG_RED, 224);
     store.setDefault(PREFS_READONLY_BG_GREEN, 224);
     store.setDefault(PREFS_READONLY_BG_BLUE, 224);
-    store.setDefault(PREFS_MS_WORD_DOCUMENTATION, true);
     store.setDefault(PREFS_EMBEDDED_EDITOR_FOR_EXCEL, !MdwPlugin.isRcp());
     store.setDefault(PREFS_INFER_SMART_SUBPROC_VERSION_SPEC, true);
     store.setDefault(PREFS_COMPARE_CONFLICTING_ASSETS, true);

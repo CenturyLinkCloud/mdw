@@ -893,7 +893,7 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
     });
 
     // documentation
-    if (!isInstance() && MdwPlugin.getSettings().isMsWordDocumentationEditing())
+    if (!isInstance())
     {
       MenuItem docsItem = new MenuItem(popupMenu, SWT.PUSH);
       docsItem.setText("Documentation");
@@ -1477,7 +1477,7 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
       {
         public void run()
         {
-          ArtifactEditorValueProvider artifactValueProvider = new DocumentationEditorValueProvider(designerCanvasSelection, true);
+          ArtifactEditorValueProvider artifactValueProvider = new DocumentationEditorValueProvider(designerCanvasSelection);
           ArtifactEditor artifactEditor = new ArtifactEditor(designerCanvasSelection, artifactValueProvider, null);
           artifactEditor.openTempFile(new NullProgressMonitor());
         }

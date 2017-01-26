@@ -36,9 +36,6 @@ osgi.instance.area.default=@user.home/workspace
      org.eclipse.equinox.p2.reconciler.dropins,1.1.300.v20150423-1455,plugins/org.eclipse.equinox.p2.reconciler.dropins_1.1.300.v20150423-1455.jar,4,true
  - Copy org.eclipse.ui.win32_3.2.500.v20150423-0822.jar from eclipse_4.5.2/plugins into the plugins directory for in-place editor support
    (TODO try automating by adding to feature.xml)
- - Copy org.eclipse.epf.common.win32.win32.x86_1.5.0.v20150508_0328.jar from com.centurylink.mdw.designer/thirdParty/plugins
-   into the plugins directory for HTML editor support
-   (TODO automate)
  - Create dropins folder
  - Copy in the appropriate jre directory depending on architecture (jdk_1.8 64 bit or 32 bit) 
 

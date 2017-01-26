@@ -16,21 +16,23 @@ import com.centurylink.mdw.common.constant.WorkAttributeConstant;
 
 public class DocumentationEditorValueProvider extends ArtifactEditorValueProvider
 {
-  private WorkflowElement element;
-  private boolean epfSupport;
+  public static final String MARKDOWN = "Markdown";
+  public static final String MS_WORD = "MS Word";
 
-  public DocumentationEditorValueProvider(WorkflowElement element, boolean epfSupport)
+  private WorkflowElement element;
+
+  public DocumentationEditorValueProvider(WorkflowElement element)
   {
     super(element);
     this.element = element;
-    this.epfSupport = epfSupport;
   }
 
   public byte[] getArtifactContent()
   {
-    String text = element.getAttribute(getAttributeName());
-    if (text == null || text.trim().length() == 0)
+    if (MS_WORD.equals(getLanguage()))
     {
+      String text = element.getAttribute(getAttributeName());
+      if (text == null || text.trim().length() == 0)
       try
       {
         URL localUrl = PluginUtil.getLocalResourceUrl("templates/word/Empty.docx");
@@ -41,15 +43,18 @@ public class DocumentationEditorValueProvider extends ArtifactEditorValueProvide
       {
         PluginMessages.uiError(ex, "Open Documentation", getProject());
       }
+      return decodeBase64(text);
     }
-
-    return decodeBase64(text);
+    else
+    {
+      return " ".getBytes();
+    }
   }
 
   @Override
   public boolean isBinary()
   {
-    return true;
+    return MS_WORD.equals(getLanguage());
   }
 
   public String getArtifactTypeDescription()
@@ -66,20 +71,19 @@ public class DocumentationEditorValueProvider extends ArtifactEditorValueProvide
   public List<String> getLanguageOptions()
   {
     List<String> languages = new ArrayList<String>();
-    languages.add("MS Word");
-    if (epfSupport)
-      languages.add("HTML");
+    languages.add(MARKDOWN);
+    languages.add(MS_WORD);
     return languages;
   }
 
   public String getDefaultLanguage()
   {
-    return "MS Word";
+    return MARKDOWN;
   }
 
   public String getLanguage()
   {
-    return "MS Word";
+    return MARKDOWN;
   }
 
   public void languageChanged(String newLanguage)
