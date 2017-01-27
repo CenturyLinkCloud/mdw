@@ -9,10 +9,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.centurylink.mdw.common.constant.WorkAttributeConstant;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.PluginUtil;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
-import com.centurylink.mdw.common.constant.WorkAttributeConstant;
 
 public class DocumentationEditorValueProvider extends ArtifactEditorValueProvider
 {
@@ -29,26 +29,36 @@ public class DocumentationEditorValueProvider extends ArtifactEditorValueProvide
 
   public byte[] getArtifactContent()
   {
+    String text = element.getAttribute(getAttributeName());
     if (MS_WORD.equals(getLanguage()))
     {
-      String text = element.getAttribute(getAttributeName());
       if (text == null || text.trim().length() == 0)
-      try
       {
-        URL localUrl = PluginUtil.getLocalResourceUrl("templates/word/Empty.docx");
-        File templateFile = new File(new URI(localUrl.toString()));
-        return PluginUtil.readFile(templateFile);
+        try
+        {
+          URL localUrl = PluginUtil.getLocalResourceUrl("templates/word/Empty.docx");
+          File templateFile = new File(new URI(localUrl.toString()));
+          return PluginUtil.readFile(templateFile);
+        }
+        catch (Exception ex)
+        {
+          PluginMessages.uiError(ex, "Open Documentation", getProject());
+          return null;
+        }
       }
-      catch (Exception ex)
+      else
       {
-        PluginMessages.uiError(ex, "Open Documentation", getProject());
+        return decodeBase64(text);
       }
-      return decodeBase64(text);
     }
     else
     {
-      return " ".getBytes();
+      if (text == null)
+        return " ".getBytes();
+      else
+        return text.getBytes();
     }
+
   }
 
   @Override

@@ -28,15 +28,13 @@ deltapack - (if you don't have)
 Run the "buildProduct" target in product_build.xml
 (make sure Ant launch config is set to run in same JRE as workspace)
 
-Explode the zips (ONTO C:\ DRIVE DUE TO https://bugs.eclipse.org/bugs/show_bug.cgi?id=441098), and modify as follows (TODO automate):
- - Add these two lines to configuration/config.ini: 
+(TODO: automate the following)
+Explode the zips and modify as follows (TODO automate):
+ - Add these two lines to configuration/config.ini:
 osgi.splashPath=platform:/base/plugins/com.centurylink.mdw.plugin.rcp
 osgi.instance.area.default=@user.home/workspace
- - Change the activate flag to true for dropins as follows in bundles.info (configuration/org.eclipse.equinox.simpleconfigurator)
-     org.eclipse.equinox.p2.reconciler.dropins,1.1.300.v20150423-1455,plugins/org.eclipse.equinox.p2.reconciler.dropins_1.1.300.v20150423-1455.jar,4,true
  - Copy org.eclipse.ui.win32_3.2.500.v20150423-0822.jar from eclipse_4.6.2/plugins into the plugins directory for in-place editor support
    (TODO try automating by adding to feature.xml)
- - Create dropins folder
  - Copy in the appropriate jre directory depending on architecture (jdk_1.8 64 bit or 32 bit) 
 
 DO NOT launch the executable before repackaging.

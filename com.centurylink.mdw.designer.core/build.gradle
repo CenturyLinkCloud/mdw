@@ -90,12 +90,6 @@ task devGetMdwCommon(type: Copy) {
     into "./classes"
 }
 
-task publishToMdwWeb(type: Copy) {
-    from "./updateSite/plugins"
-    include "${project.name}_${version}.jar"
-    into "../mdw-web/web/WEB-INF/lib"
-}
-
 task updateDesignerVersion << {
     File manifestFile = new File("./META-INF/MANIFEST.MF");
     ant.replaceregexp(file: manifestFile, match: "Bundle-Version:.*", replace: "Bundle-Version: ${version}", byline: true)

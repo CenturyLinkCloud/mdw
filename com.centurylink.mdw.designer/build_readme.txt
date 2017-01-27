@@ -1,8 +1,10 @@
 Steps for Building and Publishing MDW Designer Plug-In:
 -------------------------------------------------------
 
-Export to HTML from the tutorial docx files in mdw-hub/web/doc/tutorials (if changed).
-During the build these should be copied under com.centurylink.mdw.designer.ui/help/doc/tutorials.
+(If changed) Export tutorial docx files to HTML in MDW 5.5 mdw-hub/web/doc/tutorials.
+In com.centurylink.mdw.designer.ui:
+ - Run the Gradle build task copyTutorialDocs (copies into com.centurylink.mdw.designer.ui/help/doc/tutorials)
+ - Commit and push any changes to Git remote
 
 Build the latest framework code:
  - (In MDW 5.5) Run the mdw-framework/buildAll Gradle task.
