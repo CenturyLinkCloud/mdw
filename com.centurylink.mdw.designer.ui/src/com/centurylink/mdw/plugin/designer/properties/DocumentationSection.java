@@ -8,6 +8,7 @@ import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.swt.widgets.Composite;
 
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
+import com.centurylink.mdw.designer.utils.MarkdownRenderer;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.plugin.designer.model.Activity;
 import com.centurylink.mdw.plugin.designer.model.EmbeddedSubProcess;
@@ -137,18 +138,11 @@ public class DocumentationSection extends PropertySection implements IFilter
     if (DocumentationEditorValueProvider.MARKDOWN.equals(language) && element.getProject().checkRequiredVersion(6, 0))
     {
       webEditor = new PropertyEditor(element, PropertyEditor.TYPE_WEB);
-      webEditor.addValueChangeListener(new ValueChangeListener()
-      {
-        public void propertyValueChanged(Object newValue)
-        {
-          String value = (String) newValue;
-          System.out.println("NEW VALUE: " + value);
-        }
-      });
       webEditor.render(composite);
 
       webEditor.setElement(element);
-      webEditor.setValue("http://localhost:8081/mdw");
+      MarkdownRenderer renderer = new MarkdownRenderer(attrVal);
+      webEditor.setValue(renderer.renderHtml());
       webEditor.setEditable(!element.isReadOnly());
     }
 

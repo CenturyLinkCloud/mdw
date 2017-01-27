@@ -542,7 +542,10 @@ public class PropertyEditor
     }
     else if (type.equals(TYPE_WEB))
     {
-      ((Browser)widget).setUrl(newValue);
+      if (newValue.startsWith("http://") || newValue.startsWith("https://"))
+        ((Browser)widget).setUrl(newValue);
+      else
+        ((Browser)widget).setText(newValue);
     }
   }
 
