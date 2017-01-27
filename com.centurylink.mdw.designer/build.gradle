@@ -23,9 +23,24 @@ task updateDesignerVersion(type: GradleBuild) {
 }
 
 task publishToRepository(type: Copy) {
-    from "../com.centurylink.mdw.designer.core/updateSite"
+    from "../com.centurylink.mdw.designer.core/updateSite/plugins"
     into "${repositoryDir}/com/centurylink/mdw/mdw-designer-core/${mdwDesignerVersion}"
     include "mdw-designer-core-${mdwDesignerVersion}.jar"
+}
+
+task publishDesigner(type: Copy) {
+    dependsOn "publishToRepository"
+    from("../com.centurylink.mdw.designer.core/updateSite") {
+      include "plugins/com.centurylink.mdw.designer.core_${mdwDesignerVersion}.jar"
+    }
+    from("../com.centurylink.mdw.designer.ui/updateSite") {
+        include "site.xml"
+        include "index.html"
+        include "features/com.centurylink.mdw.designer.feature_${mdwDesignerVersion}.jar"
+        include "plugins/com.centurylink.mdw.designer.ui_${mdwDesignerVersion}.jar"
+    }
+    into previewPublishDir
+    fileMode 0644
 }
 
 task publishPreview(type: Copy) {
@@ -39,7 +54,7 @@ task publishPreview(type: Copy) {
         include "features/com.centurylink.mdw.designer.feature_${mdwDesignerVersion}.jar"
         include "plugins/com.centurylink.mdw.designer.ui_${mdwDesignerVersion}.jar"
     }
-    into previewPublishDir
+    into publishDir
     fileMode 0644
 }
 

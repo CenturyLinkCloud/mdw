@@ -25,8 +25,6 @@ Test updating Eclipse (Mars/Neon) to the new build.
 
 Build com.centurylink.mdw.designer.rcp according to the instructions in its build_readme.txt.
 
-Check in the MANIFEST and XML files that were automatically updated with the new Designer version.
-
 In Eclipse, create a Dimensions Baseline for the build:
    - Switch to Serena Perspective 
    - Right-click on the MDWA:MDWA_ECLIPSE project under the MDWA:MDWA_ECLIPSE container
