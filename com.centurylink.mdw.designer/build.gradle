@@ -13,7 +13,7 @@ task cleanAll(type: GradleBuild) {
 }
 
 task buildFeature(type: GradleBuild) {
-    dependsOn updateDesignerVersion
+    dependsOn "updateDesignerVersion"
     tasks = [":com.centurylink.mdw.designer.ui:jarFeature"]
 }
 
