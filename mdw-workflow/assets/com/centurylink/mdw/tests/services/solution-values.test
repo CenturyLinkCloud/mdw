@@ -2,40 +2,57 @@
 import groovy.json.JsonSlurper
 import org.json.JSONObject
 import org.json.JSONArray
-import com.centurylink.mdw.util.JsonUtil
-import com.centurylink.mdw.model.workflow.Solution
+
+def getJson(Map<String,String> map) {
+    if (map == null)
+        return null;
+    JSONObject jsonObj = new JSONObject();
+    for (String key : map.keySet()) {
+        String value = map.get(key);
+        if (value != null)
+            jsonObj.put(key, value);
+    }
+    return jsonObj;
+}
 
 def id1 = 'sol-' + masterRequestId + '_1'
 def name1 = 'Test: ' + id1
-def solution1 = new Solution(id1, name1)
+def solution1 = new JSONObject()
+solution1.put('id', id1)
+solution1.put('name', name1)
 def id2 = 'sol-' + masterRequestId + '_2'
 def name2= 'Test: ' + id2
-def solution2 = new Solution(id2, name2)
-solution1.description = solution2.description = 'Solution for automated test'
-solution1.ownerType = solution2.ownerType = 'USER'
-solution1.ownerId = solution2.ownerId = 'dxoakes'
+def solution2 = new JSONObject()
+solution2.put('id', id2)
+solution2.put('name', name2)
+solution1.put('description', 'Solution for automated test')
+solution2.put('description', 'Solution for automated test')
+solution1.put('ownerType', 'USER')
+solution2.put('ownerType', 'USER')
+solution1.put('ownerId', 'dxoakes')
+solution2.put('ownerId', 'dxoakes')
 
 // create solutions
 def response = post http("services/Solutions/${id1}") {
     user  = 'mdwapp'
     password = 'ldap_012' 
-    payload = solution1.getJson().toString(2)
+    payload = solution1.toString(2)
 }
 assert new JsonSlurper().parseText(response.content).status.code == 0
 response = post http("services/Solutions/${id2}") {
     user  = 'mdwapp'
     password = 'ldap_012' 
-    payload = solution2.getJson().toString(2)
+    payload = solution2.toString(2)
 }
 assert new JsonSlurper().parseText(response.content).status.code == 0
 
 // confirm solutions
 response = get http("services/Solutions/${id1}")
 assert response.code == 200
-assert new Solution(new JSONObject(response.content)).getId() == id1
+assert new JsonSlurper().parseText(response.content).id == id1
 response = get http("services/Solutions/${id2}")
 assert response.code == 200
-assert new Solution(new JSONObject(response.content)).getId() == id2
+assert new JsonSlurper().parseText(response.content).id == id2
 
 // add some values
 def valName1 = 'testVal1_' + masterRequestId
@@ -46,7 +63,7 @@ values[valName2] = 'something_' + id1
 response = post http("services/Values/SOLUTION/${id1}") {
     user  = 'mdwapp'
     password = 'ldap_012'
-    payload = JsonUtil.getJson(values)
+    payload = getJson(values)
 }
 values = [:]
 values[valName1] = id2
@@ -54,7 +71,7 @@ values[valName2] = 'somethingElse_' + id2
 response = put http("services/Values/SOLUTION/${id2}") {
     user  = 'mdwapp'
     password = 'ldap_012'
-    payload = JsonUtil.getJson(values)
+    payload = getJson(values)
 }
 
 // find solutions based on values

@@ -1,4 +1,3 @@
-import com.centurylink.mdw.model.workflow.Solution
 import org.json.JSONObject
 
 // solution-service
@@ -6,20 +5,20 @@ def test1001 = masterRequestId + "-test1001";
 def test1002 = masterRequestId + "-test1002";
 def test1003 = masterRequestId + "-test1003";
 
-def sol1 = new Solution(new JSONObject(asset('NewSolution1.json').text))
-sol1.setId(test1001)
-sol1.setName(test1001)
-def sol2 = new Solution(new JSONObject(asset('NewSolution2.json').text))
-sol2.setId(test1002)
-sol2.setName(test1002)
-def sol3 = new Solution(new JSONObject(asset('NewSolution3.json').text))
-sol3.setId(test1003)
-sol3.setName(test1003)
+def sol1 = new JSONObject(asset('NewSolution1.json').text)
+sol1.put('id', test1001)
+sol1.put('name', test1001)
+def sol2 = new JSONObject(asset('NewSolution2.json').text)
+sol2.put('id', test1002)
+sol2.put('name', test1002)
+def sol3 = new JSONObject(asset('NewSolution3.json').text)
+sol3.put('id', test1003)
+sol3.put('name', test1003)
 
 def postReq = post http("Services/Solutions/" + test1001 + "?format=json") {
   user  = 'mdwapp'
   password = 'ldap_012'
-  payload = sol1.getJson().toString(2)
+  payload = sol1.toString(2)
 }
 def solutions = new groovy.json.JsonSlurper().parseText(postReq.getContent())
 assert solutions.status.message == "Success"
@@ -27,7 +26,7 @@ assert solutions.status.message == "Success"
 def post2Req = post http("Services/Solutions/" + test1002 + "?format=json") {
   user  = 'mdwapp'
   password = 'ldap_012'
-  payload = sol2.getJson().toString(2)
+  payload = sol2.toString(2)
 }
 solutions = new groovy.json.JsonSlurper().parseText(post2Req.getContent())
 assert solutions.status.message == "Success"
@@ -35,7 +34,7 @@ assert solutions.status.message == "Success"
 def post3Req = post http("Services/Solutions/" + test1003 + "?format=json") {
   user  = 'mdwapp'
   password = 'ldap_012'
-  payload = sol3.getJson().toString(2)
+  payload = sol3.toString(2)
 }
 solutions = new groovy.json.JsonSlurper().parseText(post3Req.getContent())
 assert solutions.status.message == "Success"
