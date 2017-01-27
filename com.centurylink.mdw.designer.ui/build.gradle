@@ -16,47 +16,35 @@ clean {
     dependsOn(cleanCompile, cleanJar)
 }
 
-task copyTaskConfig(type: Copy) {
-    from "../mdw-taskmgr/src/META-INF/mdw"
-    include "MDWTaskActions.xml"
-    include "MDWTaskView.xml"
-    rename { String fileName ->
-        fileName.replace("MDW", "")
-    }
-    into "templates/config"
-}
-
-task copyFacelets(type: Copy) {
-    from "../mdw-hub/web/layout"
-    include "layout.xhtml"
-    include "header.xhtml"
-    include "footer.xhtml"
-    include "tabs.xhtml"
-    
-    // TODO: copy from mdw-hub when available
-    from "../mdw-taskmgr/web/demo"
-    include "samples.xhtml"
-    
-    into "templates/facelet"
-}
-
 task copyMdwDocs(type: Copy) {
-    from "../mdw-hub/web"
+    from "${mdwOutputDir}/../../../mdw-hub/web"
     include "doc/**/*"
     include "javadoc/**/*"
-    include "mbengdoc/**/*"
+    exclude "doc/tutorials/**/*"
     exclude "**/.metadata"
+    exclude "**/.dmignore"
+    exclude "**/*.docx"
     into "./help"
 }
 
+// this is run manually before autobuild
+task copyTutorialDocs(type: Copy) {
+  from "${mdwOutputDir}/../../../mdw-hub/web"
+  include "doc/tutorials/**/*"
+  exclude "**/.metadata"
+  exclude "**/.dmignore"
+  exclude "**/*.docx"
+  into "./help"
+}
+
 task copyMdwCerts(type: Copy) {
-  from "../mdw-framework/deploy/certs"
+  from "${mdwOutputDir}/../../../mdw-framework/deploy/certs"
   include "CenturyLinkQCA.jks"
   into "./resources"
 }
 
 task copyMdwAll {
-    dependsOn(copyMdwDocs, copyTaskConfig, copyFacelets, copyMdwCerts)
+    dependsOn(copyMdwDocs, copyMdwCerts)
 }
 
 task earBase(type: Jar) {
