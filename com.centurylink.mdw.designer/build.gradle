@@ -24,7 +24,7 @@ task updateDesignerVersion(type: GradleBuild) {
 subprojects {
     apply plugin: "java"
     
-    sourceCompatibility = 1.6
+    sourceCompatibility = 1.7
     version = "${mdwDesignerVersion}"
 
     libsDirName = "../updateSite/plugins"

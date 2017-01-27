@@ -13,12 +13,12 @@ In com.centurylink.mdw.designer.rcp:
  - Update product_build.xml:
      (if upgrading Eclipse version): eclipse.home and deltapack properties
  - Update build.properties to reflect your local environment:
-     - JavaSE-1.6, JavaSE-1.7, JavaSE-1.8
+     - JavaSE-1.7, JavaSE-1.8
 
 Build the Workspace (ctrl-b).
 
 deltapack - (if you don't have)
- - Can be built through Ant (create_deltapack.xml)
+ - Can be built through Ant (create_deltapack.xml -- Run in same JRE as workspace)
    - output is in rcp.deltapack/featureTemp2 for me 
  or...
  - Copy deltapack from following location and extract it 

@@ -2,15 +2,15 @@ Steps for Building and Publishing MDW Designer Plug-In:
 -------------------------------------------------------
 
 Export to HTML from the tutorial docx files in mdw-hub/web/doc/tutorials (if changed).
-These should end up under com.centurylink.mdw.designer.ui/help/doc/tutorials so they're available in the plug-in.
+During the build these should be copied under com.centurylink.mdw.designer.ui/help/doc/tutorials.
 
 Build the latest framework code:
- - Run the mdw-framework/buildAll Gradle task.
+ - (In MDW 5.5) Run the mdw-framework/buildAll Gradle task.
  
 Set the target platform to be the minimal supported Eclipse version and JDK.
   (Window > Preferences > Plug-In Development > Target Platform > eclipse_4.4.1)
 
-Refresh designer projects and then Ctrl-B (to make sure target platform is used for compilation)
+Refresh designer projects and then Ctrl-B (may require restarting Eclipse to remove build errors)
 
 In com.centurylink.mdw.designer:
  - Update gradle.properties: 
@@ -30,7 +30,7 @@ Upload the following files to /prod/ecom2/local/apps/MdwPlugin(or Preview) on lx
     
 Log into the server (as your CUID) and chmod -R a+rwx /prod/ecom2/local/apps/MdwPlugin/* (or MdwPluginPreview/*)
 
-Test updating Eclipse (Luna/Mars) to the new build.
+Test updating Eclipse (Mars/Neon) to the new build.
   Update Site URL: http://lxdenvmtc143.dev.qintra.com:6101/MdwPlugin
                or: http://lxdenvmtc143.dev.qintra.com:6101/MdwPluginPreview
 
