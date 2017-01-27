@@ -13,6 +13,7 @@ task cleanAll(type: GradleBuild) {
 }
 
 task buildFeature(type: GradleBuild) {
+    dependsOn updateDesignerVersion
     tasks = [":com.centurylink.mdw.designer.ui:jarFeature"]
 }
 
@@ -22,7 +23,17 @@ task updateDesignerVersion(type: GradleBuild) {
 }
 
 task publishPreview(type: Copy) {
-    println 'publishing...'
+    from("/prod/ecom2/local/apps/jenkins/workspace/MDW6-Build/com.centurylink.mdw.designer.core/updateSite") {
+      include "plugins/com.centurylink.mdw.designer.core_${mdwDesignerVersion}.jar"
+    }
+    from("../com.centurylink.mdw.designer.ui/updateSite") {
+        include "site.xml"
+        include "index.html"
+        include "features/com.centurylink.mdw.designer.feature_${mdwDesignerVersion}.jar"
+        include "plugins/com.centurylink.mdw.designer.ui_${mdwDesignerVersion}.jar"
+    }
+    into "${previewPublishDir}/"
+    fileMode 0644
 }
 
 subprojects {
@@ -46,5 +57,5 @@ subprojects {
         maven {
             url devRepoUrl
         }
-    }    
+    }   
 }
