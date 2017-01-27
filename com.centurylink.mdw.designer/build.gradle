@@ -21,6 +21,10 @@ task updateDesignerVersion(type: GradleBuild) {
         ":com.centurylink.mdw.designer.rcp:updateDesignerVersion"]
 }
 
+task publishPreview(type: Copy) {
+    println 'publishing...'
+}
+
 subprojects {
     apply plugin: "java"
     

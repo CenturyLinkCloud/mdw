@@ -1,24 +1,21 @@
 Steps for Building and Publishing MDW Designer Plug-In:
 -------------------------------------------------------
-
 (If changed) Export tutorial docx files to HTML in MDW 5.5 mdw-hub/web/doc/tutorials.
 In com.centurylink.mdw.designer.ui:
  - Run the Gradle build task copyTutorialDocs (copies into com.centurylink.mdw.designer.ui/help/doc/tutorials)
- - Commit and push any changes to Git remote
-
-Build the latest framework code:
- - (In MDW 5.5) Run the mdw-framework/buildAll Gradle task.
- 
-Set the target platform to be the minimal supported Eclipse version and JDK.
-  (Window > Preferences > Plug-In Development > Target Platform > eclipse_4.4.1)
-
-Refresh designer projects and then Ctrl-B (may require restarting Eclipse to remove build errors)
 
 In com.centurylink.mdw.designer:
  - Update gradle.properties: 
      mdwDesignerVersion
  - Run the Gradle build task updateDesignerVersion
- - Run the Gradle build task buildFeature
+
+Commit and push these changes to Git remote
+
+Perform Jenkins Builds (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
+ - MDW55 - Build
+ - Designer Build
+ - Designer Publish or Designer Preview
+ 
    
 Upload the following files to /prod/ecom2/local/apps/MdwPlugin(or Preview) on lxdenvmtc143.dev.qintra.com:
   com.centurylink.mdw.designer.core/updateSite:
