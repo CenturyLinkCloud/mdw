@@ -23,17 +23,12 @@ Test updating Eclipse (Mars/Neon) to the new build.
   Update Site URL: http://lxdenvmtc143.dev.qintra.com:6101/MdwPlugin
                or: http://lxdenvmtc143.dev.qintra.com:6101/MdwPluginPreview
 
+(If RCP is to be included in this build)
 Build com.centurylink.mdw.designer.rcp according to the instructions in its build_readme.txt.
 
-In Eclipse, create a Dimensions Baseline for the build:
-   - Switch to Serena Perspective 
-   - Right-click on the MDWA:MDWA_ECLIPSE project under the MDWA:MDWA_ECLIPSE container
-   - Select New > Tip Baseline
-   - Product=MDWA, Type=SNAPSHOT, Baseline ID=MDWA_ECLIPSE_V9_x_x (xx is the build number)
-   - Click Next, then Finish.
-   
 Publish Release Notes to the MDW Users mailing list.
-  View the Git revision history:
+  View the Git revision history (in workspace dir):
+  git log  --name-status --abbrev-commit --after={2017-01-08} com.centurylink.mdw.designer com.centurylink.mdw.designer.core com.centurylink.mdw.designer.ui com.centurylink.mdw.designer.feature com.centurylink.mdw.designer.rcp > notes.txt
   Use this information to produce the release notes email.
   
 Upload the release notes email to the SharePoint site.

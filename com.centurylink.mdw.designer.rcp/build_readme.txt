@@ -1,9 +1,6 @@
 Steps for Building and Publishing a New MDW RCP Release:
 --------------------------------------------------------
 
-Build com.centurylink.mdw.designer according to the instructions in its build_readme.txt.
- - Afterward change the PDE Target Platform to the latest release (Running Platform) 
-
 In com.centurylink.mdw.designer.rcp:
  - Update MDWDesignerRCP.product (in text editor):
      product version
