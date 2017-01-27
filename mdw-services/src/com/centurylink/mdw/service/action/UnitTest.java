@@ -43,7 +43,13 @@ public class UnitTest implements JsonService {
             return null;
         }
         catch (Exception ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            logger.severeException("Unit test errored: " + testName, ex);
+            try {
+                return createAssertionErrorResponse(testName, ex);
+            }
+            catch (JSONException jex) {
+                throw new ServiceException(jex.getMessage(), jex);
+            }
         }
         catch (AssertionError err) {
             logger.severeException("Unit test failed: " + testName, err);
@@ -60,7 +66,7 @@ public class UnitTest implements JsonService {
         return getJson((JSONObject)requestObj, metaInfo);
     }
 
-    private String createAssertionErrorResponse(String testName, AssertionError err) throws JSONException {
+    private String createAssertionErrorResponse(String testName, Throwable err) throws JSONException {
         StackTraceElement[] stes = err.getStackTrace();
         int i = 0;
         StackTraceElement scriptTraceElement = null;

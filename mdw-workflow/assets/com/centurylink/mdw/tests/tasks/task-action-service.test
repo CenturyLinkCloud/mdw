@@ -1,7 +1,18 @@
 // task-action-service
-import com.centurylink.mdw.model.task.UserTaskAction
-import com.centurylink.mdw.util.JsonUtil
 import groovy.json.JsonSlurper
+import org.json.JSONObject
+
+def getJson(Map<String,String> map) {
+    if (map == null)
+        return null;
+    JSONObject jsonObj = new JSONObject();
+    for (String key : map.keySet()) {
+        String value = map.get(key);
+        if (value != null)
+            jsonObj.put(key, value);
+    }
+    return jsonObj;
+}
 
 start process("ManualTaskServices") {
     variables = [ jaxbVar: "<TaskJaxb/>" ] // missing required: #{jaxbVar.attributeTwo}
@@ -10,7 +21,7 @@ start process("ManualTaskServices") {
 sleep 10
 
 // get instance id by claiming
-def taskInst = action task("AutoForm Task for Service Access") {
+taskInst = action task("AutoForm Task for Service Access") {
     outcome = "Claim"
 }
 
@@ -20,14 +31,10 @@ def taskInstVO = new JsonSlurper().parseText(response.content)
 assert taskInstVO.assigneeId != null
 
 // Release
-def taskAction = new UserTaskAction()
-taskAction.taskInstanceId = taskInst.id
-taskAction.taskAction = 'Release' 
-taskAction.user = 'mdwapp'
 response = post http("services/Tasks/${taskInst.id}/Release") {
     user = 'mdwapp'
     password = 'ldap_012'
-    payload = taskAction.getJson()
+    payload = '{"action":"Release","taskInstanceId":${taskInst.id},"user":"mdwapp"}'
 }
 assert response.code == 200
 assert new JsonSlurper().parseText(response.content).status.code == 0
@@ -38,14 +45,10 @@ taskInstVO = new JsonSlurper().parseText(response.content)
 assert taskInstVO.assigneeId == null
     
 // Claim
-taskAction = new UserTaskAction()
-taskAction.taskInstanceId = taskInst.id
-taskAction.taskAction = 'Claim'
-taskAction.user = 'mdwapp'
 response = post http("services/Tasks/${taskInst.id}/Claim") {
     user = 'mdwapp'
     password = 'ldap_012'
-    payload = taskAction.getJson()
+    payload = '{"action":"Claim","taskInstanceId":${taskInst.id},"user":"mdwapp"}'
 }
 assert response.code == 200
 assert new JsonSlurper().parseText(response.content).status.code == 0
@@ -56,25 +59,19 @@ taskInstVO = new JsonSlurper().parseText(response.content)
 assert taskInstVO.assigneeId == 'mdwapp'
 
 // Forward (without comment)
-taskAction = new UserTaskAction()
-taskAction.taskInstanceId = taskInst.id
-taskAction.taskAction = 'Forward'
-taskAction.user = 'mdwapp'
-taskAction.destination = 'Developers'
 response = post http("services/Tasks/${taskInst.id}/Forward") {
     user = 'mdwapp'
     password = 'ldap_012'
-    payload = taskAction.getJson()
+    payload = '{"action":"Forward","taskInstanceId":${taskInst.id},"user":"mdwapp","destination":"Developers"}'
 }
 assert response.code == 400
 assert new JsonSlurper().parseText(response.content).status.message.startsWith('Comment required')
 
 // Forward (with comment)
-taskAction.comment = 'Forwarding to Developers group'
 response = post http("services/Tasks/${taskInst.id}/Forward") {
     user = 'mdwapp'
     password = 'ldap_012'
-    payload = taskAction.getJson()
+    payload = '{"action":"Forward","taskInstanceId":${taskInst.id},"user":"mdwapp","destination":"Developers","comment":"Forwarding to Developers group"}'
 }
 assert response.code == 200
 
@@ -83,18 +80,13 @@ response = get http("services/Tasks/${taskInst.id}")
 taskInstVO = new JsonSlurper().parseText(response.content)
 assert taskInstVO.assigneeId == null
 assert taskInstVO.workgroups == ['Developers']
-assert taskInstVO.comments == taskAction.comment
+assert taskInstVO.comments == 'Forwarding to Developers group'
 
 // Assign
-taskAction = new UserTaskAction()
-taskAction.taskInstanceId = taskInst.id
-taskAction.taskAction = 'Assign'
-taskAction.user = 'mdwapp'
-taskAction.assignee = 'mdwapp'
 response = post http("services/Tasks/${taskInst.id}/Assign") {
     user = 'mdwapp'
     password = 'ldap_012'
-    payload = taskAction.getJson()
+    payload = '{"action":"Assign","taskInstanceId":${taskInst.id},"user":"mdwapp","assignee":"mdwapp"}'
 }
 assert response.code == 200
 assert new JsonSlurper().parseText(response.content).status.code == 0
@@ -105,14 +97,10 @@ taskInstVO = new JsonSlurper().parseText(response.content)
 assert taskInstVO.assigneeId == 'mdwapp'
 
 // Complete (without required attributeTwo)
-taskAction = new UserTaskAction()
-taskAction.taskInstanceId = taskInst.id
-taskAction.taskAction = 'Complete'
-taskAction.user = 'mdwapp'
 response = post http("services/Tasks/${taskInst.id}/Complete") {
     user = 'mdwapp'
     password = 'ldap_012'
-    payload = taskAction.getJson()
+    payload = '{"action":"Complete","taskInstanceId":${taskInst.id},"user":"mdwapp"}'
 }
 assert response.code == 400
 assert new JsonSlurper().parseText(response.content).status.message == "Missing required value(s): '#{jaxbVar.attributeTwo}'."
@@ -120,7 +108,7 @@ assert new JsonSlurper().parseText(response.content).status.message == "Missing 
 // set required value
 def values = [:]
 values["#{jaxbVar.attributeTwo}"] = "RequiredAttrValue"
-def putPayload = JsonUtil.getJson(values);
+def putPayload = getJson(values);
 println 'PUT request:\n' + putPayload.toString(2)
 response = put http("services/Tasks/${taskInst.id}/values") {
     user = 'mdwapp'
@@ -130,14 +118,10 @@ response = put http("services/Tasks/${taskInst.id}/values") {
 assert response.code == 200
 
 // Complete (should succeed)
-taskAction = new UserTaskAction()
-taskAction.taskInstanceId = taskInst.id
-taskAction.taskAction = 'Complete'
-taskAction.user = 'mdwapp'
 response = post http("services/Tasks/${taskInst.id}/Complete") {
     user = 'mdwapp'
     password = 'ldap_012'
-    payload = taskAction.getJson()
+    payload = '{"action":"Complete","taskInstanceId":${taskInst.id},"user":"mdwapp"}'
 }
 assert response.code == 200
 

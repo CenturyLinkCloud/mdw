@@ -20,11 +20,9 @@ process: # 15429
   variable: # 25522
     name: docVar
     value: <empty/>
-
   variable: # 25523
     name: jaxbVar
     value: |
-      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       <TaskJaxb attributeOne="attrOneValue" attributeTwo="requiredAttributeValue">
           <elementOne>newElementOneValue</elementOne>
           <elementTwo>elementTwoValue</elementTwo>

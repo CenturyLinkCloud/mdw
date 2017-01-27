@@ -1,8 +1,0 @@
- // unit tests for register Task Wait Event which will be done in future
-import com.centurylink.mdw.services.workflow.WorkflowServicesImpl;
-
-assert onServer
-
-def workflowServicesImpl = new WorkflowServicesImpl()
-//workflowServicesImpl.registerTaskWaitEvent(326, "manoj-326", "AnotherWay", false)
- 

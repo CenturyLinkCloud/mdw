@@ -16,9 +16,7 @@ process: # 18157
     status: Waiting
   variable: # 31035
     name: jaxbVar
-    value: |
-      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-      <TaskJaxb attributeTwo="RequiredAttrValue"/>
+    value: <TaskJaxb attributeTwo="RequiredAttrValue"/>
   variable: # 31036
     name: objectVar
     value: taskmaster: Manoj

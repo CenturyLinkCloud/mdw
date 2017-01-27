@@ -1,4 +1,17 @@
-import com.centurylink.mdw.util.JsonUtil
+// task-values-service
+import org.json.JSONObject
+
+def getJson(Map<String,String> map) {
+    if (map == null)
+        return null;
+    JSONObject jsonObj = new JSONObject();
+    for (String key : map.keySet()) {
+        String value = map.get(key);
+        if (value != null)
+            jsonObj.put(key, value);
+    }
+    return jsonObj;
+}
 
 // task-values-service
 start process("ManualTaskServices") {
@@ -44,7 +57,7 @@ values["#{jaxbVar.elementOne}"] = "newElementOneValue"
 values["#{objectVar.taskmaster}"] = "dxoakes"
 values["docVar"] = "<empty/>"
 values["unassignedVar"] = "now assigned"
-def json = JsonUtil.getJson(values);
+def json = getJson(values);
 println "PUT request JSON:\n" + json.toString(2) + "\n"
 response = put http("services/Tasks/${taskInst.id}/values") {
     user = 'mdwapp'
@@ -69,7 +82,7 @@ values["stringVar"] = "do not update"
 response = put http("services/Tasks/${taskInst.id}/values") {
     user = 'mdwapp'
     password = 'ldap_012'
-    payload = JsonUtil.getJson(values)
+    payload = getJson(values)
 }
 // TODO fix HttpHelper.put() to capture response for errored requests
 //def statusMsg = new groovy.json.JsonSlurper().parseText(response.content)
