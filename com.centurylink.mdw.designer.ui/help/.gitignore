@@ -1,2 +1,3 @@
-javadoc
-images
+javadoc/
+doc/
+!doc/tutorials/
