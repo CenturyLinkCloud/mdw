@@ -143,12 +143,13 @@ public class DocumentationSection extends PropertySection implements IFilter
       webEditor.setElement(element);
       MarkdownRenderer renderer = new MarkdownRenderer(attrVal);
       webEditor.setValue(renderer.renderHtml());
-      webEditor.setEditable(false);
-      webEditor.addValueChangeListener(new ValueChangeListener() {
+      webEditor.addValueChangeListener(new ValueChangeListener()
+      {
         public void propertyValueChanged(Object newValue)
         {
           MarkdownRenderer renderer = new MarkdownRenderer(newValue == null ? null : newValue.toString());
-          webEditor.setValue(renderer.renderHtml());
+          String html = renderer.renderHtml();
+          webEditor.setValue(html);
         }
       });
     }

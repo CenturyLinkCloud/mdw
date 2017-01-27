@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,6 +25,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
@@ -542,10 +544,13 @@ public class PropertyEditor
     }
     else if (type.equals(TYPE_WEB))
     {
+      Composite c = (Composite)widget;
+      // Browser browser = (Browser)((Composite)sc.getChildren()[0]).getChildren()[0];
+      Browser browser = (Browser)c.getChildren()[0];
       if (newValue.startsWith("http://") || newValue.startsWith("https://"))
-        ((Browser)widget).setUrl(newValue);
+        browser.setUrl(newValue);
       else
-        ((Browser)widget).setText(newValue);
+        browser.setText(newValue);
     }
   }
 
@@ -1486,16 +1491,16 @@ public class PropertyEditor
     return timer;
   }
 
-  private Browser createBrowser(Composite parent)
+  private Composite createBrowser(Composite parent)
   {
-    Browser browser = new Browser(parent, SWT.BORDER | this.style);
+    Composite composite = new Composite(parent, SWT.BORDER | this.style);
+    composite.setLayout(new FillLayout());
     GridData gridData = new GridData(GridData.FILL_BOTH);
     gridData.horizontalSpan = COLUMNS;
     gridData.verticalIndent = 5;
-    browser.setLayoutData(gridData);
-    if (value != null)
-        browser.setUrl(value);
-    return browser;
+    composite.setLayoutData(gridData);
+    new Browser(composite, SWT.NONE);
+    return composite;
   }
 
   private ValueConverter valueConverter;

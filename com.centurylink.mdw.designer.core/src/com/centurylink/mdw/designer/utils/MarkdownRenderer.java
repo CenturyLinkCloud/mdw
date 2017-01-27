@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.designer.utils;
 
@@ -17,12 +17,12 @@ public class MarkdownRenderer {
 
     public String renderHtml() {
         if (markdown == null || markdown.trim().isEmpty())
-            return "<html></html>";
+            return "";
         else {
             Parser parser = Parser.builder().build();
             Node document = parser.parse(markdown);
             HtmlRenderer renderer = HtmlRenderer.builder().build();
-            return renderer.render(document);
+            return "<div style=\"height:100%;overflow:auto;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif\">" + renderer.render(document) + "</div>";
         }
     }
 }
