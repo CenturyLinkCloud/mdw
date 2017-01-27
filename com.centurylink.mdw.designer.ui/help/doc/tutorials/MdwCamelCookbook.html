@@ -1,0 +1,2948 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 12">
+<meta name=Originator content="Microsoft Word 12">
+<link rel=File-List href="MdwCamelCookbook_files/filelist.xml">
+<link rel=Edit-Time-Data href="MdwCamelCookbook_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>MDW Camel Cookbook</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Manoj Agrawal</o:Author>
+  <o:LastAuthor>CenturyLink Employee</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>6419</o:TotalTime>
+  <o:Created>2017-01-27T01:33:00Z</o:Created>
+  <o:LastSaved>2017-01-27T01:33:00Z</o:LastSaved>
+  <o:Pages>8</o:Pages>
+  <o:Words>1728</o:Words>
+  <o:Characters>9851</o:Characters>
+  <o:Company>CenturyLink</o:Company>
+  <o:Lines>82</o:Lines>
+  <o:Paragraphs>23</o:Paragraphs>
+  <o:CharactersWithSpaces>11556</o:CharactersWithSpaces>
+  <o:Version>12.00</o:Version>
+ </o:DocumentProperties>
+ <o:OfficeDocumentSettings>
+  <o:RelyOnVML/>
+  <o:AllowPNG/>
+ </o:OfficeDocumentSettings>
+</xml><![endif]-->
+<link rel=dataStoreItem href="MdwCamelCookbook_files/item0001.xml"
+target="MdwCamelCookbook_files/props0002.xml">
+<link rel=themeData href="MdwCamelCookbook_files/themedata.thmx">
+<link rel=colorSchemeMapping
+href="MdwCamelCookbook_files/colorschememapping.xml">
+<!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:TrackMoves>false</w:TrackMoves>
+  <w:TrackFormatting/>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:DoNotPromoteQF/>
+  <w:LidThemeOther>EN-US</w:LidThemeOther>
+  <w:LidThemeAsian>X-NONE</w:LidThemeAsian>
+  <w:LidThemeComplexScript>X-NONE</w:LidThemeComplexScript>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+   <w:DontGrowAutofit/>
+   <w:SplitPgBreakAndParaMark/>
+   <w:DontVertAlignCellWithSp/>
+   <w:DontBreakConstrainedForcedTables/>
+   <w:DontVertAlignInTxbx/>
+   <w:Word11KerningPairs/>
+   <w:CachedColBalance/>
+  </w:Compatibility>
+  <m:mathPr>
+   <m:mathFont m:val="Cambria Math"/>
+   <m:brkBin m:val="before"/>
+   <m:brkBinSub m:val="&#45;-"/>
+   <m:smallFrac m:val="off"/>
+   <m:dispDef/>
+   <m:lMargin m:val="0"/>
+   <m:rMargin m:val="0"/>
+   <m:defJc m:val="centerGroup"/>
+   <m:wrapIndent m:val="1440"/>
+   <m:intLim m:val="subSup"/>
+   <m:naryLim m:val="undOvr"/>
+  </m:mathPr></w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" DefUnhideWhenUsed="false"
+  DefSemiHidden="false" DefQFormat="false" LatentStyleCount="267">
+  <w:LsdException Locked="false" QFormat="true" Name="Normal"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 1"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 2"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 3"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 4"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 5"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 6"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 7"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 8"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 9"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 1"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 2"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 3"/>
+  <w:LsdException Locked="false" Priority="99" Name="header"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="caption"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Title"/>
+  <w:LsdException Locked="false" Priority="1" Name="Default Paragraph Font"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Subtitle"/>
+  <w:LsdException Locked="false" Priority="99" Name="Hyperlink"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Strong"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Emphasis"/>
+  <w:LsdException Locked="false" Priority="99" Name="Normal (Web)"/>
+  <w:LsdException Locked="false" Priority="99" Name="No List"/>
+  <w:LsdException Locked="false" Priority="99" SemiHidden="true"
+   Name="Placeholder Text"/>
+  <w:LsdException Locked="false" Priority="1" QFormat="true" Name="No Spacing"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 1"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="99" SemiHidden="true" Name="Revision"/>
+  <w:LsdException Locked="false" Priority="34" QFormat="true"
+   Name="List Paragraph"/>
+  <w:LsdException Locked="false" Priority="29" QFormat="true" Name="Quote"/>
+  <w:LsdException Locked="false" Priority="30" QFormat="true"
+   Name="Intense Quote"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 1"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 1"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 1"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 2"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 2"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 2"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 2"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 3"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 3"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 3"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 3"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 4"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 4"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 4"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 4"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 5"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 5"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 5"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 5"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 6"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 6"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 6"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 6"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="19" QFormat="true"
+   Name="Subtle Emphasis"/>
+  <w:LsdException Locked="false" Priority="21" QFormat="true"
+   Name="Intense Emphasis"/>
+  <w:LsdException Locked="false" Priority="31" QFormat="true"
+   Name="Subtle Reference"/>
+  <w:LsdException Locked="false" Priority="32" QFormat="true"
+   Name="Intense Reference"/>
+  <w:LsdException Locked="false" Priority="33" QFormat="true" Name="Book Title"/>
+  <w:LsdException Locked="false" Priority="37" SemiHidden="true"
+   UnhideWhenUsed="true" Name="Bibliography"/>
+  <w:LsdException Locked="false" Priority="39" SemiHidden="true"
+   UnhideWhenUsed="true" QFormat="true" Name="TOC Heading"/>
+ </w:LatentStyles>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset:1;
+	mso-generic-font-family:roman;
+	mso-font-format:other;
+	mso-font-pitch:variable;
+	mso-font-signature:0 0 0 0 0 0;}
+@font-face
+	{font-family:Cambria;
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:roman;
+	mso-font-pitch:variable;
+	mso-font-signature:-536870145 1073743103 0 0 415 0;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:-536870145 1073786111 1 0 415 0;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-format:other;
+	mso-font-pitch:variable;
+	mso-font-signature:3 0 0 0 1 0;}
+@font-face
+	{font-family:Consolas;
+	panose-1:2 11 6 9 2 2 4 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:modern;
+	mso-font-pitch:fixed;
+	mso-font-signature:-520092929 1073806591 9 0 415 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 1 Char";
+	mso-style-next:Normal;
+	margin-top:24.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:14.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#365F91;
+	mso-themecolor:accent1;
+	mso-themeshade:191;
+	mso-font-kerning:0pt;
+	font-weight:bold;}
+h2
+	{mso-style-noshow:yes;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 2 Char";
+	mso-style-next:Normal;
+	margin-top:10.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:13.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+h3
+	{mso-style-noshow:yes;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 3 Char";
+	mso-style-next:Normal;
+	margin-top:10.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+h4
+	{mso-style-noshow:yes;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 4 Char";
+	mso-style-next:Normal;
+	margin-top:10.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;
+	font-style:italic;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{mso-style-update:auto;
+	mso-style-priority:39;
+	mso-style-unhide:no;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:5.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{mso-style-update:auto;
+	mso-style-priority:39;
+	mso-style-unhide:no;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:5.0pt;
+	margin-left:12.0pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{mso-style-update:auto;
+	mso-style-priority:39;
+	mso-style-unhide:no;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:5.0pt;
+	margin-left:24.0pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-style-link:"Header Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{mso-style-unhide:no;
+	mso-style-link:"Footer Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:center 3.25in right 6.5in;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	mso-style-unhide:no;
+	color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-unhide:no;
+	color:#606420;
+	text-decoration:underline;
+	text-underline:single;}
+p.MsoDocumentMap, li.MsoDocumentMap, div.MsoDocumentMap
+	{mso-style-unhide:no;
+	mso-style-link:"Document Map Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:Tahoma;}
+p
+	{mso-style-priority:99;
+	mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	{mso-style-unhide:no;
+	mso-style-link:"Balloon Text Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:Tahoma;}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+	{mso-style-priority:34;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	mso-add-space:auto;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListParagraphCxSpFirst, li.MsoListParagraphCxSpFirst, div.MsoListParagraphCxSpFirst
+	{mso-style-priority:34;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-type:export-only;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	mso-add-space:auto;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListParagraphCxSpMiddle, li.MsoListParagraphCxSpMiddle, div.MsoListParagraphCxSpMiddle
+	{mso-style-priority:34;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-type:export-only;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	mso-add-space:auto;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoListParagraphCxSpLast, li.MsoListParagraphCxSpLast, div.MsoListParagraphCxSpLast
+	{mso-style-priority:34;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-type:export-only;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	mso-add-space:auto;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading
+	{mso-style-noshow:yes;
+	mso-style-priority:39;
+	mso-style-qformat:yes;
+	mso-style-parent:"Heading 1";
+	mso-style-next:Normal;
+	margin-top:24.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	line-height:115%;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#365F91;
+	mso-themecolor:accent1;
+	mso-themeshade:191;
+	font-weight:bold;}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 1";
+	mso-ansi-font-size:14.0pt;
+	mso-bidi-font-size:14.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#365F91;
+	mso-themecolor:accent1;
+	mso-themeshade:191;
+	font-weight:bold;}
+span.Heading2Char
+	{mso-style-name:"Heading 2 Char";
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 2";
+	mso-ansi-font-size:13.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.Heading3Char
+	{mso-style-name:"Heading 3 Char";
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 3";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.Heading4Char
+	{mso-style-name:"Heading 4 Char";
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 4";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;
+	font-style:italic;}
+span.HeaderChar
+	{mso-style-name:"Header Char";
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:Header;
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;}
+span.FooterChar
+	{mso-style-name:"Footer Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:Footer;
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;}
+span.DocumentMapChar
+	{mso-style-name:"Document Map Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Document Map";
+	mso-ansi-font-size:8.0pt;
+	mso-bidi-font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";
+	mso-ascii-font-family:Tahoma;
+	mso-hansi-font-family:Tahoma;
+	mso-bidi-font-family:Tahoma;}
+span.BalloonTextChar
+	{mso-style-name:"Balloon Text Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Balloon Text";
+	mso-ansi-font-size:8.0pt;
+	mso-bidi-font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";
+	mso-ascii-font-family:Tahoma;
+	mso-hansi-font-family:Tahoma;
+	mso-bidi-font-family:Tahoma;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	mso-default-props:yes;
+	font-size:10.0pt;
+	mso-ansi-font-size:10.0pt;
+	mso-bidi-font-size:10.0pt;}
+ /* Page Definitions */
+ @page
+	{mso-footnote-separator:url("MdwCamelCookbook_files/header.html") fs;
+	mso-footnote-continuation-separator:url("MdwCamelCookbook_files/header.html") fcs;
+	mso-endnote-separator:url("MdwCamelCookbook_files/header.html") es;
+	mso-endnote-continuation-separator:url("MdwCamelCookbook_files/header.html") ecs;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in .75in 1.0in .75in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.WordSection1
+	{page:WordSection1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:20985168;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-121996870 67698703 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l0:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:1.5in;
+	text-indent:-.25in;}
+@list l1
+	{mso-list-id:536162033;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1896098030 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l2
+	{mso-list-id:704715725;
+	mso-list-type:hybrid;
+	mso-list-template-ids:2109482846 67698715 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l2:level1
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	margin-left:117.0pt;
+	text-indent:-.25in;}
+@list l3
+	{mso-list-id:831408371;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1985668982 67698703 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l3:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l3:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4
+	{mso-list-id:1184594985;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-314007796 67698713 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l4:level1
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:1.0in;
+	text-indent:-.25in;}
+@list l1:level1 lfo6
+	{mso-level-start-at:0;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+table.MsoTableGrid
+	{mso-style-name:"Table Grid";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-unhide:no;
+	border:solid windowtext 1.0pt;
+	mso-border-alt:solid windowtext .5pt;
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-border-insideh:.5pt solid windowtext;
+	mso-border-insidev:.5pt solid windowtext;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="33794"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink="#606420" style='tab-interval:.5in'>
+
+<div class=WordSection1>
+
+<p class=MsoHeader style='margin-bottom:6.0pt;mso-outline-level:1'><b
+style='mso-bidi-font-weight:normal'><span style='font-size:18.0pt;font-family:
+"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-no-proof:yes'><v:shapetype id="_x0000_t75" coordsize="21600,21600"
+ o:spt="75" o:preferrelative="t" path="m@4@5l@4@11@9@11@9@5xe" filled="f"
+ stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="Picture_x0020_0" o:spid="_x0000_i1042" type="#_x0000_t75"
+ alt="ctl.gif" style='width:172.5pt;height:53.25pt;visibility:visible;
+ mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image001.gif" o:title="ctl"/>
+</v:shape></span></b><b style='mso-bidi-font-weight:normal'><span
+style='font-size:18.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p></o:p></span></b></p>
+
+<w:Sdt SdtDocPart="t" DocPartType="Table of Contents" DocPartUnique="t"
+ ID="276963409">
+ <p class=MsoTocHeading>Contents<span style='font-size:12.0pt;line-height:115%;
+ mso-ascii-font-family:"Times New Roman";mso-fareast-font-family:"Times New Roman";
+ mso-hansi-font-family:"Times New Roman";mso-bidi-font-family:"Times New Roman";
+ color:windowtext;font-weight:normal'><w:sdtPr></w:sdtPr></span></p>
+ <p class=MsoToc1 style='tab-stops:24.0pt right dotted 503.5pt'><!--[if supportFields]><span
+ style='mso-element:field-begin'></span><span
+ style='mso-spacerun:yes'> </span>TOC \o &quot;1-3&quot; \h \z \u <span
+ style='mso-element:field-separator'></span><![endif]--><a href="#_Toc417395944"><span
+ style='mso-no-proof:yes'>1.</span><span style='font-size:11.0pt;font-family:
+ "Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-fareast-font-family:
+ "Times New Roman";mso-fareast-theme-font:minor-fareast;mso-hansi-theme-font:
+ minor-latin;mso-bidi-font-family:"Times New Roman";mso-bidi-theme-font:minor-bidi;
+ color:windowtext;mso-no-proof:yes;text-decoration:none;text-underline:none'><span
+ style='mso-tab-count:1'>       </span></span><span style='mso-no-proof:yes'>Introduction</span><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395944 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>1<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900340034000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc1 style='tab-stops:24.0pt right dotted 503.5pt'><a
+ href="#_Toc417395945"><span style='mso-no-proof:yes'>2.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>       </span></span><span
+ style='mso-no-proof:yes'>Prerequisites</span><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395945 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>2<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900340035000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc1 style='tab-stops:24.0pt right dotted 503.5pt'><a
+ href="#_Toc417395946"><span style='mso-no-proof:yes'>3.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>       </span></span><span
+ style='mso-no-proof:yes'>How to setup Camel component in MDW</span><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>... </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395946 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>2<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900340036000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:33.0pt right dotted 503.5pt'><a
+ href="#_Toc417395947"><span style='mso-no-proof:yes'>a.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>      </span></span><span
+ style='mso-no-proof:yes'>ServiceMix/Fuse</span><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395947 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>2<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900340037000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:33.0pt right dotted 503.5pt'><a
+ href="#_Toc417395948"><span style='mso-no-proof:yes'>b.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>     </span></span><span
+ style='mso-no-proof:yes'>Tomcat</span><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-tab-count:1 dotted'> </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395948 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>2<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900340038000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc1 style='tab-stops:24.0pt right dotted 503.5pt'><a
+ href="#_Toc417395949"><span style='mso-no-proof:yes'>4.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>       </span></span><span
+ style='mso-no-proof:yes'>Setup Eclipse Environment</span><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'> </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395949 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>2<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900340039000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:33.0pt right dotted 503.5pt'><a
+ href="#_Toc417395950"><span style='mso-no-proof:yes'>a.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>      </span></span><span
+ style='mso-no-proof:yes'>Setup Git Repository (For Tomcat Container)</span><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'> </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395950 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>2<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900350030000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:33.0pt right dotted 503.5pt'><a
+ href="#_Toc417395951"><span style='mso-no-proof:yes'>b.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>     </span></span><span
+ style='mso-no-proof:yes'>Import<span style='mso-spacerun:yes'>  </span>Example
+ Project (For Fuse/ServiceMix)</span><span style='color:windowtext;display:
+ none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-tab-count:1 dotted'> </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395951 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>5<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900350031000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:33.0pt right dotted 503.5pt'><a
+ href="#_Toc417395952"><span style='mso-no-proof:yes'>c.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>      </span></span><span
+ style='mso-no-proof:yes'>Import Camel demo package (For Fuse/ServiceMix and
+ Tomcat)</span><span style='color:windowtext;display:none;mso-hide:screen;
+ mso-no-proof:yes;text-decoration:none;text-underline:none'><span
+ style='mso-tab-count:1 dotted'> </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395952 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>6<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900350032000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc1 style='tab-stops:24.0pt right dotted 503.5pt'><a
+ href="#_Toc417395953"><span style='mso-no-proof:yes'>5.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>       </span></span><span
+ style='mso-no-proof:yes'>Run Examples</span><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395953 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>8<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900350033000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:33.0pt right dotted 503.5pt'><a
+ href="#_Toc417395954"><span style='mso-no-proof:yes'>a.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>      </span></span><span
+ style='mso-no-proof:yes'>Run Service Process through a Camel Route</span><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395954 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>8<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900350034000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc3 style='tab-stops:44.0pt right dotted 503.5pt'><a
+ href="#_Toc417395955"><span style='mso-no-proof:yes'>i.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>      </span></span><span
+ style='mso-no-proof:yes'>Register Your Service through a Camel Route</span><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395955 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>8<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900350035000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc3 style='tab-stops:55.0pt right dotted 503.5pt'><a
+ href="#_Toc417395956"><span style='mso-no-proof:yes'>ii.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>          </span></span><span
+ style='mso-no-proof:yes'>How to create a spring context</span><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'> </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395956 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>8<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900350036000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc3 style='tab-stops:55.0pt right dotted 503.5pt'><a
+ href="#_Toc417395957"><span style='mso-no-proof:yes'>iii.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>        </span></span><span
+ style='mso-no-proof:yes'>Configure to call Service Process</span><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395957 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>9<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900350037000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc3 style='tab-stops:55.0pt right dotted 503.5pt'><a
+ href="#_Toc417395958"><span style='mso-no-proof:yes'>iv.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>        </span></span><span
+ style='mso-no-proof:yes'>Invoke Your Service through REST</span><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395958 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>10<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900350038000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:33.0pt right dotted 503.5pt'><a
+ href="#_Toc417395959"><span style='mso-no-proof:yes'>b.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>     </span></span><span
+ style='mso-no-proof:yes'>Invoke a Camel Route from a Process</span><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395959 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>13<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900350039000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoToc2 style='tab-stops:33.0pt right dotted 503.5pt'><a
+ href="#_Toc417395960"><span style='mso-no-proof:yes'>i.</span><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;color:windowtext;mso-no-proof:yes;text-decoration:
+ none;text-underline:none'><span style='mso-tab-count:1'>       </span></span><span
+ style='mso-no-proof:yes'>How to create Camel Route</span><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'><span style='mso-element:field-begin'></span>
+ PAGEREF _Toc417395960 \h <span style='mso-element:field-separator'></span></span><![endif]--><span
+ style='color:windowtext;display:none;mso-hide:screen;mso-no-proof:yes;
+ text-decoration:none;text-underline:none'>13<!--[if gte mso 9]><xml>
+  <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003400310037003300390035003900360030000000</w:data>
+ </xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+ display:none;mso-hide:screen;mso-no-proof:yes;text-decoration:none;text-underline:
+ none'><span style='mso-element:field-end'></span></span><![endif]--></a><span
+ style='font-size:11.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+ minor-latin;mso-fareast-font-family:"Times New Roman";mso-fareast-theme-font:
+ minor-fareast;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:"Times New Roman";
+ mso-bidi-theme-font:minor-bidi;mso-no-proof:yes'><o:p></o:p></span></p>
+ <p class=MsoNormal><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]--><o:p>&nbsp;</o:p></p>
+</w:Sdt>
+
+<h1 style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2'><a
+name="_Toc417395944"></a><a name=contents></a><![if !supportLists]><span
+style='mso-bookmark:_Toc417395944'><span style='mso-fareast-font-family:Cambria;
+mso-fareast-theme-font:major-latin;mso-bidi-font-family:Cambria;mso-bidi-theme-font:
+major-latin'><span style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span></span><![endif]><span style='mso-bookmark:_Toc417395944'>Introduction</span></h1>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>MDW provides
+listeners for many common protocols out-of-box, such as JMS, Tibco Bus, RESTful
+webservice, MQ Series, MDW SOAP web service, EJB. Besides that Camel can also
+be integrated with MDW.<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpFirst style='margin-bottom:6.0pt;mso-add-space:
+auto'><a href="http://camel.apache.org"><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Apache Camel</span></a><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'> is an &quot;integration framework&quot; that
+enables you to link together services through declarative route
+definitions.<span style='mso-spacerun:yes'>  </span>As an alternative to the
+traditional MDW External Event Handler registration described above, you may
+choose to expose your service through a Camel route.<span
+style='mso-spacerun:yes'>  </span>The advantages of this include the advanced </span><a
+href="http://camel.apache.org/transport.html"><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>transport</span></a><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'> and </span><a
+href="http://camel.apache.org/message-filter.html"><span style='font-family:
+"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin'>filtering</span></a><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>
+capabilities that Camel supports.<span style='mso-spacerun:yes'>  </span>For
+example, Camel goes beyond the basic XPath message filtering provided by MDW
+event handlers to enable filtering according to request header values or even
+by complex scripting language expressions. <o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'>You can read more on this topic
+at </span><a
+href="http://lxdenvmtc099.dev.qintra.com:10001/MDWHub/doc/MDWCamelIntegration.html"><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>http://lxdenvmtc099.dev.qintra.com:10001/MDWHub/doc/MDWCamelIntegration.html</span></a><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'>Also there is a recorded session
+at </span><a
+href="http://cshare.ad.qintra.com/sites/MDW/Training/Forms/AllItems.aspx?RootFolder=%2Fsites%2FMDW%2FTraining%2FCamel%20Integration"><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Camel Integration</span></a></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>All the
+examples in this cookbook are available in Git repo. You will see in later
+sections on how to get to that.<o:p></o:p></span></p>
+
+<h1 style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2'><a
+name="_Toc417395945"></a><a name=eclipse></a><![if !supportLists]><span
+style='mso-bookmark:_Toc417395945'><span style='mso-fareast-font-family:Cambria;
+mso-fareast-theme-font:major-latin;mso-bidi-font-family:Cambria;mso-bidi-theme-font:
+major-latin'><span style='mso-list:Ignore'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span></span><![endif]><span style='mso-bookmark:_Toc417395945'>Prerequisites</span></h1>
+
+<p class=MsoListParagraph style='margin-bottom:6.0pt;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Either Tomcat or ServiceMix/Fuse container is
+setup with MDW 5.5.13 or later version with latest version of MDW Designer
+Plug-In (8.5.3 +) by following corresponding cookbooks.<o:p></o:p></span></p>
+
+<h1 style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2'><a
+name="_Toc417395946"><![if !supportLists]><span style='mso-fareast-font-family:
+Cambria;mso-fareast-theme-font:major-latin;mso-bidi-font-family:Cambria;
+mso-bidi-theme-font:major-latin'><span style='mso-list:Ignore'>3.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]>How
+to setup Camel component in MDW</a> </h1>
+
+<h2 style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2'><a
+name="_Toc417395947"><![if !supportLists]><span style='mso-fareast-font-family:
+Cambria;mso-fareast-theme-font:major-latin;mso-bidi-font-family:Cambria;
+mso-bidi-theme-font:major-latin'><span style='mso-list:Ignore'>a.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]>ServiceMix/Fuse</a></h2>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Since mdw-camel is an optional feature,
+you'll need to install it by typing the following command at the karaf command
+prompt:<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><b style='mso-bidi-font-weight:
+normal'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'>features:install mdw-camel<o:p></o:p></span></b></p>
+
+<h2 style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2'><a
+name="_Toc417395948"><![if !supportLists]><span style='mso-fareast-font-family:
+Cambria;mso-fareast-theme-font:major-latin;mso-bidi-font-family:Cambria;
+mso-bidi-theme-font:major-latin'><span style='mso-list:Ignore'>b.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]>Tomcat</a></h2>
+
+<p class=MsoListParagraph style='margin-top:0in;margin-right:0in;margin-bottom:
+6.0pt;margin-left:1.0in;mso-add-space:auto'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Camel is
+included in standard mdw.war. No additional setup is required<o:p></o:p></span></p>
+
+<h1 style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2'><a
+name="_Toc417395949"><![if !supportLists]><span style='mso-fareast-font-family:
+Cambria;mso-fareast-theme-font:major-latin;mso-bidi-font-family:Cambria;
+mso-bidi-theme-font:major-latin'><span style='mso-list:Ignore'>4.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]>Setup
+Eclipse Environment</a></h1>
+
+<p class=MsoNormal style='margin-left:.5in'>There are multiple ways to run
+camel examples in this cookbook, choose based on your environmental setup:</p>
+
+<h2 style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2'><a
+name="_Toc417395950"><![if !supportLists]><span style='mso-fareast-font-family:
+Cambria;mso-fareast-theme-font:major-latin;mso-bidi-font-family:Cambria;
+mso-bidi-theme-font:major-latin'><span style='mso-list:Ignore'>a.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]>Setup
+Git Repository (For Tomcat Container)</a></h2>
+
+<p class=MsoListParagraphCxSpFirst style='margin-left:1.5in;mso-add-space:auto;
+text-indent:-1.5in;mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>i.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>In Eclipse Got to Windows--&gt;Preferences</p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-left:1.5in;mso-add-space:
+auto;text-indent:-1.5in;mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>ii.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>Team--&gt;Git--&gt;Configuration</p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-left:2.0in;mso-add-space:
+auto'>Add Entry following</p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-left:2.0in;mso-add-space:
+auto;text-indent:-.25in;mso-list:l3 level4 lfo2'><![if !supportLists]><span
+style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>Key = http.sslVerify</p>
+
+<p class=MsoListParagraphCxSpLast style='margin-left:2.0in;mso-add-space:auto;
+text-indent:-.25in;mso-list:l3 level4 lfo2'><![if !supportLists]><span
+style='mso-list:Ignore'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>Value=false</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='mso-no-proof:yes'><v:shape
+ id="Picture_x0020_11" o:spid="_x0000_i1041" type="#_x0000_t75" style='width:432.75pt;
+ height:473.25pt;visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image002.png" o:title=""/>
+</v:shape></span></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:.25in'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Open Eclipse Git Perspective:</span></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:.25in'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><span style='mso-spacerun:yes'> </span>In
+Windows-&gt;Show View-&gt;Other-&gt; Git-&gt;Git Reposnitory Perspective-&gt;<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Click on “Clone a Git Repository and add the
+clone to this view”. <o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l0 level1 lfo3'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>1.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Enter URI : </span><a
+href="https://8.22.8.164/mdw/mdwdemo.git"><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>https://8.22.8.164/mdw/mdwdemo.git</span></a><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'> and <o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l0 level1 lfo3'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>2.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>User Name / password : mdw/ldap_0123 to
+connect Get Repository<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-left:1.0in;mso-outline-level:1'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin;mso-no-proof:yes'><v:shape id="Picture_x0020_63"
+ o:spid="_x0000_i1040" type="#_x0000_t75" style='width:393.75pt;height:399pt;
+ visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image003.png" o:title=""/>
+</v:shape></span><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:.25in;mso-outline-level:
+1'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraph style='margin-top:0in;margin-right:0in;margin-bottom:
+6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-.25in;mso-list:l0 level1 lfo3'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Click Next<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:1.0in;mso-outline-level:1'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin;mso-no-proof:yes'><v:shape id="Picture_x0020_2"
+ o:spid="_x0000_i1039" type="#_x0000_t75" style='width:393pt;height:399pt;
+ visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image004.png" o:title=""/>
+</v:shape></span><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpFirst style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l0 level1 lfo3'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>4.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Click Finish<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l0 level1 lfo3'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>5.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Once the project is downloaded, update
+mdw.properties for any changes related to DB<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l0 level1 lfo3'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>6.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Update Tomcat configuration to point to
+mdw.properties in mdwdemo folder.<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l0 level1 lfo3'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>7.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Run Maven build with package target and check
+if mdwdemo.jar is there under src/main/workflow/com/centurylink/mdw/tests/java<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l0 level1 lfo3'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>8.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Start Tomcat Server<o:p></o:p></span></p>
+
+<h2 style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2'><a
+name="_Toc417395951"><![if !supportLists]><span style='mso-fareast-font-family:
+Cambria;mso-fareast-theme-font:major-latin;mso-bidi-font-family:Cambria;
+mso-bidi-theme-font:major-latin'><span style='mso-list:Ignore'>b.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]>Import<span
+style='mso-spacerun:yes'>  </span>Example Project (For Fuse/ServiceMix)</a></h2>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>i.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Copy the “MDWCamelDemo
+- Vcs - Fuse -MDW 5.5.zip.zip” file from </span><a
+href="file:///\\eldnp1515dm4.ad.qintra.com\union_station\IT\MDW\Camel"><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>\\eldnp1515dm4.ad.qintra.com\union_station\IT\MDW\Camel</span></a><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>ii.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Unzip it<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>iii.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Then import
+into eclipse using Import Existing Project<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>iv.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Run Maven
+build with package target<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>v.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Check if the
+bundled deployed and active in your fuse instance directory<o:p></o:p></span></p>
+
+<h2 style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2'><a
+name="_Toc417395952"><![if !supportLists]><span style='mso-fareast-font-family:
+Cambria;mso-fareast-theme-font:major-latin;mso-bidi-font-family:Cambria;
+mso-bidi-theme-font:major-latin'><span style='mso-list:Ignore'>c.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]>Import
+Camel demo package (For Fuse/ServiceMix and Tomcat)</a></h2>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>i.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Right-click
+on workflow project in Process Explorer and select Import &gt; Package.<span
+style='mso-spacerun:yes'>  </span>Choose the &quot;Discover&quot; option and
+leave the repository location as the default.<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>ii.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Select
+latest versions of following<span style='mso-spacerun:yes'>  </span>packages<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:2.0in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l3 level4 lfo2'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>1.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>com.centurylink.mdw.camel<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:2.0in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l3 level4 lfo2'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>2.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>com.centurylink.mdw.demo.camel<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-left:1.75in'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin;mso-no-proof:
+yes'><v:shape id="Picture_x0020_4" o:spid="_x0000_i1038" type="#_x0000_t75"
+ style='width:462.75pt;height:448.5pt;visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image005.png" o:title=""/>
+</v:shape></span><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>iii.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Click
+Finish, and the packages will be downloaded and become visible in your Process
+Explorer project tree.<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>iv.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>If using
+Fuse/ServiceMix then in orderContext.spring replace following with your
+instance info <o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:2.0in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l3 level4 lfo2'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>1.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>&lt;propertyPlaceholder
+id=&quot;properties&quot;
+location=&quot;file:${karaf.home}/instances/camel/etc/com.centurylink.mdw.cameldemo.cfg&quot;/&gt;<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:2.0in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l3 level4 lfo2'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>2.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Also you need to add following entry in your com.centurylink.mdw.cfg
+file<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:2.25in'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'>mdw.application.config.pids=com.centurylink.mdw.cameldemo<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:2.0in;mso-add-space:auto;text-indent:-.25in;
+mso-list:l3 level4 lfo2'><![if !supportLists]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-fareast-font-family:Calibri;mso-fareast-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin'><span style='mso-list:Ignore'>3.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Create a file named com.centurylink.mdw.cameldemo.cfg
+in your etc dir and following in that file<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:2.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>mdw.cameldemo.jms.connection.pool=jmsConnectionPool<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>v.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>In order to
+make use of MDW Camel support, you'll need to add the following dependency to
+your build.gradle file:<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><!--[if mso & !supportInlineShapes & supportFields]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><span style='mso-element:field-begin;
+mso-field-lock:yes'></span><span style='mso-spacerun:yes'> </span>SHAPE <span
+style='mso-spacerun:yes'> </span>\* MERGEFORMAT <span style='mso-element:field-separator'></span></span><![endif]--><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><v:shapetype id="_x0000_t202" coordsize="21600,21600"
+ o:spt="202" path="m,l,21600r21600,l21600,xe">
+ <v:stroke joinstyle="miter"/>
+ <v:path gradientshapeok="t" o:connecttype="rect"/>
+</v:shapetype><v:shape id="_x0000_s1069" type="#_x0000_t202" style='width:524.25pt;
+ height:21pt;mso-position-horizontal-relative:char;
+ mso-position-vertical-relative:line' strokeweight="1pt">
+ <v:textbox style='mso-next-textbox:#_x0000_s1069'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+     width="100%" style='width:100.0%;mso-cellspacing:0in;mso-yfti-tbllook:
+     1184;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes;mso-yfti-lastrow:yes'>
+      <td style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>  </span>compile group: </span><span
+      style='font-size:10.0pt;font-family:Consolas;color:#2A00FF'>&quot;com.centurylink.mdw&quot;</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'>, name: </span><span
+      style='font-size:10.0pt;font-family:Consolas;color:#2A00FF'>&quot;mdw-camel&quot;</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'>, version:
+      mdwVersion</span><span style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>    </span></span><span style='font-size:10.0pt;
+      font-family:Consolas'><o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-size:10.0pt;font-family:Consolas;
+      color:black'><span style='mso-spacerun:yes'>  </span></span><span
+      style='mso-bidi-font-size:10.0pt'><o:p></o:p></span></p>
+      </td>
+     </tr>
+    </table>
+    <p class=MsoNormal><o:p>&nbsp;</o:p></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+ <w:wrap type="none"/>
+ <w:anchorlock/>
+</v:shape></span><!--[if mso & !supportInlineShapes & supportFields]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><v:shape id="_x0000_i1025" type="#_x0000_t75"
+ style='width:524.25pt;height:21pt'>
+ <v:imagedata croptop="-65520f" cropbottom="65520f"/>
+</v:shape><span style='mso-element:field-end'></span></span><![endif]--><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>… or in your pom.xml:<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><!--[if mso & !supportInlineShapes & supportFields]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><span style='mso-element:field-begin;
+mso-field-lock:yes'></span><span style='mso-spacerun:yes'> </span>SHAPE <span
+style='mso-spacerun:yes'> </span>\* MERGEFORMAT <span style='mso-element:field-separator'></span></span><![endif]--><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><v:shape id="_x0000_s1068" type="#_x0000_t202"
+ style='width:524.25pt;height:65.2pt;mso-position-horizontal-relative:char;
+ mso-position-vertical-relative:line' strokeweight="1pt">
+ <v:textbox style='mso-next-textbox:#_x0000_s1068'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+     width="100%" style='width:100.0%;mso-cellspacing:0in;mso-yfti-tbllook:
+     1184;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes;mso-yfti-lastrow:yes'>
+      <td style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>  </span></span><span style='font-size:10.0pt;
+      font-family:Consolas;color:teal'>&lt;</span><span style='font-size:10.0pt;
+      font-family:Consolas;color:#3F7F7F'>dependency</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:teal'>&gt;</span><span
+      style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>    </span></span><span style='font-size:10.0pt;
+      font-family:Consolas;color:teal'>&lt;</span><span style='font-size:10.0pt;
+      font-family:Consolas;color:#3F7F7F'>groupId</span><span style='font-size:
+      10.0pt;font-family:Consolas;color:teal'>&gt;</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'>com.centurylink.mdw</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:teal'>&lt;/</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:#3F7F7F'>groupId</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:teal'>&gt;</span><span
+      style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>    </span></span><span style='font-size:10.0pt;
+      font-family:Consolas;color:teal'>&lt;</span><span style='font-size:10.0pt;
+      font-family:Consolas;color:#3F7F7F'>artifactId</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:teal'>&gt;</span><u><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'>mdw</span></u><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'>-camel</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:teal'>&lt;/</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:#3F7F7F'>artifactId</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:teal'>&gt;</span><span
+      style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>    </span></span><span style='font-size:10.0pt;
+      font-family:Consolas;color:teal'>&lt;</span><span style='font-size:10.0pt;
+      font-family:Consolas;color:#3F7F7F'>version</span><span style='font-size:
+      10.0pt;font-family:Consolas;color:teal'>&gt;</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'>${mdw.version}</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:teal'>&lt;/</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:#3F7F7F'>version</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:teal'>&gt;</span><span
+      style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>  </span></span><span style='font-size:10.0pt;
+      font-family:Consolas;color:teal'>&lt;/</span><span style='font-size:10.0pt;
+      font-family:Consolas;color:#3F7F7F'>dependency</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:teal'>&gt;</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>    </span></span><span style='font-size:10.0pt;
+      font-family:Consolas'><o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-size:10.0pt;font-family:Consolas;
+      color:black'><span style='mso-spacerun:yes'>  </span></span><span
+      style='mso-bidi-font-size:10.0pt'><o:p></o:p></span></p>
+      </td>
+     </tr>
+    </table>
+    <p class=MsoNormal><o:p>&nbsp;</o:p></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+ <w:wrap type="none"/>
+ <w:anchorlock/>
+</v:shape></span><!--[if mso & !supportInlineShapes & supportFields]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><v:shape id="_x0000_i1026" type="#_x0000_t75"
+ style='width:524.25pt;height:65.2pt'>
+ <v:imagedata croptop="-65520f" cropbottom="65520f"/>
+</v:shape><span style='mso-element:field-end'></span></span><![endif]--><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Also, since all the wiring magic is done by
+reflection, you'll need to explicitly add the following imports under the
+Import-Package section:<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><!--[if mso & !supportInlineShapes & supportFields]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><span style='mso-element:field-begin;
+mso-field-lock:yes'></span><span style='mso-spacerun:yes'> </span>SHAPE <span
+style='mso-spacerun:yes'> </span>\* MERGEFORMAT <span style='mso-element:field-separator'></span></span><![endif]--><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><v:shape id="_x0000_s1067" type="#_x0000_t202"
+ style='width:525pt;height:65.25pt;mso-position-horizontal-relative:char;
+ mso-position-vertical-relative:line' strokeweight="1pt">
+ <v:textbox style='mso-next-textbox:#_x0000_s1067'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+     width="100%" style='width:100.0%;mso-cellspacing:0in;mso-yfti-tbllook:
+     1184;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+      <td style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'> </span></span><span style='font-size:10.0pt;
+      font-family:Consolas'>instruction &quot;Import-Package&quot;,<o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas'><span
+      style='mso-spacerun:yes'>    </span><span style='color:black'>...</span><o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>   
+      </span>&quot;com.centurylink.mdw.camel&quot;, <o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>   
+      </span>&quot;com.centurylink.mdw.camel.plugins.tomcat&quot;,<o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>    </span>...<span style='mso-spacerun:yes'>   
+      </span></span><span style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-size:10.0pt;font-family:Consolas;
+      color:black'><span style='mso-spacerun:yes'>  </span></span><span
+      style='mso-bidi-font-size:10.0pt'><o:p></o:p></span></p>
+      </td>
+     </tr>
+     <tr style='mso-yfti-irow:1'>
+      <td style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><o:p>&nbsp;</o:p></span></p>
+      </td>
+     </tr>
+     <tr style='mso-yfti-irow:2;mso-yfti-lastrow:yes'>
+      <td style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'> </span><o:p></o:p></span></p>
+      </td>
+     </tr>
+    </table>
+    <p class=MsoNormal><o:p>&nbsp;</o:p></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+ <w:wrap type="none"/>
+ <w:anchorlock/>
+</v:shape></span><!--[if mso & !supportInlineShapes & supportFields]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><v:shape id="_x0000_i1027" type="#_x0000_t75"
+ style='width:525pt;height:65.25pt'>
+ <v:imagedata croptop="-65520f" cropbottom="65520f"/>
+</v:shape><span style='mso-element:field-end'></span></span><![endif]--><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>.. or in your pom.xml:<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><!--[if mso & !supportInlineShapes & supportFields]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><span style='mso-element:field-begin;
+mso-field-lock:yes'></span><span style='mso-spacerun:yes'> </span>SHAPE <span
+style='mso-spacerun:yes'> </span>\* MERGEFORMAT <span style='mso-element:field-separator'></span></span><![endif]--><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><v:shape id="_x0000_s1066" type="#_x0000_t202"
+ style='width:525pt;height:67.5pt;mso-position-horizontal-relative:char;
+ mso-position-vertical-relative:line' strokeweight="1pt">
+ <v:textbox style='mso-next-textbox:#_x0000_s1066'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+     width="100%" style='width:100.0%;mso-cellspacing:0in;mso-yfti-tbllook:
+     1184;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes;mso-yfti-lastrow:yes'>
+      <td style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>  </span></span><span style='font-size:10.0pt;
+      font-family:Consolas;color:teal'>&lt;</span><span style='font-size:10.0pt;
+      font-family:Consolas;color:#3F7F7F'>Import-Package</span><span
+      style='font-size:10.0pt;font-family:Consolas;color:teal'>&gt;<o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:teal'><span
+      style='mso-spacerun:yes'>    </span></span><span style='font-size:10.0pt;
+      font-family:Consolas;color:black'>...</span><span style='font-size:10.0pt;
+      font-family:Consolas'><o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>    </span>com.centurylink.mdw.camel,<o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>    </span>com.centurylink.mdw.camel.plugins.tomcat,<o:p></o:p></span></p>
+      <p class=MsoNormal style='mso-layout-grid-align:none'><span
+      style='font-size:10.0pt;font-family:Consolas;color:black'><span
+      style='mso-spacerun:yes'>    </span>...<span style='mso-spacerun:yes'>   
+      </span></span><span style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+      <p class=MsoNormal><span style='font-size:10.0pt;font-family:Consolas;
+      color:black'><span style='mso-spacerun:yes'>  </span></span><span
+      style='mso-bidi-font-size:10.0pt'><o:p></o:p></span></p>
+      </td>
+     </tr>
+    </table>
+    <p class=MsoNormal><o:p>&nbsp;</o:p></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+ <w:wrap type="none"/>
+ <w:anchorlock/>
+</v:shape></span><!--[if mso & !supportInlineShapes & supportFields]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><v:shape id="_x0000_i1028" type="#_x0000_t75"
+ style='width:525pt;height:67.5pt'>
+ <v:imagedata croptop="-65520f" cropbottom="65520f"/>
+</v:shape><span style='mso-element:field-end'></span></span><![endif]--><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoHeader style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:.5in;mso-outline-level:1'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin;mso-bidi-font-family:
+Calibri;mso-bidi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>vi.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Then perform
+a Gradle or Maven build to pick up this new dependency.<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:-1.5in;
+mso-text-indent-alt:-9.0pt;mso-list:l3 level3 lfo2'><![if !supportLists]><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-fareast-font-family:Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>vii.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>In order for
+the framework to identify the correct parent Spring app context to associate
+with your asset, you'll need to set a configuration parameter to tie your
+workflow package to your OSGi bundle.<span style='mso-spacerun:yes'> 
+</span>Right-click on your workflow package in Process Explorer and select Show
+Properties.<span style='mso-spacerun:yes'>  </span>Select the Configuration
+property tab and under Environments click the Add button and enter the name
+&quot;dev&quot;.<span style='mso-spacerun:yes'>  </span>Add a property named
+OsgiBundleSymbolicName and under dev assign the value from the symbolicName in
+your project's build.gradle or pom.xml build file.<o:p></o:p></span></p>
+
+<p class=MsoNormal><a
+href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Tutorials/MdwFuseCookbook.html"></a><span
+style='color:#1F497D'><span style='mso-spacerun:yes'> </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:1.5in'><span style='color:#1F497D;
+mso-no-proof:yes'><v:shape id="Picture_x0020_3" o:spid="_x0000_i1037" type="#_x0000_t75"
+ style='width:726.75pt;height:273pt;visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image006.png" o:title=""/>
+</v:shape></span><span style='color:#1F497D'><o:p></o:p></span></p>
+
+<h1 style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2'><a
+name="_Toc417395953"></a><a name="advanced_1"></a><a
+name="service_proc_thru_camel"></a><![if !supportLists]><span style='mso-bookmark:
+_Toc417395953'><span style='mso-fareast-font-family:Cambria;mso-fareast-theme-font:
+major-latin;mso-bidi-font-family:Cambria;mso-bidi-theme-font:major-latin'><span
+style='mso-list:Ignore'>5.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span></span><![endif]><span style='mso-bookmark:_Toc417395953'>Run
+Examples</span></h1>
+
+<h2 style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2'><a
+name="_Toc417395954"><![if !supportLists]><span style='mso-fareast-font-family:
+Cambria;mso-fareast-theme-font:major-latin;mso-bidi-font-family:Cambria;
+mso-bidi-theme-font:major-latin'><span style='mso-list:Ignore'>a.<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]>Run
+Service Process through a Camel Route</a></h2>
+
+<h3 style='margin-left:1.5in;text-indent:-1.5in;mso-text-indent-alt:-9.0pt;
+mso-list:l3 level3 lfo2'><a name="_Toc417395955"><![if !supportLists]><span
+style='mso-fareast-font-family:Cambria;mso-fareast-theme-font:major-latin;
+mso-bidi-font-family:Cambria;mso-bidi-theme-font:major-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>i.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>Register Your Service through a Camel Route</a></h3>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Among other ways, a Camel route can be
+defined using a Spring configuration file.<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>When you ran the MDW Eclipse wizard to create
+your workflow project back in Project Setup in ServiceMix/Fuse Cookbook, a
+Spring config file named bundle-context.xml was generated for you under
+src/main/resources/META-INF/spring.<span style='mso-spacerun:yes'>  </span>This
+file gets embedded into the META-INF directory of your workflow bundle.<span
+style='mso-spacerun:yes'>  </span>You could declare your MDW Camel route in
+bundle-context.xml, but then you'd be missing out on one of the major benefits
+of using MDW: dynamicism. Instead, we'll create a separate child Spring
+configuration as a workflow asset that can be changed without requiring that
+your bundle be redeployed.<span style='mso-spacerun:yes'>  </span>In fact,
+Spring configuration assets in MDW can be used to inject any Spring-enabled
+entity into your OSGi bundle context.<o:p></o:p></span></p>
+
+<h3 style='margin-left:1.5in;text-indent:-1.5in;mso-text-indent-alt:-9.0pt;
+mso-list:l3 level3 lfo2'><a name="_Toc417395956"><![if !supportLists]><span
+style='mso-fareast-font-family:Cambria;mso-fareast-theme-font:major-latin;
+mso-bidi-font-family:Cambria;mso-bidi-theme-font:major-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>ii.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>How to create a spring context</a></h3>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Below steps show how a workflow asset called orderContext.spring
+was created in com.centurylink.mdw.demo.camel package. <o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Right-click on your workflow package in
+Process Explorer view, and select New &gt; Camel Route.<span
+style='mso-spacerun:yes'>  </span>Name your route and make sure and select
+&quot;Full Spring Config&quot; for the Language.<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.25in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin;mso-no-proof:yes'><v:shape id="Picture_x0020_91"
+ o:spid="_x0000_i1036" type="#_x0000_t75" style='width:393.75pt;height:335.25pt;
+ visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image007.png" o:title=""/>
+</v:shape></span><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<h3 style='margin-left:1.5in;text-indent:-1.5in;mso-text-indent-alt:-9.0pt;
+mso-list:l3 level3 lfo2'><a name="_Toc417395957"><![if !supportLists]><span
+style='mso-fareast-font-family:Cambria;mso-fareast-theme-font:major-latin;
+mso-bidi-font-family:Cambria;mso-bidi-theme-font:major-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>iii.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>Configure to call Service Process</a></h3>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:99.0pt;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>In this example we will call a service
+process called “FindEmployee” using a came route. Open MDW Designer Perspective
+and locate orderContext.spring under package com.centurylink.mdw.demo.camel<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin;mso-no-proof:yes'><v:shape id="Picture_x0020_73"
+ o:spid="_x0000_i1035" type="#_x0000_t75" style='width:286.5pt;height:356.25pt;
+ visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image008.png" o:title=""/>
+</v:shape></span><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:1.0in;text-indent:.5in'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Locate
+following text in orderContext.spring <o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><!--[if mso & !supportInlineShapes & supportFields]><span
+style='mso-element:field-begin;mso-field-lock:yes'></span><span
+style='mso-spacerun:yes'> </span>SHAPE <span
+style='mso-spacerun:yes'> </span>\* MERGEFORMAT <span style='mso-element:field-separator'></span><![endif]--><v:shape
+ id="_x0000_s1065" type="#_x0000_t202" style='width:491.2pt;height:72.6pt;
+ mso-position-horizontal-relative:char;mso-position-vertical-relative:line'
+ strokeweight="1pt">
+ <v:textbox style='mso-next-textbox:#_x0000_s1065'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'>    </span>&lt;!-- MDW Web Service (REST) --&gt;<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'>    </span>&lt;route&gt;<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'>      </span>&lt;from <u><span style='color:black'>uri</span></u>=&quot;mdw:REST/GetEmployee&quot;/&gt;
+    &lt;!-- specify MasterRequestID HTTP header --&gt;<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'>      </span>&lt;to <u><span style='color:black'>uri</span></u>=&quot;mdw:process?name=FindEmployee&quot;
+    pattern=&quot;InOut&quot; /&gt;<o:p></o:p></span></p>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'>    </span>&lt;/route&gt;</span><span
+    style='mso-bidi-font-size:10.0pt'><o:p></o:p></span></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+ <w:wrap type="none"/>
+ <w:anchorlock/>
+</v:shape><!--[if mso & !supportInlineShapes & supportFields]><v:shape id="_x0000_i1029"
+ type="#_x0000_t75" style='width:491.2pt;height:72.6pt'>
+ <v:imagedata croptop="-65520f" cropbottom="65520f"/>
+</v:shape><span style='mso-element:field-end'></span><![endif]--><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:99.0pt;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>The mdw:REST/GetEmployee route declared
+within this camelContext tells the MDW Camel component to register a REST-based
+web service and launch FindEmployee (process is in package:
+com.centurylink.mdw.test) when invoked.<span style='mso-spacerun:yes'> 
+</span>In order for the &quot;mdw:&quot; URI pattern to be supported, the MDW
+component bean is declared.<span style='mso-spacerun:yes'>  </span>Notice that
+with the &quot;from&quot; URI in an MDW Camel route you have the option of
+specifying a specific endpoint URL path (REST/ GetEmployee), in contrast to the
+standard MDW External Event handler which all use the same endpoint. <o:p></o:p></span></p>
+
+<h3 style='margin-left:1.5in;text-indent:-1.5in;mso-text-indent-alt:-9.0pt;
+mso-list:l3 level3 lfo2'><a name="_Toc417395958"><![if !supportLists]><span
+style='mso-fareast-font-family:Cambria;mso-fareast-theme-font:major-latin;
+mso-bidi-font-family:Cambria;mso-bidi-theme-font:major-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>iv.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>Invoke Your Service through REST</a></h3>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>As before with your SOAP request, you can use
+MDW Hub's HTTP Poster facility to submit your REST request to the server.<span
+style='mso-spacerun:yes'>  </span>The URL should include the path you assigned
+in the &quot;from&quot; URI in your Camel route Spring asset.<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><v:shape id="_x0000_s1064"
+ type="#_x0000_t202" style='position:absolute;left:0;text-align:left;
+ margin-left:103.5pt;margin-top:6pt;width:229.25pt;height:41.7pt;z-index:10;
+ mso-width-percent:400;mso-width-percent:400'>
+ <v:textbox style='mso-next-textbox:#_x0000_s1064;mso-fit-shape-to-text:t'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:teal'>&lt;</span><span
+    style='font-size:10.0pt;font-family:Consolas;color:#3F7F7F;background:silver;
+    mso-highlight:silver'>GetEmployee</span><span style='font-size:10.0pt;
+    font-family:Consolas;color:teal'>&gt;</span><span style='font-size:10.0pt;
+    font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'><span
+    style='mso-spacerun:yes'>  </span></span><span style='font-size:10.0pt;
+    font-family:Consolas;color:teal'>&lt;</span><span style='font-size:10.0pt;
+    font-family:Consolas;color:#3F7F7F'>sapId</span><span style='font-size:
+    10.0pt;font-family:Consolas;color:teal'>&gt;</span><span style='font-size:
+    10.0pt;font-family:Consolas;color:black'>DHO115360</span><span
+    style='font-size:10.0pt;font-family:Consolas;color:teal'>&lt;/</span><span
+    style='font-size:10.0pt;font-family:Consolas;color:#3F7F7F'>sapId</span><span
+    style='font-size:10.0pt;font-family:Consolas;color:teal'>&gt;</span><span
+    style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:Consolas;
+    color:teal'>&lt;/</span><span style='font-size:10.0pt;font-family:Consolas;
+    color:#3F7F7F;background:silver;mso-highlight:silver'>GetEmployee</span><span
+    style='font-size:10.0pt;font-family:Consolas;color:teal'>&gt;</span></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoHeader style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:1.5in;mso-outline-level:1'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin;mso-no-proof:
+yes'><v:shape id="Picture_x0020_74" o:spid="_x0000_i1034" type="#_x0000_t75"
+ style='width:780.75pt;height:546pt;visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image009.png" o:title=""/>
+</v:shape></span><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto;text-indent:.5in'><u><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>The URL for HttpPoster and Request for Tomcat
+is <o:p></o:p></span></u></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:.5in'><a
+href="http://localhost:8080/mdw/system/httpHelper.jsf">http://localhost:8080/mdw/system/httpHelper.jsf</a><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:.5in'><a
+href="http://localhost:8080/mdw/Services/GetEmployee">http://localhost:8080/mdw/Services/GetEmployee</a><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto;text-indent:.5in'><u><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>The URL for HttpPoster and Request for Fuse/ServiceMix
+is <o:p></o:p></span></u></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:.5in'><a
+href="http://localhost:8181/MDWHub/system/httpHelper.jsf"><span
+style='color:windowtext;text-decoration:none;text-underline:none'>http://localhost:8181/MDWHub/system/httpHelper.jsf</span></a><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.5in;mso-add-space:auto;text-indent:.5in'><a
+href="http://localhost:8181/MDWWeb/Services/GetEmployee"><span
+style='color:windowtext;text-decoration:none;text-underline:none'>http://localhost:8181/MDWWeb/Services/GetEmployee</span></a><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto;text-indent:.5in'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>You can see the response includes all the
+LDAP information of DHO115360 which was returned by the called service process<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto;text-indent:.5in'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>You should see following logs in console:<o:p></o:p></span></p>
+
+<p class=MsoHeader style='margin-bottom:6.0pt;mso-outline-level:1'><v:shape
+ id="_x0000_s1058" type="#_x0000_t202" style='position:absolute;margin-left:111pt;
+ margin-top:2.4pt;width:720.35pt;height:227.7pt;z-index:6'>
+ <v:textbox style='mso-next-textbox:#_x0000_s1058;mso-fit-shape-to-text:t'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'>[(i)20150417.16:42:49.339
+    ~14] Adding Spring Config Asset: 'mdw:spring/com.centurylink.mdw.demo.camel/orderContext.spring
+    ' with ApplicationContext:
+    OsgiBundleXmlApplicationContext(bundle=com.centurylink.mdwcameldemovcsfuse,
+    config=osgibundle:/META-INF/spring/*.xml): startup date [Fri Apr 17
+    16:42:36 MDT 2015]; root of context hierarchy<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'>[(i)20150417.16:42:51.396
+    ~14] Registering ServiceHandler:Endpoint[mdw://SOAP/GetEmployee]<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'>[(i)20150417.16:42:51.399
+    ~14] Registering ServiceHandler:Endpoint[mdw://REST/GetEmployee]<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'>…<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'>[(i)20150417.16:42:51.413
+    ~14] Registering ServiceHandler:Endpoint[mdw://REST/ActionRequest]</span><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'> <o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'>[(i)20150409.13:20:49.348
+    ~438] Starting MDW process 'FindEmployee v0.13' through Camel route.</span><span
+    style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'>[(i)20150409.13:20:49.349
+    p173252586.10812 m.1428607249348] Process started - FindEmployee/0.13</span><span
+    style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'>[(i)20150409.13:20:49.349
+    p173252586.10812 a1.19147] Activity started - Start</span><span
+    style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'>…</span><span
+    style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'>[(i)20150409.13:20:53.188
+    p173252586.10812 a5.19148] Activity completed - completion code 'false'</span><span
+    style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'><span
+    style='mso-spacerun:yes'> </span>[(i)20150409.13:20:53.189 p173252586.10812
+    a3.19149] Activity started - Lookup</span><span style='font-size:10.0pt;
+    font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'>sapId: DHO115360</span><span
+    style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'>workstationId: null</span><span
+    style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'>…</span><span
+    style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'>[(i)20150409.13:20:53.501
+    p173252586.10812 a2.19150] Activity started - Stop</span><span
+    style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:Consolas;color:black'><span
+    style='mso-spacerun:yes'> </span>[(i)20150409.13:20:53.501 p173252586.10812
+    m.1428607249348] Process completed - FindEmployee completion code is null</span><span
+    style='font-size:10.0pt;font-family:Consolas'><o:p></o:p></span></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoListParagraph style='margin-top:0in;margin-right:0in;margin-bottom:
+6.0pt;margin-left:1.0in;mso-add-space:auto;text-indent:.5in'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>You will see a process instance was created <o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-indent:.5in'><span style='font-size:14.0pt;
+font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:.5in'><span
+style='font-size:14.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin;mso-no-proof:yes'><v:shape id="Picture_x0020_77"
+ o:spid="_x0000_i1033" type="#_x0000_t75" style='width:536.25pt;height:212.25pt;
+ visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image010.png" o:title=""/>
+</v:shape></span><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-indent:.5in'><span style='font-size:14.0pt;
+font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<h2 style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2'><a
+name="_Toc417395959"></a><a name="advanced_2"></a><a
+name="camel_route_from_proc"></a><![if !supportLists]><span style='mso-bookmark:
+_Toc417395959'><span style='mso-fareast-font-family:Cambria;mso-fareast-theme-font:
+major-latin;mso-bidi-font-family:Cambria;mso-bidi-theme-font:major-latin'><span
+style='mso-list:Ignore'>b.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span></span><![endif]><span style='mso-bookmark:_Toc417395959'>Invoke
+a Camel Route from a Process</span></h2>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><v:shape id="_x0000_s1061"
+ type="#_x0000_t202" style='position:absolute;left:0;text-align:left;
+ margin-left:84pt;margin-top:64.55pt;width:535.5pt;height:131.7pt;z-index:9'>
+ <v:textbox style='mso-fit-shape-to-text:t'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+    text-autospace:none'><span style='font-size:10.0pt;font-family:Consolas'>&lt;?<u><span
+    style='color:black'>xml</span></u> version=&quot;1.0&quot;
+    encoding=&quot;UTF-8&quot;?&gt;<o:p></o:p></span></p>
+    <p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+    text-autospace:none'><span style='font-size:10.0pt;font-family:Consolas'>&lt;route
+    <u><span style='color:black'>xmlns</span></u>=&quot;http://camel.apache.org/schema/spring&quot;<o:p></o:p></span></p>
+    <p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+    text-autospace:none'><span style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'> 
+    </span>xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;<o:p></o:p></span></p>
+    <p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+    text-autospace:none'><span style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'>  </span>xsi:schemaLocation=&quot;http://camel.apache.org/schema/spring
+    <o:p></o:p></span></p>
+    <p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+    text-autospace:none'><span style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'>                     
+    </span>http://camel.apache.org/schema/spring/camel-spring.xsd&quot;&gt;<o:p></o:p></span></p>
+    <p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+    text-autospace:none'><span style='font-size:10.0pt;font-family:Consolas'><o:p>&nbsp;</o:p></span></p>
+    <p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+    text-autospace:none'><span style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'>  </span>&lt;from <u><span style='color:black'>uri</span></u>=&quot;mdw:workflow/this&quot;/&gt;<o:p></o:p></span></p>
+    <p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+    text-autospace:none'><span style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'>  </span>&lt;to <u><span style='color:black'>uri</span></u>=&quot;file:c:/<u><span
+    style='color:black'>temp</span></u>/data/<u><span style='color:black'>outbox</span></u>?fileName=<u><span
+    style='color:black'>mdw</span></u>-camel-$simple{date:now:yyyyMMdd}.<u><span
+    style='color:black'>txt</span></u>&quot;<o:p></o:p></span></p>
+    <p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+    text-autospace:none'><span style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'>      </span>pattern=&quot;InOut&quot; /&gt;<o:p></o:p></span></p>
+    <p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+    text-autospace:none'><span style='font-size:10.0pt;font-family:Consolas'><span
+    style='mso-spacerun:yes'>  </span><o:p></o:p></span></p>
+    <p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt;
+    font-family:Consolas'>&lt;/route&gt;</span></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'>You can also use MDW workflow to
+launch a Camel route. If you are using Camel Route inside a workflow process
+then you must define it as a Workflow Asset.<br>
+Example : Look into the &quot;Invoke Camel Route&quot; process in
+com.centurylink.mdw.demo.camel package This process basically launches Camel
+Route from MDW process, this goes to the routing and at the end result will
+populate as part of the response variable.<br>
+In this example the process uses asset driven (MyCamelRoute.camel) activity
+defined as part of the Camel Route Adapter activity. <br>
+</span><span style='font-family:"Arial","sans-serif"'><br style='mso-special-character:
+line-break'>
+<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
+<![endif]></span><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-bottom:6.0pt;mso-add-space:
+auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<h2 style='margin-left:1.5in;text-indent:-1.5in;mso-text-indent-alt:-9.0pt;
+mso-list:l3 level3 lfo2'><a name="_Toc417395960"><![if !supportLists]><span
+style='mso-fareast-font-family:Cambria;mso-fareast-theme-font:major-latin;
+mso-bidi-font-family:Cambria;mso-bidi-theme-font:major-latin'><span
+style='mso-list:Ignore'><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>i.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>How to create Camel Route</a></h2>
+
+<p class=MsoListParagraph style='margin-top:0in;margin-right:0in;margin-bottom:
+6.0pt;margin-left:1.0in;mso-add-space:auto;text-indent:27.0pt'>Right-click on
+your workflow package in Process Explorer view, and select New &gt; Camel Route</p>
+
+<p class=MsoNormal style='margin-left:99.0pt'><b style='mso-bidi-font-weight:
+normal'><span style='color:#1F497D;mso-no-proof:yes'><v:shape id="_x0000_i1032"
+ type="#_x0000_t75" style='width:396.75pt;height:336.75pt;visibility:visible'>
+ <v:imagedata src="MdwCamelCookbook_files/image011.png" o:href="cid:image001.png@01D07C4B.F31ED560"/>
+</v:shape></span></b><span style='color:#1F497D'><o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpFirst style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Please note that the syntax &quot;&lt;from
+uri=&quot;mdw:workflow/this&quot;/&gt;&quot; used in MyCamelRoute.camel means
+the instance of workflow which is running(i.e. instance of Invoke Camel Route
+process)<o:p></o:p></span></p>
+
+<p class=MsoListParagraphCxSpLast style='margin-top:0in;margin-right:0in;
+margin-bottom:6.0pt;margin-left:1.0in;mso-add-space:auto'><span
+style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;
+mso-hansi-theme-font:minor-latin'>Locate “Invoke Camel Route” process and right
+click and select Run the process<o:p></o:p></span></p>
+
+<p class=MsoNormal style='mso-outline-level:1'><b style='mso-bidi-font-weight:
+normal'><span style='font-size:18.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></b></p>
+
+<p class=MsoNormal style='margin-left:1.5in;mso-outline-level:1'><b
+style='mso-bidi-font-weight:normal'><span style='font-size:18.0pt;font-family:
+"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-no-proof:yes'><v:shape id="Picture_x0020_81" o:spid="_x0000_i1031"
+ type="#_x0000_t75" style='width:697.5pt;height:174pt;visibility:visible;
+ mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image012.png" o:title=""/>
+</v:shape></span></b><b style='mso-bidi-font-weight:normal'><span
+style='font-size:18.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p></o:p></span></b></p>
+
+<p class=MsoNormal style='mso-outline-level:1'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:.5in;text-indent:.5in'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>Enter
+following in Variables tab for camelRouteRequest:<o:p></o:p></span></p>
+
+<p class=MsoNormal style='mso-outline-level:1'><v:shape id="_x0000_s1059"
+ type="#_x0000_t202" style='position:absolute;margin-left:113.25pt;
+ margin-top:1.55pt;width:291.65pt;height:56.7pt;z-index:7'>
+ <v:textbox style='mso-fit-shape-to-text:t'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoListParagraphCxSpFirst style='margin-bottom:6.0pt;mso-add-space:
+    auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+    minor-latin;mso-hansi-theme-font:minor-latin'>&lt;HelloDon&gt;<o:p></o:p></span></p>
+    <p class=MsoListParagraphCxSpMiddle style='margin-bottom:6.0pt;mso-add-space:
+    auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+    minor-latin;mso-hansi-theme-font:minor-latin'><span style='mso-tab-count:
+    1'>            </span>&lt;name&gt;Don Oakes&lt;/name&gt;<o:p></o:p></span></p>
+    <p class=MsoListParagraphCxSpLast style='margin-bottom:6.0pt;mso-add-space:
+    auto'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+    minor-latin;mso-hansi-theme-font:minor-latin'>&lt;/HelloDon&gt;<o:p></o:p></span></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='mso-outline-level:1'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='mso-outline-level:1'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='mso-outline-level:1'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='mso-outline-level:1'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='mso-outline-level:1'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoNormal style='margin-left:1.5in;mso-outline-level:1'><b
+style='mso-bidi-font-weight:normal'><span style='font-size:18.0pt;font-family:
+"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin;mso-no-proof:yes'><v:shape id="Picture_x0020_82" o:spid="_x0000_i1030"
+ type="#_x0000_t75" style='width:768pt;height:480pt;visibility:visible;
+ mso-wrap-style:square'>
+ <v:imagedata src="MdwCamelCookbook_files/image013.png" o:title=""/>
+</v:shape></span></b><b style='mso-bidi-font-weight:normal'><span
+style='font-size:18.0pt;font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p></o:p></span></b></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:1.0in;text-indent:.5in'><span style='font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'>You should
+see following on console:<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-indent:.5in'><v:shape id="_x0000_s1060" type="#_x0000_t202"
+ style='position:absolute;left:0;text-align:left;margin-left:114pt;
+ margin-top:2.45pt;width:758.25pt;height:151.95pt;text-indent:0;z-index:8'>
+ <v:textbox style='mso-fit-shape-to-text:t'>
+  <![if !mso]>
+  <table cellpadding=0 cellspacing=0 width="100%">
+   <tr>
+    <td><![endif]>
+    <div>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'>[(i)20150417.16:56:18.508
+    p107165898.10694 m.aa56486~150417-165616] Process started - Invoke Camel
+    Route/0.6<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'><span
+    style='mso-spacerun:yes'> </span>[(i)20150417.16:56:20.038 p107165898.10694
+    a1.11258] Activity started - Start<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'><span
+    style='mso-spacerun:yes'> </span>[(i)20150417.16:56:20.082 p107165898.10694
+    a3.11259] Activity started - MyCamelRoute<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'>[(i)20150417.16:56:20.094
+    ~203] Loading RoutesDefinition RuleSet based on key:
+    com.centurylink.mdw.demo.camel/MyCamelRoute.camel v[0.1,1)~<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'>[(i)20150417.16:56:20.100
+    ~203] Loading Camel Route 'MyCamelRoute.camel v3' with CamelContext:
+    SpringCamelContext(camel-1) with spring id
+    com.centurylink.mdw.common.spring.MdwOsgiBundleContext@41f8adf9<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'>[(i)20150417.16:56:20.390
+    ~203] Registering WorkflowHandler:
+    Endpoint[mdw://workflow/com.centurylink.mdw.demo.camel/MyCamelRoute.camel]<o:p></o:p></span></p>
+    <p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+    style='font-size:10.0pt;font-family:"Courier New"'><span
+    style='mso-spacerun:yes'> </span>[(i)20150417.16:56:20.440 p107165898.10694
+    a2.11260] Activity started - Stop<o:p></o:p></span></p>
+    <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+    style='mso-spacerun:yes'> </span>[(i)20150417.16:56:20.470 p107165898.10694
+    m.aa56486~150417-165616] Process completed - Invoke Camel Route completion
+    code is null</span></p>
+    </div>
+    <![if !mso]></td>
+   </tr>
+  </table>
+  <![endif]></v:textbox>
+</v:shape><span style='font-size:14.0pt;font-family:"Calibri","sans-serif";
+mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='text-indent:.5in'><span style='font-size:14.0pt;
+font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='text-indent:.5in'><span style='font-size:14.0pt;
+font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='text-indent:.5in'><span style='font-size:14.0pt;
+font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:.5in'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='text-indent:.5in'><span style='font-size:14.0pt;
+font-family:"Calibri","sans-serif";mso-ascii-theme-font:minor-latin;mso-hansi-theme-font:
+minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:.5in'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:.5in'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:.5in'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'><o:p>&nbsp;</o:p></span></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:1.5in'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'>MyCamelRoute activity is
+configured to internally use MyCamelRoute.camel<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:6.0pt;
+margin-left:1.5in'><span style='font-family:"Calibri","sans-serif";mso-ascii-theme-font:
+minor-latin;mso-hansi-theme-font:minor-latin'>When process finishes a file
+named mdw-camel-&lt;date&gt;.txt gets generated under c:/temp/data/outbox with
+a response from process populated.<o:p></o:p></span></p>
+
+</div>
+
+</body>
+
+</html>
