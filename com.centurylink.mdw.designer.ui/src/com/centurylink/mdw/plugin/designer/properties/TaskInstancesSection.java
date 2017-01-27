@@ -236,12 +236,21 @@ public class TaskInstancesSection extends PropertySection implements IFilter
 
   private void openTaskInstance(TaskInstanceVO taskInstanceVO)
   {
-    boolean assigned = activity.getProject().getUser().getUsername().equals(taskInstanceVO.getTaskClaimUserCuid());
-    String taskInstParams = activity.getProject().getTaskInstancePath(taskInstanceVO.getTaskInstanceId(), assigned);
-    WorkflowPackage packageVersion = activity.getPackage();
-    String packageParam = packageVersion.isDefaultPackage() ? "" : "&packageName=" + packageVersion.getName();
+    String path;
+    if (activity.getProject().checkRequiredVersion(6, 0))
+    {
+      path = "#/tasks/" + taskInstanceVO.getTaskInstanceId();
+    }
+    else
+    {
+      boolean assigned = activity.getProject().getUser().getUsername().equals(taskInstanceVO.getTaskClaimUserCuid());
+      String taskInstParams = activity.getProject().getTaskInstancePath(taskInstanceVO.getTaskInstanceId(), assigned);
+      WorkflowPackage packageVersion = activity.getPackage();
+      String packageParam = packageVersion.isDefaultPackage() ? "" : "&packageName=" + packageVersion.getName();
+      path = taskInstParams + packageParam;
+    }
     WebApp webapp = activity.getProject().checkRequiredVersion(5,  5) ? WebApp.MdwHub : WebApp.TaskManager;
-    WebLaunchActions.getLaunchAction(activity.getProject(), webapp).launch(activity.getProject(), taskInstParams + packageParam);
+    WebLaunchActions.getLaunchAction(activity.getProject(), webapp).launch(activity.getProject(), path);
   }
 
   /**

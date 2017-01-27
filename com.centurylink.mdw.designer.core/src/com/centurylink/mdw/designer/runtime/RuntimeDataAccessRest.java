@@ -117,9 +117,16 @@ public class RuntimeDataAccessRest extends ServerAccessRest implements RuntimeDa
 
     public List<TaskInstanceVO> getTaskInstancesForProcessInstance(Long processInstanceId) throws DataAccessException {
         try {
-            String pathWithArgs = "ProcessTasks?format=json&processInstanceId=" + processInstanceId;
-            String response = invokeResourceService(pathWithArgs);
-            return new TaskList(TaskList.PROCESS_TASKS, response).getItems();
+            if (getServer().getSchemaVersion() >= 6000) {
+                String path = "Tasks?processInstanceId=" + processInstanceId;
+                String response = invokeResourceService(path);
+                return new TaskList(TaskList.TASKS, response).getItems();
+            }
+            else {
+                String path = "ProcessTasks?format=json&processInstanceId=" + processInstanceId;
+                String response = invokeResourceService(path);
+                return new TaskList(TaskList.PROCESS_TASKS, response).getItems();
+            }
         }
         catch (IOException ex) {
             throw new DataAccessOfflineException(ex.getMessage(), ex);

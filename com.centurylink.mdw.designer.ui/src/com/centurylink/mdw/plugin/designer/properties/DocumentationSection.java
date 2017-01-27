@@ -134,7 +134,7 @@ public class DocumentationSection extends PropertySection implements IFilter
       referenceIdEditor.setValue(element.getAttribute(WorkAttributeConstant.REFERENCE_ID));
     }
 
-    if (DocumentationEditorValueProvider.MARKDOWN.equals(language))
+    if (DocumentationEditorValueProvider.MARKDOWN.equals(language) && element.getProject().checkRequiredVersion(6, 0))
     {
       webEditor = new PropertyEditor(element, PropertyEditor.TYPE_WEB);
       webEditor.addValueChangeListener(new ValueChangeListener()
