@@ -33,20 +33,7 @@ In Eclipse, create a Dimensions Baseline for the build:
    - Click Next, then Finish.
    
 Publish Release Notes to the MDW Users mailing list.
-  View the revision history by querying the scm5 db:
-    select id.originator, ih.remark, id.revised_date, wi.dir_fullpath, wi.filename
-    from pcms_item_data id,
-    pcms_item_history ih,
-    pcms_workset_info wf,
-    pcms_workset_items wi
-    where id.item_uid=ih.item_uid
-    and id.product_id=upper('MDWA')
-    and wf.workset_uid=wi.workset_uid
-    and id.product_id=wf.product_id
-    and wi.item_uid=id.item_uid
-    and wf.workset_name=upper('MDWA_ECLIPSE')
-    and id.create_date > to_Date ('2015-05-27', 'YYYY-MM-DD')
-    order by remark, id.revised_date desc
+  View the Git revision history:
   Use this information to produce the release notes email.
   
 Upload the release notes email to the SharePoint site.
