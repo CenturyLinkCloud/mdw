@@ -22,8 +22,15 @@ task updateDesignerVersion(type: GradleBuild) {
         ":com.centurylink.mdw.designer.rcp:updateDesignerVersion"]
 }
 
+task publishToRepository(type: Copy) {
+    from "../com.centurylink.mdw.designer.core/updateSite"
+    into "${repositoryDir}/com/centurylink/mdw/mdw-designer-core/${mdwDesignerVersion}"
+    include "mdw-designer-core-${mdwDesignerVersion}.jar"
+}
+
 task publishPreview(type: Copy) {
-    from("/prod/ecom2/local/apps/jenkins/workspace/MDW6-Build/com.centurylink.mdw.designer.core/updateSite") {
+    dependsOn "publishToRepository"
+    from("../com.centurylink.mdw.designer.core/updateSite") {
       include "plugins/com.centurylink.mdw.designer.core_${mdwDesignerVersion}.jar"
     }
     from("../com.centurylink.mdw.designer.ui/updateSite") {
@@ -32,7 +39,7 @@ task publishPreview(type: Copy) {
         include "features/com.centurylink.mdw.designer.feature_${mdwDesignerVersion}.jar"
         include "plugins/com.centurylink.mdw.designer.ui_${mdwDesignerVersion}.jar"
     }
-    into "${previewPublishDir}/"
+    into previewPublishDir
     fileMode 0644
 }
 

@@ -1,42 +1,28 @@
 Steps for Building and Publishing MDW Designer Plug-In:
 -------------------------------------------------------
+
+In com.centurylink.mdw.designer:
+ - Update mdwDesignerVersion
+
 (If changed) Export tutorial docx files to HTML in MDW 5.5 mdw-hub/web/doc/tutorials.
 In com.centurylink.mdw.designer.ui:
  - Run the Gradle build task copyTutorialDocs (copies into com.centurylink.mdw.designer.ui/help/doc/tutorials)
-
-In com.centurylink.mdw.designer:
- - Update gradle.properties: 
-     mdwDesignerVersion
- - Run the Gradle build task updateDesignerVersion
 
 Commit and push these changes to Git remote
 
 Perform Jenkins Builds (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
  - MDW55 - Build
  - Designer Build
- - Designer Publish or Designer Preview
- 
-   
-Upload the following files to /prod/ecom2/local/apps/MdwPlugin(or Preview) on lxdenvmtc143.dev.qintra.com:
-  com.centurylink.mdw.designer.core/updateSite:
-    plugins/com.centurylink.mdw.designer.core_X.X.X.jar
-  com.centurylink.mdw.designer.ui/updateSite:
-    site.xml
-    plugins/com.centurylink.mdw.designer.ui_X.X.X.jar
-    features/com.centurylink.mdw.designer.feature_X.X.X.jar
+ - Designer Publish (or Designer Preview)
+    
+Upload any needed files to /prod/ecom2/local/apps/MdwPlugin(or Preview) on lxdenvmtc143.dev.qintra.com:
 (Other plugins required in com.centurylink.mdw.designer.feature/feature.xml should already be present.
  If versions have changed, the newer versions may need to be uploaded (esp. cucumber.eclipse).
     
-Log into the server (as your CUID) and chmod -R a+rwx /prod/ecom2/local/apps/MdwPlugin/* (or MdwPluginPreview/*)
-
 Test updating Eclipse (Mars/Neon) to the new build.
   Update Site URL: http://lxdenvmtc143.dev.qintra.com:6101/MdwPlugin
                or: http://lxdenvmtc143.dev.qintra.com:6101/MdwPluginPreview
 
-Manually upload (TODO: automate) the designer core jar to the MDW Maven repo: (TODO: automate) 
-http://lxdenvmtc143.dev.qintra.com:7021/maven/repository
-
-NOTE: Going forward we will only deliver an RCP build when there is a pressing need.
 Build com.centurylink.mdw.designer.rcp according to the instructions in its build_readme.txt.
 
 Check in the MANIFEST and XML files that were automatically updated with the new Designer version.
