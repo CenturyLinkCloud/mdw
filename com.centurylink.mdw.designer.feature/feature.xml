@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.centurylink.mdw.designer.feature"
-      label="MDWDesignerFeature" version="9.0.0"
+      label="MDWDesignerFeature" version="9.0.6"
       provider-name="CenturyLink"
       plugin="com.centurylink.mdw.designer.ui">
 
@@ -46,6 +46,14 @@ All Rights Reserved
          version="0.0.0"
          unpack="false"/>
 
+   <!-- for in-place editor support on windows -->
+   <plugin
+         id="org.eclipse.ui.win32"
+         download-size="0"
+         install-size="0"
+         version="3.3.0.v20160505-1310"
+         unpack="false"/> 
+         
    <!-- cucumber testing support -->         
    <plugin
          id="cucumber.eclipse.editor"

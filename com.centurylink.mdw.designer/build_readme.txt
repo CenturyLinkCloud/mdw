@@ -2,7 +2,7 @@ Steps for Building and Publishing MDW Designer Plug-In:
 -------------------------------------------------------
 
 In com.centurylink.mdw.designer:
- - Update mdwDesignerVersion
+ - Update mdwDesignerVersion in gradle.properties
 
 (If changed) Export tutorial docx files to HTML in MDW 5.5 mdw-hub/web/doc/tutorials.
 In com.centurylink.mdw.designer.ui:

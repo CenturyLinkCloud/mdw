@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="MDW Designer RCP" uid="com.centurylink.mdw.designer.rcp" id="com.centurylink.mdw.plugin.rcp.product" application="com.centurylink.mdw.plugin.rcp.application" version="9.0.2" useFeatures="true" includeLaunchers="true">
+<product name="MDW Designer RCP" uid="com.centurylink.mdw.designer.rcp" id="com.centurylink.mdw.plugin.rcp.product" application="com.centurylink.mdw.plugin.rcp.application" version="9.0.6" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/com.centurylink.mdw.plugin.rcp/icons/about.gif"/>
       <text>
          Model-Driven Workflow
-Version 9.0.2
+Version 9.0.6
 Copyright (c) 2017 CenturyLink, Inc.
 All Rights Reserved
       </text>
@@ -17,8 +17,10 @@ All Rights Reserved
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Declipse.p2.MD5Check=false -Xms512m -Xmx1024m -XX:MaxPermSize=256m</vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <vmArgs>-Declipse.p2.MD5Check=false -Xms512m -Xmx1024m -XX:MaxPermSize=256m
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="/com.centurylink.mdw.plugin.rcp/icons/mdw_16.gif" i32="/com.centurylink.mdw.plugin.rcp/icons/mdw_32.png" i48="/com.centurylink.mdw.plugin.rcp/icons/mdw_48.png" i64="/MDWDesignerRCP/icons/mdw_64.png" i128="/com.centurylink.mdw.plugin.rcp/icons/mdw_128.png"/>
@@ -32,19 +34,22 @@ All Rights Reserved
       </win>
    </launcher>
 
-
    <vm>
-      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</windows>
+      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
    </vm>
 
    <plugins>
    </plugins>
 
    <features>
-      <feature id="org.eclipse.rcp" version="4.5.2.v20160212-1500"/>
-      <feature id="org.eclipse.equinox.p2.user.ui" version="2.2.102.v20160129-0947"/>
-      <feature id="com.centurylink.mdw.designer.feature" version="9.0.2"/>
+      <feature id="org.eclipse.rcp" version="4.6.2.v20161124-1400"/>
+      <feature id="org.eclipse.equinox.p2.user.ui" version="2.2.201.v20161124-1529"/>
+      <feature id="com.centurylink.mdw.designer.feature" version="9.0.6"/>
    </features>
 
+   <configurations>
+      <property name="osgi.instance.area.default" value="@user.home/workspace" />
+      <property name="osgi.splashPath" value="platform:/base/plugins/com.centurylink.mdw.plugin.rcp" />
+   </configurations>
 
 </product>

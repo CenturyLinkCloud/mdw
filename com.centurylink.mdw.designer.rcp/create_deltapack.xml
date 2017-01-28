@@ -52,7 +52,7 @@
 
     <property
       name="buildRepo"
-      value="http://download.eclipse.org/eclipse/updates/4.5/" />
+      value="http://download.eclipse.org/eclipse/updates/4.6/" />
     <property
       name="projectDir"
       value="${basedir}" />

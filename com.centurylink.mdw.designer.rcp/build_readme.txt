@@ -1,6 +1,13 @@
 Steps for Building and Publishing a New MDW RCP Release:
 --------------------------------------------------------
 
+Build the latest framework code:
+ - (In MDW 5.5) Run the mdw-framework/buildAll Gradle task.
+
+In com.centurylink.mdw.designer:
+ - Update mdwDesignerVersion in gradle.properties
+ - Run gradle task buildFeature to build the plugin locally 
+
 In com.centurylink.mdw.designer.rcp:
  - Update MDWDesignerRCP.product (in text editor):
      product version
@@ -8,37 +15,26 @@ In com.centurylink.mdw.designer.rcp:
      aboutText
      (if upgrading Eclipse version): org.eclipse.rcp and org.eclipse.equinox.p2.user.ui features
  - Update product_build.xml:
-     (if upgrading Eclipse version): eclipse.home and deltapack properties
+     eclipse.home and deltapack properties (reflect current runtime)
+ - If you don't already have the matching Eclipse deltapack locally:
+     A. Copy from \\eldnp1515dm4.ad.qintra.com\union_station\IT\MDW\eclipse\deltapack
+       OR..
+     B. Can be built through Ant:
+        - update buildId and buildRepo properties in create_deltapack.xml to match current release
+        - run Ant build target in create_deltapack.xml (in same JRE as workspace) -> output is in rcp.deltapack/featureTemp2
  - Update build.properties to reflect your local environment:
-     - JavaSE-1.7, JavaSE-1.8
+     JavaSE-1.7
+     JavaSE-1.8
+     x86.jre
+     x64.jre
 
 Build the Workspace (ctrl-b).
 
-deltapack - (if you don't have)
- - Can be built through Ant (create_deltapack.xml -- Run in same JRE as workspace)
-   - output is in rcp.deltapack/featureTemp2 for me 
- or...
- - Copy deltapack from following location and extract it 
- 	\\eldnp1515dm4.ad.qintra.com\union_station\IT\MDW\eclipse\deltapack
- - set eclipse.home and deltapack properties in product_build.xml
-
-Run the "buildProduct" target in product_build.xml
+Run the "build" target in product_build.xml
 (make sure Ant launch config is set to run in same JRE as workspace)
 
-(TODO: automate the following)
-Explode the zips and modify as follows (TODO automate):
- - Add these two lines to configuration/config.ini:
-osgi.splashPath=platform:/base/plugins/com.centurylink.mdw.plugin.rcp
-osgi.instance.area.default=@user.home/workspace
- - Copy org.eclipse.ui.win32_3.2.500.v20150423-0822.jar from eclipse_4.6.2/plugins into the plugins directory for in-place editor support
-   (TODO try automating by adding to feature.xml)
- - Copy in the appropriate jre directory depending on architecture (jdk_1.8 64 bit or 32 bit) 
-
-DO NOT launch the executable before repackaging.
-
-Zip the mdw directory (not mdw_X.X.X since in-place upgrading would make this dir name out-of-date).
-Rename the mdw directory you just zipped up to mdw_x.x.x_xxx and test that it is launchable.
-Publish the zips to \\eldnp1515dm4.ad.qintra.com\union_station\IT\MDW\RCP
+Make sure the exploded build output under tmp is launchable for both x86 and x64.
+Publish the zips from build/zip to \\eldnp1515dm4.ad.qintra.com\union_station\IT\MDW\RCP
 
 Upload the following files to the /prod/ecom2/local/apps/MdwRcp directory on lxdenvmtc143.dev.qintra.com:
    - com.centurylink.mdw.designer.feature/site.xml
@@ -58,10 +54,6 @@ Log into the server (as your CUID) and chmod -R a+rwx /prod/ecom2/local/apps/Mdw
 Test updating a previous RCP installation to the new build.
 Update Site URL: http://lxdenvmtc143.dev.qintra.com:6101/MdwRcp
 
-Web Start:
-----------
-  - No longer supported: see mdw-webstart project readme.txt.
-  
 Errors when Testing:
 --------------------
 If MDWDesignerRCP.product cannot be launched for debug due to missing dependencies,
