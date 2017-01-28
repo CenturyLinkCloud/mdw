@@ -3,7 +3,7 @@ Building MDW 6
 
 1 - Edit gradle.properties to set the new build numbers.
     a) Update mdwVersion.
-    b) Update mdwDesignerVersion.
+    b) Update mdwDesignerVersion to latest published version.
     
 2 - Edit mdw-hub/package.json:
     - Update version (omit -SNAPSHOT)

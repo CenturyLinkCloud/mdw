@@ -39,7 +39,7 @@ task publishDesigner(type: Copy) {
         include "features/com.centurylink.mdw.designer.feature_${mdwDesignerVersion}.jar"
         include "plugins/com.centurylink.mdw.designer.ui_${mdwDesignerVersion}.jar"
     }
-    into previewPublishDir
+    into publishDir
     fileMode 0644
 }
 
