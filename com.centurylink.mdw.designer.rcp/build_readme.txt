@@ -1,11 +1,17 @@
 Steps for Building and Publishing a New MDW RCP Release:
 --------------------------------------------------------
 
+TODO:
+generated output missing icons/help/swing_support, maybe other needed stuff
+
 Build the latest framework code:
  - (In MDW 5.5) Run the mdw-framework/buildAll Gradle task.
 
 In com.centurylink.mdw.designer:
- - Update mdwDesignerVersion in gradle.properties
+ - Make sure the following in gradle.properties match your environment and desired build version:
+    mdwOutputDir
+    eclipseDir
+    mdwDesignerVersion
  - Run gradle task buildFeature to build the plugin locally 
 
 In com.centurylink.mdw.designer.rcp:
