@@ -74,9 +74,16 @@ task buildDist(type: Exec) {
         commandLine 'grunt', '--no-color'
 }
 
+task copyClasspathMeta(type: Copy) {
+    from("src") {
+        include "META-INF/services/*"
+    }
+    into "build/classes"
+}
+
 // excludes JavaDocs by default
 war {
-    dependsOn buildDist
+    dependsOn(buildDist, copyClasspathMeta)
     
     archiveName = "mdw-${version}.war"
 
