@@ -17,6 +17,8 @@ All Rights Reserved
    </configIni>
 
    <launcherArgs>
+      <programArgs>-pluginCustomization custom.ini
+      </programArgs>
       <vmArgs>-Declipse.p2.MD5Check=false -Dosgi.framework.extensions=org.eclipse.wst.jsdt.nashorn.extension
 -Xms512m -Xmx1024m -XX:MaxPermSize=256m
       </vmArgs>
@@ -26,7 +28,6 @@ All Rights Reserved
 
    <windowImages i16="/com.centurylink.mdw.designer.rcp/icons/mdw_16.gif" i32="/com.centurylink.mdw.designer.rcp/icons/mdw_32.png" i48="/com.centurylink.mdw.designer.rcp/icons/mdw_48.png" i64="/com.centurylink.mdw.designer.rcp/icons/mdw_64.png" i128="/com.centurylink.mdw.designer.rcp/icons/mdw_128.png" i256="/com.centurylink.mdw.designer.rcp/icons/mdw_256.png"/>
 
-
    <launcher name="mdw">
       <solaris/>
       <win useIco="false">
@@ -35,7 +36,6 @@ All Rights Reserved
             winMediumHigh="/com.centurylink.mdw.designer.rcp/icons/mdw.bmp"/>
       </win>
    </launcher>
-
 
    <vm>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
@@ -54,5 +54,12 @@ All Rights Reserved
       <property name="osgi.instance.area.default" value="@user.home/workspace" />
       <property name="osgi.splashPath" value="platform:/base/plugins/com.centurylink.mdw.plugin.rcp" />
    </configurations>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
 
 </product>

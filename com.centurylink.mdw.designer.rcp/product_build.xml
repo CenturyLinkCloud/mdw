@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="MDWDesignerRCP" default="buildProduct">
+<project name="MDWDesignerRCP" default="build">
 
   <!-- TODO: gradle build -->
   <property file="../com.centurylink.mdw.designer/gradle.properties" />
@@ -18,8 +18,12 @@
 	  <copy todir="tmp/x86/mdw/jre">
 	    <fileset dir="${x86.jre}"/>
 	  </copy>
+    <!-- TODO why are these needed to include resources (help, images)? -->
+    <copy file="buildDirectory/buildRepo/plugins/com.centurylink.mdw.designer.core_${mdwDesignerVersion}.jar"
+      todir="tmp/x86/mdw/plugins" />
 		<copy file="buildDirectory/buildRepo/plugins/com.centurylink.mdw.designer.ui_${mdwDesignerVersion}.jar"
-		  todir="tmp/x86/mdw/plugins" /> <!-- TODO why is this needed to include swing_support and help? -->
+		  todir="tmp/x86/mdw/plugins" />
+    <copy file="custom.ini" todir="tmp/x86/mdw" />
 		<zip basedir="tmp/x86" destfile="build/zip/mdw_${mdwDesignerVersion}_x86.zip" />
 		
     <!-- package x64 with jre -->
@@ -27,8 +31,12 @@
     <copy todir="tmp/x64/mdw/jre">
       <fileset dir="${x64.jre}"/>
     </copy>
+		<!-- TODO why are these needed to include resources (help, images)? -->
+    <copy file="buildDirectory/buildRepo/plugins/com.centurylink.mdw.designer.core_${mdwDesignerVersion}.jar"
+      todir="tmp/x64/mdw/plugins" />
     <copy file="buildDirectory/buildRepo/plugins/com.centurylink.mdw.designer.ui_${mdwDesignerVersion}.jar"
-      todir="tmp/x64/mdw/plugins" /> <!-- TODO why is this needed to include swing_support and help? -->
+      todir="tmp/x64/mdw/plugins" />
+    <copy file="custom.ini" todir="tmp/x64/mdw" />
     <zip basedir="tmp/x64" destfile="build/zip/mdw_${mdwDesignerVersion}_x64.zip" />
 	</target>
 	

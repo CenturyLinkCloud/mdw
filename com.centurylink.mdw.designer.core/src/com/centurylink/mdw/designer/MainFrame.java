@@ -77,8 +77,6 @@ public class MainFrame extends JFrame implements WindowListener {
 		setSize(900, 720);
 		addWindowListener(this);
 		current_page = null;
-		ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource("images/designer.gif"));
-		setIconImage(icon.getImage());
 		rootPane.setDoubleBuffered(false);
 		font_textfield = new Font("courier", Font.PLAIN, 12);
 		dao = null;

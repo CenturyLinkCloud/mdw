@@ -1,9 +1,6 @@
 Steps for Building and Publishing a New MDW RCP Release:
 --------------------------------------------------------
 
-TODO:
-generated output missing icons/help/swing_support, maybe other needed stuff
-
 Build the latest framework code:
  - (In MDW 5.5) Run the mdw-framework/buildAll Gradle task.
 
@@ -59,6 +56,9 @@ Log into the server (as your CUID) and chmod -R a+rwx /prod/ecom2/local/apps/Mdw
 
 Test updating a previous RCP installation to the new build.
 Update Site URL: http://lxdenvmtc143.dev.qintra.com:6101/MdwRcp
+
+
+**** TROUBLESHOOTING ****
 
 Errors when Testing:
 --------------------

@@ -74,5 +74,4 @@ public class Activator extends AbstractUIPlugin
     }
     return workBench.getActiveWorkbenchWindow();
   }
-
 }
