@@ -46,11 +46,14 @@ public class GroovyTestCaseRun extends TestCaseRun {
     TestCaseProcess testCaseProcess;
     TestCaseAsset testCaseAsset;
 
+    private List<String> classpathList;
+
     public GroovyTestCaseRun(TestCase testcase, int run, String masterRequestId,
             DesignerDataAccess dao, LogMessageMonitor monitor, Map<String, ProcessVO> processCache,
-            boolean isLoadTest, boolean oneThreadPerCase, boolean oldNamespaces)
+            boolean isLoadTest, boolean oneThreadPerCase, boolean oldNamespaces, List<String> classpathList)
     throws DataAccessException {
         super(testcase, run, masterRequestId, dao, monitor, processCache, isLoadTest, oneThreadPerCase, oldNamespaces);
+        this.classpathList = classpathList;
         if (!testcase.isLegacy()) {
             if (dao.isVcsPersist()) {
                 File caseFile = testcase.getCaseFile();
@@ -106,6 +109,8 @@ public class GroovyTestCaseRun extends TestCaseRun {
             }
             else {
                 CompilerConfiguration compilerConfig = new CompilerConfiguration();
+                if (classpathList != null)
+                  compilerConfig.setClasspathList(classpathList);
                 compilerConfig.setScriptBaseClass(GroovyTestCaseScript.class.getName());
 
                 Binding binding = new Binding();

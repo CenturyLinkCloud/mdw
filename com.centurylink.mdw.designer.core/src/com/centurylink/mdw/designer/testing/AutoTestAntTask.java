@@ -369,7 +369,7 @@ public class AutoTestAntTask extends MatchingTask {
                 run = new GherkinTestCaseRun(testCase, 0, masterRequestId, new DesignerDataAccess(designerDataAccess), monitor, processCache, oldNamespaces, resultDir, stubbing, stubPort);
             }
             else if (testCase.isGroovy())
-                run = new GroovyTestCaseRun(testCase, 0, masterRequestId, new DesignerDataAccess(designerDataAccess), monitor, processCache, loadTests, true, oldNamespaces);
+                run = new GroovyTestCaseRun(testCase, 0, masterRequestId, new DesignerDataAccess(designerDataAccess), monitor, processCache, loadTests, true, oldNamespaces, null);
             else
                 run = new TestCaseRun(testCase, 0, masterRequestId, new DesignerDataAccess(designerDataAccess), monitor, processCache, loadTests, true, oldNamespaces);
             File executeLog = new File(resultDir.getPath() + "/" + testCase.getCaseName() + ".log");

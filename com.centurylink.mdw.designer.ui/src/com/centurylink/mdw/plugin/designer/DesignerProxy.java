@@ -2611,7 +2611,12 @@ public class DesignerProxy
       if (testCase.isGherkin())
         run = new GherkinTestCaseLaunch(testCase.getTestCase(), runNum, masterRequestId, new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, testCase.isLoadTest(), true, testCase.getProject().isOldNamespaces(), project);
       else if (testCase.isGroovy())
-        run = new GroovyTestCaseRun(testCase.getTestCase(), runNum, masterRequestId, new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, testCase.isLoadTest(), true, testCase.getProject().isOldNamespaces());
+      {
+        List<String> classpathList = null; // new ArrayList<>();
+        // TODO: add java project classpath into the list
+        project.getJavaProject().getRawClasspath();
+        run = new GroovyTestCaseRun(testCase.getTestCase(), runNum, masterRequestId, new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, testCase.isLoadTest(), true, testCase.getProject().isOldNamespaces(), classpathList);
+      }
       else
         run = new TestCaseRun(testCase.getTestCase(), runNum, masterRequestId, new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, testCase.isLoadTest(), true, testCase.getProject().isOldNamespaces());
       run.prepareTest(createReplace, resultDir, verbose, singleServer, stubbing, log);
