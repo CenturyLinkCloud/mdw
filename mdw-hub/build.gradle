@@ -85,7 +85,6 @@ war {
     }
     
     from("src") {
-        // src/META-INF/mdw includes stuff that was copied in by copyWebMeta
         include "META-INF/mdw/**"
         include "META-INF/services/**" 
     }
