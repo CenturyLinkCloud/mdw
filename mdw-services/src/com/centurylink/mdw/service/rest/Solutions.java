@@ -75,7 +75,7 @@ public class Solutions extends JsonRestService {
     @ApiOperation(value="Create a solution or add a member to an existing solution",
         notes="Supported memberTypes: requests, tasks, processes, solutions.", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Solution", paramType="body", dataType="com.centurylink.mdw.model.value.project.Solution")})
+        @ApiImplicitParam(name="Solution", paramType="body", dataType="com.centurylink.mdw.model.workflow.Solution")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         String id = getSegment(path, 1);
@@ -123,7 +123,7 @@ public class Solutions extends JsonRestService {
     @Path("/{solutionId}")
     @ApiOperation(value="Update a solution", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Solution", paramType="body", required=true, dataType="com.centurylink.mdw.model.value.project.Solution")})
+        @ApiImplicitParam(name="Solution", paramType="body", required=true, dataType="com.centurylink.mdw.model.workflow.Solution")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         String id = getSegment(path, 1);

@@ -66,7 +66,7 @@ public class Packages extends JsonRestService implements JsonExportable {
     @ApiOperation(value="Export JSON content for a package or list of packages",
         response=Package.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="packages", paramType="query", dataType="array")})
+        @ApiImplicitParam(name="packages", paramType="query", allowMultiple=true, dataType="com.centurylink.mdw.model.workflow.Package")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
 
         Query query = getQuery(path, headers);

@@ -283,8 +283,8 @@ public class Tasks extends JsonRestService implements JsonExportable {
         notes="If {action} is 'Create', then the body contains a task template logical Id; otherwise it contains a TaskAction to be performed.",
         response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Task", paramType="body", dataType="com.centurylink.mdw.model.value.task.TaskInstanceVO"),
-        @ApiImplicitParam(name="TaskAction", paramType="body", dataType="com.centurylink.mdw.model.value.task.TaskActionVO")})
+        @ApiImplicitParam(name="Task", paramType="body", dataType="com.centurylink.mdw.model.task.TaskAction"),
+        @ApiImplicitParam(name="TaskAction", paramType="body", dataType="com.centurylink.mdw.model.task.TaskAction")})
     public JSONObject post(String path, JSONObject content, Map<String, String> headers)
             throws ServiceException, JSONException {
         String segOne = getSegment(path, 1);
@@ -361,8 +361,8 @@ public class Tasks extends JsonRestService implements JsonExportable {
         notes="If indexes is present, body is TaskIndexes; otherwise body is a Task." +
           "If subData is not present, returns task summary info. Options for subData: 'values', 'indexes'")
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Task", paramType="body", dataType="com.centurylink.mdw.model.value.task.TaskInstanceVO"),
-        @ApiImplicitParam(name="SubData", paramType="body", dataType="java.util.Map")})
+        @ApiImplicitParam(name="Task", paramType="body", dataType="com.centurylink.mdw.model.task.TaskInstance"),
+        @ApiImplicitParam(name="SubData", paramType="body", dataType="java.lang.Object")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         String id = getSegment(path, 1);

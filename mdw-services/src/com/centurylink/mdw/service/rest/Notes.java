@@ -94,7 +94,7 @@ public class Notes extends JsonRestService {
     @ApiOperation(value="Create an instance note",
         notes="Note must contain a valid user.", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Note", paramType="body", dataType="com.centurylink.mdw.model.data.common.InstanceNote")})
+        @ApiImplicitParam(name="Note", paramType="body", dataType="com.centurylink.mdw.model.note.InstanceNote")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         try {
@@ -123,7 +123,7 @@ public class Notes extends JsonRestService {
     @ApiOperation(value="Update an instance note",
         notes="Note must contain a valid user, and content ownerId must match path.", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Note", paramType="body", dataType="com.centurylink.mdw.model.data.common.InstanceNote")})
+        @ApiImplicitParam(name="Note", paramType="body", dataType="com.centurylink.mdw.model.note.InstanceNote")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         String ownerId = getSegment(path, 1);

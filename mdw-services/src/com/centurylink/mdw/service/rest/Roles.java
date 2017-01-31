@@ -80,7 +80,7 @@ public class Roles extends JsonRestService {
     @ApiOperation(value="Create a role or add a user to an existing role",
         notes="If users/{cuid} is present, user is added to role.", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Workgroup", paramType="body", dataType="com.centurylink.mdw.model.value.user.UserRoleVO")})
+        @ApiImplicitParam(name="Workgroup", paramType="body", dataType="com.centurylink.mdw.model.user.Role")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         String name = getSegment(path, 1);
@@ -128,7 +128,7 @@ public class Roles extends JsonRestService {
     @Path("/{roleName}")
     @ApiOperation(value="Update a role", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Role", paramType="body", required=true, dataType="com.centurylink.mdw.model.value.user.UserRoleVO")})
+        @ApiImplicitParam(name="Role", paramType="body", required=true, dataType="com.centurylink.mdw.model.user.Role")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
 

@@ -217,6 +217,9 @@ public class ResourceReaderExtension implements ReaderExtension {
     }
 
     private Type typeFromString(String type) {
+        if (type == null || type.isEmpty()) {
+            return null;
+        }
         final PrimitiveType primitive = PrimitiveType.fromName(type);
         if (primitive != null) {
             return primitive.getKeyClass();

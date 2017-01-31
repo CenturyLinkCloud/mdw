@@ -86,7 +86,7 @@ public class Workgroups extends JsonRestService {
     @ApiOperation(value="Create a workgroup or add a user to an existing workgroup",
         notes="If users/{cuid} is present, user is added to workgroup.", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Workgroup", paramType="body", dataType="com.centurylink.mdw.model.value.user.UserGroupVO")})
+        @ApiImplicitParam(name="Workgroup", paramType="body", dataType="com.centurylink.mdw.model.user.Workgroup")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         String name = getSegment(path, 1);
@@ -133,7 +133,7 @@ public class Workgroups extends JsonRestService {
     @Path("/{groupName}")
     @ApiOperation(value="Update a workgroup", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Workgroup", paramType="body", required=true, dataType="com.centurylink.mdw.model.value.user.UserGroupVO")})
+        @ApiImplicitParam(name="Workgroup", paramType="body", required=true, dataType="com.centurylink.mdw.model.user.Workgroup")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
 

@@ -196,7 +196,7 @@ public class Processes extends JsonRestService implements JsonExportable {
     @ApiOperation(value="Update value(s) for a process instance",
         notes="Values are created or updated based on the passed JSON object.", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Values", paramType="body", dataType="java.util.Map")})
+        @ApiImplicitParam(name="Values", paramType="body", dataType="java.lang.Object")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         String id = getSegment(path, 1);
