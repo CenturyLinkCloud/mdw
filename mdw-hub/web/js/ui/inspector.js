@@ -146,7 +146,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
             }
           }
         }
-        else if (typeof $scope.activeTab[tabProps[0]] === 'object') {
+        else if (typeof $scope.activeTab[tabProps[0]] === 'object' && tabProps[0] !== '_attribute') {
           // named object equates to array (eg: process.definition.Variables)
           var arrObj = angular.copy($scope.activeTab[tabProps[0]]);
           var arrObjProps = util.getProperties(arrObj);
@@ -177,30 +177,40 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
       $scope.applyTabArray(tabArr, tabInfo);
     }
     else if (typeof $scope.activeTab === 'object') {
-      // evaluate each object prop against tabInfo object
-      var tabObj = tabInfo;
-      var atProps = util.getProperties($scope.activeTab);
-      for (var i = 0; i < atProps.length; i++) {
-        var atProp = atProps[i];
-        var v = $scope.activeTab[atProp];
-        if (v.startsWith('${') && v.endsWith('}')) {
-          var evalsTo = $parse(v.substring(2, v.length - 1))({it: tabObj});
-          if (evalsTo !== null)
-            tabObj[$scope.activeTab[atProp]] = evalsTo;
-        }
-        if (atProp == '_url' && tabObj[$scope.activeTab[atProp]]) {
-          $scope.activeTabValues[i-1].url = tabObj[$scope.activeTab[atProp]];
-        }
-        else {
-          $scope.activeTabValues.push({
-            name: atProp,
-            value: tabObj[$scope.activeTab[atProp]]
-          });
+      if (tabProps[0] === '_attribute') {
+        var attrname = $scope.activeTab[tabProps[0]].name;
+        $scope.activeTabValues.push({
+          name: attrname,
+          value: tabInfo.attributes[attrname],
+          isMarkdown: $scope.activeTab[tabProps[0]].markdown
+        });
+      }
+      else {      
+        // evaluate each object prop against tabInfo object
+        var tabObj = tabInfo;
+        var atProps = util.getProperties($scope.activeTab);
+        for (var i = 0; i < atProps.length; i++) {
+          var atProp = atProps[i];
+          var v = $scope.activeTab[atProp];
+          if (v.startsWith('${') && v.endsWith('}')) {
+            var evalsTo = $parse(v.substring(2, v.length - 1))({it: tabObj});
+            if (evalsTo !== null)
+              tabObj[$scope.activeTab[atProp]] = evalsTo;
+          }
+          if (atProp == '_url' && tabObj[$scope.activeTab[atProp]]) {
+            $scope.activeTabValues[i-1].url = tabObj[$scope.activeTab[atProp]];
+          }
+          else {
+            $scope.activeTabValues.push({
+              name: atProp,
+              value: tabObj[$scope.activeTab[atProp]]
+            });
+          }
         }
       }
     }
     else {
-      // string indicates value is a object property name on tabInfo (object)
+      // string indicates value is an object property name on tabInfo (object)
       tabInfo = tabInfo[$scope.activeTab];
       for (var prop in tabInfo) {
         if (tabInfo.hasOwnProperty(prop)) {
@@ -247,6 +257,9 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
               }
               else if (prop == 'processmap') {
                 // TODO
+              }
+              else if (prop == 'Java') {
+                val.language = 'java';
               }
               if (InspectorTabs.assetAttrs.indexOf(prop) != -1) {
                 val.asset = { path: tabInfo[prop] };
@@ -396,9 +409,27 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
       var canvasElem = angular.element(workflowElem[0].getElementsByClassName('mdw-canvas'));
       var panelElem = angular.element(elem[0].getElementsByClassName('mdw-inspector-panel'));
 
+      scope.openInspector = function() {
+        elem[0].style.left = workflowElem[0].getBoundingClientRect().left + 'px';
+        scope.initInspector();
+        elem[0].style.display = 'block';
+      };
       scope.closeInspector = function() {
         elem[0].style.display = 'none';
         workflowElem[0].style.height = canvasElem[0].offsetHeight + 'px';
+      };
+      scope.maxInspector = function() {
+        angular.element(elem[0].getElementsByClassName('mdw-inspector-content'))[0].style.height = '100%';        
+        elem[0].style.height = '80%';
+        elem[0].style.top = '100px';
+        panelElem[0].style.height = '90%';
+      };
+      // removes extra styling added by max or close
+      scope.initInspector = function() {
+        angular.element(elem[0].getElementsByClassName('mdw-inspector-content'))[0].style.height = '';        
+        elem[0].style.height = '';
+        elem[0].style.top = '';
+        panelElem[0].style.height = '';
       };
       
       // show
@@ -407,11 +438,7 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
         scope.$apply();
         
         if (elem[0].style.display == 'none') {
-          // set inspector left position
-          elem[0].style.left = workflowElem[0].getBoundingClientRect().left + 'px';
-          
-          // show inspector
-          elem[0].style.display = 'block';
+          scope.openInspector();
         }
         
         // set workflow element height to accommodate inspector

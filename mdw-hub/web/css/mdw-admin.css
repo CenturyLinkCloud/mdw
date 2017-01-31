@@ -467,6 +467,12 @@
   border-top-left-radius: 0;   
   border-bottom-left-radius: 0;   
 }
+.mdw-markdown-content {
+	padding-left: 5px;
+  overflow: auto;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;	
+}
 .mdw-value-name {
   font-style: italic;
 }
@@ -743,6 +749,7 @@
   width: auto;
   bottom: 15px;
   right: 50px;
+  border: 1px solid #757575;  
   border-radius: 4px;
   box-shadow: 2px 2px 4px #757575; 
 }
@@ -801,12 +808,15 @@
 }
 .mdw-inspector-label {
   margin-right: 10px;
-  white-space: nowrap;  
+  white-space: nowrap;
 }
 .mdw-inspector-value {
   width: 100%;
   overflow-x: none;
   height: 18px;"  
+}
+.mdw-inspector-btn {
+	padding-left: 0 !important;
 }
 
 .panel-heading a {

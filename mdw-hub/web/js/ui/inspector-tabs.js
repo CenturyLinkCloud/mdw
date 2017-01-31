@@ -40,7 +40,9 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
          */
         Attributes: 'attributes',
         Versions: {},
-        Documentation: {},
+        Documentation: { 
+          '_attribute': { name: 'Documentation', markdown: true }
+        },
         Monitoring: {}
       },
       activity: {

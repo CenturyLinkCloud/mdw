@@ -10,9 +10,15 @@
           <span class="mdw-heading-sub">{{workflowObject.name}}</span>
         </div>
         <div class="mdw-heading-actions">
-          <a class="btn" ng-click="closeInspector()">
+          <a class="btn mdw-inspector-btn" ng-click="initInspector()">
+            <span class="glyphicon glyphicon-minus"></span>
+          </a> 
+          <a class="btn mdw-inspector-btn" ng-click="maxInspector()">
+            <span class="glyphicon glyphicon-unchecked"></span>
+          </a> 
+          <a class="btn mdw-inspector-btn" ng-click="closeInspector()">
             <span class="glyphicon glyphicon-remove"></span>
-          </a>            
+          </a>
         </div>
       </div>
       <div class="mdw-inspector-content">
@@ -23,7 +29,9 @@
         </ul>
         <!-- tab values for object -->
         <div class="mdw-inspector-values" ng-if="!activeTabValues[0].values && !drilledValue">
-          <div ng-repeat="tabValue in activeTabValues" style="display:flex" ng-if="!drilledValue">
+          <div class="mdw-markdown-content" ng-if="activeTabValues[0].isMarkdown" ng-bind-html="activeTabValues[0].value | markdown | unsafe">
+          </div>
+          <div ng-repeat="tabValue in activeTabValues" ng-if="!drilledValue && !activeTabValues[0].isMarkdown" style="display:flex">
             <div class="mdw-inspector-label" ng-if="tabValue.name && tabValue.extended">
               <a href="" ng-click="drillIn(tabValue)">{{tabValue.name}}</a>:
             </div>
@@ -56,7 +64,7 @@
               ng-bind-html="drilledValue.value | highlight:drilledValue.language | unsafe"></code></pre>
           </div>
         </div>
-        <!-- temporary drilled-in value -->
+        <!-- drilled-in value -->
         <div class="mdw-inspector-values" ng-if="drilledValue">
           <div class="mdw-resource-content">
             <pre><code class="mdw-code" 
