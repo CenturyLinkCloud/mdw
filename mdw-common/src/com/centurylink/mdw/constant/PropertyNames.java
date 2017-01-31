@@ -90,6 +90,7 @@ public class PropertyNames {
     public static final String MDW_TASKMGR_PROCESS_DYNAMIC_JAVA_JSF_ANNOTATIONS = "mdw.taskmgr.dynamic.java.jsf.annotations";
     public static final String MDW_DYNAMIC_JAVA_COMPILE_OPTIONS = "mdw.dynamic.java.compile.options";
     public static final String TASK_RESUME_NOTIFY_ENDPOINT = "mdw.task.resume.notify.endpoint";
+    public static final String MDW_LIVEVIEW_WEBSOCKET_URL = "mdw.liveview.websocket.url";
 
     public static final String MDW_JAR_LIBRARY_PATH = "mdw.jar.library.path";
     public static final String MDW_COMPILER_CLASSPATH = "mdw.compiler.classpath";

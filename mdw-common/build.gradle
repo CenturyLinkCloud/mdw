@@ -75,6 +75,9 @@ dependencies {
     compile group: "org.mongodb", name: "mongodb-driver-core", version: "3.3.0"
     compile group: "org.mongodb", name: "bson", version: "3.3.0"
     
+	// Java WebSocket Server
+	compile group: "org.java-websocket", name: "Java-WebSocket", version: "1.3.0"
+	
     // TODO: remove mbeng
     compile group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"
 }

@@ -644,4 +644,30 @@ public class ApplicationContext {
         }
         return autoTestWebSocketPort;
     }
+
+    private static int liveViewWebSocketPort;
+    public static int getLiveViewWebSocketPort() {
+        if (liveViewWebSocketPort == 0) {
+            String url = PropertyManager.getProperty(PropertyNames.MDW_LIVEVIEW_WEBSOCKET_URL);
+            if (url != null) {
+                try {
+                    int lastColon = url.lastIndexOf(':');
+                    if (lastColon == -1)
+                        throw new MalformedURLException("Cannot find port in websocket URL: " + url);
+                    int slash = url.indexOf('/', lastColon + 1);
+                    if (slash > 0)
+                        liveViewWebSocketPort = Integer.parseInt(url.substring(lastColon + 1, slash));
+                    else
+                        liveViewWebSocketPort = Integer.parseInt(url.substring(lastColon + 1));
+                }
+                catch (Exception ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                }
+            }
+            else {
+                liveViewWebSocketPort = 8283;
+            }
+        }
+        return liveViewWebSocketPort;
+    }
  }
