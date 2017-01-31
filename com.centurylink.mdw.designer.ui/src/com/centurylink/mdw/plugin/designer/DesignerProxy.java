@@ -21,6 +21,7 @@ import java.util.zip.ZipException;
 
 import javax.swing.UIManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -2612,9 +2614,16 @@ public class DesignerProxy
         run = new GherkinTestCaseLaunch(testCase.getTestCase(), runNum, masterRequestId, new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, testCase.isLoadTest(), true, testCase.getProject().isOldNamespaces(), project);
       else if (testCase.isGroovy())
       {
-        List<String> classpathList = null; // new ArrayList<>();
-        // TODO: add java project classpath into the list
-        project.getJavaProject().getRawClasspath();
+        List<String> classpathList = new ArrayList<String>();
+        IClasspathEntry[] iClassPathEntries = project.getJavaProject().getResolvedClasspath(true);
+        for (IClasspathEntry iClassPathEntry: iClassPathEntries){
+           StringBuffer projectPath = new StringBuffer(StringUtils.substringBeforeLast(project.getProjectDirWithFwdSlashes(), "/"));
+           String classPath= iClassPathEntry.getPath().toString();
+           if(iClassPathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE || iClassPathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT)
+             classpathList.add(projectPath.append("/").append(classPath.split("/")[1]).append("/build/classes").toString());
+           else
+             classpathList.add(classPath);
+        }
         run = new GroovyTestCaseRun(testCase.getTestCase(), runNum, masterRequestId, new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, testCase.isLoadTest(), true, testCase.getProject().isOldNamespaces(), classpathList);
       }
       else
