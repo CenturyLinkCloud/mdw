@@ -16,8 +16,6 @@
        http://dadacoalition.org/yedit
  - Tomcat 7 or 8:
      - https://tomcat.apache.org
-	 - This workaround is needed for Tomcat 8.5:
-	   http://balusc.omnifaces.org/2016/07/integrating-tomcat-85x-and-tomee-7x-in.html
  - Chrome and Postman
      - https://www.google.com/chrome
 	 - https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop
