@@ -14,7 +14,6 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheEnabled;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.soccom.SoccomClient;
 
 public class SimpleLogger extends AbstractStandardLoggerBase implements CacheEnabled {
 
@@ -29,7 +28,6 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheEna
     private static HashMap<String,SimpleLogger> loggers = null;
 
     private int loglevel = INFO_LEVEL;
-    private String watcher = null;
     private PrintStream logfile = null;
     private boolean toConsole;
 
@@ -74,6 +72,7 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheEna
 
     // set loglevel, logfile and watcher
     public void refreshCache() {
+        super.refreshCache();
         String v = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_LEVEL);
         if (v==null) loglevel = INFO_LEVEL;
         else if (v.equalsIgnoreCase("DEBUG")||v.equals("3")) loglevel = DEBUG_LEVEL;
@@ -82,7 +81,6 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheEna
         else if (v.equalsIgnoreCase("TRACE")||v.equals("5")) loglevel = TRACE_LEVEL;
         else if (v.equalsIgnoreCase("WARN")||v.equals("1")) loglevel = WARN_LEVEL;
         else loglevel = INFO_LEVEL;
-        watcher = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_WATCHER);
         v = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_FILE);
         if (v!=null && v.length()>0) {
             try {
@@ -102,7 +100,7 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheEna
         if (logfile!=null) {
             logfile.println(line);
         }
-        if (watcher!=null) sendToWatcher(line);
+        sendToWatchers(line);
     }
 
     private void logexception(char type, String tag, String message, Throwable throwable) {
@@ -115,7 +113,7 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheEna
             logfile.print(line);
             throwable.printStackTrace(logfile);
         }
-        if (watcher!=null) sendToWatcher(line);
+        sendToWatchers(line);
     }
 
     public void debug(String logtodisplay) {
@@ -211,23 +209,6 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheEna
     public void mdwDebug(String message) {
         if (!isMdwDebugEnabled()) return;
         logline('m', null, message);
-    }
-
-    private void sendToWatcher(String message) {
-        SoccomClient client = null;
-        try {
-            String[] spec = watcher.split(":");
-            String host = spec.length>0?spec[0]:getDefaultHost();
-            String port = spec.length>1?spec[1]:getDefaultPort();
-            client = new SoccomClient(host, port, null);
-            client.putreq(message);
-        } catch (Exception e) {
-            watcher = null;
-            System.out.println("Exception when sending log messages to watcher - turn it off");
-            e.printStackTrace();
-        } finally {
-            if (client!=null) client.close();
-        }
     }
 
     public boolean isEnabledFor(LogLevel level) {

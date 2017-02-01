@@ -4,10 +4,8 @@
 package com.centurylink.mdw.util.log.log4j;
 
 import java.io.PrintStream;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import com.centurylink.mdw.cache.CacheEnabled;
 import com.centurylink.mdw.util.log.AbstractStandardLoggerBase;
 
@@ -39,7 +37,8 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     public void debug(String logtodisplay) {
 
         if (isDebugEnabled()) {
-            logger.debug(logtodisplay);
+         //   logger.debug(logtodisplay);
+            logIt(LogLevel.DEBUG, logtodisplay, null);
         }
     }
 
@@ -49,7 +48,8 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     */
     public void debugException(String msg, Throwable throwable) {
         if (isDebugEnabled()) {
-            logger.debug(msg, throwable);
+          //  logger.debug(msg, throwable);
+            logIt(LogLevel.DEBUG, msg, throwable);
         }
     }
 
@@ -58,20 +58,23 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     */
     public void info(String logtodisplay) {
         if (isInfoEnabled()) {
-            logger.info(logtodisplay);
+          //  logger.info(logtodisplay);
+            logIt(LogLevel.INFO, logtodisplay, null);
         }
     }
 
     public void trace(String logtodisplay) {
         if (isTraceEnabled()) {
-            logger.trace(logtodisplay);
+        //    logger.trace(logtodisplay);
+            logIt(LogLevel.TRACE, logtodisplay, null);
         }
     }
 
     public void traceException(String msg, Throwable t) {
 
         if (isTraceEnabled()) {
-            logger.info(msg, t);
+         //   logger.info(msg, t);
+            logIt(LogLevel.TRACE, msg, t);
         }
      }
 
@@ -81,7 +84,8 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     public void infoException(String logtodisplay, Throwable throwable) {
 
         if (isInfoEnabled()) {
-            logger.info(logtodisplay, throwable);
+         //   logger.info(logtodisplay, throwable);
+            logIt(LogLevel.INFO, logtodisplay, throwable);
         }
      }
 
@@ -124,7 +128,8 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     public void severe(String logtodisplay) {
 
         if (isSevereEnabled()) {
-            logger.error(logtodisplay);
+       //     logger.error(logtodisplay);
+            logIt(LogLevel.ERROR, logtodisplay, null);
         }
     }
 
@@ -134,7 +139,8 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     public void severeException(String message, Throwable throwable) {
 
         if (isSevereEnabled()) {
-            logger.error(message, throwable);
+       //     logger.error(message, throwable);
+            logIt(LogLevel.ERROR, message, throwable);
         }
     }
 
@@ -144,7 +150,8 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
   public void warn(String logtodisplay) {
 
         if (isWarnEnabled()) {
-            logger.warn(logtodisplay);
+       //     logger.warn(logtodisplay);
+            logIt(LogLevel.WARN, logtodisplay, null);
         }
     }
 
@@ -154,7 +161,8 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     public void warnException(String logtodisplay, Throwable throwable) {
 
         if (isWarnEnabled()) {
-            logger.warn(logtodisplay, throwable);
+     //       logger.warn(logtodisplay, throwable);
+            logIt(LogLevel.WARN, logtodisplay, throwable);
         }
     }
 
@@ -183,7 +191,8 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     public void mdwDebug(String message) {
         if (isTraceEnabled()) {
              String line = generate_log_line('d', null, message);
-             logger.trace(line);
+      //       logger.trace(line);
+             logIt(LogLevel.TRACE, line, null);
         }
     }
 
@@ -194,11 +203,13 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     public void log(LogLevel level, String message) {
         if (isEnabledFor(level)) {
             logger.log(Level.toLevel(level.toString()), message);
+
         }
     }
 
     @Override
     public void refreshCache() {
+        super.refreshCache();
         // TODO refresh Log4J props on demand
     }
 
@@ -206,42 +217,48 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     public void exception(String tag, String message, Throwable e) {
         if (isSevereEnabled()) {
             String line = generate_log_line('e', tag, message);
-            logger.error(line, e);
+     //       logger.error(line, e);
+            logIt(LogLevel.ERROR, line, e);
         }
     }
 
     public void info(String tag, String message) {
         if (isInfoEnabled()) {
             String line = generate_log_line('i', tag, message);
-            logger.info(line);
+      //      logger.info(line);
+            logIt(LogLevel.INFO, line, null);
         }
     }
 
     public void debug(String tag, String message) {
          if (isDebugEnabled()) {
              String line = generate_log_line('d', tag, message);
-             logger.debug(line);
+  //           logger.debug(line);
+             logIt(LogLevel.DEBUG, line, null);
          }
     }
 
     public void warn(String tag, String message) {
         if (isWarnEnabled()) {
             String line = generate_log_line('w', tag, message);
-            logger.warn(line);
+  //          logger.warn(line);
+            logIt(LogLevel.WARN, line, null);
         }
     }
 
     public void severe(String tag, String message) {
         if (isSevereEnabled()) {
             String line = generate_log_line('w', tag, message);
-            logger.error(line);
+ //           logger.error(line);
+            logIt(LogLevel.ERROR, line, null);
         }
     }
 
     public void trace(String tag, String message) {
         if (isTraceEnabled()) {
             String line = generate_log_line('t', tag, message);
-            logger.trace(line);
+      //      logger.trace(line);
+            logIt(LogLevel.TRACE, line, null);
         }
     }
 
@@ -255,4 +272,41 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
         return printStream;
     }
 
+    private void logIt(LogLevel level, String message, Throwable t) {
+        switch (level.toString()) {
+        case "INFO":
+            if (t == null)
+                logger.info(message);
+            else
+                logger.info(message, t);
+            break;
+        case "ERROR":
+            if (t == null)
+                logger.error(message);
+            else
+                logger.error(message, t);
+            break;
+        case "DEBUG":
+            if (t == null)
+                logger.debug(message);
+            else
+                logger.debug(message, t);
+            break;
+        case "WARN":
+            if (t == null)
+                logger.warn(message);
+            else
+                logger.warn(message, t);
+            break;
+        case "TRACE":
+            if (t == null)
+                logger.trace(message);
+            else
+                logger.trace(message, t);
+            break;
+        default: break;
+        }
+
+        sendToWatchers(message);
+    }
 }

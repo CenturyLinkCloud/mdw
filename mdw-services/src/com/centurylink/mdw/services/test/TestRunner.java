@@ -173,8 +173,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
                 writeTestResultsXml(testCase);
             }
             else {
-                TestCaseList testCaseList = writeTestResults(testCase);
-                updateWebSocket(testCaseList);
+                writeTestResults(testCase);
             }
         }
     }
@@ -198,11 +197,12 @@ public class TestRunner implements Runnable, MasterRequestListener {
                 }
                 else {
                     fullTestCaseList = writeTestResults(testCase);
+                    if (fullTestCaseList != null)
+                        updateWebSocket(fullTestCaseList);
                 }
             }
         }
-        if (allDone && fullTestCaseList != null)
-            updateWebSocket(fullTestCaseList);
+
         return allDone;
     }
 
