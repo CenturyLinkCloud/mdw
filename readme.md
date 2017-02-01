@@ -34,7 +34,8 @@
    https://nodejs.org/en/download/current
  - Open a command prompt in the mdw-hub project directory
  - run `npm install`
- - run `bower install`
+ - run `npm install -g grunt-cli`
+ - run `npm install -g bower`
  
 1. Build the Project
  - Window > Show View > Other > Gradle (STS) > Gradle Tasks
