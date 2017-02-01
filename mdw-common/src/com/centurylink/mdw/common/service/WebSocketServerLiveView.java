@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
-package com.centurylink.mdw.base;
+package com.centurylink.mdw.common.service;
 
 import java.net.InetSocketAddress;
 
@@ -9,7 +9,6 @@ import org.java_websocket.WebSocketImpl;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.service.AbstractWebSocketServer;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.provider.StartupException;
