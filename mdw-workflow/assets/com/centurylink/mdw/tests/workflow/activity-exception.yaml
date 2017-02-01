@@ -7,6 +7,7 @@ process: # 14209
   activity: # 3 "2016-06-27 17:59:24"
     name: Which Case?
     status: Completed
+    result: error handler delegation
   activity: # 6 "2016-06-27 18:00:30"
     name: Invoke Subprocess with Error
     status: Completed
@@ -23,7 +24,7 @@ process: # 14209
         "endDate": "${today} ${~\\d\\d:\\d\\d:\\d\\d}",
         "id": ${~[0-9]*},
         "masterRequestId": "${masterRequestId}",
-        "message": "java.lang.RuntimeException: Help me, I'm an error\ncom.centurylink.mdw.tests.workflow.ThrowanException_A26.execute(ThrowanException_A26.java:23)\ncom.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:86)\ncom.centurylink.mdw.workflow.activity.DefaultActivityImpl.execute(DefaultActivityImpl.java:29)\ncom.centurylink.mdw.services.process.BaseActivity.execute(BaseActivity.java:218)\ncom.centurylink.mdw.services.process.BaseActivity.executeTimed(BaseActivity.java:227)\ncom.centurylink.mdw.services.process.ProcessEngineDriver.executeActivity(ProcessEngineDriver.java:304)\ncom.centurylink.mdw.services.process.ProcessEngineDriver.processEvent(ProcessEngineDriver.java:537)\ncom.centurylink.mdw.services.process.ProcessEngineDriver.processEvents(ProcessEngineDriver.java:503)\ncom.centurylink.mdw.services.process.InternalEventDriver.run(InternalEventDriver.java:25)\ncom.centurylink.mdw.container.plugins.CommonThreadPool$Work.run(CommonThreadPool.java:257)\njava.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)\njava.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\njava.lang.Thread.run(Thread.java:745)\ncom.centurylink.mdw.container.plugins.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:226)",
+        "message": "java.lang.RuntimeException: Help me, I'm an error\ncom.centurylink.mdw.tests.workflow.ThrowanException_A26.execute(ThrowanException_A26.java:23)\ncom.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:86)\ncom.centurylink.mdw.workflow.activity.DefaultActivityImpl.execute(DefaultActivityImpl.java:29)\ncom.centurylink.mdw.services.process.BaseActivity.execute(BaseActivity.java:210)\ncom.centurylink.mdw.services.process.BaseActivity.executeTimed(BaseActivity.java:220)\ncom.centurylink.mdw.services.process.ProcessEngineDriver.executeActivity(ProcessEngineDriver.java:302)\ncom.centurylink.mdw.services.process.ProcessEngineDriver.processEvent(ProcessEngineDriver.java:535)\ncom.centurylink.mdw.services.process.ProcessEngineDriver.processEvents(ProcessEngineDriver.java:501)\ncom.centurylink.mdw.services.process.InternalEventDriver.run(InternalEventDriver.java:25)\ncom.centurylink.mdw.container.plugin.CommonThreadPool$Work.run(CommonThreadPool.java:251)\njava.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\njava.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\njava.lang.Thread.run(Thread.java:745)\ncom.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:220)",
         "name": "Throw an Exception",
         "processName": "MDWTestSubProcess2",
         "startDate": "${today} ${~\\d\\d:\\d\\d:\\d\\d}",
@@ -65,9 +66,11 @@ process: # 14210
   activity: # 26 "2016-06-27 18:00:00"
     name: Throw an Exception
     status: Cancelled
+    result: java.lang.RuntimeException: Help me, I'm an error...
   activity: # 26 "2016-06-27 18:00:30"
     name: Throw an Exception
     status: Completed
+    result: java.lang.RuntimeException: Help me, I'm an error...
   activity: # 29 "2016-06-27 18:00:30"
     name: Alternate path
     status: Completed
