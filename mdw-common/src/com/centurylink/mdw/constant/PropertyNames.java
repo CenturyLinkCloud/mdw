@@ -10,6 +10,7 @@ public class PropertyNames {
     public static final String MDW_LOGGING_FILE = "mdw.logging.file";
     public static final String MDW_LOGGING_DIR = "mdw.logging.dir";
     public static final String MDW_LOGGING_WATCHER = "mdw.logging.watcher"; // used internally, set by regression tester "<host>:<port>:<timeout>";
+    public static final String MDW_LOGGING_WEB_WATCHER = "mdw.logging.web.watcher"; // used for watching using WebSocketServer
     // container service providers
     public static final String MDW_CONTAINER_DATASOURCE_PROVIDER= "mdw.container.datasource_provider";
     public static final String MDW_CONTAINER_JMS_PROVIDER= "mdw.container.jms_provider";
@@ -90,7 +91,7 @@ public class PropertyNames {
     public static final String MDW_TASKMGR_PROCESS_DYNAMIC_JAVA_JSF_ANNOTATIONS = "mdw.taskmgr.dynamic.java.jsf.annotations";
     public static final String MDW_DYNAMIC_JAVA_COMPILE_OPTIONS = "mdw.dynamic.java.compile.options";
     public static final String TASK_RESUME_NOTIFY_ENDPOINT = "mdw.task.resume.notify.endpoint";
-    public static final String MDW_LIVEVIEW_WEBSOCKET_URL = "mdw.liveview.websocket.url";
+    public static final String MDW_WEBSOCKET_URL = "mdw.websocket.url";
 
     public static final String MDW_JAR_LIBRARY_PATH = "mdw.jar.library.path";
     public static final String MDW_COMPILER_CLASSPATH = "mdw.compiler.classpath";
@@ -169,7 +170,6 @@ public class PropertyNames {
     public static final String MDW_TEST_RESULTS_LOCATION = "mdw.test.results.location";
     public static final String MDW_FUNCTION_TESTS_SUMMARY_FILE = "mdw.function.tests.summary.file";
     public static final String MDW_FEATURE_TESTS_SUMMARY_FILE = "mdw.feature.tests.summary.file";
-    public static final String MDW_AUTOTEST_WEBSOCKET_URL = "mdw.autotest.websocket.url";
 
     // Ldap configuration
     public static final String LDAP_PROTOCOL = "LDAP/Protocol";
