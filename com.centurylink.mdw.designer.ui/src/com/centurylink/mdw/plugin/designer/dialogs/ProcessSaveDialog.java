@@ -51,7 +51,6 @@ public class ProcessSaveDialog extends TrayDialog
   private Button newMajorButton;
 
   private Button rememberSelectionCheckbox;
-  private Button pushToRemoteCheckbox;
   private Button carryOverrideAttributesCheckbox;
   private Button keepLockedCheckbox;
   private Button enforceValidationCheckbox;
@@ -146,12 +145,6 @@ public class ProcessSaveDialog extends TrayDialog
     if (process.getProject().isFilePersist())
     {
       boolean overwrite = overwriteButton.getSelection();
-      if (process.getProject().isRemote() && process.getProject().isGitVcs())
-      {
-        pushToRemoteCheckbox = new Button(composite, SWT.CHECK);
-        pushToRemoteCheckbox.setText("Push to Git remote");
-        enablePushToRemote(!overwrite);
-      }
       // override attributes
       carryOverrideAttributesCheckbox = new Button(composite, SWT.CHECK);
       carryOverrideAttributesCheckbox.setText("Carry forward override attributes");
@@ -203,7 +196,6 @@ public class ProcessSaveDialog extends TrayDialog
       if (tray.getMessage().startsWith("Any override attributes"))
         getButton(Dialog.OK).setText(respondingToClose ? "Save" : "OK");
       tray.close();
-      enablePushToRemote(false);
       enableCarryOverrideAttrs(false, true);
     }
     else
@@ -214,7 +206,6 @@ public class ProcessSaveDialog extends TrayDialog
         tray.close();
         getButton(Dialog.OK).setText(respondingToClose ? "Save" : "OK");
       }
-      enablePushToRemote(true);
       enableCarryOverrideAttrs(process.overrideAttributesApplied(), process.overrideAttributesApplied());
     }
   }
@@ -248,12 +239,6 @@ public class ProcessSaveDialog extends TrayDialog
         + "',\nwhich is flagged as a production environment.\n\nPlease click 'Force Save' to confirm.\n\nThis action will be audit logged.";
 
       getButton(Dialog.OK).setText("Force Save");
-    }
-    else if (process.getProject().isRemote() && process.getProject().isGitVcs() &&
-        !pushToRemoteCheckbox.getSelection() && !getButton(Dialog.OK).getText().equals("Save Local"))
-    {
-      warning = "Process will be saved locally.\nServer will not be updated until changes are pushed to Remote";
-      getButton(Dialog.OK).setText("Save Local");
     }
     else if (MdwPlugin.getSettings().isWarnOverrideAttrsNotCarriedForward() && process.getProject().isFilePersist()
         && !overwriteButton.getSelection() && !carryOverrideAttributesCheckbox.getSelection()
@@ -307,19 +292,10 @@ public class ProcessSaveDialog extends TrayDialog
       prefsStore.setValue(PreferenceConstants.PREFS_PROCESS_SAVE_INCREMENT, "");
     }
     prefsStore.setValue(PreferenceConstants.PREFS_ENFORCE_PROCESS_VALIDATION_RULES, enforceValidationCheckbox.getSelection());
-    if (process.getProject().isFilePersist())
-    {
-      if (process.getProject().isRemote() && process.getProject().isGitVcs())
-        prefsStore.setValue(PreferenceConstants.PREFS_PUSH_TO_GIT_REMOTE_WHEN_SAVING, pushToRemoteCheckbox.getSelection());
-    }
-    else
-    {
+    if (!process.getProject().isFilePersist())
       prefsStore.setValue(PreferenceConstants.PREFS_KEEP_PROCESSES_LOCKED_WHEN_SAVING, keepLockedCheckbox.getSelection());
-    }
     if (carryOverrideAttributesCheckbox != null)
       prefsStore.setValue(PreferenceConstants.PREFS_CARRY_FORWARD_OVERRIDE_ATTRS, carryOverrideAttributesCheckbox.getSelection());
-
-
 
     close();
   }
@@ -371,16 +347,6 @@ public class ProcessSaveDialog extends TrayDialog
       }
     });
     return hasInstances;
-  }
-
-  private void enablePushToRemote(boolean enabled)
-  {
-    if (pushToRemoteCheckbox != null)
-    {
-      if (!enabled)
-        pushToRemoteCheckbox.setSelection(false);
-      pushToRemoteCheckbox.setEnabled(enabled);
-    }
   }
 
   private void enableCarryOverrideAttrs(boolean enabled, boolean checked)

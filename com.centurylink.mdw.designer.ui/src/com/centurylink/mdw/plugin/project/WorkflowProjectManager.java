@@ -885,4 +885,9 @@ public class WorkflowProjectManager implements IResourceChangeListener
       throw new MdwSecurityException(ex.getMessage(), ex);
     }
   }
+
+  public void makeLocal(WorkflowProject remoteProject)
+  {
+    // TODO: implement change to com.centurylink.mdw.plugin.xml
+  }
 }

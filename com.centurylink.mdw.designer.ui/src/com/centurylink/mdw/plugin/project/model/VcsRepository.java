@@ -172,10 +172,6 @@ public class VcsRepository
   public boolean isSyncAssetArchive() { return syncAssetArchive; }
   public void setSyncAssetArchive(boolean sync) { this.syncAssetArchive = sync; }
 
-  private boolean gitProjectSync;
-  public boolean isGitProjectSync() { return gitProjectSync; }
-  public void setGitProjectSync(boolean sync) { this.gitProjectSync = sync; }
-
   public void clear()
   {
     provider = null;

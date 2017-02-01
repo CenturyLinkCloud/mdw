@@ -777,8 +777,7 @@ public class WorkflowPackage extends WorkflowElement implements Versionable, Att
     {
       if (getProject().isRemote())
       {
-        if (!getProject().isGitVcs() || getProject().getMdwVcsRepository().isGitProjectSync())
-          return false; // only unlocked remote projects can be edited
+        return false;
       }
       else
       {

@@ -41,7 +41,7 @@ public class ProjectSettingsPropertyPage extends ProjectPropertyPage
   private Text gitRepositoryUrlTextField;
   private Text gitBranchTextField;
   private Text assetLocalPathTextField;
-  private SwitchButton gitSyncSwitch;
+  private SwitchButton syncSwitch;
   private Button includeArchiveCheckbox;
   private Text filesToIgnoreTextField;
   private Text hostTextField;
@@ -59,7 +59,7 @@ public class ProjectSettingsPropertyPage extends ProjectPropertyPage
   private String originalHost;
   private int originalPort;
   private String originalContextRoot;
-  private boolean originalGitSync;
+  private boolean originalSync;
   private boolean originalIncludeArchive;
   private boolean originalRefreshServerCache;
 
@@ -276,20 +276,12 @@ public class ProjectSettingsPropertyPage extends ProjectPropertyPage
       if (getProject().isGitVcs())
       {
         // git: sync project
-        gitSyncSwitch = new SwitchButton(composite, SWT.NONE);
-        gitSyncSwitch.setTextForSelect("Unlocked");
-        gitSyncSwitch.setTextForUnselect("Synced");
-        gitSyncSwitch.addSelectionListener(new SelectionAdapter()
-        {
-          public void widgetSelected(SelectionEvent e)
-          {
-            getProject().getMdwVcsRepository().setGitProjectSync(gitSyncSwitch.getSelection());
-          }
-        });
-        boolean gitSync = getProject().getMdwVcsRepository().isGitProjectSync();
-        gitSyncSwitch.setSelection(gitSync);
-        gitSyncSwitch.setEnabled(false);
-        originalGitSync = gitSync;
+        syncSwitch = new SwitchButton(composite, SWT.NONE);
+        syncSwitch.setTextForSelect("Unlocked");
+        syncSwitch.setTextForUnselect("Synced");
+        syncSwitch.setSelection(true);
+        syncSwitch.setEnabled(false);
+        originalSync = true;
 
         // new Label(composite, SWT.NONE).setText("(Unlock to enable asset editing)");
       }
@@ -448,8 +440,6 @@ public class ProjectSettingsPropertyPage extends ProjectPropertyPage
         getProject().getMdwVcsRepository().setBranch(originalGitBranch);
       if (originalAssetLocalPath != null)
         getProject().getMdwVcsRepository().setLocalPath(originalAssetLocalPath);
-      if (getProject().isGitVcs())
-        getProject().getMdwVcsRepository().setGitProjectSync(originalGitSync);
       getProject().getMdwVcsRepository().setSyncAssetArchive(originalIncludeArchive);
     }
     if (originalJdbcUrl != null)
@@ -487,7 +477,6 @@ public class ProjectSettingsPropertyPage extends ProjectPropertyPage
       if (!gitRepositoryUrlTextField.getText().trim().equals(originalGitRepositoryUrl)
           || !gitBranchTextField.getText().trim().equals(originalGitBranch)
           || !assetLocalPathTextField.getText().trim().equals(originalAssetLocalPath)
-          || (gitSyncSwitch != null && gitSyncSwitch.getSelection() != originalGitSync)
           || (includeArchiveCheckbox != null && includeArchiveCheckbox.getSelection() != originalIncludeArchive))
       {
         getProject().getMdwVcsRepository().setEntrySource("projectSettingsPropertyPage");
@@ -530,6 +519,12 @@ public class ProjectSettingsPropertyPage extends ProjectPropertyPage
       if (!contextRootTextField.getText().trim().equals(originalContextRoot))
       {
         getProject().fireElementChangeEvent(ChangeType.SETTINGS_CHANGE, getProject().getWebContextRoot());
+      }
+      if (syncSwitch != null && syncSwitch.getSelection() != originalSync)
+      {
+        WorkflowProjectManager.getInstance().makeLocal(getProject());
+        getProject().fireElementChangeEvent(ChangeType.SETTINGS_CHANGE, getProject().getMdwVcsRepository());
+        MessageDialog.openInformation(getShell(), "Remote Project Unlocked", getProject().getName() + " has been unlocked.  Please close any open assets and refresh.");
       }
     }
     if (updateServerCacheCheckbox.getSelection() != originalRefreshServerCache)

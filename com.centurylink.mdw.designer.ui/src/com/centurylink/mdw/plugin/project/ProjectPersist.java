@@ -69,7 +69,6 @@ public class ProjectPersist extends DefaultHandler
   public static final String MDW_VCS_REPO_URL = "mdwVcsRepoUrl";
   public static final String MDW_VCS_USER = "mdwVcsUser";
   public static final String MDW_VCS_SYNC_ARCHIVE = "mdwVcsSyncArchive";
-  public static final String MDW_VCS_GIT_SYNC = "mdwVcsGitSync";
   public static final String MDW_UPDATE_SERVER_CACHE = "mdwUpdateServerCache";
 
   public static final int DEFAULT_STUB_PORT = 7183;
@@ -415,11 +414,6 @@ public class ProjectPersist extends DefaultHandler
 
     if (workflowProject.getPersistType() == PersistType.Git)
     {
-      if (workflowProject.isGitVcs())
-      {
-        String gitSync = getPersistentProperty(workflowProject.getSourceProject(), MDW_VCS_GIT_SYNC);
-        workflowProject.getMdwVcsRepository().setGitProjectSync(!"false".equalsIgnoreCase(gitSync));
-      }
       String archiveSync = getPersistentProperty(workflowProject.getSourceProject(), MDW_VCS_SYNC_ARCHIVE);
       workflowProject.getMdwVcsRepository().setSyncAssetArchive("true".equalsIgnoreCase(archiveSync));
     }
@@ -504,8 +498,6 @@ public class ProjectPersist extends DefaultHandler
 
       if (workflowProject.getPersistType() == PersistType.Git)
       {
-        if (workflowProject.isGitVcs())
-          setPersistentProperty(project, MDW_VCS_GIT_SYNC, String.valueOf(workflowProject.getMdwVcsRepository().isGitProjectSync()));
         setPersistentProperty(project, MDW_VCS_SYNC_ARCHIVE, String.valueOf(workflowProject.getMdwVcsRepository().isSyncAssetArchive()));
       }
 

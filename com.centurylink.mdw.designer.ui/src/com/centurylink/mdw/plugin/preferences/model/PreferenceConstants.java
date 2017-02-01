@@ -64,7 +64,6 @@ public interface PreferenceConstants
 
   public static final String PREFS_PROCESS_SAVE_INCREMENT = "MdwProcessSaveIncrement";
   public static final String PREFS_ASSET_SAVE_INCREMENT = "MdwAssetSaveIncrement";
-  public static final String PREFS_PUSH_TO_GIT_REMOTE_WHEN_SAVING = "MdwPushToGitRemoteWhenSaving";
   public static final String PREFS_CARRY_FORWARD_OVERRIDE_ATTRS = "MdwCarryForwardOverrideAttrs";
   public static final String PREFS_KEEP_PROCESSES_LOCKED_WHEN_SAVING = "MdwKeepProcessesLockedWhenSaving";
   public static final String PREFS_KEEP_RESOURCES_LOCKED_WHEN_SAVING = "MdwKeepResourcesLockedWhenSaving";

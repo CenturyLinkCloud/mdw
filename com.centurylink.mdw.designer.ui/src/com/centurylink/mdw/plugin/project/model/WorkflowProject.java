@@ -2861,8 +2861,7 @@ public class WorkflowProject extends WorkflowElement implements Comparable<Workf
     {
       if (isRemote())
       {
-        if (!isGitVcs() || getMdwVcsRepository().isGitProjectSync())
-          return false; // only unlocked remote projects can be edited
+        return false;
       }
       else
       {

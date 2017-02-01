@@ -199,6 +199,7 @@ public class ProcessExplorerActionGroup extends ActionGroup
   private IAction jconsoleAction;
   private IAction formatFunctionTestResultsAction;
   private IAction formatLoadTestResultsAction;
+  private IAction unlockAction;
 
   private IAction myTasksAction; // TODO maybe submenu
 
@@ -292,6 +293,7 @@ public class ProcessExplorerActionGroup extends ActionGroup
     webToolsAction = createWebToolsAction();
     sortToolbarAction = createSortToolbarAction();
     filterToolbarAction = createFilterToolbarAction();
+    unlockAction = createUnlockAction();
 
     eventManagerAction = createSwingLaunchAction("Event Manager", null, "event_mgr", "EventManagerHandler");
     threadPoolManagerAction = createSwingLaunchAction("Thread Pool Manager", null, "thread_pool_mgr", "ThreadPoolManagerHandler");
@@ -1559,6 +1561,7 @@ public class ProcessExplorerActionGroup extends ActionGroup
     action.setText("Run Start Page...");
     return action;
   }
+
   private IAction createDebugAction()
   {
     IAction action = new Action()
@@ -2147,6 +2150,27 @@ public class ProcessExplorerActionGroup extends ActionGroup
     action.setId(MdwMenuManager.MDW_MENU_PREFIX + "launch.web.tools");
     action.setText(launchAction.getLabel());
     action.setImageDescriptor(launchAction.getImageDescriptor());
+    return action;
+  }
+
+  private IAction createUnlockAction()
+  {
+    IAction action = new Action()
+    {
+      public void run()
+      {
+        if (unlockApplies(getSelection()))
+        {
+          WorkflowProject project = (WorkflowProject)getSelection().getFirstElement();
+          WorkflowProjectManager.getInstance().makeLocal(project);
+          project.fireElementChangeEvent(ChangeType.SETTINGS_CHANGE, project.getMdwVcsRepository());
+          MessageDialog.openInformation(getViewSite().getShell(), "Remote Project Unlocked", project.getName() + " has been unlocked.  Please close any open assets and refresh.");
+        }
+      }
+    };
+    action.setId(MdwMenuManager.MDW_MENU_PREFIX + "unlock");
+    action.setText("Unlock");
+
     return action;
   }
 
@@ -2913,6 +2937,19 @@ public class ProcessExplorerActionGroup extends ActionGroup
       {
         LegacyExpectedResults expectedResult = (LegacyExpectedResults) selection.getFirstElement();
         return expectedResult.getActualResult().exists();
+      }
+    }
+    return false;
+  }
+
+  public boolean unlockApplies(IStructuredSelection selection)
+  {
+    if (selection.size() == 1)
+    {
+      if (selection.getFirstElement() instanceof WorkflowProject)
+      {
+        WorkflowProject workflowProject = (WorkflowProject) selection.getFirstElement();
+        return workflowProject.isFilePersist() && workflowProject.isRemote();
       }
     }
     return false;

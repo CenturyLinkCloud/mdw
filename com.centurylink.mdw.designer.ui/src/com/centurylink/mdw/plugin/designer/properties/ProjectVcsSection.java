@@ -3,6 +3,7 @@
  */
 package com.centurylink.mdw.plugin.designer.properties;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.swt.widgets.Composite;
 
@@ -108,24 +109,26 @@ public class ProjectVcsSection extends PropertySection implements IFilter, Eleme
       {
         // for git: sync switch
         gitSyncEditor = new PropertyEditor(project, PropertyEditor.TYPE_SWITCH);
-        gitSyncEditor.setLabel("Git Repo Project");
+        gitSyncEditor.setLabel("");
         //gitSyncEditor.setComment("(Unlock to enable asset editing)");
         gitSyncEditor.addValueChangeListener(new ValueChangeListener()
         {
           public void propertyValueChanged(Object newValue)
           {
-            project.getMdwVcsRepository().setGitProjectSync(Boolean.parseBoolean(newValue.toString()));
-            WorkflowProjectManager.updateProject(project);
-            project.fireElementChangeEvent(ChangeType.SETTINGS_CHANGE, project.getMdwVcsRepository());
+            boolean unlocked = !Boolean.parseBoolean(newValue.toString());
+            if (unlocked)
+            {
+              WorkflowProjectManager.getInstance().makeLocal(project);
+              project.fireElementChangeEvent(ChangeType.SETTINGS_CHANGE, project.getMdwVcsRepository());
+              MessageDialog.openInformation(getShell(), "Remote Project Unlocked", project.getName() + " has been unlocked.  Please close any open assets and refresh.");
+            }
           }
         });
         gitSyncEditor.render(composite);
         SwitchButton switchBtn = (SwitchButton) gitSyncEditor.getWidget();
         switchBtn.setTextForSelect("Unlocked");
         switchBtn.setTextForUnselect("Synced");
-        gitSyncEditor.setValue(project.getMdwVcsRepository().isGitProjectSync());
-        //gitSyncEditor.setEditable(!project.isReadOnly());
-        gitSyncEditor.setEditable(false);
+        gitSyncEditor.setValue(true);
       }
       // include archive checkbox
       includeArchiveEditor = new PropertyEditor(project, PropertyEditor.TYPE_CHECKBOX);
@@ -171,12 +174,6 @@ public class ProjectVcsSection extends PropertySection implements IFilter, Eleme
           String newLocalPath = repository.getLocalPath();
           if (!assetLocalPathEditor.getValue().equals(newLocalPath))
             assetLocalPathEditor.setValue(newLocalPath);
-          if (project.isGitVcs())
-          {
-            boolean newGitSync = repository.isGitProjectSync();
-            if (gitSyncEditor != null && !gitSyncEditor.getValue().equals(String.valueOf(newGitSync)))
-              gitSyncEditor.setValue(newGitSync);
-          }
           boolean newSyncAssets = repository.isSyncAssetArchive();
           if (includeArchiveEditor != null && !includeArchiveEditor.getValue().equals(String.valueOf(newSyncAssets)))
             includeArchiveEditor.setValue(newSyncAssets);

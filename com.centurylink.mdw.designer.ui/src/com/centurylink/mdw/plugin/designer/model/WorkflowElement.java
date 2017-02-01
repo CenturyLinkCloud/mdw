@@ -377,8 +377,7 @@ public abstract class WorkflowElement implements IStructuredSelection, IAdaptabl
     {
       if (getProject().isRemote())
       {
-        if (!getProject().isGitVcs() || getProject().getMdwVcsRepository().isGitProjectSync())
-          return false; // only unlocked remote projects can be edited
+        return false; // only unlocked remote projects can be edited
       }
       else
       {

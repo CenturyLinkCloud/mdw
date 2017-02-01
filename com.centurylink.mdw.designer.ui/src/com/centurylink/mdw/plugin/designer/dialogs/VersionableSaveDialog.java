@@ -30,8 +30,6 @@ public class VersionableSaveDialog extends TrayDialog
   public static final int CANCEL = 1;
   public static final int CLOSE_WITHOUT_SAVE = 2;
 
-  private static final String GIT_REMOTE_NOT_UNLOCKED = "Project is not unlocked,\nso asset cannot be pushed to remote";
-
   private Versionable versionable;
   public Versionable getVersionable() { return versionable; }
 
@@ -45,17 +43,14 @@ public class VersionableSaveDialog extends TrayDialog
   private Button newMinorButton;
   private Button newMajorButton;
   private CommentTray commentTray;
-  private WarningTray warningTray;
 
   private Button rememberSelectionCheckbox;
   private Button keepLockedCheckbox;
-  private Button pushToRemoteCheckbox;
   private Button enforceValidationCheckbox;
 
   private Button saveButton;
 
-  private boolean isGitRemote;
-  private boolean isGitRemoteUnlocked;
+  private boolean isVcsRemote;
 
   private boolean hasCloseWithoutSaveOption;
 
@@ -68,10 +63,8 @@ public class VersionableSaveDialog extends TrayDialog
   {
     super(shell);
     this.versionable = versionable;
-    isGitRemote = versionable.getProject().isRemote() && versionable.getProject().isGitVcs();
-    if (isGitRemote)
-      isGitRemoteUnlocked = !versionable.getProject().getMdwVcsRepository().isGitProjectSync();
     this.hasCloseWithoutSaveOption = closeWithoutSaveOption;
+    this.isVcsRemote = versionable.getProject().isRemote() && versionable.getProject().isFilePersist();
   }
 
   @Override
@@ -79,13 +72,7 @@ public class VersionableSaveDialog extends TrayDialog
   {
     super.create();
 
-    if (isGitRemote && !isGitRemoteUnlocked)
-    {
-      warningTray = new WarningTray(this);
-      warningTray.setMessage(GIT_REMOTE_NOT_UNLOCKED);
-      openTray(warningTray);
-    }
-    if (versionIncrement != Increment.Overwrite && (!isGitRemote || isGitRemoteUnlocked))
+    if (versionIncrement != Increment.Overwrite)
     {
       commentTray = new CommentTray();
       openTray(commentTray);
@@ -167,34 +154,9 @@ public class VersionableSaveDialog extends TrayDialog
     enforceValidationCheckbox.setText("Enforce asset validation rules");
     enforceValidationCheckbox.setSelection(prefsStore.getBoolean(PreferenceConstants.PREFS_ENFORCE_ASSET_VALIDATION_RULES));
 
-    if (versionable.getProject().isFilePersist())
+    if (isVcsRemote)
     {
-      if (isGitRemote)
-      {
-        pushToRemoteCheckbox = new Button(composite, SWT.CHECK);
-        pushToRemoteCheckbox.setText("Push to Remote");
-        enablePushToRemote(!overwriteButton.getSelection() && isGitRemoteUnlocked);
-        if (isGitRemoteUnlocked)
-        {
-          pushToRemoteCheckbox.addSelectionListener(new SelectionAdapter()
-          {
-            public void widgetSelected(SelectionEvent e)
-            {
-              if (pushToRemoteCheckbox.getSelection())
-              {
-                String comment = commentTray.getCommentText().getText();
-                saveButton.setEnabled(comment.trim().length() > 0);
-              }
-              else
-              {
-                saveButton.setEnabled(true);
-              }
-            }
-          });
-          if (!overwriteButton.getSelection())
-            pushToRemoteCheckbox.setSelection(prefsStore.getBoolean(PreferenceConstants.PREFS_PUSH_TO_GIT_REMOTE_WHEN_SAVING));
-        }
-      }
+      saveButton.setEnabled(false);
     }
     else
     {
@@ -234,12 +196,7 @@ public class VersionableSaveDialog extends TrayDialog
     prefsStore.setValue(PreferenceConstants.PREFS_ENFORCE_ASSET_VALIDATION_RULES, enforceValidationCheckbox.getSelection());
 
 
-    if (versionable.getProject().isFilePersist())
-    {
-      if (isGitRemote)
-        prefsStore.setValue(PreferenceConstants.PREFS_PUSH_TO_GIT_REMOTE_WHEN_SAVING, pushToRemoteCheckbox.getSelection());
-    }
-    else
+    if (!versionable.getProject().isFilePersist())
     {
       prefsStore.setValue(PreferenceConstants.PREFS_KEEP_RESOURCES_LOCKED_WHEN_SAVING, keepLockedCheckbox.getSelection());
     }
@@ -276,12 +233,6 @@ public class VersionableSaveDialog extends TrayDialog
   private void versionButtonSelected(SelectionEvent e)
   {
     boolean overwrite = overwriteButton.getSelection();
-    if (isGitRemote)
-    {
-      enablePushToRemote(!overwrite && isGitRemoteUnlocked);
-      if (!isGitRemoteUnlocked)
-        return;
-    }
 
     if (!overwrite)
     {
@@ -299,23 +250,13 @@ public class VersionableSaveDialog extends TrayDialog
     }
   }
 
-  private void enablePushToRemote(boolean enabled)
-  {
-    if (pushToRemoteCheckbox != null)
-    {
-      if (!enabled)
-        pushToRemoteCheckbox.setSelection(false);
-      pushToRemoteCheckbox.setEnabled(enabled);
-    }
-  }
-
   private ModifyListener trayModifyListener = new ModifyListener()
   {
     public void modifyText(ModifyEvent e)
     {
       String comment = commentTray.getCommentText().getText();
       boolean hasComment = comment.trim().length() > 0;
-      if (versionable.getProject().isProduction() || (pushToRemoteCheckbox != null && pushToRemoteCheckbox.getSelection()))
+      if (versionable.getProject().isProduction())
         saveButton.setEnabled(hasComment);
     }
   };

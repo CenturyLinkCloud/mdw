@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -169,8 +168,6 @@ public class DesignerProxy
   private CacheRefresh cacheRefresh;
   public CacheRefresh getCacheRefresh() { return cacheRefresh; }
 
-  private ServerGit serverGit;
-
   private AwtEnvironment awtEnvironment;
   public AwtEnvironment getAwtEnvironment() { return awtEnvironment; }
 
@@ -247,7 +244,6 @@ public class DesignerProxy
           {
             if (isGit)
             {
-              serverGit = new ServerGit(project, restfulServer);
               // update branch from Git
               if (progressMonitor != null)
                 progressMonitor.subTask("Retrieving Git status");
@@ -447,8 +443,7 @@ public class DesignerProxy
     Graph graph = flowchartPage.loadProcess(processVersion.getId(), null);
     flowchartPage.setProcess(graph);
     if (project.isRemote() && project.isFilePersist()) {
-      if (!project.isGitVcs() || project.getMdwVcsRepository().isGitProjectSync())
-        graph.setReadonly(true);
+      graph.setReadonly(true);
     }
     processVersion.setProcessVO(graph.getProcessVO());
     processVersion.setReadOnly(graph.isReadonly());
@@ -746,7 +741,6 @@ public class DesignerProxy
     if (!keepLocked)
       asset.setLockingUser(null);
 
-    boolean isNew = asset.getId() == null || asset.getId() == -1;
     Long id = dataAccess.getDesignerDataAccess().saveRuleSet(asset.getRuleSetVO());
     asset.getRuleSetVO().setId(id);
     asset.setModifyDate(new Date()); // roughly the same as db time hopefully
@@ -767,51 +761,7 @@ public class DesignerProxy
       }
     }
 
-    if (!isNew && asset.getProject().isGitVcs() && asset.getProject().isRemote())
-    {
-      IPreferenceStore prefsStore = MdwPlugin.getDefault().getPreferenceStore();
-      boolean pushToGit = prefsStore.getBoolean(PreferenceConstants.PREFS_PUSH_TO_GIT_REMOTE_WHEN_SAVING);
-      if (pushToGit)
-      {
-        try
-        {
-          commitAndPush(asset);
-          serverGit.pullAsset(asset);
-        }
-        catch (Exception ex)
-        {
-          throw new DataAccessException(ex.getMessage(), ex);
-        }
-      }
-    }
-
     cacheRefresh.fireRefresh(RuleSetVO.JAVA.equals(asset.getLanguage()));
-  }
-
-  private void commitAndPush(WorkflowAsset asset) throws Exception
-  {
-    String assetPath = asset.getVcsAssetPath();
-    if (!versionControl.isTracked(assetPath))
-      versionControl.add(assetPath);
-    String msg = asset.getRevisionComment();
-    List<String> paths = asset.getPackage().getVcsAssetMetaPaths();
-    paths.add(assetPath);
-    versionControl.commit(paths, msg);
-    versionControl.push();
-
-  }
-
-  private void commitAndPush(WorkflowProcess process) throws Exception
-  {
-    String assetPath = process.getVcsAssetPath();
-    if (!versionControl.isTracked(assetPath))
-      versionControl.add(assetPath);
-    // TODO: capture asset comments as when saving other types of assets
-    String msg = process.getLabel() + " saved by " + project.getUser().getUsername();
-    List<String> paths = process.getPackage().getVcsAssetMetaPaths();
-    paths.add(assetPath);
-    versionControl.commit(paths, msg);
-    versionControl.push();
   }
 
   public void deleteWorkflowAsset(final WorkflowAsset asset)
@@ -1490,24 +1440,6 @@ public class DesignerProxy
         throw new DataAccessException("Override attributes not applied");
       reloaded.getProcessVO().applyOverrideAttributes(overrideAttributes);
       getDesignerDataAccess().setOverrideAttributes(reloaded.getProcessVO());
-    }
-
-    if (version != 0 && process.getProject().isGitVcs() && process.getProject().isRemote())
-    {
-      IPreferenceStore prefsStore = MdwPlugin.getDefault().getPreferenceStore();
-      boolean pushToGit = prefsStore.getBoolean(PreferenceConstants.PREFS_PUSH_TO_GIT_REMOTE_WHEN_SAVING);
-      if (pushToGit)
-      {
-        try
-        {
-          commitAndPush(process);
-          serverGit.pullProcess(process);
-        }
-        catch (Exception ex)
-        {
-          throw new DataAccessException(ex.getMessage(), ex);
-        }
-      }
     }
 
     cacheRefresh.fireRefresh(reloaded.getProcessVO().hasDynamicJavaActivity());
