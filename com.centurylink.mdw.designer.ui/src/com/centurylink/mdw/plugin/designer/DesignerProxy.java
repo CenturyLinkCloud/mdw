@@ -21,7 +21,6 @@ import java.util.zip.ZipException;
 
 import javax.swing.UIManager;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -29,7 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -134,6 +133,7 @@ import com.centurylink.mdw.plugin.designer.properties.editor.AssetLocator;
 import com.centurylink.mdw.plugin.launch.GherkinTestCaseLaunch;
 import com.centurylink.mdw.plugin.launch.LogWatcher;
 import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
+import com.centurylink.mdw.plugin.project.ClasspathComputer;
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.JdbcDataSource;
 import com.centurylink.mdw.plugin.project.model.VcsRepository;
@@ -2611,23 +2611,21 @@ public class DesignerProxy
       TestCaseRun run;
 
       if (testCase.isGherkin())
+      {
         run = new GherkinTestCaseLaunch(testCase.getTestCase(), runNum, masterRequestId, new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, testCase.isLoadTest(), true, testCase.getProject().isOldNamespaces(), project);
+      }
       else if (testCase.isGroovy())
       {
-        List<String> classpathList = new ArrayList<String>();
-        IClasspathEntry[] iClassPathEntries = project.getJavaProject().getResolvedClasspath(true);
-        for (IClasspathEntry iClassPathEntry: iClassPathEntries){
-           StringBuffer projectPath = new StringBuffer(StringUtils.substringBeforeLast(project.getProjectDirWithFwdSlashes(), "/"));
-           String classPath= iClassPathEntry.getPath().toString();
-           if(iClassPathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE || iClassPathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT)
-             classpathList.add(projectPath.append("/").append(classPath.split("/")[1]).append("/build/classes").toString());
-           else
-             classpathList.add(classPath);
-        }
+        List<String> classpathList = null;
+        IJavaProject javaProject = project.getJavaProject();
+        if (javaProject != null && javaProject.exists())
+          classpathList = new ClasspathComputer(javaProject).getClasspathList();
         run = new GroovyTestCaseRun(testCase.getTestCase(), runNum, masterRequestId, new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, testCase.isLoadTest(), true, testCase.getProject().isOldNamespaces(), classpathList);
       }
       else
+      {
         run = new TestCaseRun(testCase.getTestCase(), runNum, masterRequestId, new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, testCase.isLoadTest(), true, testCase.getProject().isOldNamespaces());
+      }
       run.prepareTest(createReplace, resultDir, verbose, singleServer, stubbing, log);
       return run;
     }

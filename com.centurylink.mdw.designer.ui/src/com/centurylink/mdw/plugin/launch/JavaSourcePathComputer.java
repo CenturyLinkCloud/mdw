@@ -1,3 +1,6 @@
+/**
+ * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
+ */
 package com.centurylink.mdw.plugin.launch;
 
 import java.util.ArrayList;

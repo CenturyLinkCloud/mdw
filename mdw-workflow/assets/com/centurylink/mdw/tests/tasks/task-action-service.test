@@ -1,18 +1,7 @@
 // task-action-service
 import groovy.json.JsonSlurper
 import org.json.JSONObject
-
-def getJson(Map<String,String> map) {
-    if (map == null)
-        return null;
-    JSONObject jsonObj = new JSONObject();
-    for (String key : map.keySet()) {
-        String value = map.get(key);
-        if (value != null)
-            jsonObj.put(key, value);
-    }
-    return jsonObj;
-}
+import com.centurylink.mdw.util.JsonUtil
 
 start process("ManualTaskServices") {
     variables = [ jaxbVar: "<TaskJaxb/>" ] // missing required: #{jaxbVar.attributeTwo}
@@ -108,7 +97,7 @@ assert new JsonSlurper().parseText(response.content).status.message == "Missing 
 // set required value
 def values = [:]
 values["#{jaxbVar.attributeTwo}"] = "RequiredAttrValue"
-def putPayload = getJson(values);
+def putPayload = JsonUtil.getJson(values);
 println 'PUT request:\n' + putPayload.toString(2)
 response = put http("services/Tasks/${taskInst.id}/values") {
     user = 'mdwapp'

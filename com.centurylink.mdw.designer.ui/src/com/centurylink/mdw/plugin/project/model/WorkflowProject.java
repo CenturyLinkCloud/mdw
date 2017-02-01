@@ -926,7 +926,6 @@ public class WorkflowProject extends WorkflowElement implements Comparable<Workf
 
   public IJavaProject getJavaProject()
   {
-    assert(!isRemote());
     return WorkflowProjectManager.getJavaProject(sourceProjectName);
   }
 
