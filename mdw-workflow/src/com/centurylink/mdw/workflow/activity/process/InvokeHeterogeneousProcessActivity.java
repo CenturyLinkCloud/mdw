@@ -134,7 +134,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             String delayStr = getAttributeValue(DELAY_BETWEEN);
             int pDelay = (delayStr==null)?0:Integer.parseInt(delayStr);
             ProcessExecutor engine = getEngine();
-            String v = getAttributeValue(SYNCHRONOUS);
+            String v = getAttributeValueSmart(SYNCHRONOUS);
             synchronous = StringHelper.isEmpty(v) || v.equalsIgnoreCase("true");
             forceParallel = "true".equalsIgnoreCase(getAttributeValue(FORCE_PARALLEL));
             inService = engine.isInService();
