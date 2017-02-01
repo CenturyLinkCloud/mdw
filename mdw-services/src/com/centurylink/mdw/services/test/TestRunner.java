@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.common.service.MdwWebSocketServer;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
@@ -172,7 +173,8 @@ public class TestRunner implements Runnable, MasterRequestListener {
                 writeTestResultsXml(testCase);
             }
             else {
-                writeTestResults(testCase);
+                TestCaseList testCaseList = writeTestResults(testCase);
+                updateWebSocket(testCaseList);
             }
         }
     }
@@ -183,6 +185,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
     private synchronized boolean updateResults() throws JSONException, IOException {
 
         boolean allDone = true;
+        TestCaseList fullTestCaseList = null;
         for (TestCase testCase : testCaseList.getTestCases()) {
             if (!testCase.isFinished())
                 allDone = false;
@@ -194,12 +197,29 @@ public class TestRunner implements Runnable, MasterRequestListener {
                     writeTestResultsXml(testCase);
                 }
                 else {
-                    writeTestResults(testCase);
+                    fullTestCaseList = writeTestResults(testCase);
                 }
             }
         }
-
+        if (allDone && fullTestCaseList != null)
+            updateWebSocket(fullTestCaseList);
         return allDone;
+    }
+
+    /**
+     * force immediate update through WebSocket
+     */
+    private void updateWebSocket(TestCaseList testCaseList) {
+        MdwWebSocketServer webSocketServer = MdwWebSocketServer.getInstance();
+
+        if (webSocketServer.hasInterestedConnections("AutomatedTests")) {
+            try {
+                webSocketServer.send(testCaseList.getJson().toString(2), "AutomatedTests");
+            }
+            catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
+            }
+        }
     }
 
     public TestCaseList writeTestResults(TestCase exeTestCase) throws JSONException, IOException {

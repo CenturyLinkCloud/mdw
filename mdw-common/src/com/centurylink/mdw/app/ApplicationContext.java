@@ -619,10 +619,10 @@ public class ApplicationContext {
         return hubOverrideRoot;
     }
 
-    private static int autoTestWebSocketPort;
-    public static int getAutoTestWebSocketPort() {
-        if (autoTestWebSocketPort == 0) {
-            String url = PropertyManager.getProperty(PropertyNames.MDW_AUTOTEST_WEBSOCKET_URL);
+    private static int webSocketPort;
+    public static int getWebSocketPort() {
+        if (webSocketPort == 0) {
+            String url = PropertyManager.getProperty(PropertyNames.MDW_WEBSOCKET_URL);
             if (url != null) {
                 try {
                     int lastColon = url.lastIndexOf(':');
@@ -630,44 +630,19 @@ public class ApplicationContext {
                         throw new MalformedURLException("Cannot find port in websocket URL: " + url);
                     int slash = url.indexOf('/', lastColon + 1);
                     if (slash > 0)
-                        autoTestWebSocketPort = Integer.parseInt(url.substring(lastColon + 1, slash));
+                        webSocketPort = Integer.parseInt(url.substring(lastColon + 1, slash));
                     else
-                        autoTestWebSocketPort = Integer.parseInt(url.substring(lastColon + 1));
+                        webSocketPort = Integer.parseInt(url.substring(lastColon + 1));
                 }
                 catch (Exception ex) {
                     logger.severeException(ex.getMessage(), ex);
                 }
             }
             else {
-                autoTestWebSocketPort = 8282;
+                webSocketPort = 8282;
             }
         }
-        return autoTestWebSocketPort;
+        return webSocketPort;
     }
 
-    private static int liveViewWebSocketPort;
-    public static int getLiveViewWebSocketPort() {
-        if (liveViewWebSocketPort == 0) {
-            String url = PropertyManager.getProperty(PropertyNames.MDW_LIVEVIEW_WEBSOCKET_URL);
-            if (url != null) {
-                try {
-                    int lastColon = url.lastIndexOf(':');
-                    if (lastColon == -1)
-                        throw new MalformedURLException("Cannot find port in websocket URL: " + url);
-                    int slash = url.indexOf('/', lastColon + 1);
-                    if (slash > 0)
-                        liveViewWebSocketPort = Integer.parseInt(url.substring(lastColon + 1, slash));
-                    else
-                        liveViewWebSocketPort = Integer.parseInt(url.substring(lastColon + 1));
-                }
-                catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
-                }
-            }
-            else {
-                liveViewWebSocketPort = 8283;
-            }
-        }
-        return liveViewWebSocketPort;
-    }
  }

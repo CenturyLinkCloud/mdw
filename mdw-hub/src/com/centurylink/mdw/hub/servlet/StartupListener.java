@@ -19,6 +19,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.common.service.MdwWebSocketServer;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.PropertyManagerDatabase;
@@ -177,6 +178,9 @@ public class StartupListener implements ServletContextListener {
             logger.info("Initialize " + TimerTaskRegistration.class.getName());
             (new TimerTaskRegistration()).onStartup();
 
+            logger.info("Initialize " + MdwWebSocketServer.class.getName());
+            (new MdwWebSocketServer()).onStartup();
+
             List<StartupClass> coll = this.getAllStartupClasses(logger);
             for (StartupClass startupClass : coll) {
                 logger.info("Running startup class " + startupClass.getClass().getName());
@@ -223,6 +227,8 @@ public class StartupListener implements ServletContextListener {
         }
 
         try {
+            MdwWebSocketServer.getInstance().onShutdown();
+
             (new TimerTaskRegistration()).onShutdown();
 
             logger.info("Shutdown common thread pool");
