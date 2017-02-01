@@ -264,7 +264,7 @@ public class DesignerProxy
                 gitRepo.setBranch(branch);
               if (progressMonitor != null)
                 progressMonitor.subTask("Updating from branch: " + branch);
-              versionControl.hardReset();  // Reset any existing files to avoid conflicts and other issues with pulling/changing branch
+              versionControl.hardReset();
               versionControl.checkout(branch); // in case changed
               versionControl.pull(branch);
               String serverCommit = appSummary.getRepository().getCommit();

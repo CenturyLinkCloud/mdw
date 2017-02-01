@@ -533,7 +533,8 @@ public class WorkflowAsset extends WorkflowElement implements AttributeHolder, V
     {
       final IFile file = getAssetFile();
       file.refreshLocal(0, monitor);
-      PluginUtil.setReadOnly(file, !isUserAuthorized(UserRoleVO.ASSET_DESIGN));
+      boolean readOnly = getProject().isReadOnly() || !isUserAuthorized(UserRoleVO.ASSET_DESIGN);
+      PluginUtil.setReadOnly(file, readOnly);
 
       final IWorkbenchPage activePage = MdwPlugin.getActivePage();
       IEditorInput editorInput = new FileEditorInput(file);
@@ -898,7 +899,12 @@ public class WorkflowAsset extends WorkflowElement implements AttributeHolder, V
           {
             public void run()
             {
-              if (!isRawEdit())
+              if (isRawEdit())
+              {
+                if (getProject().isReadOnly())
+                  MessageDialog.openWarning(display.getActiveShell(), "Not Editable", "Your changes to " + getFile().getName() + " will be overwritten the next time project '" + getProject().getLabel() + "' is refreshed.");
+              }
+              else
               {
                 if (!isUserAuthorized(UserRoleVO.ASSET_DESIGN))
                 {

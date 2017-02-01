@@ -797,7 +797,7 @@ public class WorkflowProject extends WorkflowElement implements Comparable<Workf
 
   public boolean isReadOnly()
   {
-    return false;
+    return isRemote() && isFilePersist();
   }
   public boolean isUserAllowedToEdit()
   {
