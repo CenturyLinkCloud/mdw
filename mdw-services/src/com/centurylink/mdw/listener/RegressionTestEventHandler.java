@@ -232,9 +232,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
 
     // turn watching mode on and off
     private String handleWatching(ActionRequestDocument xmlbean, String message, Map<String,String> metaInfo)
-    throws Exception {
-        StandardLogger logger = LoggerUtil.getStandardLogger();
-   
+    throws Exception {      
         String server=getParameter(xmlbean, "Server", false);
         String mode=getParameter(xmlbean, "Mode", true);
         if (mode.equals("on")) {
