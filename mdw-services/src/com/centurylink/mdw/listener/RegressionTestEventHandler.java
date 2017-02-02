@@ -232,12 +232,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
 
     // turn watching mode on and off
     private String handleWatching(ActionRequestDocument xmlbean, String message, Map<String,String> metaInfo)
-    throws Exception {
-        StandardLogger logger = LoggerUtil.getStandardLogger();
-        if (!(logger instanceof SimpleLogger))
-            logger.warn("*** WARNING ***: " + logger.getClass() + " does not support LogWatcher;\n" +
-                "therefore validation of automated test process results will await verify step timeout.");
-
+    throws Exception {      
         String server=getParameter(xmlbean, "Server", false);
         String mode=getParameter(xmlbean, "Mode", true);
         if (mode.equals("on")) {
