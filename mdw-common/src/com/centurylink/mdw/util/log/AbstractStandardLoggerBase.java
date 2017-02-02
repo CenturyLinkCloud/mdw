@@ -27,7 +27,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
 
     private static Pattern pattern = Pattern.compile(MESSAGE_REG_EX, Pattern.DOTALL);
 
-    protected String watcher = null;
+    protected static String watcher = null;
 
     public String getDefaultHost() {
         return DEFAULT_HOST;
@@ -69,13 +69,14 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     }
 
     protected JSONObject buildJSONLogMessage(String message) throws JSONException {
-        JSONObject obj = new JSONObject();
-        obj.put("name", "LogWatcher");
+        JSONObject obj = null;
 
         Matcher matcher = pattern.matcher(message);
 
         if (matcher.matches())
         {
+            obj = new JSONObject();
+            obj.put("name", "LogWatcher");
             obj.put("time", matcher.group(1));
             obj.put("procId", new Long(matcher.group(2)));
             obj.put("procInstId", new Long(matcher.group(3)));
@@ -91,15 +92,20 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         if (watching())  // Designer
             sendToWatcher(message);
 
-        try {
-            JSONObject jsonObj = buildJSONLogMessage(message);
+        if (MdwWebSocketServer.getInstance().isEnabled()) {
+            try {
+                JSONObject jsonObj = buildJSONLogMessage(message);
 
-            if (jsonObj != null && jsonObj.has("ProcInstId")) {
-                if (MdwWebSocketServer.getInstance().hasInterestedConnections(jsonObj.getString("ProcInstId")))
-                    sendToWebWatcher(jsonObj);
+                if (jsonObj != null && jsonObj.has("ProcInstId")) {
+                    if (MdwWebSocketServer.getInstance().hasInterestedConnections(jsonObj.getString("ProcInstId")))
+                        sendToWebWatcher(jsonObj);
+                }
             }
+            catch (Throwable e) {
+                System.out.println("Exception when building JSON Object to send to web watcher");
+                e.printStackTrace();
+            };
         }
-        catch (Throwable e) {};
     }
 
     protected void sendToWatcher(String message) {
