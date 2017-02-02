@@ -96,9 +96,11 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             try {
                 JSONObject jsonObj = buildJSONLogMessage(message);
 
-                if (jsonObj != null && jsonObj.has("ProcInstId")) {
+                if (jsonObj != null && jsonObj.has("ProcInstId") && jsonObj.has("procId")) {
                     if (MdwWebSocketServer.getInstance().hasInterestedConnections(jsonObj.getString("ProcInstId")))
-                        sendToWebWatcher(jsonObj);
+                        sendToWebWatcher(jsonObj, jsonObj.getString("ProcInstId"));
+                    else if (MdwWebSocketServer.getInstance().hasInterestedConnections(jsonObj.getString("procId")))
+                        sendToWebWatcher(jsonObj, jsonObj.getString("procId"));
                 }
             }
             catch (Throwable e) {
@@ -125,8 +127,8 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         }
     }
 
-    protected void sendToWebWatcher(JSONObject message) throws JSONException {
-        MdwWebSocketServer.getInstance().send(message.toString(2), message.getString("ProcInstId"));
+    protected void sendToWebWatcher(JSONObject message, String key) throws JSONException {
+        MdwWebSocketServer.getInstance().send(message.toString(2), key);
     }
 
 }
