@@ -3,6 +3,8 @@
  */
 package com.centurylink.mdw.plugin.project;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,10 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.tools.ant.filters.StringInputStream;
 import org.apache.xmlbeans.XmlException;
+import org.eclipse.compare.internal.core.patch.LineReader;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
@@ -888,6 +893,31 @@ public class WorkflowProjectManager implements IResourceChangeListener
 
   public void makeLocal(WorkflowProject remoteProject)
   {
-    // TODO: implement change to com.centurylink.mdw.plugin.xml
+    IProject project = MdwPlugin.getWorkspaceRoot().getProject(remoteProject.getName());
+    if (project.exists()){
+      IFile file = project.getFile(".settings/" + ProjectPersist.SETTINGS_FILE);
+      if (file.exists()){
+        try{
+          BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
+          StringBuffer out = new StringBuffer();
+          String frameworkLine = "  <mdwFramework version=\"6.0.01-SNAPSHOT\"/>\n";
+          String line;
+          boolean lineExists = false;
+          while ((line = reader.readLine())!= null){
+            if(line.indexOf("mdwFramework")!=-1)
+              lineExists = true;
+            else if(line.indexOf("server")!=-1 && !lineExists)
+              out.append(frameworkLine);
+              out.append(line);
+              out.append("\n");
+          }
+          reader.close();
+          file.setContents(new StringInputStream(out.toString()), IResource.FORCE , null);
+          file.refreshLocal(IResource.DEPTH_ZERO, null);
+        }catch (Exception ex){
+          PluginMessages.log(ex);
+        }
+      }
+    }
   }
 }
