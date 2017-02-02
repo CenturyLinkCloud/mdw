@@ -900,14 +900,13 @@ public class WorkflowProjectManager implements IResourceChangeListener
         try{
           BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
           StringBuffer out = new StringBuffer();
-          String frameworkLine = "  <mdwFramework version=\"6.0.01-SNAPSHOT\"/>\n";
           String line;
           boolean lineExists = false;
           while ((line = reader.readLine())!= null){
             if(line.indexOf("mdwFramework")!=-1)
               lineExists = true;
             else if(line.indexOf("server")!=-1 && !lineExists)
-              out.append(frameworkLine);
+              out.append("  <mdwFramework version=\"6.0.01-SNAPSHOT\"/>\n");
               out.append(line);
               out.append("\n");
           }
