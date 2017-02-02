@@ -41,7 +41,7 @@ public class ResourceReaderExtension implements ReaderExtension {
 
     @Override
     public int getPriority() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -79,8 +79,11 @@ public class ResourceReaderExtension implements ReaderExtension {
             if (get != null)
                 return "get";
             PUT put = ReflectionUtils.getAnnotation(method, PUT.class);
-            if (put != null)
+            if (put != null) {
+                if (method.getName().equals("patch"))
+                    return "patch";
                 return "put";
+            }
             POST post = ReflectionUtils.getAnnotation(method, POST.class);
             if (post != null)
                 return "post";
@@ -198,6 +201,11 @@ public class ResourceReaderExtension implements ReaderExtension {
         final ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
         if (implicitParams != null && implicitParams.value().length > 0) {
             for (ApiImplicitParam param : implicitParams.value()) {
+                // check if parameter already added by ServletReaderExtension
+                for (Parameter opParam : operation.getParameters()) {
+                    if (param.name().equals(opParam.getName()) && param.paramType().equals(opParam.getIn()))
+                        return;  // already loaded successfully
+                }
                 final Parameter p = readImplicitParam(context.getSwagger(), param);
                 if (p != null) {
                     operation.parameter(p);
