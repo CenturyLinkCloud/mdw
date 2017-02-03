@@ -4,6 +4,8 @@
 package com.centurylink.mdw.hub.servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletConfig;
@@ -18,7 +20,10 @@ import com.centurylink.mdw.service.api.MdwScanner;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import io.swagger.models.Operation;
+import io.swagger.models.Path;
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.Parameter;
 import io.swagger.servlet.Reader;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
@@ -76,6 +81,31 @@ public class ServiceApiServlet extends HttpServlet {
                             logger.debug("  - " + c);
                     }
                     Reader.read(swagger, classes);
+                    // remove dups (TODO: better way)
+                    for (String p : swagger.getPaths().keySet()) {
+                        Path path = swagger.getPaths().get(p);
+                        List<Operation> ops = path.getOperations();
+                        if (ops != null) {
+                            for (Operation op : ops) {
+                                List<Parameter> params = op.getParameters();
+                                if (params != null) {
+                                    List<Parameter> toKeep = new ArrayList<>();
+                                    for (Parameter param : params) {
+                                        boolean already = false;
+                                        for (Parameter keep : toKeep) {
+                                            if (keep.getIn().equals(param.getIn()) && keep.getName().equals(param.getName())) {
+                                                already = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!already)
+                                            toKeep.add(param);
+                                    }
+                                    op.setParameters(toKeep);
+                                }
+                            }
+                        }
+                    }
                 }
 
                 if (ext.equals(JSON_EXT)) {

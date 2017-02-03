@@ -41,7 +41,7 @@ public class ResourceReaderExtension implements ReaderExtension {
 
     @Override
     public int getPriority() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -201,11 +201,6 @@ public class ResourceReaderExtension implements ReaderExtension {
         final ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
         if (implicitParams != null && implicitParams.value().length > 0) {
             for (ApiImplicitParam param : implicitParams.value()) {
-                // check if parameter already added by ServletReaderExtension
-                for (Parameter opParam : operation.getParameters()) {
-                    if (param.name().equals(opParam.getName()) && param.paramType().equals(opParam.getIn()))
-                        return;  // already loaded successfully
-                }
                 final Parameter p = readImplicitParam(context.getSwagger(), param);
                 if (p != null) {
                     operation.parameter(p);
