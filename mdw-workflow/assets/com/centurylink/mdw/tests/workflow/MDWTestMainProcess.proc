@@ -746,7 +746,7 @@
     },
     "maptest": {
       "category": "LOCAL",
-      "type": "java.util.Map"
+      "type": "java.util.Map<String,String>"
     },
     "order": {
       "category": "LOCAL",
@@ -765,5 +765,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "3.32"
+  "version": "3.33"
 }

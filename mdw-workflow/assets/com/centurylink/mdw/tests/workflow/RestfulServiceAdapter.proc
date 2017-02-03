@@ -152,7 +152,7 @@
   "variables": {
     "headersMap": {
       "category": "LOCAL",
-      "type": "java.util.Map"
+      "type": "java.util.Map<String,String>"
     },
     "httpMethod": {
       "category": "INPUT",
@@ -167,5 +167,5 @@
       "type": "com.centurylink.mdw.model.StringDocument"
     }
   },
-  "version": "0.20"
+  "version": "0.22"
 }

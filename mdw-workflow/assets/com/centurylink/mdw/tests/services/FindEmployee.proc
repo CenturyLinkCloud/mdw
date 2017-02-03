@@ -132,7 +132,7 @@
     },
     "requestHeaders": {
       "category": "INPUT",
-      "type": "java.util.Map"
+      "type": "java.util.Map<String,String>"
     },
     "response": {
       "category": "OUTPUT",
@@ -147,5 +147,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.15"
+  "version": "0.17"
 }
