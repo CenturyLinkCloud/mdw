@@ -55,8 +55,15 @@ public class AccessFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
 
         devMode = ApplicationContext.isDevelopment();
+
         try {
-            YamlLoader yamlLoader = new YamlLoader(new String(FileHelper.readConfig(ACCESS_CONFIG_FILE).getBytes()));
+            String accessYaml;
+            if (ApplicationContext.isPaaS())
+                accessYaml = System.getenv("mdw_access");
+            else
+                accessYaml = new String(FileHelper.readConfig(ACCESS_CONFIG_FILE).getBytes());
+
+            YamlLoader yamlLoader = new YamlLoader(accessYaml);
             Map<?,?> topMap = yamlLoader.getRequiredMap("", yamlLoader.getTop(), "");
 
             if (devMode)

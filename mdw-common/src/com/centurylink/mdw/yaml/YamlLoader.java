@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
+import org.yaml.snakeyaml.representer.Representer;
 
 import com.centurylink.mdw.util.file.FileHelper;
 
@@ -104,4 +106,17 @@ public class YamlLoader {
             msg += name;
         throw new YAMLException(msg);
     }
+
+    public String toString() {
+        return new Yaml(new Representer(), getDumperOptions()).dump(top);
+    }
+
+    protected DumperOptions getDumperOptions() {
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.FLOW);
+        options.setPrettyFlow(true);
+        options.setIndent(2);
+        return options;
+    }
+
 }
