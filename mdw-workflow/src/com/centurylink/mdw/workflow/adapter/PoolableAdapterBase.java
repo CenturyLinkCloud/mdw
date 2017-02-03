@@ -11,15 +11,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
-import org.apache.xmlbeans.XmlObject;
-import org.w3c.dom.Document;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.AdapterInvocationError;
 import com.centurylink.mdw.adapter.PoolableAdapter;
 import com.centurylink.mdw.adapter.SimulationResponse;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
@@ -33,12 +31,14 @@ import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.monitor.AdapterMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.event.StubHelper;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -116,19 +116,24 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
         if (request == null)
             throw new ActivityException("Request data is null");
 
-        // TODO handle general document types via Variable translator mechanism
-        // instead of just these specific types
         if (request instanceof DocumentReference)
             request = getDocumentContent((DocumentReference)request);
         if (request instanceof String)
             return (String)request;
-        else if (request instanceof Document)
-            return VariableTranslator.realToString(getPackage(), Document.class.getName(), request);
-        else if (request instanceof XmlObject)
-            return ((XmlObject)request).xmlText();
-        else
-            throw new ActivityException(
-                "Cannot handle request of type " + request.getClass().getName());
+        else {
+            VariableInstance varInst = getVariableInstance(varname);
+            com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), varInst.getType());
+            if (translator != null) {
+                if (translator instanceof JavaObjectTranslator)
+                    return request.toString();
+                if (translator instanceof DocumentReferenceTranslator)
+                    return ((DocumentReferenceTranslator)translator).realToString(request);
+                else
+                    return translator.toString(request);
+            }
+        }
+
+        throw new ActivityException("Cannot handle request of type " + request.getClass().getName());
     }
 
     /**
