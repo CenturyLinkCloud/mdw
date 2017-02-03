@@ -268,7 +268,7 @@ public class RestfulServiceAdapter extends AdapterActivityBase implements Header
                 if (variableVO == null)
                     throw new ActivityException(
                             "Headers variable '" + headersVar + "' is not defined for process " + processVO.getLabel());
-                if (!variableVO.getVariableType().equals(Map.class.getName()))
+                if (!variableVO.getVariableType().equals(Map.class.getName()) && !variableVO.getVariableType().equals("java.util.Map<String,String>"))
                     throw new ActivityException("Headers variable '" + headersVar + "' must be of type java.util.Map");
                 Object headersObj = getVariableValue(headersVar);
                 if (headersObj != null) {
