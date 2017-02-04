@@ -479,6 +479,11 @@
 .mdw-code {
   white-space: pre;
 }
+.mdw-todo-code {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: normal;	
+}
 .mdw-line-nums {
   background-color: #eeeeee;
   float: left;
@@ -495,7 +500,6 @@
   margin-top: 3px;
 }
 .mdw-date-input {
-  width: 120px;
   float: left;
   margin-right: 10px; 
 }

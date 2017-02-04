@@ -78,6 +78,10 @@
       "category": "INPUT",
       "type": "javax.xml.bind.JAXBElement"
     },
+    "jsonVar": {
+      "category": "INPUT",
+      "type": "org.json.JSONObject"
+    },
     "objectVar": {
       "category": "LOCAL",
       "type": "java.lang.Object"
@@ -91,5 +95,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.5"
+  "version": "0.6"
 }

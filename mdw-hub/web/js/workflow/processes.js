@@ -103,8 +103,8 @@ processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams',
 }]);
 
 processMod.controller('ProcessController', 
-    ['$scope', '$route', '$routeParams', 'mdw', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
-     function($scope, $route, $routeParams, mdw, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
+    ['$scope', '$route', '$routeParams', '$filter', 'mdw', 'util', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
+     function($scope, $route, $routeParams, $filter, mdw, util, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
   
   $scope.retrieveProcess = function() {
     $scope.process = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'summary'}, function() {
@@ -113,6 +113,40 @@ processMod.controller('ProcessController',
   };
   
   $scope.workflowStatuses = WORKFLOW_STATUSES;
+  
+  $scope.valuesEdit = false;
+  $scope.editValues = function(edit) {
+    $scope.valuesEdit = edit;
+  };
+  $scope.saveValues = function() {
+    console.log('saving process values for instance: ' + $scope.process.id);
+    var newValues = {};
+    util.getProperties($scope.values).forEach(function(name) {
+      var value = $scope.values[name];
+      if (value.dirty) {
+        if (value.type === 'java.util.Date' && value.value) {
+          var timezoneAbbr = 'MST'; // TODO
+          newValues[value.name] = $filter('date')(value.value, 'EEE MMM dd HH:mm:ss ') + timezoneAbbr + $filter('date')(value.value, ' yyyy');
+        }    
+        else {
+         newValues[value.name] = value.value;
+        }
+      }
+    });
+    Process.update({instanceId: $scope.process.id, extra: 'values'}, newValues,
+      function(data) {
+        if (data.status.code !== 0) {
+          mdw.messages = data.status.message;
+        }
+        else {
+          $route.reload();
+        }
+      }, 
+      function(error) {
+        mdw.messages = error.data.status.message;
+      }
+    );
+  };
   
   if ($route.current.originalPath.endsWith('/values') || $routeParams.name) {
     if ($routeParams.name) {
@@ -138,7 +172,8 @@ processMod.controller('ProcessController',
 
 processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/Services/Processes/:instanceId/:extra/:valueName', mdw.serviceParams(), {
-    retrieve: { method: 'GET', isArray: false }
+    retrieve: { method: 'GET', isArray: false },
+    update: {method: 'PUT'}
   });
 }]);
 

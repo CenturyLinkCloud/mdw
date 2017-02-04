@@ -87,8 +87,11 @@ public class JsonUtil {
 
     public static final Map<String,String> getMap(JSONObject jsonObj) throws JSONException {
         Map<String,String> map = new HashMap<String,String>();
-        for (String name : JSONObject.getNames(jsonObj))
-            map.put(name, jsonObj.getString(name));
+        String[] names =  JSONObject.getNames(jsonObj);
+        if (names != null) {
+            for (String name : names)
+                map.put(name, jsonObj.getString(name));
+        }
         return map;
     }
 

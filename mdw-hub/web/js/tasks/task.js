@@ -75,10 +75,10 @@ taskMod.controller('TaskValuesController', ['$scope', '$route', '$routeParams', 
               if (lineCount > 25)
                 val.showLines = 25;
               else if (lineCount > 8)
-                val.showLines = lineCount();
+                val.showLines = lineCount;
             }
           }
-          val.editable = $scope.task.editable && val.display !== 'ReadOnly';  
+          val.editable = $scope.task.editable && val.display !== 'ReadOnly';
           $scope.task.values.push(val);
         }
       }

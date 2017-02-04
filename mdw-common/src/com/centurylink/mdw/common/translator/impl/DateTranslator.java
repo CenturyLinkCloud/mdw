@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.VariableTranslator;
 
 public class DateTranslator extends VariableTranslator {
@@ -20,14 +21,12 @@ public class DateTranslator extends VariableTranslator {
         return dateFormat.format((Date)obj);
     }
 
-    @SuppressWarnings("deprecation")
-    public Object toObject(String str) {
+    public Object toObject(String str) throws TranslationException {
         try {
             return dateFormat.parse(str);
         }
         catch (ParseException ex) {
-            // compatibility with old format
-            return new Date(str);
+            throw new TranslationException(ex.getMessage(), ex);
         }
     }
 }
