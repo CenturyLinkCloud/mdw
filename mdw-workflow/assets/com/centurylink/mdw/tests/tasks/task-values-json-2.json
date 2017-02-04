@@ -42,6 +42,13 @@
     "type": "org.w3c.dom.Document",
     "value": "<empty/>\n"
   },
+  "jsonVar": {
+    "display": "Optional",
+    "label": "jsonVar",
+    "sequence": 12,
+    "type": "org.json.JSONObject",
+    "value": "{\n  \"intProp\": 67890,\n  \"objOne\": {\n    \"obj1Date\": \"Thu Sep 01 13:52:01 MDT 2016\",\n    \"obj1bool\": true,\n    \"obj1int\": 12345,\n    \"obj1string\": \"obj1stringval\"\n  },\n  \"objTwo\": {\"obj2string\": \"obj2stringval\"},\n  \"stringProp\": \"stringProp\"\n}"
+  },
   "stringVar": {
     "display": "ReadOnly",
     "label": "String",

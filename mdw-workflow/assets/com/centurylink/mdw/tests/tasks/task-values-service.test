@@ -23,7 +23,18 @@ start process("ManualTaskServices") {
   attributeTwo="requiredAttributeValue">
   <elementOne>elementOneValue</elementOne>
   <elementTwo>elementTwoValue</elementTwo>
-</TaskJaxb>''' ]
+</TaskJaxb>''',
+                 jsonVar: '''{
+  "objOne": {
+    "obj1string": "obj1stringval",
+    "obj1int": 12345,
+    "obj1bool": true,
+    "obj1Date": "Thu Sep 01 13:52:01 MDT 2016"
+  },
+  "stringProp": "stringProp",
+  "intProp": 67890,
+  "objTwo": { "obj2string": "obj2stringval"}
+}''' ]
 }
 
 sleep 10
