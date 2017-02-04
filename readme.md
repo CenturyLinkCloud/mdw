@@ -6,6 +6,8 @@
    http://www.eclipse.org/downloads
  - Required Plugins:
      - MDW Designer:   
+       Install the latest version of the MDW Plugin via Eclipse Software Updates (Help > Install New Software > Add > http://lxdenvmtc143.dev.qintra.com:6101/MdwPlugin > Install).
+       
        [http://cshare.ad.qintra.com/sites/MDW/Developer Resources/Designer Plugin Install.html](http://cshare.ad.qintra.com/sites/MDW/Developer Resources/Designer Plugin Install.html)
      - Gradle Plugin:   
        http://dist.springsource.com/release/TOOLS/gradle
