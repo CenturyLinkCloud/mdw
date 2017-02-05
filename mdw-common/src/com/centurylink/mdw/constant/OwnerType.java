@@ -49,4 +49,6 @@ public interface OwnerType {
 
     public static final String MASTER_REQUEST = "MASTER_REQUEST";
     public static final String SOLUTION = "SOLUTION";
+
+    public static final String PROCESS_RUN = "PROCESS_RUN";
 }

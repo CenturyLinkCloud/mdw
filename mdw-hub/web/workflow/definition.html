@@ -8,7 +8,12 @@
             {{process.packageName}}</a>/{{process.name}} {{process.version ? ' v' + process.version : ''}}
         </div>
         <div class="mdw-heading-actions">
-          <a ng-href="#/workflow/processes/{{process.packageName}}/{{process.name}}/{{process.version}}" class="btn btn-primary mdw-btn" title="Instances">
+          <a ng-href="#/workflow/definitionRun/{{process.packageName}}/{{process.name}}/{{process.version}}" 
+            class="btn btn-primary mdw-btn" title="Run">
+            <span class="glyphicon glyphicon-play mdw-icon-btn"></span>
+          </a>            
+          <a ng-href="#/workflow/processes/{{process.packageName}}/{{process.name}}/{{process.version}}" 
+            class="btn btn-primary mdw-btn" style="margin-left:5px;" title="Instances">
             <span class="glyphicon glyphicon-align-justify mdw-icon-btn"></span>
           </a>            
         </div>        

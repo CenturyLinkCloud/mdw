@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.model.StringDocument;
+import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.Value.Display;
 import com.centurylink.mdw.translator.VariableTranslator;
 
@@ -295,6 +296,18 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
             return CAT_STATIC;
         else
             return CAT_LOCAL;
+    }
+
+    public Value toValue() {
+        Value value = new Value(getName());
+        value.setType(getVariableType());
+        if (getDisplayMode() != null)
+            value.setDisplay(Value.getDisplay(getDisplayMode()));
+        if (getDisplaySequence() != null)
+            value.setSequence(getDisplaySequence());
+        if (getVariableReferredAs() != null)
+            value.setLabel(getVariableReferredAs());
+        return value;
     }
 
     public Variable(JSONObject json) throws JSONException {

@@ -123,8 +123,8 @@ processMod.controller('ProcessController',
     var newValues = {};
     util.getProperties($scope.values).forEach(function(name) {
       var value = $scope.values[name];
-      if (value.dirty) {
-        if (value.type === 'java.util.Date' && value.value) {
+      if (value.dirty && value.value) {
+        if (value.type === 'java.util.Date') {
           var timezoneAbbr = 'MST'; // TODO
           newValues[value.name] = $filter('date')(value.value, 'EEE MMM dd HH:mm:ss ') + timezoneAbbr + $filter('date')(value.value, ' yyyy');
         }    
@@ -177,17 +177,60 @@ processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
   });
 }]);
 
-processMod.controller('ProcessDefController', ['$scope', '$routeParams', 'mdw', 'ProcessSummary',
-                                            function($scope, $routeParams, mdw, ProcessSummary) {
+processMod.controller('ProcessDefController', ['$scope', '$routeParams', '$route', '$filter', 'mdw', 'util', 'ProcessDef', 'ProcessSummary', 'ProcessRun',
+                                              function($scope, $routeParams, $route, $filter, mdw, util, ProcessDef, ProcessSummary, ProcessRun) {
   $scope.process = { 
     packageName: $routeParams.packageName,
     name: $routeParams.processName,
     version: $routeParams.version
   };
+  
+  $scope.isRun = $route.current.loadedTemplateUrl === 'workflow/run.html';
+  
+  $scope.runProcess = function() {
+    console.log('running process: ' + $scope.run.definitionId);
+    var inValues = {};
+    util.getProperties($scope.run.values).forEach(function(name) {
+      var value = $scope.run.values[name];
+      if (value.value) {
+        if (value.type === 'java.util.Date') {
+          var timezoneAbbr = 'MST'; // TODO
+          value.value = $filter('date')(value.value, 'EEE MMM dd HH:mm:ss ') + timezoneAbbr + $filter('date')(value.value, ' yyyy');
+        }    
+        else {
+          value.value = value.value;
+        }
+        inValues[name] = value;
+      }
+    });
+    var toRun = { masterRequestId: $scope.run.masterRequestId, definitionId: $scope.run.definitionId, values: inValues};
+    ProcessRun.run({definitionId: $scope.run.definitionId}, toRun,
+      function(data) {
+        if (data.status.code !== 0) {
+          mdw.messages = data.status.message;
+        }
+      }, 
+      function(error) {
+        mdw.messages = error.data.status.message;
+      }
+    );
+    // don't wait before going to live view
+  };
+  
   var summary = ProcessSummary.get();
   if (summary) {
     $scope.process.id = summary.id;
     $scope.process.masterRequestId = summary.masterRequestId;
+    $scope.process.definitionId = summary.definitionId;
+    if ($scope.isRun)
+      $scope.run = ProcessRun.retrieve({definitionId: $scope.process.definitionId});
+  }
+  else {
+    var defSum = ProcessDef.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name, processVersion: $scope.process.version, summary: true}, function() {
+      if ($scope.isRun)
+        $scope.process.definitionId = defSum.id;
+        $scope.run = ProcessRun.retrieve({definitionId: $scope.process.definitionId});
+    });
   }
 }]);
 
@@ -201,4 +244,17 @@ processMod.factory('ProcessSummary', ['mdw', function(mdw) {
       return this.process;
     }
   };
+}]);
+
+processMod.factory('ProcessDef', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/Services/Workflow/:packageName/:processName/:processVersion', mdw.serviceParams(), {
+    retrieve: { method: 'GET', isArray: false }
+  });
+}]);
+
+processMod.factory('ProcessRun', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/Services/Processes/run/:definitionId', mdw.serviceParams(), {
+    retrieve: { method: 'GET', isArray: false },
+    run: {method: 'POST'}
+  });
 }]);

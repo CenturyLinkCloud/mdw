@@ -159,6 +159,11 @@ routesSvc.factory('routes', function() {
         controller: 'ProcessDefController'
       },
       {
+        path: '/workflow/definitionRun/:packageName/:processName/:version',
+        templateUrl: 'workflow/run.html',
+        controller: 'ProcessDefController'
+      },
+      {
         path: '/workflow/requests',
         templateUrl: 'requests/requests.html',
         controller: 'RequestsController'

@@ -15,6 +15,7 @@ import javax.xml.bind.JAXBElement;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
@@ -63,6 +64,7 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessCount;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
+import com.centurylink.mdw.model.workflow.ProcessRun;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
@@ -321,7 +323,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     Variable varDef = varDefs.get(key);
                     Value value;
                     if (varDef != null)
-                        value = toValue(varDef);
+                        value = varDef.toValue();
                     else
                         value = new Value(key);
                     value.setValue(stringVal);
@@ -332,22 +334,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (includeEmpty) {
             for (String name : varDefs.keySet()) {
                 if (!values.containsKey(name))
-                    values.put(name, toValue(varDefs.get(name)));
+                    values.put(name, varDefs.get(name).toValue());
             }
         }
         return values;
-    }
-
-    protected Value toValue(Variable varDef) {
-        Value value = new Value(varDef.getName());
-        value.setType(varDef.getVariableType());
-        if (varDef.getDisplayMode() != null)
-            value.setDisplay(Value.getDisplay(varDef.getDisplayMode()));
-        if (varDef.getDisplaySequence() != null)
-            value.setSequence(varDef.getDisplaySequence());
-        if (varDef.getVariableReferredAs() != null)
-            value.setLabel(varDef.getVariableReferredAs());
-        return value;
     }
 
     /**
@@ -375,7 +365,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Variable varDef = getVariableDefinitions(runtimeContext.getProcessId()).get(name);
         Value value;
         if (varDef != null)
-            value = toValue(varDef);
+            value = varDef.toValue();
         else
             value = new Value(name);
         value.setValue(stringVal);
@@ -706,6 +696,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    public Process getProcessDefinition(Long id) throws ServiceException {
+        return ProcessCache.getProcess(id);
+    }
+
     public ActivityList getActivityDefinitions(Query query) throws ServiceException {
         try {
             String find = query.getFind();
@@ -1006,6 +1000,63 @@ public class WorkflowServicesImpl implements WorkflowServices {
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating document for process: " + procInstId);
         }
+    }
+
+    public ProcessRun runProcess(ProcessRun runRequest) throws ServiceException, JSONException {
+        Long definitionId = runRequest.getDefinitionId();
+        if (definitionId == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing definitionId");
+        Process proc = getProcessDefinition(definitionId);
+        if (proc == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for id: " + definitionId);
+
+        ProcessRun actualRun = new ProcessRun(runRequest.getJson());  // clone
+
+        Long runId = runRequest.getId();
+        if (runId == null) {
+            runId = System.nanoTime();
+            actualRun.setId(runId);
+        }
+        String masterRequestId = runRequest.getMasterRequestId();
+        if (masterRequestId == null) {
+            masterRequestId = runId.toString();
+            actualRun.setMasterRequestId(masterRequestId);
+        }
+        String ownerType = runRequest.getOwnerType();
+        Long ownerId = runRequest.getOwnerId();
+        if (ownerType == null) {
+            if (ownerId != null)
+                throw new ServiceException(ServiceException.BAD_REQUEST, "ownerId not allowed without ownerType");
+            EventManager eventMgr = ServiceLocator.getEventManager();
+            try {
+                ownerType = OwnerType.DOCUMENT;
+                actualRun.setOwnerType(ownerType);
+                ownerId = eventMgr.createDocument(JSONObject.class.getName(), OwnerType.PROCESS_RUN, runId, runRequest.getJson(), PackageCache.getPackage(proc.getPackageName()));
+                actualRun.setOwnerId(ownerId);
+            }
+            catch (DataAccessException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating document for run id: " + runId);
+            }
+        }
+        else if (ownerId == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "ownerType not allowed without ownerId");
+
+        Map<String,String> params = new HashMap<>();
+        if (runRequest.getValues() != null) {
+            for (String name : runRequest.getValues().keySet()) {
+                Value value = runRequest.getValues().get(name);
+                if (value.getValue() != null)
+                    params.put(name, value.getValue());
+            }
+        }
+        if (proc.isService()) {
+            invokeServiceProcess(proc, masterRequestId, ownerType, ownerId, params);
+        }
+        else {
+            Long instanceId = launchProcess(proc, masterRequestId, ownerType, ownerId, params);
+            actualRun.setInstanceId(instanceId);
+        }
+        return actualRun;
     }
 
     public void updateDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {

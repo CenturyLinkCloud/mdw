@@ -4,6 +4,7 @@
 package com.centurylink.mdw.service.rest;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessCount;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
+import com.centurylink.mdw.model.workflow.ProcessRun;
 import com.centurylink.mdw.services.ProcessServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -71,6 +73,7 @@ public class Processes extends JsonRestService implements JsonExportable {
     @Path("/{instanceId|special}/{subData}/{subId}")
     @ApiOperation(value="Retrieve a process or process values, query many processes, or perform throughput queries",
         notes="If instanceId and special are not present, returns a page of processes that meet query criteria. "
+          + "If {special} is 'run', then {subData} must be procDefId and an empty ProcessRun is returned. "
           + "If {subData} is 'values', and then {subId} can be varName or expression (otherwise all populated values are returned). "
           + "If {subData} is 'summary' then a only summary-level process info is returned.",
         response=ProcessInstance.class, responseContainer="List")
@@ -81,18 +84,18 @@ public class Processes extends JsonRestService implements JsonExportable {
             String segOne = getSegment(path, 1);
             if (segOne != null) {
                 try {
-                    long instanceId = Long.parseLong(segOne);
+                    long id = Long.parseLong(segOne);
                     String segTwo = getSegment(path, 2);
                     if ("values".equalsIgnoreCase(segTwo)) {
                         String varName = getSegment(path, 3);
                         if (varName != null) {
                             // individual value
-                            Value value = workflowServices.getProcessValue(instanceId, varName);
+                            Value value = workflowServices.getProcessValue(id, varName);
                             return value.getJson();
                         }
                         else {
                             // all values
-                            Map<String,Value> values = workflowServices.getProcessValues(instanceId);
+                            Map<String,Value> values = workflowServices.getProcessValues(id);
                             JSONObject valuesJson = new JSONObject();
                             for (String name : values.keySet()) {
                                 valuesJson.put(name, values.get(name).getJson());
@@ -100,18 +103,19 @@ public class Processes extends JsonRestService implements JsonExportable {
                             return valuesJson;
                         }
                     }
-                    else if ("summary".equalsIgnoreCase(segTwo)) {
-                        ProcessInstance process = workflowServices.getProcess(instanceId, false);
+                    else if ("summary".equals(segTwo)) {
+                        ProcessInstance process = workflowServices.getProcess(id, false);
                         JSONObject summary = new JSONObject();
                         summary.put("id", process.getId());
                         summary.put("name", process.getProcessName());
                         summary.put("packageName", process.getPackageName());
                         summary.put("version", process.getProcessVersion());
                         summary.put("masterRequestId", process.getMasterRequestId());
+                        summary.put("definitionId", process.getProcessId());
                         return summary;
                     }
                     else {
-                        JSONObject json = workflowServices.getProcess(instanceId, true).getJson();
+                        JSONObject json = workflowServices.getProcess(id, true).getJson();
                         json.put("retrieveDate", StringHelper.serviceDateToString(DatabaseAccess.getDbDate()));
                         return json;
                     }
@@ -131,6 +135,24 @@ public class Processes extends JsonRestService implements JsonExportable {
                             jsonProcesses.put(jsonProcess);
                         }
                         return new JsonArray(jsonProcesses).getJson();
+                    }
+                    else if (segOne.equals("run")) {
+                        String defId = getSegment(path, 2);
+                        if (defId == null)
+                            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing path segment {subData} (= procDefId)");
+                        try {
+                            Process procDef = workflowServices.getProcessDefinition(Long.parseLong(defId));
+                            if (procDef == null)
+                                throw new ServiceException(ServiceException.NOT_FOUND, "Process not found for definition id: " + defId);
+                            ProcessRun processRun = new ProcessRun();
+                            processRun.setDefinitionId(procDef.getId());
+                            processRun.setMasterRequestId(getAuthUser(headers) + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()));
+                            processRun.setValues(procDef.getInputVariables());
+                            return processRun.getJson();
+                        }
+                        catch (NumberFormatException nfe) {
+                            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad procDefId: " + defId);
+                        }
                     }
                     else if (segOne.equals("topThroughput")) {
                         List<ProcessCount> list = workflowServices.getTopThroughputProcesses(query);
@@ -227,6 +249,41 @@ public class Processes extends JsonRestService implements JsonExportable {
         }
     }
 
+    @Override
+    @Path("/run/{definitionId}")
+    @ApiOperation(value="Run a process", response=ProcessRun.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="Values", paramType="body", dataType="com.centurylink.mdw.model.workflow.ProcessRun")})
+    public JSONObject post(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        try {
+            if ("run".equals(getSegment(path, 1))) {
+                ProcessRun run = new ProcessRun(content);
+                String defId = getSegment(path, 2);
+                if (defId == null)
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing path segment: {definitionId}");
+                try {
+                    Long definitionId = Long.parseLong(defId);
+                    if (!definitionId.equals(run.getDefinitionId()))
+                        throw new ServiceException(ServiceException.BAD_REQUEST, "Path/body mismatch for definitionId: " + definitionId + "/" + run.getDefinitionId());
+                    WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+                    return workflowServices.runProcess(run).getJson();
+                }
+                catch (NumberFormatException ex) {
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Bad definitionId: " + defId);
+                }
+            }
+            else {
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Missing path segment: run");
+            }
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
 
     /**
      * Used by Designer to delete process instance(s).

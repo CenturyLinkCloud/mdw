@@ -19,6 +19,7 @@ import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.RemoteAccess;
 import com.centurylink.mdw.model.Changes;
+import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
@@ -938,6 +939,16 @@ public class Process extends Asset implements Jsonable {
 
     private boolean overrideAttributesApplied;
     public boolean overrideAttributesApplied() { return overrideAttributesApplied; }
+
+    public Map<String,Value> getInputVariables() {
+        Map<String,Value> inputVars = new HashMap<>();
+        for (Variable var : getVariables()) {
+            if (var.isInput()) {
+                inputVars.put(var.getVariableName(), var.toValue());
+            }
+        }
+        return inputVars;
+    }
 
     /**
      * Only for VCS Assets.

@@ -88,16 +88,8 @@ public class CustomTaskValuesProvider implements TaskValuesProvider {
     protected List<Value> getDefinedValues(TaskRuntimeContext runtimeContext) {
         List<Value> values = new ArrayList<Value>();
         for (Variable var : runtimeContext.getProcess().getVariables()) {
-            Value value = new Value(var.getName());
-            value.setLabel(var.getVariableReferredAs());
-            if (var.getDisplayMode() != null)
-                value.setDisplay(Value.getDisplay(var.getDisplayMode()));
-            if (var.getDisplaySequence() != null)
-                value.setSequence(var.getDisplaySequence());
-            value.setType(var.getVariableType());
-            values.add(value);
+            values.add(var.toValue());
         }
         return values;
     }
-
 }

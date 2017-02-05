@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Value;
@@ -19,6 +21,7 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessCount;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
+import com.centurylink.mdw.model.workflow.ProcessRun;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 
 public interface WorkflowServices {
@@ -127,6 +130,7 @@ public interface WorkflowServices {
 
     public List<Process> getProcessDefinitions(Query query) throws ServiceException;
     public Process getProcessDefinition(String assetPath, Query query) throws ServiceException;
+    public Process getProcessDefinition(Long id) throws ServiceException;
 
     public ActivityList getActivityDefinitions(Query query) throws ServiceException;
 
@@ -164,5 +168,5 @@ public interface WorkflowServices {
 
     public String getDocType(Object docObj);
 
-
+    public ProcessRun runProcess(ProcessRun runRequest) throws ServiceException, JSONException;
 }

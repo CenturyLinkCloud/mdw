@@ -12,9 +12,13 @@
           <span class="mdw-commit" ng-if="asset.commitInfo" title="{{asset.commitInfo.message}}"> ({{asset.commitInfo.committer}} 
             <span class="mdw-commit-date">{{asset.commitInfo.date}}</span>)
           </span>
-          <a class="btn btn-primary mdw-btn" ng-if="asset.language == 'proc' && asset.view == 'content' && asset.content" 
-             ng-href="#/workflow/processes/{{packageName}}/{{assetName}}/{{asset.version}}" title="Instances" style="margin-left:10px;padding:1px 4px 0 4px;">
+          <a class="btn btn-primary mdw-btn mdw-asset-icon" ng-if="asset.language == 'proc' && asset.view == 'content' && asset.content" 
+             ng-href="#/workflow/processes/{{packageName}}/{{assetName}}/{{asset.version}}" title="Instances" style="margin-left:10px;">
             <span class="glyphicon glyphicon-menu-hamburger"></span>
+          </a>            
+          <a class="btn btn-primary mdw-btn mdw-asset-icon" ng-if="asset.language == 'proc' && asset.view == 'content' && asset.content" 
+             ng-href="#/workflow/processes/{{packageName}}/{{assetName}}/{{asset.version}}" title="Run">
+            <span class="glyphicon glyphicon-play"></span>
           </a>            
         </div>
         <div class="radio mdw-heading-options" ng-if="!asset.isBinary && asset.vcsDiff">

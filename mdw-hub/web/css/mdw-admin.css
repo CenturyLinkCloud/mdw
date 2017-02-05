@@ -539,7 +539,7 @@
 .mdw-icon-btn {
   font-size: 16px;
   position: relative;
-  top: 2px;	
+  top: 2px;
 }
 .mdw-cancel-btn:hover {
   color: red;
@@ -664,6 +664,11 @@
   border-radius: 4px;
   padding: 5px;
   margin-bottom: 10px;
+}
+.mdw-asset-icon {
+	margin-left: 5px;
+	margin-right: 5px;
+	padding: 1px 5px 0px 4px;
 }
 .mdw-split-left {
   padding-left: 0;

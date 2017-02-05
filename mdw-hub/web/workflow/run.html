@@ -1,0 +1,37 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/process-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          Run process {{process.packageName}}/
+          <a href="#/workflow/definition/{{process.packageName}}/{{process.name}}/v{{process.version}}">
+            {{process.name}} {{process.version ? ' v' + process.version : ''}}
+          </a>
+        </div>
+        <div class="mdw-heading-actions" ng-if="authUser.hasRole('Process Execution')">
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="runProcess()">
+            <span class="glyphicon glyphicon-play"></span> Run
+          </button>
+        </div>        
+      </div>
+      <div class="mdw-section">
+        <form name="runForm" class="form-horizontal" role="form">
+          <div class="form-group">
+            <label class="control-label col-xs-2" for="masterRequestId">
+              Master Request ID
+            </label>
+            <div class="col-xs-4">
+              <input type="text" class="form-control" 
+                id="masterRequestId" name="masterRequestId" ng-model="run.masterRequestId">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="mdw-section">
+        <mdw-values mdw-values-editable="true" mdw-values-values="run.values">
+        </mdw-values>
+      </div>
+    </div>
+  </div>
+</div>
