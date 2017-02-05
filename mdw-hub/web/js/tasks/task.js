@@ -46,73 +46,31 @@ taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http
 }]);
 
 // task values
-taskMod.controller('TaskValuesController', ['$scope', '$route', '$routeParams', 'mdw', 'Tasks', 'Task', 'DOCUMENT_TYPES',
-                                          function($scope, $route, $routeParams, mdw, Tasks, Task, DOCUMENT_TYPES) {
+taskMod.controller('TaskValuesController', ['$scope', '$route', '$routeParams', '$filter', 'mdw', 'util', 'Tasks', 'Task',
+                                          function($scope, $route, $routeParams, $filter, mdw, util, Tasks, Task) {
   mdw.message = null;
   $scope.task = Task.getTask($scope);
   if (!$scope.task)
     $scope.task = Task.retrieveTask($scope, $routeParams.taskInstanceId);
   
   // retrieve task values
-  var values = Tasks.get({taskInstanceId: $routeParams.taskInstanceId, extra: 'values'}, function() {
-    // TODO: what happens on nav when dirty?
-    $scope.task.dirty = false;
-    
-    $scope.task.values = [];
-    if (values && typeof values === 'object') {
-      // convert object into sorted array
-      for (var key in values) {
-        if (values.hasOwnProperty(key) && !key.startsWith('$')) {
-          var val = values[key];
-          val.name = key;
-          if (!val.sequence)
-            val.sequence = 0;
-          val.isDocument = val.type && DOCUMENT_TYPES[val.type];
-          if (val.isDocument) {
-            val.showLines = 8;
-            if (val.value && val.value.lineCount) {
-              var lineCount = val.value.lineCount();
-              if (lineCount > 25)
-                val.showLines = 25;
-              else if (lineCount > 8)
-                val.showLines = lineCount;
-            }
-          }
-          val.editable = $scope.task.editable && val.display !== 'ReadOnly';
-          $scope.task.values.push(val);
-        }
-      }
-      $scope.task.values.sort(function(val1, val2) {
-        var diff = val1.sequence - val2.sequence;
-        if (diff === 0) {
-          var label1 = val1.label ? val1.label : val1.name;
-          var label2 = val2.label ? val2.label : val2.name;
-          return label1.localeCompare(label2);
-        }
-        else {
-          return diff;
-        }
-      });
-    }
-  });
-  
-  $scope.openDatePopup = function(field) {
-    $scope.datePopups = {};
-    $scope.datePopups[field] = true;
-  };
-  
-  $scope.dirty = function(value) {
-    value.dirty = true;
-    $scope.task.dirty = true;
-  };
+  $scope.values = Tasks.get({taskInstanceId: $routeParams.taskInstanceId, extra: 'values'});
   
   // save values
-  $scope.save = function() {
+  $scope.saveValues = function() {
     console.log('saving task values for instance: ' + $scope.task.id);
     var newValues = {};
-    $scope.task.values.forEach(function(value) {
-      if (value.display && value.display !== 'ReadOnly' && value.value)
-        newValues[value.name] = value.value;
+    util.getProperties($scope.values).forEach(function(name) {
+      var value = $scope.values[name];
+      if (value.dirty && value.display && value.display !== 'ReadOnly') {
+        if (value.type === 'java.util.Date' && value.value) {
+          var timezoneAbbr = 'MST'; // TODO
+          newValues[value.name] = $filter('date')(value.value, 'EEE MMM dd HH:mm:ss ') + timezoneAbbr + $filter('date')(value.value, ' yyyy');
+        }    
+        else {
+          newValues[value.name] = value.value;
+        }
+      }
     });
     
     Tasks.update({taskInstanceId: $scope.task.id, extra: 'values'}, newValues,

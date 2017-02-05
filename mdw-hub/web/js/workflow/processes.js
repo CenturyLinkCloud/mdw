@@ -129,7 +129,7 @@ processMod.controller('ProcessController',
           newValues[value.name] = $filter('date')(value.value, 'EEE MMM dd HH:mm:ss ') + timezoneAbbr + $filter('date')(value.value, ' yyyy');
         }    
         else {
-         newValues[value.name] = value.value;
+          newValues[value.name] = value.value;
         }
       }
     });
