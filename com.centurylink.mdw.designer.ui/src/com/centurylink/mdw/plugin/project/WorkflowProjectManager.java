@@ -4,6 +4,7 @@
 package com.centurylink.mdw.plugin.project;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.utilities.HttpHelper;
+import com.centurylink.mdw.designer.utils.RestfulServer;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.PluginUtil;
@@ -65,6 +67,8 @@ import com.centurylink.mdw.plugin.designer.model.ElementChangeListener;
 import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
 import com.centurylink.mdw.plugin.project.extensions.ExtensionModule;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
+import com.centurylink.mdw.service.ApplicationSummaryDocument;
+import com.centurylink.mdw.service.ApplicationSummaryDocument.ApplicationSummary;
 import com.centurylink.mdw.workflow.ConfigManagerProjectsDocument;
 import com.centurylink.mdw.workflow.WorkflowApplication;
 
@@ -894,19 +898,25 @@ public class WorkflowProjectManager implements IResourceChangeListener
   public void makeLocal(WorkflowProject remoteProject)
   {
     IProject project = MdwPlugin.getWorkspaceRoot().getProject(remoteProject.getName());
-    if (project.exists()){
+    String mdwVersion = remoteProject.getMdwVersion();
+    if(mdwVersion == null){
+       ApplicationSummary appSummary = remoteProject.getRemoteAppSummary(true);
+       if(appSummary!=null)
+         mdwVersion = appSummary.getMdwVersion();
+    }
+    boolean lineExists = false;
+    if (project.exists() && mdwVersion!=null){
       IFile file = project.getFile(".settings/" + ProjectPersist.SETTINGS_FILE);
       if (file.exists()){
         try{
           BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
           StringBuffer out = new StringBuffer();
           String line;
-          boolean lineExists = false;
           while ((line = reader.readLine())!= null){
             if(line.indexOf("mdwFramework")!=-1)
               lineExists = true;
             else if(line.indexOf("server")!=-1 && !lineExists)
-              out.append("  <mdwFramework version=\"6.0.01-SNAPSHOT\"/>\n");
+              out.append("  <mdwFramework version=\"").append(mdwVersion).append("\"/>\n");
               out.append(line);
               out.append("\n");
           }
