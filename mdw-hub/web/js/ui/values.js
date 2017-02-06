@@ -66,7 +66,7 @@ valuesMod.controller('MdwValuesController', ['$scope', 'mdw', 'util', 'DOCUMENT_
         $scope.values.forEach(function(val) {
           val.editable = editable;
         });
-      };
+      }
     }, true);
   };
   
