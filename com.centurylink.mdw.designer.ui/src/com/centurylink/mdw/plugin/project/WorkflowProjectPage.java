@@ -35,8 +35,8 @@ import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.WizardPage;
 import com.centurylink.mdw.plugin.project.model.ServerSettings;
-import com.centurylink.mdw.plugin.project.model.VcsRepository;
 import com.centurylink.mdw.plugin.project.model.ServerSettings.ContainerType;
+import com.centurylink.mdw.plugin.project.model.VcsRepository;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject.PersistType;
 
@@ -136,7 +136,7 @@ public class WorkflowProjectPage extends WizardPage implements IFacetWizardPage
       IStatus s = new Status(IStatus.ERROR, getPluginId(), 0, "Source project name already exists.", null);
       return new IStatus[] { s };
     }
-    else if (getProject().isEarProject() && !(getWizard() instanceof NewWorkflowProjectWizard))
+    else if (getProject().isEarProject())
     {
       // adding workflow facet to existing EAR project
       IJavaProject sourceProject = WorkflowProjectManager.getJavaProject(getSourceProjectName());
@@ -180,7 +180,7 @@ public class WorkflowProjectPage extends WizardPage implements IFacetWizardPage
     {
       complete = !WorkflowProjectManager.getInstance().projectNameExists(getSourceProjectName());
     }
-    if (complete && getProject().isEarProject() && !(getWizard() instanceof NewWorkflowProjectWizard))
+    if (complete && getProject().isEarProject())
     {
       // adding workflow facet to existing EAR project
       complete = WorkflowProjectManager.getJavaProject(getSourceProjectName()).exists();
@@ -227,7 +227,7 @@ public class WorkflowProjectPage extends WizardPage implements IFacetWizardPage
     Label existing = new Label(parent, SWT.BEGINNING);
     existing.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL));
     // adding facet to existing EAR project
-    if (!(getWizard() instanceof NewWorkflowProjectWizard) && getProject().isEarProject())
+    if (getProject().isEarProject())
     {
       existing.setText("  (Existing Java Project)");
       if (getProject().getEarProjectName() != null)
@@ -381,7 +381,7 @@ public class WorkflowProjectPage extends WizardPage implements IFacetWizardPage
     if (getProject().isCloudProject())
     {
       tomcatRadioButton = new Button(radioGroup, SWT.RADIO | SWT.LEFT);
-      tomcatRadioButton.setText("Apache Tomcat 7.x (Requires MDW 5.5)");
+      tomcatRadioButton.setText("Apache Tomcat 7/8 (Requires MDW 5.5)");
       if (getServerSettings().isTomcat())
         tomcatRadioButton.setSelection(true);
       tomcatRadioButton.addSelectionListener(new SelectionAdapter()
@@ -481,8 +481,6 @@ public class WorkflowProjectPage extends WizardPage implements IFacetWizardPage
     if (getProject().checkRequiredVersion(5, 5))
     {
       if (container == ContainerType.WebLogic && getWizard() instanceof LocalCloudProjectWizard)
-        return false;
-      if (container == ContainerType.Tomcat && getWizard() instanceof NewWorkflowProjectWizard)
         return false;
     }
     else
@@ -624,7 +622,7 @@ public class WorkflowProjectPage extends WizardPage implements IFacetWizardPage
       RemoteWorkflowProjectWizard wizard = (RemoteWorkflowProjectWizard) getWizard();
       return wizard.getRemoteHostInfoPage();
     }
-    else if ((getWizard() instanceof NewWorkflowProjectWizard) || (getWizard() instanceof LocalCloudProjectWizard))
+    else if (getWizard() instanceof LocalCloudProjectWizard)
     {
       // cloud or ear from new project wizard
       ServerSettingsPage serverSettingsPage = null;
@@ -639,21 +637,6 @@ public class WorkflowProjectPage extends WizardPage implements IFacetWizardPage
           serverSettingsPage = wizard.getFuseSettingsPage();
         else if (getServerSettings().isTomcat())
           serverSettingsPage = wizard.getTomcatSettingsPage();
-        else
-          serverSettingsPage = wizard.getWebLogicSettingsPage();
-
-        if (wizard.getExtensionModulesPage() != null)
-          wizard.getExtensionModulesPage().initValues();
-      }
-      else
-      {
-        NewWorkflowProjectWizard wizard = (NewWorkflowProjectWizard) getWizard();
-        if (getServerSettings().isJBoss())
-          serverSettingsPage = wizard.getJBossSettingsPage();
-        else if (getServerSettings().isServiceMix())
-          serverSettingsPage = wizard.getServiceMixSettingsPage();
-        else if (getServerSettings().isFuse())
-          serverSettingsPage = wizard.getFuseSettingsPage();
         else
           serverSettingsPage = wizard.getWebLogicSettingsPage();
 

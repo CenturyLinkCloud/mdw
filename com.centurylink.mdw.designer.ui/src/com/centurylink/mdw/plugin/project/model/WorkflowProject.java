@@ -2827,7 +2827,7 @@ public class WorkflowProject extends WorkflowElement implements Comparable<Workf
   {
     if (isEarProject())
       setEarProjectName(projectName);
-    else
+    else if (projectName != null)
       setSourceProjectName(projectName.endsWith("Ear") ? projectName.substring(0, projectName.length() - 3) : projectName);
   }
 

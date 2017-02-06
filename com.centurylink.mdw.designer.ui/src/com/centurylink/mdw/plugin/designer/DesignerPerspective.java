@@ -47,7 +47,6 @@ import com.centurylink.mdw.plugin.designer.wizards.NewWebResourceWizard;
 import com.centurylink.mdw.plugin.designer.wizards.NewWordDocWizard;
 import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
 import com.centurylink.mdw.plugin.project.LocalCloudProjectWizard;
-import com.centurylink.mdw.plugin.project.NewWorkflowProjectWizard;
 import com.centurylink.mdw.plugin.project.RemoteWorkflowProjectWizard;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
@@ -65,7 +64,6 @@ public class DesignerPerspective implements IPerspectiveFactory
     layout.addShowViewShortcut("org.eclipse.gef.ui.palette_view");
 
     // new wizard shortcuts
-    layout.addNewWizardShortcut(NewWorkflowProjectWizard.WIZARD_ID);
     layout.addNewWizardShortcut(LocalCloudProjectWizard.WIZARD_ID);
     layout.addNewWizardShortcut(RemoteWorkflowProjectWizard.WIZARD_ID);
     layout.addNewWizardShortcut(NewProcessWizard.WIZARD_ID);

@@ -1041,7 +1041,7 @@
        name="MDW Event Handlers" />
     <wizard
        id="mdw.designer.remote.project"
-       name="Remote Workflow Project"
+       name="Remote Project"
        class="com.centurylink.mdw.plugin.project.RemoteWorkflowProjectWizard"
        category="mdw.new.projects"
        icon="icons/remote_project.gif"
@@ -1050,18 +1050,8 @@
        <description>Set up access to a remote workflow project.</description>
     </wizard>
     <wizard
-       id="mdw.designer.local.project"
-       name="Local Workflow Project"
-       class="com.centurylink.mdw.plugin.project.NewWorkflowProjectWizard"
-       category="mdw.new.projects"
-       icon="icons/wf_project.gif"
-       project="true"
-       preferredPerspectives="mdw.perspectives.designer">
-       <description>Create a new full-blown workflow project in your workspace.</description>
-    </wizard>
-    <wizard
        id="mdw.designer.cloud.project"
-       name="Local Cloud Project"
+       name="Local Project"
        class="com.centurylink.mdw.plugin.project.LocalCloudProjectWizard"
        category="mdw.new.projects"
        icon="icons/cloud_project.gif"

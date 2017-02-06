@@ -153,7 +153,6 @@ public class ProcessExplorerActionGroup extends ActionGroup
   private IAction updateAction;
   private IAction stubServerAction;
   private IAction logWatcherAction;
-  private IAction newLocalProjectAction;
   private IAction newCloudProjectAction;
   private IAction newRemoteProjectAction;
   private IAction newPackageAction;
@@ -251,8 +250,7 @@ public class ProcessExplorerActionGroup extends ActionGroup
     updateAction = createUpdateAction();
     stubServerAction = createStubServerAction();
     logWatcherAction = createLogWatcherAction();
-    newLocalProjectAction = createNewAction(null, "Local Workflow Project", "wf_project.gif");
-    newCloudProjectAction = createNewAction(WorkflowElement.class, "Local Cloud Project", "cloud_project.gif");
+    newCloudProjectAction = createNewAction(WorkflowElement.class, "Local Project", "cloud_project.gif");
     newRemoteProjectAction = createNewAction(WorkflowProject.class, MdwPlugin.isRcp() ? "Workflow Project" : "Remote Project", "remote_project.gif");
     newPackageAction = createNewAction(WorkflowPackage.class, "MDW Package", "package.gif");
     newPackageToolbarAction = createNewAction(WorkflowPackage.class, "New Package", "new_package.gif");
@@ -495,9 +493,6 @@ public class ProcessExplorerActionGroup extends ActionGroup
 
         if (!newMenuApplies(selection))
           return;
-
-        if (!MdwPlugin.isRcp())
-          newMenu.add(newLocalProjectAction);
 
         if (!MdwPlugin.isRcp())
           newMenu.add(newCloudProjectAction);

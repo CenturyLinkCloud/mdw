@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jst.j2ee.project.facet.EARFacetProjectCreationDataModelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -16,25 +15,18 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.wst.common.componentcore.datamodel.properties.IFacetProjectCreationDataModelProperties;
-import org.eclipse.wst.common.frameworks.datamodel.DataModelFactory;
-import org.eclipse.wst.common.frameworks.datamodel.IDataModel;
 import org.eclipse.wst.common.project.facet.core.IFacetedProjectWorkingCopy;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
-import org.eclipse.wst.common.project.facet.core.runtime.RuntimeManager;
 import org.eclipse.wst.common.project.facet.ui.IFacetWizardPage;
 import org.eclipse.wst.common.project.facet.ui.IWizardContext;
 import org.eclipse.wst.common.project.facet.ui.ModifyFacetedProjectWizard;
 import org.eclipse.wst.server.core.IRuntime;
-import org.eclipse.wst.server.core.ServerCore;
-import org.eclipse.wst.web.ui.internal.wizards.DataModelFacetCreationWizardPage;
 
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.WizardPage;
@@ -43,13 +35,10 @@ import com.centurylink.mdw.plugin.project.model.ServerSettings.ContainerType;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject.PersistType;
 import com.centurylink.mdw.plugin.server.ServerConfigurator;
 
-@SuppressWarnings("deprecation")
 public abstract class ServerSettingsPage extends WizardPage implements IFacetWizardPage
 {
   private Text serverHomeTextField;
   private Button browseServerHomeButton;
-  private Combo targetRuntimeCombo;
-  private Button newRuntimeButton;
   private Text jdkHomeTextField;
   private Button browseJdkHomeButton;
   protected Text serverHostTextField;
@@ -80,30 +69,10 @@ public abstract class ServerSettingsPage extends WizardPage implements IFacetWiz
       if (getServerSettings().getHome() != null)
         serverHomeTextField.setText(getServerSettings().getHome());
 
-      if (targetRuntimeCombo != null)
-      {
-        String prevServerVer = MdwPlugin.getStringPref(type + "-" + ProjectPersist.MDW_SERVER_VERSION);
-        if (prevServerVer.length() > 0)
-        {
-          getServerSettings().setContainerVersion(prevServerVer);
-          for (IRuntime runtime : ServerCore.getRuntimes())
-          {
-            if (checkForAppropriateRuntime(runtime))
-            {
-              if (getServerSettings().getContainerVersion().equals(runtime.getRuntimeType().getVersion()))
-                targetRuntimeCombo.setText(runtime.getName());
-            }
-          }
-        }
-      }
-      else
-      {
-        // default version for service mix
-        if (getServerSettings().isServiceMix())
-          getServerSettings().setContainerVersion("4.4.1");
-        if (getServerSettings().isFuse())
-          getServerSettings().setContainerVersion("6.1.0");
-      }
+      if (getServerSettings().isServiceMix())
+        getServerSettings().setContainerVersion("4.4.1");
+      if (getServerSettings().isFuse())
+        getServerSettings().setContainerVersion("6.1.0");
 
       String prevJdkHome = MdwPlugin.getStringPref(type + "-" + ProjectPersist.MDW_SERVER_JDK_HOME);
       if (prevJdkHome.length() > 0)
@@ -179,8 +148,6 @@ public abstract class ServerSettingsPage extends WizardPage implements IFacetWiz
     group.setLayoutData(gd);
 
     createServerHomeControls(group, 3);
-    if (getWizard() instanceof NewWorkflowProjectWizard)
-      createRuntimeSelectionControls(group, 3);
     createJdkHomeControls(group, 3);
 
     group = new Group(composite, SWT.NONE);
@@ -252,84 +219,6 @@ public abstract class ServerSettingsPage extends WizardPage implements IFacetWiz
         String serverHome = dlg.open();
         if (serverHome != null)
           serverHomeTextField.setText(serverHome);
-      }
-    });
-  }
-
-  protected void createRuntimeSelectionControls(Composite parent, int ncol)
-  {
-    new Label(parent, SWT.NONE).setText("Target Runtime:");
-    targetRuntimeCombo = new Combo(parent, SWT.READ_ONLY | SWT.DROP_DOWN);
-    GridData gd = new GridData(GridData.BEGINNING);
-    gd.widthHint = 287;
-    targetRuntimeCombo.setLayoutData(gd);
-    targetRuntimeCombo.removeAll();
-    targetRuntimeCombo.add("");
-    for (IRuntime runtime : ServerCore.getRuntimes())
-    {
-      if (runtime != null && runtime.getRuntimeType() != null && checkForAppropriateRuntime(runtime))
-        targetRuntimeCombo.add(runtime.getName());
-    }
-    targetRuntimeCombo.addModifyListener(new ModifyListener()
-    {
-      public void modifyText(ModifyEvent e)
-      {
-        IRuntime selectedRuntime = null;
-        for (IRuntime runtime : ServerCore.getRuntimes())
-        {
-          if (targetRuntimeCombo.getText().equals(runtime.getName()))
-            selectedRuntime = runtime;
-        }
-        if (selectedRuntime != null)
-        {
-          // only displayed for new workflow project wizard
-          getServerSettings().setContainerVersion(selectedRuntime.getRuntimeType().getVersion());
-          NewWorkflowProjectWizard wizard = (NewWorkflowProjectWizard)getWizard();
-          wizard.getDataModel().setProperty(IFacetProjectCreationDataModelProperties.FACET_RUNTIME, RuntimeManager.getRuntime(selectedRuntime.getName()));
-        }
-        handleFieldChanged();
-      }
-    });
-
-    newRuntimeButton = new Button(parent, SWT.PUSH);
-    newRuntimeButton.setText("New...");
-    newRuntimeButton.addSelectionListener(new SelectionAdapter()
-    {
-      public void widgetSelected(SelectionEvent e)
-      {
-        IDataModel dataModel = DataModelFactory.createDataModel(new EARFacetProjectCreationDataModelProvider());
-        if (getWizard() instanceof NewWorkflowProjectWizard)
-          dataModel = ((NewWorkflowProjectWizard)getWizard()).getDataModel();
-
-        if (DataModelFacetCreationWizardPage.launchNewRuntimeWizard(getShell(), dataModel))
-        {
-          String[] existingRuntimeNames = targetRuntimeCombo.getItems();
-          targetRuntimeCombo.removeAll();
-          for (IRuntime runtime : ServerCore.getRuntimes())
-          {
-            if (checkForAppropriateRuntime(runtime))
-              targetRuntimeCombo.add(runtime.getName());
-          }
-          String runtimeToSelect = "";
-          for (String newRuntimeName : targetRuntimeCombo.getItems())
-          {
-            boolean found = false;
-            for (String existingRuntimeName : existingRuntimeNames)
-            {
-              if (newRuntimeName.equals(existingRuntimeName))
-              {
-                found = true;
-                break;
-              }
-            }
-            if (!found)
-            {
-              runtimeToSelect = newRuntimeName;
-              break;
-            }
-          }
-          targetRuntimeCombo.setText(runtimeToSelect);
-        }
       }
     });
   }
@@ -527,8 +416,6 @@ public abstract class ServerSettingsPage extends WizardPage implements IFacetWiz
       msg = getServerName() + " Home must not contain whitespace characters";
     else if (serverHomeMsg != null)
       msg = serverHomeMsg;
-    else if (getWizard() instanceof NewWorkflowProjectWizard && targetRuntimeCombo != null && targetRuntimeCombo.getText().length() == 0)
-      msg = "Please select an appropriate Target Runtime.";
     else if (!checkDir(jdkHomeTextField.getText().trim()))
       msg = "Please enter a valid directory for JDK Home";
     else if (containsWhitespace(jdkHomeTextField.getText().trim()))

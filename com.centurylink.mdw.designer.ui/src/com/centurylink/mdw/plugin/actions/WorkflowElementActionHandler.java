@@ -157,7 +157,6 @@ import com.centurylink.mdw.plugin.launch.ExternalEventLaunchShortcut;
 import com.centurylink.mdw.plugin.launch.ProcessLaunchShortcut;
 import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
 import com.centurylink.mdw.plugin.project.LocalCloudProjectWizard;
-import com.centurylink.mdw.plugin.project.NewWorkflowProjectWizard;
 import com.centurylink.mdw.plugin.project.RemoteWorkflowProjectWizard;
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.ServerSettings;
@@ -181,9 +180,7 @@ public class WorkflowElementActionHandler
 
   public void create(Class<? extends WorkflowElement> elementClass, WorkflowElement element)
   {
-    if (elementClass == null)
-      launchWizard(new NewWorkflowProjectWizard(), element);
-    else if (elementClass.equals(WorkflowElement.class))
+    if (elementClass.equals(WorkflowElement.class))
       launchWizard(new LocalCloudProjectWizard(), element);
     else if (elementClass.equals(WorkflowProject.class))
       launchWizard(new RemoteWorkflowProjectWizard(), element);

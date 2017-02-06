@@ -28,7 +28,7 @@ public class ServerSettings implements PreferenceConstants
     Tomcat,
     WebLogic
   }
-  private ContainerType containerType = ContainerType.ServiceMix;
+  private ContainerType containerType = ContainerType.Tomcat;
   public ContainerType getContainerType() { return containerType; }
   public void setContainerType(ContainerType type) { this.containerType = type; }
   public String getContainerName()

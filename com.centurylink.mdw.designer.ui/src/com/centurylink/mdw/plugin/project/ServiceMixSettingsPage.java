@@ -163,12 +163,6 @@ public class ServiceMixSettingsPage extends ServerSettingsPage
   }
 
   @Override
-  protected void createRuntimeSelectionControls(Composite parent, int ncol)
-  {
-    // no available server runtimes for ServiceMix
-  }
-
-  @Override
   protected String getServerLocationLabel()
   {
     return "Location";
