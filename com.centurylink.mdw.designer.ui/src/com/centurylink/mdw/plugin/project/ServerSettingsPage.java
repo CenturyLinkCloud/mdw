@@ -81,14 +81,14 @@ public abstract class ServerSettingsPage extends WizardPage implements IFacetWiz
         jdkHomeTextField.setText(getServerSettings().getJdkHome());
 
       String prevServerHost = MdwPlugin.getStringPref(type + "-" + ProjectPersist.MDW_SERVER_HOST);
-      if (prevServerHost.length() > 0)
+      if (prevServerHost.length() > 0 && getProject().isRemote())
         getServerSettings().setHost(prevServerHost);
       else
         getServerSettings().setHost(ServerSettings.DEFAULT_HOST);
       serverHostTextField.setText(getServerSettings().getHost());
 
       String prevServerPort = MdwPlugin.getStringPref(type + "-" + ProjectPersist.MDW_SERVER_PORT);
-      if (prevServerPort.length() > 0)
+      if (prevServerPort.length() > 0 && getProject().isRemote())
       {
         try
         {

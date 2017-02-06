@@ -36,11 +36,11 @@ public class ProjectAction extends BasePulldownAction
     item.setText(MENU_SEL_NEW_CLOUD_PROJECT + "...");
     item.setImage(MdwPlugin.getImageDescriptor("icons/cloud_project.gif").createImage());
     item.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
       {
-        public void widgetSelected(SelectionEvent e)
-        {
-          newCloudProject();
-        }
+        newCloudProject();
+      }
     });
 
     // new remote project
@@ -48,11 +48,11 @@ public class ProjectAction extends BasePulldownAction
     item.setText(MENU_SEL_NEW_REMOTE_PROJECT + "...");
     item.setImage(MdwPlugin.getImageDescriptor("icons/remote_project.gif").createImage());
     item.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
       {
-        public void widgetSelected(SelectionEvent e)
-        {
-          accessRemoteWorkflowProject();
-        }
+        accessRemoteWorkflowProject();
+      }
     });
 
 
@@ -62,12 +62,13 @@ public class ProjectAction extends BasePulldownAction
     // configure workspace
     item = new MenuItem(menu, SWT.NONE);
     item.setText(MENU_SEL_CONFIGURE_WORKSPACE + "...");
+    item.setImage(MdwPlugin.getImageDescriptor("icons/config.gif").createImage());
     item.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
       {
-        public void widgetSelected(SelectionEvent e)
-        {
-          configureWorkspace();
-        }
+        configureWorkspace();
+      }
     });
   }
 
