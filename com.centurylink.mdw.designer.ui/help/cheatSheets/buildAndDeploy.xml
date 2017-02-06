@@ -2,7 +2,7 @@
   title="Workflow Project Build and Deploy">
   <intro>
     <description>
-      MDW Workflow projects leverage Eclipse incremental builds to allow fast 
+      MDW projects leverage Eclipse incremental builds to allow fast 
       turnaround during local development.
       <br/><br/>
       These steps provide a quick rundown of the routine you can follow to efficiently build 
@@ -38,7 +38,7 @@
       to compile.  A workable arrangement is to disable autobuild and enable "Save automatically
       before build" (on the same preference page as autobuild).  That way ctrl-b will save all your dirty editors and kick off a build.
       <br/><br/>
-      Some workflow projects contain artifacts that Eclipse has trouble validating.  In this case you
+      Some MDW projects contain artifacts that Eclipse has trouble validating.  In this case you
       can configure Eclipse to skip this validation when building (right-click on the project in
       Package Explorer and select Properties > Validation > Enable project specific settings
       and uncheck the applicable Validator options).

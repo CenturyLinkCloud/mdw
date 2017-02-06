@@ -33,25 +33,25 @@ import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 public class ExportProjectPage extends WizardPage
 {
   private TableEditor projectTableEditor;
-  
+
   private Text fileNameTextField;
   private Button browseExportFileButton;
   private Button selectAllButton;
   private Button deselectAllButton;
-  
+
   private String fileName;
   public String getFileName() {return fileName;}
 
   public ExportProjectPage()
   {
     setTitle("Export Project(s)");
-    setDescription("Export XML file for one or more MDW workflow projects.");    
+    setDescription("Export one or more MDW projects to file.");
   }
-  
+
   public void init(IStructuredSelection selection)
   {
     super.init(selection);
-  }  
+  }
 
   @Override
   public void drawWidgets(Composite parent)
@@ -69,12 +69,12 @@ public class ExportProjectPage extends WizardPage
     createSelectButtonControls(composite, ncol);
     createSpacer(composite, ncol);
     createExportFileControls(composite, ncol);
-    
+
     setControl(composite);
-    
+
     fileNameTextField.forceFocus();
-  }  
-  
+  }
+
   private void createProjectListControls(Composite parent, int ncol)
   {
     Label label = new Label(parent, SWT.NONE);
@@ -84,7 +84,7 @@ public class ExportProjectPage extends WizardPage
     label.setLayoutData(gd);
 
     projectTableEditor = new TableEditor(null, TableEditor.TYPE_TABLE);
-    
+
     // colspecs
     List<ColumnSpec> projectColSpecs = new ArrayList<ColumnSpec>();
     ColumnSpec selectionColSpec = new ColumnSpec(PropertyEditor.TYPE_CHECKBOX, "Export", "export");
@@ -94,7 +94,7 @@ public class ExportProjectPage extends WizardPage
     projectColSpec.width = 450;
     projectColSpec.readOnly = true;
     projectColSpecs.add(projectColSpec);
-    
+
     projectTableEditor.setColumnSpecs(projectColSpecs);
     projectTableEditor.setModelUpdater(new TableModelUpdater()
     {
@@ -124,12 +124,12 @@ public class ExportProjectPage extends WizardPage
         handleFieldChanged();
       }
     });
-    
+
     projectTableEditor.render(parent, false);
     gd = new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan = ncol;
     projectTableEditor.getTable().setLayoutData(gd);
-    
+
     List<DefaultRowImpl> tableRows = new ArrayList<DefaultRowImpl>();
     List<WorkflowProject> remoteProjects = WorkflowProjectManager.getInstance().getRemoteWorkflowProjects();
     for (WorkflowProject remoteProject : remoteProjects)
@@ -143,7 +143,7 @@ public class ExportProjectPage extends WizardPage
     }
     projectTableEditor.setValue(tableRows);
   }
-  
+
   private void createSelectButtonControls(Composite parent, int ncol)
   {
     Composite buttonComposite = new Composite(parent, SWT.NONE);
@@ -195,7 +195,7 @@ public class ExportProjectPage extends WizardPage
         }
       });
   }
-  
+
   private void createExportFileControls(Composite parent, int ncol)
   {
     Label label = new Label(parent, SWT.NONE);
@@ -203,7 +203,7 @@ public class ExportProjectPage extends WizardPage
     GridData gd = new GridData(GridData.BEGINNING);
     gd.horizontalSpan = ncol;
     label.setLayoutData(gd);
-    
+
     fileNameTextField = new Text(parent, SWT.SINGLE | SWT.BORDER);
     gd = new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan = ncol - 1;
@@ -235,34 +235,34 @@ public class ExportProjectPage extends WizardPage
         }
       });
   }
-  
+
   @Override
   public boolean isPageComplete()
   {
     return isPageValid();
   }
-  
+
   boolean isPageValid()
   {
     return (fileNameTextField.getText().trim().length() > 0
-        && getProjectsToExport().size() > 0);      
-  }  
-  
+        && getProjectsToExport().size() > 0);
+  }
+
   public IStatus[] getStatuses()
   {
     return null;
   }
-  
+
   private String createFileName()
   {
     return "WorkflowProjectExport.xml";
   }
-  
+
   public List<WorkflowProject> getProjectsToExport()
   {
     return ((ExportProjectWizard)getWizard()).getProjectsToExport();
   }
-  
+
   public void setProjectsToExport(List<WorkflowProject> projectsToExport)
   {
     ((ExportProjectWizard)getWizard()).setProjectsToExport(projectsToExport);

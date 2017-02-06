@@ -128,7 +128,7 @@ public abstract class WizardPage extends NewClassWizardPage
   {
     workflowProjects = WorkflowProjectManager.getInstance().getWorkflowProjects();
     if (workflowProjects == null || workflowProjects.size() == 0)
-      MessageDialog.openError(parent.getShell(), "Error", "No MDW Workflow projects found");
+      MessageDialog.openError(parent.getShell(), "Error", "No MDW projects found");
 
     if (getElement() != null && getElement().getProject() != null)
     {

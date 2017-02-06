@@ -1298,17 +1298,17 @@
        name="MDW Designer Import" />
      <wizard
        id="mdw.designer.import.project"
-       name="Workflow Project(s)"
+       name="Project(s)"
        icon="icons/remote_project.gif"
        category="mdw.designer.import"
        class="com.centurylink.mdw.plugin.designer.wizards.ImportProjectWizard">
          <description>
-            Import MDW Workflow Projects into your workspace.
+            Import MDW Projects into your workspace.
          </description>
      </wizard>
      <wizard
        id="mdw.designer.import.package"
-       name="Workflow Package"
+       name="Package(s)"
        icon="icons/package.gif"
        category="mdw.designer.import"
        class="com.centurylink.mdw.plugin.designer.wizards.ImportPackageWizard">
@@ -1324,12 +1324,12 @@
        name="MDW Designer Export" />
      <wizard
        id="mdw.designer.export.project"
-       name="Workflow Project(s)"
+       name="Project(s)"
        icon="icons/remote_project.gif"
        category="mdw.designer.export"
        class="com.centurylink.mdw.plugin.designer.wizards.ExportProjectWizard">
          <description>
-            Export MDW Workflow Projects from your workspace to generate an XML file.
+            Export MDW Projects from your workspace to generate a file.
          </description>
       </wizard>
    </extension>

@@ -34,7 +34,7 @@ public class ImportProjectSelectPage extends WizardPage
   public ImportProjectSelectPage()
   {
     setTitle("Select Projects to Import");
-    setDescription("Choose which workflow projects to import into your workspace.");
+    setDescription("Choose which projects to import into your workspace.");
   }
 
   /**

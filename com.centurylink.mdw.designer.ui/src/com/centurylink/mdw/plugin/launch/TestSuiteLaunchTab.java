@@ -188,7 +188,7 @@ public abstract class TestSuiteLaunchTab extends AbstractLaunchConfigurationTab
   {
     List<WorkflowProject> workflowProjects = WorkflowProjectManager.getInstance().getWorkflowProjects();
     if (workflowProjects == null || workflowProjects.size() == 0)
-      MessageDialog.openError(parent.getShell(), "Error", "No MDW Workflow projects found");
+      MessageDialog.openError(parent.getShell(), "Error", "No MDW projects found");
 
     new Label(parent, SWT.NONE).setText("Workflow Project");
     workflowProjectCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);

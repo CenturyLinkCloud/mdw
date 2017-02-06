@@ -44,7 +44,7 @@ public class AssetSearchQuery extends SearchQuery
 
     if (getScopedProjects().isEmpty())
     {
-      String msg = "No workflow projects in search scope.";
+      String msg = "No MDW projects in search scope.";
       showError(msg, "MDW Search", null);
       return new Status(IStatus.WARNING, MdwPlugin.getPluginId(), 0, msg, null);
     }

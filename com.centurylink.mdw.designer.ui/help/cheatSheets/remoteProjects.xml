@@ -20,7 +20,7 @@
     skip="true">
     <description>
       The easiest way to add a remote project to your workspace is to use the discovery mechanism.
-      To launch the discovery wizard, select from the menu: File > Import > MDW Designer Import > Workflow Project(s).
+      To launch the discovery wizard, select from the menu: File > Import > MDW Designer Import > Project(s).
       Then click on the Discover radio button and select the appropriate workflow application from the dropdown.
       (Note: Only applications which have registered with the MDW discovery server are available here; if your
       application is not listed you'll need to use the Remote Project Setup wizard described below).

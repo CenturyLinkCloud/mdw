@@ -32,7 +32,6 @@ public class ProjectAction extends BasePulldownAction
   {
     // new local project
     MenuItem item = new MenuItem(menu, SWT.NONE);
-    item = new MenuItem(menu, SWT.NONE);
     item.setText(MENU_SEL_NEW_CLOUD_PROJECT + "...");
     item.setImage(MdwPlugin.getImageDescriptor("icons/cloud_project.gif").createImage());
     item.addSelectionListener(new SelectionAdapter()

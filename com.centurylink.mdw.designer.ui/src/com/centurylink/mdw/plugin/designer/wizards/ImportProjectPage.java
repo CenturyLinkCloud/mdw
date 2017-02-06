@@ -53,7 +53,7 @@ public class ImportProjectPage extends WizardPage
 
   public ImportProjectPage()
   {
-    setTitle("Import MDW Workflow Projects");
+    setTitle("Import MDW Projects");
     setDescription("Import MDW Project(s) into your workspace.");
   }
 

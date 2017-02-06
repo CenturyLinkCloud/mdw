@@ -2,7 +2,7 @@
   title="MDW Updates">
   <intro>
     <description>
-      Workflow projects built on the MDW Framework execute against a particular version of the
+      Projects built on the MDW Framework execute against a particular version of the
       MDW runtime engine and database schema.  As a workflow developer your interaction with the
       components of MDW takes place largely through the MDW Eclipse plug-in.  Keeping these various 
       pieces up-to-date in a controlled and versionable manner is the subject of this cheat sheet.

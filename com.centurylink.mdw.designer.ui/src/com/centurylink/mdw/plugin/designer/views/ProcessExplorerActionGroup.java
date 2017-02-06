@@ -1066,7 +1066,7 @@ public class ProcessExplorerActionGroup extends ActionGroup
     ImageDescriptor imageDesc = MdwPlugin.getImageDescriptor("icons/remote_project.gif");
     action.setImageDescriptor(imageDesc);
     action.setId(MdwMenuManager.MDW_MENU_PREFIX + "import.projecs");
-    action.setText("Workflow Project(s)...");
+    action.setText("Project(s)...");
     return action;
   }
 
@@ -1356,7 +1356,7 @@ public class ProcessExplorerActionGroup extends ActionGroup
     ImageDescriptor imageDesc = MdwPlugin.getImageDescriptor("icons/remote_project.gif");
     action.setImageDescriptor(imageDesc);
     action.setId(MdwMenuManager.MDW_MENU_PREFIX + "export.projects");
-    action.setText("Workflow Project(s)...");
+    action.setText("Project(s)...");
     return action;
   }
 

@@ -114,7 +114,7 @@ public abstract class CodeGenWizard extends Wizard implements INewWizard
       // choose any available workflow project
       List<WorkflowProject> workflowProjects = WorkflowProjectManager.getInstance().getWorkflowProjects();
       if (workflowProjects == null || workflowProjects.size() == 0)
-        MessageDialog.openError(getShell(), "Error", "No MDW workflow projects found");
+        MessageDialog.openError(getShell(), "Error", "No MDW projects found");
       else
         getCodeElement().setProject(workflowProjects.get(0));
     }

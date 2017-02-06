@@ -111,7 +111,7 @@ public class ImportProjectWizard extends Wizard implements IImportWizard
         {
           String text = "Please confirm that the following workspace projects should be overwritten:";
           ListSelectionDialog lsd = new ListSelectionDialog(getShell(), existingProjects, new ExistingProjectContentProvider(), new ProjectLabelProvider(), text);
-          lsd.setTitle("Existing Workflow Projects");
+          lsd.setTitle("Existing Projects");
           lsd.setInitialSelections(existingProjects.toArray(new IProject[0]));
           lsd.open();
           Object[] results = (Object[]) lsd.getResult();
@@ -167,7 +167,7 @@ public class ImportProjectWizard extends Wizard implements IImportWizard
       {
         public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
         {
-          monitor.beginTask("Importing workflow project(s)", 100);
+          monitor.beginTask("Importing MDW project(s)", 100);
           monitor.worked(20);
           try
           {
