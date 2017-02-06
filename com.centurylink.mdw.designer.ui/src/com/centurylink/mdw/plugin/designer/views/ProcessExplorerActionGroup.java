@@ -461,6 +461,10 @@ public class ProcessExplorerActionGroup extends ActionGroup
 
       if (myTasksApplies(selection))
         menu.add(myTasksAction);
+
+      // unlock project
+      if (unlockApplies(selection))
+        menu.add(unlockAction);
     }
   }
 
