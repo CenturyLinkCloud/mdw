@@ -3,9 +3,6 @@
  */
 package com.centurylink.mdw.plugin.project;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,13 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import org.apache.tools.ant.filters.StringInputStream;
 import org.apache.xmlbeans.XmlException;
-import org.eclipse.compare.internal.core.patch.LineReader;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
@@ -55,7 +49,6 @@ import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.utilities.HttpHelper;
-import com.centurylink.mdw.designer.utils.RestfulServer;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.PluginUtil;
@@ -67,7 +60,6 @@ import com.centurylink.mdw.plugin.designer.model.ElementChangeListener;
 import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
 import com.centurylink.mdw.plugin.project.extensions.ExtensionModule;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
-import com.centurylink.mdw.service.ApplicationSummaryDocument;
 import com.centurylink.mdw.service.ApplicationSummaryDocument.ApplicationSummary;
 import com.centurylink.mdw.workflow.ConfigManagerProjectsDocument;
 import com.centurylink.mdw.workflow.WorkflowApplication;
@@ -897,36 +889,16 @@ public class WorkflowProjectManager implements IResourceChangeListener
 
   public void makeLocal(WorkflowProject remoteProject)
   {
-    IProject project = MdwPlugin.getWorkspaceRoot().getProject(remoteProject.getName());
-    String mdwVersion = remoteProject.getMdwVersion();
-    if(mdwVersion == null){
+    if (remoteProject.getMdwVersion() == null)
+    {
        ApplicationSummary appSummary = remoteProject.getRemoteAppSummary(true);
-       if(appSummary!=null)
-         mdwVersion = appSummary.getMdwVersion();
+       if (appSummary != null)
+         remoteProject.setMdwVersion(appSummary.getMdwVersion());
     }
-    boolean lineExists = false;
-    if (project.exists() && mdwVersion!=null){
-      IFile file = project.getFile(".settings/" + ProjectPersist.SETTINGS_FILE);
-      if (file.exists()){
-        try{
-          BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
-          StringBuffer out = new StringBuffer();
-          String line;
-          while ((line = reader.readLine())!= null){
-            if(line.indexOf("mdwFramework")!=-1)
-              lineExists = true;
-            else if(line.indexOf("server")!=-1 && !lineExists)
-              out.append("  <mdwFramework version=\"").append(mdwVersion).append("\"/>\n");
-              out.append(line);
-              out.append("\n");
-          }
-          reader.close();
-          file.setContents(new StringInputStream(out.toString()), IResource.FORCE , null);
-          file.refreshLocal(IResource.DEPTH_ZERO, null);
-        }catch (Exception ex){
-          PluginMessages.log(ex);
-        }
-      }
+    if (remoteProject.getMdwVersion() != null)
+    {
+      remoteProject.setRemote(false);
+      updateProject(remoteProject);
     }
   }
 }

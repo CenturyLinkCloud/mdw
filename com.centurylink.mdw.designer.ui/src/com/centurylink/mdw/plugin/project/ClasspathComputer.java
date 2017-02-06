@@ -8,9 +8,10 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaModelException;
 
 public class ClasspathComputer
 {
@@ -21,22 +22,29 @@ public class ClasspathComputer
   }
 
   private List<String> classpathList;
-  public List<String> getClasspathList() throws JavaModelException
+  public List<String> getClasspathList() throws CoreException
   {
     classpathList = new ArrayList<String>();
     addSourceProjectPaths(javaProject);
     return classpathList;
   }
 
-  private void addSourceProjectPaths(IJavaProject javaProject) throws JavaModelException
+  private void addSourceProjectPaths(IJavaProject javaProject) throws CoreException
   {
-    classpathList.add(ResourcesPlugin.getWorkspace().getRoot().findMember(javaProject.getOutputLocation()).getRawLocation().toString());
+    IPath outputLoc = javaProject.getOutputLocation();
+    IResource outputRes = ResourcesPlugin.getWorkspace().getRoot().findMember(outputLoc);
+    if (outputRes != null)
+    classpathList.add(outputRes.getRawLocation().toString());
     for (IClasspathEntry classpathEntry: javaProject.getResolvedClasspath(true))
     {
       if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE)
       {
         if (classpathEntry.getOutputLocation() != null)
-          classpathList.add(ResourcesPlugin.getWorkspace().getRoot().findMember(classpathEntry.getOutputLocation()).getRawLocation().toString());
+        {
+          outputRes = ResourcesPlugin.getWorkspace().getRoot().findMember(classpathEntry.getOutputLocation());
+          if (outputRes != null)
+            classpathList.add(ResourcesPlugin.getWorkspace().getRoot().findMember(classpathEntry.getOutputLocation()).getRawLocation().toString());
+        }
       }
       else if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT)
       {

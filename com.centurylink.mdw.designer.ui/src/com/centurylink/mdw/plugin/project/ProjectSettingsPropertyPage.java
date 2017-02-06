@@ -277,14 +277,12 @@ public class ProjectSettingsPropertyPage extends ProjectPropertyPage
       {
         // git: sync project
         syncSwitch = new SwitchButton(composite, SWT.NONE);
-        syncSwitch.setTextForSelect("Unlocked");
-        syncSwitch.setTextForUnselect("Synced");
-        syncSwitch.setSelection(true);
-        syncSwitch.setEnabled(false);
+        syncSwitch.setTextForSelect("Synced");
+        syncSwitch.setTextForUnselect("Unlocked");
+        syncSwitch.setSelection(false);
         originalSync = true;
-
-        // new Label(composite, SWT.NONE).setText("(Unlock to enable asset editing)");
       }
+
       // non-git: include archive checkbox
       includeArchiveCheckbox = new Button(composite, SWT.CHECK | SWT.LEFT);
       includeArchiveCheckbox.setText("Include asset archive when synchronizing");

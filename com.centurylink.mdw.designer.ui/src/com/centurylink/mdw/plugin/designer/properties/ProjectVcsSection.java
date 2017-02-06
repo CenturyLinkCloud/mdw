@@ -115,7 +115,7 @@ public class ProjectVcsSection extends PropertySection implements IFilter, Eleme
         {
           public void propertyValueChanged(Object newValue)
           {
-            boolean unlocked = !Boolean.parseBoolean(newValue.toString());
+            boolean unlocked = Boolean.parseBoolean(newValue.toString());
             if (unlocked)
             {
               WorkflowProjectManager.getInstance().makeLocal(project);
@@ -126,9 +126,9 @@ public class ProjectVcsSection extends PropertySection implements IFilter, Eleme
         });
         gitSyncEditor.render(composite);
         SwitchButton switchBtn = (SwitchButton) gitSyncEditor.getWidget();
-        switchBtn.setTextForSelect("Unlocked");
-        switchBtn.setTextForUnselect("Synced");
-        gitSyncEditor.setValue(true);
+        switchBtn.setTextForSelect("Synced");
+        switchBtn.setTextForUnselect("Unlocked");
+        gitSyncEditor.setValue(false);
       }
       // include archive checkbox
       includeArchiveEditor = new PropertyEditor(project, PropertyEditor.TYPE_CHECKBOX);
