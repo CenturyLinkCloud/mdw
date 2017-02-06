@@ -89,6 +89,7 @@ task checkAllowed() << {
 
 task publishBase(type: HttpPut) {
     dependsOn(checkAllowed, buildBaseConfigs)
+    from "../${mdwOutputDir}/mdw-config-${mdwVersion}.zip"
     from "../${mdwOutputDir}/application-context-${mdwVersion}.xml"
     baseUrl "${publishBaseUrl}/mdw/${mdwVersion}"
     user publishUser

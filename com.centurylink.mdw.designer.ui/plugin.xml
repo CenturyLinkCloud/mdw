@@ -2157,12 +2157,6 @@
        requiredMdwVersion="5.5"
        description="Adds MDW Admin UI webapp."
        class="com.centurylink.mdw.plugin.project.extensions.AdminUi" />
-     <mdwExtensionModule
-       id="mdwAdminExtension"
-       name="Admin Classic"
-       requiredMdwVersion="5.5"
-       description="Adds MDW Admin legacy webapp."
-       class="com.centurylink.mdw.plugin.project.extensions.MdwAdmin" />
    </extension>
    
    <extension point="org.eclipse.compare.compareFilters">

@@ -1,4 +1,14 @@
+task buildConfig(type: Zip) {
+    destinationDir = file("../${mdwOutputDir}")
+    archiveName = "mdw-config-${mdwVersion}.zip"
+    from "config"
+    include "*.yaml"
+    include "*.json"
+    include "*.properties"
+}
+
 task buildAll(type: GradleBuild) {
+    dependsOn buildConfig
     buildFile = "build.gradle"
     tasks = ["build"]
 }

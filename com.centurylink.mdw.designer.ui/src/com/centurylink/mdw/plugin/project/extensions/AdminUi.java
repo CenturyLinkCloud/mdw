@@ -24,8 +24,8 @@ public class AdminUi extends ExtensionModule
 
   public boolean select(Object object)
   {
-    WorkflowProject workflowProject = (WorkflowProject) object;
-    return workflowProject.checkRequiredVersion(5, 5) && workflowProject.isWar();
+    WorkflowProject project = (WorkflowProject) object;
+    return project.checkRequiredVersion(5, 5) && !project.checkRequiredVersion(6, 0) && project.isWar();
   }
 
   public boolean addTo(WorkflowProject project, IProgressMonitor monitor)
