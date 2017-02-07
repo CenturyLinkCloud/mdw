@@ -31,7 +31,10 @@ Publish Release Notes to the MDW Users mailing list.
   git log  --name-status --abbrev-commit --after={2017-01-08} com.centurylink.mdw.designer com.centurylink.mdw.designer.core com.centurylink.mdw.designer.ui com.centurylink.mdw.designer.feature com.centurylink.mdw.designer.rcp > notes.txt
   Use this information to produce the release notes email.
   
-Upload the release notes email to the SharePoint site.
+Upload the release notes email to the SharePoint site:
+  - Select the release notes email in Outlook and from the menu select File > Save As > Save As Type = Text Only.
+  - Filename format is MDW Designer Build x.x.x.txt.
+  - Upload to SharePoint under Releases > Release Notes > MDW Designer. 
 
 Update support items delivered with this build to Resolved status.
 
