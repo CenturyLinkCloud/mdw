@@ -321,7 +321,7 @@ public class DesignerProxy
           }
           catch (IOException ex)
           {
-            throw new DataAccessOfflineException("Server appears to be offline: " + ex.getMessage(), ex);
+            throw new DataUnavailableException("Extra/Archived packages not retrieved: " + ex.getMessage(), ex);
           }
         }
       }
