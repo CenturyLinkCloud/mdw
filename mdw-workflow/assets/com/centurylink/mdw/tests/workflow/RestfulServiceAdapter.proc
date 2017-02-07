@@ -28,7 +28,7 @@
         "WORK_DISPLAY_INFO": "x=228,y=398,w=100,h=60"
       },
       "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestfulServiceAdapter",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
       "name": "Sim Mode",
       "transitions": [{
         "attributes": {"TRANSITION_DISPLAY_INFO": "lx=361,ly=415,type=ElbowH,xs=332&391,ys=415&415"},
@@ -67,7 +67,7 @@
         "WORK_DISPLAY_INFO": "x=313,y=294,w=108,h=71"
       },
       "id": "A9",
-      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestfulServiceAdapter",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
       "name": "RESTful\r\nAction Request",
       "transitions": [
         {
@@ -99,7 +99,7 @@
         "WORK_DISPLAY_INFO": "x=386,y=78,w=116,h=77"
       },
       "id": "A8",
-      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestfulServiceAdapter",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
       "name": "RESTful\r\nResource Request",
       "transitions": [{
         "attributes": {"TRANSITION_DISPLAY_INFO": "lx=531,ly=102,type=Elbow,xs=506&555,ys=98&98"},
