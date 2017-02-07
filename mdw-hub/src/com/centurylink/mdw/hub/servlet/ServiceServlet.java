@@ -140,6 +140,12 @@ public abstract class ServiceServlet extends HttpServlet {
               }
             }
             else {
+                // TODO more general approach
+                String[] allowed = new String[]{"/Services/AppSummary", "/Services/GetAppSummary", "/services/AppSummary", "/Services/System/sysInfo"};
+                for (String allow : allowed) {
+                    if (request.getRequestURI().equals("/" + ApplicationContext.getMdwHubContextRoot() + allow))
+                        return;
+                }
                 headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
                 throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
             }
@@ -149,7 +155,7 @@ public abstract class ServiceServlet extends HttpServlet {
     protected String createErrorResponseMessage(HttpServletRequest request,
             Map<String, String> metaInfo, ServiceException ex) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        StringBuffer requestBuffer = new StringBuffer(request.getContentLength());
+        StringBuffer requestBuffer = new StringBuffer();
         String line;
         while ((line = reader.readLine()) != null)
             requestBuffer.append(line).append('\n');
