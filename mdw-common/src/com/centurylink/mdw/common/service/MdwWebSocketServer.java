@@ -30,6 +30,7 @@ public class MdwWebSocketServer extends org.java_websocket.server.WebSocketServe
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static MdwWebSocketServer instance = null;
+    private static final Object instanceLock = new Object();
     private final Map<String,List<WebSocket>> jsonNameToConnections = new HashMap<String,List<WebSocket>>();
 
     public MdwWebSocketServer() {
@@ -49,10 +50,15 @@ public class MdwWebSocketServer extends org.java_websocket.server.WebSocketServe
     /**
      * Use this method to access the singleton of WebSocketServer
      */
-    public static synchronized MdwWebSocketServer getInstance() {
-        if (instance == null)  // This should never happen since it's instantiated by StartupListener
-            instance = new MdwWebSocketServer();
-
+    public static MdwWebSocketServer getInstance() {
+        MdwWebSocketServer tempInstance = instance;
+        if (tempInstance == null) { // This should never happen since it's instantiated by StartupListener
+            synchronized(instanceLock) {
+                tempInstance = instance;
+                if (tempInstance == null)
+                    instance = new MdwWebSocketServer();
+            }
+        }
         return instance;
     }
 
@@ -62,16 +68,7 @@ public class MdwWebSocketServer extends org.java_websocket.server.WebSocketServe
 
     @Override
     public void onClose(WebSocket websocket, int code, String reason, boolean remote) {
-        synchronized(jsonNameToConnections) {
-            for (List<WebSocket> conns : jsonNameToConnections.values()) {
-                if (conns.contains(websocket))
-                    conns.remove(websocket);
-            }
-            for (String key : jsonNameToConnections.keySet()) {
-                if (jsonNameToConnections.get(key).isEmpty())
-                    jsonNameToConnections.remove(key);
-            }
-        }
+        unsubscribeConnection(websocket);
     }
 
     @Override
@@ -81,6 +78,9 @@ public class MdwWebSocketServer extends org.java_websocket.server.WebSocketServe
 
     @Override
     public void onMessage(WebSocket websocket, String message) {
+        // First, un-subscribe for any previously subscribed to message
+        unsubscribeConnection(websocket);
+
         List<WebSocket> myList;
         if (jsonNameToConnections.get(message) == null) {
             myList = new ArrayList<WebSocket>();
@@ -92,9 +92,8 @@ public class MdwWebSocketServer extends org.java_websocket.server.WebSocketServe
         else {
             myList = jsonNameToConnections.get(message);
             if (!myList.contains(websocket)) {
-                myList.add(websocket);
                 synchronized(jsonNameToConnections) {
-                    jsonNameToConnections.put(message, myList);
+                    myList.add(websocket);
                 }
             }
         }
@@ -171,5 +170,20 @@ public class MdwWebSocketServer extends org.java_websocket.server.WebSocketServe
             }
         }
         return false;
+    }
+
+    private void unsubscribeConnection(WebSocket websocket) {
+        synchronized(jsonNameToConnections) {
+            // Remove connection from map
+            for (List<WebSocket> conns : jsonNameToConnections.values()) {
+                if (conns.contains(websocket))
+                    conns.remove(websocket);
+            }
+            // Remove keys from map without connections left
+            for (String key : jsonNameToConnections.keySet()) {
+                if (jsonNameToConnections.get(key).isEmpty())
+                    jsonNameToConnections.remove(key);
+            }
+        }
     }
 }
