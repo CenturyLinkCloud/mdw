@@ -192,7 +192,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 String para = getActualParameterVariable(map, varname);
                 Variable var = procdef.getVariable(para);
                 if (var == null)
-                    throw new ActivityException("Bound variable: '" + var + "' not found in process definition");
+                    throw new ActivityException("Bound variable: '" + para + "' not found in process definition " + procdef.getLabel());
                 String varvalue = params.get(varname);
                 Object value;
                 if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getVariableType())) {

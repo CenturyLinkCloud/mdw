@@ -58,6 +58,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 }
                 endpointUri += query;
             }
+            logdebug("REST adapter endpoint: " + endpointUri);
             URL url = new URL(endpointUri);
             if (proxy == null)
                 return url.openConnection();
