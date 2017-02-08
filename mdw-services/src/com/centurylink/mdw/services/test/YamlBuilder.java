@@ -29,18 +29,20 @@ public class YamlBuilder {
     }
 
     public YamlBuilder appendMulti(String indent, String value) {
-        String[] lines = value.split("\r\n");
-        if (lines.length == 1)
-            lines = value.split("\n");
-        if (lines.length == 1) {
-            stringBuilder.append(value);
-        }
-        else {
-            stringBuilder.append("|").append(newLine);
-            for (int i = 0; i < lines.length; i++) {
-                stringBuilder.append(indent).append(lines[i]);
-                if (i < lines.length - 1)
-                    stringBuilder.append(newLine);
+        if (value != null) {
+            String[] lines = value.split("\r\n");
+            if (lines.length == 1)
+                lines = value.split("\n");
+            if (lines.length == 1) {
+                stringBuilder.append(value);
+            }
+            else {
+                stringBuilder.append("|").append(newLine);
+                for (int i = 0; i < lines.length; i++) {
+                    stringBuilder.append(indent).append(lines[i]);
+                    if (i < lines.length - 1)
+                        stringBuilder.append(newLine);
+                }
             }
         }
         return this;
