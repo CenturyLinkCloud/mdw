@@ -66,7 +66,7 @@ public class SwaggerModelValidator implements java.io.Serializable {
                 .getClass().getName().equals(newValidator.getClass().getName())).findFirst()
                 .orElse(null);
         if (matchedValidator == null) {
-            addValidator(newValidator);
+            getValidators().add(newValidator);
         }
 
     }
