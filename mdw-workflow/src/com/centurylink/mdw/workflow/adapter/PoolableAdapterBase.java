@@ -163,7 +163,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
      * For asynchronous and certified messages, you should not attempt to override
      * this method.
      *
-     * The default method does nothing if the response is null,
+     * The default method does nothing if the response is null or empty,
      * or set the response to the variable specified in RESPONSE_VARIABLE attribute.
      * @param response response message from the external system
      * @throws ConnectionException this exception indicates a system connection
@@ -178,13 +178,16 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
      */
     public void onSuccess(String response)
     throws ActivityException, ConnectionException, AdapterException {
-        if (response==null) return;
+        if (response == null || response.isEmpty())
+            return;
         String varname = this.getAttributeValue(RESPONSE_VARIABLE);
-        if (varname==null) return;
-        String vartype = this.getParameterType(varname);
+        if (varname == null)
+            return;
+        String vartype = getParameterType(varname);
         if (VariableTranslator.isDocumentReferenceVariable(getPackage(), vartype))
-            this.setParameterValueAsDocument(varname, vartype, response);
-        else this.setParameterValue(varname, response);
+            setParameterValueAsDocument(varname, vartype, response);
+        else
+            setParameterValue(varname, response);
     }
 
     /**
@@ -333,7 +336,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
                 connection = this.openConnection();
                 responseData = doInvoke(connection, requestData, getTimeoutForResponse(), getRequestHeaders());
             }
-            if (!responseData.isEmpty() && (logging || !isSynchronous())) {
+            if (responseData.getContent() != null && (logging || !isSynchronous())) {
                 logResponse(responseData);
             }
             onSuccess(responseData.getContent());

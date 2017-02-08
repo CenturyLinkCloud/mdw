@@ -579,7 +579,7 @@ public class GroovyTestCaseRun extends TestCaseRun {
             for (TestCaseAdapterStub adapterStub : adapterStubs) {
                 String requestContent = adapterStubRequest == null ? request : adapterStubRequest.getContent();
                 boolean match = false;
-                if (adapterStub.isEndpoint() && adapterStubRequest!=null) {
+                if (adapterStub.isEndpoint() && adapterStubRequest != null) {
                     match = adapterStub.getMatcher().call(adapterStubRequest);
                 }
                 else {
@@ -587,8 +587,6 @@ public class GroovyTestCaseRun extends TestCaseRun {
                 }
                 if (match) {
                     String stubbedResponseContent = adapterStub.getResponder().call(requestContent);
-                    if (verbose)
-                        log.println("Stubbing response with: " + stubbedResponseContent);
                     int delay = 0;
                     if (adapterStub.getDelay() > 0)
                         delay = adapterStub.getDelay();
@@ -601,9 +599,13 @@ public class GroovyTestCaseRun extends TestCaseRun {
                         stubResponse.setDelay(delay);
                         stubResponse.setStatusCode(adapterStub.getStatusCode());
                         stubResponse.setStatusMessage(adapterStub.getStatusMessage());
+                        if (verbose)
+                            log.println("Stubbing endpoint " + adapterStubRequest.getUrl() + " with:\n" + stubbedResponseContent);
                         return stubResponse.getJson().toString(2);
                     }
                     else {
+                        if (verbose)
+                            log.println("Stubbing response with: " + stubbedResponseContent);
                         return "RESPONSE~" + delay + "~" + stubbedResponseContent;
                     }
                 }

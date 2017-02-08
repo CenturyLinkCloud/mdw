@@ -1131,12 +1131,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     }
 
+    @SuppressWarnings("deprecation")
     public String getDocumentStringValue(Long id) throws ServiceException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
             Document doc = eventMgr.getDocumentVO(new Long(id.toString()));
             if (doc.getDocumentType() == null)
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, "Unable to determine document type.");
+
+            // check raw content for parsability
+            if (doc.getContent() == null || doc.getContent().isEmpty())
+                return doc.getContent();
 
             Package pkg = getPackage(doc);
             com.centurylink.mdw.variable.VariableTranslator trans = VariableTranslator.getTranslator(pkg, doc.getDocumentType());

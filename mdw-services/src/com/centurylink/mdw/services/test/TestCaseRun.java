@@ -855,8 +855,12 @@ public class TestCaseRun implements Runnable {
             }
             if (match) {
                 String stubbedResponseContent = adapterStub.getResponder().call(request.getContent());
-                if (isVerbose())
-                    log.println("Stubbing response with: " + stubbedResponseContent);
+                if (isVerbose()) {
+                    if (adapterStub.isEndpoint())
+                        log.println("Stubbing endpoint " + request.getUrl() + " with:\n" + stubbedResponseContent);
+                    else
+                        log.println("Stubbing response with: " + stubbedResponseContent);
+                }
                 int delay = 0;
                 if (adapterStub.getDelay() > 0)
                     delay = adapterStub.getDelay();
