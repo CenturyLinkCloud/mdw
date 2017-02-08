@@ -387,6 +387,7 @@ public abstract class GroovyTestCaseScript extends Script {
             init.call();
         }
         if (responder == null) {
+            final TestCaseRun testCaseRun = getTestCaseRun();
             adapterStub.setResponder(new Closure<String>(this, adapterStub) {
                 @Override
                 public String call(Object request) {
@@ -405,6 +406,7 @@ public abstract class GroovyTestCaseScript extends Script {
                             CompilerConfiguration compilerCfg = new CompilerConfiguration();
                             compilerCfg.setScriptBaseClass(DelegatingScript.class.getName());
                             GroovyShell shell = new GroovyShell(GroovyTestCaseScript.class.getClassLoader(), binding, compilerCfg);
+                            shell.setProperty("out", testCaseRun.log);
                             DelegatingScript script = (DelegatingScript) shell.parse("return \"\"\"" + adapterStub.getResponse() + "\"\"\"");
                             script.setDelegate(GroovyTestCaseScript.this);
                             return script.run().toString();

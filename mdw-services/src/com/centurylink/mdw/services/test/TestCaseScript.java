@@ -413,6 +413,7 @@ public abstract class TestCaseScript extends Script {
                 @Override
                 public String call(Object request) {
                     // binding for request
+                    final TestCaseRun testCaseRun = getTestCaseRun();
                     if (adapterStub.getResponse().indexOf("${") >= 0) {
                         try {
                             Binding binding = getBinding();
@@ -427,6 +428,7 @@ public abstract class TestCaseScript extends Script {
                             CompilerConfiguration compilerCfg = new CompilerConfiguration();
                             compilerCfg.setScriptBaseClass(DelegatingScript.class.getName());
                             GroovyShell shell = new GroovyShell(TestCaseScript.class.getClassLoader(), binding, compilerCfg);
+                            shell.setProperty("out", testCaseRun.getLog());
                             DelegatingScript script = (DelegatingScript) shell.parse("return \"\"\"" + adapterStub.getResponse() + "\"\"\"");
                             script.setDelegate(TestCaseScript.this);
                             return script.run().toString();
