@@ -305,8 +305,12 @@ routesSvc.factory('routes', function() {
         path: '/system/caches',
         templateUrl: 'system/caches.html',
         controller: 'SystemController'
+      },
+      {
+        path: '/system/message',
+        templateUrl: 'system/httpHelper.html',
+        controller: 'MessageController'
       }
-
    ]
   };
 });
