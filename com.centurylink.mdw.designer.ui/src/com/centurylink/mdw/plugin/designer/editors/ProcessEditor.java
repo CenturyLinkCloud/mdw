@@ -84,7 +84,7 @@ public class ProcessEditor extends WorkflowElementEditor implements Zoomable, El
     selectionProvider = new WorkflowSelectionProvider(process);
     site.setSelectionProvider(selectionProvider);
     if (process.hasInstanceInfo())
-      setPartName(process.getProcessInstance().getId().toString() + " - " + process.getName() + " " + process.getVersionLabel());
+      setPartName(process.getProcessInstance().getId().toString() + " - " + process.getName());
     else
       setPartName(process.getLabel());
   }
