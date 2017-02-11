@@ -1,4 +1,4 @@
-#Fri Feb 03 13:57:26 MST 2017
+#Fri Feb 10 22:41:14 MST 2017
 A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=2
 CrossmapTest.proc=2
@@ -35,7 +35,7 @@ RestfulServiceAdapter.proc=22
 ResultsOrdering.proc=5
 RpcWebService.proc=6
 RuntimeContext.proc=4
-ScriptTest.proc=20
+ScriptTest.proc=21
 SmartProcessChild.proc=2004
 SmartProcessChild2.proc=4
 SmartProcessChildCompat.proc=10003
@@ -145,8 +145,8 @@ rpc-web-service-adapter.test=1
 rpc-web-service-adapter.yaml=3 Auto-created
 runtime-context.test=2
 runtime-context.yaml=4 Auto-created
-script-activity-groovy.test=2
-script-activity-groovy.yaml=7 Auto-created
+script-activity-groovy.test=3
+script-activity-groovy.yaml=8 Auto-created
 script-activity-javascript.test=1
 script-activity-javascript.yaml=9 Auto-created
 script-activity-unknown.test=1
