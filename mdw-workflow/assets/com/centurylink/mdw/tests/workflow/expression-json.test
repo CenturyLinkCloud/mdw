@@ -1,0 +1,13 @@
+start process("ExpressionEvaluation") {
+    variables = [
+	request: '''{
+  "_type": "com.centurylink.mdw.tests.workflow.Person",
+  "person": {
+    "firstName": "linus",
+    "lastName": "torvalds"
+  }
+}''' ]
+}
+wait process
+verify process
+ 

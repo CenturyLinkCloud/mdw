@@ -1,0 +1,7 @@
+start process("ExpressionEvaluation1") {
+    variables = [
+  request: '''<donsOrder><orderNumber>X000901</orderNumber>
+  <customerId>DHO115360</customerId></donsOrder>''' ]
+}
+wait process
+verify process 

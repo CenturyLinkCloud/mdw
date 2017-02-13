@@ -1,4 +1,4 @@
-#Fri Feb 10 22:41:14 MST 2017
+#Mon Feb 13 13:17:20 IST 2017
 A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=2
 CrossmapTest.proc=2
@@ -9,6 +9,8 @@ DroolsDecisionTable.proc=2
 DroolsDecisionTableMultisheet.proc=2
 EmbeddedWithSubprocess.proc=7
 EventCheck.proc=5
+ExpressionEvaluation.proc=1
+ExpressionEvaluation1.proc=1
 GetEmployeeRequest.xml=1
 GroovyReturnVals.proc=7
 JMS\ Adapter.proc=2
@@ -114,6 +116,10 @@ event-wait-timeout-2.test=2
 event-wait-timeout-2.yaml=2
 event-wait-waiting-before-start.test=1
 event-wait-waiting-before-start.yaml=2
+expression-xml.test=1
+expression-xml.yaml=1
+expression.test=1
+expression.yaml=1
 groovy-return-vals.test=2
 groovy-return-vals.yaml=3
 javascript-1.test=1
