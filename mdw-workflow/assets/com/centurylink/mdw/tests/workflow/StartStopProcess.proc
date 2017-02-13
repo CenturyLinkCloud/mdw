@@ -6,7 +6,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=263,ly=117,type=Elbow,xs=120&405,ys=117&117"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=261,ly=117,type=Elbow,xs=120&402,ys=117&117"},
         "event": "FINISH",
         "id": "T1",
         "to": "A2"
@@ -15,7 +15,7 @@
     {
       "attributes": {
         "DoNotNotifyCaller": "false",
-        "WORK_DISPLAY_INFO": "x=409,y=97,w=60,h=40"
+        "WORK_DISPLAY_INFO": "x=406,y=97,w=60,h=40"
       },
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
@@ -30,5 +30,5 @@
     "category": "INPUT",
     "type": "java.lang.String"
   }},
-  "version": "0.5"
+  "version": "0.7"
 }
