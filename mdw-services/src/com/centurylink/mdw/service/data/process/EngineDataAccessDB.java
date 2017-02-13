@@ -292,10 +292,19 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         args[1] = doc.getDocumentType();
         args[2] = doc.getOwnerType();
         args[3] = doc.getOwnerId();
-        args[4] = doc.getStatusCode();
-        args[5] = doc.getStatusMessage();
+        if (doc.getStatusCode() == null)
+            args[4] = 0;
+        else
+            args[4] = doc.getStatusCode();
+        if (doc.getStatusMessage() == null)
+            args[5] = "";
+        else
+            args[5] = doc.getStatusMessage();
+
         if (db.isMySQL())
             docId = db.runInsertReturnId(query, args);
+        else if(db.isOracle())
+            db.runUpdate(query, args);
         else
             db.runUpdate(query, String.valueOf(args));
         doc.setDocumentId(docId);

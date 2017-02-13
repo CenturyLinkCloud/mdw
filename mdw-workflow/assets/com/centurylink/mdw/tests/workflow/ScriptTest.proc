@@ -257,8 +257,8 @@
     },
     "telephoneNumbers": {
       "category": "INPUT",
-      "type": "java.lang.String[]"
+      "type": "java.util.List<String>"
     }
   },
-  "version": "0.18"
+  "version": "0.21"
 }

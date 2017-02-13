@@ -28,6 +28,7 @@ import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
@@ -72,6 +73,7 @@ import com.centurylink.mdw.test.TestFailedException;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.model.workflow.Package;
 
 import groovy.lang.Binding;
 import groovy.lang.Closure;
@@ -175,7 +177,11 @@ public class TestCaseRun implements Runnable {
             Binding binding = new Binding();
             binding.setVariable("testCaseRun", this);
 
-            GroovyShell shell = new GroovyShell(this.getClass().getClassLoader(), binding, compilerConfig);
+            ClassLoader classLoader = this.getClass().getClassLoader();
+            Package testPkg = PackageCache.getPackage(testCase.getPackage());
+            if (testPkg != null)
+                classLoader = testPkg.getCloudClassLoader();
+            GroovyShell shell = new GroovyShell(classLoader, binding, compilerConfig);
             Script gScript = shell.parse(groovyScript);
             gScript.setProperty("out", log);
             gScript.run();
@@ -808,7 +814,14 @@ public class TestCaseRun implements Runnable {
                     Closure<String> completer = activityStub.getCompleter();
                     completer.setResolveStrategy(Closure.DELEGATE_FIRST);
                     completer.setDelegate(activityStub);
-                    String resultCode = completer.call(request.getJson().toString(2));
+                    String resultCode = null;
+                    try {
+                        resultCode = completer.call(request.getJson().toString(2));
+                    }
+                    catch (Throwable th) {
+                        th.printStackTrace(log);
+                        throw th;
+                    }
                     ActivityStubResponse activityStubResponse = new ActivityStubResponse();
                     activityStubResponse.setResultCode(resultCode);
                     if (activityStub.getSleep() > 0)

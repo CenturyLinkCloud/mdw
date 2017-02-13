@@ -1,0 +1,49 @@
+{
+  "activities": [
+    {
+      "attributes": {
+        "Parameters": "firstName=${request.firstName};lastName=${request.lastName}",
+        "WORK_DISPLAY_INFO": "x=108,y=219,w=60,h=40"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=319,ly=240,type=Elbow,xs=172&480,ys=238&238"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=484,y=218,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=195,h=27"
+  },
+  "variables": {
+    "firstName": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "lastName": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "request": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.common.service.Jsonable"
+    }
+  },
+  "version": "0.1"
+}

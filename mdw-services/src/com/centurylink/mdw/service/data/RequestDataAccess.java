@@ -157,7 +157,11 @@ public class RequestDataAccess extends CommonDataAccess {
                 Date receivedDate = query.getDateFilter("receivedDate");
                 if (receivedDate != null) {
                     String formatedReceivedDate = getDateFormat().format(receivedDate);
-                    clause.append(" and d.create_dt >= STR_TO_DATE('").append(formatedReceivedDate).append("','%d-%M-%Y')\n");
+                    if (db.isMySQL()){
+                        clause.append(" and d.create_dt >= STR_TO_DATE('").append(formatedReceivedDate).append("','%d-%M-%Y')\n");
+                    }else{
+                        clause.append(" and d.create_dt >= to_date('").append(formatedReceivedDate).append("','DD-Mon-yyyy')\n");
+                    }
                 }
             }
             catch (ParseException ex) {

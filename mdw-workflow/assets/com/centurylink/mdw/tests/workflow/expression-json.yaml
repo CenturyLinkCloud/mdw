@@ -1,0 +1,22 @@
+process: # 79
+  name: ExpressionEvaluation
+  instance: 1
+  activity: # 1 "2017-02-09 13:13:46"
+    name: Start
+    status: Completed
+  activity: # 2 "2017-02-09 13:13:50"
+    name: Stop
+    status: Completed
+  variable: # 124
+    name: firstName
+    value: linus
+  variable: # 125
+    name: lastName
+    value: torvalds
+  variable: # 118
+    name: request
+    value: |
+      {
+        "firstName": "linus",
+        "lastName": "torvalds"
+      }

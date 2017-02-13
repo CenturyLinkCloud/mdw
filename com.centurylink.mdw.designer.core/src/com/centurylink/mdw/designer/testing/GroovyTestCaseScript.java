@@ -116,6 +116,8 @@ public abstract class GroovyTestCaseScript extends Script {
             cl.setDelegate(process);
             cl.call();
         }
+        if (getTestCaseRun().testCaseProcess == null)
+            getTestCaseRun().testCaseProcess = process;
         return process;
     }
 
@@ -123,6 +125,8 @@ public abstract class GroovyTestCaseScript extends Script {
         cl.setResolveStrategy(Closure.DELEGATE_FIRST);
         cl.setDelegate(process);
         cl.call();
+        if (getTestCaseRun().testCaseProcess == null)
+            getTestCaseRun().testCaseProcess = process;
         return process;
     }
 
@@ -446,9 +450,11 @@ public abstract class GroovyTestCaseScript extends Script {
                     }
                 }
 
-                return runtimeContext.getProcess().getName().equals(matchProcess) &&
+                boolean stub = runtimeContext.getProcess().getName().equals(matchProcess) &&
                         (runtimeContext.getActivity().getActivityName().equals(matchActivity) ||
                             runtimeContext.getActivityLogicalId().equals(matchActivity));
+
+                return stub;
             }
         }, completer);
     }

@@ -125,7 +125,7 @@ public class WorkflowAssetFactory
     }
     else if (language.equals(RuleSetVO.TEST) || language.equals(RuleSetVO.FEATURE))
     {
-      if (workflowPackage != null && !workflowPackage.isArchived())
+      if (workflowPackage != null) // && !workflowPackage.isArchived())  We will pick latest version anyways - Bigger problems if latest version is the one from Archive folder
       {
         TestCase testCase;
         if (workflowPackage.getProject().isFilePersist())
