@@ -23,6 +23,8 @@ import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.constant.MiscConstants;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.script.ExecutionException;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
@@ -52,31 +54,31 @@ public class ProcessStartActivity extends DefaultActivityImpl implements StartAc
     @Override
     public void execute() throws ActivityException {
         String parameters_spec = this.getAttributeValue(PARAMETERS);
-        String procInstOwner = this.getProcessInstanceOwner();
-        if (procInstOwner.equals(OwnerType.DOCUMENT)) {
-            Long extEventInstId = this.getProcessInstanceOwnerId();
-            String extMsg = getExternalEventInstanceDetails(extEventInstId);
-            try {
-                if (extMsg!=null && parameters_spec != null) {
-                    XmlObject msgdoc = XmlObject.Factory.parse(extMsg);
-                    Map<String,String>parameters = StringHelper.parseMap(parameters_spec);
-                    for (String key : parameters.keySet()) {
-                        String one = parameters.get(key);
-                        String value = evaluate(msgdoc, one);
-                        // do not override input values set explicitly with null ones from xpath (eg: HandleOrder demo)
-                        if (value != null) {
-                            Variable variable = getProcessDefinition().getVariable(key);
-                            if (VariableTranslator.isDocumentReferenceVariable(getPackage(), variable.getVariableType()))
-                                setParameterValueAsDocument(key, variable.getVariableType(), value);
-                            else
-                                setParameterValue(key, value);
+        try {
+            if (parameters_spec != null) {
+                Map<String,String>parameters = StringHelper.parseMap(parameters_spec);
+                for (String key : parameters.keySet()) {
+                    String one = parameters.get(key);
+                    if(valueIsJavaExpression(one)){
+                        Object request = getParameterValue("request");
+                        if (request != null) {
+                            String value = getRuntimeContext().evaluateToString(one);
+                            // do not override input values set explicitly with null ones from xpath (eg: HandleOrder demo)
+                            if (value != null){
+                                Variable variable = getProcessDefinition().getVariable(key);
+                                if (VariableTranslator.isDocumentReferenceVariable(getPackage(), variable.getVariableType()))
+                                    setParameterValueAsDocument(key, variable.getVariableType(), value);
+                                else
+                                    setParameterValue(key, value);
+                            }
                         }
                     }
                 }
-            } catch (XmlException e) {
-                logger.severeException(e.getMessage(), e);
             }
+        }catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
         }
+
     }
 
     protected void addDocumentAttachment(XmlObject msgdoc) throws ActivityException {
