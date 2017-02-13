@@ -271,6 +271,13 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
                             return service;
                     }
                 }
+                // try dynamic based on parent path (HTTP methods only handle resource ID segments)
+                Package pkg = PackageCache.getPackage(pkgName);
+                if (pkg != null) {
+                    TextService service = (TextService)registry.getDynamicServiceForPath(pkg, serviceType, "/");
+                    if (service != null)
+                        return service;
+                }
                 if (pathSegments.length == 1) {
                     // fall back to old-style REST handlers
                     String cl = pathSegments[0];
