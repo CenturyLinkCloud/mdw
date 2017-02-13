@@ -73,7 +73,7 @@ public class SwaggerModelValidator implements java.io.Serializable {
 
     public void addDefaultValidators() {
         validators.clear();
- //       validators.add(new BooleanValidator());
+        // validators.add(new BooleanValidator());
         validators.add(new ArrayValidator());
         validators.add(new StringValidator());
     }
@@ -90,7 +90,9 @@ public class SwaggerModelValidator implements java.io.Serializable {
         return result;
 
     }
-    public ValidationResult validateModel(JSONObject originalRequest, Jsonable modelObject) throws ValidationException, JSONException {
+
+    public ValidationResult validateModel(JSONObject originalRequest, Jsonable modelObject)
+            throws ValidationException, JSONException {
         // Get all the models
         Map<String, Model> models = ModelConverters.getInstance()
                 .readAll(typeFromString(modelObject.getClass().getName()));
@@ -105,6 +107,7 @@ public class SwaggerModelValidator implements java.io.Serializable {
 
     /**
      * Validate fields in a JSONObject against the supported ones in a model
+     *
      * @param originalRequest
      * @param mainModel
      * @param models
@@ -115,27 +118,32 @@ public class SwaggerModelValidator implements java.io.Serializable {
             Map<String, Model> models) throws JSONException {
         ValidationResult validationResult = new ValidationResult();
         String[] passedInProperties = JSONObject.getNames(originalRequest);
-        for (int i=0;i<passedInProperties.length;i++) {
-            if (mainModel.getProperties() == null || !mainModel.getProperties().containsKey(passedInProperties[i])) {
-                validationResult.addValidationMessage(
-                        new ValidationMessage().message(passedInProperties[i] + " is not supported in this model api"));
-            } else {
+        for (int i = 0; i < passedInProperties.length; i++) {
+            if (mainModel.getProperties() == null
+                    || !mainModel.getProperties().containsKey(passedInProperties[i])) {
+                validationResult.addValidationMessage(new ValidationMessage()
+                        .message(passedInProperties[i] + " is not supported in this model api"));
+            }
+            else {
                 Property modelProperty = mainModel.getProperties().get(passedInProperties[i]);
-                //If it's a RefProperty then look at that
-                 String name = ((RefProperty) modelProperty).getSimpleRef();
-                validationResult
-                        .addValidationMessages((validateFieldsInModel(originalRequest.getJSONObject(passedInProperties[i]),
-                                models.get(name), models)));
+                // If it's a RefProperty then look at that
+                if (modelProperty instanceof RefProperty) {
+                    String name = ((RefProperty) modelProperty).getSimpleRef();
+                    validationResult.addValidationMessages((validateFieldsInModel(
+                            originalRequest.getJSONObject(passedInProperties[i]), models.get(name),
+                            models)));
+                }
             }
         }
         return validationResult;
 
-        }
+    }
 
     /**
      * Validates all the fields in a JSONObject based on the model
      * <p>
-     * First checks if the property is required, then next, validates the actual value
+     * First checks if the property is required, then next, validates the actual
+     * value
      * </p>
      *
      * @param json
@@ -153,14 +161,17 @@ public class SwaggerModelValidator implements java.io.Serializable {
                 String property = prop.getKey();
                 Property modelProperty = prop.getValue();
                 if (!json.has(property)) {
-                    //Hack for 911Address which seems to return get911Address for some reason
+                    // Hack for 911Address which seems to return get911Address
+                    // for some reason
                     if (property.startsWith("get")) {
                         property = property.substring(3);
                     }
                 }
-                //if (!json.has(property)) {
-               //     throw new ValidationException().message(new ValidationMessage().message("unable to find json property "+property));
-              //  }
+                // if (!json.has(property)) {
+                // throw new ValidationException().message(new
+                // ValidationMessage().message("unable to find json property
+                // "+property));
+                // }
                 // Check for requiredness
                 if (modelProperty.getRequired()
                         && (!json.has(property) || json.get(property) == null
@@ -170,7 +181,8 @@ public class SwaggerModelValidator implements java.io.Serializable {
                 }
                 else {
                     if (modelProperty instanceof RefProperty) {
-                        // Got a class, so process this class for required fields
+                        // Got a class, so process this class for required
+                        // fields
                         String name = ((RefProperty) modelProperty).getSimpleRef();
                         validationResult
                                 .addValidationMessages((validateFields(json.getJSONObject(property),
