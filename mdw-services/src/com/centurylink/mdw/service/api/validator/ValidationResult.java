@@ -39,6 +39,13 @@ public class ValidationResult implements Jsonable {
         this.validationMessages = validationMessages;
     }
 
+    public String getConcatenatedMessages() {
+        StringBuffer concatenated = new StringBuffer();
+        if (validationMessages != null) {
+            validationMessages.forEach((message)-> concatenated.append(message.getMessage()).append(";"));
+        }
+        return concatenated.toString();
+    }
     public ValidationResult addValidationMessage(ValidationMessage validationMessage) {
         if (validationMessage != null) {
             if (validationMessages == null)
