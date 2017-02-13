@@ -50,9 +50,9 @@ public class Workflow extends JsonRestService {
             if (getQuery(path, headers).getBooleanFilter("summary")) {
                 Process process;
                 if (segments.length == 4)
-                    process = ProcessCache.getProcess(segments[2], Asset.parseVersion(segments[3]));
+                    process = ProcessCache.getProcess(segments[1] + "/" + segments[2], Asset.parseVersion(segments[3]));
                 else
-                    process = ProcessCache.getProcess(segments[2], 0);
+                    process = ProcessCache.getProcess(segments[1] + "/" + segments[2], 0);
                 JSONObject json = new JSONObject();
                 json.put("id", process.getId());
                 json.put("name", process.getName());

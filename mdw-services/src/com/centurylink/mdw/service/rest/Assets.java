@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
@@ -47,7 +48,11 @@ public class Assets extends JsonRestService {
             String asset = pkg == null ? null : getSegment(path, 2);
 
             if (pkg == null) {
-                return assetServices.getPackages(true).getJson(); // TODO query param for vcs info
+                Query query = getQuery(path, headers);
+                if (query.hasFilters())
+                    return assetServices.getAssetPackageList(query).getJson();
+                else
+                    return assetServices.getPackages(true).getJson(); // TODO query param for vcs info
             }
             else {
                 if (asset == null) {

@@ -20,7 +20,7 @@ public class AssetFile extends File {
     private PackageDir parent;
     public PackageDir getPackage() { return parent; }
 
-    AssetFile(PackageDir parent, String fileName, AssetRevision rev) {
+    public AssetFile(PackageDir parent, String fileName, AssetRevision rev) {
         super(parent + "/" + fileName);
         this.parent = parent;
         logicalFile = new File(parent.getPackageName() + "/" + getName() + " " + rev.getFormattedVersion());

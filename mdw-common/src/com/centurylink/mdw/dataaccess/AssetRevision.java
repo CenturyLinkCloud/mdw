@@ -5,6 +5,8 @@ package com.centurylink.mdw.dataaccess;
 
 import java.util.Date;
 
+import com.centurylink.mdw.model.asset.Asset;
+
 public class AssetRevision {
 
     private int version;
@@ -14,6 +16,13 @@ public class AssetRevision {
 
     public int getVersion() { return version; }
     public void setVersion(int ver) { this.version = ver; }
+
+    public AssetRevision() {
+    }
+
+    public AssetRevision(String ver) {
+        this.version = Asset.parseVersion(ver);
+    }
 
     public String getFormattedVersion() {
         return "v" + getVersionString();

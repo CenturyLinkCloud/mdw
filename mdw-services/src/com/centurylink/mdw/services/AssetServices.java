@@ -8,10 +8,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 
@@ -31,6 +33,10 @@ public interface AssetServices {
      */
     public PackageList getPackages(boolean withVcsInfo) throws ServiceException;
 
+    /**
+     * Returns packages, with their assets filtered by query criteria.
+     */
+    public AssetPackageList getAssetPackageList(Query query) throws ServiceException;
 
     /**
      * Return the PackageDir for a name.  Does not contain assets or VCS info.
