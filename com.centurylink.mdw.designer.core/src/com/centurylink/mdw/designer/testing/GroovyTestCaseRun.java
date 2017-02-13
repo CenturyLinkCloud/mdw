@@ -534,7 +534,14 @@ public class GroovyTestCaseRun extends TestCaseRun {
                         Closure<String> completer = activityStub.getCompleter();
                         completer.setResolveStrategy(Closure.DELEGATE_FIRST);
                         completer.setDelegate(activityStub);
-                        String resultCode = completer.call(request);
+                        String resultCode = null;
+                        try {
+                            resultCode = completer.call(request);
+                        }
+                        catch (Throwable th) {
+                            th.printStackTrace(log);
+                            throw th;
+                        }
                         ActivityStubResponse activityStubResponse = new ActivityStubResponse();
                         activityStubResponse.setResultCode(resultCode);
                         if (activityStub.getSleep() > 0)
