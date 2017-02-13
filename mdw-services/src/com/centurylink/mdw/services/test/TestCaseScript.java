@@ -132,6 +132,8 @@ public abstract class TestCaseScript extends Script {
             cl.setDelegate(process);
             cl.call();
         }
+        if (getTestCaseRun().testCaseProcess == null)
+            getTestCaseRun().testCaseProcess = process;
         return process;
     }
 
@@ -139,6 +141,8 @@ public abstract class TestCaseScript extends Script {
         cl.setResolveStrategy(Closure.DELEGATE_FIRST);
         cl.setDelegate(process);
         cl.call();
+        if (getTestCaseRun().testCaseProcess == null)
+            getTestCaseRun().testCaseProcess = process;
         return process;
     }
 
