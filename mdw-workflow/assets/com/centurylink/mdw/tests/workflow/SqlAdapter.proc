@@ -61,7 +61,8 @@
     {
       "attributes": {
         "OsgiBundleSymbolicName": "com.centurylink.donsservicemix",
-        "PostScript": "import java.sql.ResultSet\r\n\r\nResultSet rs = (ResultSet) response;\r\nList<String> users = new ArrayList<String>();\r\nwhile (rs.next()) {\r\n  users.add(rs.getString(\"name\"));\r\n}\r\nmdwSupportUsers = users.toArray(new String[0]);",
+        "Output Documents": "mdwSupportUsers",
+        "PostScript": "import java.sql.ResultSet\r\n\r\nResultSet rs = (ResultSet) response;\r\nmdwSupportUsers = new ArrayList<String>();\r\nwhile (rs.next()) {\r\n  mdwSupportUsers.add(rs.getString(\"name\"));\r\n}\r\n",
         "PostScriptLang": "Groovy",
         "PreScriptLang": "Groovy",
         "WORK_DISPLAY_INFO": "x=304,y=185,w=145,h=78",
@@ -120,7 +121,7 @@
         "PostScript": "import java.sql.ResultSet\r\n\r\nResultSet rs = (ResultSet) response;\r\nif (rs.next()) {\r\n  return rs.getString(\"name\");\r\n}",
         "PostScriptLang": "Groovy",
         "PreScriptLang": "Groovy",
-        "WORK_DISPLAY_INFO": "x=478,y=153,w=100,h=72",
+        "WORK_DISPLAY_INFO": "x=479,y=153,w=100,h=72",
         "jdbcDataSource": "MDWDataSource",
         "queryType": "Select",
         "sqlQuery": "select name from user_info where cuid = 'dxoakes'"
@@ -129,7 +130,7 @@
       "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
       "name": "Select User\r\nAnd Bind Name",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=534,ly=248,type=Elbow,xs=526&526,ys=229&287"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=535,ly=248,type=Elbow,xs=527&527,ys=229&287"},
         "event": "FINISH",
         "id": "T8",
         "resultCode": "Don Oakes",
@@ -200,7 +201,7 @@
   "variables": {
     "mdwSupportUsers": {
       "category": "LOCAL",
-      "type": "java.lang.String[]"
+      "type": "java.util.List<String>"
     },
     "userCuid": {
       "category": "INPUT",
@@ -208,12 +209,12 @@
     },
     "userCuids": {
       "category": "INPUT",
-      "type": "java.lang.String[]"
+      "type": "java.util.List<String>"
     },
     "userDocument": {
       "category": "LOCAL",
       "type": "org.apache.xmlbeans.XmlObject"
     }
   },
-  "version": "0.4"
+  "version": "0.6"
 }

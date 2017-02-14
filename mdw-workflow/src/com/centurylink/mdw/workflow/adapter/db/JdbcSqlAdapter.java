@@ -4,6 +4,7 @@
 package com.centurylink.mdw.workflow.adapter.db;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
@@ -86,9 +87,9 @@ public class JdbcSqlAdapter extends AdapterActivityBase {
             QueryType queryType = getQueryType();
 
             Object queryParams = getQueryParameters();
-            if (queryParams instanceof Object[]) {
+            if (queryParams instanceof List<?>) {
                 if (queryType == QueryType.Select)
-                    return dbAccess.runSelect(query, (Object[])queryParams);
+                    return dbAccess.runSelect(query, ((List<?>)queryParams).toArray());
                 else if (queryType == QueryType.Update) {
                     Integer ret = new Integer(dbAccess.runUpdate(query, (Object[])queryParams));
                     dbAccess.commit();
@@ -151,7 +152,7 @@ public class JdbcSqlAdapter extends AdapterActivityBase {
             String paramVar = getAttributeValueSmart(PARAM_VAR);
             if (paramVar == null)
                 return null;
-            return this.getParameterValue(paramVar);
+            return this.getVariableValue(paramVar);
         }
         catch (Exception ex) {
             throw new ActivityException(ex.getMessage(), ex);
