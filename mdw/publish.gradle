@@ -39,7 +39,7 @@ task exportAssetPackages {
     if (mdwVersion.endsWith("-SNAPSHOT"))
         mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
     println "Exporting asset packages from " + assetRootPath + ":" 
-    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.json').each { pkgFile ->
+    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.json', exclude:'Archive/**/*').each { pkgFile ->
         doLast {
             def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('/','.').replace('\\','.')
             def pkgCat = pkgName.substring(pkgName.lastIndexOf('.') + 1)
