@@ -20,6 +20,7 @@ import com.centurylink.mdw.util.StringHelper;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.util.PrimitiveType;
@@ -119,10 +120,11 @@ public class SwaggerModelValidator implements java.io.Serializable {
         ValidationResult validationResult = new ValidationResult();
         String[] passedInProperties = JSONObject.getNames(originalRequest);
         for (int i = 0; i < passedInProperties.length; i++) {
+
             if (mainModel.getProperties() == null
                     || !mainModel.getProperties().containsKey(passedInProperties[i])) {
                 validationResult.addValidationMessage(new ValidationMessage()
-                        .message(passedInProperties[i] + " is not supported in this model api"));
+                        .message("property '"+passedInProperties[i] +"' for object '"+((ModelImpl)mainModel).getName()+"' is not supported in this model api"));
             }
             else {
                 Property modelProperty = mainModel.getProperties().get(passedInProperties[i]);
