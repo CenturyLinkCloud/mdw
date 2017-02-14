@@ -1,6 +1,6 @@
 // sql-adapter
 start process("SqlAdapter") {
-    variables = [userCuid: "dxoakes", userCuids: "dxoakes~aa56486"]
+    variables = [userCuid: "dxoakes", userCuids: ["dxoakes,aa56486"]]
 }
 wait process {
     timeout = 120

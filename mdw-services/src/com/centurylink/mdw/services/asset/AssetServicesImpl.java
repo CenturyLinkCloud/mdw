@@ -7,21 +7,26 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.bpm.PackageDocument;
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.AssetFile;
 import com.centurylink.mdw.dataaccess.file.GitDiffs;
@@ -29,6 +34,7 @@ import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.workflow.Package;
@@ -201,10 +207,46 @@ public class AssetServicesImpl implements AssetServices {
             return pkgList;
         }
         catch (DataAccessException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
         catch (IOException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    public AssetPackageList getAssetPackageList(Query query) throws ServiceException {
+        try {
+            List<PackageAssets> packageAssetList = new ArrayList<>();
+            for (PackageDir pkgDir : findPackageDirs(Arrays.asList(new File[]{assetRoot}))) {
+
+                Stream<File> stream = Arrays.asList(pkgDir.listFiles()).stream();
+
+                // currently "extension" is the only supported filter
+                String ext = query.getFilter("extension");
+                if (ext != null) {
+                    stream = stream.filter(f -> f.isFile() && f.getName().endsWith("." + ext));
+                }
+
+                List<AssetInfo> assets = new ArrayList<AssetInfo>();
+                for (File file : stream.collect(Collectors.toList())) {
+                    assets.add(new AssetInfo(pkgDir.getAssetFile(file)));
+                };
+                if (!assets.isEmpty()) {
+                    PackageAssets pkgAssets = new PackageAssets(pkgDir);
+                    pkgAssets.setAssets(assets);
+                    packageAssetList.add(pkgAssets);
+                }
+            }
+            AssetPackageList assetPackageList = new AssetPackageList(packageAssetList);
+            assetPackageList.setRetrieveDate(DatabaseAccess.getDbDate());
+            assetPackageList.sort();
+            return assetPackageList;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 

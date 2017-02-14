@@ -3,6 +3,7 @@
  */
 package com.centurylink.mdw.model.asset;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,9 +12,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.dataaccess.AssetRevision;
+import com.centurylink.mdw.dataaccess.file.AssetFile;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 
-public class PackageAssets implements Jsonable {
+public class PackageAssets implements Jsonable, Comparable<PackageAssets> {
 
     private PackageDir packageDir;
     public PackageDir getPackageDir() { return packageDir; }
@@ -24,6 +27,22 @@ public class PackageAssets implements Jsonable {
 
     public PackageAssets(PackageDir pkgDir) {
         this.packageDir = pkgDir;
+    }
+
+    public PackageAssets(PackageDir pkgDir, JSONObject json) throws JSONException {
+        this.packageDir = pkgDir;
+        if (json.has("assets")) {
+            this.assets = new ArrayList<>();
+            JSONArray assetArr = json.getJSONArray("assets");
+            for (int i = 0; i < assetArr.length(); i++) {
+                JSONObject assetObj = assetArr.getJSONObject(i);
+                AssetRevision rev = null;
+                if (assetObj.has("version"))
+                    rev = new AssetRevision(assetObj.getString("version"));
+                AssetFile assetFile = new AssetFile(pkgDir, assetObj.getString("name"), rev);
+                this.assets.add(new AssetInfo(assetFile));
+            }
+        }
     }
 
     public JSONObject getJson() throws JSONException {
@@ -48,5 +67,9 @@ public class PackageAssets implements Jsonable {
 
     public void sort() {
         Collections.sort(assets);
+    }
+
+    public int compareTo(PackageAssets other) {
+        return this.packageDir.getPackageName().compareToIgnoreCase(other.packageDir.getPackageName());
     }
 }

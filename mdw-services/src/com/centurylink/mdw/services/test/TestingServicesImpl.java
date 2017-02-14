@@ -73,7 +73,7 @@ public class TestingServicesImpl implements TestingServices {
             }
             testCaseList.getPackageTests().add(pkgTests);
         }
-        testCaseList.setCount(testCaseList.getPackageTests().size());
+        testCaseList.setCount(allTests.size());
         long lastMod = addStatusInfo(allTests);
         if (lastMod != -1)
             testCaseList.setRetrieveDate(new Date(lastMod));

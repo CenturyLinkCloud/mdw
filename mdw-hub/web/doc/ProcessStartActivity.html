@@ -53,18 +53,18 @@ The attribute specifies how variables should be initialized
 when the process is started via an external event, including a
 pre-flow task (owner type is DOCUMENT).
 It is a map. The value of each variable
-can be a <a href="xpath.html">MDW XPath expression</a>
-(identified by starting with "xpath:") or constants.
+can be a Java value expression or constant.
 <p>
 Here are examples of variable initialization specification:
 <table>
-<tr><td>my_var_1</td><td>xpath:/OrderHeader/OrderNumber</td></tr>
-<tr><td>my_var_2</td><td>a Static Value</td></tr>
+<tr><td>my_var_1</td><td>${request['OrderHeader/OrderNumber']}</td></tr>
+<tr><td>my_var_2</td><td>${request.OrderNumber}</td></tr>
+<tr><td>my_var_3</td><td>a Static Value</td></tr>
 </table>
 <p>
 You do not need to initialize every variable. Variables that
 are not specifically initialized will have null values.
-The XPath expression is applied to the external message that
+The Java value expression is applied to the external message that
 triggered the process instance.
 
 <h2>Subclassing This Implementor</h2>

@@ -177,6 +177,65 @@ processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
   });
 }]);
 
+processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw', 'util', 'Assets',
+                                               function($scope, $cookieStore, mdw, util, Assets) {
+  $scope.definitionList = Assets.get({extension: 'proc'}, function success() {
+    var pkgs = $scope.definitionList.packages;
+    pkgs.forEach(function(pkg) {
+      pkg.assets.forEach(function(a) {
+        a.baseName = a.name.substring(0, a.name.lastIndexOf('.'));
+      });
+      $scope.applyPkgCollapsedState();
+    });
+  });
+  
+  // TODO: copied from tests.js, consider refactoring
+  $scope.collapse = function(pkg) {
+    pkg.collapsed = true;
+    $scope.savePkgCollapsedState();
+  };
+  $scope.collapseAll = function() {
+    $scope.definitionList.packages.forEach(function(pkg) {
+      pkg.collapsed = true;
+    });
+    $scope.savePkgCollapsedState();
+  };
+  $scope.expand = function(pkg) {
+    pkg.collapsed = false;
+    $scope.savePkgCollapsedState();
+  };
+  $scope.expandAll = function() {
+    $scope.definitionList.packages.forEach(function(pkg) {
+      pkg.collapsed = false;
+    });
+    $scope.savePkgCollapsedState();
+  };
+  $scope.savePkgCollapsedState = function() {
+    var st = {};
+    $scope.definitionList.packages.forEach(function(pkg) {
+      if (pkg.collapsed)
+        st[pkg.name] = true;
+    });
+    $cookieStore.put('procsPkgCollapsedState', st);
+  };
+  $scope.applyPkgCollapsedState = function() {
+    var st = $cookieStore.get('procsPkgCollapsedState');
+    if (st) {
+      util.getProperties(st).forEach(function(pkgName) {
+        var col = st[pkgName];
+        if (col === true) {
+          for (var i = 0; i < $scope.definitionList.packages.length; i++) {
+            if (pkgName == $scope.definitionList.packages[i].name) {
+              $scope.definitionList.packages[i].collapsed = true;
+              break;
+            }
+          }
+        }
+      });
+    }
+  };
+}]);
+
 processMod.controller('ProcessDefController', ['$scope', '$routeParams', '$route', '$filter', 'mdw', 'util', 'ProcessDef', 'ProcessSummary', 'ProcessRun',
                                               function($scope, $routeParams, $route, $filter, mdw, util, ProcessDef, ProcessSummary, ProcessRun) {
   $scope.process = { 
@@ -206,7 +265,7 @@ processMod.controller('ProcessDefController', ['$scope', '$routeParams', '$route
     var toRun = { masterRequestId: $scope.run.masterRequestId, definitionId: $scope.run.definitionId, values: inValues};
     ProcessRun.run({definitionId: $scope.run.definitionId}, toRun,
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status && data.status.code !== 0) {
           mdw.messages = data.status.message;
         }
       }, 
@@ -227,9 +286,9 @@ processMod.controller('ProcessDefController', ['$scope', '$routeParams', '$route
   }
   else {
     var defSum = ProcessDef.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name, processVersion: $scope.process.version, summary: true}, function() {
-      if ($scope.isRun)
         $scope.process.definitionId = defSum.id;
-        $scope.run = ProcessRun.retrieve({definitionId: $scope.process.definitionId});
+        if ($scope.isRun)
+          $scope.run = ProcessRun.retrieve({definitionId: $scope.process.definitionId});
     });
   }
 }]);

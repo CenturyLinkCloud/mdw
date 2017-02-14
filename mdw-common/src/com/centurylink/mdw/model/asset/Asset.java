@@ -539,6 +539,8 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public static int parseVersion(String versionString) throws NumberFormatException {
         if (versionString == null)
             return 0;
+        if (versionString.startsWith("v"))
+            versionString = versionString.substring(1);
         int dot = versionString.indexOf('.');
         int major, minor;
         if (dot > 0) {

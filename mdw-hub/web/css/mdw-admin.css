@@ -314,6 +314,9 @@
   line-height: 1.2;
   color: #23527c;
 }
+.mdw-item-in {
+	margin-left: 10px;
+}
 .mdw-item-nowrap {
   white-space: nowrap;
 }

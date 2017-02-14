@@ -95,10 +95,10 @@ testingMod.controller('TestsController',
       if (pkg.collapsed)
         st[pkg.name] = true;
     });
-    $cookieStore.put('pkgCollapsedState', st);
+    $cookieStore.put('testsPkgCollapsedState', st);
   };
   $scope.applyPkgCollapsedState = function() {
-    var st = $cookieStore.get('pkgCollapsedState');
+    var st = $cookieStore.get('testsPkgCollapsedState');
     if (st) {
       util.getProperties(st).forEach(function(pkgName) {
         var col = st[pkgName];
