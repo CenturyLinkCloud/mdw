@@ -17,6 +17,8 @@ import javax.ws.rs.Path;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.rest.RestService;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -32,12 +34,17 @@ import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.servlet.ReaderContext;
 import io.swagger.servlet.extensions.ReaderExtension;
+import io.swagger.servlet.extensions.ServletReaderExtension;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.PrimitiveType;
 import io.swagger.util.ReflectionUtils;
 
-public class ResourceReaderExtension implements ReaderExtension {
+public class ResourceReaderExtension extends ServletReaderExtension implements ReaderExtension {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    public static final String BASE_REST_PKG = "com.centurylink.mdw.services.rest";
 
     @Override
     public int getPriority() {
@@ -48,20 +55,6 @@ public class ResourceReaderExtension implements ReaderExtension {
     public boolean isReadable(ReaderContext context) {
         return true;
     }
-
-    @Override
-    public void applyConsumes(ReaderContext context, Operation operation, Method method) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void applyProduces(ReaderContext context, Operation operation, Method method) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public static final String BASE_REST_PKG = "com.centurylink.mdw.services.rest";
 
     @Override
     public String getHttpMethod(ReaderContext context, Method method) {
@@ -149,47 +142,14 @@ public class ResourceReaderExtension implements ReaderExtension {
     }
 
     @Override
-    public void applyOperationId(Operation operation, Method method) {
-//        Class<?> declaringClass = method.getDeclaringClass();
-//        //if (RestService.class.isAssignableFrom(declaringClass))
-//            operation.operationId(method.getName() + declaringClass.getSimpleName());
-    }
-
-    @Override
-    public void applySummary(Operation operation, Method method) {
-    }
-
-    @Override
-    public void applyDescription(Operation operation, Method method) {
-    }
-
-    @Override
-    public void applySchemes(ReaderContext context, Operation operation, Method method) {
-    }
-
-    @Override
-    public void setDeprecated(Operation operation, Method method) {
-    }
-
-    @Override
-    public void applySecurityRequirements(ReaderContext context, Operation operation, Method method) {
-    }
-
-    @Override
     public void applyTags(ReaderContext context, Operation operation, Method method) {
+        super.applyTags(context, operation, method);
+
         Class<?> declaringClass = method.getDeclaringClass();
         Api apiAnnotation = declaringClass.getAnnotation(Api.class);
         if (apiAnnotation != null && apiAnnotation.value() != null && !apiAnnotation.value().isEmpty()) {
             operation.addTag(apiAnnotation.value());
         }
-    }
-
-    @Override
-    public void applyResponses(ReaderContext context, Operation operation, Method method) {
-    }
-
-    @Override
-    public void applyParameters(ReaderContext context, Operation operation, Type type, Annotation[] annotations) {
     }
 
     /**
@@ -228,26 +188,24 @@ public class ResourceReaderExtension implements ReaderExtension {
             return primitive.getKeyClass();
         }
         try {
-            try {
-                return Class.forName(type);
-            }
-            catch (ClassNotFoundException cnfe) {
-                // use CloudClassLoader
-                int lastDot = type.lastIndexOf('.');
-                if (lastDot > 0) {
-                    String pkgName = type.substring(0, lastDot);
-                    Package pkg = PackageCache.getPackage(pkgName);
-                    if (pkg != null) {
+            return Class.forName(type);
+        }
+        catch (ClassNotFoundException cnfe) {
+            // use CloudClassLoader
+            int lastDot = type.lastIndexOf('.');
+            if (lastDot > 0) {
+                String pkgName = type.substring(0, lastDot);
+                Package pkg = PackageCache.getPackage(pkgName);
+                if (pkg != null) {
+                    try {
+                        logger.debug("Loading type: " + type + " using " + pkg.getName() + "'s ClassLoader");
                         return pkg.getCloudClassLoader().loadClass(type);
                     }
+                    catch (ClassNotFoundException cnfe2) {
+                        logger.severeException(String.format("Failed to resolve '%s' into class", type), cnfe);
+                    }
                 }
-                System.err.println(String.format("Failed to resolve '%s' into class", type));
-                cnfe.printStackTrace();
             }
-        }
-        catch (Exception ex) {
-            System.err.println(String.format("Failed to resolve '%s' into class", type));
-            ex.printStackTrace();
         }
         return null;
     }
