@@ -76,9 +76,10 @@ public class MdwScanner implements Scanner {
                         path = jsonServiceClass.getPackage().getName().replace('.', '/');
                         if (!pathAnnotation.value().startsWith("/"))
                             path += "/";
-                        path += pathAnnotation.value();
+                        if (!pathAnnotation.value().equals("/"))
+                            path += pathAnnotation.value();
                     }
-                    if (path.startsWith(servicePath) || ("/" + path).startsWith(servicePath))
+                    if (path.equals(servicePath) || ("/" + path).equals(servicePath))
                         classes.add(jsonServiceClass);
                 }
             }
