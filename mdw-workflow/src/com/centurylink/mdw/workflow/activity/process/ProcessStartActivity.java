@@ -117,14 +117,6 @@ public class ProcessStartActivity extends DefaultActivityImpl implements StartAc
         }
     }
 
-    private String evaluate(XmlObject /* Document */ doc, String expr) {
-        String value;
-        if (expr.startsWith("xpath:")) {
-            value = XmlPath.evaluate(doc, expr.substring(6));
-        } else value = expr;
-        return value;
-    }
-
     public String getAttachmentLocation() throws PropertyException
     {
         PropertyManager propMgr = PropertyUtil.getInstance().getPropertyManager();
