@@ -120,21 +120,28 @@ public class SwaggerModelValidator implements java.io.Serializable {
         ValidationResult validationResult = new ValidationResult();
         String[] passedInProperties = JSONObject.getNames(originalRequest);
         for (int i = 0; i < passedInProperties.length; i++) {
+            String propertyKey = passedInProperties[i];
 
             if (mainModel.getProperties() == null
-                    || !mainModel.getProperties().containsKey(passedInProperties[i])) {
-                validationResult.addValidationMessage(new ValidationMessage()
-                        .message("property '"+passedInProperties[i] +"' for object '"+((ModelImpl)mainModel).getName()+"' is not supported in this model api"));
-            }
-            else {
-                Property modelProperty = mainModel.getProperties().get(passedInProperties[i]);
-                // If it's a RefProperty then look at that
-                if (modelProperty instanceof RefProperty) {
-                    String name = ((RefProperty) modelProperty).getSimpleRef();
-                    validationResult.addValidationMessages((validateFieldsInModel(
-                            originalRequest.getJSONObject(passedInProperties[i]), models.get(name),
-                            models)));
+                    || !mainModel.getProperties().containsKey(propertyKey)) {
+                if (mainModel.getProperties().containsKey("get" + propertyKey)) {
+                    propertyKey = "get" + propertyKey;
                 }
+                else {
+                    validationResult.addValidationMessage(
+                            new ValidationMessage().message("property '" + passedInProperties[i]
+                                    + "' for object '" + ((ModelImpl) mainModel).getName()
+                                    + "' is not supported in this model api"));
+
+                }
+            }
+            Property modelProperty = mainModel.getProperties().get(propertyKey);
+            // If it's a RefProperty then look at that
+            if (modelProperty instanceof RefProperty) {
+                String name = ((RefProperty) modelProperty).getSimpleRef();
+                validationResult.addValidationMessages(
+                        (validateFieldsInModel(originalRequest.getJSONObject(passedInProperties[i]),
+                                models.get(name), models)));
             }
         }
         return validationResult;
