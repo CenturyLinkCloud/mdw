@@ -60,17 +60,12 @@ public class ProcessStartActivity extends DefaultActivityImpl implements StartAc
                 for (String key : parameters.keySet()) {
                     String one = parameters.get(key);
                     if(valueIsJavaExpression(one)){
-                        Object request = getParameterValue("request");
+                        Object request = getVariableValue("request");
                         if (request != null) {
                             Object value = getRuntimeContext().evaluate(one);
                             // do not override input values set explicitly with null ones from xpath (eg: HandleOrder demo)
-                            if (value != null){
-                                Variable variable = getProcessDefinition().getVariable(key);
-                                if (VariableTranslator.isDocumentReferenceVariable(getPackage(), variable.getVariableType()))
-                                    setParameterValueAsDocument(key, variable.getVariableType(), value);
-                                else
-                                    setParameterValue(key, value);
-                            }
+                            if (value != null)
+                               setVariableValue(key, value);
                         }
                     }
                 }
