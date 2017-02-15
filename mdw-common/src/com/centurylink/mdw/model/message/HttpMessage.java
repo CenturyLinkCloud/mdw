@@ -13,8 +13,6 @@ import com.centurylink.mdw.common.service.Jsonable;
 
 public class HttpMessage implements Serializable, Jsonable {
 
-    private String messageName;
-
     private String user;
     private String url;
     public String getUrl()
@@ -89,23 +87,11 @@ public class HttpMessage implements Serializable, Jsonable {
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("responseTime", getResponseTime());
-        json.put("name", getMessageName());
         json.put("response", getResponse());
         json.put("statusCode", getStatusCode());
         return json;
     }
-    /**
-     * @return the messageName
-     */
-    public String getMessageName() {
-        return messageName;
-    }
-    /**
-     * @param messageName the messageName to set
-     */
-    public void setMessageName(String messageName) {
-        this.messageName = messageName;
-    }
+
     /**
      * @return the user
      */

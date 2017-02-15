@@ -3,10 +3,18 @@
   <div class="col-md-10">
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
-        <div class="mdw-heading-label">Submit an HTTP Post Request</div>
+        <div class="mdw-heading-label">Submit a HTTP Request</div>
       </div>
-      <form name="importForm" class="form-horizontal mdw-section" role="form">
+      <form name="httpHelperForm" class="form-horizontal mdw-section" role="form">
         <fieldset ng-disabled="waitingForResponse">
+          <div class="form-group" ng-class="{'has-error': httpHelper.httpMethod === undefined}">
+            <label class="control-label col-xs-2 mdw-required" for="httpMethod">Http Method:</label>
+            <div class="col-xs-10">
+            <select class="form-control" ng-model="httpHelper.httpMethod"  uib-dropdown-menu aria-labelledby="simple-dropdown">
+              <option ng-repeat="httpMethod in httpHelper.httpMethods" value="{{httpMethod}}">{{httpMethod}}</option>
+            </select>
+            </div>
+          </div> 
           <div class="form-group" ng-class="{'has-error': httpHelper.url === undefined}">
             <label class="control-label col-xs-2 mdw-required" for="httpUrl">URL:</label>
             <div class="col-xs-10">
@@ -23,21 +31,23 @@
             </div>
           </div>
           <div class="form-group" ng-class="{'has-error': httpHelper.requestMessage === undefined}">
-            <label class="control-label col-xs-2 mdw-required" for="requestMessageTextarea">Message Body:</label>
+            <label class="control-label col-xs-2" for="requestMessageTextarea">Message Body:</label>
             <div class="col-xs-10">
-              <textarea id="requestMessageTextarea" name="requestMessage" class="form-control" ng-model="httpHelper.requestMessage" required
+              <textarea id="requestMessageTextarea" name="requestMessage" class="form-control" ng-model="httpHelper.requestMessage" 
               rows="20"  cols="110" ng-blur="httpHelper.requestMessage = httpHelper.requestMessage === '' ? undefined : httpHelper.requestMessage">
              </textarea>
             </div>
           </div>
           <div class="form-group" ng-class="{'has-error': httpHelper.timeOut === undefined}">
-            <label class="control-label col-xs-2 mdw-required" for="httpUrl">Timeout (ms):</label>
+            <label class="control-label col-xs-2 mdw-required" for="timeOutInput">Timeout (ms):</label>
             <div class="col-xs-4">
               <input type="text" id="timeOutInput" name="timeOut" class="form-control" ng-model="httpHelper.timeOut" maxlength="128"
                  ng-blur="httpHelper.timeOut = httpHelper.timeOut === '' ? undefined : httpHelper.timeOut">
             </div>
           </div>
           <div class="form-group" ng-class="{'has-error': httpHelper.response === undefined}">
+           <label class="control-label col-xs-2">Response Code:</label>
+           <div class="col-xs-10"><pre>{{httpHelper.responseCode}}</pre></div>
            <label class="control-label col-xs-2">Response:</label>
             <div class="col-xs-10"><pre>{{httpHelper.response}}</pre></div>
             <div class="mdw-buttons">

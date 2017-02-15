@@ -10,6 +10,14 @@ constantsMod.constant('STUCK_ACTIVITY_STATUSES', ['In Progress', 'Failed', 'Canc
 constantsMod.constant('REQUEST_STATUSES', ['In Progress', 'Failed', 'Waiting', 'Completed']);
 // these are simplified
 constantsMod.constant('TASK_ADVISORIES', ['Jeopardy', 'Alert', 'Invalid']);
+constantsMod.constant('HTTP_METHODS', ['POST', 'PUT', 'GET', 'DELETE', 'PATCH']);
+
+constantsMod.constant('QUEUE_NAMES', [
+  'com.centurylink.mdw.process.handler.queue',
+  'com.centurylink.mdw.external.event.queue',
+  'com.centurylink.mdw.intra.event.queue',
+  'com.centurylink.mdw.config.topic'
+]);
 
 constantsMod.constant('EXCEL_DOWNLOAD', 'DownloadFormat=xlsx');
 constantsMod.constant('JSON_DOWNLOAD', 'DownloadFormat=json');
