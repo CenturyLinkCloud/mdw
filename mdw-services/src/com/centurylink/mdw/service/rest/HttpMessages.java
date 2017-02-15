@@ -31,9 +31,9 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Path("/Message")
-@Api("HttpHelper to send Message")
-public class HttpHelper extends JsonRestService {
+@Path("/HttpMessages")
+@Api("Http Helper to send Message")
+public class HttpMessages extends JsonRestService {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     @Override
