@@ -58,12 +58,12 @@ messageMod.controller('MessageController', ['$scope', '$location', '$http', 'mdw
         }
         $scope.waitingForResponse = false;
 
-      };
+      }
    function handleError(error) {
         $scope.httpHelper.response = error.statusText;
         $scope.httpHelper.responseCode = error.status;
         $scope.waitingForResponse = false;
-      };
+      }
   };
 }]);
  
