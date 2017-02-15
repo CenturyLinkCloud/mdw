@@ -47,7 +47,6 @@ import com.centurylink.mdw.plugin.project.model.MavenBuildFile;
 import com.centurylink.mdw.plugin.project.model.OsgiBuildFile;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-
 @SuppressWarnings("restriction")
 public class TomcatServerBehavior extends org.eclipse.jst.server.tomcat.core.internal.TomcatServerBehaviour implements MdwServerConstants
 {

@@ -12,6 +12,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.wst.server.core.IModule;
 
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
@@ -86,10 +87,16 @@ public class TomcatServerOptionsSection extends MdwServerOptionsSection
 
   private WorkflowProject getProject()
   {
-    if (server != null && server.getModules().length == 1)
-      return WorkflowProjectManager.getInstance().getWorkflowProject(server.getModules()[0].getProject());
-    else
-      return null;
+    if (server != null && server.getModules().length > 0)
+    {
+      for (IModule module : server.getModules())
+      {
+        WorkflowProject project = WorkflowProjectManager.getInstance().getWorkflowProject(module.getProject());
+        if (project != null)
+          return project;
+      }
+    }
+    return null;
   }
 
 }

@@ -27,7 +27,6 @@ import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-
 @SuppressWarnings("restriction")
 public class TomcatServer extends org.eclipse.jst.server.tomcat.core.internal.TomcatServer
 {
