@@ -11,6 +11,10 @@ public class ValidationException extends Exception
 {
     private ValidationMessage message;
 
+    public ValidationException(ValidationMessage message, Throwable cause) {
+        super(message.getMessage(), cause);
+    }
+
     public ValidationException message(ValidationMessage message) {
         this.message = message;
         return this;

@@ -92,6 +92,31 @@ public class SwaggerModelValidator implements java.io.Serializable {
 
     }
 
+    public ValidationResult validateModel(JSONObject json, Class<?> type)
+            throws ValidationException, JSONException {
+        return validateModel(json, type, false);
+    }
+
+    /**
+     * @param json JSONObject to validate
+     * @param type Java class with Swagger @Api annotations
+     * @param strict if true, unknown properties fail validation
+     */
+    public ValidationResult validateModel(JSONObject json, Class<?> type, boolean strict)
+            throws ValidationException, JSONException {
+        ModelConverters modelConverters = ModelConverters.getInstance();
+        ValidationResult result = new ValidationResult();
+        Map<String,Model> models = modelConverters.readAll(type);
+        Map<String,Model> mainModels = modelConverters.read(type);
+        for (String modelName : mainModels.keySet()) {
+            Model mainModel = mainModels.get(modelName);
+            result.addValidationMessages(validateFields(json, mainModel, models));
+            if (strict)
+                result.addValidationMessages(validateFieldsInModel(json, mainModel, models));
+        }
+        return result;
+    }
+
     public ValidationResult validateModel(JSONObject originalRequest, Jsonable modelObject)
             throws ValidationException, JSONException {
         // Get all the models
@@ -109,16 +134,16 @@ public class SwaggerModelValidator implements java.io.Serializable {
     /**
      * Validate fields in a JSONObject against the supported ones in a model
      *
-     * @param originalRequest
+     * @param json
      * @param mainModel
      * @param models
      * @return ValidationResult of invalid properties in the JSON
      * @throws JSONException
      */
-    private ValidationResult validateFieldsInModel(JSONObject originalRequest, Model mainModel,
-            Map<String, Model> models) throws JSONException {
+    private ValidationResult validateFieldsInModel(JSONObject json, Model mainModel,
+            Map<String,Model> models) throws JSONException {
         ValidationResult validationResult = new ValidationResult();
-        String[] passedInProperties = JSONObject.getNames(originalRequest);
+        String[] passedInProperties = JSONObject.getNames(json);
         for (int i = 0; i < passedInProperties.length; i++) {
             String propertyKey = passedInProperties[i];
 
@@ -128,11 +153,10 @@ public class SwaggerModelValidator implements java.io.Serializable {
                     propertyKey = "get" + propertyKey;
                 }
                 else {
-                    validationResult.addValidationMessage(
-                            new ValidationMessage().message("property '" + passedInProperties[i]
-                                    + "' for object '" + ((ModelImpl) mainModel).getName()
-                                    + "' is not supported in this model api"));
-
+                    String msg = "'" + passedInProperties[i] + "' not expected";
+                    if (mainModel instanceof ModelImpl)
+                        msg += " on " + ((ModelImpl) mainModel).getName();
+                    validationResult.addValidationMessage(new ValidationMessage().message(msg));
                 }
             }
             Property modelProperty = mainModel.getProperties().get(propertyKey);
@@ -140,7 +164,7 @@ public class SwaggerModelValidator implements java.io.Serializable {
             if (modelProperty instanceof RefProperty) {
                 String name = ((RefProperty) modelProperty).getSimpleRef();
                 validationResult.addValidationMessages(
-                        (validateFieldsInModel(originalRequest.getJSONObject(passedInProperties[i]),
+                        (validateFieldsInModel(json.getJSONObject(passedInProperties[i]),
                                 models.get(name), models)));
             }
         }
@@ -162,7 +186,7 @@ public class SwaggerModelValidator implements java.io.Serializable {
      * @throws ValidationException
      */
     private ValidationResult validateFields(JSONObject json, Model model,
-            Map<String, Model> swaggerModels) throws ValidationException {
+            Map<String,Model> swaggerModels) throws ValidationException {
         Map<String, Property> modelFields = model.getProperties();
         ValidationResult validationResult = new ValidationResult();
         for (Map.Entry<String, Property> prop : modelFields.entrySet()) {
@@ -182,11 +206,14 @@ public class SwaggerModelValidator implements java.io.Serializable {
                 // "+property));
                 // }
                 // Check for requiredness
-                if (modelProperty.getRequired()
-                        && (!json.has(property) || json.get(property) == null
-                                || StringHelper.isEmpty(json.getString(property)))) {
-                    validationResult.addValidationMessage(
-                            new ValidationMessage().message(property + " is a required field"));
+                if (!json.has(property) || json.get(property) == null
+                        || StringHelper.isEmpty(json.getString(property))) {
+                    if (modelProperty.getRequired()) {
+                        String msg = "'" + property + "' is a required property";
+                        if (model instanceof ModelImpl)
+                            msg += " on " + ((ModelImpl)model).getName();
+                        validationResult.addValidationMessage(new ValidationMessage().message(msg));
+                    }
                 }
                 else {
                     if (modelProperty instanceof RefProperty) {
@@ -209,8 +236,9 @@ public class SwaggerModelValidator implements java.io.Serializable {
                 }
             }
             catch (Exception e) {
-                throw new ValidationException()
-                        .message(new ValidationMessage().message(e.getMessage()));
+                // include e in ValidationException constructor so that root cause is not lost
+                throw new ValidationException(
+                        new ValidationMessage().message(e.getMessage()), e);
             }
         }
         return validationResult;
