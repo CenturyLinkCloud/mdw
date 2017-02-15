@@ -68,7 +68,7 @@ messageMod.controller('MessageController', ['$scope', '$location', '$http', 'mdw
 }]);
  
 messageMod.factory('Message', ['$resource', 'mdw', function($resource, mdw) {
-  return angular.extend({}, $resource(mdw.roots.services +'/Services/HttpHelper', mdw.serviceParams(), {
+  return angular.extend({}, $resource(mdw.roots.services +'/Services/HttpMessages', mdw.serviceParams(), {
     query: { method: 'GET', isArray: false }, 
     create: { method: 'POST'},
     update: { method: 'PUT' },

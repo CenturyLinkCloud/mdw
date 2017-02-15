@@ -10,19 +10,28 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Jsonable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+@ApiModel(value="HttpMessage", description="Http Message")
 public class HttpMessage implements Serializable, Jsonable {
 
+    public HttpMessage() {}
+
     private String user;
+    @ApiModelProperty(value="cuit of authenticated user", required=true)
+
     private String url;
+    @ApiModelProperty(value="URL", required=true)
+
     public String getUrl()
     {
-      if (url == null)
-      {
-        url = "http://" + ApplicationContext.getServerHost() + ":" + ApplicationContext.getServerPort()
+        if (url == null)
+        {
+            url = "http://" + ApplicationContext.getServerHost() + ":" + ApplicationContext.getServerPort()
             + "/" + ApplicationContext.getServicesContextRoot() + "/Services/REST";
-      }
-      return url;
+        }
+        return url;
     }
     public void setUrl(String url) { this.url = url; }
 
@@ -39,35 +48,24 @@ public class HttpMessage implements Serializable, Jsonable {
     public void setTimeout(Integer timeOut) { this.timeOut = timeOut; }
 
     private String response;
-    /**
-     * @param response the response to set
-     */
-    public void setResponse(String response) {
-        this.response = response;
-    }
+
+    public void setResponse(String response) {        this.response = response;    }
     public String getResponse() { return response; }
 
     private int statusCode;
-    /**
-     * @param statusCode the statusCode to set
-     */
+    @ApiModelProperty(hidden=true)
+
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
     public int getStatusCode() { return statusCode; }
 
     private int responseTime;  // ms
-    /**
-     * @param responseTime the responseTime to set
-     */
+
     public void setResponseTime(int responseTime) {
         this.responseTime = responseTime;
     }
     public int getResponseTime() { return responseTime; }
-
-    public HttpMessage() {
-
-    }
 
     public HttpMessage(JSONObject json) throws JSONException {
         if (json.has("timeOut"))
@@ -75,7 +73,7 @@ public class HttpMessage implements Serializable, Jsonable {
         if (json.has("url"))
             url = json.getString("url");
         if (json.has("user"))
-                user = json.getString("user");
+            user = json.getString("user");
         if (json.has("headers"))
             headers = json.getString("headers");
         if (json.has("requestMessage"))
@@ -92,16 +90,6 @@ public class HttpMessage implements Serializable, Jsonable {
         return json;
     }
 
-    /**
-     * @return the user
-     */
-    public String getUser() {
-        return user;
-    }
-    /**
-     * @param user the user to set
-     */
-    public void setUser(String user) {
-        this.user = user;
-    }
+    public String getUser() { return user; }
+    public void setUser(String user) { this.user = user; }
 }
