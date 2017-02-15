@@ -10,6 +10,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public class Query {
     public static final int DEFAULT_MAX = 50;
@@ -211,6 +215,27 @@ public class Query {
                 return getDateTimeFormat().format(date);
         }
     }
+    /**
+     * Support ISO8601 format for a Date YYYY-MM-dd
+     * @param str
+     * @return a Date object
+     * @throws ParseException
+     */
+    public static Date getISO8601Date(String str) throws ParseException {
+        // Use thread safe Java 8 version
+        return Date.from(LocalDate.parse(str, DateTimeFormatter.ISO_DATE).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    }
+    /**
+     * Support ISO8601 format for a DateTime yyyy-MM-dd'T'HH:mm:ss'Z'
+     * @param str
+     * @return a Date object
+     * @throws ParseException
+     */
+    public static Date getISO8601DateTime(String str) throws ParseException {
+        // Use thread safe Java 8 version
+        return Date.from(LocalDateTime.parse(str, DateTimeFormatter.ISO_DATE_TIME).atZone(ZoneId.systemDefault()).toInstant());
+    }
+
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
