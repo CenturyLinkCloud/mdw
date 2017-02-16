@@ -805,7 +805,7 @@ public class TestCaseRun implements Runnable {
      * Default implementation to substitute values from request as super.getStubResponse();
      * Users can provide their own implementation as a Groovy closure.
      */
-    public ActivityStubResponse getStubResponse(ActivityStubRequest request) throws JSONException {
+    public ActivityStubResponse getStubResponse(ActivityStubRequest request) throws JSONException, TestException {
         // activity stubbing
         ActivityRuntimeContext activityRuntimeContext = request.getRuntimeContext();
         if (testCaseProcess != null && testCaseProcess.getActivityStubs() != null) {
@@ -820,7 +820,7 @@ public class TestCaseRun implements Runnable {
                     }
                     catch (Throwable th) {
                         th.printStackTrace(log);
-                        throw th;
+                        throw new TestException(th.getMessage(), th);
                     }
                     ActivityStubResponse activityStubResponse = new ActivityStubResponse();
                     activityStubResponse.setResultCode(resultCode);
@@ -856,35 +856,48 @@ public class TestCaseRun implements Runnable {
      * Default implementation to substitute values from request as super.getStubResponse();
      * Users can provide their own implementation as a Groovy closure.
      */
-    public AdapterStubResponse getStubResponse(AdapterStubRequest request) throws JSONException {
+    public AdapterStubResponse getStubResponse(AdapterStubRequest request) throws JSONException, TestException {
         // adapter stubbing
         for (TestCaseAdapterStub adapterStub : adapterStubs) {
             boolean match = false;
-            if (adapterStub.isEndpoint()) {
-                match = adapterStub.getMatcher().call(request);
-            }
-            else {
-                match = adapterStub.getMatcher().call(request.getContent());
-            }
-            if (match) {
-                String stubbedResponseContent = adapterStub.getResponder().call(request.getContent());
-                if (isVerbose()) {
-                    if (adapterStub.isEndpoint())
-                        log.println("Stubbing endpoint " + request.getUrl() + " with:\n" + stubbedResponseContent);
-                    else
-                        log.println("Stubbing response with: " + stubbedResponseContent);
+            try {
+                if (adapterStub.isEndpoint()) {
+                    match = adapterStub.getMatcher().call(request);
                 }
-                int delay = 0;
-                if (adapterStub.getDelay() > 0)
-                    delay = adapterStub.getDelay();
-                else if (adapterStub.getSleep() > 0)
-                    delay = adapterStub.getSleep();
+                else {
+                    match = adapterStub.getMatcher().call(request.getContent());
+                }
+            }
+            catch (Throwable th) {
+                th.printStackTrace(log);
+                throw new TestException(th.getMessage(), th);
+            }
 
-                AdapterStubResponse stubResponse = new AdapterStubResponse(stubbedResponseContent);
-                stubResponse.setDelay(delay);
-                stubResponse.setStatusCode(adapterStub.getStatusCode());
-                stubResponse.setStatusMessage(adapterStub.getStatusMessage());
-                return stubResponse;
+            if (match) {
+                try {
+                    String stubbedResponseContent = adapterStub.getResponder().call(request.getContent());
+                    if (isVerbose()) {
+                        if (adapterStub.isEndpoint())
+                            log.println("Stubbing endpoint " + request.getUrl() + " with:\n" + stubbedResponseContent);
+                        else
+                            log.println("Stubbing response with: " + stubbedResponseContent);
+                    }
+                    int delay = 0;
+                    if (adapterStub.getDelay() > 0)
+                        delay = adapterStub.getDelay();
+                    else if (adapterStub.getSleep() > 0)
+                        delay = adapterStub.getSleep();
+
+                    AdapterStubResponse stubResponse = new AdapterStubResponse(stubbedResponseContent);
+                    stubResponse.setDelay(delay);
+                    stubResponse.setStatusCode(adapterStub.getStatusCode());
+                    stubResponse.setStatusMessage(adapterStub.getStatusMessage());
+                    return stubResponse;
+                }
+                catch (Throwable th) {
+                    th.printStackTrace(log);
+                    throw new TestException(th.getMessage(), th);
+                }
             }
         }
 
