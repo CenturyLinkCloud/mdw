@@ -13,33 +13,27 @@ import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-public class ProjectImporter
-{
-  private List<WorkflowProject> projectsToImport;
-  private Shell shell;
-  
-  public ProjectImporter(List<WorkflowProject> projectsToImport)
-  {
-    this.projectsToImport = projectsToImport;
-  }
-  
-  public ProjectImporter(WorkflowProject projectToImport)
-  {
-    this.projectsToImport = new ArrayList<WorkflowProject>();
-    this.projectsToImport.add(projectToImport);
-  }
-  
-  public void doImport()
-  {
-    shell = MdwPlugin.getActiveWorkbenchWindow().getShell();
-    
-    BusyIndicator.showWhile(shell.getDisplay(), new Runnable()
-    {
-      public void run()
-      {
-        for (WorkflowProject toImport : projectsToImport)
-          WorkflowProjectManager.addProject(toImport);
-      }
-    });    
-  }
+public class ProjectImporter {
+    private List<WorkflowProject> projectsToImport;
+    private Shell shell;
+
+    public ProjectImporter(List<WorkflowProject> projectsToImport) {
+        this.projectsToImport = projectsToImport;
+    }
+
+    public ProjectImporter(WorkflowProject projectToImport) {
+        this.projectsToImport = new ArrayList<WorkflowProject>();
+        this.projectsToImport.add(projectToImport);
+    }
+
+    public void doImport() {
+        shell = MdwPlugin.getActiveWorkbenchWindow().getShell();
+
+        BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+            public void run() {
+                for (WorkflowProject toImport : projectsToImport)
+                    WorkflowProjectManager.addProject(toImport);
+            }
+        });
+    }
 }

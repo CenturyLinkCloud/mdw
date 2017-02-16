@@ -8,24 +8,20 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 /**
  * Listener for process editor context events.
  */
-public class ProcessEditorContextListener extends WorkflowEditorPartListener
-{
-  public ProcessEditorContextListener(WorkflowProcess processVersion)
-  {
-    super(processVersion);
-  }
+public class ProcessEditorContextListener extends WorkflowEditorPartListener {
+    public ProcessEditorContextListener(WorkflowProcess processVersion) {
+        super(processVersion);
+    }
 
-  public void broughtToTop(WorkflowElementEditor editor)
-  {
-    ProcessEditor processEditor = (ProcessEditor) editor;
-    // force canvas to assume current link shape
-    processEditor.setCanvasLinkStyle(ProcessEditorActionBarContributor.getLinkStyle());
-    processEditor.updateCanvasBackground();
-  }
+    public void broughtToTop(WorkflowElementEditor editor) {
+        ProcessEditor processEditor = (ProcessEditor) editor;
+        // force canvas to assume current link shape
+        processEditor.setCanvasLinkStyle(ProcessEditorActionBarContributor.getLinkStyle());
+        processEditor.updateCanvasBackground();
+    }
 
-  public void closed(WorkflowElementEditor editor)
-  {
-    ProcessEditor processEditor = (ProcessEditor) editor;
-    processEditor.remove();
-  }
+    public void closed(WorkflowElementEditor editor) {
+        ProcessEditor processEditor = (ProcessEditor) editor;
+        processEditor.remove();
+    }
 }

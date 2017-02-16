@@ -3,10 +3,8 @@
  */
 package com.centurylink.mdw.plugin.designer.wizards;
 
-public class ImportTaskTemplatesPage extends ImportExportPage
-{
-  public ImportTaskTemplatesPage()
-  {
-    super("Import MDW Task Templates", "Import task templates into a workflow package.");
-  }
+public class ImportTaskTemplatesPage extends ImportExportPage {
+    public ImportTaskTemplatesPage() {
+        super("Import MDW Task Templates", "Import task templates into a workflow package.");
+    }
 }

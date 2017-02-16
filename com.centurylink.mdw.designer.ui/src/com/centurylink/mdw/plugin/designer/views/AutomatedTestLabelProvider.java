@@ -18,57 +18,46 @@ import com.centurylink.mdw.plugin.designer.model.LegacyExpectedResults;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 
-public class AutomatedTestLabelProvider extends LabelProvider
-{
-  private Map<ImageDescriptor, Image> imageCache = new HashMap<ImageDescriptor, Image>();
+public class AutomatedTestLabelProvider extends LabelProvider {
+    private Map<ImageDescriptor, Image> imageCache = new HashMap<ImageDescriptor, Image>();
 
-  public Image getImage(Object element)
-  {
-    WorkflowElement workflowElement = (WorkflowElement) element;
-    return workflowElement.getIconImage();
-  }
-
-  public String getText(Object element)
-  {
-    if (element instanceof AutomatedTestSuite)
-    {
-      AutomatedTestSuite testSuite = (AutomatedTestSuite) element;
-      return testSuite.getProject().getName();
-    }
-    else if (element instanceof WorkflowPackage)
-    {
-      return ((WorkflowPackage)element).getName();
-    }
-    else if (element instanceof Folder)
-    {
-      return ((Folder)element).getName();
-    }
-    else if (element instanceof AutomatedTestCase)
-    {
-      AutomatedTestCase testCase = (AutomatedTestCase) element;
-      return testCase.getLabel();
-    }
-    else if (element instanceof AutomatedTestResults)
-    {
-      AutomatedTestResults expectedResults = (AutomatedTestResults) element;
-      return expectedResults.getLabel();
-    }
-    else if (element instanceof LegacyExpectedResults)
-    {
-      LegacyExpectedResults expectedResult = (LegacyExpectedResults) element;
-      return expectedResult.getName();
+    public Image getImage(Object element) {
+        WorkflowElement workflowElement = (WorkflowElement) element;
+        return workflowElement.getIconImage();
     }
 
-    return null;
-  }
+    public String getText(Object element) {
+        if (element instanceof AutomatedTestSuite) {
+            AutomatedTestSuite testSuite = (AutomatedTestSuite) element;
+            return testSuite.getProject().getName();
+        }
+        else if (element instanceof WorkflowPackage) {
+            return ((WorkflowPackage) element).getName();
+        }
+        else if (element instanceof Folder) {
+            return ((Folder) element).getName();
+        }
+        else if (element instanceof AutomatedTestCase) {
+            AutomatedTestCase testCase = (AutomatedTestCase) element;
+            return testCase.getLabel();
+        }
+        else if (element instanceof AutomatedTestResults) {
+            AutomatedTestResults expectedResults = (AutomatedTestResults) element;
+            return expectedResults.getLabel();
+        }
+        else if (element instanceof LegacyExpectedResults) {
+            LegacyExpectedResults expectedResult = (LegacyExpectedResults) element;
+            return expectedResult.getName();
+        }
 
-  public void dispose()
-  {
-    for (Image image : imageCache.values())
-    {
-      image.dispose();
+        return null;
     }
-    imageCache.clear();
-  }
+
+    public void dispose() {
+        for (Image image : imageCache.values()) {
+            image.dispose();
+        }
+        imageCache.clear();
+    }
 
 }

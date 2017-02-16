@@ -8,12 +8,10 @@ import org.eclipse.ui.IWorkbench;
 
 import com.centurylink.mdw.plugin.designer.model.JavaSource;
 
-public class NewJavaWizard extends WorkflowAssetWizard 
-{
-  public static final String WIZARD_ID = "mdw.designer.new.java";
-  
-  public void init(IWorkbench workbench, IStructuredSelection selection)
-  {
-    super.init(workbench, selection, new JavaSource());
-  }
+public class NewJavaWizard extends WorkflowAssetWizard {
+    public static final String WIZARD_ID = "mdw.designer.new.java";
+
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        super.init(workbench, selection, new JavaSource());
+    }
 }

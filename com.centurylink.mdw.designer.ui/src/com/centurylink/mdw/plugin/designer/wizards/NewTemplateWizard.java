@@ -13,47 +13,40 @@ import com.centurylink.mdw.plugin.designer.model.DocumentTemplate;
 import com.centurylink.mdw.plugin.designer.model.Template;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 
-public class NewTemplateWizard extends WorkflowAssetWizard
-{
-  public static final String WIZARD_ID = "mdw.designer.new.template";
+public class NewTemplateWizard extends WorkflowAssetWizard {
+    public static final String WIZARD_ID = "mdw.designer.new.template";
 
-  public void init(IWorkbench workbench, IStructuredSelection selection)
-  {
-    super.init(workbench, selection, new Template());
-  }
-
-  @Override
-  public String getTemplateLocation()
-  {
-    String languageSel = getWorkflowAssetPage().getLanguageCombo().getText();
-    if (languageSel.equalsIgnoreCase(RuleSetVO.FACELET))
-      return "/templates/facelet";
-    else
-      return null;
-  }
-
-  @Override
-  public List<String> getTemplateOptions()
-  {
-    String languageSel = getWorkflowAssetPage().getLanguageCombo().getText();
-    if (languageSel.equalsIgnoreCase(RuleSetVO.FACELET))
-    {
-      return super.getTemplateOptions();
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        super.init(workbench, selection, new Template());
     }
-    else
-    {
-      List<String> options = new ArrayList<String>();
-      options.add(BLANK_TEMPLATE);
-      return options;
-    }
-  }
 
-  @Override
-  public DocumentTemplate getNewDocTemplate()
-  {
-    if (getWorkflowAsset().getLanguage().equals(RuleSetVO.FACELET))
-      return super.getNewDocTemplate();
-    else
-      return null;
-  }
+    @Override
+    public String getTemplateLocation() {
+        String languageSel = getWorkflowAssetPage().getLanguageCombo().getText();
+        if (languageSel.equalsIgnoreCase(RuleSetVO.FACELET))
+            return "/templates/facelet";
+        else
+            return null;
+    }
+
+    @Override
+    public List<String> getTemplateOptions() {
+        String languageSel = getWorkflowAssetPage().getLanguageCombo().getText();
+        if (languageSel.equalsIgnoreCase(RuleSetVO.FACELET)) {
+            return super.getTemplateOptions();
+        }
+        else {
+            List<String> options = new ArrayList<String>();
+            options.add(BLANK_TEMPLATE);
+            return options;
+        }
+    }
+
+    @Override
+    public DocumentTemplate getNewDocTemplate() {
+        if (getWorkflowAsset().getLanguage().equals(RuleSetVO.FACELET))
+            return super.getNewDocTemplate();
+        else
+            return null;
+    }
 }

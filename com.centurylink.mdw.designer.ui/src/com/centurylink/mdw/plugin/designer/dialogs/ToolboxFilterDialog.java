@@ -31,249 +31,213 @@ import com.centurylink.mdw.plugin.designer.model.ActivityImpl;
 import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-public class ToolboxFilterDialog extends TrayDialog
-{
-  private WorkflowProject workflowProject;
-  private List<String> suppressedImplementors;
-  public List<String> getSuppressedImplementors() { return suppressedImplementors; }
+public class ToolboxFilterDialog extends TrayDialog {
+    private WorkflowProject workflowProject;
+    private List<String> suppressedImplementors;
 
-  private CheckboxTreeViewer treeViewer;
+    public List<String> getSuppressedImplementors() {
+        return suppressedImplementors;
+    }
 
-  public ToolboxFilterDialog(Shell shell, WorkflowProject workflowProject, List<String> suppressedImpls)
-  {
-    super(shell);
-    this.workflowProject = workflowProject;
-    this.suppressedImplementors = suppressedImpls;
-  }
+    private CheckboxTreeViewer treeViewer;
 
-  @Override
-  protected Control createDialogArea(Composite parent)
-  {
-    Composite composite = (Composite) super.createDialogArea(parent);
-    composite.getShell().setText("Show Toolbox Items");
-    composite.getShell().setImage(workflowProject.getDefaultPackage().getIconImage());
+    public ToolboxFilterDialog(Shell shell, WorkflowProject workflowProject,
+            List<String> suppressedImpls) {
+        super(shell);
+        this.workflowProject = workflowProject;
+        this.suppressedImplementors = suppressedImpls;
+    }
 
-    createMessageArea(composite);
-    createPackageTree(composite);
-    createSelectButtons(composite);
-    return (composite);
-  }
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Composite composite = (Composite) super.createDialogArea(parent);
+        composite.getShell().setText("Show Toolbox Items");
+        composite.getShell().setImage(workflowProject.getDefaultPackage().getIconImage());
 
-  protected Label createMessageArea(Composite composite)
-  {
-    Label label = new Label(composite, SWT.NONE);
-    label.setText("Activity Implementors to display in Toolbox View");
-    label.setFont(composite.getFont());
-    GridData data = new GridData(GridData.FILL_BOTH);
-    label.setLayoutData(data);
-    return label;
-  }
+        createMessageArea(composite);
+        createPackageTree(composite);
+        createSelectButtons(composite);
+        return (composite);
+    }
 
-  private void createPackageTree(Composite parent)
-  {
-    treeViewer = new CheckboxTreeViewer(parent, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-    treeViewer.setContentProvider(new ViewContentProvider());
-    treeViewer.setLabelProvider(new ViewLabelProvider());
-    treeViewer.setCheckStateProvider(new ViewCheckStateProvider());
-    treeViewer.setInput(workflowProject.getTopLevelUserVisiblePackages());
-    GridData data = new GridData(GridData.FILL_BOTH);
-    data.heightHint = 400;
-    treeViewer.getTree().setLayoutData(data);
-    treeViewer.addCheckStateListener(new ICheckStateListener()
-    {
-      public void checkStateChanged(CheckStateChangedEvent event)
-      {
-        boolean checked = event.getChecked();
-        if (event.getElement() instanceof WorkflowPackage)
-        {
-          WorkflowPackage pkg = (WorkflowPackage)event.getElement();
-          for (ActivityImpl impl : pkg.getActivityImpls())
-          {
-            if (checked)
-              suppressedImplementors.remove(impl.getImplClassName());
-            else if (!suppressedImplementors.contains(impl.getImplClassName()))
-              suppressedImplementors.add(impl.getImplClassName());
-          }
-          treeViewer.refresh();
+    protected Label createMessageArea(Composite composite) {
+        Label label = new Label(composite, SWT.NONE);
+        label.setText("Activity Implementors to display in Toolbox View");
+        label.setFont(composite.getFont());
+        GridData data = new GridData(GridData.FILL_BOTH);
+        label.setLayoutData(data);
+        return label;
+    }
+
+    private void createPackageTree(Composite parent) {
+        treeViewer = new CheckboxTreeViewer(parent,
+                SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        treeViewer.setContentProvider(new ViewContentProvider());
+        treeViewer.setLabelProvider(new ViewLabelProvider());
+        treeViewer.setCheckStateProvider(new ViewCheckStateProvider());
+        treeViewer.setInput(workflowProject.getTopLevelUserVisiblePackages());
+        GridData data = new GridData(GridData.FILL_BOTH);
+        data.heightHint = 400;
+        treeViewer.getTree().setLayoutData(data);
+        treeViewer.addCheckStateListener(new ICheckStateListener() {
+            public void checkStateChanged(CheckStateChangedEvent event) {
+                boolean checked = event.getChecked();
+                if (event.getElement() instanceof WorkflowPackage) {
+                    WorkflowPackage pkg = (WorkflowPackage) event.getElement();
+                    for (ActivityImpl impl : pkg.getActivityImpls()) {
+                        if (checked)
+                            suppressedImplementors.remove(impl.getImplClassName());
+                        else if (!suppressedImplementors.contains(impl.getImplClassName()))
+                            suppressedImplementors.add(impl.getImplClassName());
+                    }
+                    treeViewer.refresh();
+                }
+                else if (event.getElement() instanceof ActivityImpl) {
+                    ActivityImpl impl = (ActivityImpl) event.getElement();
+                    if (checked)
+                        suppressedImplementors.remove(impl.getImplClassName());
+                    else if (!suppressedImplementors.contains(impl.getImplClassName()))
+                        suppressedImplementors.add(impl.getImplClassName());
+                    treeViewer.refresh();
+                }
+            }
+        });
+        ColumnViewerToolTipSupport.enableFor(treeViewer);
+    }
+
+    private void createSelectButtons(Composite parent) {
+        Composite buttonComposite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 0;
+        layout.marginWidth = 0;
+        layout.horizontalSpacing = convertHorizontalDLUsToPixels(
+                IDialogConstants.HORIZONTAL_SPACING);
+        buttonComposite.setLayout(layout);
+        buttonComposite.setLayoutData(new GridData(SWT.END, SWT.TOP, true, false));
+
+        Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID,
+                "Select All", false);
+        selectButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                suppressedImplementors = new ArrayList<String>();
+                treeViewer.refresh();
+            }
+        });
+
+        Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID,
+                "Deselect All", false);
+        deselectButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                suppressedImplementors = new ArrayList<String>();
+                for (WorkflowPackage pkg : workflowProject.getTopLevelUserVisiblePackages()) {
+                    for (ActivityImpl impl : pkg.getActivityImpls()) {
+                        if (!suppressedImplementors.contains(impl.getImplClassName()))
+                            suppressedImplementors.add(impl.getImplClassName());
+                    }
+                }
+                treeViewer.refresh();
+            }
+        });
+    }
+
+    class ViewContentProvider implements ITreeContentProvider {
+        public Object[] getElements(Object inputElement) {
+            return ((List<?>) inputElement).toArray(new WorkflowPackage[0]);
         }
-        else if (event.getElement() instanceof ActivityImpl)
-        {
-          ActivityImpl impl = (ActivityImpl)event.getElement();
-          if (checked)
-            suppressedImplementors.remove(impl.getImplClassName());
-          else if (!suppressedImplementors.contains(impl.getImplClassName()))
-            suppressedImplementors.add(impl.getImplClassName());
-          treeViewer.refresh();
+
+        public boolean hasChildren(Object element) {
+            if (element instanceof WorkflowPackage) {
+                WorkflowPackage pkg = (WorkflowPackage) element;
+                return pkg.getActivityImpls() != null && !pkg.getActivityImpls().isEmpty();
+            }
+            else {
+                return false;
+            }
         }
-      }
-    });
-    ColumnViewerToolTipSupport.enableFor(treeViewer);
-  }
 
-  private void createSelectButtons(Composite parent)
-  {
-    Composite buttonComposite = new Composite(parent, SWT.NONE);
-    GridLayout layout = new GridLayout();
-    layout.numColumns = 0;
-    layout.marginWidth = 0;
-    layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-    buttonComposite.setLayout(layout);
-    buttonComposite.setLayoutData(new GridData(SWT.END, SWT.TOP, true, false));
-
-    Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, "Select All", false);
-    selectButton.addSelectionListener(new SelectionAdapter()
-    {
-      public void widgetSelected(SelectionEvent e)
-      {
-        suppressedImplementors = new ArrayList<String>();
-        treeViewer.refresh();
-      }
-    });
-
-    Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, "Deselect All", false);
-    deselectButton.addSelectionListener(new SelectionAdapter()
-    {
-      public void widgetSelected(SelectionEvent e)
-      {
-        suppressedImplementors = new ArrayList<String>();
-        for (WorkflowPackage pkg : workflowProject.getTopLevelUserVisiblePackages())
-        {
-          for (ActivityImpl impl : pkg.getActivityImpls())
-          {
-            if (!suppressedImplementors.contains(impl.getImplClassName()))
-              suppressedImplementors.add(impl.getImplClassName());
-          }
+        public Object[] getChildren(Object parentElement) {
+            if (parentElement instanceof WorkflowPackage) {
+                WorkflowPackage pkg = (WorkflowPackage) parentElement;
+                return pkg.getActivityImpls() == null ? null
+                        : pkg.getActivityImpls().toArray(new ActivityImpl[0]);
+            }
+            else {
+                return null;
+            }
         }
-        treeViewer.refresh();
-      }
-    });
-  }
 
-  class ViewContentProvider implements ITreeContentProvider
-  {
-    public Object[] getElements(Object inputElement)
-    {
-      return ((List<?>)inputElement).toArray(new WorkflowPackage[0]);
-    }
-
-    public boolean hasChildren(Object element)
-    {
-      if (element instanceof WorkflowPackage)
-      {
-        WorkflowPackage pkg = (WorkflowPackage)element;
-        return pkg.getActivityImpls() != null && !pkg.getActivityImpls().isEmpty();
-      }
-      else
-      {
-        return false;
-      }
-    }
-
-    public Object[] getChildren(Object parentElement)
-    {
-      if (parentElement instanceof WorkflowPackage)
-      {
-        WorkflowPackage pkg = (WorkflowPackage)parentElement;
-        return pkg.getActivityImpls() == null ? null : pkg.getActivityImpls().toArray(new ActivityImpl[0]);
-      }
-      else
-      {
-        return null;
-      }
-    }
-
-    public Object getParent(Object element)
-    {
-      return null;
-    }
-
-    public void inputChanged(Viewer v, Object oldInput, Object newInput)
-    {
-    }
-
-    public void dispose()
-    {
-    }
-  }
-
-  class ViewLabelProvider extends ColumnLabelProvider
-  {
-    public String getText(Object element)
-    {
-      if (element instanceof WorkflowPackage)
-      {
-        return (((WorkflowPackage)element).getName());
-      }
-      else if (element instanceof ActivityImpl)
-      {
-        ActivityImpl impl = (ActivityImpl)element;
-        return impl.getLabel();
-      }
-      else
-      {
-        return super.getText(element);
-      }
-    }
-
-    public String getToolTipText(Object element)
-    {
-      if (element instanceof ActivityImpl)
-        return ((ActivityImpl)element).getImplClassName();
-      else
-        return super.getToolTipText(element);
-    }
-  }
-
-  class ViewCheckStateProvider implements ICheckStateProvider
-  {
-    public boolean isChecked(Object element)
-    {
-      if (element instanceof WorkflowPackage)
-      {
-        WorkflowPackage pkg = (WorkflowPackage)element;
-        boolean noneChecked = true;
-        for (ActivityImpl impl : pkg.getActivityImpls())
-        {
-          if (!suppressedImplementors.contains(impl.getImplClassName()))
-          {
-            noneChecked = false;
-            break;
-          }
+        public Object getParent(Object element) {
+            return null;
         }
-        return !noneChecked;
-      }
-      else if (element instanceof ActivityImpl)
-      {
-        ActivityImpl impl = (ActivityImpl)element;
-        return !suppressedImplementors.contains(impl.getImplClassName());
-      }
-      else
-      {
-        return false;
-      }
+
+        public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+        }
+
+        public void dispose() {
+        }
     }
 
-    public boolean isGrayed(Object element)
-    {
-      if (element instanceof WorkflowPackage)
-      {
-        WorkflowPackage pkg = (WorkflowPackage)element;
-        boolean allChecked = true;
-        boolean noneChecked = true;
-        for (ActivityImpl impl : pkg.getActivityImpls())
-        {
-          if (suppressedImplementors.contains(impl.getImplClassName()))
-            allChecked = false;
-          else
-            noneChecked = false;
+    class ViewLabelProvider extends ColumnLabelProvider {
+        public String getText(Object element) {
+            if (element instanceof WorkflowPackage) {
+                return (((WorkflowPackage) element).getName());
+            }
+            else if (element instanceof ActivityImpl) {
+                ActivityImpl impl = (ActivityImpl) element;
+                return impl.getLabel();
+            }
+            else {
+                return super.getText(element);
+            }
         }
-        return !allChecked && !noneChecked;
-      }
-      else
-      {
-        return false;
-      }
+
+        public String getToolTipText(Object element) {
+            if (element instanceof ActivityImpl)
+                return ((ActivityImpl) element).getImplClassName();
+            else
+                return super.getToolTipText(element);
+        }
     }
-  }
+
+    class ViewCheckStateProvider implements ICheckStateProvider {
+        public boolean isChecked(Object element) {
+            if (element instanceof WorkflowPackage) {
+                WorkflowPackage pkg = (WorkflowPackage) element;
+                boolean noneChecked = true;
+                for (ActivityImpl impl : pkg.getActivityImpls()) {
+                    if (!suppressedImplementors.contains(impl.getImplClassName())) {
+                        noneChecked = false;
+                        break;
+                    }
+                }
+                return !noneChecked;
+            }
+            else if (element instanceof ActivityImpl) {
+                ActivityImpl impl = (ActivityImpl) element;
+                return !suppressedImplementors.contains(impl.getImplClassName());
+            }
+            else {
+                return false;
+            }
+        }
+
+        public boolean isGrayed(Object element) {
+            if (element instanceof WorkflowPackage) {
+                WorkflowPackage pkg = (WorkflowPackage) element;
+                boolean allChecked = true;
+                boolean noneChecked = true;
+                for (ActivityImpl impl : pkg.getActivityImpls()) {
+                    if (suppressedImplementors.contains(impl.getImplClassName()))
+                        allChecked = false;
+                    else
+                        noneChecked = false;
+                }
+                return !allChecked && !noneChecked;
+            }
+            else {
+                return false;
+            }
+        }
+    }
 
 }

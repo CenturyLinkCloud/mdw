@@ -8,12 +8,10 @@ import org.eclipse.ui.IWorkbench;
 
 import com.centurylink.mdw.plugin.designer.model.XmlDoc;
 
-public class NewXmlDocWizard extends WorkflowAssetWizard 
-{
-  public static final String WIZARD_ID = "mdw.designer.new.xml";
-  
-  public void init(IWorkbench workbench, IStructuredSelection selection)
-  {
-    super.init(workbench, selection, new XmlDoc());
-  }
+public class NewXmlDocWizard extends WorkflowAssetWizard {
+    public static final String WIZARD_ID = "mdw.designer.new.xml";
+
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        super.init(workbench, selection, new XmlDoc());
+    }
 }

@@ -14,25 +14,23 @@ import com.centurylink.mdw.plugin.actions.WorkflowElementActionHandler;
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-public class ServerRunnerLaunchShortcut implements ILaunchShortcut
-{
-  public void launch(ISelection selection, String mode)
-  {
-    Object firstElement = ((StructuredSelection)selection).getFirstElement();
-    IProject project = null;
-    if (firstElement instanceof IProject)
-      project = (IProject) firstElement;
-    else if (firstElement instanceof IJavaProject)
-      project = ((IJavaProject)firstElement).getProject();
-    else
-      throw new IllegalArgumentException("Unsupported selection: " + firstElement);
-    
-    WorkflowProject workflowProject = WorkflowProjectManager.getInstance().getWorkflowProject(project);
-    WorkflowElementActionHandler actionHandler = new WorkflowElementActionHandler();
-    actionHandler.run(workflowProject);
-  }
+public class ServerRunnerLaunchShortcut implements ILaunchShortcut {
+    public void launch(ISelection selection, String mode) {
+        Object firstElement = ((StructuredSelection) selection).getFirstElement();
+        IProject project = null;
+        if (firstElement instanceof IProject)
+            project = (IProject) firstElement;
+        else if (firstElement instanceof IJavaProject)
+            project = ((IJavaProject) firstElement).getProject();
+        else
+            throw new IllegalArgumentException("Unsupported selection: " + firstElement);
 
-  public void launch(IEditorPart editor, String mode)
-  {
-  }
+        WorkflowProject workflowProject = WorkflowProjectManager.getInstance()
+                .getWorkflowProject(project);
+        WorkflowElementActionHandler actionHandler = new WorkflowElementActionHandler();
+        actionHandler.run(workflowProject);
+    }
+
+    public void launch(IEditorPart editor, String mode) {
+    }
 }

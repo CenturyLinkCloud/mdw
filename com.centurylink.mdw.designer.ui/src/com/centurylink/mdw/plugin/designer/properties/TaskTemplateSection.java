@@ -9,43 +9,43 @@ import com.centurylink.mdw.plugin.designer.model.TaskTemplate;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
 
-public class TaskTemplateSection extends PropertySection
-{
-  private TaskTemplate taskTemplate;
-  public TaskTemplate getTaskTemplate() { return taskTemplate; }
+public class TaskTemplateSection extends PropertySection {
+    private TaskTemplate taskTemplate;
 
-  private PropertyEditor idEditor;
-  private PropertyEditor nameEditor;
+    public TaskTemplate getTaskTemplate() {
+        return taskTemplate;
+    }
 
-  public void setSelection(WorkflowElement selection)
-  {
-    taskTemplate = (TaskTemplate) selection;
+    private PropertyEditor idEditor;
+    private PropertyEditor nameEditor;
 
-    idEditor.setElement(taskTemplate);
-    idEditor.setValue(taskTemplate.getId());
+    public void setSelection(WorkflowElement selection) {
+        taskTemplate = (TaskTemplate) selection;
 
-    nameEditor.setElement(taskTemplate);
-    nameEditor.setValue(taskTemplate.getName());
-  }
+        idEditor.setElement(taskTemplate);
+        idEditor.setValue(taskTemplate.getId());
 
-  public void drawWidgets(Composite composite, WorkflowElement selection)
-  {
-    taskTemplate = (TaskTemplate) selection;
+        nameEditor.setElement(taskTemplate);
+        nameEditor.setValue(taskTemplate.getName());
+    }
 
-    // id text field
-    idEditor = new PropertyEditor(taskTemplate, PropertyEditor.TYPE_TEXT);
-    idEditor.setLabel("ID");
-    idEditor.setWidth(150);
-    idEditor.setReadOnly(true);
-    idEditor.render(composite);
+    public void drawWidgets(Composite composite, WorkflowElement selection) {
+        taskTemplate = (TaskTemplate) selection;
 
-    // name text field
-    nameEditor = new PropertyEditor(taskTemplate, PropertyEditor.TYPE_TEXT);
-    nameEditor.setLabel("Name");
-    nameEditor.setWidth(300);
-    nameEditor.setReadOnly(true);
-    nameEditor.render(composite);
+        // id text field
+        idEditor = new PropertyEditor(taskTemplate, PropertyEditor.TYPE_TEXT);
+        idEditor.setLabel("ID");
+        idEditor.setWidth(150);
+        idEditor.setReadOnly(true);
+        idEditor.render(composite);
 
-  }
+        // name text field
+        nameEditor = new PropertyEditor(taskTemplate, PropertyEditor.TYPE_TEXT);
+        nameEditor.setLabel("Name");
+        nameEditor.setWidth(300);
+        nameEditor.setReadOnly(true);
+        nameEditor.render(composite);
+
+    }
 
 }

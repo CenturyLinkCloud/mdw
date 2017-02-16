@@ -26,146 +26,132 @@ import com.centurylink.mdw.plugin.project.assembly.ProjectConfigurator;
 import com.centurylink.mdw.java.JavaNaming;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 
-public class JavaSource extends WorkflowAsset
-{
-  public JavaSource()
-  {
-    super();
-  }
-
-  public JavaSource(RuleSetVO ruleSetVO, WorkflowPackage packageVersion)
-  {
-    super(ruleSetVO, packageVersion);
-  }
-
-  public JavaSource(JavaSource cloneFrom)
-  {
-    super(cloneFrom);
-  }
-
-  @Override
-  public String getTitle()
-  {
-    return "Java Source";
-  }
-
-  @Override
-  public String getIcon()
-  {
-    return "java.gif";
-  }
-
-  @Override
-  public String getDefaultExtension()
-  {
-    return ".java";
-  }
-
-  @Override
-  public IFolder getTempFolder()
-  {
-    IFolder tempFolder = getProject().getSourceProject().getFolder(MdwPlugin.getSettings().getTempResourceLocation());
-    if (!isInDefaultPackage())
-    {
-      StringTokenizer st = new StringTokenizer(getJavaPackageName(), ".");
-      while (st.hasMoreTokens())
-        tempFolder = tempFolder.getFolder(st.nextToken());
+public class JavaSource extends WorkflowAsset {
+    public JavaSource() {
+        super();
     }
 
-    return tempFolder;
-  }
-
-  @Override
-  public String getTempFileName()
-  {
-    return getJavaClassName() + getExtension();
-  }
-
-  @Override
-  public String getDefaultContent()
-  {
-    try
-    {
-      // initialize from template
-      String templateUri = Platform.getBundle(MdwPlugin.getPluginId()).getEntry("/").toString() + "/templates/source/JavaSource.javajet";
-      JETEmitter emitter = new JETEmitter(templateUri, getClass().getClassLoader());
-      emitter.addVariable(null, MdwPlugin.getPluginId());
-      Map<String, Object> map = new HashMap<String, Object>();
-      JavaCode javaCode = new JavaCode(getJavaPackageName(), getJavaClassName());
-      map.put("model", javaCode);
-      map.put("settings", MdwPlugin.getSettings());
-      return emitter.generate(new NullProgressMonitor(), new Object[] { map });
+    public JavaSource(RuleSetVO ruleSetVO, WorkflowPackage packageVersion) {
+        super(ruleSetVO, packageVersion);
     }
-    catch (JETException ex)
-    {
-      PluginMessages.uiError(ex, "Generate Java", getProject());
-      return null;
-    }
-  }
 
-  @Override
-  public String validate()
-  {
-    if (!isInDefaultPackage() && !"true".equals(System.getProperty("mdw.allow.nonstandard.naming")))
-    {
-      String goodPkgName = getJavaPackageName();
-      if (!goodPkgName.equals(getPackage().getName()))
-        return "Packages with Java Source must comply with Java package naming restrictions.";
+    public JavaSource(JavaSource cloneFrom) {
+        super(cloneFrom);
     }
-    return super.validate();
-  }
 
-  @Override
-  public void beforeFileOpened()
-  {
-    ProjectConfigurator projConf = new ProjectConfigurator(getProject(), MdwPlugin.getSettings());
-    IProgressMonitor monitor = new NullProgressMonitor();
-    projConf.setJava(monitor);
-    try
-    {
-      if (getProject().isRemote() && projConf.isJavaCapable() && !projConf.hasFrameworkJars())
-      {
-        FrameworkUpdateDialog updateDlg = new FrameworkUpdateDialog(MdwPlugin.getShell(), MdwPlugin.getSettings(), getProject());
-        if (updateDlg.open() == Dialog.OK)
-        {
-          String origVer = getProject().getMdwVersion();  // as reported by server or db
-          getProject().setMdwVersion(updateDlg.getMdwVersion());  // for downloading
-          projConf.initializeFrameworkJars();
-          projConf.initializeWebAppJars();
-          getProject().setMdwVersion(origVer);
+    @Override
+    public String getTitle() {
+        return "Java Source";
+    }
+
+    @Override
+    public String getIcon() {
+        return "java.gif";
+    }
+
+    @Override
+    public String getDefaultExtension() {
+        return ".java";
+    }
+
+    @Override
+    public IFolder getTempFolder() {
+        IFolder tempFolder = getProject().getSourceProject()
+                .getFolder(MdwPlugin.getSettings().getTempResourceLocation());
+        if (!isInDefaultPackage()) {
+            StringTokenizer st = new StringTokenizer(getJavaPackageName(), ".");
+            while (st.hasMoreTokens())
+                tempFolder = tempFolder.getFolder(st.nextToken());
         }
-      }
-      else if (!getProject().isCustomTaskManager() && !projConf.hasWebAppJars())
-      {
-        projConf.initializeWebAppJars();
-      }
-    }
-    catch (CoreException ex)
-    {
-      PluginMessages.uiError(ex, "Framework Jars", getProject());
-    }
-  }
 
-  private static List<String> languages;
-  @Override
-  public List<String> getLanguages()
-  {
-    if (languages == null)
-    {
-      languages = new ArrayList<String>();
-      languages.add("Java");
+        return tempFolder;
     }
-    return languages;
-  }
 
-  protected String getJavaPackageName()
-  {
-    return JavaNaming.getValidPackageName(getPackage().getName());
-  }
+    @Override
+    public String getTempFileName() {
+        return getJavaClassName() + getExtension();
+    }
 
-  protected String getJavaClassName()
-  {
-    return JavaNaming.getValidClassName(getName());
-  }
+    @Override
+    public String getDefaultContent() {
+        try {
+            // initialize from template
+            String templateUri = Platform.getBundle(MdwPlugin.getPluginId()).getEntry("/")
+                    .toString() + "/templates/source/JavaSource.javajet";
+            JETEmitter emitter = new JETEmitter(templateUri, getClass().getClassLoader());
+            emitter.addVariable(null, MdwPlugin.getPluginId());
+            Map<String, Object> map = new HashMap<String, Object>();
+            JavaCode javaCode = new JavaCode(getJavaPackageName(), getJavaClassName());
+            map.put("model", javaCode);
+            map.put("settings", MdwPlugin.getSettings());
+            return emitter.generate(new NullProgressMonitor(), new Object[] { map });
+        }
+        catch (JETException ex) {
+            PluginMessages.uiError(ex, "Generate Java", getProject());
+            return null;
+        }
+    }
+
+    @Override
+    public String validate() {
+        if (!isInDefaultPackage()
+                && !"true".equals(System.getProperty("mdw.allow.nonstandard.naming"))) {
+            String goodPkgName = getJavaPackageName();
+            if (!goodPkgName.equals(getPackage().getName()))
+                return "Packages with Java Source must comply with Java package naming restrictions.";
+        }
+        return super.validate();
+    }
+
+    @Override
+    public void beforeFileOpened() {
+        ProjectConfigurator projConf = new ProjectConfigurator(getProject(),
+                MdwPlugin.getSettings());
+        IProgressMonitor monitor = new NullProgressMonitor();
+        projConf.setJava(monitor);
+        try {
+            if (getProject().isRemote() && projConf.isJavaCapable()
+                    && !projConf.hasFrameworkJars()) {
+                FrameworkUpdateDialog updateDlg = new FrameworkUpdateDialog(MdwPlugin.getShell(),
+                        MdwPlugin.getSettings(), getProject());
+                if (updateDlg.open() == Dialog.OK) {
+                    String origVer = getProject().getMdwVersion(); // as
+                                                                   // reported
+                                                                   // by server
+                                                                   // or db
+                    getProject().setMdwVersion(updateDlg.getMdwVersion()); // for
+                                                                           // downloading
+                    projConf.initializeFrameworkJars();
+                    projConf.initializeWebAppJars();
+                    getProject().setMdwVersion(origVer);
+                }
+            }
+            else if (!getProject().isCustomTaskManager() && !projConf.hasWebAppJars()) {
+                projConf.initializeWebAppJars();
+            }
+        }
+        catch (CoreException ex) {
+            PluginMessages.uiError(ex, "Framework Jars", getProject());
+        }
+    }
+
+    private static List<String> languages;
+
+    @Override
+    public List<String> getLanguages() {
+        if (languages == null) {
+            languages = new ArrayList<String>();
+            languages.add("Java");
+        }
+        return languages;
+    }
+
+    protected String getJavaPackageName() {
+        return JavaNaming.getValidPackageName(getPackage().getName());
+    }
+
+    protected String getJavaClassName() {
+        return JavaNaming.getValidClassName(getName());
+    }
 
 }

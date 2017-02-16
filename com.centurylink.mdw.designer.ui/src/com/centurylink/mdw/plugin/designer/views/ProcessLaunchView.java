@@ -10,22 +10,23 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 @SuppressWarnings("restriction")
-public class ProcessLaunchView extends WebBrowserView
-{
-  private WorkflowProcess process;
-  public WorkflowProcess getProcess() { return process; }
-  public void setProcess(WorkflowProcess process)
-  {
-    this.process = process;
-    WorkflowProject workflowProject = process.getProject();
-    String procLaunchPath = "/facelets/process/plainLaunch.jsf";
-    String processIdParam = "processId=" + process.getId();
-    setURL(workflowProject.getTaskManagerUrl() + procLaunchPath + "?" + processIdParam);
-  }
+public class ProcessLaunchView extends WebBrowserView {
+    private WorkflowProcess process;
 
-  @Override
-  public void createPartControl(Composite parent)
-  {
-    super.createPartControl(parent);
-  }
+    public WorkflowProcess getProcess() {
+        return process;
+    }
+
+    public void setProcess(WorkflowProcess process) {
+        this.process = process;
+        WorkflowProject workflowProject = process.getProject();
+        String procLaunchPath = "/facelets/process/plainLaunch.jsf";
+        String processIdParam = "processId=" + process.getId();
+        setURL(workflowProject.getTaskManagerUrl() + procLaunchPath + "?" + processIdParam);
+    }
+
+    @Override
+    public void createPartControl(Composite parent) {
+        super.createPartControl(parent);
+    }
 }

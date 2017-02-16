@@ -13,41 +13,44 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 
-public class ProcessDeleteDialog extends TrayDialog
-{
-  private WorkflowProcess process;
-  public WorkflowProcess getProcess() { return process; }
+public class ProcessDeleteDialog extends TrayDialog {
+    private WorkflowProcess process;
 
-  private boolean includeInstances;
-  public boolean isIncludeInstances() { return includeInstances; }
+    public WorkflowProcess getProcess() {
+        return process;
+    }
 
-  private Button includeInstancesCheckbox;
+    private boolean includeInstances;
 
-  public ProcessDeleteDialog(Shell shell, WorkflowProcess process)
-  {
-    super(shell);
-    this.process = process;
-  }
+    public boolean isIncludeInstances() {
+        return includeInstances;
+    }
 
-  @Override
-  protected Control createDialogArea(Composite parent)
-  {
-    Composite composite = (Composite) super.createDialogArea(parent);
-    composite.getShell().setText("Delete Process");
+    private Button includeInstancesCheckbox;
 
-    String version = process.hasDescendantProcessVersions() ? "(all versions)" : "v" + process.getVersionString();
-    new Label(composite, SWT.NONE).setText("'" + process.getName() + "' " + version);
+    public ProcessDeleteDialog(Shell shell, WorkflowProcess process) {
+        super(shell);
+        this.process = process;
+    }
 
-    includeInstancesCheckbox = new Button(composite, SWT.CHECK | SWT.LEFT);
-    includeInstancesCheckbox.setText("Include process instances if they exist");
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Composite composite = (Composite) super.createDialogArea(parent);
+        composite.getShell().setText("Delete Process");
 
-    return composite;
-  }
+        String version = process.hasDescendantProcessVersions() ? "(all versions)"
+                : "v" + process.getVersionString();
+        new Label(composite, SWT.NONE).setText("'" + process.getName() + "' " + version);
 
-  @Override
-  protected void okPressed()
-  {
-    includeInstances = includeInstancesCheckbox.getSelection();
-    super.okPressed();
-  }
+        includeInstancesCheckbox = new Button(composite, SWT.CHECK | SWT.LEFT);
+        includeInstancesCheckbox.setText("Include process instances if they exist");
+
+        return composite;
+    }
+
+    @Override
+    protected void okPressed() {
+        includeInstances = includeInstancesCheckbox.getSelection();
+        super.okPressed();
+    }
 }

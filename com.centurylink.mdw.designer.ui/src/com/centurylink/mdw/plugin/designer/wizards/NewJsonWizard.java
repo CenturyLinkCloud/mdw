@@ -8,12 +8,10 @@ import org.eclipse.ui.IWorkbench;
 
 import com.centurylink.mdw.plugin.designer.model.Json;
 
-public class NewJsonWizard extends WorkflowAssetWizard
-{
-  public static final String WIZARD_ID = "mdw.designer.new.json";
+public class NewJsonWizard extends WorkflowAssetWizard {
+    public static final String WIZARD_ID = "mdw.designer.new.json";
 
-  public void init(IWorkbench workbench, IStructuredSelection selection)
-  {
-    super.init(workbench, selection, new Json());
-  }
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        super.init(workbench, selection, new Json());
+    }
 }

@@ -16,32 +16,25 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.ResourceWrapper;
 
-public class FolderTreeDialog extends ElementTreeSelectionDialog
-{
-  public FolderTreeDialog(Shell parent)
-  {
-    super(parent, new WorkbenchLabelProvider(), new WorkbenchContentProvider()
-    {
-      public Object[] getChildren(Object element)
-      {
-        List<Object> children = new ArrayList<Object>();
-        Object[] all = super.getChildren(element);
-        for (Object obj : all)
-        {
-          ResourceWrapper resourceWrapper = new ResourceWrapper(obj);
-          try
-          {
-            IFolder folder = resourceWrapper.getFolder();
-            if (folder != null)
-              children.add(obj);
-          }
-          catch (JavaModelException ex)
-          {
-            PluginMessages.log(ex);
-          }
-        }
-        return children.toArray();
-      }
-    });
-  }
+public class FolderTreeDialog extends ElementTreeSelectionDialog {
+    public FolderTreeDialog(Shell parent) {
+        super(parent, new WorkbenchLabelProvider(), new WorkbenchContentProvider() {
+            public Object[] getChildren(Object element) {
+                List<Object> children = new ArrayList<Object>();
+                Object[] all = super.getChildren(element);
+                for (Object obj : all) {
+                    ResourceWrapper resourceWrapper = new ResourceWrapper(obj);
+                    try {
+                        IFolder folder = resourceWrapper.getFolder();
+                        if (folder != null)
+                            children.add(obj);
+                    }
+                    catch (JavaModelException ex) {
+                        PluginMessages.log(ex);
+                    }
+                }
+                return children.toArray();
+            }
+        });
+    }
 }

@@ -37,232 +37,220 @@ import com.centurylink.mdw.plugin.designer.properties.editor.ValueChangeListener
 import com.centurylink.mdw.model.data.task.TaskStatuses;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 
-public class TaskInstancesSection extends PropertySection implements IFilter
-{
-  private Activity activity;
-  public Activity getActivity() { return activity; }
-  protected void setActivity(Activity activity)
-  {
-    this.activity = activity;
-    tableEditor.setElement(activity);
-    tableEditor.setValue(activity.getTaskInstances());
-  }
+public class TaskInstancesSection extends PropertySection implements IFilter {
+    private Activity activity;
 
-  private TableEditor tableEditor;
-  private List<ColumnSpec> columnSpecs;
-  protected List<ColumnSpec> getColumnSpecs()
-  {
-    if (columnSpecs == null)
-      columnSpecs = createColumnSpecs();
-    return columnSpecs;
-  }
+    public Activity getActivity() {
+        return activity;
+    }
 
-  private IStructuredContentProvider contentProvider;
-  private ITableLabelProvider labelProvider;
+    protected void setActivity(Activity activity) {
+        this.activity = activity;
+        tableEditor.setElement(activity);
+        tableEditor.setValue(activity.getTaskInstances());
+    }
 
-  public void setSelection(WorkflowElement selection)
-  {
-    setActivity((Activity)selection);
-    setTaskInstances(activity.getTaskInstances());
-  }
+    private TableEditor tableEditor;
+    private List<ColumnSpec> columnSpecs;
 
-  protected void setTaskInstances(List<TaskInstanceVO> instances)
-  {
-    tableEditor.setValue(instances);
-  }
+    protected List<ColumnSpec> getColumnSpecs() {
+        if (columnSpecs == null)
+            columnSpecs = createColumnSpecs();
+        return columnSpecs;
+    }
 
-  public void drawWidgets(Composite composite, WorkflowElement selection)
-  {
-    activity = (Activity) selection;
+    private IStructuredContentProvider contentProvider;
+    private ITableLabelProvider labelProvider;
 
-    tableEditor = new TableEditor(activity, TableEditor.TYPE_TABLE);
-    tableEditor.setReadOnly(true);
+    public void setSelection(WorkflowElement selection) {
+        setActivity((Activity) selection);
+        setTaskInstances(activity.getTaskInstances());
+    }
 
-    tableEditor.setColumnSpecs(getColumnSpecs());
+    protected void setTaskInstances(List<TaskInstanceVO> instances) {
+        tableEditor.setValue(instances);
+    }
 
-    if (contentProvider == null)
-      contentProvider = getContentProvider();
-    tableEditor.setContentProvider(contentProvider);
+    public void drawWidgets(Composite composite, WorkflowElement selection) {
+        activity = (Activity) selection;
 
-    if (labelProvider == null)
-      labelProvider = getLabelProvider();
-    tableEditor.setLabelProvider(labelProvider);
+        tableEditor = new TableEditor(activity, TableEditor.TYPE_TABLE);
+        tableEditor.setReadOnly(true);
 
-    tableEditor.render(composite);
+        tableEditor.setColumnSpecs(getColumnSpecs());
 
-    // double-click
-    tableEditor.addValueChangeListener(new ValueChangeListener()
-    {
-      public void propertyValueChanged(Object newValue)
-      {
-        openTaskInstance((TaskInstanceVO)newValue);
-      }
-    });
+        if (contentProvider == null)
+            contentProvider = getContentProvider();
+        tableEditor.setContentProvider(contentProvider);
 
-    // right-click menu
-    tableEditor.getTable().addListener(SWT.MenuDetect, new Listener()
-    {
-      public void handleEvent(Event event)
-      {
-        tableEditor.getTable().setMenu(createContextMenu(getShell()));
-      }
-    });
-  }
+        if (labelProvider == null)
+            labelProvider = getLabelProvider();
+        tableEditor.setLabelProvider(labelProvider);
 
-  private Menu createContextMenu(Shell shell)
-  {
-    Menu menu = new Menu(shell, SWT.POP_UP);
+        tableEditor.render(composite);
 
-    StructuredSelection selection = (StructuredSelection) tableEditor.getTableViewer().getSelection();
-    if (selection.size() == 1 && selection.getFirstElement() instanceof TaskInstanceVO)
-    {
-      final TaskInstanceVO taskInstanceVO = (TaskInstanceVO) selection.getFirstElement();
+        // double-click
+        tableEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                openTaskInstance((TaskInstanceVO) newValue);
+            }
+        });
 
-      // view
-      MenuItem taskMgrItem = new MenuItem(menu, SWT.PUSH);
-      taskMgrItem.setText("View in Task Manager");
-      ImageDescriptor imageDesc = MdwPlugin.getImageDescriptor("icons/taskmgr.gif");
-      taskMgrItem.setImage(imageDesc.createImage());
-      taskMgrItem.addSelectionListener(new SelectionAdapter()
-      {
-        public void widgetSelected(SelectionEvent e)
-        {
-          openTaskInstance(taskInstanceVO);
+        // right-click menu
+        tableEditor.getTable().addListener(SWT.MenuDetect, new Listener() {
+            public void handleEvent(Event event) {
+                tableEditor.getTable().setMenu(createContextMenu(getShell()));
+            }
+        });
+    }
+
+    private Menu createContextMenu(Shell shell) {
+        Menu menu = new Menu(shell, SWT.POP_UP);
+
+        StructuredSelection selection = (StructuredSelection) tableEditor.getTableViewer()
+                .getSelection();
+        if (selection.size() == 1 && selection.getFirstElement() instanceof TaskInstanceVO) {
+            final TaskInstanceVO taskInstanceVO = (TaskInstanceVO) selection.getFirstElement();
+
+            // view
+            MenuItem taskMgrItem = new MenuItem(menu, SWT.PUSH);
+            taskMgrItem.setText("View in Task Manager");
+            ImageDescriptor imageDesc = MdwPlugin.getImageDescriptor("icons/taskmgr.gif");
+            taskMgrItem.setImage(imageDesc.createImage());
+            taskMgrItem.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e) {
+                    openTaskInstance(taskInstanceVO);
+                }
+            });
         }
-      });
+
+        return menu;
     }
 
-    return menu;
-  }
+    protected List<ColumnSpec> createColumnSpecs() {
+        List<ColumnSpec> columnSpecs = new ArrayList<ColumnSpec>();
 
-  protected List<ColumnSpec> createColumnSpecs()
-  {
-    List<ColumnSpec> columnSpecs = new ArrayList<ColumnSpec>();
+        ColumnSpec instanceIdColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Task Instance ID",
+                "instanceId");
+        instanceIdColSpec.width = 100;
+        columnSpecs.add(instanceIdColSpec);
 
-    ColumnSpec instanceIdColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Task Instance ID", "instanceId");
-    instanceIdColSpec.width = 100;
-    columnSpecs.add(instanceIdColSpec);
+        ColumnSpec taskNameColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Name", "name");
+        taskNameColSpec.width = 150;
+        columnSpecs.add(taskNameColSpec);
 
-    ColumnSpec taskNameColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Name", "name");
-    taskNameColSpec.width = 150;
-    columnSpecs.add(taskNameColSpec);
+        ColumnSpec taskIdColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Task Def. ID",
+                "taskId");
+        taskIdColSpec.width = 100;
+        columnSpecs.add(taskIdColSpec);
 
-    ColumnSpec taskIdColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Task Def. ID", "taskId");
-    taskIdColSpec.width = 100;
-    columnSpecs.add(taskIdColSpec);
+        ColumnSpec statusColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Status", "status");
+        statusColSpec.width = 100;
+        columnSpecs.add(statusColSpec);
 
-    ColumnSpec statusColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Status", "status");
-    statusColSpec.width = 100;
-    columnSpecs.add(statusColSpec);
+        ColumnSpec assigneeColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Assignee",
+                "assignee");
+        assigneeColSpec.width = 100;
+        columnSpecs.add(assigneeColSpec);
 
-    ColumnSpec assigneeColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Assignee", "assignee");
-    assigneeColSpec.width = 100;
-    columnSpecs.add(assigneeColSpec);
+        ColumnSpec workgroupsColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Workgroup(s)",
+                "workgroups");
+        workgroupsColSpec.width = 150;
+        columnSpecs.add(workgroupsColSpec);
 
-    ColumnSpec workgroupsColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Workgroup(s)", "workgroups");
-    workgroupsColSpec.width = 150;
-    columnSpecs.add(workgroupsColSpec);
+        ColumnSpec startDateColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Start",
+                "startDate");
+        startDateColSpec.width = 150;
+        columnSpecs.add(startDateColSpec);
 
-    ColumnSpec startDateColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Start", "startDate");
-    startDateColSpec.width = 150;
-    columnSpecs.add(startDateColSpec);
+        ColumnSpec endDateColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "End", "endDate");
+        endDateColSpec.width = 150;
+        columnSpecs.add(endDateColSpec);
 
-    ColumnSpec endDateColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "End", "endDate");
-    endDateColSpec.width = 150;
-    columnSpecs.add(endDateColSpec);
-
-    return columnSpecs;
-  }
-
-  protected IStructuredContentProvider getContentProvider()
-  {
-    return new TaskInstanceContentProvider();
-  }
-
-  class TaskInstanceContentProvider implements IStructuredContentProvider
-  {
-    @SuppressWarnings("unchecked")
-    public Object[] getElements(Object inputElement)
-    {
-      List<TaskInstanceVO> rows = (List<TaskInstanceVO>) inputElement;
-      return rows.toArray(new TaskInstanceVO[0]);
+        return columnSpecs;
     }
 
-    public void dispose()
-    {
+    protected IStructuredContentProvider getContentProvider() {
+        return new TaskInstanceContentProvider();
     }
 
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-    {
-    }
-  }
+    class TaskInstanceContentProvider implements IStructuredContentProvider {
+        @SuppressWarnings("unchecked")
+        public Object[] getElements(Object inputElement) {
+            List<TaskInstanceVO> rows = (List<TaskInstanceVO>) inputElement;
+            return rows.toArray(new TaskInstanceVO[0]);
+        }
 
-  protected ITableLabelProvider getLabelProvider()
-  {
-    return new TaskInstanceLabelProvider();
-  }
+        public void dispose() {
+        }
 
-  class TaskInstanceLabelProvider extends LabelProvider implements ITableLabelProvider
-  {
-    public Image getColumnImage(Object element, int columnIndex)
-    {
-      return null;
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        }
     }
 
-    public String getColumnText(Object element, int columnIndex)
-    {
-      TaskInstanceVO taskInstanceVO = (TaskInstanceVO) element;
-      ColumnSpec colspec = getColumnSpecs().get(columnIndex);
-      if (colspec.property.equals("instanceId"))
-        return taskInstanceVO.getTaskInstanceId().toString();
-      else if (colspec.property.equals("name"))
-        return taskInstanceVO.getTaskName();
-      else if (colspec.property.equals("taskId"))
-        return taskInstanceVO.getTaskId().toString();
-      else if (colspec.property.equals("status"))
-        return TaskStatuses.getTaskStatuses().get(taskInstanceVO.getStatusCode());
-      else if (colspec.property.equals("assignee"))
-        return taskInstanceVO.getTaskClaimUserCuid();
-      else if (colspec.property.equals("workgroups"))
-        return taskInstanceVO.getWorkgroupsString();
-      else if (colspec.property.equals("startDate"))
-        return taskInstanceVO.getStartDate() == null ? "" : taskInstanceVO.getStartDate();
-      else if (colspec.property.equals("endDate"))
-        return taskInstanceVO.getEndDate() == null ? "" : taskInstanceVO.getEndDate();
-      else
-        return null;
+    protected ITableLabelProvider getLabelProvider() {
+        return new TaskInstanceLabelProvider();
     }
-  }
 
-  private void openTaskInstance(TaskInstanceVO taskInstanceVO)
-  {
-    String path;
-    if (activity.getProject().checkRequiredVersion(6, 0))
-    {
-      path = "#/tasks/" + taskInstanceVO.getTaskInstanceId();
+    class TaskInstanceLabelProvider extends LabelProvider implements ITableLabelProvider {
+        public Image getColumnImage(Object element, int columnIndex) {
+            return null;
+        }
+
+        public String getColumnText(Object element, int columnIndex) {
+            TaskInstanceVO taskInstanceVO = (TaskInstanceVO) element;
+            ColumnSpec colspec = getColumnSpecs().get(columnIndex);
+            if (colspec.property.equals("instanceId"))
+                return taskInstanceVO.getTaskInstanceId().toString();
+            else if (colspec.property.equals("name"))
+                return taskInstanceVO.getTaskName();
+            else if (colspec.property.equals("taskId"))
+                return taskInstanceVO.getTaskId().toString();
+            else if (colspec.property.equals("status"))
+                return TaskStatuses.getTaskStatuses().get(taskInstanceVO.getStatusCode());
+            else if (colspec.property.equals("assignee"))
+                return taskInstanceVO.getTaskClaimUserCuid();
+            else if (colspec.property.equals("workgroups"))
+                return taskInstanceVO.getWorkgroupsString();
+            else if (colspec.property.equals("startDate"))
+                return taskInstanceVO.getStartDate() == null ? "" : taskInstanceVO.getStartDate();
+            else if (colspec.property.equals("endDate"))
+                return taskInstanceVO.getEndDate() == null ? "" : taskInstanceVO.getEndDate();
+            else
+                return null;
+        }
     }
-    else
-    {
-      boolean assigned = activity.getProject().getUser().getUsername().equals(taskInstanceVO.getTaskClaimUserCuid());
-      String taskInstParams = activity.getProject().getTaskInstancePath(taskInstanceVO.getTaskInstanceId(), assigned);
-      WorkflowPackage packageVersion = activity.getPackage();
-      String packageParam = packageVersion.isDefaultPackage() ? "" : "&packageName=" + packageVersion.getName();
-      path = taskInstParams + packageParam;
+
+    private void openTaskInstance(TaskInstanceVO taskInstanceVO) {
+        String path;
+        if (activity.getProject().checkRequiredVersion(6, 0)) {
+            path = "#/tasks/" + taskInstanceVO.getTaskInstanceId();
+        }
+        else {
+            boolean assigned = activity.getProject().getUser().getUsername()
+                    .equals(taskInstanceVO.getTaskClaimUserCuid());
+            String taskInstParams = activity.getProject()
+                    .getTaskInstancePath(taskInstanceVO.getTaskInstanceId(), assigned);
+            WorkflowPackage packageVersion = activity.getPackage();
+            String packageParam = packageVersion.isDefaultPackage() ? ""
+                    : "&packageName=" + packageVersion.getName();
+            path = taskInstParams + packageParam;
+        }
+        WebApp webapp = activity.getProject().checkRequiredVersion(5, 5) ? WebApp.MdwHub
+                : WebApp.TaskManager;
+        WebLaunchActions.getLaunchAction(activity.getProject(), webapp)
+                .launch(activity.getProject(), path);
     }
-    WebApp webapp = activity.getProject().checkRequiredVersion(5,  5) ? WebApp.MdwHub : WebApp.TaskManager;
-    WebLaunchActions.getLaunchAction(activity.getProject(), webapp).launch(activity.getProject(), path);
-  }
 
-  /**
-   * For IFilter interface.
-   */
-  public boolean select(Object toTest)
-  {
-    if (toTest == null || !(toTest instanceof Activity))
-      return false;
+    /**
+     * For IFilter interface.
+     */
+    public boolean select(Object toTest) {
+        if (toTest == null || !(toTest instanceof Activity))
+            return false;
 
-    activity = (Activity) toTest;
-    return (activity.hasInstanceInfo() && activity.isManualTask());
-  }
+        activity = (Activity) toTest;
+        return (activity.hasInstanceInfo() && activity.isManualTask());
+    }
 
 }

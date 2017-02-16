@@ -3,40 +3,53 @@
  */
 package com.centurylink.mdw.plugin.project.model;
 
-public class OsgiSettings
-{
-  private boolean gradleBuild;
-  public boolean isGradleBuild() { return gradleBuild; }
-  public void setGradleBuild(boolean gradleBuild) { this.gradleBuild = gradleBuild; }
+public class OsgiSettings {
+    private boolean gradleBuild;
 
-  private String groupId;
-  public String getGroupId() { return groupId; }
-  public void setGroupId(String groupId) { this.groupId = groupId; }
+    public boolean isGradleBuild() {
+        return gradleBuild;
+    }
 
-  private String artifactId;
-  public String getArtifactId() { return artifactId; }
-  public void setArtifactId(String artifactId) { this.artifactId = artifactId; }
+    public void setGradleBuild(boolean gradleBuild) {
+        this.gradleBuild = gradleBuild;
+    }
 
-  public String getOutputDir()
-  {
-    if (gradleBuild)
-      return "build/classes";
-    else
-      return "target";
-  }
+    private String groupId;
 
-  public String getSourceDir()
-  {
-    return "src/main/java";
-  }
+    public String getGroupId() {
+        return groupId;
+    }
 
-  public String getResourceDir()
-  {
-    return "src/main/resources";
-  }
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
 
-  public String getLibDir()
-  {
-    return getResourceDir() + "/lib";
-  }
+    private String artifactId;
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
+    public String getOutputDir() {
+        if (gradleBuild)
+            return "build/classes";
+        else
+            return "target";
+    }
+
+    public String getSourceDir() {
+        return "src/main/java";
+    }
+
+    public String getResourceDir() {
+        return "src/main/resources";
+    }
+
+    public String getLibDir() {
+        return getResourceDir() + "/lib";
+    }
 }

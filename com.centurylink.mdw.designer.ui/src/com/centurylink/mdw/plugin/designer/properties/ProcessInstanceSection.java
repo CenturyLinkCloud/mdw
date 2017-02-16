@@ -12,125 +12,125 @@ import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
 import com.centurylink.mdw.model.data.work.WorkStatuses;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 
-public class ProcessInstanceSection extends PropertySection implements IFilter
-{
-  private WorkflowProcess process;
-  public WorkflowProcess getProcess() { return process; }
+public class ProcessInstanceSection extends PropertySection implements IFilter {
+    private WorkflowProcess process;
 
-  private PropertyEditor idPropertyEditor;
-  private PropertyEditor masterRequestIdPropertyEditor;
-  private PropertyEditor statusPropertyEditor;
-  private PropertyEditor ownerPropertyEditor;
-  private PropertyEditor ownerIdPropertyEditor;
-  private PropertyEditor startDatePropertyEditor;
-  private PropertyEditor endDatePropertyEditor;
-  private PropertyEditor processLabelPropertyEditor;
+    public WorkflowProcess getProcess() {
+        return process;
+    }
 
-  public void setSelection(WorkflowElement selection)
-  {
-    process = (WorkflowProcess) selection;
-    ProcessInstanceVO instanceInfo = process.getProcessInstance();
+    private PropertyEditor idPropertyEditor;
+    private PropertyEditor masterRequestIdPropertyEditor;
+    private PropertyEditor statusPropertyEditor;
+    private PropertyEditor ownerPropertyEditor;
+    private PropertyEditor ownerIdPropertyEditor;
+    private PropertyEditor startDatePropertyEditor;
+    private PropertyEditor endDatePropertyEditor;
+    private PropertyEditor processLabelPropertyEditor;
 
-    idPropertyEditor.setElement(process);
-    idPropertyEditor.setValue(instanceInfo.getId());
+    public void setSelection(WorkflowElement selection) {
+        process = (WorkflowProcess) selection;
+        ProcessInstanceVO instanceInfo = process.getProcessInstance();
 
-    masterRequestIdPropertyEditor.setElement(process);
-    masterRequestIdPropertyEditor.setValue(instanceInfo.getMasterRequestId());
+        idPropertyEditor.setElement(process);
+        idPropertyEditor.setValue(instanceInfo.getId());
 
-    statusPropertyEditor.setElement(process);
-    statusPropertyEditor.setValue(WorkStatuses.getWorkStatuses().get(new Integer(instanceInfo.getStatusCode())));
+        masterRequestIdPropertyEditor.setElement(process);
+        masterRequestIdPropertyEditor.setValue(instanceInfo.getMasterRequestId());
 
-    ownerPropertyEditor.setElement(process);
-    ownerPropertyEditor.setValue(instanceInfo.getOwner());
+        statusPropertyEditor.setElement(process);
+        statusPropertyEditor.setValue(
+                WorkStatuses.getWorkStatuses().get(new Integer(instanceInfo.getStatusCode())));
 
-    ownerIdPropertyEditor.setElement(process);
-    ownerIdPropertyEditor.setValue(instanceInfo.getOwnerId());
+        ownerPropertyEditor.setElement(process);
+        ownerPropertyEditor.setValue(instanceInfo.getOwner());
 
-    startDatePropertyEditor.setElement(process);
-    if (instanceInfo.getStartDate() != null)
-      startDatePropertyEditor.setValue(instanceInfo.getStartDate().toString());
+        ownerIdPropertyEditor.setElement(process);
+        ownerIdPropertyEditor.setValue(instanceInfo.getOwnerId());
 
-    endDatePropertyEditor.setElement(process);
-    if (instanceInfo.getEndDate() != null)
-      endDatePropertyEditor.setValue(instanceInfo.getEndDate().toString());
+        startDatePropertyEditor.setElement(process);
+        if (instanceInfo.getStartDate() != null)
+            startDatePropertyEditor.setValue(instanceInfo.getStartDate().toString());
 
-    processLabelPropertyEditor.setElement(process);
-    if (instanceInfo.getComment() != null)
-      processLabelPropertyEditor.setValue(instanceInfo.getComment());
-  }
+        endDatePropertyEditor.setElement(process);
+        if (instanceInfo.getEndDate() != null)
+            endDatePropertyEditor.setValue(instanceInfo.getEndDate().toString());
 
-  public void drawWidgets(Composite composite, WorkflowElement selection)
-  {
-    process = (WorkflowProcess) selection;
+        processLabelPropertyEditor.setElement(process);
+        if (instanceInfo.getComment() != null)
+            processLabelPropertyEditor.setValue(instanceInfo.getComment());
+    }
 
-    // id text field
-    idPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
-    idPropertyEditor.setLabel("Instance ID");
-    idPropertyEditor.setWidth(150);
-    idPropertyEditor.setReadOnly(true);
-    idPropertyEditor.render(composite);
+    public void drawWidgets(Composite composite, WorkflowElement selection) {
+        process = (WorkflowProcess) selection;
 
-    // master request id text field
-    masterRequestIdPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
-    masterRequestIdPropertyEditor.setLabel("Master Req. ID");
-    masterRequestIdPropertyEditor.setWidth(150);
-    masterRequestIdPropertyEditor.setReadOnly(true);
-    masterRequestIdPropertyEditor.render(composite);
+        // id text field
+        idPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
+        idPropertyEditor.setLabel("Instance ID");
+        idPropertyEditor.setWidth(150);
+        idPropertyEditor.setReadOnly(true);
+        idPropertyEditor.render(composite);
 
-    // status text field
-    statusPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
-    statusPropertyEditor.setLabel("Status");
-    statusPropertyEditor.setWidth(150);
-    statusPropertyEditor.setReadOnly(true);
-    statusPropertyEditor.render(composite);
+        // master request id text field
+        masterRequestIdPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
+        masterRequestIdPropertyEditor.setLabel("Master Req. ID");
+        masterRequestIdPropertyEditor.setWidth(150);
+        masterRequestIdPropertyEditor.setReadOnly(true);
+        masterRequestIdPropertyEditor.render(composite);
 
-    // owner text field
-    ownerPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
-    ownerPropertyEditor.setLabel("Owner");
-    ownerPropertyEditor.setWidth(150);
-    ownerPropertyEditor.setReadOnly(true);
-    ownerPropertyEditor.render(composite);
+        // status text field
+        statusPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
+        statusPropertyEditor.setLabel("Status");
+        statusPropertyEditor.setWidth(150);
+        statusPropertyEditor.setReadOnly(true);
+        statusPropertyEditor.render(composite);
 
-    // owner id text field
-    ownerIdPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
-    ownerIdPropertyEditor.setLabel("Owner ID");
-    ownerIdPropertyEditor.setWidth(150);
-    ownerIdPropertyEditor.setReadOnly(true);
-    ownerIdPropertyEditor.render(composite);
+        // owner text field
+        ownerPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
+        ownerPropertyEditor.setLabel("Owner");
+        ownerPropertyEditor.setWidth(150);
+        ownerPropertyEditor.setReadOnly(true);
+        ownerPropertyEditor.render(composite);
 
-    // start date text field
-    startDatePropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
-    startDatePropertyEditor.setLabel("Start");
-    startDatePropertyEditor.setWidth(200);
-    startDatePropertyEditor.setReadOnly(true);
-    startDatePropertyEditor.render(composite);
+        // owner id text field
+        ownerIdPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
+        ownerIdPropertyEditor.setLabel("Owner ID");
+        ownerIdPropertyEditor.setWidth(150);
+        ownerIdPropertyEditor.setReadOnly(true);
+        ownerIdPropertyEditor.render(composite);
 
-    // end date text field
-    endDatePropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
-    endDatePropertyEditor.setLabel("Finish");
-    endDatePropertyEditor.setWidth(200);
-    endDatePropertyEditor.setReadOnly(true);
-    endDatePropertyEditor.render(composite);
+        // start date text field
+        startDatePropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
+        startDatePropertyEditor.setLabel("Start");
+        startDatePropertyEditor.setWidth(200);
+        startDatePropertyEditor.setReadOnly(true);
+        startDatePropertyEditor.render(composite);
 
-    // label text field
-    processLabelPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
-    processLabelPropertyEditor.setLabel("Label: ");
-    processLabelPropertyEditor.setWidth(500);
-    processLabelPropertyEditor.setReadOnly(true);
-    processLabelPropertyEditor.render(composite);
+        // end date text field
+        endDatePropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
+        endDatePropertyEditor.setLabel("Finish");
+        endDatePropertyEditor.setWidth(200);
+        endDatePropertyEditor.setReadOnly(true);
+        endDatePropertyEditor.render(composite);
 
-  }
+        // label text field
+        processLabelPropertyEditor = new PropertyEditor(process, PropertyEditor.TYPE_TEXT);
+        processLabelPropertyEditor.setLabel("Label: ");
+        processLabelPropertyEditor.setWidth(500);
+        processLabelPropertyEditor.setReadOnly(true);
+        processLabelPropertyEditor.render(composite);
 
-  /**
-   * For IFilter interface.
-   */
-  public boolean select(Object toTest)
-  {
-    if (toTest == null || !(toTest instanceof WorkflowProcess))
-      return false;
+    }
 
-    process = (WorkflowProcess) toTest;
-    return process.hasInstanceInfo();
-  }
+    /**
+     * For IFilter interface.
+     */
+    public boolean select(Object toTest) {
+        if (toTest == null || !(toTest instanceof WorkflowProcess))
+            return false;
+
+        process = (WorkflowProcess) toTest;
+        return process.hasInstanceInfo();
+    }
 
 }

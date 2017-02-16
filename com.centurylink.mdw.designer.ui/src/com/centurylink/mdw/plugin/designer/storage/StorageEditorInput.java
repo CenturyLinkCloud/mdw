@@ -11,67 +11,62 @@ import org.eclipse.ui.IStorageEditorInput;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 
-public class StorageEditorInput implements IStorageEditorInput
-{
-  private IStorage storage;
-  public IStorage getStorage() { return storage; }
+public class StorageEditorInput implements IStorageEditorInput {
+    private IStorage storage;
 
-  public WorkflowElement getElement()
-  {
-    if (storage == null)
-      return null;
+    public IStorage getStorage() {
+        return storage;
+    }
 
-    return (WorkflowElement) storage;
-  }
+    public WorkflowElement getElement() {
+        if (storage == null)
+            return null;
 
-  public StorageEditorInput(IStorage storage)
-  {
-    this.storage = storage;
-  }
+        return (WorkflowElement) storage;
+    }
 
-  public boolean exists()
-  {
-    return storage != null;
-  }
+    public StorageEditorInput(IStorage storage) {
+        this.storage = storage;
+    }
 
-  private ImageDescriptor imageDesc = null;
-  public ImageDescriptor getImageDescriptor()
-  {
-    WorkflowElement workflowElement = getElement();
-    if (workflowElement == null)
-      return null;
+    public boolean exists() {
+        return storage != null;
+    }
 
-    if (imageDesc == null)
-      imageDesc = MdwPlugin.getImageDescriptor("icons/" + workflowElement.getIcon());
+    private ImageDescriptor imageDesc = null;
 
-    return imageDesc;
-  }
+    public ImageDescriptor getImageDescriptor() {
+        WorkflowElement workflowElement = getElement();
+        if (workflowElement == null)
+            return null;
 
-  public String getName()
-  {
-    if (getElement() == null)
-      return null;
+        if (imageDesc == null)
+            imageDesc = MdwPlugin.getImageDescriptor("icons/" + workflowElement.getIcon());
 
-    return getElement().getName();
-  }
+        return imageDesc;
+    }
 
-  public IPersistableElement getPersistable()
-  {
-    return null;
-  }
+    public String getName() {
+        if (getElement() == null)
+            return null;
 
-  public String getToolTipText()
-  {
-    if (getElement() == null)
-      return null;
+        return getElement().getName();
+    }
 
-    return getElement().getTitle();
-  }
+    public IPersistableElement getPersistable() {
+        return null;
+    }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  public Object getAdapter(Class adapter)
-  {
-    return null;
-  }
+    public String getToolTipText() {
+        if (getElement() == null)
+            return null;
+
+        return getElement().getTitle();
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Object getAdapter(Class adapter) {
+        return null;
+    }
 
 }

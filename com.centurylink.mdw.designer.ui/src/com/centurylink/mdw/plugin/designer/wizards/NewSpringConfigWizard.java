@@ -8,18 +8,15 @@ import org.eclipse.ui.IWorkbench;
 
 import com.centurylink.mdw.plugin.designer.model.SpringConfig;
 
-public class NewSpringConfigWizard extends WorkflowAssetWizard
-{
-  public static final String WIZARD_ID = "mdw.designer.new.spring.config";
+public class NewSpringConfigWizard extends WorkflowAssetWizard {
+    public static final String WIZARD_ID = "mdw.designer.new.spring.config";
 
-  public void init(IWorkbench workbench, IStructuredSelection selection)
-  {
-    super.init(workbench, selection, new SpringConfig());
-  }
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        super.init(workbench, selection, new SpringConfig());
+    }
 
-  @Override
-  public String getTemplateLocation()
-  {
-    return "/templates/spring";
-  }
+    @Override
+    public String getTemplateLocation() {
+        return "/templates/spring";
+    }
 }

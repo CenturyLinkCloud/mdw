@@ -6,7 +6,6 @@ package com.centurylink.mdw.plugin.designer;
 /**
  * Tracks dirtiness of the designer canvas.
  */
-public interface DirtyStateListener
-{
-  public void dirtyStateChanged(boolean dirty); 
+public interface DirtyStateListener {
+    public void dirtyStateChanged(boolean dirty);
 }

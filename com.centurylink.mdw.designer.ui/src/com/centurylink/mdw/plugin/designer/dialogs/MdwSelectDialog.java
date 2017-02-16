@@ -13,62 +13,69 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-public class MdwSelectDialog extends TrayDialog
-{
-  private String message;
-  public String getMessage() { return message; }
+public class MdwSelectDialog extends TrayDialog {
+    private String message;
 
-  private String selection;
-  public String getSelection() { return selection; }
-  public void setSelection(String selection) { this.selection = selection; }
+    public String getMessage() {
+        return message;
+    }
 
-  private Combo selectCombo;
+    private String selection;
 
-  private String title = "MDW Select";
-  public void setTitle(String title) { this.title = title; }
+    public String getSelection() {
+        return selection;
+    }
 
-  private List<String> options;
+    public void setSelection(String selection) {
+        this.selection = selection;
+    }
 
-  public MdwSelectDialog(Shell shell, String message, List<String> options)
-  {
-    super(shell);
-    this.message = message;
-    this.options = options;
-  }
+    private Combo selectCombo;
 
-  @Override
-  protected Control createDialogArea(Composite parent)
-  {
-    Composite composite = (Composite) super.createDialogArea(parent);
-    composite.getShell().setText(title);
+    private String title = "MDW Select";
 
-    new Label(composite, SWT.NONE).setText(message);
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    selectCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-    for (String option : options)
-      selectCombo.add(option);
+    private List<String> options;
 
-    if (selection != null)
-      selectCombo.setText(selection);
+    public MdwSelectDialog(Shell shell, String message, List<String> options) {
+        super(shell);
+        this.message = message;
+        this.options = options;
+    }
 
-    return composite;
-  }
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Composite composite = (Composite) super.createDialogArea(parent);
+        composite.getShell().setText(title);
 
-  @Override
-  protected void cancelPressed()
-  {
-    setReturnCode(CANCEL);
-    close();
-  }
+        new Label(composite, SWT.NONE).setText(message);
 
-  @Override
-  protected void okPressed()
-  {
-    // set the input
-    selection = selectCombo.getText();
-    if (selection.trim().length() == 0)
-      selection = null;
-    setReturnCode(OK);
-    close();
-  }
+        selectCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+        for (String option : options)
+            selectCombo.add(option);
+
+        if (selection != null)
+            selectCombo.setText(selection);
+
+        return composite;
+    }
+
+    @Override
+    protected void cancelPressed() {
+        setReturnCode(CANCEL);
+        close();
+    }
+
+    @Override
+    protected void okPressed() {
+        // set the input
+        selection = selectCombo.getText();
+        if (selection.trim().length() == 0)
+            selection = null;
+        setReturnCode(OK);
+        close();
+    }
 }

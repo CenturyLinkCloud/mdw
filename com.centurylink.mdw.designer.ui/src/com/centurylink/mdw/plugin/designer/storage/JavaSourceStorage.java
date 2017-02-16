@@ -14,79 +14,72 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
 
-public class JavaSourceStorage extends WorkflowElement implements IStorage
-{
-  private String className;
-  public String getClassName() { return className; }
+public class JavaSourceStorage extends WorkflowElement implements IStorage {
+    private String className;
 
-  private String sourceCode;
-  public String getSourceCode() { return sourceCode; }
+    public String getClassName() {
+        return className;
+    }
 
-  public JavaSourceStorage(WorkflowProject workflowProj, String className, String sourceCode)
-  {
-    setProject(workflowProj);
-    this.className = className;
-    this.sourceCode = sourceCode;
-  }
+    private String sourceCode;
 
-  public InputStream getContents() throws CoreException
-  {
-    return new ByteArrayInputStream(sourceCode.getBytes());
-  }
+    public String getSourceCode() {
+        return sourceCode;
+    }
 
-  public String getName()
-  {
-    return className.substring(className.lastIndexOf('.') + 1);
-  }
+    public JavaSourceStorage(WorkflowProject workflowProj, String className, String sourceCode) {
+        setProject(workflowProj);
+        this.className = className;
+        this.sourceCode = sourceCode;
+    }
 
-  public IPath getFullPath()
-  {
-    return null;
-  }
+    public InputStream getContents() throws CoreException {
+        return new ByteArrayInputStream(sourceCode.getBytes());
+    }
 
-  public boolean isReadOnly()
-  {
-    return true;
-  }
-  public boolean isUserAllowedToEdit()
-  {
-    return false;
-  }
+    public String getName() {
+        return className.substring(className.lastIndexOf('.') + 1);
+    }
 
-  @SuppressWarnings("rawtypes")
-  public Object getAdapter(Class adapter)
-  {
-    return null;
-  }
+    public IPath getFullPath() {
+        return null;
+    }
 
-  @Override
-  public String getIcon()
-  {
-    return "java.gif";
-  }
+    public boolean isReadOnly() {
+        return true;
+    }
 
-  public Entity getActionEntity()
-  {
-    return Entity.File;
-  }
+    public boolean isUserAllowedToEdit() {
+        return false;
+    }
 
-  @Override
-  public Long getId()
-  {
-    return null;
-  }
+    @SuppressWarnings("rawtypes")
+    public Object getAdapter(Class adapter) {
+        return null;
+    }
 
-  @Override
-  public String getTitle()
-  {
-    return getClassName();
-  }
+    @Override
+    public String getIcon() {
+        return "java.gif";
+    }
 
-  @Override
-  public boolean hasInstanceInfo()
-  {
-    return false;
-  }
+    public Entity getActionEntity() {
+        return Entity.File;
+    }
 
+    @Override
+    public Long getId() {
+        return null;
+    }
+
+    @Override
+    public String getTitle() {
+        return getClassName();
+    }
+
+    @Override
+    public boolean hasInstanceInfo() {
+        return false;
+    }
 
 }

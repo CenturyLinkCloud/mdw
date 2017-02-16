@@ -14,128 +14,122 @@ import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.ValueChangeListener;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-public class ProjectPermissionsSection extends PropertySection implements IFilter
-{
-  private WorkflowProject project;
-  public WorkflowProject getProject() { return project; }
+public class ProjectPermissionsSection extends PropertySection implements IFilter {
+    private WorkflowProject project;
 
-  private PropertyEditor userEditor;
-  private PropertyEditor editProcessesEditor;
-  private PropertyEditor runProcessesEditor;
-  private PropertyEditor adminPermissionsEditor;
-  private PropertyEditor sysAdminPermissionsEditor;
-  private PropertyEditor taskManagerLinkEditor;
-  private PropertyEditor reloadButtonEditor;
+    public WorkflowProject getProject() {
+        return project;
+    }
 
-  public void setSelection(WorkflowElement selection)
-  {
-    project = (WorkflowProject) selection;
+    private PropertyEditor userEditor;
+    private PropertyEditor editProcessesEditor;
+    private PropertyEditor runProcessesEditor;
+    private PropertyEditor adminPermissionsEditor;
+    private PropertyEditor sysAdminPermissionsEditor;
+    private PropertyEditor taskManagerLinkEditor;
+    private PropertyEditor reloadButtonEditor;
 
-    userEditor.setElement(project);
-    userEditor.setValue(project.getUser().getUsername());
+    public void setSelection(WorkflowElement selection) {
+        project = (WorkflowProject) selection;
 
-    editProcessesEditor.setElement(project);
-    editProcessesEditor.setValue(project.isUserAuthorizedInAnyGroup(UserRoleVO.PROCESS_DESIGN));
+        userEditor.setElement(project);
+        userEditor.setValue(project.getUser().getUsername());
 
-    runProcessesEditor.setElement(project);
-    runProcessesEditor.setValue(project.isUserAuthorizedInAnyGroup(UserRoleVO.PROCESS_EXECUTION));
+        editProcessesEditor.setElement(project);
+        editProcessesEditor.setValue(project.isUserAuthorizedInAnyGroup(UserRoleVO.PROCESS_DESIGN));
 
-    adminPermissionsEditor.setElement(project);
-    adminPermissionsEditor.setValue(project.isUserAuthorizedInAnyGroup(UserRoleVO.USER_ADMIN));
+        runProcessesEditor.setElement(project);
+        runProcessesEditor
+                .setValue(project.isUserAuthorizedInAnyGroup(UserRoleVO.PROCESS_EXECUTION));
 
-    // TODO task execution
+        adminPermissionsEditor.setElement(project);
+        adminPermissionsEditor.setValue(project.isUserAuthorizedInAnyGroup(UserRoleVO.USER_ADMIN));
 
-    sysAdminPermissionsEditor.setElement(project);
-    sysAdminPermissionsEditor.setValue(project.isUserAuthorizedForSystemAdmin());
+        // TODO task execution
 
-    taskManagerLinkEditor.setElement(project);
+        sysAdminPermissionsEditor.setElement(project);
+        sysAdminPermissionsEditor.setValue(project.isUserAuthorizedForSystemAdmin());
 
-    reloadButtonEditor.setElement(project);
-  }
+        taskManagerLinkEditor.setElement(project);
 
-  public void drawWidgets(Composite composite, WorkflowElement selection)
-  {
-    project = (WorkflowProject) selection;
+        reloadButtonEditor.setElement(project);
+    }
 
-    // user text field
-    userEditor = new PropertyEditor(project, PropertyEditor.TYPE_TEXT);
-    userEditor.setLabel("Current User");
-    userEditor.setWidth(150);
-    userEditor.setReadOnly(true);
-    userEditor.render(composite);
+    public void drawWidgets(Composite composite, WorkflowElement selection) {
+        project = (WorkflowProject) selection;
 
-    // edit processes checkbox
-    editProcessesEditor = new PropertyEditor(project, PropertyEditor.TYPE_CHECKBOX);
-    editProcessesEditor.setLabel("Design/Edit Processes");
-    editProcessesEditor.setReadOnly(true);
-    editProcessesEditor.render(composite);
+        // user text field
+        userEditor = new PropertyEditor(project, PropertyEditor.TYPE_TEXT);
+        userEditor.setLabel("Current User");
+        userEditor.setWidth(150);
+        userEditor.setReadOnly(true);
+        userEditor.render(composite);
 
-    // run processes checkbox
-    runProcessesEditor = new PropertyEditor(project, PropertyEditor.TYPE_CHECKBOX);
-    runProcessesEditor.setLabel("Execute Processes");
-    runProcessesEditor.setReadOnly(true);
-    runProcessesEditor.render(composite);
+        // edit processes checkbox
+        editProcessesEditor = new PropertyEditor(project, PropertyEditor.TYPE_CHECKBOX);
+        editProcessesEditor.setLabel("Design/Edit Processes");
+        editProcessesEditor.setReadOnly(true);
+        editProcessesEditor.render(composite);
 
-    // admin checkbox
-    adminPermissionsEditor = new PropertyEditor(project, PropertyEditor.TYPE_CHECKBOX);
-    adminPermissionsEditor.setLabel("Administrator Privileges");
-    adminPermissionsEditor.setReadOnly(true);
-    adminPermissionsEditor.render(composite);
+        // run processes checkbox
+        runProcessesEditor = new PropertyEditor(project, PropertyEditor.TYPE_CHECKBOX);
+        runProcessesEditor.setLabel("Execute Processes");
+        runProcessesEditor.setReadOnly(true);
+        runProcessesEditor.render(composite);
 
-    // sys admin checkbox
-    sysAdminPermissionsEditor = new PropertyEditor(project, PropertyEditor.TYPE_CHECKBOX);
-    sysAdminPermissionsEditor.setLabel("System Admin Privileges");
-    sysAdminPermissionsEditor.setReadOnly(true);
-    sysAdminPermissionsEditor.render(composite);
+        // admin checkbox
+        adminPermissionsEditor = new PropertyEditor(project, PropertyEditor.TYPE_CHECKBOX);
+        adminPermissionsEditor.setLabel("Administrator Privileges");
+        adminPermissionsEditor.setReadOnly(true);
+        adminPermissionsEditor.render(composite);
 
-    // task manager link
-    taskManagerLinkEditor = new PropertyEditor(project, PropertyEditor.TYPE_LINK);
-    taskManagerLinkEditor.setLabel("Launch Task Manager to Change Role Assignments");
-    taskManagerLinkEditor.setIndent(-100);
-    taskManagerLinkEditor.setHeight(20);
-    taskManagerLinkEditor.setWidth(500);
-    taskManagerLinkEditor.addValueChangeListener(new ValueChangeListener()
-      {
-        public void propertyValueChanged(Object newValue)
-        {
-          launchTaskManager();
-        }
-      });
-    taskManagerLinkEditor.render(composite);
+        // sys admin checkbox
+        sysAdminPermissionsEditor = new PropertyEditor(project, PropertyEditor.TYPE_CHECKBOX);
+        sysAdminPermissionsEditor.setLabel("System Admin Privileges");
+        sysAdminPermissionsEditor.setReadOnly(true);
+        sysAdminPermissionsEditor.render(composite);
 
-    // reload button
-    reloadButtonEditor = new PropertyEditor(project, PropertyEditor.TYPE_BUTTON);
-    reloadButtonEditor.setLabel("Reload");
-    reloadButtonEditor.setIndent(-100);
-    reloadButtonEditor.addValueChangeListener(new ValueChangeListener()
-      {
-        public void propertyValueChanged(Object newValue)
-        {
-          reloadPermissions();
-        }
-      });
-    reloadButtonEditor.render(composite);
-  }
+        // task manager link
+        taskManagerLinkEditor = new PropertyEditor(project, PropertyEditor.TYPE_LINK);
+        taskManagerLinkEditor.setLabel("Launch Task Manager to Change Role Assignments");
+        taskManagerLinkEditor.setIndent(-100);
+        taskManagerLinkEditor.setHeight(20);
+        taskManagerLinkEditor.setWidth(500);
+        taskManagerLinkEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                launchTaskManager();
+            }
+        });
+        taskManagerLinkEditor.render(composite);
 
-  private void launchTaskManager()
-  {
-    WebLaunchActions.getLaunchAction(project, WebApp.TaskManager).launch(project);
-  }
+        // reload button
+        reloadButtonEditor = new PropertyEditor(project, PropertyEditor.TYPE_BUTTON);
+        reloadButtonEditor.setLabel("Reload");
+        reloadButtonEditor.setIndent(-100);
+        reloadButtonEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                reloadPermissions();
+            }
+        });
+        reloadButtonEditor.render(composite);
+    }
 
-  private void reloadPermissions()
-  {
-    project.getDesignerProxy().getPluginDataAccess().reloadUserPermissions();
-    setSelection(project);
-  }
+    private void launchTaskManager() {
+        WebLaunchActions.getLaunchAction(project, WebApp.TaskManager).launch(project);
+    }
 
-  public boolean select(Object toTest)
-  {
-    if (toTest == null || !(toTest instanceof WorkflowProject))
-      return false;
+    private void reloadPermissions() {
+        project.getDesignerProxy().getPluginDataAccess().reloadUserPermissions();
+        setSelection(project);
+    }
 
-    if (!((WorkflowProject)toTest).isInitialized())
-      return false;  // wait until project has been initialized
+    public boolean select(Object toTest) {
+        if (toTest == null || !(toTest instanceof WorkflowProject))
+            return false;
 
-    return !((WorkflowProject)toTest).getProject().checkRequiredVersion(5, 5, 8);
-  }
+        if (!((WorkflowProject) toTest).isInitialized())
+            return false; // wait until project has been initialized
+
+        return !((WorkflowProject) toTest).getProject().checkRequiredVersion(5, 5, 8);
+    }
 }

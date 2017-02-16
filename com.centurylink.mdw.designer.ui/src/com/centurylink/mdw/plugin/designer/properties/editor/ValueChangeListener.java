@@ -3,7 +3,6 @@
  */
 package com.centurylink.mdw.plugin.designer.properties.editor;
 
-public interface ValueChangeListener
-{
-  public void propertyValueChanged(Object newValue);
+public interface ValueChangeListener {
+    public void propertyValueChanged(Object newValue);
 }

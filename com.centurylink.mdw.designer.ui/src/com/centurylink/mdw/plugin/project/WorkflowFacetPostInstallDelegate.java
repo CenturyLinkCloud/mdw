@@ -18,60 +18,60 @@ import com.centurylink.mdw.plugin.project.assembly.ProjectInflator;
 import com.centurylink.mdw.plugin.project.assembly.ProjectUpdater;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-public class WorkflowFacetPostInstallDelegate implements IDelegate
-{
-  public void execute(IProject project, IProjectFacetVersion fv, Object config, final IProgressMonitor monitor) throws CoreException
-  {
-    final WorkflowProject workflowProject = (WorkflowProject) config;
+public class WorkflowFacetPostInstallDelegate implements IDelegate {
+    public void execute(IProject project, IProjectFacetVersion fv, Object config,
+            final IProgressMonitor monitor) throws CoreException {
+        final WorkflowProject workflowProject = (WorkflowProject) config;
 
-    if (workflowProject == null || !workflowProject.isSkipFacetPostInstallUpdates())
-    {
-      MdwPlugin.getDisplay().asyncExec(new Runnable()
-      {
-        public void run()
-        {
-          workflowProject.setDefaultFilesToIgnoreDuringUpdate();
+        if (workflowProject == null || !workflowProject.isSkipFacetPostInstallUpdates()) {
+            MdwPlugin.getDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    workflowProject.setDefaultFilesToIgnoreDuringUpdate();
 
-          ProjectUpdater updater = new ProjectUpdater(workflowProject, MdwPlugin.getSettings());
+                    ProjectUpdater updater = new ProjectUpdater(workflowProject,
+                            MdwPlugin.getSettings());
 
-          ProjectConfigurator configurator = new ProjectConfigurator(workflowProject, MdwPlugin.getSettings());
+                    ProjectConfigurator configurator = new ProjectConfigurator(workflowProject,
+                            MdwPlugin.getSettings());
 
-          try
-          {
-            updater.updateFrameworkJars(monitor);
-            final IProject project = workflowProject.isCloudProject() ? workflowProject.getSourceProject() : workflowProject.getEarProject();
-            updater.updateMappingTemplates(project.getFolder("deploy/config"), null);
+                    try {
+                        updater.updateFrameworkJars(monitor);
+                        final IProject project = workflowProject.isCloudProject()
+                                ? workflowProject.getSourceProject()
+                                : workflowProject.getEarProject();
+                        updater.updateMappingTemplates(project.getFolder("deploy/config"), null);
 
-            if (workflowProject.isCloudProject())
-            {
-              updater.updateWebProjectJars(monitor);
-              configurator.addFrameworkJarsToClasspath(monitor);
-              configurator.setJavaBuildOutputPath("build/classes", monitor);
-            }
-            else
-            {
-              ProjectInflator inflator = new ProjectInflator(workflowProject, MdwPlugin.getSettings());
-              inflator.generateEarArtifacts(monitor);
-              configurator.configureEarProject(monitor);
-              inflator.generateSourceArtifacts(monitor);
-              configurator.configureSourceProject(MdwPlugin.getShell(), monitor);
-            }
+                        if (workflowProject.isCloudProject()) {
+                            updater.updateWebProjectJars(monitor);
+                            configurator.addFrameworkJarsToClasspath(monitor);
+                            configurator.setJavaBuildOutputPath("build/classes", monitor);
+                        }
+                        else {
+                            ProjectInflator inflator = new ProjectInflator(workflowProject,
+                                    MdwPlugin.getSettings());
+                            inflator.generateEarArtifacts(monitor);
+                            configurator.configureEarProject(monitor);
+                            inflator.generateSourceArtifacts(monitor);
+                            configurator.configureSourceProject(MdwPlugin.getShell(), monitor);
+                        }
 
-            configurator.createFrameworkSourceCodeAssociations(MdwPlugin.getShell(), monitor);
+                        configurator.createFrameworkSourceCodeAssociations(MdwPlugin.getShell(),
+                                monitor);
 
-            // take care of any extension modules
-            ExtensionModulesUpdater changer = new ExtensionModulesUpdater(workflowProject);
-            changer.setAdds(workflowProject.getExtensionModules());
-            changer.doChanges(MdwPlugin.getShell());
+                        // take care of any extension modules
+                        ExtensionModulesUpdater changer = new ExtensionModulesUpdater(
+                                workflowProject);
+                        changer.setAdds(workflowProject.getExtensionModules());
+                        changer.doChanges(MdwPlugin.getShell());
 
-            DesignerPerspective.promptForShowPerspective(MdwPlugin.getActiveWorkbenchWindow(), workflowProject);
-          }
-          catch (Exception ex)
-          {
-            PluginMessages.uiError(ex, "Update Framework Libraries", workflowProject);
-          }
+                        DesignerPerspective.promptForShowPerspective(
+                                MdwPlugin.getActiveWorkbenchWindow(), workflowProject);
+                    }
+                    catch (Exception ex) {
+                        PluginMessages.uiError(ex, "Update Framework Libraries", workflowProject);
+                    }
+                }
+            });
         }
-      });
     }
-  }
 }

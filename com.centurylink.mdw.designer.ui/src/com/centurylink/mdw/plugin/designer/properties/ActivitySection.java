@@ -15,120 +15,112 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.ValueChangeListener;
 
-public class ActivitySection extends PropertySection
-{
-  private Activity activity;
-  public Activity getActivity() { return activity; }
+public class ActivitySection extends PropertySection {
+    private Activity activity;
 
-  private PropertyEditor idPropertyEditor;
-  private PropertyEditor logicalIdPropertyEditor;
-  private PropertyEditor namePropertyEditor;
-  private PropertyEditor implementorPropertyEditor;
-  private PropertyEditor linkPropertyEditor;
-  private PropertyEditor descriptionPropertyEditor;
+    public Activity getActivity() {
+        return activity;
+    }
 
-  public void setSelection(WorkflowElement selection)
-  {
-    activity = (Activity) selection;
+    private PropertyEditor idPropertyEditor;
+    private PropertyEditor logicalIdPropertyEditor;
+    private PropertyEditor namePropertyEditor;
+    private PropertyEditor implementorPropertyEditor;
+    private PropertyEditor linkPropertyEditor;
+    private PropertyEditor descriptionPropertyEditor;
 
-    idPropertyEditor.setElement(activity);
-    idPropertyEditor.setValue(activity.getId());
+    public void setSelection(WorkflowElement selection) {
+        activity = (Activity) selection;
 
-    logicalIdPropertyEditor.setElement(activity);
-    logicalIdPropertyEditor.setValue(activity.getLogicalId());
+        idPropertyEditor.setElement(activity);
+        idPropertyEditor.setValue(activity.getId());
 
-    namePropertyEditor.setElement(activity);
-    namePropertyEditor.setValue(activity.getName());
-    namePropertyEditor.setEditable(!activity.isReadOnly());
+        logicalIdPropertyEditor.setElement(activity);
+        logicalIdPropertyEditor.setValue(activity.getLogicalId());
 
-    implementorPropertyEditor.setElement(activity);
-    implementorPropertyEditor.setValue(activity.getActivityImpl().getImplClassName());
-    implementorPropertyEditor.setEditable(!activity.isReadOnly());
+        namePropertyEditor.setElement(activity);
+        namePropertyEditor.setValue(activity.getName());
+        namePropertyEditor.setEditable(!activity.isReadOnly());
 
-    linkPropertyEditor.setElement(activity);
+        implementorPropertyEditor.setElement(activity);
+        implementorPropertyEditor.setValue(activity.getActivityImpl().getImplClassName());
+        implementorPropertyEditor.setEditable(!activity.isReadOnly());
 
-    descriptionPropertyEditor.setElement(activity);
-    descriptionPropertyEditor.setValue(activity.getDescription());
-    descriptionPropertyEditor.setEditable(!activity.isReadOnly());
-  }
+        linkPropertyEditor.setElement(activity);
 
-  public void drawWidgets(Composite composite, WorkflowElement selection)
-  {
-    activity = (Activity) selection;
+        descriptionPropertyEditor.setElement(activity);
+        descriptionPropertyEditor.setValue(activity.getDescription());
+        descriptionPropertyEditor.setEditable(!activity.isReadOnly());
+    }
 
-    // id text field
-    idPropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_TEXT);
-    idPropertyEditor.setLabel("ID");
-    idPropertyEditor.setWidth(150);
-    idPropertyEditor.setReadOnly(true);
-    idPropertyEditor.render(composite);
+    public void drawWidgets(Composite composite, WorkflowElement selection) {
+        activity = (Activity) selection;
 
-    // logical id text field
-    logicalIdPropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_TEXT);
-    logicalIdPropertyEditor.setLabel("Logical ID");
-    logicalIdPropertyEditor.setWidth(150);
-    logicalIdPropertyEditor.setReadOnly(true);
-    logicalIdPropertyEditor.render(composite);
+        // id text field
+        idPropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_TEXT);
+        idPropertyEditor.setLabel("ID");
+        idPropertyEditor.setWidth(150);
+        idPropertyEditor.setReadOnly(true);
+        idPropertyEditor.render(composite);
 
-    // name text field
-    namePropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_TEXT);
-    namePropertyEditor.setLabel("Label");
-    namePropertyEditor.setMultiLine(true);
-    namePropertyEditor.setWidth(475);
-    namePropertyEditor.setHeight(30);
-    namePropertyEditor.addValueChangeListener(new ValueChangeListener()
-    {
-      public void propertyValueChanged(Object newValue)
-      {
-        activity.setName((String)newValue);
-      }
-    });
-    namePropertyEditor.render(composite);
+        // logical id text field
+        logicalIdPropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_TEXT);
+        logicalIdPropertyEditor.setLabel("Logical ID");
+        logicalIdPropertyEditor.setWidth(150);
+        logicalIdPropertyEditor.setReadOnly(true);
+        logicalIdPropertyEditor.render(composite);
 
-    // implementor combo
-    implementorPropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_COMBO);
-    implementorPropertyEditor.setLabel("Implementor");
-    implementorPropertyEditor.setWidth(475);
-    List<String> implementorNames = new ArrayList<String>();
-    for (ActivityImplementorVO implVo : getDataAccess().getActivityImplementors(false))
-      implementorNames.add(implVo.getImplementorClassName());
-    implementorPropertyEditor.setValueOptions(implementorNames);
-    implementorPropertyEditor.addValueChangeListener(new ValueChangeListener()
-    {
-      public void propertyValueChanged(Object newValue)
-      {
-        activity.setActivityImpl(activity.getProject().getActivityImpl((String)newValue));
-      }
-    });
-    implementorPropertyEditor.render(composite);
-    ((Combo)implementorPropertyEditor.getWidget()).setVisibleItemCount(10);
+        // name text field
+        namePropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_TEXT);
+        namePropertyEditor.setLabel("Label");
+        namePropertyEditor.setMultiLine(true);
+        namePropertyEditor.setWidth(475);
+        namePropertyEditor.setHeight(30);
+        namePropertyEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                activity.setName((String) newValue);
+            }
+        });
+        namePropertyEditor.render(composite);
 
-    // implementor link
-    linkPropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_LINK);
-    linkPropertyEditor.setLabel("Open Implementor Source Code");
-    linkPropertyEditor.addValueChangeListener(new ValueChangeListener()
-    {
-      public void propertyValueChanged(Object newValue)
-      {
-        activity.getProject().viewSource(activity.getActivityImpl().getImplClassName());
-      }
-    });
-    linkPropertyEditor.render(composite);
+        // implementor combo
+        implementorPropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_COMBO);
+        implementorPropertyEditor.setLabel("Implementor");
+        implementorPropertyEditor.setWidth(475);
+        List<String> implementorNames = new ArrayList<String>();
+        for (ActivityImplementorVO implVo : getDataAccess().getActivityImplementors(false))
+            implementorNames.add(implVo.getImplementorClassName());
+        implementorPropertyEditor.setValueOptions(implementorNames);
+        implementorPropertyEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                activity.setActivityImpl(activity.getProject().getActivityImpl((String) newValue));
+            }
+        });
+        implementorPropertyEditor.render(composite);
+        ((Combo) implementorPropertyEditor.getWidget()).setVisibleItemCount(10);
 
-    // description text area
-    descriptionPropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_TEXT);
-    descriptionPropertyEditor.setLabel("Description");
-    descriptionPropertyEditor.setWidth(475);
-    descriptionPropertyEditor.setHeight(70);
-    descriptionPropertyEditor.setMultiLine(true);
-    descriptionPropertyEditor.setTextLimit(1000);
-    descriptionPropertyEditor.addValueChangeListener(new ValueChangeListener()
-    {
-      public void propertyValueChanged(Object newValue)
-      {
-        activity.setDescription((String)newValue);
-      }
-    });
-    descriptionPropertyEditor.render(composite);
-  }
+        // implementor link
+        linkPropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_LINK);
+        linkPropertyEditor.setLabel("Open Implementor Source Code");
+        linkPropertyEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                activity.getProject().viewSource(activity.getActivityImpl().getImplClassName());
+            }
+        });
+        linkPropertyEditor.render(composite);
+
+        // description text area
+        descriptionPropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_TEXT);
+        descriptionPropertyEditor.setLabel("Description");
+        descriptionPropertyEditor.setWidth(475);
+        descriptionPropertyEditor.setHeight(70);
+        descriptionPropertyEditor.setMultiLine(true);
+        descriptionPropertyEditor.setTextLimit(1000);
+        descriptionPropertyEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                activity.setDescription((String) newValue);
+            }
+        });
+        descriptionPropertyEditor.render(composite);
+    }
 }

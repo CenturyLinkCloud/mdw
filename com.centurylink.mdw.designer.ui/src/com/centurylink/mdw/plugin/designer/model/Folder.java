@@ -12,113 +12,124 @@ import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 /**
  * Logical container for workflow elements.
  */
-public class Folder extends WorkflowElement implements Comparable<Folder>
-{
-  private List<WorkflowElement> children;
-  public List<WorkflowElement> getChildren() { return children; }
-  public void setChildren(List<WorkflowElement> children) { this.children = children; }
-  public boolean hasChildren()
-  {
-    return children != null && children.size() > 0;
-  }
+public class Folder extends WorkflowElement implements Comparable<Folder> {
+    private List<WorkflowElement> children;
 
-  public void addChild(WorkflowElement child) {
-    addChild(children == null ? 0 : children.size(), child);
-  }
-
-  public void addChild(int position, WorkflowElement child)
-  {
-    if (children == null)
-      children = new ArrayList<WorkflowElement>();
-    children.add(position, child);
-    if (child instanceof Folder)
-      ((Folder)child).parent = this;
-    else if (child instanceof File)
-      ((File)child).setParent(this);
-  }
-  public List<Folder> getSubFolders()
-  {
-    List<Folder> subfolders = new ArrayList<Folder>();
-    if (children != null)
-    {
-      for (WorkflowElement child : children)
-      {
-        if (child instanceof Folder)
-          subfolders.add((Folder)child);
-      }
+    public List<WorkflowElement> getChildren() {
+        return children;
     }
-    return subfolders;
-  }
 
-  private Folder parent;
-  public Folder getParent() { return parent; }
-  public boolean hasParent() { return parent != null; }
+    public void setChildren(List<WorkflowElement> children) {
+        this.children = children;
+    }
 
-  private String name;
-  public String getName() { return name; }
-  public void setName(String name) { this.name = name; }
+    public boolean hasChildren() {
+        return children != null && children.size() > 0;
+    }
 
-  private String icon = "folder.gif";
-  public void setIcon(String icon) { this.icon = icon; }
-  public String getIcon() { return icon; }
+    public void addChild(WorkflowElement child) {
+        addChild(children == null ? 0 : children.size(), child);
+    }
 
-  public Entity getActionEntity()
-  {
-    return Entity.Folder;
-  }
+    public void addChild(int position, WorkflowElement child) {
+        if (children == null)
+            children = new ArrayList<WorkflowElement>();
+        children.add(position, child);
+        if (child instanceof Folder)
+            ((Folder) child).parent = this;
+        else if (child instanceof File)
+            ((File) child).setParent(this);
+    }
 
-  public Folder(String name)
-  {
-    this.name = name;
-  }
+    public List<Folder> getSubFolders() {
+        List<Folder> subfolders = new ArrayList<Folder>();
+        if (children != null) {
+            for (WorkflowElement child : children) {
+                if (child instanceof Folder)
+                    subfolders.add((Folder) child);
+            }
+        }
+        return subfolders;
+    }
 
-  public Folder(String name, WorkflowProject workflowProject)
-  {
-    setProject(workflowProject);
-    this.name = name;
-  }
+    private Folder parent;
 
-  @Override
-  public String getTitle()
-  {
-    return "Folder";
-  }
+    public Folder getParent() {
+        return parent;
+    }
 
-  @Override
-  public Long getId()
-  {
-    return convertToLong(getName());
-  }
+    public boolean hasParent() {
+        return parent != null;
+    }
 
-  public boolean isReadOnly()
-  {
-    return true;
-  }
+    private String name;
 
-  public boolean hasInstanceInfo()
-  {
-    return false;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public int compareTo(Folder other)
-  {
-    return getName().compareTo(other.getName());
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public boolean equals(Object other)
-  {
-    if (other instanceof Folder && getProject() == null && ((Folder)other).getProject() == null)
-      return getPath().equals(((Folder)other).getPath());
-    else
-      return super.equals(other);
-  }
+    private String icon = "folder.gif";
 
-  public String getPath()
-  {
-    if (hasParent())
-      return getParent().getName() + "/" + getName();
-    else
-      return getName();
-  }
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public Entity getActionEntity() {
+        return Entity.Folder;
+    }
+
+    public Folder(String name) {
+        this.name = name;
+    }
+
+    public Folder(String name, WorkflowProject workflowProject) {
+        setProject(workflowProject);
+        this.name = name;
+    }
+
+    @Override
+    public String getTitle() {
+        return "Folder";
+    }
+
+    @Override
+    public Long getId() {
+        return convertToLong(getName());
+    }
+
+    public boolean isReadOnly() {
+        return true;
+    }
+
+    public boolean hasInstanceInfo() {
+        return false;
+    }
+
+    public int compareTo(Folder other) {
+        return getName().compareTo(other.getName());
+    }
+
+    public boolean equals(Object other) {
+        if (other instanceof Folder && getProject() == null
+                && ((Folder) other).getProject() == null)
+            return getPath().equals(((Folder) other).getPath());
+        else
+            return super.equals(other);
+    }
+
+    public String getPath() {
+        if (hasParent())
+            return getParent().getName() + "/" + getName();
+        else
+            return getName();
+    }
 
 }

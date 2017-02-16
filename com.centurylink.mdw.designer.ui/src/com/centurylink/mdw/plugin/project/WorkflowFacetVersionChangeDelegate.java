@@ -9,10 +9,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
-public class WorkflowFacetVersionChangeDelegate implements IDelegate
-{
-  public void execute(IProject project, IProjectFacetVersion fv, Object config, IProgressMonitor monitor) throws CoreException
-  {
-    // does nothing at present
-  }
+public class WorkflowFacetVersionChangeDelegate implements IDelegate {
+    public void execute(IProject project, IProjectFacetVersion fv, Object config,
+            IProgressMonitor monitor) throws CoreException {
+        // does nothing at present
+    }
 }

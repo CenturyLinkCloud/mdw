@@ -13,29 +13,28 @@ import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
 /**
- * Private launch configuration for Cucumber MDW test cases.
- * (See CucumberLaunchConfiguration for non-MDW Cucumber tests).
+ * Private launch configuration for Cucumber MDW test cases. (See
+ * CucumberLaunchConfiguration for non-MDW Cucumber tests).
  */
-public class CucumberTestLaunchConfiguration extends CucumberLaunchConfiguration
-{
-  @Override
-  public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException
-  {
-    IVMInstall vm = verifyVMInstall(config);
-    IVMRunner runner = vm.getVMRunner(mode);
-    String[] classpath = getClasspath(config);
-    VMRunnerConfiguration runConfig = new VMRunnerConfiguration(CUCUMBER_CLI_MAIN, classpath);
+public class CucumberTestLaunchConfiguration extends CucumberLaunchConfiguration {
+    @Override
+    public void launch(ILaunchConfiguration config, String mode, ILaunch launch,
+            IProgressMonitor monitor) throws CoreException {
+        IVMInstall vm = verifyVMInstall(config);
+        IVMRunner runner = vm.getVMRunner(mode);
+        String[] classpath = getClasspath(config);
+        VMRunnerConfiguration runConfig = new VMRunnerConfiguration(CUCUMBER_CLI_MAIN, classpath);
 
-    verifyWorkingDirectory(config);
+        verifyWorkingDirectory(config);
 
-    String[] bootpath = getBootpath(config);
-    runConfig.setBootClassPath(bootpath);
-    runConfig.setVMArguments(DebugPlugin.parseArguments(getVMArguments(config)));
-    runConfig.setWorkingDirectory(getWorkingDirectory(config).getAbsolutePath());
+        String[] bootpath = getBootpath(config);
+        runConfig.setBootClassPath(bootpath);
+        runConfig.setVMArguments(DebugPlugin.parseArguments(getVMArguments(config)));
+        runConfig.setWorkingDirectory(getWorkingDirectory(config).getAbsolutePath());
 
-    String[] args = DebugPlugin.parseArguments(getProgramArguments(config));
-    runConfig.setProgramArguments(args);
+        String[] args = DebugPlugin.parseArguments(getProgramArguments(config));
+        runConfig.setProgramArguments(args);
 
-    runner.run(runConfig, launch, monitor);
-  }
+        runner.run(runConfig, launch, monitor);
+    }
 }

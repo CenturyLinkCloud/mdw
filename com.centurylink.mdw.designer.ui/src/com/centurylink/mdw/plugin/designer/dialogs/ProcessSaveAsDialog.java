@@ -26,137 +26,133 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-public class ProcessSaveAsDialog extends TrayDialog
-{
-  private WorkflowProcess process;
-  public WorkflowProcess getProcess() { return process; }
+public class ProcessSaveAsDialog extends TrayDialog {
+    private WorkflowProcess process;
 
-  private Text newNameTextField;
-
-  private String newName;
-  public String getNewName() { return newName; }
-
-  private Combo workflowPackageCombo;
-
-  private String packageName;
-  public String getPackageName() { return packageName; }
-
-  private WorkflowPackage newPackage;
-
-  public ProcessSaveAsDialog(Shell shell, WorkflowProcess processVersion)
-  {
-    super(shell);
-    this.process = processVersion;
-  }
-
-  @Override
-  protected Control createDialogArea(Composite parent)
-  {
-    Composite composite = (Composite) super.createDialogArea(parent);
-    composite.getShell().setText("Save Process As…");
-
-    // package selection
-    new Label(composite, SWT.NONE).setText("Workflow Package");
-    workflowPackageCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-    GridData grid = new GridData(SWT.BEGINNING);
-    grid.horizontalSpan = 2;
-    grid.widthHint = 150;
-    workflowPackageCombo.setLayoutData(grid);
-
-    workflowPackageCombo.removeAll();
-    for (WorkflowPackage packageVersion : this.process.getProject().getTopLevelUserVisiblePackages())
-      workflowPackageCombo.add(packageVersion.getName());
-
-    workflowPackageCombo.addSelectionListener(new SelectionAdapter()
-      {
-        public void widgetSelected(SelectionEvent e)
-        {
-          packageName = workflowPackageCombo.getText().trim();
-          if (!StringHelper.isEmpty(packageName))
-            newPackage = getProject().getPackage(packageName);
-        }
-      });
-
-    if (getProcess().getPackage() != null)
-    {
-      packageName = getProcess().getPackage().getName();
-      workflowPackageCombo.setText(packageName);
+    public WorkflowProcess getProcess() {
+        return process;
     }
 
-    // process name
-    new Label(composite, SWT.NONE).setText("Process Name");
-    newNameTextField = new Text(composite, SWT.BORDER | SWT.SINGLE);
-    GridData gd = new GridData(SWT.LEFT);
-    gd.widthHint = 200;
-    newNameTextField.setLayoutData(gd);
-    newName = newNameTextField.getText().trim();
-    newNameTextField.setText(newName);
-    newNameTextField.addModifyListener(new ModifyListener()
-    {
-      public void modifyText(ModifyEvent e)
-      {
-        String name = newNameTextField.getText().trim();
-        String warning = null;
-        WorkflowPackage processPkg = newPackage == null ? process.getPackage() : newPackage;
-        if (!processPkg.isUserAuthorized(UserRoleVO.ASSET_DESIGN))
-        {
-          warning = "you are not authorized to create a process in selected workflow Package:\n'" + packageName + "'";
+    private Text newNameTextField;
+
+    private String newName;
+
+    public String getNewName() {
+        return newName;
+    }
+
+    private Combo workflowPackageCombo;
+
+    private String packageName;
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    private WorkflowPackage newPackage;
+
+    public ProcessSaveAsDialog(Shell shell, WorkflowProcess processVersion) {
+        super(shell);
+        this.process = processVersion;
+    }
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Composite composite = (Composite) super.createDialogArea(parent);
+        composite.getShell().setText("Save Process As…");
+
+        // package selection
+        new Label(composite, SWT.NONE).setText("Workflow Package");
+        workflowPackageCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+        GridData grid = new GridData(SWT.BEGINNING);
+        grid.horizontalSpan = 2;
+        grid.widthHint = 150;
+        workflowPackageCombo.setLayoutData(grid);
+
+        workflowPackageCombo.removeAll();
+        for (WorkflowPackage packageVersion : this.process.getProject()
+                .getTopLevelUserVisiblePackages())
+            workflowPackageCombo.add(packageVersion.getName());
+
+        workflowPackageCombo.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                packageName = workflowPackageCombo.getText().trim();
+                if (!StringHelper.isEmpty(packageName))
+                    newPackage = getProject().getPackage(packageName);
+            }
+        });
+
+        if (getProcess().getPackage() != null) {
+            packageName = getProcess().getPackage().getName();
+            workflowPackageCombo.setText(packageName);
         }
-        else if (nameAlreadyExists(name))
-        {
-          warning = process.getTitle() + " name already exists:\n'" + name + "'";
-        }
-        if (warning != null)
-        {
-          getButton(IDialogConstants.OK_ID).setEnabled(false);
-          WarningTray tray = getWarningTray();
-          tray.setMessage(warning);
-          tray.open();
-          getButton(Dialog.OK).setEnabled(false);
-        }
+
+        // process name
+        new Label(composite, SWT.NONE).setText("Process Name");
+        newNameTextField = new Text(composite, SWT.BORDER | SWT.SINGLE);
+        GridData gd = new GridData(SWT.LEFT);
+        gd.widthHint = 200;
+        newNameTextField.setLayoutData(gd);
+        newName = newNameTextField.getText().trim();
+        newNameTextField.setText(newName);
+        newNameTextField.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                String name = newNameTextField.getText().trim();
+                String warning = null;
+                WorkflowPackage processPkg = newPackage == null ? process.getPackage() : newPackage;
+                if (!processPkg.isUserAuthorized(UserRoleVO.ASSET_DESIGN)) {
+                    warning = "you are not authorized to create a process in selected workflow Package:\n'"
+                            + packageName + "'";
+                }
+                else if (nameAlreadyExists(name)) {
+                    warning = process.getTitle() + " name already exists:\n'" + name + "'";
+                }
+                if (warning != null) {
+                    getButton(IDialogConstants.OK_ID).setEnabled(false);
+                    WarningTray tray = getWarningTray();
+                    tray.setMessage(warning);
+                    tray.open();
+                    getButton(Dialog.OK).setEnabled(false);
+                }
+                else {
+                    newName = name;
+                    getWarningTray().close();
+                    getButton(IDialogConstants.OK_ID).setEnabled(true);
+                    getButton(Dialog.OK).setEnabled(name.length() > 0);
+                }
+            }
+        });
+
+        newNameTextField.forceFocus();
+
+        return composite;
+    }
+
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        super.createButtonsForButtonBar(parent);
+        getButton(Dialog.OK).setEnabled(false);
+    }
+
+    private WarningTray warningTray;
+
+    public WarningTray getWarningTray() {
+        if (warningTray == null)
+            warningTray = new WarningTray(this);
+        return warningTray;
+    }
+
+    private boolean nameAlreadyExists(String name) {
+        WorkflowProject workflowProject = process.getProject();
+        PluginDataAccess dataAccess = workflowProject.getDataAccess();
+        if (process instanceof WorkflowProcess)
+            return dataAccess.processNameExists(name);
         else
-        {
-          newName = name;
-          getWarningTray().close();
-          getButton(IDialogConstants.OK_ID).setEnabled(true);
-          getButton(Dialog.OK).setEnabled(name.length() > 0);
-        }
-      }
-    });
+            return false;
+    }
 
-    newNameTextField.forceFocus();
-
-    return composite;
-  }
-
-  @Override
-  protected void createButtonsForButtonBar(Composite parent)
-  {
-    super.createButtonsForButtonBar(parent);
-    getButton(Dialog.OK).setEnabled(false);
-  }
-
-  private WarningTray warningTray;
-  public WarningTray getWarningTray()
-  {
-    if (warningTray == null)
-      warningTray = new WarningTray(this);
-    return warningTray;
-  }
-
-  private boolean nameAlreadyExists(String name)
-  {
-    WorkflowProject workflowProject = process.getProject();
-    PluginDataAccess dataAccess = workflowProject.getDataAccess();
-    if (process instanceof WorkflowProcess)
-      return dataAccess.processNameExists(name);
-    else
-      return false;
-  }
-
-  public WorkflowProject getProject()
-  {
-	return getProcess().getProject();
-  }
+    public WorkflowProject getProject() {
+        return getProcess().getProject();
+    }
 
 }

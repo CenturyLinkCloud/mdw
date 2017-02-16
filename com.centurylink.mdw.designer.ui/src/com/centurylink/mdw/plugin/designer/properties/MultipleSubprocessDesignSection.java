@@ -15,56 +15,48 @@ import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.TableEditor.DefaultRowImpl;
 import com.centurylink.mdw.plugin.designer.properties.editor.ValueChangeListener;
 
-public class MultipleSubprocessDesignSection extends DesignSection implements IFilter
-{
-  @Override
-  protected void preRender(final PropertyEditor propertyEditor)
-  {
-    if (WorkAttributeConstant.PROCESS_MAP.equals(propertyEditor.getName()))
-    {
-      propertyEditor.addValueChangeListener(new ValueChangeListener()
-      {
-        public void propertyValueChanged(Object newValue)
-        {
-          DefaultRowImpl row = (DefaultRowImpl) newValue;
-          String procName = row.getColumnValues()[2];
-          String ver = row.getColumnValues()[3];
-          if (procName != null && ver != null) {
-            AssetVersionSpec spec = new AssetVersionSpec(procName, ver);
-            AssetLocator locator = new AssetLocator(getActivity(), AssetLocator.Type.Process);
-            WorkflowProcess subproc = locator.getProcessVersion(spec);
-            if (subproc != null)
-              openSubprocess(subproc);
-          }
+public class MultipleSubprocessDesignSection extends DesignSection implements IFilter {
+    @Override
+    protected void preRender(final PropertyEditor propertyEditor) {
+        if (WorkAttributeConstant.PROCESS_MAP.equals(propertyEditor.getName())) {
+            propertyEditor.addValueChangeListener(new ValueChangeListener() {
+                public void propertyValueChanged(Object newValue) {
+                    DefaultRowImpl row = (DefaultRowImpl) newValue;
+                    String procName = row.getColumnValues()[2];
+                    String ver = row.getColumnValues()[3];
+                    if (procName != null && ver != null) {
+                        AssetVersionSpec spec = new AssetVersionSpec(procName, ver);
+                        AssetLocator locator = new AssetLocator(getActivity(),
+                                AssetLocator.Type.Process);
+                        WorkflowProcess subproc = locator.getProcessVersion(spec);
+                        if (subproc != null)
+                            openSubprocess(subproc);
+                    }
+                }
+            });
         }
-      });
     }
-  }
 
-  @Override
-  public boolean select(Object toTest)
-  {
-    if (toTest == null || !(toTest instanceof Activity))
-      return false;
+    @Override
+    public boolean select(Object toTest) {
+        if (toTest == null || !(toTest instanceof Activity))
+            return false;
 
-    Activity activity = (Activity) toTest;
+        Activity activity = (Activity) toTest;
 
-    if (activity.isForProcessInstance())
-      return false;
+        if (activity.isForProcessInstance())
+            return false;
 
-    return activity.isHeterogeneousSubProcInvoke();
-  }
-
-  private void openSubprocess(WorkflowProcess subproc)
-  {
-    IWorkbenchPage page = MdwPlugin.getActivePage();
-    try
-    {
-      page.openEditor(subproc, "mdw.editors.process");
+        return activity.isHeterogeneousSubProcInvoke();
     }
-    catch (PartInitException ex)
-    {
-      PluginMessages.uiError(ex, "Open Process", subproc.getProject());
+
+    private void openSubprocess(WorkflowProcess subproc) {
+        IWorkbenchPage page = MdwPlugin.getActivePage();
+        try {
+            page.openEditor(subproc, "mdw.editors.process");
+        }
+        catch (PartInitException ex) {
+            PluginMessages.uiError(ex, "Open Process", subproc.getProject());
+        }
     }
-  }
 }

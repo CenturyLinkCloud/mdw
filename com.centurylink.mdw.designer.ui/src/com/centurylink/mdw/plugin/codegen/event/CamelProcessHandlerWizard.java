@@ -10,52 +10,49 @@ import org.eclipse.ui.IWorkbench;
 
 import com.centurylink.mdw.plugin.WizardPage;
 
-public class CamelProcessHandlerWizard extends EventHandlerWizard
-{
-  public static final String WIZARD_ID = "mdw.codegen.camel.process.handler";
+public class CamelProcessHandlerWizard extends EventHandlerWizard {
+    public static final String WIZARD_ID = "mdw.codegen.camel.process.handler";
 
-  // wizard pages
-  CamelHandlerPage camelHandlerPage;
-  public CamelHandlerPage getCamelHandlerPage() { return camelHandlerPage; }
+    // wizard pages
+    CamelHandlerPage camelHandlerPage;
 
-  public CamelProcessHandlerWizard()
-  {
-    setWindowTitle("Camel Process Launch Handler");
-  }
+    public CamelHandlerPage getCamelHandlerPage() {
+        return camelHandlerPage;
+    }
 
-  @Override
-  public void init(IWorkbench workbench, IStructuredSelection selection)
-  {
-    super.init(workbench, selection);
-    getEventHandler().setCustom(true);
-  }
+    public CamelProcessHandlerWizard() {
+        setWindowTitle("Camel Process Launch Handler");
+    }
 
-  @Override
-  public void addPages()
-  {
-    camelHandlerPage = (CamelHandlerPage) addPage(new CamelHandlerPage());
-    super.addJavaImplCodeGenPages();
-  }
+    @Override
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        super.init(workbench, selection);
+        getEventHandler().setCustom(true);
+    }
 
-  @Override
-  public void generate(IProgressMonitor monitor) throws InterruptedException, CoreException
-  {
-    setModel(getEventHandler());
+    @Override
+    public void addPages() {
+        camelHandlerPage = (CamelHandlerPage) addPage(new CamelHandlerPage());
+        super.addJavaImplCodeGenPages();
+    }
 
-    monitor.beginTask("Creating Camel Event Notify Handler -- ", 100);
+    @Override
+    public void generate(IProgressMonitor monitor) throws InterruptedException, CoreException {
+        setModel(getEventHandler());
 
-    // create the java code
-    String template = "CamelProcessLaunchHandler.javajet";
-    String jetFile = "source/src/eventHandlers/" + template;
-    if (!getEventHandler().getProject().checkRequiredVersion(5, 5))
-      jetFile = "source/52/src/eventHandlers/" + template;
+        monitor.beginTask("Creating Camel Event Notify Handler -- ", 100);
 
-    generateCode(jetFile, monitor);
-  }
+        // create the java code
+        String template = "CamelProcessLaunchHandler.javajet";
+        String jetFile = "source/src/eventHandlers/" + template;
+        if (!getEventHandler().getProject().checkRequiredVersion(5, 5))
+            jetFile = "source/52/src/eventHandlers/" + template;
 
-  @Override
-  public WizardPage getPageAfterJavaImplCodeGenPage()
-  {
-    return null;
-  }
+        generateCode(jetFile, monitor);
+    }
+
+    @Override
+    public WizardPage getPageAfterJavaImplCodeGenPage() {
+        return null;
+    }
 }

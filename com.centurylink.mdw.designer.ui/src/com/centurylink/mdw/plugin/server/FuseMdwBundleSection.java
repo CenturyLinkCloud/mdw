@@ -3,7 +3,6 @@
  */
 package com.centurylink.mdw.plugin.server;
 
-public class FuseMdwBundleSection extends ServiceMixMdwBundleSection
-{
+public class FuseMdwBundleSection extends ServiceMixMdwBundleSection {
 
 }

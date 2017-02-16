@@ -8,27 +8,22 @@ import org.eclipse.swt.graphics.Image;
 
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 
-public class PropertiesLabelProvider extends LabelProvider
-{
-  public Image getImage(Object element)
-  {
-    if (element instanceof WorkflowElement)
-    {
-      WorkflowElement workflowElement = (WorkflowElement) element;
-      return workflowElement.getIconImage();
+public class PropertiesLabelProvider extends LabelProvider {
+    public Image getImage(Object element) {
+        if (element instanceof WorkflowElement) {
+            WorkflowElement workflowElement = (WorkflowElement) element;
+            return workflowElement.getIconImage();
+        }
+
+        return null;
     }
 
-    return null;
-  }
+    public String getText(Object element) {
+        if (element instanceof WorkflowElement) {
+            WorkflowElement workflowElement = (WorkflowElement) element;
+            return workflowElement.getFullPathLabel().replace('\n', ' ').replaceAll("\\r", "");
+        }
 
-  public String getText(Object element)
-  {
-    if (element instanceof WorkflowElement)
-    {
-      WorkflowElement workflowElement = (WorkflowElement) element;
-      return workflowElement.getFullPathLabel().replace('\n', ' ').replaceAll("\\r", "");
+        return null;
     }
-
-    return null;
-  }
 }

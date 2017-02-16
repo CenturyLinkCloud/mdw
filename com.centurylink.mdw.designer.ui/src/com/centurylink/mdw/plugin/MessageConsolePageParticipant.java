@@ -14,128 +14,110 @@ import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.part.IPageBookViewPage;
 
-public class MessageConsolePageParticipant implements IConsolePageParticipant
-{
-  public static final String PREFS_KEY = "MdwShowWhenContentChanges";
+public class MessageConsolePageParticipant implements IConsolePageParticipant {
+    public static final String PREFS_KEY = "MdwShowWhenContentChanges";
 
-  private ShowWhenContentChangesAction showWhenContentChangesAction;
-  private TerminateAction terminateAction;
+    private ShowWhenContentChangesAction showWhenContentChangesAction;
+    private TerminateAction terminateAction;
 
-  private IConsole console;
+    private IConsole console;
 
-  public void init(IPageBookViewPage page, IConsole console)
-  {
-    this.console = console;
+    public void init(IPageBookViewPage page, IConsole console) {
+        this.console = console;
 
-    // contribute to toolbar
-    IActionBars actionBars = page.getSite().getActionBars();
-    showWhenContentChangesAction = new ShowWhenContentChangesAction();
-    actionBars.getToolBarManager().appendToGroup(IConsoleConstants.OUTPUT_GROUP, showWhenContentChangesAction);
+        // contribute to toolbar
+        IActionBars actionBars = page.getSite().getActionBars();
+        showWhenContentChangesAction = new ShowWhenContentChangesAction();
+        actionBars.getToolBarManager().appendToGroup(IConsoleConstants.OUTPUT_GROUP,
+                showWhenContentChangesAction);
 
-    if (((MessageConsole)console).isShowTerminate())
-    {
-      terminateAction = new TerminateAction();
-      actionBars.getToolBarManager().appendToGroup(IConsoleConstants.LAUNCH_GROUP, terminateAction);
-    }
-  }
-
-  public void activated()
-  {
-    if (terminateAction != null)
-      terminateAction.update();
-  }
-
-  public void deactivated()
-  {
-    if (terminateAction != null)
-      terminateAction.update();
-  }
-
-  public void dispose()
-  {
-    if (showWhenContentChangesAction != null)
-      showWhenContentChangesAction.dispose();
-  }
-
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  public Object getAdapter(Class adapter)
-  {
-    return null;
-  }
-
-  private class ShowWhenContentChangesAction extends Action implements IPropertyChangeListener
-  {
-    public ShowWhenContentChangesAction()
-    {
-      super("Show Console When Output Changes", IAction.AS_CHECK_BOX);
-      setId("com.centurylink.mdw.ShowWhenContentChangesAction");
-      setToolTipText("Show Console When Output Changes");
-      getPreferenceStore().addPropertyChangeListener(this);
-      setImageDescriptor(MdwPlugin.getImageDescriptor("icons/write_out.gif"));
-      update();
+        if (((MessageConsole) console).isShowTerminate()) {
+            terminateAction = new TerminateAction();
+            actionBars.getToolBarManager().appendToGroup(IConsoleConstants.LAUNCH_GROUP,
+                    terminateAction);
+        }
     }
 
-    public void run()
-    {
-      IPreferenceStore store = getPreferenceStore();
-      store.removePropertyChangeListener(this);
-      store.setValue(getPrefsKey(), isChecked());
-      store.addPropertyChangeListener(this);
+    public void activated() {
+        if (terminateAction != null)
+            terminateAction.update();
     }
 
-    public void propertyChange(PropertyChangeEvent event)
-    {
-      String property = event.getProperty();
-      if (property.equals(getPrefsKey()))
-        update();
+    public void deactivated() {
+        if (terminateAction != null)
+            terminateAction.update();
     }
 
-    private void update()
-    {
-      IPreferenceStore store = getPreferenceStore();
-      setChecked(store.getBoolean(getPrefsKey()));
+    public void dispose() {
+        if (showWhenContentChangesAction != null)
+            showWhenContentChangesAction.dispose();
     }
 
-    private IPreferenceStore getPreferenceStore()
-    {
-      return MdwPlugin.getDefault().getPreferenceStore();
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Object getAdapter(Class adapter) {
+        return null;
     }
 
-    public void dispose()
-    {
-      getPreferenceStore().removePropertyChangeListener(this);
+    private class ShowWhenContentChangesAction extends Action implements IPropertyChangeListener {
+        public ShowWhenContentChangesAction() {
+            super("Show Console When Output Changes", IAction.AS_CHECK_BOX);
+            setId("com.centurylink.mdw.ShowWhenContentChangesAction");
+            setToolTipText("Show Console When Output Changes");
+            getPreferenceStore().addPropertyChangeListener(this);
+            setImageDescriptor(MdwPlugin.getImageDescriptor("icons/write_out.gif"));
+            update();
+        }
+
+        public void run() {
+            IPreferenceStore store = getPreferenceStore();
+            store.removePropertyChangeListener(this);
+            store.setValue(getPrefsKey(), isChecked());
+            store.addPropertyChangeListener(this);
+        }
+
+        public void propertyChange(PropertyChangeEvent event) {
+            String property = event.getProperty();
+            if (property.equals(getPrefsKey()))
+                update();
+        }
+
+        private void update() {
+            IPreferenceStore store = getPreferenceStore();
+            setChecked(store.getBoolean(getPrefsKey()));
+        }
+
+        private IPreferenceStore getPreferenceStore() {
+            return MdwPlugin.getDefault().getPreferenceStore();
+        }
+
+        public void dispose() {
+            getPreferenceStore().removePropertyChangeListener(this);
+        }
+
+        private String getPrefsKey() {
+            return PREFS_KEY + "_" + ((MessageConsole) console).getCoreName().replaceAll(" ", "");
+        }
     }
 
-    private String getPrefsKey()
-    {
-      return PREFS_KEY + "_" + ((MessageConsole)console).getCoreName().replaceAll(" ", "");
-    }
-  }
+    private class TerminateAction extends Action implements IPropertyChangeListener {
+        public TerminateAction() {
+            super("Stop Watching", MdwPlugin.getImageDescriptor("icons/stop.gif"));
+            setId("com.centurylink.mdw.TerminateAction");
+            setToolTipText("Stop Watching");
+            update();
+        }
 
-  private class TerminateAction extends Action implements IPropertyChangeListener
-  {
-    public TerminateAction()
-    {
-      super("Stop Watching", MdwPlugin.getImageDescriptor("icons/stop.gif"));
-      setId("com.centurylink.mdw.TerminateAction");
-      setToolTipText("Stop Watching");
-      update();
-    }
+        public void run() {
+            ((MessageConsole) console).terminate();
+            setEnabled(false);
+        }
 
-    public void run()
-    {
-      ((MessageConsole)console).terminate();
-      setEnabled(false);
-    }
+        private void update() {
+            setEnabled(((MessageConsole) console).isRunning());
+        }
 
-    private void update()
-    {
-      setEnabled(((MessageConsole)console).isRunning());
+        public void propertyChange(PropertyChangeEvent event) {
+            update();
+        }
     }
-
-    public void propertyChange(PropertyChangeEvent event)
-    {
-      update();
-    }
-  }
 }

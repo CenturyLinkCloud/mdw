@@ -13,131 +13,123 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.ValueChangeListener;
 
-public class ExternalEventSection extends PropertySection
-{
-  private ExternalEvent externalEvent;
-  public ExternalEvent getExternalEvent() { return externalEvent; }
+public class ExternalEventSection extends PropertySection {
+    private ExternalEvent externalEvent;
 
-  private PropertyEditor idPropertyEditor;
-  private PropertyEditor handlerClassPropertyEditor;
-  private PropertyEditor handlerLinkPropertyEditor;
-  private PropertyEditor messagePatternPropertyEditor;
-  private PropertyEditor savePropertyEditor;
-  private PropertyEditor externalEventHelpPropertyEditor;
-  private PropertyEditor mdwXPathSyntaxHelpPropertyEditor;
+    public ExternalEvent getExternalEvent() {
+        return externalEvent;
+    }
 
-  public void setSelection(WorkflowElement selection)
-  {
-    externalEvent = (ExternalEvent) selection;
+    private PropertyEditor idPropertyEditor;
+    private PropertyEditor handlerClassPropertyEditor;
+    private PropertyEditor handlerLinkPropertyEditor;
+    private PropertyEditor messagePatternPropertyEditor;
+    private PropertyEditor savePropertyEditor;
+    private PropertyEditor externalEventHelpPropertyEditor;
+    private PropertyEditor mdwXPathSyntaxHelpPropertyEditor;
 
-    idPropertyEditor.setElement(externalEvent);
-    idPropertyEditor.setValue(externalEvent.getId());
+    public void setSelection(WorkflowElement selection) {
+        externalEvent = (ExternalEvent) selection;
 
-    handlerClassPropertyEditor.setElement(externalEvent);
-    handlerClassPropertyEditor.setValue(externalEvent.getEventHandler());
-    handlerClassPropertyEditor.setEditable(!externalEvent.isReadOnly());
+        idPropertyEditor.setElement(externalEvent);
+        idPropertyEditor.setValue(externalEvent.getId());
 
-    handlerLinkPropertyEditor.setElement(externalEvent);
+        handlerClassPropertyEditor.setElement(externalEvent);
+        handlerClassPropertyEditor.setValue(externalEvent.getEventHandler());
+        handlerClassPropertyEditor.setEditable(!externalEvent.isReadOnly());
 
-    messagePatternPropertyEditor.setElement(externalEvent);
-    messagePatternPropertyEditor.setValue(externalEvent.getMessagePattern());
-    messagePatternPropertyEditor.setEditable(!externalEvent.isReadOnly());
+        handlerLinkPropertyEditor.setElement(externalEvent);
 
-    savePropertyEditor.setElement(externalEvent);
-    savePropertyEditor.setLabel("Save");
-    savePropertyEditor.setEditable(!externalEvent.isReadOnly());
+        messagePatternPropertyEditor.setElement(externalEvent);
+        messagePatternPropertyEditor.setValue(externalEvent.getMessagePattern());
+        messagePatternPropertyEditor.setEditable(!externalEvent.isReadOnly());
 
-    externalEventHelpPropertyEditor.setElement(externalEvent);
-    externalEventHelpPropertyEditor.setValue("/MDWHub/doc/listener.html");
+        savePropertyEditor.setElement(externalEvent);
+        savePropertyEditor.setLabel("Save");
+        savePropertyEditor.setEditable(!externalEvent.isReadOnly());
 
-    mdwXPathSyntaxHelpPropertyEditor.setElement(externalEvent);
-    mdwXPathSyntaxHelpPropertyEditor.setValue("/MDWHub/doc/xpath.html");
-  }
+        externalEventHelpPropertyEditor.setElement(externalEvent);
+        externalEventHelpPropertyEditor.setValue("/MDWHub/doc/listener.html");
 
-  public void drawWidgets(Composite composite, WorkflowElement selection)
-  {
-    externalEvent = (ExternalEvent) selection;
+        mdwXPathSyntaxHelpPropertyEditor.setElement(externalEvent);
+        mdwXPathSyntaxHelpPropertyEditor.setValue("/MDWHub/doc/xpath.html");
+    }
 
-    // id text field
-    idPropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_TEXT);
-    idPropertyEditor.setLabel("ID");
-    idPropertyEditor.setWidth(150);
-    idPropertyEditor.setReadOnly(true);
-    idPropertyEditor.render(composite);
+    public void drawWidgets(Composite composite, WorkflowElement selection) {
+        externalEvent = (ExternalEvent) selection;
 
-    // handler class combo
-    handlerClassPropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_TEXT);
-    handlerClassPropertyEditor.setLabel("Handler Class");
-    handlerClassPropertyEditor.setWidth(475);
-    handlerClassPropertyEditor.addValueChangeListener(new ValueChangeListener()
-      {
-        public void propertyValueChanged(Object newValue)
-        {
-          externalEvent.setEventHandler((String)newValue);
-        }
-      });
-    handlerClassPropertyEditor.render(composite);
+        // id text field
+        idPropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_TEXT);
+        idPropertyEditor.setLabel("ID");
+        idPropertyEditor.setWidth(150);
+        idPropertyEditor.setReadOnly(true);
+        idPropertyEditor.render(composite);
 
-    // handler class link
-    handlerLinkPropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_LINK);
-    handlerLinkPropertyEditor.setLabel("Open Handler Source Code");
-    handlerLinkPropertyEditor.addValueChangeListener(new ValueChangeListener()
-      {
-        public void propertyValueChanged(Object newValue)
-        {
-          externalEvent.getProject().viewSource(externalEvent.getEventHandlerClassName());
-        }
-      });
-    handlerLinkPropertyEditor.render(composite);
+        // handler class combo
+        handlerClassPropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_TEXT);
+        handlerClassPropertyEditor.setLabel("Handler Class");
+        handlerClassPropertyEditor.setWidth(475);
+        handlerClassPropertyEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                externalEvent.setEventHandler((String) newValue);
+            }
+        });
+        handlerClassPropertyEditor.render(composite);
 
-    // message pattern text field
-    messagePatternPropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_TEXT);
-    messagePatternPropertyEditor.setLabel("Message Pattern");
-    messagePatternPropertyEditor.setWidth(300);
-    messagePatternPropertyEditor.addValueChangeListener(new ValueChangeListener()
-      {
-        public void propertyValueChanged(Object newValue)
-        {
-          externalEvent.setMessagePattern((String)newValue);
-        }
-      });
-    messagePatternPropertyEditor.render(composite);
+        // handler class link
+        handlerLinkPropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_LINK);
+        handlerLinkPropertyEditor.setLabel("Open Handler Source Code");
+        handlerLinkPropertyEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                externalEvent.getProject().viewSource(externalEvent.getEventHandlerClassName());
+            }
+        });
+        handlerLinkPropertyEditor.render(composite);
 
-    // save button
-    savePropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_BUTTON);
-    savePropertyEditor.setLabel("Save");
-    savePropertyEditor.setWidth(65);
-    savePropertyEditor.addValueChangeListener(new ValueChangeListener()
-      {
-        public void propertyValueChanged(Object newValue)
-        {
-          saveExternalEvent();
-        }
-      });
-    savePropertyEditor.render(composite);
+        // message pattern text field
+        messagePatternPropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_TEXT);
+        messagePatternPropertyEditor.setLabel("Message Pattern");
+        messagePatternPropertyEditor.setWidth(300);
+        messagePatternPropertyEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                externalEvent.setMessagePattern((String) newValue);
+            }
+        });
+        messagePatternPropertyEditor.render(composite);
 
-    // external event handler help link
-    externalEventHelpPropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_LINK);
-    externalEventHelpPropertyEditor.setLabel("External Event Handler Help");
-    externalEventHelpPropertyEditor.render(composite);
+        // save button
+        savePropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_BUTTON);
+        savePropertyEditor.setLabel("Save");
+        savePropertyEditor.setWidth(65);
+        savePropertyEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                saveExternalEvent();
+            }
+        });
+        savePropertyEditor.render(composite);
 
-    // mdw xpath help link
-    mdwXPathSyntaxHelpPropertyEditor = new PropertyEditor(externalEvent, PropertyEditor.TYPE_LINK);
-    mdwXPathSyntaxHelpPropertyEditor.setLabel("MDW XPath Syntax Help");
-    mdwXPathSyntaxHelpPropertyEditor.setVerticalIndent(-15);
-    mdwXPathSyntaxHelpPropertyEditor.render(composite);
-  }
+        // external event handler help link
+        externalEventHelpPropertyEditor = new PropertyEditor(externalEvent,
+                PropertyEditor.TYPE_LINK);
+        externalEventHelpPropertyEditor.setLabel("External Event Handler Help");
+        externalEventHelpPropertyEditor.render(composite);
 
-  private void saveExternalEvent()
-  {
-    BusyIndicator.showWhile(getShell().getDisplay(), new Runnable()
-    {
-      public void run()
-      {
-        DesignerProxy designerProxy = externalEvent.getProject().getDesignerProxy();
-        designerProxy.saveExternalEvent(externalEvent);
-        externalEvent.fireElementChangeEvent(ChangeType.RENAME, externalEvent.getMessagePattern());
-      }
-    });
-  }
+        // mdw xpath help link
+        mdwXPathSyntaxHelpPropertyEditor = new PropertyEditor(externalEvent,
+                PropertyEditor.TYPE_LINK);
+        mdwXPathSyntaxHelpPropertyEditor.setLabel("MDW XPath Syntax Help");
+        mdwXPathSyntaxHelpPropertyEditor.setVerticalIndent(-15);
+        mdwXPathSyntaxHelpPropertyEditor.render(composite);
+    }
+
+    private void saveExternalEvent() {
+        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+            public void run() {
+                DesignerProxy designerProxy = externalEvent.getProject().getDesignerProxy();
+                designerProxy.saveExternalEvent(externalEvent);
+                externalEvent.fireElementChangeEvent(ChangeType.RENAME,
+                        externalEvent.getMessagePattern());
+            }
+        });
+    }
 }

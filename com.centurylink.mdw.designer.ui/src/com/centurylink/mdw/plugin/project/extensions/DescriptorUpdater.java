@@ -8,10 +8,11 @@ import java.io.IOException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Updates text-based library descriptor files when an extension is being added or removed. 
+ * Updates text-based library descriptor files when an extension is being added
+ * or removed.
  */
-public interface DescriptorUpdater
-{
-  public String getFilePath();
-  public String processContents(String raw, IProgressMonitor monitor) throws IOException;
+public interface DescriptorUpdater {
+    public String getFilePath();
+
+    public String processContents(String raw, IProgressMonitor monitor) throws IOException;
 }

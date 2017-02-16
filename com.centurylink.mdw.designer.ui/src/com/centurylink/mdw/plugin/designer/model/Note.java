@@ -6,78 +6,76 @@ package com.centurylink.mdw.plugin.designer.model;
 import com.centurylink.mdw.designer.display.TextNote;
 import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
 
-public class Note extends WorkflowElement
-{
-  private TextNote textNote;
-  public TextNote getTextNote() { return textNote; }
-  public void setTextNote(TextNote textNote) { this.textNote = textNote; }
+public class Note extends WorkflowElement {
+    private TextNote textNote;
 
-  private WorkflowProcess process;
-  public WorkflowProcess getProcess() { return process; }
+    public TextNote getTextNote() {
+        return textNote;
+    }
 
-  public Note(TextNote textNote, WorkflowProcess processVersion)
-  {
-    this.textNote = textNote;
-    this.process = processVersion;
-    setProject(processVersion.getProject());
-  }
+    public void setTextNote(TextNote textNote) {
+        this.textNote = textNote;
+    }
 
-  public String getTitle()
-  {
-    return "Note";
-  }
+    private WorkflowProcess process;
 
-  public Long getId()
-  {
-    return textNote.getId();
-  }
+    public WorkflowProcess getProcess() {
+        return process;
+    }
 
-  public String getName()
-  {
-    return textNote.getName();
-  }
-  public void setName(String name)
-  {
-    textNote.setName(name);
-  }
+    public Note(TextNote textNote, WorkflowProcess processVersion) {
+        this.textNote = textNote;
+        this.process = processVersion;
+        setProject(processVersion.getProject());
+    }
 
-  @Override
-  public String getFullPathLabel()
-  {
-    return getPath() + (getProcess() == null ? "Note " : getProcess().getName() + "/Note ") + getLabel();
-  }
+    public String getTitle() {
+        return "Note";
+    }
 
-  public String getText()
-  {
-    return textNote.vo.getContent();
-  }
-  public void setText(String text)
-  {
-    textNote.setText(text);
-  }
+    public Long getId() {
+        return textNote.getId();
+    }
 
-  public void adjustSize()
-  {
-    textNote.adjustSize();
-  }
+    public String getName() {
+        return textNote.getName();
+    }
 
-  public String getIcon()
-  {
-    return "doc.gif";
-  }
+    public void setName(String name) {
+        textNote.setName(name);
+    }
 
-  public boolean isReadOnly()
-  {
-    return process.isReadOnly();
-  }
+    @Override
+    public String getFullPathLabel() {
+        return getPath() + (getProcess() == null ? "Note " : getProcess().getName() + "/Note ")
+                + getLabel();
+    }
 
-  public boolean hasInstanceInfo()
-  {
-    return false;
-  }
+    public String getText() {
+        return textNote.vo.getContent();
+    }
 
-  public Entity getActionEntity()
-  {
-    return Entity.Note;
-  }
+    public void setText(String text) {
+        textNote.setText(text);
+    }
+
+    public void adjustSize() {
+        textNote.adjustSize();
+    }
+
+    public String getIcon() {
+        return "doc.gif";
+    }
+
+    public boolean isReadOnly() {
+        return process.isReadOnly();
+    }
+
+    public boolean hasInstanceInfo() {
+        return false;
+    }
+
+    public Entity getActionEntity() {
+        return Entity.Note;
+    }
 }

@@ -14,54 +14,50 @@ import org.eclipse.search.ui.ISearchResultListener;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 
-public class SearchResults implements ISearchResult
-{
-  private List<WorkflowElement> matchingElements;
-  public List<WorkflowElement> getMatchingElements() { return matchingElements; }
-  public void addMatchingElement(WorkflowElement element)
-  {
-    matchingElements.add(element);
-  }
+public class SearchResults implements ISearchResult {
+    private List<WorkflowElement> matchingElements;
 
-  private SearchQuery searchQuery;
-  
-  public SearchResults(SearchQuery searchQuery)
-  {
-    this.searchQuery = searchQuery;
-    this.matchingElements = new ArrayList<WorkflowElement>();
-  }
-  
-  public ImageDescriptor getImageDescriptor()
-  {
-    return MdwPlugin.getImageDescriptor("icons/" + searchQuery.getIcon());
-  }
+    public List<WorkflowElement> getMatchingElements() {
+        return matchingElements;
+    }
 
-  public String getLabel()
-  {
-    String label = "'" + searchQuery.getPattern() + "' - " + matchingElements.size() + " matching element(s) ";
-    if (searchQuery.getScopedProjects() != null && !searchQuery.getScopedProjects().isEmpty())
-      label += "in project(s): " + searchQuery.getScopedProjectsString();
-    else if (searchQuery.getSelectedPackage() != null)
-      label += "in package: " + searchQuery.getSelectedPackage().getLabel();
-    return label;
-  }
+    public void addMatchingElement(WorkflowElement element) {
+        matchingElements.add(element);
+    }
 
-  public ISearchQuery getQuery()
-  {
-    return searchQuery;
-  }
+    private SearchQuery searchQuery;
 
-  public String getTooltip()
-  {
-    return "Search Results";
-  }
+    public SearchResults(SearchQuery searchQuery) {
+        this.searchQuery = searchQuery;
+        this.matchingElements = new ArrayList<WorkflowElement>();
+    }
 
-  public void addListener(ISearchResultListener l)
-  {
-  }
+    public ImageDescriptor getImageDescriptor() {
+        return MdwPlugin.getImageDescriptor("icons/" + searchQuery.getIcon());
+    }
 
-  public void removeListener(ISearchResultListener l)
-  {
-  }
+    public String getLabel() {
+        String label = "'" + searchQuery.getPattern() + "' - " + matchingElements.size()
+                + " matching element(s) ";
+        if (searchQuery.getScopedProjects() != null && !searchQuery.getScopedProjects().isEmpty())
+            label += "in project(s): " + searchQuery.getScopedProjectsString();
+        else if (searchQuery.getSelectedPackage() != null)
+            label += "in package: " + searchQuery.getSelectedPackage().getLabel();
+        return label;
+    }
+
+    public ISearchQuery getQuery() {
+        return searchQuery;
+    }
+
+    public String getTooltip() {
+        return "Search Results";
+    }
+
+    public void addListener(ISearchResultListener l) {
+    }
+
+    public void removeListener(ISearchResultListener l) {
+    }
 
 }

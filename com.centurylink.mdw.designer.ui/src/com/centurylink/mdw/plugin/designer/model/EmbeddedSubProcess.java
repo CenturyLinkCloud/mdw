@@ -17,156 +17,144 @@ import com.centurylink.mdw.model.value.user.UserActionVO.Entity;
 /**
  * Wraps a Designer workflow SubGraph.
  */
-public class EmbeddedSubProcess extends WorkflowElement
-{
-  private SubGraph subGraph;
-  public SubGraph getSubGraph() { return subGraph; }
+public class EmbeddedSubProcess extends WorkflowElement {
+    private SubGraph subGraph;
 
-  // parent process
-  private WorkflowProcess process;
-  public WorkflowProcess getProcess() { return process; }
+    public SubGraph getSubGraph() {
+        return subGraph;
+    }
 
-  private List<ProcessInstanceVO> subProcessInstances;
-  public List<ProcessInstanceVO> getSubProcessInstances() { return subProcessInstances; }
-  public void setSubProcessInstances(List<ProcessInstanceVO> subProcessInstances) { this.subProcessInstances = subProcessInstances; }
+    // parent process
+    private WorkflowProcess process;
 
-  public Entity getActionEntity()
-  {
-    return Entity.Process;
-  }
+    public WorkflowProcess getProcess() {
+        return process;
+    }
 
-  public EmbeddedSubProcess(SubGraph subGraph, WorkflowProcess processVersion)
-  {
-    this.process = processVersion;
-    this.subGraph = subGraph;
-  }
+    private List<ProcessInstanceVO> subProcessInstances;
 
-  public EmbeddedSubProcess(ProcessVO subprocessVO, WorkflowProcess processVersion)
-  {
-    this.process = processVersion;
-    DesignerProxy designerProxy = processVersion.getProject().getDesignerProxy();
-    this.subGraph = new SubGraph(subprocessVO, null, designerProxy.getNodeMetaInfo(), designerProxy.getIconFactory());
-  }
+    public List<ProcessInstanceVO> getSubProcessInstances() {
+        return subProcessInstances;
+    }
 
-  public ProcessVO getSubProcessVO()
-  {
-    if (subGraph == null)
-      return null;
-    return subGraph.getProcessVO();
-  }
+    public void setSubProcessInstances(List<ProcessInstanceVO> subProcessInstances) {
+        this.subProcessInstances = subProcessInstances;
+    }
 
-  public WorkflowProject getProject()
-  {
-    return process.getProject();
-  }
+    public Entity getActionEntity() {
+        return Entity.Process;
+    }
 
-  @Override
-  public String getTitle()
-  {
-    return "Embedded Subprocess";
-  }
+    public EmbeddedSubProcess(SubGraph subGraph, WorkflowProcess processVersion) {
+        this.process = processVersion;
+        this.subGraph = subGraph;
+    }
 
-  @Override
-  public Long getId()
-  {
-    return subGraph.getId();
-  }
+    public EmbeddedSubProcess(ProcessVO subprocessVO, WorkflowProcess processVersion) {
+        this.process = processVersion;
+        DesignerProxy designerProxy = processVersion.getProject().getDesignerProxy();
+        this.subGraph = new SubGraph(subprocessVO, null, designerProxy.getNodeMetaInfo(),
+                designerProxy.getIconFactory());
+    }
 
-  public int getSequenceId()
-  {
-    return subGraph.getSequenceId();
-  }
+    public ProcessVO getSubProcessVO() {
+        if (subGraph == null)
+            return null;
+        return subGraph.getProcessVO();
+    }
 
-  public boolean isReadOnly()
-  {
-    return process.isReadOnly();
-  }
+    public WorkflowProject getProject() {
+        return process.getProject();
+    }
 
-  public boolean hasInstanceInfo()
-  {
-    return subProcessInstances != null;
-  }
+    @Override
+    public String getTitle() {
+        return "Embedded Subprocess";
+    }
 
-  /**
-   * true if the activity is displayed within a process
-   * (still might not have instance info if flow has not reached here yet)
-   */
-  public boolean isForProcessInstance()
-  {
-    return process != null && process.hasInstanceInfo();
-  }
+    @Override
+    public Long getId() {
+        return subGraph.getId();
+    }
 
+    public int getSequenceId() {
+        return subGraph.getSequenceId();
+    }
 
-  @Override
-  public String getIcon()
-  {
-    return "element.gif";
-  }
+    public boolean isReadOnly() {
+        return process.isReadOnly();
+    }
 
+    public boolean hasInstanceInfo() {
+        return subProcessInstances != null;
+    }
 
-  @Override
-  public String getPath()
-  {
-    String path = getProjectPrefix();
-    if (getProject() != null && getProcess() != null && !getProcess().isInDefaultPackage())
-      path += getProcess().getPackage().getName() + "/";
-    return path;
-  }
+    /**
+     * true if the activity is displayed within a process (still might not have
+     * instance info if flow has not reached here yet)
+     */
+    public boolean isForProcessInstance() {
+        return process != null && process.hasInstanceInfo();
+    }
 
-  @Override
-  public String getFullPathLabel()
-  {
-    return getPath() + (getProcess() == null ? "" : getProcess().getName() + "/") + getLabel();
-  }
+    @Override
+    public String getIcon() {
+        return "element.gif";
+    }
 
-  public String getName()
-  {
-    return subGraph.getName();
-  }
+    @Override
+    public String getPath() {
+        String path = getProjectPrefix();
+        if (getProject() != null && getProcess() != null && !getProcess().isInDefaultPackage())
+            path += getProcess().getPackage().getName() + "/";
+        return path;
+    }
 
-  public void setName(String name)
-  {
-    subGraph.setName(name);
-  }
+    @Override
+    public String getFullPathLabel() {
+        return getPath() + (getProcess() == null ? "" : getProcess().getName() + "/") + getLabel();
+    }
 
-  public String getDescription()
-  {
-    return subGraph.getDescription();
-  }
+    public String getName() {
+        return subGraph.getName();
+    }
 
-  public void setDescription(String description)
-  {
-    subGraph.setDescription(description);
-  }
+    public void setName(String name) {
+        subGraph.setName(name);
+    }
 
-  public List<AttributeVO> getAttributes()
-  {
-    return subGraph.getAttributes();
-  }
+    public String getDescription() {
+        return subGraph.getDescription();
+    }
 
-  public String getAttribute(String name)
-  {
-    return subGraph.getAttribute(name);
-  }
+    public void setDescription(String description) {
+        subGraph.setDescription(description);
+    }
 
-  public void setAttribute(String name, String value)
-  {
-    subGraph.setAttribute(name, value);
-  }
+    public List<AttributeVO> getAttributes() {
+        return subGraph.getAttributes();
+    }
 
-  @Override
-  public boolean overrideAttributesApplied()
-  {
-    return getProcess().overrideAttributesApplied();
-  }
-  @Override
-  public boolean isOverrideAttributeDirty(String prefix)
-  {
-    return getProcess().isAttributeOwnerDirty(prefix, OwnerType.PROCESS, getId());
-  }
-  @Override
-  public void setOverrideAttributeDirty(String prefix, boolean dirty)
-  {
-    getProcess().setAttributeOwnerDirty(prefix, OwnerType.PROCESS, getId(), dirty);
-  }
+    public String getAttribute(String name) {
+        return subGraph.getAttribute(name);
+    }
+
+    public void setAttribute(String name, String value) {
+        subGraph.setAttribute(name, value);
+    }
+
+    @Override
+    public boolean overrideAttributesApplied() {
+        return getProcess().overrideAttributesApplied();
+    }
+
+    @Override
+    public boolean isOverrideAttributeDirty(String prefix) {
+        return getProcess().isAttributeOwnerDirty(prefix, OwnerType.PROCESS, getId());
+    }
+
+    @Override
+    public void setOverrideAttributeDirty(String prefix, boolean dirty) {
+        getProcess().setAttributeOwnerDirty(prefix, OwnerType.PROCESS, getId(), dirty);
+    }
 }

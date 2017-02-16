@@ -14,22 +14,14 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 /**
  * This is for standalone (non-MDW) cucumber tests.
  */
-public class CucumberTabGroup extends AbstractLaunchConfigurationTabGroup
-{
-  private CucumberLaunchTab cucumberTab;
+public class CucumberTabGroup extends AbstractLaunchConfigurationTabGroup {
+    private CucumberLaunchTab cucumberTab;
 
-  public void createTabs(ILaunchConfigurationDialog dialog, String mode)
-  {
-    cucumberTab = new CucumberLaunchTab();
+    public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
+        cucumberTab = new CucumberLaunchTab();
 
-    ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[]
-    {
-      cucumberTab,
-      new JavaArgumentsTab(),
-      new JavaJRETab(),
-      new JavaClasspathTab(),
-      new CommonTab()
-    };
-    setTabs(tabs);
-  }
+        ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] { cucumberTab,
+                new JavaArgumentsTab(), new JavaJRETab(), new JavaClasspathTab(), new CommonTab() };
+        setTabs(tabs);
+    }
 }

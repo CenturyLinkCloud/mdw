@@ -19,68 +19,55 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.centurylink.mdw.plugin.MdwPlugin;
 
-public class MdwProgressMonitorDialog extends ProgressMonitorDialog
-{
-  public MdwProgressMonitorDialog(Shell parent)
-  {
-    super(parent);
-  }
-
-  protected Image getImage()
-  {
-    Shell shell = getShell();
-    final Display display;
-    if (shell == null || shell.isDisposed())
-    {
-      shell = getParentShell();
-    }
-    if (shell == null || shell.isDisposed())
-    {
-      display = Display.getCurrent();
-      Assert.isNotNull(display, "Dialog should be created in UI thread");
-    }
-    else
-    {
-      display = shell.getDisplay();
+public class MdwProgressMonitorDialog extends ProgressMonitorDialog {
+    public MdwProgressMonitorDialog(Shell parent) {
+        super(parent);
     }
 
-    final Image[] image = new Image[1];
-    display.syncExec(new Runnable()
-    {
-      public void run()
-      {
-        image[0] = MdwPlugin.getImageDescriptor("icons/mdw_48.png").createImage();
-      }
-    });
+    protected Image getImage() {
+        Shell shell = getShell();
+        final Display display;
+        if (shell == null || shell.isDisposed()) {
+            shell = getParentShell();
+        }
+        if (shell == null || shell.isDisposed()) {
+            display = Display.getCurrent();
+            Assert.isNotNull(display, "Dialog should be created in UI thread");
+        }
+        else {
+            display = shell.getDisplay();
+        }
 
-    return image[0];
-  }
+        final Image[] image = new Image[1];
+        display.syncExec(new Runnable() {
+            public void run() {
+                image[0] = MdwPlugin.getImageDescriptor("icons/mdw_48.png").createImage();
+            }
+        });
 
-  protected Control createMessageArea(Composite composite)
-  {
-    Image image = getImage();
-    if (image != null)
-    {
-      imageLabel = new Label(composite, SWT.NULL);
-      image.setBackground(imageLabel.getBackground());
-      imageLabel.setImage(image);
-      GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(imageLabel);
+        return image[0];
     }
-    // create message
-    if (message != null)
-    {
-      messageLabel = new Label(composite, getMessageLabelStyle());
-      messageLabel.setText(message);
-      FontData font = messageLabel.getFont().getFontData()[0];
-      font.setStyle(font.getStyle() | SWT.BOLD);
-      messageLabel.setFont(new Font(this.getShell().getDisplay(), font));
-      GridDataFactory
-          .fillDefaults()
-          .align(SWT.FILL, SWT.BEGINNING)
-          .grab(true, false)
-          .hint(convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH),
-              SWT.DEFAULT).applyTo(messageLabel);
+
+    protected Control createMessageArea(Composite composite) {
+        Image image = getImage();
+        if (image != null) {
+            imageLabel = new Label(composite, SWT.NULL);
+            image.setBackground(imageLabel.getBackground());
+            imageLabel.setImage(image);
+            GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.BEGINNING).applyTo(imageLabel);
+        }
+        // create message
+        if (message != null) {
+            messageLabel = new Label(composite, getMessageLabelStyle());
+            messageLabel.setText(message);
+            FontData font = messageLabel.getFont().getFontData()[0];
+            font.setStyle(font.getStyle() | SWT.BOLD);
+            messageLabel.setFont(new Font(this.getShell().getDisplay(), font));
+            GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).grab(true, false)
+                    .hint(convertHorizontalDLUsToPixels(
+                            IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH), SWT.DEFAULT)
+                    .applyTo(messageLabel);
+        }
+        return composite;
     }
-    return composite;
-  }
 }

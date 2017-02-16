@@ -19,103 +19,105 @@ import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.designer.dialogs.MdwProgressMonitorDialog;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-public abstract class DesignerRunner
-{
-  private Shell shell;
-  private ProgressMonitorDialog progressMonitorDialog;
-  private String progressMessage;
-  private String errorMessage;
-  private WorkflowProject workflowProject;
-  private RunnerResult result;
-  public RunnerResult getResult() { return result; }
-  public RunnerStatus getStatus()
-  {
-    if (result == null)
-      return null;
-    return result.getStatus();
-  }
+public abstract class DesignerRunner {
+    private Shell shell;
+    private ProgressMonitorDialog progressMonitorDialog;
+    private String progressMessage;
+    private String errorMessage;
+    private WorkflowProject workflowProject;
+    private RunnerResult result;
 
-  public DesignerRunner(String progressMessage, String errorMessage, WorkflowProject workflowProject)
-  {
-    this.progressMessage = progressMessage;
-    this.errorMessage = errorMessage;
-    this.workflowProject = workflowProject;
-  }
+    public RunnerResult getResult() {
+        return result;
+    }
 
-  public abstract void perform() throws ValidationException, DataAccessException, RemoteException, XmlException;
+    public RunnerStatus getStatus() {
+        if (result == null)
+            return null;
+        return result.getStatus();
+    }
 
-  public RunnerResult run()
-  {
-    return run(true);
-  }
+    public DesignerRunner(String progressMessage, String errorMessage,
+            WorkflowProject workflowProject) {
+        this.progressMessage = progressMessage;
+        this.errorMessage = errorMessage;
+        this.workflowProject = workflowProject;
+    }
 
-  public RunnerResult run(boolean forked)
-  {
-    result = new RunnerResult();
+    public abstract void perform()
+            throws ValidationException, DataAccessException, RemoteException, XmlException;
 
-    shell = MdwPlugin.getActiveWorkbenchWindow().getShell();
-    progressMonitorDialog = new MdwProgressMonitorDialog(shell);
-    try
-    {
-      shell.setFocus(); // this is absolutely needed
-      progressMonitorDialog.run(forked, false, new IRunnableWithProgress()
-      {
-        public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
-        {
-          monitor.beginTask(progressMessage,  IProgressMonitor.UNKNOWN);
-          try
-          {
-            perform();
-            result.setStatus(RunnerStatus.SUCCESS);
-          }
-          catch (Exception ex)
-          {
-            result.setStatus(RunnerStatus.FAILURE);
-            throw new InvocationTargetException(ex);
-          }
+    public RunnerResult run() {
+        return run(true);
+    }
+
+    public RunnerResult run(boolean forked) {
+        result = new RunnerResult();
+
+        shell = MdwPlugin.getActiveWorkbenchWindow().getShell();
+        progressMonitorDialog = new MdwProgressMonitorDialog(shell);
+        try {
+            shell.setFocus(); // this is absolutely needed
+            progressMonitorDialog.run(forked, false, new IRunnableWithProgress() {
+                public void run(IProgressMonitor monitor)
+                        throws InvocationTargetException, InterruptedException {
+                    monitor.beginTask(progressMessage, IProgressMonitor.UNKNOWN);
+                    try {
+                        perform();
+                        result.setStatus(RunnerStatus.SUCCESS);
+                    }
+                    catch (Exception ex) {
+                        result.setStatus(RunnerStatus.FAILURE);
+                        throw new InvocationTargetException(ex);
+                    }
+                }
+            });
+            return result;
         }
-      });
-      return result;
+        catch (Exception ex) {
+            int messageLevel = PluginMessages.isDataIntegrityException(ex)
+                    ? PluginMessages.DATA_INTEGRITY_MESSAGE : PluginMessages.ERROR_MESSAGE;
+            PluginMessages.uiMessage(shell, ex, errorMessage, workflowProject, messageLevel);
+            if (ex.getCause() instanceof ValidationException) {
+                if (DesignerProxy.INCOMPATIBLE_INSTANCES.equals(ex.getCause().getMessage())
+                        || (ex.getCause().getMessage() != null && ex.getCause().getMessage()
+                                .contains(DesignerProxy.ALREADY_EXISTS)))
+                    result.setStatus(RunnerStatus.DISALLOW);
+                else
+                    result.setStatus(RunnerStatus.INVALID);
+            }
+
+            return result;
+        }
     }
-    catch (Exception ex)
-    {
-      int messageLevel = PluginMessages.isDataIntegrityException(ex) ? PluginMessages.DATA_INTEGRITY_MESSAGE : PluginMessages.ERROR_MESSAGE;
-      PluginMessages.uiMessage(shell, ex, errorMessage, workflowProject, messageLevel);
-      if (ex.getCause() instanceof ValidationException)
-      {
-        if (DesignerProxy.INCOMPATIBLE_INSTANCES.equals(ex.getCause().getMessage())
-            || (ex.getCause().getMessage() != null && ex.getCause().getMessage().contains(DesignerProxy.ALREADY_EXISTS)))
-          result.setStatus(RunnerStatus.DISALLOW);
-        else
-          result.setStatus(RunnerStatus.INVALID);
-      }
 
-      return result;
+    public enum RunnerStatus {
+        INITIAL, SUCCESS, FAILURE, INVALID, DISALLOW
     }
-  }
 
-  public enum RunnerStatus
-  {
-    INITIAL,
-    SUCCESS,
-    FAILURE,
-    INVALID,
-    DISALLOW
-  }
+    public class RunnerResult {
+        private RunnerStatus status;
 
-  public class RunnerResult
-  {
-    private RunnerStatus status;
-    public RunnerStatus getStatus() { return status; }
-    public void setStatus(RunnerStatus status) { this.status = status; }
+        public RunnerStatus getStatus() {
+            return status;
+        }
 
-    private Object[] returnValues;
-    public Object[] getReturnValues() { return returnValues; }
-    public void setReturnValues(Object[] vals) { this.returnValues = vals; }
+        public void setStatus(RunnerStatus status) {
+            this.status = status;
+        }
 
-    public RunnerResult()
-    {
-      status = RunnerStatus.INITIAL;
+        private Object[] returnValues;
+
+        public Object[] getReturnValues() {
+            return returnValues;
+        }
+
+        public void setReturnValues(Object[] vals) {
+            this.returnValues = vals;
+        }
+
+        public RunnerResult() {
+            status = RunnerStatus.INITIAL;
+        }
     }
-  }
 }

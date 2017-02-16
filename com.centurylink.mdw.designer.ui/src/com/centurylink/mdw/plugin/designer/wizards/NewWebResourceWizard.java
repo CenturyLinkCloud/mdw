@@ -13,62 +13,52 @@ import org.eclipse.ui.IWorkbench;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.designer.model.WebResource;
 
-public class NewWebResourceWizard extends WorkflowAssetWizard 
-{
-  public static final String WIZARD_ID = "mdw.designer.new.webResource";
-  
-  private NewWebResourcePage newWebResourcePage;
-  
-  public void init(IWorkbench workbench, IStructuredSelection selection)
-  {
-    WebResource webResource = new WebResource();
-    super.init(workbench, selection, webResource);
-    newWebResourcePage = new NewWebResourcePage(webResource);
-  }
-  
-  @Override
-  public void addPages()
-  {
-    addPage(newWebResourcePage);
-  }  
+public class NewWebResourceWizard extends WorkflowAssetWizard {
+    public static final String WIZARD_ID = "mdw.designer.new.webResource";
 
-  @Override
-  public boolean performFinish()
-  {
-    WebResource webResource = (WebResource) getWorkflowAsset();
-    
-    if (webResource.isBinary())
-    {
-      // load from selected file
-      File file = new File(newWebResourcePage.getResourceFilePath());
-      
-      FileInputStream fis = null;
-      try
-      {
-        fis = new FileInputStream(file);
-        byte[] bytes = new byte[(int)file.length()];
-        fis.read(bytes);
-        webResource.encodeAndSetContent(bytes);
-      }
-      catch (IOException ex)
-      {
-        PluginMessages.uiError(getShell(), ex, "Create Web Resource", webResource.getProject());
-      }
-      finally
-      {
-        if (fis != null)
-        {
-          try
-          {
-            fis.close();
-          }
-          catch (IOException ex)
-          {
-          }
-        }
-      }
+    private NewWebResourcePage newWebResourcePage;
+
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        WebResource webResource = new WebResource();
+        super.init(workbench, selection, webResource);
+        newWebResourcePage = new NewWebResourcePage(webResource);
     }
-    
-    return super.performFinish();
- }
+
+    @Override
+    public void addPages() {
+        addPage(newWebResourcePage);
+    }
+
+    @Override
+    public boolean performFinish() {
+        WebResource webResource = (WebResource) getWorkflowAsset();
+
+        if (webResource.isBinary()) {
+            // load from selected file
+            File file = new File(newWebResourcePage.getResourceFilePath());
+
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                byte[] bytes = new byte[(int) file.length()];
+                fis.read(bytes);
+                webResource.encodeAndSetContent(bytes);
+            }
+            catch (IOException ex) {
+                PluginMessages.uiError(getShell(), ex, "Create Web Resource",
+                        webResource.getProject());
+            }
+            finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    }
+                    catch (IOException ex) {
+                    }
+                }
+            }
+        }
+
+        return super.performFinish();
+    }
 }

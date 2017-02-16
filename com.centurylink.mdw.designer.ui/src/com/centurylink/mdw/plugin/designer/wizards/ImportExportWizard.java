@@ -35,174 +35,168 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-public abstract class ImportExportWizard extends Wizard
-{
-  private ImportExportPage page;
-  protected ImportExportPage getPage() { return page; }
+public abstract class ImportExportWizard extends Wizard {
+    private ImportExportPage page;
 
-  private IWorkbench workbench;
-  public IWorkbench getWorkbench() { return workbench; }
-
-  private List<WorkflowElement> elements;
-  public List<WorkflowElement> getElements() { return elements; }
-  public void setElements(List<WorkflowElement> elements) { this.elements = elements; }
-
-  /**
-   * for most cases selections always contain a single element
-   */
-  public WorkflowElement getElement()
-  {
-    if (elements == null || elements.isEmpty())
-      return null;
-    return elements.get(0);
-  }
-  public void setElement(WorkflowElement element)
-  {
-    elements = new ArrayList<WorkflowElement>();
-    elements.add(element);
-  }
-
-  public void init(IWorkbench workbench, IStructuredSelection selection)
-  {
-    setDefaultPageImageDescriptor(MdwPlugin.getImageDescriptor("icons/mdw_wiz.png"));
-    setNeedsProgressMonitor(true);
-    setWindowTitle(this instanceof IExportWizard ? "MDW Export" : "MDW Import");
-
-    page = createPage();
-    page.isExport = this instanceof IExportWizard;
-
-    if (selection != null && selection.getFirstElement() instanceof WorkflowElement) {
-      elements = new ArrayList<WorkflowElement>();
-      for (Object item : selection.toList())
-        elements.add((WorkflowElement)item);
+    protected ImportExportPage getPage() {
+        return page;
     }
-  }
 
-  abstract ImportExportPage createPage();
-  abstract void performImportExport(ProgressMonitor progressMonitor)
-  throws IOException, JSONException, XmlException, DataAccessException, ValidationException, ActionCancelledException;
+    private IWorkbench workbench;
 
-  /**
-   * Override to reflect import operations in UI.
-   */
-  protected void postRunUpdates()
-  {
-  }
+    public IWorkbench getWorkbench() {
+        return workbench;
+    }
 
-  @Override
-  public void addPages()
-  {
-    addPage(page);
-  }
+    private List<WorkflowElement> elements;
 
-  @Override
-  public boolean performFinish()
-  {
-    IRunnableWithProgress op = new IRunnableWithProgress()
-    {
-      public void run(IProgressMonitor monitor) throws InvocationTargetException
-      {
-        ProgressMonitor progressMonitor = new SwtProgressMonitor(monitor);
-        try
-        {
-          progressMonitor.start((page.isExport ? "Exporting from " : "Importing into ") + "'" + getProject().getLabel() + "'");
-          progressMonitor.progress(5);
+    public List<WorkflowElement> getElements() {
+        return elements;
+    }
 
-          performImportExport(progressMonitor);
-          progressMonitor.done();
+    public void setElements(List<WorkflowElement> elements) {
+        this.elements = elements;
+    }
+
+    /**
+     * for most cases selections always contain a single element
+     */
+    public WorkflowElement getElement() {
+        if (elements == null || elements.isEmpty())
+            return null;
+        return elements.get(0);
+    }
+
+    public void setElement(WorkflowElement element) {
+        elements = new ArrayList<WorkflowElement>();
+        elements.add(element);
+    }
+
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        setDefaultPageImageDescriptor(MdwPlugin.getImageDescriptor("icons/mdw_wiz.png"));
+        setNeedsProgressMonitor(true);
+        setWindowTitle(this instanceof IExportWizard ? "MDW Export" : "MDW Import");
+
+        page = createPage();
+        page.isExport = this instanceof IExportWizard;
+
+        if (selection != null && selection.getFirstElement() instanceof WorkflowElement) {
+            elements = new ArrayList<WorkflowElement>();
+            for (Object item : selection.toList())
+                elements.add((WorkflowElement) item);
         }
-        catch (ActionCancelledException ex)
-        {
-          throw new OperationCanceledException();
+    }
+
+    abstract ImportExportPage createPage();
+
+    abstract void performImportExport(ProgressMonitor progressMonitor)
+            throws IOException, JSONException, XmlException, DataAccessException,
+            ValidationException, ActionCancelledException;
+
+    /**
+     * Override to reflect import operations in UI.
+     */
+    protected void postRunUpdates() {
+    }
+
+    @Override
+    public void addPages() {
+        addPage(page);
+    }
+
+    @Override
+    public boolean performFinish() {
+        IRunnableWithProgress op = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor) throws InvocationTargetException {
+                ProgressMonitor progressMonitor = new SwtProgressMonitor(monitor);
+                try {
+                    progressMonitor.start((page.isExport ? "Exporting from " : "Importing into ")
+                            + "'" + getProject().getLabel() + "'");
+                    progressMonitor.progress(5);
+
+                    performImportExport(progressMonitor);
+                    progressMonitor.done();
+                }
+                catch (ActionCancelledException ex) {
+                    throw new OperationCanceledException();
+                }
+                catch (Exception ex) {
+                    PluginMessages.log(ex);
+                    throw new InvocationTargetException(ex);
+                }
+            }
+        };
+
+        try {
+            getContainer().run(true, true, op);
+            postRunUpdates();
+            return true;
         }
-        catch (Exception ex)
-        {
-          PluginMessages.log(ex);
-          throw new InvocationTargetException(ex);
+        catch (InvocationTargetException ex) {
+            if (ex.getCause() instanceof DataAccessOfflineException)
+                MessageDialog.openError(getShell(), "Export Attributes",
+                        "Server appears to be offline: " + ex.getMessage());
+            else
+                PluginMessages.uiError(getShell(), ex, page.getTitle(), getProject());
+            return false;
         }
-      }
-    };
-
-    try
-    {
-      getContainer().run(true, true, op);
-      postRunUpdates();
-      return true;
+        catch (Exception ex) {
+            PluginMessages.uiError(getShell(), ex, page.getTitle(), getProject());
+            return false;
+        }
     }
-    catch (InvocationTargetException ex)
-    {
-      if (ex.getCause() instanceof DataAccessOfflineException)
-        MessageDialog.openError(getShell(), "Export Attributes", "Server appears to be offline: " + ex.getMessage());
-      else
-        PluginMessages.uiError(getShell(), ex, page.getTitle(), getProject());
-      return false;
+
+    protected byte[] readFile(String filePath) throws IOException {
+        return PluginUtil.readFile(new File(filePath));
     }
-    catch (Exception ex)
-    {
-      PluginMessages.uiError(getShell(), ex, page.getTitle(), getProject());
-      return false;
+
+    protected void writeFile(String filePath, byte[] contents) throws IOException {
+        PluginUtil.writeFile(new File(filePath), contents);
     }
-  }
 
-  protected byte[] readFile(String filePath) throws IOException
-  {
-    return PluginUtil.readFile(new File(filePath));
-  }
+    protected WorkflowProject getProject() {
+        if (getElement() == null)
+            return null;
+        return getElement().getProject();
+    }
 
-  protected void writeFile(String filePath, byte[] contents) throws IOException
-  {
-    PluginUtil.writeFile(new File(filePath), contents);
-  }
+    protected WorkflowPackage getPackage() {
+        if (getElement() == null)
+            return null;
+        if (getElement() instanceof WorkflowPackage)
+            return (WorkflowPackage) getElement();
+        return getElement().getPackage();
+    }
 
-  protected WorkflowProject getProject()
-  {
-    if (getElement() == null)
-      return null;
-    return getElement().getProject();
-  }
+    /**
+     * For exporting multiple packages.
+     */
+    protected List<WorkflowPackage> getPackages() {
+        if (getElements() == null)
+            return null;
+        List<WorkflowPackage> packages = new ArrayList<WorkflowPackage>();
+        for (WorkflowElement element : getElements())
+            packages.add(element.getPackage());
+        return packages;
+    }
 
-  protected WorkflowPackage getPackage()
-  {
-    if (getElement() == null)
-      return null;
-    if (getElement() instanceof WorkflowPackage)
-      return (WorkflowPackage) getElement();
-    return getElement().getPackage();
-  }
+    protected WorkflowProcess getProcess() {
+        WorkflowElement element = getElement();
+        if (element instanceof WorkflowProcess)
+            return (WorkflowProcess) element;
+        else
+            return null;
+    }
 
-  /**
-   * For exporting multiple packages.
-   */
-  protected List<WorkflowPackage> getPackages()
-  {
-    if (getElements() == null)
-      return null;
-    List<WorkflowPackage> packages = new ArrayList<WorkflowPackage>();
-    for (WorkflowElement element : getElements())
-      packages.add(element.getPackage());
-    return packages;
-  }
+    protected WorkflowAsset getAsset() {
+        WorkflowElement element = getElement();
+        if (element instanceof WorkflowAsset)
+            return (WorkflowAsset) element;
+        else
+            return null;
+    }
 
-  protected WorkflowProcess getProcess()
-  {
-    WorkflowElement element = getElement();
-    if (element instanceof WorkflowProcess)
-      return (WorkflowProcess)element;
-    else
-      return null;
-  }
-
-  protected WorkflowAsset getAsset()
-  {
-    WorkflowElement element = getElement();
-    if (element instanceof WorkflowAsset)
-      return (WorkflowAsset)element;
-    else
-      return null;
-  }
-
-  public boolean needsProgressMonitor()
-  {
-    return true;
-  }
+    public boolean needsProgressMonitor() {
+        return true;
+    }
 }

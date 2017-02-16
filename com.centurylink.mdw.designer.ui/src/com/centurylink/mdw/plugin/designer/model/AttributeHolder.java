@@ -3,8 +3,8 @@
  */
 package com.centurylink.mdw.plugin.designer.model;
 
-public interface AttributeHolder
-{
-  public String getAttribute(String name);
-  public void setAttribute(String name, String value);
+public interface AttributeHolder {
+    public String getAttribute(String name);
+
+    public void setAttribute(String name, String value);
 }

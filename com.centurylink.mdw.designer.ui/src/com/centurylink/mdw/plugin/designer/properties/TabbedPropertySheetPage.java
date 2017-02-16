@@ -14,40 +14,37 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
  * Extends Eclipse TabbedPropertySheetPage to allow access to currentSelection
  * for dynamic property sheet widget layout.
  */
-public class TabbedPropertySheetPage extends org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage
-{
-  private ISelection currentSelection;
-  public ISelection getCurrentSelection()
-  {
-    return currentSelection;
-  }
-  
-  public TabbedPropertySheetPage(ITabbedPropertySheetPageContributor tabbedPropertySheetPageContributor)
-  {
-    super(tabbedPropertySheetPageContributor);
-  }
+public class TabbedPropertySheetPage
+        extends org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage {
+    private ISelection currentSelection;
 
-  public void selectionChanged(IWorkbenchPart part, ISelection selection)
-  {
-    if (part instanceof ProcessEditor && selection.equals(currentSelection))
-      return;
-    
-    if (selection instanceof WorkflowProcess && selection.equals(currentSelection))
-    {
-      // fool super into thinking the selection changed
-      WorkflowProcess throwaway = new WorkflowProcess((WorkflowProcess)selection);
-      throwaway.setDummy(true);
-      super.selectionChanged(part, throwaway);
+    public ISelection getCurrentSelection() {
+        return currentSelection;
     }
-    
-    this.currentSelection = selection;
-    if (selection instanceof WorkflowProcess)
-    {
-      WorkflowProcess processVersion = (WorkflowProcess) selection;
-      if (getSite().getPage().findEditor(processVersion) == null)
-        processVersion.setReadOnly(true);
+
+    public TabbedPropertySheetPage(
+            ITabbedPropertySheetPageContributor tabbedPropertySheetPageContributor) {
+        super(tabbedPropertySheetPageContributor);
     }
-      
-    super.selectionChanged(part, selection);
-  }  
+
+    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+        if (part instanceof ProcessEditor && selection.equals(currentSelection))
+            return;
+
+        if (selection instanceof WorkflowProcess && selection.equals(currentSelection)) {
+            // fool super into thinking the selection changed
+            WorkflowProcess throwaway = new WorkflowProcess((WorkflowProcess) selection);
+            throwaway.setDummy(true);
+            super.selectionChanged(part, throwaway);
+        }
+
+        this.currentSelection = selection;
+        if (selection instanceof WorkflowProcess) {
+            WorkflowProcess processVersion = (WorkflowProcess) selection;
+            if (getSite().getPage().findEditor(processVersion) == null)
+                processVersion.setReadOnly(true);
+        }
+
+        super.selectionChanged(part, selection);
+    }
 }

@@ -10,11 +10,10 @@ import org.eclipse.ui.IStartup;
 
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 
-public class Startup implements IStartup
-{
-  public void earlyStartup()
-  {
-    IWorkspace workspace = ResourcesPlugin.getWorkspace();
-    workspace.addResourceChangeListener(WorkflowProjectManager.getInstance(), IResourceChangeEvent.POST_CHANGE);
-  }
+public class Startup implements IStartup {
+    public void earlyStartup() {
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        workspace.addResourceChangeListener(WorkflowProjectManager.getInstance(),
+                IResourceChangeEvent.POST_CHANGE);
+    }
 }

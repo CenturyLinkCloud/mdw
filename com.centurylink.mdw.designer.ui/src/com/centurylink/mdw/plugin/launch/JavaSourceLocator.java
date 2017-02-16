@@ -15,43 +15,34 @@ import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
 import org.eclipse.jdt.launching.sourcelookup.containers.JavaSourceLookupParticipant;
 
 public class JavaSourceLocator extends AbstractSourceLookupDirector {
-  
-  private static Set<String> filteredTypes;
-  
-  static
-  {
-    filteredTypes = new HashSet<String>();
-    filteredTypes.add(ProjectSourceContainer.TYPE_ID);
-    filteredTypes.add(WorkspaceSourceContainer.TYPE_ID);
-    filteredTypes.add("org.eclipse.debug.ui.containerType.workingSet");
-  }
-  
-  public void initializeParticipants()
-  {
-    addParticipants(new ISourceLookupParticipant[]
-    {
-      new SourceLookupParticipant()
-    });
-  }
 
-  public boolean supportsSourceContainerType(ISourceContainerType type)
-  {
-    return !filteredTypes.contains(type.getId());
-  }
-  
-  class SourceLookupParticipant extends JavaSourceLookupParticipant
-  {
-    @Override
-    public String getSourceName(Object object) throws CoreException
-    {
-      String sourceName = super.getSourceName(object);
-      if (sourceName != null)
-      {
-        int idx = sourceName.indexOf(" from StringJavaFileObject");
-        if (idx > 0)
-          sourceName = sourceName.substring(0, idx);
-      }
-      return sourceName;
+    private static Set<String> filteredTypes;
+
+    static {
+        filteredTypes = new HashSet<String>();
+        filteredTypes.add(ProjectSourceContainer.TYPE_ID);
+        filteredTypes.add(WorkspaceSourceContainer.TYPE_ID);
+        filteredTypes.add("org.eclipse.debug.ui.containerType.workingSet");
     }
-  }
+
+    public void initializeParticipants() {
+        addParticipants(new ISourceLookupParticipant[] { new SourceLookupParticipant() });
+    }
+
+    public boolean supportsSourceContainerType(ISourceContainerType type) {
+        return !filteredTypes.contains(type.getId());
+    }
+
+    class SourceLookupParticipant extends JavaSourceLookupParticipant {
+        @Override
+        public String getSourceName(Object object) throws CoreException {
+            String sourceName = super.getSourceName(object);
+            if (sourceName != null) {
+                int idx = sourceName.indexOf(" from StringJavaFileObject");
+                if (idx > 0)
+                    sourceName = sourceName.substring(0, idx);
+            }
+            return sourceName;
+        }
+    }
 }

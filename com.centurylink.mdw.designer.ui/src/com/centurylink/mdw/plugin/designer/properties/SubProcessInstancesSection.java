@@ -41,221 +41,203 @@ import com.centurylink.mdw.model.data.work.WorkStatuses;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
 
-public class SubProcessInstancesSection extends PropertySection implements IFilter
-{
-  // activity or embedded subprocess
-  private WorkflowElement element;
-  public WorkflowElement getElement() { return element; }
+public class SubProcessInstancesSection extends PropertySection implements IFilter {
+    // activity or embedded subprocess
+    private WorkflowElement element;
 
-  private TableEditor tableEditor;
-  private List<ColumnSpec> columnSpecs;
+    public WorkflowElement getElement() {
+        return element;
+    }
 
-  private SubProcessInstanceContentProvider contentProvider;
-  private SubProcessInstanceLabelProvider labelProvider;
+    private TableEditor tableEditor;
+    private List<ColumnSpec> columnSpecs;
 
-  public void setSelection(WorkflowElement selection)
-  {
-    this.element = selection;
+    private SubProcessInstanceContentProvider contentProvider;
+    private SubProcessInstanceLabelProvider labelProvider;
 
-    tableEditor.setElement(element);
+    public void setSelection(WorkflowElement selection) {
+        this.element = selection;
 
-    if (element instanceof Activity)
-      tableEditor.setValue(((Activity)element).getSubProcessInstances());
-    else if (element instanceof EmbeddedSubProcess)
-      tableEditor.setValue(((EmbeddedSubProcess)element).getSubProcessInstances());
-  }
+        tableEditor.setElement(element);
 
-  public void drawWidgets(Composite composite, WorkflowElement selection)
-  {
-    this.element = selection;
+        if (element instanceof Activity)
+            tableEditor.setValue(((Activity) element).getSubProcessInstances());
+        else if (element instanceof EmbeddedSubProcess)
+            tableEditor.setValue(((EmbeddedSubProcess) element).getSubProcessInstances());
+    }
 
-    tableEditor = new TableEditor(element, TableEditor.TYPE_TABLE);
-    tableEditor.setReadOnly(true);
+    public void drawWidgets(Composite composite, WorkflowElement selection) {
+        this.element = selection;
 
-    if (columnSpecs == null)
-      columnSpecs = createColumnSpecs();
-    tableEditor.setColumnSpecs(columnSpecs);
+        tableEditor = new TableEditor(element, TableEditor.TYPE_TABLE);
+        tableEditor.setReadOnly(true);
 
-    if (contentProvider == null)
-      contentProvider = new SubProcessInstanceContentProvider();
-    tableEditor.setContentProvider(contentProvider);
+        if (columnSpecs == null)
+            columnSpecs = createColumnSpecs();
+        tableEditor.setColumnSpecs(columnSpecs);
 
-    if (labelProvider == null)
-      labelProvider = new SubProcessInstanceLabelProvider();
-    tableEditor.setLabelProvider(labelProvider);
+        if (contentProvider == null)
+            contentProvider = new SubProcessInstanceContentProvider();
+        tableEditor.setContentProvider(contentProvider);
 
-    tableEditor.render(composite);
+        if (labelProvider == null)
+            labelProvider = new SubProcessInstanceLabelProvider();
+        tableEditor.setLabelProvider(labelProvider);
 
-    // double-click
-    tableEditor.addValueChangeListener(new ValueChangeListener()
-    {
-      public void propertyValueChanged(Object newValue)
-      {
-        if (!(element instanceof EmbeddedSubProcess))
-          openSubProcessInstance((ProcessInstanceVO)newValue);
-      }
-    });
+        tableEditor.render(composite);
 
-    // right-click menu
-    tableEditor.getTable().addListener(SWT.MenuDetect, new Listener()
-    {
-      public void handleEvent(Event event)
-      {
-        tableEditor.getTable().setMenu(element instanceof EmbeddedSubProcess ? null : createContextMenu(getShell()));
-      }
-    });
-  }
+        // double-click
+        tableEditor.addValueChangeListener(new ValueChangeListener() {
+            public void propertyValueChanged(Object newValue) {
+                if (!(element instanceof EmbeddedSubProcess))
+                    openSubProcessInstance((ProcessInstanceVO) newValue);
+            }
+        });
 
-  private Menu createContextMenu(Shell shell)
-  {
-    Menu menu = new Menu(shell, SWT.POP_UP);
+        // right-click menu
+        tableEditor.getTable().addListener(SWT.MenuDetect, new Listener() {
+            public void handleEvent(Event event) {
+                tableEditor.getTable().setMenu(element instanceof EmbeddedSubProcess ? null
+                        : createContextMenu(getShell()));
+            }
+        });
+    }
 
-    StructuredSelection selection = (StructuredSelection) tableEditor.getTableViewer().getSelection();
-    if (selection.size() == 1 && selection.getFirstElement() instanceof ProcessInstanceVO)
-    {
-      final ProcessInstanceVO processInstanceInfo = (ProcessInstanceVO) selection.getFirstElement();
+    private Menu createContextMenu(Shell shell) {
+        Menu menu = new Menu(shell, SWT.POP_UP);
 
-      // view
-      MenuItem procInstItem = new MenuItem(menu, SWT.PUSH);
-      procInstItem.setText("View Subprocess Instance");
-      ImageDescriptor imageDesc = MdwPlugin.getImageDescriptor("icons/process.gif");
-      procInstItem.setImage(imageDesc.createImage());
-      procInstItem.addSelectionListener(new SelectionAdapter()
-      {
-        public void widgetSelected(SelectionEvent e)
-        {
-          openSubProcessInstance(processInstanceInfo);
+        StructuredSelection selection = (StructuredSelection) tableEditor.getTableViewer()
+                .getSelection();
+        if (selection.size() == 1 && selection.getFirstElement() instanceof ProcessInstanceVO) {
+            final ProcessInstanceVO processInstanceInfo = (ProcessInstanceVO) selection
+                    .getFirstElement();
+
+            // view
+            MenuItem procInstItem = new MenuItem(menu, SWT.PUSH);
+            procInstItem.setText("View Subprocess Instance");
+            ImageDescriptor imageDesc = MdwPlugin.getImageDescriptor("icons/process.gif");
+            procInstItem.setImage(imageDesc.createImage());
+            procInstItem.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e) {
+                    openSubProcessInstance(processInstanceInfo);
+                }
+            });
         }
-      });
+
+        return menu;
     }
 
-    return menu;
-  }
+    private List<ColumnSpec> createColumnSpecs() {
+        List<ColumnSpec> columnSpecs = new ArrayList<ColumnSpec>();
 
-  private List<ColumnSpec> createColumnSpecs()
-  {
-    List<ColumnSpec> columnSpecs = new ArrayList<ColumnSpec>();
+        ColumnSpec instanceIdColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Instance ID",
+                "instanceId");
+        instanceIdColSpec.width = 100;
+        columnSpecs.add(instanceIdColSpec);
 
-    ColumnSpec instanceIdColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Instance ID", "instanceId");
-    instanceIdColSpec.width = 100;
-    columnSpecs.add(instanceIdColSpec);
+        ColumnSpec nameColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Name", "name");
+        nameColSpec.width = 250;
+        columnSpecs.add(nameColSpec);
 
-    ColumnSpec nameColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Name", "name");
-    nameColSpec.width = 250;
-    columnSpecs.add(nameColSpec);
+        ColumnSpec statusColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Status", "status");
+        statusColSpec.width = 100;
+        columnSpecs.add(statusColSpec);
 
-    ColumnSpec statusColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Status", "status");
-    statusColSpec.width = 100;
-    columnSpecs.add(statusColSpec);
+        ColumnSpec startDateColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Start",
+                "startDate");
+        startDateColSpec.width = 150;
+        columnSpecs.add(startDateColSpec);
 
-    ColumnSpec startDateColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Start", "startDate");
-    startDateColSpec.width = 150;
-    columnSpecs.add(startDateColSpec);
+        ColumnSpec endDateColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "End", "endDate");
+        endDateColSpec.width = 150;
+        columnSpecs.add(endDateColSpec);
 
-    ColumnSpec endDateColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "End", "endDate");
-    endDateColSpec.width = 150;
-    columnSpecs.add(endDateColSpec);
-
-    return columnSpecs;
-  }
-
-
-  class SubProcessInstanceContentProvider implements IStructuredContentProvider
-  {
-    @SuppressWarnings("unchecked")
-    public Object[] getElements(Object inputElement)
-    {
-      List<ProcessInstanceVO> rows = (List<ProcessInstanceVO>) inputElement;
-      return rows.toArray(new ProcessInstanceVO[0]);
+        return columnSpecs;
     }
 
-    public void dispose()
-    {
+    class SubProcessInstanceContentProvider implements IStructuredContentProvider {
+        @SuppressWarnings("unchecked")
+        public Object[] getElements(Object inputElement) {
+            List<ProcessInstanceVO> rows = (List<ProcessInstanceVO>) inputElement;
+            return rows.toArray(new ProcessInstanceVO[0]);
+        }
+
+        public void dispose() {
+        }
+
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        }
     }
 
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-    {
+    class SubProcessInstanceLabelProvider extends LabelProvider implements ITableLabelProvider {
+        public Image getColumnImage(Object element, int columnIndex) {
+            return null;
+        }
+
+        public String getColumnText(Object element, int columnIndex) {
+            ProcessInstanceVO processInstanceInfo = (ProcessInstanceVO) element;
+
+            switch (columnIndex) {
+            case 0:
+                return processInstanceInfo.getId().toString();
+            case 1:
+                return processInstanceInfo.getProcessName();
+            case 2:
+                return WorkStatuses.getWorkStatuses().get(processInstanceInfo.getStatusCode());
+            case 3:
+                if (processInstanceInfo.getStartDate() == null)
+                    return "";
+                return processInstanceInfo.getStartDate();
+            case 4:
+                if (processInstanceInfo.getEndDate() == null)
+                    return "";
+                return processInstanceInfo.getEndDate();
+            default:
+                return null;
+            }
+        }
     }
-  }
 
-  class SubProcessInstanceLabelProvider extends LabelProvider implements ITableLabelProvider
-  {
-    public Image getColumnImage(Object element, int columnIndex)
-    {
-      return null;
+    private void openSubProcessInstance(ProcessInstanceVO processInstanceInfo) {
+        // create a new instance for a new editor
+        ProcessVO subprocess = new ProcessVO();
+        subprocess.setProcessId(processInstanceInfo.getProcessId());
+        subprocess.setProcessName(processInstanceInfo.getProcessName());
+        WorkflowProcess toOpen = new WorkflowProcess(element.getProject(), subprocess);
+        toOpen.setPackage(element.getProject().getProcessPackage(subprocess.getId()));
+        toOpen.setProcessInstance(processInstanceInfo);
+
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        try {
+            page.openEditor(toOpen, "mdw.editors.process");
+        }
+        catch (PartInitException ex) {
+            PluginMessages.uiError(getShell(), ex, "Open SubProcess Instances",
+                    element.getProject());
+        }
     }
 
-    public String getColumnText(Object element, int columnIndex)
-    {
-      ProcessInstanceVO processInstanceInfo = (ProcessInstanceVO) element;
+    /**
+     * For IFilter interface.
+     */
+    public boolean select(Object toTest) {
+        if (toTest == null || !(toTest instanceof WorkflowElement))
+            return false;
 
-      switch (columnIndex)
-      {
-        case 0:
-          return processInstanceInfo.getId().toString();
-        case 1:
-          return processInstanceInfo.getProcessName();
-        case 2:
-          return WorkStatuses.getWorkStatuses().get(processInstanceInfo.getStatusCode());
-        case 3:
-          if (processInstanceInfo.getStartDate() == null)
-            return "";
-          return processInstanceInfo.getStartDate();
-        case 4:
-          if (processInstanceInfo.getEndDate() == null)
-            return "";
-          return processInstanceInfo.getEndDate();
-        default:
-          return null;
-      }
-    }
-  }
+        WorkflowElement workflowElement = (WorkflowElement) toTest;
 
-  private void openSubProcessInstance(ProcessInstanceVO processInstanceInfo)
-  {
-    // create a new instance for a new editor
-    ProcessVO subprocess = new ProcessVO();
-    subprocess.setProcessId(processInstanceInfo.getProcessId());
-    subprocess.setProcessName(processInstanceInfo.getProcessName());
-    WorkflowProcess toOpen = new WorkflowProcess(element.getProject(), subprocess);
-    toOpen.setPackage(element.getProject().getProcessPackage(subprocess.getId()));
-    toOpen.setProcessInstance(processInstanceInfo);
+        if (workflowElement instanceof Activity) {
+            Activity activity = (Activity) workflowElement;
+            if (activity.isSubProcessInvoke() || activity.isManualTask())
+                return activity.hasSubProcessInstances();
+            else
+                return false;
+        }
+        else if (workflowElement instanceof EmbeddedSubProcess) {
+            return workflowElement.hasInstanceInfo();
+        }
 
-    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-    try
-    {
-      page.openEditor(toOpen, "mdw.editors.process");
-    }
-    catch (PartInitException ex)
-    {
-      PluginMessages.uiError(getShell(), ex, "Open SubProcess Instances", element.getProject());
-    }
-  }
-
-  /**
-   * For IFilter interface.
-   */
-  public boolean select(Object toTest)
-  {
-    if (toTest == null || !(toTest instanceof WorkflowElement))
-      return false;
-
-    WorkflowElement workflowElement = (WorkflowElement) toTest;
-
-    if (workflowElement instanceof Activity)
-    {
-      Activity activity = (Activity) workflowElement;
-      if (activity.isSubProcessInvoke() || activity.isManualTask())
-        return activity.hasSubProcessInstances();
-      else
         return false;
     }
-    else if (workflowElement instanceof EmbeddedSubProcess)
-    {
-      return workflowElement.hasInstanceInfo();
-    }
-
-    return false;
-  }
 
 }

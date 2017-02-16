@@ -3,16 +3,12 @@
  */
 package com.centurylink.mdw.plugin.server;
 
-public class ServiceMixServerOptionsSection extends MdwServerOptionsSection
-{
-  protected String getDescription()
-  {
-    return "MDW ServiceMix Launch Settings";
-  }
+public class ServiceMixServerOptionsSection extends MdwServerOptionsSection {
+    protected String getDescription() {
+        return "MDW ServiceMix Launch Settings";
+    }
 
-  protected String getDefaultJavaOptions()
-  {
-    return ServiceMixServerBehavior.DEFAULT_JAVA_OPTS;
-  }
+    protected String getDefaultJavaOptions() {
+        return ServiceMixServerBehavior.DEFAULT_JAVA_OPTS;
+    }
 }
-

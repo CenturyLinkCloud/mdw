@@ -3,16 +3,13 @@
  */
 package com.centurylink.mdw.plugin.server;
 
-public class FuseServerOptionsSection extends MdwServerOptionsSection
-{
-  protected String getDescription()
-  {
-    return "MDW ServiceMix Launch Settings";
-  }
+public class FuseServerOptionsSection extends MdwServerOptionsSection {
+    protected String getDescription() {
+        return "MDW ServiceMix Launch Settings";
+    }
 
-  protected String getDefaultJavaOptions()
-  {
-    return FuseServerBehavior.DEFAULT_JAVA_OPTS;
-  }
+    protected String getDefaultJavaOptions() {
+        return FuseServerBehavior.DEFAULT_JAVA_OPTS;
+    }
 
 }

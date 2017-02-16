@@ -33,317 +33,288 @@ import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditorList;
 import com.centurylink.mdw.plugin.designer.properties.editor.TableEditor;
 
-public class SubProcessMappingSection extends PropertySection implements IFilter
-{
-  private Activity activity;
-  public Activity getActivity() { return activity; }
+public class SubProcessMappingSection extends PropertySection implements IFilter {
+    private Activity activity;
 
-  private WorkflowProcess subProcess;
-  public WorkflowProcess getSubProcess() { return subProcess; }
+    public Activity getActivity() {
+        return activity;
+    }
 
-  private MappingEditor mappingEditor;
-  private List<ColumnSpec> columnSpecs;
+    private WorkflowProcess subProcess;
 
-  private MappingLabelProvider labelProvider;
-  private MappingCellModifier cellModifier;
-  private MappingModelUpdater modelUpdater;
+    public WorkflowProcess getSubProcess() {
+        return subProcess;
+    }
 
-  private Map<Integer,VariableVO> inputOutputVariables;
+    private MappingEditor mappingEditor;
+    private List<ColumnSpec> columnSpecs;
 
-  public void setSelection(WorkflowElement selection)
-  {
-    activity = (Activity) selection;
-    findSubProcess();
+    private MappingLabelProvider labelProvider;
+    private MappingCellModifier cellModifier;
+    private MappingModelUpdater modelUpdater;
 
-    mappingEditor.setElement(activity);
-    populateVariableBindingsTable();
-    mappingEditor.setEditable(!activity.isReadOnly());
-  }
+    private Map<Integer, VariableVO> inputOutputVariables;
 
-  private void populateVariableBindingsTable()
-  {
-    if (mappingEditor != null)
-      mappingEditor.disposeWidget();
+    public void setSelection(WorkflowElement selection) {
+        activity = (Activity) selection;
+        findSubProcess();
 
-    mappingEditor.setOwningProcess(subProcess);
-    inputOutputVariables = getInputOutputVariables();
+        mappingEditor.setElement(activity);
+        populateVariableBindingsTable();
+        mappingEditor.setEditable(!activity.isReadOnly());
+    }
 
-    columnSpecs = createColumnSpecs();
-    mappingEditor.setColumnSpecs(columnSpecs);
+    private void populateVariableBindingsTable() {
+        if (mappingEditor != null)
+            mappingEditor.disposeWidget();
 
-    mappingEditor.render(composite, false);
+        mappingEditor.setOwningProcess(subProcess);
+        inputOutputVariables = getInputOutputVariables();
 
-    if (subProcess != null)
-    {
-      Map<String,String> map = StringHelper.parseMap(activity.getAttribute("variables"));
-      // clear inapplicable bindings
-      List<String> inapplicableVars = new ArrayList<String>();
-      for (String varName : map.keySet())
-      {
-        boolean found = false;
-        for (VariableVO inputVar : subProcess.getInputOutputVariables())
-        {
-          if (inputVar.getName().equals(varName))
-          {
-            found = true;
-            break;
-          }
+        columnSpecs = createColumnSpecs();
+        mappingEditor.setColumnSpecs(columnSpecs);
+
+        mappingEditor.render(composite, false);
+
+        if (subProcess != null) {
+            Map<String, String> map = StringHelper.parseMap(activity.getAttribute("variables"));
+            // clear inapplicable bindings
+            List<String> inapplicableVars = new ArrayList<String>();
+            for (String varName : map.keySet()) {
+                boolean found = false;
+                for (VariableVO inputVar : subProcess.getInputOutputVariables()) {
+                    if (inputVar.getName().equals(varName)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                    inapplicableVars.add(varName);
+            }
+            for (String inapplicableVar : inapplicableVars)
+                map.remove(inapplicableVar);
+
+            if (!inapplicableVars.isEmpty()) {
+                String newAttrVal = StringHelper.formatMap(map);
+                activity.setAttribute("variables", newAttrVal);
+                activity.fireAttributeValueChanged("variables", newAttrVal);
+            }
+
+            List<VariableBinding> variableBindings = getVariableBindings(map);
+            mappingEditor.setValue(variableBindings);
         }
-        if (!found)
-          inapplicableVars.add(varName);
-      }
-      for (String inapplicableVar : inapplicableVars)
-        map.remove(inapplicableVar);
 
-      if (!inapplicableVars.isEmpty())
-      {
-        String newAttrVal = StringHelper.formatMap(map);
-        activity.setAttribute("variables", newAttrVal);
-        activity.fireAttributeValueChanged("variables", newAttrVal);
-      }
-
-      List<VariableBinding> variableBindings = getVariableBindings(map);
-      mappingEditor.setValue(variableBindings);
+        composite.layout(true);
     }
 
-    composite.layout(true);
-  }
+    public void drawWidgets(Composite composite, WorkflowElement selection) {
+        activity = (Activity) selection;
 
-  public void drawWidgets(Composite composite, WorkflowElement selection)
-  {
-    activity = (Activity) selection;
+        mappingEditor = new MappingEditor(activity);
 
-    mappingEditor = new MappingEditor(activity);
+        if (labelProvider == null)
+            labelProvider = new MappingLabelProvider();
+        mappingEditor.setLabelProvider(labelProvider);
 
-    if (labelProvider == null)
-      labelProvider = new MappingLabelProvider();
-    mappingEditor.setLabelProvider(labelProvider);
+        if (cellModifier == null)
+            cellModifier = new MappingCellModifier();
+        mappingEditor.setCellModifier(cellModifier);
 
-    if (cellModifier == null)
-      cellModifier = new MappingCellModifier();
-    mappingEditor.setCellModifier(cellModifier);
+        if (modelUpdater == null)
+            modelUpdater = new MappingModelUpdater();
+        mappingEditor.setModelUpdater(modelUpdater);
 
-    if (modelUpdater == null)
-      modelUpdater = new MappingModelUpdater();
-    mappingEditor.setModelUpdater(modelUpdater);
-
-    // widget creation is deferred until setSelection()
-  }
-
-  /**
-   * Returns a list of variable bindings corresponding to the input, output
-   * and input/output variables of the subprocess, with expressions populated
-   * based on the activity attribute map.
-   */
-  private List<VariableBinding> getVariableBindings(Map<String,String> map)
-  {
-    List<VariableBinding> variableBindings = new ArrayList<VariableBinding>();
-    for (VariableVO variableVO : inputOutputVariables.values())
-    {
-      VariableBinding variableBinding = new VariableBinding(variableVO, null);
-      if (map.containsKey(variableVO.getVariableName()))
-      {
-        variableBinding.setExpression(map.get(variableVO.getVariableName()));
-      }
-      variableBindings.add(variableBinding);
+        // widget creation is deferred until setSelection()
     }
-    return variableBindings;
-  }
 
-  private void findSubProcess()
-  {
-    BusyIndicator.showWhile(getShell().getDisplay(), new Runnable()
-    {
-      public void run()
-      {
-        String subProcName = activity.getAttribute(WorkAttributeConstant.PROCESS_NAME);
-        String subProcVer = activity.getAttribute(WorkAttributeConstant.PROCESS_VERSION);
-
-        subProcess = null;
-        if (subProcName != null)
-        {
-          AssetVersionSpec spec = new AssetVersionSpec(subProcName, subProcVer);
-          AssetLocator locator = new AssetLocator(activity, AssetLocator.Type.Process);
-          WorkflowProcess matchingSubProc = locator.getProcessVersion(spec);
-          if (matchingSubProc != null)
-          {
-            PluginDataAccess dataAccess = activity.getProject().getDataAccess();
-            ProcessVO subProcVO = dataAccess.retrieveProcess(matchingSubProc.getName(), matchingSubProc.getVersion());
-            subProcess = new WorkflowProcess(activity.getProject(), subProcVO);
-          }
+    /**
+     * Returns a list of variable bindings corresponding to the input, output
+     * and input/output variables of the subprocess, with expressions populated
+     * based on the activity attribute map.
+     */
+    private List<VariableBinding> getVariableBindings(Map<String, String> map) {
+        List<VariableBinding> variableBindings = new ArrayList<VariableBinding>();
+        for (VariableVO variableVO : inputOutputVariables.values()) {
+            VariableBinding variableBinding = new VariableBinding(variableVO, null);
+            if (map.containsKey(variableVO.getVariableName())) {
+                variableBinding.setExpression(map.get(variableVO.getVariableName()));
+            }
+            variableBindings.add(variableBinding);
         }
-      }
-    });
-  }
-
-  /**
-   * Builds a map of Integer to VariableVO for the combo box cell editor.
-   */
-  private Map<Integer,VariableVO> getInputOutputVariables()
-  {
-    Map<Integer,VariableVO> inputOutputVariables = new TreeMap<Integer, VariableVO>();
-    if (subProcess != null)
-    {
-      List<VariableVO> inputOutputVariableVOs = subProcess.getInputOutputVariables();
-      for (int i = 0; i < inputOutputVariableVOs.size(); i++)
-      {
-        VariableVO inputOutputVariableVO = (VariableVO) inputOutputVariableVOs.get(i);
-        inputOutputVariables.put(new Integer(i), inputOutputVariableVO);
-      }
-    }
-    return inputOutputVariables;
-  }
-
-  private List<ColumnSpec> createColumnSpecs()
-  {
-    List<ColumnSpec> columnSpecs = new ArrayList<ColumnSpec>();
-
-    ColumnSpec variableColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "SubProcess Variable", "variable");
-    variableColSpec.width = 175;
-    variableColSpec.readOnly = true;
-    columnSpecs.add(variableColSpec);
-
-    ColumnSpec typeColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Type", "type");
-    typeColSpec.width = 200;
-    typeColSpec.readOnly = true;
-    columnSpecs.add(typeColSpec);
-
-    ColumnSpec varModeColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Mode", "mode");
-    varModeColSpec.width = 125;
-    varModeColSpec.readOnly = true;
-    columnSpecs.add(varModeColSpec);
-
-    ColumnSpec expressionColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Binding Expression", "expression");
-    expressionColSpec.width = 175;
-    columnSpecs.add(expressionColSpec);
-
-    return columnSpecs;
-  }
-
-  class MappingLabelProvider extends LabelProvider implements ITableLabelProvider
-  {
-    public Image getColumnImage(Object element, int columnIndex)
-    {
-      return null;
+        return variableBindings;
     }
 
-    public String getColumnText(Object element, int columnIndex)
-    {
-      VariableBinding variableBinding = (VariableBinding) element;
+    private void findSubProcess() {
+        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+            public void run() {
+                String subProcName = activity.getAttribute(WorkAttributeConstant.PROCESS_NAME);
+                String subProcVer = activity.getAttribute(WorkAttributeConstant.PROCESS_VERSION);
 
-      switch (columnIndex)
-      {
-        case 0:
-          return variableBinding.getVariableVO().getVariableName();
-        case 1:
-          return variableBinding.getVariableVO().getVariableType();
-        case 2:
-          return lookupVariableMode(variableBinding.getVariableVO().getVariableCategory());
-        case 3:
-          return variableBinding.getExpression();
-        default:
-          return null;
-      }
+                subProcess = null;
+                if (subProcName != null) {
+                    AssetVersionSpec spec = new AssetVersionSpec(subProcName, subProcVer);
+                    AssetLocator locator = new AssetLocator(activity, AssetLocator.Type.Process);
+                    WorkflowProcess matchingSubProc = locator.getProcessVersion(spec);
+                    if (matchingSubProc != null) {
+                        PluginDataAccess dataAccess = activity.getProject().getDataAccess();
+                        ProcessVO subProcVO = dataAccess.retrieveProcess(matchingSubProc.getName(),
+                                matchingSubProc.getVersion());
+                        subProcess = new WorkflowProcess(activity.getProject(), subProcVO);
+                    }
+                }
+            }
+        });
     }
 
-    private String lookupVariableMode(Integer cat)
-    {
-      if (cat == null || cat.intValue() < 0)
-        return VariableVO.VariableCategories[VariableVO.CAT_LOCAL];
-      else
-        return VariableVO.VariableCategories[cat.intValue()];
-    }
-  }
-
-  class MappingCellModifier extends TableEditor.DefaultCellModifier
-  {
-    MappingCellModifier()
-    {
-      mappingEditor.super();
-    }
-
-    public Object getValue(Object element, String property)
-    {
-      VariableBinding variableBinding = (VariableBinding) element;
-      int colIndex = getColumnIndex(property);
-      switch (colIndex)
-      {
-        case 0:
-          return variableBinding.getVariableVO().getVariableName();
-        case 1:
-          return variableBinding.getVariableVO().getVariableType();
-        case 2:
-          return variableBinding.getVariableVO().getVariableCategory();
-        case 3:
-          return variableBinding.getExpression();
-        default:
-          return null;
-      }
+    /**
+     * Builds a map of Integer to VariableVO for the combo box cell editor.
+     */
+    private Map<Integer, VariableVO> getInputOutputVariables() {
+        Map<Integer, VariableVO> inputOutputVariables = new TreeMap<Integer, VariableVO>();
+        if (subProcess != null) {
+            List<VariableVO> inputOutputVariableVOs = subProcess.getInputOutputVariables();
+            for (int i = 0; i < inputOutputVariableVOs.size(); i++) {
+                VariableVO inputOutputVariableVO = (VariableVO) inputOutputVariableVOs.get(i);
+                inputOutputVariables.put(new Integer(i), inputOutputVariableVO);
+            }
+        }
+        return inputOutputVariables;
     }
 
-    public void modify(Object element, String property, Object value)
-    {
-      TableItem item = (TableItem) element;
-      VariableBinding variableBinding = (VariableBinding) item.getData();
-      int colIndex = getColumnIndex(property);
-      switch (colIndex)
-      {
-        case 0:
-          variableBinding.setVariableVO(inputOutputVariables.get((Integer)value));
-          break;
-        case 3:
-          variableBinding.setExpression((String)value);
-          break;
-        default:
-      }
-      mappingEditor.getTableViewer().update(variableBinding, null);
-      mappingEditor.updateModelValue(mappingEditor.getTableValue());
-      mappingEditor.fireValueChanged(mappingEditor.getTableValue());
-    }
-  }
+    private List<ColumnSpec> createColumnSpecs() {
+        List<ColumnSpec> columnSpecs = new ArrayList<ColumnSpec>();
 
-  class MappingModelUpdater implements TableEditor.TableModelUpdater
-  {
-    public Object create()
-    {
-      VariableVO firstVarToBind = inputOutputVariables.get(new Integer(0));
-      VariableBinding variableBinding = new VariableBinding(firstVarToBind, "");
-      return variableBinding;
+        ColumnSpec variableColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "SubProcess Variable",
+                "variable");
+        variableColSpec.width = 175;
+        variableColSpec.readOnly = true;
+        columnSpecs.add(variableColSpec);
+
+        ColumnSpec typeColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Type", "type");
+        typeColSpec.width = 200;
+        typeColSpec.readOnly = true;
+        columnSpecs.add(typeColSpec);
+
+        ColumnSpec varModeColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT, "Mode", "mode");
+        varModeColSpec.width = 125;
+        varModeColSpec.readOnly = true;
+        columnSpecs.add(varModeColSpec);
+
+        ColumnSpec expressionColSpec = new ColumnSpec(PropertyEditor.TYPE_TEXT,
+                "Binding Expression", "expression");
+        expressionColSpec.width = 175;
+        columnSpecs.add(expressionColSpec);
+
+        return columnSpecs;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public void updateModelValue(List tableValue)
-    {
-      List<VariableBinding> variableBindings = (List<VariableBinding>) tableValue;
-      List<VariableBinding> toSerialize = new ArrayList<VariableBinding>();
-      for (VariableBinding potentialBinding : variableBindings)
-      {
-        if (!StringHelper.isEmpty(potentialBinding.getExpression()))
-          toSerialize.add(potentialBinding);
-      }
-      String serialized = mappingEditor.serializeMapping(toSerialize);
-      getActivity().setAttribute("variables", serialized);
+    class MappingLabelProvider extends LabelProvider implements ITableLabelProvider {
+        public Image getColumnImage(Object element, int columnIndex) {
+            return null;
+        }
+
+        public String getColumnText(Object element, int columnIndex) {
+            VariableBinding variableBinding = (VariableBinding) element;
+
+            switch (columnIndex) {
+            case 0:
+                return variableBinding.getVariableVO().getVariableName();
+            case 1:
+                return variableBinding.getVariableVO().getVariableType();
+            case 2:
+                return lookupVariableMode(variableBinding.getVariableVO().getVariableCategory());
+            case 3:
+                return variableBinding.getExpression();
+            default:
+                return null;
+            }
+        }
+
+        private String lookupVariableMode(Integer cat) {
+            if (cat == null || cat.intValue() < 0)
+                return VariableVO.VariableCategories[VariableVO.CAT_LOCAL];
+            else
+                return VariableVO.VariableCategories[cat.intValue()];
+        }
     }
-  }
 
-  public boolean select(Object toTest)
-  {
-    if (toTest == null || !(toTest instanceof Activity))
-      return false;
+    class MappingCellModifier extends TableEditor.DefaultCellModifier {
+        MappingCellModifier() {
+            mappingEditor.super();
+        }
 
-    activity = (Activity) toTest;
-    if (!activity.isSubProcessInvoke())
-      return false;
+        public Object getValue(Object element, String property) {
+            VariableBinding variableBinding = (VariableBinding) element;
+            int colIndex = getColumnIndex(property);
+            switch (colIndex) {
+            case 0:
+                return variableBinding.getVariableVO().getVariableName();
+            case 1:
+                return variableBinding.getVariableVO().getVariableType();
+            case 2:
+                return variableBinding.getVariableVO().getVariableCategory();
+            case 3:
+                return variableBinding.getExpression();
+            default:
+                return null;
+            }
+        }
 
-    if (activity.isForProcessInstance())
-      return false;
-
-    PropertyEditorList propEditorList = new PropertyEditorList(activity);
-    for (PropertyEditor propertyEditor : propEditorList)
-    {
-      if (propertyEditor.getType().equals(MappingEditor.TYPE_MAPPING))
-        return true;
+        public void modify(Object element, String property, Object value) {
+            TableItem item = (TableItem) element;
+            VariableBinding variableBinding = (VariableBinding) item.getData();
+            int colIndex = getColumnIndex(property);
+            switch (colIndex) {
+            case 0:
+                variableBinding.setVariableVO(inputOutputVariables.get((Integer) value));
+                break;
+            case 3:
+                variableBinding.setExpression((String) value);
+                break;
+            default:
+            }
+            mappingEditor.getTableViewer().update(variableBinding, null);
+            mappingEditor.updateModelValue(mappingEditor.getTableValue());
+            mappingEditor.fireValueChanged(mappingEditor.getTableValue());
+        }
     }
-    return false;
-  }
+
+    class MappingModelUpdater implements TableEditor.TableModelUpdater {
+        public Object create() {
+            VariableVO firstVarToBind = inputOutputVariables.get(new Integer(0));
+            VariableBinding variableBinding = new VariableBinding(firstVarToBind, "");
+            return variableBinding;
+        }
+
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        public void updateModelValue(List tableValue) {
+            List<VariableBinding> variableBindings = (List<VariableBinding>) tableValue;
+            List<VariableBinding> toSerialize = new ArrayList<VariableBinding>();
+            for (VariableBinding potentialBinding : variableBindings) {
+                if (!StringHelper.isEmpty(potentialBinding.getExpression()))
+                    toSerialize.add(potentialBinding);
+            }
+            String serialized = mappingEditor.serializeMapping(toSerialize);
+            getActivity().setAttribute("variables", serialized);
+        }
+    }
+
+    public boolean select(Object toTest) {
+        if (toTest == null || !(toTest instanceof Activity))
+            return false;
+
+        activity = (Activity) toTest;
+        if (!activity.isSubProcessInvoke())
+            return false;
+
+        if (activity.isForProcessInstance())
+            return false;
+
+        PropertyEditorList propEditorList = new PropertyEditorList(activity);
+        for (PropertyEditor propertyEditor : propEditorList) {
+            if (propertyEditor.getType().equals(MappingEditor.TYPE_MAPPING))
+                return true;
+        }
+        return false;
+    }
 }

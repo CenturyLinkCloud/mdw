@@ -13,33 +13,37 @@ import com.centurylink.mdw.common.utilities.timer.ActionCancelledException;
 import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
 import com.centurylink.mdw.plugin.designer.Exporter;
 
-public class ExportAttributesWizard extends ImportExportWizard implements IExportWizard
-{
-  private String prefix;
-  public String getPrefix() { return prefix; }
-  public void setPrefix(String prefix) { this.prefix = prefix; }
+public class ExportAttributesWizard extends ImportExportWizard implements IExportWizard {
+    private String prefix;
 
-  ImportExportPage createPage()
-  {
-    return new ExportAttributesPage();
-  }
+    public String getPrefix() {
+        return prefix;
+    }
 
-  void performImportExport(ProgressMonitor progressMonitor) throws IOException, XmlException, DataAccessException, ActionCancelledException
-  {
-    Exporter exporter = new Exporter(getProject().getDesignerDataAccess());
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
 
-    progressMonitor.start("Exporting Attributes...");
-    progressMonitor.progress(15);
+    ImportExportPage createPage() {
+        return new ExportAttributesPage();
+    }
 
-    String xmlString;
-    if (getProcess() != null)
-      xmlString = exporter.exportAttributes(getPrefix(), getProcess(), progressMonitor);
-    else
-      xmlString = exporter.exportAttributes(getPrefix(), getPackage(), progressMonitor);
+    void performImportExport(ProgressMonitor progressMonitor)
+            throws IOException, XmlException, DataAccessException, ActionCancelledException {
+        Exporter exporter = new Exporter(getProject().getDesignerDataAccess());
 
-    progressMonitor.progress(10);
-    progressMonitor.subTask("Writing XML file");
-    writeFile(getPage().getFilePath(), xmlString.getBytes());
-    progressMonitor.progress(5);
-  }
+        progressMonitor.start("Exporting Attributes...");
+        progressMonitor.progress(15);
+
+        String xmlString;
+        if (getProcess() != null)
+            xmlString = exporter.exportAttributes(getPrefix(), getProcess(), progressMonitor);
+        else
+            xmlString = exporter.exportAttributes(getPrefix(), getPackage(), progressMonitor);
+
+        progressMonitor.progress(10);
+        progressMonitor.subTask("Writing XML file");
+        writeFile(getPage().getFilePath(), xmlString.getBytes());
+        progressMonitor.progress(5);
+    }
 }

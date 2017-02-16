@@ -10,28 +10,25 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
 @SuppressWarnings("restriction")
-public class Tomcat70Configuration extends org.eclipse.jst.server.tomcat.core.internal.Tomcat70Configuration
-{
-  public Tomcat70Configuration(IFolder path)
-  {
-    super(path);
-  }
+public class Tomcat70Configuration
+        extends org.eclipse.jst.server.tomcat.core.internal.Tomcat70Configuration {
+    public Tomcat70Configuration(IFolder path) {
+        super(path);
+    }
 
-  @Override
-  public void load(IFolder folder, IProgressMonitor monitor) throws CoreException
-  {
-    super.load(folder, monitor);
-  }
+    @Override
+    public void load(IFolder folder, IProgressMonitor monitor) throws CoreException {
+        super.load(folder, monitor);
+    }
 
-  @Override
-  public IStatus cleanupServer(IPath baseDir, IPath installDir, boolean removeKeptContextFiles, IProgressMonitor monitor)
-  {
-    return super.cleanupServer(baseDir, installDir, removeKeptContextFiles, monitor);
-  }
+    @Override
+    public IStatus cleanupServer(IPath baseDir, IPath installDir, boolean removeKeptContextFiles,
+            IProgressMonitor monitor) {
+        return super.cleanupServer(baseDir, installDir, removeKeptContextFiles, monitor);
+    }
 
-  @Override
-  public IStatus backupAndPublish(IPath tomcatDir, boolean doBackup, IProgressMonitor monitor)
-  {
-    return super.backupAndPublish(tomcatDir, doBackup, monitor);
-  }
+    @Override
+    public IStatus backupAndPublish(IPath tomcatDir, boolean doBackup, IProgressMonitor monitor) {
+        return super.backupAndPublish(tomcatDir, doBackup, monitor);
+    }
 }

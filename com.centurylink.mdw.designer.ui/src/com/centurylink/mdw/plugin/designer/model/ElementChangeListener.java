@@ -3,7 +3,6 @@
  */
 package com.centurylink.mdw.plugin.designer.model;
 
-public interface ElementChangeListener
-{
-  public void elementChanged(ElementChangeEvent ece);
+public interface ElementChangeListener {
+    public void elementChanged(ElementChangeEvent ece);
 }

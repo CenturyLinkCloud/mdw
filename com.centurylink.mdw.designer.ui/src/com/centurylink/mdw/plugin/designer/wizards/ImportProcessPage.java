@@ -3,10 +3,8 @@
  */
 package com.centurylink.mdw.plugin.designer.wizards;
 
-public class ImportProcessPage extends ImportExportPage
-{
-  public ImportProcessPage()
-  {
-    super("Import MDW Process", "Import a workflow process from an XML file.");
-  }
+public class ImportProcessPage extends ImportExportPage {
+    public ImportProcessPage() {
+        super("Import MDW Process", "Import a workflow process from an XML file.");
+    }
 }

@@ -3,7 +3,6 @@
  */
 package com.centurylink.mdw.plugin.server;
 
-public class FusePublishTask extends ServiceMixPublishTask
-{
+public class FusePublishTask extends ServiceMixPublishTask {
 
 }

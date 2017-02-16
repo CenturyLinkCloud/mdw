@@ -3,11 +3,9 @@
  */
 package com.centurylink.mdw.plugin.server;
 
-public class FuseMdwServerSection extends ServiceMixMdwServerSection
-{
-  @Override
-  protected String getServerLabel()
-  {
-    return "JBoss Fuse";
-  }
+public class FuseMdwServerSection extends ServiceMixMdwServerSection {
+    @Override
+    protected String getServerLabel() {
+        return "JBoss Fuse";
+    }
 }

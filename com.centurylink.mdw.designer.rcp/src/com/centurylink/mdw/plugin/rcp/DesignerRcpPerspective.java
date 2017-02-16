@@ -30,55 +30,57 @@ import com.centurylink.mdw.plugin.designer.wizards.NewWebResourceWizard;
 import com.centurylink.mdw.plugin.designer.wizards.NewXmlDocWizard;
 import com.centurylink.mdw.plugin.project.RemoteWorkflowProjectWizard;
 
-public class DesignerRcpPerspective implements IPerspectiveFactory
-{
-  public void createInitialLayout(IPageLayout layout)
-  {
-    layout.setFixed(true);  // to avoid non-functional perspective shortcuts in toolbar
+public class DesignerRcpPerspective implements IPerspectiveFactory {
+    public void createInitialLayout(IPageLayout layout) {
+        layout.setFixed(true); // to avoid non-functional perspective shortcuts
+                               // in toolbar
 
-    // view shortcuts
-    layout.addShowViewShortcut(ProcessExplorerView.VIEW_ID);
-    layout.addShowViewShortcut(ToolboxView.VIEW_ID);
-    layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet");
-    layout.addShowViewShortcut(ProcessInstanceListView.VIEW_ID);
-    layout.addShowViewShortcut(AutomatedTestView.VIEW_ID);
+        // view shortcuts
+        layout.addShowViewShortcut(ProcessExplorerView.VIEW_ID);
+        layout.addShowViewShortcut(ToolboxView.VIEW_ID);
+        layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet");
+        layout.addShowViewShortcut(ProcessInstanceListView.VIEW_ID);
+        layout.addShowViewShortcut(AutomatedTestView.VIEW_ID);
 
-    // new wizard shortcuts
-    layout.addNewWizardShortcut(RemoteWorkflowProjectWizard.WIZARD_ID + ".rcp");
-    layout.addNewWizardShortcut(NewProcessWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewPackageWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(EventHandlerWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(CamelProcessHandlerWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewPageWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewReportWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewRuleWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewScriptWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewJavaWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewCamelRouteWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewTemplateWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewWebResourceWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewXmlDocWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewSpringConfigWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewJarFileWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewTestCaseWizard.WIZARD_ID);
-    layout.addNewWizardShortcut(NewTextResourceWizard.WIZARD_ID);
+        // new wizard shortcuts
+        layout.addNewWizardShortcut(RemoteWorkflowProjectWizard.WIZARD_ID + ".rcp");
+        layout.addNewWizardShortcut(NewProcessWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewPackageWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(EventHandlerWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(CamelProcessHandlerWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewPageWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewReportWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewRuleWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewScriptWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewJavaWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewCamelRouteWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewTemplateWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewWebResourceWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewXmlDocWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewSpringConfigWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewJarFileWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewTestCaseWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewTextResourceWizard.WIZARD_ID);
 
-    // editor is placed by default (for process defs)
-    String editorArea = layout.getEditorArea();
+        // editor is placed by default (for process defs)
+        String editorArea = layout.getEditorArea();
 
-    // place process explorer to left of the editor area.
-    IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT, (float) 0.25, editorArea);
-    left.addView(ProcessExplorerView.VIEW_ID);
+        // place process explorer to left of the editor area.
+        IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT, (float) 0.25,
+                editorArea);
+        left.addView(ProcessExplorerView.VIEW_ID);
 
-    // place properties view below
-    IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, (float) 0.75, editorArea);
-    bottom.addView("org.eclipse.ui.views.PropertySheet");
-    bottom.addView(ProcessInstanceListView.VIEW_ID);
-    bottom.addView(AutomatedTestView.VIEW_ID);
+        // place properties view below
+        IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, (float) 0.75,
+                editorArea);
+        bottom.addView("org.eclipse.ui.views.PropertySheet");
+        bottom.addView(ProcessInstanceListView.VIEW_ID);
+        bottom.addView(AutomatedTestView.VIEW_ID);
 
-    // place designer toolbox to the right
-    IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, (float) 0.75, editorArea);
-    right.addView(ToolboxView.VIEW_ID);
-    right.addPlaceholder("org.eclipse.gef.ui.palette_view");
-  }
+        // place designer toolbox to the right
+        IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, (float) 0.75,
+                editorArea);
+        right.addView(ToolboxView.VIEW_ID);
+        right.addPlaceholder("org.eclipse.gef.ui.palette_view");
+    }
 }

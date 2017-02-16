@@ -28,85 +28,86 @@ import com.centurylink.mdw.workflow.ManagedNode;
 import com.centurylink.mdw.workflow.WorkflowApplication;
 import com.centurylink.mdw.workflow.WorkflowEnvironment;
 
-public class ExportProjectWizard extends Wizard implements IExportWizard
-{
-  private ExportProjectPage exportProjectPage;
+public class ExportProjectWizard extends Wizard implements IExportWizard {
+    private ExportProjectPage exportProjectPage;
 
-  private IWorkbench workbench;
-  public IWorkbench getWorkbench() { return workbench; }
+    private IWorkbench workbench;
 
-  private List<WorkflowProject> projectsToExport;
-  public List<WorkflowProject> getProjectsToExport() { return projectsToExport; }
-  public void setProjectsToExport(List<WorkflowProject> projects) { this.projectsToExport = projects; }
-
-  public void init(IWorkbench workbench, IStructuredSelection selection)
-  {
-    setDefaultPageImageDescriptor(MdwPlugin.getImageDescriptor("icons/mdw_wiz.png"));
-    projectsToExport = new ArrayList<WorkflowProject>();
-    if (selection != null)
-    {
-      for (Object element : selection.toArray())
-      {
-        if (element instanceof WorkflowProject && ((WorkflowProject)element).isRemote())
-          projectsToExport.add((WorkflowProject)element);
-      }
+    public IWorkbench getWorkbench() {
+        return workbench;
     }
-  }
 
-  @Override
-  public boolean performFinish()
-  {
-    BusyIndicator.showWhile(getShell().getDisplay(), new Runnable()
-    {
-      public void run()
-      {
-        ConfigManagerProjectsDocument doc = ConfigManagerProjectsDocument.Factory.newInstance();
-        ConfigManagerProjects configMgrProjects = doc.addNewConfigManagerProjects();
+    private List<WorkflowProject> projectsToExport;
 
-        try
-        {
-          for (WorkflowProject workflowProject : projectsToExport)
-          {
-            WorkflowApplication workflowApp = configMgrProjects.addNewWorkflowApp();
-            workflowApp.setName("");
-            workflowApp.setMalAppName("");
-            workflowApp.setEcomAcronym("");
-            workflowApp.setWebContextRoot(workflowProject.getWebContextRoot());
-            WorkflowEnvironment workflowEnv = workflowApp.addNewEnvironment();
-            workflowEnv.setName(workflowProject.getName());
-            workflowEnv.setOwner(workflowProject.getAuthor());
-            ManagedNode managedNode = workflowEnv.addNewManagedServer();
-            managedNode.setHost(workflowProject.getServerSettings().getHost());
-            managedNode.setPort(new BigInteger(String.valueOf(workflowProject.getServerSettings().getPort())));
-            EnvironmentDB envDb = workflowEnv.addNewEnvironmentDb();
-            envDb.setJdbcUrl(workflowProject.getMdwDataSource().getJdbcUrl());
-            envDb.setUser(workflowProject.getMdwDataSource().getDbUser());
-            envDb.setPassword(CryptUtil.encrypt(workflowProject.getMdwDataSource().getDbPassword()));
-          }
-          String xml = doc.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2));
-          String filepath = exportProjectPage.getFileName();
-          writeTextFile(filepath, xml);
+    public List<WorkflowProject> getProjectsToExport() {
+        return projectsToExport;
+    }
+
+    public void setProjectsToExport(List<WorkflowProject> projects) {
+        this.projectsToExport = projects;
+    }
+
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        setDefaultPageImageDescriptor(MdwPlugin.getImageDescriptor("icons/mdw_wiz.png"));
+        projectsToExport = new ArrayList<WorkflowProject>();
+        if (selection != null) {
+            for (Object element : selection.toArray()) {
+                if (element instanceof WorkflowProject && ((WorkflowProject) element).isRemote())
+                    projectsToExport.add((WorkflowProject) element);
+            }
         }
-        catch (Exception ex)
-        {
-          PluginMessages.uiError(getShell(), ex, "Export Projects");
-        }
-      }
-    });
-    return true;
-  }
+    }
 
-  @Override
-  public void addPages()
-  {
-    exportProjectPage = new ExportProjectPage();
-    addPage(exportProjectPage);
-  }
+    @Override
+    public boolean performFinish() {
+        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+            public void run() {
+                ConfigManagerProjectsDocument doc = ConfigManagerProjectsDocument.Factory
+                        .newInstance();
+                ConfigManagerProjects configMgrProjects = doc.addNewConfigManagerProjects();
 
-  public void writeTextFile(String fullPathFilename, String xml) throws IOException
-  {
-    BufferedWriter writer = new BufferedWriter(new FileWriter(fullPathFilename));
-    writer.write(xml);
-    writer.close();
-  }
+                try {
+                    for (WorkflowProject workflowProject : projectsToExport) {
+                        WorkflowApplication workflowApp = configMgrProjects.addNewWorkflowApp();
+                        workflowApp.setName("");
+                        workflowApp.setMalAppName("");
+                        workflowApp.setEcomAcronym("");
+                        workflowApp.setWebContextRoot(workflowProject.getWebContextRoot());
+                        WorkflowEnvironment workflowEnv = workflowApp.addNewEnvironment();
+                        workflowEnv.setName(workflowProject.getName());
+                        workflowEnv.setOwner(workflowProject.getAuthor());
+                        ManagedNode managedNode = workflowEnv.addNewManagedServer();
+                        managedNode.setHost(workflowProject.getServerSettings().getHost());
+                        managedNode.setPort(new BigInteger(
+                                String.valueOf(workflowProject.getServerSettings().getPort())));
+                        EnvironmentDB envDb = workflowEnv.addNewEnvironmentDb();
+                        envDb.setJdbcUrl(workflowProject.getMdwDataSource().getJdbcUrl());
+                        envDb.setUser(workflowProject.getMdwDataSource().getDbUser());
+                        envDb.setPassword(CryptUtil
+                                .encrypt(workflowProject.getMdwDataSource().getDbPassword()));
+                    }
+                    String xml = doc.xmlText(
+                            new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2));
+                    String filepath = exportProjectPage.getFileName();
+                    writeTextFile(filepath, xml);
+                }
+                catch (Exception ex) {
+                    PluginMessages.uiError(getShell(), ex, "Export Projects");
+                }
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public void addPages() {
+        exportProjectPage = new ExportProjectPage();
+        addPage(exportProjectPage);
+    }
+
+    public void writeTextFile(String fullPathFilename, String xml) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fullPathFilename));
+        writer.write(xml);
+        writer.close();
+    }
 }

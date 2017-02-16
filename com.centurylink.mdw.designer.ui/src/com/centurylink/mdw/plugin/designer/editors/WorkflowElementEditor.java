@@ -14,59 +14,60 @@ import com.centurylink.mdw.plugin.designer.DirtyStateListener;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 import com.centurylink.mdw.plugin.designer.properties.TabbedPropertySheetPage;
 
-public abstract class WorkflowElementEditor extends EditorPart implements ITabbedPropertySheetPageContributor, DirtyStateListener, ISaveablePart, ISaveablePart2
-{
-  public abstract WorkflowElement getElement();
-  public abstract void notifyNameChange();
+public abstract class WorkflowElementEditor extends EditorPart implements
+        ITabbedPropertySheetPageContributor, DirtyStateListener, ISaveablePart, ISaveablePart2 {
+    public abstract WorkflowElement getElement();
 
-  private boolean dirty;
-  public boolean isDirty()
-  {
-    if (isReadOnly())
-      return false;
+    public abstract void notifyNameChange();
 
-    return dirty;
-  }
+    private boolean dirty;
 
-  private boolean visible;
-  public boolean isVisible() { return visible; }
-  public void setVisible(boolean visible) { this.visible = visible; }
+    public boolean isDirty() {
+        if (isReadOnly())
+            return false;
 
-  public boolean isReadOnly()
-  {
-    return getElement().isReadOnly();
-  }
+        return dirty;
+    }
 
-  @Override
-  public boolean isSaveAsAllowed()
-  {
-    return false;
-  }
+    private boolean visible;
 
-  @Override
-  public void doSaveAs()
-  {
-    // not allowed
-  }
+    public boolean isVisible() {
+        return visible;
+    }
 
-  public String getContributorId()
-  {
-    return "mdw.tabbedprops.contributor";  // see plugin.xml
-  }
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  public Object getAdapter(Class type)
-  {
-    if (type == IPropertySheetPage.class)
-      return new TabbedPropertySheetPage(this);
+    public boolean isReadOnly() {
+        return getElement().isReadOnly();
+    }
 
-    return super.getAdapter(type);
-  }
+    @Override
+    public boolean isSaveAsAllowed() {
+        return false;
+    }
 
-  public void dirtyStateChanged(boolean dirty)
-  {
-    this.dirty = dirty;
-    firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
-    firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);
-  }
+    @Override
+    public void doSaveAs() {
+        // not allowed
+    }
+
+    public String getContributorId() {
+        return "mdw.tabbedprops.contributor"; // see plugin.xml
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Object getAdapter(Class type) {
+        if (type == IPropertySheetPage.class)
+            return new TabbedPropertySheetPage(this);
+
+        return super.getAdapter(type);
+    }
+
+    public void dirtyStateChanged(boolean dirty) {
+        this.dirty = dirty;
+        firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
+        firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);
+    }
 }

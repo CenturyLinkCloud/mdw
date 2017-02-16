@@ -7,16 +7,17 @@ import org.eclipse.ui.actions.ActionGroup;
 
 import com.centurylink.mdw.plugin.actions.WorkflowElementActionHandler;
 
-public class ProcessHierarchyActionGroup extends ActionGroup
-{
-  ProcessHierarchyView view;
-  private WorkflowElementActionHandler actionHandler;
-  WorkflowElementActionHandler getActionHandler() { return actionHandler; }
+public class ProcessHierarchyActionGroup extends ActionGroup {
+    ProcessHierarchyView view;
+    private WorkflowElementActionHandler actionHandler;
 
-  public ProcessHierarchyActionGroup(ProcessHierarchyView view)
-  {
-    this.view = view;
-    this.actionHandler = new WorkflowElementActionHandler();
-  }
+    WorkflowElementActionHandler getActionHandler() {
+        return actionHandler;
+    }
+
+    public ProcessHierarchyActionGroup(ProcessHierarchyView view) {
+        this.view = view;
+        this.actionHandler = new WorkflowElementActionHandler();
+    }
 
 }

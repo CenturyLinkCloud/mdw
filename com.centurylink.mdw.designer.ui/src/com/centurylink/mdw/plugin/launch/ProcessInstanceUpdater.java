@@ -5,57 +5,72 @@ package com.centurylink.mdw.plugin.launch;
 
 import com.centurylink.mdw.designer.runtime.ProcessInstancePage;
 
-public class ProcessInstanceUpdater extends com.centurylink.mdw.designer.testing.ProcessInstanceUpdater
-{
-  private Long processId;
-  public Long getProcessId() { return processId; }
+public class ProcessInstanceUpdater
+        extends com.centurylink.mdw.designer.testing.ProcessInstanceUpdater {
+    private Long processId;
 
-  private Long processInstanceId;
-  public Long getProcessInstanceId() { return processInstanceId; }
+    public Long getProcessId() {
+        return processId;
+    }
 
-  private String subtype;
-  public String getSubType() { return subtype; }
+    private Long processInstanceId;
 
-  private String time;
-  public String getTime() { return time; }
+    public Long getProcessInstanceId() {
+        return processInstanceId;
+    }
 
-  private String id;
-  public String getId() { return id; }
+    private String subtype;
 
-  private String msg;
-  public String getMsg() { return msg; }
+    public String getSubType() {
+        return subtype;
+    }
 
-  public ProcessInstanceUpdater(Long processId, Long processInstanceId, ProcessInstancePage processInstancePage, String subtype, String time, String id, String msg)
-  {
-    super(processInstancePage);
-    this.processId = processId;
-    this.processInstanceId = processInstanceId;
-    this.subtype = subtype;
-    this.time = time;
-    this.id = id;
-    this.msg = msg;
-  }
+    private String time;
 
-  public void handleMessage()
-  {
-    if (getProcessInstancePage().getProcessInstance() != null)
-      super.handleMessage(processId, processInstanceId, subtype, time, id, msg);
-  }
+    public String getTime() {
+        return time;
+    }
 
-  protected boolean isShowingThisInstance(Long mainProcInstId)
-  {
-    return true;  // instance is opened in LogWatcher
-  }
+    private String id;
 
-  protected void showInstance(ProcessInstancePage procInstPage)
-  {
-    // won't be called
-  }
+    public String getId() {
+        return id;
+    }
 
-  public String toString()
-  {
-    return "proc=" + processId + " procInst=" + processInstanceId
-      + " " + subtype + " " + time + " " + id + " " + msg;
-  }
+    private String msg;
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public ProcessInstanceUpdater(Long processId, Long processInstanceId,
+            ProcessInstancePage processInstancePage, String subtype, String time, String id,
+            String msg) {
+        super(processInstancePage);
+        this.processId = processId;
+        this.processInstanceId = processInstanceId;
+        this.subtype = subtype;
+        this.time = time;
+        this.id = id;
+        this.msg = msg;
+    }
+
+    public void handleMessage() {
+        if (getProcessInstancePage().getProcessInstance() != null)
+            super.handleMessage(processId, processInstanceId, subtype, time, id, msg);
+    }
+
+    protected boolean isShowingThisInstance(Long mainProcInstId) {
+        return true; // instance is opened in LogWatcher
+    }
+
+    protected void showInstance(ProcessInstancePage procInstPage) {
+        // won't be called
+    }
+
+    public String toString() {
+        return "proc=" + processId + " procInst=" + processInstanceId + " " + subtype + " " + time
+                + " " + id + " " + msg;
+    }
 
 }

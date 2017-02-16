@@ -9,46 +9,39 @@ import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.designer.views.ProcessHierarchyContentProvider.LinkedProcess;
 
-public class ProcessHierarchyLabelProvider extends LabelProvider
-{
-  private Image iconImage;
-  public Image getIconImage()
-  {
-    if (iconImage == null)
-    {
-      ImageDescriptor imageDescriptor = MdwPlugin.getImageDescriptor("icons/process.gif");
-      iconImage = imageDescriptor.createImage();
-    }
-    return iconImage;
-  }
+public class ProcessHierarchyLabelProvider extends LabelProvider {
+    private Image iconImage;
 
-  public Image getImage(Object element)
-  {
-    return getIconImage();
-  }
+    public Image getIconImage() {
+        if (iconImage == null) {
+            ImageDescriptor imageDescriptor = MdwPlugin.getImageDescriptor("icons/process.gif");
+            iconImage = imageDescriptor.createImage();
+        }
+        return iconImage;
+    }
 
-  public String getText(Object element)
-  {
-    if (element instanceof LinkedProcessInstance)
-    {
-      LinkedProcessInstance instance = (LinkedProcessInstance) element;
-      ProcessInstanceVO procInst = instance.getProcessInstance();
-      return procInst.getProcessName() + " v" + procInst.getProcessVersion() + " (" + procInst.getId() + ")";
+    public Image getImage(Object element) {
+        return getIconImage();
     }
-    else if (element instanceof LinkedProcess)
-    {
-      return ((LinkedProcess)element).getProcess().getLabel();
-    }
-    else
-    {
-      return null;
-    }
-  }
 
-  public void dispose()
-  {
-    if (iconImage != null && !iconImage.isDisposed())
-      iconImage.dispose();
-  }
+    public String getText(Object element) {
+        if (element instanceof LinkedProcessInstance) {
+            LinkedProcessInstance instance = (LinkedProcessInstance) element;
+            ProcessInstanceVO procInst = instance.getProcessInstance();
+            return procInst.getProcessName() + " v" + procInst.getProcessVersion() + " ("
+                    + procInst.getId() + ")";
+        }
+        else if (element instanceof LinkedProcess) {
+            return ((LinkedProcess) element).getProcess().getLabel();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public void dispose() {
+        if (iconImage != null && !iconImage.isDisposed())
+            iconImage.dispose();
+    }
 
 }

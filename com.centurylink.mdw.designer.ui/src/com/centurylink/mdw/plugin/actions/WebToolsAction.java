@@ -21,63 +21,56 @@ import com.centurylink.mdw.plugin.actions.WebLaunchActions.WebLaunchAction;
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-public class WebToolsAction extends BasePulldownAction implements IObjectActionDelegate
-{
-  private WorkflowProject mostRecentWebToolsLaunchWorkflowProject;
+public class WebToolsAction extends BasePulldownAction implements IObjectActionDelegate {
+    private WorkflowProject mostRecentWebToolsLaunchWorkflowProject;
 
-  public void init(IWorkbenchWindow window)
-  {
-    super.init(window);
-  }
-
-  public void setActivePart(IAction action, IWorkbenchPart targetPart)
-  {
-  }
-
-  public void run(IAction action)
-  {
-    WorkflowProject workflowProject = getProject(getSelection());
-    WebLaunchAction launchAction = WebLaunchActions.getLaunchAction(workflowProject, WebApp.WebTools);
-    if (workflowProject != null)
-      launchAction.launch(workflowProject);
-    else if (mostRecentWebToolsLaunchWorkflowProject != null)
-      launchAction.launch(mostRecentWebToolsLaunchWorkflowProject);
-  }
-
-  /**
-   * populates the plugin action menu (the webtools icon) with its items
-   */
-  public void populateMenu(Menu menu)
-  {
-    WorkflowProjectManager wfProjectMgr = WorkflowProjectManager.getInstance();
-    List<WorkflowProject> workflowProjects = wfProjectMgr.getWorkflowProjects();
-    if (workflowProjects.isEmpty())
-    {
-      MenuItem item = new MenuItem(menu, SWT.NONE);
-      item.setText("(No Projects)");
-      item.setImage(MdwPlugin.getImageDescriptor("icons/wait.gif").createImage());
-      item.setEnabled(false);
+    public void init(IWorkbenchWindow window) {
+        super.init(window);
     }
-    else
-    {
-      for (final WorkflowProject workflowProject : workflowProjects)
-      {
-        String projName = workflowProject.isFrameworkProject() ? "MDWFramework" : workflowProject.getName();
 
-        // MDWWeb
-        MenuItem item = new MenuItem(menu, SWT.NONE);
-        final WebLaunchAction launchAction = WebLaunchActions.getLaunchAction(workflowProject, WebApp.WebTools);
-        item.setText(projName + " - " + launchAction.getLabel());
-        item.setImage(launchAction.getIconImage());
-        item.addSelectionListener(new SelectionAdapter()
-        {
-          public void widgetSelected(SelectionEvent e)
-          {
-            mostRecentWebToolsLaunchWorkflowProject = workflowProject;
+    public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+    }
+
+    public void run(IAction action) {
+        WorkflowProject workflowProject = getProject(getSelection());
+        WebLaunchAction launchAction = WebLaunchActions.getLaunchAction(workflowProject,
+                WebApp.WebTools);
+        if (workflowProject != null)
             launchAction.launch(workflowProject);
-          }
-        });
-      }
+        else if (mostRecentWebToolsLaunchWorkflowProject != null)
+            launchAction.launch(mostRecentWebToolsLaunchWorkflowProject);
     }
-  }
+
+    /**
+     * populates the plugin action menu (the webtools icon) with its items
+     */
+    public void populateMenu(Menu menu) {
+        WorkflowProjectManager wfProjectMgr = WorkflowProjectManager.getInstance();
+        List<WorkflowProject> workflowProjects = wfProjectMgr.getWorkflowProjects();
+        if (workflowProjects.isEmpty()) {
+            MenuItem item = new MenuItem(menu, SWT.NONE);
+            item.setText("(No Projects)");
+            item.setImage(MdwPlugin.getImageDescriptor("icons/wait.gif").createImage());
+            item.setEnabled(false);
+        }
+        else {
+            for (final WorkflowProject workflowProject : workflowProjects) {
+                String projName = workflowProject.isFrameworkProject() ? "MDWFramework"
+                        : workflowProject.getName();
+
+                // MDWWeb
+                MenuItem item = new MenuItem(menu, SWT.NONE);
+                final WebLaunchAction launchAction = WebLaunchActions
+                        .getLaunchAction(workflowProject, WebApp.WebTools);
+                item.setText(projName + " - " + launchAction.getLabel());
+                item.setImage(launchAction.getIconImage());
+                item.addSelectionListener(new SelectionAdapter() {
+                    public void widgetSelected(SelectionEvent e) {
+                        mostRecentWebToolsLaunchWorkflowProject = workflowProject;
+                        launchAction.launch(workflowProject);
+                    }
+                });
+            }
+        }
+    }
 }

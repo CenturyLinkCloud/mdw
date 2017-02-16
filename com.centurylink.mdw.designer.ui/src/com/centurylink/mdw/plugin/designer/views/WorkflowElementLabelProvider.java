@@ -8,25 +8,21 @@ import org.eclipse.swt.graphics.Image;
 
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 
-public class WorkflowElementLabelProvider extends LabelProvider
-{
-  public Image getImage(Object element)
-  {
-    if (!(element instanceof WorkflowElement))
-      throw new IllegalArgumentException("Invalid object not instance of WorkflowElement");
+public class WorkflowElementLabelProvider extends LabelProvider {
+    public Image getImage(Object element) {
+        if (!(element instanceof WorkflowElement))
+            throw new IllegalArgumentException("Invalid object not instance of WorkflowElement");
 
-    return ((WorkflowElement)element).getIconImage();
-  }
+        return ((WorkflowElement) element).getIconImage();
+    }
 
-  public String getText(Object element)
-  {
-    if (!(element instanceof WorkflowElement))
-      throw new IllegalArgumentException("Invalid object not instance of WorkflowElement");
+    public String getText(Object element) {
+        if (!(element instanceof WorkflowElement))
+            throw new IllegalArgumentException("Invalid object not instance of WorkflowElement");
 
-    return ((WorkflowElement)element).getLabel();
-  }
+        return ((WorkflowElement) element).getLabel();
+    }
 
-  public void dispose()
-  {
-  }
+    public void dispose() {
+    }
 }

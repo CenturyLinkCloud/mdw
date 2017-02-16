@@ -13,25 +13,23 @@ import com.centurylink.mdw.common.utilities.timer.ActionCancelledException;
 import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
 import com.centurylink.mdw.plugin.designer.Exporter;
 
-public class ExportTaskTemplatesWizard extends ImportExportWizard implements IExportWizard
-{
-  ImportExportPage createPage()
-  {
-    return new ExportTaskTemplatesPage();
-  }
+public class ExportTaskTemplatesWizard extends ImportExportWizard implements IExportWizard {
+    ImportExportPage createPage() {
+        return new ExportTaskTemplatesPage();
+    }
 
-  void performImportExport(ProgressMonitor progressMonitor) throws IOException, XmlException, DataAccessException, ActionCancelledException
-  {
-    Exporter exporter = new Exporter(getProject().getDesignerDataAccess());
+    void performImportExport(ProgressMonitor progressMonitor)
+            throws IOException, XmlException, DataAccessException, ActionCancelledException {
+        Exporter exporter = new Exporter(getProject().getDesignerDataAccess());
 
-    progressMonitor.start("Exporting Task Templates...");
-    progressMonitor.progress(15);
+        progressMonitor.start("Exporting Task Templates...");
+        progressMonitor.progress(15);
 
-    String xmlString = exporter.exportTaskTemplates(getPackage(), progressMonitor);
+        String xmlString = exporter.exportTaskTemplates(getPackage(), progressMonitor);
 
-    progressMonitor.progress(10);
-    progressMonitor.subTask("Writing XML file");
-    writeFile(getPage().getFilePath(), xmlString.getBytes());
-    progressMonitor.progress(5);
-  }
+        progressMonitor.progress(10);
+        progressMonitor.subTask("Writing XML file");
+        writeFile(getPage().getFilePath(), xmlString.getBytes());
+        progressMonitor.progress(5);
+    }
 }

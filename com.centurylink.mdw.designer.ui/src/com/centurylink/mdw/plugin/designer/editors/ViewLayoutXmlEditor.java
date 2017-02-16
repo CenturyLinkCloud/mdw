@@ -14,31 +14,29 @@ import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.designer.model.ViewLayout;
 
 @SuppressWarnings("restriction")
-public class ViewLayoutXmlEditor extends XMLMultiPageEditorPart
-{
-  private FileEditorInput editorInput;
+public class ViewLayoutXmlEditor extends XMLMultiPageEditorPart {
+    private FileEditorInput editorInput;
 
-  public ViewLayoutXmlEditor()
-  {
-    noToolbar();
-  }
+    public ViewLayoutXmlEditor() {
+        noToolbar();
+    }
 
-  @Override
-  protected void setInput(IEditorInput input)
-  {
-    super.setInput(input);
-    this.editorInput = (FileEditorInput)input;
-  }
+    @Override
+    protected void setInput(IEditorInput input) {
+        super.setInput(input);
+        this.editorInput = (FileEditorInput) input;
+    }
 
-  @Override
-  protected IDesignViewer createDesignPage()
-  {
-    Composite container = getDesignContainer(getContainer());
+    @Override
+    protected IDesignViewer createDesignPage() {
+        Composite container = getDesignContainer(getContainer());
 
-    ViewLayoutTableTreeViewer tableTreeViewer = new ViewLayoutTableTreeViewer(container, new ViewLayout(editorInput.getFile()));
-    tableTreeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-    MdwPlugin.getPluginWorkbench().getHelpSystem().setHelp(tableTreeViewer.getControl(), MdwPlugin.getPluginId() + ".view_layout_editor_help");
+        ViewLayoutTableTreeViewer tableTreeViewer = new ViewLayoutTableTreeViewer(container,
+                new ViewLayout(editorInput.getFile()));
+        tableTreeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+        MdwPlugin.getPluginWorkbench().getHelpSystem().setHelp(tableTreeViewer.getControl(),
+                MdwPlugin.getPluginId() + ".view_layout_editor_help");
 
-    return tableTreeViewer;
-  }
+        return tableTreeViewer;
+    }
 }

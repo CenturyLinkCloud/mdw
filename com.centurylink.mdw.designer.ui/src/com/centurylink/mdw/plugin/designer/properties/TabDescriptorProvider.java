@@ -26,167 +26,140 @@ import com.centurylink.mdw.plugin.designer.model.AttributeHolder;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
-public class TabDescriptorProvider implements ITabDescriptorProvider
-{
-  public static final String CONTRIBUTOR_ID = "mdw.tabbedprops.contributor";
+public class TabDescriptorProvider implements ITabDescriptorProvider {
+    public static final String CONTRIBUTOR_ID = "mdw.tabbedprops.contributor";
 
-  private ITabbedPropertySheetPageContributor contributor;
-  private MyTabbedPropertyRegistry registry;
-
-  @Override
-  public ITabDescriptor[] getTabDescriptors(IWorkbenchPart part, ISelection selection)
-  {
-    if (contributor == null)
-    {
-      contributor = new ITabbedPropertySheetPageContributor()
-      {
-        public String getContributorId()
-        {
-          return CONTRIBUTOR_ID;
-        }
-      };
-    }
-    if (registry == null)
-    {
-      registry = new MyTabbedPropertyRegistry(CONTRIBUTOR_ID);
-    }
-
-    ITabDescriptor[] result = registry.getAllTabDescriptors();
-
-    if (selection instanceof WorkflowElement && selection instanceof AttributeHolder)
-    {
-      List<PageletTab> elementTabs = getPageletTabs((WorkflowElement)selection);
-      if (elementTabs != null)
-      {
-        for (PageletTab elementTab : elementTabs)
-        {
-          boolean add = true;
-          for (int i = 0; i < result.length; i++)
-          {
-            if (result[i].getId().equals(elementTab.getId()))
-            {
-              add = false;
-              break;
-            }
-          }
-          if (add)
-            result = addToArray(elementTab, result);
-        }
-      }
-    }
-
-    return result;
-  }
-
-  private ITabDescriptor[] addToArray(ITabDescriptor descriptor, ITabDescriptor[] array)
-  {
-    ITabDescriptor[] result = new ITabDescriptor[array.length + 1];
-    for (int i = 0; i < array.length; i++)
-      result[i] = array[i];
-    result[array.length] = descriptor;
-    return result;
-  }
-
-  protected List<PageletTab> getPageletTabs(WorkflowElement element)
-  {
-    List<PageletTab> tabs = null;
-    WorkflowProject project = element.getProject();
-    if (project.checkRequiredVersion(5, 5))
-    {
-      String elementType = element.getTitle();
-      List<PageletTab> allProjTabs = project.getPageletTabs();
-      if (allProjTabs != null)
-      {
-        for (PageletTab pageletTab : allProjTabs)
-        {
-          InputStream inStream = new ByteArrayInputStream(pageletTab.getXml().getBytes());
-          SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-          try
-          {
-            SAXParser parser = parserFactory.newSAXParser();
-            final List<String> types = new ArrayList<String>();
-            parser.parse(inStream, new DefaultHandler()
-            {
-              public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException
-              {
-                if (qName.equalsIgnoreCase("PAGELET"))
-                {
-                  String appliesTo = attrs.getValue("APPLIES_TO");
-                  if (appliesTo != null)
-                  {
-                    for (String type : appliesTo.split(","))
-                      types.add(type);
-                  }
-                }
-              }
-            });
-            if (types.contains(elementType))
-            {
-              if (tabs == null)
-                tabs = new ArrayList<PageletTab>();
-              tabs.add(pageletTab);
-            }
-          }
-          catch (Exception ex)
-          {
-            PluginMessages.log(ex);  // don't prevent processing other pagelets
-          }
-        }
-      }
-    }
-
-    return tabs;
-  }
-
-  /**
-   * The only purpose for this class is to use the default tabbed properties registry
-   * getAllTabDescriptors() method for retrieving tabs based on plugin.xml.
-   */
-  @SuppressWarnings({"restriction", "rawtypes", "unchecked"})
-  class MyTabbedPropertyRegistry extends org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyRegistry
-  {
-    protected MyTabbedPropertyRegistry(String id)
-    {
-      super(id);
-    }
-
-    public ITabDescriptor[] getAllTabDescriptors()
-    {
-      return super.getAllTabDescriptors();
-    }
+    private ITabbedPropertySheetPageContributor contributor;
+    private MyTabbedPropertyRegistry registry;
 
     @Override
-    protected List readTabDescriptors()
-    {
-      List result = new ArrayList();
-      IConfigurationElement[] extensions = getConfigurationElements("propertyTabs");
-      for (int i = 0; i < extensions.length; i++)
-      {
-        IConfigurationElement extension = extensions[i];
-        IConfigurationElement[] tabs = extension.getChildren("propertyTab");
-        for (int j = 0; j < tabs.length; j++)
-        {
-          IConfigurationElement tab = tabs[j];
-          PropertyTab descriptor = new PropertyTab(tab);
-          if (getIndex(propertyCategories.toArray(), descriptor.getCategory()) == -1)
-            PluginMessages.log("Tab Error - tab descriptor has unknown category:" + descriptor.getCategory());
-          else
-            result.add(descriptor);
+    public ITabDescriptor[] getTabDescriptors(IWorkbenchPart part, ISelection selection) {
+        if (contributor == null) {
+            contributor = new ITabbedPropertySheetPageContributor() {
+                public String getContributorId() {
+                    return CONTRIBUTOR_ID;
+                }
+            };
         }
-      }
-      return result;
+        if (registry == null) {
+            registry = new MyTabbedPropertyRegistry(CONTRIBUTOR_ID);
+        }
+
+        ITabDescriptor[] result = registry.getAllTabDescriptors();
+
+        if (selection instanceof WorkflowElement && selection instanceof AttributeHolder) {
+            List<PageletTab> elementTabs = getPageletTabs((WorkflowElement) selection);
+            if (elementTabs != null) {
+                for (PageletTab elementTab : elementTabs) {
+                    boolean add = true;
+                    for (int i = 0; i < result.length; i++) {
+                        if (result[i].getId().equals(elementTab.getId())) {
+                            add = false;
+                            break;
+                        }
+                    }
+                    if (add)
+                        result = addToArray(elementTab, result);
+                }
+            }
+        }
+
+        return result;
     }
 
-    private int getIndex(Object[] array, Object target)
-    {
-      for (int i = 0; i < array.length; i++)
-      {
-        if (array[i].equals(target))
-        {
-          return i;
-        }
-      }
-      return -1; // should never happen
+    private ITabDescriptor[] addToArray(ITabDescriptor descriptor, ITabDescriptor[] array) {
+        ITabDescriptor[] result = new ITabDescriptor[array.length + 1];
+        for (int i = 0; i < array.length; i++)
+            result[i] = array[i];
+        result[array.length] = descriptor;
+        return result;
     }
-  }
+
+    protected List<PageletTab> getPageletTabs(WorkflowElement element) {
+        List<PageletTab> tabs = null;
+        WorkflowProject project = element.getProject();
+        if (project.checkRequiredVersion(5, 5)) {
+            String elementType = element.getTitle();
+            List<PageletTab> allProjTabs = project.getPageletTabs();
+            if (allProjTabs != null) {
+                for (PageletTab pageletTab : allProjTabs) {
+                    InputStream inStream = new ByteArrayInputStream(pageletTab.getXml().getBytes());
+                    SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+                    try {
+                        SAXParser parser = parserFactory.newSAXParser();
+                        final List<String> types = new ArrayList<String>();
+                        parser.parse(inStream, new DefaultHandler() {
+                            public void startElement(String uri, String localName, String qName,
+                                    Attributes attrs) throws SAXException {
+                                if (qName.equalsIgnoreCase("PAGELET")) {
+                                    String appliesTo = attrs.getValue("APPLIES_TO");
+                                    if (appliesTo != null) {
+                                        for (String type : appliesTo.split(","))
+                                            types.add(type);
+                                    }
+                                }
+                            }
+                        });
+                        if (types.contains(elementType)) {
+                            if (tabs == null)
+                                tabs = new ArrayList<PageletTab>();
+                            tabs.add(pageletTab);
+                        }
+                    }
+                    catch (Exception ex) {
+                        PluginMessages.log(ex); // don't prevent processing
+                                                // other pagelets
+                    }
+                }
+            }
+        }
+
+        return tabs;
+    }
+
+    /**
+     * The only purpose for this class is to use the default tabbed properties
+     * registry getAllTabDescriptors() method for retrieving tabs based on
+     * plugin.xml.
+     */
+    @SuppressWarnings({ "restriction", "rawtypes", "unchecked" })
+    class MyTabbedPropertyRegistry
+            extends org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyRegistry {
+        protected MyTabbedPropertyRegistry(String id) {
+            super(id);
+        }
+
+        public ITabDescriptor[] getAllTabDescriptors() {
+            return super.getAllTabDescriptors();
+        }
+
+        @Override
+        protected List readTabDescriptors() {
+            List result = new ArrayList();
+            IConfigurationElement[] extensions = getConfigurationElements("propertyTabs");
+            for (int i = 0; i < extensions.length; i++) {
+                IConfigurationElement extension = extensions[i];
+                IConfigurationElement[] tabs = extension.getChildren("propertyTab");
+                for (int j = 0; j < tabs.length; j++) {
+                    IConfigurationElement tab = tabs[j];
+                    PropertyTab descriptor = new PropertyTab(tab);
+                    if (getIndex(propertyCategories.toArray(), descriptor.getCategory()) == -1)
+                        PluginMessages.log("Tab Error - tab descriptor has unknown category:"
+                                + descriptor.getCategory());
+                    else
+                        result.add(descriptor);
+                }
+            }
+            return result;
+        }
+
+        private int getIndex(Object[] array, Object target) {
+            for (int i = 0; i < array.length; i++) {
+                if (array[i].equals(target)) {
+                    return i;
+                }
+            }
+            return -1; // should never happen
+        }
+    }
 }

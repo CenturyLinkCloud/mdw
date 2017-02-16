@@ -28,107 +28,97 @@ import com.centurylink.mdw.plugin.designer.properties.editor.PropertyEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.TableEditor;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 
-public class AttributesSection extends PropertySection implements IFilter
-{
-  private WorkflowElement element;
-  public WorkflowElement getElement() { return element; }
+public class AttributesSection extends PropertySection implements IFilter {
+    private WorkflowElement element;
 
-  private TableEditor tableEditor;
-
-  public void setSelection(WorkflowElement selection)
-  {
-    this.element = selection;
-
-    tableEditor.setElement(element);
-    tableEditor.setValue(element.getAttributes());
-  }
-
-  public void drawWidgets(Composite composite, WorkflowElement selection)
-  {
-    this.element = selection;
-
-    tableEditor = new TableEditor(element, TableEditor.TYPE_TABLE);
-
-    List<ColumnSpec> columnSpecs = new ArrayList<ColumnSpec>();
-    columnSpecs.add(new ColumnSpec(PropertyEditor.TYPE_TEXT, "Attribute Name", "name"));
-    columnSpecs.add(new ColumnSpec(PropertyEditor.TYPE_TEXT, "Value", "value"));
-    tableEditor.setColumnSpecs(columnSpecs);
-
-    tableEditor.setReadOnly(true);
-
-    tableEditor.setContentProvider(new AttributeContentProvider());
-    tableEditor.setLabelProvider(new AttributeLabelProvider());
-    tableEditor.render(composite);
-    tableEditor.getTable().addSelectionListener(new SelectionAdapter()
-    {
-      @Override
-      public void widgetDefaultSelected(SelectionEvent e)
-      {
-        AttributeVO attributeVO = (AttributeVO) e.item.getData();
-        AttributeDialog dialog = new AttributeDialog(getShell(), attributeVO);
-        dialog.open();
-      }
-    });
-  }
-
-  class AttributeContentProvider implements IStructuredContentProvider
-  {
-    @SuppressWarnings("unchecked")
-    public Object[] getElements(Object inputElement)
-    {
-      List<AttributeVO> rows = (List<AttributeVO>) inputElement;
-      return rows.toArray(new AttributeVO[0]);
+    public WorkflowElement getElement() {
+        return element;
     }
 
-    public void dispose()
-    {
+    private TableEditor tableEditor;
+
+    public void setSelection(WorkflowElement selection) {
+        this.element = selection;
+
+        tableEditor.setElement(element);
+        tableEditor.setValue(element.getAttributes());
     }
 
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-    {
+    public void drawWidgets(Composite composite, WorkflowElement selection) {
+        this.element = selection;
+
+        tableEditor = new TableEditor(element, TableEditor.TYPE_TABLE);
+
+        List<ColumnSpec> columnSpecs = new ArrayList<ColumnSpec>();
+        columnSpecs.add(new ColumnSpec(PropertyEditor.TYPE_TEXT, "Attribute Name", "name"));
+        columnSpecs.add(new ColumnSpec(PropertyEditor.TYPE_TEXT, "Value", "value"));
+        tableEditor.setColumnSpecs(columnSpecs);
+
+        tableEditor.setReadOnly(true);
+
+        tableEditor.setContentProvider(new AttributeContentProvider());
+        tableEditor.setLabelProvider(new AttributeLabelProvider());
+        tableEditor.render(composite);
+        tableEditor.getTable().addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                AttributeVO attributeVO = (AttributeVO) e.item.getData();
+                AttributeDialog dialog = new AttributeDialog(getShell(), attributeVO);
+                dialog.open();
+            }
+        });
     }
-  }
 
-  class AttributeLabelProvider extends LabelProvider implements ITableLabelProvider
-  {
-    public Image getColumnImage(Object element, int columnIndex)
-    {
-      return null;
+    class AttributeContentProvider implements IStructuredContentProvider {
+        @SuppressWarnings("unchecked")
+        public Object[] getElements(Object inputElement) {
+            List<AttributeVO> rows = (List<AttributeVO>) inputElement;
+            return rows.toArray(new AttributeVO[0]);
+        }
+
+        public void dispose() {
+        }
+
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        }
     }
 
-    public String getColumnText(Object element, int columnIndex)
-    {
-      AttributeVO attributeVO = (AttributeVO) element;
+    class AttributeLabelProvider extends LabelProvider implements ITableLabelProvider {
+        public Image getColumnImage(Object element, int columnIndex) {
+            return null;
+        }
 
-      switch (columnIndex)
-      {
-        case 0:
-          return attributeVO.getAttributeName();
-        case 1:
-          return attributeVO.getAttributeValue();
-        default:
-          return null;
-      }
+        public String getColumnText(Object element, int columnIndex) {
+            AttributeVO attributeVO = (AttributeVO) element;
+
+            switch (columnIndex) {
+            case 0:
+                return attributeVO.getAttributeName();
+            case 1:
+                return attributeVO.getAttributeValue();
+            default:
+                return null;
+            }
+        }
     }
-  }
 
-  public boolean select(Object toTest)
-  {
-    if (!(toTest instanceof Activity) && !(toTest instanceof WorkflowProcess)
-            && !(toTest instanceof Transition) && !(toTest instanceof ActivityImpl)
-            && !(toTest instanceof EmbeddedSubProcess))
-      return false;
+    public boolean select(Object toTest) {
+        if (!(toTest instanceof Activity) && !(toTest instanceof WorkflowProcess)
+                && !(toTest instanceof Transition) && !(toTest instanceof ActivityImpl)
+                && !(toTest instanceof EmbeddedSubProcess))
+            return false;
 
-    if (toTest instanceof Activity && ((Activity)toTest).isForProcessInstance())
-      return false;
-    if (toTest instanceof Transition && ((Transition)toTest).isForProcessInstance())
-      return false;
-    if (toTest instanceof EmbeddedSubProcess && ((EmbeddedSubProcess)toTest).isForProcessInstance())
-      return false;
+        if (toTest instanceof Activity && ((Activity) toTest).isForProcessInstance())
+            return false;
+        if (toTest instanceof Transition && ((Transition) toTest).isForProcessInstance())
+            return false;
+        if (toTest instanceof EmbeddedSubProcess
+                && ((EmbeddedSubProcess) toTest).isForProcessInstance())
+            return false;
 
-    if (((WorkflowElement)toTest).hasInstanceInfo())
-      return false;
+        if (((WorkflowElement) toTest).hasInstanceInfo())
+            return false;
 
-    return true;
-  }
+        return true;
+    }
 }

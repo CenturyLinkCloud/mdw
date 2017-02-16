@@ -10,40 +10,39 @@ import org.eclipse.ui.internal.views.properties.tabbed.view.TabDescriptor;
  * Wraps a standard Eclipse property tab.
  */
 @SuppressWarnings("restriction")
-public class PropertyTab extends TabDescriptor
-{
-  public PropertyTab(IConfigurationElement configurationElement)
-  {
-    super(configurationElement);
-  }
+public class PropertyTab extends TabDescriptor {
+    public PropertyTab(IConfigurationElement configurationElement) {
+        super(configurationElement);
+    }
 
-  private boolean dirty;
-  public boolean isDirty() { return dirty; }
-  public void setDirty(boolean dirty)
-  {
-    this.dirty = dirty;
-  }
+    private boolean dirty;
 
-  /**
-   * Avoid discouraged access warnings.
-   */
-  public String getLabel()
-  {
-    return super.getLabel();
-  }
+    public boolean isDirty() {
+        return dirty;
+    }
 
-  @Override
-  public String getText()
-  {
-    return dirty ? getLabel() + " *" : getLabel();
-  }
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
 
-  public String getOverrideAttributePrefix()
-  {
-    // mdw.properties.tabs.simul.override
-    int override = getId().indexOf(".override");
-    String trimmed = getId().substring(0, override);
-    return trimmed.substring(trimmed.lastIndexOf('.') + 1).toUpperCase(); // by convention
-  }
+    /**
+     * Avoid discouraged access warnings.
+     */
+    public String getLabel() {
+        return super.getLabel();
+    }
+
+    @Override
+    public String getText() {
+        return dirty ? getLabel() + " *" : getLabel();
+    }
+
+    public String getOverrideAttributePrefix() {
+        // mdw.properties.tabs.simul.override
+        int override = getId().indexOf(".override");
+        String trimmed = getId().substring(0, override);
+        return trimmed.substring(trimmed.lastIndexOf('.') + 1).toUpperCase(); // by
+                                                                              // convention
+    }
 
 }

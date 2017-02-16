@@ -3,15 +3,12 @@
  */
 package com.centurylink.mdw.plugin.designer.wizards;
 
-public class ExportTaskTemplatesPage extends ImportExportPage
-{
-  public ExportTaskTemplatesPage()
-  {
-    super("Export MDW Tasks", "Export XML file for MDW task templates.");
-  }
+public class ExportTaskTemplatesPage extends ImportExportPage {
+    public ExportTaskTemplatesPage() {
+        super("Export MDW Tasks", "Export XML file for MDW task templates.");
+    }
 
-  protected String getDefaultFileName()
-  {
-    return getPackage().getName() + "-" + getPackage().getVersionString() + "_tasks.xml";
-  }
+    protected String getDefaultFileName() {
+        return getPackage().getName() + "-" + getPackage().getVersionString() + "_tasks.xml";
+    }
 }

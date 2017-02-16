@@ -8,12 +8,10 @@ import org.eclipse.ui.IWorkbench;
 
 import com.centurylink.mdw.plugin.designer.model.TextResource;
 
-public class NewTextResourceWizard extends WorkflowAssetWizard 
-{
-  public static final String WIZARD_ID = "mdw.designer.new.textResource";
-  
-  public void init(IWorkbench workbench, IStructuredSelection selection)
-  {
-    super.init(workbench, selection, new TextResource());
-  }
+public class NewTextResourceWizard extends WorkflowAssetWizard {
+    public static final String WIZARD_ID = "mdw.designer.new.textResource";
+
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        super.init(workbench, selection, new TextResource());
+    }
 }

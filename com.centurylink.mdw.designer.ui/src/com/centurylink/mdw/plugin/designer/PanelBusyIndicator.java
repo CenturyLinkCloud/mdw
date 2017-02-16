@@ -12,75 +12,63 @@ import org.eclipse.swt.widgets.Display;
 
 import com.centurylink.mdw.plugin.PluginUtil;
 
-public class PanelBusyIndicator
-{
-  Display display;
-  Component awtComponent;
+public class PanelBusyIndicator {
+    Display display;
+    Component awtComponent;
 
-  public PanelBusyIndicator(Display display, Component awtComponent)
-  {
-    this.display = display;
-    this.awtComponent = awtComponent;
-    if (!checkComponent())
-      throw new NullPointerException("Component ancestor cannot be null.");
-  }
-
-  /**
-   * Must be called from the SWT event thread.
-   */
-  public void busyWhile(Runnable runnable)
-  throws InvocationTargetException
-  {
-    if (PluginUtil.isMac())
-    {
-      // https://bugs.openjdk.java.net/browse/JDK-8087465
-      runnable.run();
-      return;
+    public PanelBusyIndicator(Display display, Component awtComponent) {
+        this.display = display;
+        this.awtComponent = awtComponent;
+        if (!checkComponent())
+            throw new NullPointerException("Component ancestor cannot be null.");
     }
 
-    try
-    {
-      EventQueue.invokeAndWait(new Runnable()
-      {
-        public void run()
-        {
-          awtComponent.setEnabled(false);
+    /**
+     * Must be called from the SWT event thread.
+     */
+    public void busyWhile(Runnable runnable) throws InvocationTargetException {
+        if (PluginUtil.isMac()) {
+            // https://bugs.openjdk.java.net/browse/JDK-8087465
+            runnable.run();
+            return;
         }
-      });
 
-      EventQueue.invokeLater(new Runnable()
-      {
-        public void run()
-        {
-          awtComponent.getParent().getParent().setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));
+        try {
+            EventQueue.invokeAndWait(new Runnable() {
+                public void run() {
+                    awtComponent.setEnabled(false);
+                }
+            });
+
+            EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    awtComponent.getParent().getParent().setCursor(
+                            java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));
+                }
+            });
+
+            BusyIndicator.showWhile(display, runnable);
         }
-      });
-
-      BusyIndicator.showWhile(display, runnable);
-    }
-    catch (InterruptedException ex)
-    {
-      throw new InvocationTargetException(ex);
-    }
-    finally
-    {
-      EventQueue.invokeLater(new Runnable()
-      {
-        public void run()
-        {
-          awtComponent.getParent().getParent().setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.DEFAULT_CURSOR));
-          awtComponent.setEnabled(true);
+        catch (InterruptedException ex) {
+            throw new InvocationTargetException(ex);
         }
-      });
+        finally {
+            EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    awtComponent.getParent().getParent().setCursor(
+                            java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    awtComponent.setEnabled(true);
+                }
+            });
+        }
     }
-  }
 
-  private boolean checkComponent()
-  {
-    if (awtComponent == null || awtComponent.getParent() == null || awtComponent.getParent().getParent() == null)
-      return false;
+    private boolean checkComponent() {
+        if (awtComponent == null || awtComponent.getParent() == null
+                || awtComponent.getParent().getParent() == null)
+            return false;
 
-    return true;
-  }
+        return true;
+    }
 
 }

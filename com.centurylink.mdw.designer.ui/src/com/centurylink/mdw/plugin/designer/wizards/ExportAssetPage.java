@@ -3,22 +3,17 @@
  */
 package com.centurylink.mdw.plugin.designer.wizards;
 
+public class ExportAssetPage extends ImportExportPage {
+    public ExportAssetPage() {
+        super("Export MDW Asset", "Export workflow asset to file.");
+    }
 
-public class ExportAssetPage extends ImportExportPage
-{
-  public ExportAssetPage()
-  {
-    super("Export MDW Asset", "Export workflow asset to file.");
-  }
+    protected String getDefaultFileName() {
+        return getAsset().getName();
+    }
 
-  protected String getDefaultFileName()
-  {
-    return getAsset().getName();
-  }
-
-  @Override
-  protected String getFileExtension()
-  {
-    return getAsset().getExtension();
-  }
+    @Override
+    protected String getFileExtension() {
+        return getAsset().getExtension();
+    }
 }

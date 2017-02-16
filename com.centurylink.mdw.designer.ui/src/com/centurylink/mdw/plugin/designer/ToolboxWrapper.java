@@ -63,448 +63,414 @@ import com.centurylink.mdw.plugin.search.SearchResultsPage;
 import com.centurylink.mdw.plugin.swing.support.EmbeddedSwingComposite;
 
 /**
- * SWT wrapper for the designer toolbox swing component pane.
- * This is a singleton since there is only one toolbox view.
+ * SWT wrapper for the designer toolbox swing component pane. This is a
+ * singleton since there is only one toolbox view.
  */
-public class ToolboxWrapper extends DesignerPanelWrapper implements AWTEventListener, ElementChangeListener
-{
-  public static final String VIEW_ID = "mdw.views.designer.toolbox";
+public class ToolboxWrapper extends DesignerPanelWrapper
+        implements AWTEventListener, ElementChangeListener {
+    public static final String VIEW_ID = "mdw.views.designer.toolbox";
 
-  private WorkflowProcess process;
-  public WorkflowProcess getProcess() { return process; }
-  public void setProcess(WorkflowProcess process)
-  {
-    if (process != null)
-      process.getProject().removeElementChangeListener(this);
-    this.process = process;
-    process.getProject().addElementChangeListener(this);
-  }
+    private WorkflowProcess process;
 
-  private static ToolboxWrapper instance;
-  private ActivityImpl toolboxSelection;
-  public ActivityImpl getToolboxSelection() { return toolboxSelection; }
+    public WorkflowProcess getProcess() {
+        return process;
+    }
 
-  private FlowchartPage flowchartPage;
-  public FlowchartPage getFlowchartPage() { return flowchartPage; }
-  public void setFlowchartPage(FlowchartPage flowchartPage) { this.flowchartPage = flowchartPage; }
+    public void setProcess(WorkflowProcess process) {
+        if (process != null)
+            process.getProject().removeElementChangeListener(this);
+        this.process = process;
+        process.getProject().addElementChangeListener(this);
+    }
 
-  private ToolboxWrapper()
-  {
-    Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_EVENT_MASK);
-  }
+    private static ToolboxWrapper instance;
+    private ActivityImpl toolboxSelection;
 
-  private Map<String,List<ActivityImpl>> projectDirtyImpls = new HashMap<String,List<ActivityImpl>>();
+    public ActivityImpl getToolboxSelection() {
+        return toolboxSelection;
+    }
 
-  public boolean isDirty()
-  {
-    List<ActivityImpl> dirtyImpls = getDirtyImpls();
-    return isPopulated() && dirtyImpls != null && !dirtyImpls.isEmpty();
-  }
-  public void setDirty(ActivityImpl impl)
-  {
-    List<ActivityImpl> dirtyImpls = getDirtyImpls();
-    if (dirtyImpls == null)
-      dirtyImpls = new ArrayList<ActivityImpl>();
-    if (!dirtyImpls.contains(impl))
-      dirtyImpls.add(impl);
-    projectDirtyImpls.put(getProject().getLabel(), dirtyImpls);
-  }
-  public void clearDirty()
-  {
-    projectDirtyImpls.remove(getProject().getLabel());
-  }
-  public void dirtyStateChanged(boolean dirty)
-  {
-    if (dirty)
-      setDirty(getToolboxSelection());
-    else
-      projectDirtyImpls.remove(getProject().getName());
+    private FlowchartPage flowchartPage;
 
-    super.dirtyStateChanged(dirty);
-  }
-  public List<ActivityImpl> getDirtyImpls()
-  {
-    return projectDirtyImpls.get(getProject().getLabel());
-  }
+    public FlowchartPage getFlowchartPage() {
+        return flowchartPage;
+    }
 
-  public static ToolboxWrapper getInstance()
-  {
-    if (instance == null)
-      instance = new ToolboxWrapper();
+    public void setFlowchartPage(FlowchartPage flowchartPage) {
+        this.flowchartPage = flowchartPage;
+    }
 
-    return instance;
-  }
+    private ToolboxWrapper() {
+        Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_EVENT_MASK);
+    }
 
-  public void populate()
-  {
-    if (getFlowchartPage() != null)
-      filter();
-    super.populate();
-  }
+    private Map<String, List<ActivityImpl>> projectDirtyImpls = new HashMap<String, List<ActivityImpl>>();
 
-  public boolean isPopulated()
-  {
-    return getFlowchartPage() != null;
-  }
+    public boolean isDirty() {
+        List<ActivityImpl> dirtyImpls = getDirtyImpls();
+        return isPopulated() && dirtyImpls != null && !dirtyImpls.isEmpty();
+    }
 
-  /**
-   * Creates the wrapped Swing component.
-   * @param parent the parent SWT part
-   * @return the SWT composite with the embedded Swing component
-   */
-  public EmbeddedSwingComposite createEmbeddedSwingComposite(Composite parent)
-  {
-    return new EmbeddedSwingComposite(parent, SWT.NONE)
-    {
-      @Override
-      protected JComponent createSwingComponent()
-      {
-        JPanel toolbarPane = null;
-        if (getFlowchartPage() == null)
-        {
-          toolbarPane = new JPanel();
-        }
-        else if (isInstance())
-        {
-          toolbarPane = new ProcessStatusPane(null);
-        }
+    public void setDirty(ActivityImpl impl) {
+        List<ActivityImpl> dirtyImpls = getDirtyImpls();
+        if (dirtyImpls == null)
+            dirtyImpls = new ArrayList<ActivityImpl>();
+        if (!dirtyImpls.contains(impl))
+            dirtyImpls.add(impl);
+        projectDirtyImpls.put(getProject().getLabel(), dirtyImpls);
+    }
+
+    public void clearDirty() {
+        projectDirtyImpls.remove(getProject().getLabel());
+    }
+
+    public void dirtyStateChanged(boolean dirty) {
+        if (dirty)
+            setDirty(getToolboxSelection());
         else
-        {
-          getFlowchartPage().nodepane.reload(isSortAtoZ(), getProject().getDataAccess().getSchemaVersion());
-          toolbarPane = getFlowchartPage().nodepane;
-        }
-        JScrollPane scrollPane = new JScrollPane(toolbarPane);
-        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setBackground(Color.GRAY);
-        return scrollPane;
-      }
-    };
-  }
+            projectDirtyImpls.remove(getProject().getName());
 
-  /**
-   * Handles Swing events (running on the AWT UI thread).
-   */
-  public void eventDispatched(AWTEvent event)
-  {
-    if (getFlowchartPage() == null || !event.getSource().equals(getFlowchartPage().nodepane))
-      return;
+        super.dirtyStateChanged(dirty);
+    }
 
-    if (event.getID() == MouseEvent.MOUSE_RELEASED)
-    {
-      MouseEvent mouseEvent = (MouseEvent) event;
-      if (mouseEvent.isPopupTrigger() || (PluginUtil.isMac() && mouseEvent.getButton() == 3))
-      {
-        getDisplay().asyncExec(new Runnable()
-        {
-          public void run()
-          {
-            final Menu menu = buildPopupMenu();
-            if (menu != null)
-            {
-              getEmbeddedSwingComposite().setMenu(menu);
-              menu.setVisible(true);
+    public List<ActivityImpl> getDirtyImpls() {
+        return projectDirtyImpls.get(getProject().getLabel());
+    }
+
+    public static ToolboxWrapper getInstance() {
+        if (instance == null)
+            instance = new ToolboxWrapper();
+
+        return instance;
+    }
+
+    public void populate() {
+        if (getFlowchartPage() != null)
+            filter();
+        super.populate();
+    }
+
+    public boolean isPopulated() {
+        return getFlowchartPage() != null;
+    }
+
+    /**
+     * Creates the wrapped Swing component.
+     * 
+     * @param parent
+     *            the parent SWT part
+     * @return the SWT composite with the embedded Swing component
+     */
+    public EmbeddedSwingComposite createEmbeddedSwingComposite(Composite parent) {
+        return new EmbeddedSwingComposite(parent, SWT.NONE) {
+            @Override
+            protected JComponent createSwingComponent() {
+                JPanel toolbarPane = null;
+                if (getFlowchartPage() == null) {
+                    toolbarPane = new JPanel();
+                }
+                else if (isInstance()) {
+                    toolbarPane = new ProcessStatusPane(null);
+                }
+                else {
+                    getFlowchartPage().nodepane.reload(isSortAtoZ(),
+                            getProject().getDataAccess().getSchemaVersion());
+                    toolbarPane = getFlowchartPage().nodepane;
+                }
+                JScrollPane scrollPane = new JScrollPane(toolbarPane);
+                scrollPane.setHorizontalScrollBarPolicy(
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                scrollPane.setBackground(Color.GRAY);
+                return scrollPane;
             }
-          }
-        });
-        mouseEvent.consume();
-      }
+        };
     }
-    else if (event.getID() == MouseEvent.MOUSE_CLICKED)
-    {
-      // don't propagate double-click events
-      MouseEvent mouseEvent = (MouseEvent) event;
-      if (mouseEvent.getClickCount() > 1)
-        mouseEvent.consume();
-    }
-    else if (event.getID() == MouseEvent.MOUSE_PRESSED || event.getID() == MouseEvent.MOUSE_DRAGGED)
-    {
-      // set the current selection
-      MouseEvent mouseEvent = (MouseEvent) event;
-      handleSelection(mouseEvent.getX(), mouseEvent.getY());
-      final boolean doubleClick = mouseEvent.getClickCount() > 1;
 
-      getDisplay().asyncExec(new Runnable()
-      {
-        public void run()
-        {
-          setViewFocus();
-          getSelectionProvider().setSelection(toolboxSelection);
-          if (doubleClick)
-            showPropertiesView();
+    /**
+     * Handles Swing events (running on the AWT UI thread).
+     */
+    public void eventDispatched(AWTEvent event) {
+        if (getFlowchartPage() == null || !event.getSource().equals(getFlowchartPage().nodepane))
+            return;
+
+        if (event.getID() == MouseEvent.MOUSE_RELEASED) {
+            MouseEvent mouseEvent = (MouseEvent) event;
+            if (mouseEvent.isPopupTrigger()
+                    || (PluginUtil.isMac() && mouseEvent.getButton() == 3)) {
+                getDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        final Menu menu = buildPopupMenu();
+                        if (menu != null) {
+                            getEmbeddedSwingComposite().setMenu(menu);
+                            menu.setVisible(true);
+                        }
+                    }
+                });
+                mouseEvent.consume();
+            }
         }
-      });
-    }
-  }
-
-  private void handleSelection(int mouseX, int mouseY)
-  {
-    int idx = getFlowchartPage().nodepane.nodeAt(mouseX, mouseY);
-    if (idx != -1)
-    {
-      Object obj = getDesignerProxy().getNodeMetaInfo().get(idx);
-      if (obj instanceof ActivityImplementorVO)
-      {
-        ActivityImplementorVO activityImplVO = (ActivityImplementorVO) obj;
-        toolboxSelection = getProject().getActivityImpl(activityImplVO.getImplementorClassName());
-        if (!toolboxSelection.isUserAuthorized(UserRoleVO.ASSET_DESIGN))
-          toolboxSelection.setReadOnly(true);
-      }
-    }
-    toolboxSelection.addDirtyStateListener(this);
-  }
-
-  /**
-   * Updates the UI to reflect the model.
-   */
-  public void update()
-  {
-    filter();
-    getFlowchartPage().nodepane.reload(isSortAtoZ(), getProject().getDataAccess().getSchemaVersion());
-    clearDirty();
-  }
-
-  /**
-   * Applies filters for suppressed implementors.
-   */
-  public void filter()
-  {
-    try
-    {
-      List<String> suppressed = getProject().getSuppressedActivityImplementors();
-      for (ActivityImplementorVO impl : getProject().getDataAccess().getDesignerDataModel().getActivityImplementors())
-        impl.setShowInToolbox(!suppressed.contains(impl.getImplementorClassName()) && !impl.isHidden());
-    }
-    catch (IOException ex)
-    {
-      PluginMessages.uiError(ex, "Filter Implementors", getProject());
-    }
-  }
-
-  /**
-   * Reloads from the database.
-   */
-  public void refresh()
-  {
-    try
-    {
-      IRunnableWithProgress loader = new IRunnableWithProgress()
-      {
-        public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
-        {
-          ProgressMonitor progressMonitor = new SwtProgressMonitor(monitor);
-          progressMonitor.start("Loading Activity Implementors for " + getProject().getLabel());
-          progressMonitor.progress(25);
-          getProject().reloadActivityImplementors();
-          progressMonitor.done();
+        else if (event.getID() == MouseEvent.MOUSE_CLICKED) {
+            // don't propagate double-click events
+            MouseEvent mouseEvent = (MouseEvent) event;
+            if (mouseEvent.getClickCount() > 1)
+                mouseEvent.consume();
         }
-      };
-      ProgressMonitorDialog progMonDlg = new MdwProgressMonitorDialog(Display.getCurrent().getActiveShell());
-      progMonDlg.run(true, false, loader);
-    }
-    catch (Exception ex)
-    {
-      PluginMessages.uiError(ex, "Refresh Implementors", getProject());
-    }
-    update();
-    clearDirty();
-  }
+        else if (event.getID() == MouseEvent.MOUSE_PRESSED
+                || event.getID() == MouseEvent.MOUSE_DRAGGED) {
+            // set the current selection
+            MouseEvent mouseEvent = (MouseEvent) event;
+            handleSelection(mouseEvent.getX(), mouseEvent.getY());
+            final boolean doubleClick = mouseEvent.getClickCount() > 1;
 
-  private boolean isSortAtoZ()
-  {
-    IPreferenceStore prefsStore = MdwPlugin.getDefault().getPreferenceStore();
-    return prefsStore.getBoolean(PreferenceConstants.PREFS_SORT_TOOLBOX_A_TO_Z);
-  }
-
-  public void setViewFocus()
-  {
-    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-    if (page != null)
-    {
-      IViewPart viewPart = page.findView(VIEW_ID);
-      if (viewPart != null)
-        page.activate(viewPart);
-    }
-  }
-
-  public boolean isInstance()
-  {
-    if (getProcess() == null)
-      return false;
-    return getProcess().hasInstanceInfo();
-  }
-
-  public DesignerProxy getDesignerProxy()
-  {
-    return getProject().getDesignerProxy();
-  }
-
-  public PluginDataAccess getDataAccess()
-  {
-    return getProject().getDataAccess();
-  }
-
-  public WorkflowProject getProject()
-  {
-    return process.getProject();
-  }
-
-  /**
-   * Needs to run on the SWT UI thread.
-   */
-  private Menu buildPopupMenu()
-  {
-    if (toolboxSelection == null)
-      return null;
-
-    Menu menu = new Menu(getParent().getShell(), SWT.POP_UP);
-
-    if (toolboxSelection != null && toolboxSelection.isUserAuthorized(UserRoleVO.ASSET_DESIGN))
-    {
-      MenuItem newItem = new MenuItem(menu, SWT.PUSH);
-      newItem.setText("New...");
-      ImageDescriptor newImageDesc = MdwPlugin.getImageDescriptor("icons/genact_wiz.gif");
-      newItem.setImage(newImageDesc.createImage());
-      newItem.addSelectionListener(new SelectionAdapter()
-      {
-        public void widgetSelected(SelectionEvent e)
-        {
-          newImpl();
-        }
-      });
-
-      // delete
-      if (!toolboxSelection.isPseudoProcessActivity())
-      {
-        MenuItem deleteItem = new MenuItem(menu, SWT.PUSH);
-        deleteItem.setText("Delete");
-        ImageDescriptor deleteImageDesc = MdwPlugin.getImageDescriptor("icons/delete.gif");
-        deleteItem.setImage(deleteImageDesc.createImage());
-        deleteItem.addSelectionListener(new SelectionAdapter()
-        {
-          public void widgetSelected(SelectionEvent e)
-          {
-            deleteImpl();
-          }
-        });
-      }
-    }
-
-    // properties
-    MenuItem propsItem = new MenuItem(menu, SWT.PUSH);
-    propsItem.setText("Show Properties");
-    ImageDescriptor propsImageDesc = MdwPlugin.getImageDescriptor("icons/properties.gif");
-    propsItem.setImage(propsImageDesc.createImage());
-    propsItem.addSelectionListener(new SelectionAdapter()
-    {
-      public void widgetSelected(SelectionEvent e)
-      {
-        showPropertiesView();
-      }
-    });
-
-    // view impl source
-    if (!toolboxSelection.isPseudoProcessActivity())
-    {
-      MenuItem sourceItem = new MenuItem(menu, SWT.PUSH);
-      sourceItem.setText("View Source");
-      ImageDescriptor sourceImageDesc = MdwPlugin.getImageDescriptor("icons/java.gif");
-      sourceItem.setImage(sourceImageDesc.createImage());
-      sourceItem.addSelectionListener(new SelectionAdapter()
-      {
-        public void widgetSelected(SelectionEvent e)
-        {
-          PanelBusyIndicator pbi = new PanelBusyIndicator(getDisplay(), getFlowchartPage().nodepane);
-          try
-          {
-            pbi.busyWhile(new Runnable()
-            {
-              public void run()
-              {
-                toolboxSelection.getProject().viewSource(toolboxSelection.getImplClassName());
-              }
+            getDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    setViewFocus();
+                    getSelectionProvider().setSelection(toolboxSelection);
+                    if (doubleClick)
+                        showPropertiesView();
+                }
             });
-          }
-          catch (Exception ex)
-          {
-            PluginMessages.uiError(ex, "View Source", getProject());
-          }
         }
-      });
     }
 
-    // search for references
-    MenuItem refsItem = new MenuItem(menu, SWT.PUSH);
-    refsItem.setText("Search for Usages");
-    ImageDescriptor refsImageDesc = MdwPlugin.getImageDescriptor("icons/references.gif");
-    refsItem.setImage(refsImageDesc.createImage());
-    refsItem.addSelectionListener(new SelectionAdapter()
-    {
-      public void widgetSelected(SelectionEvent e)
-      {
-        searchReferences(toolboxSelection);
-      }
-    });
-
-    return menu;
-  }
-
-  private void deleteImpl()
-  {
-    IViewPart viewPart = getViewPart();
-    if (viewPart != null)
-      ((ToolboxView)viewPart).handleDelete();
-  }
-
-  private void newImpl()
-  {
-    IViewPart viewPart = getViewPart();
-    if (viewPart != null)
-      ((ToolboxView)viewPart).handleNew();
-  }
-
-  private IViewPart getViewPart()
-  {
-    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-    if (page != null)
-      return page.findView(VIEW_ID);
-    return null;
-  }
-
-  private void searchReferences(ActivityImpl activityImpl)
-  {
-    List<WorkflowProject> projects = new ArrayList<WorkflowProject>();
-    projects.add(getProject());
-    Shell shell = MdwPlugin.getActiveWorkbenchWindow().getShell();
-    ProcessSearchQuery searchQuery = new ProcessSearchQuery(projects, SearchQuery.SearchType.CONTAINING_ENTITY, "*", true, shell);
-    searchQuery.setContainedEntityId(activityImpl.getId());
-    searchQuery.setContainedEntityName(activityImpl.getImplClassName());
-
-    try
-    {
-      ProgressMonitorDialog context = new MdwProgressMonitorDialog(shell);
-      NewSearchUI.runQueryInForeground(context, searchQuery);
-
-      // this shouldn't be necessary according to the Eclipse API docs
-      NewSearchUI.activateSearchResultView();
-      ISearchResultViewPart part = NewSearchUI.getSearchResultView();
-      part.updateLabel();
-      SearchResultsPage page = (SearchResultsPage)part.getActivePage();
-      page.setSearchQuery(searchQuery);
-      page.setInput(searchQuery.getSearchResult(), null);
+    private void handleSelection(int mouseX, int mouseY) {
+        int idx = getFlowchartPage().nodepane.nodeAt(mouseX, mouseY);
+        if (idx != -1) {
+            Object obj = getDesignerProxy().getNodeMetaInfo().get(idx);
+            if (obj instanceof ActivityImplementorVO) {
+                ActivityImplementorVO activityImplVO = (ActivityImplementorVO) obj;
+                toolboxSelection = getProject()
+                        .getActivityImpl(activityImplVO.getImplementorClassName());
+                if (!toolboxSelection.isUserAuthorized(UserRoleVO.ASSET_DESIGN))
+                    toolboxSelection.setReadOnly(true);
+            }
+        }
+        toolboxSelection.addDirtyStateListener(this);
     }
-    catch (OperationCanceledException ex)
-    {
-      MessageDialog.openInformation(shell, "Search Cancelled", "Search for usages cancelled.");
-    }
-    catch (Exception ex)
-    {
-      PluginMessages.uiError(shell, ex, "Search for Usages", getProject());
-    }
-  }
 
-  public void elementChanged(ElementChangeEvent ece)
-  {
-    if (ece.getElement() instanceof ActivityImpl && getFlowchartPage() != null)  // must be visible
-      update(); // reflect any changes
-  }
+    /**
+     * Updates the UI to reflect the model.
+     */
+    public void update() {
+        filter();
+        getFlowchartPage().nodepane.reload(isSortAtoZ(),
+                getProject().getDataAccess().getSchemaVersion());
+        clearDirty();
+    }
+
+    /**
+     * Applies filters for suppressed implementors.
+     */
+    public void filter() {
+        try {
+            List<String> suppressed = getProject().getSuppressedActivityImplementors();
+            for (ActivityImplementorVO impl : getProject().getDataAccess().getDesignerDataModel()
+                    .getActivityImplementors())
+                impl.setShowInToolbox(
+                        !suppressed.contains(impl.getImplementorClassName()) && !impl.isHidden());
+        }
+        catch (IOException ex) {
+            PluginMessages.uiError(ex, "Filter Implementors", getProject());
+        }
+    }
+
+    /**
+     * Reloads from the database.
+     */
+    public void refresh() {
+        try {
+            IRunnableWithProgress loader = new IRunnableWithProgress() {
+                public void run(IProgressMonitor monitor)
+                        throws InvocationTargetException, InterruptedException {
+                    ProgressMonitor progressMonitor = new SwtProgressMonitor(monitor);
+                    progressMonitor
+                            .start("Loading Activity Implementors for " + getProject().getLabel());
+                    progressMonitor.progress(25);
+                    getProject().reloadActivityImplementors();
+                    progressMonitor.done();
+                }
+            };
+            ProgressMonitorDialog progMonDlg = new MdwProgressMonitorDialog(
+                    Display.getCurrent().getActiveShell());
+            progMonDlg.run(true, false, loader);
+        }
+        catch (Exception ex) {
+            PluginMessages.uiError(ex, "Refresh Implementors", getProject());
+        }
+        update();
+        clearDirty();
+    }
+
+    private boolean isSortAtoZ() {
+        IPreferenceStore prefsStore = MdwPlugin.getDefault().getPreferenceStore();
+        return prefsStore.getBoolean(PreferenceConstants.PREFS_SORT_TOOLBOX_A_TO_Z);
+    }
+
+    public void setViewFocus() {
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        if (page != null) {
+            IViewPart viewPart = page.findView(VIEW_ID);
+            if (viewPart != null)
+                page.activate(viewPart);
+        }
+    }
+
+    public boolean isInstance() {
+        if (getProcess() == null)
+            return false;
+        return getProcess().hasInstanceInfo();
+    }
+
+    public DesignerProxy getDesignerProxy() {
+        return getProject().getDesignerProxy();
+    }
+
+    public PluginDataAccess getDataAccess() {
+        return getProject().getDataAccess();
+    }
+
+    public WorkflowProject getProject() {
+        return process.getProject();
+    }
+
+    /**
+     * Needs to run on the SWT UI thread.
+     */
+    private Menu buildPopupMenu() {
+        if (toolboxSelection == null)
+            return null;
+
+        Menu menu = new Menu(getParent().getShell(), SWT.POP_UP);
+
+        if (toolboxSelection != null
+                && toolboxSelection.isUserAuthorized(UserRoleVO.ASSET_DESIGN)) {
+            MenuItem newItem = new MenuItem(menu, SWT.PUSH);
+            newItem.setText("New...");
+            ImageDescriptor newImageDesc = MdwPlugin.getImageDescriptor("icons/genact_wiz.gif");
+            newItem.setImage(newImageDesc.createImage());
+            newItem.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e) {
+                    newImpl();
+                }
+            });
+
+            // delete
+            if (!toolboxSelection.isPseudoProcessActivity()) {
+                MenuItem deleteItem = new MenuItem(menu, SWT.PUSH);
+                deleteItem.setText("Delete");
+                ImageDescriptor deleteImageDesc = MdwPlugin.getImageDescriptor("icons/delete.gif");
+                deleteItem.setImage(deleteImageDesc.createImage());
+                deleteItem.addSelectionListener(new SelectionAdapter() {
+                    public void widgetSelected(SelectionEvent e) {
+                        deleteImpl();
+                    }
+                });
+            }
+        }
+
+        // properties
+        MenuItem propsItem = new MenuItem(menu, SWT.PUSH);
+        propsItem.setText("Show Properties");
+        ImageDescriptor propsImageDesc = MdwPlugin.getImageDescriptor("icons/properties.gif");
+        propsItem.setImage(propsImageDesc.createImage());
+        propsItem.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                showPropertiesView();
+            }
+        });
+
+        // view impl source
+        if (!toolboxSelection.isPseudoProcessActivity()) {
+            MenuItem sourceItem = new MenuItem(menu, SWT.PUSH);
+            sourceItem.setText("View Source");
+            ImageDescriptor sourceImageDesc = MdwPlugin.getImageDescriptor("icons/java.gif");
+            sourceItem.setImage(sourceImageDesc.createImage());
+            sourceItem.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e) {
+                    PanelBusyIndicator pbi = new PanelBusyIndicator(getDisplay(),
+                            getFlowchartPage().nodepane);
+                    try {
+                        pbi.busyWhile(new Runnable() {
+                            public void run() {
+                                toolboxSelection.getProject()
+                                        .viewSource(toolboxSelection.getImplClassName());
+                            }
+                        });
+                    }
+                    catch (Exception ex) {
+                        PluginMessages.uiError(ex, "View Source", getProject());
+                    }
+                }
+            });
+        }
+
+        // search for references
+        MenuItem refsItem = new MenuItem(menu, SWT.PUSH);
+        refsItem.setText("Search for Usages");
+        ImageDescriptor refsImageDesc = MdwPlugin.getImageDescriptor("icons/references.gif");
+        refsItem.setImage(refsImageDesc.createImage());
+        refsItem.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                searchReferences(toolboxSelection);
+            }
+        });
+
+        return menu;
+    }
+
+    private void deleteImpl() {
+        IViewPart viewPart = getViewPart();
+        if (viewPart != null)
+            ((ToolboxView) viewPart).handleDelete();
+    }
+
+    private void newImpl() {
+        IViewPart viewPart = getViewPart();
+        if (viewPart != null)
+            ((ToolboxView) viewPart).handleNew();
+    }
+
+    private IViewPart getViewPart() {
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        if (page != null)
+            return page.findView(VIEW_ID);
+        return null;
+    }
+
+    private void searchReferences(ActivityImpl activityImpl) {
+        List<WorkflowProject> projects = new ArrayList<WorkflowProject>();
+        projects.add(getProject());
+        Shell shell = MdwPlugin.getActiveWorkbenchWindow().getShell();
+        ProcessSearchQuery searchQuery = new ProcessSearchQuery(projects,
+                SearchQuery.SearchType.CONTAINING_ENTITY, "*", true, shell);
+        searchQuery.setContainedEntityId(activityImpl.getId());
+        searchQuery.setContainedEntityName(activityImpl.getImplClassName());
+
+        try {
+            ProgressMonitorDialog context = new MdwProgressMonitorDialog(shell);
+            NewSearchUI.runQueryInForeground(context, searchQuery);
+
+            // this shouldn't be necessary according to the Eclipse API docs
+            NewSearchUI.activateSearchResultView();
+            ISearchResultViewPart part = NewSearchUI.getSearchResultView();
+            part.updateLabel();
+            SearchResultsPage page = (SearchResultsPage) part.getActivePage();
+            page.setSearchQuery(searchQuery);
+            page.setInput(searchQuery.getSearchResult(), null);
+        }
+        catch (OperationCanceledException ex) {
+            MessageDialog.openInformation(shell, "Search Cancelled",
+                    "Search for usages cancelled.");
+        }
+        catch (Exception ex) {
+            PluginMessages.uiError(shell, ex, "Search for Usages", getProject());
+        }
+    }
+
+    public void elementChanged(ElementChangeEvent ece) {
+        if (ece.getElement() instanceof ActivityImpl && getFlowchartPage() != null) // must
+                                                                                    // be
+                                                                                    // visible
+            update(); // reflect any changes
+    }
 }
