@@ -3,16 +3,13 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Path;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,6 +22,8 @@ import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -48,57 +47,51 @@ public class HttpMessages extends JsonRestService {
         return Entity.Role;
     }
 
-
-    /**
-     * For http post
-     */
     @Override
     @ApiOperation(value="http post call",
-    notes="Request must contain a valid URL, body and user.", response=HttpMessage.class)
+    notes="Request must contain a valid URL, payload and user.", response=HttpMessage.class)
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
+        long before = java.lang.System.currentTimeMillis();
+        HttpMessage requestMessage = new HttpMessage(content);
+        String response = "Error: Please check Server side logs";
+        int code = -1;
+        HttpHelper httpClient = null;
+
         try {
-            HttpMessage requestMessage = new HttpMessage(content);
-            User userVO = ServiceLocator.getUserManager().getUser(requestMessage.getUser());
-            if (userVO == null)
-                throw new ServiceException("User not found: " + requestMessage.getUser());
-
-            if (requestMessage.getTimeout() == null || requestMessage.getTimeout() == 0)
-            {
-                requestMessage.setTimeout(new Integer(15000));
+            if (StringHelper.isEmpty(requestMessage.getRequestMessage())) {
+                response = "Missing payload for HTTP POST method " + content;
             }
-
-            HttpClient httpClient = new HttpClient();
-            PostMethod postMethod = new PostMethod(requestMessage.getUrl());
-            postMethod.getParams().setParameter("http.socket.timeout", requestMessage.getTimeout());
-            postMethod.getParams().setParameter("http.connection.timeout", requestMessage.getTimeout());
-            if (requestMessage.getHeaders()!= null)
-            {
-                for (String header : requestMessage.getHeaders().split(","))
+            else {
+                User userVO = ServiceLocator.getUserManager().getUser(requestMessage.getUser());
+                if (userVO == null)
+                    throw new ServiceException("User not found: " + requestMessage.getUser());
+                httpClient = new HttpHelper(new URL(requestMessage.getUrl()));
+                httpClient.setHeaders(headers);
+                if (requestMessage.getTimeout() == null || requestMessage.getTimeout() == 0)
                 {
-                    int eq = header.indexOf('=');
-                    if (eq > 0)
-                        postMethod.setRequestHeader(header.substring(0, eq).trim(), header.substring(eq + 1).trim());
+                    requestMessage.setTimeout(new Integer(15000));
                 }
+                response = httpClient.post(requestMessage.getRequestMessage(), requestMessage.getTimeout(), requestMessage.getTimeout());
+                code = httpClient.getResponseCode();
             }
-            RequestEntity reqEntity = new StringRequestEntity(requestMessage.getRequestMessage(),"text/xml", "UTF-8");
-            postMethod.setRequestEntity(reqEntity);
-            long before = java.lang.System.currentTimeMillis();
-            requestMessage.setStatusCode(httpClient.executeMethod(postMethod));
-            String response = postMethod.getResponseBodyAsString();
-            requestMessage.setResponse(response);
-            int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
-
-            if (logger.isDebugEnabled())
-                logger.debug("Replied with a response: [" + response + "] in time  = " + responseTime);
-
-            requestMessage.setResponseTime(responseTime);
-            return requestMessage.getJson();
-
+        }
+        catch (MalformedURLException e) {
+            response = e.getMessage() + requestMessage.getUrl();
         }
         catch (Exception ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            response = ex.getMessage() + " :\n "+ httpClient.getResponse();
+            code = httpClient.getResponseCode();
         }
+        finally{
+            int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
+            if (logger.isDebugEnabled())
+                logger.debug("Post Call replied with a response: [" + response + "] in time  = " + responseTime);
+            requestMessage.setResponseTime(responseTime);
+            requestMessage.setResponse(response);
+            requestMessage.setStatusCode(code);
+        }
+        return requestMessage.getJson();
     }
 
     @Override
@@ -106,14 +99,18 @@ public class HttpMessages extends JsonRestService {
     notes="Request must contain a valid URL and user",
     response=HttpMessage.class)
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
+        long before = java.lang.System.currentTimeMillis();
+        String response = "Error: Please check Server side logs";
+        int code = -1;
+        HttpMessage requestMessage = new HttpMessage();
+        HttpHelper httpClient = null;
+
         try {
-            HttpMessage requestMessage = new HttpMessage();
             Query query = getQuery(path, headers);
             String userCuid = headers.get(Listener.AUTHENTICATED_USER_HEADER);
             User userVO = ServiceLocator.getUserManager().getUser(userCuid);
             if (userVO == null)
                 throw new ServiceException("User not found: " + userCuid);
-            requestMessage.setUser(userCuid);
             if (query.getFilter("timeOut") == null || Integer.parseInt(query.getFilter("timeOut")) == 0)
             {
                 requestMessage.setTimeout(new Integer(15000));
@@ -121,40 +118,28 @@ public class HttpMessages extends JsonRestService {
             else {
                 requestMessage.setTimeout(Integer.parseInt(query.getFilter("timeOut")));
             }
-            requestMessage.setUrl(query.getFilter("url"));
-
-            HttpClient httpClient = new HttpClient();
-            GetMethod getMethod = new GetMethod(requestMessage.getUrl());
-            getMethod.getParams().setParameter("http.socket.timeout", requestMessage.getTimeout());
-            getMethod.getParams().setParameter("http.connection.timeout", requestMessage.getTimeout());
-
-            requestMessage.setHeaders(query.getFilter("headers"));
-
-            if (requestMessage.getHeaders() != null)
-            {
-                for (String header : requestMessage.getHeaders().split(","))
-                {
-                    int eq = header.indexOf('=');
-                    if (eq > 0)
-                        getMethod.setRequestHeader(header.substring(0, eq).trim(), header.substring(eq + 1).trim());
-                }
-            }
-
-            long before = java.lang.System.currentTimeMillis();
-            requestMessage.setStatusCode(httpClient.executeMethod(getMethod));
-            String response = getMethod.getResponseBodyAsString();
-            requestMessage.setResponse(response);
-            int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
-
-            if (logger.isDebugEnabled())
-                logger.debug("Replied with a response: [" + response + "] in time  = " + responseTime);
-
-            requestMessage.setResponseTime(responseTime);
-            return requestMessage.getJson();
-
+            httpClient = new HttpHelper(new URL(query.getFilter("url")));
+            httpClient.setHeaders(headers);
+            httpClient.setConnectTimeout(requestMessage.getTimeout());
+            httpClient.setReadTimeout(requestMessage.getTimeout());
+            response = httpClient.get();
+            code = httpClient.getResponseCode();
+        }
+        catch (MalformedURLException e) {
+            response = e.getMessage() + requestMessage.getUrl();
         }
         catch (Exception ex) {
-            throw new ServiceException(ex.getMessage(), ex);
+            response = ex.getMessage() + " :\n "+ httpClient.getResponse();
+            code = httpClient.getResponseCode();
         }
+        finally{
+            int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
+            if (logger.isDebugEnabled())
+                logger.debug("Get Call replied with a response: [" + response + "] in time  = " + responseTime);
+            requestMessage.setResponseTime(responseTime);
+            requestMessage.setResponse(response);
+            requestMessage.setStatusCode(code);
+        }
+        return requestMessage.getJson();
     }
 }
