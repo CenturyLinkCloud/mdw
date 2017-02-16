@@ -833,7 +833,7 @@ public class TestCaseRun extends ControlCommandShell implements Threadable {
         // is invoked from stub server.
     }
 
-    public String getStubResponse(String masterRequestId, String request, int run) throws JSONException {
+    public String getStubResponse(String masterRequestId, String request, int run) throws JSONException, TestException {
 
         if (request != null && request.startsWith("{\"ActivityRuntimeContext\":"))
             return "(EXECUTE_ACTIVITY)"; // no activity stubbing in old-style test syntax

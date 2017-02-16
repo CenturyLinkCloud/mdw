@@ -1081,7 +1081,7 @@ public class AutomatedTestView extends TestRunnerViewPart implements IMenuListen
         }
         return run.getStubResponse(masterRequestId, request, run.getRunNumber());
       }
-      catch (JSONException ex)
+      catch (Exception ex)
       {
         PluginMessages.uiError(ex, "Test Stubber", testSuite.getProject());
         return null;

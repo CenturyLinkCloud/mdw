@@ -233,7 +233,7 @@ public class AutoTestAntTask extends MatchingTask {
                                 }
                                 return run.getStubResponse(masterRequestId, request, run.getRunNumber());
                             }
-                            catch (JSONException ex) {
+                            catch (Exception ex) {
                                 log(ex.getMessage(), ex, Project.MSG_ERR);
                                 return null;
                             }
