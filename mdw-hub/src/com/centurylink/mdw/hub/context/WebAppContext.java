@@ -30,7 +30,7 @@ public class WebAppContext {
         if (mdw == null) {
 
             String hubRoot = "/mdw";  // TODO overridable
-            String servicesRoot = PropertyManager.getProperty("mdw.services.url");
+            String servicesRoot = PropertyManager.getProperty("mdw.hub.services.url");
             if (servicesRoot == null)
                 servicesRoot = hubRoot;
 
