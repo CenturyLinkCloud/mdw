@@ -226,6 +226,21 @@ public class Query {
         return Date.from(LocalDate.parse(str, DateTimeFormatter.ISO_DATE).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
     /**
+     *
+     * @param str
+     * @return
+     * @throws ParseException
+     */
+    public static String getISO8601DateString(Date date) {
+        if (date == null)
+            return null;
+        else {
+            Calendar c = Calendar.getInstance();
+            c.setTime(date);
+            return new SimpleDateFormat("yyyy-MM-dd").format(date);
+        }
+    }
+    /**
      * Support ISO8601 format for a DateTime yyyy-MM-dd'T'HH:mm:ss'Z'
      * @param str
      * @return a Date object
