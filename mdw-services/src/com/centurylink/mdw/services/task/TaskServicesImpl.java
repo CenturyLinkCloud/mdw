@@ -54,7 +54,6 @@ import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
-import com.qwest.mbeng.MbengException;
 
 /**
  * Services related to manual tasks.
@@ -169,7 +168,7 @@ public class TaskServicesImpl implements TaskServices {
                             taskInstances.add(taskInstance);
                     }
                 }
-                catch (MbengException ex) {
+                catch (Exception ex) {
                     throw new DataAccessException(-1, ex.getMessage(), ex);
                 }
             }

@@ -24,7 +24,6 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.Attachment;
-import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.monitor.ServiceLevelAgreement;
 import com.centurylink.mdw.model.monitor.ServiceLevelAgreementInstance;
@@ -1821,7 +1820,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 indexKey = rs.getString(1);
                 indexValue = rs.getString(2);
                 indices.put(indexKey, indexValue);
-                if (indexKey.equals(FormDataDocument.META_MASTER_REQUEST_ID))
+                if (indexKey.equals("MASTER_REQUEST_ID"))
                     taskInst.setOrderId(indexValue);
             }
             // load groups

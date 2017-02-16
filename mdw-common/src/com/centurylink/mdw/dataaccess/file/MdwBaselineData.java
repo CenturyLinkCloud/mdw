@@ -44,7 +44,6 @@ public class MdwBaselineData implements BaselineData {
             variableTypes.add(new VariableType(205L, "groovy.util.Node", "com.centurylink.mdw.common.translator.impl.GroovyNodeTranslator"));
             variableTypes.add(new VariableType(206L, "com.centurylink.mdw.xml.XmlBeanWrapper", "com.centurylink.mdw.common.translator.impl.XmlBeanWrapperTranslator"));
             variableTypes.add(new VariableType(207L, "com.centurylink.mdw.model.StringDocument", "com.centurylink.mdw.common.translator.impl.StringDocumentTranslator"));
-            variableTypes.add(new VariableType(208L, "com.centurylink.mdw.model.FormDataDocument", "com.centurylink.mdw.common.translator.impl.FormDataDocumentTranslator"));
             variableTypes.add(new VariableType(209L, "com.centurylink.mdw.model.HTMLDocument", "com.centurylink.mdw.common.translator.impl.HtmlDocumentTranslator"));
             variableTypes.add(new VariableType(210L, "javax.xml.bind.JAXBElement", "com.centurylink.mdw.jaxb.JaxbElementTranslator"));
             variableTypes.add(new VariableType(211L, "com.centurylink.mdw.common.service.Jsonable", "com.centurylink.mdw.common.translator.impl.JsonableTranslator"));

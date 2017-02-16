@@ -36,7 +36,6 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
-import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
@@ -85,8 +84,6 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 import com.centurylink.mdw.xml.XmlBeanWrapper;
-import com.qwest.mbeng.MbengDocument;
-import com.qwest.mbeng.MbengTableArray;
 
 public class WorkflowServicesImpl implements WorkflowServices {
 
@@ -1116,12 +1113,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
             return JSONObject.class.getName();
         else if (docObj.getClass().getName().equals("org.apache.camel.component.cxf.CxfPayload"))
             return "org.apache.camel.component.cxf.CxfPayload";
-        else if (docObj instanceof MbengTableArray)
-            return MbengTableArray.class.getName();
-        else if (docObj instanceof MbengDocument)
-            return MbengDocument.class.getName();
-        else if (docObj instanceof FormDataDocument)
-            return FormDataDocument.class.getName();
         else if (docObj instanceof Jsonable)
             return Jsonable.class.getName();
         else if (docObj instanceof Yaml)

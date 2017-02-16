@@ -27,16 +27,16 @@ import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.task.TaskAction;
-import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Document;
-import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
-import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.monitor.ActivityMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
@@ -55,7 +55,6 @@ import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.TrackingTimer;
-import com.qwest.mbeng.MbengDocument;
 
 /**
  * Base class that implements the Controlled Activity.
@@ -1363,11 +1362,7 @@ public abstract class BaseActivity implements GeneralActivity {
 
                 // don't check in production (or for cache-only perf level since old values are not retained)
                 if (!ApplicationContext.isProduction() && (getPerformanceLevel() < 5)) {
-                    boolean changed;
-                    if (value instanceof MbengDocument)
-                        changed = ((MbengDocument)value).isDirty();
-                    else
-                        changed = hasDocumentValueChanged(varName, value);
+                    boolean changed = hasDocumentValueChanged(varName, value);
 
                     if (changed){
                         if (!isOutputDoc) {

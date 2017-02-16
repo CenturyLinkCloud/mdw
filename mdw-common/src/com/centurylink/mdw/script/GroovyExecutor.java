@@ -3,10 +3,6 @@
  */
 package com.centurylink.mdw.script;
 
-import groovy.lang.Binding;
-import groovy.util.GroovyScriptEngine;
-import groovy.util.XmlSlurper;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,13 +10,19 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.json.JSONObject;
+
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.common.translator.impl.JsonObjectTranslator;
+import com.centurylink.mdw.common.translator.impl.JsonableTranslator;
 import com.centurylink.mdw.common.translator.impl.XmlBeanWrapperTranslator;
+import com.centurylink.mdw.common.translator.impl.YamlTranslator;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.java.JavaNaming;
 import com.centurylink.mdw.model.asset.Asset;
@@ -30,6 +32,11 @@ import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
+
+import groovy.lang.Binding;
+import groovy.util.GroovyScriptEngine;
+import groovy.util.XmlSlurper;
+import io.swagger.util.Yaml;
 
 public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
 
@@ -131,20 +138,25 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
         }
     }
 
+    /**
+     * TODO: something more general
+     */
     private DocumentReferenceTranslator getDocRefTranslator(Object value) {
 
         if (value instanceof org.apache.xmlbeans.XmlObject)
-          return (DocumentReferenceTranslator) VariableTranslator.getTranslator(org.apache.xmlbeans.XmlObject.class.getName());
+            return (DocumentReferenceTranslator) VariableTranslator.getTranslator(org.apache.xmlbeans.XmlObject.class.getName());
         else if (value instanceof org.w3c.dom.Document)
-          return (DocumentReferenceTranslator) VariableTranslator.getTranslator(org.w3c.dom.Document.class.getName());
+            return (DocumentReferenceTranslator) VariableTranslator.getTranslator(org.w3c.dom.Document.class.getName());
         else if (value instanceof com.centurylink.mdw.xml.XmlBeanWrapper)
-          return (DocumentReferenceTranslator) VariableTranslator.getTranslator(com.centurylink.mdw.xml.XmlBeanWrapper.class.getName());
-        else if (value instanceof com.centurylink.mdw.model.FormDataDocument)
-            return (DocumentReferenceTranslator) VariableTranslator.getTranslator(com.centurylink.mdw.model.FormDataDocument.class.getName());
+            return (DocumentReferenceTranslator) VariableTranslator.getTranslator(com.centurylink.mdw.xml.XmlBeanWrapper.class.getName());
         else if (value instanceof groovy.util.Node)
-          return (DocumentReferenceTranslator) VariableTranslator.getTranslator(groovy.util.Node.class.getName());
-        else if (value instanceof com.qwest.mbeng.MbengDocument)
-          return (DocumentReferenceTranslator) VariableTranslator.getTranslator(com.qwest.mbeng.MbengDocument.class.getName());
+            return (DocumentReferenceTranslator) VariableTranslator.getTranslator(groovy.util.Node.class.getName());
+        else if (value instanceof Jsonable)
+            return (JsonableTranslator) VariableTranslator.getTranslator(Jsonable.class.getName());
+        else if (value instanceof JSONObject)
+            return (JsonObjectTranslator) VariableTranslator.getTranslator(JSONObject.class.getName());
+        else if (value instanceof Yaml)
+            return (YamlTranslator) VariableTranslator.getTranslator(Yaml.class.getName());
         else
           return null;
     }

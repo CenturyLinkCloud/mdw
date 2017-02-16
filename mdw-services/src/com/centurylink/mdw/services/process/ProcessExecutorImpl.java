@@ -13,7 +13,6 @@ import java.util.Map;
 import javax.jms.JMSException;
 import javax.naming.NamingException;
 
-import org.apache.xmlbeans.XmlObject;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
@@ -37,7 +36,6 @@ import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
-import com.centurylink.mdw.model.monitor.CertifiedMessage;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -63,7 +61,6 @@ import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.event.CertifiedMessageManager;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.translator.VariableTranslator;
@@ -74,10 +71,6 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.util.timer.TrackingTimer;
-import com.qwest.mbeng.DomDocument;
-import com.qwest.mbeng.FormatDom;
-import com.qwest.mbeng.MbengException;
-import com.qwest.mbeng.MbengNode;
 
 class ProcessExecutorImpl {
 
@@ -1016,42 +1009,6 @@ class ProcessExecutorImpl {
                 if (cntrActivity!=null) {
                     resumeProcessInstanceForSecondaryOwner(event, cntrActivity);
                 }    // else the process is completed/cancelled
-            } else {    // remote process call - forward the finish message to the remote caller
-                event.setOwnerType(OwnerType.PROCESS_INSTANCE);
-                logger.info("*********Reply to remote process invoker*********");
-                // remote reference will be converted by the caller
-                Process processVO = ProcessCache.getProcess(event.getWorkId());
-                Long procInstId = event.getWorkInstanceId();
-                List<Variable> variables = processVO.getVariables();
-                Map<String,String> params = null;
-                for (Variable var : variables) {
-                    if (var.getVariableCategory().intValue()==Variable.CAT_OUTPUT
-                            || var.getVariableCategory().intValue()==Variable.CAT_INOUT) {
-                        VariableInstance vio = edao.getVariableInstance(procInstId,var.getVariableName());
-                        if (vio!=null) {
-                            if (params==null) {
-                                params = new HashMap<String,String>();
-                                event.setParameters(params);
-                            }
-                            params.put(var.getVariableName(), vio.getStringValue());
-                        }
-                    }
-                }
-                DomDocument domdoc = new DomDocument();
-                FormatDom fmter = new FormatDom();
-                domdoc.getRootNode().setName("_mdw_remote_process");
-                MbengNode node = domdoc.newNode("direction", "return", "", ' ');
-                domdoc.getRootNode().appendChild(node);
-                node = domdoc.newNode("message", event.toXml(), "", ' ');
-                domdoc.getRootNode().appendChild(node);
-                String msg = fmter.format(domdoc);
-                DocumentReference docref = this.createDocument(XmlObject.class.getName(),
-                        OwnerType.PROCESS_INSTANCE, event.getWorkInstanceId(), msg);
-                CertifiedMessageManager manager = CertifiedMessageManager.getSingleton();
-                Map<String,String> props = new HashMap<String,String>();
-                props.put(CertifiedMessage.PROP_PROTOCOL, CertifiedMessage.PROTOCOL_MDW2MDW);
-                props.put(CertifiedMessage.PROP_JNDI_URL, ownerType);
-                manager.sendTextMessage(props, msg, docref.getDocumentId(), "procinst." + event.getWorkInstanceId());
             }
         } catch (Exception e) {
             throw new ProcessException(-1, e.getMessage(), e);
@@ -1091,12 +1048,6 @@ class ProcessExecutorImpl {
      *
      * @param childInst child process instance
      * @param masterReqId
-     * @throws DataAccessException
-     * @throws ProcessException
-     * @throws JMSException
-     * @throws NamingException
-     * @throws MbengException
-     * @throws ServiceLocatorException
      */
     private void resumeProcessInstanceForSecondaryOwner(InternalEvent event,
             BaseActivity cntrActivity) throws Exception {
@@ -1236,13 +1187,6 @@ class ProcessExecutorImpl {
      * @param processInstVO
      * @param processVO
      * @param pMessage
-     * @throws SQLException
-     * @throws DataAccessException
-     * @throws JMSException
-     * @throws NamingException
-     * @throws MbengException
-     * @throws ServiceLocatorException
-     * @throws ProcessHandlerException
      */
     private void completeProcessInstance(ProcessInstance processInst, String completionCode, boolean noNotify)
     throws Exception {
@@ -1653,8 +1597,7 @@ class ProcessExecutorImpl {
     /////////////////////// other
 
     private void cancelTasksOfProcessInstance(ProcessInstance procInst)
-        throws NamingException, JMSException, MbengException,
-                SQLException, ServiceLocatorException, MDWException {
+    throws NamingException, JMSException, SQLException, ServiceLocatorException, MDWException {
         List<ProcessInstance> processInstanceList =
             edao.getChildProcessInstances(procInst.getId());
         List<Long> procInstIds = new ArrayList<Long>();

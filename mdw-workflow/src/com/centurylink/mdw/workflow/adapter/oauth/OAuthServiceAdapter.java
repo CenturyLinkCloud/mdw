@@ -218,7 +218,7 @@ public class OAuthServiceAdapter extends AdapterActivityBase {
     /**
      * Replaces expressions in an attribute value. This is used instead of the
      * logic in getAttributeValueSmart() since the Mbeng parser does not like
-     * symbols like '=' inside the attribute.
+     * symbols like '=' inside the attribute.  // TODO: still needed
      *
      * @param input
      *            raw attribute value

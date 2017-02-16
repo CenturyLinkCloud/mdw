@@ -101,7 +101,6 @@ import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
-import com.qwest.mbeng.MbengException;
 
 /**
  * Repackaged to separate business interface from implementation.
@@ -1313,7 +1312,7 @@ public class TaskManagerBean implements TaskManager {
     }
 
     private PrioritizationStrategy getPrioritizationStrategy(TaskTemplate taskTemplate, Long processInstanceId, Long formDataDocId, Map<String,String> indices)
-    throws DataAccessException, MbengException, StrategyException {
+    throws DataAccessException, StrategyException {
         String priorityStrategyAttr = taskTemplate.getAttribute(TaskAttributeConstant.PRIORITY_STRATEGY);
         if (StringHelper.isEmpty(priorityStrategyAttr)) {
             return null;
@@ -1328,7 +1327,7 @@ public class TaskManagerBean implements TaskManager {
     }
 
     private void populateStrategyParams(ParameterizedStrategy strategy, TaskTemplate taskTemplate, Long processInstId, Long formDataDocId, Map<String,String> indices)
-    throws DataAccessException, MbengException {
+    throws DataAccessException {
         Package pkg = null;
         for (Attribute attr : taskTemplate.getAttributes()) {
             strategy.setParameter(attr.getAttributeName(), attr.getAttributeValue());
@@ -1344,14 +1343,19 @@ public class TaskManagerBean implements TaskManager {
         if (taskTemplate.isAutoformTask() && formDataDocId != null) {
             Document docvo = eventManager.getDocumentVO(formDataDocId);
             FormDataDocument datadoc = new FormDataDocument();
-            datadoc.load(docvo.getContent());
-            List<VariableInstance> varInsts = new ArrayList<VariableInstance>(); // FIXME Autoform
-            for (VariableInstance varInst : varInsts) {
-                Object varVal = varInst.getData();
-                if (varInst.isDocument()) {
-                    varVal = varInst.getData(); // FIXME AutoForm
+            try {
+                datadoc.load(docvo.getContent());
+                List<VariableInstance> varInsts = new ArrayList<VariableInstance>(); // FIXME Autoform
+                for (VariableInstance varInst : varInsts) {
+                    Object varVal = varInst.getData();
+                    if (varInst.isDocument()) {
+                        varVal = varInst.getData(); // FIXME AutoForm
+                    }
+                    strategy.setParameter(varInst.getName(), varVal);
                 }
-                strategy.setParameter(varInst.getName(), varVal);
+            }
+            catch (Exception ex) {
+                throw new DataAccessException(ex.getMessage(), ex);
             }
         }
         else {
@@ -1390,7 +1394,7 @@ public class TaskManagerBean implements TaskManager {
                     if (!activityInstanceId.equals(formDataDoc.getActivityInstanceId())) continue;
                     taskInst = one;
                     break;
-                } catch (MbengException e) {
+                } catch (Exception e) {
                     logger.warnException("Failed to load document", e);
                 }
             }
