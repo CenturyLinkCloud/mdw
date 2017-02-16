@@ -311,15 +311,60 @@ public class HttpHelper {
         return response;
     }
 
+    /**
+     * Perform an HTTP PATCH request to the URL.
+     * @param content bytes
+     * @return string containing the response from the server
+     */
+    public byte[] patchBytes(byte[] content) throws IOException {
+
+        if (connection == null) {
+            if (proxy == null)
+                connection = (HttpURLConnection) url.openConnection();
+            else
+                connection = (HttpURLConnection) url.openConnection(proxy);
+        }
+
+        prepareConnection(connection);
+
+        if (StringUtils.isEmpty(connection.getRequestProperty("Content-Type"))) {
+            /**
+             * Default it to application/octet-stream if nothing has been specified
+             */
+            connection.setRequestProperty("Content-Type", "application/octet-stream");
+        }
+
+        connection.setDoOutput(true);
+        connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+        connection.setRequestMethod("POST");
+
+        OutputStream os = connection.getOutputStream();
+        os.write(content);
+
+        readInput(connection);
+        os.close();
+        return response;
+    }
+
    /**
-    * Submit an HTTP PUT request with a String value
-    * @param file the file to be uploaded
-    * @return string with the response from the server
-    */
+     * Submit an HTTP PUT request with a String value
+     * @param content string containing the content to be put
+     * @return string containing the response from the server
+     */
     public String put(String content) throws IOException {
         putBytes(content.getBytes());
         return getResponse();
      }
+
+    /**
+     * Submit an HTTP PATCH request with a String value
+     * @param content string containing the content to be patched
+     * @return string containing the response from the server
+     */
+     public String patch(String content) throws IOException {
+         patchBytes(content.getBytes());
+         return getResponse();
+      }
 
     /**
      * Upload a text file to the destination URL

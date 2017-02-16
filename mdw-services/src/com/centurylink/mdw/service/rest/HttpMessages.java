@@ -54,7 +54,7 @@ public class HttpMessages extends JsonRestService {
             throws ServiceException, JSONException {
         long before = java.lang.System.currentTimeMillis();
         HttpMessage requestMessage = new HttpMessage(content);
-        String response = "Error: Please check Server side logs";
+        String response = null;
         int code = -1;
         HttpHelper httpClient = null;
 
@@ -88,6 +88,8 @@ public class HttpMessages extends JsonRestService {
             if (logger.isDebugEnabled())
                 logger.debug("Post Call replied with a response: [" + response + "] in time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
+            if (StringHelper.isEmpty(response))
+                response = "Error: Please check Server side logs";
             requestMessage.setResponse(response);
             requestMessage.setStatusCode(code);
         }
@@ -100,7 +102,7 @@ public class HttpMessages extends JsonRestService {
     response=HttpMessage.class)
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         long before = java.lang.System.currentTimeMillis();
-        String response = "Error: Please check Server side logs";
+        String response = null;
         int code = -1;
         HttpMessage requestMessage = new HttpMessage();
         HttpHelper httpClient = null;
@@ -137,6 +139,8 @@ public class HttpMessages extends JsonRestService {
             if (logger.isDebugEnabled())
                 logger.debug("Get Call replied with a response: [" + response + "] in time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
+            if (StringHelper.isEmpty(response))
+                response = "Error: Please check Server side logs";
             requestMessage.setResponse(response);
             requestMessage.setStatusCode(code);
         }
@@ -150,7 +154,7 @@ public class HttpMessages extends JsonRestService {
             throws ServiceException, JSONException {
         long before = java.lang.System.currentTimeMillis();
         HttpMessage requestMessage = new HttpMessage(content);
-        String response = "Error: Please check Server side logs";
+        String response = null;
         int code = -1;
         HttpHelper httpClient = null;
 
@@ -187,6 +191,8 @@ public class HttpMessages extends JsonRestService {
             if (logger.isDebugEnabled())
                 logger.debug("PUT Call replied with a response: [" + response + "] in time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
+            if (StringHelper.isEmpty(response))
+                response = "Error: Please check Server side logs";
             requestMessage.setResponse(response);
             requestMessage.setStatusCode(code);
         }
@@ -199,6 +205,8 @@ public class HttpMessages extends JsonRestService {
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         long before = java.lang.System.currentTimeMillis();
+        String response = null;
+
         HttpMessage requestMessage;
         if (content == null)
             requestMessage = new HttpMessage();
@@ -206,7 +214,6 @@ public class HttpMessages extends JsonRestService {
             requestMessage = new HttpMessage(content);
         }
 
-        String response = "Error: Please check Server side logs";
         int code = -1;
         HttpHelper httpClient = null;
 
@@ -242,9 +249,64 @@ public class HttpMessages extends JsonRestService {
             if (logger.isDebugEnabled())
                 logger.debug("DELETE Call replied with a response: [" + response + "] in time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
+            if (StringHelper.isEmpty(response))
+                response = "Error: Please check Server side logs";
             requestMessage.setResponse(response);
             requestMessage.setStatusCode(code);
         }
         return requestMessage.getJson();
     }
+
+    @Override
+    @ApiOperation(value="http patch call",
+    notes="Request must contain a valid URL, payload and user.", response=HttpMessage.class)
+    public JSONObject patch(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        long before = java.lang.System.currentTimeMillis();
+        HttpMessage requestMessage = new HttpMessage(content);
+        String response = null;
+        int code = -1;
+        HttpHelper httpClient = null;
+
+        try {
+            if (StringHelper.isEmpty(requestMessage.getRequestMessage())) {
+                response = "Missing payload for HTTP PATCH method \nRequest: " + content;
+            }
+            else {
+                User userVO = ServiceLocator.getUserManager().getUser(requestMessage.getUser());
+                if (userVO == null)
+                    throw new ServiceException("User not found: " + requestMessage.getUser());
+                httpClient = new HttpHelper(new URL(requestMessage.getUrl()));
+                httpClient.setHeaders(headers);
+                httpClient.setConnectTimeout(requestMessage.getTimeout());
+                httpClient.setReadTimeout(requestMessage.getTimeout());
+                if (requestMessage.getTimeout() == null || requestMessage.getTimeout() == 0)
+                {
+                    requestMessage.setTimeout(new Integer(15000));
+                }
+
+                response = httpClient.patch(requestMessage.getRequestMessage());
+                code = httpClient.getResponseCode();
+            }
+        }
+        catch (MalformedURLException e) {
+            response = e.getMessage() + " \nURL: " + requestMessage.getUrl();
+        }
+        catch (Exception ex) {
+            response = ex.getMessage() + " \nResponse: "+ httpClient.getResponse();
+            code = httpClient.getResponseCode();
+        }
+        finally{
+            int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
+            if (logger.isDebugEnabled())
+                logger.debug("PATCH Call replied with a response: [" + response + "] in time  = " + responseTime);
+            requestMessage.setResponseTime(responseTime);
+            if (StringHelper.isEmpty(response))
+                response = "Error: Please check Server side logs";
+            requestMessage.setResponse(response);
+            requestMessage.setStatusCode(code);
+        }
+        return requestMessage.getJson();
+    }
+
 }
