@@ -43,6 +43,7 @@ import com.centurylink.mdw.test.PackageTests;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCase.Status;
 import com.centurylink.mdw.test.TestCaseList;
+import com.centurylink.mdw.test.TestException;
 import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -358,7 +359,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
     }
 
     private class TestStubber implements Stubber {
-        public ActivityStubResponse processRequest(ActivityStubRequest request) throws JSONException {
+        public ActivityStubResponse processRequest(ActivityStubRequest request) throws JSONException, TestException {
             TestCaseRun run = masterRequestRuns.get(request.getRuntimeContext().getMasterRequestId());
             if (run == null) {
                 ActivityStubResponse activityStubResponse = new ActivityStubResponse();
@@ -368,7 +369,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
             return run.getStubResponse(request);
         }
 
-        public AdapterStubResponse processRequest(AdapterStubRequest request) throws JSONException {
+        public AdapterStubResponse processRequest(AdapterStubRequest request) throws JSONException, TestException {
             TestCaseRun run = masterRequestRuns.get(request.getMasterRequestId());
             if (run == null) {
                 AdapterStubResponse stubResponse = new AdapterStubResponse(AdapterActivity.MAKE_ACTUAL_CALL);

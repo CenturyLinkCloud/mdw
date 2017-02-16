@@ -16,6 +16,7 @@ import com.centurylink.mdw.model.workflow.ActivityStubRequest;
 import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.soccom.SoccomException;
 import com.centurylink.mdw.soccom.SoccomServer;
+import com.centurylink.mdw.test.TestException;
 
 public class StubServer extends SoccomServer {
     public static final int DEFAULT_PORT = 7182;
@@ -108,10 +109,13 @@ public class StubServer extends SoccomServer {
         catch (JSONException ex) {
             throw new IOException(ex.getMessage(), ex);
         }
+        catch (TestException ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
     }
 
     public interface Stubber {
-        ActivityStubResponse processRequest(ActivityStubRequest request) throws JSONException;
-        AdapterStubResponse processRequest(AdapterStubRequest request) throws JSONException;
+        ActivityStubResponse processRequest(ActivityStubRequest request) throws JSONException, TestException;
+        AdapterStubResponse processRequest(AdapterStubRequest request) throws JSONException, TestException;
     }
 }
