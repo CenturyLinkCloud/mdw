@@ -3,7 +3,9 @@
  */
 package com.centurylink.mdw.plugin.project;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
@@ -275,9 +277,14 @@ public class ProjectPersist extends DefaultHandler
       sb.append(" contextRoot=\"" + workflowProject.getWebContextRoot() + "\"");
     else
     {
-      ContainerType containerType = workflowProject.getServerSettings().getContainerType();
-      if (containerType != null)
-        sb.append(" container=\"" + containerType.toString() + "\"");
+      if(isMakeLocal())
+        sb.append(" contextRoot=\"" + workflowProject.getWebContextRoot() + "\"");
+      else
+      {
+        ContainerType containerType = workflowProject.getServerSettings().getContainerType();
+        if (containerType != null)
+          sb.append(" container=\"" + containerType.toString() + "\"");
+      }
     }
     sb.append("/>\n");
 
@@ -531,5 +538,28 @@ public class ProjectPersist extends DefaultHandler
   {
     if (value != null)
       MdwPlugin.setStringPref(name, value);
+  }
+  public boolean isMakeLocal()
+  {
+    IProject project = MdwPlugin.getWorkspaceRoot().getProject(workflowProject.getName());
+    if (project.exists()){
+      IFile file = project.getFile(".settings/" + ProjectPersist.SETTINGS_FILE);
+      if (file.exists()){
+        try{
+          BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
+          String line;
+          while ((line = reader.readLine())!= null){
+            if(line.indexOf("mdwFramework")!=-1)
+              return false;
+          }
+          reader.close();
+        }catch (Exception ex){
+          PluginMessages.log(ex);
+        }
+      }else{
+        return false;
+      }
+    }
+    return true;
   }
 }
