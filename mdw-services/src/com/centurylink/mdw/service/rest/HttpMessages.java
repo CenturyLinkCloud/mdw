@@ -60,7 +60,7 @@ public class HttpMessages extends JsonRestService {
 
         try {
             if (StringHelper.isEmpty(requestMessage.getRequestMessage())) {
-                response = "Missing payload for HTTP POST method " + content;
+                response = "Missing payload for HTTP POST method \nRequest: " + content;
             }
             else {
                 User userVO = ServiceLocator.getUserManager().getUser(requestMessage.getUser());
@@ -77,10 +77,10 @@ public class HttpMessages extends JsonRestService {
             }
         }
         catch (MalformedURLException e) {
-            response = e.getMessage() + requestMessage.getUrl();
+            response = e.getMessage() + " \nURL: " + requestMessage.getUrl();
         }
         catch (Exception ex) {
-            response = ex.getMessage() + " :\n "+ httpClient.getResponse();
+            response = ex.getMessage() + " \nResponse: "+ httpClient.getResponse();
             code = httpClient.getResponseCode();
         }
         finally{
@@ -126,16 +126,121 @@ public class HttpMessages extends JsonRestService {
             code = httpClient.getResponseCode();
         }
         catch (MalformedURLException e) {
-            response = e.getMessage() + requestMessage.getUrl();
+            response = e.getMessage() + " \nURL: " + requestMessage.getUrl();
         }
         catch (Exception ex) {
-            response = ex.getMessage() + " :\n "+ httpClient.getResponse();
+            response = ex.getMessage() + " \nResponse: "+ httpClient.getResponse();
             code = httpClient.getResponseCode();
         }
         finally{
             int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
             if (logger.isDebugEnabled())
                 logger.debug("Get Call replied with a response: [" + response + "] in time  = " + responseTime);
+            requestMessage.setResponseTime(responseTime);
+            requestMessage.setResponse(response);
+            requestMessage.setStatusCode(code);
+        }
+        return requestMessage.getJson();
+    }
+
+    @Override
+    @ApiOperation(value="http put call",
+    notes="Request must contain a valid URL, payload and user.", response=HttpMessage.class)
+    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        long before = java.lang.System.currentTimeMillis();
+        HttpMessage requestMessage = new HttpMessage(content);
+        String response = "Error: Please check Server side logs";
+        int code = -1;
+        HttpHelper httpClient = null;
+
+        try {
+            if (StringHelper.isEmpty(requestMessage.getRequestMessage())) {
+                response = "Missing payload for HTTP PUT method \nRequest: " + content;
+            }
+            else {
+                User userVO = ServiceLocator.getUserManager().getUser(requestMessage.getUser());
+                if (userVO == null)
+                    throw new ServiceException("User not found: " + requestMessage.getUser());
+                httpClient = new HttpHelper(new URL(requestMessage.getUrl()));
+                httpClient.setHeaders(headers);
+                httpClient.setConnectTimeout(requestMessage.getTimeout());
+                httpClient.setReadTimeout(requestMessage.getTimeout());
+                if (requestMessage.getTimeout() == null || requestMessage.getTimeout() == 0)
+                {
+                    requestMessage.setTimeout(new Integer(15000));
+                }
+
+                response = httpClient.put(requestMessage.getRequestMessage());
+                code = httpClient.getResponseCode();
+            }
+        }
+        catch (MalformedURLException e) {
+            response = e.getMessage() + " \nURL: " + requestMessage.getUrl();
+        }
+        catch (Exception ex) {
+            response = ex.getMessage() + " \nResponse: "+ httpClient.getResponse();
+            code = httpClient.getResponseCode();
+        }
+        finally{
+            int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
+            if (logger.isDebugEnabled())
+                logger.debug("PUT Call replied with a response: [" + response + "] in time  = " + responseTime);
+            requestMessage.setResponseTime(responseTime);
+            requestMessage.setResponse(response);
+            requestMessage.setStatusCode(code);
+        }
+        return requestMessage.getJson();
+    }
+
+    @Override
+    @ApiOperation(value="http delete call",
+    notes="Request must contain a valid URL and user.", response=HttpMessage.class)
+    public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        long before = java.lang.System.currentTimeMillis();
+        HttpMessage requestMessage;
+        if (content == null)
+            requestMessage = new HttpMessage();
+        else {
+            requestMessage = new HttpMessage(content);
+        }
+
+        String response = "Error: Please check Server side logs";
+        int code = -1;
+        HttpHelper httpClient = null;
+
+        try {
+            Query query = getQuery(path, headers);
+            String userCuid = headers.get(Listener.AUTHENTICATED_USER_HEADER);
+            User userVO = ServiceLocator.getUserManager().getUser(userCuid);
+            if (userVO == null)
+                throw new ServiceException("User not found: " + userCuid);
+            if (query.getFilter("timeOut") == null || Integer.parseInt(query.getFilter("timeOut")) == 0)
+            {
+                requestMessage.setTimeout(new Integer(15000));
+            }
+            else {
+                requestMessage.setTimeout(Integer.parseInt(query.getFilter("timeOut")));
+            }
+            httpClient = new HttpHelper(new URL(query.getFilter("url")));
+            httpClient.setConnectTimeout(requestMessage.getTimeout());
+            httpClient.setReadTimeout(requestMessage.getTimeout());
+
+            response = httpClient.delete(query.getFilter("requestMessage"));
+            code = httpClient.getResponseCode();
+        }
+        catch (MalformedURLException e) {
+            response = e.getMessage() + " \nURL: " + requestMessage.getUrl();
+        }
+        catch (Exception ex) {
+            response = ex.getMessage() + " \nResponse: "+ httpClient.getResponse();
+            code = httpClient.getResponseCode();
+        }
+        finally{
+            int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
+            if (logger.isDebugEnabled())
+                logger.debug("DELETE Call replied with a response: [" + response + "] in time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
             requestMessage.setResponse(response);
             requestMessage.setStatusCode(code);
