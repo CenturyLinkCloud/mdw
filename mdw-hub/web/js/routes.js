@@ -314,7 +314,12 @@ routesSvc.factory('routes', function() {
       {
         path: '/system/message',
         templateUrl: 'system/httpHelper.html',
-        controller: 'MessageController'
+        controller: 'HttpMessageController'
+      },
+      {
+        path: '/system/jmsMessage',
+        templateUrl: 'system/jmsHelper.html',
+        controller: 'JmsMessageController'
       }
    ]
   };

@@ -1,17 +1,16 @@
 //Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
-var messageMod = angular.module('message', ['ngResource', 'ui.bootstrap', 'mdw']);
+var messageMod = angular.module('httpMessage', ['ngResource', 'ui.bootstrap', 'mdw']);
 
-messageMod.controller('MessageController', ['$scope', '$location', '$http', 'mdw', 'util', 'Message', 'HTTP_METHODS',
-  											function($scope, $location, $http, mdw, util, Message, HTTP_METHODS) {
+messageMod.controller('HttpMessageController', ['$scope', '$location', '$http', 'mdw', 'util', 'HttpMessage', 'HTTP_METHODS',
+  											function($scope, $location, $http, mdw, util, HttpMessage, HTTP_METHODS) {
 
   $scope.waitingForResponse = false;
   $scope.httpHelper = {};
   $scope.httpHelper.httpMethods = [];
   $scope.httpHelper.httpMethod = 'POST';
   $scope.httpHelper.timeOut = 15000;
-  
   $scope.httpHelper.url = "http://localhost:8080/mdw/services";
   $scope.httpHelper.responseCode = "";
   $scope.httpHelper.httpMethods = HTTP_METHODS.slice();
@@ -27,22 +26,9 @@ messageMod.controller('MessageController', ['$scope', '$location', '$http', 'mdw
     });
   }
 
- 
-  $scope.getMethod = function(selFieldValue) {
-    if ($scope.httpHelper.httpMethods) {
-      for (var i = 0; i < $scope.httpHelper.httpMethods.length; i++) {
-        var method = $scope.httpHelper.httpMethods[i];
-        if (method === selFieldValue)
-          return method;
-      }
-    }
-  };
-  
-  $scope.setMethod = function(method) {
-    $scope.httpHelper.httpMethod = method;
-  };
-  
   $scope.sendMessage = function() {
+    $scope.waitingForResponse = true;
+
     if ($scope.httpHelper.headers) {
       var headersNameValue = $scope.httpHelper.headers.split(',');
       if (headersNameValue) {
@@ -58,41 +44,35 @@ messageMod.controller('MessageController', ['$scope', '$location', '$http', 'mdw
     console.log('sending message: ' + $scope.httpHelper.requestMessage + 'Method' + $scope.httpHelper.httpMethod);
     switch ($scope.httpHelper.httpMethod) {
     case 'POST':
-      Message.create(Message.shallowCopy({}, $scope.httpHelper, $scope.authUser.cuid), handleSuccess, handleError);
+      HttpMessage.create(HttpMessage.shallowCopy({}, $scope.httpHelper, $scope.authUser.cuid), handleSuccess, handleError);
       break;
     case 'GET':
-      Message.query(Message.shallowCopy({}, $scope.httpHelper, $scope.authUser.cuid), handleSuccess, handleError);
+      HttpMessage.query(HttpMessage.shallowCopy({}, $scope.httpHelper, $scope.authUser.cuid), handleSuccess, handleError);
       break;
     case 'PUT':
-      Message.update(Message.shallowCopy({}, $scope.httpHelper, $scope.authUser.cuid), handleSuccess, handleError);
+      HttpMessage.update(HttpMessage.shallowCopy({}, $scope.httpHelper, $scope.authUser.cuid), handleSuccess, handleError);
       break;
     case 'DELETE':
-      Message.remove(Message.shallowCopy({}, $scope.httpHelper, $scope.authUser.cuid), handleSuccess, handleError);
+      HttpMessage.remove(HttpMessage.shallowCopy({}, $scope.httpHelper, $scope.authUser.cuid), handleSuccess, handleError);
       break;
     case 'PATCH':
-      Message.patch(Message.shallowCopy({}, $scope.httpHelper, $scope.authUser.cuid), handleSuccess, handleError);
+      HttpMessage.patch(HttpMessage.shallowCopy({}, $scope.httpHelper, $scope.authUser.cuid), handleSuccess, handleError);
       break;
     }
     function handleSuccess(data) {
-      if (data.statusCode !== 0) {
-        $scope.httpHelper.response = data.response;
-        $scope.httpHelper.responseCode = data.statusCode;
-      }
-      else {
-        $scope.waitingForResponse = true;
-        $location.path('/Services/Message');
-      }
-      $scope.waitingForResponse = false;
+      $scope.httpHelper.response = data.response;
+      $scope.httpHelper.responseCode = data.statusCode;
     }
     function handleError(error) {
       $scope.httpHelper.response = error.statusText;
       $scope.httpHelper.responseCode = error.status;
-      $scope.waitingForResponse = false;
     }
+    $scope.waitingForResponse = false;
+
   };
 }]);
 
-messageMod.factory('Message', ['$resource', 'mdw', function($resource, mdw) {
+messageMod.factory('HttpMessage', ['$resource', 'mdw', function($resource, mdw) {
   return angular.extend({}, $resource(mdw.roots.services +'/Services/HttpMessages', mdw.serviceParams(), {
     query: { method: 'GET', isArray: false }, 
     create: { method: 'POST'},

@@ -8,49 +8,42 @@ import java.io.Serializable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Jsonable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value="HttpMessage", description="Http Message")
-public class HttpMessage implements Serializable, Jsonable {
+@ApiModel(value="JmsMessage", description="Jms Message")
+public class JmsMessage implements Serializable, Jsonable {
 
-    public HttpMessage() {}
+    public JmsMessage() {}
 
     private String user;
     @ApiModelProperty(value="cuid of authenticated user", required=true)
 
-    private String url;
-    @ApiModelProperty(value="URL", required=true)
+    private String endPoint = "<Internal>";
+    @ApiModelProperty(value="endPoint", required=true)
 
-    public String getUrl()
-    {
-        if (url == null)
-        {
-            url = "http://" + ApplicationContext.getServerHost() + ":" + ApplicationContext.getServerPort()
-            + "/" + ApplicationContext.getServicesContextRoot() + "/services";
-        }
-        return url;
-    }
-    public void setUrl(String url) { this.url = url; }
+    public String getEndpoint() { return endPoint; }
+    public void setEndpoint(String endPoint) { this.endPoint = endPoint; }
 
-    private String headers;
-    public String getHeaders() { return headers; }
-    public void setHeaders(String headers) { this.headers = headers; }
+    private String queueName;
+    public String getQueueName() { return queueName; }
+    public void setQueueName(String queueName) { this.queueName = queueName; }
 
     private String requestMessage;
     public String getRequestMessage() { return requestMessage; }
-    public void setRequestMessage(String requestMessage) { this.requestMessage = requestMessage; }
+    public void setRequestMessage(String message) { this.requestMessage = message; }
 
-    private Integer timeOut = new Integer(15000);
+    private Integer timeOut = new Integer(10); //seconds
     public Integer getTimeout() { return timeOut; }
     public void setTimeout(Integer timeOut) { this.timeOut = timeOut; }
 
     private String response;
+    public String getResponse() { return response; }
 
     public void setResponse(String response) {        this.response = response;    }
-    public String getResponse() { return response; }
+
 
     private int statusCode;
     @ApiModelProperty(hidden=true)
@@ -67,20 +60,20 @@ public class HttpMessage implements Serializable, Jsonable {
     }
     public int getResponseTime() { return responseTime; }
 
-    public HttpMessage(JSONObject json) throws JSONException {
+    public JmsMessage(JSONObject json) throws JSONException {
+        if (json.has("endPoint"))
+            endPoint = json.getString("endPoint");
         if (json.has("timeOut"))
             timeOut = json.getInt("timeOut");
-        if (json.has("url"))
-            url = json.getString("url");
         if (json.has("user"))
             user = json.getString("user");
-        if (json.has("headers"))
-            headers = json.getString("headers");
+        if (json.has("queueName"))
+            queueName = json.getString("queueName");
         if (json.has("requestMessage"))
             requestMessage = json.getString("requestMessage");
     }
 
-    public String getJsonName() { return "HttpMessage"; }
+    public String getJsonName() { return "RequestMessage"; }
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
@@ -92,4 +85,5 @@ public class HttpMessage implements Serializable, Jsonable {
 
     public String getUser() { return user; }
     public void setUser(String user) { this.user = user; }
+
 }

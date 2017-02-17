@@ -1,0 +1,75 @@
+ <div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isMobile" ng-include="'layout/system-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          Message Helpers        
+        </div>
+      </div>
+       <div class="mdw-tabbed-section">
+        <uib-tabset>
+          <uib-tab heading="Http Poster">
+              <div class="mdw-inner-content">
+              <div class="mdw-resource-heading">
+                
+              </div>
+            </div>
+          </uib-tab>
+          <uib-tab heading="JMS Messanger">
+              <div class="mdw-inner-content">
+              <div class="mdw-resource-heading">
+                <div class="mdw-heading-label">Send a Message to a JMS Queue</div>
+              </div>
+                <form name="jmsHelperForm" class="form-horizontal mdw-section" role="form">
+                  <fieldset ng-disabled="waitingForResponse">
+                    <div class="form-group" ng-class="{'has-error': jmsHelper.endPoint === undefined}">
+                      <label class="control-label col-xs-2 mdw-required" for="endPointInput">Endpoint:</label>
+                      <div class="col-xs-10">
+                        <input type="text" id="endPointInput" name="endPoint" class="form-control" ng-model="jmsHelper.endPoint" required maxlength="128"
+                           ng-blur="jmsHelper.endPoint = jmsHelper.endPoint === '' ? undefined : jmsHelper.endPoint">
+                      </div>
+                    </div>     
+                   <div class="form-group" ng-class="{'has-error': jmsHelper.queueName === undefined}">
+                      <label class="control-label col-xs-2 mdw-required" for="queueName">Queue Name:</label>
+                      <div class="col-xs-10">
+                      <select class="form-control" ng-model="jmsHelper.queueName"  uib-dropdown-menu aria-labelledby="simple-dropdown">
+                        <option ng-repeat="queueName in jmsHelper.queueNames" value="{{queueName}}">{{queueName}}</option>
+                      </select>
+                      </div>
+                    </div> 
+                    <div class="form-group" ng-class="{'has-error': jmsHelper.requestMessage === undefined}">
+                      <label class="control-label col-xs-2 mdw-required" for="requestMessageTextarea">JMS Message:</label>
+                      <div class="col-xs-10">
+                        <textarea id="requestMessageTextarea" name="requestMessage" class="form-control" ng-model="jmsHelper.requestMessage" required
+                        rows="20"  cols="110" ng-blur="jmsHelper.requestMessage = jmsHelper.requestMessage === '' ? undefined : jmsHelper.requestMessage">
+                       </textarea>
+                      </div>
+                    </div>
+                     <div class="form-group" ng-class="{'has-error': jmsHelper.timeOut === undefined}">
+                        <label class="control-label col-xs-2 mdw-required" for="timeOutInput">Timeout (s):</label>
+                        <div class="col-xs-4">
+                          <input type="text" id="timeOutInput" name="timeOut" class="form-control" ng-model="jmsHelper.timeOut" maxlength="128"
+                             ng-blur="jmsHelper.timeOut = jmsHelper.timeOut === '' ? undefined : jmsHelper.timeOut">
+                        </div>
+                      </div>
+                    
+                    <div class="form-group" ng-class="{'has-error': jmsHelper.response === undefined}">
+                     <label class="control-label col-xs-2">Response:</label>
+                      <div class="col-xs-10"><pre>{{jmsHelper.response}}</pre></div>
+                      <div class="mdw-buttons">
+                        <button class="btn btn-success mdw-btn" type="submit" ng-click="sendMessage()" 
+                          ng-disabled="!authUser.hasRole('Process Design')">
+                          <span class="glyphicon glyphicon-send"></span> Send Message
+                        </button>
+                      </div>
+                    </div>
+                  </fieldset>            
+                </form>
+            </div>
+          </uib-tab>
+        </uib-tabset>
+      </div>
+    </div>
+  </div>
+</div>

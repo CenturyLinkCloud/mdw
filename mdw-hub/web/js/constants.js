@@ -13,9 +13,9 @@ constantsMod.constant('TASK_ADVISORIES', ['Jeopardy', 'Alert', 'Invalid']);
 constantsMod.constant('HTTP_METHODS', ['POST', 'PUT', 'GET', 'DELETE', 'PATCH']);
 
 constantsMod.constant('QUEUE_NAMES', [
-  'com.centurylink.mdw.process.handler.queue',
   'com.centurylink.mdw.external.event.queue',
   'com.centurylink.mdw.intra.event.queue',
+  'com.centurylink.mdw.process.handler.queue',
   'com.centurylink.mdw.config.topic'
 ]);
 
