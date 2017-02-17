@@ -2,7 +2,7 @@
   "activities": [
     {
       "attributes": {
-        "Parameters": "sapId=xpath:/GetEmployee/sapId;workstationId=xpath:/GetEmployee/workstationId",
+        "Parameters": "sapId=${request['tns:GetEmployee/tns:sapId']};workstationId=${request['tns:GetEmployee/tns:workstationId']}",
         "WORK_DISPLAY_INFO": "x=43,y=102,w=60,h=40"
       },
       "id": "A1",
@@ -130,6 +130,10 @@
       "category": "LOCAL",
       "type": "java.lang.String"
     },
+    "request": {
+      "category": "INPUT",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
     "requestHeaders": {
       "category": "INPUT",
       "type": "java.util.Map<String,String>"
@@ -147,5 +151,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.17"
+  "version": "0.18"
 }
