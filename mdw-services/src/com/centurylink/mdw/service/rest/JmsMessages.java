@@ -43,7 +43,7 @@ public class JmsMessages extends JsonRestService {
 
     @Override
     @ApiOperation(value="jms call",
-    notes="Request must contain a valid endpoint, queue name, payload and user.", response=JmsMessage.class)
+    notes="Request must contain a valid endpoint, queue name, payload and authenticated user.", response=JmsMessage.class)
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         long before = java.lang.System.currentTimeMillis();
@@ -54,7 +54,7 @@ public class JmsMessages extends JsonRestService {
 
         try {
             if (StringHelper.isEmpty(requestMessage.getRequestMessage())) {
-                response = "Missing payload for HTTP POST method \nRequest: " + content;
+                response = "Missing payload for JMS Message \nRequest: " + content;
             }
             else {
                 String contextUrl = StringHelper.isEmpty(requestMessage.getEndpoint()) || requestMessage.getEndpoint().equals("<Internal>") ? null : requestMessage.getEndpoint();
@@ -68,7 +68,7 @@ public class JmsMessages extends JsonRestService {
         finally{
             int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
             if (logger.isDebugEnabled())
-                logger.debug("JMS Call replied with a response: [" + response + "] in time  = " + responseTime);
+                logger.debug("JMS Call replied within time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
             if (StringHelper.isEmpty(response))
                 response = "Error: Please check Server side logs";
