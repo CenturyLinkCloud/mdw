@@ -12,8 +12,62 @@
           <uib-tab heading="Http Poster">
               <div class="mdw-inner-content">
               <div class="mdw-resource-heading">
-                
+                <div class="mdw-heading-label">Send a HTTP Request</div>
               </div>
+               <form name="httpHelperForm" class="form-horizontal mdw-section" role="form">
+                <fieldset ng-disabled="waitingForResponse">
+                  <div class="form-group" ng-class="{'has-error': httpHelper.httpMethod === undefined}">
+                    <label class="control-label col-xs-2 mdw-required" for="httpMethod">Http Method:</label>
+                    <div class="col-xs-10">
+                    <select class="form-control" ng-model="httpHelper.httpMethod"  uib-dropdown-menu aria-labelledby="simple-dropdown">
+                      <option ng-repeat="httpMethod in httpHelper.httpMethods" value="{{httpMethod}}">{{httpMethod}}</option>
+                    </select>
+                    </div>
+                  </div> 
+                  <div class="form-group" ng-class="{'has-error': httpHelper.url === undefined}">
+                    <label class="control-label col-xs-2 mdw-required" for="httpUrl">URL:</label>
+                    <div class="col-xs-10">
+                      <input type="text" id="httpUrl" name="url" class="form-control" ng-model="httpHelper.url" required maxlength="128"
+                         ng-blur="httpHelper.url = httpHelper.url === '' ? undefined : httpHelper.url">
+                    </div>
+                  </div>     
+                  <div class="form-group" ng-class="{'has-error': httpHelper.headers === undefined}">
+                    <label class="control-label col-xs-2" for="headersTextarea">Headers (x=1,y=2,etc):</label>
+                    <div class="col-xs-10">
+                      <textarea id="headersTextarea" name="headers" class="form-control" ng-model="httpHelper.headers"
+                      rows="5"  cols="110" ng-blur="httpHelper.headers = httpHelper.headers === '' ? undefined : httpHelper.headers">
+                     </textarea>
+                    </div>
+                  </div>
+                  <div class="form-group" ng-class="{'has-error': httpHelper.requestMessage === undefined}">
+                    <label class="control-label col-xs-2" for="requestMessageTextarea">Message Body:</label>
+                    <div class="col-xs-10">
+                      <textarea id="requestMessageTextarea" name="requestMessage" class="form-control" ng-model="httpHelper.requestMessage" 
+                      rows="20"  cols="110" ng-blur="httpHelper.requestMessage = httpHelper.requestMessage === '' ? undefined : httpHelper.requestMessage">
+                     </textarea>
+                    </div>
+                  </div>
+                  <div class="form-group" ng-class="{'has-error': httpHelper.timeOut === undefined}">
+                    <label class="control-label col-xs-2 mdw-required" for="timeOutInput">Timeout (ms):</label>
+                    <div class="col-xs-4">
+                      <input type="text" id="timeOutInput" name="timeOut" class="form-control" ng-model="httpHelper.timeOut" maxlength="128"
+                         ng-blur="httpHelper.timeOut = httpHelper.timeOut === '' ? undefined : httpHelper.timeOut">
+                    </div>
+                  </div>
+                  <div class="form-group" ng-class="{'has-error': httpHelper.response === undefined}">
+                   <label class="control-label col-xs-2">Response Code:</label>
+                   <div class="col-xs-10"><pre>{{httpHelper.responseCode}}</pre></div>
+                   <label class="control-label col-xs-2">Response:</label>
+                    <div class="col-xs-10"><pre>{{httpHelper.response}}</pre></div>
+                    <div class="mdw-buttons">
+                      <button class="btn btn-success mdw-btn" type="submit" ng-click="sendHttpMessage()" 
+                        ng-disabled="!authUser.hasRole('Process Design')">
+                        <span class="glyphicon glyphicon-send"></span> Send Message
+                      </button>
+                    </div>
+                  </div>
+                </fieldset>            
+              </form>
             </div>
           </uib-tab>
           <uib-tab heading="JMS Messanger">
@@ -58,7 +112,7 @@
                      <label class="control-label col-xs-2">Response:</label>
                       <div class="col-xs-10"><pre>{{jmsHelper.response}}</pre></div>
                       <div class="mdw-buttons">
-                        <button class="btn btn-success mdw-btn" type="submit" ng-click="sendMessage()" 
+                        <button class="btn btn-success mdw-btn" type="submit" ng-click="sendJmsMessage()" 
                           ng-disabled="!authUser.hasRole('Process Design')">
                           <span class="glyphicon glyphicon-send"></span> Send Message
                         </button>

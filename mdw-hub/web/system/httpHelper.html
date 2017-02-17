@@ -51,7 +51,7 @@
            <label class="control-label col-xs-2">Response:</label>
             <div class="col-xs-10"><pre>{{httpHelper.response}}</pre></div>
             <div class="mdw-buttons">
-              <button class="btn btn-success mdw-btn" type="submit" ng-click="sendMessage()" 
+              <button class="btn btn-success mdw-btn" type="submit" ng-click="sendHttpMessage()" 
                 ng-disabled="!authUser.hasRole('Process Design')">
                 <span class="glyphicon glyphicon-send"></span> Send Message
               </button>

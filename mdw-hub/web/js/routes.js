@@ -313,13 +313,8 @@ routesSvc.factory('routes', function() {
       },
       {
         path: '/system/message',
-        templateUrl: 'system/httpHelper.html',
-        controller: 'HttpMessageController'
-      },
-      {
-        path: '/system/jmsMessage',
-        templateUrl: 'system/jmsHelper.html',
-        controller: 'JmsMessageController'
+        templateUrl: 'system/messageHelper.html',
+        controller: 'MessageController'
       }
    ]
   };
