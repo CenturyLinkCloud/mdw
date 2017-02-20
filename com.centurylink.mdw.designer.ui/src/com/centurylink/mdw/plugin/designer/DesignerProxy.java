@@ -2477,7 +2477,7 @@ public class DesignerProxy {
 
     public TestCaseRun prepareTestCase(AutomatedTestCase testCase, int runNum, File resultDir,
             boolean createReplace, boolean verbose, PrintStream log, LogMessageMonitor monitor,
-            boolean singleServer, boolean stubbing) throws RemoteException {
+            boolean singleServer, boolean stubbing, boolean debug) throws RemoteException {
         if ((testCase.isGroovy() || testCase.isGherkin())
                 && !MdwPlugin.workspaceHasGroovySupport()) {
             String msg = "Please install Groovy support to execute test case: "

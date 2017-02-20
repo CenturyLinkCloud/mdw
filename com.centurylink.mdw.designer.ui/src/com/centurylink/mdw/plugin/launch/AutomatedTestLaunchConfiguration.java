@@ -43,6 +43,7 @@ public class AutomatedTestLaunchConfiguration extends LaunchConfigurationDelegat
     public static final String CREATE_REPLACE_RESULTS = "createReplaceResults";
     public static final String IS_LOAD_TEST = "isLoadTest";
     public static final String TESTCASE_COUNTS_MAP = "testCaseCountsMap";
+    public static final String DEBUG = "debug";
 
     private AutomatedTestSuite testSuite;
 
@@ -70,6 +71,7 @@ public class AutomatedTestLaunchConfiguration extends LaunchConfigurationDelegat
         boolean singleServer = launchConfig.getAttribute(attrPrefix + "_" + SINGLE_SERVER, false);
         boolean createReplace = launchConfig.getAttribute(attrPrefix + "_" + CREATE_REPLACE_RESULTS,
                 false);
+        boolean debug = launchConfig.getAttribute(attrPrefix + "_" + DEBUG, false);
 
         testSuite = new AutomatedTestSuite(workflowProject);
         testSuite.setLoadTest(isLoadTest);
@@ -83,6 +85,7 @@ public class AutomatedTestLaunchConfiguration extends LaunchConfigurationDelegat
         testSuite.setStubbing(stubbing);
         testSuite.setSingleServer(singleServer);
         testSuite.setCreateReplaceResults(createReplace);
+        testSuite.setDebug(debug);
 
         List<AutomatedTestCase> testCases = new ArrayList<AutomatedTestCase>();
         List<String> testCasesStr = launchConfig.getAttribute(attrPrefix + "_" + TEST_CASES,

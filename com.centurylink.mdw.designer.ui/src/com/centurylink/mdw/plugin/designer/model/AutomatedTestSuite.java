@@ -114,6 +114,16 @@ public class AutomatedTestSuite extends WorkflowElement {
         this.createReplaceResults = createReplace;
     }
 
+    private boolean debug;
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
     private List<AutomatedTestCase> testCases;
 
     public List<AutomatedTestCase> getTestCases() {
