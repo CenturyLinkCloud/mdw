@@ -4,7 +4,7 @@
 	<classpathentry excluding="Archive/" kind="src" output="build/assets" path="assets"/>
 	<classpathentry exported="true" kind="src" path="/mdw-common"/>
 	<classpathentry exported="true" kind="src" path="/mdw-services"/>
-	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
+	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT">
 		<attributes>

@@ -29,7 +29,7 @@ class ServerStart<T extends AbstractExecTask> extends AbstractExecTask {
 
     public ServerStart() {
         super(ServerStart.class)
-        execAction = new AsyncExecHandler(getExecActionFactory().getFileResolver())        
+        // execAction = new AsyncExecHandler(getExecActionFactory().getFileResolver())        
     }
     
     public T commandLine(Object... arguments) {

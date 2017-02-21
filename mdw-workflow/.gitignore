@@ -6,3 +6,4 @@ data/
 projects/
 packages/
 *.launch
+bin/
