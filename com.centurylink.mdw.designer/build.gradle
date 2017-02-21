@@ -17,10 +17,6 @@ task buildFeature(type: GradleBuild) {
     tasks = [":com.centurylink.mdw.designer.ui:jarFeature"]
 }
 
-task copyTutorialDocs(type: GradleBuild) {
-    tasks = [":com.centurylink.mdw.designer.ui:copyTutorialDocs"]
-}
-
 task updateDesignerVersion(type: GradleBuild) {
     tasks = [":com.centurylink.mdw.designer.ui:updateDesignerVersion",
         ":com.centurylink.mdw.designer.rcp:updateDesignerVersion"]
