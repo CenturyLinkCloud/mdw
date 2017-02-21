@@ -17,7 +17,7 @@ dependencies {
     test group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"
     test group: "sirrus", name: "sirrus", version: "1.0"
     test group: "com.rsa.jsafe", name: "JsafeJCE", version: "1.0"
-    test group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0ctl"
+    test group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
     test group: "com.qwest.appsec", name: "AccessControl", version: "6.8"
     test group: "org.json", name: "json", version: "20090211"
     test group: "commons-lang", name: "commons-lang", version: "2.4"
