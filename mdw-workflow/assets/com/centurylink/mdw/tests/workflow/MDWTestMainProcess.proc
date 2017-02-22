@@ -738,7 +738,7 @@
     },
     "intarraytest": {
       "category": "LOCAL",
-      "type": "java.lang.Integer[]"
+      "type": "java.util.List<Integer>"
     },
     "launcher": {
       "category": "LOCAL",
@@ -765,5 +765,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "3.33"
+  "version": "3.34"
 }
