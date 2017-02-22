@@ -135,12 +135,23 @@ public class VcsArchiver {
                 newLoader.copyPkg(tempPkgDir, archiveDest);
             }
         }
+
         progressMonitor.progress(20);
         // TODO:  Add checkbox in Admin Asset Import screen to retain the assets backup upon completion
         progressMonitor.subTask("Removing temp: " + tempArchiveDir);
-        newLoader.delete(tempArchiveDir);
+        try {
+            newLoader.delete(tempArchiveDir);
+        }
+        catch (Throwable ex) {
+            System.out.println(ex.getMessage());
+        }
         progressMonitor.subTask("Removing temp: " + tempDir);
-        newLoader.delete(tempDir);
+        try {
+            newLoader.delete(tempDir);
+        }
+        catch (Throwable ex) {
+            System.out.println(ex.getMessage());
+        }
         progressMonitor.progress(10);
     }
 }
