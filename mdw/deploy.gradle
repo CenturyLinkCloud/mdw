@@ -30,35 +30,17 @@ task stopTomcat(type: ServerStop) {
 }
 
 task deleteAssets(type: Delete) {
-	delete deployAssetDir
+    delete fileTree(deployAssetDir) {
+      exclude 'Archive'
+    }
 }
 deleteAssets.mustRunAfter stopTomcat
 
-task deleteMdwDemo(type: Delete) {
-	delete ".temp/mdwdemo"
-}
-
-task cloneMdwDemo(type: GitClone) {
-	dependsOn deleteMdwDemo
-	def gitUrl = new URL(mdwDemoGitUrl)
-	fromUrl gitUrl
-	into ".temp/mdwdemo"
-	trustedHost gitUrl.host
-}
-cloneMdwDemo.mustRunAfter(deleteMdwDemo, deleteAssets)
-
-task deployMdwDemo(type: Copy) {
-	dependsOn cloneMdwDemo
-	from(".temp/mdwdemo/workflow/assets") {
+task deployMdwAssets(type: Copy) {
+	from("../mdw-workflow/assets") {
 	}
 	into deployAssetDir
 }
-
-task deployAssets(type: Copy) {
-	from "../${mdwAssetRoot}"
-	into deployAssetDir
-}
-deployAssets.mustRunAfter deployMdwDemo
 
 task deleteWars(type: Delete) {
 	delete "${deployWarDir}/mdw.war"
@@ -110,12 +92,12 @@ task startTomcat(type: ServerStart) {
       return standardOutput.toString()
     }
 }
-startTomcat.mustRunAfter(stopTomcat, deployAssets, deployMdwWar, deployJavadocs, deployMdwDemo)
+startTomcat.mustRunAfter(stopTomcat, deployMdwWar, deployJavadocs, deployMdwAssets)
 
 // no tomcat or assets
 task deployWarOnly(dependsOn: [deleteWars, deployMdwWar, deployJavadocs]) << {
 }
 
-task deployMdw(dependsOn: [stopTomcat, deleteAssets, deleteWars, deployAssets, deployMdwWar, startTomcat]) << {
+task deployMdw(dependsOn: [stopTomcat, deleteAssets, deleteWars, deployMdwAssets, deployMdwWar, startTomcat]) << {
 	println "*** MDW build ${mdwVersion} published to ${deployAssetDir}, ${deployWarDir} ***"
 }
