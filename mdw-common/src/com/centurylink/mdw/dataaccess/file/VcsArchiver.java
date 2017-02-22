@@ -135,12 +135,18 @@ public class VcsArchiver {
                 newLoader.copyPkg(tempPkgDir, archiveDest);
             }
         }
-        progressMonitor.progress(20);
-        // TODO:  Add checkbox in Admin Asset Import screen to retain the assets backup upon completion
-        progressMonitor.subTask("Removing temp: " + tempArchiveDir);
-        newLoader.delete(tempArchiveDir);
-        progressMonitor.subTask("Removing temp: " + tempDir);
-        newLoader.delete(tempDir);
-        progressMonitor.progress(10);
+
+        try {
+            progressMonitor.progress(20);
+            // TODO:  Add checkbox in Admin Asset Import screen to retain the assets backup upon completion
+            progressMonitor.subTask("Removing temp: " + tempArchiveDir);
+            newLoader.delete(tempArchiveDir);
+            progressMonitor.subTask("Removing temp: " + tempDir);
+            newLoader.delete(tempDir);
+            progressMonitor.progress(10);
+        }
+        catch (Throwable ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 }
