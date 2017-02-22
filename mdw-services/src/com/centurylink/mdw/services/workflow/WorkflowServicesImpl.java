@@ -72,6 +72,7 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.TaskException;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
@@ -218,10 +219,14 @@ public class WorkflowServicesImpl implements WorkflowServices {
         try {
             TaskManager taskMgr = ServiceLocator.getTaskManager();
             TaskInstance taskVo = taskMgr.getTaskInstance(taskInstanceId);
-            Long activityInstanceId = taskMgr.getActivityInstanceId(taskVo,false);
-            dataAccess = new EngineDataAccessDB();
-            tw = dataAccess.startTransaction();
-            dataAccess.recordEventWait(eventName, !recurring, 3600, activityInstanceId, completionCode);
+            if (taskVo != null) {
+                Long activityInstanceId = taskVo.getActivityInstanceId();
+                dataAccess = new EngineDataAccessDB();
+                tw = dataAccess.startTransaction();
+                dataAccess.recordEventWait(eventName, !recurring, 3600, activityInstanceId, completionCode);
+            }
+            else
+                throw new TaskException("Task Instance was not found for ID " + taskInstanceId);
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);

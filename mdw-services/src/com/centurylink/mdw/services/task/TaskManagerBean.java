@@ -36,7 +36,6 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.Attachment;
-import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
@@ -306,7 +305,7 @@ public class TaskManagerBean implements TaskManager {
         int pri = 0;
         // use the prioritization strategy if one is defined for the task
         try {
-            PrioritizationStrategy prioritizationStrategy = getPrioritizationStrategy(task, procInstId, OwnerType.DOCUMENT.equals(secondaryOwner) ? secondaryOwnerId : null,indices);
+            PrioritizationStrategy prioritizationStrategy = getPrioritizationStrategy(task, procInstId, indices);
             if (prioritizationStrategy != null) {
                 Date calcDueDate = prioritizationStrategy.determineDueDate(task);
                 if (calcDueDate != null)
@@ -800,6 +799,7 @@ public class TaskManagerBean implements TaskManager {
         Integer prevStatus = ti.getStatusCode();
         Integer prevState = ti.getStateCode();
         String assigneeCuid = null;
+        TaskTemplate taskVO = null;
 
         boolean isComplete = false;
 
@@ -845,8 +845,9 @@ public class TaskManagerBean implements TaskManager {
                 closeTaskInstance(ti, action, comment);
             if (notifyEngine && !ti.isSubTask()) {
                 if (taskResumeEndpoint == null) {
+                    taskVO = TaskTemplateCache.getTaskTemplate(ti.getTaskId());
                     // resume through engine
-                    if (ti.isGeneralTask())
+                    if (taskVO != null && taskVO.isAutoformTask())
                         resumeAutoFormTaskInstance(action, ti);
                     else
                         resumeCustomTaskInstance(action, ti);
@@ -863,7 +864,8 @@ public class TaskManagerBean implements TaskManager {
         String label = ti.getTaskName();
         if (label == null) {
             label = "Unknown";
-            TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(ti.getTaskId());
+            if (taskVO == null)
+                taskVO = TaskTemplateCache.getTaskTemplate(ti.getTaskId());
             if (taskVO != null)
                 label = taskVO.getTaskName();
         }
@@ -882,7 +884,7 @@ public class TaskManagerBean implements TaskManager {
                 }
                 if (allCompleted) {
                     TaskInstance masterTaskInst = getTaskInstance(masterTaskInstId);
-                    TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(masterTaskInst.getTaskId());
+                    taskVO = TaskTemplateCache.getTaskTemplate(masterTaskInst.getTaskId());
                     if ("true".equalsIgnoreCase(taskVO.getAttribute(TaskAttributeConstant.SUBTASKS_COMPLETE_MASTER)))
                         performActionOnTaskInstance(TaskAction.COMPLETE, masterTaskInstId, userId, null, null, null, notifyEngine, false);
                 }
@@ -914,20 +916,21 @@ public class TaskManagerBean implements TaskManager {
     private void resumeAutoFormTaskInstance(String taskAction, TaskInstance ti) throws TaskException {
         try {
             String eventName = FormConstants.TASK_CORRELATION_ID_PREFIX + ti.getTaskInstanceId().toString();
-            FormDataDocument datadoc = new FormDataDocument();
-            String formAction; // FIXME Aufoform
+            JSONObject jsonMsg = new JSONObject();
+            String formAction;
             if (taskAction.equals(TaskAction.CANCEL))
                 formAction = "@CANCEL_TASK";
             else if (taskAction.equals(TaskAction.COMPLETE))
                 formAction = "@COMPLETE_TASK";
             else {
                 formAction = "@COMPLETE_TASK";
-                datadoc.setMetaValue(FormConstants.URLARG_COMPLETION_CODE, taskAction);
+                jsonMsg.put(FormConstants.URLARG_COMPLETION_CODE, taskAction);
             }
-            datadoc.setAttribute(FormDataDocument.ATTR_ACTION, formAction);
-            String message = datadoc.format();
+            jsonMsg.put(FormConstants.FORMATTR_ACTION, formAction);
+            JSONObject jsonMeta = new JSONObject().put("META", jsonMsg);
+            String message = jsonMeta.toString();
             EventManager eventManager = ServiceLocator.getEventManager();
-            Long docid = eventManager.createDocument(FormDataDocument.class.getName(),
+            Long docid = eventManager.createDocument(JSONObject.class.getName(),
                     OwnerType.TASK_INSTANCE, ti.getTaskInstanceId(), message);
             String av = PropertyManager.getProperty(PropertyNames.ACTIVITY_RESUME_DELAY);
             int delay = 2;
@@ -1239,8 +1242,7 @@ public class TaskManagerBean implements TaskManager {
           if (strategy instanceof ParameterizedStrategy) {
             // need to check how to pass the indices
             populateStrategyParams((ParameterizedStrategy)strategy, TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId()),
-                taskInstance.getOwnerId(),
-                OwnerType.DOCUMENT.equals(taskInstance.getSecondaryOwnerType()) ? taskInstance.getSecondaryOwnerId() : null, null);
+                taskInstance.getOwnerId(), null);
           }
         }
         catch (Exception ex) {
@@ -1269,8 +1271,7 @@ public class TaskManagerBean implements TaskManager {
                         OwnerType.PROCESS_INSTANCE.equals(taskInstance.getOwnerType()) ? taskInstance.getOwnerId() : null);
                 if (strategy instanceof ParameterizedStrategy) {
                     populateStrategyParams((ParameterizedStrategy)strategy, taskTemplate,
-                            taskInstance.getOwnerId(),
-                            OwnerType.DOCUMENT.equals(taskInstance.getSecondaryOwnerType()) ? taskInstance.getSecondaryOwnerId() : null, indices);
+                            taskInstance.getOwnerId(), indices);
                 }
                 return strategy.determineWorkgroups(taskTemplate, taskInstance);
             }
@@ -1298,8 +1299,7 @@ public class TaskManagerBean implements TaskManager {
                 SubTaskStrategy strategy = TaskInstanceStrategyFactory.getSubTaskStrategy(subTaskStrategyAttr,
                         OwnerType.PROCESS_INSTANCE.equals(taskInstance.getOwnerType()) ? taskInstance.getOwnerId() : null);
                 if (strategy instanceof ParameterizedStrategy) {
-                    populateStrategyParams((ParameterizedStrategy)strategy, runtimeContext.getTaskTemplate(), taskInstance.getOwnerId(),
-                            OwnerType.DOCUMENT.equals(taskInstance.getSecondaryOwnerType()) ? taskInstance.getSecondaryOwnerId() : null, null);
+                    populateStrategyParams((ParameterizedStrategy)strategy, runtimeContext.getTaskTemplate(), taskInstance.getOwnerId(), null);
                 }
                 XmlOptions xmlOpts = Compatibility.namespaceOptions().setDocumentType(SubTaskPlanDocument.type);
                 SubTaskPlanDocument subTaskPlanDoc = SubTaskPlanDocument.Factory.parse(strategy.getSubTaskPlan(runtimeContext), xmlOpts);
@@ -1311,7 +1311,7 @@ public class TaskManagerBean implements TaskManager {
         }
     }
 
-    private PrioritizationStrategy getPrioritizationStrategy(TaskTemplate taskTemplate, Long processInstanceId, Long formDataDocId, Map<String,String> indices)
+    private PrioritizationStrategy getPrioritizationStrategy(TaskTemplate taskTemplate, Long processInstanceId, Map<String,String> indices)
     throws DataAccessException, StrategyException {
         String priorityStrategyAttr = taskTemplate.getAttribute(TaskAttributeConstant.PRIORITY_STRATEGY);
         if (StringHelper.isEmpty(priorityStrategyAttr)) {
@@ -1320,13 +1320,13 @@ public class TaskManagerBean implements TaskManager {
         else {
             PrioritizationStrategy strategy = TaskInstanceStrategyFactory.getPrioritizationStrategy(priorityStrategyAttr, processInstanceId);
             if (strategy instanceof ParameterizedStrategy) {
-                populateStrategyParams((ParameterizedStrategy)strategy, taskTemplate, processInstanceId, formDataDocId, indices);
+                populateStrategyParams((ParameterizedStrategy)strategy, taskTemplate, processInstanceId, indices);
             }
             return strategy;
         }
     }
 
-    private void populateStrategyParams(ParameterizedStrategy strategy, TaskTemplate taskTemplate, Long processInstId, Long formDataDocId, Map<String,String> indices)
+    private void populateStrategyParams(ParameterizedStrategy strategy, TaskTemplate taskTemplate, Long processInstId, Map<String,String> indices)
     throws DataAccessException {
         Package pkg = null;
         for (Attribute attr : taskTemplate.getAttributes()) {
@@ -1340,65 +1340,24 @@ public class TaskManagerBean implements TaskManager {
             logger.severeException("Failed to get the process Package information : "+processInstId, ex);
         }
 
-        if (taskTemplate.isAutoformTask() && formDataDocId != null) {
-            Document docvo = eventManager.getDocumentVO(formDataDocId);
-            FormDataDocument datadoc = new FormDataDocument();
-            try {
-                datadoc.load(docvo.getContent());
-                List<VariableInstance> varInsts = new ArrayList<VariableInstance>(); // FIXME Autoform
-                for (VariableInstance varInst : varInsts) {
-                    Object varVal = varInst.getData();
-                    if (varInst.isDocument()) {
-                        varVal = varInst.getData(); // FIXME AutoForm
-                    }
-                    strategy.setParameter(varInst.getName(), varVal);
-                }
-            }
-            catch (Exception ex) {
-                throw new DataAccessException(ex.getMessage(), ex);
-            }
-        }
-        else {
-            for (VariableInstance varInst : getProcessInstanceVariables(processInstId)) {
-                Object varVal = varInst.getData();
-                if (varInst.isDocument())
-                    varVal = eventManager.getDocumentVO(((DocumentReference)varVal).getDocumentId()).getObject(varInst.getType(), pkg);
-                strategy.setParameter(varInst.getName(), varVal);
-            }
+        for (VariableInstance varInst : getProcessInstanceVariables(processInstId)) {
+            Object varVal = varInst.getData();
+            if (varInst.isDocument())
+                varVal = eventManager.getDocumentVO(((DocumentReference)varVal).getDocumentId()).getObject(varInst.getType(), pkg);
+            strategy.setParameter(varInst.getName(), varVal);
         }
     }
 
     /**
      * get the task instance for the activity instance.
-     * For general tasks, the process instance ID is needed
-     * to loop through all task instances of the process.
      *
      * @param activityInstId activity instance ID
-     * @param pProcessInstId process instance ID for general tasks; null for classic tasks
      */
-    public TaskInstance getTaskInstanceByActivityInstanceId(Long activityInstanceId,
-            Long procInstId)
+    public TaskInstance getTaskInstanceByActivityInstanceId(Long activityInstanceId)
     throws TaskException, DataAccessException {
         TaskInstance taskInst;
-        if (procInstId==null) {
-            taskInst = getTaskDAO().getTaskInstanceByActivityInstanceId(activityInstanceId);
-        } else {
-            List<TaskInstance> taskInstList = getTaskDAO().getTaskInstancesForProcessInstance(procInstId);
-            taskInst = null;
-            for (TaskInstance one : taskInstList) {
-                if (!one.getSecondaryOwnerType().equals(OwnerType.DOCUMENT)) continue;
-                Document doc = getTaskInstanceData(one);
-                FormDataDocument formDataDoc = new FormDataDocument();
-                try {
-                    formDataDoc.load(doc.getContent());
-                    if (!activityInstanceId.equals(formDataDoc.getActivityInstanceId())) continue;
-                    taskInst = one;
-                    break;
-                } catch (Exception e) {
-                    logger.warnException("Failed to load document", e);
-                }
-            }
-        }
+        taskInst = getTaskDAO().getTaskInstanceByActivityInstanceId(activityInstanceId);
+
         return taskInst;
     }
 
@@ -1584,18 +1543,10 @@ public class TaskManagerBean implements TaskManager {
             if (OwnerType.TASK_INSTANCE.equals(taskInstance.getSecondaryOwnerType())) {
                 taskInst = getTaskDAO().getTaskInstance(taskInstance.getSecondaryOwnerId()); //secondary owner id refers to master task instance id
             }
-            if (OwnerType.DOCUMENT.equals(taskInst.getSecondaryOwnerType())) {
-                String formDataString = getTaskInstanceData(taskInst).getContent();
-                FormDataDocument formDataDoc = new FormDataDocument();
-                formDataDoc.load(formDataString);
-                activityInstanceId = formDataDoc.getActivityInstanceId();
-            }
-            else {
-                // task instance secondary owner is work transition instance
-                Long workTransInstId = taskInst.getSecondaryOwnerId();
-                TransitionInstance workTransInst = eventManager.getWorkTransitionInstance(workTransInstId);
-                activityInstanceId = workTransInst.getDestinationID();
-            }
+            // task instance secondary owner is work transition instance
+            Long workTransInstId = taskInst.getSecondaryOwnerId();
+            TransitionInstance workTransInst = eventManager.getWorkTransitionInstance(workTransInstId);
+            activityInstanceId = workTransInst.getDestinationID();
         }
       }
       catch (Exception ex) {
@@ -1753,10 +1704,9 @@ public class TaskManagerBean implements TaskManager {
       }
   }
 
-   public void cancelTasksOfActivityInstance(Long actInstId, Long procInstId)
+   public void cancelTasksOfActivityInstance(Long actInstId)
             throws NamingException, MDWException {
-        TaskInstance taskInstance = getTaskInstanceByActivityInstanceId(actInstId,
-                procInstId == null ? null : new Long(procInstId));
+        TaskInstance taskInstance = getTaskInstanceByActivityInstanceId(actInstId);
         if (taskInstance == null)
             throw new TaskException("Cannot find the task instance for the activity instance");
         if (taskInstance.getStatusCode().equals(TaskStatus.STATUS_ASSIGNED)

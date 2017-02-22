@@ -186,7 +186,7 @@ public interface TaskManager {
    public void cancelTasksForProcessInstances(List<Long> procInstIds)
    throws TaskException, DataAccessException;
 
-   public void cancelTasksOfActivityInstance(Long actInstId, Long procInstId)
+   public void cancelTasksOfActivityInstance(Long actInstId)
    throws NamingException, MDWException;
 
    public TaskInstance performActionOnTaskInstance(String action, Long taskInstanceId,
@@ -306,13 +306,10 @@ public interface TaskManager {
 
    /**
     * get the task instance for the activity instance.
-    * For general tasks, the process instance ID is needed
-    * to loop through all task instances of the process.
     *
     * @param activityInstId activity instance ID
-    * @param pProcessInstId process instance ID for general tasks; null for classic tasks
     */
-   public TaskInstance getTaskInstanceByActivityInstanceId(Long activityInstanceId, Long procInstId)
+   public TaskInstance getTaskInstanceByActivityInstanceId(Long activityInstanceId)
    throws TaskException, DataAccessException;
 
    /**

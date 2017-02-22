@@ -5,43 +5,51 @@ package com.centurylink.mdw.workflow.activity.task;
 
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.FormConstants;
-import com.centurylink.mdw.constant.TaskAttributeConstant;
-import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
+import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.task.TaskAction;
+import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskTemplate;
-import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.TaskServices;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
-import com.qwest.mbeng.MbengException;
+import com.centurylink.mdw.workflow.activity.AbstractWait;
 
 @Tracked(LogLevel.TRACE)
-public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivityBase {
+public class AutoFormManualTaskActivity extends AbstractWait implements TaskActivity {
+
+    protected static final String WAIT_FOR_TASK = "Wait for Task";
+
+    public boolean needSuspend() {
+        String waitForTask = this.getAttributeValue(WAIT_FOR_TASK);
+        return waitForTask==null || waitForTask.equalsIgnoreCase("true");
+    }
 
     /**
      *
      * The method creates a new task instance, or in case a task instance ID
      * is already known (the method getTaskInstanceId() return non-null),
      * the method sends a response back to the task instance.
-     * The method invokes createFormData() to get the form data document,
-     * and by default it takes the data from the document variable specified in the designer.
      *
      */
     @Override
     public void execute() throws ActivityException {
         try {
-            FormDataDocument formdata = this.createFormData();
-            populateFormDataMetaInfo(formdata, false, false);
-
             String taskTemplate = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE);
             if (taskTemplate == null)
                 throw new ActivityException("Missing attribute: " + ATTRIBUTE_TASK_TEMPLATE);
@@ -52,16 +60,15 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
             if (template == null)
                 throw new ActivityException("Task template not found: " + spec);
             TaskServices taskServices = ServiceLocator.getTaskServices();
-            Long taskInstanceId = taskServices.createAutoFormTaskInstance(spec,
-                    getMasterRequestId(), getProcessInstanceId(), getActivityInstanceId(), formdata).getTaskInstanceId();
+            Long taskInstanceId = taskServices.createTaskInstance(spec,
+                    getMasterRequestId(), getProcessInstanceId(), getActivityInstanceId(), getWorkTransitionInstanceId()).getTaskInstanceId();
 
             String taskInstCorrelationId = FormConstants.TASK_CORRELATION_ID_PREFIX + taskInstanceId.toString();
-            formdata.setAttribute(FormDataDocument.ATTR_ID, taskInstCorrelationId);
             super.loginfo("Task instance created - ID " + taskInstanceId);
             if (this.needSuspend()) {
                 getEngine().createEventWaitInstance(
                         this.getActivityInstanceId(),
-                        getEventName(formdata),
+                        taskInstCorrelationId,
                         EventType.EVENTNAME_FINISH, true, true);
                 EventWaitInstance received = registerWaitEvents(false,true);
                 if (received!=null)
@@ -73,92 +80,148 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
         }
     }
 
-    /**
-     * TODO: Git rid of FormDataDocument.
-     */
-    protected void populateFormDataMetaInfo(FormDataDocument datadoc, boolean subsequentCall, boolean updateActivityInstanceId)
-    throws ActivityException {
-        try {
-            String taskTemplateAttr = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE);
-            // else subsequent call no need to set form name
-            if (subsequentCall) {
-                // FIXME Autoform
-                // datadoc.setAttribute(FormDataDocument.ATTR_ACTION, FormConstants.ACTION_RESPOND_TASK);
-                if (updateActivityInstanceId || datadoc.getMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID)==null)
-                    datadoc.setMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID, getActivityInstanceId().toString());
-            }
-            else {
-                // FIXME Autoform
-                // datadoc.setAttribute(FormDataDocument.ATTR_ACTION, FormConstants.ACTION_CREATE_TASK);
-                datadoc.setMetaValue(FormDataDocument.META_ACTIVITY_INSTANCE_ID, getActivityInstanceId().toString());
-            }
-            datadoc.setAttribute(FormDataDocument.ATTR_NAME, getActivityId().toString());
-            datadoc.setMetaValue(FormDataDocument.META_PROCESS_INSTANCE_ID, getProcessInstanceId().toString());
-            if (!subsequentCall) {
-                // use Task Template for attributes
-                String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
-                AssetVersionSpec spec = new AssetVersionSpec(taskTemplateAttr, templateVersion == null ? "0" : templateVersion);
-                TaskTemplate template = TaskTemplateCache.getTaskTemplate(spec);
-                if (template == null)
-                    throw new ActivityException("Task template not found: " + spec);
-                String taskLogicalId = template.getLogicalId();
-                datadoc.setMetaValue(FormDataDocument.META_TASK_LOGICAL_ID, taskLogicalId);
+    public final boolean resume(InternalEvent event)
+            throws ActivityException {
+        // secondary owner type must be OwnerType.EXTERNAL_EVENT_INSTANCE
+        String messageString = super.getMessageFromEventMessage(event);
+        return resume(messageString, event.getCompletionCode());
+    }
 
-                String sla = template.getAttribute(TaskAttributeConstant.TASK_SLA);
-                if (sla != null) // always in seconds for templates
-                  datadoc.setMetaValue(FormDataDocument.META_DUE_IN_SECONDS, Integer.toString(Integer.parseInt(sla)));
-                datadoc.setMetaValue(FormDataDocument.META_TASK_NAME, template.getAttribute(template.getName()));
-                datadoc.setMetaValue(FormDataDocument.META_MASTER_REQUEST_ID, getMasterRequestId());
-                fillInCustomActions(datadoc);
+    protected boolean resume(String message, String completionCode) throws ActivityException {
+        if (messageIsTaskAction(message)) {
+            processTaskAction(message);
+            return true;
+        } else {
+            this.setReturnCode(completionCode);
+            processOtherMessage(message);
+            Integer actInstStatus = super.handleEventCompletionCode();
+            if (actInstStatus.equals(WorkStatus.STATUS_CANCELLED)) {
+                try {
+                    ServiceLocator.getTaskManager().
+                        cancelTasksOfActivityInstance(getActivityInstanceId());
+                } catch (Exception e) {
+                    logger.severeException("Failed to cancel task instance - process moves on", e);
+                }
+            } else if (actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
+                try {
+                    TaskManager taskMgr = ServiceLocator.getTaskManager();
+                    TaskInstance taskInst = taskMgr.getTaskInstanceByActivityInstanceId(this.getActivityInstanceId());
+                    String eventName = FormConstants.TASK_CORRELATION_ID_PREFIX + taskInst.getTaskInstanceId().toString();
+
+                    getEngine().createEventWaitInstance(
+                            this.getActivityInstanceId(),
+                            eventName,
+                            null, true, true);
+                } catch (Exception e) {
+                    logger.severeException("Failed to re-register task action listening", e);
+                }
+                // unsolicited event listening is already registered by handleEventCompletionCode
             }
+            return true;
         }
-        catch (Exception e) {
+    }
+
+    public final boolean resumeWaiting(InternalEvent event) throws ActivityException {
+        boolean done;
+        EventWaitInstance received;
+        try {
+            // re-register wait events
+            TaskManager taskMgr = ServiceLocator.getTaskManager();
+            TaskInstance taskInst = taskMgr.getTaskInstanceByActivityInstanceId(this.getActivityInstanceId());
+            String eventName = FormConstants.TASK_CORRELATION_ID_PREFIX + taskInst.getTaskInstanceId().toString();
+
+            received = getEngine().createEventWaitInstance(
+                    this.getActivityInstanceId(),
+                    eventName,
+                    null, true, false);
+            if (received==null) received = registerWaitEvents(false,true);
+        } catch (Exception e) {
             throw new ActivityException(-1, e.getMessage(), e);
         }
+        if (received!=null) {
+            done = resume(getExternalEventInstanceDetails(received.getMessageDocumentId()),
+                    received.getCompletionCode());
+        } else {
+            done = false;
+        }
+        return done;
     }
 
-    /**
-     * This method is used to create form data document to be sent to task manager.
-     * The methods populates variable instance data and custom actions in the data document
-     * @throws
-     */
-    protected FormDataDocument createFormData() throws ActivityException {
-        FormDataDocument datadoc = new FormDataDocument();
-        String formname = this.getAttributeValue(TaskActivity.ATTRIBUTE_FORM_NAME);
-        if (formname!=null && !formname.startsWith("html:")) {
-            // use form to selectively include process variables
-            fillInCustomActions(datadoc);
-            fillInVariables(datadoc);
+    protected boolean messageIsTaskAction(String messageString) throws ActivityException {
+        if (messageString.startsWith("{")) {
+            JSONObject jsonobj;
+            try {
+                jsonobj = new JSONObject(messageString);
+                JSONObject meta = jsonobj.has("META")?jsonobj.getJSONObject("META"):null;
+                if (meta==null || !meta.has(FormConstants.FORMATTR_ACTION)) return false;
+                String action = meta.getString(FormConstants.FORMATTR_ACTION);
+                return action!=null && action.startsWith("@");
+            } catch (JSONException e) {
+                throw new ActivityException(0, "Failed to parse JSON message", e);
+            }
         } else {
-            // include all instantiated process variables
-            for (VariableInstance var : this.getParameters()) {
-                String value;
-                if (var.isDocument()) {
-                    value = getDocumentContent((DocumentReference)var.getData());
-                } else value = var.getStringValue();
-                try {
-                    datadoc.setValue(var.getName(), value);
-                } catch (MbengException e) {
-                    super.logwarn("Failed to set variable in form data document: " + var.getName());
+            int k = messageString.indexOf("FORMDATA");
+            return k>0 && k<8;
+        }
+    }
+
+    protected void processTaskAction(String messageString) throws ActivityException {
+        try {
+            JSONObject datadoc = new JSONObject(messageString);
+            String compCode = extractFormData(datadoc); // this handles both embedded proc and not
+            datadoc = datadoc.getJSONObject("META");
+            String action = datadoc.getString(FormConstants.FORMATTR_ACTION);
+            CallURL callurl = new CallURL(action);
+            action = callurl.getAction();
+            if (compCode==null) compCode = datadoc.has(FormConstants.URLARG_COMPLETION_CODE) ? datadoc.getString(FormConstants.URLARG_COMPLETION_CODE) : null;
+            if (compCode==null) compCode = callurl.getParameter(FormConstants.URLARG_COMPLETION_CODE);
+            String subaction = datadoc.has(FormConstants.URLARG_ACTION) ? datadoc.getString(FormConstants.URLARG_ACTION) : null;
+            if (subaction==null) subaction = callurl.getParameter(FormConstants.URLARG_ACTION);
+            if (this.getProcessInstance().isEmbedded()) {
+                if (subaction==null)
+                    subaction = compCode;
+                if (action.equals("@CANCEL_TASK")) {
+                    if (TaskAction.ABORT.equalsIgnoreCase(subaction))
+                        compCode = EventType.EVENTNAME_ABORT + ":process";
+                    else compCode = EventType.EVENTNAME_ABORT;
+                } else {    // FormConstants.ACTION_COMPLETE_TASK
+                    if (TaskAction.RETRY.equalsIgnoreCase(subaction))
+                        compCode = TaskAction.RETRY;
+                    else if (compCode==null) compCode = EventType.EVENTNAME_FINISH;
+                    else compCode = EventType.EVENTNAME_FINISH + ":" + compCode;
+                }
+                this.setProcessInstanceCompletionCode(compCode);
+                setReturnCode(null);
+            } else {
+                if (action.equals("@CANCEL_TASK")) {
+                    if (TaskAction.ABORT.equalsIgnoreCase(subaction))
+                        compCode = WorkStatus.STATUSNAME_CANCELLED + "::" + EventType.EVENTNAME_ABORT;
+                    else compCode = WorkStatus.STATUSNAME_CANCELLED + "::";
+                    setReturnCode(compCode);
+                } else {    // FormConstants.ACTION_COMPLETE_TASK
+                    setReturnCode(compCode);
                 }
             }
+        } catch (Exception e) {
+            String errmsg = "Failed to parse task completion message";
+            logger.severeException(errmsg, e);
+            throw new ActivityException(-1, errmsg, e);
         }
-        return datadoc;
     }
 
     /**
-     * This method is used to extract data from the data document received from the task manager.
+     * This method is used to extract data from the message received from the task manager.
      * The method updates all variables specified as non-readonly
      *
      * @param datadoc
-     * @param formnode
      * @return completion code; when it returns null, the completion
      *   code is taken from the completionCode parameter of
-     *   the form data document attribute FormDataDocument.ATTR_ACTION
+     *   the message with key FormDataDocument.ATTR_ACTION
      * @throws ActivityException
+     * @throws JSONException
      */
-    protected String extractFormData(FormDataDocument datadoc)
-            throws ActivityException {
+    protected String extractFormData(JSONObject datadoc)
+            throws ActivityException, JSONException {
         String varstring = this.getAttributeValue(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
         List<String[]> parsed = StringHelper.parseTable(varstring, ',', ';', 5);
         for (String[] one : parsed) {
@@ -167,37 +230,46 @@ public class AutoFormManualTaskActivity extends FormDataDocumentManualTaskActivi
             if (displayOption.equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
             if (displayOption.equals(TaskActivity.VARIABLE_DISPLAY_READONLY)) continue;
             if (varname.startsWith("#{") || varname.startsWith("${")) continue;
-            String data = datadoc.getValue(varname);
+            String data = datadoc.has(varname) ? datadoc.getString(varname) : null;
             setDataToVariable(varname, data);
         }
         return null;
     }
 
-    protected void fillInVariables(FormDataDocument formdatadoc)
-    throws ActivityException {
-        try {
-            String varstring = this.getAttributeValue(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
-            List<String[]> parsed = StringHelper.parseTable(varstring, ',', ';', 5);
-            for (String[] one : parsed) {
-                String varname = one[0];
-                // TODO: support expressions in displaying autoform manual tasks
-                // (currently only supported for Task services
-                if (!varname.startsWith("#{") && !varname.startsWith("${")) {
-                    String displayOption = one[2];
-                    if (displayOption.equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
-                    String data;
-                    VariableInstance varinst = this.getVariableInstance(varname);
-                    if (varinst!=null) {
-                        if (varinst.isDocument()) {
-                            DocumentReference docref = (DocumentReference)varinst.getData();
-                            data = super.getDocumentContent(docref);
-                        } else data = varinst.getStringValue();
-                        formdatadoc.setValue(varname, data);
-                    }
-                }
-            }
-        } catch (MbengException e) {
-            throw new ActivityException(-1, "Failed to fill in variable data", e);
-        }
+    protected void setDataToVariable(String datapath, String value)
+            throws ActivityException {
+        if (value == null || value.length() == 0)
+            return;
+        // w/o above, hit oracle constraints that variable value must not be
+        // null
+        // shall we consider removing that constraint? and shall we check
+        // if the variable should be updated?
+        String pType = this.getParameterType(datapath);
+        if (pType == null)
+            return; // ignore data that is not a variable
+        if (VariableTranslator.isDocumentReferenceVariable(getPackage(), pType))
+            this.setParameterValueAsDocument(datapath, pType, value);
+        else
+            this.setParameterValue(datapath, value);
     }
+
+    /**
+     * This method is invoked to process a received event (other than task completion).
+     * You will need to override this method to customize processing of the event.
+     *
+     * The default method does nothing.
+     *
+     * The status of the activity after processing the event is configured in the designer, which
+     * can be either Hold or Waiting.
+     *
+     * When you override this method, you can optionally set different completion
+     * code from those configured in the designer by calling setReturnCode().
+     *
+     * @param messageString the entire message content of the external event (from document table)
+     * @throws ActivityException
+     */
+    protected void processOtherMessage(String messageString)
+        throws ActivityException {
+    }
+
 }

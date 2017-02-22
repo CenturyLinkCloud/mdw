@@ -11,7 +11,6 @@ import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.task.UserTaskAction;
@@ -33,11 +32,8 @@ public interface TaskServices {
 
     public Map<String,String> getIndexes(Long taskInstanceId) throws DataAccessException;
 
-    public TaskInstance createCustomTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
+    public TaskInstance createTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
             Long activityInstanceId, Long transitionId) throws TaskException, DataAccessException, CachingException;
-
-    public TaskInstance createAutoFormTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, FormDataDocument formDoc) throws TaskException, DataAccessException, CachingException;
 
     public TaskInstance getInstance(Long instanceId) throws DataAccessException;
 
