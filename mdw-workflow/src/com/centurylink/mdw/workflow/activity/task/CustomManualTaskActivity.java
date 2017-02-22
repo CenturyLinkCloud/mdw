@@ -47,7 +47,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
             String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
             AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
             TaskServices taskServices = ServiceLocator.getTaskServices();
-            taskServices.createCustomTaskInstance(spec, getMasterRequestId(), getProcessInstanceId(),
+            taskServices.createTaskInstance(spec, getMasterRequestId(), getProcessInstanceId(),
                     getActivityInstanceId(), getWorkTransitionInstanceId());
 
             EventWaitInstance received = registerWaitEvents(false,true);
@@ -171,7 +171,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
             if (actInstStatus.equals(WorkStatus.STATUS_CANCELLED)) {
                 try {
                     ServiceLocator.getTaskManager()
-                            .cancelTasksOfActivityInstance(this.getActivityInstanceId(), null);
+                            .cancelTasksOfActivityInstance(this.getActivityInstanceId());
                 }
                 catch (Exception e) {
                     logger.severeException("Failed to cancel task instance - process moves on", e);

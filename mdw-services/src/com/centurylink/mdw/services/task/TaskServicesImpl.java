@@ -18,7 +18,6 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
-import com.centurylink.mdw.model.FormDataDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
@@ -43,7 +42,6 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
-import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskException;
 import com.centurylink.mdw.services.TaskManager;
@@ -149,58 +147,38 @@ public class TaskServicesImpl implements TaskServices {
 
     /**
      * Ugly logic for determining task instances for activity instances.
-     * TODO: Remove this when we get rid of FormDataDocument.
      */
     private TaskList filterForActivityInstance(TaskList taskList, ProcessInstance processInstance, Long[] activityInstanceIds)
     throws DataAccessException {
         TaskList filteredList = new TaskList();
         List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
-        EventManager eventManager = ServiceLocator.getEventManager();
         for (TaskInstance taskInstance : taskList.getItems()) {
-            String secondaryOwner = taskInstance.getSecondaryOwnerType();
-            if (OwnerType.DOCUMENT.equals(secondaryOwner)) {
-                String formDataString = eventManager.getDocumentVO(taskInstance.getSecondaryOwnerId()).getContent();
-                FormDataDocument formDataDoc = new FormDataDocument();
-                try {
-                    formDataDoc.load(formDataString);
-                    for (Long activityInstanceId : activityInstanceIds) {
-                        if (activityInstanceId.equals(formDataDoc.getActivityInstanceId()))
-                            taskInstances.add(taskInstance);
+            Process process = ProcessCache.getProcess(processInstance.getProcessId());
+            for (Long activityInstanceId : activityInstanceIds) {
+                ActivityInstance activityInstance = processInstance.getActivity(activityInstanceId);
+                if (activityInstance == null && processInstance.getSubprocessInstances() != null) {
+                    for (ProcessInstance subproc : processInstance.getSubprocessInstances()) {
+                        activityInstance = subproc.getActivity(activityInstanceId);
+                        if (activityInstance != null)
+                            break;
                     }
                 }
-                catch (Exception ex) {
-                    throw new DataAccessException(-1, ex.getMessage(), ex);
-                }
-            }
-            else {
-                // task instance secondary owner is work transition instance
-                Process process = ProcessCache.getProcess(processInstance.getProcessId());
-                for (Long activityInstanceId : activityInstanceIds) {
-                    ActivityInstance activityInstance = processInstance.getActivity(activityInstanceId);
-                    if (activityInstance == null && processInstance.getSubprocessInstances() != null) {
-                        for (ProcessInstance subproc : processInstance.getSubprocessInstances()) {
-                            activityInstance = subproc.getActivity(activityInstanceId);
-                            if (activityInstance != null)
-                                break;
-                        }
-                    }
-                    if (activityInstance != null) {
-                        Long activityId = activityInstance.getDefinitionId();
-                        Long workTransInstId = taskInstance.getSecondaryOwnerId();
-                        for (TransitionInstance transitionInstance : processInstance.getTransitions()) {
-                            if (transitionInstance.getTransitionInstanceID().equals(workTransInstId)) {
-                                Long transitionId = transitionInstance.getTransitionID();
-                                Transition workTrans = process.getWorkTransition(transitionId);
-                                if (workTrans == null && process.getSubProcesses() != null) {
-                                    for (Process subproc : process.getSubProcesses()) {
-                                        workTrans = subproc.getWorkTransition(transitionId);
-                                        if (workTrans != null)
-                                            break;
-                                    }
+                if (activityInstance != null) {
+                    Long activityId = activityInstance.getDefinitionId();
+                    Long workTransInstId = taskInstance.getSecondaryOwnerId();
+                    for (TransitionInstance transitionInstance : processInstance.getTransitions()) {
+                        if (transitionInstance.getTransitionInstanceID().equals(workTransInstId)) {
+                            Long transitionId = transitionInstance.getTransitionID();
+                            Transition workTrans = process.getWorkTransition(transitionId);
+                            if (workTrans == null && process.getSubProcesses() != null) {
+                                for (Process subproc : process.getSubProcesses()) {
+                                    workTrans = subproc.getWorkTransition(transitionId);
+                                    if (workTrans != null)
+                                        break;
                                 }
-                                if (workTrans.getToWorkId().equals(activityId))
-                                    taskInstances.add(taskInstance);
                             }
+                            if (workTrans.getToWorkId().equals(activityId))
+                                taskInstances.add(taskInstance);
                         }
                     }
                 }
@@ -227,7 +205,7 @@ public class TaskServicesImpl implements TaskServices {
 
     }
 
-    public TaskInstance createCustomTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
+    public TaskInstance createTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
             Long activityInstanceId, Long transitionId) throws TaskException, DataAccessException, CachingException {
 
         TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(spec);
@@ -237,33 +215,6 @@ public class TaskServicesImpl implements TaskServices {
         TaskManager taskManager = ServiceLocator.getTaskManager();
         TaskInstance instance = taskManager.createTaskInstance(taskVO.getTaskId(), masterRequestId, processInstanceId,
                 OwnerType.WORK_TRANSITION_INSTANCE, transitionId);
-
-        TaskRuntimeContext runtimeContext = taskManager.getTaskRuntimeContext(instance);
-
-        taskManager.setIndexes(runtimeContext);
-
-        List<SubTask> subTaskList = taskManager.getSubTaskList(runtimeContext);
-        if (subTaskList != null && !subTaskList.isEmpty())
-            createSubTasks(subTaskList, runtimeContext);
-
-        logger.info("Created task instance " + instance.getId() + " (" + taskVO.getTaskName() + ")");
-
-        return instance;
-    }
-
-    public TaskInstance createAutoFormTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, FormDataDocument formDoc) throws TaskException, DataAccessException, CachingException {
-
-        TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(spec);
-        if (taskVO == null)
-            throw new DataAccessException("Task template not found: " + spec);
-
-        EventManager eventManager = ServiceLocator.getEventManager();
-        Long documentId = eventManager.createDocument(FormDataDocument.class.getName(), OwnerType.LISTENER_REQUEST, 1L, formDoc.format());
-
-        TaskManager taskManager = ServiceLocator.getTaskManager();
-        TaskInstance instance = taskManager.createTaskInstance(taskVO.getTaskId(), masterRequestId, processInstanceId,
-                OwnerType.DOCUMENT, documentId);
 
         TaskRuntimeContext runtimeContext = taskManager.getTaskRuntimeContext(instance);
 
