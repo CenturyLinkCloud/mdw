@@ -188,23 +188,18 @@ public class LdapAdapter extends AdapterActivityBase {
                 if (ldapResults.containsKey(mappedAttr)) {
                     List<Object> resultList = ldapResults.get(mappedAttr);
                     if (!resultList.isEmpty()) {
-                        if (varType.equals("java.lang.String[]")) {
-                            String[] value = new String[resultList.size()];
+                        if (varType.equals("java.util.List<String>")) {
+                            setVariableValue(varName, resultList);
+                        }else if (varType.equals("java.util.List<Integer>")) {
+                            List<Integer> value = new ArrayList<Integer>();
                             for (int i = 0; i < resultList.size(); i++)
-                                value[i] = resultList.get(i) == null ? null : resultList.get(i).toString();
-                            setParameterValue(varName, value);
-                        }
-                        else if (varType.equals("java.lang.Integer[]")) {
-                            Integer[] value = new Integer[resultList.size()];
+                                value.add(new Integer(resultList.get(i).toString()));
+                            setVariableValue(varName, value);
+                        }else if (varType.equals("java.util.List<Long>")) {
+                            List<Long> value = new ArrayList<Long>();
                             for (int i = 0; i < resultList.size(); i++)
-                                value[i] = resultList.get(i) == null ? null : new Integer(resultList.get(i).toString());
-                            setParameterValue(varName, value);
-                        }
-                        else if (varType.equals("java.lang.Long[]")) {
-                            Long[] value = new Long[resultList.size()];
-                            for (int i = 0; i < resultList.size(); i++)
-                                value[i] = resultList.get(i) == null ? null : new Long(resultList.get(i).toString());
-                            setParameterValue(varName, value);
+                                value.add(new Long(resultList.get(i).toString()));
+                            setVariableValue(varName, value);
                         }
                         else {
                             setParameterValue(varName, resultList.get(0));

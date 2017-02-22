@@ -166,7 +166,7 @@
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
     "START_TRANSITION_ID": "2358799",
-    "WORK_DISPLAY_INFO": "x=20,y=13,w=121,h=27"
+    "WORK_DISPLAY_INFO": "x=20,y=13,w=116,h=27"
   },
   "variables": {
     "cuid": {
@@ -195,15 +195,15 @@
     },
     "matchingCuids": {
       "category": "LOCAL",
-      "type": "java.lang.String[]"
+      "type": "java.util.List<String>"
     },
     "matchingHomePhones": {
       "category": "LOCAL",
-      "type": "java.lang.String[]"
+      "type": "java.util.List<String>"
     },
     "matchingMnetIds": {
       "category": "LOCAL",
-      "type": "java.lang.Integer[]"
+      "type": "java.util.List<Integer>"
     },
     "mnetId": {
       "category": "LOCAL",
@@ -231,7 +231,7 @@
     },
     "unmatchedMultiple": {
       "category": "LOCAL",
-      "type": "java.lang.String[]"
+      "type": "java.util.List<String>"
     },
     "unmatchedSingle": {
       "category": "LOCAL",
@@ -242,5 +242,5 @@
       "type": "org.apache.xmlbeans.XmlObject"
     }
   },
-  "version": "0.1"
+  "version": "0.2"
 }
