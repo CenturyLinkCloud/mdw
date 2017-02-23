@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -537,5 +538,63 @@ public class DatabaseAccess {
 
     public String toString() {
         return database_name;
+    }
+
+    /**
+     * MongoDB doesn't allow keys to have dots (.) or to start with $.  This method encodes such keys if found
+     * and returns a new BSON document
+     */
+    public static org.bson.Document encodeMongoDoc(org.bson.Document doc) {
+        org.bson.Document newDoc = new org.bson.Document();
+        for (String key : doc.keySet()) {
+            Object value = doc.get(key);
+            if (value instanceof org.bson.Document)
+                value = encodeMongoDoc(doc.get(key, org.bson.Document.class));
+            else if (value instanceof List<?>) {
+                for (int i=0; i < ((List<?>)value).size(); i++) {
+                    Object obj = ((List<?>)value).get(i);
+                    if (obj instanceof org.bson.Document)
+                        ((List<org.bson.Document>)value).set(i, encodeMongoDoc((org.bson.Document)obj));
+                }
+            }
+
+            String newKey = key;
+            if (key.startsWith("$"))
+                newKey = "\\uff04" + key.substring(1);
+            if (key.contains(".")) {
+                newKey = newKey.replace(".", "\\uff0e");
+            }
+            newDoc.put(newKey, value);
+        }
+        return newDoc;
+    }
+
+    /**
+     * MongoDB doesn't allow keys to have dots (.) or to start with $.  This method decodes such keys back to dots and $ if found
+     * and returns a new BSON document
+     */
+    public static org.bson.Document decodeMongoDoc(org.bson.Document doc) {
+        org.bson.Document newDoc = new org.bson.Document();
+        for (String key : doc.keySet()) {
+            Object value = doc.get(key);
+            if (value instanceof org.bson.Document)
+                value = decodeMongoDoc(doc.get(key, org.bson.Document.class));
+            else if (value instanceof List<?>) {
+                for (int i=0; i < ((List<?>)value).size(); i++) {
+                    Object obj = ((List<?>)value).get(i);
+                    if (obj instanceof org.bson.Document)
+                        ((List<org.bson.Document>)value).set(i, decodeMongoDoc((org.bson.Document)obj));
+                }
+            }
+
+            String newKey = key;
+            if (key.startsWith("\\uff04"))
+                newKey = "$" + key.substring(6);
+            if (key.contains("\\uff0e")) {
+                newKey = newKey.replace("\\uff0e", ".");
+            }
+            newDoc.put(newKey, value);
+        }
+        return newDoc;
     }
 }

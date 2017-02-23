@@ -314,8 +314,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             if (doc.getContent(pkg).trim().startsWith("{") && doc.getContent(pkg).trim().endsWith("}")) {
                 try {
                     org.bson.Document myJsonDoc = org.bson.Document.parse(doc.getContent(pkg)); // Parse JSON to create BSON CONTENT Document
-                    if (!myJsonDoc.isEmpty())
+                    if (!myJsonDoc.isEmpty()) {
+                        if (doc.getContent(pkg).contains(".") || doc.getContent(pkg).contains("$"))
+                            myJsonDoc = DatabaseAccess.encodeMongoDoc(myJsonDoc);
                         myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("_id", docId).append("isJSON", true); // Plus append _id and isJSON:true field
+                    }
                 }
                 catch (Throwable ex) {myDoc=null;}  // Assume not JSON then
             }
@@ -352,6 +355,8 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                 try {
                     org.bson.Document myJsonDoc = org.bson.Document.parse(content); // Parse JSON to create BSON CONTENT Document
                     if (!myJsonDoc.isEmpty())
+                        if (content.contains(".") || content.contains("$"))
+                            myJsonDoc = DatabaseAccess.encodeMongoDoc(myJsonDoc);
                         myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("isJSON", true); // Plus append isJSON:true field
                 }
                 catch (Throwable ex) {myDoc=null;}  // Assume not JSON then
