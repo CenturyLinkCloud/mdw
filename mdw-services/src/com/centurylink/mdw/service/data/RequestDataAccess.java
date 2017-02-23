@@ -229,7 +229,7 @@ public class RequestDataAccess extends CommonDataAccess {
                         org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                         if (c != null) {
                             if (c.getBoolean("isJSON", false))
-                                request.setContent(c.get("CONTENT", org.bson.Document.class).toJson(new JsonWriterSettings(true)));
+                                request.setContent(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true)));
                             else
                                 request.setContent(c.getString("CONTENT"));
                             foundInMongo = true;

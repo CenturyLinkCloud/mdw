@@ -433,7 +433,7 @@ public class CommonDataAccess {
                 org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                 if (c != null) {
                     if (c.getBoolean("isJSON", false))
-                        vo.setContent(c.get("CONTENT", org.bson.Document.class).toJson(new JsonWriterSettings(true)));
+                        vo.setContent(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true)));
                     else
                         vo.setContent(c.getString("CONTENT"));
                     foundInMongo = true;
