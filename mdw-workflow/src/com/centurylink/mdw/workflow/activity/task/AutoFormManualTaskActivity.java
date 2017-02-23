@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.constant.FormConstants;
+import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
@@ -63,7 +63,7 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
             Long taskInstanceId = taskServices.createTaskInstance(spec,
                     getMasterRequestId(), getProcessInstanceId(), getActivityInstanceId(), getWorkTransitionInstanceId()).getTaskInstanceId();
 
-            String taskInstCorrelationId = FormConstants.TASK_CORRELATION_ID_PREFIX + taskInstanceId.toString();
+            String taskInstCorrelationId = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + taskInstanceId.toString();
             super.loginfo("Task instance created - ID " + taskInstanceId);
             if (this.needSuspend()) {
                 getEngine().createEventWaitInstance(
@@ -106,7 +106,7 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
                 try {
                     TaskManager taskMgr = ServiceLocator.getTaskManager();
                     TaskInstance taskInst = taskMgr.getTaskInstanceByActivityInstanceId(this.getActivityInstanceId());
-                    String eventName = FormConstants.TASK_CORRELATION_ID_PREFIX + taskInst.getTaskInstanceId().toString();
+                    String eventName = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + taskInst.getTaskInstanceId().toString();
 
                     getEngine().createEventWaitInstance(
                             this.getActivityInstanceId(),
@@ -128,7 +128,7 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
             // re-register wait events
             TaskManager taskMgr = ServiceLocator.getTaskManager();
             TaskInstance taskInst = taskMgr.getTaskInstanceByActivityInstanceId(this.getActivityInstanceId());
-            String eventName = FormConstants.TASK_CORRELATION_ID_PREFIX + taskInst.getTaskInstanceId().toString();
+            String eventName = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + taskInst.getTaskInstanceId().toString();
 
             received = getEngine().createEventWaitInstance(
                     this.getActivityInstanceId(),
@@ -153,8 +153,8 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
             try {
                 jsonobj = new JSONObject(messageString);
                 JSONObject meta = jsonobj.has("META")?jsonobj.getJSONObject("META"):null;
-                if (meta==null || !meta.has(FormConstants.FORMATTR_ACTION)) return false;
-                String action = meta.getString(FormConstants.FORMATTR_ACTION);
+                if (meta==null || !meta.has(TaskAttributeConstant.TASK_ACTION)) return false;
+                String action = meta.getString(TaskAttributeConstant.TASK_ACTION);
                 return action!=null && action.startsWith("@");
             } catch (JSONException e) {
                 throw new ActivityException(0, "Failed to parse JSON message", e);
@@ -170,13 +170,13 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
             JSONObject datadoc = new JSONObject(messageString);
             String compCode = extractFormData(datadoc); // this handles both embedded proc and not
             datadoc = datadoc.getJSONObject("META");
-            String action = datadoc.getString(FormConstants.FORMATTR_ACTION);
+            String action = datadoc.getString(TaskAttributeConstant.TASK_ACTION);
             CallURL callurl = new CallURL(action);
             action = callurl.getAction();
-            if (compCode==null) compCode = datadoc.has(FormConstants.URLARG_COMPLETION_CODE) ? datadoc.getString(FormConstants.URLARG_COMPLETION_CODE) : null;
-            if (compCode==null) compCode = callurl.getParameter(FormConstants.URLARG_COMPLETION_CODE);
-            String subaction = datadoc.has(FormConstants.URLARG_ACTION) ? datadoc.getString(FormConstants.URLARG_ACTION) : null;
-            if (subaction==null) subaction = callurl.getParameter(FormConstants.URLARG_ACTION);
+            if (compCode==null) compCode = datadoc.has(TaskAttributeConstant.URLARG_COMPLETION_CODE) ? datadoc.getString(TaskAttributeConstant.URLARG_COMPLETION_CODE) : null;
+            if (compCode==null) compCode = callurl.getParameter(TaskAttributeConstant.URLARG_COMPLETION_CODE);
+            String subaction = datadoc.has(TaskAttributeConstant.URLARG_ACTION) ? datadoc.getString(TaskAttributeConstant.URLARG_ACTION) : null;
+            if (subaction==null) subaction = callurl.getParameter(TaskAttributeConstant.URLARG_ACTION);
             if (this.getProcessInstance().isEmbedded()) {
                 if (subaction==null)
                     subaction = compCode;

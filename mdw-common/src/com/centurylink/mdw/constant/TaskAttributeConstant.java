@@ -55,4 +55,9 @@ public class TaskAttributeConstant  {
      public static final String TASK_JSONNAME = "Task";
      public static final String LOGICAL_ID = "logicalId";
      public static final String TASK_LOGICAL_ID = "TaskLogicalId";
+
+     public static final String TASK_CORRELATION_ID_PREFIX = "TaskInstance:";
+     public static final String TASK_ACTION = "ACTION";
+     public static final String URLARG_COMPLETION_CODE = "completionCode";
+     public static final String URLARG_ACTION = "action";
 }
