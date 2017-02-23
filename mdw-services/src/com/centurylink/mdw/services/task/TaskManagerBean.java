@@ -27,7 +27,6 @@ import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.FormConstants;
 import com.centurylink.mdw.constant.MiscConstants;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -915,7 +914,7 @@ public class TaskManagerBean implements TaskManager {
 
     private void resumeAutoFormTaskInstance(String taskAction, TaskInstance ti) throws TaskException {
         try {
-            String eventName = FormConstants.TASK_CORRELATION_ID_PREFIX + ti.getTaskInstanceId().toString();
+            String eventName = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + ti.getTaskInstanceId().toString();
             JSONObject jsonMsg = new JSONObject();
             String formAction;
             if (taskAction.equals(TaskAction.CANCEL))
@@ -924,9 +923,9 @@ public class TaskManagerBean implements TaskManager {
                 formAction = "@COMPLETE_TASK";
             else {
                 formAction = "@COMPLETE_TASK";
-                jsonMsg.put(FormConstants.URLARG_COMPLETION_CODE, taskAction);
+                jsonMsg.put(TaskAttributeConstant.URLARG_COMPLETION_CODE, taskAction);
             }
-            jsonMsg.put(FormConstants.FORMATTR_ACTION, formAction);
+            jsonMsg.put(TaskAttributeConstant.TASK_ACTION, formAction);
             JSONObject jsonMeta = new JSONObject().put("META", jsonMsg);
             String message = jsonMeta.toString();
             EventManager eventManager = ServiceLocator.getEventManager();
