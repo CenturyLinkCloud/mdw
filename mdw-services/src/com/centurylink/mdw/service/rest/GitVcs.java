@@ -96,10 +96,14 @@ public class GitVcs extends JsonRestService {
             if ("pull".equals(action)) {
                 if (requestPath.equals("*")) {
                     // importing all assets
+                    boolean deleteTempBackups = false;
+                    if (content.has("deleteTempBackups"))
+                        deleteTempBackups = content.getBoolean("deleteTempBackups");
+
                     logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")");
                     archiver.backup();
                     vcGit.sparseCheckout(branch, assetPath);
-                    archiver.archive();
+                    archiver.archive(deleteTempBackups);
                 }
                 else {
                     int lastSlash = requestPath.lastIndexOf('/');
@@ -130,12 +134,11 @@ public class GitVcs extends JsonRestService {
 
             return null;
         }
+        catch (ServiceException ex) {
+            throw ex;
+        }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            if (ex instanceof ServiceException)
-                throw (ServiceException)ex;
-            else
-                throw new ServiceException(ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 

@@ -12,9 +12,13 @@ import java.util.List;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
 
 public class VcsArchiver {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static final String ARCHIVE = "Archive";
 
@@ -62,37 +66,33 @@ public class VcsArchiver {
         List<PackageDir> oldPkgDirs = oldLoader.getPackageDirs(true);
         progressMonitor.subTask("Backing up existing package(s) in: " + assetDir);
         progressMonitor.progress(10);
-        tempArchiveDir = new File(tempDir + "/ArchiveAssetBackup_" + StringHelper.filenameDateToString(new Date()));
-        if (!tempArchiveDir.exists()) {
-            if (!tempArchiveDir.mkdirs())
-                throw new IOException("Unable to create temp directory: " + tempArchiveDir.getAbsolutePath());
-        }
         tempDir = new File(tempDir + "/AssetBackup_" + StringHelper.filenameDateToString(new Date()));
         if (!tempDir.exists()) {
             if (!tempDir.mkdirs())
                 throw new IOException("Unable to create temp directory: " + tempDir.getAbsolutePath());
         }
+        tempArchiveDir = new File(tempDir + "/Archive");
+        if (!tempArchiveDir.exists()) {
+            if (!tempArchiveDir.mkdirs())
+                throw new IOException("Unable to create temp directory: " + tempArchiveDir.getAbsolutePath());
+        }
         progressMonitor.progress(10);
-        progressMonitor.subTask("Copying packages to temps: " + tempDir.getAbsolutePath() + " and " + tempArchiveDir.getAbsolutePath());
+        progressMonitor.subTask("Copying packages to temps: " + tempDir.getAbsolutePath() + ", " + tempArchiveDir.getAbsolutePath());
         tempPkgDirs = new ArrayList<File>(oldPkgDirs.size());
         tempPkgArchiveDirs = new ArrayList<File>(oldPkgDirs.size());
-        File myTempDir;
         for (PackageDir oldPkgDir : oldPkgDirs) {
             if (path == null || path.equals(oldPkgDir.getPackageName())) {
-                myTempDir = oldPkgDir.isArchive() ? tempArchiveDir : tempDir;
+                File myTempDir = oldPkgDir.isArchive() ? tempArchiveDir : tempDir;
                 File tempPkgDir = new File(myTempDir + "/" + oldPkgDir.getPackageName() + " v" + oldPkgDir.getPackageVersion());
                 progressMonitor.subTask("  -- " + tempPkgDir.getName());
                 oldLoader.copyPkg(oldPkgDir, tempPkgDir);
-                if (myTempDir == tempDir)
-                    tempPkgDirs.add(tempPkgDir);
-                else
+                if (oldPkgDir.isArchive())
                     tempPkgArchiveDirs.add(tempPkgDir);
+                else
+                    tempPkgDirs.add(tempPkgDir);
             }
         }
         progressMonitor.progress(20);
-
-        // copy the Archive folder assets to temp dir to prevent loss due to git hard reset
-
     }
 
     /**
@@ -100,6 +100,14 @@ public class VcsArchiver {
      * Uses 40% of progressMonitor.
      */
     public void archive() throws DataAccessException, IOException {
+        archive(false);
+    }
+
+    /**
+     * Move replaced package(s) to archive from temp (those not found in updated asset folder).
+     * Uses 40% of progressMonitor.
+     */
+    public void archive(boolean deleteBackups) throws DataAccessException, IOException {
         LoaderPersisterVcs newLoader = new LoaderPersisterVcs("mdw", assetDir, versionControl, new MdwBaselineData());
         archiveDir = new File(assetDir + "/" + ARCHIVE);
         if (!archiveDir.exists()) {
@@ -137,20 +145,14 @@ public class VcsArchiver {
         }
 
         progressMonitor.progress(20);
-        // TODO:  Add checkbox in Admin Asset Import screen to retain the assets backup upon completion
-        progressMonitor.subTask("Removing temp: " + tempArchiveDir);
-        try {
-            newLoader.delete(tempArchiveDir);
-        }
-        catch (Throwable ex) {
-            System.out.println(ex.getMessage());
-        }
-        progressMonitor.subTask("Removing temp: " + tempDir);
-        try {
-            newLoader.delete(tempDir);
-        }
-        catch (Throwable ex) {
-            System.out.println(ex.getMessage());
+        if (deleteBackups) {
+            progressMonitor.subTask("Removing temp backups: " + tempDir + ", " + tempArchiveDir);
+            try {
+                newLoader.delete(tempDir);
+            }
+            catch (Throwable ex) {
+                logger.severeException(ex.getMessage(), ex);
+            }
         }
         progressMonitor.progress(10);
     }

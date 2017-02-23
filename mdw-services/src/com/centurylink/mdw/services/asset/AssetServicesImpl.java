@@ -85,11 +85,9 @@ public class AssetServicesImpl implements AssetServices {
         gitRemoteUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
         if (gitRemoteUrl != null) {
             String prop = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
-            File oldGitRoot = gitRoot;
             if (prop != null)
               gitRoot = new File(prop);
-            if (gitRoot != null && oldGitRoot == null) {
-                logger.info("Git root path for Asset Services: " + gitRoot);
+            if (gitRoot != null) {
                 gitBranch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
                 if (gitBranch == null) {
                     logger.warn("Asset Services do not include Git information since " + PropertyNames.MDW_GIT_BRANCH + " is not set");
