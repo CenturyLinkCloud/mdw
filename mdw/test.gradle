@@ -14,6 +14,7 @@ dependencies {
     test group: "com.centurylink.mdw", name: "mdw-designer-core", version: "${mdwDesignerVersion}"
     test group: "com.centurylink.mdw", name: "mdw-common", version: "5.5.38"
     test group: "com.centurylink.mdw", name: "mdw-schemas", version: "5.5.38"
+    test group: "com.qwest.mbeng", name: "mbeng", version: "7.1.0"
     test group: "sirrus", name: "sirrus", version: "1.0"
     test group: "com.rsa.jsafe", name: "JsafeJCE", version: "1.0"
     test group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
