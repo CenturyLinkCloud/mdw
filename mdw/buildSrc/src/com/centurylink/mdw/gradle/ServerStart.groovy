@@ -9,6 +9,7 @@ import org.gradle.tooling.BuildException
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.process.ExecResult
 import org.gradle.process.internal.ExecAction
+import org.gradle.api.tasks.Exec
 
 /**
  * Start a Server.  Successful even if the Server's already running.
@@ -25,11 +26,11 @@ class ServerStart<T extends AbstractExecTask> extends AbstractExecTask {
     private int timeout = 90 // seconds
     public void timeout(Object timeout) { this.timeout = Integer.parseInt(timeout.toString()); }
     
-    private ExecAction execAction;
+    private Exec execAction;
 
     public ServerStart() {
         super(ServerStart.class)
-        // execAction = new AsyncExecHandler(getExecActionFactory().getFileResolver())        
+        execAction = new Exec()        
     }
     
     public T commandLine(Object... arguments) {
