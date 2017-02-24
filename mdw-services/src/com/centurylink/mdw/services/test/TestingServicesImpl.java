@@ -17,6 +17,7 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -40,6 +41,7 @@ import com.centurylink.mdw.test.PackageTests;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseList;
 import com.centurylink.mdw.test.TestExecConfig;
+import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -108,6 +110,8 @@ public class TestingServicesImpl implements TestingServices {
     private long addStatusInfo(List<TestCase> testCases) {
         try {
             if (!testCases.isEmpty()) {
+                //
+
                 File resultsFile = getTestResultsFile(testCases.get(0).getAsset().getExtension());
                 if (resultsFile != null && resultsFile.isFile()) {
                     if (resultsFile.getName().endsWith(".xml"))
@@ -340,6 +344,20 @@ public class TestingServicesImpl implements TestingServices {
                 throw new IOException("Unable to create directory: " + resultsDir);
         }
         return resultsDir;
+    }
+
+    public JSONObject getTestResultsJson() throws ServiceException, JSONException {
+        try {
+            File file = getTestResultsFile(Asset.getFileExtension(Asset.TEST).substring(1));
+            if (!file.isFile())
+                throw new ServiceException(ServiceException.NOT_FOUND, "Results file not found: " + file);
+            else if (!file.getName().endsWith(".json"))
+                throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Results file must be JSON: " + file);
+            return new JSONObject(new String(FileHelper.read(file)));
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
     }
 
     public File getTestResultsFile(String format) throws IOException {

@@ -44,15 +44,25 @@ public class AutomatedTests extends JsonRestService {
         response=TestCase.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
-        String[] segments = getSegments(path);
-        if (segments.length == 6 && "config".equals(segments[5]))
-            return ServiceLocator.getTestingServices().getTestExecConfig().getJson();
-        TestCase singleCase = getTestCase(segments);
-        if (singleCase != null) {
-            return singleCase.getJson();
+        // results file resides on master instance
+        if (ApplicationContext.isMasterServer()) {
+            String[] segments = getSegments(path);
+            if (segments.length == 6) {
+                if ("config".equals(segments[5]))
+                    return ServiceLocator.getTestingServices().getTestExecConfig().getJson();
+                else
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+            }
+            TestCase singleCase = getTestCase(segments);
+            if (singleCase != null) {
+                return singleCase.getJson();
+            }
+            else {
+                return ServiceLocator.getTestingServices().getTestCases().getJson();
+            }
         }
         else {
-            return ServiceLocator.getTestingServices().getTestCases().getJson();
+            return masterServerGet(path);
         }
     }
 
@@ -66,28 +76,34 @@ public class AutomatedTests extends JsonRestService {
         @ApiImplicitParam(name="TestCaseList", paramType="body", dataType="com.centurylink.mdw.test.TestCaseList")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        TestingServices testingServices = ServiceLocator.getTestingServices();
-        TestExecConfig config = testingServices.getTestExecConfig();
-        String user = getAuthUser(headers);
-        String[] segments = getSegments(path);
-        if (segments[5].equals("cancel")) {
-            testingServices.cancelTestExecution(user);
+        // results file resides on master instance
+        if (ApplicationContext.isMasterServer()) {
+            TestingServices testingServices = ServiceLocator.getTestingServices();
+            TestExecConfig config = testingServices.getTestExecConfig();
+            String user = getAuthUser(headers);
+            String[] segments = getSegments(path);
+            if (segments[5].equals("cancel")) {
+                testingServices.cancelTestExecution(user);
+            }
+            else {
+                TestCase singleCase = getTestCase(segments);
+                try {
+                    if (singleCase != null) {
+                        testingServices.executeCase(singleCase, user, config);
+                    }
+                    else {
+                        testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
+                    }
+                }
+                catch (IOException ex) {
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+                }
+            }
+            return null;
         }
         else {
-            TestCase singleCase = getTestCase(segments);
-            try {
-                if (singleCase != null) {
-                    testingServices.executeCase(singleCase, user, config);
-                }
-                else {
-                    testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
-                }
-            }
-            catch (IOException ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
-            }
+            return masterServerPost(path, content);
         }
-        return null;
     }
 
     private TestCase getTestCase(String[] segments) throws ServiceException {
@@ -110,8 +126,13 @@ public class AutomatedTests extends JsonRestService {
         @ApiImplicitParam(name="TestExecConfig", paramType="body", dataType="com.centurylink.mdw.test.TestExecConfig")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        TestingServices testingServices = ServiceLocator.getTestingServices();
-        testingServices.setTestExecConfig(new TestExecConfig(content));
-        return null;
+        if (ApplicationContext.isMasterServer()) {
+            TestingServices testingServices = ServiceLocator.getTestingServices();
+            testingServices.setTestExecConfig(new TestExecConfig(content));
+            return null;
+        }
+        else {
+            return masterServerPut(path, content);
+        }
     }
 }

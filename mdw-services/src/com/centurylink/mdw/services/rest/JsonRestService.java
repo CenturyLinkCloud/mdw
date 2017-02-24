@@ -4,6 +4,7 @@
 package com.centurylink.mdw.services.rest;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Map;
 
 import javax.ws.rs.DELETE;
@@ -14,6 +15,7 @@ import javax.ws.rs.PUT;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.JsonExport;
 import com.centurylink.mdw.common.service.JsonExportable;
 import com.centurylink.mdw.common.service.JsonService;
@@ -21,6 +23,7 @@ import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.util.HttpHelper;
 
 import io.swagger.annotations.Api;
 
@@ -120,6 +123,36 @@ public abstract class JsonRestService extends RestService implements JsonService
         if (content.has("distributed"))
             content.remove("distributed");
         super.propagatePost(content.toString(2), headers);
+    }
+
+    protected JSONObject masterServerGet(String path) throws ServiceException, JSONException {
+        String url = "http://" + ApplicationContext.getMasterServer() + ApplicationContext.getServicesContextRoot() + "/services/" + path;
+        try {
+            return new JSONObject(new HttpHelper(new URL(url)).get());
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    protected JSONObject masterServerPost(String path, JSONObject json) throws ServiceException, JSONException {
+        String url = "http://" + ApplicationContext.getMasterServer() + ApplicationContext.getServicesContextRoot() + "/services/" + path;
+        try {
+            return new JSONObject(new HttpHelper(new URL(url)).post(json.toString(2)));
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    protected JSONObject masterServerPut(String path, JSONObject json) throws ServiceException, JSONException {
+        String url = "http://" + ApplicationContext.getMasterServer() + ApplicationContext.getServicesContextRoot() + "/services/" + path;
+        try {
+            return new JSONObject(new HttpHelper(new URL(url)).put(json.toString(2)));
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
     }
 
     @Override

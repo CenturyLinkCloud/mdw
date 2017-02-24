@@ -225,7 +225,7 @@ public class FallbackEventHandler implements ExternalEventHandler {
             pool.ping_and_start();
             response = "OK";
         } else if (rootNodeName.equals("_mdw_peer_server_list")) {
-            List<String> servers = ApplicationContext.getRoutingServerList().isEmpty() ? ApplicationContext.getManagedServerList() : ApplicationContext.getRoutingServerList();
+            List<String> servers = ApplicationContext.getRoutingServerList().isEmpty() ? ApplicationContext.getServerList() : ApplicationContext.getRoutingServerList();
             StringBuffer sb = new StringBuffer();
             for (String server : servers) {
                 if (sb.length()>0) sb.append(",");

@@ -69,7 +69,7 @@ public class InternalMessengerRest extends InternalMessenger {
     }
 
     public void broadcastMessage(String msg) throws ProcessException {
-        for (String hostport : ApplicationContext.getManagedServerList()) {
+        for (String hostport : ApplicationContext.getServerList()) {
             String serviceUrl = "http://" + hostport + serviceContext + "/Services/REST";
             try {
                 HttpHelper httpHelper = new HttpHelper(new URL(serviceUrl));

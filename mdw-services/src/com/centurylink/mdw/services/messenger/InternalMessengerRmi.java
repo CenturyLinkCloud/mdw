@@ -59,7 +59,7 @@ public class InternalMessengerRmi extends InternalMessenger {
     }
 
     public void broadcastMessage(String msg) throws ProcessException {
-        for (String hostport : ApplicationContext.getManagedServerList()) {
+        for (String hostport : ApplicationContext.getServerList()) {
             try {
                 RMIListener server = (RMIListener)ApplicationContext.getNamingProvider().
                     lookup(hostport, RMIListener.JNDI_NAME, RMIListener.class);

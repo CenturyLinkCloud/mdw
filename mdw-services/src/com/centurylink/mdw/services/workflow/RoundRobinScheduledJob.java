@@ -24,7 +24,7 @@ public abstract class RoundRobinScheduledJob extends LoadBalancedScheduledJob {
 
     public void runOnLoadBalancedInstance(CallURL args) {
         try {
-            List<String> serverList = ApplicationContext.getManagedServerList(); // host:8181,host:8282,host:8383,host:8484
+            List<String> serverList = ApplicationContext.getServerList(); // host:8181,host:8282,host:8383,host:8484
             EventManager eventManager = ServiceLocator.getEventManager();
             String eventName = "ScheduledJob." + this.getClass().getName();
             boolean runOnCurrentInstance = true;

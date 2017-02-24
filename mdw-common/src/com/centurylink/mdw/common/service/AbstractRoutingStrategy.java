@@ -32,7 +32,7 @@ public abstract class AbstractRoutingStrategy implements RequestRoutingStrategy 
     }
 
     protected List<String> getWorkerInstances() {
-        return ApplicationContext.getManagedServerList();
+        return ApplicationContext.getServerList();
     }
 
     protected List<String> getRoutingInstances() {

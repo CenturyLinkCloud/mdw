@@ -441,6 +441,14 @@ public class ApplicationContext {
         return getServerHost() + ":" + getServerPort();
     }
 
+    public static String getMasterServer() {
+        return getServerList().get(0);
+    }
+
+    public static boolean isMasterServer() {
+        return getMasterServer().equals(getServerHostPort());
+    }
+
     public static String getTempDirectory() {
         String tempDir = PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR);
         if (tempDir == null)
@@ -514,7 +522,7 @@ public class ApplicationContext {
     /**
      * @return hosta:8080,hosta:8181,hostb:8080
      */
-    public static List<String> getManagedServerList() {
+    public static List<String> getServerList() {
         if (serverList == null) {
             serverList = new ArrayList<String>();
             String prop = PropertyManager.getProperty(PropertyNames.MDW_SERVER_LIST);
@@ -549,7 +557,7 @@ public class ApplicationContext {
     public static List<String> getCompleteServerList() {
         if (completeServerList == null) {
             completeServerList = new ArrayList<String>();
-            for (String server : getManagedServerList()) {
+            for (String server : getServerList()) {
                 completeServerList.add(server);
             }
             for (String server : getRoutingServerList()) {

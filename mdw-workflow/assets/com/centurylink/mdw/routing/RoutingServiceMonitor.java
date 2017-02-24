@@ -70,7 +70,7 @@ public class RoutingServiceMonitor implements ServiceMonitor {
         Exception caughtException = null;
         URL prevDestination = null;
         // In case of failure (i.e. host not responsive, etc) re-try by routing to a different URL
-        for (int i=0; i<ApplicationContext.getManagedServerList().size(); i++) {
+        for (int i=0; i<ApplicationContext.getServerList().size(); i++) {
             URL destination = getRoutingStrategyDestination(request, headers);
             if (destination == null)
                 return null;
@@ -138,6 +138,6 @@ public class RoutingServiceMonitor implements ServiceMonitor {
         return PropertyManager.getBooleanProperty(PropertyNames.MDW_ROUTING_REQUESTS_ENABLED, false) &&
                !ApplicationContext.getRoutingServerList().isEmpty() &&
                ApplicationContext.getRoutingServerList().contains(ApplicationContext.getServerHostPort()) &&
-               !ApplicationContext.getManagedServerList().isEmpty();
+               !ApplicationContext.getServerList().isEmpty();
     }
 }

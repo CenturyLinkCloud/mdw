@@ -6,6 +6,9 @@ package com.centurylink.mdw.services;
 import java.io.File;
 import java.io.IOException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseList;
@@ -54,4 +57,6 @@ public interface TestingServices {
 
     public TestExecConfig getTestExecConfig() throws ServiceException;
     public void setTestExecConfig(TestExecConfig config) throws ServiceException;
+
+    public JSONObject getTestResultsJson() throws ServiceException, JSONException;
 }
