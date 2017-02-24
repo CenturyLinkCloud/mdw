@@ -1,5 +1,22 @@
 apply plugin: "war"
 
+eclipse {
+    wtp {
+        component {
+            resource sourcePath: "/web", deployPath: "/"
+            resource sourcePath: "/src/META-INF", deployPath: "/META-INF"
+            // TODO: this creates a duplicate entry (because "/src" needed instead of "src")
+            resource sourcePath: "/src", deployPath: "/WEB-INF/classes"
+        }
+        facet {
+            facet type: "fixed", name: "jst.web"
+            file.whenMerged {
+                facets.find { it.type.name() == "installed" && it.name == "jst.web" }.version = "3.1"
+            }
+        }
+    }
+}
+    
 dependencies {
     
     compile project(":mdw-common")

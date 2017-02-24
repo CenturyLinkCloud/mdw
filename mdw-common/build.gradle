@@ -1,5 +1,12 @@
-apply plugin: "java"
-
+eclipse {
+    wtp {
+        facet {
+            facet type: "fixed", name: "jst.utility"
+            facet name: "jst.utility", version: "1.0"
+        }
+    }
+}
+    
 dependencies {
     compile group: "com.centurylink.mdw", name: "mdw-schemas", version: "5.5.38-SNAPSHOT"
     compile group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"

@@ -40,6 +40,13 @@ task publishFormal {
 
 subprojects {
     apply plugin: "java"
+    apply plugin: "eclipse-wtp"
+    
+    eclipse {
+        classpath {
+            defaultOutputDir = file("build/classes")
+        }
+    }
     
     sourceCompatibility = 1.8
     version = "${mdwVersion}"

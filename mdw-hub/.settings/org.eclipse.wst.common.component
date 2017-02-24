@@ -1,10 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="mdw-hub">
-        <wb-resource deploy-path="/" source-path="/web" tag="defaultRootSource"/>
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+	<wb-module deploy-name="mdw-hub">
+		<property name="context-root" value="mdw-hub"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <wb-resource deploy-path="/META-INF" source-path="/src/META-INF"/>
-        <property name="java-output-path" value="/mdw-hub/build/classes"/>
-        <property name="context-root" value="mdw-hub"/>
-    </wb-module>
+        <wb-resource deploy-path="/" source-path="/web"/>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/mdw-common/mdw-common">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/mdw-services/mdw-services">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/mdw-workflow/mdw-workflow">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+	</wb-module>
 </project-modules>

@@ -1,4 +1,11 @@
-apply plugin: "java"
+eclipse {
+    wtp {
+        facet {
+            facet type: "fixed", name: "jst.utility"
+            facet name: "jst.utility", version: "1.0"
+        }
+    }
+}
 
 dependencies {
     compile project(":mdw-common")
