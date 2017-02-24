@@ -75,15 +75,15 @@ deployJavadocs.mustRunAfter deployMdwWar
 
 // doesn't work on windows (blocks build task thread)
 // http://forums.gradle.org/gradle/topics/exec_task_issues_details
-task startTomcat(type: ServerStart) {
+task startTomcat(type: Exec) {
     workingDir tomcatBinDir
     if (System.properties["os.name"].startsWith("Windows"))
         commandLine "start.bat"
     else
         commandLine "./start.sh"
         
-    verifyUrl testServerUrl
-    timeout 90
+    //verifyUrl testServerUrl   //TODO restore the functionality once issue 112 is resolved
+    //timeout 90
     
     // store the output instead of printing to the console:
     standardOutput = errorOutput = new ByteArrayOutputStream()
