@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
@@ -44,8 +45,8 @@ public class AutomatedTests extends JsonRestService {
         response=TestCase.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
-        // results file resides on master instance
-        if (ApplicationContext.isMasterServer()) {
+        // results file resides on master instance (but avoid loop)
+        if (ApplicationContext.isMasterServer() || headers.get(Listener.METAINFO_MASTER_OP) != null) {
             String[] segments = getSegments(path);
             if (segments.length == 6) {
                 if ("config".equals(segments[5]))
@@ -77,7 +78,7 @@ public class AutomatedTests extends JsonRestService {
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         // results file resides on master instance
-        if (ApplicationContext.isMasterServer()) {
+        if (ApplicationContext.isMasterServer() || headers.get(Listener.METAINFO_MASTER_OP) != null) {
             TestingServices testingServices = ServiceLocator.getTestingServices();
             TestExecConfig config = testingServices.getTestExecConfig();
             String user = getAuthUser(headers);
@@ -126,7 +127,7 @@ public class AutomatedTests extends JsonRestService {
         @ApiImplicitParam(name="TestExecConfig", paramType="body", dataType="com.centurylink.mdw.test.TestExecConfig")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        if (ApplicationContext.isMasterServer()) {
+        if (ApplicationContext.isMasterServer() || headers.get(Listener.METAINFO_MASTER_OP) != null) {
             TestingServices testingServices = ServiceLocator.getTestingServices();
             testingServices.setTestExecConfig(new TestExecConfig(content));
             return null;

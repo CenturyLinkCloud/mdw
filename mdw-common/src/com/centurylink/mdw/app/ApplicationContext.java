@@ -256,12 +256,13 @@ public class ApplicationContext {
                     }
                     else if (host.indexOf('.') < 0) {
                         // encourage fully-qualified domain names
-                        Exception ex = new UnknownHostException("Use fully qualified host names in " + PropertyNames.MDW_SERVER_LIST);
+                        Exception ex = new UnknownHostException("Use qualified host names in " + PropertyNames.MDW_SERVER_LIST);
                         logger.severeException(ex.getMessage(), ex);
                     }
                     for (InetAddress address : InetAddress.getAllByName(host)) {
-                        if (address.getHostAddress().equals(localIp))
+                        if (address.getHostAddress().equals(localIp)) {
                             serverHost = host;
+                        }
                     }
                 }
             }

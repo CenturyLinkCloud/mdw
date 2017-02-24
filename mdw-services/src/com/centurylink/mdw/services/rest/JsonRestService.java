@@ -4,6 +4,7 @@
 package com.centurylink.mdw.services.rest;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
@@ -126,9 +127,8 @@ public abstract class JsonRestService extends RestService implements JsonService
     }
 
     protected JSONObject masterServerGet(String path) throws ServiceException, JSONException {
-        String url = "http://" + ApplicationContext.getMasterServer() + ApplicationContext.getServicesContextRoot() + "/services/" + path;
         try {
-            return new JSONObject(new HttpHelper(new URL(url)).get());
+            return new JSONObject(masterOpHelper(path).get());
         }
         catch (IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
@@ -136,19 +136,24 @@ public abstract class JsonRestService extends RestService implements JsonService
     }
 
     protected JSONObject masterServerPost(String path, JSONObject json) throws ServiceException, JSONException {
-        String url = "http://" + ApplicationContext.getMasterServer() + ApplicationContext.getServicesContextRoot() + "/services/" + path;
         try {
-            return new JSONObject(new HttpHelper(new URL(url)).post(json.toString(2)));
+            return new JSONObject(masterOpHelper(path).post(json.toString(2)));
         }
         catch (IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 
+    protected HttpHelper masterOpHelper(String path) throws MalformedURLException {
+        String url = "http://" + ApplicationContext.getMasterServer() + "/" + ApplicationContext.getServicesContextRoot() + "/services/" + path;
+        HttpHelper httpHelper = new HttpHelper(new URL(url));
+        httpHelper.setHeader(Listener.METAINFO_MASTER_OP, "true");
+        return httpHelper;
+    }
+
     protected JSONObject masterServerPut(String path, JSONObject json) throws ServiceException, JSONException {
-        String url = "http://" + ApplicationContext.getMasterServer() + ApplicationContext.getServicesContextRoot() + "/services/" + path;
         try {
-            return new JSONObject(new HttpHelper(new URL(url)).put(json.toString(2)));
+            return new JSONObject(masterOpHelper(path).put(json.toString(2)));
         }
         catch (IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);

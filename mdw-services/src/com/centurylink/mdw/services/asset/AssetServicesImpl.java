@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -69,11 +70,16 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
-    private VersionControl versionControl;
+    private static Optional<VersionControl> versionControl;
     public VersionControl getVersionControl() throws IOException {
-        if (versionControl == null)
-            versionControl = getVersionControlGit();
-        return versionControl;
+        if (versionControl == null) {
+            VersionControlGit versionControlGit = getVersionControlGit();
+            if (versionControlGit == null)
+                versionControl = Optional.empty();
+            else
+                versionControl = Optional.of(versionControlGit);
+        }
+        return versionControl.orElse(null);
     }
 
     public void clearVersionControl() {
@@ -88,6 +94,7 @@ public class AssetServicesImpl implements AssetServices {
             if (prop != null)
               gitRoot = new File(prop);
             if (gitRoot != null) {
+                logger.info("Git root path for Asset Services: " + gitRoot);
                 gitBranch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
                 if (gitBranch == null) {
                     logger.warn("Asset Services do not include Git information since " + PropertyNames.MDW_GIT_BRANCH + " is not set");

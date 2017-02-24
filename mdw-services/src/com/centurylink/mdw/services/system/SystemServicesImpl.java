@@ -144,6 +144,7 @@ public class SystemServicesImpl implements SystemServices {
         }
         systemInfos.add(new SysInfo("Server port", String.valueOf(ApplicationContext.getServerPort())));
         systemInfos.add(new SysInfo("Server name", ApplicationContext.getServerHostPort()));
+        systemInfos.add(new SysInfo("Master server", ApplicationContext.getMasterServer()));
         systemInfos.add(new SysInfo("Runtime env", ApplicationContext.getRuntimeEnvironment()));
         systemInfos.add(new SysInfo("Startup dir", System.getProperty("user.dir")));
         systemInfos.add(new SysInfo("App user", System.getProperty("user.name")));

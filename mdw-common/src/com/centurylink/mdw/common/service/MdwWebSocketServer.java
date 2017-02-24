@@ -123,8 +123,9 @@ public class MdwWebSocketServer extends org.java_websocket.server.WebSocketServe
             Collection<WebSocket> conns = connections();
             synchronized (conns) {
                 for (WebSocket conn : conns) {
-                    if (interestedConns.contains(conn))
+                    if (interestedConns.contains(conn)) {
                         conn.send(text);
+                    }
                 }
             }
         }

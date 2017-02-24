@@ -57,6 +57,7 @@ public interface Listener {
     public static final String AUTHORIZATION_WORKGROUP = "AuthorizationWorkgroup";
 
     public static final String METAINFO_DOWNLOAD_FORMAT = "DownloadFormat";
+    public static final String METAINFO_MASTER_OP = "mdw-master-op";
     public static final String DOWNLOAD_FORMAT_EXCEL = "xlsx";
     public static final String DOWNLOAD_FORMAT_ZIP = "zip";
     public static final String DOWNLOAD_FORMAT_JSON = "json";
