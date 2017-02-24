@@ -1,12 +1,18 @@
 apply plugin: "war"
 
+configurations {
+    wtpExclude 
+}
+
 eclipse {
     wtp {
         component {
             resource sourcePath: "/web", deployPath: "/"
-            resource sourcePath: "/src/META-INF", deployPath: "/META-INF"
             // TODO: this creates a duplicate entry (because "/src" needed instead of "src")
             resource sourcePath: "/src", deployPath: "/WEB-INF/classes"
+
+            // exclude mdw-common, mdw-services and mdw-workflow (found from WEB-INF/classes)
+            minusConfigurations << configurations.wtpExclude            
         }
         facet {
             facet type: "fixed", name: "jst.web"
@@ -23,6 +29,10 @@ dependencies {
     compile project(":mdw-services")
     compile project(":mdw-workflow")
     
+    wtpExclude project(":mdw-common")
+    wtpExclude project(":mdw-services")
+    wtpExclude project(":mdw-workflow")
+
     providedCompile group: "javax.jms", name: "jms", version: "1.1.1"
     providedCompile group: "javax.mail", name: "mail", version: "1.4.5"
     providedCompile group: "javax.servlet", name: "servlet-api", version: "2.5"
