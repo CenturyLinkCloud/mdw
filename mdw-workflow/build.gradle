@@ -1,4 +1,7 @@
 eclipse {
+    project {
+        natures+= "org.eclipse.jdt.groovy.core.groovyNature"
+    }
     classpath {
         defaultOutputDir = file("build/classes")
         containers "GROOVY_SUPPORT"
