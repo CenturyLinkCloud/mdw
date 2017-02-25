@@ -45,7 +45,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$http', 'mdw'
   $scope.packageImportFile = null;
   $scope.distributedImport = true;
   $scope.cacheRefresh = true;
-  $scope.deleteTempBackups = false;
+  $scope.deleteTempBackups = true;
   
   $scope.cancel = function() {
     $location.path('/packages');
