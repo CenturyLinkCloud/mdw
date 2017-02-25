@@ -90,7 +90,7 @@ public class TestingServicesImpl implements TestingServices {
             addStatusInfo(testCase);
             AssetServices assetServices = ServiceLocator.getAssetServices();
             VersionControlGit vcGit = (VersionControlGit) assetServices.getVersionControl();
-            if (vcGit != null) {
+            if (vcGit != null && PropertyManager.getProperty(PropertyNames.MDW_GIT_USER) != null) {
                 testCase.getAsset()
                     .setCommitInfo(vcGit.getCommitInfo(
                             vcGit.getRelativePath(new File(assetServices.getAssetRoot() + "/"
