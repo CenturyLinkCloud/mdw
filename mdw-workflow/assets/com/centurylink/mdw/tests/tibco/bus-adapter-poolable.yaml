@@ -23,6 +23,6 @@ process: # 10907
     name: ServiceResponse
     value: |
       <bpm:MDWStatusMessage xmlns:bpm="http://mdw.centurylink.com/bpm">
-        <StatusCode>0</StatusCode>
-        <bpm:StatusMessage>SUCCESS</bpm:StatusMessage>
+          <StatusCode>0</StatusCode>
+          <bpm:StatusMessage>SUCCESS</bpm:StatusMessage>
       </bpm:MDWStatusMessage>
