@@ -29,6 +29,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.centurylink.mdw.common.utilities.CryptUtil;
+import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.PluginUtil;
@@ -86,7 +87,7 @@ public class ProjectPersist extends DefaultHandler {
 
     /**
      * Read the settings file and parse into workflow project model object.
-     * 
+     *
      * @param settingsFile
      * @param project
      *            for storing personalized settings
@@ -238,7 +239,7 @@ public class ProjectPersist extends DefaultHandler {
 
     /**
      * Persist settings file from workflowProject.
-     * 
+     *
      * @param settingsFile
      * @param project
      *            for storing personalized settings
@@ -272,17 +273,10 @@ public class ProjectPersist extends DefaultHandler {
         ServerSettings serverSettings = workflowProject.getServerSettings();
         sb.append("  <server host=\"" + serverSettings.getHost() + "\" port=\""
                 + serverSettings.getPort() + "\"");
-        if (workflowProject.isRemote())
+        if (!StringHelper.isEmpty(workflowProject.getWebContextRoot()))
             sb.append(" contextRoot=\"" + workflowProject.getWebContextRoot() + "\"");
         else {
-            if (isMakeLocal())
-                sb.append(" contextRoot=\"" + workflowProject.getWebContextRoot() + "\"");
-            else {
-                ContainerType containerType = workflowProject.getServerSettings()
-                        .getContainerType();
-                if (containerType != null)
-                    sb.append(" container=\"" + containerType.toString() + "\"");
-            }
+            sb.append(" contextRoot=\"mdw\"");
         }
         sb.append("/>\n");
 
@@ -547,31 +541,5 @@ public class ProjectPersist extends DefaultHandler {
     private void setPersistentProperty(String name, String value) {
         if (value != null)
             MdwPlugin.setStringPref(name, value);
-    }
-
-    public boolean isMakeLocal() {
-        IProject project = MdwPlugin.getWorkspaceRoot().getProject(workflowProject.getName());
-        if (project.exists()) {
-            IFile file = project.getFile(".settings/" + ProjectPersist.SETTINGS_FILE);
-            if (file.exists()) {
-                try {
-                    BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(file.getContents()));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        if (line.indexOf("mdwFramework") != -1)
-                            return false;
-                    }
-                    reader.close();
-                }
-                catch (Exception ex) {
-                    PluginMessages.log(ex);
-                }
-            }
-            else {
-                return false;
-            }
-        }
-        return true;
     }
 }
