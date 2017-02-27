@@ -17,7 +17,7 @@ eclipse {
         facet {
             facet type: "fixed", name: "jst.web"
             file.whenMerged {
-                facets.find { it.type.name() == "installed" && it.name == "jst.web" }.version = "3.1"
+                facets.find { it.type.name() == "installed" && it.name == "jst.web" }.version = "3.0"
             }
         }
     }
