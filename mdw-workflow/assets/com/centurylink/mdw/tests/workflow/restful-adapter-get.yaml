@@ -27,11 +27,11 @@ process: # 10229
         "Container": "Tomcat",
         "Database": "MySQL",
         "DbInfo": {
-          "jdbcUrl": "jdbc:mysql://localhost:3308/mdw",
+          "jdbcUrl": "${~http.*}",
           "user": "mdw"
         },
         "MdwBuild": "${~201.*}",
-        "MdwHubUrl": "http://localhost:8080/mdw",
+        "MdwHubUrl": "${~http.*}",
         "MdwVersion": "${~6.*}",
         "Repository": {
           "branch": "master",
@@ -39,7 +39,7 @@ process: # 10229
           "provider": "Git",
           "url": "${~http.*}"
         },
-        "ServicesUrl": "http://localhost:8080/mdw",
+        "ServicesUrl": "${~http.*}",
         "Version": "Unknown",
         "xmlns:ser": "http://mdw.centurylink.com/services"
       }}
