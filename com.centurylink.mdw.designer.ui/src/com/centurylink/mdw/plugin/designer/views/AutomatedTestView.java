@@ -302,7 +302,7 @@ public class AutomatedTestView extends TestRunnerViewPart
                         TestCaseRun testCaseRun = designerProxy.prepareTestCase(testCase, 0,
                                 resultDir, testSuite.isCreateReplaceResults(),
                                 testSuite.isVerbose(), log, monitor, testSuite.isSingleServer(),
-                                testSuite.isStubbing(),testSuite.isDebug());
+                                testSuite.isStubbing());
 
                         masterRequestRunMap.put(testCaseRun.getMasterRequestId(), testCaseRun);
                         testCaseRun.setMasterRequestListener(AutomatedTestView.this);
@@ -423,7 +423,7 @@ public class AutomatedTestView extends TestRunnerViewPart
 
                             TestCaseRun testCaseRun = designerProxy.prepareTestCase(testCase, k,
                                     resultDir, false, testSuite.isVerbose(), log, monitorObj,
-                                    testSuite.isSingleServer(), testSuite.isStubbing(), testSuite.isDebug());
+                                    testSuite.isSingleServer(), testSuite.isStubbing());
                             testCase.getTestCase().setNumberPrepared(
                                     testCase.getTestCase().getNumberPrepared() + 1);
                             masterRequestRunMap.put(testCaseRun.getMasterRequestId(), testCaseRun);

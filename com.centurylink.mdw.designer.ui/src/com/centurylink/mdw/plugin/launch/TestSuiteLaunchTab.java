@@ -99,7 +99,6 @@ public abstract class TestSuiteLaunchTab extends AbstractLaunchConfigurationTab 
     private Button verboseCheckBox;
     private Button stubbingCheckBox;
     private Button singleServerCheckBox;
-    private Button debugCheckBox;
 
     public void initializeFrom(ILaunchConfiguration launchConfig) {
         try {
@@ -138,10 +137,6 @@ public abstract class TestSuiteLaunchTab extends AbstractLaunchConfigurationTab 
             boolean singleServer = launchConfig.getAttribute(
                     getAttrPrefix() + AutomatedTestLaunchConfiguration.SINGLE_SERVER, false);
             singleServerCheckBox.setSelection(singleServer);
-
-            boolean isDebug = launchConfig
-                    .getAttribute(getAttrPrefix() + AutomatedTestLaunchConfiguration.DEBUG, false);
-            debugCheckBox.setSelection(isDebug);
 
             List<String> cases = launchConfig.getAttribute(
                     getAttrPrefix() + AutomatedTestLaunchConfiguration.TEST_CASES,
@@ -204,8 +199,6 @@ public abstract class TestSuiteLaunchTab extends AbstractLaunchConfigurationTab 
                 stubbingCheckBox.getSelection());
         launchConfig.setAttribute(getAttrPrefix() + AutomatedTestLaunchConfiguration.SINGLE_SERVER,
                 singleServerCheckBox.getSelection());
-        launchConfig.setAttribute(getAttrPrefix() + AutomatedTestLaunchConfiguration.DEBUG,
-                debugCheckBox.getSelection());
         List<String> cases = new ArrayList<String>();
         for (String testCase : testCases)
             cases.add(testCase);
@@ -313,7 +306,7 @@ public abstract class TestSuiteLaunchTab extends AbstractLaunchConfigurationTab 
     protected Composite createServerSection(Composite parent) {
         Composite buttonComposite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
-        layout.numColumns = 5;
+        layout.numColumns = 4;
         layout.horizontalSpacing = 5;
         buttonComposite.setLayout(layout);
         GridData gd1 = new GridData(SWT.BEGINNING, SWT.TOP, true, false);
@@ -347,17 +340,6 @@ public abstract class TestSuiteLaunchTab extends AbstractLaunchConfigurationTab 
         singleServerCheckBox.setLocation(120, 200);
         singleServerCheckBox.pack();
         singleServerCheckBox.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                setDirty(true);
-                validatePage();
-            }
-        });
-
-        debugCheckBox = new Button(buttonComposite, SWT.CHECK);
-        debugCheckBox.setText("Debug");
-        debugCheckBox.setLocation(120, 200);
-        debugCheckBox.pack();
-        debugCheckBox.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 setDirty(true);
                 validatePage();
