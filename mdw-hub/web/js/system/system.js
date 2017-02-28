@@ -18,15 +18,15 @@ sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'W
       // leave cache error logging to the server side
       WorkflowCache.refresh({}, { distributed: refreshType}).$promise.then(function success(response) {
         $scope.refreshMessage = response.status.message;
-        mdw.messages = 'Cache refresh complete'
-      }, function error(error) {
-        if (error.data.status)
-          mdw.messages = error.data.status.message;
+        mdw.messages = 'Cache refresh complete';
+      }, function error(response) {
+        if (response.data.status)
+          mdw.messages = response.data.status.message;
       });
   };
   
   $scope.findClass = function(className) {
-    $scope.classInfo = System.get({sysInfoType: 'Class', className: className})
+    $scope.classInfo = System.get({sysInfoType: 'Class', className: className});
   };
 }]);
 
