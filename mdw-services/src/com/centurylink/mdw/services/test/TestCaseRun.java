@@ -530,9 +530,11 @@ public class TestCaseRun implements Runnable {
         }
 
         try {
-            String endpoint = PropertyManager.getProperty("mdw.test.base.url"); // should include /services
+            String endpoint = PropertyManager.getProperty("mdw.test.base.url");
             if (endpoint == null)
                 endpoint = ApplicationContext.getServicesUrl() + "/services";
+            else
+                endpoint += "/services";
             if (Listener.METAINFO_PROTOCOL_SOAP.equals(message.getProtocol()))
                 endpoint += "/SOAP";
             HttpHelper httpHelper = new HttpHelper(new URL(endpoint));
