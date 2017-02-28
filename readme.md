@@ -38,8 +38,8 @@
  - run `npm install -g bower`
  
 1. Build the Project
- - Window > Show View > Other > Gradle (STS) > Gradle Tasks
-   Select the mdw project and double-click the "buildAll" task
+ - Window > Show View > Other > Gradle  > Gradle Tasks
+   Select the mdw project and Select Show all Tasks. Expand Other folder in mdw project and double-click the "buildAll" task
 
 1. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md)
    or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
