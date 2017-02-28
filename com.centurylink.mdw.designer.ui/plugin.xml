@@ -203,7 +203,7 @@
             id="com.centurylink.mdw.property.tester.MdwProjectVersionLessThanTester">
       </propertyTester>
       <propertyTester
-            properties="canLaunchAutomatedTest,canLaunchAutomatedTests,canLaunchCucumberTest,canLaunchCucumberTests"
+            properties="canLaunchAutomatedTest,canLaunchAutomatedTests,canLaunchCucumberTest,canLaunchCucumberTests,canDebugAutomatedTest"
             namespace="com.centurylink.mdw.properties.launch"
             type="org.eclipse.core.runtime.IAdaptable"
             class="com.centurylink.mdw.plugin.launch.AutoTestPropertyTester"
@@ -231,7 +231,12 @@
          id="com.centurylink.mdw.plugin.launch.AutomatedTest"      
          name="MDW Automated Test"
          delegate="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchConfiguration"
-         modes="run,debug" />
+         modes="run" />
+      <launchConfigurationType
+         id="com.centurylink.mdw.plugin.debug.AutomatedTest"      
+         name="MDW Automated Test Debug"
+         delegate="com.centurylink.mdw.plugin.launch.AutomatedTestDebugConfiguration"
+         modes="debug" />
       <launchConfigurationType public="false"
          id="com.centurylink.mdw.plugin.launch.CucumberTestCase"      
          name="Cucumber Gherkin Feature"
@@ -323,7 +328,7 @@
       <shortcut
             label="MDW Automated Test..."
             icon="icons/auto_test.gif"
-            modes="run,debug"
+            modes="run"
             class="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchShortcut"
             helpContextId="automated_tester_help"
             id="com.centurylink.mdw.plugin.launch.shortcut.AutomatedTest">
@@ -345,12 +350,12 @@
            </configurationType>      
       </shortcut>
       <shortcut
-            label="MDW Automated Tests..."
+            label="MDW Automated Test Debug..."
             icon="icons/auto_test.gif"
-            modes="run,debug"
-            class="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchShortcut"
+            modes="debug"
+            class="com.centurylink.mdw.plugin.launch.AutomatedTestDebugShortcut"
             helpContextId="automated_tester_help"
-            id="com.centurylink.mdw.plugin.launch.shortcut.AutomatedTest">
+            id="com.centurylink.mdw.plugin.debug.shortcut.AutomatedTest">
            <contextualLaunch>
               <enablement>
                  <with variable="selection">
@@ -358,14 +363,14 @@
                     <iterate>
                         <and>
                             <instanceof value="org.eclipse.core.runtime.IAdaptable"/>
-                            <test property="com.centurylink.mdw.properties.launch.canLaunchAutomatedTests" forcePluginActivation="true"/>
+                            <test property="com.centurylink.mdw.properties.launch.canDebugAutomatedTest" forcePluginActivation="true"/>
                         </and>
                     </iterate>
                  </with>
                </enablement>
            </contextualLaunch>
            <configurationType
-              id="com.centurylink.mdw.plugin.launch.AutomatedTest">
+              id="com.centurylink.mdw.plugin.debug.AutomatedTest">
            </configurationType>      
       </shortcut>
       <shortcut
@@ -468,6 +473,11 @@
             id="com.centurylink.mdw.plugin.launch.image.AutomatedTest">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
+            icon="icons/auto_test.gif"
+            configTypeID="com.centurylink.mdw.plugin.debug.AutomatedTest"
+            id="com.centurylink.mdw.plugin.launch.image.AutomatedTest">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
             icon="icons/cukes.gif"
             configTypeID="com.centurylink.mdw.plugin.launch.Cucumber"
             id="com.centurylink.mdw.plugin.launch.image.CucumberTest">
@@ -504,6 +514,11 @@
             type="com.centurylink.mdw.plugin.launch.AutomatedTest"
             class="com.centurylink.mdw.plugin.launch.AutomatedTestTabGroup"
             id="com.centurylink.mdw.plugin.launch.tabgroup.AutomatedTest">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="com.centurylink.mdw.plugin.debug.AutomatedTest"
+            class="com.centurylink.mdw.plugin.launch.AutomatedTestTabGroup"
+            id="com.centurylink.mdw.plugin.debug.tabgroup.AutomatedTest">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="com.centurylink.mdw.plugin.launch.Cucumber"
@@ -575,6 +590,14 @@
          mode="run"
          label="MDW Test Case"
          title="MDW Automated Test Launch Configuration"
+         image="icons\auto_test.gif"
+         bannerImage="icons\mdw_wiz.png">
+      </launchGroup>
+      <launchGroup
+         id="com.centurylink.mdw.plugin.debug.group.automated.test"
+         mode="debug"
+         label="MDW Test Case"
+         title="MDW Automated Test Debug Configuration"
          image="icons\auto_test.gif"
          bannerImage="icons\mdw_wiz.png">
       </launchGroup>

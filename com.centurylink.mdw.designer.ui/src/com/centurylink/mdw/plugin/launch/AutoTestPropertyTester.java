@@ -26,7 +26,7 @@ public class AutoTestPropertyTester extends PropertyTester {
         ResourceWrapper resourceWrapper = new ResourceWrapper((IAdaptable) receiver);
         try {
             WorkflowProject workflowProject = resourceWrapper.getOwningWorkflowProject();
-            if ("canLaunchAutomatedTest".equals(property)) {
+            if ("canLaunchAutomatedTest".equals(property) || "canDebugAutomatedTest".equals(property)) {
                 IFile file = resourceWrapper.getFile();
                 if (file != null) {
                     if (("test".equals(file.getFileExtension())
