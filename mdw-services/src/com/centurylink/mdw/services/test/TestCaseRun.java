@@ -31,6 +31,7 @@ import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.Asset;
@@ -529,7 +530,9 @@ public class TestCaseRun implements Runnable {
         }
 
         try {
-            String endpoint = ApplicationContext.getServicesUrl() + "/Services";
+            String endpoint = PropertyManager.getProperty("mdw.test.base.url"); // should include /services
+            if (endpoint == null)
+                endpoint = ApplicationContext.getServicesUrl() + "/services";
             if (Listener.METAINFO_PROTOCOL_SOAP.equals(message.getProtocol()))
                 endpoint += "/SOAP";
             HttpHelper httpHelper = new HttpHelper(new URL(endpoint));
@@ -574,7 +577,9 @@ public class TestCaseRun implements Runnable {
                 url =  http.getUri();
             }
             else {
-                url = ApplicationContext.getServicesUrl();
+                url = PropertyManager.getProperty("mdw.test.base.url");
+                if (url == null)
+                    url = ApplicationContext.getServicesUrl();
                 if (http.getUri().startsWith("/"))
                     url += http.getUri();
                 else
