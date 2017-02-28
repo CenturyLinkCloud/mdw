@@ -40,7 +40,7 @@ public class System extends JsonRestService {
             JSONArray jsonArr = new JSONArray();
             try {
                 SysInfoType type = segments[1].equals("sysInfo") ? SysInfoType.System : SysInfoType.valueOf(segments[1]);
-                List<SysInfoCategory> categories = systemServices.getSysInfoCategories(type);
+                List<SysInfoCategory> categories = systemServices.getSysInfoCategories(type, getQuery(path, headers));
                 for (SysInfoCategory category : categories)
                     jsonArr.put(category.getJson());
                 return new JsonArray(jsonArr).getJson();

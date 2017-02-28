@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.common.service.Query;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.container.ThreadPoolProvider;
@@ -28,11 +30,13 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.system.SysInfo;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.services.SystemServices;
+import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.log.LoggerUtil;
 
 public class SystemServicesImpl implements SystemServices {
 
-    public List<SysInfoCategory> getSysInfoCategories(SysInfoType type) {
+    public List<SysInfoCategory> getSysInfoCategories(SysInfoType type, Query query)
+    throws ServiceException {
         List<SysInfoCategory> sysInfoCats = new ArrayList<SysInfoCategory>();
         if (type == SysInfoType.System) {
             // Request and Session info added by REST servlet
@@ -46,11 +50,11 @@ public class SystemServicesImpl implements SystemServices {
             sysInfoCats.add(getThreadDump());
             sysInfoCats.add(getPoolStatus());
         }
-        else if (type == SysInfoType.JMS) {
-
-        }
-        else if (type == SysInfoType.Caches) {
-
+        else if (type == SysInfoType.Class) {
+            String className = query.getFilter("className");
+            if (className == null)
+                throw new ServiceException("Missing parameter: className");
+            sysInfoCats.add(findClass(className));
         }
         else if (type == SysInfoType.MBean) {
 
@@ -274,5 +278,17 @@ public class SystemServicesImpl implements SystemServices {
         else
             poolStatus.add(new SysInfo ("Current Status" , ((CommonThreadPool)threadPool).currentStatus()));
         return new SysInfoCategory("Pool Status", poolStatus);
+    }
+
+    public SysInfoCategory findClass(String className, ClassLoader classLoader) {
+        List<SysInfo> classInfo = new ArrayList<>();
+        classInfo.add(new SysInfo(className, ClasspathUtil.locate(className, classLoader)));
+        return new SysInfoCategory("Class Info", classInfo);
+    }
+
+    public SysInfoCategory findClass(String className) {
+        List<SysInfo> classInfo = new ArrayList<>();
+        classInfo.add(new SysInfo(className, ClasspathUtil.locate(className)));
+        return new SysInfoCategory("Class Info", classInfo);
     }
 }

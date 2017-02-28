@@ -307,8 +307,8 @@ routesSvc.factory('routes', function() {
         controller: 'SystemController'
       },
       {
-        path: '/system/caches',
-        templateUrl: 'system/caches.html',
+        path: '/system/tools',
+        templateUrl: 'system/tools.html',
         controller: 'SystemController'
       },
       {
