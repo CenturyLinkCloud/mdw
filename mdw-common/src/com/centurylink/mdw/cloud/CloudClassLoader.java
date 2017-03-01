@@ -294,7 +294,7 @@ public class CloudClassLoader extends ClassLoader {
     @Override
     public URL getResource(String name) {
         URL result = null;
-        for (int i=0; result==null && i<classpath.size(); i++) {
+        for (int i = 0; result == null && i < classpath.size(); i++) {
             File one = classpath.get(i);
             if (one.isDirectory()) {
                 File searchResource = new File(one.getPath() + "/" + name);
