@@ -3,9 +3,9 @@
  */
 package com.centurylink.mdw.java;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 
-public class MdwJavaException extends MDWException {
+public class MdwJavaException extends MdwException {
 
     public MdwJavaException(int code, String message) {
         super(code, message);

@@ -3,9 +3,9 @@
  */
 package com.centurylink.mdw.script;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 
-public class ExecutionException extends MDWException {
+public class ExecutionException extends MdwException {
 
     private static final long serialVersionUID = 1L;
 

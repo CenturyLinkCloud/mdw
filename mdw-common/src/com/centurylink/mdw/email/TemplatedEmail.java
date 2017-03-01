@@ -48,7 +48,7 @@ import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.cache.impl.TemplateCache;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.email.Template.Format;
@@ -495,7 +495,7 @@ public class TemplatedEmail {
         try {
             return ExpressionUtil.substitute(input, model, images, true);
         }
-        catch (MDWException ex) {
+        catch (MdwException ex) {
             throw new MessagingException(ex.getMessage(), ex);
         }
     }

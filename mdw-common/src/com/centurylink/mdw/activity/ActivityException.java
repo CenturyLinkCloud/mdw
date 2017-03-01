@@ -13,16 +13,16 @@ import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
  */
 public class ActivityException extends WorkflowException {
 
-    public ActivityException(String message){
+    public ActivityException(String message) {
         super(message);
     }
 
-    public ActivityException(int code, String message){
+    public ActivityException(int code, String message) {
         super(code, message);
 
     }
 
-    public ActivityException(int code, String message, Throwable th){
+    public ActivityException(int code, String message, Throwable th) {
         super(code, message, th);
 
     }

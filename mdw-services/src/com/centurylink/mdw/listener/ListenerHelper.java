@@ -363,10 +363,10 @@ public class ListenerHelper {
         if (contentType == null)
             contentType = Listener.CONTENT_TYPE_XML; // compatibility
 
-        metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getErrorCode()));
+        metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getCode()));
 
         StatusMessage statusMsg = new StatusMessage();
-        statusMsg.setCode(ex.getErrorCode());
+        statusMsg.setCode(ex.getCode());
         statusMsg.setMessage(ex.getMessage());
         if (contentType.equals(Listener.CONTENT_TYPE_JSON)) {
             return statusMsg.getJsonString();

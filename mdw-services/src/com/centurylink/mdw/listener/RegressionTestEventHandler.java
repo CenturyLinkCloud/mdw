@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
@@ -343,7 +343,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
     }
 
     private void setPropertyGlobally(String name, String value)
-            throws MDWException, JSONException {
+            throws MdwException, JSONException {
         JSONObject json = new JSONObject();
         json.put("ACTION", "REFRESH_PROPERTY");
         json.put("NAME", name);

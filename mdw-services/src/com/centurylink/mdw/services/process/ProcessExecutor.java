@@ -13,7 +13,7 @@ import javax.transaction.SystemException;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.event.EventWaitInstance;
@@ -596,7 +596,7 @@ public class ProcessExecutor {
     }
 
     public void sendInternalEvent(InternalEvent event)
-        throws MDWException {
+        throws MdwException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
@@ -607,7 +607,7 @@ public class ProcessExecutor {
     }
 
     public void sendDelayedInternalEvent(InternalEvent event, int delaySeconds, String msgid, boolean isUpdate)
-        throws MDWException {
+        throws MdwException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();

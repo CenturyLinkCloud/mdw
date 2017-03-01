@@ -1,34 +1,33 @@
 /**
- * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.common;
 
+public class MdwException extends Exception {
 
-public class MDWException extends Exception {
+    private int code;
 
-    private int errorCode;
-
-    public MDWException(String pMessage){
-        super(pMessage);
+    public MdwException(String code){
+        super(code);
     }
 
-    public MDWException(int pCode, String pMessage){
-        super(pMessage);
-        this.errorCode = pCode;
+    public MdwException(int code, String message) {
+        super(message);
+        this.code = code;
     }
 
-    public MDWException(int pCode, String pMessage, Throwable pTh){
-        super(pMessage, pTh);
-        this.errorCode = pCode;
+    public MdwException(int code, String message, Throwable cause) {
+        super(message, cause);
+        this.code = code;
     }
 
-    public MDWException(String pMessage, Throwable pTh){
-        super(pMessage, pTh);
-        this.errorCode = -1;
+    public MdwException(String message, Throwable cause){
+        super(message, cause);
+        this.code = -1;
     }
 
-    public int getErrorCode(){
-        return this.errorCode;
+    public int getCode(){
+        return this.code;
     }
 
     public String getStackTraceDetails() {

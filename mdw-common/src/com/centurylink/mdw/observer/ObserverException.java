@@ -3,13 +3,13 @@
  */
 package com.centurylink.mdw.observer;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 
 /**
  * ObserverException
  *
   */
-public class ObserverException extends MDWException {
+public class ObserverException extends MdwException {
 
     private static final long serialVersionUID = 1L;
 

@@ -22,7 +22,7 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
@@ -1704,7 +1704,7 @@ public class TaskManagerBean implements TaskManager {
   }
 
    public void cancelTasksOfActivityInstance(Long actInstId)
-            throws NamingException, MDWException {
+            throws NamingException, MdwException {
         TaskInstance taskInstance = getTaskInstanceByActivityInstanceId(actInstId);
         if (taskInstance == null)
             throw new TaskException("Cannot find the task instance for the activity instance");

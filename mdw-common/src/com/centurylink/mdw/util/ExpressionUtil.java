@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.model.variable.VariableInstance;
 
 public class ExpressionUtil {
@@ -25,12 +25,12 @@ public class ExpressionUtil {
      * @return string with values substituted
      */
     public static String substitute(String input, Object model)
-    throws MDWException {
+    throws MdwException {
         return substitute(input, model, null, false);
     }
 
     public static String substitute(String input, Object model, boolean lenient)
-    throws MDWException {
+    throws MdwException {
         return substitute(input, model, null, lenient);
     }
 
@@ -42,7 +42,7 @@ public class ExpressionUtil {
      * @return string with values substituted
      */
     public static String substitute(String input, Object model, Map<String,String> imageMap, boolean lenient)
-    throws MDWException {
+    throws MdwException {
         StringBuffer substituted = new StringBuffer(input.length());
         try {
             Matcher matcher = tokenPattern.matcher(input);
@@ -81,7 +81,7 @@ public class ExpressionUtil {
             return substituted.toString();
         }
         catch (Exception ex) {
-            throw new MDWException("Error substituting expression value(s)", ex);
+            throw new MdwException("Error substituting expression value(s)", ex);
         }
     }
 
@@ -92,7 +92,7 @@ public class ExpressionUtil {
      * @return string with values substituted
      */
     public static String substitute(String input, List<VariableInstance> variables)
-    throws MDWException {
+    throws MdwException {
         StringBuffer substituted = new StringBuffer(input.length());
         try {
             Matcher matcher = tokenPattern.matcher(input);
@@ -109,7 +109,7 @@ public class ExpressionUtil {
             return substituted.toString();
         }
         catch (Exception ex) {
-            throw new MDWException("Error substituting expression value(s) in input: '" + input + "'", ex);
+            throw new MdwException("Error substituting expression value(s) in input: '" + input + "'", ex);
         }
     }
 

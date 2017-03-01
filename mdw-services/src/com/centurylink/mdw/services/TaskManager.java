@@ -10,7 +10,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Attachment;
 import com.centurylink.mdw.model.event.EventLog;
@@ -187,7 +187,7 @@ public interface TaskManager {
    throws TaskException, DataAccessException;
 
    public void cancelTasksOfActivityInstance(Long actInstId)
-   throws NamingException, MDWException;
+   throws NamingException, MdwException;
 
    public TaskInstance performActionOnTaskInstance(String action, Long taskInstanceId,
            Long userId, Long assigneeId, String comment, String destination, boolean notifyEngine)

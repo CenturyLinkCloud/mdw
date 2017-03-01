@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.cache.impl.TemplateCache;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -455,7 +455,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         try {
             return toMailAddresses(getGroupEmails(groups));
         }
-        catch (MDWException e) {
+        catch (MdwException e) {
             logger.severeException(e.getMessage(), e);
             throw new ObserverException(-1, e.getMessage(), e);
         }

@@ -3,9 +3,9 @@
  */
 package com.centurylink.mdw.util;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 
-public class FormatException extends MDWException {
+public class FormatException extends MdwException {
     private static final long serialVersionUID = 1L;
 
     public FormatException(String msg) {

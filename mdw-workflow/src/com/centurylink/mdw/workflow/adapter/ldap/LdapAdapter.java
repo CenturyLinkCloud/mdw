@@ -20,7 +20,7 @@ import javax.naming.directory.SearchResult;
 import org.apache.xmlbeans.XmlOptions;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
@@ -267,7 +267,7 @@ public class LdapAdapter extends AdapterActivityBase {
         try {
             return ExpressionUtil.substitute(input, getParameters());
         }
-        catch (MDWException ex) {
+        catch (MdwException ex) {
             throw new ActivityException(ex.getMessage(), ex);
         }
     }

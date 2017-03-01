@@ -3,9 +3,9 @@
  */
 package com.centurylink.mdw.dataaccess;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 
-public class DataAccessException extends MDWException{
+public class DataAccessException extends MdwException{
     private static final long serialVersionUID = 1L;
 
 

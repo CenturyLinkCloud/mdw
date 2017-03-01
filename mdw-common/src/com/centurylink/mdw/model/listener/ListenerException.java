@@ -6,12 +6,12 @@ package com.centurylink.mdw.model.listener;
 
 import java.io.Serializable;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 
 // JAVA IMPORTS -------------------------------------------------------
 
 
-public class ListenerException extends MDWException implements Serializable{
+public class ListenerException extends MdwException implements Serializable{
 
     // CONSTANTS ------------------------------------------------------
 

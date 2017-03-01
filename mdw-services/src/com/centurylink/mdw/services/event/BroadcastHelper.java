@@ -11,7 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.pooling.AdapterConnectionPool;
@@ -23,7 +23,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 public class BroadcastHelper  {
 
     public void processBroadcastMessage(String message)
-        throws JSONException, MDWException
+        throws JSONException, MdwException
     {
         JSONObject json = new JSONObject(message);
         String action = json.getString("ACTION");
@@ -61,7 +61,7 @@ public class BroadcastHelper  {
             String status = json.getString("STATUS");
             AdapterConnectionPool pool = ConnectionPoolRegistration.getPool(poolName);
             pool.processPoolStatusBroadcast(status);
-        } else throw new MDWException("Unknown ACTION");
+        } else throw new MdwException("Unknown ACTION");
 
     }
 

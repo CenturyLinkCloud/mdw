@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.common;
 
-public class StrategyException extends MDWException {
+public class StrategyException extends MdwException {
 
     private static final long serialVersionUID = 1L;
 

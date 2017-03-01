@@ -6,7 +6,7 @@ package com.centurylink.mdw.workflow.activity.event;
 import java.util.List;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
@@ -58,7 +58,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
                             ScheduledEvent.INTERNAL_EVENT_PREFIX+getActivityInstanceId()+"timeout", false);
                 }
             }
-            catch (MDWException e) {
+            catch (MdwException e) {
                 throw new ActivityException(0, "Failed to set timeout", e);
             }
         }

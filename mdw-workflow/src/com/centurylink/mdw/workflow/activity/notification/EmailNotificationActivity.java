@@ -18,7 +18,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.cache.CachingException;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -190,7 +190,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
         try {
             return toMailAddresses(getGroupEmails(groups));
         }
-        catch (MDWException e) {
+        catch (MdwException e) {
             logger.severeException(e.getMessage(), e);
             throw new ActivityException(-1, e.getMessage(), e);
         }

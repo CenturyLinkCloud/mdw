@@ -3,7 +3,7 @@
  */
 package com.centurylink.mdw.services.messenger;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 
 public abstract class IntraMDWMessenger {
@@ -21,20 +21,20 @@ public abstract class IntraMDWMessenger {
     /**
      * 
      * @param message
-     * @throws MDWException
+     * @throws MdwException
      */
     abstract public void sendMessage(String message)
-    throws MDWException;
+    throws MdwException;
 
     /**
      * 
      * @param request request message
      * @param timeoutSeconds
      * @return response message
-     * @throws MDWException
+     * @throws MdwException
      */
     abstract public String invoke(String request, int timeoutSeconds)
-    throws MDWException;
+    throws MdwException;
     
     /**
      * This method is a low level method for use by CertifiedMessageManager only.
@@ -43,10 +43,10 @@ public abstract class IntraMDWMessenger {
      * @param message
      * @param msgId
      * @param askTimeoutSeconds
-     * @throws MDWException
+     * @throws MdwException
      */
     abstract public void sendCertifiedMessage(String message, String msgid, int ackTimeoutSeconds)
-    throws MDWException,AdapterException;
+    throws MdwException,AdapterException;
     
     
 }

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.util.ExpressionUtil;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -55,7 +55,7 @@ public class RootServlet extends HttpServlet {
                     ex.printStackTrace();
                     throw ex;
                 }
-                catch (MDWException ex) {
+                catch (MdwException ex) {
                     // TODO: logging
                     ex.printStackTrace();
                     throw new IOException(ex.getMessage(), ex);

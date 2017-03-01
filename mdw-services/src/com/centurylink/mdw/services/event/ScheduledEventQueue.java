@@ -202,7 +202,7 @@ public class ScheduledEventQueue implements CacheEnabled, CacheService {
                 logger.info("Add unscheduled event " + event.getName());
             }
         } catch (DataAccessException e) {
-            if (e.getErrorCode()==23000) logger.info("To schedule the event but it is already scheduled: " + event.getName());
+            if (e.getCode()==23000) logger.info("To schedule the event but it is already scheduled: " + event.getName());
             else logger.severeException("Failed to schedule event " + name, e);
         } catch (Exception e) {
             logger.severeException("Failed to schedule event " + name, e);

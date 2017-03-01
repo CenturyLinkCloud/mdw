@@ -196,7 +196,7 @@ public class AssetContentServlet extends HttpServlet {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            response.sendError(ex.getErrorCode(), ex.getMessage());
+            response.sendError(ex.getCode(), ex.getMessage());
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

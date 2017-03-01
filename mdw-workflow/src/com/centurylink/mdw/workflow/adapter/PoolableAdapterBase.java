@@ -356,7 +356,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
     }
 
     protected int getErrorCode(Throwable ex) {
-        if (ex instanceof AdapterException) return ((AdapterException)ex).getErrorCode();
+        if (ex instanceof AdapterException) return ((AdapterException)ex).getCode();
         if (ex instanceof ConnectionException) return ((ConnectionException)ex).getCode();
         return ServiceException.INTERNAL_ERROR;
     }
@@ -429,7 +429,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
             handleConnectionException(e.getCode(), errorCause);
         } catch (AdapterException e) {
             this.setReturnCode(null);        // override "RETRY"
-            throw new ActivityException(e.getErrorCode(), e.getMessage(), e);
+            throw new ActivityException(e.getCode(), e.getMessage(), e);
         }
     }
 

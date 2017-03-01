@@ -239,7 +239,7 @@ public class SoapServlet extends ServiceServlet {
             }
             catch (ServiceException ex) {
                 logger.severeException(ex.getMessage(), ex);
-                responseString = createSoapFaultResponse(soapVersion, String.valueOf(ex.getErrorCode()), ex.getMessage());
+                responseString = createSoapFaultResponse(soapVersion, String.valueOf(ex.getCode()), ex.getMessage());
             }
         }
         catch (Exception ex) {

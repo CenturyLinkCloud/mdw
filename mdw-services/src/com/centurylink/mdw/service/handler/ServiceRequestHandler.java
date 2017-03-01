@@ -192,8 +192,8 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getErrorCode()));
-            return createResponse(ex.getErrorCode(), ex.getMessage(), format);
+            metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getCode()));
+            return createResponse(ex.getCode(), ex.getMessage(), format);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -206,8 +206,8 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
     }
 
     protected String createErrorResponse(Throwable t, Format f) throws EventHandlerException {
-        if (t instanceof ServiceException && ((ServiceException)t).getErrorCode() >= 400)
-            return createResponse(((ServiceException)t).getErrorCode(), t.getMessage(), f);
+        if (t instanceof ServiceException && ((ServiceException)t).getCode() >= 400)
+            return createResponse(((ServiceException)t).getCode(), t.getMessage(), f);
         Throwable cause = t;
         while (cause.getCause() != null)
           cause = cause.getCause();

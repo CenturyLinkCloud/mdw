@@ -13,7 +13,8 @@ import org.apache.xmlbeans.XmlObject;
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.WorkflowException;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -29,6 +30,7 @@ import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.Transition;
@@ -118,22 +120,50 @@ public class ProcessEngineDriver {
             Process processVO, InternalEvent messageDoc, Integer eventType)
       throws ProcessException {
         try {
-            if (logger.isInfoEnabled())
+            if (logger.isInfoEnabled()) {
                 logger.info(logtag(processVO.getProcessId(), processInstVO.getId(),
-                    messageDoc.getWorkId(), messageDoc.getWorkInstanceId()),
-                    "Inherited Event - type=" + eventType + ", compcode="
-                    + messageDoc.getCompletionCode());
+                    messageDoc.getWorkId(), messageDoc.getWorkInstanceId()), "Inherited Event - type="
+                    + eventType + ", compcode=" + messageDoc.getCompletionCode());
+            }
             String compCode = messageDoc.getCompletionCode();
             ProcessInstance originatingInstance = processInstVO;
-            Process embeddedProcdef = processVO.findEmbeddedProcess(eventType, compCode);
-            while (embeddedProcdef==null && processInstVO.getOwner().equals(OwnerType.PROCESS_INSTANCE)) {
+            Process embeddedHandlerProc = processVO.findEmbeddedProcess(eventType, compCode);
+            while (embeddedHandlerProc == null && processInstVO.getOwner().equals(OwnerType.PROCESS_INSTANCE)) {
                 processInstVO = engine.getProcessInstance(processInstVO.getOwnerId());
                 processVO = getProcessDefinition(processInstVO);
-                embeddedProcdef = processVO.findEmbeddedProcess(eventType, compCode);
+                embeddedHandlerProc = processVO.findEmbeddedProcess(eventType, compCode);
             }
-            if (embeddedProcdef != null && isRecursiveCall(originatingInstance, processVO, embeddedProcdef.getProcessId())) {
+            if (embeddedHandlerProc == null) {
+                // try package-level handler
+                Process originatingProcess = getProcessDefinition(originatingInstance);
+                Package originatingPkg = PackageCache.getPackage(originatingProcess.getPackageName());
+                String handlerProcName = EventType.getHandlerName(eventType);
+                if (handlerProcName != null) {
+                    Process packageHandlerProc = null;
+                    packageHandlerProc = ProcessCache.getProcess(originatingPkg + "/" + handlerProcName, 0);
+                    if (packageHandlerProc == null)
+                        packageHandlerProc = ProcessCache.getProcess(originatingPkg + "/" + handlerProcName.toLowerCase(), 0);
+                    if (packageHandlerProc != null) {
+//                        Document errorDoc = engine.createDocument(type, ownerType, ownerId, statusCode, statusMessage, doc)
+//                        invokeService(packageHandlerProc.getId(), ownerType, ownerId, masterRequestId,
+//                                masterRequest, params, null, null)
+//                        long secondOwnerId = messageDoc.getWorkInstanceId();
+//                        String secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
+//                        if (processVO.getVariable("exception") != null) {
+//                            VariableInstance exceptionVar = processInstVO.getVariable("exception");
+//                            if (exceptionVar == null)
+//                                engine.createVariableInstance(processInstVO, "exception", new DocumentReference(messageDoc.getSecondaryOwnerId()));
+//                            else
+//                                engine.updateVariableInstance(exceptionVar);
+//                        }
+                    }
+                }
+            }
+
+            if (embeddedHandlerProc != null && isRecursiveCall(originatingInstance, processVO, embeddedHandlerProc.getProcessId())) {
                 logger.info("Invoking embedded process recursively - not allowed");
-            } else if (embeddedProcdef != null) {
+            }
+            else if (embeddedHandlerProc != null) {
                 Long secondaryOwnerId = null;
                 String secondaryOwnerType = null;
                 if (!eventType.equals(EventType.ABORT)) {
@@ -149,26 +179,31 @@ public class ProcessEngineDriver {
                             else
                                 engine.updateVariableInstance(exceptionVar);
                         }
-                    } else {
+                    }
+                    else {
                         if (eventType.equals(EventType.ERROR)) {
                             logger.warn("Creating fallout embedded process without activity instance as secondary owner");
                             logger.warn("--- completion code " + messageDoc.getCompletionCode());
                             logger.warn("--- trans inst ID " + messageDoc.getTransitionInstanceId());
                             logger.warn("--- work ID " + messageDoc.getWorkId());
                             String[] stack = this.getStackTrace();
-                            for (int i=0; i<stack.length; i++) {
+                            for (int i = 0; i < stack.length; i++) {
                                 logger.warn("--- stack " + i + ": " + stack[i]);
                             }
                         }
                         messageDoc.setSecondaryOwnerType(null);
                     }
-                } else messageDoc.setSecondaryOwnerType(null);
+                }
+                else {
+                    messageDoc.setSecondaryOwnerType(null);
+                }
                 String ownerType = OwnerType.MAIN_PROCESS_INSTANCE;
                 ProcessInstance procInst = engine.createProcessInstance(
-                        embeddedProcdef.getProcessId(), ownerType, processInstVO.getId(),
+                        embeddedHandlerProc.getProcessId(), ownerType, processInstVO.getId(),
                         secondaryOwnerType, secondaryOwnerId, processInstVO.getMasterRequestId(), null);
                 engine.startProcessInstance(procInst, 0);
-            } else if (eventType.equals(EventType.ABORT)) {
+            }
+            else if (eventType.equals(EventType.ABORT)) {
                 // abort the root process instance
                 InternalEvent event = InternalEvent.createProcessAbortMessage(processInstVO);
                 engine.abortProcessInstance(event);
@@ -209,7 +244,7 @@ public class ProcessEngineDriver {
                 String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + pi.getId()
                     + "start" + event.getWorkId();
                 engine.sendDelayedInternalEvent(event, delayInSeconds, msgid, false);
-            } catch (MDWException e) {
+            } catch (MdwException e) {
                 msg = "Failed to send retry jms message";
                 logger.exception(logtag(pi.getProcessId(),pi.getId(),event.getWorkId(),0L),
                         msg, new Exception(msg));

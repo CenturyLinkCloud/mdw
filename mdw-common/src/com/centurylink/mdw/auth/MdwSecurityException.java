@@ -3,15 +3,15 @@
  */
 package com.centurylink.mdw.auth;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 
-public class MdwSecurityException extends MDWException {
+public class MdwSecurityException extends MdwException {
 
     public static final int UNTRUSTED_CERT = 101;
 
     private int errorCode;
 
-    public int getErrorCode() {
+    public int getCode() {
         return errorCode;
     }
 

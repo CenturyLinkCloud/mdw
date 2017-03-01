@@ -3,9 +3,9 @@
  */
 package com.centurylink.mdw.common.service;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 
-public class ServiceException extends MDWException {
+public class ServiceException extends MdwException {
 
     // taken from HTTP response codes
     public static final int BAD_REQUEST = 400;

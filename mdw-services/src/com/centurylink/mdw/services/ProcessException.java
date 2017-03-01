@@ -3,12 +3,12 @@
  */
 package com.centurylink.mdw.services;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 
 /**
  *
  */
-public class ProcessException extends MDWException {
+public class ProcessException extends MdwException {
 
     private static final long serialVersionUID = 1L;
     /**

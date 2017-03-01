@@ -4,13 +4,13 @@
 package com.centurylink.mdw.util;
 
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 
 /**
  * ServiceLocatorException
  *
   */
-public class ServiceLocatorException extends MDWException {
+public class ServiceLocatorException extends MdwException {
 
     private static final long serialVersionUID = 1L;
 

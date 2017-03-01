@@ -23,7 +23,8 @@ import com.centurylink.mdw.activity.types.InvokeProcessActivity;
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
 import com.centurylink.mdw.activity.types.SynchronizationActivity;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
@@ -466,7 +467,7 @@ class ProcessExecutorImpl {
                 }
             } catch (SQLException ex) {
                 throw new ProcessException(-1, ex.getMessage(), ex);
-            } catch (MDWException ex) {
+            } catch (MdwException ex) {
                 throw new ProcessException(-1, ex.getMessage(), ex);
             }
         }
@@ -778,7 +779,7 @@ class ProcessExecutorImpl {
             throw new ProcessException(-1, e.getMessage(), e);
         } catch (InterruptedException e) {
             throw new ProcessException(-1, e.getMessage(), e);
-        } catch (MDWException e) {
+        } catch (MdwException e) {
             throw new ProcessException(-1, e.getMessage(), e);
         }
     }
@@ -786,7 +787,7 @@ class ProcessExecutorImpl {
     private void prepareActivitySub(Process processVO, Activity actVO,
             ProcessInstance pi, ActivityInstance ai, Long pWorkTransInstId,
             InternalEvent event, BaseActivity activity)
-    throws DataAccessException, SQLException, NamingException, MDWException, ServiceLocatorException {
+    throws DataAccessException, SQLException, NamingException, MdwException, ServiceLocatorException {
 
 
         if (logger.isInfoEnabled())
@@ -1017,7 +1018,7 @@ class ProcessExecutorImpl {
 
     private void handleResumeOnHold(GeneralActivity cntrActivity, ActivityInstance actInst,
             ProcessInstance procInst)
-        throws DataAccessException, MDWException {
+        throws DataAccessException, MdwException {
         try {
             InternalEvent event = InternalEvent.createActivityNotifyMessage(actInst,
                     EventType.RESUME, procInst.getMasterRequestId(), actInst.getStatusCode()==WorkStatus.STATUS_COMPLETED? "Completed" : null);
@@ -1260,7 +1261,7 @@ class ProcessExecutorImpl {
 
     private void retryActivity(ProcessInstance procInst, Long actId,
             String completionCode, String masterRequestId)
-            throws DataAccessException, SQLException, MDWException {
+            throws DataAccessException, SQLException, MdwException {
         // make sure any other activity instances are closed
         List<ActivityInstance> activityInstances = edao.getActivityInstances(actId, procInst.getId(),
                 true, false);
@@ -1388,7 +1389,7 @@ class ProcessExecutorImpl {
     private void resumeActivityFinishSub(ActivityInstance actinst,
             BaseActivity activity, ProcessInstance procinst,
             boolean finished, boolean resumeOnHold)
-        throws DataAccessException, SQLException, MDWException {
+        throws DataAccessException, SQLException, MdwException {
         String logtag = logtag(procinst.getProcessId(),procinst.getId(),
                 actinst.getDefinitionId(),actinst.getId());
         if (finished) {
@@ -1430,7 +1431,7 @@ class ProcessExecutorImpl {
                     finished, resumeOnHold);
         } catch (SQLException e) {
             throw new ProcessException(-1, e.getMessage(), e);
-        } catch (MDWException e) {
+        } catch (MdwException e) {
             throw new ProcessException(-1, e.getMessage(), e);
         } finally {
             if (ar.activity.getTimer() != null)
@@ -1597,7 +1598,7 @@ class ProcessExecutorImpl {
     /////////////////////// other
 
     private void cancelTasksOfProcessInstance(ProcessInstance procInst)
-    throws NamingException, JMSException, SQLException, ServiceLocatorException, MDWException {
+    throws NamingException, JMSException, SQLException, ServiceLocatorException, MdwException {
         List<ProcessInstance> processInstanceList =
             edao.getChildProcessInstances(procInst.getId());
         List<Long> procInstIds = new ArrayList<Long>();
@@ -1647,7 +1648,7 @@ class ProcessExecutorImpl {
                 edao.updateDocumentInfo(docvo);
             }
             return ret;
-        } catch (MDWException e) {
+        } catch (MdwException e) {
             throw new ProcessException(-1, e.getMessage(), e);
         } catch (SQLException e) {
             throw new ProcessException(-1, e.getMessage(), e);
@@ -1716,7 +1717,7 @@ class ProcessExecutorImpl {
             return ret;
         } catch (SQLException e) {
             throw new ProcessException(-1, e.getMessage(), e);
-           } catch (MDWException e) {
+           } catch (MdwException e) {
             throw new ProcessException(-1, e.getMessage(), e);
         }
     }
@@ -1790,7 +1791,7 @@ class ProcessExecutorImpl {
      */
     private void resumeActivityInstance(ActivityInstance actInst,
             String pCompletionCode, Long documentId, String message, int delay)
-    throws DataAccessException, MDWException, SQLException {
+    throws DataAccessException, MdwException, SQLException {
         ProcessInstance pi = edao.getProcessInstance(actInst.getOwnerId());
         if (!this.isProcessInstanceResumable(pi)) {
             logger.info("ProcessInstance in NOT resumable. ProcessInstanceId:" + pi.getId());
@@ -1813,12 +1814,12 @@ class ProcessExecutorImpl {
         else this.sendInternalEvent(outgoingMsg);
     }
 
-    void sendInternalEvent(InternalEvent event) throws MDWException {
+    void sendInternalEvent(InternalEvent event) throws MdwException {
         internalMessenger.sendMessage(event, edao);
     }
 
     void sendDelayedInternalEvent(InternalEvent event, int delaySeconds, String msgid, boolean isUpdate)
-        throws MDWException {
+        throws MdwException {
         internalMessenger.sendDelayedMessage(event, delaySeconds, msgid, isUpdate, edao);
     }
 
@@ -1932,6 +1933,7 @@ class ProcessExecutorImpl {
             }
             actEx.setActivityInstance(actInst);
         }
+        // DocumentReference docRef = createDocument(Jsonable.class.getName(), OwnerType.DOCUMENT, actInstVO.getId(), actEx);
         DocumentReference docRef = createDocument("java.lang.Object", OwnerType.DOCUMENT, actInstVO.getId(), actEx);
         return docRef;
     }

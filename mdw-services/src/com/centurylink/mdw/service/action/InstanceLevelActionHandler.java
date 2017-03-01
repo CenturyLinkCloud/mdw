@@ -15,7 +15,7 @@ import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.bpm.WorkTypeDocument.WorkType;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.VariableConstants;
@@ -189,15 +189,15 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
 
     }
 
-    private void checkProcessInstanceStatus(ProcessInstance processInstanceVO, String action) throws MDWException {
+    private void checkProcessInstanceStatus(ProcessInstance processInstanceVO, String action) throws MdwException {
         int statusCode = processInstanceVO.getStatusCode();
         if (statusCode == WorkStatus.STATUS_COMPLETED.intValue())
-            throw new MDWException("Cannot perform action " + action + " on Completed process instance ID: " + processInstanceVO.getId());
+            throw new MdwException("Cannot perform action " + action + " on Completed process instance ID: " + processInstanceVO.getId());
         if (statusCode == WorkStatus.STATUS_CANCELLED.intValue())
-            throw new MDWException("Cannot perform action " + action + " on Cancelled process instance ID: " + processInstanceVO.getId());
+            throw new MdwException("Cannot perform action " + action + " on Cancelled process instance ID: " + processInstanceVO.getId());
     }
 
-    private String getActionParam(Action action, String paramName, boolean required) throws MDWException {
+    private String getActionParam(Action action, String paramName, boolean required) throws MdwException {
         String paramValue = null;
         for (Parameter parameter : action.getParameterList()) {
             if (parameter.getName().equals(paramName)) {
@@ -206,7 +206,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
             }
         }
         if (required && paramValue == null)
-            throw new MDWException("Missing action parameter: " + paramName);
+            throw new MdwException("Missing action parameter: " + paramName);
         else
             return paramValue;
     }

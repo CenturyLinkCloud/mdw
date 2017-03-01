@@ -249,8 +249,8 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
         if (errorCause instanceof AdapterException) {
             AdapterException adEx = (AdapterException) errorCause;
             isErrorRetryable = adEx.isRetryableError();
-            if (adEx.getErrorCode() != 0) {
-                errorCode = adEx.getErrorCode();
+            if (adEx.getCode() != 0) {
+                errorCode = adEx.getCode();
             }
             else {
                 errorCode = ServiceException.INTERNAL_ERROR;

@@ -3,9 +3,9 @@
  */
 package com.centurylink.mdw.common.service;
 
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 
-public class ServiceRegistryException extends MDWException {
+public class ServiceRegistryException extends MdwException {
 
     public ServiceRegistryException(String message) {
         super(message);

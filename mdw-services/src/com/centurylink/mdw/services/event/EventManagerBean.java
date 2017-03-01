@@ -16,7 +16,7 @@ import org.apache.xmlbeans.XmlObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.MDWException;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
@@ -413,7 +413,7 @@ public class EventManagerBean implements EventManager {
             this.sendInternalEvent(outgoingMsg, edao);
         } catch (SQLException e) {
             throw new ProcessException(0, "Failed to remove event waits", e);
-        } catch (MDWException e) {
+        } catch (MdwException e) {
             throw new ProcessException(0, "Failed to remove event waits", e);
         } finally {
             edao.stopTransaction(transaction);
@@ -466,7 +466,7 @@ public class EventManagerBean implements EventManager {
             edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
         } catch (SQLException e) {
             throw new ProcessException(0, "Failed to remove event waits", e);
-        } catch (MDWException e) {
+        } catch (MdwException e) {
             throw new ProcessException(0, "Failed to remove event waits", e);
         } finally {
             edao.stopTransaction(transaction);
@@ -1056,7 +1056,7 @@ public class EventManagerBean implements EventManager {
                 return false;
             } catch (AdapterException e1) {
                 // 6b. handle non-retriable errors
-                exceptionCode = ((AdapterException)e1).getErrorCode();
+                exceptionCode = ((AdapterException)e1).getCode();
                 message.setStatus(EventInstance.STATUS_CERTIFIED_MESSAGE_HOLD);
                 logger.severeException(LoggerUtil.getStandardLogger().getSentryMark()+ "Certified message hits unretriable error: "
                             + message.getId(), e1);
