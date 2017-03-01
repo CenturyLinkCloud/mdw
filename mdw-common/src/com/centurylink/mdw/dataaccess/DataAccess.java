@@ -188,14 +188,12 @@ public class DataAccess {
                                         LoggerUtil.getStandardLogger().severe("**** WARNING: Git commit: " + localCommit + " does not match remote HEAD commit: " + remoteCommit);
                                 }
 
-                                if (logger.isDebugEnabled()) {
-                                    // log actual diffs at debug level
-                                    GitDiffs diffs = vcGit.getDiffs(branch, assetPath);
-                                    if (!diffs.isEmpty()) {
-                                        logger.severe("**** WARNING: Local Git repository is out-of-sync with respect to remote branch: " + branch
-                                                + "\n(" + gitLocal.getAbsolutePath() + ")");
-                                        logger.debug("Differences:\n============\n" + diffs);
-                                    }
+                                // log actual diffs at debug level
+                                GitDiffs diffs = vcGit.getDiffs(branch, assetPath);
+                                if (!diffs.isEmpty()) {
+                                    logger.warn("**** WARNING: Local Git repository is out-of-sync with respect to remote branch: " + branch
+                                            + "\n(" + gitLocal.getAbsolutePath() + ")");
+                                    logger.info("Differences:\n============\n" + diffs);
                                 }
 
                                 String strGitAutoPull = PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL);
