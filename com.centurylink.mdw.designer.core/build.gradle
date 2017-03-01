@@ -1,6 +1,7 @@
 dependencies {
     compile files("./classes")
     compile fileTree(dir: "lib", includes: ["*.jar"]) // some of these are only for compile (not eclipse dependencies)
+    
 }
 
 task copyCompatibilityMappings(type: Copy) {
@@ -19,9 +20,16 @@ task cleanMdwCommon(type: Delete) {
     }
 }
 
-// gets schemas and common
+// jars needed by designer
+task copyMdwLibs(type: Copy) {
+    from "${mdwOutputDir}/../designer_libs"
+    include "*.jar"
+    into "./lib"
+}
+
+// gets schemas, common
 task getMdwCommon(type: Copy) {
-    dependsOn(copyCompatibilityMappings, cleanMdwCommon)
+    dependsOn(copyCompatibilityMappings, copyMdwLibs, cleanMdwCommon)
     from zipTree("${mdwOutputDir}/mdw-schemas-${mdwVersion}.jar").matching{exclude "META-INF/**"}
     from zipTree("${mdwOutputDir}/mdw-common-${mdwVersion}.jar").matching{exclude "META-INF/**"}
     into "./classes"

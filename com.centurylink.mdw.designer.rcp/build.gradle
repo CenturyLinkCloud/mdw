@@ -1,4 +1,6 @@
 // TODO headless build
+sourceCompatibility = 1.8
+
 dependencies {
     compile project(":com.centurylink.mdw.designer.core")
     compile project(":com.centurylink.mdw.designer.ui")

@@ -1,7 +1,6 @@
 // TODO: full headless designer build
 // TODO: com.centurylink.mdw.designer.feature
 // TODO: com.centurylink.mdw.designer.rcp
-
 task buildAll(type: GradleBuild) {
     buildFile = "build.gradle"
     tasks = ["build"]
@@ -60,6 +59,7 @@ task publishPreview(type: Copy) {
 
 subprojects {
     apply plugin: "java"
+    apply plugin: "eclipse"
     
     sourceCompatibility = 1.7
     version = "${mdwDesignerVersion}"
@@ -79,5 +79,17 @@ subprojects {
         maven {
             url devRepoUrl
         }
-    }   
+    }
+    
+    eclipse {
+        project {
+          buildCommand "org.eclipse.pde.ManifestBuilder"
+          buildCommand "org.eclipse.pde.SchemaBuilder"
+          
+          natures "org.eclipse.pde.PluginNature"
+        }
+        classpath {
+            containers "org.eclipse.pde.core.requiredPlugins"
+        }
+    }
 }
