@@ -639,7 +639,8 @@ public class VersionControlGit implements VersionControl {
         // we're purposely omitting folders
         Status status = git.status().addPath(path).call();
         for (String untracked : status.getUntracked()) {
-            diffs.add(DiffType.EXTRA, untracked);
+            if (!untracked.startsWith(path + "/Archive/"))
+                diffs.add(DiffType.EXTRA, untracked);
         }
         for (String added : status.getAdded()) {
             diffs.add(DiffType.EXTRA, added);
