@@ -56,7 +56,6 @@ import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityCount;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
 import com.centurylink.mdw.model.workflow.ActivityList;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
@@ -251,7 +250,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             }
             else if (action != null && (action.equalsIgnoreCase(Action.Retry.toString()))){
                 ActivityInstance activityVo = ServiceLocator.getEventManager().getActivityInstance(new Long(activityInstanceId).longValue());
-                ServiceLocator.getEventManager().retryActivity(activityVo.getDefinitionId(), new Long(activityInstanceId).longValue());
+                ServiceLocator.getEventManager().retryActivity(activityVo.getActivityId(), new Long(activityInstanceId).longValue());
             }
         }
         catch (Exception ex) {
@@ -421,7 +420,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     @Override
-    public ActivityInstanceInfo getActivity(Long instanceId) throws ServiceException {
+    public ActivityInstance getActivity(Long instanceId) throws ServiceException {
         try {
             Query query = new Query();
             query.setFilter("instanceId", instanceId);
@@ -510,9 +509,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
      */
     protected ActivityList populateActivities(ActivityList activityList, Query query) throws DataAccessException {
         AggregateDataAccessVcs dataAccess = null;
-        List<ActivityInstanceInfo> aList = activityList.getActivities();
-        ArrayList<ActivityInstanceInfo> matchActivities = new ArrayList<ActivityInstanceInfo>();
-        for (ActivityInstanceInfo activityInstance : aList) {
+        List<ActivityInstance> aList = activityList.getActivities();
+        ArrayList<ActivityInstance> matchActivities = new ArrayList<>();
+        for (ActivityInstance activityInstance : aList) {
             Process process = ProcessCache.getProcess(activityInstance.getProcessId());
             if (process == null) {
                 logger.severe("Missing definition for process id: " + activityInstance.getProcessId());
@@ -551,7 +550,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
         String activityName = query.getFilter("activityName");
         if (activityName != null) {
-            for (ActivityInstanceInfo activityInstance : aList) {
+            for (ActivityInstance activityInstance : aList) {
                 try {
                     String decodedActName = java.net.URLDecoder.decode(activityName, "UTF-8");
                     if (activityInstance.getName().startsWith(decodedActName)) {
@@ -705,7 +704,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public ActivityList getActivityDefinitions(Query query) throws ServiceException {
         try {
             String find = query.getFind();
-            List<ActivityInstanceInfo> activityInstanceList = new ArrayList<ActivityInstanceInfo>();
+            List<ActivityInstance> activityInstanceList = new ArrayList<>();
             ActivityList found = new ActivityList(ActivityList.ACTIVITY_INSTANCES, activityInstanceList);
 
             if (find == null) {
@@ -716,7 +715,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     for (Activity activityVO : activities) {
                         if (activityVO.getActivityName() != null && activityVO.getActivityName().startsWith(find))
                         {
-                            ActivityInstanceInfo ai = new ActivityInstanceInfo();
+                            ActivityInstance ai = new ActivityInstance();
                             ai.setId(activityVO.getActivityId());
                             ai.setName(activityVO.getActivityName());
                             ai.setDefinitionId(activityVO.getLogicalId());
@@ -735,7 +734,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     for (Activity activityVO : activities) {
                         if (activityVO.getActivityName() != null && activityVO.getActivityName().startsWith(find))
                         {
-                            ActivityInstanceInfo ai = new ActivityInstanceInfo();
+                            ActivityInstance ai = new ActivityInstance();
                             ai.setId(activityVO.getActivityId());
                             ai.setName(activityVO.getActivityName());
                             ai.setDefinitionId(activityVO.getLogicalId());

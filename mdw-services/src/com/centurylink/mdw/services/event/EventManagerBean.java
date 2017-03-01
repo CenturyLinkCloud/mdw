@@ -400,7 +400,7 @@ public class EventManagerBean implements EventManager {
         try {
             transaction = edao.startTransaction();
             ActivityInstance ai = edao.getActivityInstance(activityInstId);
-            Long procInstId = ai.getOwnerId();
+            Long procInstId = ai.getProcessInstanceId();
             ProcessInstance pi = edao.getProcessInstance(procInstId);
             if (!this.isProcessInstanceResumable(pi)) {
                 logger.info("ProcessInstance in NOT resumable. ProcessInstanceId:" + pi.getId());
@@ -429,7 +429,7 @@ public class EventManagerBean implements EventManager {
         try {
             transaction = edao.startTransaction();
             ActivityInstance ai = edao.getActivityInstance(activityInstId);
-            Long procInstId = ai.getOwnerId();
+            Long procInstId = ai.getProcessInstanceId();
             ProcessInstance pi = edao.getProcessInstance(procInstId);
             if (!this.isProcessInstanceResumable(pi)) {
                 logger.info("ProcessInstance in NOT resumable. ProcessInstanceId:" + pi.getId());

@@ -149,11 +149,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         Long actInstId = db.isMySQL()?null:this.getNextId("ACTIVITY_INSTANCE_ID_SEQ");
         String query = "insert into ACTIVITY_INSTANCE " +
             "(ACTIVITY_INSTANCE_ID, ACTIVITY_ID, PROCESS_INSTANCE_ID, STATUS_CD, START_DT, CREATE_DT, CREATE_USR) " +
-            "values (?, ?, ?, ?, "+now()+", " + now() + ", 'MDWEngine')";
+            "values (?, ?, ?, ?, " + now() + ", " + now() + ", 'MDWEngine')";
         Object[] args = new Object[4];
         args[0] = actInstId;
-        args[1] = act.getDefinitionId();
-        args[2] = act.getOwnerId();
+        args[1] = act.getActivityId();
+        args[2] = act.getProcessInstanceId();
         args[3] = act.getStatusCode();
         if (db.isMySQL()) actInstId = db.runInsertReturnId(query, args);
         else db.runUpdate(query, args);
@@ -169,11 +169,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         ActivityInstance vo = new ActivityInstance();
         vo.setId(actInstId);
         vo.setStatusCode(rs.getInt(1));
-        vo.setStartDate(StringHelper.dateToString(rs.getTimestamp(2)));
-        vo.setEndDate(StringHelper.dateToString(rs.getTimestamp(3)));
-        vo.setStatusMessage(rs.getString(4));
-        vo.setDefinitionId(rs.getLong(5));
-        vo.setOwnerId(rs.getLong(6));
+        vo.setStartDate(rs.getTimestamp(2));
+        vo.setEndDate(rs.getTimestamp(3));
+        vo.setMessage(rs.getString(4));
+        vo.setActivityId(rs.getLong(5));
+        vo.setProcessInstanceId(rs.getLong(6));
         return vo;
     }
 
@@ -191,9 +191,9 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                 " where ACTIVITY_INSTANCE_ID=?";
         }
         Object[] args = new Object[3];
-        if (actInst.getStatusMessage()!=null) {
-            if (status_message==null) status_message = actInst.getStatusMessage();
-            else status_message = actInst.getStatusMessage() + "\n" + status_message;
+        if (actInst.getMessage()!=null) {
+            if (status_message==null) status_message = actInst.getMessage();
+            else status_message = actInst.getMessage() + "\n" + status_message;
             if (status_message.length()>3960) {
                 status_message = status_message.substring(0,3960)
                     + "\n\nTruncated to 3960 characters\n";
@@ -937,11 +937,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             ActivityInstance vo = new ActivityInstance();
             vo.setId(rs.getLong(5));
             vo.setStatusCode(rs.getInt(1));
-            vo.setStartDate(StringHelper.dateToString(rs.getTimestamp(2)));
-            vo.setEndDate(StringHelper.dateToString(rs.getTimestamp(3)));
-            vo.setStatusMessage(rs.getString(4));
-            vo.setDefinitionId(actId);
-            vo.setOwnerId(procInstId);
+            vo.setStartDate(rs.getTimestamp(2));
+            vo.setEndDate(rs.getTimestamp(3));
+            vo.setMessage(rs.getString(4));
+            vo.setActivityId(actId);
+            vo.setProcessInstanceId(procInstId);
             ret.add(vo);
         }
         return ret;
@@ -956,11 +956,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             ActivityInstance vo = new ActivityInstance();
             vo.setId(rs.getLong(5));
             vo.setStatusCode(rs.getInt(1));
-            vo.setStartDate(StringHelper.dateToString(rs.getTimestamp(2)));
-            vo.setEndDate(StringHelper.dateToString(rs.getTimestamp(3)));
-            vo.setStatusMessage(rs.getString(4));
-            vo.setDefinitionId(rs.getLong(6));
-            vo.setOwnerId(procInstId);
+            vo.setStartDate(rs.getTimestamp(2));
+            vo.setEndDate(rs.getTimestamp(3));
+            vo.setMessage(rs.getString(4));
+            vo.setActivityId(rs.getLong(6));
+            vo.setProcessInstanceId(procInstId);
             vo.setStatus(WorkStatuses.getWorkStatuses().get(vo.getStatusCode()));
             ret.add(vo);
         }

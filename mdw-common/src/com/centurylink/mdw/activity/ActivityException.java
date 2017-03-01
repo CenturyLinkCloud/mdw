@@ -1,17 +1,20 @@
 /**
- * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.activity;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.app.WorkflowException;
-import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
+import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.ThrowableJsonable;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
 
 /**
  * Exception thrown by a workflow activity.
  */
-public class ActivityException extends WorkflowException {
+public class ActivityException extends WorkflowException implements Jsonable {
 
     public ActivityException(String message) {
         super(message);
@@ -32,27 +35,45 @@ public class ActivityException extends WorkflowException {
 
     }
 
-    private ActivityInstanceInfo actInst = null;
-
-    public ActivityInstanceInfo getActivityInstance() {
-        return actInst;
+    private ActivityInstance activityInstance = null;
+    public ActivityInstance getActivityInstance() {
+        return activityInstance;
+    }
+    public void setActivityInstance(ActivityInstance activityInstance) {
+        this.activityInstance = activityInstance;
     }
 
-    public void setActivityInstance(ActivityInstanceInfo activityInst) {
-        actInst = activityInst;
+//    public ActivityException(JSONObject json) throws JSONException {
+//        if (json.has("activityInstance"))
+//            this.activityInstance = new ActivityInstance(json.getJSONObject("activityInstance"));
+//    }
+
+    @Override
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new ThrowableJsonable(this).getJson();
+        if (activityInstance != null)
+            json.put("activityInstance", activityInstance.getJson());
+        return json;
+    }
+
+    @Override
+    public String getJsonName() {
+        return "activityException";
     }
 
     public String toString() {
-        if (actInst == null)
+        if (activityInstance == null)
             return super.toString();
 
-        String str = super.toString() + "\n" + actInst.getJsonName() + ":\n";
+        String str = super.toString() + "\n" + activityInstance.getJsonName() + ":\n";
         try {
-            str += actInst.getJson().toString(2);
+            str += activityInstance.getJson().toString(2);
             return str;
         }
         catch (JSONException e) {
             return super.toString();
         }
     }
+
+
 }

@@ -1421,13 +1421,13 @@ public class TaskManagerBean implements TaskManager {
             if (activityInstanceId != null) {
                 EventManager eventManager = ServiceLocator.getEventManager();
                 ActivityInstance activityInstance = eventManager.getActivityInstance(activityInstanceId);
-                Long processInstanceId = activityInstance.getOwnerId();
+                Long processInstanceId = activityInstance.getProcessInstanceId();
                 ProcessInstance processInstance = eventManager.getProcessInstance(processInstanceId);
 
                 Process processVO = ProcessCache.getProcess(processInstance.getProcessId());
                 if (processInstance.isEmbedded())
                     processVO = processVO.getSubProcessVO(new Long(processInstance.getComment()));
-                List<Transition> outgoingWorkTransVOs = processVO.getAllWorkTransitions(activityInstance.getDefinitionId());
+                List<Transition> outgoingWorkTransVOs = processVO.getAllWorkTransitions(activityInstance.getActivityId());
                 for (Transition workTransVO : outgoingWorkTransVOs) {
                     String resultCode = workTransVO.getCompletionCode();
                     if (resultCode != null) {
@@ -1472,7 +1472,7 @@ public class TaskManagerBean implements TaskManager {
             if (activityInstanceId != null) {
                 EventManager eventManager = ServiceLocator.getEventManager();
                 ActivityInstance activityInstance = eventManager.getActivityInstance(activityInstanceId);
-                Long processInstanceId = activityInstance.getOwnerId();
+                Long processInstanceId = activityInstance.getProcessInstanceId();
                 ProcessInstance processInstance = eventManager.getProcessInstance(processInstanceId);
 
                 if (!isExceptionHandlerTaskInstance(taskInstance)) {
@@ -1489,7 +1489,7 @@ public class TaskManagerBean implements TaskManager {
                 Process processVO = ProcessCache.getProcess(processInstance.getProcessId());
                 if (processInstance.isEmbedded())
                     processVO = processVO.getSubProcessVO(new Long(processInstance.getComment()));
-                List<Transition> outgoingWorkTransVOs = processVO.getAllWorkTransitions(activityInstance.getDefinitionId());
+                List<Transition> outgoingWorkTransVOs = processVO.getAllWorkTransitions(activityInstance.getActivityId());
                 boolean foundNullResultCode = false;
                 for (Transition workTransVO : outgoingWorkTransVOs) {
                     Integer eventType = workTransVO.getEventType();

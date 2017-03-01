@@ -290,7 +290,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
             throws SQLException {
         if (cache_activity_transition==CACHE_ONLY) {
             actInst.setStatusCode(status);
-            actInst.setStatusMessage(statusMessage);
+            actInst.setMessage(statusMessage);
         } else {
             edadb.setActivityInstanceStatus(actInst, status, statusMessage);
         }
@@ -338,8 +338,8 @@ public class EngineDataAccessCache implements EngineDataAccess {
         if (cache_activity_transition==CACHE_ONLY) {
             int count = 0;
             for (ActivityInstance actInst : activityInstCache.values()) {
-                if (!actInst.getDefinitionId().equals(activityId)) continue;
-                if (!actInst.getOwnerId().equals(procInstId)) continue;
+                if (!actInst.getActivityId().equals(activityId)) continue;
+                if (!actInst.getProcessInstanceId().equals(procInstId)) continue;
                 for (Integer s : statuses) {
                     if (s.intValue()==actInst.getStatusCode()) {
                         count++;
@@ -380,8 +380,8 @@ public class EngineDataAccessCache implements EngineDataAccess {
         if (cache_activity_transition==CACHE_ONLY) {
             ret = new ArrayList<ActivityInstance>();
             for (ActivityInstance actInst : activityInstCache.values()) {
-                if (!actInst.getDefinitionId().equals(actId)) continue;
-                if (!actInst.getOwnerId().equals(procInstId)) continue;
+                if (!actInst.getActivityId().equals(actId)) continue;
+                if (!actInst.getProcessInstanceId().equals(procInstId)) continue;
                 if (activeOnly) {
                     if (isSynchActivity && actInst.getStatusCode()==WorkStatus.STATUS_COMPLETED
                             || actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue()
@@ -661,7 +661,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
             throws SQLException {
         if (cache_activity_transition==CACHE_ONLY) {
             ActivityInstance actInst = activityInstCache.get(actInstId);
-            actInst.setEndDate(StringHelper.dateToString(new Date()));
+            actInst.setEndDate(new Date());
         } else {
             edadb.updateActivityInstanceEndTime(actInstId, endtime);
         }

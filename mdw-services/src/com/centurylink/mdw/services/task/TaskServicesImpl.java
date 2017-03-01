@@ -164,7 +164,7 @@ public class TaskServicesImpl implements TaskServices {
                     }
                 }
                 if (activityInstance != null) {
-                    Long activityId = activityInstance.getDefinitionId();
+                    Long activityId = activityInstance.getActivityId();
                     Long workTransInstId = taskInstance.getSecondaryOwnerId();
                     for (TransitionInstance transitionInstance : processInstance.getTransitions()) {
                         if (transitionInstance.getTransitionInstanceID().equals(workTransInstId)) {

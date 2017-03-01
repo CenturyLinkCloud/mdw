@@ -125,7 +125,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                 Long instanceId = new Long(getActionParam(action, "mdw.InstanceId", true));
                 EventManager eventMgr = ServiceLocator.getEventManager();
                 ActivityInstance actInstVO = eventMgr.getActivityInstance(instanceId);
-                ProcessInstance procInstVO = eventMgr.getProcessInstance(actInstVO.getOwnerId());
+                ProcessInstance procInstVO = eventMgr.getProcessInstance(actInstVO.getProcessInstanceId());
 
                 if (actionType.equals(ActivityResultCodeConstant.RESULT_RETRY)) {
                     checkProcessInstanceStatus(procInstVO, actionType);

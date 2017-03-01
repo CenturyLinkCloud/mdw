@@ -354,17 +354,17 @@ public class TestCaseRun implements Runnable {
                 if (orderById) {
                     Collections.sort(orderedList, new Comparator<ActivityInstance>() {
                         public int compare(ActivityInstance ai1, ActivityInstance ai2) {
-                            return (int)(ai1.getDefinitionId() - ai2.getDefinitionId());
+                            return (int)(ai1.getActivityId() - ai2.getActivityId());
                         }
                     });
                 }
                 for (ActivityInstance act : orderedList) {
-                    yaml.append("  activity: # ").append(act.getDefinitionId()).append(" \"").append(act.getStartDate()).append("\"").newLine();
-                    String actNameKey = procInst.getProcessId() + "-" + act.getDefinitionId();
+                    yaml.append("  activity: # ").append(act.getActivityId()).append(" \"").append(StringHelper.dateToString(act.getStartDate())).append("\"").newLine();
+                    String actNameKey = procInst.getProcessId() + "-" + act.getActivityId();
                     yaml.append("    name: " ).appendMulti("      ", activityNames.get(actNameKey)).newLine();
                     yaml.append("    status: ").append(WorkStatuses.getWorkStatuses().get(act.getStatusCode())).newLine();
-                    if (act.getStatusMessage() != null) {
-                        String msgLines[] = act.getStatusMessage().split("\\r\\n|\\n|\\r");
+                    if (act.getMessage() != null) {
+                        String msgLines[] = act.getMessage().split("\\r\\n|\\n|\\r");
                         String result = msgLines[0];
                         if (msgLines.length > 1)
                             result += "...";

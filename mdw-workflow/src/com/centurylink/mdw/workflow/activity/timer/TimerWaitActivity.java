@@ -209,7 +209,7 @@ public class TimerWaitActivity extends AbstractWait {
         // check if timer is expired at this time?
         try {
             ActivityInstance ai = getEngine().getActivityInstance(getActivityInstanceId());
-            Date expectedEndTime = StringHelper.stringToDate(ai.getEndDate());
+            Date expectedEndTime = ai.getEndDate();
             long currentTime = DatabaseAccess.getCurrentTime();
             if (currentTime>expectedEndTime.getTime()) {
                 int moreSeconds = processTimerExpiration();

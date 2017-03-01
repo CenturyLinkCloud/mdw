@@ -183,11 +183,11 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
                 actInst = new ActivityInstance();
                 actInst.setId(new Long(rs.getLong(1)));
                 actInst.setStatusCode(rs.getInt(2));
-                actInst.setStartDate(StringHelper.dateToString(rs.getTimestamp(3)));
-                actInst.setEndDate(StringHelper.dateToString(rs.getTimestamp(4)));
-                actInst.setStatusMessage(rs.getString(5));
-                actInst.setDefinitionId(new Long(rs.getLong(6)));
-                actInst.setOwnerId(procInstId);
+                actInst.setStartDate(rs.getTimestamp(3));
+                actInst.setEndDate(rs.getTimestamp(4));
+                actInst.setMessage(rs.getString(5));
+                actInst.setActivityId(new Long(rs.getLong(6)));
+                actInst.setProcessInstanceId(procInstId);
                 actInstList.add(actInst);
             }
         }

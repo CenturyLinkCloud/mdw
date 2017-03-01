@@ -43,9 +43,6 @@ import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.SimpleLogger;
-import com.centurylink.mdw.util.log.StandardLogger;
 
 public class RegressionTestEventHandler extends ExternalEventHandlerBase {
 
@@ -232,7 +229,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
 
     // turn watching mode on and off
     private String handleWatching(ActionRequestDocument xmlbean, String message, Map<String,String> metaInfo)
-    throws Exception {      
+    throws Exception {
         String server=getParameter(xmlbean, "Server", false);
         String mode=getParameter(xmlbean, "Mode", true);
         if (mode.equals("on")) {

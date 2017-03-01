@@ -25,7 +25,6 @@ import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.variable.VariableType;
-import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.ActivityList;
 import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
@@ -81,10 +80,10 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 actInst = new ActivityInstance();
                 actInst.setId(new Long(rs.getLong(1)));
                 actInst.setStatusCode(rs.getInt(2));
-                actInst.setStartDate(StringHelper.dateToString(rs.getTimestamp(3)));
-                actInst.setEndDate(StringHelper.dateToString(rs.getTimestamp(4)));
-                actInst.setStatusMessage(rs.getString(5));
-                actInst.setDefinitionId(new Long(rs.getLong(6)));
+                actInst.setStartDate(rs.getTimestamp(3));
+                actInst.setEndDate(rs.getTimestamp(4));
+                actInst.setMessage(rs.getString(5));
+                actInst.setActivityId(new Long(rs.getLong(6)));
                 actInst.setCompletionCode(rs.getString(7));
                 actInstList.add(actInst);
             }
@@ -601,7 +600,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 count = new Long(rs.getLong(1));
             else
                 count = new Long(-1);
-            List<ActivityInstanceInfo> mdwActivityInstanceList = new ArrayList<ActivityInstanceInfo>();
+            List<ActivityInstance> mdwActivityInstanceList = new ArrayList<>();
             ActivityList actList = new ActivityList(ActivityList.ACTIVITY_INSTANCES, mdwActivityInstanceList);
             if (count <= 0) {
                 return actList;
@@ -611,7 +610,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
 
             rs = db.runSelect(sql.toString(), null);
             while (rs.next()) {
-                ActivityInstanceInfo ai = new ActivityInstanceInfo();
+                ActivityInstance ai = new ActivityInstance();
                 ai.setId(rs.getLong("aii"));
                 ai.setDefinitionId("A" + rs.getLong("activity_id"));
                 ai.setMasterRequestId(rs.getString("master_request_id"));
@@ -623,7 +622,6 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 ai.setMessage(rs.getString("error"));
                 ai.setStatus(WorkStatuses.getName(rs.getInt("status_cd")));
                 ai.setProcessInstanceId(rs.getLong("pii"));
-                ai.setActivityInstanceId(rs.getLong("aii"));
 
                 mdwActivityInstanceList.add(ai);
             }

@@ -15,8 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.JsonExportable;
 import com.centurylink.mdw.common.service.JsonArray;
+import com.centurylink.mdw.common.service.JsonExportable;
 import com.centurylink.mdw.common.service.JsonListMap;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
@@ -25,7 +25,7 @@ import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.ActivityCount;
-import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.ActivityList;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -57,7 +57,7 @@ public class Activities extends JsonRestService implements JsonExportable {
     @Path("/{instanceId|special}")
     @ApiOperation(value="Retrieve an activity, query many activity instances, or perform special queries",
         notes="If instanceId and special are not present, returns a page of activities that meet query criteria.",
-        response=ActivityInstanceInfo.class, responseContainer="List")
+        response=ActivityInstance.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
@@ -74,7 +74,7 @@ public class Activities extends JsonRestService implements JsonExportable {
                 if (segOne.equals("definitions")) {
                     ActivityList activityVOs = workflowServices.getActivityDefinitions(query);
                     JSONArray jsonActivities = new JSONArray();
-                    for (ActivityInstanceInfo activityInstance : activityVOs.getActivities()) {
+                    for (ActivityInstance activityInstance : activityVOs.getActivities()) {
                         jsonActivities.put(activityInstance.getJson());
                     }
                     //return new JsonArray(jsonActivities).getJson();

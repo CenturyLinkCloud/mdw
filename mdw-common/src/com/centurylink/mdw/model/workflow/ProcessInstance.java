@@ -22,30 +22,6 @@ import com.centurylink.mdw.util.StringHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-/**
- * This class represents process instances.
- * It is used for two purposes: a) represent memory image
- * of process instances in execution engine; b) represent
- * process instance runtime information for designer/task manager
- *
- * The following fields are used by designer only:
- *   - activity instances
- *   - transition instances
- *   - remote server
- *   - start and end dates
- *
- * Objects of this class can be created in two cases for designer:
- *   1) when displaying a list of process instances in the designer
- *   2) when returning a list of parent/ancestor process instances.
- * In the second case, the version is not returned (has value 0)
- *
- * For the engine, the objects can also be created in two cases:
- *   3) when starting a process, create the object from JMS message
- *      content
- *   4) when loading an existing process instance, where contents
- *      are loaded from database.
- *
- */
 @ApiModel(value="Process", description="MDW workflow process instance")
 public class ProcessInstance implements Serializable, Jsonable {
 
@@ -291,7 +267,7 @@ public class ProcessInstance implements Serializable, Jsonable {
     public List<ActivityInstance> getActivityInstances(Long actId) {
         List<ActivityInstance> ret = new ArrayList<ActivityInstance>();
         for (ActivityInstance one : this.activities) {
-            if (one.getDefinitionId().equals(actId)) ret.add(one);
+            if (one.getActivityId().equals(actId)) ret.add(one);
         }
         return ret;
     }

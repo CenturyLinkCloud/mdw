@@ -147,11 +147,11 @@ public class InternalEvent {
     public static InternalEvent createActivityDelayMessage(ActivityInstance actInst,
             String masterRequestId) {
         InternalEvent event = new InternalEvent();
-        event.workId = actInst.getDefinitionId();
+        event.workId = actInst.getActivityId();
         event.transitionInstanceId = null;
         event.eventType = EventType.DELAY;
         event.ownerType = OwnerType.PROCESS_INSTANCE;
-        event.ownerId = actInst.getOwnerId();
+        event.ownerId = actInst.getProcessInstanceId();
         event.workInstanceId = actInst.getId();
         event.masterRequestId = masterRequestId;
         event.secondaryOwnerType = OwnerType.SLA;    // just an indicator for new style
@@ -200,16 +200,13 @@ public class InternalEvent {
      * @return
      */
     public static InternalEvent createActivityNotifyMessage(ActivityInstance ai,
-            Integer eventType, String masterRequestId, String compCode)
-//            Long actId, Long actInstId, Long procInstId,
-//            , String statusMessage)
-    {
+            Integer eventType, String masterRequestId, String compCode) {
         InternalEvent event = new InternalEvent();
-        event.workId = ai.getDefinitionId();
+        event.workId = ai.getActivityId();
         event.transitionInstanceId = null;
         event.eventType = eventType;
         event.ownerType = OwnerType.PROCESS_INSTANCE;
-        event.ownerId = ai.getOwnerId();
+        event.ownerId = ai.getProcessInstanceId();
         event.masterRequestId = masterRequestId;
         event.workInstanceId = ai.getId();
         event.completionCode = compCode;

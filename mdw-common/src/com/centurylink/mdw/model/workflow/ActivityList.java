@@ -19,11 +19,11 @@ import com.centurylink.mdw.util.StringHelper;
 /**
  * A collection of activity instances.
  */
-public class ActivityList implements Jsonable, InstanceList<ActivityInstanceInfo> {
+public class ActivityList implements Jsonable, InstanceList<ActivityInstance> {
 
     public static final String ACTIVITY_INSTANCES = "activityInstances";
 
-    public ActivityList(String name, List<ActivityInstanceInfo> activities) {
+    public ActivityList(String name, List<ActivityInstance> activities) {
         this.name = name;
         this.activities = activities;
         if (activities != null)
@@ -42,7 +42,7 @@ public class ActivityList implements Jsonable, InstanceList<ActivityInstanceInfo
             total = jsonObj.getLong("totalCount"); // compatibility
         JSONArray activityList = jsonObj.getJSONArray(name);
         for (int i = 0; i < activityList.length(); i++)
-            activities.add(new ActivityInstanceInfo((JSONObject)activityList.get(i)));
+            activities.add(new ActivityInstance((JSONObject)activityList.get(i)));
     }
 
     public String getJsonName() {
@@ -61,7 +61,7 @@ public class ActivityList implements Jsonable, InstanceList<ActivityInstanceInfo
         }
         JSONArray array = new JSONArray();
         if (activities != null) {
-            for (ActivityInstanceInfo act : activities)
+            for (ActivityInstance act : activities)
                 array.put(act.getJson());
         }
         json.put(name, array);
@@ -84,20 +84,20 @@ public class ActivityList implements Jsonable, InstanceList<ActivityInstanceInfo
     public long getTotal() { return total; }
     public void setTotal(long total) { this.total = total; }
 
-    private List<ActivityInstanceInfo> activities = new ArrayList<ActivityInstanceInfo>();
-    public List<ActivityInstanceInfo> getActivities() { return activities; }
-    public void setActivities(List<ActivityInstanceInfo> activities) { this.activities = activities; }
+    private List<ActivityInstance> activities = new ArrayList<>();
+    public List<ActivityInstance> getActivities() { return activities; }
+    public void setActivities(List<ActivityInstance> activities) { this.activities = activities; }
 
-    public List<ActivityInstanceInfo> getItems() {
+    public List<ActivityInstance> getItems() {
         return activities;
     }
 
-    public void addActivity(ActivityInstanceInfo activity) {
+    public void addActivity(ActivityInstance activity) {
         activities.add(activity);
     }
 
-    public ActivityInstanceInfo getActivity(Long activityInstanceId) {
-        for (ActivityInstanceInfo activity : activities) {
+    public ActivityInstance getActivity(Long activityInstanceId) {
+        for (ActivityInstance activity : activities) {
             if (activity.getId().equals(activityInstanceId))
                 return activity;
         }

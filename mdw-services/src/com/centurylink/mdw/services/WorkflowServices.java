@@ -14,7 +14,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.workflow.ActivityCount;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
-import com.centurylink.mdw.model.workflow.ActivityInstanceInfo;
+import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.ActivityList;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
@@ -134,7 +134,7 @@ public interface WorkflowServices {
 
     public ActivityList getActivityDefinitions(Query query) throws ServiceException;
 
-    public ActivityInstanceInfo getActivity(Long instanceId) throws ServiceException;
+    public ActivityInstance getActivity(Long instanceId) throws ServiceException;
 
     public List<ActivityImplementor> getImplementors() throws ServiceException;
     public ActivityImplementor getImplementor(String className) throws ServiceException;

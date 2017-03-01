@@ -301,13 +301,13 @@ public class ProcessEngineDriver {
                 break;
             case ActivityRuntime.STARTCASE_SYNCH_COMPLETE:
                 logger.info(logtag(ar.getProcessInstance().getProcessId(),
-                        ar.getProcessInstance().getId(),ar.getActivityInstance().getDefinitionId(),
+                        ar.getProcessInstance().getId(),ar.getActivityInstance().getActivityId(),
                         ar.getActivityInstance().getId()),
                         "The synchronization activity is already completed");
                 break;
             case ActivityRuntime.STARTCASE_SYNCH_HOLD:
                 logger.info(logtag(ar.getProcessInstance().getProcessId(),
-                        ar.getProcessInstance().getId(),ar.getActivityInstance().getDefinitionId(),
+                        ar.getProcessInstance().getId(),ar.getActivityInstance().getActivityId(),
                         ar.getActivityInstance().getId()),
                         "The synchronization activity is on-hold - ignore incoming transition");
                 break;
@@ -377,12 +377,12 @@ public class ProcessEngineDriver {
                 return;
             }
             String tag = logtag(processInstance.getProcessId(), processInstance.getId(),
-                    ai.getDefinitionId(), actInstId);
+                    ai.getActivityId(), actInstId);
             logger.info(tag, "Activity in waiting status times out");
 
             Integer actInstStatus = WorkStatus.STATUS_CANCELLED;
             Process procdef = getProcessDefinition(processInstance);
-            Activity activity = procdef.getActivityVO(ai.getDefinitionId());
+            Activity activity = procdef.getActivityVO(ai.getActivityId());
             String status = activity.getAttribute(WorkAttributeConstant.STATUS_AFTER_TIMEOUT);
             if (status!=null) {
                 for (int i=0; i<WorkStatus.allStatusNames.length; i++) {
