@@ -75,9 +75,10 @@
     {
       "attributes": {
         "OsgiBundleSymbolicName": "com.centurylink.mdw.workflow",
-        "Rule": "import org.w3c.dom.Node;\r\nimport org.w3c.dom.NodeList;\r\n\r\nNodeList nodes = order.getFirstChild().getChildNodes();\r\n Node node = nodes.item(0);\r\n if (\"orderId\".equals(node.getLocalName()))\r\n   orderId = node.getFirstChild().getNodeValue();\r\n\r\n",
+        "Output Documents": "order",
+        "Rule": "org.w3c.dom.NodeList nodes = order.getFirstChild().getChildNodes();\r\norg.w3c.dom.Node node = nodes.item(0);\r\n\r\n if (\"orderId\".equals(node.getLocalName()))\r\n   orderId = node.getFirstChild().getNodeValue();\r\n\r\n",
         "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=858,y=657,w=25,h=23"
+        "WORK_DISPLAY_INFO": "x=825,y=661,w=25,h=23"
       },
       "id": "A25",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
@@ -85,7 +86,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=474,ly=774,type=ElbowV,xs=870&470,ys=684&876",
+          "TRANSITION_DISPLAY_INFO": "lx=474,ly=774,type=ElbowV,xs=837&470,ys=688&876",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -130,6 +131,7 @@
     },
     {
       "attributes": {
+        "Output Documents": "order",
         "OutputVariables": "order",
         "ReadOnlyVariables": "order#xmldata#launcher",
         "Rule": "// import com.centurylink.mdw.common.translator.VariableTranslator;\n// import com.qwest.mbeng.MbengDocument;\n// File orderFile = new File(\"C:\\\\workspaces\\\\mdw\\\\MDWDesigner\\\\myorder.so\");\n// order = VariableTranslator.realToObject(MbengDocument.class.getName(), orderFile.getText());\nprintln(\"I do not need to load from file any more!\");",
@@ -142,7 +144,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=859,ly=528,type=ElbowV,xs=839&870,ys=393&653",
+          "TRANSITION_DISPLAY_INFO": "lx=841,ly=533,type=ElbowV,xs=838&838,ys=393&657",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -223,7 +225,7 @@
         "RETURN_CODE": "BTN",
         "Rule": "return \"ABORT:\";\n",
         "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=1524,y=366,w=24,h=24"
+        "WORK_DISPLAY_INFO": "x=1495,y=367,w=24,h=24"
       },
       "id": "A12",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
@@ -231,7 +233,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=724,ly=552,type=ElbowV,xs=1534&1534&470&470,ys=388&780&780&876",
+          "TRANSITION_DISPLAY_INFO": "lx=725,ly=557,type=ElbowV,xs=1523&1523&470&470,ys=395&780&780&876",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -578,7 +580,7 @@
           "to": "A15"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1459,ly=334,type=ElbowV,xs=440&1536,ys=271&362"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1430,ly=335,type=ElbowV,xs=440&1507,ys=271&363"},
           "event": "FINISH",
           "id": "T49",
           "resultCode": "AbortEvent",
@@ -592,7 +594,7 @@
           "to": "A23"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=988,ly=233,type=ElbowV,xs=471&1476&1476,ys=255&255&648"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1044,ly=251,type=ElbowV,xs=471&1593&1593,ys=255&255&769"},
           "event": "FINISH",
           "id": "T51",
           "resultCode": "DocumentBinding",
@@ -602,7 +604,7 @@
     },
     {
       "attributes": {
-        "WORK_DISPLAY_INFO": "x=1480,y=652,w=20,h=20",
+        "WORK_DISPLAY_INFO": "x=1597,y=773,w=20,h=20",
         "processname": "com.centurylink.mdw.tests.workflow/MDWServiceLevel_9",
         "processversion": "[0.2,1)",
         "synchronous": "TRUE",
@@ -612,7 +614,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
       "name": "Invoke service lvl9 process",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=974,ly=704,type=ElbowV,xs=1490&470,ys=676&876"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1070,ly=758,type=ElbowV,xs=1607&470,ys=797&876"},
         "event": "FINISH",
         "id": "T52",
         "to": "A11"
@@ -765,5 +767,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "3.34"
+  "version": "3.35"
 }
