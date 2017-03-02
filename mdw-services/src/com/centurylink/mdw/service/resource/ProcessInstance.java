@@ -5,6 +5,7 @@ package com.centurylink.mdw.service.resource;
 
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.JsonService;
@@ -28,7 +29,19 @@ public class ProcessInstance implements JsonService {
                 processInstance = processServices.getInstanceShallow(new Long(instanceId));
             else
                 processInstance = processServices.getInstance(new Long(instanceId));
-            return processInstance.getJson().toString(2);
+
+            // designer expects activity.statusMessage instead of activity.message
+            JSONObject json = processInstance.getJson();
+            if (json.has("activities")) {
+                JSONArray activities = json.getJSONArray("activities");
+                for (int i = 0; i < activities.length(); i++) {
+                    JSONObject activity = activities.getJSONObject(i);
+                    if (activity.has("message")) {
+                        activity.put("statusMessage", activity.getString("message"));
+                    }
+                }
+            }
+            return json.toString(2);
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
