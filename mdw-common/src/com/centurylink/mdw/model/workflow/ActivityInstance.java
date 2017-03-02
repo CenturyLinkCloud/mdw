@@ -84,7 +84,7 @@ public class ActivityInstance implements Jsonable, Serializable {
     public boolean isDefinitionMissing() { return definitionMissing; }
     public void setDefinitionMissing(boolean defMissing) { this.definitionMissing = defMissing; }
 
-    private String processVersion = "0";
+    private String processVersion;
     public String getProcessVersion() { return processVersion; }
     public void setProcessVersion(String processVersion) { this.processVersion = processVersion; }
 

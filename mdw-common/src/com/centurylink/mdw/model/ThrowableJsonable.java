@@ -3,6 +3,7 @@
  */
 package com.centurylink.mdw.model;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.common.service.Jsonable;
 
 /**
@@ -27,18 +27,14 @@ public class ThrowableJsonable implements Jsonable {
     private ThrowableJsonable cause;
     public ThrowableJsonable getCause() { return cause; }
 
-    private int code;
-    public int getCode() { return code; }
-
     private StackTraceElement[] stackElements;
     public StackTraceElement[] getStackElements() { return stackElements; }
 
     public ThrowableJsonable(Throwable th) {
         this.throwable = th.getClass().getName();
         this.message = th.getMessage();
-        this.cause = new ThrowableJsonable(th.getCause());
-        if (th instanceof MdwException)
-            this.code = ((MdwException)th).getCode();
+        if (th.getCause() != null)
+            this.cause = new ThrowableJsonable(th.getCause());
         this.stackElements = th.getStackTrace();
     }
 
@@ -46,11 +42,9 @@ public class ThrowableJsonable implements Jsonable {
         if (json.has("throwable"))
             throwable = json.getString("throwable");
         if (json.has("message"))
-            message = json.getString("method");
+            message = json.getString("message");
         if (json.has("cause"))
             cause = new ThrowableJsonable(json.getJSONObject("cause"));
-        if (json.has("code"))
-            code = json.getInt("code");
         if (json.has("stackElements")) {
             List<StackTraceElement> elements = new ArrayList<>();
             JSONArray stackElemArr = json.getJSONArray("stackElements");
@@ -85,8 +79,6 @@ public class ThrowableJsonable implements Jsonable {
             json.put("message", message);
         if (cause != null)
             json.put("cause", cause.getJson());
-        if (code != 0)
-            json.put("code", code);
         if (stackElements != null) {
             JSONArray stackElemArr = new JSONArray();
             for (int i = 0; i < stackElements.length; i++) {
@@ -112,5 +104,44 @@ public class ThrowableJsonable implements Jsonable {
     @Override
     public String getJsonName() {
         return "throwable";
+    }
+
+    public Throwable toThrowable() throws Exception {
+        return toThrowable(null);
+    }
+
+    public Throwable toThrowable(ClassLoader classLoader) throws Exception {
+        Class<? extends Throwable> clazz;
+        if (classLoader == null)
+            clazz = Class.forName(throwable).asSubclass(Throwable.class);
+        else
+            clazz = Class.forName(throwable, true, classLoader).asSubclass(Throwable.class);
+
+        Constructor<? extends Throwable> ctor;
+        try {
+            if (cause == null) {
+                if (message == null) {
+                    return clazz.newInstance();
+                }
+                else {
+                    ctor = clazz.getConstructor(String.class);
+                    return ctor.newInstance(message);
+                }
+            }
+            else {
+                if (message == null) {
+                    ctor = clazz.getConstructor(Throwable.class);
+                    return ctor.newInstance(cause.toThrowable());
+                }
+                else {
+                    ctor = clazz.getConstructor(String.class, Throwable.class);
+                    return ctor.newInstance(message, cause.toThrowable());
+                }
+            }
+        }
+        catch (NoSuchMethodException ex) {
+            // no appropriate constructor
+            return clazz.newInstance();
+        }
     }
 }

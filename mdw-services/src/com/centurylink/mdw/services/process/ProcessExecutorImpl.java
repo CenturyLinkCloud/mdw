@@ -24,6 +24,7 @@ import com.centurylink.mdw.activity.types.SuspendibleActivity;
 import com.centurylink.mdw.activity.types.SynchronizationActivity;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
@@ -1930,8 +1931,7 @@ class ProcessExecutorImpl {
             }
             actEx.setActivityInstance(actInst);
         }
-        // DocumentReference docRef = createDocument(Jsonable.class.getName(), OwnerType.DOCUMENT, actInstVO.getId(), actEx);
-        DocumentReference docRef = createDocument("java.lang.Object", OwnerType.DOCUMENT, actInstVO.getId(), actEx);
+        DocumentReference docRef = createDocument(Jsonable.class.getName(), OwnerType.DOCUMENT, actInstVO.getId(), actEx);
         return docRef;
     }
 }

@@ -3,9 +3,18 @@
  */
 package com.centurylink.mdw.common;
 
-public class MdwException extends Exception {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.ThrowableJsonable;
+
+public class MdwException extends Exception implements Jsonable {
 
     private int code;
+    public int getCode(){
+        return this.code;
+    }
 
     public MdwException(String code){
         super(code);
@@ -24,10 +33,6 @@ public class MdwException extends Exception {
     public MdwException(String message, Throwable cause){
         super(message, cause);
         this.code = -1;
-    }
-
-    public int getCode(){
-        return this.code;
     }
 
     public String getStackTraceDetails() {
@@ -61,5 +66,47 @@ public class MdwException extends Exception {
             return t;
         else
             return findCause(t.getCause());
+    }
+
+    public MdwException(JSONObject json) throws JSONException {
+        this(getCode(json), getMessage(json), getCause(json));
+    }
+
+    @Override
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        if (code > 0)
+            json.put("code", code);
+        if (getMessage() != null)
+            json.put("message", getMessage());
+        if (getCause() != null)
+            json.put("cause", new ThrowableJsonable(getCause()).getJson());
+        return json;
+    }
+
+    @Override
+    public String getJsonName() {
+        String className = getClass().getSimpleName();
+        return className.substring(0, 1).toLowerCase() + className.substring(1);
+    }
+
+    private static int getCode(JSONObject json) throws JSONException {
+        return json.has("code") ? json.getInt("code") : 0;
+    }
+    private static String getMessage(JSONObject json) throws JSONException {
+        return json.has("message") ? json.getString("message") : null;
+    }
+    private static Throwable getCause(JSONObject json) throws JSONException {
+        Throwable cause = null;
+        if (json.has("cause")) {
+            ThrowableJsonable jsonable = new ThrowableJsonable(json.getJSONObject("cause"));
+            try {
+                cause = jsonable.toThrowable();
+            }
+            catch (Exception ex) {
+                throw new JSONException(ex);
+            }
+        }
+        return cause;
     }
 }
