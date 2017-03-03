@@ -119,10 +119,12 @@ task exportAssetPackages(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
-task versions << {
+task versions {
+     doLast {
     println "Java Version: " + System.getProperty("java.version")
     println GradleVersion.current().prettyPrint()
     println "MDW Version: ${mdwVersion}"
+     }
 }
 
 // deploy a build for testing on lxdenvmtc143
