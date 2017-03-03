@@ -265,20 +265,19 @@ public class TomcatServerBehavior
 
             if (kind == IServer.PUBLISH_CLEAN || kind == IServer.PUBLISH_FULL) {
                 if (moduleTree.length == 1) // publish everything in top level
-                                            // module to prevent overwriting by
-                                            // submodules
+                                            // module to prevent overwriting by submodules
                 {
-                    // referenced projects first so that main module overrides
-                    // any conflicts
+                    // referenced projects first so that main module overrides any conflicts
                     IModule[] submods = getTomcatServer().getChildModules(moduleTree);
                     for (IModule submod : submods) {
+                        if ("mdw-web".equals(submod.getName()) || "mdw-taskmgr".equals(submod.getName()))
+                            continue;
                         IModuleResource[] mrs = getResources(new IModule[] { submod });
                         IPath submodPath = publishPath;
                         if (!"jst.web".equals(submod.getModuleType().getId()))
                             submodPath = submodPath.append("WEB-INF/classes");
-                        IStatus[] statuses = publishHelper.publishFull(mrs, submodPath, monitor); // deployment
-                                                                                                  // assembly
-                                                                                                  // designates
+                        // deployment assembly designates
+                        IStatus[] statuses = publishHelper.publishFull(mrs, submodPath, monitor);
                         if (showError(statuses))
                             return;
                         monitor.worked(2000 / submods.length);
@@ -346,8 +345,7 @@ public class TomcatServerBehavior
 
                         copyWebInfLibArchiveEntriesToDir(archive, publishDir);
 
-                        // refresh the project's deploy folder after full
-                        // publish
+                        // refresh the project's deploy folder after full publish
                         WorkflowProject project = getProject();
                         if (project != null)
                             project.getDeployFolder().refreshLocal(IResource.DEPTH_INFINITE,
