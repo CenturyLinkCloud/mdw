@@ -619,7 +619,7 @@ class ProcessExecutorImpl {
                 DocumentReference docRef = CreateActivityExceptionDocument(processInst, actInstVO, activity, cause);
                 InternalEvent outgoingMsg =
                     InternalEvent.createActivityErrorMessage(activityId, activityInstId, processInst.getId(), compCode,
-                        event.getMasterRequestId(), statusMsg.length() > 2000 ? statusMsg.substring(0, 1999) : statusMsg, docRef.getDocumentId());  // avoid overflowing data col
+                        event.getMasterRequestId(), statusMsg.length() > 2000 ? statusMsg.substring(0, 1999) : statusMsg, docRef.getDocumentId());
                 sendInternalEvent(outgoingMsg);
             }
         }
@@ -1931,7 +1931,7 @@ class ProcessExecutorImpl {
             }
             actEx.setActivityInstance(actInst);
         }
-        DocumentReference docRef = createDocument(Jsonable.class.getName(), OwnerType.DOCUMENT, actInstVO.getId(), actEx);
+        DocumentReference docRef = createDocument(Jsonable.class.getName(), OwnerType.ACTIVITY_INSTANCE, actInstVO.getId(), actEx);
         return docRef;
     }
 }

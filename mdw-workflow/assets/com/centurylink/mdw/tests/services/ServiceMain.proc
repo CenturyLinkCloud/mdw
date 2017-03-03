@@ -102,11 +102,11 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "SERVICE",
-    "WORK_DISPLAY_INFO": "x=39,y=44,w=112,h=27"
+    "WORK_DISPLAY_INFO": "x=39,y=43,w=112,h=27"
   },
   "variables": {"execPlan": {
     "category": "LOCAL",
     "type": "org.yaml.snakeyaml.Yaml"
   }},
-  "version": "0.1"
+  "version": "0.2"
 }

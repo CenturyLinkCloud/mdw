@@ -4,6 +4,7 @@
 package com.centurylink.mdw.services.process;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -144,18 +145,23 @@ public class ProcessEngineDriver {
                     if (packageHandlerProc == null)
                         packageHandlerProc = ProcessCache.getProcess(originatingPkg + "/" + handlerProcName.toLowerCase(), 0);
                     if (packageHandlerProc != null) {
-//                        Document errorDoc = engine.createDocument(type, ownerType, ownerId, statusCode, statusMessage, doc)
-//                        invokeService(packageHandlerProc.getId(), ownerType, ownerId, masterRequestId,
-//                                masterRequest, params, null, null)
-//                        long secondOwnerId = messageDoc.getWorkInstanceId();
-//                        String secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
-//                        if (processVO.getVariable("exception") != null) {
-//                            VariableInstance exceptionVar = processInstVO.getVariable("exception");
-//                            if (exceptionVar == null)
-//                                engine.createVariableInstance(processInstVO, "exception", new DocumentReference(messageDoc.getSecondaryOwnerId()));
-//                            else
-//                                engine.updateVariableInstance(exceptionVar);
-//                        }
+                        Map<String,String> params = new HashMap<>();
+                        Variable exVar = packageHandlerProc.getVariable("exception");
+                        if (exVar == null || !exVar.isInput()) {
+                            logger.warn("Handler proc " + originatingPkg.getName() + "/" +
+                                packageHandlerProc.getName() + " does not declare input var: 'exception'");
+                        }
+                        else {
+                            params.put("exception", new DocumentReference(messageDoc.getSecondaryOwnerId()).toString());
+                        }
+                        if (packageHandlerProc.isService()) {
+                            invokeService(packageHandlerProc.getId(), OwnerType.ERROR, messageDoc.getSecondaryOwnerId(),
+                                    originatingInstance.getMasterRequestId(), null, params, null, null);
+                        }
+                        else {
+                            startProcess(packageHandlerProc.getId(), originatingInstance.getMasterRequestId(), OwnerType.ERROR,
+                                    messageDoc.getSecondaryOwnerId(), params, null);
+                        }
                     }
                 }
             }

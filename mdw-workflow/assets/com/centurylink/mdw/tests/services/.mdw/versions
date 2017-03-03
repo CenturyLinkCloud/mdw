@@ -1,7 +1,7 @@
-#Tue Feb 28 15:55:40 MST 2017
+#Thu Mar 02 14:19:49 MST 2017
 Employee.java=1005
 Employee.wsdl=6
-Error.proc=1
+Error.proc=2
 FindEmployee.proc=18
 GetEmployeeRequest.xml=1
 GetEmployeeResponse.xml=2
@@ -13,8 +13,8 @@ NewSolution2.json=2
 NewSolution3.json=2
 ProcessJaxb.java=1
 ProcessValues.proc=3
-ServiceMain.proc=1
-ServiceSub.proc=1 Renamed from e\:\\workspaces\\mdw6\\mdw-workflow\\assets\\com\\centurylink\\mdw\\tests\\services\\ServiceAsyncSub.proc
+ServiceMain.proc=2
+ServiceSub.proc=2 Renamed from e\:\\workspaces\\mdw6\\mdw-workflow\\assets\\com\\centurylink\\mdw\\tests\\services\\ServiceAsyncSub.proc
 Values.json=1
 activity-proceed-completion-code.test=3
 activity-proceed-completion-code.yaml=1

@@ -15,7 +15,7 @@
     {
       "attributes": {
         "DoNotNotifyCaller": "false",
-        "WORK_DISPLAY_INFO": "x=500,y=158,w=60,h=40"
+        "WORK_DISPLAY_INFO": "x=503,y=158,w=60,h=40"
       },
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
@@ -31,7 +31,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
       "name": "Error",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=452,ly=178,type=Elbow,xs=396&496,ys=178&178"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=454,ly=178,type=Elbow,xs=396&499,ys=178&178"},
         "event": "FINISH",
         "id": "T2",
         "to": "A2"
@@ -42,7 +42,7 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=50,y=50,w=160,h=27"
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=105,h=27"
   },
-  "version": "0.1"
+  "version": "0.2"
 }

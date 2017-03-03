@@ -28,5 +28,9 @@
     "PROCESS_VISIBILITY": "PUBLIC",
     "WORK_DISPLAY_INFO": "x=46,y=41,w=48,h=27"
   },
-  "version": "0.1"
+  "variables": {"exception": {
+    "category": "INPUT",
+    "type": "com.centurylink.mdw.common.service.Jsonable"
+  }},
+  "version": "0.2"
 }

@@ -45,6 +45,7 @@ public interface OwnerType {
     public static final String PACKAGE = "PACKAGE";
 
     public static final String DOCUMENT = "DOCUMENT";
+    public static final String ERROR = "ERROR";
     public static final String SLA = "SLA";
 
     public static final String MASTER_REQUEST = "MASTER_REQUEST";

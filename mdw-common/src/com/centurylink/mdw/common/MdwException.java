@@ -8,8 +8,12 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.model.ThrowableJsonable;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class MdwException extends Exception implements Jsonable {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private int code;
     public int getCode(){
@@ -104,6 +108,7 @@ public class MdwException extends Exception implements Jsonable {
                 cause = jsonable.toThrowable();
             }
             catch (Exception ex) {
+                logger.severeException("Cannot instantiate throwable: " + jsonable.getThrowable(), ex);
                 throw new JSONException(ex);
             }
         }
