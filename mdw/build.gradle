@@ -120,11 +120,11 @@ task exportAssetPackages(type: GradleBuild) {
 }
 
 task versions {
-     doLast {
-    println "Java Version: " + System.getProperty("java.version")
-    println GradleVersion.current().prettyPrint()
-    println "MDW Version: ${mdwVersion}"
-     }
+    doLast {
+        println "Java Version: " + System.getProperty("java.version")
+        println GradleVersion.current().prettyPrint()
+        println "MDW Version: ${mdwVersion}"
+    }
 }
 
 // deploy a build for testing on lxdenvmtc143
