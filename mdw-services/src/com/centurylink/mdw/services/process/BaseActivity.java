@@ -1030,7 +1030,7 @@ public abstract class BaseActivity implements GeneralActivity {
                 // serialize here to support package aware translator providers
                 document = VariableTranslator.realToString(getPackage(), type, document);
             }
-            engine.updateDocumentContent(docref, document, type);
+            engine.updateDocumentContent(docref, document, type, getPackage());
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);

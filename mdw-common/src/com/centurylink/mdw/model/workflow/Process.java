@@ -681,6 +681,13 @@ public class Process extends Asset implements Jsonable {
         return getProcessName() + " v" + getVersionString();
     }
 
+    public String getFullLabel() {
+        if (getPackageName() == null)
+            return getLabel();
+        else
+            return getPackageName() + "/" + getLabel();
+    }
+
     public static int versionFromString(String v) {
         int k = v.indexOf('.');
         int version;

@@ -5,7 +5,6 @@ package com.centurylink.mdw.services.process;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,6 @@ import com.centurylink.mdw.activity.types.SuspendibleActivity;
 import com.centurylink.mdw.activity.types.SynchronizationActivity;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.MdwException;
-import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
@@ -44,6 +42,7 @@ import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
@@ -229,14 +228,14 @@ class ProcessExecutorImpl {
         }
     }
 
-    void updateDocumentContent(DocumentReference docref, Object doc, String type) throws DataAccessException {
+    void updateDocumentContent(DocumentReference docref, Object doc, String type, Package pkg) throws DataAccessException {
         try {
             Document docvo = edao.getDocument(docref.getDocumentId(), false);
             if (doc instanceof String)
                 docvo.setContent((String)doc);
             else
                 docvo.setObject(doc, type);
-            edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent());
+            edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent(pkg));
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update document content", e);
         }
@@ -262,7 +261,7 @@ class ProcessExecutorImpl {
             var.setType(variableVO.getVariableType());
             String value = eventParams.get(varname);
             if (value!=null && value.length()>0) {
-                if (VariableTranslator.isDocumentReferenceVariable(var.getType())) {
+                if (VariableTranslator.isDocumentReferenceVariable(getPackage(processVO), var.getType())) {
                     if (value.startsWith("DOCUMENT:")) var.setStringValue(value);
                     else {
                         DocumentReference docref = this.createDocument(var.getType(),
@@ -373,7 +372,7 @@ class ProcessExecutorImpl {
             if (varinst==null) return null;
             if (varinst.isDocument()) {
                 Document docvo = getDocument((DocumentReference)varinst.getData(), false);
-                return docvo.getContent();
+                return docvo.getContent(null);
             } else return varinst.getStringValue();
         } catch (SQLException e) {
             throw new DataAccessException(0, "Failed to get value for variable " + varname, e);
@@ -616,7 +615,7 @@ class ProcessExecutorImpl {
                 compCode = activity.getReturnCode();
             }
             if (!AdapterActivity.COMPCODE_AUTO_RETRY.equals(compCode)) {
-                DocumentReference docRef = CreateActivityExceptionDocument(processInst, actInstVO, activity, cause);
+                DocumentReference docRef = createActivityExceptionDocument(processInst, actInstVO, activity, cause);
                 InternalEvent outgoingMsg =
                     InternalEvent.createActivityErrorMessage(activityId, activityInstId, processInst.getId(), compCode,
                         event.getMasterRequestId(), statusMsg.length() > 2000 ? statusMsg.substring(0, 1999) : statusMsg, docRef.getDocumentId());
@@ -903,7 +902,7 @@ class ProcessExecutorImpl {
                 failActivityInstance(ai, activity.getReturnMessage(),
                         pi, logtag, activity.getReturnMessage());
                 if (!AdapterActivity.COMPCODE_AUTO_RETRY.equals(compCode.getCompletionCode())) {
-                    DocumentReference docRef = CreateActivityExceptionDocument(pi, ai, activity, null);
+                    DocumentReference docRef = createActivityExceptionDocument(pi, ai, activity, new ActivityException("Activity failed: " + ai.getId()));
                     InternalEvent outmsg = InternalEvent.createActivityErrorMessage(ai.getActivityId(),
                         ai.getId(), pi.getId(), compCode.getCompletionCode(),
                         event.getMasterRequestId(), activity.getReturnMessage(), docRef.getDocumentId());
@@ -1034,7 +1033,7 @@ class ProcessExecutorImpl {
             } catch (SQLException e1) {
                 throw new DataAccessException(-1, e1.getMessage(), e1);
             }
-            DocumentReference docRef = CreateActivityExceptionDocument(procInst, actInst, (BaseActivity)cntrActivity, e);
+            DocumentReference docRef = createActivityExceptionDocument(procInst, actInst, (BaseActivity)cntrActivity, e);
             InternalEvent event = InternalEvent.createActivityErrorMessage(
                     actInst.getActivityId(), actInst.getId(), procInst.getId(), null,
                     procInst.getMasterRequestId(), statusMsg, docRef.getDocumentId());
@@ -1467,8 +1466,10 @@ class ProcessExecutorImpl {
                 if (vio != null) {
                     if (passDocContent && vio.isDocument()) {
                         Document docvo = getDocument((DocumentReference)vio.getData(), false);
-                        if (docvo!=null) params.put(var.getVariableName(), docvo.getContent());
-                    } else {
+                        if (docvo != null)
+                            params.put(var.getVariableName(), docvo.getContent(getPackage(subprocDef)));
+                    }
+                    else {
                         params.put(var.getVariableName(), vio.getStringValue());
                     }
                 }
@@ -1488,14 +1489,16 @@ class ProcessExecutorImpl {
                     actInst.getActivityId(), actInst.getId());
             failActivityInstance(actInst, statusMsg, procInst, logtag, "Exception in resume");
             if (activity==null || !AdapterActivity.COMPCODE_AUTO_RETRY.equals(activity.getReturnCode())) {
-                DocumentReference docRef = CreateActivityExceptionDocument(procInst, actInst, activity, cause);
+                Throwable th = cause == null ? new ActivityException("Resume activity: " + actInstId) : cause;
+                DocumentReference docRef = createActivityExceptionDocument(procInst, actInst, activity, th);
                 InternalEvent outgoingMsg = InternalEvent.createActivityErrorMessage(
                             actInst.getActivityId(), actInst.getId(),
                             procInst.getId(), compCode, procInst.getMasterRequestId(),
                             statusMsg, docRef.getDocumentId());
                 sendInternalEvent(outgoingMsg);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.severeException("\n\n*****Failed in handleResumeException*****\n", e);
         }
     }
@@ -1904,34 +1907,46 @@ class ProcessExecutorImpl {
         }
     }
 
-    private DocumentReference CreateActivityExceptionDocument(ProcessInstance processInst, ActivityInstance actInstVO, BaseActivity activity, Throwable cause) throws DataAccessException {
-        ActivityException actEx = new ActivityException(cause != null ? cause.getMessage() : "Unknown Exception or Error", cause);
-        if (actInstVO != null) {
-            ActivityInstance actInst = new ActivityInstance();
-            actInst.setStartDate(actInstVO.getStartDate());
-            actInst.setEndDate(new Date(DatabaseAccess.getCurrentTime()));
-            actInst.setId(actInstVO.getId());
-            actInst.setDefinitionId("A" + actInstVO.getActivityId());
-            actInst.setMasterRequestId(processInst.getMasterRequestId());
-            actInst.setPackageName(processInst.getPackageName());
-            actInst.setProcessId(processInst.getProcessId());
-            actInst.setProcessName(processInst.getProcessName());
-            actInst.setProcessVersion(processInst.getProcessVersion());
-            actInst.setStatus(WorkStatus.STATUSNAME_FAILED);
-            actInst.setDefinitionMissing(false);
-            if (activity == null) {
-                actInst.setMessage(actInstVO.getMessage());
-                actInst.setName(null);
-                actInst.setResult(null);
-            }
-            else {
-                actInst.setMessage(actInstVO.getMessage() != null ? actInstVO.getMessage() + "\n" + activity.getReturnMessage() : activity.getReturnMessage());
-                actInst.setName(activity.getActivityName());
-                actInst.setResult(activity.getReturnCode());
-            }
-            actEx.setActivityInstance(actInst);
+    private DocumentReference createActivityExceptionDocument(ProcessInstance processInst,
+            ActivityInstance actInstVO, BaseActivity activityImpl, Throwable th) throws DataAccessException {
+        ActivityException actEx;
+        if (th instanceof ActivityException) {
+            actEx = (ActivityException) th;
         }
-        DocumentReference docRef = createDocument(Jsonable.class.getName(), OwnerType.ACTIVITY_INSTANCE, actInstVO.getId(), actEx);
-        return docRef;
+        else {
+            if (th instanceof MdwException)
+                actEx = new ActivityException(((MdwException)th).getCode(), th.toString(), th.getCause());
+            else
+                actEx = new ActivityException(th.toString(), th.getCause());
+            actEx.setStackTrace(th.getStackTrace());
+        }
+
+        // populate activity context
+        if (actInstVO != null) {
+            Process process = getProcessDefinition(processInst);
+            Package pkg = getPackage(process);
+            Activity activity = process.getActivityVO(actInstVO.getActivityId());
+            ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(pkg, process, processInst, activity, actInstVO);
+            // TODO option to suppress variables
+            for (Variable var : process.getVariables()) {
+                try {
+                    runtimeContext.getVariables().put(var.getName(), activityImpl.getVariableValue(var.getName()));
+                }
+                catch (ActivityException ex) {
+                    logger.severeException(activityImpl.logtag() + ex.getMessage(), ex);
+                }
+            }
+
+            actEx.setRuntimeContext(runtimeContext);
+        }
+
+        return createDocument(Exception.class.getName(), OwnerType.ACTIVITY_INSTANCE, actInstVO.getId(), actEx);
+    }
+
+    private Package getPackage(Process process) {
+        if (process.getPackageName() == null)
+            return null;
+        else
+            return PackageCache.getPackage(process.getPackageName());
     }
 }

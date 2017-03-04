@@ -305,4 +305,16 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
                 return translator.toString(obj);
         }
     }
+
+    public Object getValueForString(String varName, String strVal) {
+        Variable var = getProcess().getVariable(varName);
+        if (var == null)
+            throw new IllegalArgumentException("Variable not defined: " + varName);
+        VariableTranslator translator = com.centurylink.mdw.translator.VariableTranslator
+                .getTranslator(getPackage(), var.getVariableType());
+        if (translator instanceof DocumentReferenceTranslator)
+            return ((DocumentReferenceTranslator)translator).realToObject(strVal);
+        else
+            return translator.toObject(strVal);
+    }
 }

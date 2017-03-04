@@ -7,7 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.WorkflowException;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 
 /**
  * Exception thrown by a workflow activity.
@@ -32,25 +32,21 @@ public class ActivityException extends WorkflowException {
         super(message, th);
     }
 
-    private ActivityInstance activityInstance = null;
-    public ActivityInstance getActivityInstance() {
-        return activityInstance;
-    }
-    public void setActivityInstance(ActivityInstance activityInstance) {
-        this.activityInstance = activityInstance;
-    }
+    private ActivityRuntimeContext runtimeContext;
+    public ActivityRuntimeContext getRuntimeContext() { return runtimeContext; }
+    public void setRuntimeContext(ActivityRuntimeContext context) { this.runtimeContext = context; }
 
     public ActivityException(JSONObject json) throws JSONException {
         super(json);
-        if (json.has("activityInstance"))
-            this.activityInstance = new ActivityInstance(json.getJSONObject("activityInstance"));
+        if (json.has("runtimeContext"))
+            this.runtimeContext = new ActivityRuntimeContext(json.getJSONObject("runtimeContext"));
     }
 
     @Override
     public JSONObject getJson() throws JSONException {
         JSONObject json = super.getJson();
-        if (activityInstance != null)
-            json.put("activityInstance", activityInstance.getJson());
+        if (runtimeContext != null)
+            json.put("runtimeContext", runtimeContext.getJson(true));
         return json;
     }
 }

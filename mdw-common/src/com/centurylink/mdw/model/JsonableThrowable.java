@@ -14,9 +14,9 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.Jsonable;
 
 /**
- * Wraps a Throwable as a Jsonable for JSON serialization.
+ * Represents a Throwable as a Jsonable for JSON serialization.
  */
-public class ThrowableJsonable implements Jsonable {
+public class JsonableThrowable implements Jsonable {
 
     private String throwable;
     public String getThrowable() { return throwable; }
@@ -24,30 +24,53 @@ public class ThrowableJsonable implements Jsonable {
     private String message;
     public String getMessage() { return message; }
 
-    private ThrowableJsonable cause;
-    public ThrowableJsonable getCause() { return cause; }
+    private JsonableThrowable cause;
+    public JsonableThrowable getCause() { return cause; }
 
     private StackTraceElement[] stackElements;
     public StackTraceElement[] getStackElements() { return stackElements; }
 
-    public ThrowableJsonable(Throwable th) {
+    public JsonableThrowable(Throwable th) {
         this.throwable = th.getClass().getName();
         this.message = th.getMessage();
         if (th.getCause() != null)
-            this.cause = new ThrowableJsonable(th.getCause());
+            this.cause = new JsonableThrowable(th.getCause());
         this.stackElements = th.getStackTrace();
     }
 
-    public ThrowableJsonable(JSONObject json) throws JSONException {
+    public JsonableThrowable(JSONObject json) throws JSONException {
         if (json.has("throwable"))
             throwable = json.getString("throwable");
         if (json.has("message"))
             message = json.getString("message");
         if (json.has("cause"))
-            cause = new ThrowableJsonable(json.getJSONObject("cause"));
-        if (json.has("stackElements")) {
+            cause = new JsonableThrowable(json.getJSONObject("cause"));
+        if (json.has("stackElements"))
+            stackElements = getStackElements(json.getJSONArray("stackElements"));
+    }
+
+    @Override
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        if (throwable != null)
+            json.put("throwable", throwable);
+        if (message != null)
+            json.put("message", message);
+        if (cause != null)
+            json.put("cause", cause.getJson());
+        JSONArray stackElementsJson = getStackElementsJson(stackElements);
+        if (stackElementsJson != null)
+            json.put("stackElements", stackElementsJson);
+
+        return json;
+    }
+
+    public static StackTraceElement[] getStackElements(JSONArray stackElemArr) throws JSONException {
+        if (stackElemArr == null) {
+            return null;
+        }
+        else {
             List<StackTraceElement> elements = new ArrayList<>();
-            JSONArray stackElemArr = json.getJSONArray("stackElements");
             for (int i = 0; i < stackElemArr.length(); i++) {
                 JSONObject stackElem = stackElemArr.getJSONObject(i);
                 String clazz = null;
@@ -66,21 +89,14 @@ public class ThrowableJsonable implements Jsonable {
                     line = stackElem.getInt("line");
                 elements.add(new StackTraceElement(clazz, method, file, line));
             }
-            stackElements = elements.toArray(new StackTraceElement[0]);
+            return elements.toArray(new StackTraceElement[0]);
         }
     }
 
-    @Override
-    public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
-        if (throwable != null)
-            json.put("throwable", throwable);
-        if (message != null)
-            json.put("message", message);
-        if (cause != null)
-            json.put("cause", cause.getJson());
+    public static JSONArray getStackElementsJson(StackTraceElement[] stackElements) throws JSONException {
+        JSONArray stackElemArr = null;
         if (stackElements != null) {
-            JSONArray stackElemArr = new JSONArray();
+            stackElemArr = new JSONArray();
             for (int i = 0; i < stackElements.length; i++) {
                 StackTraceElement stackElement = stackElements[i];
                 JSONObject stackElem = new JSONObject();
@@ -94,11 +110,10 @@ public class ThrowableJsonable implements Jsonable {
                     stackElem.put("line", stackElement.getLineNumber());
                 if (stackElement.isNativeMethod())
                     stackElem.put("native", stackElement.isNativeMethod());
+                stackElemArr.put(stackElem);
             }
-            json.put("stackElements", stackElemArr);
         }
-
-        return json;
+        return stackElemArr;
     }
 
     @Override
@@ -117,31 +132,35 @@ public class ThrowableJsonable implements Jsonable {
         else
             clazz = Class.forName(throwable, true, classLoader).asSubclass(Throwable.class);
 
+        Throwable th;
         Constructor<? extends Throwable> ctor;
         try {
             if (cause == null) {
                 if (message == null) {
-                    return clazz.newInstance();
+                    th = clazz.newInstance();
                 }
                 else {
                     ctor = clazz.getConstructor(String.class);
-                    return ctor.newInstance(message);
+                    th = ctor.newInstance(message);
                 }
             }
             else {
                 if (message == null) {
                     ctor = clazz.getConstructor(Throwable.class);
-                    return ctor.newInstance(cause.toThrowable());
+                    th =  ctor.newInstance(cause.toThrowable());
                 }
                 else {
                     ctor = clazz.getConstructor(String.class, Throwable.class);
-                    return ctor.newInstance(message, cause.toThrowable());
+                    th = ctor.newInstance(message, cause.toThrowable());
                 }
             }
         }
         catch (NoSuchMethodException ex) {
             // no appropriate constructor
-            return clazz.newInstance();
+            th = clazz.newInstance();
         }
+        if (stackElements != null)
+            th.setStackTrace(stackElements);
+        return th;
     }
 }

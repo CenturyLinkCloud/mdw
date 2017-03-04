@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.util.JsonUtil;
 import com.sun.el.ValueExpressionLiteral;
 
 public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jsonable {
@@ -77,7 +78,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     }
 
     public ActivityRuntimeContext(JSONObject json) throws JSONException {
-        super(null, null, null);
+        super(null, null, null, json.has("variables") ? new HashMap<>() : null);
         String procPath = json.getString("process");
         int slash = procPath.indexOf("/");
         if (slash > 0) {
@@ -93,14 +94,31 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
         this.activityVO = new Activity(json.getJSONObject("activity"));
         this.activityInstanceVO = new ActivityInstance(json.getJSONObject("activityInstance"));
         this.processInstanceVO = new ProcessInstance(json.getJSONObject("processInstance"));
+        if (json.has("variables")) {
+            Map<String,String> varMap = JsonUtil.getMap(json.getJSONObject("variables"));
+            for (String name : varMap.keySet()) {
+                String val = varMap.get(name);
+                getVariables().put(name, getValueForString(name, val));
+            }
+        }
     }
 
     public JSONObject getJson() throws JSONException {
+        return getJson(false);
+    }
+
+    public JSONObject getJson(boolean withVariables) throws JSONException {
         JSONObject json = new JSONObject();
         json.put("activity", getActivity().getJson());
         json.put("activityInstance", getActivityInstance().getJson());
         json.put("process", getPackage().getName() + "/" + getProcess().getName());
         json.put("processInstance", getProcessInstance().getJson());
+        if (withVariables && getVariables() != null) {
+            JSONObject varsObj = new JSONObject();
+            for (String name : getVariables().keySet())
+                json.put(name, getValueAsString(name));
+            json.put("variables", varsObj);
+        }
         return json;
     }
 

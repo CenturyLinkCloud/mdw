@@ -18,23 +18,128 @@ process: # 14209
     name: exception
     value: |
       {
-        "activityInstance": {
-          "definitionId": "A26",
-          "endDate": "${today} ${~\\d\\d:\\d\\d:\\d\\d}",
-          "id": ${~[0-9]*},
-          "masterRequestId": "${masterRequestId}",
-          "message": "java.lang.RuntimeException: Help me, I'm an error\ncom.centurylink.mdw.tests.workflow.ThrowanException_A26.execute(ThrowanException_A26.java:23)\ncom.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:86)\ncom.centurylink.mdw.workflow.activity.DefaultActivityImpl.execute(DefaultActivityImpl.java:29)\ncom.centurylink.mdw.services.process.BaseActivity.execute(BaseActivity.java:209)\ncom.centurylink.mdw.services.process.BaseActivity.executeTimed(BaseActivity.java:219)\ncom.centurylink.mdw.services.process.ProcessEngineDriver.executeActivity(ProcessEngineDriver.java:337)\ncom.centurylink.mdw.services.process.ProcessEngineDriver.processEvent(ProcessEngineDriver.java:570)\ncom.centurylink.mdw.services.process.ProcessEngineDriver.processEvents(ProcessEngineDriver.java:536)\ncom.centurylink.mdw.services.process.InternalEventDriver.run(InternalEventDriver.java:25)\ncom.centurylink.mdw.container.plugin.CommonThreadPool$Work.run(CommonThreadPool.java:251)\njava.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\njava.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\njava.lang.Thread.run(Thread.java:745)\ncom.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:220)",
-          "name": "Throw an Exception",
-          "processName": "MDWTestSubProcess2",
-          "startDate": "${today} ${~\\d\\d:\\d\\d:\\d\\d}",
-          "status": "Failed"
+        "code": -1,
+        "message": "java.lang.RuntimeException: Help me, I'm an error",
+        "runtimeContext": {
+          "activity": {
+            "attributes": {
+              "Java": "/**\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n */\n\npackage com.centurylink.mdw.tests.workflow;\n\nimport java.util.Map;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\nimport com.centurylink.mdw.java.MdwJavaException;\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\n\n/**\n * Dynamic Java to force an error.\n */\npublic class ThrowanException_A26 implements JavaExecutor {\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n    }\n\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\n        throw new RuntimeException(\"Help me, I'm an error\");\n    }\n\n}\n",
+              "WORK_DISPLAY_INFO": "x=166,y=176,w=132,h=69"
+            },
+            "id": "A26",
+            "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+            "name": "Throw an Exception"
+          },
+          "activityInstance": {
+            "activityId": 26,
+            "id": ${~[0-9]*},
+            "processInstanceId": ${~[0-9]*},
+            "startDate": "${today} ${~\\d\\d:\\d\\d:\\d\\d}",
+            "statusCode": 2
+          },
+          "process": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2",
+          "processInstance": {
+            "comments": "com.centurylink.mdw.tests.workflow v6.0.03/MDWTestSubProcess2 v0.9",
+            "id": ${~[0-9]*},
+            "masterRequestId": "${masterRequestId}",
+            "owner": "PROCESS_INSTANCE",
+            "ownerId": ${~[0-9]*},
+            "processId": ${~[0-9]*},
+            "processName": "MDWTestSubProcess2",
+            "secondaryOwner": "ACTIVITY_INSTANCE",
+            "secondaryOwnerId": ${~[0-9]*},
+            "statusCode": 2,
+            "variables": []
+          },
+          "variables": {}
         },
-        "cause": {
-          "message": "Help me, I'm an error",
-          "stackElements": [],
-          "throwable": "java.lang.RuntimeException"
-        },
-        "message": "Help me, I'm an error"
+        "stackElements": [
+          {
+            "class": "com.centurylink.mdw.tests.workflow.ThrowanException_A26",
+            "file": "ThrowanException_A26.java",
+            "line": 23,
+            "method": "execute"
+          },
+          {
+            "class": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+            "file": "DynamicJavaActivity.java",
+            "line": 86,
+            "method": "execute"
+          },
+          {
+            "class": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+            "file": "DefaultActivityImpl.java",
+            "line": 29,
+            "method": "execute"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.BaseActivity",
+            "file": "BaseActivity.java",
+            "line": 209,
+            "method": "execute"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.BaseActivity",
+            "file": "BaseActivity.java",
+            "line": 219,
+            "method": "executeTimed"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
+            "file": "ProcessEngineDriver.java",
+            "line": 363,
+            "method": "executeActivity"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
+            "file": "ProcessEngineDriver.java",
+            "line": 596,
+            "method": "processEvent"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
+            "file": "ProcessEngineDriver.java",
+            "line": 562,
+            "method": "processEvents"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.InternalEventDriver",
+            "file": "InternalEventDriver.java",
+            "line": 25,
+            "method": "run"
+          },
+          {
+            "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$Work",
+            "file": "CommonThreadPool.java",
+            "line": 251,
+            "method": "run"
+          },
+          {
+            "class": "java.util.concurrent.ThreadPoolExecutor",
+            "file": "ThreadPoolExecutor.java",
+            "line": 1142,
+            "method": "runWorker"
+          },
+          {
+            "class": "java.util.concurrent.ThreadPoolExecutor$Worker",
+            "file": "ThreadPoolExecutor.java",
+            "line": 617,
+            "method": "run"
+          },
+          {
+            "class": "java.lang.Thread",
+            "file": "Thread.java",
+            "line": 745,
+            "method": "run"
+          },
+          {
+            "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread",
+            "file": "CommonThreadPool.java",
+            "line": 220,
+            "method": "run"
+          }
+        ],
+        "throwable": "com.centurylink.mdw.activity.ActivityException"
       }
   variable: # 20668
     name: processCase

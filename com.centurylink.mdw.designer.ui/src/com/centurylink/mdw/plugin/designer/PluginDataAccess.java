@@ -569,22 +569,32 @@ public class PluginDataAccess {
             try {
                 if (MdwPlugin.getActiveWorkbenchWindow() != null)
                     designerDataModel.reloadVariableTypes(designerDataAccess);
+                List<VariableTypeVO> cleanedUpVarTypes = new ArrayList<VariableTypeVO>();
                 if (workflowProject.checkRequiredVersion(6, 0)) {
-                    List<VariableTypeVO> cleanedUpVarTypes = new ArrayList<VariableTypeVO>();
                     for (VariableTypeVO varType : designerDataModel.getVariableTypes()) {
                         switch (varType.getVariableType()) {
-                        case "java.lang.String[]":
-                        case "java.lang.Integer[]":
-                        case "java.lang.Long[]":
-                        case "java.util.Map":
-                        case "com.centurylink.mdw.model.FormDataDocument":
-                            break;
-                        default:
-                            cleanedUpVarTypes.add(varType);
+                            case "java.lang.String[]":
+                            case "java.lang.Integer[]":
+                            case "java.lang.Long[]":
+                            case "java.util.Map":
+                            case "com.centurylink.mdw.model.FormDataDocument":
+                                break;
+                            default:
+                                cleanedUpVarTypes.add(varType);
                         }
                     }
-                    designerDataModel.setVariableTypes(cleanedUpVarTypes);
                 }
+                else {
+                    for (VariableTypeVO varType : designerDataModel.getVariableTypes()) {
+                        switch (varType.getVariableType()) {
+                            case "java.lang.Exception":
+                                break;
+                            default:
+                                cleanedUpVarTypes.add(varType);
+                        }
+                    }
+                }
+                designerDataModel.setVariableTypes(cleanedUpVarTypes);
                 varTypes = designerDataModel.getVariableTypes();
                 Collections.sort(varTypes, new Comparator<VariableTypeVO>() {
                     public int compare(VariableTypeVO varType1, VariableTypeVO varType2) {

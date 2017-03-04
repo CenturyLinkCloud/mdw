@@ -23,7 +23,7 @@
     },
     {
       "attributes": {
-        "Rule": "throw new Exception('I've fallen and I can't get up')",
+        "Rule": "throw new Exception(\"I've fallen and I can't get up\")",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=268,y=151,w=124,h=64"
       },

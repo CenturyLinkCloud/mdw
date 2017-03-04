@@ -496,12 +496,12 @@ public class ProcessExecutor {
         }
     }
 
-    public void updateDocumentContent(DocumentReference docref, Object doc, String type)
+    public void updateDocumentContent(DocumentReference docref, Object doc, String type, Package pkg)
      throws DataAccessException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
-            engineImpl.updateDocumentContent(docref, doc, type);
+            engineImpl.updateDocumentContent(docref, doc, type, pkg);
         } finally {
             stopTransaction(transaction);
         }

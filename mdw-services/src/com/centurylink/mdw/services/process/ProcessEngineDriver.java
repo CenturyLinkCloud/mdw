@@ -134,94 +134,114 @@ public class ProcessEngineDriver {
                 processVO = getProcessDefinition(processInstVO);
                 embeddedHandlerProc = processVO.findEmbeddedProcess(eventType, compCode);
             }
-            if (embeddedHandlerProc == null) {
-                // try package-level handler
-                Process originatingProcess = getProcessDefinition(originatingInstance);
-                Package originatingPkg = PackageCache.getPackage(originatingProcess.getPackageName());
-                String handlerProcName = EventType.getHandlerName(eventType);
-                if (handlerProcName != null) {
-                    Process packageHandlerProc = null;
-                    packageHandlerProc = ProcessCache.getProcess(originatingPkg + "/" + handlerProcName, 0);
-                    if (packageHandlerProc == null)
-                        packageHandlerProc = ProcessCache.getProcess(originatingPkg + "/" + handlerProcName.toLowerCase(), 0);
-                    if (packageHandlerProc != null) {
-                        Map<String,String> params = new HashMap<>();
-                        Variable exVar = packageHandlerProc.getVariable("exception");
-                        if (exVar == null || !exVar.isInput()) {
-                            logger.warn("Handler proc " + originatingPkg.getName() + "/" +
-                                packageHandlerProc.getName() + " does not declare input var: 'exception'");
-                        }
-                        else {
-                            params.put("exception", new DocumentReference(messageDoc.getSecondaryOwnerId()).toString());
-                        }
-                        if (packageHandlerProc.isService()) {
-                            invokeService(packageHandlerProc.getId(), OwnerType.ERROR, messageDoc.getSecondaryOwnerId(),
-                                    originatingInstance.getMasterRequestId(), null, params, null, null);
-                        }
-                        else {
-                            startProcess(packageHandlerProc.getId(), originatingInstance.getMasterRequestId(), OwnerType.ERROR,
-                                    messageDoc.getSecondaryOwnerId(), params, null);
-                        }
-                    }
-                }
-            }
 
-            if (embeddedHandlerProc != null && isRecursiveCall(originatingInstance, processVO, embeddedHandlerProc.getProcessId())) {
-                logger.info("Invoking embedded process recursively - not allowed");
-            }
-            else if (embeddedHandlerProc != null) {
-                Long secondaryOwnerId = null;
-                String secondaryOwnerType = null;
-                if (!eventType.equals(EventType.ABORT)) {
-                    long secondOwnerId = messageDoc.getWorkInstanceId();
-                    if (secondOwnerId > 0) {
-                        secondaryOwnerId = secondOwnerId;
-                        secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
-                        // Update the Process Variable "exception" with the exception handler's triggering Activity exception
-                        if (processVO.getVariable("exception") != null && messageDoc.getSecondaryOwnerId() > 0) {
-                            VariableInstance exceptionVar = processInstVO.getVariable("exception");
-                            if (exceptionVar == null)
-                                engine.createVariableInstance(processInstVO, "exception", new DocumentReference(messageDoc.getSecondaryOwnerId()));
-                            else
-                                engine.updateVariableInstance(exceptionVar);
+            if (embeddedHandlerProc != null) {
+                if (isRecursiveCall(originatingInstance, processVO, embeddedHandlerProc.getProcessId())) {
+                    logger.warn("Invoking embedded process recursively - not allowed: " + embeddedHandlerProc.getName());
+                }
+                else {
+                    Long secondaryOwnerId = null;
+                    String secondaryOwnerType = null;
+                    if (!eventType.equals(EventType.ABORT)) {
+                        long secondOwnerId = messageDoc.getWorkInstanceId();
+                        if (secondOwnerId > 0) {
+                            secondaryOwnerId = secondOwnerId;
+                            secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
+                            // Update the Process Variable "exception" with the exception handler's triggering Activity exception
+                            if (processVO.getVariable("exception") != null && messageDoc.getSecondaryOwnerId() > 0) {
+                                VariableInstance exceptionVar = processInstVO.getVariable("exception");
+                                if (exceptionVar == null)
+                                    engine.createVariableInstance(processInstVO, "exception", new DocumentReference(messageDoc.getSecondaryOwnerId()));
+                                else
+                                    engine.updateVariableInstance(exceptionVar);
+                            }
+                        }
+                        else {
+                            if (eventType.equals(EventType.ERROR)) {
+                                logger.warn("Creating fallout embedded process without activity instance as secondary owner");
+                                logger.warn("--- completion code " + messageDoc.getCompletionCode());
+                                logger.warn("--- trans inst ID " + messageDoc.getTransitionInstanceId());
+                                logger.warn("--- work ID " + messageDoc.getWorkId());
+                                String[] stack = this.getStackTrace();
+                                for (int i = 0; i < stack.length; i++) {
+                                    logger.warn("--- stack " + i + ": " + stack[i]);
+                                }
+                            }
+                            messageDoc.setSecondaryOwnerType(null);
                         }
                     }
                     else {
-                        if (eventType.equals(EventType.ERROR)) {
-                            logger.warn("Creating fallout embedded process without activity instance as secondary owner");
-                            logger.warn("--- completion code " + messageDoc.getCompletionCode());
-                            logger.warn("--- trans inst ID " + messageDoc.getTransitionInstanceId());
-                            logger.warn("--- work ID " + messageDoc.getWorkId());
-                            String[] stack = this.getStackTrace();
-                            for (int i = 0; i < stack.length; i++) {
-                                logger.warn("--- stack " + i + ": " + stack[i]);
-                            }
-                        }
                         messageDoc.setSecondaryOwnerType(null);
                     }
+                    String ownerType = OwnerType.MAIN_PROCESS_INSTANCE;
+                    ProcessInstance procInst = engine.createProcessInstance(
+                            embeddedHandlerProc.getProcessId(), ownerType, processInstVO.getId(),
+                            secondaryOwnerType, secondaryOwnerId, processInstVO.getMasterRequestId(), null);
+                    engine.startProcessInstance(procInst, 0);
                 }
-                else {
-                    messageDoc.setSecondaryOwnerType(null);
-                }
-                String ownerType = OwnerType.MAIN_PROCESS_INSTANCE;
-                ProcessInstance procInst = engine.createProcessInstance(
-                        embeddedHandlerProc.getProcessId(), ownerType, processInstVO.getId(),
-                        secondaryOwnerType, secondaryOwnerId, processInstVO.getMasterRequestId(), null);
-                engine.startProcessInstance(procInst, 0);
-            }
-            else if (eventType.equals(EventType.ABORT)) {
-                // abort the root process instance
-                InternalEvent event = InternalEvent.createProcessAbortMessage(processInstVO);
-                engine.abortProcessInstance(event);
             }
             else {
-                logger.info("WorkTransition has not been defined for event of type " + eventType);
+                // try package-level handler
+                Process packageHandlerProc = getPackageHandler(processInstVO, eventType);
+                if (packageHandlerProc != null) {
+                    Map<String,String> params = new HashMap<>();
+                    Variable exVar = packageHandlerProc.getVariable("exception");
+                    if (exVar == null || !exVar.isInput()) {
+                        logger.warn("Handler proc " + packageHandlerProc.getFullLabel() + " does not declare input var: 'exception'");
+                    }
+                    else {
+                        params.put("exception", new DocumentReference(messageDoc.getSecondaryOwnerId()).toString());
+                    }
+                    if (packageHandlerProc.isService()) {
+                        invokeService(packageHandlerProc.getId(), OwnerType.ERROR, messageDoc.getSecondaryOwnerId(),
+                                originatingInstance.getMasterRequestId(), null, params, null, null);
+                    }
+                    else {
+                        startProcess(packageHandlerProc.getId(), originatingInstance.getMasterRequestId(), OwnerType.ERROR,
+                                messageDoc.getSecondaryOwnerId(), params, null);
+                    }
+                    return;
+                }
+                else if (eventType.equals(EventType.ABORT)) {
+                    // abort the root process instance
+                    InternalEvent event = InternalEvent.createProcessAbortMessage(processInstVO);
+                    engine.abortProcessInstance(event);
+                }
+                else {
+                    logger.info("WorkTransition has not been defined for event of type " + eventType);
+                }
             }
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ProcessException(ex.getMessage());
         }
+    }
+
+    /**
+     * Finds the relevant package handler for a master process instance.
+     */
+    private Process getPackageHandler(ProcessInstance masterInstance, Integer eventType) {
+        // try package-level handler
+        Process process = getProcessDefinition(masterInstance);
+        Package pkg = PackageCache.getPackage(process.getPackageName());
+        String handlerProcName = EventType.getHandlerName(eventType);
+        if (handlerProcName != null) {
+            Process packageHandlerProc = null;
+            packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName, 0);
+            if (packageHandlerProc == null)
+                packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName.toLowerCase(), 0);
+            if (packageHandlerProc != null) {
+                if (packageHandlerProc.getName().equals(process.getName())) {
+                    logger.warn("Package handler recursion is not allowed. "
+                        + "Define an embedded handler in package handler: " + packageHandlerProc.getLabel());
+                }
+                else {
+                    return packageHandlerProc;
+                }
+            }
+        }
+        return null;
     }
 
     private void retryActivityStartWhenInstanceExists(ProcessExecutor engine,
@@ -674,10 +694,11 @@ public class ProcessEngineDriver {
     public String invokeService(Long processId, String ownerType,
             Long ownerId, String masterRequestId, String masterRequest,
             Map<String,String> parameters, String responseVarName, int performance_level,
-            String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception
-    {
+            String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
+        Process process = getProcessDefinition(processId);
+        Package pkg = getPackage(process);
         long startMilli = System.currentTimeMillis();
-        if (performance_level<=0) performance_level = getProcessDefinition(processId).getPerformanceLevel();
+        if (performance_level<=0) performance_level = process.getPerformanceLevel();
         if (performance_level<=0) performance_level = default_performance_level_service;
         EngineDataAccess edao = EngineDataAccessCache.getInstance(true, performance_level);
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
@@ -693,8 +714,11 @@ public class ProcessEngineDriver {
                         DocumentReference docRef = new DocumentReference(parameters.get(key));
                         if (!docRef.getDocumentId().equals(ownerId)) {
                             Document docVO = engine.loadDocument(docRef, false);
-                            if (docVO != null && docVO.getContent() != null)
-                                addDocumentToCache(engine, docRef.getDocumentId(), docVO.getDocumentType(), docVO.getContent());
+                            if (docVO != null) {
+                                String docContent = docVO.getContent(pkg);
+                                if (docContent != null)
+                                    addDocumentToCache(engine, docRef.getDocumentId(), docVO.getDocumentType(), docContent);
+                            }
                         }
                     }
                 }
@@ -819,12 +843,15 @@ public class ProcessEngineDriver {
         if (requestVO==null) return;
         int cat = requestVO.getVariableCategory();
         String vartype = requestVO.getVariableType();
-        if (cat!=Variable.CAT_INPUT && cat!=Variable.CAT_INOUT) return;
-        if (!VariableTranslator.isDocumentReferenceVariable(vartype)) return;
+        if (cat != Variable.CAT_INPUT && cat != Variable.CAT_INOUT)
+            return;
+        if (!VariableTranslator.isDocumentReferenceVariable(getPackage(procdef), vartype))
+            return;
         List<VariableInstance> viList = pi.getVariables();
-        if (viList!=null) {
+        if (viList != null) {
             for (VariableInstance vi : viList) {
-                if (vi.getName().equals(VariableConstants.REQUEST)) return;
+                if (vi.getName().equals(VariableConstants.REQUEST))
+                    return;
             }
         }
         DocumentReference docref = new DocumentReference(reqdocId);
@@ -1001,6 +1028,17 @@ public class ProcessEngineDriver {
         if (procinst.isEmbedded())
             procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
         return procdef;
+    }
+
+    private Package getPackage(String packageName) {
+        return PackageCache.getPackage(packageName);
+    }
+
+    private Package getPackage(Process process) {
+        if (process.getPackageName() == null)
+            return null;
+        else
+            return getPackage(process.getPackageName());
     }
 
     private String genMasterRequestId() {

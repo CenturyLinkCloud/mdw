@@ -140,7 +140,7 @@
   "variables": {
     "exception": {
       "category": "LOCAL",
-      "type": "com.centurylink.mdw.common.service.Jsonable"
+      "type": "java.lang.Exception"
     },
     "processCase": {
       "category": "INPUT",

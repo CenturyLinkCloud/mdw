@@ -3,11 +3,12 @@
  */
 package com.centurylink.mdw.common;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Jsonable;
-import com.centurylink.mdw.model.ThrowableJsonable;
+import com.centurylink.mdw.model.JsonableThrowable;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -37,6 +38,15 @@ public class MdwException extends Exception implements Jsonable {
     public MdwException(String message, Throwable cause){
         super(message, cause);
         this.code = -1;
+    }
+
+    @Override
+    public String toString() {
+        String s = getClass().getName();
+        if (code != 0)
+            s += ":(code=" + code + ")";
+        String message = getLocalizedMessage();
+        return (message != null) ? (s + ": " + message) : s;
     }
 
     public String getStackTraceDetails() {
@@ -74,17 +84,26 @@ public class MdwException extends Exception implements Jsonable {
 
     public MdwException(JSONObject json) throws JSONException {
         this(getCode(json), getMessage(json), getCause(json));
+        if (json.has("stackElements")) {
+            StackTraceElement[] stackElements = JsonableThrowable.getStackElements(json.getJSONArray("stackElements"));
+            if (stackElements != null)
+                setStackTrace(stackElements);
+        }
     }
 
     @Override
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
-        if (code > 0)
+        json.put("throwable", this.getClass().getName());
+        if (code != 0)
             json.put("code", code);
         if (getMessage() != null)
             json.put("message", getMessage());
         if (getCause() != null)
-            json.put("cause", new ThrowableJsonable(getCause()).getJson());
+            json.put("cause", new JsonableThrowable(getCause()).getJson());
+        JSONArray stackElementsJson = JsonableThrowable.getStackElementsJson(getStackTrace());
+        if (stackElementsJson != null)
+            json.put("stackElements", stackElementsJson);
         return json;
     }
 
@@ -103,13 +122,12 @@ public class MdwException extends Exception implements Jsonable {
     private static Throwable getCause(JSONObject json) throws JSONException {
         Throwable cause = null;
         if (json.has("cause")) {
-            ThrowableJsonable jsonable = new ThrowableJsonable(json.getJSONObject("cause"));
+            JsonableThrowable jsonable = new JsonableThrowable(json.getJSONObject("cause"));
             try {
                 cause = jsonable.toThrowable();
             }
             catch (Exception ex) {
                 logger.severeException("Cannot instantiate throwable: " + jsonable.getThrowable(), ex);
-                throw new JSONException(ex);
             }
         }
         return cause;
