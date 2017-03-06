@@ -39,7 +39,7 @@ process: # 14209
           },
           "process": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2",
           "processInstance": {
-            "comments": "com.centurylink.mdw.tests.workflow v6.0.03/MDWTestSubProcess2 v0.9",
+            "comments": "${~.*}",
             "id": ${~[0-9]*},
             "masterRequestId": "${masterRequestId}",
             "owner": "PROCESS_INSTANCE",

@@ -30,7 +30,7 @@ public class TestCompare {
                 expectedContent = preFilter.apply(expectedContent);
             expectedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(expectedContent.getBytes())));
 
-            actualReader = new BufferedReader(new StringReader(actual.text().replace("\\n", "\n")));
+            actualReader = new BufferedReader(new StringReader(actual.text()));
             int i = 1;
             String expectedLine = null;
             while ((expectedLine = expectedReader.readLine()) != null) {

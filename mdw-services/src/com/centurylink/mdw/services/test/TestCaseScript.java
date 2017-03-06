@@ -564,6 +564,10 @@ public abstract class TestCaseScript extends Script {
         before = before.replaceAll("\\$(?!\\{)", "\\\\\\$");
         // escape all regex -> ${~
         before = before.replaceAll("\\$\\{~", "\\\\\\$\\{~");
+        // escape all escaped newlines
+        before = before.replaceAll("\\\\n", "\\\\\\\\\\n");
+        // escape all escaped quotes
+        before = before.replaceAll("\\\"", "\\\\\"");
 
         CompilerConfiguration compilerCfg = new CompilerConfiguration();
         compilerCfg.setScriptBaseClass(DelegatingScript.class.getName());
