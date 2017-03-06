@@ -12,6 +12,7 @@ import org.json.JSONException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.workflow.ActivityCount;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
@@ -109,6 +110,7 @@ public interface WorkflowServices {
 
     ProcessInstance getProcess(Long instanceId) throws ServiceException;
     ProcessInstance getProcess(Long instanceId, boolean withSubprocs) throws ServiceException;
+    ProcessInstance getProcessForTrigger(Long triggerId) throws ServiceException;
 
     ProcessRuntimeContext getContext(Long instanceId) throws ServiceException;
 
@@ -159,6 +161,7 @@ public interface WorkflowServices {
     public void createDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
     public void updateDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
 
+    public Document getDocument(Long id) throws ServiceException;
 
     /**
      * Converts a document to a string, applying a consistent format for XML and JSON.

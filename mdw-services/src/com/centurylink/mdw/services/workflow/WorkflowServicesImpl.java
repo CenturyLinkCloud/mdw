@@ -419,6 +419,39 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    public ProcessInstance getProcessForTrigger(Long triggerId) throws ServiceException {
+        String ownerContent = getDocumentStringValue(triggerId);
+        try {
+            JSONObject json = new JSONObject(ownerContent);
+            if (!json.has("runtimeContext"))
+                throw new ServiceException(ServiceException.NOT_FOUND, "Trigger document does not have RuntimeContext information: " + triggerId);
+            JSONObject runtimeContext = json.getJSONObject("runtimeContext");
+            Long procInstId;
+            if (runtimeContext.has("activityInstance"))
+                procInstId = runtimeContext.getJSONObject("activityInstance").getLong("processInstanceId");
+            else if (runtimeContext.has("processInstance"))
+                procInstId = runtimeContext.getJSONObject("processInstance").getLong("id");
+            else
+                throw new ServiceException(ServiceException.NOT_FOUND, "Trigger document does not have instance information: " + triggerId);
+
+            return getProcess(procInstId);
+        }
+        catch (JSONException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error retrieving triggerId: " + triggerId , ex);
+        }
+    }
+
+    public Document getDocument(Long id) throws ServiceException {
+        try {
+            if (!getWorkflowDao().isDocument(id))
+                throw new ServiceException(ServiceException.NOT_FOUND, "Document not found: " + id);
+            return getWorkflowDao().getDocument(id);
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error retrieving document: " + id, ex);
+        }
+    }
+
     @Override
     public ActivityInstance getActivity(Long instanceId) throws ServiceException {
         try {
@@ -1098,7 +1131,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     /**
-     * TODO: Is there a better way?
+     * TODO: There's gotta be a better way
      */
     public String getDocType(Object docObj) {
         if (docObj instanceof String || docObj instanceof StringDocument)
@@ -1129,8 +1162,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     @SuppressWarnings("deprecation")
     public String getDocumentStringValue(Long id) throws ServiceException {
         try {
-            EventManager eventMgr = ServiceLocator.getEventManager();
-            Document doc = eventMgr.getDocumentVO(new Long(id.toString()));
+            Document doc = getWorkflowDao().getDocument(id);
             if (doc.getDocumentType() == null)
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, "Unable to determine document type.");
 

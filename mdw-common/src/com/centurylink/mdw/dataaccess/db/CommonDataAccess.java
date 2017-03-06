@@ -412,6 +412,17 @@ public class CommonDataAccess {
         return loadDocument(documentId, forUpdate);
     }
 
+    public boolean isDocument(Long id) throws SQLException {
+        String query = "select DOCUMENT_ID from DOCUMENT where DOCUMENT_ID = ?";
+        try {
+            db.openConnection();
+            return db.runSelect(query, id).next();
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
     public Document loadDocument(Long documentId, boolean forUpdate)
             throws SQLException {
         String query = "select CREATE_DT, MODIFY_DT, DOCUMENT_TYPE, OWNER_TYPE, OWNER_ID " +

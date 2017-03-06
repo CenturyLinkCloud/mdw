@@ -202,7 +202,22 @@ public class Processes extends JsonRestService implements JsonExportable {
             }
             else {
                 Query query = getQuery(path, headers);
-                return workflowServices.getProcesses(query).getJson();
+                long triggerId = query.getLongFilter("triggerId");
+                if (triggerId > 0) {
+                    // retrieve instance by trigger -- just send summary
+                    ProcessInstance process = workflowServices.getProcessForTrigger(triggerId);
+                    JSONObject summary = new JSONObject();
+                    summary.put("id", process.getId());
+                    summary.put("name", process.getProcessName());
+                    summary.put("packageName", process.getPackageName());
+                    summary.put("version", process.getProcessVersion());
+                    summary.put("masterRequestId", process.getMasterRequestId());
+                    summary.put("definitionId", process.getProcessId());
+                    return summary;
+                }
+                else {
+                    return workflowServices.getProcesses(query).getJson();
+                }
             }
         }
         catch (ServiceException ex) {

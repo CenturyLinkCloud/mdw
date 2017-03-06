@@ -149,6 +149,11 @@ routesSvc.factory('routes', function() {
         controller: 'ProcessesController'
       },
       {
+        path: '/workflow/triggers/:triggerId',
+        templateUrl: 'workflow/process.html',
+        controller: 'ProcessController'
+      },
+      {
         path: '/workflow/definitions',
         templateUrl: 'workflow/definitions.html',
         controller: 'ProcessDefsController'
