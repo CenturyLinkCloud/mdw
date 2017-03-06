@@ -26,7 +26,8 @@
         "WORK_DISPLAY_INFO": "x=378,y=105,w=110,h=71",
         "processname": "com.centurylink.mdw.tests.services/ServiceSub",
         "processversion": "[0.1,1)",
-        "synchronous": "FALSE"
+        "synchronous": "FALSE",
+        "variables": "testCase=$testCase"
       },
       "id": "A7",
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
@@ -59,7 +60,7 @@
     },
     {
       "attributes": {
-        "Java": "/**\n * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.\n */\r\npackage com.centurylink.mdw.tests.services;\r\n\r\nimport java.util.Map;\nimport java.util.ArrayList;\nimport java.util.List;\r\nimport com.centurylink.mdw.model.Subprocess;\nimport com.centurylink.mdw.model.ExecutionPlan;\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\nimport com.centurylink.mdw.model.workflow.WorkStatus;\n\npublic class CreatePlan_A10 implements JavaExecutor {\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n    }\n\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException {\n        List<Subprocess> subprocs = new ArrayList<>();\n        Subprocess subproc = new Subprocess();\n        subproc.setLogicalName(\"ServiceAsyncSub\");\n        subproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\n        subprocs.add(subproc);\n        ExecutionPlan execPlan = new ExecutionPlan();\n        execPlan.setSubprocesses(subprocs);        \n        variables.put(\"execPlan\", execPlan);\n        return null;\n    }\n\n}\n",
+        "Java": "/**\n * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.\n */\r\npackage com.centurylink.mdw.tests.services;\r\n\r\nimport java.util.Map;\nimport java.util.ArrayList;\nimport java.util.List;\r\nimport com.centurylink.mdw.model.Subprocess;\nimport com.centurylink.mdw.model.ExecutionPlan;\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\nimport com.centurylink.mdw.model.workflow.WorkStatus;\n\npublic class CreatePlan_A10 implements JavaExecutor {\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n    }\n\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException {\n        List<Subprocess> subprocs = new ArrayList<>();\n        Subprocess subproc = new Subprocess();\n        subproc.setLogicalName(\"ServiceAsyncSub\");\n        subproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\n        subproc.getParameters().put(\"testCase\", \"$testCase\");\n        subprocs.add(subproc);\n        ExecutionPlan execPlan = new ExecutionPlan();\n        execPlan.setSubprocesses(subprocs);        \n        variables.put(\"execPlan\", execPlan);\n        return null;\n    }\n\n}\n",
         "Output Documents": "execPlan",
         "WORK_DISPLAY_INFO": "x=206,y=239,w=110,h=68"
       },
@@ -125,5 +126,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.2"
+  "version": "0.3"
 }

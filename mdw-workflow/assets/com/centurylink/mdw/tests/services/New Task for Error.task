@@ -1,7 +1,0 @@
-{
-  "attributes": {"Variables": "exception,exception,Not Displayed,0,,com.centurylink.mdw.common.service.Jsonable"},
-  "category": "COM",
-  "logicalId": "Error:A3",
-  "name": "New Task for Error",
-  "version": "0"
-}

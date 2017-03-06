@@ -44,5 +44,9 @@
     "PROCESS_VISIBILITY": "PUBLIC",
     "WORK_DISPLAY_INFO": "x=50,y=50,w=105,h=27"
   },
-  "version": "0.2"
+  "variables": {"testCase": {
+    "category": "INPUT",
+    "type": "java.lang.String"
+  }},
+  "version": "0.3"
 }

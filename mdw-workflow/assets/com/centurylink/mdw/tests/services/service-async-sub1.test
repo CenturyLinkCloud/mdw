@@ -1,0 +1,10 @@
+// service-async-sub1
+today = new Date().format("YYYY-MM-dd")
+start process('ServiceMain') {
+    variables = [ testCase: 'single' ]
+}
+
+wait process
+
+sleep 10 // give Error.proc a chance to flow
+verify processes('ServiceMain', 'ServiceSub', 'Error')

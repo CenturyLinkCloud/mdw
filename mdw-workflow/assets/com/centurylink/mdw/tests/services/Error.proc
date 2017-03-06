@@ -23,12 +23,10 @@
     },
     {
       "attributes": {
-        "Category": "COM",
         "STATUS_AFTER_EVENT": "Cancelled",
         "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
-        "TaskLogicalId": "Error:A3",
-        "TaskName": "New Task for Error",
-        "Variables": "exception,exception,Not Displayed,0,,com.centurylink.mdw.common.service.Jsonable",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.services/Fallout.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WORK_DISPLAY_INFO": "x=384,y=118,w=100,h=60",
         "Wait for Task": "TRUE"
       },
@@ -76,5 +74,5 @@
       "type": "com.centurylink.mdw.model.StringDocument"
     }
   },
-  "version": "0.2"
+  "version": "0.3"
 }

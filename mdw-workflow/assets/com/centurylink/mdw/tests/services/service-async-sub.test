@@ -1,5 +1,0 @@
-// service-async-sub
-
-// shouldn't the subproc ServiceAsyncSub stop after error?
-
-start process('ServiceMain')
