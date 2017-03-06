@@ -37,6 +37,8 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.common.constant.OwnerType;
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
@@ -59,6 +61,7 @@ import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.centurylink.mdw.model.value.task.TaskInstanceVO;
 import com.centurylink.mdw.model.value.user.UserRoleVO;
 import com.centurylink.mdw.model.value.variable.DocumentReference;
+import com.centurylink.mdw.model.value.variable.DocumentVO;
 import com.centurylink.mdw.model.value.work.ActivityInstanceVO;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
@@ -79,10 +82,10 @@ import com.centurylink.mdw.plugin.designer.model.ElementChangeEvent;
 import com.centurylink.mdw.plugin.designer.model.ElementChangeEvent.ChangeType;
 import com.centurylink.mdw.plugin.designer.model.EmbeddedSubProcess;
 import com.centurylink.mdw.plugin.designer.model.Note;
-import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
-import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.designer.model.Transition;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
+import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
+import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.designer.properties.editor.ArtifactEditor;
 import com.centurylink.mdw.plugin.designer.properties.editor.AssetLocator;
 import com.centurylink.mdw.plugin.designer.properties.value.ArtifactEditorValueProvider;
@@ -159,7 +162,7 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
 
     /**
      * Creates the wrapped Swing component.
-     * 
+     *
      * @param parent
      *            the parent SWT part
      * @return the SWT composite with the embedded Swing component
@@ -1172,6 +1175,18 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
                     actionHandler.showHierarchy(designerCanvasSelection);
                 }
             });
+
+            if (OwnerType.ERROR.equals(processInstVersion.getProcessInstance().getOwner())) {
+                MenuItem errorTriggerItem = new MenuItem(popupMenu, SWT.PUSH);
+                errorTriggerItem.setText("Triggering Process");
+                ImageDescriptor errorImageDesc = MdwPlugin.getImageDescriptor("icons/error.gif");
+                errorTriggerItem.setImage(errorImageDesc.createImage());
+                errorTriggerItem.addSelectionListener(new SelectionAdapter() {
+                    public void widgetSelected(SelectionEvent e) {
+                        openTriggeringInstance();
+                    }
+                });
+            }
         }
 
         // retry and skip
@@ -1599,6 +1614,59 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
                         Long callerId = getProcess().getProcessInstance().getOwnerId();
                         PluginDataAccess dataAccess = getProject().getDataAccess();
                         ProcessInstanceVO procInst = dataAccess.getProcessInstance(callerId);
+
+                        ProcessVO subprocess = new ProcessVO();
+                        subprocess.setProcessId(procInst.getProcessId());
+                        subprocess.setProcessName(procInst.getProcessName());
+                        WorkflowProcess toOpen = new WorkflowProcess(getProject(), subprocess);
+                        toOpen.setPackage(getProject().getProcessPackage(subprocess.getId()));
+
+                        toOpen.setProcessInstance(procInst);
+                        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                                .getActivePage();
+                        try {
+                            page.openEditor(toOpen, "mdw.editors.process");
+                            page.showView("org.eclipse.ui.views.PropertySheet");
+                        }
+                        catch (PartInitException ex) {
+                            PluginMessages.uiError(ex, "Open Calling Instance", getProject());
+                        }
+                    }
+                });
+            }
+            catch (Exception ex) {
+                PluginMessages.uiError(ex, "Open Calling Instance", getProject());
+            }
+        }
+    }
+
+    public void openTriggeringInstance() {
+        if (isInstance()) {
+            PanelBusyIndicator pbi = new PanelBusyIndicator(getDisplay(), getCanvas());
+            try {
+                pbi.busyWhile(new Runnable() {
+                    public void run() {
+                        // create a new instance for a new editor
+                        Long errorDocId = getProcess().getProcessInstance().getOwnerId();
+                        DocumentVO doc = getProject().getDesignerProxy().getDocument(new DocumentReference(errorDocId, null));
+                        Long procInstId = null;
+                        try {
+                            JSONObject runtimeContext = new JSONObject(doc.getContent()).getJSONObject("runtimeContext");
+                            if (runtimeContext.has("activityInstance"))
+                                procInstId = runtimeContext.getJSONObject("activityInstance").getLong("processInstanceId");
+                            else if (runtimeContext.has("processInstance"))
+                                procInstId = runtimeContext.getJSONObject("processInstance").getLong("id");
+                            else
+                                throw new JSONException("Handler owner doc does not contain runtime instance information");
+                        }
+                        catch (JSONException ex) {
+                            PluginMessages.uiError(ex, "Open Calling Instance", getProject());
+                            return;
+                        }
+
+
+                        PluginDataAccess dataAccess = getProject().getDataAccess();
+                        ProcessInstanceVO procInst = dataAccess.getProcessInstance(procInstId);
 
                         ProcessVO subprocess = new ProcessVO();
                         subprocess.setProcessId(procInst.getProcessId());
