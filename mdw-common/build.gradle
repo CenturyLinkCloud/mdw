@@ -23,7 +23,7 @@ dependencies {
     compile group: "org.springframework", name: "spring-jms", version: "3.0.5.RELEASE"
     compile group: "org.springframework", name: "spring-aop", version: "3.0.5.RELEASE"
     compile group: "aopalliance", name: "aopalliance", version: "1.0"
-    compile group: "org.codehaus.groovy", name: "groovy-all", version: "2.3.6"
+    compile group: "org.codehaus.groovy", name: "groovy-all", version: "2.4.8"
     compile group: "org.json", name: "json", version: "20090211"
     compile group: "org.apache.activemq", name: "activemq-all", version: "5.10.0"
     compile group: "org.apache.ant", name: "ant-junit", version: "1.8.2"
