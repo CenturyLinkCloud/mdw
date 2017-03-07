@@ -34,46 +34,50 @@ dependencies {
     test group: "org.yaml", name: "snakeyaml", version: "1.16"
 }
 
-task functionTests() << {
-    ant.taskdef(
-        name: "autotest", 
-        classname: "com.centurylink.mdw.designer.testing.AutoTestAntTask", 
-        classpath: configurations.test.asPath)
-    ant.autotest(
-        suiteName: "mdw",
-        baseDir: "../mdw-workflow/assets",
-        includes: "**/*.test",
-        excludes: "com/centurylink/mdw/tests/load/*",
-        serverUrl: testServerUrl,
-        workflowDir: "../mdw-workflow/assets",
-        testResultsDir: "../mdw-workflow/testResults",
-        testResultsBaseUrl: "${testResultsBaseUrl}",
-        testResultsSummaryFile: "../mdw-workflow/testResults/mdw-function-test-results.xml",
-        threadCount: 5,
-        intervalSecs: 2,        
-        sslTrustStore: "./deploy/certs/CenturyLinkQCA.jks",
-        user: "mdwapp",
-        password: "ldap_012",
-        stubbing: true,
-        verbose: false,
-        failOnError: false)
+task functionTests() {
+    doLast {
+        ant.taskdef(
+            name: "autotest", 
+            classname: "com.centurylink.mdw.designer.testing.AutoTestAntTask", 
+            classpath: configurations.test.asPath)
+        ant.autotest(
+            suiteName: "mdw",
+            baseDir: "../mdw-workflow/assets",
+            includes: "**/*.test",
+            excludes: "com/centurylink/mdw/tests/load/*",
+            serverUrl: testServerUrl,
+            workflowDir: "../mdw-workflow/assets",
+            testResultsDir: "../mdw-workflow/testResults",
+            testResultsBaseUrl: "${testResultsBaseUrl}",
+            testResultsSummaryFile: "../mdw-workflow/testResults/mdw-function-test-results.xml",
+            threadCount: 5,
+            intervalSecs: 2,        
+            sslTrustStore: "./deploy/certs/CenturyLinkQCA.jks",
+            user: "mdwapp",
+            password: "ldap_012",
+            stubbing: true,
+            verbose: false,
+            failOnError: false)
+    }
 }
 
-task formatFunctionTestResults(dependsOn: functionTests) << {
-    ant.taskdef(
-        name:"testReport", 
-        classname: "com.centurylink.mdw.ant.taskdef.AutoTestReport", 
-        classpath: configurations.test.asPath)
-    ant.testReport(
-        todir: "../mdw-workflow/testResults",
-        testOutputFile: "../mdw-workflow/testResults/mdw-function-test-results.xml", 
-        xslFile: "../mdw-workflow/assets/com/centurylink/mdw/testing/function-test-results.xsl",
-        emailRecipients: "mdw.development@centurylink.com") {
-            report(todir: "../mdw-workflow/testResults", format: "noframes")
-        }
-    ant.move(
-        file: "../mdw-workflow/testResults/junit-noframes.html",
-        tofile: "../mdw-workflow/testResults/mdw-function-test-results.html")
+task formatFunctionTestResults(dependsOn: functionTests) {
+    doLast {
+        ant.taskdef(
+            name:"testReport", 
+            classname: "com.centurylink.mdw.ant.taskdef.AutoTestReport", 
+            classpath: configurations.test.asPath)
+        ant.testReport(
+            todir: "../mdw-workflow/testResults",
+            testOutputFile: "../mdw-workflow/testResults/mdw-function-test-results.xml", 
+            xslFile: "../mdw-workflow/assets/com/centurylink/mdw/testing/function-test-results.xsl",
+            emailRecipients: "mdw.development@centurylink.com") {
+                report(todir: "../mdw-workflow/testResults", format: "noframes")
+            }
+        ant.move(
+            file: "../mdw-workflow/testResults/junit-noframes.html",
+            tofile: "../mdw-workflow/testResults/mdw-function-test-results.html")
+    }
 }
 
 task publishFunctionTestResults(type: Copy) {
@@ -84,11 +88,15 @@ task publishFunctionTestResults(type: Copy) {
     rename("mdw-function-test-results.html", "mdw-function-test-results-${mdwVersion}.html")
 }
 
-task autoTest(dependsOn: [functionTests]) << {
-    println "*** MDW ${mdwVersion} automated test execution ***"
+task autoTest(dependsOn: [functionTests]) {
+    doLast {
+        println "*** MDW ${mdwVersion} automated test execution ***"
+    }
 }
 
-task autoTestAndPublish(dependsOn: [publishFunctionTestResults]) << {
-    println "*** MDW ${mdwVersion} automated test execution ***"
-    println "    Function Test results summary: " + functionTestPublishUrl + "-${mdwVersion}.html"
+task autoTestAndPublish(dependsOn: [publishFunctionTestResults]) {
+    doLast {
+        println "*** MDW ${mdwVersion} automated test execution ***"
+        println "    Function Test results summary: " + functionTestPublishUrl + "-${mdwVersion}.html"
+    }
 }

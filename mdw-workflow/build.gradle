@@ -1,11 +1,14 @@
 eclipse {
     project {
-        natures+= "org.eclipse.jdt.groovy.core.groovyNature"
+        natures += "org.eclipse.jdt.groovy.core.groovyNature"
     }
+    
     classpath {
         defaultOutputDir = file("build/classes")
+        
         containers "GROOVY_SUPPORT"
         containers "GROOVY_DSL_SUPPORT"
+        
         file {
             whenMerged { classpath ->
                 // eclipse should process dynamic java, but should not be part of build
@@ -18,6 +21,7 @@ eclipse {
             }
         }
     }
+    
     wtp {
         facet {
             facet name: "mdw.workflow", version: "5.1"
@@ -30,6 +34,7 @@ eclipse {
 dependencies {
     compile project(":mdw-common")
     compile project(":mdw-services")
+    
     compile group: "org.apache.velocity", name: "velocity", version: "1.6.4"
     compile group: "org.apache.velocity", name: "velocity-tools", version: "1.4"
     compile group: "org.apache.poi", name: "poi-all", version: "3.9"
@@ -55,10 +60,13 @@ dependencies {
     compile group: "com.ibm", name: "com.ibm.mq", version: "7.0.1.9"
     compile group: "com.ibm", name: "com.ibm.mq.jmqi", version: "7.0.1.9"
     
+    compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.1.9"
 }
 
-task cleanJar << {
-    delete "../${mdwOutputDir}/mdw-base-${version}.jar"
+task cleanJar {
+    doLast {
+        delete "../${mdwOutputDir}/mdw-base-${version}.jar"
+    }
 }
 
 clean {

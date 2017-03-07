@@ -17,9 +17,11 @@ dependencies {
     publish group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
 }
 
-task buildBaseConfigs() << {
-    def appConfigXml = file("../mdw-common/src/META-INF/mdw/spring/application-context.xml")
-    file("../${mdwOutputDir}/application-context-${mdwVersion}.xml").bytes = appConfigXml.bytes;
+task buildBaseConfigs() {
+    doLast {
+        def appConfigXml = file("../mdw-common/src/META-INF/mdw/spring/application-context.xml")
+        file("../${mdwOutputDir}/application-context-${mdwVersion}.xml").bytes = appConfigXml.bytes;
+    }
 }
 
 task cleanPackages(type: Delete) {
@@ -81,10 +83,12 @@ task buildPackages(type: Copy) {
     dependsOn(cleanPackages, exportAssetPackages)
 }
 
-task checkAllowed() << {
-    assert publishUser != null : "Missing property: publishUser"
-    assert publishPassword != null : "Missing property: publishPassword"
-    // TODO disallow non-snapshot publish except from Jenkins
+task checkAllowed() {
+    doLast {
+        assert publishUser != null : "Missing property: publishUser"
+        assert publishPassword != null : "Missing property: publishPassword"
+        // TODO disallow non-snapshot publish except from Jenkins
+    }
 }
 
 task publishBase(type: HttpPut) {
@@ -127,6 +131,8 @@ task publishAssets(type: HttpPut) {
     password publishPassword
 }
 
-task publishBuild(dependsOn: [publishBase, publishJars, publishWar, publishAssets]) << {
-    println "*** MDW build ${mdwVersion} published to ${publishBaseUrl} ***"
+task publishBuild(dependsOn: [publishBase, publishJars, publishWar, publishAssets]) {
+    doLast {
+        println "*** MDW build ${mdwVersion} published to ${publishBaseUrl} ***"
+    }
 }

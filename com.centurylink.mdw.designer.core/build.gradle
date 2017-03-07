@@ -98,7 +98,9 @@ task devGetMdwCommon(type: Copy) {
     into "./classes"
 }
 
-task updateDesignerVersion << {
-    File manifestFile = new File("./META-INF/MANIFEST.MF");
-    ant.replaceregexp(file: manifestFile, match: "Bundle-Version:.*", replace: "Bundle-Version: ${version}", byline: true)
+task updateDesignerVersion {
+    doLast {
+        File manifestFile = new File("./META-INF/MANIFEST.MF");
+        ant.replaceregexp(file: manifestFile, match: "Bundle-Version:.*", replace: "Bundle-Version: ${version}", byline: true)
+    }
 }

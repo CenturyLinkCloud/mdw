@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="src" path="/mdw-common"/>
 	<classpathentry exported="true" kind="src" path="/mdw-services"/>
-	<classpathentry kind="lib" path="assets/com/centurylink/mdw/db/mariaDB4j-core-2.1.9.jar"/>
 	<classpathentry excluding="Archive/" kind="src" output="build/assets" path="assets"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/"/>
 	<classpathentry kind="con" path="GROOVY_SUPPORT">
