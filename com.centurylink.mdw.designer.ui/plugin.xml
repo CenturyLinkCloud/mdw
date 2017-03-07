@@ -233,9 +233,9 @@
          delegate="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchConfiguration"
          modes="run" />
       <launchConfigurationType
-         id="com.centurylink.mdw.plugin.debug.AutomatedTest"      
-         name="MDW Automated Test Debug"
-         delegate="com.centurylink.mdw.plugin.launch.AutomatedTestDebugConfiguration"
+         id="com.centurylink.mdw.launch.GroovyTest"      
+         name="MDW Groovy AutoTest"
+         delegate="com.centurylink.mdw.plugin.launch.GroovyAutoTestConfiguration"
          modes="debug" />
       <launchConfigurationType public="false"
          id="com.centurylink.mdw.plugin.launch.CucumberTestCase"      
@@ -350,12 +350,12 @@
            </configurationType>      
       </shortcut>
       <shortcut
-            label="MDW Automated Test Debug..."
+            label="MDW Groovy AutoTest..."
             icon="icons/auto_test.gif"
-            modes="debug"
-            class="com.centurylink.mdw.plugin.launch.AutomatedTestDebugShortcut"
+            modes="run,debug"
+            class="com.centurylink.mdw.plugin.launch.GroovyAutoTestShortcut"
             helpContextId="automated_tester_help"
-            id="com.centurylink.mdw.plugin.debug.shortcut.AutomatedTest">
+            id="com.centurylink.mdw.plugin.launch.shortcut.GroovyAutoTest">
            <contextualLaunch>
               <enablement>
                  <with variable="selection">
@@ -363,15 +363,15 @@
                     <iterate>
                         <and>
                             <instanceof value="org.eclipse.core.runtime.IAdaptable"/>
-                            <test property="com.centurylink.mdw.properties.launch.canDebugAutomatedTest" forcePluginActivation="true"/>
+                            <test property="com.centurylink.mdw.properties.launch.canLaunchGroovyAutoTest" forcePluginActivation="true"/>
                         </and>
                     </iterate>
                  </with>
                </enablement>
            </contextualLaunch>
            <configurationType
-              id="com.centurylink.mdw.plugin.debug.AutomatedTest">
-           </configurationType>      
+              id="com.centurylink.mdw.launch.GroovyTest">
+           </configurationType> 
       </shortcut>
       <shortcut
             label="Cucumber Test (MDW)..."
@@ -473,9 +473,9 @@
             id="com.centurylink.mdw.plugin.launch.image.AutomatedTest">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="icons/auto_test.gif"
-            configTypeID="com.centurylink.mdw.plugin.debug.AutomatedTest"
-            id="com.centurylink.mdw.plugin.launch.image.AutomatedTest">
+            icon="icons/groovy_test.gif"
+            configTypeID="com.centurylink.mdw.launch.GroovyTest"
+            id="com.centurylink.mdw.plugin.launch.image.GroovyAutoTest">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
             icon="icons/cukes.gif"
@@ -516,9 +516,9 @@
             id="com.centurylink.mdw.plugin.launch.tabgroup.AutomatedTest">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
-            type="com.centurylink.mdw.plugin.debug.AutomatedTest"
+            type="com.centurylink.mdw.launch.GroovyTest"
             class="com.centurylink.mdw.plugin.launch.AutomatedTestTabGroup"
-            id="com.centurylink.mdw.plugin.debug.tabgroup.AutomatedTest">
+            id="com.centurylink.mdw.plugin.launch.tabgroup.GroovyAutoTest">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="com.centurylink.mdw.plugin.launch.Cucumber"
@@ -594,11 +594,11 @@
          bannerImage="icons\mdw_wiz.png">
       </launchGroup>
       <launchGroup
-         id="com.centurylink.mdw.plugin.debug.group.automated.test"
-         mode="debug"
-         label="MDW Test Case"
-         title="MDW Automated Test Debug Configuration"
-         image="icons\auto_test.gif"
+         id="com.centurylink.mdw.plugin.launch.group.groovy.test"
+         mode="run,debug"
+         label="MDW Groovy Test Case"
+         title="MDW Groovy AutoTest Configuration"
+         image="icons\groovy_test.gif"
          bannerImage="icons\mdw_wiz.png">
       </launchGroup>
       <launchGroup

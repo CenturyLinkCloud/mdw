@@ -7,7 +7,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 
 //ToDo : need to implement
-public class AutomatedTestDebugConfiguration extends LaunchConfigurationDelegate {
+public class GroovyAutoTestConfiguration extends LaunchConfigurationDelegate {
 
 
     public void launch(ILaunchConfiguration launchConfig, String mode, ILaunch launch,

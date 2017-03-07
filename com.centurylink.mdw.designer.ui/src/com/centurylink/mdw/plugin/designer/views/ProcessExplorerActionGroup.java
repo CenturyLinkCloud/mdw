@@ -1466,7 +1466,10 @@ public class ProcessExplorerActionGroup extends ActionGroup {
                 view.setFocus();
 
                 Object element = getSelection().getFirstElement();
-                actionHandler.debug((WorkflowElement) element);
+                if (element instanceof AutomatedTestSuite || element instanceof AutomatedTestCase)
+                    actionHandler.debugTest(getSelection());
+                else
+                    actionHandler.debug((WorkflowElement) element);
             }
         };
         ImageDescriptor imageDesc = MdwPlugin.getImageDescriptor("icons/debug.gif");
@@ -2499,10 +2502,51 @@ public class ProcessExplorerActionGroup extends ActionGroup {
     }
 
     public boolean debugApplies(IStructuredSelection selection) {
+        if (selection.size() > 1) {
+            Boolean legacy = null;
+            WorkflowPackage testPkg = null;
+            for (Object o : selection.toArray()) {
+                if (!(o instanceof AutomatedTestCase))
+                    return false;
+                // make sure they're all in the same package or legacy suite
+                AutomatedTestCase testCase = (AutomatedTestCase) o;
+                if (legacy == null)
+                    legacy = testCase.isLegacy();
+                if (legacy.booleanValue() != testCase.isLegacy())
+                    return false;
+                if (!testCase.isLegacy()) {
+                    if (testPkg == null)
+                        testPkg = testCase.getPackage();
+                    if (!testPkg.equals(testCase.getPackage()))
+                        return false;
+                }
+            }
+            return ((AutomatedTestCase) selection.getFirstElement()).getProject()
+                    .isUserAuthorizedInAnyGroup(UserRoleVO.PROCESS_EXECUTION);
+        }
+
         if (selection.size() != 1 || !(selection.getFirstElement() instanceof WorkflowElement))
             return false;
 
         WorkflowElement workflowElement = (WorkflowElement) selection.getFirstElement();
+
+        if (workflowElement instanceof AutomatedTestSuite
+                || workflowElement instanceof AutomatedTestCase) {
+            if (workflowElement.getProject() == null || !workflowElement.getProject()
+                    .isUserAuthorizedInAnyGroup(UserRoleVO.PROCESS_EXECUTION))
+                return false;
+            WorkflowPackage pkg = workflowElement.getPackage();
+            if (pkg != null && !pkg.isUserAuthorized(UserRoleVO.PROCESS_EXECUTION))
+                return false;
+            try {
+                AutomatedTestView testView = (AutomatedTestView) MdwPlugin.getActivePage()
+                        .showView("mdw.views.launch.automatedTest");
+                return !testView.isLocked();
+            }
+            catch (PartInitException ex) {
+                PluginMessages.uiError(ex, "Menu", workflowElement.getProject());
+            }
+        }
 
         if (workflowElement instanceof WorkflowProcess || workflowElement instanceof ExternalEvent)
             return !MdwPlugin.isRcp()

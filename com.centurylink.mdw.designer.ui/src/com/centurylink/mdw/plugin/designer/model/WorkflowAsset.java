@@ -1005,6 +1005,14 @@ public class WorkflowAsset extends WorkflowElement implements AttributeHolder, V
         }
     }
 
+    @SuppressWarnings("rawtypes")
+    public Object getAdapter(Class adapter) {
+        if (adapter.equals(IFile.class) && getFile() != null)
+            return getFile();
+        else
+            return null;
+    }
+
     /**
      * don't change the format of this output since it is use for drag-and-drop
      * support
