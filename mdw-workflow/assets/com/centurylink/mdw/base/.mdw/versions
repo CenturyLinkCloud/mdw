@@ -1,4 +1,4 @@
-#Sat Sep 17 22:16:44 MDT 2016
+#Tue Mar 07 15:46:55 MST 2017
 AutoFormManualTask.pagelet=3
 CustomManualTask.pagelet=2
 MdwRpcWebService.wsdl=2
@@ -31,9 +31,8 @@ send.gif=1
 subprocess.gif=1
 sync.png=1
 task.png=1
-taskOpenEmail.html=6
-taskOpenOneClick.html=5
-tm.png=1
+taskOpenEmail.html=8
+taskOpenOneClick.html=6
 velocity.jpg=1
 wait.jpg=1
 writer.jpg=1
