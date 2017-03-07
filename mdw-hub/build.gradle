@@ -35,7 +35,6 @@ dependencies {
 
     providedCompile group: "javax.jms", name: "jms", version: "1.1.1"
     providedCompile group: "javax.el", name: "el-api", version: "1.0"
-    providedCompile group: "com.sun.el", name: "el-impl", version: "1.0"
     providedCompile group: "javax.servlet", name: "servlet-api", version: "2.5"
     providedCompile group: "javax.validation", name: "validation-api", version: "1.0.0"
     providedCompile group: "javax.jsp.jstl", name: "jstl", version: "1.1.2"
@@ -57,6 +56,8 @@ dependencies {
     compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri"); exclude(module: "jms") }
     compile group: "org.apache.poi", name: "poi-all", version: "3.9"
     compile group: "org.apache.xbean", name: "xbean-spring", version: "3.6"
+    compile group: "com.sun.el", name: "el-impl", version: "1.0"
+    
         
     // swagger
     compile group: "io.swagger", name: "swagger-servlet", version: "1.5.4"
