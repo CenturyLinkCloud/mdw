@@ -1,15 +1,23 @@
+/**
+ * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
+ */
 package com.centurylink.mdw.plugin.launch;
 
 import org.codehaus.groovy.eclipse.launchers.AbstractGroovyLaunchShortcut;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.codehaus.groovy.eclipse.launchers.GroovyScriptLaunchShortcut;
 
-public class GroovyAutoTestShortcut extends AbstractGroovyLaunchShortcut {
+/**
+ * AutoTests for mdw6.
+ */
+public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
 
-    public static final String GROOVY_SCRIPT_LAUNCH_CONFIG_ID = "org.codehaus.groovy.eclipse.groovyScriptLaunchConfiguration" ;
+    public static final String GROUP_ID = "com.centurylink.mdw.plugin.launch.group.auto.test";
+    public static final String TYPE_ID = "com.centurylink.mdw.plugin.launch.AutomatedTest";
 
     @Override
     public ILaunchConfigurationType getGroovyLaunchConfigType() {
-        return getLaunchManager().getLaunchConfigurationType(GROOVY_SCRIPT_LAUNCH_CONFIG_ID) ;
+        return getLaunchManager().getLaunchConfigurationType(GroovyScriptLaunchShortcut.GROOVY_SCRIPT_LAUNCH_CONFIG_ID) ;
     }
 
     @Override

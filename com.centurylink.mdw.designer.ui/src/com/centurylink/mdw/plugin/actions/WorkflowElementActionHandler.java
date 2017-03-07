@@ -154,7 +154,7 @@ import com.centurylink.mdw.plugin.designer.wizards.NewYamlWizard;
 import com.centurylink.mdw.plugin.launch.ActivityLaunchShortcut;
 import com.centurylink.mdw.plugin.launch.AutomatedTestLaunchShortcut;
 import com.centurylink.mdw.plugin.launch.ExternalEventLaunchShortcut;
-import com.centurylink.mdw.plugin.launch.GroovyAutoTestShortcut;
+import com.centurylink.mdw.plugin.launch.AutoTestLaunchShortcut;
 import com.centurylink.mdw.plugin.launch.ProcessLaunchShortcut;
 import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
 import com.centurylink.mdw.plugin.project.LocalCloudProjectWizard;
@@ -1265,7 +1265,7 @@ public class WorkflowElementActionHandler {
     }
 
     public void debugTest(IStructuredSelection selection) {
-        GroovyAutoTestShortcut launchShortcut = new GroovyAutoTestShortcut();
+        AutomatedTestLaunchShortcut launchShortcut = new AutomatedTestLaunchShortcut();
         launchShortcut.launch(selection, ILaunchManager.DEBUG_MODE);
     }
 

@@ -203,7 +203,7 @@
             id="com.centurylink.mdw.property.tester.MdwProjectVersionLessThanTester">
       </propertyTester>
       <propertyTester
-            properties="canLaunchAutomatedTest,canLaunchAutomatedTests,canLaunchCucumberTest,canLaunchCucumberTests,canDebugAutomatedTest"
+            properties="canLaunchAutoTest,canLaunchAutoTests,canLaunchCucumberTest,canLaunchCucumberTests"
             namespace="com.centurylink.mdw.properties.launch"
             type="org.eclipse.core.runtime.IAdaptable"
             class="com.centurylink.mdw.plugin.launch.AutoTestPropertyTester"
@@ -231,12 +231,12 @@
          id="com.centurylink.mdw.plugin.launch.AutomatedTest"      
          name="MDW Automated Test"
          delegate="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchConfiguration"
-         modes="run" />
+         modes="run,debug" />
       <launchConfigurationType
-         id="com.centurylink.mdw.launch.GroovyTest"      
-         name="MDW Groovy AutoTest"
-         delegate="com.centurylink.mdw.plugin.launch.GroovyAutoTestConfiguration"
-         modes="debug" />
+         id="com.centurylink.mdw.plugin.launch.AutoTest"      
+         name="MDW AutoTest"
+         delegate="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchConfiguration"
+         modes="run,debug" />
       <launchConfigurationType public="false"
          id="com.centurylink.mdw.plugin.launch.CucumberTestCase"      
          name="Cucumber Gherkin Feature"
@@ -328,7 +328,7 @@
       <shortcut
             label="MDW Automated Test..."
             icon="icons/auto_test.gif"
-            modes="run"
+            modes="run,debug"
             class="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchShortcut"
             helpContextId="automated_tester_help"
             id="com.centurylink.mdw.plugin.launch.shortcut.AutomatedTest">
@@ -339,7 +339,7 @@
                     <iterate>
                         <and>
                             <instanceof value="org.eclipse.core.runtime.IAdaptable"/>
-                            <test property="com.centurylink.mdw.properties.launch.canLaunchAutomatedTest" forcePluginActivation="true"/>
+                            <test property="com.centurylink.mdw.properties.launch.canLaunchAutoTest" forcePluginActivation="true"/>
                         </and>
                     </iterate>
                  </with>
@@ -350,12 +350,12 @@
            </configurationType>      
       </shortcut>
       <shortcut
-            label="MDW Groovy AutoTest..."
+            label="MDW AutoTest..."
             icon="icons/auto_test.gif"
             modes="run,debug"
-            class="com.centurylink.mdw.plugin.launch.GroovyAutoTestShortcut"
+            class="com.centurylink.mdw.plugin.launch.AutoTestLaunchShortcut"
             helpContextId="automated_tester_help"
-            id="com.centurylink.mdw.plugin.launch.shortcut.GroovyAutoTest">
+            id="com.centurylink.mdw.plugin.launch.shortcut.AutoTest">
            <contextualLaunch>
               <enablement>
                  <with variable="selection">
@@ -363,14 +363,14 @@
                     <iterate>
                         <and>
                             <instanceof value="org.eclipse.core.runtime.IAdaptable"/>
-                            <test property="com.centurylink.mdw.properties.launch.canLaunchGroovyAutoTest" forcePluginActivation="true"/>
+                            <test property="com.centurylink.mdw.properties.launch.canLaunchAutoTest" forcePluginActivation="true"/>
                         </and>
                     </iterate>
                  </with>
                </enablement>
            </contextualLaunch>
            <configurationType
-              id="com.centurylink.mdw.launch.GroovyTest">
+              id="com.centurylink.mdw.plugin.launch.AutoTest">
            </configurationType> 
       </shortcut>
       <shortcut
@@ -473,9 +473,9 @@
             id="com.centurylink.mdw.plugin.launch.image.AutomatedTest">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="icons/groovy_test.gif"
-            configTypeID="com.centurylink.mdw.launch.GroovyTest"
-            id="com.centurylink.mdw.plugin.launch.image.GroovyAutoTest">
+            icon="icons/auto_test.gif"
+            configTypeID="com.centurylink.mdw.plugin.launch.AutoTest"
+            id="com.centurylink.mdw.plugin.launch.image.AutoTest">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
             icon="icons/cukes.gif"
@@ -516,9 +516,9 @@
             id="com.centurylink.mdw.plugin.launch.tabgroup.AutomatedTest">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
-            type="com.centurylink.mdw.launch.GroovyTest"
-            class="com.centurylink.mdw.plugin.launch.AutomatedTestTabGroup"
-            id="com.centurylink.mdw.plugin.launch.tabgroup.GroovyAutoTest">
+            type="com.centurylink.mdw.plugin.launch.AutoTest"
+            class="com.centurylink.mdw.plugin.launch.AutoTestTabGroup"
+            id="com.centurylink.mdw.plugin.launch.tabgroup.AutoTest">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="com.centurylink.mdw.plugin.launch.Cucumber"
@@ -587,18 +587,18 @@
       </launchGroup>
       <launchGroup
          id="com.centurylink.mdw.plugin.launch.group.automated.test"
-         mode="run"
+         mode="run,debug"
          label="MDW Test Case"
          title="MDW Automated Test Launch Configuration"
          image="icons\auto_test.gif"
          bannerImage="icons\mdw_wiz.png">
       </launchGroup>
       <launchGroup
-         id="com.centurylink.mdw.plugin.launch.group.groovy.test"
+         id="com.centurylink.mdw.plugin.launch.group.auto.test"
          mode="run,debug"
-         label="MDW Groovy Test Case"
-         title="MDW Groovy AutoTest Configuration"
-         image="icons\groovy_test.gif"
+         label="MDW AutoTest Case"
+         title="MDW AutoTest Configuration"
+         image="icons\auto_test.gif"
          bannerImage="icons\mdw_wiz.png">
       </launchGroup>
       <launchGroup

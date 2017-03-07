@@ -36,8 +36,10 @@ import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
-    public static final String GROUP_ID = "com.centurylink.mdw.plugin.launch.group.automated.test";
-    public static final String TYPE_ID = "com.centurylink.mdw.plugin.launch.AutomatedTest";
+    public static final String GROUP_ID = "com.centurylink.mdw.plugin.launch.group.auto.test";
+    public static final String MDW5_GROUP_ID = "com.centurylink.mdw.plugin.launch.group.automated.test";
+    public static final String TYPE_ID = "com.centurylink.mdw.plugin.launch.AutoTest";
+    public static final String MDW5_TYPE_ID = "com.centurylink.mdw.plugin.launch.AutomatedTest";
 
     public void launch(ISelection sel, String mode) {
         StructuredSelection selection = (StructuredSelection) sel;
@@ -134,7 +136,10 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
         }
 
         IStructuredSelection selection = new StructuredSelection(launchConfig);
-        DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, GROUP_ID);
+        if (element.getProject().checkRequiredVersion(6, 0))
+            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, GROUP_ID);
+        else
+            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, MDW5_GROUP_ID);
     }
 
     /**
@@ -175,7 +180,10 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
             config = workingCopy.doSave();
         }
         IStructuredSelection selection = new StructuredSelection(config);
-        DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, GROUP_ID);
+        if (workflowProject.checkRequiredVersion(6, 0))
+            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, GROUP_ID);
+        else
+            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, MDW5_GROUP_ID);
     }
 
     private Shell getShell() {
@@ -226,8 +234,11 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
     protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(
             WorkflowProject workflowProject, WorkflowPackage workflowPackage,
             boolean isLegacyLaunch, String testName, List<String> testCases) throws CoreException {
-        ILaunchConfigurationType configType = getLaunchManager()
-                .getLaunchConfigurationType(TYPE_ID);
+        ILaunchConfigurationType configType;
+        if (workflowProject.checkRequiredVersion(6, 0))
+            configType = getLaunchManager().getLaunchConfigurationType(TYPE_ID);
+        else
+            configType = getLaunchManager().getLaunchConfigurationType(MDW5_TYPE_ID);
         ILaunchConfigurationWorkingCopy wc = configType.newInstance(
                 workflowProject.getSourceProject(),
                 getLaunchManager().generateLaunchConfigurationName(testName));
