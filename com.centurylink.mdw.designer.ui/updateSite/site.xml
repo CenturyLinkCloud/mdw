@@ -3,7 +3,7 @@
    <description url="http://lxdenvmtc143.dev.qintra.com:6101/MdwPlugin">
       MDW Plug-In Update Site
    </description>
-   <feature url="features/com.centurylink.mdw.designer.feature_9.0.9.jar" id="com.centurylink.mdw.designer.feature" version="9.0.9">
+   <feature url="features/com.centurylink.mdw.designer.feature_9.1.0.jar" id="com.centurylink.mdw.designer.feature" version="9.1.0">
       <category name="workflowDev"/>
    </feature>
    <category-def name="workflowDev" label="BPM Workflow Design">
