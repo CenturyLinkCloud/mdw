@@ -587,7 +587,7 @@
       </launchGroup>
       <launchGroup
          id="com.centurylink.mdw.plugin.launch.group.automated.test"
-         mode="run,debug"
+         mode="run"
          label="MDW Test Case"
          title="MDW Automated Test Launch Configuration"
          image="icons\auto_test.gif"
@@ -595,7 +595,15 @@
       </launchGroup>
       <launchGroup
          id="com.centurylink.mdw.plugin.launch.group.auto.test"
-         mode="run,debug"
+         mode="run"
+         label="MDW AutoTest Case"
+         title="MDW AutoTest Configuration"
+         image="icons\auto_test.gif"
+         bannerImage="icons\mdw_wiz.png">
+      </launchGroup>
+      <launchGroup
+         id="com.centurylink.mdw.plugin.launch.group.auto.test.debug"
+         mode="debug"
          label="MDW AutoTest Case"
          title="MDW AutoTest Configuration"
          image="icons\auto_test.gif"

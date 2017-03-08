@@ -2521,8 +2521,8 @@ public class ProcessExplorerActionGroup extends ActionGroup {
                         return false;
                 }
             }
-            return ((AutomatedTestCase) selection.getFirstElement()).getProject()
-                    .isUserAuthorizedInAnyGroup(UserRoleVO.PROCESS_EXECUTION);
+            WorkflowProject prj  = ((AutomatedTestCase)selection.getFirstElement()).getProject();
+            return prj != null && prj.checkRequiredVersion(6, 0) && prj.isUserAuthorizedInAnyGroup(UserRoleVO.PROCESS_EXECUTION);
         }
 
         if (selection.size() != 1 || !(selection.getFirstElement() instanceof WorkflowElement))
@@ -2532,8 +2532,8 @@ public class ProcessExplorerActionGroup extends ActionGroup {
 
         if (workflowElement instanceof AutomatedTestSuite
                 || workflowElement instanceof AutomatedTestCase) {
-            if (workflowElement.getProject() == null || !workflowElement.getProject()
-                    .isUserAuthorizedInAnyGroup(UserRoleVO.PROCESS_EXECUTION))
+            WorkflowProject prj = workflowElement.getProject();
+            if (prj == null || !prj.checkRequiredVersion(6, 0) || !prj.isUserAuthorizedInAnyGroup(UserRoleVO.PROCESS_EXECUTION))
                 return false;
             WorkflowPackage pkg = workflowElement.getPackage();
             if (pkg != null && !pkg.isUserAuthorized(UserRoleVO.PROCESS_EXECUTION))

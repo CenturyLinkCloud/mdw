@@ -37,6 +37,7 @@ import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
     public static final String GROUP_ID = "com.centurylink.mdw.plugin.launch.group.auto.test";
+    public static final String DEBUG_GROUP_ID = "com.centurylink.mdw.plugin.launch.group.auto.test.debug";
     public static final String MDW5_GROUP_ID = "com.centurylink.mdw.plugin.launch.group.automated.test";
     public static final String TYPE_ID = "com.centurylink.mdw.plugin.launch.AutoTest";
     public static final String MDW5_TYPE_ID = "com.centurylink.mdw.plugin.launch.AutomatedTest";
@@ -113,7 +114,7 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
     }
 
     private void performLaunch(WorkflowElement element, String mode) throws CoreException {
-        ILaunchConfigurationWorkingCopy workingCopy = createLaunchConfiguration(element);
+        ILaunchConfigurationWorkingCopy workingCopy = createLaunchConfiguration(element, ILaunchManager.DEBUG_MODE.equals(mode));
         ILaunchConfiguration launchConfig = findExistingLaunchConfiguration(workingCopy);
         if (launchConfig == null) {
             // no existing found - create a new one
@@ -136,10 +137,14 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
         }
 
         IStructuredSelection selection = new StructuredSelection(launchConfig);
-        if (element.getProject().checkRequiredVersion(6, 0))
-            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, GROUP_ID);
-        else
+        if (element.getProject().checkRequiredVersion(6, 0)) {
+            // TODO: currently 'run' uses MDW5_GROUP_ID even for mdw6 until new launch is proven via DEBUG_GROUP_ID
+            String groupId = ILaunchManager.DEBUG_MODE.equals(mode) ? DEBUG_GROUP_ID : MDW5_GROUP_ID;
+            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, groupId);
+        }
+        else {
             DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, MDW5_GROUP_ID);
+        }
     }
 
     /**
@@ -161,7 +166,7 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
             testCases.add(testCase.getPath());
 
         ILaunchConfigurationWorkingCopy workingCopy = createLaunchConfiguration(workflowProject,
-                workflowPackage, isLegacyLaunch, testName, testCases);
+                workflowPackage, isLegacyLaunch, testName, testCases, ILaunchManager.DEBUG_MODE.equals(mode));
         ILaunchConfiguration config = findExistingLaunchConfiguration(workingCopy);
         if (config == null) {
             // no existing found - create a new one
@@ -180,17 +185,21 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
             config = workingCopy.doSave();
         }
         IStructuredSelection selection = new StructuredSelection(config);
-        if (workflowProject.checkRequiredVersion(6, 0))
-            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, GROUP_ID);
-        else
+        if (workflowProject.checkRequiredVersion(6, 0)) {
+            // TODO: currently 'run' uses MDW5_GROUP_ID even for mdw6 until new launch is proven via DEBUG_GROUP_ID
+            String groupId = ILaunchManager.DEBUG_MODE.equals(mode) ? DEBUG_GROUP_ID : MDW5_GROUP_ID;
+            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, groupId);
+        }
+        else {
             DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, MDW5_GROUP_ID);
+        }
     }
 
     private Shell getShell() {
         return MdwPlugin.getActiveWorkbenchWindow().getShell();
     }
 
-    protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(WorkflowElement element)
+    protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(WorkflowElement element, boolean debug)
             throws CoreException {
         String testName = null;
         List<String> testCases = new ArrayList<String>();
@@ -228,17 +237,20 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
         }
 
         return createLaunchConfiguration(workflowProject, workflowPackage, isLegacyLaunch, testName,
-                testCases);
+                testCases, debug);
     }
 
     protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(
             WorkflowProject workflowProject, WorkflowPackage workflowPackage,
-            boolean isLegacyLaunch, String testName, List<String> testCases) throws CoreException {
+            boolean isLegacyLaunch, String testName, List<String> testCases, boolean debug) throws CoreException {
         ILaunchConfigurationType configType;
-        if (workflowProject.checkRequiredVersion(6, 0))
-            configType = getLaunchManager().getLaunchConfigurationType(TYPE_ID);
-        else
+        if (workflowProject.checkRequiredVersion(6, 0)) {
+            // TODO currently for 'run' still using old MDW5_TYPE_ID
+            configType = getLaunchManager().getLaunchConfigurationType(debug ? TYPE_ID : MDW5_TYPE_ID);
+        }
+        else {
             configType = getLaunchManager().getLaunchConfigurationType(MDW5_TYPE_ID);
+        }
         ILaunchConfigurationWorkingCopy wc = configType.newInstance(
                 workflowProject.getSourceProject(),
                 getLaunchManager().generateLaunchConfigurationName(testName));
