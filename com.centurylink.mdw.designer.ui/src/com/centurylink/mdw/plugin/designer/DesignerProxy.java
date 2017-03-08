@@ -129,6 +129,7 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowAsset;
 import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.designer.properties.editor.AssetLocator;
+import com.centurylink.mdw.plugin.launch.AutoTestCaseRun;
 import com.centurylink.mdw.plugin.launch.GherkinTestCaseLaunch;
 import com.centurylink.mdw.plugin.launch.LogWatcher;
 import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
@@ -2477,7 +2478,7 @@ public class DesignerProxy {
 
     public TestCaseRun prepareTestCase(AutomatedTestCase testCase, int runNum, File resultDir,
             boolean createReplace, boolean verbose, PrintStream log, LogMessageMonitor monitor,
-            boolean singleServer, boolean stubbing) throws RemoteException {
+            boolean singleServer, boolean stubbing, boolean debug) throws RemoteException {
         if ((testCase.isGroovy() || testCase.isGherkin())
                 && !MdwPlugin.workspaceHasGroovySupport()) {
             String msg = "Please install Groovy support to execute test case: "
@@ -2518,14 +2519,22 @@ public class DesignerProxy {
                         testCase.getProject().isOldNamespaces(), project);
             }
             else if (testCase.isGroovy()) {
-                List<String> classpathList = null;
-                IJavaProject javaProject = project.getJavaProject();
-                if (javaProject != null && javaProject.exists())
-                    classpathList = new ClasspathComputer(javaProject).getClasspathList();
-                run = new GroovyTestCaseRun(testCase.getTestCase(), runNum, masterRequestId,
-                        new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor,
-                        procCache, testCase.isLoadTest(), true,
-                        testCase.getProject().isOldNamespaces(), classpathList);
+                // TODO use new AutoTestRun for non-debug once proven
+                boolean useNewAutoTestRun = project.checkRequiredVersion(6, 0) && debug;
+                if (useNewAutoTestRun) {
+                    run = new AutoTestCaseRun(testCase, runNum, masterRequestId,
+                            new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, debug);
+                }
+                else {
+                    List<String> classpathList = null;
+                    IJavaProject javaProject = project.getJavaProject();
+                    if (javaProject != null && javaProject.exists())
+                        classpathList = new ClasspathComputer(javaProject).getClasspathList();
+                    run = new GroovyTestCaseRun(testCase.getTestCase(), runNum, masterRequestId,
+                            new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor,
+                            procCache, testCase.isLoadTest(), true,
+                            testCase.getProject().isOldNamespaces(), classpathList);
+                }
             }
             else {
                 run = new TestCaseRun(testCase.getTestCase(), runNum, masterRequestId,

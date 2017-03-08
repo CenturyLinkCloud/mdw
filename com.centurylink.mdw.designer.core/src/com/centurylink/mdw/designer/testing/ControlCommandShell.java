@@ -45,6 +45,7 @@ public class ControlCommandShell {
 
     protected DesignerDataAccess dao;
     protected boolean verbose;
+    public boolean isVerbose() { return verbose; }
     protected String response;	// response of last "message"
 
     public ControlCommandShell(DesignerDataAccess dao) {

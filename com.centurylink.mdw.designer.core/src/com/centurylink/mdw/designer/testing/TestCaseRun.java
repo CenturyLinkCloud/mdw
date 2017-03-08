@@ -68,6 +68,7 @@ public class TestCaseRun extends ControlCommandShell implements Threadable {
 
     protected LogMessageMonitor monitor;
     protected boolean createReplace;
+    public boolean isCreateReplace() { return createReplace; }
     protected boolean passed;
     protected boolean isBatch = false;
     protected boolean isLoadTest;
@@ -76,6 +77,7 @@ public class TestCaseRun extends ControlCommandShell implements Threadable {
     protected String message;
     protected Map<String,ProcessVO> processCache;
     protected boolean singleServer;
+    public boolean isSingleServer() { return singleServer; }
     protected boolean stubbing;
     public boolean isStubbing() { return stubbing; }
     protected boolean oldNamespaces;

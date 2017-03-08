@@ -380,4 +380,9 @@ public class TestRunner implements Runnable, MasterRequestListener {
         }
     }
 
+
+    public static void main(String[] args) {
+        System.out.println("TODO: launch groovy test case(s)");
+    }
+
 }

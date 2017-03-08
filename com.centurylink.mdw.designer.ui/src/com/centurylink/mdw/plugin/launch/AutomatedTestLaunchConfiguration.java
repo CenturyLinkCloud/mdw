@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IViewPart;
@@ -113,6 +114,7 @@ public class AutomatedTestLaunchConfiguration extends LaunchConfigurationDelegat
         if (!testSuite.getResultsDir().exists())
             testSuite.getResultsDir().mkdirs();
 
+        testSuite.setDebug(ILaunchManager.DEBUG_MODE.equals(mode));
         showResultsView();
     }
 
