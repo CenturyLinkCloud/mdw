@@ -1,4 +1,4 @@
-#Tue Mar 07 15:46:55 MST 2017
+#Wed Mar 08 12:35:27 MST 2017
 AutoFormManualTask.pagelet=3
 CustomManualTask.pagelet=2
 MdwRpcWebService.wsdl=2
@@ -28,6 +28,7 @@ process.jpg=2
 receive.gif=1
 script.gif=1
 send.gif=1
+slack.png=1 Renamed from c\:\\Users\\ab78953\\mygit\\MDW\\mdw-workflow\\assets\\com\\centurylink\\mdw\\base\\web-slack.png
 subprocess.gif=1
 sync.png=1
 task.png=1
@@ -35,5 +36,6 @@ taskOpenEmail.html=8
 taskOpenOneClick.html=6
 velocity.jpg=1
 wait.jpg=1
+web-slack.png=1
 writer.jpg=1
 xml.jpg=1
