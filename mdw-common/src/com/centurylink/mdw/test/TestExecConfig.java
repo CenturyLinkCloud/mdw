@@ -34,6 +34,13 @@ public class TestExecConfig implements Jsonable {
     public boolean isCreateReplace() { return createReplace; }
     public void setCreateReplace(boolean createReplace) { this.createReplace = createReplace; }
 
+    /**
+     * True for Designer or Gradle runs.
+     */
+    private boolean standalone;
+    public boolean isStandalone() { return standalone; }
+    public void setStandalone(boolean standalone) { this.standalone = standalone; }
+
     public TestExecConfig() {
         // default options
     }
@@ -51,6 +58,8 @@ public class TestExecConfig implements Jsonable {
             this.verbose = json.getBoolean("verbose");
         if (json.has("createReplace"))
             this.createReplace = json.getBoolean("createReplace");
+        if (json.has("standalone"))
+            this.standalone = json.getBoolean("standalone");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -67,6 +76,8 @@ public class TestExecConfig implements Jsonable {
             json.put("verbose", verbose);
         if (createReplace)
             json.put("createReplace", createReplace);
+        if (standalone)
+            json.put("standalone", standalone);
 
         return json;
     }

@@ -22,7 +22,6 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.MdwWebSocketServer;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.config.PropertyManagerDatabase;
 import com.centurylink.mdw.constant.JMSDestinationNames;
 import com.centurylink.mdw.constant.PropertyGroups;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -100,7 +99,7 @@ public class StartupListener implements ServletContextListener {
                 ApplicationContext.setWarDeployPath(servletRealPath);
             }
 
-              // load properties from files first
+              // load properties
             propertyManager = PropertyManager.initializeContainerPropertyManager(containerName, servletRealPath);
 
             // initialize ApplicationContext
@@ -116,13 +115,6 @@ public class StartupListener implements ServletContextListener {
             } catch (Exception e1) {
                 throw new StartupException(StartupException.FAIL_TO_START_DATABASE_POOL,
                         "Failed to connect through database connection pool",e1);
-            }
-
-            // load properties from database and local override
-            if (propertyManager instanceof PropertyManagerDatabase) {
-                ((PropertyManagerDatabase)propertyManager).loadPropertiesFromDatabase(null, true);
-                ((PropertyManagerDatabase)propertyManager).loadPropertiesFromFile(null,
-                        PropertyManager.ENV_OVERRIDE_PROPERTIES_FILE_NAME, false, false);
             }
 
             logger.refreshCache();    // now update based on properties loaded from database

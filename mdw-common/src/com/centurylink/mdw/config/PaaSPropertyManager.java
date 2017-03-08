@@ -64,19 +64,18 @@ public class PaaSPropertyManager extends PropertyManager {
      * property name prefix terminated by a '.', the property names returned
      * will contain the whole property names including the group names.
      *
-     * @param pGroupName
+     * @param group
      * @return Properties for the group
-     * @throws PropertyException
      */
     @Override
-    public Properties getProperties(String pGroupName) {
+    public Properties getProperties(String group) {
         Properties props = new Properties();
-        int k = pGroupName.length();
+        int k = group.length();
         for (Object key : properties.keySet()) {
             String propname = (String) key;
             int l = propname.length();
             char ch = l > k ? propname.charAt(k) : ' ';
-            if ((ch == '.' || ch == '/') && propname.startsWith(pGroupName)) {
+            if ((ch == '.' || ch == '/') && propname.startsWith(group)) {
                 if (ch == '.')
                     props.put(propname, properties.get(propname));
                 else
@@ -87,12 +86,12 @@ public class PaaSPropertyManager extends PropertyManager {
     }
 
     @Override
-    public String getStringProperty(String pGroupName, String pPropertyName)
+    public String getStringProperty(String group, String name)
             throws PropertyException {
-        if (pGroupName != null)
-            return this.getStringProperty(pGroupName + "/" + pPropertyName);
+        if (group != null)
+            return this.getStringProperty(group + "/" + name);
         else
-            return this.getStringProperty(pPropertyName);
+            return this.getStringProperty(name);
     }
 
     @Override
@@ -111,11 +110,11 @@ public class PaaSPropertyManager extends PropertyManager {
     }
 
     @Override
-    public void setStringProperty(String property_name, String value) {
+    public void setStringProperty(String name, String value) {
         if (value == null || value.length() == 0)
-            properties.remove(property_name);
+            properties.remove(name);
         else
-            properties.put(property_name, value);
+            properties.put(name, value);
 
     }
 }

@@ -59,6 +59,21 @@ public class TestingServicesImpl implements TestingServices {
         return getTestCases(Asset.getFileExtension(Asset.TEST).substring(1));
     }
 
+    public TestCaseList getTestCaseList(TestCase testCase) throws ServiceException {
+        AssetServices assetServices = ServiceLocator.getAssetServices();
+        PackageDir pkgDir = assetServices.getPackage(testCase.getPackage());
+        PackageTests pkgTests = new PackageTests(pkgDir);
+        List<PackageTests> packageTests = new ArrayList<PackageTests>();
+        packageTests.add(pkgTests);
+        List<TestCase> testCases = new ArrayList<TestCase>();
+        testCases.add(testCase);
+        pkgTests.setTestCases(testCases);
+        TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
+        testCaseList.setPackageTests(packageTests);
+        testCaseList.setCount(1);
+        return testCaseList;
+    }
+
     public TestCaseList getTestCases(String format) throws ServiceException {
         TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
         testCaseList.setPackageTests(new ArrayList<PackageTests>());
@@ -388,17 +403,7 @@ public class TestingServicesImpl implements TestingServices {
     }
 
     public void executeCase(TestCase testCase, String user, TestExecConfig config) throws ServiceException, IOException {
-        AssetServices assetServices = ServiceLocator.getAssetServices();
-        PackageDir pkgDir = assetServices.getPackage(testCase.getPackage());
-        PackageTests pkgTests = new PackageTests(pkgDir);
-        List<PackageTests> packageTests = new ArrayList<PackageTests>();
-        packageTests.add(pkgTests);
-        List<TestCase> testCases = new ArrayList<TestCase>();
-        testCases.add(testCase);
-        pkgTests.setTestCases(testCases);
-        TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
-        testCaseList.setPackageTests(packageTests);
-        testCaseList.setCount(1);
+        TestCaseList testCaseList = getTestCaseList(testCase);
         executeCases(testCaseList, user, config);
     }
 

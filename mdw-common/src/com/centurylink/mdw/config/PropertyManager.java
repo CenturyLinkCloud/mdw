@@ -21,9 +21,6 @@ public abstract class PropertyManager implements CacheEnabled {
 
     public static final String MDW_PROPERTIES_FILE_NAME = "mdw.properties";
     public static final String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";
-    public static final String PACKAGE_PROPERTIES_FILE_NAME = "package.properties";
-    public static final String ENV_OVERRIDE_PROPERTIES_FILE_NAME = "env.properties";
-    public static final String DATABASE = "database";
     public static final String MDW_CONFIG_LOCATION = "mdw.config.location";
     public static final String MDW_PROPERTY_MANAGER = "mdw.property.manager";
     public static final String DB_CONFIG_ENABLED = "mdw.database.config.enabled";
@@ -44,19 +41,17 @@ public abstract class PropertyManager implements CacheEnabled {
     /**
      * Returns the handle to the property based on the passed in
      * GroupName and the property Name
-     * @param pGroupName
-     * @param pPropertyName
+     * @param group
+     * @param name
      * @return Value defined for the property as String
-     * @throws PropertyException
      */
-     public abstract String getStringProperty(String pGroupName, String pPropertyName)
+     public abstract String getStringProperty(String group, String name)
       throws PropertyException;
 
-     public abstract String getStringProperty(String property_name);
+     public abstract String getStringProperty(String name);
+     public abstract void setStringProperty(String name, String value);
 
      public abstract Properties getAllProperties();
-
-     public abstract void setStringProperty(String property_name, String value);
 
      private String propertyFileLocation;
      protected String getPropertyFileLocation() {
@@ -81,53 +76,60 @@ public abstract class PropertyManager implements CacheEnabled {
       }
 
       public static PropertyManager getLocalInstance() {
-        if (instance==null) {
+        if (instance == null) {
             try {
                 initializeContainerPropertyManager(ApplicationContext.getContainerName(), null);
-            } catch (StartupException e) {
+            }
+            catch (StartupException e) {
                 // should not reach here, as the property manager should be initialized by now
                 throw new RuntimeException(e);
             }
-            // container/database property manager will never hit this
+            // container property manager will never hit this
         }
         return instance;
       }
 
-      public static String getProperty(String property_name) {
-          return getInstance().getStringProperty(property_name);
+      public static String getProperty(String name) {
+          return getInstance().getStringProperty(name);
       }
 
-      public static int getIntegerProperty(String property_name, int defaultValue) {
-          String v = getInstance().getStringProperty(property_name);
-          if (v==null) return defaultValue;
+      public static int getIntegerProperty(String name, int defaultValue) {
+          String v = getInstance().getStringProperty(name);
+          if (v == null)
+              return defaultValue;
           try {
-            return Integer.parseInt(v);
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
+              return Integer.parseInt(v);
+          }
+          catch (NumberFormatException e) {
+              return defaultValue;
+          }
       }
 
-      public static long getLongProperty(String property_name, long defaultValue) {
-          String v = getInstance().getStringProperty(property_name);
-          if (v==null) return defaultValue;
+      public static long getLongProperty(String name, long defaultValue) {
+          String v = getInstance().getStringProperty(name);
+          if (v == null)
+              return defaultValue;
           try {
-            return Long.parseLong(v);
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
+              return Long.parseLong(v);
+          }
+          catch (NumberFormatException e) {
+              return defaultValue;
+          }
       }
 
-      public static boolean getBooleanProperty(String property_name, boolean defaultValue) {
-          String v = getInstance().getStringProperty(property_name);
-          if (v==null) return defaultValue;
+      public static boolean getBooleanProperty(String name, boolean defaultValue) {
+          String v = getInstance().getStringProperty(name);
+          if (v == null)
+              return defaultValue;
           return v.equalsIgnoreCase("true");
       }
 
-    public synchronized static PropertyManager initializeDesignerPropertyManager(String dburl) {
+    public synchronized static PropertyManager initializeDesignerPropertyManager() {
         if (instance==null) {
             try {
-                instance = new PropertyManagerDatabase("Designer", dburl, null);
-            } catch (Exception e) {
+                instance = new DefaultPropertyManager("Designer", null);
+            }
+            catch (Exception e) {
                 String msg = "Cannot create default property manager";
                 System.out.println(msg);
                 e.printStackTrace();
@@ -137,9 +139,9 @@ public abstract class PropertyManager implements CacheEnabled {
         return instance;
     }
 
-    public static PropertyManager initializeUnitTestPropertyManager() {
-        if (instance==null) {
-            instance = new PropertyManagerUnitTest();
+    public static PropertyManager initializeMockPropertyManager() {
+        if (instance == null) {
+            instance = new MockPropertyManager();
         }
         return instance;
     }
@@ -162,7 +164,7 @@ public abstract class PropertyManager implements CacheEnabled {
                 throw new StartupException(StartupException.FAIL_TO_LOAD_PROPERTIES, msg);
             }
         } else {
-            instance = new PropertyManagerDatabase(containerName, null, servletRealPath);
+            instance = new DefaultPropertyManager(containerName, servletRealPath);
         }
         return instance;
     }
@@ -187,15 +189,16 @@ public abstract class PropertyManager implements CacheEnabled {
             for (Object key : props.keySet()) {
                 String pn = (String)key;
                 String pv = props.getProperty(pn);
-                if (source.equals(ENV_OVERRIDE_PROPERTIES_FILE_NAME)) {
-                    System.out.println(" - property local override: " + pn + "=" + pv);
-                }
                 if (pv.length()>0) {
                     properties.put(pn, pv);
                     getSources().put(pn, source);
-                } else properties.remove(pn);
+                }
+                else {
+                    properties.remove(pn);
+                }
             }
-        } finally {
+        }
+        finally {
             if (stream!=null)
                 { try { stream.close(); } catch (Exception e) {} };
         }
