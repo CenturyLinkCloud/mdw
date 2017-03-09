@@ -238,11 +238,6 @@
          delegate="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchConfiguration"
          modes="run,debug" />
       <launchConfigurationType public="false"
-         id="com.centurylink.mdw.plugin.launch.GroovyAutoTest"      
-         name="MDW Groovy AutoTest"
-         delegate="com.centurylink.mdw.plugin.launch.GroovyAutoTestLaunchConfiguration"
-         modes="run,debug" />
-      <launchConfigurationType public="false"
          id="com.centurylink.mdw.plugin.launch.CucumberTestCase"      
          name="Cucumber Gherkin Feature"
          delegate="com.centurylink.mdw.plugin.launch.CucumberTestLaunchConfiguration"

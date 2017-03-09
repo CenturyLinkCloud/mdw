@@ -20,8 +20,6 @@ import com.centurylink.mdw.plugin.project.model.WorkflowProject;
  */
 public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
 
-    public static final String TYPE_ID = "com.centurylink.mdw.plugin.launch.GroovyAutoTest";
-
     private AutoTestCaseRun testCaseRun;
     private TestCase testCase;
     protected TestCase getTestCase() { return testCase; }
