@@ -242,7 +242,7 @@ public class AutomatedTestView extends TestRunnerViewPart
             counterData = new CounterData(testSuite.getTestCases().size());
             updateCounterPanel(0, 0, 0, true);
             monitor = null;
-            if (!hasGherkin)
+            if (!hasGherkin && !testSuite.isDebug()) // TODO should not start monitor at all for mdw6 once new pattern is proven
                 monitor = new LogMessageMonitor(
                         testSuite.getProject().getDesignerProxy().getDesignerDataAccess(),
                         testSuite.getProject().isOldNamespaces());
