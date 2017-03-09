@@ -15,6 +15,10 @@ import com.centurylink.mdw.designer.testing.TestCaseRun;
 import com.centurylink.mdw.model.value.process.ProcessVO;
 import com.centurylink.mdw.plugin.designer.model.AutomatedTestCase;
 
+/**
+ * Invokes the Groovy AutoTest launch config
+ *
+ */
 public class AutoTestCaseRun extends TestCaseRun {
 
     private AutomatedTestCase autoTestCase;

@@ -68,7 +68,7 @@ public class AutomatedTestLaunchConfiguration extends LaunchConfigurationDelegat
         int runInterval = launchConfig.getAttribute(attrPrefix + "_" + RUN_INTERVAL, 2);
         boolean verbose = launchConfig.getAttribute(attrPrefix + "_" + VERBOSE, true);
         boolean stubbing = launchConfig.getAttribute(attrPrefix + "_" + STUBBING, false);
-        boolean singleServer = launchConfig.getAttribute(attrPrefix + "_" + SINGLE_SERVER, false);
+        boolean singleServer = launchConfig.getAttribute(attrPrefix + "_" + SINGLE_SERVER, true);
         boolean createReplace = launchConfig.getAttribute(attrPrefix + "_" + CREATE_REPLACE_RESULTS,
                 false);
 

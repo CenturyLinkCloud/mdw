@@ -5,14 +5,12 @@ package com.centurylink.mdw.services.test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -58,7 +56,6 @@ import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
-import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.test.PreFilter;
@@ -1007,49 +1004,10 @@ public class TestCaseRun implements Runnable {
         }
     }
 
-
-    public static void main(String args[]) {
-        try {
-            // TODO these should be populated from arguments
-            String assetLoc = "e:/workspaces/dons/mdw-demo/assets";
-            String testCasePath = "com.centurylink.mdw.demo.test/HandleOrder.test";
-            String user = "dxoakes";
-
-            File assetRoot = new File(assetLoc);
-            if (!assetRoot.isDirectory())
-                throw new FileNotFoundException("Asset directory not found: " + assetRoot.getAbsolutePath());
-            ApplicationContext.setAssetRoot(assetRoot);
-
-            TestingServices testingServices = ServiceLocator.getTestingServices();
-            TestCase testCase = testingServices.getTestCase(testCasePath);
-
-            // TODO: populate config from system params
-            TestExecConfig execConfig = new TestExecConfig();
-            execConfig.setStandalone(true);
-
-            File resultsFile = testingServices.getTestResultsFile(null);
-
-            String masterRequestId = user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
-            LogMessageMonitor monitor = null;
-            Map<String,Process> processCache = new HashMap<>();
-            TestCaseRun run = new TestCaseRun(testCase, user, resultsFile.getParentFile(), 0, masterRequestId, monitor, processCache, execConfig);
-            try {
-                run.runStandalone();
-            }
-            catch (Throwable th) {
-                th.printStackTrace(run.log);
-                throw th;
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
     /**
      * Standalone execution for Designer and Gradle.
      */
-    private void runStandalone() throws Exception {
+    void runStandalone() throws Exception {
         CompilerConfiguration compilerConfig = new CompilerConfiguration(System.getProperties());
         compilerConfig.setScriptBaseClass(TestCaseScript.class.getName());
         Binding binding = new Binding();

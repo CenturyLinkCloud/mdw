@@ -135,7 +135,7 @@ public abstract class TestSuiteLaunchTab extends AbstractLaunchConfigurationTab 
             stubbingCheckBox.setSelection(isStubbing);
 
             boolean singleServer = launchConfig.getAttribute(
-                    getAttrPrefix() + AutomatedTestLaunchConfiguration.SINGLE_SERVER, false);
+                    getAttrPrefix() + AutomatedTestLaunchConfiguration.SINGLE_SERVER, true);
             singleServerCheckBox.setSelection(singleServer);
 
             List<String> cases = launchConfig.getAttribute(
