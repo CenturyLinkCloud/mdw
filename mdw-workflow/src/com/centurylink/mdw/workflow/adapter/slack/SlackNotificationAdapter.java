@@ -13,6 +13,9 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.connector.adapter.AdapterException;
+import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -71,18 +74,25 @@ public class SlackNotificationAdapter extends RestServiceAdapter
             ActivityException actException = (ActivityException)exception;
             message = actException.toString();
         }
-        return buildSlackRequest(message, null);
+
+        try {
+            return buildSlackRequest(message, null);
+        }
+        catch (PropertyException e) {
+            throw new ActivityException("Unable to build message for SlackNotificationAdapter",e);
+        }
     }
     /**
      *
      * @param message message for JSON String
      * @param link
      * @return JSON string to send to Slack
+     * @throws PropertyException
      */
-    public String buildSlackRequest(String message, String link) {
+    public String buildSlackRequest(String message, String link) throws PropertyException {
         JSONObject slackRequest = new JSONObject();
         String env = ApplicationContext.getRuntimeEnvironment().toUpperCase();
-        String slackUser = getAttributeValue(SLACK_USERNAME_ATTRIBUTE);
+        String slackUser = getAttributeValueSmart(SLACK_USERNAME_ATTRIBUTE);
         try {
             slackRequest.put("username", slackUser );
             slackRequest.put("icon_emoji", ":loudspeaker:");
@@ -92,6 +102,30 @@ public class SlackNotificationAdapter extends RestServiceAdapter
             logger.severe("Unable to build Slack Channel Request : message "+message+" link "+link+ " error: "+e.getMessage() );
         }
         return slackRequest.toString();
+
+    }
+
+    /*
+     * Only do the call if the webhookurl and user are defined
+     */
+    @Override
+    public String invoke(Object conn, String request, int timeout, Map<String, String> headers)
+            throws ConnectionException, AdapterException {
+        try {
+            if (!StringHelper.isEmpty(getEndpointUri()) && !StringHelper.isEmpty(getAttributeValueSmart(SLACK_USERNAME_ATTRIBUTE))) {
+                return super.invoke(conn, request, timeout, headers);
+            }
+            else {
+                logger.debug("Slack Notification is disabled (endpoint uri and user are not defined, continuing with flow");
+            }
+        }
+        catch (PropertyException e) {
+            // Catch this quietly, log it and just return
+            // If the property doesn't exist then either it's supposed
+            // to quietly continue or it shouldn't matter
+            logger.severe("Slack Notification unable to get properties : "+e.getMessage());
+        }
+        return "Ok";
 
     }
 
