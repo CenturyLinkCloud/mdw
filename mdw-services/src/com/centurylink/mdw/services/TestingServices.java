@@ -32,6 +32,11 @@ public interface TestingServices {
     public TestCase getTestCase(String path) throws ServiceException;
 
     /**
+     * Build a TestCaseList which includes single test.
+     */
+    public TestCaseList getTestCaseList(TestCase testCase) throws ServiceException;
+
+    /**
      * @return the test results root dir (testResults sibling to cases dir by default)
      * @throws IOException if the results dir does not exist and cannot be created
      */

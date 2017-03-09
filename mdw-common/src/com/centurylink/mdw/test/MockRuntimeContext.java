@@ -140,7 +140,7 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
         super(null, null, null, null, null);
         this.activityName = activityName;
         this.baselineData = baselineData;
-        PropertyManager.initializeUnitTestPropertyManager();
+        PropertyManager.initializeMockPropertyManager();
     }
 
     public void setAdapterStubbedResponse(String response) {

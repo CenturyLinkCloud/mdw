@@ -4,6 +4,7 @@
 package com.centurylink.mdw.services.test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -36,6 +37,8 @@ import com.centurylink.mdw.model.workflow.ActivityStubRequest;
 import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ProcessException;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.test.StubServer.Stubber;
@@ -114,15 +117,17 @@ public class TestRunner implements Runnable, MasterRequestListener {
             }
 
             // socket client
-            setLogWatchState(true);
+            if (!config.isStandalone()) {
+                setLogWatchState(true);
 
-            if (StubServer.isRunning())
-                StubServer.stop();
-            if (config.isStubbing())
-                StubServer.start(new TestStubber());
+                if (StubServer.isRunning())
+                    StubServer.stop();
+                if (config.isStubbing())
+                    StubServer.start(new TestStubber());
 
-            // stubbing
-            setStubServerState(config.isStubbing());
+                // stubbing
+                setStubServerState(config.isStubbing());
+            }
 
             // clear statutes for selected tests
             initResults();
@@ -150,8 +155,10 @@ public class TestRunner implements Runnable, MasterRequestListener {
                 Thread.sleep(PAUSE); // pause at least once to avoid too-quick socket shutdown
             } while (!updateResults() && running);
 
-            setLogWatchState(false);
-            setStubServerState(false);
+            if (!config.isStandalone()) {
+                setLogWatchState(false);
+                setStubServerState(false);
+            }
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -381,8 +388,38 @@ public class TestRunner implements Runnable, MasterRequestListener {
     }
 
 
-    public static void main(String[] args) {
-        System.out.println("TODO: launch groovy test case(s)");
+    /**
+     * Run in non-container context (from Designer or Gradle).
+     */
+    public static void main(String[] args) throws IOException {
+
+        String assetLoc = "e:/workspaces/dons/mdw-demo/assets";
+        String testCasePath = "com.centurylink.mdw.demo.test/HandleOrder.test";
+        String user = "dxoakes";
+
+        File assetRoot = new File(assetLoc);
+        if (!assetRoot.isDirectory())
+            throw new FileNotFoundException("Asset directory not found: " + assetRoot.getAbsolutePath());
+        ApplicationContext.setAssetRoot(assetRoot);
+
+        try {
+            TestingServices testingServices = ServiceLocator.getTestingServices();
+            TestCase testCase = testingServices.getTestCase(testCasePath);
+            TestCaseList testCaseList = testingServices.getTestCaseList(testCase);
+
+            // TODO: populate config from system params
+            TestExecConfig execConfig = new TestExecConfig();
+            execConfig.setStandalone(true);
+
+            File resultsFile = testingServices.getTestResultsFile(null);
+
+            TestRunner runner = new TestRunner();
+            runner.init(testCaseList, user, resultsFile, execConfig);
+            new Thread(runner).start();
+        }
+        catch (Exception ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
     }
 
 }

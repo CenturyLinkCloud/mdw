@@ -47,11 +47,11 @@ import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.ActivityStubRequest;
 import com.centurylink.mdw.model.workflow.ActivityStubResponse;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
-import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -74,7 +74,6 @@ import com.centurylink.mdw.test.TestFailedException;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
-import com.centurylink.mdw.model.workflow.Package;
 
 import groovy.lang.Binding;
 import groovy.lang.Closure;
@@ -179,7 +178,9 @@ public class TestCaseRun implements Runnable {
             binding.setVariable("testCaseRun", this);
 
             ClassLoader classLoader = this.getClass().getClassLoader();
-            Package testPkg = PackageCache.getPackage(testCase.getPackage());
+            Package testPkg = null;
+            if (!config.isStandalone())
+                testPkg = PackageCache.getPackage(testCase.getPackage());
             if (testPkg != null)
                 classLoader = testPkg.getCloudClassLoader();
             GroovyShell shell = new GroovyShell(classLoader, binding, compilerConfig);
@@ -476,30 +477,26 @@ public class TestCaseRun implements Runnable {
         // qualify vcs asset processes
         if (target.indexOf('/') == -1 && testCase.getPackage() != null)
             target = testCase.getPackage() + "/" + target;
-        Process vo = processCache.get(target);
-        if (vo == null) {
+        Process process = processCache.get(target);
+        if (process == null) {
             try {
-                String procName = target;
+                String procPath = target;
                 int version = 0; // latest
                 int spaceV = target.lastIndexOf(" v");
                 if (spaceV > 0) {
                     try {
                         // TODO support smart versions
-                        version = Asset.parseVersionSpec(procName.substring(spaceV + 2));
-                        procName = target.substring(0, spaceV);
+                        version = Asset.parseVersionSpec(procPath.substring(spaceV + 2));
+                        procPath = target.substring(0, spaceV);
                     }
                     catch (NumberFormatException ex) {
-                        // process name must have space v
+                        // process name must contain space v
                     }
                 }
-                // TODO honor package path
-                int lastSlash = procName.lastIndexOf('/');
-                if (lastSlash >= 0)
-                    procName = procName.substring(lastSlash + 1);
-
-                vo = ProcessCache.getProcess(procName, version); //dao.getProcessDefinition(procName, version);
-                if (vo == null)
+                process = workflowServices.getProcessDefinition(procPath, new Query());
+                if (process == null)
                     throw new TestException("Process: " + target + " not found");
+                processCache.put(target, process);
             }
             catch (TestException ex) {
                 throw ex;
@@ -508,7 +505,7 @@ public class TestCaseRun implements Runnable {
                 throw new TestException("Cannot load " + target, ex);
             }
         }
-        return vo;
+        return process;
     }
 
     Asset getAsset(String path) throws TestException {

@@ -63,11 +63,8 @@ public class AssetServicesImpl implements AssetServices {
     private static String assetPath;
 
     public AssetServicesImpl() {
-        String assetLoc = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION);
-        if (assetLoc != null) {
-            assetRoot = new File(assetLoc);
-            archiveDir = new File(assetRoot + "/" + PackageDir.ARCHIVE_SUBDIR);
-        }
+        assetRoot = ApplicationContext.getAssetRoot();
+        archiveDir = new File(assetRoot + "/" + PackageDir.ARCHIVE_SUBDIR);
     }
 
     private static Optional<VersionControl> versionControl;

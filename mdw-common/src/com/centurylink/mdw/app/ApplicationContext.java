@@ -607,6 +607,12 @@ public class ApplicationContext {
         }
         return assetRoot;
     }
+    /**
+     * Use this only when running outside of container.
+     */
+    public static void setAssetRoot(File assetLoc) {
+        assetRoot = assetLoc;
+    }
 
     private static String hubOverridePackage;
     public static String getHubOverridePackage() {

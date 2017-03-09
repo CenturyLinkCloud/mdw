@@ -35,38 +35,20 @@ public class DataAccess {
         return getProcessPersister(currentSchemaVersion, supportedSchemaVersion, new DatabaseAccess(null));
     }
 
-    /**
-     * Not to be called from Designer due to property lookup.
-     */
-    public static ProcessPersister getProcessPersister(int version, int supportedVersion,
-            DatabaseAccess db) throws DataAccessException {
-        String fileBasedAssetLoc = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION);
-        return getProcessPersister(version, supportedVersion, db, fileBasedAssetLoc);
+    public static ProcessPersister getProcessPersister(int version, int supportedVersion, DatabaseAccess db)
+    throws DataAccessException {
+        File assetRoot = ApplicationContext.getAssetRoot();
+        if (assetRoot == null)
+            throw new IllegalStateException("Asset root not known");
+        return (ProcessPersister) getVcsProcessLoader(assetRoot);
     }
 
-    public static ProcessPersister getProcessPersister(int version, int supportedVersion,
-            DatabaseAccess db, String fileBasedAssetLoc)
-            throws DataAccessException {
-        if (fileBasedAssetLoc != null)
-            return (ProcessPersister) getVcsProcessLoader(new File(fileBasedAssetLoc));
-        else
-            throw new UnsupportedOperationException("Only VCS assets are supported");
-    }
-
-    /**
-     * Not to be called from Designer due to property lookup.
-     */
-    public static ProcessLoader getProcessLoader(int version, int supportedVersion, DatabaseAccess db) throws DataAccessException {
-        String assetLoc = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION);
-        return getProcessLoader(version, supportedVersion, db, assetLoc);
-    }
-
-    public static ProcessLoader getProcessLoader(int version, int supportedVersion, DatabaseAccess db,
-            String fileBasedAssetLoc) throws DataAccessException {
-        if (fileBasedAssetLoc != null)
-            return getVcsProcessLoader(new File(fileBasedAssetLoc));
-        else
-            throw new UnsupportedOperationException("Only VCS assets are supported");
+    public static ProcessLoader getProcessLoader(int version, int supportedVersion, DatabaseAccess db)
+    throws DataAccessException {
+        File assetRoot = ApplicationContext.getAssetRoot();
+        if (assetRoot == null)
+            throw new IllegalStateException("Asset root not known");
+        return getVcsProcessLoader(assetRoot);
     }
 
     public static ProcessLoader getProcessLoader(DatabaseAccess db) throws DataAccessException {
@@ -77,19 +59,11 @@ public class DataAccess {
         return getProcessLoader(currentSchemaVersion, supportedSchemaVersion, new DatabaseAccess(null));
     }
 
-    /**
-     * Not to be called from Designer due to property lookup.
-     */
     public static RuntimeDataAccess getRuntimeDataAccess(DatabaseAccess db) throws DataAccessException {
-        String assetLoc = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION);
-        return getRuntimeDataAccess(db, assetLoc);
-    }
-
-    public static RuntimeDataAccess getRuntimeDataAccess(DatabaseAccess db, String fileBasedAssetLoc) throws DataAccessException {
-        if (fileBasedAssetLoc != null)
-            return getVcsRuntimeDataAccess(db, new File(fileBasedAssetLoc));
-        else
-            throw new UnsupportedOperationException("Only VCS assets are supported");
+        File assetRoot = ApplicationContext.getAssetRoot();
+        if (assetRoot == null)
+            throw new IllegalStateException("Asset root not known");
+        return getVcsRuntimeDataAccess(db, assetRoot);
     }
 
     public static UserDataAccess getUserDataAccess(DatabaseAccess db) throws DataAccessException {
