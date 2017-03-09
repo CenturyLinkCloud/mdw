@@ -85,9 +85,8 @@ import groovy.lang.Closure;
 import groovy.lang.GroovyCodeSource;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
-import groovy.ui.GroovyMain;
 
-public class TestCaseRun extends GroovyMain implements Runnable {
+public class TestCaseRun implements Runnable {
 
     private TestCase testCase;
     public TestCase getTestCase() { return testCase; }
@@ -1060,28 +1059,25 @@ public class TestCaseRun extends GroovyMain implements Runnable {
         GroovyShell shell = new GroovyShell(classLoader, binding, compilerConfig);
         shell.setProperty("out", log);
         setupContextClassLoader(shell);
-        GroovyCodeSource src = getScriptSource(true, testCase.file().getPath());
+        GroovyCodeSource src = new GroovyCodeSource(testCase.file());
         shell.run(src, new String[0]);
     }
 
+    // GROOVY-6771
     @SuppressWarnings("unchecked")
     private static void setupContextClassLoader(GroovyShell shell) {
         final Thread current = Thread.currentThread();
         @SuppressWarnings("rawtypes")
         class DoSetContext implements PrivilegedAction {
             ClassLoader classLoader;
-
             public DoSetContext(ClassLoader loader) {
                 classLoader = loader;
             }
-
             public Object run() {
                 current.setContextClassLoader(classLoader);
                 return null;
             }
         }
-
         AccessController.doPrivileged(new DoSetContext(shell.getClassLoader()));
     }
-
 }
