@@ -20,8 +20,7 @@ import com.centurylink.mdw.plugin.project.model.WorkflowProject;
  */
 public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
 
-    public static final String GROUP_ID = "com.centurylink.mdw.plugin.launch.group.auto.test";
-    public static final String TYPE_ID = "com.centurylink.mdw.plugin.launch.AutomatedTest";
+    public static final String TYPE_ID = "com.centurylink.mdw.plugin.launch.GroovyAutoTest";
 
     private AutoTestCaseRun testCaseRun;
     private TestCase testCase;
@@ -51,7 +50,7 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
 
     @Override
     protected String classToRun() {
-        return "com.centurylink.mdw.services.test.TestRunner";
+        return "com.centurylink.mdw.services.test.TestCaseRun";
     }
 
     @Override
@@ -61,17 +60,16 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
 
     @Override
     protected Map<String, String> createLaunchProperties(IType runType, IJavaProject javaProject) {
-        Map<String, String> launchConfigProperties = super.createLaunchProperties(runType, javaProject);
+        Map<String,String> launchConfigProperties = super.createLaunchProperties(runType, javaProject);
 
         String vmArgs = launchConfigProperties.get(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS);
-        vmArgs += "-Dmdw.test.case=" + getTestCase().getCaseName();
 
-        if (getTestCase().isLegacy())
-            vmArgs += " -Dmdw.test.cases.dir=\""
-                    + project.getOldTestCasesDir().toString().replace('\\', '/') + "\"";
-        else
-            vmArgs += " -Dmdw.test.case.file=\""
-                    + getTestCase().getCaseFile().toString().replace('\\', '/') + "\"";
+        vmArgs += " -Dmdwx.runtime.env=standalone";
+
+        vmArgs += " -Dmdw.test.case=" + getTestCase().getCaseName();
+
+        vmArgs += " -Dmdw.test.case.file=\""
+                + getTestCase().getCaseFile().toString().replace('\\', '/') + "\"";
 
         vmArgs += " -Dmdw.test.case.user=" + project.getUser().getUsername();
         vmArgs += " -Dmdw.test.server.url=" + project.getServiceUrl();
@@ -84,6 +82,8 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
 
         if (testCaseRun.isSingleServer())
             vmArgs += " -Dmdw.test.pin.to.server=true";
+
+        vmArgs += " -Dmdw.runtime.env=standalone";
 
         if (testCaseRun.isCreateReplace())
             vmArgs += " -Dmdw.test.create.replace=true";
@@ -101,8 +101,6 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
             vmArgs += " -Dmdw.test.masterRequestId=" + testCaseRun.getMasterRequestId();
 
         launchConfigProperties.put(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
-
-        launchConfigProperties.put(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, classToRun());
 
         return launchConfigProperties;
     }
