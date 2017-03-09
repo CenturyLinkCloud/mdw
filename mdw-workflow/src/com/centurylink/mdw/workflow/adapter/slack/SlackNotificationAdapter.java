@@ -4,7 +4,6 @@
 
 package com.centurylink.mdw.workflow.adapter.slack;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,16 +20,15 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
 
-
 /**
  * Slack Notification Adapter Activity
  * <p>
  * Posts an exception message onto a Slack channel using a webhook
  * </p>
  */
-public class SlackNotificationAdapter extends RestServiceAdapter
-{
-    // User name to post with (this just appears in the message, so it's not a real user)
+public class SlackNotificationAdapter extends RestServiceAdapter {
+    // User name to post with (this just appears in the message, so it's not a
+    // real user)
     public static String SLACK_USERNAME_ATTRIBUTE = "SLACK_USERNAME";
     // Prefix that identifies where the Slack message came from
     public static String SLACK_PREFIX = "sd-workflow : ";
@@ -42,36 +40,38 @@ public class SlackNotificationAdapter extends RestServiceAdapter
      */
     @Override
     public Map<String, String> getRequestHeaders() {
-        Map<String,String> requestHeaders = super.getRequestHeaders();
+        Map<String, String> requestHeaders = super.getRequestHeaders();
         if (requestHeaders == null)
-            requestHeaders = new HashMap<String,String>();
+            requestHeaders = new HashMap<String, String>();
         requestHeaders.put("Content-Type", "application/json");
         return requestHeaders;
     }
 
     /*
-     * <p>
-     * Overriden to take the exception and build the Slack Request
-     * Basic for starters, just takes the toString from the Activity exception
-     * Can be overriden to provide a more sophisticated Slack message
-     * </p>
+     * <p> Overriden to take the exception and build the Slack Request Basic for
+     * starters, just takes the toString from the Activity exception Can be
+     * overriden to provide a more sophisticated Slack message </p>
      */
     @Override
     protected String getRequestData() throws ActivityException {
         String varname = getAttributeValue(REQUEST_VARIABLE);
         if (StringHelper.isEmpty(varname)) {
-            throw new ActivityException("Variable not found for 'exception' for SlackNotificationAdapter");
+            throw new ActivityException(
+                    "Variable not found for 'exception' for SlackNotificationAdapter");
         }
         Exception exception = (Exception) getVariableValue(varname);
         if (exception == null) {
-            throw new ActivityException("Exception variable not defined for SlackNotificationAdapter");
+            throw new ActivityException(
+                    "Exception variable not defined for SlackNotificationAdapter");
 
         }
         String message = null;
         if (!(exception instanceof ActivityException)) {
-            throw new ActivityException("Exception variable not an instance of ActivityException for SlackNotificationAdapter");
-        } else {
-            ActivityException actException = (ActivityException)exception;
+            throw new ActivityException(
+                    "Exception variable not an instance of ActivityException for SlackNotificationAdapter");
+        }
+        else {
+            ActivityException actException = (ActivityException) exception;
             message = actException.toString();
         }
 
@@ -79,12 +79,14 @@ public class SlackNotificationAdapter extends RestServiceAdapter
             return buildSlackRequest(message, null);
         }
         catch (PropertyException e) {
-            throw new ActivityException("Unable to build message for SlackNotificationAdapter",e);
+            throw new ActivityException("Unable to build message for SlackNotificationAdapter", e);
         }
     }
+
     /**
      *
-     * @param message message for JSON String
+     * @param message
+     *            message for JSON String
      * @param link
      * @return JSON string to send to Slack
      * @throws PropertyException
@@ -94,15 +96,39 @@ public class SlackNotificationAdapter extends RestServiceAdapter
         String env = ApplicationContext.getRuntimeEnvironment().toUpperCase();
         String slackUser = getAttributeValueSmart(SLACK_USERNAME_ATTRIBUTE);
         try {
-            slackRequest.put("username", slackUser );
+            slackRequest.put("username", slackUser);
             slackRequest.put("icon_emoji", ":loudspeaker:");
-            slackRequest.put("text", env+ " - "+SLACK_PREFIX+message);
+            slackRequest.put("text", env + " - " + SLACK_PREFIX + message);
         }
         catch (JSONException e) {
-            logger.severe("Unable to build Slack Channel Request : message "+message+" link "+link+ " error: "+e.getMessage() );
+            logger.severe("Unable to build Slack Channel Request : message " + message + " link "
+                    + link + " error: " + e.getMessage());
         }
         return slackRequest.toString();
 
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter#
+     * openConnection()
+     */
+    @Override
+    public Object openConnection() throws ConnectionException {
+        try {
+            if (!StringHelper.isEmpty(getEndpointUri())
+                    && !StringHelper.isEmpty(getAttributeValueSmart(SLACK_USERNAME_ATTRIBUTE))) {
+                return super.openConnection();
+            }
+        }
+        catch (PropertyException e) {
+            // Catch this quietly, log it and just return
+            // If the property doesn't exist then either it's supposed
+            // to quietly continue or it shouldn't matter
+            logger.severe("Slack Notification unable to get properties : " + e.getMessage());
+        }
+        return null;
     }
 
     /*
@@ -111,23 +137,15 @@ public class SlackNotificationAdapter extends RestServiceAdapter
     @Override
     public String invoke(Object conn, String request, int timeout, Map<String, String> headers)
             throws ConnectionException, AdapterException {
-        try {
-            if (!StringHelper.isEmpty(getEndpointUri()) && !StringHelper.isEmpty(getAttributeValueSmart(SLACK_USERNAME_ATTRIBUTE))) {
-                return super.invoke(conn, request, timeout, headers);
-            }
-            else {
-                logger.debug("Slack Notification is disabled (endpoint uri and user are not defined, continuing with flow");
-            }
+        if (conn != null) {
+            return super.invoke(conn, request, timeout, headers);
         }
-        catch (PropertyException e) {
-            // Catch this quietly, log it and just return
-            // If the property doesn't exist then either it's supposed
-            // to quietly continue or it shouldn't matter
-            logger.severe("Slack Notification unable to get properties : "+e.getMessage());
+        else {
+            logger.debug(
+                    "Slack Notification is disabled (endpoint uri and user are not defined, continuing with flow");
+            return "Ok";
         }
-        return "Ok";
 
     }
-
 
 }
