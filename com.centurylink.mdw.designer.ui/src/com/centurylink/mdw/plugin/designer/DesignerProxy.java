@@ -2519,17 +2519,18 @@ public class DesignerProxy {
                         testCase.getProject().isOldNamespaces(), project);
             }
             else if (testCase.isGroovy()) {
-                // TODO use new AutoTestRun for non-debug once proven
-                boolean useNewAutoTestRun = project.checkRequiredVersion(6, 0) && debug;
-                if (useNewAutoTestRun) {
+                if (debug) {
                     run = new AutoTestCaseRun(testCase, runNum, masterRequestId,
                             new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor, procCache, debug);
                 }
                 else {
                     List<String> classpathList = null;
                     IJavaProject javaProject = project.getJavaProject();
-                    if (javaProject != null && javaProject.exists())
+                    if (javaProject != null && javaProject.exists()) {
+                        // TODO: use below and delete ClasspathComputer
+                        // classpathList = Arrays.asList(JavaRuntime.computeDefaultRuntimeClassPath(javaProject));
                         classpathList = new ClasspathComputer(javaProject).getClasspathList();
+                    }
                     run = new GroovyTestCaseRun(testCase.getTestCase(), runNum, masterRequestId,
                             new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor,
                             procCache, testCase.isLoadTest(), true,

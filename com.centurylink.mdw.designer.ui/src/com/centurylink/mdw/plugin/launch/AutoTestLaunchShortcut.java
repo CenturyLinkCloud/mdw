@@ -3,16 +3,26 @@
  */
 package com.centurylink.mdw.plugin.launch;
 
+import java.util.Arrays;
 import java.util.Map;
 
+import org.codehaus.groovy.eclipse.core.GroovyCore;
 import org.codehaus.groovy.eclipse.launchers.AbstractGroovyLaunchShortcut;
 import org.codehaus.groovy.eclipse.launchers.GroovyScriptLaunchShortcut;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.JavaRuntime;
 
-import com.centurylink.mdw.designer.testing.TestCase;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 /**
@@ -20,20 +30,14 @@ import com.centurylink.mdw.plugin.project.model.WorkflowProject;
  */
 public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
 
-    public static final String TYPE_ID = "com.centurylink.mdw.plugin.launch.GroovyAutoTest";
-
     private AutoTestCaseRun testCaseRun;
-    private TestCase testCase;
-    protected TestCase getTestCase() { return testCase; }
     private WorkflowProject project;
-    protected WorkflowProject getProject() { return project; }
 
     public AutoTestLaunchShortcut() {
     }
 
     public AutoTestLaunchShortcut(AutoTestCaseRun testCaseRun) {
         this.testCaseRun = testCaseRun;
-        this.testCase = testCaseRun.getTestCase();
         this.project = testCaseRun.getAutoTestCase().getProject();
     }
 
@@ -50,7 +54,7 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
 
     @Override
     protected String classToRun() {
-        return "com.centurylink.mdw.services.test.TestCaseRun";
+        return "com.centurylink.mdw.services.test.TestCaseMain";
     }
 
     @Override
@@ -64,18 +68,13 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
 
         String vmArgs = launchConfigProperties.get(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS);
 
-        vmArgs += " -Dmdwx.runtime.env=standalone";
+        vmArgs += " -Dmdw.runtime.env=standalone";
 
-        vmArgs += " -Dmdw.test.case=" + getTestCase().getCaseName();
+        vmArgs += " -Dmdw.asset.root=" + project.getAssetDir();
 
-        vmArgs += " -Dmdw.test.case.file=\""
-                + getTestCase().getCaseFile().toString().replace('\\', '/') + "\"";
-
-        vmArgs += " -Dmdw.test.case.user=" + project.getUser().getUsername();
         vmArgs += " -Dmdw.test.server.url=" + project.getServiceUrl();
 
         if (testCaseRun.isStubbing()) {
-            vmArgs += " -Dmdw.test.server.stub=true";
             vmArgs += " -Dmdw.test.server.stubPort="
                     + project.getServerSettings().getStubServerPort();
         }
@@ -83,25 +82,56 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
         if (testCaseRun.isSingleServer())
             vmArgs += " -Dmdw.test.pin.to.server=true";
 
-        vmArgs += " -Dmdw.runtime.env=standalone";
-
         if (testCaseRun.isCreateReplace())
             vmArgs += " -Dmdw.test.create.replace=true";
-
-        vmArgs += " -Dmdw.test.results.dir=\""
-                + getTestCase().getResultDirectory().toString().replace('\\', '/') + "\"";
-
-        vmArgs += " -Dmdw.test.workflow.dir=\""
-                + project.getAssetDir().toString().replace('\\', '/') + "\"";
 
         if (testCaseRun.isVerbose())
             vmArgs += " -Dmdw.test.verbose=true";
 
+        vmArgs += " -Dmdw.test.user=" + project.getUser().getUsername();
+
         if (testCaseRun.getMasterRequestId() != null)
-            vmArgs += " -Dmdw.test.masterRequestId=" + testCaseRun.getMasterRequestId();
+            vmArgs += " -Dmdw.test.master.request.id=" + testCaseRun.getMasterRequestId();
 
         launchConfigProperties.put(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 
         return launchConfigProperties;
+    }
+
+    @Override
+    protected void launchGroovy(ICompilationUnit unit, IJavaProject javaProject, String mode) {
+        IType runType = null;
+
+        // if unit is null, then we are not looking for a run type
+        if (unit != null) {
+            IType[] types = null;
+            try {
+                types = unit.getAllTypes();
+            } catch (JavaModelException e) {
+                GroovyCore.errorRunningGroovy(e);
+                return;
+            }
+            runType = findClassToRun(types);
+            if (runType == null) {
+                GroovyCore.errorRunningGroovy(new Exception("Unable to find run type: " + unit));
+                return;
+            }
+        }
+
+        Map<String,String> launchConfigProperties = createLaunchProperties(runType, javaProject);
+
+        try {
+            ILaunchConfigurationWorkingCopy workingConfig = findOrCreateLaunchConfig(launchConfigProperties,
+                    runType != null ? runType.getElementName() : javaProject.getElementName());
+            workingConfig.setAttribute(
+                    IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, Arrays.asList(
+                            JavaRuntime.computeDefaultRuntimeClassPath(javaProject)));
+            ILaunchConfiguration config = workingConfig.doSave();
+            DebugPlugin.getDefault().addDebugEventListener(new AutoTestDebugListener(config, testCaseRun.getTestCase(), testCaseRun.getLog()));
+            DebugUITools.launch(config, mode);
+        }
+        catch (CoreException e) {
+            GroovyCore.errorRunningGroovyFile((IFile) unit.getResource(), e);
+        }
     }
 }

@@ -231,17 +231,12 @@
          id="com.centurylink.mdw.plugin.launch.AutomatedTest"      
          name="MDW Automated Test"
          delegate="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchConfiguration"
-         modes="run,debug" />
+         modes="run" />
       <launchConfigurationType
          id="com.centurylink.mdw.plugin.launch.AutoTest"      
          name="MDW AutoTest"
          delegate="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchConfiguration"
-         modes="run,debug" />
-      <launchConfigurationType public="false"
-         id="com.centurylink.mdw.plugin.launch.GroovyAutoTest"      
-         name="MDW Groovy AutoTest"
-         delegate="com.centurylink.mdw.plugin.launch.GroovyAutoTestLaunchConfiguration"
-         modes="run,debug" />
+         modes="debug" />
       <launchConfigurationType public="false"
          id="com.centurylink.mdw.plugin.launch.CucumberTestCase"      
          name="Cucumber Gherkin Feature"
@@ -595,14 +590,6 @@
          mode="run"
          label="MDW Test Case"
          title="MDW Automated Test Launch Configuration"
-         image="icons\auto_test.gif"
-         bannerImage="icons\mdw_wiz.png">
-      </launchGroup>
-      <launchGroup
-         id="com.centurylink.mdw.plugin.launch.group.auto.test"
-         mode="run"
-         label="MDW AutoTest Case"
-         title="MDW AutoTest Configuration"
          image="icons\auto_test.gif"
          bannerImage="icons\mdw_wiz.png">
       </launchGroup>

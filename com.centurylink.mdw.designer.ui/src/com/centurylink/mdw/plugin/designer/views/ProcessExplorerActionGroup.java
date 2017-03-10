@@ -2502,29 +2502,6 @@ public class ProcessExplorerActionGroup extends ActionGroup {
     }
 
     public boolean debugApplies(IStructuredSelection selection) {
-        if (selection.size() > 1) {
-            Boolean legacy = null;
-            WorkflowPackage testPkg = null;
-            for (Object o : selection.toArray()) {
-                if (!(o instanceof AutomatedTestCase))
-                    return false;
-                // make sure they're all in the same package or legacy suite
-                AutomatedTestCase testCase = (AutomatedTestCase) o;
-                if (legacy == null)
-                    legacy = testCase.isLegacy();
-                if (legacy.booleanValue() != testCase.isLegacy())
-                    return false;
-                if (!testCase.isLegacy()) {
-                    if (testPkg == null)
-                        testPkg = testCase.getPackage();
-                    if (!testPkg.equals(testCase.getPackage()))
-                        return false;
-                }
-            }
-            WorkflowProject prj  = ((AutomatedTestCase)selection.getFirstElement()).getProject();
-            return prj != null && prj.checkRequiredVersion(6, 0) && prj.isUserAuthorizedInAnyGroup(UserRoleVO.PROCESS_EXECUTION);
-        }
-
         if (selection.size() != 1 || !(selection.getFirstElement() instanceof WorkflowElement))
             return false;
 
