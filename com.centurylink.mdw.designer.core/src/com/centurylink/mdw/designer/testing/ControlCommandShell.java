@@ -41,6 +41,7 @@ public class ControlCommandShell {
     protected static final String EXPORT = "export";
 
     protected PrintStream log = System.out;
+    public PrintStream getLog() { return log; }
     public void setLog(PrintStream outStream) { this.log = outStream; }
 
     protected DesignerDataAccess dao;

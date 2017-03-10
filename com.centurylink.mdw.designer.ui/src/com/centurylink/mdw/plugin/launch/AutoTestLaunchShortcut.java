@@ -3,14 +3,25 @@
  */
 package com.centurylink.mdw.plugin.launch;
 
+import java.util.Arrays;
 import java.util.Map;
 
+import org.codehaus.groovy.eclipse.core.GroovyCore;
 import org.codehaus.groovy.eclipse.launchers.AbstractGroovyLaunchShortcut;
 import org.codehaus.groovy.eclipse.launchers.GroovyScriptLaunchShortcut;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.JavaRuntime;
 
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
@@ -77,7 +88,7 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
         if (testCaseRun.isVerbose())
             vmArgs += " -Dmdw.test.verbose=true";
 
-        vmArgs += " -Dmdw.test.case.user=" + project.getUser().getUsername();
+        vmArgs += " -Dmdw.test.user=" + project.getUser().getUsername();
 
         if (testCaseRun.getMasterRequestId() != null)
             vmArgs += " -Dmdw.test.master.request.id=" + testCaseRun.getMasterRequestId();
@@ -85,5 +96,42 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
         launchConfigProperties.put(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 
         return launchConfigProperties;
+    }
+
+    @Override
+    protected void launchGroovy(ICompilationUnit unit, IJavaProject javaProject, String mode) {
+        IType runType = null;
+
+        // if unit is null, then we are not looking for a run type
+        if (unit != null) {
+            IType[] types = null;
+            try {
+                types = unit.getAllTypes();
+            } catch (JavaModelException e) {
+                GroovyCore.errorRunningGroovy(e);
+                return;
+            }
+            runType = findClassToRun(types);
+            if (runType == null) {
+                GroovyCore.errorRunningGroovy(new Exception("Unable to find run type: " + unit));
+                return;
+            }
+        }
+
+        Map<String,String> launchConfigProperties = createLaunchProperties(runType, javaProject);
+
+        try {
+            ILaunchConfigurationWorkingCopy workingConfig = findOrCreateLaunchConfig(launchConfigProperties,
+                    runType != null ? runType.getElementName() : javaProject.getElementName());
+            workingConfig.setAttribute(
+                    IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, Arrays.asList(
+                            JavaRuntime.computeDefaultRuntimeClassPath(javaProject)));
+            ILaunchConfiguration config = workingConfig.doSave();
+            DebugPlugin.getDefault().addDebugEventListener(new AutoTestDebugListener(config, testCaseRun.getTestCase(), testCaseRun.getLog()));
+            DebugUITools.launch(config, mode);
+        }
+        catch (CoreException e) {
+            GroovyCore.errorRunningGroovyFile((IFile) unit.getResource(), e);
+        }
     }
 }

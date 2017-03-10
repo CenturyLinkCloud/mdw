@@ -50,10 +50,11 @@ public class TestCaseMain {
 
         // user & masterRequestId
         String user = System.getProperty("mdw.test.user");
+        if (user == null)
+            throw new IllegalStateException("Missing system property: mdw.test.user");
         String masterRequestId = System.getProperty("mdw.test.master.request.id");
-        // TODO: somehow default masterRequestId format is specified in TestExecConfig
         if (masterRequestId == null)
-            masterRequestId = user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
+            throw new IllegalStateException("Missing system property: mdw.asset.root");
 
         try {
             TestingServices testingServices = ServiceLocator.getTestingServices();

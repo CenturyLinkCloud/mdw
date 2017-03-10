@@ -45,6 +45,7 @@ public class AutoTestCaseRun extends TestCaseRun {
 
     @Override
     public void stop() {
+
         // TODO halt via launch.terminate()
         super.stop();
     }

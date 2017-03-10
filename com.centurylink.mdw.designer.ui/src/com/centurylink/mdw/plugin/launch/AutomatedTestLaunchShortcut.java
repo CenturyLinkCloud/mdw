@@ -36,11 +36,10 @@ import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
-    public static final String GROUP_ID = "com.centurylink.mdw.plugin.launch.group.auto.test";
+    public static final String GROUP_ID = "com.centurylink.mdw.plugin.launch.group.automated.test";
     public static final String DEBUG_GROUP_ID = "com.centurylink.mdw.plugin.launch.group.auto.test.debug";
-    public static final String MDW5_GROUP_ID = "com.centurylink.mdw.plugin.launch.group.automated.test";
-    public static final String TYPE_ID = "com.centurylink.mdw.plugin.launch.AutoTest";
-    public static final String MDW5_TYPE_ID = "com.centurylink.mdw.plugin.launch.AutomatedTest";
+    public static final String TYPE_ID = "com.centurylink.mdw.plugin.launch.AutomatedTest";
+    public static final String DEBUG_TYPE_ID = "com.centurylink.mdw.plugin.launch.AutoTest";
 
     public void launch(ISelection sel, String mode) {
         StructuredSelection selection = (StructuredSelection) sel;
@@ -137,13 +136,11 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
         }
 
         IStructuredSelection selection = new StructuredSelection(launchConfig);
-        if (element.getProject().checkRequiredVersion(6, 0)) {
-            // TODO: currently 'run' uses MDW5_GROUP_ID even for mdw6 until new launch is proven via DEBUG_GROUP_ID
-            String groupId = ILaunchManager.DEBUG_MODE.equals(mode) ? DEBUG_GROUP_ID : MDW5_GROUP_ID;
-            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, groupId);
+        if (ILaunchManager.DEBUG_MODE.equals(mode)) {
+            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, DEBUG_GROUP_ID);
         }
         else {
-            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, MDW5_GROUP_ID);
+            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, GROUP_ID);
         }
     }
 
@@ -185,13 +182,11 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
             config = workingCopy.doSave();
         }
         IStructuredSelection selection = new StructuredSelection(config);
-        if (workflowProject.checkRequiredVersion(6, 0)) {
-            // TODO: currently 'run' uses MDW5_GROUP_ID even for mdw6 until new launch is proven via DEBUG_GROUP_ID
-            String groupId = ILaunchManager.DEBUG_MODE.equals(mode) ? DEBUG_GROUP_ID : MDW5_GROUP_ID;
-            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, groupId);
+        if (ILaunchManager.DEBUG_MODE.equals(mode)) {
+            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, DEBUG_GROUP_ID);
         }
         else {
-            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, MDW5_GROUP_ID);
+            DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), selection, GROUP_ID);
         }
     }
 
@@ -244,12 +239,11 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
             WorkflowProject workflowProject, WorkflowPackage workflowPackage,
             boolean isLegacyLaunch, String testName, List<String> testCases, boolean debug) throws CoreException {
         ILaunchConfigurationType configType;
-        if (workflowProject.checkRequiredVersion(6, 0)) {
-            // TODO currently for 'run' still using old MDW5_TYPE_ID
-            configType = getLaunchManager().getLaunchConfigurationType(debug ? TYPE_ID : MDW5_TYPE_ID);
+        if (debug) {
+            configType = getLaunchManager().getLaunchConfigurationType(DEBUG_TYPE_ID);
         }
         else {
-            configType = getLaunchManager().getLaunchConfigurationType(MDW5_TYPE_ID);
+            configType = getLaunchManager().getLaunchConfigurationType(TYPE_ID);
         }
         ILaunchConfigurationWorkingCopy wc = configType.newInstance(
                 workflowProject.getSourceProject(),
