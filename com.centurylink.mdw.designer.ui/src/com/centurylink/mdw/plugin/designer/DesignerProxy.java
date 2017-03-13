@@ -135,7 +135,6 @@ import com.centurylink.mdw.plugin.launch.AutoTestCaseRun;
 import com.centurylink.mdw.plugin.launch.GherkinTestCaseLaunch;
 import com.centurylink.mdw.plugin.launch.LogWatcher;
 import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
-import com.centurylink.mdw.plugin.project.ClasspathComputer;
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.JdbcDataSource;
 import com.centurylink.mdw.plugin.project.model.VcsRepository;
