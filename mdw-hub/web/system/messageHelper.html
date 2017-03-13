@@ -35,7 +35,7 @@
                     <label class="control-label col-xs-2" for="headersTextarea">Headers (x=1,y=2,etc):</label>
                     <div class="col-xs-10">
                       <textarea id="headersTextarea" name="headers" class="form-control" ng-model="httpHelper.headers"
-                      rows="5"  cols="110" ng-blur="httpHelper.headers = httpHelper.headers === '' ? undefined : httpHelper.headers">
+                      rows="2"  cols="110" ng-blur="httpHelper.headers = httpHelper.headers === '' ? undefined : httpHelper.headers">
                      </textarea>
                     </div>
                   </div>
@@ -70,7 +70,7 @@
               </form>
             </div>
           </uib-tab>
-          <uib-tab heading="JMS Messanger">
+          <uib-tab heading="JMS Messenger">
               <div class="mdw-inner-content">
               <div class="mdw-resource-heading">
                 <div class="mdw-heading-label">Send a message to a JMS Queue</div>
