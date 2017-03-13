@@ -12,6 +12,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -2527,9 +2529,7 @@ public class DesignerProxy {
                     List<String> classpathList = null;
                     IJavaProject javaProject = project.getJavaProject();
                     if (javaProject != null && javaProject.exists()) {
-                        // TODO: use below and delete ClasspathComputer
-                        // classpathList = Arrays.asList(JavaRuntime.computeDefaultRuntimeClassPath(javaProject));
-                        classpathList = new ClasspathComputer(javaProject).getClasspathList();
+                        classpathList = Arrays.asList(JavaRuntime.computeDefaultRuntimeClassPath(javaProject));
                     }
                     run = new GroovyTestCaseRun(testCase.getTestCase(), runNum, masterRequestId,
                             new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor,
