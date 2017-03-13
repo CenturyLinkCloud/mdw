@@ -184,10 +184,40 @@ processMod.controller('ProcessController',
   };
   
   $scope.asException = function(value) {
-    if (!$scope.exception)
-      $scope.exception = '';
-    
+    var except = '';
+    if (value.value) {
+      var activityException = JSON.parse(value.value).activityException;
+      if (activityException) {
+        var ex = activityException;
+        while (ex) {
+          if (ex.throwable)
+            except += ex.throwable + ':';
+          if (ex.code)
+            except += '(code=' + ex.code + '):';
+          if (ex.message)
+            except += ' ' + ex.message;
+          except += '\n';
+          if (ex.stackElements) {
+            ex.stackElements.forEach(function(el) {
+              except += '\tat ' + el.class;
+              if (el.file) {
+                except += '(' + el.file;
+                if (el.line) {
+                  except += ':' + el.line;
+                }
+                except += ')\n';
+              }
+            });
+          }
+          if (ex.cause)
+            except += 'Caused By: ';
+          ex = ex.cause;
+        }
+      }
+    }
+    return except;
   };
+  
 }]);
 
 processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
