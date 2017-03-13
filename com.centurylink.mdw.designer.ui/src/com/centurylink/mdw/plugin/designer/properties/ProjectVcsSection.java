@@ -142,7 +142,7 @@ public class ProjectVcsSection extends PropertySection implements IFilter, Eleme
             });
             includeArchiveEditor.render(composite);
             includeArchiveEditor.setValue(project.getMdwVcsRepository().isSyncAssetArchive());
-            includeArchiveEditor.setEditable(!project.isReadOnly());
+            includeArchiveEditor.setEditable(true);
         }
 
         composite.layout(true);
