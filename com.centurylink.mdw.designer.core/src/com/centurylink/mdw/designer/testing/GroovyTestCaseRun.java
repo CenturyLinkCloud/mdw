@@ -401,6 +401,8 @@ public class GroovyTestCaseRun extends TestCaseRun {
                         actual = helper.post(http.getMessage().getPayload());
                     else if (http.getMethod().equalsIgnoreCase("put"))
                         actual = helper.put(http.getMessage().getPayload());
+                    else if (http.getMethod().equalsIgnoreCase("patch"))
+                        actual = helper.patch(http.getMessage().getPayload());
                     else if (http.getMethod().equalsIgnoreCase("delete"))
                         actual = helper.delete(http.getMessage() == null ? null : http.getMessage().getPayload());
                     else

@@ -262,6 +262,12 @@ public abstract class GroovyTestCaseScript extends Script {
         return response;
     }
 
+    public TestCaseResponse patch(TestCaseHttp http) throws TestException {
+        http.setMethod("patch");
+        response = getTestCaseRun().http(http);
+        return response;
+    }
+
     public TestCaseResponse delete(TestCaseHttp http) throws TestException {
         http.setMethod("delete");
         response = getTestCaseRun().http(http);
