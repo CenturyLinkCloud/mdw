@@ -1,4 +1,4 @@
-#Mon Mar 06 11:36:47 MST 2017
+#Mon Mar 13 09:43:12 MDT 2017
 Employee.java=1005
 Employee.wsdl=6
 Error.proc=3
@@ -12,6 +12,7 @@ MyWorkflowModel.java=2
 NewSolution1.json=2
 NewSolution2.json=2
 NewSolution3.json=2
+PatchHandler.java=2
 ProcessJaxb.java=1
 ProcessValues.proc=3
 ServiceMain.proc=3
@@ -21,6 +22,7 @@ activity-proceed-completion-code.test=3
 activity-proceed-completion-code.yaml=1
 delete-non-200.test=1
 jms-listener.test=1
+patch-200.test=1
 process-as-service-adapter.test=3
 process-as-service-adapter.yaml=3
 process-as-service-exception.test=3

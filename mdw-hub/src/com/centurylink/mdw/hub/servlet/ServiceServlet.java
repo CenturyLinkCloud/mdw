@@ -57,7 +57,11 @@ public abstract class ServiceServlet extends HttpServlet {
         metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_REST);
         metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
         metaInfo.put(Listener.METAINFO_REQUEST_URL, request.getRequestURL().toString());
-        metaInfo.put(Listener.METAINFO_HTTP_METHOD, request.getMethod());
+        String method = request.getMethod();
+        String overrideMethod = request.getHeader("X-HTTP-Method-Override");
+        if (overrideMethod != null)
+            method = overrideMethod.toUpperCase();
+        metaInfo.put(Listener.METAINFO_HTTP_METHOD, method);
         metaInfo.put(Listener.METAINFO_REMOTE_HOST, request.getRemoteHost());
         metaInfo.put(Listener.METAINFO_REMOTE_ADDR, request.getRemoteAddr());
         metaInfo.put(Listener.METAINFO_REMOTE_PORT, String.valueOf(request.getRemotePort()));

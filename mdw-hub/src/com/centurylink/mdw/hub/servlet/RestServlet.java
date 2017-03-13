@@ -170,7 +170,7 @@ public class RestServlet extends ServiceServlet {
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if ("PATCH".equalsIgnoreCase(request.getMethod())) {
+        if ("PATCH".equalsIgnoreCase(request.getMethod()) || "PATCH".equalsIgnoreCase(request.getHeader("X-HTTP-Method-Override"))) {
             doPatch(request, response);
         }
         else {

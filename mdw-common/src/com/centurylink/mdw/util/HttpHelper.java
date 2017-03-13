@@ -369,7 +369,7 @@ public class HttpHelper {
      public String patch(String content) throws IOException {
          patchBytes(content.getBytes());
          return getResponse();
-      }
+     }
 
     /**
      * Upload a text file to the destination URL

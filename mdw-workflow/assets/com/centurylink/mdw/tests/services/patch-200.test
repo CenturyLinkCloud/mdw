@@ -1,0 +1,14 @@
+// patch-200 (invokes PatchHandler service)
+
+def request = '''{
+  "description": "Developers Group",
+  "name": "New Developers",
+  "users": []
+}'''
+
+def response = patch http("services/com/centurylink/mdw/tests/services/PatchHandler") {
+    headers = [ "Content-Type": "application/json", "request-id": masterRequestId ]
+    payload = request
+}
+assert response.code == 200
+assert response.content == request
