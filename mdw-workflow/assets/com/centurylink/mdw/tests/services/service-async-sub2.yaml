@@ -45,19 +45,19 @@ process: # 10203
               {
                 "class": "org.codehaus.groovy.reflection.CachedConstructor",
                 "file": "CachedConstructor.java",
-                "line": 77,
+                "line": 83,
                 "method": "invoke"
               },
               {
                 "class": "org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce",
                 "file": "ConstructorSite.java",
-                "line": 102,
+                "line": 105,
                 "method": "callConstructor"
               },
               {
                 "class": "org.codehaus.groovy.runtime.callsite.AbstractCallSite",
                 "file": "AbstractCallSite.java",
-                "line": 190,
+                "line": 247,
                 "method": "callConstructor"
               },
               {
@@ -69,7 +69,7 @@ process: # 10203
               {
                 "class": "groovy.util.GroovyScriptEngine",
                 "file": "GroovyScriptEngine.java",
-                "line": 577,
+                "line": 605,
                 "method": "run"
               },
               {
@@ -450,11 +450,11 @@ java.lang.Exception: I've fallen and I can't get up
       	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
       	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
       	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
-      	at org.codehaus.groovy.reflection.CachedConstructor.invoke(CachedConstructor.java:77)
-      	at org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce.callConstructor(ConstructorSite.java:102)
-      	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:190)
+      	at org.codehaus.groovy.reflection.CachedConstructor.invoke(CachedConstructor.java:83)
+      	at org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce.callConstructor(ConstructorSite.java:105)
+      	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:247)
       	at ServiceSubv0_3_Error_3.run(ServiceSubv0_3_Error_3.groovy:1)
-      	at groovy.util.GroovyScriptEngine.run(GroovyScriptEngine.java:577)
+      	at groovy.util.GroovyScriptEngine.run(GroovyScriptEngine.java:605)
       	at com.centurylink.mdw.script.GroovyExecutor.runScript(GroovyExecutor.java:126)
       	... 16 more
 process: # 10201

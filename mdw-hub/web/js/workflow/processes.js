@@ -159,8 +159,11 @@ processMod.controller('ProcessController',
     if ($routeParams.name) {
       $scope.value = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'values', valueName: $routeParams.name}, function() {
         $scope.value.name = $routeParams.name;
-        if ($scope.value.type)
+        if ($scope.value.type) {
           $scope.value.format = DOCUMENT_TYPES[$scope.value.type];
+          if ($scope.value.type === 'java.lang.Exception')
+            $scope.value.view = 'exception';
+        }
       });
     }
     else {
@@ -175,6 +178,16 @@ processMod.controller('ProcessController',
   else {
     $scope.retrieveProcess();
   }
+  
+  $scope.isException = function(value) {
+    return value.type == 'java.lang.Exception';
+  };
+  
+  $scope.asException = function(value) {
+    if (!$scope.exception)
+      $scope.exception = '';
+    
+  };
 }]);
 
 processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {

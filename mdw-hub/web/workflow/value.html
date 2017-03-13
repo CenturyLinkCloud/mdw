@@ -6,11 +6,16 @@
         <div class="mdw-heading-label">
           Process {{process.id}}: <span class="mdw-value-name">{{value.name}}</span>
         </div>
+        <div class="radio mdw-heading-options" ng-if="isException(value)">
+          <label class="radio-inline"><input type="radio" ng-model="value.view" value="exception">Stack Trace</label>
+          <label class="radio-inline"><input type="radio" ng-model="value.view" value="raw">Raw Content</label>
+        </div>
       </div>
       <div class="mdw-section">
         <div class="mdw-resource-info">{{value.type}}</div>
-        <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="value.value | highlight:value.format | unsafe"></code></pre>
+        <pre class="mdw-resource-content" ng-if="value.view === 'exception'"><code class="mdw-code" ng-bind-html="asException(value) | highlight:'java' | unsafe"></code></pre>
+        <pre class="mdw-resource-content" ng-if="!value.view || value.view === 'raw'"><code class="mdw-code" ng-bind-html="value.value | highlight:value.format | unsafe"></code></pre>
       </div>
-    </div>  
+    </div>
   </div>
 </div>
