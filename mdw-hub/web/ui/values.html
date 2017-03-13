@@ -6,7 +6,9 @@
     <div ng-class="value.isDocument ? 'col-md-10' : 'col-xs-4'">
       <!-- TODO: currently unsupported: collections, numbers -->
       <!-- TODO: add this once value labels become links: ng-style="{'overflow-y': value.editable ? 'auto' : 'hidden'}" -->
-      <textarea ng-if="value.isDocument" class="form-control mdw-document-input" 
+      <textarea ng-if="value.isException" class="form-control mdw-document-input"
+        rows="{{value.showLines}}" id="{{value.name}}" name="{{value.name}}" ng-readonly="true">{{asException(value)}}</textarea>
+      <textarea ng-if="value.isDocument && !value.isException" class="form-control mdw-document-input" 
         rows="{{value.showLines}}" id="{{value.name}}" name="{{value.name}}" 
         ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)">
       </textarea>

@@ -7,7 +7,7 @@ valuesMod.controller('MdwValuesController', ['$scope', 'mdw', 'util', 'DOCUMENT_
                                              function($scope, mdw, util, DOCUMENT_TYPES) {
   $scope.init = function() {
     $scope.showLines = 2;
-    $scope.maxLines = 5;
+    $scope.maxLines = 8;
     
     if (!$scope.dateDisplayFormat)
       $scope.dateDisplayFormat = 'MMM-dd-yyyy';
@@ -25,6 +25,7 @@ valuesMod.controller('MdwValuesController', ['$scope', 'mdw', 'util', 'DOCUMENT_
             if (!val.sequence)
               val.sequence = 0;
             val.isDocument = val.type && DOCUMENT_TYPES[val.type];
+            val.isException = val.type === 'java.lang.Exception';
             if (val.isDocument) {
               val.showLines = $scope.showLines;
               if (val.value && val.value.lineCount) {
@@ -77,6 +78,10 @@ valuesMod.controller('MdwValuesController', ['$scope', 'mdw', 'util', 'DOCUMENT_
   $scope.openDatePopup = function(field) {
     $scope.datePopups = {};
     $scope.datePopups[field] = true;
+  };
+  
+  $scope.asException = function(value) {
+    return util.asException(value);
   };
 }]);
 

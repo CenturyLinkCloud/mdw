@@ -119,6 +119,40 @@ utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
         thisUtil.mdwProperties = response.data;
       });
       return promise;      
-    }    
+    },
+    asException: function(value) {
+      var except = '';
+      if (value.value && value.type === 'java.lang.Exception') {
+        var activityException = JSON.parse(value.value).activityException;
+        if (activityException) {
+          var ex = activityException;
+          while (ex) {
+            if (ex.throwable)
+              except += ex.throwable + ':';
+            if (ex.code)
+              except += '(code=' + ex.code + '):';
+            if (ex.message)
+              except += ' ' + ex.message;
+            except += '\n';
+            if (ex.stackElements) {
+              ex.stackElements.forEach(function(el) {
+                except += '\tat ' + el.class;
+                if (el.file) {
+                  except += '(' + el.file;
+                  if (el.line) {
+                    except += ':' + el.line;
+                  }
+                  except += ')\n';
+                }
+              });
+            }
+            if (ex.cause)
+              except += 'Caused By: ';
+            ex = ex.cause;
+          }
+        }
+      }
+      return except;
+    }
   };
 }]);
