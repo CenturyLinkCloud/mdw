@@ -13,7 +13,7 @@
       </div>
       <div class="mdw-section">
         <div class="mdw-resource-info">{{value.type}}</div>
-        <pre class="mdw-resource-content" ng-if="value.view === 'exception'"><code class="mdw-code" ng-bind-html="asException(value) | highlight:'java' | unsafe"></code></pre>
+        <pre class="mdw-resource-content" ng-if="value.view === 'exception'"><code class="mdw-code" ng-bind-html="asException(value) | unsafe"></code></pre>
         <pre class="mdw-resource-content" ng-if="!value.view || value.view === 'raw'"><code class="mdw-code" ng-bind-html="value.value | highlight:value.format | unsafe"></code></pre>
       </div>
     </div>
