@@ -82,6 +82,9 @@ public class ProcessCache implements CacheEnabled, CacheService {
         vl.add(process);
         if (versionZero)
             procNameLatest.put(process.getProcessQualifiedName(), process);
+
+        if (process.getPackageName() == null)
+            logger.warn("Non-Package Qualified Process Names are DEPRECATED in MDW");
     }
 
     private Process getProcess0(Long processId) {

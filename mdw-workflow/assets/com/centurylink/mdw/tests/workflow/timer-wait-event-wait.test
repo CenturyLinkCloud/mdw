@@ -1,5 +1,5 @@
 // timer-wait-event-wait
-start process("com.centurylink.mdw.tests/MDWTestTimerWait") {
+start process("com.centurylink.mdw.tests.workflow/MDWTestTimerWait") {
     variables = [testCase: "wait"]
 }
 sleep 20
