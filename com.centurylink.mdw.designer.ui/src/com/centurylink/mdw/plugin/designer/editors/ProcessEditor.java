@@ -298,10 +298,12 @@ public class ProcessEditor extends WorkflowElementEditor
     private boolean checkLatest() {
         boolean isLatest = getProcess().isLatest();
         if (!isLatest && !DesignerProxy.isArchiveEditAllowed()) {
-            String msg = getProcess().getLabel()
-                    + " is flagged as archived and yet is editable without the required system property.  "
-                    + "Process will be temporarily dearchived to support save and avoid losing work.  Please report this error to MDW Support.";
-            PluginMessages.uiError(msg, "Save Process", getProcess().getProject());
+            if(!getProcess().getProject().checkRequiredVersion(6, 0)){
+                String msg = getProcess().getLabel()
+                        + " is flagged as archived and yet is editable without the required system property.  "
+                        + "Process will be temporarily dearchived to support save and avoid losing work.  Please report this error to MDW Support.";
+                PluginMessages.uiError(msg, "Save Process", getProcess().getProject());
+            }
             isLatest = true;
         }
         return isLatest;
