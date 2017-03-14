@@ -120,7 +120,7 @@ utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
       });
       return promise;      
     },
-    buildException: function(el, except) {
+    buildException: function(except) {
     	// Uses the callback mechanism to update the except variable (gets around jshint error)
     	return function(el) {
             except += '\tat ' + el.class;
@@ -149,7 +149,7 @@ utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
               except += ' ' + ex.message;
             except += '\n';
             if (ex.stackElements) {
-              ex.stackElements.forEach(this.buildException(el, except));
+              ex.stackElements.forEach(this.buildException(except));
             }
             if (ex.cause)
               except += 'Caused By: ';
