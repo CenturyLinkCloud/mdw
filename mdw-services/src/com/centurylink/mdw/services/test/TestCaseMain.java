@@ -4,8 +4,6 @@
 package com.centurylink.mdw.services.test;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,14 +13,14 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestExecConfig;
+import com.centurylink.mdw.test.TestCase.Status;
 
 public class TestCaseMain {
     /**
-     * Execute a test case in standalone mode (for Designer and Gradle).
+     * Execute a test case in standalone mode (for Designer debug).
      * Takes a single argument: testCasePath.
-     * TODO: list of test cases (or pattern)
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Throwable {
 
         // asset root
         String assetLoc = System.getProperty("mdw.asset.root");
@@ -56,26 +54,38 @@ public class TestCaseMain {
         if (masterRequestId == null)
             throw new IllegalStateException("Missing system property: mdw.asset.root");
 
+        TestingServices testingServices = ServiceLocator.getTestingServices();
+        TestCase testCase = testingServices.getTestCase(testCasePath);
+
+        File resultsFile = testingServices.getTestResultsFile(null);
+
+        // TODO
+        LogMessageMonitor monitor = null;
+        Map<String,Process> processCache = new HashMap<>();
+        TestCaseRun run = new TestCaseRun(testCase, user, resultsFile.getParentFile(), 0, masterRequestId, monitor, processCache, execConfig);
         try {
-            TestingServices testingServices = ServiceLocator.getTestingServices();
-            TestCase testCase = testingServices.getTestCase(testCasePath);
+            run.runStandalone();
+            if (run.getTestCase().getStatus() == Status.Passed)
+                System.exit(0);
+            else
+                System.exit(1); // fail
 
-            File resultsFile = testingServices.getTestResultsFile(null);
-
-            // TODO
-            LogMessageMonitor monitor = null;
-            Map<String,Process> processCache = new HashMap<>();
-            TestCaseRun run = new TestCaseRun(testCase, user, resultsFile.getParentFile(), 0, masterRequestId, monitor, processCache, execConfig);
-            try {
-                run.runStandalone();
-            }
-            catch (Throwable th) {
-                th.printStackTrace(run.getLog());
-                throw th;
-            }
         }
-        catch (Exception ex) {
-            ex.printStackTrace();
+        catch (Throwable th) {
+            th.printStackTrace(run.getLog());
+            throw th;
+        }
+
+        // reach here only when error
+        System.exit(1);
+    }
+
+    /**
+     * Replaces main() in GroovyStarter in order to call System.exit() when finished.
+     */
+    public static class GroovyStarter {
+        public static void main(String args[]) {
+            org.codehaus.groovy.tools.GroovyStarter.main(args);
         }
     }
 }
