@@ -146,7 +146,7 @@ public class ProcessSaveAsDialog extends TrayDialog {
         WorkflowProject workflowProject = process.getProject();
         PluginDataAccess dataAccess = workflowProject.getDataAccess();
         if (process instanceof WorkflowProcess)
-            return dataAccess.processNameExists(name);
+            return dataAccess.processNameExists(newPackage.getPackageVO(),name);
         else
             return false;
     }

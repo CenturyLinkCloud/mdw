@@ -256,7 +256,7 @@ public class ProcessExplorerDropTarget extends ViewerDropAdapter {
                     }
                 }
                 CopyDialog copyDialog = new CopyDialog(getViewer().getControl().getShell(),
-                        existing, processName, version);
+                        existing, processName, version, targetPackage);
                 if (copyDialog.open() == Dialog.OK) {
                     String newName = copyDialog.getNewName();
                     designerProxy.copyProcess(processName, version, newName, targetPackage);
@@ -310,7 +310,7 @@ public class ProcessExplorerDropTarget extends ViewerDropAdapter {
         if (operation == DND.DROP_COPY) {
             ExternalEvent existing = workflowProject.getExternalEvent(externalEventId);
             CopyDialog copyDialog = new CopyDialog(getViewer().getControl().getShell(), existing,
-                    existing.getMessagePattern(), null);
+                    existing.getMessagePattern(), null,targetPackage);
             if (copyDialog.open() == Dialog.OK) {
                 String newPattern = copyDialog.getNewName();
                 ExternalEvent newCopy = new ExternalEvent(existing);

@@ -1060,7 +1060,7 @@ public class DesignerProxy {
     }
 
     public void renameProcess(final WorkflowProcess processVersion, final String newName) {
-        if (dataAccess.processNameExists(newName)) {
+        if (dataAccess.processNameExists(processVersion.getPackage().getPackageVO(),newName)) {
             Shell shell = MdwPlugin.getActiveWorkbenchWindow().getShell();
             MessageDialog.openError(shell, "Can't Rename",
                     "Process name already exists: '" + newName + "'");

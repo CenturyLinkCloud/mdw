@@ -53,15 +53,18 @@ public class RenameDialog extends TrayDialog {
     @Override
     protected Control createDialogArea(Composite parent) {
         String message = "";
+        final WorkflowProcess  processVersion;
         Composite composite = (Composite) super.createDialogArea(parent);
         if (toRename instanceof WorkflowProcess) {
-            WorkflowProcess processVersion = (WorkflowProcess) toRename;
+            processVersion = (WorkflowProcess) toRename;
             if (processVersion.hasDescendantProcessVersions())
                 message = "Renaming all process versions.";
             else
                 message = "Renamed process will be version 1.";
 
             message += "\nCalling processes must be updated manually.";
+        }else{
+            processVersion = null;
         }
         composite.getShell().setText(title);
 
@@ -81,7 +84,7 @@ public class RenameDialog extends TrayDialog {
 
                 String error = null;
                 if (toRename instanceof WorkflowProcess
-                        && workflowProject.getDataAccess().processNameExists(name))
+                        &&  workflowProject.getDataAccess().processNameExists(processVersion.getPackage().getPackageVO(),name))
                     error = "Process name already exists:\n'" + name + "'";
                 else if (toRename instanceof WorkflowPackage) {
                     WorkflowPackage packageVersion = (WorkflowPackage) toRename;

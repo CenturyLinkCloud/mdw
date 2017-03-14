@@ -38,11 +38,6 @@ public class CopyDialog extends TrayDialog {
     }
 
     public CopyDialog(Shell shell, WorkflowElement workflowElement, String originalName,
-            String originalVersion) {
-        this(shell, workflowElement, originalName, originalVersion, null);
-    }
-
-    public CopyDialog(Shell shell, WorkflowElement workflowElement, String originalName,
             String originalVersion, WorkflowPackage targetPackage) {
         super(shell);
         this.workflowElement = workflowElement;
@@ -100,7 +95,7 @@ public class CopyDialog extends TrayDialog {
         WorkflowProject workflowProject = workflowElement.getProject();
         PluginDataAccess dataAccess = workflowProject.getDataAccess();
         if (workflowElement instanceof WorkflowProcess)
-            return dataAccess.processNameExists(name);
+            return dataAccess.processNameExists(targetPackage.getPackageVO(),name);
         else if (workflowElement instanceof ExternalEvent)
             return workflowProject.externalEventMessagePatternExists(name);
         else if (workflowElement instanceof WorkflowAsset)

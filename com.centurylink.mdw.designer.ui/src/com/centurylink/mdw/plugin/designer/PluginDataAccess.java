@@ -311,9 +311,9 @@ public class PluginDataAccess {
         return processNames;
     }
 
-    public boolean processNameExists(String processName) {
-        for (ProcessVO processVO : designerDataModel.getProcesses()) {
-            if (processVO.getProcessName().equals(processName))
+    public boolean processNameExists(PackageVO pkgVO, String processName) {
+        for (ProcessVO process : pkgVO.getProcesses()) {
+            if (process.getProcessName().equals(processName))
                 return true;
         }
         return false;
