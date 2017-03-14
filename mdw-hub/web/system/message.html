@@ -9,15 +9,24 @@
                <form name="httpHelperForm" class="form-horizontal mdw-section" role="form">
                 <fieldset ng-disabled="waitingForResponse">
                   <div class="form-group">
-                    <div class="col-xs-1">
-                    <select class="form-control" ng-model="httpHelper.httpMethod"  uib-dropdown-menu aria-labelledby="simple-dropdown">
-                      <option ng-repeat="httpMethod in httpHelper.httpMethods" value="{{httpMethod}}">{{httpMethod}}</option>
-                    </select>
+                    <div class="col-xs-2">
+                      <div class="mdw-float-right">
+                        <div class="mdw-inner-addon mdw-right-addon" uib-dropdown dropdown-append-to-body="true">
+                          <i class="glyphicon glyphicon-chevron-down"></i>
+                          <input type="text" class="form-control mdw-dropfilter"
+                            placeholder="POST" uib-dropdown-toggle readonly value="{{httpHelper.httpMethod}}">
+                          <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+                            <li ng-repeat="httpMethod in httpHelper.httpMethods">
+                              <a href="" ng-click="httpHelper.httpMethod = httpMethod">{{httpMethod}}</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
-                    <div class="col-xs-1" style="text-align: right;">
+                    <div class="col-xs-1">
                        <label class="control-label" for="httpUrl">URL:</label>
                     </div>
-                    <div class="col-xs-9">
+                    <div class="col-xs-8">
                       <input type="text" id="httpUrl" name="url" class="form-control" ng-model="httpHelper.url" required maxlength="128"
                          ng-blur="httpHelper.url = httpHelper.url === '' ? undefined : httpHelper.url">
                     </div>
