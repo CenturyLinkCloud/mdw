@@ -318,7 +318,7 @@ routesSvc.factory('routes', function() {
       },
       {
         path: '/system/message',
-        templateUrl: 'system/messageHelper.html',
+        templateUrl: 'system/message.html',
         controller: 'MessageController'
       }
    ]
