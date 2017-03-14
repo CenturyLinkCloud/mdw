@@ -803,7 +803,7 @@ public class ProcessEngineDriver {
             bindRequestHeadersVariable(procdef, headers, engine, mainProcessInst);
         }
         logger.info(logtag(processId, mainProcessInst.getId(), masterRequestId),
-                WorkStatus.LOGMSG_PROC_START + " - " + procdef.getProcessName() + "/" + procdef.getVersionString());
+                WorkStatus.LOGMSG_PROC_START + " - " + procdef.getProcessQualifiedName() + "/" + procdef.getVersionString());
         engine.notifyMonitors(mainProcessInst, WorkStatus.LOGMSG_PROC_START);
         // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
         InternalEvent event = InternalEvent.createActivityStartMessage(startActivityId,
@@ -970,7 +970,7 @@ public class ProcessEngineDriver {
                 procdef.getProcessId(), ownerType, ownerId, null, null,
                 masterRequestId, vars);
         logger.info(logtag(processId, processInst.getId(), masterRequestId),
-                WorkStatus.LOGMSG_PROC_START + " - " + procdef.getProcessName() + "/" + procdef.getVersionString());
+                WorkStatus.LOGMSG_PROC_START + " - " + procdef.getProcessQualifiedName() + "/" + procdef.getVersionString());
         engine.notifyMonitors(processInst, WorkStatus.LOGMSG_PROC_START);
         if (ownerType.equals(OwnerType.DOCUMENT))
             setOwnerDocumentProcessInstanceId(engine, ownerId, processInst.getId(), masterRequestId);

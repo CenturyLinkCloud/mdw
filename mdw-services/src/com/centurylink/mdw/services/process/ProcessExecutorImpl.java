@@ -503,7 +503,7 @@ class ProcessExecutorImpl {
             return;
         }
         String tag = logtag(processInstVO.getProcessId(),processInstVO.getId(),processInstVO.getMasterRequestId());
-        logger.info(tag, "Transition to error subprocess " + embeddedProcdef.getProcessName());
+        logger.info(tag, "Transition to error subprocess " + embeddedProcdef.getProcessQualifiedName());
         String secondaryOwnerType;
         Long secondaryOwnerId;
         if (fromActInstId==null || fromActInstId.longValue()==0L) {
@@ -537,7 +537,7 @@ class ProcessExecutorImpl {
             if (logger.isInfoEnabled()) {
                 logger.info(logtag(processInstanceVO.getProcessId(), processInstanceVO.getId(),
                         processInstanceVO.getMasterRequestId()),
-                        WorkStatus.LOGMSG_PROC_START + " - " + processVO.getProcessName()
+                        WorkStatus.LOGMSG_PROC_START + " - " + processVO.getProcessQualifiedName()
                         + (processInstanceVO.isEmbedded() ?
                                 (" (embedded process " + processVO.getProcessId() + ")") :
                                 ("/" + processVO.getVersionString())));
@@ -1226,7 +1226,7 @@ class ProcessExecutorImpl {
         if (!noNotify) sendInternalEvent(retMsg);
         if (logger.isInfoEnabled()) {
             logger.info(logtag(processVO.getProcessId(), processInst.getId(), processInst.getMasterRequestId()),
-                    (isCancelled?WorkStatus.LOGMSG_PROC_CANCEL:WorkStatus.LOGMSG_PROC_COMPLETE) + " - " + processVO.getProcessName()
+                    (isCancelled?WorkStatus.LOGMSG_PROC_CANCEL:WorkStatus.LOGMSG_PROC_COMPLETE) + " - " + processVO.getProcessQualifiedName()
                     + (isCancelled?"":completionCode==null?" completion code is null":(" completion code = "+completionCode)));
         }
         notifyMonitors(processInst, WorkStatus.LOGMSG_PROC_COMPLETE);
@@ -1877,9 +1877,9 @@ class ProcessExecutorImpl {
                                         processInstance.setVariables(new ArrayList<VariableInstance>());
                                     Variable varVO = processVO.getVariable(varName);
                                     if (varVO == null || !varVO.isInput())
-                                        throw new ProcessException("Process '" + processVO.getLabel() + "' has no such input variable defined: " + varName);
+                                        throw new ProcessException("Process '" + processVO.getFullLabel() + "' has no such input variable defined: " + varName);
                                     if (processInstance.getVariable(varName) != null)
-                                        throw new ProcessException("Process '" + processVO.getLabel() + "' input variable already populated: " + varName);
+                                        throw new ProcessException("Process '" + processVO.getFullLabel() + "' input variable already populated: " + varName);
                                     if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), varVO.getVariableType())) {
                                         DocumentReference docRef = createDocument(varVO.getVariableType(), OwnerType.VARIABLE_INSTANCE, new Long(0),
                                                 updated.get(varName));

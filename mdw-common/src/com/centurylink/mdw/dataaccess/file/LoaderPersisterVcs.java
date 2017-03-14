@@ -895,24 +895,33 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public Process getProcessBase(String name, int version) throws DataAccessException {
         List<Process> versions = version == 0 ? new ArrayList<Process>() : null;
+        String plainName = name;
+        String pkgName = null;
+        int lastSlash = name.lastIndexOf('/');
+        if (lastSlash >= 0) {
+            pkgName = plainName.substring(0, lastSlash);
+            plainName = plainName.substring(lastSlash + 1);
+        }
         for (PackageDir pkgDir : getPackageDirs()) {
-            for (File procFile : pkgDir.listFiles(procFileFilter)) {
-                String fileName = procFile.getName();
-                if (fileName.substring(0, fileName.length() - PROCESS_FILE_EXTENSION.length()).equals(name)) {
-                    try {
-                        Process process = loadProcess(pkgDir, pkgDir.getAssetFile(procFile), true);
-                        if (version == 0) {
-                            versions.add(process);
+            if (pkgName == null || pkgName.equals(pkgDir.getPackageName())) {
+                for (File procFile : pkgDir.listFiles(procFileFilter)) {
+                    String fileName = procFile.getName();
+                    if (fileName.substring(0, fileName.length() - PROCESS_FILE_EXTENSION.length()).equals(plainName)) {
+                        try {
+                            Process process = loadProcess(pkgDir, pkgDir.getAssetFile(procFile), true);
+                            if (version == 0) {
+                                versions.add(process);
+                            }
+                            else if (process.getVersion() == version) {
+                                return process;
+                            }
                         }
-                        else if (process.getVersion() == version) {
-                            return process;
+                        catch (DataAccessException ex) {
+                            throw ex;
                         }
-                    }
-                    catch (DataAccessException ex) {
-                        throw ex;
-                    }
-                    catch (Exception ex) {
-                        throw new DataAccessException(ex.getMessage(), ex);
+                        catch (Exception ex) {
+                            throw new DataAccessException(ex.getMessage(), ex);
+                        }
                     }
                 }
             }

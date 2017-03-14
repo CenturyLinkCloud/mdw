@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -62,7 +63,10 @@ public class Workflow extends JsonRestService {
             }
             else {
                 String assetPath = segments[1] + "/" + segments[2];
-                Process process = workflowServices.getProcessDefinition(assetPath, getQuery(path, headers));
+                Query query = getQuery(path, headers);
+                if (segments.length == 4)
+                    query.setFilter("version", Asset.parseVersion(segments[3]));
+                Process process = workflowServices.getProcessDefinition(assetPath, query);
                 JSONObject json = process.getJson(); // does not include name or package
                 json.put("name", process.getName());
                 json.put("packageName", process.getPackageName());

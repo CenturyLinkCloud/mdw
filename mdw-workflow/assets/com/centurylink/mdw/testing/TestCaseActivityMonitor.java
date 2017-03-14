@@ -70,7 +70,7 @@ public class TestCaseActivityMonitor implements ActivityMonitor {
                             Process process = runtimeContext.getProcess();
                             Variable variable = process.getVariable(name);
                             if (variable == null)
-                                throw new IllegalStateException("Variable: " + name + " not defined for process: " + process.getLabel());
+                                throw new IllegalStateException("Variable: " + name + " not defined for process: " + process.getFullLabel());
                             boolean isDoc = VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), variable.getVariableType());
                             Object value;
                             if (isDoc)

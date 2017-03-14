@@ -774,23 +774,30 @@ public class EventManagerBean implements EventManager {
         return processVO;
     }
 
-    public Long findProcessId(String name, int version)
+    /**
+     * Builds the value object that represents a process
+     *
+     * @param pProcessName
+     * @param pVersion
+     * @return ProcessVO
+     */
+    public Process getProcess(String procname, int version)
     throws DataAccessException {
-        CodeTimer timer = new CodeTimer("findProcessId()", true);
-        String plainName = name;
-        int lastSlash = plainName.lastIndexOf('/');
-        if (lastSlash >= 0)
-            plainName = plainName.substring(lastSlash + 1);  // currently just ignore package ref since name is unique
-        ProcessLoader loader = DataAccess.getProcessLoader();
-        Process processVO;
+        CodeTimer timer = new CodeTimer("getProcessVO()", true);
+        Process processVO = null;
         try {
-            processVO = loader.getProcessBase(plainName, version);
+            processVO = DataAccess.getProcessLoader().getProcessBase(procname, version);
+            if (processVO != null) {
+                // all db attributes are override attributes
+                Map<String,String> attributes = getAttributes(OwnerType.PROCESS, processVO.getProcessId());
+                if (attributes != null)
+                    processVO.applyOverrideAttributes(attributes);
+            }
         } catch (Exception e) {
-            throw new DataAccessException(0, "Cannot find process with name "
-                    + plainName + ", version " + version, e);
+            throw new DataAccessException(0, "Cannot load process: " + procname + " v" + version + " (" + e.getMessage() + ")", e);
         }
         timer.stopAndLogTiming("");
-        return processVO.getProcessId();
+        return processVO;
     }
 
     public List<EventLog> getEventLogs(String pEventName, String pEventSource,

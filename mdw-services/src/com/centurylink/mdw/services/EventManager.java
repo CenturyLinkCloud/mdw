@@ -300,16 +300,13 @@ public interface EventManager {
     throws DataAccessException, ProcessException;
 
     /**
-     * Find the process definition ID by process name and version.
-     * Throws DataAccessException when the process is not found
-     * @param name
-     * @param version
-     * @return ID of the process
-     * @throws DataAccessException
+     * get the process definition by process name and version
+     * @param procname process name
+     * @param version process version
+     * @return process definition
      */
-    public Long findProcessId(String name, int version)
+    public Process getProcess(String procname, int version)
     throws DataAccessException;
-
     ////
     //// the followings are for scheduled events (timer tasks and long-delayed internal messages)
     ////
