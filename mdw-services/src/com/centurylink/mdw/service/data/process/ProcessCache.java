@@ -49,6 +49,7 @@ public class ProcessCache implements CacheEnabled, CacheService {
 
     public void clearCache() {
         synchronized(processMap) {
+            processList = null;
             processMap.clear();
             procNameMap.clear();
             procNameLatest.clear();
@@ -73,14 +74,17 @@ public class ProcessCache implements CacheEnabled, CacheService {
 
     private void putInCache(Process process, boolean versionZero) {
         processMap.put(process.getProcessId(), process);
-        List<Process> vl = procNameMap.get(process.getProcessName());
+        List<Process> vl = procNameMap.get(process.getProcessQualifiedName());
         if (vl == null) {
             vl = new ArrayList<Process>();
-            procNameMap.put(process.getProcessName(), vl);
+            procNameMap.put(process.getProcessQualifiedName(), vl);
         }
         vl.add(process);
         if (versionZero)
-            procNameLatest.put(process.getProcessName(), process);
+            procNameLatest.put(process.getProcessQualifiedName(), process);
+
+        if (process.getPackageName() == null)
+            logger.warn("Non-Package Qualified Process Names are DEPRECATED in MDW");
     }
 
     private Process getProcess0(Long processId) {
@@ -121,10 +125,17 @@ public class ProcessCache implements CacheEnabled, CacheService {
         try {
             Process match = null;
             for (Process process : getAllProcesses()) {
-                if (spec.getName().equals(process.getName())) {
-                    if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
-                        match = process;
+                if (spec.getQualifiedName().equals(spec.getName())) {   // Missing package name - Match using only process name
+                    if (spec.getName().equals(process.getProcessName())) {
+                        if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
+                            match = process;
+                    }
                 }
+                else
+                    if (spec.getQualifiedName().equals(process.getProcessQualifiedName())) {   // Match using fully qualified process name
+                        if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
+                            match = process;
+                    }
             }
             if (match == null) {
                 return null;
@@ -183,10 +194,11 @@ public class ProcessCache implements CacheEnabled, CacheService {
     private Process loadProcess(String procname, int version) {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
-            Long procid = eventMgr.findProcessId(procname, version);
-            if (procid == null)
+            Process proc = eventMgr.getProcess(procname, version);
+
+            if (proc == null)
                 throw new Exception("Process not found " + procname + " v" + version);
-            return eventMgr.getProcess(procid);
+            return proc;
         }
         catch (Exception ex) {
             StandardLogger logger = LoggerUtil.getStandardLogger();

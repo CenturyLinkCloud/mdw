@@ -488,15 +488,16 @@ public class TestCaseRun implements Runnable {
                 int spaceV = target.lastIndexOf(" v");
                 if (spaceV > 0) {
                     try {
-                        // TODO support smart versions
-                        version = Asset.parseVersionSpec(procPath.substring(spaceV + 2));
+                        version = Asset.parseVersion(procPath.substring(spaceV + 2));
                         procPath = target.substring(0, spaceV);
                     }
                     catch (NumberFormatException ex) {
                         // process name must contain space v
                     }
                 }
-                process = workflowServices.getProcessDefinition(procPath, new Query());
+                Query query = new Query();
+                query.setFilter("version", version);
+                process = workflowServices.getProcessDefinition(procPath, query);
                 if (process == null)
                     throw new TestException("Process: " + target + " not found");
                 processCache.put(target, process);
@@ -848,7 +849,7 @@ public class TestCaseRun implements Runnable {
                         activityStubResponse.setVariables(responseVariables);
                     }
                     if (isVerbose())
-                        log.println("Stubbing activity " + activityRuntimeContext.getProcess().getProcessName() + ":" +
+                        log.println("Stubbing activity " + activityRuntimeContext.getProcess().getProcessQualifiedName() + ":" +
                                 activityRuntimeContext.getActivityLogicalId() + " with result code: " + resultCode);
                     return activityStubResponse;
                 }

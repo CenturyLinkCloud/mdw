@@ -239,6 +239,16 @@ public class Process extends Asset implements Jsonable {
     }
 
     /**
+     * @return the processName
+     */
+    public String getProcessQualifiedName() {
+        if (StringHelper.isEmpty(getPackageName()))
+                return getName();
+        else
+            return getPackageName() + "/" + getName();
+    }
+
+    /**
      * @param processName the processName to set
      */
     public void setProcessName(String processName) {
@@ -682,10 +692,7 @@ public class Process extends Asset implements Jsonable {
     }
 
     public String getFullLabel() {
-        if (getPackageName() == null)
-            return getLabel();
-        else
-            return getPackageName() + "/" + getLabel();
+        return getProcessQualifiedName() + " v" + getVersionString();
     }
 
     public static int versionFromString(String v) {

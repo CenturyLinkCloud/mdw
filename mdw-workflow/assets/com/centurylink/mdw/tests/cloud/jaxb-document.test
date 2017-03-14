@@ -1,5 +1,5 @@
 // jaxb-document
-start process("com.centurylink.mdw.tests/JaxbDocument") {
+start process("com.centurylink.mdw.tests.cloud/JaxbDocument") {
     variables = [actionRequest: asset("jaxb-action-request.xml").text,
                  assetDefinedJaxb: asset("jaxb-asset.xml").text]
 }

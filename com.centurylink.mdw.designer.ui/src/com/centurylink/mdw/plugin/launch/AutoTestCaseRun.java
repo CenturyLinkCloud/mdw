@@ -5,6 +5,10 @@ package com.centurylink.mdw.plugin.launch;
 
 import java.util.Map;
 
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -13,6 +17,7 @@ import com.centurylink.mdw.designer.DesignerDataAccess;
 import com.centurylink.mdw.designer.testing.LogMessageMonitor;
 import com.centurylink.mdw.designer.testing.TestCaseRun;
 import com.centurylink.mdw.model.value.process.ProcessVO;
+import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.designer.model.AutomatedTestCase;
 
 /**
@@ -45,8 +50,21 @@ public class AutoTestCaseRun extends TestCaseRun {
 
     @Override
     public void stop() {
-
-        // TODO halt via launch.terminate()
+        if (launchShortcut != null) {
+            ILaunchConfiguration debugLaunchConfig = launchShortcut.getLaunchConfiguration();
+            if (debugLaunchConfig != null) {
+                try {
+                    for (ILaunch launch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
+                        if (launch.getLaunchConfiguration().equals(debugLaunchConfig))
+                            launch.terminate();
+                    }
+                    super.stop();
+                }
+                catch (DebugException ex) {
+                    PluginMessages.log(ex);
+                }
+            }
+        }
         super.stop();
     }
 

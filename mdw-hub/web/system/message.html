@@ -10,7 +10,7 @@
                 <fieldset ng-disabled="waitingForResponse">
                   <div class="form-group">
                     <div class="col-xs-2">
-                      <div class="mdw-float-right">
+                      <div class="mdw-float-left">
                         <div class="mdw-inner-addon mdw-right-addon" uib-dropdown dropdown-append-to-body="true">
                           <i class="glyphicon glyphicon-chevron-down"></i>
                           <input type="text" class="form-control mdw-dropfilter"
@@ -83,12 +83,19 @@
                            ng-blur="jmsHelper.endPoint = jmsHelper.endPoint === '' ? undefined : jmsHelper.endPoint">
                       </div>
                     </div>     
-                   <div class="form-group">
+                    <div class="form-group">
                       <label class="control-label col-xs-2 mdw-required" for="queueName">Queue Name:</label>
-                      <div class="col-xs-10">
-                      <select class="form-control" ng-model="jmsHelper.queueName"  uib-dropdown-menu aria-labelledby="simple-dropdown">
-                        <option ng-repeat="queueName in jmsHelper.queueNames" value="{{queueName}}">{{queueName}}</option>
-                      </select>
+                      <div class="mdw-float-right col-xs-10">
+                        <div class="mdw-inner-addon mdw-right-addon" uib-dropdown dropdown-append-to-body="true">
+                          <i class="glyphicon glyphicon-chevron-down"></i>
+                          <input type="text" class="form-control mdw-dropfilter"
+                             uib-dropdown-toggle readonly value="{{jmsHelper.queueName}}">
+                          <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+                            <li ng-repeat="queueName in jmsHelper.queueNames">
+                              <a href="" ng-click="jmsHelper.queueName = queueName">{{queueName}}</a>
+                            </li>
+                          </ul>
+                        </div>
                       </div>
                     </div> 
                     <div class="form-group">

@@ -1,4 +1,4 @@
-#Mon Mar 06 09:06:52 MST 2017
+#Tue Mar 14 16:18:31 MDT 2017
 A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=3
 CrossmapTest.proc=2
@@ -74,7 +74,7 @@ doc-unchangedJson.json=1
 doc-unchangedStringDoc.txt=1
 doc-unchangedXmlBean.xml=1
 doc-unchangedXmlBeanWrapper.txt=2
-document-handling.test=1
+document-handling.test=2
 document-handling.yaml=11
 document-lvl9-binding-async-subprocess.test=2
 document-lvl9-binding-async-subprocess.yaml=4
@@ -160,7 +160,7 @@ service-heteroproc-parallel-action.xml=2
 service-heteroproc-parallel-response.xml=1
 service-heteroproc-parallel.test=6
 service-heteroproc-parallel.yaml=8 Auto-created
-service-heteroproc-sequential.test=1
+service-heteroproc-sequential.test=2
 service-heteroproc-sequential.yaml=7 Auto-created
 service-order-simple.test=1
 service-order-simple.yaml=3 Auto-created
@@ -206,7 +206,7 @@ timer-wait-event-cancel.test=1
 timer-wait-event-cancel.yaml=5 Auto-created
 timer-wait-event-hold.test=1
 timer-wait-event-hold.yaml=5 Auto-created
-timer-wait-event-wait.test=1
+timer-wait-event-wait.test=2
 timer-wait-event-wait.yaml=5 Auto-created
 timer-wait-method-expr.test=1
 timer-wait-method-expr.yaml=3 Auto-created

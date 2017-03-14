@@ -685,27 +685,18 @@ public class WorkflowServicesImpl implements WorkflowServices {
         int lastSlash = assetPath.lastIndexOf('/');
         if (lastSlash <= 0)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Bad asset path: " + assetPath);
-        String packageName = assetPath.substring(0, lastSlash);
-        String processName = assetPath.substring(lastSlash + 1);
+        String processName = assetPath; //.substring(lastSlash + 1);
         if (assetPath.endsWith(".proc"))
             processName = processName.substring(0, processName.length() - ".proc".length());
-        else
-            assetPath += ".proc";
-        AssetInfo asset = new AssetInfo(ApplicationContext.getAssetRoot(), assetPath);
-        if (!asset.getFile().isFile())
+
+        int version = query.getIntFilter("version");
+        if (version < 0)
+            version = 0;
+        Process process = ProcessCache.getProcess(processName, version);
+        if (process == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath);
 
-        try {
-            String version = query.getFilter("version"); // TODO honor version
-            String json = new String(FileHelper.read(asset.getFile()));
-            Process process = new Process(new JSONObject(json));
-            process.setName(processName);
-            process.setPackageName(packageName);
-            return process;
-        }
-        catch (Exception ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error reading: " + asset.getFile(), ex);
-        }
+        return process;
     }
 
     public List<Process> getProcessDefinitions(Query query) throws ServiceException {

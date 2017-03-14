@@ -1,7 +1,7 @@
 // service-heteroproc-sequential
 masterRequestId = "tester-" + System.currentTimeMillis()
 
-start process("com.centurylink.mdw.tests/MDWTestHeterogeneousProcessCall"){
+start process("com.centurylink.mdw.tests.workflow/MDWTestHeterogeneousProcessCall"){
 	variables = [testcase: "sequential",
 		request:	"""\
 <ser:ActionRequest xmlns:ser='http://mdw.centurylink.com/services'>

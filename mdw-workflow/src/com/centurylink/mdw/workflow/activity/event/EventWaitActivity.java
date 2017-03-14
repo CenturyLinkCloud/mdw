@@ -180,7 +180,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
                 Process processVO = getProcessDefinition();
                 Variable variableVO = processVO.getVariable(rcvdMsgDocVar);
                 if (variableVO == null)
-                    throw new ActivityException("Received Message Variable '" + rcvdMsgDocVar + "' is not defined or is not Document Type for process " + processVO.getLabel());
+                    throw new ActivityException("Received Message Variable '" + rcvdMsgDocVar + "' is not defined or is not Document Type for process " + processVO.getFullLabel());
                 if (message != null) {
                     this.setParameterValueAsDocument(rcvdMsgDocVar, variableVO.getVariableType(), message);
                 }

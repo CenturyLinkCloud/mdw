@@ -15,6 +15,8 @@ import com.centurylink.mdw.plugin.PluginMessages;
 public class AutoTestDebugListener implements IDebugEventSetListener {
 
     private ILaunchConfiguration launchConfig;
+    ILaunchConfiguration getLaunchConfig() { return launchConfig; }
+
     private TestCase testCase;
     private PrintStream log;
 
@@ -28,8 +30,8 @@ public class AutoTestDebugListener implements IDebugEventSetListener {
         for (DebugEvent event : events) {
             if (event.getSource() instanceof IProcess) {
                 IProcess process = (IProcess) event.getSource();
-                if (event.getKind() == DebugEvent.TERMINATE) {
-                    if (process.getLaunch().getLaunchConfiguration().equals(launchConfig) && process.isTerminated()) {
+                if (process.getLaunch().getLaunchConfiguration().equals(launchConfig) && process.isTerminated()) {
+                    if (event.getKind() == DebugEvent.TERMINATE) {
                         testCase.setEndDate(new Date());
                         try {
                             if (process.getExitValue() == 0) {
@@ -43,6 +45,7 @@ public class AutoTestDebugListener implements IDebugEventSetListener {
                             }
                             if (log != System.out)
                                 log.close();
+
                         }
                         catch (DebugException ex) {
                             PluginMessages.log(ex);

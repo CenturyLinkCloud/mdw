@@ -59,9 +59,12 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
      * @throws Exception The most common exception is that no process exists for the given name.
      */
     protected Long getProcessId(String procname) throws Exception {
-        EventManager eventManager = ServiceLocator.getEventManager();
-        Long procId = eventManager.findProcessId(procname, 0);
-        return procId;
+        Process proc = ProcessCache.getProcess(procname, 0);
+        if (proc == null)
+            throw new DataAccessException(0, "Cannot find process with name "
+                    + procname + ", version 0");
+
+        return proc.getProcessId();
     }
 
     /**

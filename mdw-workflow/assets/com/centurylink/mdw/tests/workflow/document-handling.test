@@ -1,6 +1,6 @@
 // document-handling
 // creates two instances
-start process("com.centurylink.mdw.tests/DocumentChange") {
+start process("com.centurylink.mdw.tests.workflow/DocumentChange") {
     variables = [ outcome: "change",
                   changedDomDoc: asset("doc-changedDomDoc.xml").text,
                   changedFormDataDoc: asset("doc-changedFormDataDoc.xml").text,

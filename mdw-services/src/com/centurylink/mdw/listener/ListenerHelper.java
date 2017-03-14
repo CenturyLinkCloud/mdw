@@ -19,6 +19,7 @@ import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.event.DefaultExternalEventHandler;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.EventHandlerRegistry;
@@ -31,9 +32,11 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.PackageAware;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.ServiceMonitor;
 import com.centurylink.mdw.service.data.event.EventHandlerCache;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.handler.ServiceRequestHandler;
 import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventManager;
@@ -558,9 +561,12 @@ public class ListenerHelper {
      * @throws Exception
      */
     public Long getProcessId(String procname) throws Exception {
-        EventManager eventMgr = ServiceLocator.getEventManager();
-        Long procId = eventMgr.findProcessId(procname, 0);
-        return procId;
+        Process proc = ProcessCache.getProcess(procname, 0);
+        if (proc == null)
+            throw new DataAccessException(0, "Cannot find process with name "
+                    + procname + ", version 0");
+
+        return proc.getProcessId();
     }
 
     public static boolean isJson(String message) {

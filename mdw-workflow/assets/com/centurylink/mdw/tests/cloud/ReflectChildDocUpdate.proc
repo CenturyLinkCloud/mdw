@@ -24,8 +24,8 @@
     {
       "attributes": {
         "WORK_DISPLAY_INFO": "x=165,y=74,w=101,h=70",
-        "processname": "com.centurylink.mdw.tests/JaxbDocument",
-        "processversion": "[0.3,1)",
+        "processname": "com.centurylink.mdw.tests.cloud/JaxbDocument",
+        "processversion": "[0.8,1)",
         "synchronous": "TRUE",
         "variables": "actionRequest=$actionRequest;assetDefinedJaxb=$assetDefinedJaxbIn"
       },
@@ -89,5 +89,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.3"
+  "version": "0.4"
 }

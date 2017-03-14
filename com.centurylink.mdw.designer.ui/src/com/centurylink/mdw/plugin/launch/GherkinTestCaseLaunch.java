@@ -127,9 +127,9 @@ public class GherkinTestCaseLaunch extends TestCaseRun {
                 DebugUITools.launch(launchConfig, ILaunchManager.RUN_MODE);
 
                 // don't return until execution complete
-                while (getTestCase().getStatus().equals(TestCase.STATUS_RUNNING)
-                        || getTestCase().getStatus().equals(TestCase.STATUS_WAITING))
-                    Thread.sleep(500);
+//                while (getTestCase().getStatus().equals(TestCase.STATUS_RUNNING)
+//                        || getTestCase().getStatus().equals(TestCase.STATUS_WAITING))
+//                    Thread.sleep(500);
             }
             catch (Throwable ex) {
                 PluginMessages.log(ex);

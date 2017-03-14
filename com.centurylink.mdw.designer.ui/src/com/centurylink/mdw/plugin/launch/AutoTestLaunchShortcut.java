@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 
+import com.centurylink.mdw.designer.testing.TestCase;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 /**
@@ -32,6 +33,14 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
 
     private AutoTestCaseRun testCaseRun;
     private WorkflowProject project;
+
+    private AutoTestDebugListener debugListener;
+
+    ILaunchConfiguration getLaunchConfiguration() {
+        if (debugListener == null)
+            return null;
+        return debugListener.getLaunchConfig();
+    }
 
     public AutoTestLaunchShortcut() {
     }
@@ -65,6 +74,13 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
     @Override
     protected Map<String, String> createLaunchProperties(IType runType, IJavaProject javaProject) {
         Map<String,String> launchConfigProperties = super.createLaunchProperties(runType, javaProject);
+
+//        launchConfigProperties.put(
+//                IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
+//                "org.codehaus.groovy.tools.GroovyStarter");
+
+        launchConfigProperties.put(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
+                "com.centurylink.mdw.services.test.TestCaseMain$GroovyStarter");
 
         String vmArgs = launchConfigProperties.get(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS);
 
@@ -126,12 +142,21 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
             workingConfig.setAttribute(
                     IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, Arrays.asList(
                             JavaRuntime.computeDefaultRuntimeClassPath(javaProject)));
-            ILaunchConfiguration config = workingConfig.doSave();
-            DebugPlugin.getDefault().addDebugEventListener(new AutoTestDebugListener(config, testCaseRun.getTestCase(), testCaseRun.getLog()));
-            DebugUITools.launch(config, mode);
+            ILaunchConfiguration launchConfig = workingConfig.doSave();
+            DebugPlugin.getDefault().addDebugEventListener(new AutoTestDebugListener(launchConfig, testCaseRun.getTestCase(), testCaseRun.getLog()));
+            DebugUITools.launch(launchConfig, mode);
+
+            // don't return until execution complete
+            try {
+                while (testCaseRun.getTestCase().getStatus().equals(TestCase.STATUS_RUNNING)
+                        || testCaseRun.getTestCase().getStatus().equals(TestCase.STATUS_WAITING))
+                    Thread.sleep(500);
+            }
+            catch (InterruptedException ex) {
+            }
         }
-        catch (CoreException e) {
-            GroovyCore.errorRunningGroovyFile((IFile) unit.getResource(), e);
+        catch (CoreException ex) {
+            GroovyCore.errorRunningGroovyFile((IFile) unit.getResource(), ex);
         }
     }
 }
