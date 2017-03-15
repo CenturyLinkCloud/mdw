@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -38,6 +39,14 @@ public class SpringAppContext implements CacheEnabled, CacheService {
     public static final String SPRING_CONTEXT_FILE = "spring/application-context.xml";
 
     private static final Object pkgContextLock = new Object();
+
+    // These are to keep track of variable translators, activity implementors, and event handlers that we
+    // already know don't have a bean defined in a package-specific context, so avoid loading the class and
+    // trying to get bean from context, since under heavy load, this can cause a bottleneck, especially for
+    // variable translators.
+    private static volatile Map<String, Map<String, Boolean>> undefinedVariableBeans = new ConcurrentHashMap<String, Map<String, Boolean>>();
+    private static volatile Map<String, Map<String, Boolean>> undefinedActivityBeans = new ConcurrentHashMap<String, Map<String, Boolean>>();
+    private static volatile Map<String, Map<String, Boolean>> undefinedEventBeans = new ConcurrentHashMap<String, Map<String, Boolean>>();
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -218,6 +227,11 @@ public class SpringAppContext implements CacheEnabled, CacheService {
     }
 
     public GeneralActivity getActivityImplementor(String type, Package pkg) throws IOException, ClassNotFoundException {
+        String key = pkg == null ? "SpringRootContext" : pkg.toString();
+        Map<String, Boolean> set = undefinedActivityBeans.get(key);
+        if (set != null && set.get(type) != null)
+            return null;
+
         try {
             Class<? extends GeneralActivity> implClass;
             if (pkg == null)
@@ -231,11 +245,23 @@ public class SpringAppContext implements CacheEnabled, CacheService {
             return getApplicationContext(pkg).getBean(implClass);
         }
         catch (NoSuchBeanDefinitionException ex) {
+            // Add to map of known classes that have no bean declared
+            //     set = undefinedActivityBeans.get(key);
+            if (set == null)
+                set = new ConcurrentHashMap<String, Boolean>();
+            set.put(type,true);
+            undefinedActivityBeans.put(key, set);
+
             return null; // no bean declared
         }
     }
 
     public ExternalEventHandler getEventHandler(String type, Package pkg) throws IOException, ClassNotFoundException {
+        String key = pkg == null ? "SpringRootContext" : pkg.toString();
+        Map<String, Boolean> set = undefinedEventBeans.get(key);
+        if (set != null && set.get(type) != null)
+            return null;
+
         try {
             Class<? extends ExternalEventHandler> implClass;
             if (pkg == null)
@@ -249,11 +275,23 @@ public class SpringAppContext implements CacheEnabled, CacheService {
             return getApplicationContext(pkg).getBean(implClass);
         }
         catch (NoSuchBeanDefinitionException ex) {
+            // Add to map of known classes that have no bean declared
+            //         set = undefinedEventBeans.get(key);
+            if (set == null)
+                set = new ConcurrentHashMap<String, Boolean>();
+            set.put(type,true);
+            undefinedEventBeans.put(key, set);
+
             return null; // no bean declared
         }
     }
 
     public VariableTranslator getVariableTranslator(String type, Package pkg) throws IOException, ClassNotFoundException {
+        String key = (pkg == null ? "SpringRootContext" : pkg.toString());
+        Map<String, Boolean> set = undefinedVariableBeans.get(key);
+        if (set != null && set.get(type) != null)
+            return null;
+
         try {
             Class<? extends VariableTranslator> implClass;
               if (pkg == null)
@@ -263,6 +301,13 @@ public class SpringAppContext implements CacheEnabled, CacheService {
             return getApplicationContext(pkg).getBean(implClass);
         }
         catch (NoSuchBeanDefinitionException ex) {
+            // Add to map of known classes that have no bean declared
+            //    set = undefinedVariableBeans.get(key);
+            if (set == null)
+                set = new ConcurrentHashMap<String, Boolean>();
+            set.put(type, true);
+            undefinedVariableBeans.put(key, set);
+
             return null; // no bean declared
         }
     }

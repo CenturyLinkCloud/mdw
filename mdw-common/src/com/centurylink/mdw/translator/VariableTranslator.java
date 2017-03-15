@@ -3,8 +3,11 @@
  */
 package com.centurylink.mdw.translator;
 
+import java.util.List;
+
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.impl.VariableTypeCache;
+import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.provider.ProviderRegistry;
@@ -16,6 +19,7 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
     protected static String EMPTY_STRING = "<EMPTY>";
     protected static String  ARRAY_DELIMETER = "~";
 
+    private static final List<VariableType> mdwVariableTypes = new MdwBaselineData().getVariableTypes();
 
     private Package pkg;
     public Package getPackage() { return pkg; }
@@ -51,9 +55,11 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
             if (vo == null)
                 return null;
 
-            // try dynamic java first (preferred in case patch override is needed)
-            ClassLoader parentLoader = packageVO == null ? VariableTranslator.class.getClassLoader() : packageVO.getClassLoader();
-            trans = ProviderRegistry.getInstance().getDynamicVariableTranslator(vo.getTranslatorClass(), parentLoader);
+            // try dynamic java first (preferred in case patch override is needed / Exclude MDW built-in translators)
+            if (!mdwVariableTypes.contains(vo)) {
+                ClassLoader parentLoader = packageVO == null ? VariableTranslator.class.getClassLoader() : packageVO.getClassLoader();
+                trans = ProviderRegistry.getInstance().getDynamicVariableTranslator(vo.getTranslatorClass(), parentLoader);
+            }
             if (trans == null) {
                 com.centurylink.mdw.variable.VariableTranslator injected
                     = SpringAppContext.getInstance().getVariableTranslator(vo.getTranslatorClass(), packageVO);

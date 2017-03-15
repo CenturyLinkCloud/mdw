@@ -114,17 +114,15 @@ public class TestRunner implements Runnable, MasterRequestListener {
             }
 
             // socket client
-            if (!config.isStandalone()) {
-                setLogWatchState(true);
+            setLogWatchState(true);
 
-                if (StubServer.isRunning())
-                    StubServer.stop();
-                if (config.isStubbing())
-                    StubServer.start(new TestStubber());
+            if (StubServer.isRunning())
+                StubServer.stop();
+            if (config.isStubbing())
+                StubServer.start(new TestStubber());
 
-                // stubbing
-                setStubServerState(config.isStubbing());
-            }
+            // stubbing
+            setStubServerState(config.isStubbing());
 
             // clear statutes for selected tests
             initResults();
@@ -152,10 +150,8 @@ public class TestRunner implements Runnable, MasterRequestListener {
                 Thread.sleep(PAUSE); // pause at least once to avoid too-quick socket shutdown
             } while (!updateResults() && running);
 
-            if (!config.isStandalone()) {
-                setLogWatchState(false);
-                setStubServerState(false);
-            }
+            setLogWatchState(false);
+            setStubServerState(false);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

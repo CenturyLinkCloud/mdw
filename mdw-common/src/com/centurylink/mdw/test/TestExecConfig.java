@@ -54,13 +54,6 @@ public class TestExecConfig implements Jsonable {
     public void setPinToServer(boolean pinToServer) { this.pinToServer = pinToServer; }
 
     /**
-     * True for Designer or Gradle runs.
-     */
-    private boolean standalone;
-    public boolean isStandalone() { return standalone; }
-    public void setStandalone(boolean standalone) { this.standalone = standalone; }
-
-    /**
      * Implies running workflow through REST.
      */
     private String serverUrl;
@@ -87,12 +80,8 @@ public class TestExecConfig implements Jsonable {
             this.verbose = json.getBoolean("verbose");
         if (json.has("createReplace"))
             this.createReplace = json.getBoolean("createReplace");
-        if (json.has("standalone"))
-            this.standalone = json.getBoolean("standalone");
         if (json.has("pinToServer"))
             this.pinToServer = json.getBoolean("pinToServer");
-        if (json.has("standalone"))
-            this.standalone = json.getBoolean("standalone");
         if (json.has("serverUrl"))
             this.serverUrl = json.getString("serverUrl");
     }
@@ -111,7 +100,6 @@ public class TestExecConfig implements Jsonable {
         if (pinToServer != null)
             this.pinToServer = Boolean.parseBoolean(pinToServer);
         this.serverUrl = properties.getProperty(MDW_TEST_SERVER_URL);
-        this.standalone = "standalone".equals(properties.getProperty("mdw.runtime.env"));
     }
 
     public JSONObject getJson() throws JSONException {
@@ -130,12 +118,8 @@ public class TestExecConfig implements Jsonable {
             json.put("verbose", verbose);
         if (createReplace)
             json.put("createReplace", createReplace);
-        if (standalone)
-            json.put("standalone", standalone);
         if (pinToServer)
             json.put("pinToServer", pinToServer);
-        if (standalone)
-            json.put("standalone", standalone);
         if (serverUrl != null)
             json.put("serverUrl", serverUrl);
         return json;

@@ -5,12 +5,10 @@ package com.centurylink.mdw.services.test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +24,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.xmlbeans.XmlException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.app.ApplicationContext;
@@ -35,11 +32,9 @@ import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
@@ -56,8 +51,6 @@ import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessList;
-import com.centurylink.mdw.model.workflow.ProcessRun;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -85,7 +78,6 @@ import com.centurylink.mdw.util.file.FileHelper;
 
 import groovy.lang.Binding;
 import groovy.lang.Closure;
-import groovy.lang.GroovyCodeSource;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
@@ -95,7 +87,10 @@ public class TestCaseRun implements Runnable {
     public TestCase getTestCase() { return testCase; }
 
     private String user;
+    protected String getUser() { return user; }
+
     private File resultsDir;
+    public File getResultsDir() { return resultsDir; }
 
     private int runNumber;
     public int getRunNumber() { return runNumber; }
@@ -109,9 +104,13 @@ public class TestCaseRun implements Runnable {
     MasterRequestListener getMasterRequestListener() { return masterRequestListener; }
 
     private LogMessageMonitor monitor;
+    protected LogMessageMonitor getMonitor() { return monitor; }
+
     private Map<String,Process> processCache;
+    protected Map<String,Process> getProcessCache() { return processCache; }
 
     private TestExecConfig config;
+    protected TestExecConfig getConfig() { return config; }
 
     public boolean isLoadTest() { return config.isLoadTest(); }
     public boolean isVerbose() { return config.isVerbose(); }
@@ -168,6 +167,9 @@ public class TestCaseRun implements Runnable {
         message = null;
         testCase.setStatus(TestCase.Status.InProgress);
         testCase.setStart(new Date());
+
+        deleteResultsFile();
+
         log.format("===== execute case %s\r\n", testCase.getPath());
         for (File file : resultsDir.listFiles()) {
             if (file.getName().endsWith(Asset.getFileExtension(Asset.YAML))) {
@@ -187,11 +189,10 @@ public class TestCaseRun implements Runnable {
             binding.setVariable("testCaseRun", this);
 
             ClassLoader classLoader = this.getClass().getClassLoader();
-            Package testPkg = null;
-            if (!config.isStandalone())
-                testPkg = PackageCache.getPackage(testCase.getPackage());
+            Package testPkg = PackageCache.getPackage(testCase.getPackage());
             if (testPkg != null)
                 classLoader = testPkg.getCloudClassLoader();
+
             GroovyShell shell = new GroovyShell(classLoader, binding, compilerConfig);
             Script gScript = shell.parse(groovyScript);
             gScript.setProperty("out", log);
@@ -208,44 +209,26 @@ public class TestCaseRun implements Runnable {
             log.println("starting process " + process.getLabel() + "...");
         this.testCaseProcess = process;
         try {
-            // delete the (convention-based) result file if exists
-            String resFileName = getTestCase().getName() + Asset.getFileExtension(Asset.YAML);
-            File resFile = new File(resultsDir + "/" + resFileName);
-            if (resFile.isFile())
-                resFile.delete();
-
             Process proc = process.getProcess();
             Map<String,String> params = process.getParams();
-            if (config.isStandalone()) {
-                HttpHelper httpHelper = getHttpHelper("services/Processes/run/" + proc.getId() + "?app=autotest");
-                ProcessRun run = new ProcessRun();
-                run.setDefinitionId(proc.getId());
-                run.setMasterRequestId(getMasterRequestId());
-                run.setOwnerType(OwnerType.TESTER);
-                run.setOwnerId(0L);
-                if (params != null && !params.isEmpty()) {
-                    Map<String,Value> values = new HashMap<>();
-                    for (String name : params.keySet())
-                        values.put(name, new Value(name, params.get(name)));
-                    run.setValues(values);
-                }
-                String response = httpHelper.post(run.getJson().toString(2));
-                run = new ProcessRun(new JSONObject(response));
-                if (run.getInstanceId() == null)
-                    throw new TestException("Failed to start " + process.getLabel());
-                else
-                    log.println(process.getLabel() + " instance " + run.getInstanceId() + " started");
-            }
-            else {
-                if (proc.isService())
-                    workflowServices.invokeServiceProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
-                else
-                    workflowServices.launchProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
-            }
+            if (proc.isService())
+                workflowServices.invokeServiceProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
+            else
+                workflowServices.launchProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
         }
         catch (Exception ex) {
             throw new TestException("Failed to start " + process.getLabel(), ex);
         }
+    }
+
+    /**
+     * Delete the (convention-based) result file if exists
+     */
+    protected void deleteResultsFile() {
+        String resFileName = getTestCase().getName() + Asset.getFileExtension(Asset.YAML);
+        File resFile = new File(resultsDir + "/" + resFileName);
+        if (resFile.isFile())
+            resFile.delete();
     }
 
     List<ProcessInstance> loadProcess(TestCaseProcess[] processes, Asset expectedResults) throws TestException {
@@ -291,16 +274,7 @@ public class TestCaseRun implements Runnable {
             query.setFilter("masterRequestId", masterRequestId);
             query.setFilter("processId", proc.getId().toString());
             query.setDescending(true);
-            List<ProcessInstance> procInstList;
-            if (config.isStandalone()) {
-                query.setFilter("app", "autotest");
-                HttpHelper httpHelper = getHttpHelper("services/Processes?" + query);
-                String response = httpHelper.get();
-                procInstList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JSONObject(response)).getProcesses();
-            }
-            else {
-                procInstList = workflowServices.getProcesses(query).getProcesses();
-            }
+            List<ProcessInstance> procInstList = workflowServices.getProcesses(query).getProcesses();
             Map<Long,String> activityNameMap = new HashMap<Long,String>();
             for (Activity act : proc.getActivities()) {
                 activityNameMap.put(act.getActivityId(), act.getActivityName());
@@ -315,13 +289,7 @@ public class TestCaseRun implements Runnable {
                 }
             }
             for (ProcessInstance procInst : procInstList) {
-                if (config.isStandalone()) {
-                    HttpHelper httpHelper = getHttpHelper("services/Processes/" + procInst.getId() + "?app=autotest");
-                    procInst = new ProcessInstance(new JSONObject(httpHelper.get()));
-                }
-                else {
-                    procInst = workflowServices.getProcess(procInst.getId());
-                }
+                procInst = workflowServices.getProcess(procInst.getId());
                 mainProcessInsts.add(procInst);
                 List<ProcessInstance> procInsts = fullProcessInsts.get(proc.getName());
                 if (procInsts == null)
@@ -333,25 +301,9 @@ public class TestCaseRun implements Runnable {
                     q.setFilter("owner", OwnerType.MAIN_PROCESS_INSTANCE);
                     q.setFilter("ownerId", procInst.getId().toString());
                     q.setFilter("processId", proc.getProcessId().toString());
-                    List<ProcessInstance> embeddedProcInstList;
-                    if (config.isStandalone()) {
-                        q.setFilter("app", "autotest");
-                        HttpHelper httpHelper = getHttpHelper("services/Processes?" + q);
-                        String response = httpHelper.get();
-                        embeddedProcInstList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JSONObject(response)).getProcesses();
-                    }
-                    else {
-                        embeddedProcInstList = workflowServices.getProcesses(q).getProcesses();
-                    }
+                    List<ProcessInstance> embeddedProcInstList = workflowServices.getProcesses(q).getProcesses();
                     for (ProcessInstance embeddedProcInst : embeddedProcInstList) {
-                        ProcessInstance fullChildInfo;
-                        if (config.isStandalone()) {
-                            HttpHelper httpHelper = getHttpHelper("services/Processes/" + embeddedProcInst.getId() + "?app=autotest");
-                            fullChildInfo = new ProcessInstance(new JSONObject(httpHelper.get()));
-                        }
-                        else {
-                            fullChildInfo = workflowServices.getProcess(embeddedProcInst.getId());
-                        }
+                        ProcessInstance fullChildInfo = workflowServices.getProcess(embeddedProcInst.getId());
                         String childProcName = "unknown_subproc_name";
                         for (Process subproc : proc.getSubProcesses()) {
                             if (subproc.getProcessId().toString().equals(embeddedProcInst.getComment())) {
@@ -399,7 +351,7 @@ public class TestCaseRun implements Runnable {
         return mainProcessInsts;
     }
 
-    private String translateToYaml(Map<String,List<ProcessInstance>> processInstances, Map<String,String> activityNames, boolean orderById, String newLineChars)
+    protected String translateToYaml(Map<String,List<ProcessInstance>> processInstances, Map<String,String> activityNames, boolean orderById, String newLineChars)
     throws IOException, DataAccessException {
 
         YamlBuilder yaml = new YamlBuilder(newLineChars);
@@ -536,47 +488,15 @@ public class TestCaseRun implements Runnable {
     }
 
     Process getProcess(String target) throws TestException {
-        // qualify vcs asset processes
-        if (target.indexOf('/') == -1 && testCase.getPackage() != null)
-            target = testCase.getPackage() + "/" + target;
+        target = qualify(target);
         Process process = processCache.get(target);
         if (process == null) {
             try {
-                String procPath = target;
-                int version = 0; // latest
-                int spaceV = target.lastIndexOf(" v");
-                if (spaceV > 0) {
-                    try {
-                        version = Asset.parseVersion(procPath.substring(spaceV + 2));
-                        procPath = target.substring(0, spaceV);
-                    }
-                    catch (NumberFormatException ex) {
-                        // process name must contain space v
-                    }
-                }
-                Query query = new Query();
-                query.setFilter("version", version);
-                if (config.isStandalone()) {
-                    query.setFilter("summary", true);
-                    query.setFilter("app", "autotest");
-                    HttpHelper httpHelper = getHttpHelper("services/Workflow/" + procPath + "?" + query);
-                    String response = httpHelper.get();
-                    JSONObject json = new JSONObject(response);
-                    process = new Process(json);
-                    if (json.has("id"))
-                        process.setId(json.getLong("id"));
-                    if (json.has("package"))
-                        process.setPackageName(json.getString("package"));
-                }
-                else {
-                    process = workflowServices.getProcessDefinition(procPath, query);
-                }
+                Query query = getProcessQuery(target);
+                process = workflowServices.getProcessDefinition(query.getPath(), query);
                 if (process == null)
-                    throw new TestException("Process: " + target + " not found");
+                    throw new FileNotFoundException("Process: " + target + " not found");
                 processCache.put(target, process);
-            }
-            catch (TestException ex) {
-                throw ex;
             }
             catch (Exception ex) {
                 throw new TestException("Cannot load " + target, ex);
@@ -729,23 +649,6 @@ public class TestCaseRun implements Runnable {
         }
     }
 
-    protected HttpHelper getHttpHelper(String endpoint) throws MalformedURLException {
-        String url;
-        if (config.isStandalone()) {
-            url = config.getServerUrl();
-        }
-        else {
-            url = PropertyManager.getProperty("mdw.test.base.url");
-            if (url == null)
-                url = ApplicationContext.getServicesUrl();
-        }
-        if (!endpoint.startsWith("/"))
-            endpoint = "/" + endpoint;
-        HttpHelper helper = new HttpHelper(new URL(url + endpoint));
-        helper.setHeader("Content-Type", "application/json");
-        return helper;
-    }
-
     void wait(TestCaseProcess process) throws TestException {
         if (process.getTimeout() == 0)
             throw new TestException("Missing property 'timeout' for process wait command");
@@ -841,21 +744,9 @@ public class TestCaseRun implements Runnable {
         if (isVerbose())
             log.println("performing " + task.getOutcome() + " on task '" + task.getName() + "'");
 
-        Query query = new Query();
-        query.setFilter("masterRequestId", masterRequestId);
-        query.setFilter("name", task.getName());
-        query.setDescending(true);
+        Query query = getTaskQuery(task.getName());
         try {
-            TaskList taskList;
-            if (config.isStandalone()) {
-                query.setFilter("app", "autotest");
-                HttpHelper httpHelper = getHttpHelper("services/Tasks?" + query);
-                String response = httpHelper.get();
-                taskList = new TaskList(TaskList.TASKS, new JSONObject(response));
-            }
-            else {
-                taskList = taskServices.getTasks(query, user);
-            }
+            TaskList taskList = taskServices.getTasks(query, user);
             List<TaskInstance> taskInstances = taskList.getTasks();
             if (taskInstances.isEmpty())
                 throw new TestException("Cannot find task instances: " + query);
@@ -867,29 +758,9 @@ public class TestCaseRun implements Runnable {
             taskAction.setAction(task.getOutcome());
             taskAction.setUser(user);
             taskAction.setTaskInstanceId(task.getId());
-            if (config.isStandalone()) {
-                if (task.getVariables() != null) {
-                    JSONObject valuesJson = new JSONObject();
-                    for (String name : task.getVariables().keySet())
-                        valuesJson.put(name, new Value(name, task.getVariables().get(name).toString()).getJson());
-                    HttpHelper httpHelper = getHttpHelper("services/Workflow/" + taskInstance.getOwnerId() + "/values?app=autotest");
-                    String response = httpHelper.put(valuesJson.toString(2));
-                    StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
-                    if (!statusMsg.isSuccess())
-                        throw new TestException("Error updating task values: " + statusMsg.getMessage());
-                }
-                HttpHelper httpHelper = getHttpHelper("services/Tasks/" + task.getOutcome() + "?app=autotest");
-                String response = httpHelper.post(taskAction.getJson().toString(2));
-                StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
-                if (!statusMsg.isSuccess())
-                    throw new TestException("Error actioning task: " + task.getId() + ": " + statusMsg.getMessage());
-            }
-            else {
-                if (task.getVariables() != null) {
-                    workflowServices.setVariables(taskInstance.getOwnerId(), task.getVariables());
-                }
-                taskServices.performTaskAction(taskAction);
-            }
+            if (task.getVariables() != null)
+                workflowServices.setVariables(taskInstance.getOwnerId(), task.getVariables());
+            taskServices.performTaskAction(taskAction);
         }
         catch (TestException ex) {
             throw ex;
@@ -1099,6 +970,40 @@ public class TestCaseRun implements Runnable {
         }
     }
 
+    protected String qualify(String target) {
+        if (target.indexOf('/') == -1 && getTestCase().getPackage() != null)
+            return getTestCase().getPackage() + "/" + target;
+        return target;
+    }
+
+    protected Query getProcessQuery(String target) {
+        String procPath = target;
+        int version = 0; // latest
+        int spaceV = target.lastIndexOf(" v");
+        if (spaceV > 0) {
+            try {
+                version = Asset.parseVersionSpec(procPath.substring(spaceV + 2));
+                procPath = target.substring(0, spaceV);
+            }
+            catch (NumberFormatException ex) {
+                // process name must contain space v
+            }
+        }
+        Query query = new Query(procPath);
+        query.setFilter("version", version);
+        query.setFilter("app", "autotest");
+        return query;
+    }
+
+    protected Query getTaskQuery(String name) {
+        Query query = new Query("");
+        query.setFilter("masterRequestId", masterRequestId);
+        query.setFilter("name", name);
+        query.setFilter("app", "autotest");
+        query.setDescending(true);
+        return query;
+    }
+
     /**
      * Makes sure the message is embeddable in an XML attribute for results parsing.
      */
@@ -1126,42 +1031,5 @@ public class TestCaseRun implements Runnable {
             if (fis != null)
                 fis.close();
         }
-    }
-
-    /**
-     * Standalone execution for Designer and Gradle.
-     */
-    void runStandalone() throws Exception {
-        startExecution();
-
-        CompilerConfiguration compilerConfig = new CompilerConfiguration(System.getProperties());
-        compilerConfig.setScriptBaseClass(TestCaseScript.class.getName());
-        Binding binding = new Binding();
-        binding.setVariable("testCaseRun", this);
-
-        ClassLoader classLoader = this.getClass().getClassLoader();
-        GroovyShell shell = new GroovyShell(classLoader, binding, compilerConfig);
-        shell.setProperty("out", log);
-        setupContextClassLoader(shell);
-        GroovyCodeSource src = new GroovyCodeSource(testCase.file());
-        shell.run(src, new String[0]);
-    }
-
-    // GROOVY-6771
-    @SuppressWarnings("unchecked")
-    private static void setupContextClassLoader(GroovyShell shell) {
-        final Thread current = Thread.currentThread();
-        @SuppressWarnings("rawtypes")
-        class DoSetContext implements PrivilegedAction {
-            ClassLoader classLoader;
-            public DoSetContext(ClassLoader loader) {
-                classLoader = loader;
-            }
-            public Object run() {
-                current.setContextClassLoader(classLoader);
-                return null;
-            }
-        }
-        AccessController.doPrivileged(new DoSetContext(shell.getClassLoader()));
     }
 }
