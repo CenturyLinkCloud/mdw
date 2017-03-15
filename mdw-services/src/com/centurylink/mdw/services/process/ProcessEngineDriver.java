@@ -224,7 +224,7 @@ public class ProcessEngineDriver {
     private Process getPackageHandler(ProcessInstance masterInstance, Integer eventType) {
         // try package-level handler
         Process process = getProcessDefinition(masterInstance);
-        Package pkg = PackageCache.getPackage(process.getPackageName());
+        String pkg = process.getPackageName();
         String handlerProcName = EventType.getHandlerName(eventType);
         if (handlerProcName != null) {
             Process packageHandlerProc = null;
