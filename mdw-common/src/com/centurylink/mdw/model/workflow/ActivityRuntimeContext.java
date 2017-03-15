@@ -115,8 +115,11 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
         json.put("processInstance", getProcessInstance().getJson());
         if (withVariables && getVariables() != null) {
             JSONObject varsObj = new JSONObject();
-            for (String name : getVariables().keySet())
-                json.put(name, getValueAsString(name));
+            for (String name : getVariables().keySet()) {
+                //Only add if the variable has a value
+                if (getVariables().get(name) != null)
+                    json.put(name, getValueAsString(name));
+            }
             json.put("variables", varsObj);
         }
         return json;
