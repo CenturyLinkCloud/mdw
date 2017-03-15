@@ -120,18 +120,18 @@ utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
       });
       return promise;      
     },
-    buildException: function(except) {
+    buildException: function(exceptHolder) {
     	// Uses the callback mechanism to update the except variable (gets around jshint error)
     	return function(el) {
-            except += '\tat ' + el.class;
+            exceptHolder.exceptionMessage += '\tat ' + el.class;
             if (el.file) {
-              except += '(' + el.file;
+              exceptHolder.exceptionMessage += '(' + el.file;
               if (el.line) {
-                except += ':' + el.line;
+                exceptHolder.exceptionMessage += ':' + el.line;
               }
-              except += ')\n';
+              exceptHolder.exceptionMessage += ')\n';
             }
-    		
+
     	};
     },
     asException: function(value) {
@@ -149,7 +149,10 @@ utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
               except += ' ' + ex.message;
             except += '\n';
             if (ex.stackElements) {
-              ex.stackElements.forEach(this.buildException(except));
+              var exceptHolder = {};
+              exceptHolder.exceptionMessage = '';
+              ex.stackElements.forEach(this.buildException(exceptHolder));
+              except += exceptHolder.exceptionMessage
             }
             if (ex.cause)
               except += 'Caused By: ';
