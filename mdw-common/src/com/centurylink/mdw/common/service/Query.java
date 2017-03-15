@@ -24,6 +24,10 @@ public class Query {
 
     }
 
+    public Query(String path) {
+        this.path = path;
+    }
+
     public Query(String path, Map<String,String> parameters) {
 
         this.path = path;
@@ -252,6 +256,10 @@ public class Query {
         return Date.from(LocalDateTime.parse(str, DateTimeFormatter.ISO_DATE_TIME).atZone(ZoneId.systemDefault()).toInstant());
     }
 
+    /**
+     * Builds a path/query string for an endpoint.
+     * Don't change this without extensive regression testing.
+     */
     @SuppressWarnings("deprecation")
     public String toString() {
         StringBuilder sb = new StringBuilder();
