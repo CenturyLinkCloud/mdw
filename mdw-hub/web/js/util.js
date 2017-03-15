@@ -152,7 +152,7 @@ utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
               var exceptHolder = {};
               exceptHolder.exceptionMessage = '';
               ex.stackElements.forEach(this.buildException(exceptHolder));
-              except += exceptHolder.exceptionMessage
+              except += exceptHolder.exceptionMessage;
             }
             if (ex.cause)
               except += 'Caused By: ';
