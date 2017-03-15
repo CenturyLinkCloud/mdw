@@ -982,7 +982,7 @@ public class TestCaseRun implements Runnable {
         int spaceV = target.lastIndexOf(" v");
         if (spaceV > 0) {
             try {
-                version = Asset.parseVersion(procPath.substring(spaceV + 2));
+                version = Asset.parseVersionSpec(procPath.substring(spaceV + 2));
                 procPath = target.substring(0, spaceV);
             }
             catch (NumberFormatException ex) {
