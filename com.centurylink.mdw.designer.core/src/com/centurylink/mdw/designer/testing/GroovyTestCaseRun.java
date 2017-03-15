@@ -251,7 +251,6 @@ public class GroovyTestCaseRun extends TestCaseRun {
                 int spaceV = target.lastIndexOf(" v");
                 if (spaceV > 0) {
                     try {
-                        // TODO support smart versions
                         version = RuleSetVO.parseVersionSpec(procName.substring(spaceV + 2));
                         procName = target.substring(0, spaceV);
                     }
@@ -259,10 +258,12 @@ public class GroovyTestCaseRun extends TestCaseRun {
                         // process name must have space v
                     }
                 }
-                // TODO honor package path
-                int lastSlash = procName.lastIndexOf('/');
-                if (lastSlash >= 0)
-                    procName = procName.substring(lastSlash + 1);
+                if (testCaseAsset == null || !testCaseAsset.isVcs()) {
+                    // trim qualifying package name for old-style
+                    int lastSlash = procName.lastIndexOf('/');
+                    if (lastSlash >= 0)
+                        procName = procName.substring(lastSlash + 1);
+                }
 
                 vo = dao.getProcessDefinition(procName, version);
                 if (vo == null)

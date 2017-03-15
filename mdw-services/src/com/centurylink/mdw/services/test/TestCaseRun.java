@@ -391,11 +391,10 @@ public class TestCaseRun implements Runnable {
                     yaml.append("    name: ").append(var.getName()).newLine();
                     yaml.append("    value: ");
                     try {
-                        String val = var.getStringValue();
-                        if (var.isDocument()) {
-                            val = workflowServices.getDocumentStringValue(new DocumentReference(val).getDocumentId());
+                        var.setProcessInstanceId(procInst.getId());
+                        String val = getStringValue(var);
+                        if (var.isDocument())
                             procInst.getVariable().put(var.getName(), val); // pre-populate document values
-                        }
                         yaml.appendMulti("      ", val).newLine();
                     }
                     catch (Throwable t) {
@@ -407,6 +406,20 @@ public class TestCaseRun implements Runnable {
             }
         }
         return yaml.toString();
+    }
+
+    protected String getStringValue(VariableInstance var) throws TestException {
+        String val = var.getStringValue();
+        if (var.isDocument()) {
+            try {
+                val = workflowServices.getDocumentStringValue(new DocumentReference(val).getDocumentId());
+            }
+            catch (ServiceException ex) {
+                throw new TestException(ex.getMessage(), ex);
+            }
+        }
+
+        return val;
     }
 
     boolean verifyProcess(TestCaseProcess[] processes, Asset expectedResults) throws TestException {
