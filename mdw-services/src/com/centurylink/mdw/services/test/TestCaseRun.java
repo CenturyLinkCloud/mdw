@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -25,6 +26,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.xmlbeans.XmlException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.app.ApplicationContext;
@@ -33,9 +35,11 @@ import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
@@ -52,6 +56,8 @@ import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessList;
+import com.centurylink.mdw.model.workflow.ProcessRun;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -210,10 +216,32 @@ public class TestCaseRun implements Runnable {
 
             Process proc = process.getProcess();
             Map<String,String> params = process.getParams();
-            if (proc.isService())
-                workflowServices.invokeServiceProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
-            else
-                workflowServices.launchProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
+            if (config.isStandalone()) {
+                HttpHelper httpHelper = getHttpHelper("services/Processes/run/" + proc.getId() + "?app=autotest");
+                ProcessRun run = new ProcessRun();
+                run.setDefinitionId(proc.getId());
+                run.setMasterRequestId(getMasterRequestId());
+                run.setOwnerType(OwnerType.TESTER);
+                run.setOwnerId(0L);
+                if (params != null && !params.isEmpty()) {
+                    Map<String,Value> values = new HashMap<>();
+                    for (String name : params.keySet())
+                        values.put(name, new Value(name, params.get(name)));
+                    run.setValues(values);
+                }
+                String response = httpHelper.post(run.getJson().toString(2));
+                run = new ProcessRun(new JSONObject(response));
+                if (run.getInstanceId() == null)
+                    throw new TestException("Failed to start " + process.getLabel());
+                else
+                    log.println(process.getLabel() + " instance " + run.getInstanceId() + " started");
+            }
+            else {
+                if (proc.isService())
+                    workflowServices.invokeServiceProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
+                else
+                    workflowServices.launchProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
+            }
         }
         catch (Exception ex) {
             throw new TestException("Failed to start " + process.getLabel(), ex);
@@ -254,7 +282,7 @@ public class TestCaseRun implements Runnable {
     }
 
     protected List<ProcessInstance> loadResults(List<Process> processes, Asset expectedResults, boolean orderById)
-    throws DataAccessException, IOException, ServiceException {
+    throws DataAccessException, IOException, ServiceException, JSONException, ParseException {
         List<ProcessInstance> mainProcessInsts = new ArrayList<ProcessInstance>();
         Map<String,List<ProcessInstance>> fullProcessInsts = new TreeMap<String,List<ProcessInstance>>();
         Map<String,String> fullActivityNameMap = new HashMap<String,String>();
@@ -263,7 +291,16 @@ public class TestCaseRun implements Runnable {
             query.setFilter("masterRequestId", masterRequestId);
             query.setFilter("processId", proc.getId().toString());
             query.setDescending(true);
-            List<ProcessInstance> procInstList = workflowServices.getProcesses(query).getProcesses();
+            List<ProcessInstance> procInstList;
+            if (config.isStandalone()) {
+                query.setFilter("app", "autotest");
+                HttpHelper httpHelper = getHttpHelper("services/Processes?" + query);
+                String response = httpHelper.get();
+                procInstList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JSONObject(response)).getProcesses();
+            }
+            else {
+                procInstList = workflowServices.getProcesses(query).getProcesses();
+            }
             Map<Long,String> activityNameMap = new HashMap<Long,String>();
             for (Activity act : proc.getActivities()) {
                 activityNameMap.put(act.getActivityId(), act.getActivityName());
@@ -278,7 +315,13 @@ public class TestCaseRun implements Runnable {
                 }
             }
             for (ProcessInstance procInst : procInstList) {
-                procInst = workflowServices.getProcess(procInst.getId());
+                if (config.isStandalone()) {
+                    HttpHelper httpHelper = getHttpHelper("services/Processes/" + procInst.getId() + "?app=autotest");
+                    procInst = new ProcessInstance(new JSONObject(httpHelper.get()));
+                }
+                else {
+                    procInst = workflowServices.getProcess(procInst.getId());
+                }
                 mainProcessInsts.add(procInst);
                 List<ProcessInstance> procInsts = fullProcessInsts.get(proc.getName());
                 if (procInsts == null)
@@ -290,9 +333,25 @@ public class TestCaseRun implements Runnable {
                     q.setFilter("owner", OwnerType.MAIN_PROCESS_INSTANCE);
                     q.setFilter("ownerId", procInst.getId().toString());
                     q.setFilter("processId", proc.getProcessId().toString());
-                    List<ProcessInstance> embeddedProcInstList = workflowServices.getProcesses(q).getProcesses();
+                    List<ProcessInstance> embeddedProcInstList;
+                    if (config.isStandalone()) {
+                        q.setFilter("app", "autotest");
+                        HttpHelper httpHelper = getHttpHelper("services/Processes?" + q);
+                        String response = httpHelper.get();
+                        embeddedProcInstList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JSONObject(response)).getProcesses();
+                    }
+                    else {
+                        embeddedProcInstList = workflowServices.getProcesses(q).getProcesses();
+                    }
                     for (ProcessInstance embeddedProcInst : embeddedProcInstList) {
-                        ProcessInstance fullChildInfo = workflowServices.getProcess(embeddedProcInst.getId());
+                        ProcessInstance fullChildInfo;
+                        if (config.isStandalone()) {
+                            HttpHelper httpHelper = getHttpHelper("services/Processes/" + embeddedProcInst.getId() + "?app=autotest");
+                            fullChildInfo = new ProcessInstance(new JSONObject(httpHelper.get()));
+                        }
+                        else {
+                            fullChildInfo = workflowServices.getProcess(embeddedProcInst.getId());
+                        }
                         String childProcName = "unknown_subproc_name";
                         for (Process subproc : proc.getSubProcesses()) {
                             if (subproc.getProcessId().toString().equals(embeddedProcInst.getComment())) {
@@ -497,7 +556,21 @@ public class TestCaseRun implements Runnable {
                 }
                 Query query = new Query();
                 query.setFilter("version", version);
-                process = workflowServices.getProcessDefinition(procPath, query);
+                if (config.isStandalone()) {
+                    query.setFilter("summary", true);
+                    query.setFilter("app", "autotest");
+                    HttpHelper httpHelper = getHttpHelper("services/Workflow/" + procPath + "?" + query);
+                    String response = httpHelper.get();
+                    JSONObject json = new JSONObject(response);
+                    process = new Process(json);
+                    if (json.has("id"))
+                        process.setId(json.getLong("id"));
+                    if (json.has("package"))
+                        process.setPackageName(json.getString("package"));
+                }
+                else {
+                    process = workflowServices.getProcessDefinition(procPath, query);
+                }
                 if (process == null)
                     throw new TestException("Process: " + target + " not found");
                 processCache.put(target, process);
@@ -656,6 +729,23 @@ public class TestCaseRun implements Runnable {
         }
     }
 
+    protected HttpHelper getHttpHelper(String endpoint) throws MalformedURLException {
+        String url;
+        if (config.isStandalone()) {
+            url = config.getServerUrl();
+        }
+        else {
+            url = PropertyManager.getProperty("mdw.test.base.url");
+            if (url == null)
+                url = ApplicationContext.getServicesUrl();
+        }
+        if (!endpoint.startsWith("/"))
+            endpoint = "/" + endpoint;
+        HttpHelper helper = new HttpHelper(new URL(url + endpoint));
+        helper.setHeader("Content-Type", "application/json");
+        return helper;
+    }
+
     void wait(TestCaseProcess process) throws TestException {
         if (process.getTimeout() == 0)
             throw new TestException("Missing property 'timeout' for process wait command");
@@ -756,7 +846,16 @@ public class TestCaseRun implements Runnable {
         query.setFilter("name", task.getName());
         query.setDescending(true);
         try {
-            TaskList taskList = taskServices.getTasks(query, user);
+            TaskList taskList;
+            if (config.isStandalone()) {
+                query.setFilter("app", "autotest");
+                HttpHelper httpHelper = getHttpHelper("services/Tasks?" + query);
+                String response = httpHelper.get();
+                taskList = new TaskList(TaskList.TASKS, new JSONObject(response));
+            }
+            else {
+                taskList = taskServices.getTasks(query, user);
+            }
             List<TaskInstance> taskInstances = taskList.getTasks();
             if (taskInstances.isEmpty())
                 throw new TestException("Cannot find task instances: " + query);
@@ -768,12 +867,34 @@ public class TestCaseRun implements Runnable {
             taskAction.setAction(task.getOutcome());
             taskAction.setUser(user);
             taskAction.setTaskInstanceId(task.getId());
-            if (task.getVariables() != null) {
-                workflowServices.setVariables(taskInstance.getOwnerId(), task.getVariables());
+            if (config.isStandalone()) {
+                if (task.getVariables() != null) {
+                    JSONObject valuesJson = new JSONObject();
+                    for (String name : task.getVariables().keySet())
+                        valuesJson.put(name, new Value(name, task.getVariables().get(name).toString()).getJson());
+                    HttpHelper httpHelper = getHttpHelper("services/Workflow/" + taskInstance.getOwnerId() + "/values?app=autotest");
+                    String response = httpHelper.put(valuesJson.toString(2));
+                    StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
+                    if (!statusMsg.isSuccess())
+                        throw new TestException("Error updating task values: " + statusMsg.getMessage());
+                }
+                HttpHelper httpHelper = getHttpHelper("services/Tasks/" + task.getOutcome() + "?app=autotest");
+                String response = httpHelper.post(taskAction.getJson().toString(2));
+                StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
+                if (!statusMsg.isSuccess())
+                    throw new TestException("Error actioning task: " + task.getId() + ": " + statusMsg.getMessage());
             }
-            taskServices.performTaskAction(taskAction);
+            else {
+                if (task.getVariables() != null) {
+                    workflowServices.setVariables(taskInstance.getOwnerId(), task.getVariables());
+                }
+                taskServices.performTaskAction(taskAction);
+            }
         }
-        catch (ServiceException ex) {
+        catch (TestException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
             throw new TestException("Error actioning task: " + task.getId(), ex);
         }
     }
@@ -1011,6 +1132,8 @@ public class TestCaseRun implements Runnable {
      * Standalone execution for Designer and Gradle.
      */
     void runStandalone() throws Exception {
+        startExecution();
+
         CompilerConfiguration compilerConfig = new CompilerConfiguration(System.getProperties());
         compilerConfig.setScriptBaseClass(TestCaseScript.class.getName());
         Binding binding = new Binding();

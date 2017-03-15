@@ -23,7 +23,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -298,7 +297,10 @@ public class HttpHelper {
 
         prepareConnection(connection);
 
-        if (StringUtils.isEmpty(connection.getRequestProperty("Content-Type"))) {
+        String contentType = connection.getRequestProperty("Content-Type");
+        if (contentType == null)
+            contentType = connection.getRequestProperty("content-type");
+        if (contentType == null || contentType.isEmpty()) {
             /**
              * Default it to application/octet-stream if nothing has been specified
              */
@@ -331,14 +333,6 @@ public class HttpHelper {
         }
 
         prepareConnection(connection);
-
-        if (StringUtils.isEmpty(connection.getRequestProperty("Content-Type"))) {
-            /**
-             * Default it to application/octet-stream if nothing has been specified
-             */
-            connection.setRequestProperty("Content-Type", "application/octet-stream");
-        }
-
         connection.setDoOutput(true);
         connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
         connection.setRequestMethod("POST");
@@ -388,7 +382,10 @@ public class HttpHelper {
 
         prepareConnection(connection);
 
-        if (StringUtils.isEmpty(connection.getRequestProperty("Content-Type"))) {
+        String contentType = connection.getRequestProperty("Content-Type");
+        if (contentType == null)
+            contentType = connection.getRequestProperty("content-type");
+        if (contentType == null || contentType.isEmpty()) {
             /**
              * Default it to application/octet-stream if nothing has been specified
              */

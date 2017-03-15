@@ -45,6 +45,7 @@ public class TestCaseMain {
         testCasePath = testCasePath.substring(0, lastSlash).replace('/', '.') + testCasePath.substring(lastSlash);
 
         TestExecConfig execConfig = new TestExecConfig(System.getProperties());
+        execConfig.setStandalone(true);
 
         // user & masterRequestId
         String user = System.getProperty("mdw.test.user");
@@ -59,8 +60,8 @@ public class TestCaseMain {
 
         File resultsFile = testingServices.getTestResultsFile(null);
 
-        // TODO
-        LogMessageMonitor monitor = null;
+        LogMessageMonitor monitor = new LogMessageMonitor();
+        monitor.start(true);
         Map<String,Process> processCache = new HashMap<>();
         TestCaseRun run = new TestCaseRun(testCase, user, resultsFile.getParentFile(), 0, masterRequestId, monitor, processCache, execConfig);
         try {
@@ -74,6 +75,9 @@ public class TestCaseMain {
         catch (Throwable th) {
             th.printStackTrace(run.getLog());
             throw th;
+        }
+        finally {
+            monitor.shutdown();
         }
 
         // reach here only when error

@@ -3,17 +3,18 @@
  */
 package com.centurylink.mdw.common.service;
 
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Query {
     public static final int DEFAULT_MAX = 50;
@@ -251,23 +252,19 @@ public class Query {
         return Date.from(LocalDateTime.parse(str, DateTimeFormatter.ISO_DATE_TIME).atZone(ZoneId.systemDefault()).toInstant());
     }
 
-
+    @SuppressWarnings("deprecation")
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(path).append(": ");
-        sb.append("[count=").append(count);
-        sb.append(", ").append("find=").append(find);
-        sb.append(", ").append("start=").append(start);
-        sb.append(", ").append("max=").append(max);
-        sb.append(", ").append("sort=").append(sort);
-        sb.append(", ").append("descending=").append(descending);
-
         if (filters != null) {
-            for (String key : filters.keySet())
-                sb.append(", ").append(key).append("=").append(filters.get(key));
+            for (String name : filters.keySet()) {
+                if (sb.length() > 0)
+                    sb.append("&");
+                sb.append(name).append("=").append(URLEncoder.encode(filters.get(name)));
+            }
         }
-
-        sb.append("]");
-        return sb.toString();
+        if (path != null)
+            return path + "?" + sb.toString();
+        else
+            return sb.toString();
     }
 }

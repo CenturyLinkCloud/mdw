@@ -283,13 +283,11 @@ public class Tasks extends JsonRestService implements JsonExportable {
         notes="If {action} is 'Create', then the body contains a task template logical Id; otherwise it contains a TaskAction to be performed.",
         response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Task", paramType="body", dataType="com.centurylink.mdw.model.task.TaskAction"),
-        @ApiImplicitParam(name="TaskAction", paramType="body", dataType="com.centurylink.mdw.model.task.TaskAction")})
+        @ApiImplicitParam(name="TaskAction", paramType="body", dataType="com.centurylink.mdw.model.task.UserTaskAction")})
     public JSONObject post(String path, JSONObject content, Map<String, String> headers)
             throws ServiceException, JSONException {
         String segOne = getSegment(path, 1);
         try {
-            Query query = getQuery(path, headers);
             TaskServices taskServices = ServiceLocator.getTaskServices();
             if (segOne == null || segOne.equalsIgnoreCase("create")) {
                 // Create a new task

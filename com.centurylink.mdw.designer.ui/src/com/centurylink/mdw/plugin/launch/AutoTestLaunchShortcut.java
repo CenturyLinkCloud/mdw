@@ -71,18 +71,16 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
         return true;
     }
 
-    @Override
-    protected Map<String, String> createLaunchProperties(IType runType, IJavaProject javaProject) {
-        Map<String,String> launchConfigProperties = super.createLaunchProperties(runType, javaProject);
+    private String vmArgs;
 
-//        launchConfigProperties.put(
-//                IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-//                "org.codehaus.groovy.tools.GroovyStarter");
+    @Override
+    protected Map<String,String> createLaunchProperties(IType runType, IJavaProject javaProject) {
+        Map<String,String> launchConfigProperties = super.createLaunchProperties(runType, javaProject);
 
         launchConfigProperties.put(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
                 "com.centurylink.mdw.services.test.TestCaseMain$GroovyStarter");
 
-        String vmArgs = launchConfigProperties.get(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS);
+        vmArgs = launchConfigProperties.get(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS);
 
         vmArgs += " -Dmdw.runtime.env=standalone";
 
@@ -139,9 +137,9 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
         try {
             ILaunchConfigurationWorkingCopy workingConfig = findOrCreateLaunchConfig(launchConfigProperties,
                     runType != null ? runType.getElementName() : javaProject.getElementName());
-            workingConfig.setAttribute(
-                    IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, Arrays.asList(
-                            JavaRuntime.computeDefaultRuntimeClassPath(javaProject)));
+            workingConfig.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, Arrays.asList(
+                        JavaRuntime.computeDefaultRuntimeClassPath(javaProject)));
+            workingConfig.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
             ILaunchConfiguration launchConfig = workingConfig.doSave();
             DebugPlugin.getDefault().addDebugEventListener(new AutoTestDebugListener(launchConfig, testCaseRun.getTestCase(), testCaseRun.getLog()));
             DebugUITools.launch(launchConfig, mode);

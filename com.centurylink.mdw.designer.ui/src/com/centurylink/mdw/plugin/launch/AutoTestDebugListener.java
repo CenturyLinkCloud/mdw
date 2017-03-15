@@ -38,9 +38,6 @@ public class AutoTestDebugListener implements IDebugEventSetListener {
                                 testCase.setStatus(TestCase.STATUS_PASS);
                             }
                             else {
-                                String exitMsg = "Groovy exit code: " + process.getExitValue();
-                                log.println(exitMsg);
-                                // testCaseRun.setMessage(exitMsg); // TODO why not displayed?
                                 testCase.setStatus(TestCase.STATUS_FAIL);
                             }
                             if (log != System.out)
