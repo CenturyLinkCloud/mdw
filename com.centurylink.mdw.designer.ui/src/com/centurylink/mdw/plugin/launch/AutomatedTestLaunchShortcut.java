@@ -69,10 +69,17 @@ public class AutomatedTestLaunchShortcut implements ILaunchShortcut {
                             .getWorkflowProject(firstFile.getProject());
                     // test case file(s)
                     List<AutomatedTestCase> testCases = new ArrayList<AutomatedTestCase>();
-                    for (Object obj : selection.toArray()) {
-                        IFile file = (IFile) obj;
-                        WorkflowPackage pkg = project.getPackage((IFolder) file.getParent());
-                        testCases.add((AutomatedTestCase) pkg.getAsset(file));
+                    Object[] objArr = selection.toArray();
+                    if (objArr.length == 1) {
+                        WorkflowPackage pkg = project.getPackage((IFolder)firstFile.getParent());
+                        testCases.add((AutomatedTestCase) pkg.getAsset(firstFile));
+                    }
+                    else {
+                        for (Object obj : objArr) {
+                            IFile file = (IFile) obj;
+                            WorkflowPackage pkg = project.getPackage((IFolder)file.getParent());
+                            testCases.add((AutomatedTestCase) pkg.getAsset(file));
+                        }
                     }
                     performLaunch(testCases, mode);
                 }

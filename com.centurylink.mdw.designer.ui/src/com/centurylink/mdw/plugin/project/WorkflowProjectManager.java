@@ -142,7 +142,7 @@ public class WorkflowProjectManager implements IResourceChangeListener {
     /**
      * Finds all the MDW workflow faceted ear and java projects in the
      * workspace.
-     * 
+     *
      * @return list of faceted projects.
      */
     private List<IFacetedProject> findWorkflowFacetedProjects() {
@@ -169,7 +169,7 @@ public class WorkflowProjectManager implements IResourceChangeListener {
 
     /**
      * Instantiate a workflow project based on an Eclipse workspace project
-     * 
+     *
      * @param project
      *            the ear or java faceted project to build the wf project from
      */
@@ -186,15 +186,7 @@ public class WorkflowProjectManager implements IResourceChangeListener {
      */
     public WorkflowProject getWorkflowProject(IProject project) {
         for (WorkflowProject workflowProject : getWorkflowProjects()) {
-            if (project.getName().equals(workflowProject.getWebProjectName())) // not
-                                                                               // only
-                                                                               // ear
-                                                                               // projects
-                                                                               // can
-                                                                               // have
-                                                                               // webProject
-                                                                               // attr
-            {
+            if (project.getName().equals(workflowProject.getWebProjectName())) {
                 return workflowProject;
             }
             else if (workflowProject.isRemote() || workflowProject.isCloudProject()) {
@@ -288,7 +280,7 @@ public class WorkflowProjectManager implements IResourceChangeListener {
 
     /**
      * Adds a workflow project and saves its settings.
-     * 
+     *
      * @param workflowProject
      * @param earProject
      */
@@ -308,7 +300,7 @@ public class WorkflowProjectManager implements IResourceChangeListener {
 
     /**
      * Persists a workflow project's settings in a workspace project.
-     * 
+     *
      * @param workflowProject
      * @param project
      */

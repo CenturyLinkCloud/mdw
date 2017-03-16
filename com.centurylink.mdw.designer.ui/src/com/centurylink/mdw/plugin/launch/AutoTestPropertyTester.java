@@ -26,15 +26,12 @@ public class AutoTestPropertyTester extends PropertyTester {
         ResourceWrapper resourceWrapper = new ResourceWrapper((IAdaptable) receiver);
         try {
             WorkflowProject workflowProject = resourceWrapper.getOwningWorkflowProject();
-            if ("canLaunchAutoTest".equals(property)) {
+            if ("canLaunchAutoTest".equals(property)) { // currently only for debug
                 IFile file = resourceWrapper.getFile();
                 if (file != null) {
-                    if (("test".equals(file.getFileExtension())
-                            || "feature".equals(file.getFileExtension())) && file.exists()
-                            && !file.isDerived()) {
+                    if (("test".equals(file.getFileExtension())) && file.exists() && !file.isDerived()) {
                         if (workflowProject != null) {
-                            WorkflowPackage pkg = workflowProject
-                                    .getPackage((IFolder) file.getParent());
+                            WorkflowPackage pkg = workflowProject.getPackage((IFolder) file.getParent());
                             if (pkg != null)
                                 return pkg.getAsset(file) != null;
                         }
@@ -92,9 +89,7 @@ public class AutoTestPropertyTester extends PropertyTester {
                         return !tests.isEmpty();
                     }
                     else {
-                        IProject project = resourceWrapper.getProject();
-                        if (project != null)
-                            return !CucumberTest.getTests(project).isEmpty();
+                        return false;
                     }
                 }
             }
