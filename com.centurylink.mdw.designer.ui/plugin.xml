@@ -353,7 +353,7 @@
             label="MDW AutoTest..."
             icon="icons/auto_test.gif"
             modes="run,debug"
-            class="com.centurylink.mdw.plugin.launch.AutoTestLaunchShortcut"
+            class="com.centurylink.mdw.plugin.launch.AutomatedTestLaunchShortcut"
             helpContextId="automated_tester_help"
             id="com.centurylink.mdw.plugin.launch.shortcut.AutoTest">
            <contextualLaunch>
