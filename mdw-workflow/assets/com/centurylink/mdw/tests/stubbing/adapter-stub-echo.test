@@ -8,7 +8,7 @@ def responder = { Object request ->
 stub adapter(gpath("request.name() == 'EmployeeLookup'"), responder) {
     delay = 5
 }
-start process("com.centurylink.mdw.tests/TestAdapterStub") {
+start process("com.centurylink.mdw.tests.stubbing/TestAdapterStub") {
     variables = [request: asset("EmployeeLookup.xml").text]
 }
 

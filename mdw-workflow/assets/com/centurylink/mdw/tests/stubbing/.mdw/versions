@@ -1,4 +1,4 @@
-#Sat Jan 07 16:55:03 MST 2017
+#Thu Mar 16 14:27:34 MDT 2017
 EmployeeLookup.xml=1
 EmployeeLookupResponse.xml=1
 EmployeeLookupResponseSubst.xml=2
@@ -14,7 +14,7 @@ activity-stubbing-embedded.test=2
 activity-stubbing-embedded.yaml=2
 activity-stubbing.test=3
 activity-stubbing.yaml=5
-adapter-stub-echo.test=2
+adapter-stub-echo.test=3
 adapter-stub-echo.yaml=1
 adapter-stub-substitutions.test=3
 adapter-stub-substitutions.yaml=1
@@ -22,7 +22,7 @@ adapter-stubbing-gpath.test=3
 adapter-stubbing-gpath.yaml=1
 adapter-stubbing-json.test=3
 adapter-stubbing-json.yaml=2
-adapter-stubbing-xpath.test=2
+adapter-stubbing-xpath.test=3
 adapter-stubbing-xpath.yaml=1
 employeeRequest.json=1
 employeeResponse.json=1
