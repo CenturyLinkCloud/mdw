@@ -1,12 +1,12 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=423,y=163,w=32,h=32"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=424,y=34,w=32,h=32"},
       "id": "A6",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Process Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=439,ly=218,type=Elbow,xs=439&439,ys=199&238"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=440,ly=102,type=Elbow,xs=440&440,ys=70&135"},
         "event": "FINISH",
         "id": "T41",
         "to": "A33"
@@ -29,35 +29,14 @@
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=454,y=880,w=32,h=32"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=488,y=880,w=32,h=32"},
       "id": "A11",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Process Finish"
     },
     {
       "attributes": {
-        "Output Documents": "launcher",
-        "Rule": "table launcher \n    with argument, result, retcode\n    option key=argument;\nvariable index;\ndo $index = 0;\nwhile $index < $N do\n    $index = $index + 1\n    and new ($index, \"\", \"START\") in $launcher;",
-        "SCRIPT": "MagicBox",
-        "WORK_DISPLAY_INFO": "x=70,y=370,w=31,h=31"
-      },
-      "id": "A27",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "Set Array input arguments",
-      "transitions": [{
-        "attributes": {
-          "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=88,ly=441,type=ElbowV,xs=85&85,ys=405&458",
-          "TRANSITION_RETRY_COUNT": "0"
-        },
-        "event": "FINISH",
-        "id": "T28",
-        "to": "A5"
-      }]
-    },
-    {
-      "attributes": {
-        "WORK_DISPLAY_INFO": "x=1372,y=660,w=20,h=20",
+        "WORK_DISPLAY_INFO": "x=475,y=623,w=20,h=20",
         "processname": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2",
         "processversion": "[0.4,1)",
         "synchronous": "TRUE"
@@ -66,7 +45,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
       "name": "Invoke process that errs",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=924,ly=778,type=ElbowV,xs=1382&470,ys=684&876"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=491,ly=774,type=ElbowV,xs=491&491,ys=647&876"},
         "event": "FINISH",
         "id": "T21",
         "to": "A11"
@@ -86,7 +65,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=474,ly=774,type=ElbowV,xs=837&470,ys=688&876",
+          "TRANSITION_DISPLAY_INFO": "lx=508,ly=776,type=ElbowV,xs=837&504,ys=688&876",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -121,7 +100,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=473,ly=775,type=ElbowV,xs=1041&470,ys=686&876",
+          "TRANSITION_DISPLAY_INFO": "lx=507,ly=775,type=ElbowV,xs=1041&504,ys=686&876",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -184,7 +163,7 @@
       "attributes": {
         "Rule": "print(\"Returned value is \" +Sum);",
         "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=234,y=659,w=30,h=24"
+        "WORK_DISPLAY_INFO": "x=223,y=654,w=30,h=24"
       },
       "id": "A26",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
@@ -192,7 +171,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=252,ly=774,type=ElbowV,xs=249&470,ys=687&876",
+          "TRANSITION_DISPLAY_INFO": "lx=243,ly=771,type=ElbowV,xs=238&504,ys=682&876",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -202,30 +181,10 @@
     },
     {
       "attributes": {
-        "Rule": "table launcher;\n\ndo $Sum = 0;\n\nforeach row in $launcher\nif row.retcode == \"FINISH\"\nthen $Sum = $Sum + row.result;\n",
-        "SCRIPT": "MagicBox",
-        "WORK_DISPLAY_INFO": "x=67,y=552,w=28,h=33"
-      },
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "Sum up",
-      "transitions": [{
-        "attributes": {
-          "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=85,ly=614,type=ElbowV,xs=81&249,ys=589&655",
-          "TRANSITION_RETRY_COUNT": "0"
-        },
-        "event": "FINISH",
-        "id": "T33",
-        "to": "A26"
-      }]
-    },
-    {
-      "attributes": {
         "RETURN_CODE": "BTN",
         "Rule": "return \"ABORT:\";\n",
         "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=1495,y=367,w=24,h=24"
+        "WORK_DISPLAY_INFO": "x=343,y=479,w=24,h=24"
       },
       "id": "A12",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
@@ -233,7 +192,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=725,ly=557,type=ElbowV,xs=1523&1523&470&470,ys=395&780&780&876",
+          "TRANSITION_DISPLAY_INFO": "lx=405,ly=747,type=ElbowV,xs=371&371&484&484,ys=507&780&780&876",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -243,7 +202,7 @@
     },
     {
       "attributes": {
-        "WORK_DISPLAY_INFO": "x=420,y=554,w=31,h=29",
+        "WORK_DISPLAY_INFO": "x=60,y=490,w=31,h=29",
         "processname": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess",
         "processversion": "[1.7,2)",
         "synchronous": "TRUE",
@@ -255,7 +214,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=253,ly=613,type=ElbowV,xs=435&249,ys=587&655",
+          "TRANSITION_DISPLAY_INFO": "lx=198,ly=667,type=ElbowV,xs=75&238,ys=523&650",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -275,7 +234,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "7s",
-          "TRANSITION_DISPLAY_INFO": "lx=474,ly=774,type=ElbowV,xs=1232&470,ys=687&876",
+          "TRANSITION_DISPLAY_INFO": "lx=508,ly=774,type=ElbowV,xs=1232&504,ys=687&876",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -285,33 +244,7 @@
     },
     {
       "attributes": {
-        "DELAY_BETWEEN": "5",
-        "KeyColumn": "argument",
-        "ParameterTable": "launcher",
-        "ReturnCodeColumn": "retcode",
-        "STATUS_AFTER_EVENT": "Cancelled",
-        "WORK_DISPLAY_INFO": "x=62,y=462,w=41,h=41",
-        "processname": "com.centurylink.mdw.tests/MDWTestSubProcess",
-        "processversion": "1007",
-        "synchronous": "TRUE"
-      },
-      "id": "A5",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeMultipleProcessActivity",
-      "name": "Invoke multiple processes",
-      "transitions": [{
-        "attributes": {
-          "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=85,ly=527,type=ElbowV,xs=81&81,ys=507&548",
-          "TRANSITION_RETRY_COUNT": "0"
-        },
-        "event": "FINISH",
-        "id": "T32",
-        "to": "A1"
-      }]
-    },
-    {
-      "attributes": {
-        "WORK_DISPLAY_INFO": "x=234,y=499,w=28,h=25",
+        "WORK_DISPLAY_INFO": "x=223,y=505,w=28,h=25",
         "processname": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess",
         "processversion": "[1.7,2)",
         "synchronous": "TRUE",
@@ -323,7 +256,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=253,ly=591,type=ElbowV,xs=249&249,ys=528&655",
+          "TRANSITION_DISPLAY_INFO": "lx=241,ly=592,type=ElbowV,xs=237&237,ys=534&650",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -333,10 +266,10 @@
     },
     {
       "attributes": {
-        "Output Documents": "xmldata",
-        "Rule": "$xmldata.MINUTES = \"2\";\n\n$intarraytest = \"1~1~2~3~5~8\";\n\n$maptest = \"R=red~G=green~B=blue\";",
-        "SCRIPT": "MagicBox",
-        "WORK_DISPLAY_INFO": "x=423,y=410,w=25,h=23"
+        "Output Documents": "xmldata#maptest#intarraytest",
+        "Rule": "/*$xmldata.MINUTES = '2\";\n $intarraytest = \"1~1~2~3~5~8\";\n $maptest = \"R=red~G=green~B=blue\";\n */\nxmldata = '<ROOT>\\n'\nxmldata = xmldata+'   <MINUTES>2<\/MINUTES>\\n'\nxmldata = xmldata+'<\/ROOT>\\n'\n\nintarraytest = new java.util.ArrayList<Integer>(6);\nintarraytest.add( new Integer(1))\nintarraytest.add( new Integer(1))\nintarraytest.add( new Integer(2))\nintarraytest.add( new Integer(3))\nintarraytest.add( new Integer(5))\nintarraytest.add( new Integer(8))\n\nmaptest = new HashMap<String, String>()\nmaptest.put('R', 'red')\nmaptest.put('G', 'green')\nmaptest.put('B', 'blue')\n\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=66,y=391,w=25,h=23"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
@@ -344,7 +277,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=440,ly=493,type=ElbowV,xs=436&436,ys=437&550",
+          "TRANSITION_DISPLAY_INFO": "lx=79,ly=460,type=ElbowV,xs=78&78,ys=418&486",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -363,7 +296,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=472,ly=772,type=ElbowV,xs=730&470,ys=684&876",
+          "TRANSITION_DISPLAY_INFO": "lx=504,ly=778,type=ElbowV,xs=730&504,ys=684&876",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -392,7 +325,7 @@
         "Output Documents": "xmldata",
         "Rule": "xmldata = \"<ROOT>\\n\";\nxmldata = xmldata+\"   <MINUTES>2<\/MINUTES>\\n\";\nxmldata = xmldata+\"<\/ROOT>\\n\";\n\nInteger[] intarraytest = new Integer[6];\n        intarraytest[0] = new Integer(1);\n        intarraytest[1] = new Integer(1);\n        intarraytest[2] = new Integer(2);\n        intarraytest[3] = new Integer(3);\n        intarraytest[4] = new Integer(5);\n        intarraytest[5] = new Integer(8);\n\nMap<String, String> maptest = new HashMap<String, String>();\n            maptest.put(\"R\", \"red\");\n            maptest.put(\"G\", \"green\");\n            maptest.put(\"B\", \"blue\");\n    \n\n",
         "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=238,y=393,w=29,h=29"
+        "WORK_DISPLAY_INFO": "x=223,y=392,w=29,h=29"
       },
       "id": "A23",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
@@ -400,7 +333,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=256,ly=461,type=ElbowV,xs=250&250,ys=426&495",
+          "TRANSITION_DISPLAY_INFO": "lx=243,ly=467,type=ElbowV,xs=237&237,ys=425&501",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -412,13 +345,13 @@
       "attributes": {
         "Rule": "println(\"Hello, world!\")",
         "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=1374,y=368,w=24,h=24"
+        "WORK_DISPLAY_INFO": "x=478,y=435,w=24,h=24"
       },
       "id": "A15",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
       "name": "Create argument",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1383,ly=523,type=ElbowV,xs=1383&1383,ys=396&656"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=486,ly=533,type=ElbowV,xs=486&486,ys=463&619"},
         "event": "FINISH",
         "id": "T20",
         "to": "A10"
@@ -426,8 +359,9 @@
     },
     {
       "attributes": {
-        "Rule": "$xmldata.MINUTES = \"2\";\n\n$intarraytest = \"1~1~2~3~5~8\";\n\n$maptest = \"R=red~G=green~B=blue\";\n\nsyntax error here",
-        "SCRIPT": "MagicBox",
+        "Output Documents": "intarraytest#maptest#xmldata",
+        "Rule": "/*$xmldata.MINUTES = '2\";\n $intarraytest = \"1~1~2~3~5~8\";\n $maptest = \"R=red~G=green~B=blue\";\n */\nxmldata = '<ROOT>\\n'\nxmldata = xmldata+'   <MINUTES>2<\/MINUTES>\\n'\nxmldata = xmldata+'<\/ROOT>\\n'\n\nintarraytest = new java.util.ArrayList<Integer>(6);\nintarraytest.add( new Integer(1))\nintarraytest.add( new Integer(1))\nintarraytest.add( new Integer(2))\nintarraytest.add( new Integer(3))\nintarraytest.add( new Integer(5))\nintarraytest.add( new Integer(8))\n\nmaptest = new HashMap<String, String>()\nmaptest.put('R', 'red')\nmaptest.put('G', 'green')\nmaptest.put('B', 'blue')\n\n\nsyntax error here",
+        "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=680,y=369,w=30,h=28"
       },
       "id": "A13",
@@ -496,7 +430,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=473,ly=774,type=ElbowV,xs=627&470,ys=685&876",
+          "TRANSITION_DISPLAY_INFO": "lx=498,ly=782,type=ElbowV,xs=627&504,ys=685&876",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -524,77 +458,70 @@
       "attributes": {
         "Expression": "processCase",
         "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=406,y=242,w=69,h=25"
+        "WORK_DISPLAY_INFO": "x=408,y=139,w=69,h=25"
       },
       "id": "A33",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
       "name": "multiple processes ?",
       "transitions": [
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=95,ly=298,type=ElbowV,xs=440&85,ys=271&366"},
-          "event": "FINISH",
-          "id": "T42",
-          "resultCode": "MultipleSubProcess",
-          "to": "A27"
-        },
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=435,ly=338,type=ElbowV,xs=435&435,ys=271&406"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=81,ly=344,type=ElbowV,xs=442&78,ys=168&387"},
           "event": "FINISH",
           "id": "T43",
           "resultCode": "RemoteSubProcess",
           "to": "A4"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=633,ly=328,type=ElbowV,xs=440&695,ys=271&365"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=633,ly=311,type=ElbowV,xs=442&695,ys=168&365"},
           "event": "FINISH",
           "id": "T44",
           "resultCode": "DEFAULT",
           "to": "A13"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=756,ly=333,type=ElbowV,xs=440&839,ys=271&362"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=756,ly=330,type=ElbowV,xs=442&839,ys=168&362"},
           "event": "FINISH",
           "id": "T45",
           "resultCode": "ServiceOrder",
           "to": "A17"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=948,ly=333,type=ElbowV,xs=440&1034,ys=271&360"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=948,ly=332,type=ElbowV,xs=442&1034,ys=168&360"},
           "event": "FINISH",
           "id": "T46",
           "resultCode": "Synchronization",
           "to": "A2"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1092,ly=328,type=ElbowV,xs=440&1231,ys=271&363"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1092,ly=325,type=ElbowV,xs=442&1231,ys=168&363"},
           "event": "FINISH",
           "id": "T47",
           "resultCode": "Sync with custom expr",
           "to": "A8"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1249,ly=331,type=ElbowV,xs=440&1386,ys=271&364"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=472,ly=367,type=ElbowV,xs=442&490,ys=168&431"},
           "event": "FINISH",
           "id": "T48",
           "resultCode": "error handler delegation",
           "to": "A15"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1430,ly=335,type=ElbowV,xs=440&1507,ys=271&363"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=376,ly=396,type=ElbowV,xs=440&440&371&371,ys=168&349&349&475"},
           "event": "FINISH",
           "id": "T49",
           "resultCode": "AbortEvent",
           "to": "A12"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=304,ly=333,type=ElbowV,xs=440&252,ys=271&389"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=239,ly=352,type=ElbowV,xs=442&237,ys=168&388"},
           "event": "FINISH",
           "id": "T50",
           "resultCode": "SingleSubProcess",
           "to": "A23"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1044,ly=251,type=ElbowV,xs=471&1593&1593,ys=255&255&769"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=980,ly=170,type=ElbowV,xs=481&1356&1356,ys=168&168&693"},
           "event": "FINISH",
           "id": "T51",
           "resultCode": "DocumentBinding",
@@ -604,7 +531,7 @@
     },
     {
       "attributes": {
-        "WORK_DISPLAY_INFO": "x=1597,y=773,w=20,h=20",
+        "WORK_DISPLAY_INFO": "x=1332,y=697,w=20,h=20",
         "processname": "com.centurylink.mdw.tests.workflow/MDWServiceLevel_9",
         "processversion": "[0.2,1)",
         "synchronous": "TRUE",
@@ -614,7 +541,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
       "name": "Invoke service lvl9 process",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1070,ly=758,type=ElbowV,xs=1607&470,ys=797&876"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=910,ly=730,type=ElbowV,xs=1342&504,ys=721&876"},
         "event": "FINISH",
         "id": "T52",
         "to": "A11"
@@ -671,19 +598,19 @@
     {
       "activities": [
         {
-          "attributes": {"WORK_DISPLAY_INFO": "x=371,y=58,w=32,h=32"},
+          "attributes": {"WORK_DISPLAY_INFO": "x=1073,y=64,w=32,h=32"},
           "id": "A29",
           "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
           "name": "Process Start",
           "transitions": [{
-            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=443,ly=74,type=Straight,xs=403&484,ys=74&74"},
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1145,ly=80,type=Straight,xs=1105&1186,ys=80&80"},
             "event": "FINISH",
             "id": "T39",
             "to": "A28"
           }]
         },
         {
-          "attributes": {"WORK_DISPLAY_INFO": "x=599,y=59,w=32,h=32"},
+          "attributes": {"WORK_DISPLAY_INFO": "x=1301,y=65,w=32,h=32"},
           "id": "A30",
           "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
           "name": "Process Finish"
@@ -695,13 +622,13 @@
             "TASK_TEMPLATE": "com.centurylink.mdw.tests.workflow/A Task For Testing Variables.task",
             "TASK_TEMPLATE_assetVersion": "[0.2,1)",
             "Task Name": "General Fallout",
-            "WORK_DISPLAY_INFO": "x=484,y=60,w=30,h=28"
+            "WORK_DISPLAY_INFO": "x=1186,y=66,w=30,h=28"
           },
           "id": "A28",
           "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
           "name": "My fallout task",
           "transitions": [{
-            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=556,ly=74,type=Straight,xs=514&599,ys=74&75"},
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1258,ly=80,type=Straight,xs=1216&1301,ys=80&81"},
             "event": "FINISH",
             "id": "T38",
             "to": "A30"
@@ -713,7 +640,7 @@
         "PROCESS_VISIBILITY": "EMBEDDED",
         "START_TRANSITION_ID": "2325912",
         "TaskName": "A Test Task",
-        "WORK_DISPLAY_INFO": "x=351,y=33,w=310,h=84",
+        "WORK_DISPLAY_INFO": "x=1053,y=39,w=310,h=84",
         "WORK_DISPLAY_INFO_MDWTestFalloutProcess": "x=499,y=110,w=31,h=27",
         "WORK_DISPLAY_INFO_MDWTestMainProcess": "x=494,y=29,w=24,h=24"
       },
@@ -744,7 +671,7 @@
     },
     "launcher": {
       "category": "LOCAL",
-      "type": "com.qwest.mbeng.MbengTableArray"
+      "type": "org.apache.xmlbeans.XmlObject"
     },
     "maptest": {
       "category": "LOCAL",
@@ -767,5 +694,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "3.35"
+  "version": "3.37"
 }
