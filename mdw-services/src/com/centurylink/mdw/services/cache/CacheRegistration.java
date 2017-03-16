@@ -68,11 +68,9 @@ public class CacheRegistration implements StartupClass {
      */
     public void onStartup() throws StartupException{
         try{
-            if (ApplicationContext.isFileBasedAssetPersist())
-                DataAccess.getProcessLoader().getPackageList(false, null); // prime the ids
-            this.preloadCache();
+            preloadCache();
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
-            this.preloadDynamicCache();
+            preloadDynamicCache();
             performInitialRequest();
         } catch(Exception ex){
             String message = "Failed to load caches";
@@ -179,8 +177,6 @@ public class CacheRegistration implements StartupClass {
         try {
             String propmgr = PropertyManager.class.getName();
             refreshCache(propmgr);
-            if (ApplicationContext.isFileBasedAssetPersist())
-                DataAccess.getProcessLoader().getPackageList(false, null); // prime the ids
             if (excludedFormats == null || !excludedFormats.contains(Asset.JAVA))
                 CacheRegistry.getInstance().clearDynamicServices();
             synchronized (allCaches) {
