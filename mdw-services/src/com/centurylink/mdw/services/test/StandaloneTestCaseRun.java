@@ -323,11 +323,15 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         }
     }
 
-    protected HttpHelper getHttpHelper(String endpoint) throws MalformedURLException {
-        String url = getConfig().getServerUrl();
-        if (!endpoint.startsWith("/"))
-            endpoint = "/" + endpoint;
-        HttpHelper helper = new HttpHelper(new URL(url + endpoint));
+    protected HttpHelper getHttpHelper(String endpoint, String user, String password) throws MalformedURLException {
+        String url = endpoint;
+        if (!endpoint.startsWith("http://") && !endpoint.startsWith("https://")) {
+            url = getConfig().getServerUrl();
+            if (!endpoint.startsWith("/"))
+                endpoint = "/" + endpoint;
+            url += endpoint;
+        }
+        HttpHelper helper = new HttpHelper(new URL(url), user, password);
         helper.setHeader("Content-Type", "application/json");
         return helper;
     }
