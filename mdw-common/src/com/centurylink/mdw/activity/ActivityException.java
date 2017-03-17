@@ -46,7 +46,7 @@ public class ActivityException extends WorkflowException {
     public JSONObject getJson() throws JSONException {
         JSONObject json = super.getJson();
         if (runtimeContext != null)
-            json.put("runtimeContext", runtimeContext.getJson(true));
+            json.put("runtimeContext", runtimeContext.getJson());
         return json;
     }
 }
