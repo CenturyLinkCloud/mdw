@@ -1455,7 +1455,7 @@
             base-type="org.eclipse.core.runtime.xml"
             file-names="MDWTaskView.xml,MDWTaskView.xml.xml,TaskView.xml,TaskView.xml.xml,*TaskView.xml,*TaskView.xml.xml">
          </content-type>
-         <file-association content-type="org.eclipse.jdt.groovy.core.groovySource" file-names=".test"/>
+         <file-association content-type="org.eclipse.jdt.groovy.core.groovySource" file-extensions="test" />
    </extension>
    
    <extension
