@@ -97,7 +97,7 @@ public class Workflow extends JsonRestService {
      * Update workflow values is currently supported.
      */
     @Override
-    @Path("/{instanceId/values")
+    @Path("/{instanceId}/{values}")
     @ApiOperation(value="Update values for an ownerType and ownerId", response=StatusMessage.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="Values", paramType="body")})
