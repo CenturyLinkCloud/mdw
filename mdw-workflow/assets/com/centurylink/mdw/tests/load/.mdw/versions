@@ -1,4 +1,4 @@
-#Wed Sep 14 15:09:52 MDT 2016
+#Fri Mar 17 14:53:43 MDT 2017
 MDWLoadTestRegular.proc=5
 myorderreq1.xml=2
 myorderreq3.xml=2
@@ -6,13 +6,8 @@ myorderreq5.xml=2
 myorderreq9.xml=2
 placeHolderMap.csv=1
 regular-proc-msg.test=3
-regular-proc-msg.yaml=1
 regular-proc.test=2
-regular-proc.yaml=1
 service-proc-perf1.test=1
-service-proc-perf1.yaml=1
 service-proc-perf3.test=1
-service-proc-perf3.yaml=1
 service-proc-perf5.test=1
-service-proc-perf5.yaml=1
 service-proc-perf9.test=1

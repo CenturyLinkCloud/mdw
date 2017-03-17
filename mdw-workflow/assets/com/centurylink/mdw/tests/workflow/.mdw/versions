@@ -1,4 +1,4 @@
-#Thu Mar 16 14:27:00 MDT 2017
+#Fri Mar 17 17:10:34 MDT 2017
 A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=3
 CrossmapTest.proc=2
@@ -32,7 +32,7 @@ MDWTestVariables.proc=3
 Person.java=4
 PopulateVar.java=2
 PrePostGroovyScript.proc=7
-RestfulServiceAdapter.proc=22
+RestfulServiceAdapter.proc=23
 ResultsOrdering.proc=5
 RpcWebService.proc=6
 RuntimeContext.proc=4
@@ -137,7 +137,7 @@ raise-cancel-event.yaml=3 Auto-created
 regex-in-proc-results.test=2
 regex-in-proc-results.yaml=5 Auto-created
 restful-adapter-get.test=1
-restful-adapter-get.yaml=8 Auto-created
+restful-adapter-get.yaml=9
 restful-adapter-post.test=1
 restful-adapter-post.yaml=6 Auto-created
 results-by-id-1.test=1

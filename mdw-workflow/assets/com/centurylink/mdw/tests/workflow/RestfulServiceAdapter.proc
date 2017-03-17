@@ -56,7 +56,7 @@
       "attributes": {
         "ConnectTimeout": "60000",
         "DO_LOGGING": "True",
-        "EndpointUri": "#{props['mdw.services.url']}/Services",
+        "EndpointUri": "#{props['mdw.services.url']}/Services/REST",
         "HeadersVariable": "headersMap",
         "HttpMethod": "POST",
         "PostScriptLang": "Groovy",
@@ -69,25 +69,12 @@
       "id": "A9",
       "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
       "name": "RESTful\r\nAction Request",
-      "transitions": [
-        {
-          "attributes": {
-            "TRANSITION_DELAY": "30s",
-            "TRANSITION_DISPLAY_INFO": "lx=326,ly=292,type=Curve,xs=367&382,ys=329&266",
-            "TRANSITION_RETRY_COUNT": "3"
-          },
-          "event": "ERROR",
-          "id": "T9",
-          "resultCode": "RETRY",
-          "to": "A9"
-        },
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=517,ly=318,type=Elbow,xs=425&563,ys=320&320"},
-          "event": "FINISH",
-          "id": "T12",
-          "to": "A5"
-        }
-      ]
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=517,ly=318,type=Elbow,xs=425&563,ys=320&320"},
+        "event": "FINISH",
+        "id": "T12",
+        "to": "A5"
+      }]
     },
     {
       "attributes": {
@@ -113,7 +100,7 @@
         "OsgiBundleSymbolicName": "com.centurylink.donsservicemix",
         "Output Documents": "requestDoc",
         "RETURN_CODE": "httpMethod",
-        "Rule": "System.out.println(\"HTTP Method: \" + httpMethod);\r\n\r\nif (httpMethod.equals(\"POST\") || httpMethod.equals(\"SIM\"))\r\n{\r\n  requestDoc = '''<tns:GetEmployee xmlns:tns=\"http://mdw.centurylink.com/serviceTypes\">\r\n  <tns:workstationId>dxoakes<\/tns:workstationId>\r\n<\/tns:GetEmployee>''';\r\n\r\n}\r\n\r\nreturn httpMethod\r\n",
+        "Rule": "\r\nruntimeContext.logInfo('HTTP Method: ' + httpMethod)\r\n\r\nif (httpMethod.equals(\"POST\") || httpMethod.equals(\"SIM\")) {\r\n    requestDoc = new com.centurylink.mdw.tests.services.GetEmployee()\r\n    requestDoc.setWorkstationId('dxoakes')\r\n}\r\n\r\nreturn httpMethod\r\n",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=228,y=70,w=100,h=60"
       },
@@ -167,5 +154,5 @@
       "type": "com.centurylink.mdw.model.StringDocument"
     }
   },
-  "version": "0.22"
+  "version": "0.23"
 }

@@ -15,7 +15,7 @@ start process("ProcessValues") {
 }
 
 verify process
-sleep 5 // objectVar takes time to update (TODO: why?) 
+sleep 5 // objectVar takes time to update (TODO: why?)
 
 // check values through process services
 def procInst = masterProcessInstance
@@ -57,14 +57,14 @@ response = get http("services/Processes/${procInst.id}/values/jaxbVar") {
   }
 assert response.code == 200
 json = new JSONObject(response.actual)
-assert json.getString('value') == '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ProcessJaxb attributeOne="attrOneValue" attributeTwo="requiredAttributeValue">
+
+assert json.getString('value').replaceAll("\\r\\n", "").replaceAll("\\n", "") == '''<ProcessJaxb attributeOne="attrOneValue" attributeTwo="requiredAttributeValue">
     <elementOne>elementOneValue</elementOne>
     <elementTwo>elementTwoValue</elementTwo>
-</ProcessJaxb>
-'''
+</ProcessJaxb>'''.replaceAll("\\r\\n", "").replaceAll("\\n", "")
+
 // expressions
-response = get http("services/Processes/${procInst.id}/values/\${jaxbVar.elementOne}") {
+response = get http("services/Processes/${procInst.id}/values/\$%7BjaxbVar.elementOne%7D") {
     user = 'mdwapp'
     password = 'ldap_012'
     headers = [ Accept: "application/json" ]
@@ -73,7 +73,7 @@ assert response.code == 200
 json = new JSONObject(response.actual)
 assert json.getString('value') == 'elementOneValue'
 
-response = get http("services/Processes/${procInst.id}/values/\${objectVar.flowmaster}") {
+response = get http("services/Processes/${procInst.id}/values/\$%7BobjectVar.flowmaster%7D") {
     user = 'mdwapp'
     password = 'ldap_012'
     headers = [ Accept: "application/json" ]

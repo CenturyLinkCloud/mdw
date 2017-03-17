@@ -27,7 +27,7 @@ process: # 10229
         "Container": "Tomcat",
         "Database": "MySQL",
         "DbInfo": {
-          "jdbcUrl": "${~http.*}",
+          "jdbcUrl": "${~jdbc.*}",
           "user": "mdw"
         },
         "MdwBuild": "${~201.*}",

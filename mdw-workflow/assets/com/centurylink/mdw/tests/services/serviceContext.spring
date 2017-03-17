@@ -6,7 +6,7 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <!-- jaxb marshaller/unmarshaller pooling -->
-  <bean id="myJaxbTranslator" class="com.centurylink.mdw.jaxb.JaxbElementTranslator">
+  <bean id="serviceJaxbTranslator" class="com.centurylink.mdw.jaxb.JaxbElementTranslator">
     <property name="marshaller" ref="myMarshaller" />
     <property name="unmarshaller" ref="myUnmarshaller" />
   </bean>
@@ -16,6 +16,7 @@
     <constructor-arg>
       <list>
         <value type="java.lang.Class">com.centurylink.mdw.tests.services.ProcessJaxb</value>
+        <value type="java.lang.Class">com.centurylink.mdw.tests.services.GetEmployee</value>
       </list>
     </constructor-arg>
   </bean>

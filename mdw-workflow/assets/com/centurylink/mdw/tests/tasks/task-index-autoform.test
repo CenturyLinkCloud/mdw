@@ -1,10 +1,11 @@
 // task-index-autoform
 import java.text.DateFormat;
-  Date date = new Date ();
-  DateFormat df = DateFormat.getDateTimeInstance();
-  df.setTimeZone(TimeZone.getTimeZone("UTC"));  
-  df.applyPattern("EEE MMM dd HH:mm:ss zzz yyyy")
-    
+
+Date date = new Date ();
+DateFormat df = DateFormat.getDateTimeInstance();
+df.setTimeZone(TimeZone.getTimeZone("UTC"));
+df.applyPattern("EEE MMM dd HH:mm:ss zzz yyyy")
+
 today = df.format(date);
 start process("TaskIndexTesting") {
     variables = [ isCustom: false,
@@ -13,7 +14,7 @@ start process("TaskIndexTesting") {
                   dateVar: today ]
 }
 
-sleep 60
+sleep 30
 def taskInst = action task("An AutoForm Task") {
     outcome = "Claim"
 }
@@ -21,8 +22,13 @@ def taskInst = action task("An AutoForm Task") {
 println 'verifying initial indexes for task instance id: ' + taskInst.getId()
 def resp = get http("Services/Tasks/" + taskInst.getId() + "/indexes?format=json")
 
+DateFormat df2 = DateFormat.getDateTimeInstance();
+df2.applyPattern("EEE MMM dd HH:mm:ss zzz yyyy")
+
 def indexes = new groovy.json.JsonSlurper().parseText(resp.getContent())
-assert indexes.dateVarIndex == today.toString()
+println 'df.format(df2.parse(indexes.dateVarIndex)): "' + df.format(df2.parse(indexes.dateVarIndex)) + '"'
+println 'today: "' + today + '"'
+assert df.format(df2.parse(indexes.dateVarIndex)) == today
 assert indexes.intVarIndex == "101"
 assert indexes.stringVarIndex == "before"
 
@@ -41,7 +47,7 @@ println 'verifying updated for task instance id: ' + taskInst.getId()
 resp = get http("Services/Tasks/" + taskInst.getId() + "/indexes?format=json")
 
 indexes = new groovy.json.JsonSlurper().parseText(resp.getContent())
-assert indexes.dateVarIndex == laterToday.toString()
+assert df.format(df2.parse(indexes.dateVarIndex)) == laterToday.toString()
 assert indexes.stringVarIndex == "after"
 assert indexes.intVarIndex == "1001"
 
