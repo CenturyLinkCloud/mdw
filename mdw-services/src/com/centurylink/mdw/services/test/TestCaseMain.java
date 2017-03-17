@@ -4,16 +4,23 @@
 package com.centurylink.mdw.services.test;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.test.TestCase;
-import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.test.TestCase.Status;
+import com.centurylink.mdw.test.TestExecConfig;
+import com.centurylink.mdw.util.HttpHelper;
 
 public class TestCaseMain {
     /**
@@ -61,11 +68,32 @@ public class TestCaseMain {
 
         LogMessageMonitor monitor = new LogMessageMonitor();
         monitor.start(true);
+
         Map<String,Process> processCache = new HashMap<>();
         TestCaseRun run = new StandaloneTestCaseRun(testCase, user, resultsFile.getParentFile(), 0,
                 masterRequestId, monitor, processCache, execConfig);
         try {
+            // tell the server we're monitoring
+            HttpHelper httpHelper = new HttpHelper(new URL(execConfig.getServerUrl() + "/services/System/config"));
+            JSONObject configJson = new JSONObject();
+            configJson.put(PropertyNames.MDW_LOGGING_WATCHER, InetAddress.getLocalHost().getHostAddress());
+            if (execConfig.isStubbing())
+                configJson.put(PropertyNames.MDW_STUB_SERVER, InetAddress.getLocalHost().getHostAddress());
+            StatusMessage msg = new StatusMessage(new JSONObject(httpHelper.put(configJson.toString(2))));
+            if (!msg.isSuccess())
+                System.out.println("Error setting server config: " + msg.getMessage());
+
             run.run();
+
+            // stop monitoring
+            httpHelper = new HttpHelper(new URL(execConfig.getServerUrl() + "/services/System/config"));
+            configJson.put(PropertyNames.MDW_LOGGING_WATCHER, "");
+            if (execConfig.isStubbing())
+                configJson.put(PropertyNames.MDW_STUB_SERVER, "");
+            msg = new StatusMessage(new JSONObject(httpHelper.put(configJson.toString(2))));
+            if (!msg.isSuccess())
+                System.out.println("Error setting server config: " + msg.getMessage());
+
             if (run.getTestCase().getStatus() == Status.Passed)
                 System.exit(0);
             else

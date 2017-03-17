@@ -79,8 +79,9 @@ public class Workflow extends JsonRestService {
                 if (segments.length == 4)
                     query.setFilter("version", Asset.parseVersion(segments[3]));
                 Process process = workflowServices.getProcessDefinition(assetPath, query);
-                JSONObject json = process.getJson(); // does not include name or package
+                JSONObject json = process.getJson(); // does not include name, package or id
                 json.put("name", process.getName());
+                json.put("id", process.getId());
                 json.put("packageName", process.getPackageName());
                 return json;
             }

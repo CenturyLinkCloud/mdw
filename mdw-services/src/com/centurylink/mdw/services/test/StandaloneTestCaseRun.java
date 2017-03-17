@@ -247,9 +247,14 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                 process = new Process(json);
                 if (json.has("id"))
                     process.setId(json.getLong("id"));
+                else
+                    throw new TestException("Process ID not found for: " + query);
                 if (json.has("package"))
                     process.setPackageName(json.getString("package"));
                 getProcessCache().put(target, process);
+            }
+            catch (TestException ex) {
+                throw ex;
             }
             catch (Exception ex) {
                 throw new TestException("Cannot load " + target, ex);

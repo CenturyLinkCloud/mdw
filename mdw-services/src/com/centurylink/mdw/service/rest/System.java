@@ -3,6 +3,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -14,17 +15,22 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.services.SystemServices.SysInfoType;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.log.LoggerUtil;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Path("/System")
-@Api("System Information")
+@Api("System Information & Configuration")
 public class System extends JsonRestService {
 
     @Override
@@ -52,5 +58,34 @@ public class System extends JsonRestService {
         else {
             return new JSONObject(); // TODO
         }
+    }
+
+    @Override
+    @Path("/config")
+    @ApiOperation(value="Update configuration", response=StatusMessage.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="ConfigValues", paramType="body", required=true, dataType="java.lang.Object")})
+    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
+    throws ServiceException, JSONException {
+        String[] segments = getSegments(path);
+        if (segments.length != 2 || !"config".equals(segments[1]))
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid request path: " + path);
+
+        PropertyManager propMgr = PropertyManager.getInstance();
+        for (String name : JSONObject.getNames(content)) {
+            Object v = content.get(name);
+            String value = v == null ? null : v.toString();
+            propMgr.setStringProperty(name, value == null || value.isEmpty() ? null : value);
+        }
+        LoggerUtil.getStandardLogger().refreshCache();
+
+        try {
+            propagatePut(content, headers);
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+
+        return null;
     }
 }
