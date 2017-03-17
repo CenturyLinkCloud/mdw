@@ -25,25 +25,18 @@ import javax.xml.bind.DatatypeConverter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.MdwWebSocketServer;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.model.event.AdapterStubRequest;
-import com.centurylink.mdw.model.event.AdapterStubResponse;
-import com.centurylink.mdw.model.workflow.ActivityStubRequest;
-import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
-import com.centurylink.mdw.services.test.StubServer.Stubber;
 import com.centurylink.mdw.test.PackageTests;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCase.Status;
 import com.centurylink.mdw.test.TestCaseList;
-import com.centurylink.mdw.test.TestException;
 import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -119,7 +112,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
             if (StubServer.isRunning())
                 StubServer.stop();
             if (config.isStubbing())
-                StubServer.start(new TestStubber());
+                StubServer.start(new TestStubber(masterRequestRuns));
 
             // stubbing
             setStubServerState(config.isStubbing());
@@ -356,27 +349,5 @@ public class TestRunner implements Runnable, MasterRequestListener {
         json.put("VALUE", on ?  InetAddress.getLocalHost().getHostAddress() : "");
         InternalMessenger messenger = MessengerFactory.newInternalMessenger();
         messenger.broadcastMessage(json.toString());
-    }
-
-    private class TestStubber implements Stubber {
-        public ActivityStubResponse processRequest(ActivityStubRequest request) throws JSONException, TestException {
-            TestCaseRun run = masterRequestRuns.get(request.getRuntimeContext().getMasterRequestId());
-            if (run == null) {
-                ActivityStubResponse activityStubResponse = new ActivityStubResponse();
-                activityStubResponse.setPassthrough(true);
-                return activityStubResponse;
-            }
-            return run.getStubResponse(request);
-        }
-
-        public AdapterStubResponse processRequest(AdapterStubRequest request) throws JSONException, TestException {
-            TestCaseRun run = masterRequestRuns.get(request.getMasterRequestId());
-            if (run == null) {
-                AdapterStubResponse stubResponse = new AdapterStubResponse(AdapterActivity.MAKE_ACTUAL_CALL);
-                stubResponse.setPassthrough(true);
-                return stubResponse;
-            }
-            return run.getStubResponse(request);
-        }
     }
 }

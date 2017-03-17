@@ -26,6 +26,7 @@ public class TestCaseMain {
     /**
      * Execute a test case in standalone mode (for Designer debug).
      * Takes a single argument: testCasePath.
+     * TODO: Refactor when implementing Gradle test run task.
      */
     public static void main(String args[]) throws Throwable {
 
@@ -69,9 +70,26 @@ public class TestCaseMain {
         LogMessageMonitor monitor = new LogMessageMonitor();
         monitor.start(true);
 
+        final Map<String,TestCaseRun> masterRequestRuns = new HashMap<>();
+
+        if (StubServer.isRunning())
+            StubServer.stop();
+        if (execConfig.isStubbing())
+            StubServer.start(new TestStubber(masterRequestRuns));
+
         Map<String,Process> processCache = new HashMap<>();
         TestCaseRun run = new StandaloneTestCaseRun(testCase, user, resultsFile.getParentFile(), 0,
                 masterRequestId, monitor, processCache, execConfig);
+        masterRequestRuns.put(masterRequestId, run);
+        run.setMasterRequestListener(new MasterRequestListener() {
+            public void syncMasterRequestId(String oldId, String newId) {
+                TestCaseRun run = masterRequestRuns.remove(oldId);
+                if (run != null) {
+                    masterRequestRuns.put(newId, run);
+                }
+            }
+        });
+
         try {
             // tell the server we're monitoring
             HttpHelper httpHelper = new HttpHelper(new URL(execConfig.getServerUrl() + "/services/System/config"));
