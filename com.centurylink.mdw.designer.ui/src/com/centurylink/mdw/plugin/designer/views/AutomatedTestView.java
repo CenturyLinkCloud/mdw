@@ -242,7 +242,7 @@ public class AutomatedTestView extends TestRunnerViewPart
             counterData = new CounterData(testSuite.getTestCases().size());
             updateCounterPanel(0, 0, 0, true);
             monitor = null;
-            if (!hasGherkin && !testSuite.isDebug()) // TODO should not start monitor at all for mdw6 once new pattern is proven
+            if (!hasGherkin && !testSuite.isDebug())
                 monitor = new LogMessageMonitor(
                         testSuite.getProject().getDesignerProxy().getDesignerDataAccess(),
                         testSuite.getProject().isOldNamespaces());
@@ -256,7 +256,7 @@ public class AutomatedTestView extends TestRunnerViewPart
 
             if (StubServer.isRunning())
                 StubServer.stop();
-            if (testSuite.isStubbing() && !hasGherkin) {
+            if (testSuite.isStubbing() && !hasGherkin && !testSuite.isDebug()) {
                 StubServer.Stubber stubber = new TestStubber();
                 int port = testSuite.getProject().getServerSettings().getStubServerPort();
                 StubServer.start(testSuite.getProject().getDesignerProxy().getRestfulServer(), port,
