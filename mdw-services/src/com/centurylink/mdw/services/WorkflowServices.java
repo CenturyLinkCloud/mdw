@@ -116,6 +116,9 @@ public interface WorkflowServices {
 
     Map<String,Value> getProcessValues(Long instanceId, boolean includeEmpty) throws ServiceException;
     Map<String,Value> getProcessValues(Long instanceId) throws ServiceException;
+    /**
+     * name can be an expression
+     */
     Value getProcessValue(Long instanceId, String name) throws ServiceException;
 
     ProcessList getProcesses(Query query) throws ServiceException;

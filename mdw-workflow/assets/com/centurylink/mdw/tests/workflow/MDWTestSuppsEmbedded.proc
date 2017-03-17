@@ -1,12 +1,12 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=19,y=245,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=24,y=438,w=60,h=40"},
       "id": "A13",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=253,ly=639,type=Elbow,xs=45&45,ys=289&400"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=245,ly=365,type=Elbow,xs=88&139,ys=458&458"},
         "event": "FINISH",
         "id": "T1",
         "to": "A5"
@@ -15,13 +15,13 @@
     {
       "attributes": {
         "Rule": "$case = \"good\";",
-        "WORK_DISPLAY_INFO": "x=587,y=196,w=100,h=60"
+        "WORK_DISPLAY_INFO": "x=653,y=162,w=100,h=60"
       },
       "id": "A10",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
       "name": "update case value",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=794,ly=354,type=Elbow,xs=691&878,ys=226&395"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=747,ly=355,type=Elbow,xs=703&809,ys=226&374"},
         "event": "FINISH",
         "id": "T7",
         "to": "A7"
@@ -30,7 +30,7 @@
     {
       "attributes": {
         "DoNotNotifyCaller": "false",
-        "WORK_DISPLAY_INFO": "x=882,y=375,w=60,h=40"
+        "WORK_DISPLAY_INFO": "x=779,y=378,w=60,h=40"
       },
       "id": "A7",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
@@ -43,7 +43,7 @@
         "TASK_TEMPLATE": "com.centurylink.mdw.tests.workflow/Supps Embedded Manual Task.task",
         "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},CORRECT,true,;Signal-{$MasterRequestID},,true,",
-        "WORK_DISPLAY_INFO": "x=381,y=548,w=100,h=60"
+        "WORK_DISPLAY_INFO": "x=414,y=430,w=100,h=60"
       },
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
@@ -51,7 +51,7 @@
       "transitions": [{
         "attributes": {
           "TRANSITION_DELAY": "0",
-          "TRANSITION_DISPLAY_INFO": "lx=783,ly=367,type=ElbowH,xs=485&676&676&878,ys=585&585&419&419",
+          "TRANSITION_DISPLAY_INFO": "lx=704,ly=389,type=ElbowH,xs=518&656&656&775,ys=494&494&394&394",
           "TRANSITION_RETRY_COUNT": "0"
         },
         "event": "FINISH",
@@ -61,71 +61,15 @@
     },
     {
       "attributes": {
-        "Output Documents": "launcher",
-        "Rule": "table launcher \n    with argument, result, retcode\n    option key=argument;\nvariable index;\ndo $index = 0;\ndo new (1, \"\", \"START\") in $launcher;\ndo new (2, \"\", \"START\") in $launcher;\ndo new (3, \"\", \"START\") in $launcher;\n",
-        "SCRIPT": "MagicBox",
-        "WORK_DISPLAY_INFO": "x=381,y=629,w=100,h=60"
-      },
-      "id": "A4",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "set up arg table",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=485,ly=679,type=Elbow,xs=485&529,ys=659&659"},
-        "event": "FINISH",
-        "id": "T20",
-        "to": "A11"
-      }]
-    },
-    {
-      "attributes": {
-        "Rule": "table launcher;\n\ndo $case = 0;\n\nforeach row in $launcher\nif row.retcode == \"FINISH\"\nthen $case = $case + row.result;",
-        "SCRIPT": "MagicBox",
-        "WORK_DISPLAY_INFO": "x=831,y=631,w=100,h=60"
-      },
-      "id": "A8",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "sum up",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=905,ly=525,type=Elbow,xs=906&906,ys=627&419"},
-        "event": "FINISH",
-        "id": "T21",
-        "to": "A7"
-      }]
-    },
-    {
-      "attributes": {
-        "DELAY_BETWEEN": "5",
-        "KeyColumn": "argument",
-        "ParameterTable": "launcher",
-        "ReturnCodeColumn": "retcode",
-        "STATUS_AFTER_EVENT": "Hold",
-        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},CORRECT,true,;Signal-{$MasterRequestID},,true,",
-        "WORK_DISPLAY_INFO": "x=533,y=629,w=100,h=60",
-        "processname": "com.centurylink.mdw.tests/MDWTestSubProcess",
-        "processversion": "1007",
-        "synchronous": "TRUE"
-      },
-      "id": "A11",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeMultipleProcessActivity",
-      "name": "3 subproceses",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=778,ly=452,type=Elbow,xs=637&827,ys=660&660"},
-        "event": "FINISH",
-        "id": "T19",
-        "to": "A8"
-      }]
-    },
-    {
-      "attributes": {
         "STATUS_AFTER_TIMEOUT": "Cancelled",
         "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},Hold::CORRECT,true,;Signal-{$MasterRequestID},,false,",
-        "WORK_DISPLAY_INFO": "x=387,y=205,w=100,h=60"
+        "WORK_DISPLAY_INFO": "x=420,y=169,w=100,h=60"
       },
       "id": "A9",
       "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
       "name": "Wait for some event",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=531,ly=234,type=Elbow,xs=491&583,ys=230&230"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=609,ly=209,type=Elbow,xs=524&649,ys=195&195"},
         "event": "FINISH",
         "id": "T6",
         "to": "A10"
@@ -135,14 +79,14 @@
       "attributes": {
         "Expression": "testCase",
         "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=21,y=404,w=48,h=151"
+        "WORK_DISPLAY_INFO": "x=143,y=383,w=48,h=151"
       },
       "id": "A5",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
       "name": "which case?",
       "transitions": [
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=247,ly=230,type=Elbow,xs=73&383,ys=479&256"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=280,ly=213,type=Elbow,xs=195&416,ys=458&199"},
           "event": "FINISH",
           "id": "T8",
           "resultCode": "correct-resume-on-wait",
@@ -151,7 +95,7 @@
         {
           "attributes": {
             "TRANSITION_DELAY": "0",
-            "TRANSITION_DISPLAY_INFO": "lx=294,ly=553,type=ElbowH,xs=73&235&235&377,ys=496&496&584&584",
+            "TRANSITION_DISPLAY_INFO": "lx=334,ly=452,type=ElbowH,xs=195&410,ys=460&460",
             "TRANSITION_RETRY_COUNT": "0"
           },
           "event": "FINISH",
@@ -160,32 +104,21 @@
           "to": "A1"
         },
         {
-          "attributes": {
-            "TRANSITION_DELAY": "0",
-            "TRANSITION_DISPLAY_INFO": "lx=271,ly=596,type=ElbowH,xs=52&253&253&377,ys=552&552&625&625",
-            "TRANSITION_RETRY_COUNT": "0"
-          },
-          "event": "FINISH",
-          "id": "T18",
-          "resultCode": "subproc-hold",
-          "to": "A4"
-        },
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=247,ly=190,type=Elbow,xs=72&388,ys=459&221"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=265,ly=205,type=Elbow,xs=195&416,ys=458&199"},
           "event": "FINISH",
           "id": "T26",
           "resultCode": "finish-resume-on-wait",
           "to": "A9"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=198,ly=310,type=Elbow,xs=73&387,ys=479&344"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=237,ly=298,type=Elbow,xs=195&420,ys=458&303"},
           "event": "FINISH",
           "id": "T27",
           "resultCode": "custom-finish-event-on-event-wait",
           "to": "A22"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=261,ly=434,type=Elbow,xs=69&373,ys=479&478"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=302,ly=378,type=Elbow,xs=191&300&300&410,ys=458&458&382&382"},
           "event": "FINISH",
           "id": "T29",
           "resultCode": "correct-waiting-on-wait",
@@ -194,7 +127,7 @@
         {
           "attributes": {
             "TRANSITION_DELAY": "0s",
-            "TRANSITION_DISPLAY_INFO": "lx=148,ly=639,type=Elbow,xs=45&355,ys=559&776"
+            "TRANSITION_DISPLAY_INFO": "lx=246,ly=542,type=Elbow,xs=195&426,ys=458&586"
           },
           "event": "FINISH",
           "id": "T32",
@@ -207,13 +140,13 @@
       "attributes": {
         "STATUS_AFTER_TIMEOUT": "Cancelled",
         "WAIT_EVENT_NAMES": "Signal-{$MasterRequestID},custom-finish,false,",
-        "WORK_DISPLAY_INFO": "x=391,y=314,w=100,h=60"
+        "WORK_DISPLAY_INFO": "x=424,y=273,w=100,h=60"
       },
       "id": "A22",
       "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
       "name": "Wait for some event",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=569,ly=313,type=Elbow,xs=495&878,ys=344&395"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=588,ly=276,type=Elbow,xs=528&775,ys=303&398"},
         "event": "FINISH",
         "id": "T30",
         "resultCode": "custom-finish",
@@ -224,13 +157,13 @@
       "attributes": {
         "STATUS_AFTER_TIMEOUT": "Cancelled",
         "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},Waiting::CORRECT,true,;Signal-{$MasterRequestID},,false,",
-        "WORK_DISPLAY_INFO": "x=377,y=448,w=100,h=60"
+        "WORK_DISPLAY_INFO": "x=410,y=352,w=100,h=60"
       },
       "id": "A24",
       "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
       "name": "Wait for some event",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=727,ly=434,type=Elbow,xs=481&878,ys=478&395"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=659,ly=411,type=Elbow,xs=514&775,ys=395&395"},
         "event": "FINISH",
         "id": "T31",
         "to": "A7"
@@ -243,13 +176,13 @@
         "TIMER_WAIT": "3",
         "Unit": "Minutes",
         "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},ABORT,true,",
-        "WORK_DISPLAY_INFO": "x=305,y=780,w=100,h=60"
+        "WORK_DISPLAY_INFO": "x=430,y=556,w=100,h=60"
       },
       "id": "A25",
       "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
       "name": "Wait for 3 min",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=608,ly=609,type=Elbow,xs=409&878,ys=810&395"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=595,ly=489,type=Elbow,xs=534&775,ys=586&398"},
         "event": "FINISH",
         "id": "T33",
         "to": "A7"
@@ -272,12 +205,12 @@
     {
       "activities": [
         {
-          "attributes": {"WORK_DISPLAY_INFO": "x=709,y=78,w=60,h=40"},
+          "attributes": {"WORK_DISPLAY_INFO": "x=837,y=73,w=60,h=40"},
           "id": "A17",
           "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
           "name": "Start",
           "transitions": [{
-            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=787,ly=98,type=Elbow,xs=773&822,ys=98&98"},
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=915,ly=93,type=Elbow,xs=901&950,ys=93&93"},
             "event": "FINISH",
             "id": "T22",
             "to": "A18"
@@ -287,20 +220,20 @@
           "attributes": {
             "Rule": "SetInEmbedded = SetInMain + \", World!\";",
             "SCRIPT": "Groovy",
-            "WORK_DISPLAY_INFO": "x=826,y=72,w=100,h=60"
+            "WORK_DISPLAY_INFO": "x=954,y=67,w=100,h=60"
           },
           "id": "A18",
           "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
           "name": "Set Variable in Embedded",
           "transitions": [{
-            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=968,ly=101,type=Elbow,xs=930&978,ys=101&101"},
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1096,ly=96,type=Elbow,xs=1058&1106,ys=96&96"},
             "event": "FINISH",
             "id": "T23",
             "to": "A16"
           }]
         },
         {
-          "attributes": {"WORK_DISPLAY_INFO": "x=982,y=81,w=60,h=40"},
+          "attributes": {"WORK_DISPLAY_INFO": "x=1110,y=76,w=60,h=40"},
           "id": "A16",
           "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
           "name": "Stop"
@@ -311,7 +244,7 @@
         "ENTRY_TRANSITION_ID": "2327617",
         "PROCESS_VISIBILITY": "EMBEDDED",
         "START_TRANSITION_ID": "2327578",
-        "WORK_DISPLAY_INFO": "x=709,y=45,w=333,h=105"
+        "WORK_DISPLAY_INFO": "x=837,y=40,w=333,h=105"
       },
       "id": "P2",
       "name": "Exception Handler",
@@ -323,19 +256,19 @@
     {
       "activities": [
         {
-          "attributes": {"WORK_DISPLAY_INFO": "x=295,y=80,w=60,h=40"},
+          "attributes": {"WORK_DISPLAY_INFO": "x=859,y=386,w=60,h=40"},
           "id": "A20",
           "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
           "name": "Start",
           "transitions": [{
-            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=441,ly=92,type=Elbow,xs=359&420,ys=100&100"},
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=991,ly=398,type=Elbow,xs=923&970,ys=406&406"},
             "event": "FINISH",
             "id": "T24",
             "to": "A19"
           }]
         },
         {
-          "attributes": {"WORK_DISPLAY_INFO": "x=617,y=80,w=60,h=40"},
+          "attributes": {"WORK_DISPLAY_INFO": "x=1133,y=386,w=60,h=40"},
           "id": "A21",
           "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
           "name": "Stop"
@@ -345,13 +278,13 @@
             "STATUS_AFTER_EVENT": "Cancelled",
             "TIMER_WAIT": "1",
             "Unit": "Minutes",
-            "WORK_DISPLAY_INFO": "x=424,y=71,w=100,h=60"
+            "WORK_DISPLAY_INFO": "x=974,y=377,w=100,h=60"
           },
           "id": "A19",
           "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
           "name": "wait 1 min",
           "transitions": [{
-            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=573,ly=100,type=Elbow,xs=528&613,ys=100&100"},
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1104,ly=406,type=Elbow,xs=1078&1129,ys=406&406"},
             "event": "FINISH",
             "id": "T25",
             "to": "A21"
@@ -363,7 +296,7 @@
         "ENTRY_TRANSITION_ID": "2327616",
         "PROCESS_VISIBILITY": "EMBEDDED",
         "START_TRANSITION_ID": "2327569",
-        "WORK_DISPLAY_INFO": "x=255,y=40,w=440,h=120"
+        "WORK_DISPLAY_INFO": "x=858,y=349,w=342,h=114"
       },
       "id": "P3",
       "name": "Correction Handler",
@@ -375,12 +308,12 @@
     {
       "activities": [
         {
-          "attributes": {"WORK_DISPLAY_INFO": "x=845,y=211,w=60,h=40"},
+          "attributes": {"WORK_DISPLAY_INFO": "x=862,y=222,w=60,h=40"},
           "id": "A27",
           "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
           "name": "Start",
           "transitions": [{
-            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=931,ly=231,type=Elbow,xs=909&954,ys=231&231"},
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=954,ly=242,type=Elbow,xs=926&959,ys=242&242"},
             "event": "FINISH",
             "id": "T34",
             "to": "A30"
@@ -389,7 +322,7 @@
         {
           "attributes": {
             "DoNotNotifyCaller": "false",
-            "WORK_DISPLAY_INFO": "x=1145,y=211,w=60,h=40"
+            "WORK_DISPLAY_INFO": "x=1101,y=222,w=60,h=40"
           },
           "id": "A28",
           "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
@@ -400,13 +333,13 @@
             "STATUS_AFTER_EVENT": "Cancelled",
             "TIMER_WAIT": "1",
             "Unit": "Minutes",
-            "WORK_DISPLAY_INFO": "x=958,y=200,w=100,h=60"
+            "WORK_DISPLAY_INFO": "x=963,y=215,w=100,h=60"
           },
           "id": "A30",
           "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
           "name": "wait 1 min",
           "transitions": [{
-            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1101,ly=231,type=Elbow,xs=1062&1141,ys=231&231"},
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1082,ly=242,type=Elbow,xs=1067&1097,ys=242&242"},
             "event": "FINISH",
             "id": "T35",
             "to": "A28"
@@ -416,7 +349,7 @@
       "attributes": {
         "EMBEDDED_PROCESS_TYPE": "Cancellation Handler",
         "PROCESS_VISIBILITY": "EMBEDDED",
-        "WORK_DISPLAY_INFO": "x=805,y=171,w=440,h=120"
+        "WORK_DISPLAY_INFO": "x=846,y=178,w=327,h=124"
       },
       "id": "P26",
       "name": "Cancellation Handler"
@@ -433,12 +366,12 @@
     },
     "launcher": {
       "category": "LOCAL",
-      "type": "com.qwest.mbeng.MbengTableArray"
+      "type": "org.apache.xmlbeans.XmlObject"
     },
     "testCase": {
       "category": "INPUT",
       "type": "java.lang.String"
     }
   },
-  "version": "0.9"
+  "version": "0.11"
 }

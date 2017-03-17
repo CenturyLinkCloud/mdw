@@ -20,7 +20,7 @@ start process("com.centurylink.mdw.tests.workflow/DocumentChange") {
 
 sleep 15 // ensure consistent ordering in YAML
 
-start process("com.centurylink.mdw.tests/DocumentChange") {
+start process("com.centurylink.mdw.tests.workflow/DocumentChange") {
     variables = [ outcome: "nochange",
                   changedDomDoc: asset("doc-changedDomDoc.xml").text,
                   changedFormDataDoc: asset("doc-changedFormDataDoc.xml").text,

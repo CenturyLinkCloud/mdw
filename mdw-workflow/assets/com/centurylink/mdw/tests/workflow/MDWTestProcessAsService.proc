@@ -14,8 +14,8 @@
     },
     {
       "attributes": {
-        "Expression": "( [ $count >= 100 ] \"TRUE\" ; \"FALSE\" )",
-        "SCRIPT": "MagicBox",
+        "Expression": "count > 99 ?  'TRUE' : 'FALSE'",
+        "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=704,y=392,w=90,h=47"
       },
       "id": "A1",
@@ -101,8 +101,8 @@
     },
     {
       "attributes": {
-        "Rule": "document response;\n& $response = \"LoadTestResponse\";\n$response.Status = \"OK\";\n$count = 0;",
-        "SCRIPT": "MagicBox",
+        "Rule": "/*document response;\n & $response = \"LoadTestResponse\";\n $response.Status = \"OK\";\n $count = 0;\n */\nimport javax.xml.parsers.DocumentBuilder;\nimport javax.xml.parsers.DocumentBuilderFactory;\nimport org.w3c.dom.Document;\nimport org.w3c.dom.Element;\n\nDocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();\nDocumentBuilder builder = dbf.newDocumentBuilder();\n\nDocument response = builder.newDocument();\nElement element = response.createElement(\"LoadTestResponse\");\nresponse.appendChild(element);\n\nElement itemElement = response.createElement(\"Status\");\nitemElement.appendChild(response.createTextNode('OK'));\nelement.appendChild(itemElement);\n\ncount=0",
+        "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=432,y=391,w=100,h=60"
       },
       "id": "A10",
@@ -288,5 +288,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "0.16"
+  "version": "0.20"
 }

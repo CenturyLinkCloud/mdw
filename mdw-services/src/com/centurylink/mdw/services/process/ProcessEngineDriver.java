@@ -508,7 +508,7 @@ public class ProcessEngineDriver {
                 Process procdef = getProcessDefinition(procInst.getProcessId());
                 if (procdef == null) {
                     String msg = "Unable to load process id " + procInst.getProcessId() + " (instance id=" + procInst.getId() + ") for " + msgid;
-                    if (ApplicationContext.isFileBasedAssetPersist() && ApplicationContext.isDevelopment()) {
+                    if (ApplicationContext.isDevelopment()) {
                         // referential integrity not always enforced for VCS assets
                         if (PropertyManager.getBooleanProperty(PropertyNames.MDW_INTERNAL_EVENT_DEV_CLEANUP, true)) {
                             logger.severe(msg + " (event will be deleted)");

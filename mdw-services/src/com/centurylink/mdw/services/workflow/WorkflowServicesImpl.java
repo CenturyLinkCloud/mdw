@@ -19,7 +19,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Jsonable;
@@ -40,7 +39,6 @@ import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
-import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.listener.Listener;
@@ -79,7 +77,6 @@ import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.util.TransactionWrapper;
-import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -358,9 +355,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public Value getProcessValue(Long instanceId, String name) throws ServiceException {
         ProcessRuntimeContext runtimeContext = getContext(instanceId);
-        if (!runtimeContext.isExpression(name) && runtimeContext.getProcess().getVariable(name) == null)
+        Variable var = runtimeContext.getProcess().getVariable(name);
+        if (var == null && runtimeContext.isExpression(name))
             throw new ServiceException(ServiceException.NOT_FOUND, "No variable defined: " + name);
-        String stringVal = runtimeContext.getValueAsString(name);
+        String stringVal = null;
+        if (var != null && VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), var.getVariableType())) {
+            VariableInstance varInst = runtimeContext.getProcessInstance().getVariable(name);
+            // ensure consistent formatting for doc values
+            if (varInst != null && varInst.getStringValue() != null && varInst.getStringValue().startsWith("DOCUMENT:"))
+                stringVal = getDocumentStringValue(new DocumentReference(varInst.getStringValue()).getDocumentId());
+        }
+        else {
+            stringVal = runtimeContext.getValueAsString(name);
+        }
         if (stringVal == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "No value '" + name + "' found for instance: " + instanceId);
         Variable varDef = getVariableDefinitions(runtimeContext.getProcessId()).get(name);

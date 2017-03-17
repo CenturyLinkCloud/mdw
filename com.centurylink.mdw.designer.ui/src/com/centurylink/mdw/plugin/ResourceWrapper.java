@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -41,10 +42,28 @@ public class ResourceWrapper {
 
     public IFile getFile() {
         IFile file = null;
-        if (adaptable != null)
+        if (adaptable != null) {
             file = (IFile) adaptable.getAdapter(IFile.class);
-        else
+            /*if (file == null) {
+                if (adaptable instanceof IJavaElement) {
+                    IResource res = ((IJavaElement)adaptable).getResource();
+                    file = res.getAdapter(IFile.class);
+                    if (file == null) {
+                        if (adaptable instanceof IJavaElement)
+                            file = ((IJavaElement)adaptable).getResource().getAdapter(IFile.class);
+                    }
+                }
+            }*/
+        }
+        else {
             file = (resourceObj instanceof IFile) ? (IFile) resourceObj : null;
+            /*if (file == null) {
+                if (resourceObj instanceof IJavaElement)
+                    file = ((IJavaElement)resourceObj).getResource().getAdapter(IFile.class);
+            }*/
+
+
+        }
 
         return file;
     }
@@ -95,6 +114,10 @@ public class ResourceWrapper {
             project = (IProject) adaptable.getAdapter(IProject.class);
             if (project == null) {
                 IJavaProject javaProj = (IJavaProject) adaptable.getAdapter(IJavaProject.class);
+                if (javaProj == null) {
+                    if (adaptable instanceof IJavaElement)
+                        javaProj = ((IJavaElement)adaptable).getJavaProject();
+                }
                 if (javaProj != null)
                     project = javaProj.getProject();
             }
@@ -104,6 +127,8 @@ public class ResourceWrapper {
                 project = (IProject) resourceObj;
             else if (resourceObj instanceof IJavaProject)
                 project = ((IJavaProject) resourceObj).getProject();
+            else if (resourceObj instanceof IJavaElement)
+                project = ((IJavaElement)resourceObj).getJavaProject().getProject();
         }
         return project;
     }

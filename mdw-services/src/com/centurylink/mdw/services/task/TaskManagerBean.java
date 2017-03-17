@@ -681,7 +681,7 @@ public class TaskManagerBean implements TaskManager {
         for (int i = 0; i < instances.length; i++) {
             instances[i].setComments("Task has been cancelled by ProcessInstance.");
             String instantStatus = instances[i].getStatus();
-            if (instantStatus == null && ApplicationContext.isFileBasedAssetPersist()) {
+            if (instantStatus == null) {
                 TaskStatus taskStatus = DataAccess.getBaselineData().getTaskStatuses().get(instances[i].getStatusCode());
                 if (taskStatus != null)
                     instantStatus = taskStatus.getDescription();

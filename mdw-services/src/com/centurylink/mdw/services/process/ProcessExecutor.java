@@ -61,14 +61,12 @@ public class ProcessExecutor {
             String masterRequestId, Map<String,String> parameters)
     throws ProcessException, DataAccessException {
         String label = null;
-        if (ApplicationContext.isFileBasedAssetPersist()) {
-            Process procVO = ProcessCache.getProcess(processId);
-            if (procVO != null) {
-                label = procVO.getLabel();
-                Package pkg = PackageCache.getProcessPackage(processId);
-                if (pkg != null && !pkg.isDefaultPackage())
-                    label = pkg.getLabel() + "/" + label;
-            }
+        Process procVO = ProcessCache.getProcess(processId);
+        if (procVO != null) {
+            label = procVO.getLabel();
+            Package pkg = PackageCache.getProcessPackage(processId);
+            if (pkg != null && !pkg.isDefaultPackage())
+                label = pkg.getLabel() + "/" + label;
         }
         TransactionWrapper transaction=null;
         try {

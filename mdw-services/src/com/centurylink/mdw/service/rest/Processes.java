@@ -232,7 +232,8 @@ public class Processes extends JsonRestService implements JsonExportable {
     @Override
     @Path("/{instanceId}/values")
     @ApiOperation(value="Update value(s) for a process instance",
-        notes="Values are created or updated based on the passed JSON object.", response=StatusMessage.class)
+        notes="Values are created or updated based on the passed JSON object.",
+        response=StatusMessage.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="Values", paramType="body", dataType="java.lang.Object")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)

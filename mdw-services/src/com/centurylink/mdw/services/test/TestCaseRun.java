@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -391,11 +392,10 @@ public class TestCaseRun implements Runnable {
                     yaml.append("    name: ").append(var.getName()).newLine();
                     yaml.append("    value: ");
                     try {
-                        String val = var.getStringValue();
-                        if (var.isDocument()) {
-                            val = workflowServices.getDocumentStringValue(new DocumentReference(val).getDocumentId());
+                        var.setProcessInstanceId(procInst.getId());
+                        String val = getStringValue(var);
+                        if (var.isDocument())
                             procInst.getVariable().put(var.getName(), val); // pre-populate document values
-                        }
                         yaml.appendMulti("      ", val).newLine();
                     }
                     catch (Throwable t) {
@@ -407,6 +407,20 @@ public class TestCaseRun implements Runnable {
             }
         }
         return yaml.toString();
+    }
+
+    protected String getStringValue(VariableInstance var) throws TestException {
+        String val = var.getStringValue();
+        if (var.isDocument()) {
+            try {
+                val = workflowServices.getDocumentStringValue(new DocumentReference(val).getDocumentId());
+            }
+            catch (ServiceException ex) {
+                throw new TestException(ex.getMessage(), ex);
+            }
+        }
+
+        return val;
     }
 
     boolean verifyProcess(TestCaseProcess[] processes, Asset expectedResults) throws TestException {
@@ -524,14 +538,10 @@ public class TestCaseRun implements Runnable {
         }
 
         try {
-            String endpoint = PropertyManager.getProperty("mdw.test.base.url");
-            if (endpoint == null)
-                endpoint = ApplicationContext.getServicesUrl() + "/services";
-            else
-                endpoint += "/services";
+            String endpoint = "services";
             if (Listener.METAINFO_PROTOCOL_SOAP.equals(message.getProtocol()))
                 endpoint += "/SOAP";
-            HttpHelper httpHelper = new HttpHelper(new URL(endpoint));
+            HttpHelper httpHelper = getHttpHelper(endpoint);
             httpHelper.setHeaders(getDefaultMessageHeaders(message.getPayload()));
             String actual = httpHelper.post(message.getPayload());
             if (isVerbose()) {
@@ -547,46 +557,17 @@ public class TestCaseRun implements Runnable {
         }
     }
 
-    /**
-     * Not for HTTP method but for general sendMessage().
-     */
-    protected Map<String,String> getDefaultMessageHeaders(String payload) {
-        if (getMasterRequestId() != null) {
-            Map<String,String> headers = new HashMap<String,String>();
-            headers.put("mdw-request-id", getMasterRequestId());
-            if (payload != null && payload.startsWith("{"))
-                headers.put("Content-Type", "application/json");
-
-            return headers;
-        }
-        return null;
-    }
-
     TestCaseResponse http(TestCaseHttp http) throws TestException {
         if (isVerbose()) {
             log.println("http " + http.getMethod() + " request to " + http.getUri());
         }
 
         try {
-            String url;
-            if (http.getUri().startsWith("http://") || http.getUri().startsWith("https://")) {
-                url =  http.getUri();
-            }
-            else {
-                url = PropertyManager.getProperty("mdw.test.base.url");
-                if (url == null)
-                    url = ApplicationContext.getServicesUrl();
-                if (http.getUri().startsWith("/"))
-                    url += http.getUri();
-                else
-                    url += "/" + http.getUri();
-            }
-
             HttpHelper helper;
             if (http.getMessage() != null && http.getMessage().getUser() != null)
-                helper = new HttpHelper(new URL(url), http.getMessage().getUser(), http.getMessage().getPassword());
+                helper = getHttpHelper(http.getUri(), http.getMessage().getUser(), http.getMessage().getPassword());
             else
-                helper = new HttpHelper(new URL(url));
+                helper = getHttpHelper(http.getUri());
 
             Map<String,String> headers = new HashMap<String,String>();
             if (http.getMessage() != null) {
@@ -968,6 +949,40 @@ public class TestCaseRun implements Runnable {
             testCase.setEnd(endDate);
             testCase.setStatus(passed ? TestCase.Status.Passed : TestCase.Status.Failed);
         }
+    }
+
+    protected HttpHelper getHttpHelper(String endpoint) throws MalformedURLException {
+        return getHttpHelper(endpoint, null, null);
+    }
+
+    protected HttpHelper getHttpHelper(String endpoint, String user, String password) throws MalformedURLException {
+        String url = endpoint;
+        if (!endpoint.startsWith("http://") && !endpoint.startsWith("https://")) {
+            url = PropertyManager.getProperty("mdw.test.base.url");
+            if (url == null)
+                url = ApplicationContext.getServicesUrl();
+            if (!endpoint.startsWith("/"))
+                endpoint = "/" + endpoint;
+            url += endpoint;
+        }
+        HttpHelper helper = new HttpHelper(new URL(url), user, password);
+        helper.setHeader("Content-Type", "application/json");
+        return helper;
+    }
+
+    /**
+     * Not for HTTP method but for general sendMessage().
+     */
+    protected Map<String,String> getDefaultMessageHeaders(String payload) {
+        if (getMasterRequestId() != null) {
+            Map<String,String> headers = new HashMap<String,String>();
+            headers.put("mdw-request-id", getMasterRequestId());
+            if (payload != null && payload.startsWith("{"))
+                headers.put("Content-Type", "application/json");
+
+            return headers;
+        }
+        return null;
     }
 
     protected String qualify(String target) {

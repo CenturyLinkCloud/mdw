@@ -6,7 +6,7 @@ stub adapter(xpath("GetEmployee")) {
     delay = 5
     response = asset("GetEmployeeResponse.xml").text
 }
-start process("com.centurylink.mdw.tests/TestAdapterStub") {
+start process("com.centurylink.mdw.tests.stubbing/TestAdapterStub") {
     // this request also can work for call-through
     variables = [request: asset("GetEmployee.xml").text]
 }

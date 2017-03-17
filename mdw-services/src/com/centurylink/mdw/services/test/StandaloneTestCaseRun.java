@@ -27,8 +27,10 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.UserTaskAction;
+import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
@@ -37,6 +39,7 @@ import com.centurylink.mdw.model.workflow.ProcessRun;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.test.TestCase;
+import com.centurylink.mdw.test.TestCaseEvent;
 import com.centurylink.mdw.test.TestCaseProcess;
 import com.centurylink.mdw.test.TestCaseTask;
 import com.centurylink.mdw.test.TestException;
@@ -49,8 +52,9 @@ import groovy.lang.GroovyCodeSource;
 import groovy.lang.GroovyShell;
 
 /**
- * @author dxoakes
- *
+ * Executes a test outside of the runtime container.
+ * Used by Designer when debugging.  Will eventually be used for all Designer runs.
+ * Will also be used by our upcoming Gradle custom task for test execution.
  */
 public class StandaloneTestCaseRun extends TestCaseRun {
 
@@ -58,7 +62,6 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             String masterRequestId, LogMessageMonitor monitor, Map<String, Process> processCache,
             TestExecConfig config) throws IOException {
         super(testCase, user, mainResultsDir, run, masterRequestId, monitor, processCache, config);
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -78,12 +81,14 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         setupContextClassLoader(shell);
         try {
             shell.run(new GroovyCodeSource(getTestCase().file()), new String[0]);
+            finishExecution(null);
         }
         catch (IOException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 
+    @Override
     void startProcess(TestCaseProcess process) throws TestException {
         if (isVerbose())
             getLog().println("starting process " + process.getLabel() + "...");
@@ -115,6 +120,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         }
     }
 
+    @Override
     protected List<ProcessInstance> loadResults(List<Process> processes, Asset expectedResults, boolean orderById)
     throws DataAccessException, IOException, ServiceException, JSONException, ParseException {
         List<ProcessInstance> mainProcessInsts = new ArrayList<ProcessInstance>();
@@ -128,7 +134,8 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             query.setFilter("app", "autotest");
             HttpHelper httpHelper = getHttpHelper("services/Processes?" + query);
             String response = httpHelper.get();
-            List<ProcessInstance> procInstList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JSONObject(response)).getProcesses();
+            ProcessList processList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JSONObject(response));
+            List<ProcessInstance> processInstances = processList.getProcesses();
             Map<Long,String> activityNameMap = new HashMap<Long,String>();
             for (Activity act : proc.getActivities()) {
                 activityNameMap.put(act.getActivityId(), act.getActivityName());
@@ -142,7 +149,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                     }
                 }
             }
-            for (ProcessInstance procInst : procInstList) {
+            for (ProcessInstance procInst : processInstances) {
                 httpHelper = getHttpHelper("services/Processes/" + procInst.getId() + "?app=autotest");
                 procInst = new ProcessInstance(new JSONObject(httpHelper.get()));
                 mainProcessInsts.add(procInst);
@@ -211,14 +218,29 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         return mainProcessInsts;
     }
 
+    @Override
+    protected String getStringValue(VariableInstance var) throws TestException {
+        String val = var.getStringValue();
+        if (val != null && val.startsWith("DOCUMENT:")) {
+            try {
+                HttpHelper httpHelper = getHttpHelper("services/Processes/" + var.getProcessInstanceId() + "/values/" + var.getName());
+                Value value = new Value(var.getName(), new JSONObject(httpHelper.get()));
+                return value.getValue();
+            }
+            catch (Exception ex) {
+                throw new TestException(ex.getMessage(), ex);
+            }
+        }
+        return val;
+    }
+
+    @Override
     Process getProcess(String target) throws TestException {
         target = qualify(target);
         Process process = getProcessCache().get(target);
         if (process == null) {
             try {
                 Query query = getProcessQuery(target);
-                query.setFilter("summary", true);
-                query.setFilter("app", "autotest");
                 HttpHelper httpHelper = getHttpHelper("services/Workflow/" + query);
                 String response = httpHelper.get();
                 JSONObject json = new JSONObject(response);
@@ -236,6 +258,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         return process;
     }
 
+    @Override
     void performTaskAction(TestCaseTask task) throws TestException {
         if (isVerbose())
             getLog().println("performing " + task.getOutcome() + " on task '" + task.getName() + "'");
@@ -259,8 +282,8 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             if (task.getVariables() != null) {
                 JSONObject valuesJson = new JSONObject();
                 for (String name : task.getVariables().keySet())
-                    valuesJson.put(name, new Value(name, task.getVariables().get(name).toString()).getJson());
-                httpHelper = getHttpHelper("services/Workflow/" + taskInstance.getOwnerId() + "/values?app=autotest");
+                    valuesJson.put(name, task.getVariables().get(name).toString());
+                httpHelper = getHttpHelper("services/Processes/" + taskInstance.getOwnerId() + "/values?app=autotest");
                 response = httpHelper.put(valuesJson.toString(2));
                 StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
                 if (!statusMsg.isSuccess())
@@ -280,11 +303,35 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         }
     }
 
-    protected HttpHelper getHttpHelper(String endpoint) throws MalformedURLException {
-        String url = getConfig().getServerUrl();
-        if (!endpoint.startsWith("/"))
-            endpoint = "/" + endpoint;
-        HttpHelper helper = new HttpHelper(new URL(url + endpoint));
+    @Override
+    void notifyEvent(TestCaseEvent event) throws TestException {
+        if (isVerbose())
+            getLog().println("notifying event: '" + event.getId() + "'");
+
+        try {
+            Event evt = new Event();
+            evt.setId(event.getId());
+            evt.setMessage(event.getMessage());
+            HttpHelper httpHelper = getHttpHelper("services/Events/" + event.getId() + "?app=autotest");
+            String response = httpHelper.post(evt.getJson().toString(2));
+            StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
+            if (!statusMsg.isSuccess())
+                throw new TestException("Error notifying event: " + statusMsg.getMessage());
+        }
+        catch (Exception ex) {
+            throw new TestException("Unable to notifyEvent: " + ex.getMessage());
+        }
+    }
+
+    protected HttpHelper getHttpHelper(String endpoint, String user, String password) throws MalformedURLException {
+        String url = endpoint;
+        if (!endpoint.startsWith("http://") && !endpoint.startsWith("https://")) {
+            url = getConfig().getServerUrl();
+            if (!endpoint.startsWith("/"))
+                endpoint = "/" + endpoint;
+            url += endpoint;
+        }
+        HttpHelper helper = new HttpHelper(new URL(url), user, password);
         helper.setHeader("Content-Type", "application/json");
         return helper;
     }

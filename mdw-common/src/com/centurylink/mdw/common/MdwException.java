@@ -17,11 +17,9 @@ public class MdwException extends Exception implements Jsonable {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private int code;
-    public int getCode(){
-        return this.code;
-    }
+    public int getCode() { return this.code; }
 
-    public MdwException(String code){
+    public MdwException(String code) {
         super(code);
     }
 
@@ -37,13 +35,12 @@ public class MdwException extends Exception implements Jsonable {
 
     public MdwException(String message, Throwable cause){
         super(message, cause);
-        this.code = -1;
     }
 
     @Override
     public String toString() {
         String s = getClass().getName();
-        if (code != 0)
+        if (code > 0)
             s += ":(code=" + code + ")";
         String message = getLocalizedMessage();
         return (message != null) ? (s + ": " + message) : s;
@@ -95,7 +92,7 @@ public class MdwException extends Exception implements Jsonable {
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("throwable", this.getClass().getName());
-        if (code != 0)
+        if (code > 0)
             json.put("code", code);
         if (getMessage() != null)
             json.put("message", getMessage());

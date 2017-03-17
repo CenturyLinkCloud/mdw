@@ -3,5 +3,6 @@
 .JETEmitters/
 RemoteSystemsTempFiles/
 Servers/
+testResults/
 npm-debug.log
 notes.txt

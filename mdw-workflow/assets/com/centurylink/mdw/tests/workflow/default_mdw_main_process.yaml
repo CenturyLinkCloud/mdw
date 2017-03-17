@@ -1,0 +1,17 @@
+process: # 10407
+  name: MDWTestMainProcess
+  instance: 1
+  activity: # 6 "2017-03-13 18:58:41"
+    name: Process Start
+    status: Completed
+  activity: # 33 "2017-03-13 18:58:41"
+    name: multiple processes ?
+    status: Completed
+    result: DEFAULT
+  activity: # 13 "2017-03-13 18:58:41"
+    name: Scripts with syntax error
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException:(code=-1): Error executing Groovy script: 'MDWTestMainProcessv3_37_Scriptswithsyntaxerror_13'...
+  variable: # 10901
+    name: processCase
+    value: DEFAULT
