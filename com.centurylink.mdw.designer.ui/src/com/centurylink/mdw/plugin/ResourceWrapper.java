@@ -44,7 +44,7 @@ public class ResourceWrapper {
         IFile file = null;
         if (adaptable != null) {
             file = (IFile) adaptable.getAdapter(IFile.class);
-            if (file == null) {
+            /*if (file == null) {
                 if (adaptable instanceof IJavaElement) {
                     IResource res = ((IJavaElement)adaptable).getResource();
                     file = res.getAdapter(IFile.class);
@@ -53,14 +53,14 @@ public class ResourceWrapper {
                             file = ((IJavaElement)adaptable).getResource().getAdapter(IFile.class);
                     }
                 }
-            }
+            }*/
         }
         else {
             file = (resourceObj instanceof IFile) ? (IFile) resourceObj : null;
-            if (file == null) {
+            /*if (file == null) {
                 if (resourceObj instanceof IJavaElement)
                     file = ((IJavaElement)resourceObj).getResource().getAdapter(IFile.class);
-            }
+            }*/
 
 
         }
