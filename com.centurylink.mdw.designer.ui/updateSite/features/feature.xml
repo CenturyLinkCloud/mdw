@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.centurylink.mdw.designer.feature"
-      label="MDW Designer" version="9.1.1"
+      label="MDW Designer" version="9.1.2"
       provider-name="CenturyLink"
       plugin="com.centurylink.mdw.designer.ui">
 
@@ -18,11 +18,11 @@
    </url>
 
    <plugin
-         id="com.centurylink.mdw.designer.core" version="9.1.1"
+         id="com.centurylink.mdw.designer.core" version="9.1.2"
          unpack="false"/>
 
    <plugin
-         id="com.centurylink.mdw.designer.ui" version="9.1.1"
+         id="com.centurylink.mdw.designer.ui" version="9.1.2"
          unpack="false"/>
 
    <plugin
