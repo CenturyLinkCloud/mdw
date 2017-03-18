@@ -1,4 +1,5 @@
-#Fri Mar 17 17:13:30 MDT 2017
+#Fri Mar 17 22:34:17 MDT 2017
+DocumentWebService.proc=7
 Employee.java=1005
 Employee.wsdl=6
 Error.proc=3
@@ -17,12 +18,16 @@ NewSolution3.json=2
 PatchHandler.java=2
 ProcessJaxb.java=1
 ProcessValues.proc=3
+RestfulServiceAdapter.proc=1
 ServiceMain.proc=3
 ServiceSub.proc=3 Renamed from e\:\\workspaces\\mdw6\\mdw-workflow\\assets\\com\\centurylink\\mdw\\tests\\services\\ServiceAsyncSub.proc
 Values.json=1
 activity-proceed-completion-code.test=3
 activity-proceed-completion-code.yaml=1
 delete-non-200.test=1
+document-web-service-adapter.test=1
+document-web-service-adapter.yaml=5
+employee-request.xml=1
 jms-listener.test=1
 patch-200.test=1
 process-as-service-adapter.test=3
@@ -48,6 +53,10 @@ raw-http.yaml=3
 raw-jms.test=3
 raw-jms.yaml=4
 rest-listener.test=2
+restful-adapter-get.test=1
+restful-adapter-get.yaml=1
+restful-adapter-post.test=1
+restful-adapter-post.yaml=1
 retry-activity-service.test=2
 retry-activity-service.yaml=3 Auto-created
 service-async-sub.test=2

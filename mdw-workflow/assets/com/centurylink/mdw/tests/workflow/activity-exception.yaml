@@ -18,7 +18,6 @@ process: # 14209
     name: exception
     value: |
       {
-        "code": -1,
         "message": "java.lang.RuntimeException: Help me, I'm an error",
         "runtimeContext": {
           "activity": {
@@ -50,8 +49,7 @@ process: # 14209
             "secondaryOwnerId": ${~[0-9]*},
             "statusCode": 2,
             "variables": []
-          },
-          "variables": {}
+          }
         },
         "stackElements": [
           {

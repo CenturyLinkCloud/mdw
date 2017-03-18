@@ -5,13 +5,13 @@ process: # 10293
     name: Start
     status: Completed
   activity: # 7 "2017-01-12 12:54:29"
-    name: Request Type
+    name: Set Request
     status: Completed
     result: POST
   activity: # 9 "2017-01-12 12:54:29"
     name: |
-      RESTful
-      Action Request
+      POST
+      Request
     status: Completed
   activity: # 5 "2017-01-12 12:54:32"
     name: Stop
@@ -22,9 +22,9 @@ process: # 10293
   variable: # 10717
     name: requestDoc
     value: |
-      <tns:GetEmployee xmlns:tns="http://mdw.centurylink.com/serviceTypes">
-          <tns:workstationId>dxoakes</tns:workstationId>
-      </tns:GetEmployee>
+      <GetEmployee>
+          <workstationId>dxoakes</workstationId>
+      </GetEmployee>
   variable: # 10726
     name: responseDoc
     value: |
