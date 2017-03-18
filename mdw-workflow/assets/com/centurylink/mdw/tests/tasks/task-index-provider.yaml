@@ -37,7 +37,6 @@ process: # 13702
   variable: # 20795
     name: jaxbVar
     value: |
-      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       <TaskJaxb attributeOne="attrOneValue" attributeTwo="attrTwoValue">
           <elementOne>elementOneValue</elementOne>
           <elementTwo>elementTwoValue</elementTwo>

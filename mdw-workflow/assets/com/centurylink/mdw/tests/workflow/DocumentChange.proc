@@ -31,7 +31,7 @@
     },
     {
       "attributes": {
-        "Rule": "println 'changing read-only doc vars'\r\n\r\nimport org.apache.xmlbeans.XmlObject\r\nimport org.json.JSONObject\r\n\r\nimport com.centurylink.mdw.model.FormDataDocument\r\nimport com.centurylink.mdw.model.user.AuthenticatedUser\r\n\r\nprintln 'changing some doc vars'\r\n\r\n// changedDomDoc\r\n//changedDomDoc = (org.w3c.dom.Document) changedDomDoc;\r\n//\r\n//def album = changedDomDoc.createElement('Album')\r\n//album.setAttribute('name', 'The Head on the Door')\r\n//album.setAttribute('year', '1985')\r\n//changedDomDoc.getDocumentElement().appendChild(album)\r\n//\r\n//def artist = changedDomDoc.createElement('Artist')\r\n//artist.setTextContent('The Cure')\r\n//album.appendChild(artist)\r\n\r\n// changedFormDataDoc\r\n//changedFormDataDoc = (FormDataDocument) changedFormDataDoc\r\n//changedFormDataDoc.setMetaValue 'FORM', 'newFormValue'\r\n\r\n// changedGroovyNode\r\n//changedGroovyNode = (groovy.util.Node) changedGroovyNode;\r\n//Map<String,String> attrs = new HashMap<String,String>();\r\n//attrs.put 'name', 'Sound Affects'\r\n//attrs.put 'year', '1980'\r\n//soundAffects = changedGroovyNode.appendNode('Album', attrs)\r\n//soundAffects.appendNode('Artist', 'The Jam')\r\n\r\n// changedJavaObject\r\n//changedJavaObject = (AuthenticatedUser) changedJavaObject\r\n//changedJavaObject.setCuid 'sidhug'\r\n//changedJavaObject.setFirstName 'Gary'\r\n//changedJavaObject.setLastName 'Sidhu'\r\n\r\n// changedJson\r\n//changedJson = (JSONObject) changedJson;\r\n//room = new JSONObject('{  name: \"bathroom\", floor: \"second\" }');\r\n//changedJson.house.rooms.put(room);\r\n\r\n// changedStringDoc\r\n//changedStringDoc = 'Early to bed, early to rise; makes a man healthy, wealthy and wise.'\r\n\r\n// changedXmlBean\r\nchangedXmlBean = (XmlObject) changedXmlBean\r\ndef cursor = changedXmlBean.newCursor()\r\ncursor.toChild 'EightiesMusic'\r\ncursor.toChild 'Album'\r\ncursor.insertElement 'Album'\r\ncursor.toPrevSibling();\r\ncursor.toNextToken();\r\ncursor.insertAttributeWithValue 'name', 'Special Beat Service'\r\ncursor.insertAttributeWithValue 'year', '1982'\r\ncursor.insertElementWithText 'Artist', 'The English Beat'\r\ncursor.dispose()\r\n\r\n// changedXmlBeanWrapper\r\n//changedXmlBeanWrapper = (com.centurylink.mdw.model.ActionRequestXmlBeanWrapper) changedXmlBeanWrapper\r\n//changedXmlBeanWrapper.addParameter('frequency', 'EVERYDAY')",
+        "Rule": "println 'changing read-only doc vars'\r\n\r\nimport org.apache.xmlbeans.XmlObject\r\nimport org.json.JSONObject\r\n\r\nimport com.centurylink.mdw.model.user.AuthenticatedUser\r\n\r\nprintln 'changing some doc vars'\r\n\r\n// changedDomDoc\r\n//changedDomDoc = (org.w3c.dom.Document) changedDomDoc;\r\n//\r\n//def album = changedDomDoc.createElement('Album')\r\n//album.setAttribute('name', 'The Head on the Door')\r\n//album.setAttribute('year', '1985')\r\n//changedDomDoc.getDocumentElement().appendChild(album)\r\n//\r\n//def artist = changedDomDoc.createElement('Artist')\r\n//artist.setTextContent('The Cure')\r\n//album.appendChild(artist)\r\n\r\n// changedJavaObject\r\n//changedJavaObject = (AuthenticatedUser) changedJavaObject\r\n//changedJavaObject.setCuid 'sidhug'\r\n//changedJavaObject.setFirstName 'Gary'\r\n//changedJavaObject.setLastName 'Sidhu'\r\n\r\n// changedJson\r\n//changedJson = (JSONObject) changedJson;\r\n//room = new JSONObject('{  name: \"bathroom\", floor: \"second\" }');\r\n//changedJson.house.rooms.put(room);\r\n\r\n// changedStringDoc\r\n//changedStringDoc = 'Early to bed, early to rise; makes a man healthy, wealthy and wise.'\r\n\r\n// changedXmlBean\r\nchangedXmlBean = (XmlObject) changedXmlBean\r\ndef cursor = changedXmlBean.newCursor()\r\ncursor.toChild 'EightiesMusic'\r\ncursor.toChild 'Album'\r\ncursor.insertElement 'Album'\r\ncursor.toPrevSibling();\r\ncursor.toNextToken();\r\ncursor.insertAttributeWithValue 'name', 'Special Beat Service'\r\ncursor.insertAttributeWithValue 'year', '1982'\r\ncursor.insertElementWithText 'Artist', 'The English Beat'\r\ncursor.dispose()\r\n\r\n// changedXmlBeanWrapper\r\n//changedXmlBeanWrapper = (com.centurylink.mdw.model.ActionRequestXmlBeanWrapper) changedXmlBeanWrapper\r\n//changedXmlBeanWrapper.addParameter('frequency', 'EVERYDAY')",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=451,y=256,w=112,h=72"
       },
@@ -79,16 +79,16 @@
     },
     {
       "attributes": {
-        "Output Documents": "changedDomDoc#changedFormDataDoc#changedGroovyNode#changedJavaObject#changedJson#changedStringDoc#changedXmlBean#changedXmlBeanWrapper",
-        "Rule": "import org.apache.xmlbeans.XmlObject\r\nimport org.json.JSONObject\r\n\r\nimport com.centurylink.mdw.model.FormDataDocument\r\nimport com.centurylink.mdw.model.user.AuthenticatedUser\r\n\r\nprintln 'changing some doc vars'\r\n\r\n// changedDomDoc\r\nchangedDomDoc = (org.w3c.dom.Document) changedDomDoc;\r\n\r\ndef album = changedDomDoc.createElement('Album')\r\nalbum.setAttribute('name', 'The Head on the Door')\r\nalbum.setAttribute('year', '1985')\r\nchangedDomDoc.getDocumentElement().appendChild(album)\r\n\r\ndef artist = changedDomDoc.createElement('Artist')\r\nartist.setTextContent('The Cure')\r\nalbum.appendChild(artist)\r\n\r\n// changedFormDataDoc\r\nchangedFormDataDoc = (FormDataDocument) changedFormDataDoc\r\nchangedFormDataDoc.setMetaValue 'FORM', 'newFormValue'\r\n\r\n// changedGroovyNode\r\nchangedGroovyNode = (groovy.util.Node) changedGroovyNode;\r\nMap<String,String> attrs = new HashMap<String,String>();\r\nattrs.put 'name', 'Sound Affects'\r\nattrs.put 'year', '1980'\r\nsoundAffects = changedGroovyNode.appendNode('Album', attrs)\r\nsoundAffects.appendNode('Artist', 'The Jam')\r\n\r\n// changedJavaObject\r\nchangedJavaObject = (AuthenticatedUser) changedJavaObject\r\nchangedJavaObject.setCuid 'sidhug'\r\nchangedJavaObject.setFirstName 'Gary'\r\nchangedJavaObject.setLastName 'Sidhu'\r\n\r\n// changedJson\r\nchangedJson = (JSONObject) changedJson;\r\nroom = new JSONObject('{  name: \"bathroom\", floor: \"second\" }');\r\nchangedJson.house.rooms.put(room);\r\n\r\n// changedStringDoc\r\nchangedStringDoc = 'Early to bed, early to rise; makes a man healthy, wealthy and wise.'\r\n\r\n// changedXmlBean\r\nchangedXmlBean = (XmlObject) changedXmlBean\r\ndef cursor = changedXmlBean.newCursor()\r\ncursor.toChild 'EightiesMusic'\r\ncursor.toChild 'Album'\r\ncursor.insertElement 'Album'\r\ncursor.toPrevSibling();\r\ncursor.toNextToken();\r\ncursor.insertAttributeWithValue 'name', 'Special Beat Service'\r\ncursor.insertAttributeWithValue 'year', '1982'\r\ncursor.insertElementWithText 'Artist', 'The English Beat'\r\ncursor.dispose()\r\n\r\n// changedXmlBeanWrapper\r\nchangedXmlBeanWrapper = (com.centurylink.mdw.common.service.types.ActionRequestMessage) changedXmlBeanWrapper\r\nchangedXmlBeanWrapper.addParameter('frequency', 'EVERYDAY')\r\n\r\n\r\n\r\n",
+        "Output Documents": "changedDomDoc#changedJavaObject#changedJson#changedStringDoc#changedXmlBean#changedXmlBeanWrapper",
+        "Rule": "import org.apache.xmlbeans.XmlObject\r\nimport org.json.JSONObject\r\n\r\nimport com.centurylink.mdw.model.user.AuthenticatedUser\r\n\r\nprintln 'changing some doc vars'\r\n\r\n// changedDomDoc\r\nchangedDomDoc = (org.w3c.dom.Document) changedDomDoc;\r\n\r\ndef album = changedDomDoc.createElement('Album')\r\nalbum.setAttribute('name', 'The Head on the Door')\r\nalbum.setAttribute('year', '1985')\r\nchangedDomDoc.getDocumentElement().appendChild(album)\r\n\r\ndef artist = changedDomDoc.createElement('Artist')\r\nartist.setTextContent('The Cure')\r\nalbum.appendChild(artist)\r\n\r\n// changedJavaObject\r\nchangedJavaObject = (AuthenticatedUser) changedJavaObject\r\nchangedJavaObject.setCuid 'sidhug'\r\nchangedJavaObject.setFirstName 'Gary'\r\nchangedJavaObject.setLastName 'Sidhu'\r\n\r\n// changedJson\r\nchangedJson = (JSONObject) changedJson;\r\nroom = new JSONObject('{  name: \"bathroom\", floor: \"second\" }');\r\nchangedJson.house.rooms.put(room);\r\n\r\n// changedStringDoc\r\nchangedStringDoc = 'Early to bed, early to rise; makes a man healthy, wealthy and wise.'\r\n\r\n// changedXmlBean\r\nchangedXmlBean = (XmlObject) changedXmlBean\r\ndef cursor = changedXmlBean.newCursor()\r\ncursor.toChild 'EightiesMusic'\r\ncursor.toChild 'Album'\r\ncursor.insertElement 'Album'\r\ncursor.toPrevSibling();\r\ncursor.toNextToken();\r\ncursor.insertAttributeWithValue 'name', 'Special Beat Service'\r\ncursor.insertAttributeWithValue 'year', '1982'\r\ncursor.insertElementWithText 'Artist', 'The English Beat'\r\ncursor.dispose()\r\n\r\n// changedXmlBeanWrapper\r\nchangedXmlBeanWrapper = (com.centurylink.mdw.common.service.types.ActionRequestMessage) changedXmlBeanWrapper\r\nchangedXmlBeanWrapper.addParameter('frequency', 'EVERYDAY')\r\n\r\n\r\n\r\n",
         "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=450,y=21,w=113,h=73"
+        "WORK_DISPLAY_INFO": "x=451,y=21,w=113,h=73"
       },
       "id": "A3",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
       "name": "Change\r\nOutput Docs",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=632,ly=114,type=Elbow,xs=567&691,ys=57&169"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=632,ly=114,type=Elbow,xs=568&691,ys=57&169"},
         "event": "FINISH",
         "id": "T1",
         "to": "A2"
@@ -109,14 +109,6 @@
     "changedDomDoc": {
       "category": "INPUT",
       "type": "org.w3c.dom.Document"
-    },
-    "changedFormDataDoc": {
-      "category": "INPUT",
-      "type": "com.centurylink.mdw.model.FormDataDocument"
-    },
-    "changedGroovyNode": {
-      "category": "INPUT",
-      "type": "groovy.util.Node"
     },
     "changedJavaObject": {
       "category": "LOCAL",
@@ -146,14 +138,6 @@
       "category": "INPUT",
       "type": "org.w3c.dom.Document"
     },
-    "unchangedFormDataDoc": {
-      "category": "INPUT",
-      "type": "com.centurylink.mdw.model.FormDataDocument"
-    },
-    "unchangedGroovyNode": {
-      "category": "INPUT",
-      "type": "groovy.util.Node"
-    },
     "unchangedJavaObject": {
       "category": "LOCAL",
       "type": "java.lang.Object"
@@ -175,5 +159,5 @@
       "type": "com.centurylink.mdw.xml.XmlBeanWrapper"
     }
   },
-  "version": "0.7"
+  "version": "0.8"
 }

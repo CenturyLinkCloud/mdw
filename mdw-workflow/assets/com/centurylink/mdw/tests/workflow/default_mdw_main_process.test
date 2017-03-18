@@ -1,4 +1,4 @@
- // default_mdw_main_process.test
+// default_mdw_main_process.test
 start process("MDWTestMainProcess") {
   variables = [processCase: "DEFAULT"]
 }

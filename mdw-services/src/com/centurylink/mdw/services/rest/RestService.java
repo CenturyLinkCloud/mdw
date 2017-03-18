@@ -152,7 +152,7 @@ public abstract class RestService {
         return value;
     }
 
-    protected void propagatePost(String request, Map<String,String> headers)
+    protected void propagate(String method, String request, Map<String,String> headers)
     throws ServiceException, IOException {
         String requestUrl = headers.get(Listener.METAINFO_REQUEST_URL);
         String queryStr = "";
@@ -163,7 +163,10 @@ public abstract class RestService {
         for (URL serviceUrl : getOtherServerUrls(requestUrl)) {
             HttpHelper httpHelper = new HttpHelper(new URL(serviceUrl + queryStr));
             httpHelper.setHeaders(headers);
-            validateResponse(httpHelper.post(request));
+            if (method.equals("post"))
+              validateResponse(httpHelper.post(request));
+            else if (method.equals("put"))
+                validateResponse(httpHelper.put(request));
         }
     }
 

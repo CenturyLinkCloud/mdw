@@ -1,4 +1,4 @@
-#Tue Mar 14 15:54:33 MDT 2017
+#Fri Mar 17 15:48:22 MDT 2017
 Acknowledger.java=5
 Custom\ Category\ Task.task=1
 CustomBaseData.proc=5
@@ -30,4 +30,4 @@ jms-adapter-cloud-async.test=1
 jms-adapter-cloud-async.yaml=2
 simple-dynamic-java.test=2
 simple-dynamic-java.yaml=9
-testContext.spring=6
+testContext.spring=7

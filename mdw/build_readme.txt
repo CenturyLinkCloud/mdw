@@ -11,7 +11,7 @@ Building MDW 6
 3 - Edit mdw-hub/bower.json:
     - Update version (omit -SNAPSHOT)
 
-4 - Edit mdw-hun/manifest.yaml:
+4 - Edit mdw-hub/manifest.yaml:
     - Set path to point to new war version
    
 5 - Commit and push these changes to Git.

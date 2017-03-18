@@ -5,13 +5,13 @@ process: # 10229
     name: Start
     status: Completed
   activity: # 7 "2017-01-03 10:40:19"
-    name: Request Type
+    name: Set Request
     status: Completed
     result: GET
   activity: # 8 "2017-01-03 10:40:26"
     name: |
-      RESTful
-      Resource Request
+      GET
+      Request
     status: Completed
   activity: # 6 "2017-01-03 10:40:27"
     name: Stop
@@ -27,7 +27,7 @@ process: # 10229
         "Container": "Tomcat",
         "Database": "MySQL",
         "DbInfo": {
-          "jdbcUrl": "${~http.*}",
+          "jdbcUrl": "${~jdbc.*}",
           "user": "mdw"
         },
         "MdwBuild": "${~201.*}",

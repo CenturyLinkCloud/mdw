@@ -123,7 +123,14 @@ public abstract class JsonRestService extends RestService implements JsonService
     throws ServiceException, IOException, JSONException {
         if (content.has("distributed"))
             content.remove("distributed");
-        super.propagatePost(content.toString(2), headers);
+        super.propagate("post", content.toString(2), headers);
+    }
+
+    protected void propagatePut(JSONObject content, Map<String,String> headers)
+    throws ServiceException, IOException, JSONException {
+        if (content.has("distributed"))
+            content.remove("distributed");
+        super.propagate("put", content.toString(2), headers);
     }
 
     protected JSONObject masterServerGet(String path) throws ServiceException, JSONException {

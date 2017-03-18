@@ -356,7 +356,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public Value getProcessValue(Long instanceId, String name) throws ServiceException {
         ProcessRuntimeContext runtimeContext = getContext(instanceId);
         Variable var = runtimeContext.getProcess().getVariable(name);
-        if (var == null && runtimeContext.isExpression(name))
+        if (var == null && !runtimeContext.isExpression(name))
             throw new ServiceException(ServiceException.NOT_FOUND, "No variable defined: " + name);
         String stringVal = null;
         if (var != null && VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), var.getVariableType())) {

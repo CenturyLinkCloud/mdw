@@ -9,6 +9,7 @@ process: # 13703
       Custom
       ?
     status: Completed
+    result: false
   activity: # 4 "2016-02-23 09:46:11"
     name: An AutoForm Task
     status: Completed

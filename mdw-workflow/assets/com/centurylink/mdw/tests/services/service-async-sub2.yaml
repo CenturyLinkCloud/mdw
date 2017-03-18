@@ -284,7 +284,6 @@ process: # 10203
           ],
           "throwable": "com.centurylink.mdw.script.ExecutionException"
         },
-        "code": -1,
         "message": "Error executing Groovy script: 'ServiceSubv0_3_Error_3'\njava.lang.Exception: I've fallen and I can't get up",
         "runtimeContext": {
           "activity": {
@@ -322,8 +321,7 @@ process: # 10203
               "type": "java.lang.String",
               "value": "multiple"
             }]
-          },
-          "variables": {}
+          }
         },
         "stackElements": [
           {
@@ -422,7 +420,7 @@ process: # 10203
   variable: # 10158
     name: stackTrace
     value: |
-      com.centurylink.mdw.activity.ActivityException:(code=-1): Error executing Groovy script: 'ServiceSubv0_3_Error_3'
+      com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'ServiceSubv0_3_Error_3'
 java.lang.Exception: I've fallen and I can't get up
       	at com.centurylink.mdw.services.process.BaseActivity.executeScript(BaseActivity.java:1284)
       	at com.centurylink.mdw.services.process.BaseActivity.executeScript(BaseActivity.java:1242)
@@ -439,7 +437,7 @@ java.lang.Exception: I've fallen and I can't get up
       	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
       	at java.lang.Thread.run(Thread.java:745)
       	at com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:220)
-      Caused by: com.centurylink.mdw.script.ExecutionException:(code=-1): Error executing Groovy script: 'ServiceSubv0_3_Error_3'
+      Caused by: com.centurylink.mdw.script.ExecutionException: Error executing Groovy script: 'ServiceSubv0_3_Error_3'
 java.lang.Exception: I've fallen and I can't get up
       	at com.centurylink.mdw.script.GroovyExecutor.runScript(GroovyExecutor.java:130)
       	at com.centurylink.mdw.script.GroovyExecutor.execute(GroovyExecutor.java:68)
@@ -507,7 +505,7 @@ process: # 10202
   activity: # 3 "2017-03-06 11:25:59"
     name: Error
     status: Failed
-    result: com.centurylink.mdw.activity.ActivityException:(code=-1): Error executing Groovy script: 'ServiceSubv0_3_Error_3'...
+    result: com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'ServiceSubv0_3_Error_3'...
   variable: # 10125
     name: testCase
     value: multiple

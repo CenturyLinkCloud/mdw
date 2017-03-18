@@ -2,7 +2,7 @@
   "activities": [
     {
       "attributes": {
-        "Parameters": "sapId=${request['tns:GetEmployee/tns:sapId']};workstationId=${request['tns:GetEmployee/tns:workstationId']}",
+        "Parameters": "sapId=${request.sapId};workstationId=${request.workstationId}",
         "WORK_DISPLAY_INFO": "x=43,y=102,w=60,h=40"
       },
       "id": "A1",
@@ -132,7 +132,7 @@
     },
     "request": {
       "category": "INPUT",
-      "type": "org.apache.xmlbeans.XmlObject"
+      "type": "javax.xml.bind.JAXBElement"
     },
     "requestHeaders": {
       "category": "INPUT",
@@ -151,5 +151,5 @@
       "type": "java.lang.String"
     }
   },
-  "version": "0.18"
+  "version": "0.19"
 }

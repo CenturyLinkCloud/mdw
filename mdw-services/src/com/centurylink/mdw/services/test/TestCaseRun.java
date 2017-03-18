@@ -170,13 +170,7 @@ public class TestCaseRun implements Runnable {
         testCase.setStart(new Date());
 
         deleteResultsFile();
-
         log.format("===== execute case %s\r\n", testCase.getPath());
-        for (File file : resultsDir.listFiles()) {
-            if (file.getName().endsWith(Asset.getFileExtension(Asset.YAML))) {
-                file.delete();
-            }
-        }
     }
 
     public void run() {

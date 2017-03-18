@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
+ * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.plugin;
 
@@ -44,23 +44,23 @@ public class ResourceWrapper {
         IFile file = null;
         if (adaptable != null) {
             file = (IFile) adaptable.getAdapter(IFile.class);
-            /*if (file == null) {
+            if (file == null) {
                 if (adaptable instanceof IJavaElement) {
                     IResource res = ((IJavaElement)adaptable).getResource();
-                    file = res.getAdapter(IFile.class);
+                    file = (IFile) res.getAdapter(IFile.class);
                     if (file == null) {
                         if (adaptable instanceof IJavaElement)
-                            file = ((IJavaElement)adaptable).getResource().getAdapter(IFile.class);
+                            file = (IFile)((IJavaElement)adaptable).getResource().getAdapter(IFile.class);
                     }
                 }
-            }*/
+            }
         }
         else {
             file = (resourceObj instanceof IFile) ? (IFile) resourceObj : null;
-            /*if (file == null) {
+            if (file == null) {
                 if (resourceObj instanceof IJavaElement)
-                    file = ((IJavaElement)resourceObj).getResource().getAdapter(IFile.class);
-            }*/
+                    file = (IFile)((IJavaElement)resourceObj).getResource().getAdapter(IFile.class);
+            }
 
 
         }

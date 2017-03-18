@@ -3,6 +3,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -89,5 +92,37 @@ public class Workflow extends JsonRestService {
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
+    }
+
+    /**
+     * Update workflow values is currently supported.
+     */
+    @Override
+    @Path("/{instanceId}/{values}")
+    @ApiOperation(value="Update values for an ownerType and ownerId", response=StatusMessage.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="Values", paramType="body")})
+    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
+    throws ServiceException, JSONException {
+        String[] segments = getSegments(path);
+        if (segments.length == 3 && segments[2].equals("values")) {
+            try {
+                Long instanceId = Long.parseLong(segments[1]);
+                Map<String,Object> values = new HashMap<>();
+                for (String name : JSONObject.getNames(content)) {
+                    Value value = new Value(name, content.getJSONObject(name));
+                    values.put(name, value.getValue());
+                }
+                ServiceLocator.getWorkflowServices().setVariables(instanceId, values);
+            }
+            catch (NumberFormatException ex) {
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Bad instanceId: " + segments[1]);
+            }
+        }
+        else {
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Unexpected path: " + path);
+        }
+
+        return null;
     }
 }

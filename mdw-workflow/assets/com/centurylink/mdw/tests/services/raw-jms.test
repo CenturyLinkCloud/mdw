@@ -11,4 +11,4 @@ send message("JMS") {
 </mdw:ActionRequest>'''
 }
 sleep 45
-verify process("MDWTestMainProcess")
+verify process("com.centurylink.mdw.tests.workflow/MDWTestMainProcess")

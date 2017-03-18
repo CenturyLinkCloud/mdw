@@ -34,7 +34,7 @@ process: # 14892
   activity: # 3 "2016-03-10 15:32:58"
     name: custom
     status: Completed
-    result: true
+    result: false
   activity: # 4 "2016-03-10 15:32:58"
     name: |
       autoform task

@@ -4,21 +4,29 @@
 package com.centurylink.mdw.services.test;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.test.TestCase;
-import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.test.TestCase.Status;
+import com.centurylink.mdw.test.TestExecConfig;
+import com.centurylink.mdw.util.HttpHelper;
 
 public class TestCaseMain {
     /**
      * Execute a test case in standalone mode (for Designer debug).
      * Takes a single argument: testCasePath.
+     * TODO: Refactor when implementing Gradle test run task.
      */
     public static void main(String args[]) throws Throwable {
 
@@ -61,11 +69,49 @@ public class TestCaseMain {
 
         LogMessageMonitor monitor = new LogMessageMonitor();
         monitor.start(true);
+
+        final Map<String,TestCaseRun> masterRequestRuns = new HashMap<>();
+
+        if (StubServer.isRunning())
+            StubServer.stop();
+        if (execConfig.isStubbing())
+            StubServer.start(new TestStubber(masterRequestRuns));
+
         Map<String,Process> processCache = new HashMap<>();
         TestCaseRun run = new StandaloneTestCaseRun(testCase, user, resultsFile.getParentFile(), 0,
                 masterRequestId, monitor, processCache, execConfig);
+        masterRequestRuns.put(masterRequestId, run);
+        run.setMasterRequestListener(new MasterRequestListener() {
+            public void syncMasterRequestId(String oldId, String newId) {
+                TestCaseRun run = masterRequestRuns.remove(oldId);
+                if (run != null) {
+                    masterRequestRuns.put(newId, run);
+                }
+            }
+        });
+
         try {
+            // tell the server we're monitoring
+            HttpHelper httpHelper = new HttpHelper(new URL(execConfig.getServerUrl() + "/services/System/config"));
+            JSONObject configJson = new JSONObject();
+            configJson.put(PropertyNames.MDW_LOGGING_WATCHER, InetAddress.getLocalHost().getHostAddress());
+            if (execConfig.isStubbing())
+                configJson.put(PropertyNames.MDW_STUB_SERVER, InetAddress.getLocalHost().getHostAddress());
+            StatusMessage msg = new StatusMessage(new JSONObject(httpHelper.put(configJson.toString(2))));
+            if (!msg.isSuccess())
+                System.out.println("Error setting server config: " + msg.getMessage());
+
             run.run();
+
+            // stop monitoring
+            httpHelper = new HttpHelper(new URL(execConfig.getServerUrl() + "/services/System/config"));
+            configJson.put(PropertyNames.MDW_LOGGING_WATCHER, "");
+            if (execConfig.isStubbing())
+                configJson.put(PropertyNames.MDW_STUB_SERVER, "");
+            msg = new StatusMessage(new JSONObject(httpHelper.put(configJson.toString(2))));
+            if (!msg.isSuccess())
+                System.out.println("Error setting server config: " + msg.getMessage());
+
             if (run.getTestCase().getStatus() == Status.Passed)
                 System.exit(0);
             else

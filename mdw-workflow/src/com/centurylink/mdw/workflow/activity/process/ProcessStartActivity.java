@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
 import com.centurylink.mdw.activity.ActivityException;
@@ -22,18 +21,13 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.constant.MiscConstants;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.script.ExecutionException;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-import com.centurylink.mdw.xml.XmlPath;
 
 /**
  * Base class for all the ProcessStart Controlled Activity
