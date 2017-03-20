@@ -1,6 +1,6 @@
 // document-handling
 // creates two instances
-start process("com.centurylink.mdw.tests.workflow/DocumentChange") {
+start process("DocumentChange") {
     variables = [ outcome: "change",
                   changedDomDoc: asset("doc-changedDomDoc.xml").text,
                   changedJson: asset("doc-changedJson.json").text,
@@ -16,7 +16,7 @@ start process("com.centurylink.mdw.tests.workflow/DocumentChange") {
 
 sleep 15 // ensure consistent ordering in YAML
 
-start process("com.centurylink.mdw.tests.workflow/DocumentChange") {
+start process("DocumentChange") {
     variables = [ outcome: "nochange",
                   changedDomDoc: asset("doc-changedDomDoc.xml").text,
                   changedJson: asset("doc-changedJson.json").text,
