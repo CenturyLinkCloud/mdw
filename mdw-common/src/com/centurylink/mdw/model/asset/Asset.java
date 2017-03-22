@@ -705,7 +705,10 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
      * Takes into account special rules due to multiple languages per extension.
      */
     public static String getFormat(String fileName) {
-        return getLanguage(fileName.substring(fileName.lastIndexOf('.')));
+        int lastDot = fileName.lastIndexOf('.');
+        if (lastDot == -1)
+            return null;
+        return getLanguage(fileName.substring(lastDot));
     }
 
     public static String getLanguage(String fileExtension) {

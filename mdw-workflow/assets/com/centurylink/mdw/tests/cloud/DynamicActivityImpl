@@ -1,4 +1,0 @@
-// dynamic-activity-impl
-start process("DynamicActivityImpl")
-wait process
-verify process
