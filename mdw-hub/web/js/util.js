@@ -136,8 +136,10 @@ utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
     },
     asException: function(value) {
       var except = '';
-      if (value.value && value.type === 'java.lang.Exception') {
-        var activityException = JSON.parse(value.value).activityException;
+      if (value.value) {
+        var activityException = JSON.parse(value.value);
+        if (activityException.activityException)
+          activityException = activityException.activityException;
         if (activityException) {
           var ex = activityException;
           while (ex) {

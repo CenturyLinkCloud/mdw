@@ -33,7 +33,7 @@ public interface TaskServices {
     public Map<String,String> getIndexes(Long taskInstanceId) throws DataAccessException;
 
     public TaskInstance createTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, Long transitionId) throws TaskException, DataAccessException, CachingException;
+            Long activityInstanceId, Long transitionId, String comments) throws TaskException, DataAccessException, CachingException;
 
     public TaskInstance getInstance(Long instanceId) throws DataAccessException;
 

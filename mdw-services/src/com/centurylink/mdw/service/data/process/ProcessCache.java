@@ -197,7 +197,7 @@ public class ProcessCache implements CacheEnabled, CacheService {
             Process proc = eventMgr.getProcess(procname, version);
 
             if (proc == null)
-                throw new Exception("Process not found " + procname + " v" + version);
+                throw new Exception("Process not found " + procname + (version == 0 ? "" : " v" + version));
             return proc;
         }
         catch (Exception ex) {

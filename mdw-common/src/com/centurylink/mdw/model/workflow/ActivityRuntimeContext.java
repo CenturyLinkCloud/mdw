@@ -86,6 +86,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
             packageVO.setName(procPath.substring(0, slash));
             processVO = new Process();
             processVO.setName(procPath.substring(slash + 1));
+            processVO.setPackageName(packageVO.getName());
         }
         else {
             processVO = new Process();

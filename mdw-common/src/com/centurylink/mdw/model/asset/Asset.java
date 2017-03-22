@@ -224,7 +224,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         this.comment = comment;
     }
     public String getLabel() {
-        return getName() + " v" + getVersion();
+        return getName() + (getVersion() == 0 ? "" : " v" + getVersionString());
     }
     public String getCreateUser() {
         return createUser;

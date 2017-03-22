@@ -234,7 +234,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
             }
 
             // variable-specified recipients
-            if (recipientEmails != null) {
+            if (recipientEmails != null && !recipientEmails.isEmpty()) {
                 if (recipientEmails.startsWith("$")) {
                     Object recipVarValue = emailModel.getVariables().get(recipientEmails.substring(1).trim());
                     if (recipVarValue != null) {
@@ -247,8 +247,9 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                             throw new ObserverException(-1, ex.getMessage(), ex);
                         }
                     }
-                } else {
-                    String[] emails = recipientEmails.split("[;,] *");
+                }
+                else {
+                    String[] emails = recipientEmails.split(",");
                     for (String one : emails) {
                         try {
                             Address address = new InternetAddress(one);

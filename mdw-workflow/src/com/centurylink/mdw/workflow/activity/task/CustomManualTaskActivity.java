@@ -48,7 +48,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
             AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
             TaskServices taskServices = ServiceLocator.getTaskServices();
             taskServices.createTaskInstance(spec, getMasterRequestId(), getProcessInstanceId(),
-                    getActivityInstanceId(), getWorkTransitionInstanceId());
+                    getActivityInstanceId(), getWorkTransitionInstanceId(), null);
 
             EventWaitInstance received = registerWaitEvents(false,true);
             if (received!=null)

@@ -98,7 +98,6 @@ public class TaskServicesImpl implements TaskServices {
      */
     public TaskList getTasks(Query query, String cuid) throws ServiceException {
         try {
-
             String workgroups = query.getFilter("workgroups");
             if ("[My Workgroups]".equals(workgroups)) {
                 User user = UserGroupCache.getUser(cuid);
@@ -206,18 +205,18 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public TaskInstance createTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, Long transitionId) throws TaskException, DataAccessException, CachingException {
+            Long activityInstanceId, Long transitionId, String comments) throws TaskException, DataAccessException, CachingException {
 
         TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(spec);
         if (taskVO == null)
             throw new DataAccessException("Task template not found: " + spec);
 
         TaskManager taskManager = ServiceLocator.getTaskManager();
-        TaskInstance instance = taskManager.createTaskInstance(taskVO.getTaskId(), masterRequestId, processInstanceId,
-                OwnerType.WORK_TRANSITION_INSTANCE, transitionId);
+
+        TaskInstance instance = taskManager.createTaskInstance(taskVO.getTaskId(), processInstanceId,
+                OwnerType.WORK_TRANSITION_INSTANCE, transitionId, comments, null, null, null, 0, null, null, masterRequestId);
 
         TaskRuntimeContext runtimeContext = taskManager.getTaskRuntimeContext(instance);
-
         taskManager.setIndexes(runtimeContext);
 
         List<SubTask> subTaskList = taskManager.getSubTaskList(runtimeContext);

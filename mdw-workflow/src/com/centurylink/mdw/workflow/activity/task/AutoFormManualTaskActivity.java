@@ -18,6 +18,7 @@ import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -60,8 +61,21 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
             if (template == null)
                 throw new ActivityException("Task template not found: " + spec);
             TaskServices taskServices = ServiceLocator.getTaskServices();
-            Long taskInstanceId = taskServices.createTaskInstance(spec,
-                    getMasterRequestId(), getProcessInstanceId(), getActivityInstanceId(), getWorkTransitionInstanceId()).getTaskInstanceId();
+            String comments = null;
+            Exception exception = (Exception) getVariableValue("exception");
+            if (exception != null) {
+                comments = exception.toString();
+                if (exception instanceof ActivityException) {
+                    ActivityRuntimeContext rc = ((ActivityException)exception).getRuntimeContext();
+                    if (rc != null && rc.getProcess() != null) {
+                        comments = rc.getProcess().getFullLabel() + "\n" + comments;
+                    }
+                }
+            }
+            Long taskInstanceId = taskServices
+                    .createTaskInstance(spec, getMasterRequestId(), getProcessInstanceId(),
+                            getActivityInstanceId(), getWorkTransitionInstanceId(), comments)
+                    .getTaskInstanceId();
 
             String taskInstCorrelationId = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + taskInstanceId.toString();
             super.loginfo("Task instance created - ID " + taskInstanceId);

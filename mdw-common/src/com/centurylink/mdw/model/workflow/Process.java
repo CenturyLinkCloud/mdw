@@ -688,11 +688,11 @@ public class Process extends Asset implements Jsonable {
     }
 
     public String getLabel() {
-        return getProcessName() + " v" + getVersionString();
+        return getProcessName() + (getVersion() == 0 ? "" : " v" + getVersionString());
     }
 
     public String getFullLabel() {
-        return getProcessQualifiedName() + " v" + getVersionString();
+        return getProcessQualifiedName() + (getVersion() == 0 ? "" : " v" + getVersionString());
     }
 
     public static int versionFromString(String v) {

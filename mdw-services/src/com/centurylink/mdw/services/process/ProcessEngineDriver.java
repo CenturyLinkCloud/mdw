@@ -182,7 +182,10 @@ public class ProcessEngineDriver {
             }
             else {
                 // try package-level handler
-                Process packageHandlerProc = getPackageHandler(processInstVO, eventType);
+                Process packageHandlerProc = null;
+                // TODO ugly test to avoid dup errors for service subproc invokes
+                if (messageDoc.getStatusMessage() == null || !messageDoc.getStatusMessage().startsWith("com.centurylink.mdw.activity.ActivityException: At least one subprocess is not completed\n"))
+                    packageHandlerProc = getPackageHandler(processInstVO, eventType);
                 if (packageHandlerProc != null) {
                     Map<String,String> params = new HashMap<>();
                     Variable exVar = packageHandlerProc.getVariable("exception");
@@ -228,9 +231,10 @@ public class ProcessEngineDriver {
         String handlerProcName = EventType.getHandlerName(eventType);
         if (handlerProcName != null) {
             Process packageHandlerProc = null;
-            packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName, 0);
+            // TODO: unfound on first try logs exception
+            packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName.toLowerCase(), 0);
             if (packageHandlerProc == null)
-                packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName.toLowerCase(), 0);
+                packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName, 0);
             if (packageHandlerProc != null) {
                 if (packageHandlerProc.getName().equals(process.getName())) {
                     logger.warn("Package handler recursion is not allowed. "
@@ -611,9 +615,7 @@ public class ProcessEngineDriver {
                     } else if (event.getEventType().equals(EventType.ERROR)) {
                         if (!processVO.isEmbeddedExceptionHandler()) {
                             engine.updateProcessInstanceStatus(procInst.getId(), WorkStatus.STATUS_WAITING);
-                            if (!engine.isInService()) {
-                                handleInheritedEvent(engine, procInst, processVO, event, EventType.ERROR);
-                            }
+                            handleInheritedEvent(engine, procInst, processVO, event, EventType.ERROR);
                         } else {
                             logger.info("Error occurred inside an error handler!!!");
                         }

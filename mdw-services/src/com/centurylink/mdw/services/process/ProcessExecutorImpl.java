@@ -1925,6 +1925,8 @@ class ProcessExecutorImpl {
         if (actInstVO != null) {
             Process process = getProcessDefinition(processInst);
             Package pkg = getPackage(process);
+            if (pkg != null)
+                processInst.setPackageName(pkg.getName());
             Activity activity = process.getActivityVO(actInstVO.getActivityId());
             ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(pkg, process, processInst, activity, actInstVO);
             // TODO option to suppress variables

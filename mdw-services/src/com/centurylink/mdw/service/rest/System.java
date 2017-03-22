@@ -18,6 +18,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.system.SysInfoCategory;
+import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.services.SystemServices.SysInfoType;
@@ -32,6 +33,15 @@ import io.swagger.annotations.ApiOperation;
 @Path("/System")
 @Api("System Information & Configuration")
 public class System extends JsonRestService {
+
+    /**
+     * ASSET_DESIGN role can PUT in-memory config for running tests.
+     */
+    public List<String> getRoles(String path) {
+        List<String> roles = super.getRoles(path);
+        roles.add(Role.ASSET_DESIGN);
+        return roles;
+    }
 
     @Override
     @Path("/{sysInfoType}/{category}")

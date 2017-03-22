@@ -129,4 +129,20 @@ public class MdwException extends Exception implements Jsonable {
         }
         return cause;
     }
+
+    public boolean equals(Object obj) {
+        if (super.equals(obj))
+            return true;
+        if (!(obj instanceof MdwException))
+            return false;
+        MdwException mdwException = (MdwException) obj;
+        if (!toString().equals(mdwException.toString()))
+            return false;  // fail fast
+        try {
+            return (getJson().equals(mdwException.getJson()));
+        }
+        catch (JSONException ex) {
+            return false;
+        }
+    }
 }
