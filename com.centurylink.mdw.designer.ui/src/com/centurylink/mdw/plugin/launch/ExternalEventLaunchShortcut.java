@@ -74,8 +74,8 @@ public class ExternalEventLaunchShortcut implements ILaunchShortcut {
 
         wc.setAttribute(ExternalEventLaunchConfiguration.WORKFLOW_PROJECT,
                 workflowProject.getName());
-        wc.setAttribute(ExternalEventLaunchConfiguration.MESSAGE_PATTERN,
-                externalEvent.getMessagePattern());
+        wc.setAttribute(ExternalEventLaunchConfiguration.EVENT_NAME,
+                externalEvent.getName());
         return wc;
     }
 
@@ -98,7 +98,7 @@ public class ExternalEventLaunchShortcut implements ILaunchShortcut {
         String wcWorkflowProject = workingCopy
                 .getAttribute(ExternalEventLaunchConfiguration.WORKFLOW_PROJECT, "");
         String wcMessagePattern = workingCopy
-                .getAttribute(ExternalEventLaunchConfiguration.MESSAGE_PATTERN, "");
+                .getAttribute(ExternalEventLaunchConfiguration.EVENT_NAME, "");
 
         ILaunchConfigurationType configType = workingCopy.getType();
         ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations(configType);
@@ -108,7 +108,7 @@ public class ExternalEventLaunchShortcut implements ILaunchShortcut {
             if (!wcWorkflowProject.equals(workflowProject))
                 continue;
             String messagePattern = launchConfig
-                    .getAttribute(ExternalEventLaunchConfiguration.MESSAGE_PATTERN, "");
+                    .getAttribute(ExternalEventLaunchConfiguration.EVENT_NAME, "");
             if (!wcMessagePattern.equals(messagePattern))
                 continue;
 

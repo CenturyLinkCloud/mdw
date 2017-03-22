@@ -13,7 +13,7 @@ import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 public class ExternalEventLaunchConfiguration extends WorkflowLaunchConfiguration {
-    public static final String MESSAGE_PATTERN = "messagePattern";
+    public static final String EVENT_NAME = "eventName";
 
     public void launch(ILaunchConfiguration launchConfig, String mode, ILaunch launch,
             IProgressMonitor monitor) throws CoreException {
@@ -29,9 +29,13 @@ public class ExternalEventLaunchConfiguration extends WorkflowLaunchConfiguratio
         setWriteToConsole(
                 launchConfig.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true));
 
-        String messagePattern = launchConfig.getAttribute(MESSAGE_PATTERN, "");
-        if (!workflowProject.externalEventNameExists(messagePattern)) {
-            showError("Can't locate external event with message pattern: '" + messagePattern
+        String eventName = launchConfig.getAttribute(EVENT_NAME, "");
+        if (!workflowProject.externalEventNameExists(eventName)) {
+            if(workflowProject.checkRequiredVersion(6, 0))
+                showError("Can't locate external event with event name: '" + eventName
+                        + "' in " + wfProjectName + ".", "Launch External Event", workflowProject);
+            else
+                showError("Can't locate external event with message pattern: '" + eventName
                     + "' in " + wfProjectName + ".", "Launch External Event", workflowProject);
             return;
         }
