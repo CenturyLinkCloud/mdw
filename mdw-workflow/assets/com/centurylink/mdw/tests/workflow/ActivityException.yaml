@@ -31,22 +31,22 @@ process: # 14209
           },
           "activityInstance": {
             "activityId": 26,
-            "id": ${~[0-9]*},
-            "processInstanceId": ${~[0-9]*},
-            "startDate": "${today} ${~\\d\\d:\\d\\d:\\d\\d}",
+            "id": ${~\\d*},
+            "processInstanceId": ${~\\d*},
+            "startDate": ${today},
             "statusCode": 2
           },
           "process": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2",
           "processInstance": {
-            "comments": "${~.*}",
-            "id": ${~[0-9]*},
+            "comments": ${~com\\.centurylink\\.mdw\\.tests\\.workflow v\\d.\\d.\\d\\d\\/MDWTestSubProcess2 v\\d.\\d},
+            "id": ${~\\d*},
             "masterRequestId": "${masterRequestId}",
             "owner": "PROCESS_INSTANCE",
-            "ownerId": ${~[0-9]*},
-            "processId": ${~[0-9]*},
+            "ownerId": ${~\\d*},
+            "processId": ${~\\d*},
             "processName": "MDWTestSubProcess2",
             "secondaryOwner": "ACTIVITY_INSTANCE",
-            "secondaryOwnerId": ${~[0-9]*},
+            "secondaryOwnerId": ${~\\d*},
             "statusCode": 2,
             "variables": []
           }

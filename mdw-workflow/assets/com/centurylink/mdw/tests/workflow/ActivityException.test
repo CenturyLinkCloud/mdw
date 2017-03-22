@@ -1,4 +1,5 @@
-today = new Date().format("YYYY-MM-dd")
+//today = new Date().format("YYYY-MM-dd")
+today = new Date().format("YYYY-MM-dd HH:mm:ss");
 println 'today: ' + today
 start process("ActivityException") {
     variables = [processCase: "error handler delegation"]

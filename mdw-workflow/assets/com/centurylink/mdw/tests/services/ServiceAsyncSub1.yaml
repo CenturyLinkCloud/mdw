@@ -39,7 +39,7 @@ process: # 10191
               {
                 "class": "java.lang.reflect.Constructor",
                 "file": "Constructor.java",
-                "line": 422,
+                "line": ${~\\d+},
                 "method": "newInstance"
               },
               {
@@ -298,27 +298,27 @@ process: # 10191
           },
           "activityInstance": {
             "activityId": 3,
-            "id": ${~[0-9]*},
-            "processInstanceId": ${~[0-9]*},
+            "id": ${~\\d*},
+            "processInstanceId": ${~\\d*},
             "startDate": "${today} ${~\\d\\d:\\d\\d:\\d\\d}",
             "statusCode": 2
           },
           "process": "com.centurylink.mdw.tests.services/ServiceSub",
           "processInstance": {
-            "comments": "${~.*}",
-            "id": ${~[0-9]*},
+            "comments": "${~com.*}",
+            "id": ${~\\d*},
             "masterRequestId": "${masterRequestId}",
             "owner": "PROCESS_INSTANCE",
-            "ownerId": ${~[0-9]*},
-            "processId": ${~[0-9]*},
+            "ownerId": ${~\\d*},
+            "processId": ${~\\d*},
             "processName": "ServiceSub",
             "statusCode": 2,
             "variables": [{
-              "id": ${~[0-9]*},
+              "id": ${~\\d*},
               "name": "testCase",
               "type": "java.lang.String",
               "value": "single",
-              "variableId": ${~[0-9]*}
+              "variableId": ${~\\d*}
             }]
           }
         },
@@ -446,7 +446,7 @@ java.lang.Exception: I've fallen and I can't get up
       	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
       	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
       	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-      	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
+      	at java.lang.reflect.Constructor.newInstance(Constructor.java:${~\\d+})
       	at org.codehaus.groovy.reflection.CachedConstructor.invoke(CachedConstructor.java:83)
       	at org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce.callConstructor(ConstructorSite.java:105)
       	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:247)

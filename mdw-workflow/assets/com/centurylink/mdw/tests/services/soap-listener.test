@@ -1,8 +1,0 @@
-// soap-listener
-send message("SOAP") {
-    payload = asset("GetEmployeeSoap.xml").text
-}
-
-verify response {
-    expected = asset("GetEmployeeResponseSoap.xml").text
-}
