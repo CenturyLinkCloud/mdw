@@ -2074,9 +2074,9 @@ public class WorkflowProject extends WorkflowElement
         return null;
     }
 
-    public boolean externalEventMessagePatternExists(String messagePattern) {
+    public boolean externalEventNameExists(String inputText) {
         for (ExternalEventVO externalEvent : getDataAccess().getExternalEvents(false)) {
-            if (externalEvent.getEventName().equals(messagePattern))
+            if (externalEvent.getEventName().equals(inputText))
                 return true;
         }
         return false;
@@ -2872,7 +2872,7 @@ public class WorkflowProject extends WorkflowElement
      * only once per Authenticator implementation class). Per-project would be
      * inconvenient for users who do not want to save their credentials in the
      * Eclipse secure store.
-     * 
+     *
      * @return null means authenticator could not be created
      */
     public Boolean isAuthenticated() {

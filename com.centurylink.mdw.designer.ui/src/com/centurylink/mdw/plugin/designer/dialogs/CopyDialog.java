@@ -97,7 +97,7 @@ public class CopyDialog extends TrayDialog {
         if (workflowElement instanceof WorkflowProcess)
             return dataAccess.processNameExists(targetPackage.getPackageVO(),name);
         else if (workflowElement instanceof ExternalEvent)
-            return workflowProject.externalEventMessagePatternExists(name);
+            return workflowProject.externalEventNameExists(name);
         else if (workflowElement instanceof WorkflowAsset)
             return targetPackage == null ? workflowProject.workflowAssetNameExists(name)
                     : targetPackage.workflowAssetNameExists(name);

@@ -30,7 +30,7 @@ public class ExternalEventLaunchConfiguration extends WorkflowLaunchConfiguratio
                 launchConfig.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true));
 
         String messagePattern = launchConfig.getAttribute(MESSAGE_PATTERN, "");
-        if (!workflowProject.externalEventMessagePatternExists(messagePattern)) {
+        if (!workflowProject.externalEventNameExists(messagePattern)) {
             showError("Can't locate external event with message pattern: '" + messagePattern
                     + "' in " + wfProjectName + ".", "Launch External Event", workflowProject);
             return;

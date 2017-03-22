@@ -40,7 +40,7 @@ public class EventHandlerPage extends CodeGenWizardPage {
     private Button builtInHandlerButton;
     private Button customHandlerButton;
 
-    private Text messagePatternTextField;
+    private Text inputTextField;
 
     private Group launchNotifyGroup;
     private Button launchProcessButton;
@@ -51,6 +51,8 @@ public class EventHandlerPage extends CodeGenWizardPage {
 
     private Button createDocumentCheckbox;
     private Text documentVariableTextField;
+
+    private boolean is6;
 
     public EventHandlerPage() {
         setTitle("External Event Handler Settings");
@@ -79,20 +81,24 @@ public class EventHandlerPage extends CodeGenWizardPage {
     }
 
     protected void createMessagePatternControls(Composite parent, int ncol) {
+        is6=getProject().checkRequiredVersion(6, 0);
         Label label = new Label(parent, SWT.NONE);
         GridData gd = new GridData(GridData.BEGINNING);
         gd.verticalIndent = 10;
         label.setLayoutData(gd);
-        label.setText("Message Pattern:");
-        messagePatternTextField = new Text(parent, SWT.SINGLE | SWT.BORDER);
+        if(!is6)
+            label.setText("Message Pattern:");
+        else
+            label.setText("Event Handler Name:");
+        inputTextField = new Text(parent, SWT.SINGLE | SWT.BORDER);
         gd = new GridData(GridData.BEGINNING);
         gd.horizontalSpan = ncol - 1;
         gd.verticalIndent = 10;
         gd.widthHint = 300;
-        messagePatternTextField.setLayoutData(gd);
-        messagePatternTextField.addModifyListener(new ModifyListener() {
+        inputTextField.setLayoutData(gd);
+        inputTextField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                getEventHandler().setMessagePattern(messagePatternTextField.getText().trim());
+                getEventHandler().setInputText(inputTextField.getText().trim());
                 handleFieldChanged();
             }
         });
@@ -404,12 +410,21 @@ public class EventHandlerPage extends CodeGenWizardPage {
             msg = "Please select a valid workflow package";
         else if (!getEventHandler().getPackage().isUserAuthorized(UserRoleVO.ASSET_DESIGN))
             msg = "You're not authorized to create external event handlers for this workflow package.";
-        else if (!checkString(getEventHandler().getMessagePattern()))
-            msg = "Please enter a valid message pattern";
+        else if (!checkString(getEventHandler().getInputText())){
+            if(is6)
+                msg = "Please enter a valid event name";
+            else
+                msg = "Please enter a valid message pattern";
+        }
         else if (getEventHandler().getProject()
-                .externalEventMessagePatternExists(getEventHandler().getMessagePattern()))
-            msg = "An event handler with message pattern '" + getEventHandler().getMessagePattern()
+                .externalEventNameExists(getEventHandler().getInputText())){
+            if(is6)
+                msg = "An event handler with event name '" + getEventHandler().getInputText()
+                + "' already exists";
+            else
+                msg = "An event handler with message pattern '" + getEventHandler().getInputText()
                     + "' already exists";
+        }
 
         if (msg == null && !getEventHandler().isCustom()) {
             if (getEventHandlerWizard().getHandlerAction() == null)
