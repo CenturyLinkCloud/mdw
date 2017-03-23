@@ -63,9 +63,10 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
                     getActivityInstanceId(), getWorkTransitionInstanceId(), null);
 
             EventWaitInstance received = registerWaitEvents(false,true);
-            if (received!=null)
+            if (received != null)
               resume(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
-        } catch(Exception ex) {
+        }
+        catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
