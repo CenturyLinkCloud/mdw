@@ -1,7 +1,7 @@
 apply plugin: "war"
 
 configurations {
-    wtpExclude 
+    wtpExclude
 }
 
 eclipse {
@@ -40,7 +40,7 @@ dependencies {
     providedCompile group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
     providedCompile group: "javax.servlet.jsp.jstl", name: "jstl-api", version: "1.2"
     providedCompile group: "junit", name: "junit", version: "4.8.1"
-    providedCompile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1"
+    providedCompile(group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1") { transitive = false }
     
     compile group: "commons-beanutils", name: "commons-beanutils", version: "1.8.3"
     compile group: "commons-cli", name: "commons-cli", version: "1.0"
@@ -57,12 +57,10 @@ dependencies {
     compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri"); exclude(module: "jms") }
     compile group: "org.apache.xbean", name: "xbean-spring", version: "3.6"
     compile group: "el-impl", name: "el-impl", version: "1.0"
+    compile group: "mysql", name: "mysql-connector-java", version: "5.1.29"
     
-        
     // swagger
-    compile group: "io.swagger", name: "swagger-servlet", version: "1.5.4"
-
-    compile group: "mysql", name: "mysql-connector-java", version: "5.1.29"    
+    compile group: "io.swagger", name: "swagger-servlet", version: "1.5.4"    
 }
 
 task mdwWarSourcesJar(type: Jar) {
@@ -99,6 +97,8 @@ war {
     dependsOn(buildDist)
     
     archiveName = "mdw-${version}.war"
+    
+    war.classpath
 
     manifest {
         attributes("MDW-Version": mdwVersion, "MDW-Build": new Date().format(mdwBuildTimeFormat))
@@ -129,7 +129,7 @@ war {
 }
 
 war {
-    // dependsOn ":javadocs"  // build javadocs but do not include in war
+    dependsOn ":javadocs"  // build javadocs but do not include in war
     
     exclude "**/.*ignore";
     rootSpec.exclude "**/.*ignore"

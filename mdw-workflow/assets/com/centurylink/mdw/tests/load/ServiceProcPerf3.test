@@ -1,7 +1,0 @@
-// service-proc-perf3
-masterRequestId = System.currentTimeMillis();
-send message("REST") {
-    payload = file("myorderreq3.xml").text
-}
-wait process("com.centurylink.mdw.tests.workflow/MDWTestProcessAsService")
-verify process("com.centurylink.mdw.tests.workflow/MDWTestProcessAsService")

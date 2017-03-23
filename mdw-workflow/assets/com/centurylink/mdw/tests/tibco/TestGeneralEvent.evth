@@ -1,4 +1,0 @@
-{
-  "handlerClass": "START_PROCESS?ProcessName=StartStopProcess&MasterRequestID={//MasterRequestId}",
-  "path": "TestGeneralEvent[EventType='ORDER_START']"
-}

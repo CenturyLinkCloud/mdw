@@ -1,4 +1,0 @@
-<xs:MDWStatusMessage xmlns:xs="http://mdw.centurylink.com/XMLSchema">
-  <StatusCode>0</StatusCode>
-  <xs:StatusMessage>SUCCESS</xs:StatusMessage>
-</xs:MDWStatusMessage>
