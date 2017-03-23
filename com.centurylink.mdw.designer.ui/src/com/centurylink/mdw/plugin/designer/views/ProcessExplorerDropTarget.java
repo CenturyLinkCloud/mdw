@@ -310,11 +310,11 @@ public class ProcessExplorerDropTarget extends ViewerDropAdapter {
         if (operation == DND.DROP_COPY) {
             ExternalEvent existing = workflowProject.getExternalEvent(externalEventId);
             CopyDialog copyDialog = new CopyDialog(getViewer().getControl().getShell(), existing,
-                    existing.getMessagePattern(), null,targetPackage);
+                    existing.getName(), null,targetPackage);
             if (copyDialog.open() == Dialog.OK) {
                 String newPattern = copyDialog.getNewName();
                 ExternalEvent newCopy = new ExternalEvent(existing);
-                newCopy.setMessagePattern(newPattern);
+                newCopy.setName(newPattern);
                 newCopy.setPackage(targetPackage);
                 designerProxy.registerExternalEventHandler(newCopy);
 
