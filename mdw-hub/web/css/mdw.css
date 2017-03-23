@@ -95,6 +95,7 @@
 }
 .mdw_welcomeLink {
   text-decoration: none;
+  white-space: nowrap;
 }
 .mdw_welcomeLink:hover {
   text-decoration: underline;
@@ -538,7 +539,7 @@ a.mdw_listLinks:hover {
   font-size: 10px;
   font-family: verdana;
   font-weight: bold;
-  padding-left: 10px;
+  padding-left: 8px;
 }
 .mdw_chart {
   margin-top: 7px;
