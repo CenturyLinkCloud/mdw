@@ -4,9 +4,7 @@ import org.apache.xmlbeans.XmlObject
 
 buildscript {
     repositories {
-        maven {
-            url devRepoUrl
-        }
+        mavenCentral()
     }
     dependencies { 
         classpath group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
@@ -17,9 +15,7 @@ buildscript {
 }
 
 repositories {
-    maven {
-        url devRepoUrl
-    }
+    mavenCentral()
 }
 
 dependencies {

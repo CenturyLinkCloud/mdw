@@ -1,9 +1,7 @@
 apply plugin: "java"
 
 repositories {
-    maven {
-        url devRepoUrl
-    }
+  mavenCentral()
 }
 
 configurations {
