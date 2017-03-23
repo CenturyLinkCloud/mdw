@@ -88,14 +88,6 @@ public class ExternalEvent extends WorkflowElement implements Comparable<Externa
         return "extevent.gif";
     }
 
-    public String getMessagePattern() {
-        return getName();
-    }
-
-    public void setMessagePattern(String messagePattern) {
-        setName(messagePattern);
-    }
-
     public String getEventHandler() {
         return externalEventVO.getEventHandler();
     }

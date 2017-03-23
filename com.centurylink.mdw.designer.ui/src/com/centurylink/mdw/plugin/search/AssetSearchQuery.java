@@ -100,7 +100,7 @@ public class AssetSearchQuery extends SearchQuery {
                             String searchText = isCaseSensitive() ? getContainedText()
                                     : getContainedText().toLowerCase();
                             searchText = searchText.replaceAll("\\*", "");
-                            if (eventHandler.getMessagePattern().indexOf(searchText) >= 0)
+                            if (eventHandler.getName().indexOf(searchText) >= 0)
                                 getSearchResults().addMatchingElement(eventHandler);
                         }
                     }
