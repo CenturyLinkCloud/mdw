@@ -2,4 +2,4 @@
 
 ### Under Construction...
 
-[Refer to another md file:](test.md)
+[Refer to another md file:](test)
