@@ -45,133 +45,133 @@ process: # 10203
               {
                 "class": "org.codehaus.groovy.reflection.CachedConstructor",
                 "file": "CachedConstructor.java",
-                "line": 83,
+                "line": ${~\\d+},
                 "method": "invoke"
               },
               {
                 "class": "org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce",
                 "file": "ConstructorSite.java",
-                "line": 105,
+                "line": ${~\\d+},
                 "method": "callConstructor"
               },
               {
                 "class": "org.codehaus.groovy.runtime.callsite.AbstractCallSite",
                 "file": "AbstractCallSite.java",
-                "line": 247,
+                "line": ${~\\d+},
                 "method": "callConstructor"
               },
               {
                 "class": "ServiceSubv0_3_Error_3",
                 "file": "ServiceSubv0_3_Error_3.groovy",
-                "line": 1,
+                "line": ${~\\d+},
                 "method": "run"
               },
               {
                 "class": "groovy.util.GroovyScriptEngine",
                 "file": "GroovyScriptEngine.java",
-                "line": 605,
+                "line": ${~\\d+},
                 "method": "run"
               },
               {
                 "class": "com.centurylink.mdw.script.GroovyExecutor",
                 "file": "GroovyExecutor.java",
-                "line": 126,
+                "line": ${~\\d+},
                 "method": "runScript"
               },
               {
                 "class": "com.centurylink.mdw.script.GroovyExecutor",
                 "file": "GroovyExecutor.java",
-                "line": 68,
+                "line": ${~\\d+},
                 "method": "execute"
               },
               {
                 "class": "com.centurylink.mdw.services.process.BaseActivity",
                 "file": "BaseActivity.java",
-                "line": 1271,
+                "line": ${~\\d+},
                 "method": "executeScript"
               },
               {
                 "class": "com.centurylink.mdw.services.process.BaseActivity",
                 "file": "BaseActivity.java",
-                "line": 1242,
+                "line": ${~\\d+},
                 "method": "executeScript"
               },
               {
                 "class": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
                 "file": "ScriptExecutorActivity.java",
-                "line": 43,
+                "line": ${~\\d+},
                 "method": "execute"
               },
               {
                 "class": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
                 "file": "DefaultActivityImpl.java",
-                "line": 29,
+                "line": ${~\\d+},
                 "method": "execute"
               },
               {
                 "class": "com.centurylink.mdw.services.process.BaseActivity",
                 "file": "BaseActivity.java",
-                "line": 209,
+                "line": ${~\\d+},
                 "method": "execute"
               },
               {
                 "class": "com.centurylink.mdw.services.process.BaseActivity",
                 "file": "BaseActivity.java",
-                "line": 219,
+                "line": ${~\\d+},
                 "method": "executeTimed"
               },
               {
                 "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
                 "file": "ProcessEngineDriver.java",
-                "line": 363,
+                "line": ${~\\d+},
                 "method": "executeActivity"
               },
               {
                 "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
                 "file": "ProcessEngineDriver.java",
-                "line": 596,
+                "line": ${~\\d+},
                 "method": "processEvent"
               },
               {
                 "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
                 "file": "ProcessEngineDriver.java",
-                "line": 562,
+                "line": ${~\\d+},
                 "method": "processEvents"
               },
               {
                 "class": "com.centurylink.mdw.services.process.InternalEventDriver",
                 "file": "InternalEventDriver.java",
-                "line": 25,
+                "line": ${~\\d+},
                 "method": "run"
               },
               {
                 "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$Work",
                 "file": "CommonThreadPool.java",
-                "line": 251,
+                "line": ${~\\d+},
                 "method": "run"
               },
               {
                 "class": "java.util.concurrent.ThreadPoolExecutor",
                 "file": "ThreadPoolExecutor.java",
-                "line": 1142,
+                "line": ${~\\d+},
                 "method": "runWorker"
               },
               {
                 "class": "java.util.concurrent.ThreadPoolExecutor$Worker",
                 "file": "ThreadPoolExecutor.java",
-                "line": 617,
+                "line": ${~\\d+},
                 "method": "run"
               },
               {
                 "class": "java.lang.Thread",
                 "file": "Thread.java",
-                "line": 745,
+                "line": ${~\\d+},
                 "method": "run"
               },
               {
                 "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread",
                 "file": "CommonThreadPool.java",
-                "line": 220,
+                "line": ${~\\d+},
                 "method": "run"
               }
             ],
@@ -182,85 +182,85 @@ process: # 10203
             {
               "class": "com.centurylink.mdw.script.GroovyExecutor",
               "file": "GroovyExecutor.java",
-              "line": 130,
+              "line": ${~\\d+},
               "method": "runScript"
             },
             {
               "class": "com.centurylink.mdw.script.GroovyExecutor",
               "file": "GroovyExecutor.java",
-              "line": 68,
+              "line": ${~\\d+},
               "method": "execute"
             },
             {
               "class": "com.centurylink.mdw.services.process.BaseActivity",
               "file": "BaseActivity.java",
-              "line": 1271,
+              "line": ${~\\d+},
               "method": "executeScript"
             },
             {
               "class": "com.centurylink.mdw.services.process.BaseActivity",
               "file": "BaseActivity.java",
-              "line": 1242,
+              "line": ${~\\d+},
               "method": "executeScript"
             },
             {
               "class": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
               "file": "ScriptExecutorActivity.java",
-              "line": 43,
+              "line": ${~\\d+},
               "method": "execute"
             },
             {
               "class": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
               "file": "DefaultActivityImpl.java",
-              "line": 29,
+              "line": ${~\\d+},
               "method": "execute"
             },
             {
               "class": "com.centurylink.mdw.services.process.BaseActivity",
               "file": "BaseActivity.java",
-              "line": 209,
+              "line": ${~\\d+},
               "method": "execute"
             },
             {
               "class": "com.centurylink.mdw.services.process.BaseActivity",
               "file": "BaseActivity.java",
-              "line": 219,
+              "line": ${~\\d+},
               "method": "executeTimed"
             },
             {
               "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
               "file": "ProcessEngineDriver.java",
-              "line": 363,
+              "line": ${~\\d+},
               "method": "executeActivity"
             },
             {
               "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
               "file": "ProcessEngineDriver.java",
-              "line": 596,
+              "line": ${~\\d+},
               "method": "processEvent"
             },
             {
               "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
               "file": "ProcessEngineDriver.java",
-              "line": 562,
+              "line": ${~\\d+},
               "method": "processEvents"
             },
             {
               "class": "com.centurylink.mdw.services.process.InternalEventDriver",
               "file": "InternalEventDriver.java",
-              "line": 25,
+              "line": ${~\\d+},
               "method": "run"
             },
             {
               "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$Work",
               "file": "CommonThreadPool.java",
-              "line": 251,
+              "line": ${~\\d+},
               "method": "run"
             },
             {
               "class": "java.util.concurrent.ThreadPoolExecutor",
               "file": "ThreadPoolExecutor.java",
-              "line": 1142,
+              "line": ${~\\d+},
               "method": "runWorker"
             },
             {
@@ -278,7 +278,7 @@ process: # 10203
             {
               "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread",
               "file": "CommonThreadPool.java",
-              "line": 220,
+              "line": ${~\\d+},
               "method": "run"
             }
           ],
@@ -310,6 +310,7 @@ process: # 10203
             "masterRequestId": "${masterRequestId}",
             "owner": "PROCESS_INSTANCE",
             "ownerId": ${~\\d*},
+            "packageName": "com.centurylink.mdw.tests.services",
             "processId": ${~\\d*},
             "processName": "ServiceSub",
             "secondaryOwner": "ACTIVITY_INSTANCE",
@@ -327,91 +328,91 @@ process: # 10203
           {
             "class": "com.centurylink.mdw.services.process.BaseActivity",
             "file": "BaseActivity.java",
-            "line": 1284,
+            "line": ${~\\d+},
             "method": "executeScript"
           },
           {
             "class": "com.centurylink.mdw.services.process.BaseActivity",
             "file": "BaseActivity.java",
-            "line": 1242,
+            "line": ${~\\d+},
             "method": "executeScript"
           },
           {
             "class": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
             "file": "ScriptExecutorActivity.java",
-            "line": 43,
+            "line": ${~\\d+},
             "method": "execute"
           },
           {
             "class": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
             "file": "DefaultActivityImpl.java",
-            "line": 29,
+            "line": ${~\\d+},
             "method": "execute"
           },
           {
             "class": "com.centurylink.mdw.services.process.BaseActivity",
             "file": "BaseActivity.java",
-            "line": 209,
+            "line": ${~\\d+},
             "method": "execute"
           },
           {
             "class": "com.centurylink.mdw.services.process.BaseActivity",
             "file": "BaseActivity.java",
-            "line": 219,
+            "line": ${~\\d+},
             "method": "executeTimed"
           },
           {
             "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
             "file": "ProcessEngineDriver.java",
-            "line": 363,
+            "line": ${~\\d+},
             "method": "executeActivity"
           },
           {
             "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
             "file": "ProcessEngineDriver.java",
-            "line": 596,
+            "line": ${~\\d+},
             "method": "processEvent"
           },
           {
             "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
             "file": "ProcessEngineDriver.java",
-            "line": 562,
+            "line": ${~\\d+},
             "method": "processEvents"
           },
           {
             "class": "com.centurylink.mdw.services.process.InternalEventDriver",
             "file": "InternalEventDriver.java",
-            "line": 25,
+            "line": ${~\\d+},
             "method": "run"
           },
           {
             "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$Work",
             "file": "CommonThreadPool.java",
-            "line": 251,
+            "line": ${~\\d+},
             "method": "run"
           },
           {
             "class": "java.util.concurrent.ThreadPoolExecutor",
             "file": "ThreadPoolExecutor.java",
-            "line": 1142,
+            "line": ${~\\d+},
             "method": "runWorker"
           },
           {
             "class": "java.util.concurrent.ThreadPoolExecutor$Worker",
             "file": "ThreadPoolExecutor.java",
-            "line": 617,
+            "line": ${~\\d+},
             "method": "run"
           },
           {
             "class": "java.lang.Thread",
             "file": "Thread.java",
-            "line": 745,
+            "line": ${~\\d+},
             "method": "run"
           },
           {
             "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread",
             "file": "CommonThreadPool.java",
-            "line": 220,
+            "line": ${~\\d+},
             "method": "run"
           }
         ],
@@ -422,26 +423,26 @@ process: # 10203
     value: |
       com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'ServiceSubv0_3_Error_3'
 java.lang.Exception: I've fallen and I can't get up
-      	at com.centurylink.mdw.services.process.BaseActivity.executeScript(BaseActivity.java:1284)
-      	at com.centurylink.mdw.services.process.BaseActivity.executeScript(BaseActivity.java:1242)
-      	at com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity.execute(ScriptExecutorActivity.java:43)
-      	at com.centurylink.mdw.workflow.activity.DefaultActivityImpl.execute(DefaultActivityImpl.java:29)
-      	at com.centurylink.mdw.services.process.BaseActivity.execute(BaseActivity.java:209)
-      	at com.centurylink.mdw.services.process.BaseActivity.executeTimed(BaseActivity.java:219)
-      	at com.centurylink.mdw.services.process.ProcessEngineDriver.executeActivity(ProcessEngineDriver.java:363)
-      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvent(ProcessEngineDriver.java:596)
-      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvents(ProcessEngineDriver.java:562)
-      	at com.centurylink.mdw.services.process.InternalEventDriver.run(InternalEventDriver.java:25)
-      	at com.centurylink.mdw.container.plugin.CommonThreadPool$Work.run(CommonThreadPool.java:251)
+      	at com.centurylink.mdw.services.process.BaseActivity.executeScript(BaseActivity.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.BaseActivity.executeScript(BaseActivity.java:${~\\d+})
+      	at com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity.execute(ScriptExecutorActivity.java:${~\\d+})
+      	at com.centurylink.mdw.workflow.activity.DefaultActivityImpl.execute(DefaultActivityImpl.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.BaseActivity.execute(BaseActivity.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.BaseActivity.executeTimed(BaseActivity.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.ProcessEngineDriver.executeActivity(ProcessEngineDriver.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvent(ProcessEngineDriver.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvents(ProcessEngineDriver.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.InternalEventDriver.run(InternalEventDriver.java:${~\\d+})
+      	at com.centurylink.mdw.container.plugin.CommonThreadPool$Work.run(CommonThreadPool.java:${~\\d+})
       	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
       	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
       	at java.lang.Thread.run(Thread.java:745)
-      	at com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:220)
+      	at com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:${~\\d+})
       Caused by: com.centurylink.mdw.script.ExecutionException: Error executing Groovy script: 'ServiceSubv0_3_Error_3'
 java.lang.Exception: I've fallen and I can't get up
-      	at com.centurylink.mdw.script.GroovyExecutor.runScript(GroovyExecutor.java:130)
-      	at com.centurylink.mdw.script.GroovyExecutor.execute(GroovyExecutor.java:68)
-      	at com.centurylink.mdw.services.process.BaseActivity.executeScript(BaseActivity.java:1271)
+      	at com.centurylink.mdw.script.GroovyExecutor.runScript(GroovyExecutor.java:${~\\d+})
+      	at com.centurylink.mdw.script.GroovyExecutor.execute(GroovyExecutor.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.BaseActivity.executeScript(BaseActivity.java:${~\\d+})
       	... 14 more
       Caused by: java.lang.Exception: I've fallen and I can't get up
       	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
@@ -453,7 +454,7 @@ java.lang.Exception: I've fallen and I can't get up
       	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:247)
       	at ServiceSubv0_3_Error_3.run(ServiceSubv0_3_Error_3.groovy:1)
       	at groovy.util.GroovyScriptEngine.run(GroovyScriptEngine.java:605)
-      	at com.centurylink.mdw.script.GroovyExecutor.runScript(GroovyExecutor.java:126)
+      	at com.centurylink.mdw.script.GroovyExecutor.runScript(GroovyExecutor.java:${~\\d+})
       	... 16 more
 process: # 10201
   name: ServiceMain
