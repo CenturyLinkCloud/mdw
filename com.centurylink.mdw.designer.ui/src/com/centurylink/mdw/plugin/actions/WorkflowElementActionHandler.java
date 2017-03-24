@@ -176,6 +176,8 @@ public class WorkflowElementActionHandler {
     public static final String REFRESH_CACHES = "refreshCaches";
     public static final String STUB_SERVER = "stubServer";
     public static final String LOG_WATCHER = "logWatcher";
+    public static final String EVT_HANDLER_FILE_EXTENSION = ".evth";
+
 
     public void create(Class<? extends WorkflowElement> elementClass, WorkflowElement element) {
         if (elementClass.equals(WorkflowElement.class))
@@ -266,7 +268,7 @@ public class WorkflowElementActionHandler {
                 PluginMessages.uiError(ex, "Open Test Case", testCase.getProject());
             }
         }
-        else if (element instanceof WorkflowAsset) {
+        else if (element instanceof WorkflowAsset ) {
             WorkflowAsset asset = (WorkflowAsset) element;
             asset.openFile(new NullProgressMonitor());
         }
@@ -290,6 +292,17 @@ public class WorkflowElementActionHandler {
             }
             catch (PartInitException ex) {
                 PluginMessages.uiError(ex, "Open File", file.getProject());
+            }
+        }
+        else if(element instanceof ExternalEvent) {
+            ExternalEvent event = (ExternalEvent)element;
+            IFile file = event.getProject().getAssetFolder().getFolder(event.getPackage().getName().replace('.', '/')).getFile(event.getName()+EVT_HANDLER_FILE_EXTENSION);
+            IWorkbenchPage activePage = MdwPlugin.getActivePage();
+            try {
+                IDE.openEditor(activePage, file, true);
+            }
+            catch (PartInitException ex) {
+                PluginMessages.uiError(ex, "Open File", event.getProject());
             }
         }
         else {
