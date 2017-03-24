@@ -1,3 +1,5 @@
+package com.centurylink.mdw.tests.server
+
 // unit tests for version spec parsing
 import static com.centurylink.mdw.model.asset.AssetVersionSpec.parse;
 import com.centurylink.mdw.model.workflow.Process;

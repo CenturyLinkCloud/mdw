@@ -1,4 +1,5 @@
-// collections-variables
+package com.centurylink.mdw.tests.workflow
+
 start process("MDWTestVariables")
 wait process
 verify process

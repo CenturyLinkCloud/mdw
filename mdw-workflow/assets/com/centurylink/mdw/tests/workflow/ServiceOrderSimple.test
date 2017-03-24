@@ -1,4 +1,5 @@
-// service-order-simple
+package com.centurylink.mdw.tests.workflow
+
 masterRequestId = System.currentTimeMillis();
 send message("REST") {
     payload = '''<ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">

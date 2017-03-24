@@ -1,4 +1,5 @@
-// groovy-return-vals
+package com.centurylink.mdw.tests.workflow
+
 start process("GroovyReturnVals")
 wait process
 verify process {

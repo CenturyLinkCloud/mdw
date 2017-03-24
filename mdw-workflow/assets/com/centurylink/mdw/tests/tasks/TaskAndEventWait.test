@@ -1,4 +1,5 @@
-// manual task and event wait
+package com.centurylink.mdw.tests.tasks
+
 start process("MDWTestTaskAndEvent")
 sleep 30
 send message("REST") {

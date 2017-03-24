@@ -89,6 +89,10 @@
     <url-pattern>/login</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
+    <servlet-name>LoginServlet</servlet-name>
+    <url-pattern>/logout</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
     <servlet-name>ErrorServlet</servlet-name>
     <url-pattern>/error</url-pattern>
   </servlet-mapping>

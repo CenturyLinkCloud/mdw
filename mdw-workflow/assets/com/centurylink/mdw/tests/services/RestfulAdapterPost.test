@@ -1,4 +1,5 @@
-// restful-adapter-post
+package com.centurylink.mdw.tests.services
+
 start process("RestfulServiceAdapter") {
     variables = [httpMethod: "POST"]
 }

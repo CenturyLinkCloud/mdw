@@ -63,9 +63,7 @@ subprojects {
     }
     
     repositories {
-        maven {
-            url devRepoUrl
-        }
+        mavenCentral()
     }
     
     // copy into output dir rather than including directly in jar
@@ -102,6 +100,12 @@ task packageSources(type: GradleBuild) {
     tasks = ["sourcesJar"]
 }
 
+allprojects {
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
 task javadocs(type: Javadoc) {
     dependsOn "cleanJavadocs"
     source subprojects.collect {project -> project.sourceSets.main.java }
@@ -109,8 +113,8 @@ task javadocs(type: Javadoc) {
     title = "MDW 6 API JavaDocs"
     maxMemory = "256m"
     options.links "http://docs.oracle.com/javase/8/docs/api/"
-    options.bottom "<i>Copyright &#169; 2016 CenturyLink, Inc.</i>"
-    destinationDir = file('../mdw-hub/web/javadoc')
+    options.bottom "<i>Copyright &#169; 2017 CenturyLink, Inc.</i>"
+    destinationDir = file('../docs/javadoc')
 }
 
 task exportAssetPackages(type: GradleBuild) {

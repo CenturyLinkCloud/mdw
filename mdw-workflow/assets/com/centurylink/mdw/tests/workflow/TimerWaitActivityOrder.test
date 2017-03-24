@@ -1,4 +1,5 @@
-// timer-wait-activity-order
+package com.centurylink.mdw.tests.workflow
+
 start process("TimerWaitActivityOrder") {
     variables = [cumulativeResult: "_"]
 }

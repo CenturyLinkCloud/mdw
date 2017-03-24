@@ -1,4 +1,5 @@
-// event-wait-waiting-before-start
+package com.centurylink.mdw.tests.workflow
+
 send message("REST") {
     payload = "<NonTaskAction>%%M%%</NonTaskAction>"
 }

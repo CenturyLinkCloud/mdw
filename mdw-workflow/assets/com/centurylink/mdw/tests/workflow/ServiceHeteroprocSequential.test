@@ -1,4 +1,5 @@
-// service-heteroproc-sequential
+package com.centurylink.mdw.tests.workflow
+
 masterRequestId = "tester-" + System.currentTimeMillis()
 
 start process("com.centurylink.mdw.tests.workflow/MDWTestHeterogeneousProcessCall"){

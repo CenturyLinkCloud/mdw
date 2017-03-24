@@ -1,4 +1,5 @@
-// ldap-adapter
+package com.centurylink.mdw.tests.workflow
+
 start process("LdapAdapter") {
     variables = [ cuid: "dxoakes", lastNameInput: "Oakes", sapIdInput: "DHO115360" ]
 }

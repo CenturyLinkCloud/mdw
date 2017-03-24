@@ -1,4 +1,5 @@
-// raise-cancel-event
+package com.centurylink.mdw.tests.workflow
+
 start process("MDWTestMainProcess") {
     variables = [processCase: "AbortEvent"]
 }

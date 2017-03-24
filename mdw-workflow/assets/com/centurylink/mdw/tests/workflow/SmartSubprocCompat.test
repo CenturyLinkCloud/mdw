@@ -1,4 +1,5 @@
-// smart-subproc-compat
+package com.centurylink.mdw.tests.workflow
+
 start process("SmartProcessParent") {
     variables = [ testCase: "oldStyle" ]
 }

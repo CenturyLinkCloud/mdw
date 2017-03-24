@@ -23,8 +23,8 @@
       </a>      
     </div>
     <div class="mdw_logout" style="display:table-cell;">
-       <a href="" class="mdw_actionLink mdw_welcomeLink" ng-if="authUser.cuid != 'guest'" ng-click="logout()">Logout</a>
-       <a href="" class="mdw_actionLink mdw_welcomeLink" ng-if="authUser.cuid == 'guest'" ng-click="login()">Login</a>
+       <a href="logout" class="mdw_actionLink mdw_welcomeLink" ng-if="authUser.cuid != 'guest'">Sign Out</a>
+       <a href="login" class="mdw_actionLink mdw_welcomeLink" ng-if="authUser.cuid == 'guest'">Sign In</a>
     </div>
   </div>
 </div>

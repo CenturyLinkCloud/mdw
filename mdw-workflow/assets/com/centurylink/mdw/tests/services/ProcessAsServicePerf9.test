@@ -1,4 +1,5 @@
-// process-as-service-memonly
+package com.centurylink.mdw.tests.services
+
 send message {
     payload = '''<ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
   <Action Name="RegressionTest">

@@ -1,4 +1,5 @@
-// timer-wait-event-before-start
+package com.centurylink.mdw.tests.workflow
+
 masterRequestId = System.currentTimeMillis();
 send message("REST") {
     payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"

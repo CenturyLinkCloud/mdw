@@ -1,3 +1,5 @@
+package com.centurylink.mdw.tests.services
+
 // test DELETE with non-200 response
 def response = delete http("services/Requests/1234")
 assert response.code == 405 // Not Allowed

@@ -1,6 +1,7 @@
-// runtime-context
+package com.centurylink.mdw.tests.workflow
+
 // TODO: make this test more complete by testing variables
 // and other values from the activity RuntimeContext
-start process("RuntimeContext") 
+start process("RuntimeContext")
 wait process
 verify process

@@ -1,4 +1,5 @@
-// event-wait-timeout-1
+package com.centurylink.mdw.tests.workflow
+
 start process("MDWTestEventWaitTimeout")
 sleep 10
 send message("REST") {
@@ -8,7 +9,7 @@ send message("REST") {
     <Parameter name="MasterRequestId">%%M%%</Parameter>
     <Parameter name="Maintenance">Timeout</Parameter>
   </Action>
-</ser:ActionRequest>'''    
+</ser:ActionRequest>'''
 }
 sleep 180
 send message("REST") {

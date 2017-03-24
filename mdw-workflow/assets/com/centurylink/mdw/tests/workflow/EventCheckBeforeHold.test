@@ -1,4 +1,5 @@
-// event-check-before-hold
+package com.centurylink.mdw.tests.workflow
+
 notify event("H-${masterRequestId}") {
     message = "<EventCheck/>"
 }

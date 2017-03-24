@@ -1,4 +1,5 @@
-// task-index-provider
+package com.centurylink.mdw.tests.tasks
+
 today = new Date()
 start process("TaskIndexTesting") {
     variables = [ isCustom: true,

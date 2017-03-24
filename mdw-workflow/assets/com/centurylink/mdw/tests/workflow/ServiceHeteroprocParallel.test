@@ -1,4 +1,5 @@
-// service-heteroproc-parallel
+package com.centurylink.mdw.tests.workflow
+
 send asset("service-heteroproc-parallel-action.xml")
 wait process("MDWTestHeterogeneousProcessCall")
 verify process("MDWTestHeterogeneousProcessCall")

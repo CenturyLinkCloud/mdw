@@ -1,4 +1,5 @@
-// service-async-sub1
+package com.centurylink.mdw.tests.services
+
 today = new Date().format("YYYY-MM-dd")
 start process('ServiceMain') {
     variables = [ testCase: 'multiple' ]

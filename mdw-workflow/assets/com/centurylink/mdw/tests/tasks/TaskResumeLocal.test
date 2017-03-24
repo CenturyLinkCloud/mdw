@@ -1,5 +1,6 @@
-// task-resume-local
-// See also com.centurylink.mdw.tests.routing/task-resume-service.test 
+package com.centurylink.mdw.tests.tasks
+
+// See also com.centurylink.mdw.tests.routing/task-resume-service.test
 // (task-resume-service uses HTTP to notify workflow vs the usual in-VM
 // mechanism tested here).  YAML outcome should be the same.
 

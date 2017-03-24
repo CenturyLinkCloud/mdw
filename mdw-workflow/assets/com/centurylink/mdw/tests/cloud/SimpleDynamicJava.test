@@ -1,4 +1,5 @@
-// simple-dynamic-java
+package com.centurylink.mdw.tests.cloud
+
 // creates two instances
 start process("SimpleDynamicJava") {
     variables = [ responsibleParty: "dxoakes",
