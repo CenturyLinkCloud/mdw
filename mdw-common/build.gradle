@@ -70,10 +70,12 @@ dependencies {
     compile group: "info.cukes", name: "cucumber-core", version: "1.2.4"  
     
     // oauth
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.common", version: "1.0.1"
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.client", version: "1.0.1"
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.resourceserver", version: "1.0.1"
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.authzserver", version: "1.0.1"
+    // TODO: For now oltu transitive dependencies are excluded because recent JSONObject versions do not alphabetize object keys.
+    // This prevents tests from passing.  We need to perform structural comparison in JSON instead of text, or serialize reliably with later org.json. 
+    compile(group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.common", version: "1.0.1") { exclude(group: "org.json") }
+    compile(group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.client", version: "1.0.1") { exclude(group: "org.json") }
+    compile(group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.resourceserver", version: "1.0.1") { exclude(group: "org.json") }
+    compile(group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.authzserver", version: "1.0.1") { exclude(group: "org.json") }
     
     // doc store
     compile group: "org.mongodb", name: "mongodb-driver", version: "3.3.0"
