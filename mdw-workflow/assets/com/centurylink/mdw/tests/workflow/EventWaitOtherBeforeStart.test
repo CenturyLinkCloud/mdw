@@ -1,4 +1,5 @@
-// event-wait-other-before-start
+package com.centurylink.mdw.tests.workflow
+
 send message("REST") {
     payload = "<Signal>${masterRequestId}</Signal>"
 }
@@ -7,5 +8,5 @@ start process("MDWTestSuppsEmbedded") {
     variables = [testCase: "custom-finish-event-on-event-wait"]
 }
 
-wait process 
+wait process
 verify process

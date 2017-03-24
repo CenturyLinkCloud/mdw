@@ -1,4 +1,5 @@
-// task-values-service
+package com.centurylink.mdw.tests.tasks
+
 import org.json.JSONObject
 
 def getJson(Map<String,String> map) {

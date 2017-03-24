@@ -1,4 +1,5 @@
-// raw-jms
+package com.centurylink.mdw.tests.services
+
 send message("JMS") {
     payload = '''\
 <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">

@@ -1,4 +1,5 @@
-// rpc-web-service-adapter
+package com.centurylink.mdw.tests.workflow
+
 start process("RpcWebService") {
     variables = [ requestDoc: asset("GetEmployeeRequest.xml").text ]
 }

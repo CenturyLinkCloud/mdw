@@ -1,3 +1,5 @@
+package com.centurylink.mdw.tests.services
+
 // patch-200 (invokes PatchHandler service)
 
 def request = '''{

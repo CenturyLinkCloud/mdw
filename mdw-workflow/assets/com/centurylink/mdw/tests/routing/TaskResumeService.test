@@ -1,4 +1,5 @@
-// task-resume-service
+package com.centurylink.mdw.tests.routing
+
 // Note: Needs package or global property: mdw.task.resume.notify.endpoint
 // See also com.centurylink.mdw.tests.tasks/task-resume-local.test
 // (this uses HTTP to notify workflow vs the usual in-VM

@@ -1,4 +1,5 @@
-// event-wait-timeout-2
+package com.centurylink.mdw.tests.workflow
+
 start process("MDWTestEventWaitTimeout")
 sleep 10
 send message("REST") {

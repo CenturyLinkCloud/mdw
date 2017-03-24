@@ -1,4 +1,5 @@
-// tester-substitution
+package com.centurylink.mdw.tests.workflow
+
 // this is to test the MDW test tool itself
 name = "Donald"
 helloMessage = "Hello, " + name

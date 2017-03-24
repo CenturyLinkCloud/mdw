@@ -1,5 +1,4 @@
-// results-by-id-1
-// note: requires designer >= 9.0.0
+package com.centurylink.mdw.tests.workflow
 
 start process("ResultsOrdering") {
     variables = [ delay1: 5, delay2: 10, delay3: 20 ]
@@ -10,4 +9,3 @@ wait process
 verify process {
     resultsById = true
 }
- 

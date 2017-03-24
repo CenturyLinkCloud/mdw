@@ -1,4 +1,5 @@
-// event-check-before-complete
+package com.centurylink.mdw.tests.workflow
+
 notify event("S-${masterRequestId}") {
     message = "<EventCheck/>"
 }

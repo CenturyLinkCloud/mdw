@@ -1,4 +1,5 @@
-// document-handling
+package com.centurylink.mdw.tests.workflow
+
 // creates two instances
 start process("DocumentChange") {
     variables = [ outcome: "change",

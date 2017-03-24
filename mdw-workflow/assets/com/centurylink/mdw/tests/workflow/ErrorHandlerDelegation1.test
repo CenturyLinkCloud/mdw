@@ -1,11 +1,12 @@
-// error-handler-delegation-1
+package com.centurylink.mdw.tests.workflow
+
 start process("MDWTestMainProcess") {
     variables = [processCase: "error handler delegation"]
 }
 sleep 25
 action task("A Task For Testing Variables") {
     outcome = "Claim"
-} 
+}
 sleep 10
 action task("A Task For Testing Variables") {
     outcome = "Retry"
@@ -19,5 +20,5 @@ action task("A Task For Testing Variables[1]") {
     outcome = "AltAction"
 }
 wait process
-verify processes("com.centurylink.mdw.tests.workflow/MDWTestMainProcess", 
+verify processes("com.centurylink.mdw.tests.workflow/MDWTestMainProcess",
                  "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2")

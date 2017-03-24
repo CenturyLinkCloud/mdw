@@ -1,4 +1,5 @@
-// task-action-service
+package com.centurylink.mdw.tests.tasks
+
 import groovy.json.JsonSlurper
 import org.json.JSONObject
 import com.centurylink.mdw.util.JsonUtil
@@ -32,7 +33,7 @@ assert new JsonSlurper().parseText(response.content).status.code == 0
 response = get http("services/Tasks/${taskInst.id}")
 taskInstVO = new JsonSlurper().parseText(response.content)
 assert taskInstVO.assigneeId == null
-    
+
 // Claim
 response = post http("services/Tasks/${taskInst.id}/Claim") {
     user = 'mdwapp'

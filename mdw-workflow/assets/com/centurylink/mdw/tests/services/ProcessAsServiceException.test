@@ -1,4 +1,5 @@
-// process-as-service-exception
+package com.centurylink.mdw.tests.services
+
 send message {
     payload = '''<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
   <Action Name="RegressionTest">

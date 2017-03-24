@@ -1,4 +1,5 @@
-// pre-post-groovy-script
+package com.centurylink.mdw.tests.workflow
+
 start process("PrePostGroovyScript") {
     variables = [orderDoc: '''<order>
   <orderNumber>x12345678</orderNumber>

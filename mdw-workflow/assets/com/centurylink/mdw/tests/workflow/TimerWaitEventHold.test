@@ -1,4 +1,5 @@
-// timer-wait-even-hold
+package com.centurylink.mdw.tests.workflow
+
 start process("MDWTestTimerWait") {
     variables = [testCase: "hold"]
 }

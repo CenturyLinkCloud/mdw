@@ -1,4 +1,5 @@
-// supp-pre-arrived-task-event
+package com.centurylink.mdw.tests.tasks
+
 send message("REST") {
     payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
 }

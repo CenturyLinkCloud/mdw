@@ -1,4 +1,5 @@
-// default_mdw_main_process.test
+package com.centurylink.mdw.tests.workflow
+
 start process("MDWTestMainProcess") {
   variables = [processCase: "DEFAULT"]
 }
@@ -6,4 +7,3 @@ wait process("MDWTestMainProcess") {
     timeout = 180
 }
 verify processes("MDWTestMainProcess", "MDWTestSubProcess")
-  

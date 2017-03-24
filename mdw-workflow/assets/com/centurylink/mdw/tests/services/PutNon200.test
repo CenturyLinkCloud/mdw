@@ -1,3 +1,5 @@
+package com.centurylink.mdw.tests.services
+
 // test PUT with non-200 response
 def response = put http("services/Requests/1234") {
     payload = "{}"

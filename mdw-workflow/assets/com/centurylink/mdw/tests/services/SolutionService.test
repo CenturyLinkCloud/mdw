@@ -1,3 +1,5 @@
+package com.centurylink.mdw.tests.services
+
 import org.json.JSONObject
 
 // solution-service

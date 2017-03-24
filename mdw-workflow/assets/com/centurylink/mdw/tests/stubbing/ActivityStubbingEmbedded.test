@@ -1,4 +1,5 @@
-// activity-stubbing-embedded
+package com.centurylink.mdw.tests.stubbing
+
 assert stubbing
 assert hasTestingPackage
 

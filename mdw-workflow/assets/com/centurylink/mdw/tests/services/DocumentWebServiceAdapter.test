@@ -1,5 +1,8 @@
-// document-web-service-adapter
+package com.centurylink.mdw.tests.services
+
 // uses the FindEmployee service proc thru the GetEmployee handler
+println 'hello'
+
 start process("DocumentWebService") {
     variables = [ requestDoc: file("employee-request.xml").text ]
 }

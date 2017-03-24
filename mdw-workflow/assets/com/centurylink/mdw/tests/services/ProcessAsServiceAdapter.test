@@ -1,3 +1,5 @@
+package com.centurylink.mdw.tests.services
+
 // process-as-service-adapter
 send message {
     payload = '''<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">

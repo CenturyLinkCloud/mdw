@@ -1,4 +1,5 @@
-// drools-activity
+package com.centurylink.mdw.tests.workflow
+
 cal = Calendar.getInstance()
 cal.add(Calendar.DATE, -1)
 yesterday = cal.getTime()

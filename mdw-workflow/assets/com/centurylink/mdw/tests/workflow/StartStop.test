@@ -1,4 +1,5 @@
-// start-stop
+package com.centurylink.mdw.tests.workflow
+
 masterRequestId = System.currentTimeMillis();
 assert masterRequestId > 0
 

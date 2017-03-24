@@ -1,4 +1,5 @@
-// single-process
+package com.centurylink.mdw.tests.workflow
+
 start process("com.centurylink.mdw.tests.workflow/MDWTestMainProcess") {
 	variables = [processCase: "SingleSubProcess", N: 7]
 }

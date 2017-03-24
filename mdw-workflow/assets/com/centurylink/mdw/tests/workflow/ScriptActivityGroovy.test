@@ -1,4 +1,5 @@
-// script-activity-groovy
+package com.centurylink.mdw.tests.workflow
+
 def domDoc = '''<records>
   <car make="Infiniti" model="G35x" year="2005">
     <country>Japan</country>

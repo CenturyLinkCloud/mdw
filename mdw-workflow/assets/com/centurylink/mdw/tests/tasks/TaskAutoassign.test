@@ -1,3 +1,5 @@
+package com.centurylink.mdw.tests.tasks
+
 import groovy.json.JsonSlurper
 
 // task-autoassign
@@ -17,7 +19,7 @@ def response = get http("services/Tasks?masterRequestId=${masterRequestId}") {
     user = 'mdwapp'
     password = 'ldap_012'
     payload = ''
-} 
+}
 
 assert response.code == 200
 def slurped = new JsonSlurper().parseText(response.content)
@@ -30,13 +32,13 @@ slurped.tasks.each {
     else if (it.name == 'AutoAssigned From Jaxb Elem')
         autoAssignedFromJaxbElem = it
     else if (it.name == 'Auto Assigned From Jaxb Attr')
-        autoAssignedFromJaxbAttr = it      
+        autoAssignedFromJaxbAttr = it
 }
 assert autoAssignedTask && autoAssignedTask.assigneeId == 'aa56486'
 assert autoAssignedFromJaxbElem && autoAssignedFromJaxbElem.assigneeId == 'dxoakes'
 assert autoAssignedFromJaxbAttr && autoAssignedFromJaxbAttr.assigneeId == 'aa56486'
 
-// update assignees 
+// update assignees
 response = post http("services/Tasks/${autoAssignedTask.id}/Assign") {
     user = 'mdwapp'
     password = 'ldap_012'
