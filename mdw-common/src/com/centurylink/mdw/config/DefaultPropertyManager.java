@@ -19,12 +19,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.constant.PaaSConstants;
 import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.util.CryptUtil;
 
 public class DefaultPropertyManager extends PropertyManager {
 
@@ -203,6 +206,20 @@ public class DefaultPropertyManager extends PropertyManager {
                 throw new PropertyException("Property file does not exist: " + filename);
             else
                 loadFromStream(properties, stream, filename);
+
+            // handle encrypted values
+            Map<String,String> namesOfEncrypted = new HashMap<>();
+            for (Object key : properties.keySet()) {
+                String name = key.toString();
+                if (name.startsWith("[") && name.endsWith("]")) {
+                    namesOfEncrypted.put(name, name.substring(1, name.length() - 1));
+                }
+            }
+            for (String nameOfEncrypted : namesOfEncrypted.keySet()) {
+                String encValue = (String) properties.remove(nameOfEncrypted);
+                String value = CryptUtil.decrypt(encValue);
+                properties.setProperty(namesOfEncrypted.get(nameOfEncrypted), value);
+            }
         }
         catch (Exception ex) {
             throw new PropertyException(-1, "Failed to load properties from " + filename, ex);
