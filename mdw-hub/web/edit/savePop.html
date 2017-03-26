@@ -1,7 +1,12 @@
 <div>
+  <div style="font-weight:bold">
+    <div style="color:#a94442;">{{message}}</div>
+    <div ng-if="!message">Save {{asset.name}}</div>
+  </div>
+  <hr style="margin-top:10px;margin-bottom:10px;">
   <div>
     <label class="mdw-label">Comment:</label>
-    <input type="text" ng-model="version.comment" style="width:250px">
+    <input type="text" ng-model="version.comment" style="width:350px">
   </div>
   <div style="margin-top:8px;">
     <label class="mdw-label">Version:</label>
@@ -22,7 +27,7 @@
   </div>
   <hr style="margin-top:0;margin-bottom:10px;">
   <div>
-    <button type="button" class="btn btn-default mdw-edit-btn" ng-disabled="!version.comment" ng-click="save()">Save</button>
-    <button type="button" class="btn btn-default mdw-edit-btn" ng-click="closePopover()">Cancel</button>
+    <button type="button" class="btn btn-default mdw-edit-btn" ng-disabled="!isSaveEnabled()" ng-click="save()">Save</button>
+    <button type="button" class="btn btn-default mdw-edit-btn" ng-click="cancelSave()">Cancel</button>
   </div>
 </div>

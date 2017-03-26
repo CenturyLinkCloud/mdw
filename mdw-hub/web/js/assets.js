@@ -218,6 +218,9 @@ assetMod.factory('Asset', ['$resource', 'mdw', function($resource, mdw) {
         };
         return assetData;
       }
+    },
+    put: {
+      method: 'PUT'
     }
   });
 }]);
