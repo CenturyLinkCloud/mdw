@@ -7,11 +7,12 @@
           <a ng-href="#/packages/{{packageName}}">{{packageName}}</a> / {{assetName}}
         </div>
         <div class="mdw-heading-actions" style="padding-top:8px;">
-          <a ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" class="btn btn-default">
-            <span class="glyphicon glyphicon-floppy-disk"></span> Save
+          <a class="btn btn-default" href="" 
+            uib-popover-template="'edit/savePop.html'" popover-placement="left-top" pop-click>
+            Save
           </a>            
-          <a ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" class="btn btn-default">
-            <span class="glyphicon"></span> Cancel
+          <a class="btn btn-default" ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" >
+            Cancel
           </a>            
         </div>
       </div>

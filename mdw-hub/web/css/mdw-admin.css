@@ -845,7 +845,11 @@
   right: 0;
   font-size: 13px !important;	
 }
-
+.mdw-edit-btn {
+	font-size: 13px;
+  font-weight: bold;
+  padding: 4px 6px;
+}
 .panel-heading a {
   font-weight: bold;
   text-decoration: none;

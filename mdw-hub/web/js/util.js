@@ -135,6 +135,17 @@ utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
       }
       return null;
     },
+    nextMinor: function(version) {
+      var dot = version.indexOf('.');
+      var maj = version.substring(0, dot);
+      var min = version.substring(dot + 1);
+      return maj + '.' + (parseInt(min) + 1);
+    },
+    nextMajor: function(version) {
+      var dot = version.indexOf('.');
+      var maj = version.substring(0, dot);
+      return (parseInt(maj) + 1) + '.0';
+    },
     buildException: function(exceptHolder) {
     	// Uses the callback mechanism to update the except variable (gets around jshint error)
     	return function(el) {

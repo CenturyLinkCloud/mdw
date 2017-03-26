@@ -23,6 +23,13 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
         mode: $scope.asset.language
       };
       
+      $scope.version = {
+        current: $scope.asset.version,
+        nextMinor: util.nextMinor($scope.asset.version),
+        nextMajor: util.nextMajor($scope.asset.version),
+        selected: util.nextMinor($scope.asset.version)
+      };
+      
       $scope.asset.url = mdw.roots.hub + '/asset/' + $scope.packageName + '/' +  $scope.asset.name;
       
       $scope.asset.view = 'content';
@@ -41,7 +48,9 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
   );
   
   $scope.save = function() {
-    
+    console.log('saving: ' + $scope.asset.packageName + '/' + $scope.asset.name + ' v' + $scope.version.selected);
+    console.log('comment: ' + $scope.version.comment);
+    $scope.closePopover();
   };
   
   

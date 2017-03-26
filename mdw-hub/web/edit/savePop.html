@@ -1,0 +1,28 @@
+<div>
+  <div>
+    <label class="mdw-label">Comment:</label>
+    <input type="text" ng-model="version.comment" style="width:250px">
+  </div>
+  <div style="margin-top:8px;">
+    <label class="mdw-label">Version:</label>
+      <div class="radio" style="margin-top:0;margin-left:8px;">
+        <label class="radio-inline">
+          <input type="radio" ng-model="version.selected" value="{{version.current}}">
+          Overwrite: <strong>v{{version.current}}</strong>
+        </label><br>
+        <label>
+          <input type="radio" ng-model="version.selected" value="{{version.nextMinor}}">
+          New minor: <strong>v{{version.nextMinor}}</strong>
+        </label><br>
+        <label>
+          <input type="radio" ng-model="version.selected" value="{{version.nextMajor}}">
+          New major: <strong>v{{version.nextMajor}}</strong>
+        </label>
+      </div>
+  </div>
+  <hr style="margin-top:0;margin-bottom:10px;">
+  <div>
+    <button type="button" class="btn btn-default mdw-edit-btn" ng-disabled="!version.comment" ng-click="save()">Save</button>
+    <button type="button" class="btn btn-default mdw-edit-btn" ng-click="closePopover()">Cancel</button>
+  </div>
+</div>
