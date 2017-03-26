@@ -68,7 +68,7 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
     $scope.closePopover();
     $scope.initVersion();
     $scope.message = null;
-  }
+  };
   
   $scope.save = function() {
     console.log('saving: ' + $scope.asset.packageName + '/' + $scope.asset.name + ' v' + $scope.version.selected);
@@ -83,8 +83,26 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
       $scope.message = null;
       $scope.dirty = false;
       $scope.asset.version = $scope.version.selected;
+      var commitMsg = $scope.version.comment;
+      GitVcs.push({
+        pkgPath: $scope.asset.packageName,
+        asset: $scope.asset.name,
+        gitAction: 'push'
+      },
+      { comment: commitMsg },
+      function success(response) {
+        $scope.closePopover();
+      },
+      function error(response) {
+        if (response.data.status)
+          $scope.message = response.data.status.message;
+        else if (response.statusText)
+          $scope.message = response.status + ': ' + response.statusText;
+        else
+          $scope.message = "Error saving asset";
+      });
+      
       $scope.initVersion();
-      $scope.closePopover();
     }, 
     function error(response) {
       if (response.data.status)
@@ -92,7 +110,7 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
       else if (response.statusText)
         $scope.message = response.status + ': ' + response.statusText;
       else
-        $scope.message = "Error saving asset"
+        $scope.message = "Error saving asset";
     });
   };
   

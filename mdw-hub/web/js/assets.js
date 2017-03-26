@@ -51,7 +51,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$http', 'mdw'
   };
   
   $scope.gitImport = function() {
-    GitVcs.import({assetPath: '*', gitAction: 'pull'}, { distributed: $scope.distributedImport, deleteTempBackups: $scope.deleteTempBackups }, function(data) {
+    GitVcs.import({pkgPath: '*', gitAction: 'pull'}, { distributed: $scope.distributedImport, deleteTempBackups: $scope.deleteTempBackups }, function(data) {
       if (data.status && data.status.code !== 0) {
         $scope.gitImportMessage = data.status.message;
       }
@@ -226,8 +226,9 @@ assetMod.factory('Asset', ['$resource', 'mdw', function($resource, mdw) {
 }]);
 
 assetMod.factory('GitVcs', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/Services/GitVcs/:assetPath', mdw.serviceParams(), {
-    import: { method: 'POST' }
+  return $resource(mdw.roots.services + '/Services/GitVcs/:pkgPath/:asset', mdw.serviceParams(), {
+    import: { method: 'POST' },
+    push: { method: 'POST'}
   });
 }]);
 

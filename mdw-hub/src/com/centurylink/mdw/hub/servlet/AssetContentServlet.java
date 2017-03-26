@@ -154,6 +154,9 @@ public class AssetContentServlet extends HttpServlet {
         }
     }
 
+    /**
+     * TODO: distributed updates (to be performed in GitVcs after push req from client)
+     */
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (!assetRoot.isDirectory())
             throw new ServletException(assetRoot + " is not a directory");

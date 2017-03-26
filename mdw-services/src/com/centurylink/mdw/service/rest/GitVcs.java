@@ -104,6 +104,13 @@ public class GitVcs extends JsonRestService {
             logger.info("Git VCS branch: " + branch);
 
             VcsArchiver archiver = getVcsArchiver(vcGit);
+            int lastSlash = requestPath.lastIndexOf('/');
+            String pkgName = null;
+            String assetName = null;
+            if (lastSlash > 0) {
+                pkgName = requestPath.substring(0, lastSlash);
+                assetName = requestPath.substring(lastSlash + 1);
+            }
 
             if ("pull".equals(action)) {
                 if (requestPath.equals("*")) {
@@ -118,21 +125,20 @@ public class GitVcs extends JsonRestService {
                     archiver.archive(deleteTempBackups);
                 }
                 else {
-                    int lastSlash = requestPath.lastIndexOf('/');
-                    if (lastSlash > 0) {
-                        String reqPkg = requestPath.substring(0, lastSlash);
-                        String reqAsset = requestPath.substring(lastSlash + 1);
-                        String pkgPath = assetPath + "/" + reqPkg.replace('.', '/');
-                        throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Cannot pull asset: " + pkgPath + "/" + reqAsset);
-                        // TODO implement pull for specific asset
-                        // archiver.backup(requestPath);
-                        // logger.info("Pulling asset with Git Path: " + pkgPath + "/" + reqAsset);
-                        // vcGit.pull(branch, pkgPath + "/" + reqAsset);
-                        // archiver.archive();
+                    if (pkgName != null) {
+                        String pullPath = assetPath + "/" + pkgName.replace('.', '/');
+                        if (assetName != null) {
+                            pullPath = pullPath + "/" + assetName;
+                            // TODO: implement asset pull
+                            throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Asset pull not implemented: " + pullPath);
+                        }
+                        else {
+                            // probably won't implement this
+                            throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Package pull not implemented: " + pullPath);
+                        }
                     }
                     else {
-                        // cannot pull packages
-                        throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Not implemented");
+                        throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
                     }
                 }
 
@@ -142,6 +148,30 @@ public class GitVcs extends JsonRestService {
 
                 if (content.has("distributed") && content.getBoolean("distributed"))
                     propagatePost(content, headers);
+            }
+            else if ("push".equals(action)) {
+                if (pkgName != null) {
+                    String pushPath = assetPath + "/" + pkgName.replace('.', '/');
+                    if (assetName != null) {
+                        pushPath = pushPath + "/" + assetName;
+                        if (!content.has("comment"))
+                            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing comment");
+                        String comment = content.getString("comment");
+                        vcGit.pull(branch);
+                        // TODO add if new
+                        vcGit.commit(pushPath, comment);
+                        vcGit.push();
+                    }
+                    else {
+                        // probably won't implement this
+                        throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Package push not implemented: " + pushPath);
+                    }
+
+                    // TODO distributed pull afterward and then async distributed cache refresh
+                }
+                else {
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
+                }
             }
 
             return null;
