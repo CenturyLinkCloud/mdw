@@ -1,4 +1,3 @@
-// Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var utilMod = angular.module('util', []);
@@ -119,6 +118,22 @@ utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
         thisUtil.mdwProperties = response.data;
       });
       return promise;      
+    },
+    getLanguage: function(assetName) {
+      var lastDot = assetName.lastIndexOf('.');
+      if (lastDot > 0 && lastDot < assetName.length - 2) {
+        var ext = assetName.substring(lastDot + 1);
+        if (ext == 'md')
+          return 'markdown';
+        else if (ext == 'test')
+          return 'groovy';
+        else if (ext == 'spring' || ext == 'camel')
+          return 'xml';
+        else if (ext === 'proc' || ext === 'task' || ext === 'impl' || ext === 'evth' || ext == 'pagelet')
+            return 'json';
+        return ext;
+      }
+      return null;
     },
     buildException: function(exceptHolder) {
     	// Uses the callback mechanism to update the except variable (gets around jshint error)

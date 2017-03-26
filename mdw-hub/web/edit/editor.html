@@ -1,0 +1,21 @@
+<div class="row" style="display:flex;">
+  <div class="mdw-panel-full-width">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading" style="padding-top:6px;padding-bottom:5px;">
+        <div class="mdw-heading-label" style="margin-top:0px;">
+          <img class="mdw-heading-icon" src="images/mdw_48.png" alt="mdw" >
+          <a ng-href="#/packages/{{packageName}}">{{packageName}}</a> / {{assetName}}
+        </div>
+        <div class="mdw-heading-actions" style="padding-top:8px;">
+          <a ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" class="btn btn-default">
+            <span class="glyphicon glyphicon-floppy-disk"></span> Save
+          </a>            
+          <a ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" class="btn btn-default">
+            <span class="glyphicon"></span> Cancel
+          </a>            
+        </div>
+      </div>
+      <div mdw-editor="aceOptions" ng-model="asset.content" class="mdw-editor"></div>
+    </div>
+  </div>
+</div>

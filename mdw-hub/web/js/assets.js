@@ -1,4 +1,3 @@
-// Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var assetMod = angular.module('assets', ['ngResource', 'mdw']);
@@ -153,8 +152,8 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', 'mdw', 'Asse
   );
 }]);
 
-assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'Assets', 'Asset', 
-                                       function($scope, $routeParams, mdw, Assets, Asset) {
+assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util', 'Assets', 'Asset', 
+                                       function($scope, $routeParams, mdw, util, Assets, Asset) {
   
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
@@ -164,17 +163,15 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'Assets
       assetName: $routeParams.assetName
     },
     function(assetsData) {
-      var lastDot = $scope.asset.name.lastIndexOf('.');
-      if (lastDot > 0 && lastDot < $scope.asset.name.length - 2)
-        $scope.asset.language = $scope.asset.name.substring(lastDot + 1);
+      $scope.asset.language = util.getLanguage($scope.asset.name);
 
       if ($scope.asset.language == 'proc') {
         // TODO: asset.content becomes backup in case editing is canceled
-        $scope.process = {packageName: $scope.packageName, name: $scope.asset.name.substring(0, lastDot)};
-        // $scope.asset.workflowImageUrl = mdw.roots.hub + '/workflowImage?processId=' + $scope.asset.id;
+        $scope.process = {packageName: $scope.packageName, name: $scope.asset.name.substring(0, $scope.asset.name.length - 5)};
       }
       $scope.asset.url = mdw.roots.hub + '/asset/' + $scope.packageName + '/' +  $scope.asset.name;
-      $scope.asset.view = 'content';      
+      $scope.asset.view = 'content';
+      $scope.asset.packageName = $scope.packageName;
       if (!$scope.asset.isBinary && !$scope.asset.isImage) {
         if ($scope.asset.vcsDiff != 'MISSING') {
           Asset.get({

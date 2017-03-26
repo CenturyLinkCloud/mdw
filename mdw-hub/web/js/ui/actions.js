@@ -1,4 +1,3 @@
-// Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var actionsMod = angular.module('mdwActions', ['mdw']);

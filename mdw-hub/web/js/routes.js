@@ -1,4 +1,3 @@
-// Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var routesSvc = angular.module('routes', []);
@@ -65,6 +64,11 @@ routesSvc.factory('routes', function() {
         templateUrl: 'assets/asset.html',
         controller: 'AssetController'
       },
+      {
+        path: '/edit/:packageName/:assetName',
+        templateUrl: 'edit/editor.html',
+        controller: 'EditorController'
+      },      
       {
         path: '/tests',
         templateUrl: 'testing/tests.html',

@@ -1,4 +1,3 @@
-// Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var roleMod = angular.module('roles', ['ngResource', 'mdw']);

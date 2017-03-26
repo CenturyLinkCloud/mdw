@@ -19,7 +19,6 @@
     "angular-resource": "1.4.7",
     "angular-sanitize": "1.4.7",
     "bootstrap-css-only": "~3.3.4",
-    "angular-ui-grid": "3.0.7",
     "highlightjs": "~9.3.0",
     "iframe-resizer": "~3.5.3",
     "jsdiff": "~2.2.0",
@@ -28,7 +27,8 @@
     "angular-mocks": "1.4.7",
     "Chart.js": "~2.1.4",
     "angular-websocket": "~2.0.0",
-    "angular-cookies": "1.4.7"
+    "angular-cookies": "1.4.7",
+    "ace-builds": "^1.2.6"
   },
   "keywords": [
     "mdw"

@@ -99,7 +99,6 @@ module.exports = function(grunt) {
                     "web/bower_components/angular-route/angular-route.js",
                     "web/bower_components/angular-animate/angular-animate.js",
                     "web/bower_components/angular-bootstrap/ui-bootstrap.js",
-                    "web/bower_components/angular-ui-grid/ui-grid.js",
                     "web/lib/ng-infinite-scroll-1.2.0.js",
                     "web/bower_components/angular-mocks/angular-mocks.js"
                   ]

@@ -1,4 +1,3 @@
-// Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
 var sysMod = angular.module('system', ['ngResource', 'mdw']);

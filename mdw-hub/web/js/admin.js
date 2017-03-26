@@ -1,11 +1,10 @@
-// Copyright (c) 2015 CenturyLink, Inc. All Rights Reserved.
 'use strict';
 
-var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ngCookies', 'ui.bootstrap', 
- 'chart.js', 'mdwChart', 'mdwActions', 'mdwList', 'mdwValues', 'mdwPanel', 'mdwWorkflow', 'mdwStep', 'mdwLink', 'mdwSubflow', 
+var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ngCookies', 'ui.bootstrap', 'chart.js', 
+ 'mdwChart', 'mdwActions', 'mdwList', 'mdwEditor', 'mdwValues', 'mdwPanel', 'mdwWorkflow', 'mdwStep', 'mdwLink', 'mdwSubflow', 
  'mdwNote', 'mdwInspector', 'mdwInspectorTabs', 'authUser', 'mdw', 'util', 'constants', 'routes', 'users', 'groups', 
- 'roles', 'assets', 'testing', 'tasks', 'task', 'processes', 'activities', 'requests', 'services', 'system',
- 'solutions', 'history', 'message', 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
+ 'roles', 'assets', 'edit', 'testing', 'tasks', 'task', 'processes', 'activities', 'requests', 'services', 'system',
+ 'solutions', 'message', 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
 ]);
 
 adminApp.config(function($httpProvider) {
@@ -56,8 +55,8 @@ adminApp.config(['$routeProvider', function($routeProvider) {
   });
 }]);
 
-adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$timeout', '$location', '$anchorScroll', 'mdw', 'authUser', 'util',
-                                        function($rootScope, $scope, $window, $timeout, $location, $anchorScroll, mdw, authUser, util) {
+adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$timeout', '$route', '$location', '$anchorScroll', 'mdw', 'authUser', 'util',
+                                        function($rootScope, $scope, $window, $timeout, $route, $location, $anchorScroll, mdw, authUser, util) {
   $scope.mdw = mdw;
   console.log('mdw ' + mdw.version + ' ' + mdw.build);
   
@@ -129,6 +128,15 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   $scope.isMobile = util.isMobile() || 'true' === util.urlParams().mdwMobile;
   console.log('isMobile: ' + $scope.isMobile);
   $scope.isDebug = 'true' === util.urlParams().mdwDebug;
+  
+  $scope.isEdit = function() {
+    return $route.current && $route.current.loadedTemplateUrl 
+        && $route.current.loadedTemplateUrl.startsWith('edit/');
+  };
+  
+  $scope.isFullView = function() {
+    return $scope.isMobile || $scope.isEdit();
+  };
 
   $scope.login = function() {
     window.location.href = $mdwHubRoot + "/login";
