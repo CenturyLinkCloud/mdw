@@ -130,8 +130,8 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   $scope.isDebug = 'true' === util.urlParams().mdwDebug;
   
   $scope.isEdit = function() {
-    return $route.current && $route.current.loadedTemplateUrl 
-        && $route.current.loadedTemplateUrl.startsWith('edit/');
+    return $route.current && $route.current.loadedTemplateUrl && 
+        $route.current.loadedTemplateUrl.startsWith('edit/');
   };
   
   $scope.isFullView = function() {

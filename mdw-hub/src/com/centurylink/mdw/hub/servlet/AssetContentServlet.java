@@ -203,6 +203,7 @@ public class AssetContentServlet extends HttpServlet {
             }
             else {
                 authorizeForUpdate(request.getSession(), Entity.Asset, path);
+                logger.info("Saving asset: " + path);
                 // TODO: handle single asset path update
             }
         }

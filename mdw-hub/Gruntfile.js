@@ -89,7 +89,7 @@ module.exports = function(grunt) {
         }]
       }
     },
-    jasmine:{
+    jasmine: {
       src : 'web/js/**/*.js',
       options : {
           specs : 'test/**/*.js',

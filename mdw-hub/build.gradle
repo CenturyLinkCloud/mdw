@@ -92,6 +92,13 @@ task buildDist(type: Exec) {
         commandLine 'grunt', '--no-color'
 }
 
+task jsHint(type: Exec) {
+    if (System.properties["os.name"].startsWith("Windows"))
+        commandLine 'cmd', '/c', 'grunt', '--no-color', 'jshint'
+    else
+        commandLine 'grunt', '--no-color', 'jshint'
+}
+
 // excludes JavaDocs by default
 war {
     dependsOn(buildDist)

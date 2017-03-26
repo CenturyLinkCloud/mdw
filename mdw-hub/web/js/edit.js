@@ -40,5 +40,9 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
     }
   );
   
+  $scope.save = function() {
+    
+  };
+  
   
 }]);

@@ -1,7 +1,7 @@
 'use strict';
 
 var editorMod = angular.module('mdwEditor', ['mdw']);
-editorMod.constant('editorConfig', {})
+editorMod.constant('editorConfig', {});
   
 editorMod.directive('mdwEditor', ['editorConfig', function (editorConfig) {
   
