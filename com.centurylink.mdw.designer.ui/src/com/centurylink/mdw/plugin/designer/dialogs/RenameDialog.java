@@ -95,8 +95,8 @@ public class RenameDialog extends TrayDialog {
                 }
 
                 String error = null;
-                if (toRename instanceof WorkflowProcess
-                        &&  workflowProject.getDataAccess().processNameExists(processVersion.getPackage().getPackageVO(),name))
+                if (toRename instanceof WorkflowProcess && workflowProject.getDataAccess()
+                        .processNameExists(processVersion.getPackage().getPackageVO(), name))
                     error = "Process name already exists:\n'" + name + "'";
                 else if (toRename instanceof WorkflowPackage) {
                     WorkflowPackage packageVersion = (WorkflowPackage) toRename;

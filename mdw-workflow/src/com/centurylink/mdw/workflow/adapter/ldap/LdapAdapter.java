@@ -202,12 +202,14 @@ public class LdapAdapter extends AdapterActivityBase {
                     if (!resultList.isEmpty()) {
                         if (varType.equals("java.util.List<String>")) {
                             setVariableValue(varName, resultList);
-                        }else if (varType.equals("java.util.List<Integer>")) {
+                        }
+                        else if (varType.equals("java.util.List<Integer>")) {
                             List<Integer> value = new ArrayList<Integer>();
                             for (int i = 0; i < resultList.size(); i++)
                                 value.add(new Integer(resultList.get(i).toString()));
                             setVariableValue(varName, value);
-                        }else if (varType.equals("java.util.List<Long>")) {
+                        }
+                        else if (varType.equals("java.util.List<Long>")) {
                             List<Long> value = new ArrayList<Long>();
                             for (int i = 0; i < resultList.size(); i++)
                                 value.add(new Long(resultList.get(i).toString()));

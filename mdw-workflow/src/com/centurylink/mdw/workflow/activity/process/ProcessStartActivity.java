@@ -62,24 +62,25 @@ public class ProcessStartActivity extends DefaultActivityImpl implements StartAc
         String parameters_spec = this.getAttributeValue(PARAMETERS);
         try {
             if (parameters_spec != null) {
-                Map<String,String>parameters = StringHelper.parseMap(parameters_spec);
+                Map<String, String> parameters = StringHelper.parseMap(parameters_spec);
                 for (String key : parameters.keySet()) {
                     String one = parameters.get(key);
-                    if(valueIsJavaExpression(one)){
+                    if (valueIsJavaExpression(one)) {
                         Object request = getVariableValue("request");
                         if (request != null) {
                             Object value = getRuntimeContext().evaluate(one);
-                            // do not override input values set explicitly with null ones from xpath (eg: HandleOrder demo)
+                            // do not override input values set explicitly with
+                            // null ones from xpath (eg: HandleOrder demo)
                             if (value != null)
-                               setVariableValue(key, value);
+                                setVariableValue(key, value);
                         }
                     }
                 }
             }
-        }catch (Exception ex) {
+        }
+        catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
         }
-
     }
 
     protected void addDocumentAttachment(XmlObject msgdoc) throws ActivityException {

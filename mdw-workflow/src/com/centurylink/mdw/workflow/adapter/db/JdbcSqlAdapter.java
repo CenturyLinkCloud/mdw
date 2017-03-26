@@ -101,7 +101,7 @@ public class JdbcSqlAdapter extends AdapterActivityBase {
             Object queryParams = getQueryParameters();
             if (queryParams instanceof List<?>) {
                 if (queryType == QueryType.Select)
-                    return dbAccess.runSelect(query, ((List<?>)queryParams).toArray());
+                    return dbAccess.runSelect(query, ((List<?>) queryParams).toArray());
                 else if (queryType == QueryType.Update) {
                     Integer ret = new Integer(dbAccess.runUpdate(query, (Object[])queryParams));
                     dbAccess.commit();

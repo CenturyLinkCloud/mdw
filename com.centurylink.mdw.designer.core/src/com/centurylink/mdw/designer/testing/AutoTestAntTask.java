@@ -554,7 +554,8 @@ public class AutoTestAntTask extends MatchingTask {
 
     public void writeTestCaseResults(TestCase execTestCase) throws IOException {
         try {
-            com.centurylink.mdw.test.TestCase testCase = testCaseList.getTestCase(execTestCase.getPath());
+            com.centurylink.mdw.test.TestCase testCase = testCaseList
+                    .getTestCase(execTestCase.getPath());
             if (testCase != null) {
                 testCase.setStatus(execTestCase.getCaseStatus());
                 testCase.setStart(execTestCase.getStartDate());

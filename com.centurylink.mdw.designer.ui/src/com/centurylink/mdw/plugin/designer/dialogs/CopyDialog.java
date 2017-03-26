@@ -107,7 +107,7 @@ public class CopyDialog extends TrayDialog {
         WorkflowProject workflowProject = workflowElement.getProject();
         PluginDataAccess dataAccess = workflowProject.getDataAccess();
         if (workflowElement instanceof WorkflowProcess)
-            return dataAccess.processNameExists(targetPackage.getPackageVO(),name);
+            return dataAccess.processNameExists(targetPackage.getPackageVO(), name);
         else if (workflowElement instanceof ExternalEvent)
             return workflowProject.externalEventNameExists(name);
         else if (workflowElement instanceof WorkflowAsset)

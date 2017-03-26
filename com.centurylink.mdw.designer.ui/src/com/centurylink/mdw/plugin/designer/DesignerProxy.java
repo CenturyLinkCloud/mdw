@@ -1072,7 +1072,7 @@ public class DesignerProxy {
     }
 
     public void renameProcess(final WorkflowProcess processVersion, final String newName) {
-        if (dataAccess.processNameExists(processVersion.getPackage().getPackageVO(),newName)) {
+        if (dataAccess.processNameExists(processVersion.getPackage().getPackageVO(), newName)) {
             Shell shell = MdwPlugin.getActiveWorkbenchWindow().getShell();
             MessageDialog.openError(shell, "Can't Rename",
                     "Process name already exists: '" + newName + "'");
@@ -2540,7 +2540,8 @@ public class DesignerProxy {
                     List<String> classpathList = null;
                     IJavaProject javaProject = project.getJavaProject();
                     if (javaProject != null && javaProject.exists()) {
-                        classpathList = Arrays.asList(JavaRuntime.computeDefaultRuntimeClassPath(javaProject));
+                        classpathList = Arrays
+                                .asList(JavaRuntime.computeDefaultRuntimeClassPath(javaProject));
                     }
                     run = new GroovyTestCaseRun(testCase.getTestCase(), runNum, masterRequestId,
                             new DesignerDataAccess(dataAccess.getDesignerDataAccess()), monitor,

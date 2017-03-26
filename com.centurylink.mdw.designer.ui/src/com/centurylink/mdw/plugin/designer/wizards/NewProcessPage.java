@@ -135,7 +135,8 @@ public class NewProcessPage extends WizardPage {
         return (getProject() != null && getProcess().getPackage() != null
                 && getProcess().isUserAuthorized(UserRoleVO.ASSET_DESIGN)
                 && checkStringDisallowChars(getProcess().getName(), "/"))
-                && !getProject().getDataAccess().processNameExists(getProcess().getPackage().getPackageVO(),getProcess().getName());
+                && !getProject().getDataAccess().processNameExists(
+                        getProcess().getPackage().getPackageVO(), getProcess().getName());
     }
 
     public IStatus[] getStatuses() {
@@ -148,7 +149,8 @@ public class NewProcessPage extends WizardPage {
             msg = "Please enter a process name";
         else if (!checkStringDisallowChars(getProcess().getName(), "/"))
             msg = "Invalid characters in name (/ not allowed)";
-        else if (getProject().getDataAccess().processNameExists(getProcess().getPackage().getPackageVO(),getProcess().getName()))
+        else if (getProject().getDataAccess().processNameExists(
+                getProcess().getPackage().getPackageVO(), getProcess().getName()))
             msg = "Process name already exists";
 
         if (msg == null)
