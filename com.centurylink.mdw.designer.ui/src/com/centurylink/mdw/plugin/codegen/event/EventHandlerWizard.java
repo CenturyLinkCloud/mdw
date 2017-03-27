@@ -139,15 +139,12 @@ public class EventHandlerWizard extends CodeGenWizard {
 
     @Override
     public String getInfoLabelLabel() {
-        if (!getEventHandler().getProject().checkRequiredVersion(6,0))
-            return "Message Pattern";
-        else
-            return "Event Handler Name";
+        return "Message Pattern";
     }
 
     @Override
     public String getInfoLabelValue() {
-        return getEventHandler().getInputText();
+        return getEventHandler().getMessagePattern();
     }
 
     @Override

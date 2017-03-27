@@ -20,16 +20,25 @@ import com.centurylink.mdw.plugin.designer.model.ExternalEvent;
 import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 
 public class EventHandler extends Code {
-    private String inputText;
+    private String messagePattern;
 
-    public String getInputText() {
-        return inputText;
+    public String getMessagePattern() {
+        return messagePattern;
     }
 
-    public void setInputText(String inputText) {
-        this.inputText = inputText;
+    public void setMessagePattern(String messagePattern) {
+        this.messagePattern = messagePattern;
     }
 
+    private String eventName;
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
 
     private String process;
 
@@ -94,7 +103,11 @@ public class EventHandler extends Code {
 
     public ExternalEvent createExternalEvent(String handlerString) {
         ExternalEventVO externalEventVO = new ExternalEventVO();
-        externalEventVO.setEventName(inputText);
+        if (eventName != null && eventName.length() > 0)
+            externalEventVO.setEventName(eventName);
+        else
+            externalEventVO.setEventName(messagePattern);
+        externalEventVO.setMessagePattern(messagePattern);
         externalEventVO.setEventHandler(handlerString);
         WorkflowPackage workflowPackage = getPackage() == null ? getProject().getDefaultPackage()
                 : getPackage();

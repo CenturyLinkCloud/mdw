@@ -123,7 +123,7 @@ public class ListenerHelper {
             bucket = EventHandlerCache.getExternalEvents("*");
             if (bucket != null) {
                 for (ExternalEvent e : bucket) {
-                    String v = XmlPath.evaluate(xmlBean, e.getEventName());
+                    String v = XmlPath.evaluate(xmlBean, e.getMessagePattern());
                     if (v != null)
                         return e;
                 }
