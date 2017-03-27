@@ -31,16 +31,18 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
     private String eventName;
     private String eventHandler;
     private XmlPath xpath;
+    private String eventMessagePattern;
 
     public ExternalEvent(){
         xpath = null;
     }
 
-    public ExternalEvent(Long id, String name, String handler) {
+    public ExternalEvent(Long id, String name, String handler, String messagePattern) {
         this.id = id;
         eventName = name;
         eventHandler = handler;
         xpath = null;
+        eventMessagePattern = messagePattern;
     }
 
     /**
@@ -69,6 +71,15 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
         this.eventName = eventName;
     }
 
+    public String getMessagePattern() {
+        return eventMessagePattern;
+    }
+
+    public void setMessagePattern(String eventMessagePattern) {
+        this.eventMessagePattern = eventMessagePattern;
+    }
+
+
     public Long getId() {
         return id;
     }
@@ -78,24 +89,13 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
     }
 
     public XmlPath getXpath() throws XmlException {
-        if (xpath==null) xpath = new XmlPath(eventName);
+        if (xpath==null) xpath = new XmlPath(eventMessagePattern);
         return xpath;
     }
 
     public String getSimpleName() {
-        String simpleName;
-        if (eventHandler.startsWith("START_PROCESS") || eventHandler.startsWith("NOTIFY_PROCESS")) {
-            simpleName = eventName.replace('/', '-') + "=" + eventHandler.replace('?', '_').replace('/', '-');
-        }
-        else {
-            simpleName = eventName.replace('/', '-') + "=";
-            int lastDot = eventHandler.lastIndexOf('.');
-            if (lastDot > 0)
-                simpleName += eventHandler.substring(lastDot + 1); // without package
-            else
-                simpleName += eventHandler;
-        }
-
+        eventHandler.replace('?', '_').replace('/', '-');
+        String simpleName = eventName.replace('/', '-') ;
         return FileHelper.stripDisallowedFilenameChars(simpleName);
     }
 
@@ -105,27 +105,37 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
     }
 
     /**
-     * Currently this is only used for File-based and VCS-based persistence (esp. createExternalEvent()).
+     * Currently this is only used for File-based and VCS-based persistence
+     * (esp. createExternalEvent()).
      */
     private String packageName;
+
     public String getPackageName() {
         return packageName;
     }
+
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
 
     public ExternalEvent(JSONObject json) throws JSONException {
-        this.eventName = json.getString("path");
+        if (json.getString("name") != null)
+            this.eventName = json.getString("name");
+        else
+            this.eventName = json.getString("path");
+        this.eventMessagePattern = json.getString("path");
         this.eventHandler = json.getString("handlerClass");
     }
 
     /**
-     * TODO: When/if eventHandlers become full-fledged assets, we can decouple asset name from eventName.
+     * TODO: When/if eventHandlers become full-fledged assets, we can decouple
+     * asset name from eventName.
      */
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
-        json.put("path", eventName);
+        if (eventName != null && eventName.length() > 0)
+            json.put("name", eventName);
+        json.put("path", eventMessagePattern);
         json.put("handlerClass", eventHandler);
         return json;
     }

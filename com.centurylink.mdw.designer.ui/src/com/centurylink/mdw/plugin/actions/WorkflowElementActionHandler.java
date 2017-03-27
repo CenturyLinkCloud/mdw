@@ -308,15 +308,17 @@ public class WorkflowElementActionHandler {
         }
         else if (element instanceof ExternalEvent) {
             ExternalEvent event = (ExternalEvent) element;
-            IFile file = event.getProject().getAssetFolder()
-                    .getFolder(event.getPackage().getName().replace('.', '/'))
-                    .getFile(event.getName() + EVT_HANDLER_FILE_EXTENSION);
-            IWorkbenchPage activePage = MdwPlugin.getActivePage();
-            try {
-                IDE.openEditor(activePage, file, true);
-            }
-            catch (PartInitException ex) {
-                PluginMessages.uiError(ex, "Open File", event.getProject());
+            if (event.getProject().checkRequiredVersion(6, 0)) {
+                IFile file = event.getProject().getAssetFolder()
+                        .getFolder(event.getPackage().getName().replace('.', '/'))
+                        .getFile(event.getName() + EVT_HANDLER_FILE_EXTENSION);
+                IWorkbenchPage activePage = MdwPlugin.getActivePage();
+                try {
+                    IDE.openEditor(activePage, file, true);
+                }
+                catch (PartInitException ex) {
+                    PluginMessages.uiError(ex, "Open File", event.getProject());
+                }
             }
         }
         else {

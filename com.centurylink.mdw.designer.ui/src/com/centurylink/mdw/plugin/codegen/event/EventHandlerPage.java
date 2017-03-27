@@ -52,7 +52,8 @@ public class EventHandlerPage extends CodeGenWizardPage {
     private Button builtInHandlerButton;
     private Button customHandlerButton;
 
-    private Text inputTextField;
+    private Text messagePatternTextField;
+    private Text eventNameTextField;
 
     private Group launchNotifyGroup;
     private Button launchProcessButton;
@@ -83,8 +84,12 @@ public class EventHandlerPage extends CodeGenWizardPage {
         gl.numColumns = ncol;
         composite.setLayout(gl);
 
+        is6=getProject().checkRequiredVersion(6, 0);
+
         createWorkflowProjectControls(composite, ncol);
         createWorkflowPackageControls(composite, ncol);
+        if (is6)
+            createEventNameControls(composite, ncol);
         createMessagePatternControls(composite, ncol);
         createXPathHelpControls(composite, ncol);
         createEventHandlerControls(composite, ncol);
@@ -93,24 +98,40 @@ public class EventHandlerPage extends CodeGenWizardPage {
     }
 
     protected void createMessagePatternControls(Composite parent, int ncol) {
-        is6=getProject().checkRequiredVersion(6, 0);
         Label label = new Label(parent, SWT.NONE);
         GridData gd = new GridData(GridData.BEGINNING);
         gd.verticalIndent = 10;
         label.setLayoutData(gd);
-        if(!is6)
-            label.setText("Message Pattern:");
-        else
-            label.setText("Event Handler Name:");
-        inputTextField = new Text(parent, SWT.SINGLE | SWT.BORDER);
+        label.setText("Message Pattern:");
+        messagePatternTextField = new Text(parent, SWT.SINGLE | SWT.BORDER);
         gd = new GridData(GridData.BEGINNING);
         gd.horizontalSpan = ncol - 1;
         gd.verticalIndent = 10;
         gd.widthHint = 300;
-        inputTextField.setLayoutData(gd);
-        inputTextField.addModifyListener(new ModifyListener() {
+        messagePatternTextField.setLayoutData(gd);
+        messagePatternTextField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                getEventHandler().setInputText(inputTextField.getText().trim());
+                getEventHandler().setMessagePattern(messagePatternTextField.getText().trim());
+                handleFieldChanged();
+            }
+        });
+    }
+
+    protected void createEventNameControls(Composite parent, int ncol) {
+        Label label = new Label(parent, SWT.NONE);
+        GridData gd = new GridData(GridData.BEGINNING);
+        gd.verticalIndent = 10;
+        label.setLayoutData(gd);
+        label.setText("Event Handler Name:");
+        eventNameTextField = new Text(parent, SWT.SINGLE | SWT.BORDER);
+        gd = new GridData(GridData.BEGINNING);
+        gd.horizontalSpan = ncol - 1;
+        gd.verticalIndent = 10;
+        gd.widthHint = 300;
+        eventNameTextField.setLayoutData(gd);
+        eventNameTextField.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                getEventHandler().setEventName(eventNameTextField.getText().trim());
                 handleFieldChanged();
             }
         });
@@ -422,21 +443,18 @@ public class EventHandlerPage extends CodeGenWizardPage {
             msg = "Please select a valid workflow package";
         else if (!getEventHandler().getPackage().isUserAuthorized(UserRoleVO.ASSET_DESIGN))
             msg = "You're not authorized to create external event handlers for this workflow package.";
-        else if (!checkString(getEventHandler().getInputText())){
-            if(is6)
-                msg = "Please enter a valid event name";
-            else
-                msg = "Please enter a valid message pattern";
-        }
-        else if (getEventHandler().getProject()
-                .externalEventNameExists(getEventHandler().getInputText())){
-            if(is6)
-                msg = "An event handler with event name '" + getEventHandler().getInputText()
-                + "' already exists";
-            else
-                msg = "An event handler with message pattern '" + getEventHandler().getInputText()
+        else if (is6 && !checkString(getEventHandler().getEventName()))
+            msg = "Please enter a valid event name";
+        else if (is6 && getEventHandler().getProject()
+                .externalEventNameExists(getEventHandler().getEventName()))
+            msg = "An event handler with event name '" + getEventHandler().getEventName()
                     + "' already exists";
-        }
+        else if (!checkString(getEventHandler().getMessagePattern()))
+            msg = "Please enter a valid message pattern";
+        else if (getEventHandler().getProject()
+                .externalEventMessagePatternExists(getEventHandler().getMessagePattern()))
+            msg = "An event handler with message pattern '" + getEventHandler().getMessagePattern()
+                    + "' already exists";
 
         if (msg == null && !getEventHandler().isCustom()) {
             if (getEventHandlerWizard().getHandlerAction() == null)

@@ -2086,9 +2086,18 @@ public class WorkflowProject extends WorkflowElement
         return null;
     }
 
-    public boolean externalEventNameExists(String inputText) {
+    public boolean externalEventNameExists(String eventName) {
         for (ExternalEventVO externalEvent : getDataAccess().getExternalEvents(false)) {
-            if (externalEvent.getEventName().equals(inputText))
+            if (externalEvent.getEventName().equals(eventName))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean externalEventMessagePatternExists(String messagePattern) {
+        for (ExternalEventVO externalEvent : getDataAccess().getExternalEvents(false)) {
+            if (externalEvent.getMessagePattern() != null
+                    && externalEvent.getMessagePattern().equals(messagePattern))
                 return true;
         }
         return false;
