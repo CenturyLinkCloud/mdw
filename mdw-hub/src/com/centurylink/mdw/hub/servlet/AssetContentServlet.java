@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,17 +42,18 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.ProcessPersister;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.ProcessPersister.PersistType;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
-import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Package;
@@ -152,12 +154,17 @@ public class AssetContentServlet extends HttpServlet {
         }
     }
 
+    /**
+     * TODO: distributed updates (to be performed in GitVcs after push req from client)
+     */
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (!assetRoot.isDirectory())
             throw new ServletException(assetRoot + " is not a directory");
 
         String path = request.getPathInfo().substring(1);
         try {
+            LoaderPersisterVcs persisterVcs = (LoaderPersisterVcs) DataAccess.getProcessPersister();
+
             if ("packages".equals(path)) {
                 authorizeForUpdate(request.getSession(), Entity.Package, "Package zip");
                 String contentType = request.getContentType();
@@ -184,10 +191,6 @@ public class AssetContentServlet extends HttpServlet {
                     ImporterExporterJson importer = new ImporterExporterJson();
                     String packageJson = new String(FileHelper.read(tempFile));
                     List<Package> packages = importer.importPackages(packageJson);
-                    ProcessPersister persister = DataAccess.getProcessPersister();
-                    if (!(persister instanceof LoaderPersisterVcs))
-                            throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Asset import only allowed for VCS Assets");
-                    LoaderPersisterVcs persisterVcs = (LoaderPersisterVcs) persister;
                     for (Package pkg : packages) {
                         PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkg.getName());
                         if (pkgDir == null) {
@@ -203,8 +206,45 @@ public class AssetContentServlet extends HttpServlet {
             }
             else {
                 authorizeForUpdate(request.getSession(), Entity.Asset, path);
-                logger.info("Saving asset: " + path);
-                // TODO: handle single asset path update
+
+                int lastSlash = path.lastIndexOf('/');
+                if (lastSlash == -1 || lastSlash > path.length() - 2)
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
+                String pkgName = path.substring(0, lastSlash);
+                Package pkg = persisterVcs.getPackage(pkgName);
+                if (pkg == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Package not found: " + pkgName);
+
+                // TODO processes
+                String assetName = path.substring(lastSlash + 1);
+                Asset asset = persisterVcs.getAsset(pkg.getId(), assetName);
+                if (asset == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + pkgName + "/" + assetName);
+
+                String version = request.getParameter("version");
+                if (version == null)
+                    version = asset.getVersionString();
+                logger.info("Saving asset: " + path + " v" + version);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                InputStream is = request.getInputStream();
+                int read = 0;
+                byte[] bytes = new byte[1024];
+                while((read = is.read(bytes)) != -1)
+                    baos.write(bytes, 0, read);
+
+                asset.setRawContent(baos.toByteArray());
+                int ver = asset.getVersion();
+                int newVer = Asset.parseVersion(version);
+                if (newVer < ver)
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid asset version: v" + version);
+                boolean verChange = newVer != ver;
+                asset.setVersion(newVer);
+
+                persisterVcs.save(asset, persisterVcs.getTopLevelPackageDir(pkgName));
+                if (verChange)
+                  persisterVcs.persistPackage(pkg, PersistType.NEW_VERSION);
+                logger.info("Asset saved: " + path + " v" + version);
             }
         }
         catch (ServiceException ex) {

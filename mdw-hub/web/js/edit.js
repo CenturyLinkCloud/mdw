@@ -20,15 +20,17 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
       
       $scope.aceOptions = {
         theme: 'eclipse', 
-        mode: $scope.asset.language
+        mode: $scope.asset.language,
+        onChange: function() {
+          // first call happens on load
+          if ($scope.dirty === undefined)
+            $scope.dirty = false;
+          else
+            $scope.dirty = true;
+        }
       };
       
-      $scope.version = {
-        current: $scope.asset.version,
-        nextMinor: util.nextMinor($scope.asset.version),
-        nextMajor: util.nextMajor($scope.asset.version),
-        selected: util.nextMinor($scope.asset.version)
-      };
+      $scope.initVersion();
       
       $scope.asset.url = mdw.roots.hub + '/asset/' + $scope.packageName + '/' +  $scope.asset.name;
       
@@ -36,22 +38,80 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
       $scope.asset.packageName = $scope.packageName;
       
       Asset.get({
-          packageName: $scope.packageName,
-          assetName: $scope.asset.name,
-          gitRemote: true
-        },
-        function(assetData) {
-          $scope.asset.content = assetData.rawResponse;
-        }
-      );
+        packageName: $scope.packageName,
+        assetName: $scope.asset.name,
+        gitRemote: true
+      },
+      function(assetData) {
+        $scope.asset.content = assetData.rawResponse;
+      });
     }
   );
   
-  $scope.save = function() {
-    console.log('saving: ' + $scope.asset.packageName + '/' + $scope.asset.name + ' v' + $scope.version.selected);
-    console.log('comment: ' + $scope.version.comment);
-    $scope.closePopover();
+  $scope.initVersion = function() {
+    $scope.version = {
+        current: $scope.asset.version,
+        nextMinor: util.nextMinor($scope.asset.version),
+        nextMajor: util.nextMajor($scope.asset.version),
+        selected: util.nextMinor($scope.asset.version),
+        comment: null
+      };
   };
   
+  $scope.isSaveEnabled = function() {
+    // TODO: not if git pull needed
+    var gitPullNeeded = false;
+    return $scope.dirty && $scope.version.comment && !gitPullNeeded;
+  };
+  
+  $scope.cancelSave = function() {
+    $scope.closePopover();
+    $scope.initVersion();
+    $scope.message = null;
+  };
+  
+  $scope.save = function() {
+    console.log('saving: ' + $scope.asset.packageName + '/' + $scope.asset.name + ' v' + $scope.version.selected);
+    Asset.put({
+      packageName: $scope.asset.packageName,
+      assetName: $scope.asset.name,
+      version: $scope.version.selected,
+      comment: $scope.version.comment
+    }, 
+    $scope.asset.content, 
+    function success(response) {
+      $scope.message = null;
+      $scope.dirty = false;
+      $scope.asset.version = $scope.version.selected;
+      var commitMsg = $scope.version.comment;
+      GitVcs.push({
+        pkgPath: $scope.asset.packageName,
+        asset: $scope.asset.name,
+        gitAction: 'push'
+      },
+      { comment: commitMsg },
+      function success(response) {
+        $scope.closePopover();
+      },
+      function error(response) {
+        if (response.data.status)
+          $scope.message = response.data.status.message;
+        else if (response.statusText)
+          $scope.message = response.status + ': ' + response.statusText;
+        else
+          $scope.message = "Error saving asset";
+      });
+      
+      $scope.initVersion();
+    }, 
+    function error(response) {
+      if (response.data.status)
+        $scope.message = response.data.status.message;
+      else if (response.statusText)
+        $scope.message = response.status + ': ' + response.statusText;
+      else
+        $scope.message = "Error saving asset";
+    });
+  };
   
 }]);

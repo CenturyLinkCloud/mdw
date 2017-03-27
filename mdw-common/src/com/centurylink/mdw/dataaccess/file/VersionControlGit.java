@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -43,6 +45,7 @@ import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
+import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.StatusCommand;
@@ -259,9 +262,29 @@ public class VersionControlGit implements VersionControl {
         Properties props = pkg2versions.get(pkgDir);
         if (props == null) {
             // make sure the keys are sorted in a predictable order
+            // also avoid setting date comment which causes Git conflicts
             props = new Properties() {
+                @Override
                 public synchronized Enumeration<Object> keys() {
                     return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+                }
+                @Override
+                public void store(OutputStream out, String comments) throws IOException {
+                    if (comments != null) {
+                        super.store(out, comments);
+                    }
+                    else {
+                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, "8859_1"));
+                        synchronized (this) {
+                            for (Enumeration<?> e = keys(); e.hasMoreElements();) {
+                                String key = (String)e.nextElement();
+                                String val = (String)get(key);
+                                bw.write(key + "=" + val);
+                                bw.newLine();
+                            }
+                        }
+                        bw.flush();
+                    }
                 }
             };
             File propFile = new File(pkgDir + "/" + VERSIONS_FILE);
@@ -519,7 +542,10 @@ public class VersionControlGit implements VersionControl {
     }
 
     public void push() throws Exception {
-        git.push().call();
+        PushCommand push = git.push();
+        if (credentialsProvider != null)
+            push.setCredentialsProvider(credentialsProvider);
+        push.call();
     }
 
     public void fetch() throws Exception {
