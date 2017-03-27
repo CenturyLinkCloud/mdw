@@ -37,7 +37,6 @@ public interface AssetServices {
     public File getAssetRoot();
 
     public VersionControl getVersionControl() throws IOException;
-    public void clearVersionControl();
 
     /**
      * Returns the list of workflow packages.  Does not include archived packages.

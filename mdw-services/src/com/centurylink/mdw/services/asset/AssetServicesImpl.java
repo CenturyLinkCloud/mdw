@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,7 +51,6 @@ import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
-import com.centurylink.mdw.util.DesignatedHostSslVerifier;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -62,79 +60,70 @@ public class AssetServicesImpl implements AssetServices {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private File assetRoot;
-    public File getAssetRoot() { return assetRoot; }
+    public File getAssetRoot() {
+        return assetRoot;
+    }
     private File archiveDir;
+    private File getArchiveDir() {
+        return archiveDir;
+    }
 
     private static File gitRoot;
-    private static String gitBranch; // from mdw.properties (not necessarily actual branch for switch scenario)
-    private static String gitRemoteUrl;
-    private static String gitUser;
+    private static File getGitRoot() {
+        if (gitRoot == null) {
+            String prop = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
+            if (prop != null)
+              gitRoot = new File(prop);
+        }
+        return gitRoot;
+    }
+    /**
+     * from mdw.properties (not necessarily actual branch for switch scenario)
+     */
+    private static String getGitBranch() {
+        return PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
+    }
+
+    private static String getGitRemoteUrl() {
+        return PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
+    }
+
+    private static String getGitUser() {
+        return PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
+    }
     /**
      * Relative to gitRoot
      */
     private static String assetPath;
+    private String getAssetPath() throws IOException {
+        if (assetPath == null && getVersionControlGit() != null) {
+            assetPath = getVersionControlGit().getRelativePath(assetRoot);
+        }
+        return assetPath;
+    };
 
     public AssetServicesImpl() {
         assetRoot = ApplicationContext.getAssetRoot();
         archiveDir = new File(assetRoot + "/" + PackageDir.ARCHIVE_SUBDIR);
     }
 
-    private static Optional<VersionControl> versionControl;
     public VersionControl getVersionControl() throws IOException {
-        if (versionControl == null) {
-            VersionControlGit versionControlGit = getVersionControlGit();
-            if (versionControlGit == null)
-                versionControl = Optional.empty();
-            else
-                versionControl = Optional.of(versionControlGit);
+        return getVersionControlGit();
+    }
+
+    private VersionControlGit getVersionControlGit() throws IOException  {
+        try {
+            return (VersionControlGit)DataAccess.getAssetVersionControl(assetRoot);
         }
-        return versionControl.orElse(null);
-    }
-
-    public void clearVersionControl() {
-        versionControl = null;
-    }
-
-    private VersionControlGit getVersionControlGit() throws IOException {
-        VersionControlGit versionControlGit = null;
-        gitRemoteUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
-        if (gitRemoteUrl != null) {
-            String prop = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
-            if (prop != null)
-              gitRoot = new File(prop);
-            if (gitRoot != null) {
-                logger.info("Git root path for Asset Services: " + gitRoot);
-                gitBranch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
-                if (gitBranch == null) {
-                    logger.warn("Asset Services do not include Git information since " + PropertyNames.MDW_GIT_BRANCH + " is not set");
-                }
-                else {
-                    gitUser = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
-                    String password = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
-                    if (gitUser == null) {
-                        logger.warn("Git credentials not specified.");
-                    }
-                    String gitTrustedHost = PropertyManager.getProperty(PropertyNames.MDW_GIT_TRUSTED_HOST);
-                    if (gitTrustedHost != null) {
-                        try {
-                            DesignatedHostSslVerifier.setupSslVerification(gitTrustedHost);
-                        }
-                        catch (Exception ex) {
-                            throw new IOException(ex.getMessage(), ex);
-                        }
-                    }
-                    versionControlGit = new VersionControlGit();
-                    versionControlGit.connect(gitRemoteUrl, gitUser, password, gitRoot);
-                    assetPath = versionControlGit.getRelativePath(assetRoot);
-
-                    if (!versionControlGit.localRepoExists()) {
-                        // something's amiss -- startup should have cloned from Git
-                        throw new IOException("Git root: " + gitRoot + " does not exist.");
-                    }
-                }
+        catch (DataAccessException ex) {
+            if (ex.getCause() instanceof IOException) {
+                logger.severeException(ex.getMessage(), ex);
+                throw (IOException)ex.getCause();
+            }
+            else {
+                throw new IOException(ex.getMessage(), ex);
             }
         }
-        return versionControlGit;
     }
 
     /**
@@ -206,7 +195,7 @@ public class AssetServicesImpl implements AssetServices {
         List<File> assetRoots = new ArrayList<File>();
         assetRoots.add(assetRoot);
         try {
-            File vcsRoot = getVersionControl() == null ? null : gitRoot;
+            File vcsRoot = getVersionControl() == null ? null : getGitRoot();
             PackageList pkgList = new PackageList(ApplicationContext.getServerHostPort(), assetRoot, vcsRoot);
             CodeTimer timer = new CodeTimer("AssetServices", true);
             List<PackageDir> pkgDirs = findPackageDirs(assetRoots);
@@ -282,9 +271,9 @@ public class AssetServicesImpl implements AssetServices {
 
         for (File dir : dirs) {
             for (File sub : dir.listFiles()) {
-                if (sub.isDirectory() && !sub.equals(archiveDir)) {
+                if (sub.isDirectory() && !sub.equals(getArchiveDir())) {
                     if (new File(sub + "/.mdw").isDirectory()) {
-                        PackageDir pkgSubDir = new PackageDir(assetRoot, sub, getAssetVersionControl());
+                        PackageDir pkgSubDir = new PackageDir(getAssetRoot(), sub, getAssetVersionControl());
                         pkgSubDir.parse();
                         pkgSubDirs.add(pkgSubDir);
                     }
@@ -303,15 +292,15 @@ public class AssetServicesImpl implements AssetServices {
         try {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
             if (versionControl != null) {
-                if (gitBranch != null)
-                    pkgList.setVcsBranch(gitBranch);
-                if (gitRemoteUrl != null)
-                    pkgList.setVcsRemoteUrl(gitRemoteUrl);
+                if (getGitBranch() != null)
+                    pkgList.setVcsBranch(getGitBranch());
+                if (getGitRemoteUrl() != null)
+                    pkgList.setVcsRemoteUrl(getGitRemoteUrl());
 
                 pkgList.setGitBranch(versionControl.getBranch());
 
-                if (versionControl != null && !pkgList.getPackageDirs().isEmpty() && gitUser != null) {
-                    GitDiffs diffs = versionControl.getDiffs(gitBranch, assetPath);
+                if (versionControl != null && !pkgList.getPackageDirs().isEmpty() && getGitUser() != null) {
+                    GitDiffs diffs = versionControl.getDiffs(getGitBranch(), getAssetPath());
 
                     for (PackageDir pkgDir : pkgList.getPackageDirs()) {
                         String pkgVcPath = versionControl.getRelativePath(pkgDir);
@@ -342,7 +331,7 @@ public class AssetServicesImpl implements AssetServices {
                         if (missingDiff.endsWith(PackageDir.PACKAGE_JSON_PATH)) {
                             int trim = PackageDir.PACKAGE_JSON_PATH.length();
                             // add a ghost package
-                            String pkgName = missingDiff.substring(assetPath.length() + 1, missingDiff.length() - trim - 1).replace('/', '.');
+                            String pkgName = missingDiff.substring(getAssetPath().length() + 1, missingDiff.length() - trim - 1).replace('/', '.');
                             PackageDir pkgDir = getGhostPackage(pkgName);
                             if (pkgDir != null)
                                 pkgList.getPackageDirs().add(pkgDir);
@@ -359,10 +348,10 @@ public class AssetServicesImpl implements AssetServices {
     private void addVersionControlInfo(PackageAssets pkgAssets) throws ServiceException {
         try {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
-            if (versionControl != null && gitUser != null) {
+            if (versionControl != null && getGitUser() != null) {
                 PackageDir pkgDir = pkgAssets.getPackageDir();
                 String pkgVcPath = versionControl.getRelativePath(pkgDir);
-                GitDiffs diffs = versionControl.getDiffs(gitBranch, pkgVcPath);
+                GitDiffs diffs = versionControl.getDiffs(getGitBranch(), pkgVcPath);
                 pkgDir.setVcsDiffType(diffs.getDiffType(pkgVcPath + "/" + PackageDir.META_DIR + "/" + pkgDir.getMetaFile().getName()));
 
                 for (AssetInfo asset : pkgAssets.getAssets()) {
@@ -437,7 +426,7 @@ public class AssetServicesImpl implements AssetServices {
             else {
                 AssetInfo asset = getGhostAsset(pkgDir, assetName);
                 if (asset == null)
-                    throw new DataAccessException("Missing asset file for path: " + assetPath);
+                    throw new DataAccessException("Missing asset file for path: " + getAssetPath());
                 return asset;
             }
         }
@@ -450,10 +439,10 @@ public class AssetServicesImpl implements AssetServices {
         CodeTimer timer = new CodeTimer("addVersionControlInfo(AssetInfo)", true);
         try {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
-            if (versionControl != null && gitUser != null) {
+            if (versionControl != null && getGitUser() != null) {
                 String assetVcPath = versionControl.getRelativePath(asset.getFile());
                 asset.setCommitInfo(versionControl.getCommitInfo(assetVcPath));
-                GitDiffs diffs = versionControl.getDiffs(gitBranch, assetVcPath);
+                GitDiffs diffs = versionControl.getDiffs(getGitBranch(), assetVcPath);
                 asset.setVcsDiffType(diffs.getDiffType(assetVcPath));
             }
         }
@@ -469,13 +458,13 @@ public class AssetServicesImpl implements AssetServices {
         PackageDir pkgDir = null;
         String pkgPath = pkgName.replace('.', '/');
         VersionControlGit gitVc = (VersionControlGit) getVersionControl();
-        if (gitVc != null && gitUser != null) {
-            String pkgMetaFilePath = assetPath + "/" + pkgPath + "/" + PackageDir.PACKAGE_JSON_PATH;
-            GitDiffs diffs = gitVc.getDiffs(gitBranch, pkgMetaFilePath);
+        if (gitVc != null && getGitUser() != null) {
+            String pkgMetaFilePath = getAssetPath() + "/" + pkgPath + "/" + PackageDir.PACKAGE_JSON_PATH;
+            GitDiffs diffs = gitVc.getDiffs(getGitBranch(), pkgMetaFilePath);
             if (DiffType.MISSING.equals(diffs.getDiffType(pkgMetaFilePath))) {
                 VersionControl vc = null;
-                String versionFilePath = assetPath + "/" + pkgPath + "/" + PackageDir.VERSIONS_PATH;
-                String versionPropsStr = gitVc.getRemoteContentString(gitBranch, versionFilePath);
+                String versionFilePath = getAssetPath() + "/" + pkgPath + "/" + PackageDir.VERSIONS_PATH;
+                String versionPropsStr = gitVc.getRemoteContentString(getGitBranch(), versionFilePath);
                 if (versionPropsStr != null) {
                     Properties versionProps = new Properties();
                     versionProps.load(new ByteArrayInputStream(versionPropsStr.getBytes()));
@@ -483,7 +472,7 @@ public class AssetServicesImpl implements AssetServices {
                 }
                 pkgDir = new PackageDir(assetRoot, pkgName, vc);
                 pkgDir.setVcsDiffType(DiffType.MISSING);
-                String metaContent = ((VersionControlGit)getVersionControl()).getRemoteContentString(gitBranch, pkgMetaFilePath);
+                String metaContent = ((VersionControlGit)getVersionControl()).getRemoteContentString(getGitBranch(), pkgMetaFilePath);
                 if (metaContent != null) {
                     if (metaContent.trim().startsWith("{")) {
                         Package pkgVO = new Package(new JSONObject(metaContent));
@@ -505,17 +494,17 @@ public class AssetServicesImpl implements AssetServices {
     private AssetInfo getGhostAsset(PackageDir pkgDir, String assetName) throws Exception {
         AssetInfo asset = null;
         VersionControlGit gitVc = (VersionControlGit) getVersionControl();
-        if (gitVc != null && gitUser != null) {
-            String path = assetPath + "/" + pkgDir.getPackageName() + "/" + assetName;
-            GitDiffs diffs = gitVc.getDiffs(gitBranch, path);
+        if (gitVc != null && getGitUser() != null) {
+            String path = getAssetPath() + "/" + pkgDir.getPackageName() + "/" + assetName;
+            GitDiffs diffs = gitVc.getDiffs(getGitBranch(), path);
             if (DiffType.MISSING.equals(diffs.getDiffType(path))) {
                 AssetFile assetFile = pkgDir.getAssetFile(new File(path));
                 asset = new AssetInfo(assetFile);
                 asset.setVcsDiffType(DiffType.MISSING);
                 if (pkgDir.getVcsDiffType() != DiffType.MISSING) {
                     // non-ghost pkg -- set version from remote
-                    String versionFilePath = assetPath + "/" + pkgDir.getPackageName() + "/" + PackageDir.VERSIONS_PATH;
-                    String versionPropsStr = gitVc.getRemoteContentString(gitBranch, versionFilePath);
+                    String versionFilePath = getAssetPath() + "/" + pkgDir.getPackageName() + "/" + PackageDir.VERSIONS_PATH;
+                    String versionPropsStr = gitVc.getRemoteContentString(getGitBranch(), versionFilePath);
                     if (versionPropsStr != null) {
                         Properties versionProps = new Properties();
                         versionProps.load(new ByteArrayInputStream(versionPropsStr.getBytes()));
@@ -526,7 +515,7 @@ public class AssetServicesImpl implements AssetServices {
                 }
             }
             else {
-                throw new IOException("Cannot locate missing asset in version control: " + assetPath);
+                throw new IOException("Cannot locate missing asset in version control: " + getAssetPath());
             }
         }
         return asset;

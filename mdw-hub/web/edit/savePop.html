@@ -3,29 +3,41 @@
     <div style="color:#a94442;">{{message}}</div>
     <div ng-if="!message">Save {{asset.name}}</div>
   </div>
-  <hr style="margin-top:10px;margin-bottom:10px;">
-  <div>
-    <label class="mdw-label">Commit Message:</label>
-    <input type="text" ng-model="version.comment" style="width:350px">
-  </div>
+  <hr style="margin-top:8px;margin-bottom:5px;">
   <div style="margin-top:8px;">
     <label class="mdw-label">Version:</label>
-      <div class="radio" style="margin-top:0;margin-left:8px;">
-        <label class="radio-inline">
-          <input type="radio" ng-model="version.selected" value="{{version.current}}">
-          Overwrite: <strong>v{{version.current}}</strong>
-        </label><br>
-        <label>
-          <input type="radio" ng-model="version.selected" value="{{version.nextMinor}}">
-          New minor: <strong>v{{version.nextMinor}}</strong>
-        </label><br>
-        <label>
-          <input type="radio" ng-model="version.selected" value="{{version.nextMajor}}">
-          New major: <strong>v{{version.nextMajor}}</strong>
-        </label>
-      </div>
+    <div class="radio" style="margin-top:0;margin-left:8px;">
+      <label class="radio-inline">
+        <input type="radio" ng-model="version.selected" value="{{version.current}}">
+        Overwrite: <strong>v{{version.current}}</strong>
+      </label><br>
+      <label>
+        <input type="radio" ng-model="version.selected" value="{{version.nextMinor}}">
+        New minor: <strong>v{{version.nextMinor}}</strong>
+      </label><br>
+      <label>
+        <input type="radio" ng-model="version.selected" value="{{version.nextMajor}}">
+        New major: <strong>v{{version.nextMajor}}</strong>
+      </label>
+    </div>
   </div>
-  <hr style="margin-top:0;margin-bottom:10px;">
+  <label class="mdw-label">Options:</label>
+  <div style="margin-left:7px;position:relative;top:-5px;">
+    <div class="checkbox mdw-checkbox">
+      <label><input type="checkbox" ng-model="options.distributedSave">Distributed save (all server instances)</label>
+    </div>
+    <div class="checkbox mdw-checkbox">
+      <label><input type="checkbox" ng-model="options.cacheRefresh">Refresh server caches after save</label>
+    </div>
+    <div class="checkbox mdw-checkbox" style="margin-bottom:5px;">
+      <label><input type="checkbox" ng-model="options.commitAndPush">Commit and push to VCS remote</label>
+    </div>
+    <div>
+      <label class="mdw-label">Commit Message:</label>
+      <input type="text" ng-model="version.comment" ng-disabled="!options.commitAndPush" style="width:350px">
+    </div>
+  </div>
+  <hr style="margin-top:8px;margin-bottom:10px;">
   <div>
     <button type="button" class="btn btn-default mdw-edit-btn" ng-disabled="!isSaveEnabled()" ng-click="save()">Save</button>
     <button type="button" class="btn btn-default mdw-edit-btn" ng-click="cancelSave()">Cancel</button>

@@ -42,8 +42,8 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.ProcessPersister.PersistType;
+import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
@@ -154,9 +154,6 @@ public class AssetContentServlet extends HttpServlet {
         }
     }
 
-    /**
-     * TODO: distributed updates (to be performed in GitVcs after push req from client)
-     */
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (!assetRoot.isDirectory())
             throw new ServletException(assetRoot + " is not a directory");
@@ -240,11 +237,16 @@ public class AssetContentServlet extends HttpServlet {
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid asset version: v" + version);
                 boolean verChange = newVer != ver;
                 asset.setVersion(newVer);
-
-                persisterVcs.save(asset, persisterVcs.getTopLevelPackageDir(pkgName));
-                if (verChange)
-                  persisterVcs.persistPackage(pkg, PersistType.NEW_VERSION);
+                PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkgName);
+                persisterVcs.save(asset, pkgDir);
+                persisterVcs.updateAsset(asset);
+                if (verChange) {
+                    persisterVcs.persistPackage(pkg, PersistType.NEW_VERSION);
+                }
                 logger.info("Asset saved: " + path + " v" + version);
+
+                // TODO: distributedSave
+                boolean distributed = "true".equalsIgnoreCase(request.getParameter("distributedSave"));
             }
         }
         catch (ServiceException ex) {

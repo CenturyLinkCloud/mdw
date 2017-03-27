@@ -86,7 +86,7 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   
   $scope.isDescendant = function(parent, child) {
     var node = child.parentNode;
-    while (node !== null) {
+    while (node) {
         if (node == parent)
             return true;
         node = node.parentNode;

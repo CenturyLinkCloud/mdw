@@ -144,8 +144,6 @@ public class GitVcs extends JsonRestService {
 
                 archiver.getProgressMonitor().done();
 
-                ServiceLocator.getAssetServices().clearVersionControl();
-
                 if (content.has("distributed") && content.getBoolean("distributed"))
                     propagatePost(content, headers);
             }

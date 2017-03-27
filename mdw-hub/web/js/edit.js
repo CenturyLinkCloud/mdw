@@ -2,8 +2,8 @@
 
 var editMod = angular.module('edit', ['ngResource', 'mdw']);
 
-editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util', 'Assets', 'Asset', 'GitVcs',
-                                         function($scope, $routeParams, mdw, util, Assets, Asset, GitVcs) {
+editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util', 'Assets', 'Asset', 'WorkflowCache', 'GitVcs',
+                                         function($scope, $routeParams, mdw, util, Assets, Asset, WorkflowCache, GitVcs) {
   
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
@@ -31,6 +31,7 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
       };
       
       $scope.initVersion();
+      $scope.initOptions();
       
       $scope.asset.url = mdw.roots.hub + '/asset/' + $scope.packageName + '/' +  $scope.asset.name;
       
@@ -39,8 +40,7 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
       
       Asset.get({
         packageName: $scope.packageName,
-        assetName: $scope.asset.name,
-        gitRemote: true
+        assetName: $scope.asset.name
       },
       function(assetData) {
         $scope.asset.content = assetData.rawResponse;
@@ -58,10 +58,16 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
       };
   };
   
+  $scope.initOptions = function() {
+    $scope.options = {
+      distributedSave: true,
+      cacheRefresh: true,
+      commitAndPush: true
+    };    
+  };
+  
   $scope.isSaveEnabled = function() {
-    // TODO: not if git pull needed
-    var gitPullNeeded = false;
-    return $scope.dirty && $scope.version.comment && !gitPullNeeded;
+    return $scope.dirty && (!$scope.commitAndSave || $scope.version.comment);
   };
   
   $scope.cancelSave = function() {
@@ -76,7 +82,8 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
       packageName: $scope.asset.packageName,
       assetName: $scope.asset.name,
       version: $scope.version.selected,
-      comment: $scope.version.comment
+      comment: $scope.version.comment,
+      distributedSave: $scope.options.distributedSave
     }, 
     $scope.asset.content, 
     function success(response) {
@@ -84,23 +91,31 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
       $scope.dirty = false;
       $scope.asset.version = $scope.version.selected;
       var commitMsg = $scope.version.comment;
-      GitVcs.push({
-        pkgPath: $scope.asset.packageName,
-        asset: $scope.asset.name,
-        gitAction: 'push'
-      },
-      { comment: commitMsg },
-      function success(response) {
+      if ($scope.options.cacheRefresh) {
+        WorkflowCache.refresh({}, { distributed: $scope.options.distributedSave });
+      }
+      if ($scope.options.commitAndPush) {
+        GitVcs.push({
+          pkgPath: $scope.asset.packageName,
+          asset: $scope.asset.name,
+          gitAction: 'push'
+        },
+        { comment: commitMsg },
+        function success(response) {
+          $scope.closePopover();
+        },
+        function error(response) {
+          if (response.data.status)
+            $scope.message = response.data.status.message;
+          else if (response.statusText)
+            $scope.message = response.status + ': ' + response.statusText;
+          else
+            $scope.message = "Error saving asset";
+        });
+      }
+      else {
         $scope.closePopover();
-      },
-      function error(response) {
-        if (response.data.status)
-          $scope.message = response.data.status.message;
-        else if (response.statusText)
-          $scope.message = response.status + ': ' + response.statusText;
-        else
-          $scope.message = "Error saving asset";
-      });
+      }
       
       $scope.initVersion();
     }, 
