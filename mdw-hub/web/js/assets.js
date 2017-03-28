@@ -157,6 +157,9 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util',
   
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
+  if ($scope.assetName.endsWith('.proc')) {
+    $scope.process = {packageName: $scope.packageName, name: $scope.assetName.substring(0, $scope.assetName.length - 5)};
+  }
 
   $scope.asset = Assets.get({
       packageName: $routeParams.packageName,
@@ -164,11 +167,7 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util',
     },
     function(assetsData) {
       $scope.asset.language = util.getLanguage($scope.asset.name);
-
-      if ($scope.asset.language == 'proc') {
-        // TODO: asset.content becomes backup in case editing is canceled
-        $scope.process = {packageName: $scope.packageName, name: $scope.asset.name.substring(0, $scope.asset.name.length - 5)};
-      }
+      
       $scope.asset.url = mdw.roots.hub + '/asset/' + $scope.packageName + '/' +  $scope.asset.name;
       $scope.asset.view = 'content';
       $scope.asset.packageName = $scope.packageName;

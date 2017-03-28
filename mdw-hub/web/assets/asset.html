@@ -12,17 +12,17 @@
           <span class="mdw-commit" ng-if="asset.commitInfo" title="{{asset.commitInfo.message}}"> ({{asset.commitInfo.committer}} 
             <span class="mdw-commit-date">{{asset.commitInfo.date}}</span>)
           </span>
-          <a class="btn btn-primary mdw-btn mdw-asset-icon" ng-if="asset.language == 'proc' && asset.view == 'content' && asset.content" 
+          <a class="btn btn-primary mdw-btn mdw-asset-icon" ng-if="process && asset.view == 'content' && asset.content" 
              ng-href="#/workflow/processes/{{packageName}}/{{assetName}}/{{asset.version}}" title="Instances" style="margin-left:10px;">
             <span class="glyphicon glyphicon-menu-hamburger"></span>
           </a>            
-          <a class="btn btn-primary mdw-btn mdw-asset-icon" ng-if="asset.language == 'proc' && asset.view == 'content' && asset.content" 
+          <a class="btn btn-primary mdw-btn mdw-asset-icon" ng-if="process && asset.view == 'content' && asset.content" 
              ng-href="#/workflow/processes/{{packageName}}/{{assetName}}/{{asset.version}}" title="Run">
             <span class="glyphicon glyphicon-play"></span>
           </a>            
         </div>
         <div class="radio mdw-heading-options" ng-if="!asset.isBinary && asset.vcsDiff">
-          <label class="radio-inline"><input type="radio" ng-model="asset.view" value="content">{{asset.language == 'proc' ? 'Workflow' : 'Content'}}</label>
+          <label class="radio-inline"><input type="radio" ng-model="asset.view" value="content">{{process ? 'Workflow' : 'Content'}}</label>
           <label class="radio-inline"><input type="radio" ng-model="asset.view" value="gitDiff">Git Diff</label>
         </div>
         <div class="mdw-heading-actions">
@@ -37,12 +37,12 @@
           </a>            
         </div>
       </div>
-        <div class="mdw-image-container" ng-if="asset.language == 'proc' && asset.view == 'content' && asset.content">
-          <mdw-workflow process="process" render-state="true" service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}">
-        </div>
+      <div class="mdw-image-container" ng-if="process && asset.view == 'content' && asset.content">
+        <mdw-workflow process="process" service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}">
+      </div>
       <div class="mdw-item-content" ng-if="asset.view == 'content' && (asset.content || asset.isImage)">
-        <pre ng-if="!asset.isBinary && !asset.isMarkdown && asset.language != 'proc'" class="mdw-line-nums">{{asset.lineNums}}</pre>
-        <pre ng-show="!asset.isBinary && !asset.isMarkdown && asset.language != 'proc'" class="mdw-resource-content"><code class="mdw-code" ng-bind-html="asset.content | highlight:asset.language | unsafe"></code></pre>
+        <pre ng-if="!asset.isBinary && !asset.isMarkdown && !process" class="mdw-line-nums">{{asset.lineNums}}</pre>
+        <pre ng-show="!asset.isBinary && !asset.isMarkdown && !process" class="mdw-resource-content"><code class="mdw-code" ng-bind-html="asset.content | highlight:asset.language | unsafe"></code></pre>
         <div ng-show="asset.isMarkdown" class="mdw-resource-content"><div ng-bind-html="asset.content | markdown | unsafe"></div></div>
         <img ng-if="asset.isImage" ng-src="{{asset.url}}" alt="asset.name" />
       </div>

@@ -7,6 +7,17 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
   
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
+  if ($scope.assetName.endsWith('.proc')) {
+    $scope.process = {packageName: $scope.packageName, name: $scope.assetName.substring(0, $scope.assetName.length - 5)};
+    $scope.onProcessChange = function(proc) {
+      var wasDirty = $scope.procDirty;
+      $scope.procDirty = true;
+      if (!wasDirty)
+        $scope.$digest();
+      $scope.process = proc;
+      // console.log(JSON.stringify($scope.process, null, '  '));
+    };
+  }
 
   $scope.asset = Assets.get({
       packageName: $routeParams.packageName,
@@ -14,19 +25,16 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
     },
     function(assetsData) {
       $scope.asset.language = util.getLanguage($scope.asset.name);
-      if ($scope.asset.language == 'proc') {
-        $scope.process = {packageName: $scope.packageName, name: $scope.asset.name.substring(0, $scope.asset.name.length - 5)};
-      }
       
       $scope.aceOptions = {
         theme: 'eclipse', 
         mode: $scope.asset.language,
         onChange: function() {
           // first call happens on load
-          if ($scope.dirty === undefined)
-            $scope.dirty = false;
+          if ($scope.aceDirty === undefined)
+            $scope.aceDirty = false;
           else
-            $scope.dirty = true;
+            $scope.aceDirty = true;
         }
       };
       
@@ -66,8 +74,15 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
     };    
   };
   
+  $scope.isDirty = function() {
+    if ($scope.process)
+      return $scope.procDirty;
+    else
+      return $scope.aceDirty;
+  };
+  
   $scope.isSaveEnabled = function() {
-    return $scope.dirty && (!$scope.commitAndSave || $scope.version.comment);
+    return $scope.isDirty() && (!$scope.commitAndSave || $scope.version.comment);
   };
   
   $scope.cancelSave = function() {
@@ -88,7 +103,7 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
     $scope.asset.content, 
     function success(response) {
       $scope.message = null;
-      $scope.dirty = false;
+      $scope.aceDirty = false;
       $scope.asset.version = $scope.version.selected;
       var commitMsg = $scope.version.comment;
       if ($scope.options.cacheRefresh) {

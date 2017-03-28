@@ -112,7 +112,14 @@ stepMod.factory('Step', ['mdw', 'util', 'DC', 'WORKFLOW_STATUSES',
   Step.prototype.applyState = function(activityInstances) {
     this.instances = activityInstances;
   };
-      
+  
+  Step.prototype.translate = function(deltaX, deltaY) {
+    var x = this.display.x + deltaX;
+    var y = this.display.y + deltaY;
+    this.activity.attributes.WORK_DISPLAY_INFO = 'x=' + x + ',y=' + y + 
+        ',w=' + this.display.w + ',h=' + this.display.h;
+  };
+  
   return Step;
     
 }]);

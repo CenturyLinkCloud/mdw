@@ -24,7 +24,9 @@ workflowMod.controller('MdwWorkflowController',
         $scope.process = data;
         $scope.renderProcess();
         $scope.canvas.bind('mousemove', $scope.mouseMove);
-        $scope.canvas.bind('click', $scope.mouseClick);
+        $scope.canvas.bind('mousedown', $scope.mouseDown);
+        $scope.canvas.bind('mouseup', $scope.mouseUp);
+        $scope.canvas.bind('mouseout', $scope.mouseOut);
       }, function(error) {
         mdw.messages = error;
       });
@@ -32,13 +34,17 @@ workflowMod.controller('MdwWorkflowController',
     else {
       $scope.renderProcess();
       $scope.canvas.bind('mousemove', $scope.mouseMove);
-      $scope.canvas.bind('click', $scope.mouseClick);
+      $scope.canvas.bind('mousedown', $scope.mouseDown);
+      $scope.canvas.bind('mouseup', $scope.mouseUp);
+      $scope.canvas.bind('mouseout', $scope.mouseOut);
     }
   };
   
   $scope.dest = function() {
     $scope.canvas.bind('mousemove', $scope.mouseMove);
-    $scope.canvas.bind('click', $scope.mouseClick);
+    $scope.canvas.bind('mousedown', $scope.mouseDown);
+    $scope.canvas.bind('mouseup', $scope.mouseUp);
+    $scope.canvas.bind('mouseout', $scope.mouseOut);
   };
   
   $scope.renderProcess = function() {
@@ -62,7 +68,7 @@ workflowMod.controller('MdwWorkflowController',
           $scope.doRender();
         }
         else {
-        $http({ method: 'GET', url: $scope.serviceBase + '/Implementors' })
+          $http({ method: 'GET', url: $scope.serviceBase + '/Implementors' })
           .then(function success(response) {
             $scope.implementors = response.data;
             mdwImplementors.set($scope.implementors);
@@ -91,22 +97,45 @@ workflowMod.controller('MdwWorkflowController',
     }
   };
   
+  $scope.down = false;
+  $scope.dragging = false;
   $scope.mouseMove = function(e) {
-    if ($scope.diagram)
-      $scope.diagram.onMouseMove(e);
-  };
-  $scope.mouseClick = function(e) {
+    if ($scope.down && $scope.editable)
+      $scope.dragging = true;
     if ($scope.diagram) {
-      var prevSelectObj = $scope.diagram.selectObj;
-      $scope.diagram.onMouseClick(e);
-      if ($scope.diagram.selectObj !== prevSelectObj) {
-        var selObj = $scope.diagram.selectObj;
-        if (selObj)
-          Inspector.setObj(selObj);
-        else
-          Inspector.setObj($scope.diagram);
+      if ($scope.dragging) {
+        if ($scope.diagram.onMouseDrag(e)) {
+          $scope.onChange($scope.process);
+        }
+      }
+      else {
+        $scope.diagram.onMouseMove(e);
       }
     }
+  };
+  $scope.mouseDown = function(e) {
+    $scope.down = true;
+    if ($scope.diagram) {
+      $scope.diagram.onMouseDown(e);
+    }
+  };
+  $scope.mouseUp = function(e) {
+    $scope.down = false;
+    if (!$scope.dragging) {
+      var selObj = $scope.diagram.selectObj;
+      if (selObj)
+        Inspector.setObj(selObj);
+      else
+        Inspector.setObj($scope.diagram);
+    }
+    $scope.dragging = false;
+    if ($scope.diagram) {
+      $scope.diagram.onMouseUp(e);
+    }
+  };
+  $scope.mouseOut = function(e) {
+    $scope.down = false;
+    $scope.dragging = false;
   };
 }]);
 
@@ -235,7 +264,35 @@ workflowMod.factory('Diagram',
         return this.steps[i];
     }
   };
+
+  Diagram.prototype.getLinks = function(step) {
+    var links = [];
+    for (var i = 0; i < this.links.length; i++) {
+      if (step == this.links[i].to || step == this.links[i].from)
+        links.push(this.links[i]);
+    }
+    return links;
+  };
   
+  Diagram.prototype.addLink = function(from, to) {
+    var maxId = 0;
+    this.links.forEach(function(link) {
+      var linkId = parseInt(link.transition.id.substring(1));
+      if (linkId > maxId)
+        maxId = linkId;
+    });
+    var transition = {
+        id: maxId + 1,
+        event: 'FINISH',
+        to: to.activity.id
+    };
+    from.activity.transitions.push(transition);
+    var link = new Link(transition, from, to);
+    link.display = {type: Link.LINK_TYPES.ELBOW, lx: 0, ly: 0, xs: [0,0], ys: [0,0]};
+    link.calc();
+    this.links.push();
+  };
+
   Diagram.prototype.getDisplay = function(displayAttr) {
     var display = {};
     if (displayAttr) {
@@ -254,6 +311,13 @@ workflowMod.factory('Diagram',
     return display;
   };
   
+  Diagram.prototype.getDisplayAttr = function(display) {
+    var attr = 'x=' + display.x + ',y=' + display.y;
+    if (display.w)
+      attr += ',w=' + display.w + ',h=' + display.h;
+    return attr;
+  };
+
   Diagram.prototype.drawTitle = function() {
     this.context.font = DC.TITLE_FONT;
     this.context.fillStyle = this.titleLinkHover ? DC.HYPERLINK_COLOR : DC.DEFAULT_COLOR;
@@ -472,6 +536,16 @@ workflowMod.factory('Diagram',
     this.context.fillStyle = DC.DEFAULT_COLOR;
   };
   
+  Diagram.prototype.drawLine = function(x1, y1, x2, y2, color) {
+    if (color)
+      this.context.strokeStyle = color;
+    this.context.beginPath();
+    this.context.moveTo(x1, y1);
+    this.context.lineTo(x2, y2);
+    this.context.stroke();
+    this.context.strokeStyle = DC.DEFAULT_COLOR;
+  };
+  
   Diagram.prototype.drawDiamond = function(x, y, w, h) {
     var xh = x + w / 2;
     var yh = y + h / 2;
@@ -486,18 +560,31 @@ workflowMod.factory('Diagram',
   };
   
   Diagram.prototype.drawImage = function(src, x, y) {
-    var img = new Image();
-    img.src = src;
-    var context = this.context;
-    img.onload = function() {
-      context.drawImage(img, x, y);
-    };
+    if (!this.images)
+      this.images = {};
+    var img = this.images[src];
+    if (!img) {
+      var img = new Image();
+      img.src = src;
+      var context = this.context;
+      var images = this.images;
+      img.onload = function() {
+        context.drawImage(img, x, y);
+        images[src] = img;
+      };
+    }
+    else {
+      this.context.drawImage(img, x, y);
+    }
   };
   
-  Diagram.prototype.onMouseClick = function(e) {
+  Diagram.prototype.onMouseDown = function(e) {
     var rect = this.canvas.getBoundingClientRect();
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;
+    // starting points for drag
+    this.dragX = x;
+    this.dragY = y;
     
     var prevSelect = this.selectObj;
     if (this.isHover(x, y, this.title)) {
@@ -512,6 +599,8 @@ workflowMod.factory('Diagram',
         if (prevSelect && prevSelect !== this.selectObj)
           this.unselect(prevSelect);
         this.select(this.selectObj);
+        if (e.shiftKey && this.selectObj.workflowType == 'activity')
+          this.shiftDrag = true;
       }
       else {
         if (prevSelect)
@@ -519,6 +608,22 @@ workflowMod.factory('Diagram',
         this.selectObj = null;
       }
     }
+  };
+  
+  Diagram.prototype.onMouseUp = function(e) {
+    if (this.shiftDrag && this.dragX && this.dragY) {
+      if (this.selectedObj && this.selectedObj.workflowType == 'activity') {
+        var rect = this.canvas.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        var destObj = this.getHoverObj(x, y);
+        if (destObj && destObj.workflowType == 'activity') {
+          this.addLink(this.selectedObj, destObj);
+          this.draw();
+        }
+      }
+    }
+    this.shiftDrag = false;
   };
   
   // TODO better select indication
@@ -571,6 +676,46 @@ workflowMod.factory('Diagram',
     }
   };
   
+  Diagram.prototype.onMouseDrag = function(e) {
+    if (this.selectObj && this.dragX && this.dragY) {
+      var rect = this.canvas.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+      if (this.shiftDrag) {
+        if (this.selectedObj.workflowType == 'activity') {
+          this.draw();
+          this.drawLine(this.dragX, this.dragY, x, y, 'green');
+        }
+      }
+      else if (this.titleLinkHover) {
+        var display = {
+            x: this.display.x += (x - this.dragX),
+            y: this.display.y += (y - this.dragY),
+            w: this.display.w,
+            h: this.display.h
+        }
+        this.dragX = x;
+        this.dragY = y;
+        this.process.attributes.WORK_DISPLAY_INFO = this.getDisplayAttr(display);
+        this.draw();
+        return true;
+      }
+      else if (this.selectObj.translate) {
+        var deltaX = x - this.dragX;
+        var deltaY = y - this.dragY;
+        this.selectObj.translate(deltaX, deltaY);
+        if (this.selectObj.workflowType == 'activity') {
+          var step = this.getStep(this.selectObj.activity.id);
+          this.getLinks(step).forEach(function(link) {
+            link.recalc(step);
+          });
+        }
+        this.draw();
+        return true;
+      }
+    }
+  };
+  
   Diagram.prototype.getHoverObj = function(x, y) {
     for (var i = 0; i < this.steps.length; i++) {
       if (this.isHover(x, y, this.steps[i].display))
@@ -613,7 +758,8 @@ workflowMod.factory('mdwImplementors', ['mdw', function(mdw) {
 //   - process (object): packageName and name must be populated
 //     optional process fields
 //       - version: for non-latest process version
-//   - renderState: if true, display runtime overlay
+//       - renderState: if true, display runtime overlay
+//       - editable: if true, workflow can be modified
 //   - service-base: endpoint url root
 //   - hub-base: MDWHub url root
 workflowMod.directive('mdwWorkflow', [function() {
@@ -622,7 +768,9 @@ workflowMod.directive('mdwWorkflow', [function() {
     templateUrl: 'ui/workflow.html',
     scope: {
       process: '=process',
+      onChange: '=onchange',
       renderState: '@renderState',
+      editable: '@editable',
       serviceBase: '@serviceBase',
       hubBase: '@hubBase'
     },
