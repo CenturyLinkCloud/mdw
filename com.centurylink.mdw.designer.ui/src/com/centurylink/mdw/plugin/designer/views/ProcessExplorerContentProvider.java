@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -399,6 +400,14 @@ public class ProcessExplorerContentProvider implements ITreeContentProvider, Ele
                 ece.getElement().addElementChangeListener(this);
             }
             else {
+                if (parent instanceof WorkflowPackage) {
+                    try {
+                        ((WorkflowPackage)parent).getFolder().refreshLocal(IResource.DEPTH_ONE, null);
+                    }
+                    catch (Exception ex) {
+                        PluginMessages.log(ex);
+                    }
+                }
                 treeViewer.refresh(parent, true);
             }
             treeViewer.expandToLevel(ece.getElement(), 0);
