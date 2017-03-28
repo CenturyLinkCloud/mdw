@@ -136,7 +136,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
       attr += display.xs[i];
     }
     attr += ',ys=';
-    for (var i = 0; i < display.ys.length; i++) {
+    for (i = 0; i < display.ys.length; i++) {
       if (i > 0)
         attr += '&';
       attr += display.ys[i];
@@ -365,6 +365,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     var ly = this.display.ly;
   
     var n = xs.length;
+    var i, k;
     // remember relative label position
     var labelSlope = this.getSlope(xs[0], ys[0], lx, ly) - this.getSlope(xs[0], ys[0], xs[n-1], ys[n-1]);
     var labelDist = this.getDist(xs[0], ys[0], xs[n-1], ys[n-1]);
@@ -378,7 +379,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
         this.calc();
       }
       else {
-        if (step == from) {
+        if (step == this.from) {
           if (xs[1] > step.display.x + step.display.w + Link.GAP) 
             xs[0] = step.display.x + step.display.w + Link.GAP;
           else if (xs[1] < step.display.x - Link.GAP)
@@ -389,7 +390,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
             ys[0] = step.display.y - Link.GAP;
         } 
         else {
-          var k = n - 1;
+          k = n - 1;
           if (xs[k-1] > step.display.x + step.display.w + Link.GAP)
             xs[k] = step.display.x + step.display.w + Link.GAP;
           else if (xs[k-1] < step.display.x - Link.GAP)
@@ -432,7 +433,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
           xs[1] = xs[0];
       }
       else {
-        var k = n - 1;
+        k = n - 1;
         if (xs[k-1] > step.display.x + step.display.w)
           xs[k] = step.display.x + step.display.w + Link.GAP;
         else if (xs[k-1] < step.display.x) 
@@ -447,7 +448,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
         else 
           ys[k] = ys[k-1];
             
-        if ((wasHorizontal && n % 2 == 0) || (!wasHorizontal && n % 2 != 0))
+        if ((wasHorizontal && n % 2 === 0) || (!wasHorizontal && n % 2 !== 0))
           ys[k-1] = ys[k];
         else 
           xs[k-1] = xs[k];
@@ -477,11 +478,12 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     var h2 = this.to.display.h;
     
     var n = xs.length < 2 ? 2 : xs.length;
+    var i;
     
     if (type == Link.LINK_TYPES.STRAIGHT) {
       xs = this.display.xs = [];
       ys = this.display.ys = [];
-      for (var a = 0; a < n; a++) {
+      for (i = 0; i < n; i++) {
         xs.push(0);
         ys.push(0);
       }
@@ -492,8 +494,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
         ys[0] = y1 + h1 / 2;
         xs[n-1] = (x1 <= x2) ? x2 : (x2 + w2);
         ys[n-1] = y2 + h2 / 2;
-        for (var i = 1; i < n - 1; i++) {
-          if (i % 2 != 0) {
+        for (i = 1; i < n - 1; i++) {
+          if (i % 2 !== 0) {
             ys[i] = ys[i-1];
             xs[i] = (xs[n-1] -xs[0]) * ((i + 1) / 2) / (n / 2) + xs[0];
           } 
@@ -509,8 +511,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
         ys[0] = (y1 <= y2) ? (y1 + h1) : y1;
         xs[n-1] = x2 + w2 / 2;
         ys[n-1] = (y1 <= y2) ? y2 : (y2 + h2);
-        for (var i = 1; i < n - 1; i++) {
-          if (i % 2 != 0) {
+        for (i = 1; i < n - 1; i++) {
+          if (i % 2 !== 0) {
             xs[i] = xs[i-1];
             ys[i] = (ys[n-1] - ys[0]) * ((i + 1) / 2) / (n / 2) + ys[0];
           } 
@@ -530,11 +532,11 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     else {
       // ELBOW, ELBOWH, ELBOWV with middle control points
       var horizontalFirst = type == Link.LINK_TYPES.ELBOWH || (type == Link.LINK_TYPES.ELBOWH && Math.abs(x1 - x2) >= Math.abs(y1 - y2));
-      var evenN = n % 2 == 0;
+      var evenN = n % 2 === 0;
       var horizontalLast = (horizontalFirst && evenN) || (!horizontalFirst && !evenN);
       xs = this.display.xs = [];
       ys = this.display.ys = [];
-      for (a = 0; a < n; a++) {
+      for (i = 0; i < n; i++) {
         xs.push(0);
         ys.push(0);
       }
@@ -555,8 +557,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
         ys[n-1] = (y2 <= y1) ? (y2 + h2) : y2;
       }
       if (horizontalFirst) {
-        for (var i = 1; i < n - 1; i++) {
-          if (i % 2 != 0) {
+        for (i = 1; i < n - 1; i++) {
+          if (i % 2 !== 0) {
             ys[i] = ys[i-1];
             xs[i] = (xs[n-1] - xs[0]) * ((i + 1) / 2) / (n / 2) + xs[0];
           } 
@@ -567,8 +569,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
         }
       } 
       else {
-        for (var i = 1; i < n - 1; i++) {
-          if (i % 2 != 0) {
+        for (i = 1; i < n - 1; i++) {
+          if (i % 2 !== 0) {
             xs[i] = xs[i-1];
             ys[i] = (ys[n-1] - ys[0]) * ((i + 1) / 2) / (n / 2) + ys[0];
           } 
@@ -672,8 +674,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
           xs[1] = this.to.display.x + this.to.display.w + Link.GAP;
       }
     }
-    else if ((type == Link.LINK_TYPES.ELBOW && Math.abs(this.to.display.x - this.from.display.x) < Math.abs(this.to.display.y - this.from.display.y) * Link.ELBOW_THRESHOLD)
-          || (type == Link.LINK_TYPES.ELBOWV && Math.abs(this.to.display.y - this.from.display.y) > Link.ELBOW_VH_THRESHOLD)) {
+    else if ((type == Link.LINK_TYPES.ELBOW && Math.abs(this.to.display.x - this.from.display.x) < Math.abs(this.to.display.y - this.from.display.y) * Link.ELBOW_THRESHOLD) ||
+          (type == Link.LINK_TYPES.ELBOWV && Math.abs(this.to.display.y - this.from.display.y) > Link.ELBOW_VH_THRESHOLD)) {
       // VHV
       xs[0] = this.from.display.x + this.from.display.w / 2;
       xs[1] = this.to.display.x + this.to.display.w / 2;
@@ -686,8 +688,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
         ys[1] = this.to.display.y + this.to.display.h + Link.GAP;
       }
     } 
-    else if ((type == Link.LINK_TYPES.ELBOW && Math.abs(this.to.display.y - this.from.display.y) < Math.abs(this.to.display.x - this.from.display.x) * Link.ELBOW_THRESHOLD)
-          || (type == Link.LINK_TYPES.ELBOWH && Math.abs(this.to.display.x - this.from.display.x) > Link.ELBOW_VH_THRESHOLD)) {
+    else if ((type == Link.LINK_TYPES.ELBOW && Math.abs(this.to.display.y - this.from.display.y) < Math.abs(this.to.display.x - this.from.display.x) * Link.ELBOW_THRESHOLD) ||
+          (type == Link.LINK_TYPES.ELBOWH && Math.abs(this.to.display.x - this.from.display.x) > Link.ELBOW_VH_THRESHOLD)) {
       // HVH
       ys[0] = this.from.display.y + this.from.display.h / 2;
       ys[1] = this.to.display.y + this.to.display.h / 2;
@@ -746,7 +748,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
   
   Link.prototype.getDist = function(x1, y1, x2, y2) {
     return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
-  }
+  };
   
   return Link;
 }]);

@@ -564,7 +564,7 @@ workflowMod.factory('Diagram',
       this.images = {};
     var img = this.images[src];
     if (!img) {
-      var img = new Image();
+      img = new Image();
       img.src = src;
       var context = this.context;
       var images = this.images;
@@ -693,7 +693,7 @@ workflowMod.factory('Diagram',
             y: this.display.y += (y - this.dragY),
             w: this.display.w,
             h: this.display.h
-        }
+        };
         this.dragX = x;
         this.dragY = y;
         this.process.attributes.WORK_DISPLAY_INFO = this.getDisplayAttr(display);
