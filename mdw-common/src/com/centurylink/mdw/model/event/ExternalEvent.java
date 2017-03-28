@@ -119,7 +119,7 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
     }
 
     public ExternalEvent(JSONObject json) throws JSONException {
-        if (json.getString("name") != null)
+        if (json.has("name"))
             this.eventName = json.getString("name");
         else
             this.eventName = json.getString("path");
