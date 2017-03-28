@@ -106,35 +106,14 @@ public class Workflow extends JsonRestService {
         }
     }
 
-    /**
-     * Update workflow values is currently supported.
-     */
     @Override
-    @Path("/{instanceId}/{values}")
-    @ApiOperation(value="Update values for an ownerType and ownerId", response=StatusMessage.class)
+    @Path("//{packageName}/{processName}")
+    @ApiOperation(value="Update a process definition", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Values", paramType="body")})
+        @ApiImplicitParam(name="Process", paramType="body", dataType="com.centurylink.mdw.model.workflow.Process")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        String[] segments = getSegments(path);
-        if (segments.length == 3 && segments[2].equals("values")) {
-            try {
-                Long instanceId = Long.parseLong(segments[1]);
-                Map<String,Object> values = new HashMap<>();
-                for (String name : JSONObject.getNames(content)) {
-                    Value value = new Value(name, content.getJSONObject(name));
-                    values.put(name, value.getValue());
-                }
-                ServiceLocator.getWorkflowServices().setVariables(instanceId, values);
-            }
-            catch (NumberFormatException ex) {
-                throw new ServiceException(ServiceException.BAD_REQUEST, "Bad instanceId: " + segments[1]);
-            }
-        }
-        else {
-            throw new ServiceException(ServiceException.BAD_REQUEST, "Unexpected path: " + path);
-        }
-
-        return null;
+        // TODO implement update
+        return super.put(path, content, headers);
     }
 }

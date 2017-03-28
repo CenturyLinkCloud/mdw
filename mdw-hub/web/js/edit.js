@@ -15,7 +15,6 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
       if (!wasDirty)
         $scope.$digest();
       $scope.process = proc;
-      // console.log(JSON.stringify($scope.process, null, '  '));
     };
   }
 

@@ -282,7 +282,7 @@ workflowMod.factory('Diagram',
         maxId = linkId;
     });
     var transition = {
-        id: maxId + 1,
+        id: 'T' + (maxId + 1),
         event: 'FINISH',
         to: to.activity.id
     };
