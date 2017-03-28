@@ -99,7 +99,6 @@ task jsHint(type: Exec) {
         commandLine 'grunt', '--no-color', 'jshint'
 }
 
-// excludes JavaDocs by default
 war {
     dependsOn(buildDist)
     
@@ -130,14 +129,11 @@ war {
     webXml = file("web/WEB-INF/web.xml")
     exclude "**/.*ignore";
     rootSpec.exclude "WEB-INF/web.xml"  // specified above
-    rootSpec.exclude "javadoc/**" // hosted only in dev env
     
     rootSpec.exclude "**/.*ignore"
 }
 
 war {
-    dependsOn ":javadocs"  // build javadocs but do not include in war
-    
     exclude "**/.*ignore";
     rootSpec.exclude "**/.*ignore"
 
