@@ -124,6 +124,10 @@ public class VersionControlGit implements VersionControl {
     public CredentialsProvider getCredentialsProvider() { return this.credentialsProvider; };
     public void setCredentialsProvider(CredentialsProvider provider) { this.credentialsProvider = provider; }
 
+    public VersionControlGit() {
+        System.out.println("CREATING VC Git: " + this.hashCode());
+    }
+
     public void connect(String repositoryUrl, String user, String password, File localDir) throws IOException {
 
         if (repositoryUrl != null && !repositoryUrl.isEmpty()) {
@@ -509,6 +513,17 @@ public class VersionControlGit implements VersionControl {
         preserveList.add(new File(localDir + "/.git"));
         preserveList.add(new File(localDir + "/" + path));
         FileHelper.deleteRecursive(localDir, preserveList);
+    }
+
+    /**
+     * Performs a HARD reset and FORCED checkout.
+     * Only to be used on server (not Designer).
+     */
+    public void hardCheckout(String branch, String path) throws Exception {
+        fetch(); // in case the branch is not known locally
+        hardReset();
+        checkout(branch);
+        pull(branch);  // pull before delete or next pull may add non-path items back
     }
 
     public void hardReset() throws Exception {

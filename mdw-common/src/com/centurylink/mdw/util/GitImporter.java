@@ -117,7 +117,7 @@ public class GitImporter {
             archiver.backup();
 
             System.out.println("Performing git checkout on branch: " + branch);
-            vcGit.sparseCheckout(branch, assetPath);
+            vcGit.hardCheckout(branch, assetPath);
 
             archiver.archive();
             progressMonitor.done();
@@ -126,7 +126,7 @@ public class GitImporter {
             System.out.println("Directory: " + localDir + " does not exist.  Cloning...");
             vcGit.cloneNoCheckout();
             System.out.println("Performing git checkout on branch: " + branch);
-            vcGit.sparseCheckout(branch, assetPath);
+            vcGit.hardCheckout(branch, assetPath);
         }
     }
 

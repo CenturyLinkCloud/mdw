@@ -137,7 +137,7 @@ public class DataAccess {
                         String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
                         String password = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
                         if (user != null && password != null) {
-                            VersionControlGit vcGit = new VersionControlGit();
+                            VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
                             File gitLocal = new File(gitLocalPath);
                             vcGit.connect(url, user, password, gitLocal);
 
@@ -191,7 +191,7 @@ public class DataAccess {
                                     VcsArchiver archiver = new VcsArchiver(ApplicationContext.getAssetRoot(), tempDir, vcGit, progressMonitor);
                                     logger.severe("**** Performing Git Auto-Pull (Overwrites existing assets): " + vcGit + " (branch: " + branch + ")");
                                     archiver.backup();
-                                    vcGit.sparseCheckout(branch, assetPath);
+                                    vcGit.hardCheckout(branch, assetPath);
                                     archiver.archive();
                                 }
                             }

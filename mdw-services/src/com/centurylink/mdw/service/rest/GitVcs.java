@@ -121,7 +121,7 @@ public class GitVcs extends JsonRestService {
 
                     logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")");
                     archiver.backup();
-                    vcGit.sparseCheckout(branch, assetPath);
+                    vcGit.hardCheckout(branch, assetPath);
                     archiver.archive(deleteTempBackups);
                 }
                 else {
