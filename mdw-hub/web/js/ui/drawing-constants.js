@@ -11,5 +11,6 @@ dcMod.constant('DC', {
   HYPERLINK_COLOR: '#1565c0',
   META_COLOR: 'gray',
   BOX_OUTLINE_COLOR: 'black',
-  BOX_ROUNDING_RADIUS: 12
+  BOX_ROUNDING_RADIUS: 12,
+  ANCHOR_W: 4
 });

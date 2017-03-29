@@ -10,6 +10,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     this.from = from;
     this.to = to;
     this.workflowType = 'transition';
+    this.isLink = true;
   };
   
   Link.INITIATED = 'blue';
@@ -749,6 +750,12 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
   Link.prototype.getDist = function(x1, y1, x2, y2) {
     return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
   };
+  
+  Link.prototype.getAnchor = function(x, y) {
+    // TODO
+    return -1;
+  };
+  
   
   return Link;
 }]);

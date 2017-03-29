@@ -2,17 +2,22 @@
 
 var stepMod = angular.module('mdwStep', ['mdw']);
 
-stepMod.factory('Step', ['mdw', 'util', 'DC', 'WORKFLOW_STATUSES',
-                         function(mdw, util, DC, WORKFLOW_STATUSES) {
+stepMod.factory('Step', ['mdw', 'util', 'Node', 'DC', 'WORKFLOW_STATUSES',
+                         function(mdw, util, Node, DC, WORKFLOW_STATUSES) {
   
   var Step = function(activity) {
+    Node.apply(this);
     this.activity = activity;
     this.workflowType = 'activity';
+    this.isStep = true;
   };
+  
+  Step.prototype = new Node();
   
   Step.INST_W = 8;
   Step.OLD_INST_W = 4;
   Step.MAX_INSTS = 10;
+  Step.MIN_SIZE = 4;
   
   Step.STATUSES = [{status: 'Unknown', color: 'transparent'}].concat(WORKFLOW_STATUSES);
   
@@ -118,6 +123,12 @@ stepMod.factory('Step', ['mdw', 'util', 'DC', 'WORKFLOW_STATUSES',
     var y = this.display.y + deltaY;
     this.activity.attributes.WORK_DISPLAY_INFO = 'x=' + x + ',y=' + y + 
         ',w=' + this.display.w + ',h=' + this.display.h;
+  };
+  
+  Step.prototype.resize = function(x, y, deltaX, deltaY) {
+    var display = this.resizeDisplay(x, y, deltaX, deltaY, Step.MIN_SIZE);
+    this.activity.attributes.WORK_DISPLAY_INFO = 'x=' + display.x + ',y=' + display.y + 
+      ',w=' + display.w + ',h=' + display.h;
   };
   
   return Step;

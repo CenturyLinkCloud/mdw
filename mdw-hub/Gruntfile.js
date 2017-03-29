@@ -13,6 +13,7 @@ module.exports = function(grunt) {
       files: ['Gruntfile.js', 'web/js/**/*.js', 'test/**/*.js'],
       options: {
         // options here to override JSHint defaults
+        esnext: true,
         globalstrict: true,
         globals: {
           console: false,
