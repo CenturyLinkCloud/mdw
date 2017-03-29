@@ -154,6 +154,9 @@ public class AssetContentServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Note: Processes are updated in Workflow REST service.
+     */
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (!assetRoot.isDirectory())
             throw new ServletException(assetRoot + " is not a directory");

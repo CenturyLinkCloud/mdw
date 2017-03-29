@@ -55,8 +55,8 @@ adminApp.config(['$routeProvider', function($routeProvider) {
   });
 }]);
 
-adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$timeout', '$route', '$location', '$anchorScroll', 'mdw', 'authUser', 'util',
-                                        function($rootScope, $scope, $window, $timeout, $route, $location, $anchorScroll, mdw, authUser, util) {
+adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$timeout', '$location', '$anchorScroll', 'mdw', 'authUser', 'util',
+                                        function($rootScope, $scope, $window, $timeout, $location, $anchorScroll, mdw, authUser, util) {
   $scope.mdw = mdw;
   console.log('mdw ' + mdw.version + ' ' + mdw.build);
   
@@ -105,9 +105,9 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
       $scope.closePopover();
   };
   
-  // only applies when isFullWidth
+  // only applies when fullWidth
   $scope.getNavMenuWidthStyle = function(min) {
-    if ($scope.isFullWidth) {
+    if ($scope.fullWidth) {
       if ($scope.navMenuWidth)
         return { width: $scope.navMenuWidth + 'px' };
       else if (min)
@@ -121,21 +121,28 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
       $scope.navMenuWidth = w;
   };
   
-  $scope.setFullWidth = function(fullWidth) {
-    $scope.isFullWidth = fullWidth;
+  $scope.mobile = util.isMobile() || 'true' === util.urlParams().mdwMobile;
+  $scope.isMobile = function() {
+    return $scope.mobile;
   };
   
-  $scope.isMobile = util.isMobile() || 'true' === util.urlParams().mdwMobile;
-  console.log('isMobile: ' + $scope.isMobile);
-  $scope.isDebug = 'true' === util.urlParams().mdwDebug;
+  $scope.isDebug = function() {
+    return 'true' === util.urlParams().mdwDebug;
+  };
   
   $scope.isEdit = function() {
-    return $route.current && $route.current.loadedTemplateUrl && 
-        $route.current.loadedTemplateUrl.startsWith('edit/');
+    return $location.url().startsWith('/edit/');
+  };
+  
+  $scope.isFullWidth = function() {
+    return $scope.fullWidth;
+  };
+  $scope.setFullWidth = function(fullWidth) {
+    $scope.fullWidth = fullWidth;
   };
   
   $scope.isFullView = function() {
-    return $scope.isMobile || $scope.isEdit();
+    return $scope.isMobile() || $scope.isEdit();
   };
 
   $scope.login = function() {

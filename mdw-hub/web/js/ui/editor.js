@@ -110,6 +110,7 @@ editorMod.directive('mdwEditor', ['editorConfig', function (editorConfig) {
       var options = editorConfig.ace || {};
       var opts = angular.extend({}, options, scope.$eval(attrs.mdwEditor));
       var acee = window.ace.edit(elem[0]);
+      acee.$blockScrolling = Infinity;
       var session = acee.getSession();
       var onChangeListener;
       var onBlurListener;

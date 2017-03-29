@@ -347,7 +347,7 @@ public class HttpHelper {
         prepareConnection(connection);
         connection.setDoOutput(true);
         connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
-        connection.setRequestMethod("POST");
+        connection.setRequestMethod("PUT");
 
         OutputStream os = connection.getOutputStream();
         os.write(content);

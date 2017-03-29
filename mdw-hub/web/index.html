@@ -85,7 +85,7 @@
   </script>
   <div class="mdw-normalize" ng-if="!isFullView()" ng-include="'layout/header.html'"></div>
   <div class="mdw-normalize" ng-if="!isFullView()" ng-include="'layout/tabs.html'"></div>
-  <div ng-class="{content: true, container: true, 'mdw-content': !isFullView(), 'mdw-mobile-content': isFullView(), 'mdw-full-width': isFullWidth}" ng-view></div>
+  <div ng-class="{content: true, container: true, 'mdw-content': !isFullView(), 'mdw-mobile-content': isFullView(), 'mdw-full-width': isFullWidth()}" ng-view></div>
   <div ng-if="!isFullView()" ng-include="'layout/footer.html'"></div>
 </body>
 </html>
