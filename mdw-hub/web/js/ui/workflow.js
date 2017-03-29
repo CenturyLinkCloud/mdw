@@ -656,7 +656,7 @@ workflowMod.factory('Diagram',
     var rect = this.canvas.getBoundingClientRect();
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;
-
+    this.anchor = -1;
     var wasTitleLinkHover = this.titleLinkHover ? this.titleLinkHover : false;
     if (this.isHover(x, y, this.title)) {
       this.hoverObj = this;
