@@ -1,4 +1,4 @@
-#Thu Mar 23 17:51:04 MDT 2017
+#Tue Mar 28 21:42:03 MDT 2017
 ActivityStubbing.test=2
 ActivityStubbing.yaml=1
 ActivityStubbingClosure.test=2
@@ -13,12 +13,12 @@ AdapterStubbingGpath.yaml=1
 AdapterStubbingJson.test=2
 AdapterStubbingJson.yaml=1
 AdapterStubbingXpath.test=2
-AdapterStubbingXpath.yaml=1
+AdapterStubbingXpath.yaml=2
 EmployeeLookup.xml=1
 EmployeeLookupResponse.xml=1
 EmployeeLookupResponseSubst.xml=2
-GetEmployee.xml=1
-GetEmployeeResponse.xml=1
+GetEmployee.xml=2
+GetEmployeeResponse.xml=2
 TestActivityStub.proc=5
 TestActivityStubSubproc.proc=2
 TestAdapterStub.proc=5
