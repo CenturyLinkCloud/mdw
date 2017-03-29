@@ -24,7 +24,6 @@ import java.util.Properties;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.tools.view.XMLToolboxManager;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.cache.impl.AssetCache;
@@ -165,9 +164,10 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
             VelocityContext context = null;
             String toolboxFile = getAttributeValueSmart(VELOCITY_TOOLBOX_FILE);
             if (toolboxFile != null && FileHelper.fileExistsOnClasspath(toolboxFile)) {
-                XMLToolboxManager toolboxManager = new XMLToolboxManager();
-                toolboxManager.load(FileHelper.fileInputStreamFromClasspath(toolboxFile));
-                context = new VelocityContext(toolboxManager.getToolbox(toolboxFile));
+                throw new ActivityException("TODO: Velocity Toolbox Support");
+                // XMLToolboxManager toolboxManager = new XMLToolboxManager();
+                // toolboxManager.load(FileHelper.fileInputStreamFromClasspath(toolboxFile));
+                // context = new VelocityContext(toolboxManager.getToolbox(toolboxFile));
             }
             else {
                 context = new VelocityContext();

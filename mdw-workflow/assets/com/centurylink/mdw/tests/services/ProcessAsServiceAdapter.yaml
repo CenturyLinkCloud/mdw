@@ -26,9 +26,9 @@ process: # 13743
   variable: # 20915
     name: req
     value: |
-      <tns:GetEmployee xmlns:tns="http://mdw-servicemix.centurylink.com/serviceTypes">
-        <tns:workstationId>dxoakes</tns:workstationId>
-      </tns:GetEmployee>
+      <GetEmployee>
+        <workstationId>dxoakes</workstationId>
+      </GetEmployee>
   variable: # 20919
     name: response
     value: |

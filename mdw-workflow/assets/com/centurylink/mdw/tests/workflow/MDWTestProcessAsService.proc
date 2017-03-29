@@ -118,7 +118,7 @@
     {
       "attributes": {
         "Output Documents": "req",
-        "Rule": "req = '''<tns:GetEmployee xmlns:tns=\\\"http://mdw-servicemix.centurylink.com/serviceTypes\\\">\r\n  <tns:workstationId>dxoakes<\/tns:workstationId>\r\n<\/tns:GetEmployee>'''",
+        "Rule": "req = '''<GetEmployee\">\r\n  <workstationId>dxoakes<\/workstationId>\r\n<\/GetEmployee>'''",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=435,y=272,w=100,h=60"
       },
@@ -288,5 +288,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "0.20"
+  "version": "0.17"
 }

@@ -1,4 +1,4 @@
-#Thu Mar 23 17:50:08 MDT 2017
+#Tue Mar 28 19:35:09 MDT 2017
 DeleteNon200.test=2
 DeleteNon200.yaml=1
 DocumentWebService.proc=7
@@ -14,7 +14,7 @@ GetEmployee.xsd=1
 GetEmployeeRequest.xml=1
 GetEmployeeResponse.xml=2
 GetEmployeeResponseSoap.xml=1
-GetEmployeeSoap.xml=2
+GetEmployeeSoap.xml=3
 MyWorkflowModel.java=2
 NewSolution1.json=2
 NewSolution2.json=2
@@ -23,7 +23,7 @@ Patch200.test=2
 Patch200.yaml=1
 PatchHandler.java=2
 ProcessAsServiceAdapter.test=2
-ProcessAsServiceAdapter.yaml=1
+ProcessAsServiceAdapter.yaml=2
 ProcessAsServiceException.test=2
 ProcessAsServiceException.yaml=1
 ProcessAsServicePerf3.test=2

@@ -1,11 +1,10 @@
-<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
-              xmlns:tns="http://mdw.centurylink.com/serviceTypes">
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Header>
     <trans:requestId xmlns:trans="http://www.centurylink.com/transaction/">12345678</trans:requestId>
   </env:Header>                    
   <env:Body>
-    <tns:GetEmployee>
-      <tns:workstationId>dxoakes</tns:workstationId>
-    </tns:GetEmployee>
+    <GetEmployee>
+      <workstationId>dxoakes</workstationId>
+    </GetEmployee>
   </env:Body>
 </env:Envelope>
