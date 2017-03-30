@@ -44,8 +44,6 @@ public class HttpServiceAdapter extends PoolableAdapterBase {
     /**
      * <p>
      * Allows the overriding of this method without overriding invoke()
-     * Default implementation is using the constructor
-     * new HttpHelper((HttpURLConnection)connection, user, pass);
      * </p>
      * @return an HttpHelper instance
      * @throws PropertyException

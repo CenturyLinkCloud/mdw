@@ -46,7 +46,7 @@ public class JdbcSqlAdapter extends AdapterActivityBase {
     }
 
     /**
-     * Returns an HttpURLConnection based on the configured endpoint, which
+     * Returns a db connection based on the configured jdbc url or datasource, which
      * includes the resource path. Override for HTTPS or other connection type.
      */
     @Override

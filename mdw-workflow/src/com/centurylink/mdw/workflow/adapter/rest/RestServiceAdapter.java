@@ -50,7 +50,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     }
 
     /**
-     * Returns an HttpURLConnection based on the configured endpoint, which
+     * Returns an HttpConnection based on the configured endpoint, which
      * includes the resource path. Override for HTTPS or other connection type.
      */
     public Object openConnection(String proxyHost, int proxyPort) throws ConnectionException {
