@@ -16,7 +16,6 @@
 package com.centurylink.mdw.workflow.adapter.http;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.Map;
 import java.util.Properties;
 
@@ -65,10 +64,12 @@ public class HttpServiceAdapter extends PoolableAdapterBase {
     @Override
     protected Response getResponse(Object connection, String responseString) throws IOException {
         Response response = super.getResponse(connection, responseString);
-        if (connection instanceof HttpURLConnection) {
-            HttpURLConnection httpConn = (HttpURLConnection) connection;
-            response.setStatusCode(httpConn.getResponseCode());
-            response.setStatusMessage(httpConn.getResponseMessage());
+        if (connection instanceof HttpConnection) {
+            HttpConnection httpConn = (HttpConnection) connection;
+            if (httpConn.getResponse() != null) {
+                response.setStatusCode(httpConn.getResponse().getCode());
+                response.setStatusMessage(httpConn.getResponse().getMessage());
+            }
         }
         return response;
     }

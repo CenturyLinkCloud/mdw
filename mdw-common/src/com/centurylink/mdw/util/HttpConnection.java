@@ -162,13 +162,15 @@ public class HttpConnection {
         }
     }
 
+    private HttpResponse response;
+    public HttpResponse getResponse() { return response; }
+
     /**
      * Populates the response member.  Closes the connection.
      */
     protected HttpResponse readInput() throws IOException {
         InputStream is = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        HttpResponse response = null;
         try {
             byte[] buffer = new byte[2048];
             try {
