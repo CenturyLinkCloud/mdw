@@ -324,10 +324,11 @@ public class PluginDataAccess {
     }
 
     public boolean processNameExists(PackageVO pkgVO, String processName) {
-        for (ProcessVO process : pkgVO.getProcesses()) {
-            if (process.getProcessName().equals(processName))
-                return true;
-        }
+        if (pkgVO.getProcesses() != null)
+            for (ProcessVO process : pkgVO.getProcesses()) {
+                if (process.getProcessName().equals(processName))
+                    return true;
+            }
         return false;
     }
 
