@@ -15,11 +15,18 @@
  */
 package com.centurylink.mdw.plugin.codegen.event;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
 
+import com.centurylink.mdw.plugin.MdwPlugin;
+import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.WizardPage;
 import com.centurylink.mdw.plugin.codegen.CodeGenWizard;
 import com.centurylink.mdw.plugin.codegen.meta.EventHandler;
@@ -100,6 +107,24 @@ public class EventHandlerWizard extends CodeGenWizard {
                 .registerExternalEventHandler(externalEvent);
         externalEvent.addElementChangeListener(externalEvent.getProject());
         externalEvent.fireElementChangeEvent(ChangeType.ELEMENT_CREATE, externalEvent);
+        if (externalEvent.getProject().checkRequiredVersion(6, 0)) {
+            IFile file = externalEvent.getProject().getAssetFolder()
+                    .getFolder(externalEvent.getPackage().getName().replace('.', '/'))
+                    .getFile(externalEvent.getName()+".evth");
+            IWorkbenchPage activePage = MdwPlugin.getActivePage();
+            try {
+                externalEvent.getProject().getAssetFolder()
+                .getFolder(externalEvent.getPackage().getName().replace('.', '/'))
+                .refreshLocal(IResource.DEPTH_ONE, null);
+                IDE.openEditor(activePage, file, true);
+            }
+            catch (PartInitException ex) {
+                PluginMessages.uiError(ex, "Open File", externalEvent.getProject());
+            }
+            catch (CoreException ex) {
+                PluginMessages.uiError(ex, "Open File", externalEvent.getProject());
+            }
+        }
     }
 
     /**
