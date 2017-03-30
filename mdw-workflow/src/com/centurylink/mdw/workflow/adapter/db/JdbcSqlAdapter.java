@@ -125,7 +125,7 @@ public class JdbcSqlAdapter extends AdapterActivityBase {
         catch (SQLException ex) {
             AdapterException adapEx = new AdapterException(-1, ex.getMessage(), ex);
             if (isRetryable(ex))
-              adapEx.setIsRetryableError(true);
+              adapEx.setRetryable(true);
             throw adapEx;
         }
         catch (Exception ex) {

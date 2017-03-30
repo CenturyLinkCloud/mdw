@@ -15,198 +15,18 @@ process: # 10191
     value: |
       {
         "cause": {
-          "cause": {
-            "message": "I've fallen and I can't get up",
-            "stackElements": [
-              {
-                "class": "sun.reflect.NativeConstructorAccessorImpl",
-                "file": "NativeConstructorAccessorImpl.java",
-                "method": "newInstance0",
-                "native": true
-              },
-              {
-                "class": "sun.reflect.NativeConstructorAccessorImpl",
-                "file": "NativeConstructorAccessorImpl.java",
-                "line": 62,
-                "method": "newInstance"
-              },
-              {
-                "class": "sun.reflect.DelegatingConstructorAccessorImpl",
-                "file": "DelegatingConstructorAccessorImpl.java",
-                "line": 45,
-                "method": "newInstance"
-              },
-              {
-                "class": "java.lang.reflect.Constructor",
-                "file": "Constructor.java",
-                "line": ${~\\d+},
-                "method": "newInstance"
-              },
-              {
-                "class": "org.codehaus.groovy.reflection.CachedConstructor",
-                "file": "CachedConstructor.java",
-                "line": 83,
-                "method": "invoke"
-              },
-              {
-                "class": "org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce",
-                "file": "ConstructorSite.java",
-                "line": 105,
-                "method": "callConstructor"
-              },
-              {
-                "class": "org.codehaus.groovy.runtime.callsite.AbstractCallSite",
-                "file": "AbstractCallSite.java",
-                "line": 247,
-                "method": "callConstructor"
-              },
-              {
-                "class": "ServiceSubv0_3_Error_3",
-                "file": "ServiceSubv0_3_Error_3.groovy",
-                "line": 1,
-                "method": "run"
-              },
-              {
-                "class": "groovy.util.GroovyScriptEngine",
-                "file": "GroovyScriptEngine.java",
-                "line": 605,
-                "method": "run"
-              },
-              {
-                "class": "com.centurylink.mdw.script.GroovyExecutor",
-                "file": "GroovyExecutor.java",
-                "line": ${~\\d+},
-                "method": "runScript"
-              },
-              {
-                "class": "com.centurylink.mdw.script.GroovyExecutor",
-                "file": "GroovyExecutor.java",
-                "line": ${~\\d+},
-                "method": "execute"
-              },
-              {
-                "class": "com.centurylink.mdw.services.process.BaseActivity",
-                "file": "BaseActivity.java",
-                "line": ${~\\d+},
-                "method": "executeScript"
-              },
-              {
-                "class": "com.centurylink.mdw.services.process.BaseActivity",
-                "file": "BaseActivity.java",
-                "line": ${~\\d+},
-                "method": "executeScript"
-              },
-              {
-                "class": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-                "file": "ScriptExecutorActivity.java",
-                "line": ${~\\d+},
-                "method": "execute"
-              },
-              {
-                "class": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
-                "file": "DefaultActivityImpl.java",
-                "line": ${~\\d+},
-                "method": "execute"
-              },
-              {
-                "class": "com.centurylink.mdw.services.process.BaseActivity",
-                "file": "BaseActivity.java",
-                "line": ${~\\d+},
-                "method": "execute"
-              },
-              {
-                "class": "com.centurylink.mdw.services.process.BaseActivity",
-                "file": "BaseActivity.java",
-                "line": ${~\\d+},
-                "method": "executeTimed"
-              },
-              {
-                "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
-                "file": "ProcessEngineDriver.java",
-                "line": ${~\\d+},
-                "method": "executeActivity"
-              },
-              {
-                "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
-                "file": "ProcessEngineDriver.java",
-                "line": ${~\\d+},
-                "method": "processEvent"
-              },
-              {
-                "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
-                "file": "ProcessEngineDriver.java",
-                "line": ${~\\d+},
-                "method": "processEvents"
-              },
-              {
-                "class": "com.centurylink.mdw.services.process.InternalEventDriver",
-                "file": "InternalEventDriver.java",
-                "line": ${~\\d+},
-                "method": "run"
-              },
-              {
-                "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$Work",
-                "file": "CommonThreadPool.java",
-                "line": ${~\\d+},
-                "method": "run"
-              },
-              {
-                "class": "java.util.concurrent.ThreadPoolExecutor",
-                "file": "ThreadPoolExecutor.java",
-                "line": 1142,
-                "method": "runWorker"
-              },
-              {
-                "class": "java.util.concurrent.ThreadPoolExecutor$Worker",
-                "file": "ThreadPoolExecutor.java",
-                "line": 617,
-                "method": "run"
-              },
-              {
-                "class": "java.lang.Thread",
-                "file": "Thread.java",
-                "line": 745,
-                "method": "run"
-              },
-              {
-                "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread",
-                "file": "CommonThreadPool.java",
-                "line": ${~\\d+},
-                "method": "run"
-              }
-            ],
-            "throwable": "java.lang.Exception"
-          },
-          "message": "Error executing Groovy script: 'ServiceSubv0_3_Error_3'\njava.lang.Exception: I've fallen and I can't get up",
+          "message": "I've fallen and I can't get up",
           "stackElements": [
             {
-              "class": "com.centurylink.mdw.script.GroovyExecutor",
-              "file": "GroovyExecutor.java",
-              "line": ${~\\d+},
-              "method": "runScript"
-            },
-            {
-              "class": "com.centurylink.mdw.script.GroovyExecutor",
-              "file": "GroovyExecutor.java",
-              "line": ${~\\d+},
+              "class": "com.centurylink.mdw.tests.services.Error_A3",
+              "file": "Error_A3.java",
+              "line": 16,
               "method": "execute"
             },
             {
-              "class": "com.centurylink.mdw.services.process.BaseActivity",
-              "file": "BaseActivity.java",
-              "line": ${~\\d+},
-              "method": "executeScript"
-            },
-            {
-              "class": "com.centurylink.mdw.services.process.BaseActivity",
-              "file": "BaseActivity.java",
-              "line": ${~\\d+},
-              "method": "executeScript"
-            },
-            {
-              "class": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-              "file": "ScriptExecutorActivity.java",
-              "line": ${~\\d+},
+              "class": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+              "file": "DynamicJavaActivity.java",
+              "line": 98,
               "method": "execute"
             },
             {
@@ -282,18 +102,17 @@ process: # 10191
               "method": "run"
             }
           ],
-          "throwable": "com.centurylink.mdw.script.ExecutionException"
+          "throwable": "com.centurylink.mdw.java.JavaExecutionException"
         },
-        "message": "Error executing Groovy script: 'ServiceSubv0_3_Error_3'\njava.lang.Exception: I've fallen and I can't get up",
+        "message": "I've fallen and I can't get up",
         "runtimeContext": {
           "activity": {
             "attributes": {
-              "Rule": "throw new Exception(\"I've fallen and I can't get up\")",
-              "SCRIPT": "Groovy",
-              "WORK_DISPLAY_INFO": "x=268,y=151,w=124,h=64"
+              "Java": "package com.centurylink.mdw.tests.services;\r\n\r\nimport java.util.Map;\r\n\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\npublic class Error_A3 implements JavaExecutor {\r\n\r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\r\n        throw new JavaExecutionException(\"I've fallen and I can't get up\");\r\n    }\r\n}\r\n",
+              "WORK_DISPLAY_INFO": "x=238,y=84,w=100,h=60"
             },
             "id": "A3",
-            "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+            "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
             "name": "Error"
           },
           "activityInstance": {
@@ -325,21 +144,9 @@ process: # 10191
         },
         "stackElements": [
           {
-            "class": "com.centurylink.mdw.services.process.BaseActivity",
-            "file": "BaseActivity.java",
-            "line": ${~\\d+},
-            "method": "executeScript"
-          },
-          {
-            "class": "com.centurylink.mdw.services.process.BaseActivity",
-            "file": "BaseActivity.java",
-            "line": ${~\\d+},
-            "method": "executeScript"
-          },
-          {
-            "class": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-            "file": "ScriptExecutorActivity.java",
-            "line": ${~\\d+},
+            "class": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+            "file": "DynamicJavaActivity.java",
+            "line": 116,
             "method": "execute"
           },
           {
@@ -420,41 +227,24 @@ process: # 10191
   variable: # 10110
     name: stackTrace
     value: |
-      com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'ServiceSubv0_3_Error_3'
-java.lang.Exception: I've fallen and I can't get up
-      	at com.centurylink.mdw.services.process.BaseActivity.executeScript(BaseActivity.java:${~\\d+})
-      	at com.centurylink.mdw.services.process.BaseActivity.executeScript(BaseActivity.java:${~\\d+})
-      	at com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity.execute(ScriptExecutorActivity.java:${~\\d+})
-      	at com.centurylink.mdw.workflow.activity.DefaultActivityImpl.execute(DefaultActivityImpl.java:${~\\d+})
-      	at com.centurylink.mdw.services.process.BaseActivity.execute(BaseActivity.java:${~\\d+})
-      	at com.centurylink.mdw.services.process.BaseActivity.executeTimed(BaseActivity.java:${~\\d+})
-      	at com.centurylink.mdw.services.process.ProcessEngineDriver.executeActivity(ProcessEngineDriver.java:${~\\d+})
-      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvent(ProcessEngineDriver.java:${~\\d+})
-      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvents(ProcessEngineDriver.java:${~\\d+})
-      	at com.centurylink.mdw.services.process.InternalEventDriver.run(InternalEventDriver.java:${~\\d+})
-      	at com.centurylink.mdw.container.plugin.CommonThreadPool$Work.run(CommonThreadPool.java:${~\\d+})
+      com.centurylink.mdw.activity.ActivityException: I've fallen and I can't get up
+      	at com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:116)
+      	at com.centurylink.mdw.workflow.activity.DefaultActivityImpl.execute(DefaultActivityImpl.java:41)
+      	at com.centurylink.mdw.services.process.BaseActivity.execute(BaseActivity.java:221)
+      	at com.centurylink.mdw.services.process.BaseActivity.executeTimed(BaseActivity.java:231)
+      	at com.centurylink.mdw.services.process.ProcessEngineDriver.executeActivity(ProcessEngineDriver.java:379)
+      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvent(ProcessEngineDriver.java:612)
+      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvents(ProcessEngineDriver.java:578)
+      	at com.centurylink.mdw.services.process.InternalEventDriver.run(InternalEventDriver.java:37)
+      	at com.centurylink.mdw.container.plugin.CommonThreadPool$Work.run(CommonThreadPool.java:263)
       	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
       	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
       	at java.lang.Thread.run(Thread.java:745)
-      	at com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:${~\\d+})
-      Caused by: com.centurylink.mdw.script.ExecutionException: Error executing Groovy script: 'ServiceSubv0_3_Error_3'
-java.lang.Exception: I've fallen and I can't get up
-      	at com.centurylink.mdw.script.GroovyExecutor.runScript(GroovyExecutor.java:${~\\d+})
-      	at com.centurylink.mdw.script.GroovyExecutor.execute(GroovyExecutor.java:${~\\d+})
-      	at com.centurylink.mdw.services.process.BaseActivity.executeScript(BaseActivity.java:${~\\d+})
-      	... 14 more
-      Caused by: java.lang.Exception: I've fallen and I can't get up
-      	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-      	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
-      	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-      	at java.lang.reflect.Constructor.newInstance(Constructor.java:${~\\d+})
-      	at org.codehaus.groovy.reflection.CachedConstructor.invoke(CachedConstructor.java:83)
-      	at org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce.callConstructor(ConstructorSite.java:105)
-      	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:247)
-      	at ServiceSubv0_3_Error_3.run(ServiceSubv0_3_Error_3.groovy:1)
-      	at groovy.util.GroovyScriptEngine.run(GroovyScriptEngine.java:605)
-      	at com.centurylink.mdw.script.GroovyExecutor.runScript(GroovyExecutor.java:${~\\d+})
-      	... 16 more
+      	at com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:232)
+      Caused by: com.centurylink.mdw.java.JavaExecutionException: I've fallen and I can't get up
+      	at com.centurylink.mdw.tests.services.Error_A3.execute(Error_A3.java:16)
+      	at com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:98)
+      	... 12 more
 process: # 10189
   name: ServiceMain
   instance: 1
@@ -487,7 +277,7 @@ process: # 10190
   activity: # 3 "2017-03-06 11:20:05"
     name: Error
     status: Failed
-    result: com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'ServiceSubv0_3_Error_3'...
+    result: com.centurylink.mdw.activity.ActivityException: I've fallen and I can't get up...
   variable: # 10108
     name: testCase
     value: single

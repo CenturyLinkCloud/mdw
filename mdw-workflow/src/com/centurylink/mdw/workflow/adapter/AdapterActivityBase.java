@@ -260,7 +260,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
         int errorCode;
         if (errorCause instanceof AdapterException) {
             AdapterException adEx = (AdapterException) errorCause;
-            isErrorRetryable = adEx.isRetryableError();
+            isErrorRetryable = adEx.isRetryable();
             if (adEx.getCode() != 0) {
                 errorCode = adEx.getCode();
             }
