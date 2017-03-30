@@ -756,7 +756,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     return -1;
   };
   
-  Link.prototype.translate = function(deltaX, deltaY) {
+  Link.prototype.move = function(deltaX, deltaY) {
     var display = {
       type: this.display.type,
       lx: this.display.lx + deltaX,

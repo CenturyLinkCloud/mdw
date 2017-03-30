@@ -34,7 +34,7 @@ titleMod.factory('Title', ['$document', 'mdw', 'util', 'Node', 'DC',
     return maxDisplay;
   };
   
-  Title.prototype.translate = function(deltaX, deltaY) {
+  Title.prototype.move = function(deltaX, deltaY) {
     var x = this.display.x + deltaX;
     var y = this.display.y + deltaY;
     this.process.attributes.WORK_DISPLAY_INFO = this.getDisplayAttr(x, y, this.display.w, this.display.h); 

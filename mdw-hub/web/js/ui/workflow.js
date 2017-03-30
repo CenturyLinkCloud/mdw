@@ -656,14 +656,14 @@ workflowMod.factory('Diagram',
           return true;
         }
       }
-      else if (this.selectObj.translate) {
+      else if (this.selectObj.move) {
         var deltaX = x - this.dragX;
         var deltaY = y - this.dragY;
         if (this.selectObj.isStep) {
           var activityId = this.selectObj.activity.id;
           let step = this.getStep(activityId);
           if (step) {
-            this.selectObj.translate(deltaX, deltaY);
+            this.selectObj.move(deltaX, deltaY);
             this.getLinks(step).forEach(function(link) {
               link.recalc(step);
             });
@@ -675,7 +675,7 @@ workflowMod.factory('Diagram',
               let step = subflow.getStep(activityId);
               if (step) {
                 // only within bounds of subflow
-                if (diagram.selectObj.translate(deltaX, deltaY, subflow.display)) {
+                if (diagram.selectObj.move(deltaX, deltaY, subflow.display)) {
                   subflow.getLinks(step).forEach(function(link) {
                     link.recalc(step);
                   });
@@ -685,7 +685,7 @@ workflowMod.factory('Diagram',
           }
         }
         else {
-          this.selectObj.translate(deltaX, deltaY);
+          this.selectObj.move(deltaX, deltaY);
         }
         this.draw();
         return true;
@@ -712,7 +712,10 @@ workflowMod.factory('Diagram',
       if (this.isHover(x, y, subflow.display))
         return subflow;  // subflow but not item within
     }
-    // TODO: notes
+    for (var i = 0; i < this.notes.length; i++) {
+      if (this.isHover(x, y, this.notes[i].display))
+        return this.notes[i];
+    }
   };
 
   Diagram.prototype.isHover = function(x, y, display) {

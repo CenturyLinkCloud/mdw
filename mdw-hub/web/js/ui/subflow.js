@@ -134,16 +134,16 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Node', 'DC', 'Step',
     }
   };
   
-  Subflow.prototype.translate = function(deltaX, deltaY) {
+  Subflow.prototype.move = function(deltaX, deltaY) {
     var x = this.display.x + deltaX;
     var y = this.display.y + deltaY;
     this.subprocess.attributes.WORK_DISPLAY_INFO = this.getDisplayAttr(x, y, this.display.w, this.display.h);
     
     this.steps.forEach(function(step) {
-      step.translate(deltaX, deltaY);
+      step.move(deltaX, deltaY);
     });
     this.links.forEach(function(link) {
-      link.translate(deltaX, deltaY);
+      link.move(deltaX, deltaY);
     });
   };
   

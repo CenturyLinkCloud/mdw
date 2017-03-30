@@ -83,10 +83,9 @@ module.exports = function(grunt) {
           dest: 'dist/lib'
         }, {
           expand: true,
-          cwd: 'web/bower_components/lodash/dist',
-          src: [ 'lodash.min.js'],
-          dest: 'dist/lib/lodash'
-          
+          cwd: 'web/bower_components/ace-builds/src-min-noconflict',
+          src: [ 'ace.js'],
+          dest: 'dist/lib/ace-builds/src-min-noconflict'
         }]
       }
     },
@@ -95,8 +94,8 @@ module.exports = function(grunt) {
       options : {
           specs : 'test/**/*.js',
           vendor: [
-                   "web/bower_components/angular/angular.js",
-                   "web/bower_components/angular-resource/angular-resource.js",
+                    "web/bower_components/angular/angular.js",
+                    "web/bower_components/angular-resource/angular-resource.js",
                     "web/bower_components/angular-route/angular-route.js",
                     "web/bower_components/angular-animate/angular-animate.js",
                     "web/bower_components/angular-bootstrap/ui-bootstrap.js",

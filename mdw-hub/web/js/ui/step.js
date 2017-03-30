@@ -118,9 +118,19 @@ stepMod.factory('Step', ['mdw', 'util', 'Node', 'DC', 'WORKFLOW_STATUSES',
     this.instances = activityInstances;
   };
 
-  Step.prototype.translate = function(deltaX, deltaY, limDisplay) {
+  Step.prototype.move = function(deltaX, deltaY, limDisplay) {
     var x = this.display.x + deltaX;
     var y = this.display.y + deltaY;
+    if (limDisplay) {
+      if (x < limDisplay.x)
+        x = limDisplay.x;
+      else if (x > limDisplay.x + limDisplay.w - this.display.w)
+        x = limDisplay.x + limDisplay.w - this.display.w;
+      if (y < limDisplay.y)
+        y = limDisplay.y;
+      else if (y > limDisplay.y + limDisplay.h - this.display.h)
+        y = limDisplay.y + limDisplay.h - this.display.h;
+    }
     this.activity.attributes.WORK_DISPLAY_INFO = this.getDisplayAttr(x, y, this.display.w, this.display.h);
     return true;
   };
