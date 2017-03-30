@@ -584,6 +584,7 @@ public abstract class TestCaseScript extends Script {
         before = before.replaceAll("\\$\\{~", "\\\\\\$\\{~");
         // escape all escaped newlines
         before = before.replaceAll("\\\\n", "\\\\\\\\\\n");
+        before = before.replaceAll("\\\\r", "\\\\\\\\\\r");
         // escape all escaped quotes
         before = before.replaceAll("\\\"", "\\\\\"");
 
