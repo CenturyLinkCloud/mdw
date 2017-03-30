@@ -15,56 +15,54 @@
  */
 package com.centurylink.mdw.connector.adapter;
 
-
 import com.centurylink.mdw.common.MdwException;
 
 public class AdapterException extends MdwException {
-    private static final long serialVersionUID = 1L;
 
     public static final int EXCEED_MAXTRIES = 41282;
     public static final int CONFIGURATION_WRONG = ConnectionException.CONFIGURATION_WRONG;
 
-    private boolean isRetryableError;
-    public AdapterException(String pMessage){
-        super(pMessage);
+    private boolean retryable;
+
+    public AdapterException(String message) {
+        super(message);
     }
 
-     public AdapterException(String pMessage, boolean pIsRetryableError){
-        super(pMessage);
-        this.isRetryableError = pIsRetryableError;
+    public AdapterException(String message, boolean retryable) {
+        super(message);
+        this.retryable = retryable;
     }
 
-    public AdapterException(int pCode, String pMessage){
-        super(pCode, pMessage);
-
-    }
-
-     public AdapterException(int pCode, String pMessage, boolean pIsRetryableError){
-        super(pCode, pMessage);
-        this.isRetryableError = pIsRetryableError;
-    }
-
-
-     public AdapterException(String pMessage, Throwable pTh) {
-         super(pMessage, pTh);
-
-     }
-
-    public AdapterException(int pCode, String pMessage, Throwable pTh){
-        super(pCode, pMessage, pTh);
+    public AdapterException(int code, String message) {
+        super(code, message);
 
     }
 
-    public AdapterException(int pCode, String pMessage, Throwable pTh, boolean pIsRetryableError){
-        super(pCode, pMessage, pTh);
-        this.isRetryableError = pIsRetryableError;
+    public AdapterException(int code, String message, boolean retryable) {
+        super(code, message);
+        this.retryable = retryable;
     }
 
-    public boolean isRetryableError(){
-        return isRetryableError;
+    public AdapterException(String message, Throwable cause) {
+        super(message, cause);
+
     }
 
-    public void setIsRetryableError(boolean pIsRetryableError){
-        this.isRetryableError = pIsRetryableError;
+    public AdapterException(int code, String message, Throwable cause) {
+        super(code, message, cause);
+
+    }
+
+    public AdapterException(int code, String message, Throwable cause, boolean retryable) {
+        super(code, message, cause);
+        this.retryable = retryable;
+    }
+
+    public boolean isRetryable() {
+        return retryable;
+    }
+
+    public void setRetryable(boolean retryable) {
+        this.retryable = retryable;
     }
 }

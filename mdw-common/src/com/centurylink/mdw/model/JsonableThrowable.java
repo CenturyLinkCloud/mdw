@@ -168,6 +168,15 @@ public class JsonableThrowable implements Jsonable {
             }
         }
         catch (NoSuchMethodException ex) {
+            if (message != null) {
+                try {
+                    ctor = clazz.getConstructor(String.class);
+                    th = ctor.newInstance(message);
+                }
+                catch (NoSuchMethodException ex2) {
+                    th = clazz.newInstance();
+                }
+            }
             // no appropriate constructor
             th = clazz.newInstance();
         }
