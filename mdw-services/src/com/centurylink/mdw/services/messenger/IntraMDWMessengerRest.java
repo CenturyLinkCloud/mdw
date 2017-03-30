@@ -63,7 +63,9 @@ public class IntraMDWMessengerRest extends IntraMDWMessenger {
     throws ProcessException {
         try {
             HttpHelper httpHelper = new HttpHelper(getURL(destination));
-            String res = httpHelper.post(message, timeoutSeconds, timeoutSeconds);
+            httpHelper.getConnection().setReadTimeout(timeoutSeconds * 1000);
+            httpHelper.getConnection().setConnectTimeout(timeoutSeconds * 1000);
+            String res = httpHelper.post(message);
             return res==null?null:res.trim();
         } catch (Exception e) {
             throw new ProcessException(-1, e.getMessage(), e);
@@ -78,7 +80,9 @@ public class IntraMDWMessengerRest extends IntraMDWMessenger {
             HashMap<String,String> headers = new HashMap<String,String>();
             headers.put("MDWCertifiedMessageId", msgid);
             httpHelper.setHeaders(headers);
-            acknowledgment = httpHelper.post(message, ackTimeoutSeconds, ackTimeoutSeconds);
+            httpHelper.getConnection().setReadTimeout(ackTimeoutSeconds * 1000);
+            httpHelper.getConnection().setConnectTimeout(ackTimeoutSeconds * 1000);
+            acknowledgment = httpHelper.post(message);
         } catch (Exception e) {
             throw new ProcessException(0, "Faile to send certified message", e);
         }

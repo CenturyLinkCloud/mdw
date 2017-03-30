@@ -25,6 +25,7 @@ import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
 
@@ -53,7 +54,12 @@ public class HttpServiceAdapter extends PoolableAdapterBase {
     public HttpHelper getHttpHelper(Object connection) throws PropertyException {
         String user = getAttributeValueSmart(PROP_USER);
         String pass = getAttributeValueSmart(PROP_PASS);
-        return new HttpHelper((HttpURLConnection)connection, user, pass);
+        HttpHelper helper = new HttpHelper((HttpConnection)connection);
+        if (user != null) {
+            helper.getConnection().setUser(user);
+            helper.getConnection().setPassword(pass);
+        }
+        return helper;
     }
 
     @Override

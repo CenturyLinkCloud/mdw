@@ -1,0 +1,9 @@
+package com.centurylink.mdw.tests.services
+
+// patch-non200 (invokes PatchHandler service)
+
+def response = patch http("services/com/centurylink/mdw/tests/services/PatchHandler") {
+    headers = [ "Content-Type": "application/json", "request-id": masterRequestId, "send-response-code": "404" ]
+    payload = "{}"
+}
+assert response.code == 404

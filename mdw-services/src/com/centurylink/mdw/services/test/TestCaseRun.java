@@ -547,7 +547,7 @@ public class TestCaseRun implements Runnable {
             String endpoint = "services";
             if (Listener.METAINFO_PROTOCOL_SOAP.equals(message.getProtocol()))
                 endpoint += "/SOAP";
-            HttpHelper httpHelper = getHttpHelper(endpoint);
+            HttpHelper httpHelper = getHttpHelper("POST", endpoint);
             httpHelper.setHeaders(getDefaultMessageHeaders(message.getPayload()));
             String actual = httpHelper.post(message.getPayload());
             if (isVerbose()) {
@@ -570,10 +570,12 @@ public class TestCaseRun implements Runnable {
 
         try {
             HttpHelper helper;
-            if (http.getMessage() != null && http.getMessage().getUser() != null)
-                helper = getHttpHelper(http.getUri(), http.getMessage().getUser(), http.getMessage().getPassword());
-            else
-                helper = getHttpHelper(http.getUri());
+            if (http.getMessage() != null && http.getMessage().getUser() != null) {
+                helper = getHttpHelper(http.getMethod(), http.getUri(), http.getMessage().getUser(), http.getMessage().getPassword());
+            }
+            else {
+                helper = getHttpHelper(http.getMethod(), http.getUri());
+            }
 
             Map<String,String> headers = new HashMap<String,String>();
             if (http.getMessage() != null) {
@@ -618,6 +620,8 @@ public class TestCaseRun implements Runnable {
                 }
                 catch (IOException ex) {
                     actual = helper.getResponse();
+                    if (helper.getResponseCode() <= 0)
+                        ex.printStackTrace(log);
                 }
             }
 
@@ -957,11 +961,21 @@ public class TestCaseRun implements Runnable {
         }
     }
 
-    protected HttpHelper getHttpHelper(String endpoint) throws MalformedURLException {
-        return getHttpHelper(endpoint, null, null);
+    protected HttpHelper getHttpHelper(String method, String endpoint) throws MalformedURLException {
+        return getHttpHelper(method, endpoint, null, null);
     }
 
-    protected HttpHelper getHttpHelper(String endpoint, String user, String password) throws MalformedURLException {
+    protected HttpHelper getHttpHelper(String method, String endpoint, String user, String password) throws MalformedURLException {
+        HttpHelper helper = HttpHelper.getHttpHelper(method, getUrl(endpoint));
+        if (user != null) {
+            helper.getConnection().setUser(user);
+            helper.getConnection().setPassword(password);
+        }
+        helper.getConnection().setHeader("Content-Type", "application/json");
+        return helper;
+    }
+
+    protected URL getUrl(String endpoint) throws MalformedURLException {
         String url = endpoint;
         if (!endpoint.startsWith("http://") && !endpoint.startsWith("https://")) {
             url = PropertyManager.getProperty("mdw.test.base.url");
@@ -971,9 +985,7 @@ public class TestCaseRun implements Runnable {
                 endpoint = "/" + endpoint;
             url += endpoint;
         }
-        HttpHelper helper = new HttpHelper(new URL(url), user, password);
-        helper.setHeader("Content-Type", "application/json");
-        return helper;
+        return new URL(url);
     }
 
     /**

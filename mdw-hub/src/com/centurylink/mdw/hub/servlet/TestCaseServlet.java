@@ -70,7 +70,7 @@ public class TestCaseServlet extends AssetContentServlet {
                 String url = "http://" + ApplicationContext.getMasterServer() + "/"
                         + ApplicationContext.getServicesContextRoot() + "/testResult" + request.getPathInfo();
                 HttpHelper httpHelper = new HttpHelper(new URL(url));
-                httpHelper.setHeader(Listener.METAINFO_MASTER_OP, "true");
+                httpHelper.getConnection().setHeader(Listener.METAINFO_MASTER_OP, "true");
                 response.setContentType("text/plain");
                 response.getWriter().println(httpHelper.get());
             }

@@ -42,6 +42,7 @@ import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
+import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter;
 import com.centurylink.mdw.xml.DomHelper;
@@ -65,7 +66,9 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
                 throw new ConnectionException("Missing attribute: WSDL");
 
             URL wsdlUrl = new URL(wsdl);
-            return wsdlUrl.openConnection();
+            HttpConnection httpConnection = new HttpConnection(wsdlUrl);
+            httpConnection.open();
+            return httpConnection;
         }
         catch (Exception ex) {
             throw new ConnectionException(-1, ex.getMessage(), ex);

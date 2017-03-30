@@ -17,6 +17,9 @@ process: # 10293
     name: Stop
     status: Completed
   variable: # 10714
+    name: headersMap
+    value: {"my-header": "my-header-value"}
+  variable: # 11954
     name: httpMethod
     value: POST
   variable: # 10717

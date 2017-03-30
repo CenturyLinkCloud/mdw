@@ -166,7 +166,7 @@ public abstract class JsonRestService extends RestService implements JsonService
     protected HttpHelper masterOpHelper(String path) throws MalformedURLException {
         String url = "http://" + ApplicationContext.getMasterServer() + "/" + ApplicationContext.getServicesContextRoot() + "/services/" + path;
         HttpHelper httpHelper = new HttpHelper(new URL(url));
-        httpHelper.setHeader(Listener.METAINFO_MASTER_OP, "true");
+        httpHelper.getConnection().setHeader(Listener.METAINFO_MASTER_OP, "true");
         return httpHelper;
     }
 

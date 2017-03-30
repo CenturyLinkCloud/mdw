@@ -108,7 +108,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         try {
             Process proc = process.getProcess();
             Map<String,String> params = process.getParams();
-            HttpHelper httpHelper = getHttpHelper("services/Processes/run/" + proc.getId() + "?app=autotest");
+            HttpHelper httpHelper = getHttpHelper("POST", "services/Processes/run/" + proc.getId() + "?app=autotest");
             ProcessRun run = new ProcessRun();
             run.setDefinitionId(proc.getId());
             run.setMasterRequestId(getMasterRequestId());
@@ -144,7 +144,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             query.setFilter("processId", proc.getId().toString());
             query.setDescending(true);
             query.setFilter("app", "autotest");
-            HttpHelper httpHelper = getHttpHelper("services/Processes?" + query);
+            HttpHelper httpHelper = getHttpHelper("GET", "services/Processes?" + query);
             String response = httpHelper.get();
             ProcessList processList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JSONObject(response));
             List<ProcessInstance> processInstances = processList.getProcesses();
@@ -162,7 +162,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                 }
             }
             for (ProcessInstance procInst : processInstances) {
-                httpHelper = getHttpHelper("services/Processes/" + procInst.getId() + "?app=autotest");
+                httpHelper = getHttpHelper("GET", "services/Processes/" + procInst.getId() + "?app=autotest");
                 procInst = new ProcessInstance(new JSONObject(httpHelper.get()));
                 mainProcessInsts.add(procInst);
                 List<ProcessInstance> procInsts = fullProcessInsts.get(proc.getName());
@@ -177,11 +177,11 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                     q.setFilter("processId", proc.getProcessId().toString());
                     List<ProcessInstance> embeddedProcInstList;
                     q.setFilter("app", "autotest");
-                    httpHelper = getHttpHelper("services/Processes?" + q);
+                    httpHelper = getHttpHelper("GET", "services/Processes?" + q);
                     response = httpHelper.get();
                     embeddedProcInstList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JSONObject(response)).getProcesses();
                     for (ProcessInstance embeddedProcInst : embeddedProcInstList) {
-                        httpHelper = getHttpHelper("services/Processes/" + embeddedProcInst.getId() + "?app=autotest");
+                        httpHelper = getHttpHelper("GET", "services/Processes/" + embeddedProcInst.getId() + "?app=autotest");
                         ProcessInstance fullChildInfo = new ProcessInstance(new JSONObject(httpHelper.get()));
                         String childProcName = "unknown_subproc_name";
                         for (Process subproc : proc.getSubProcesses()) {
@@ -235,7 +235,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         String val = var.getStringValue();
         if (val != null && val.startsWith("DOCUMENT:")) {
             try {
-                HttpHelper httpHelper = getHttpHelper("services/Processes/" + var.getProcessInstanceId() + "/values/" + var.getName());
+                HttpHelper httpHelper = getHttpHelper("GET", "services/Processes/" + var.getProcessInstanceId() + "/values/" + var.getName());
                 Value value = new Value(var.getName(), new JSONObject(httpHelper.get()));
                 return value.getValue();
             }
@@ -253,7 +253,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         if (process == null) {
             try {
                 Query query = getProcessQuery(target);
-                HttpHelper httpHelper = getHttpHelper("services/Workflow/" + query);
+                HttpHelper httpHelper = getHttpHelper("GET", "services/Workflow/" + query);
                 String response = httpHelper.get();
                 JSONObject json = new JSONObject(response);
                 process = new Process(json);
@@ -282,7 +282,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
 
         try {
             Query query = getTaskQuery(task.getName());
-            HttpHelper httpHelper = getHttpHelper("services/Tasks/" + query);
+            HttpHelper httpHelper = getHttpHelper("GET", "services/Tasks/" + query);
             String response = httpHelper.get();
             TaskList taskList = new TaskList(TaskList.TASKS, new JSONObject(response));
             List<TaskInstance> taskInstances = taskList.getTasks();
@@ -300,13 +300,13 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                 JSONObject valuesJson = new JSONObject();
                 for (String name : task.getVariables().keySet())
                     valuesJson.put(name, task.getVariables().get(name).toString());
-                httpHelper = getHttpHelper("services/Processes/" + taskInstance.getOwnerId() + "/values?app=autotest");
+                httpHelper = getHttpHelper("PUT", "services/Processes/" + taskInstance.getOwnerId() + "/values?app=autotest");
                 response = httpHelper.put(valuesJson.toString(2));
                 StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
                 if (!statusMsg.isSuccess())
                     throw new TestException("Error updating task values: " + statusMsg.getMessage());
             }
-            httpHelper = getHttpHelper("services/Tasks/" + task.getOutcome() + "?app=autotest");
+            httpHelper = getHttpHelper("POST", "services/Tasks/" + task.getOutcome() + "?app=autotest");
             response = httpHelper.post(taskAction.getJson().toString(2));
             StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
             if (!statusMsg.isSuccess())
@@ -329,7 +329,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             Event evt = new Event();
             evt.setId(event.getId());
             evt.setMessage(event.getMessage());
-            HttpHelper httpHelper = getHttpHelper("services/Events/" + event.getId() + "?app=autotest");
+            HttpHelper httpHelper = getHttpHelper("POST", "services/Events/" + event.getId() + "?app=autotest");
             String response = httpHelper.post(evt.getJson().toString(2));
             StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
             if (!statusMsg.isSuccess())
@@ -349,7 +349,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             url += endpoint;
         }
         HttpHelper helper = new HttpHelper(new URL(url), user, password);
-        helper.setHeader("Content-Type", "application/json");
+        helper.getConnection().setHeader("Content-Type", "application/json");
         return helper;
     }
 

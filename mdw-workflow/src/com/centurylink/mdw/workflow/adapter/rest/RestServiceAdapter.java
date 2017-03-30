@@ -16,7 +16,6 @@
 package com.centurylink.mdw.workflow.adapter.rest;
 
 import java.io.IOException;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -30,6 +29,8 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.HttpAltConnection;
+import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -45,14 +46,14 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
 
     @Override
     public Object openConnection() throws ConnectionException {
-        return openConnection(null);
+        return openConnection(null, 0);
     }
 
     /**
      * Returns an HttpURLConnection based on the configured endpoint, which
      * includes the resource path. Override for HTTPS or other connection type.
      */
-    public Object openConnection(Proxy proxy) throws ConnectionException {
+    public Object openConnection(String proxyHost, int proxyPort) throws ConnectionException {
         try {
             String endpointUri = getEndpointUri();
             Map<String,String> params = getRequestParameters();
@@ -72,10 +73,19 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
             }
             logdebug("REST adapter endpoint: " + endpointUri);
             URL url = new URL(endpointUri);
-            if (proxy == null)
-                return url.openConnection();
+            HttpConnection httpConnection;
+            if ("PATCH".equals(getHttpMethod()))
+                httpConnection = new HttpAltConnection(url);
             else
-                return url.openConnection(proxy);
+                httpConnection = new HttpConnection(url);
+
+            if (proxyHost != null)
+                httpConnection.setProxyHost(proxyHost);
+            if (proxyPort > 0)
+                httpConnection.setProxyPort(proxyPort);
+
+            httpConnection.open();
+            return httpConnection;
         }
         catch (Exception ex) {
             throw new ConnectionException(ConnectionException.CONNECTION_DOWN, ex.getMessage(), ex);
@@ -132,6 +142,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 return httpHelper.put(request);
             else if (httpMethod.equals("DELETE"))
                 return httpHelper.delete();
+            else if (httpMethod.equals("PATCH"))
+                return httpHelper.patch(request);
             else
                 throw new AdapterException("Unsupported HTTP Method: " + httpMethod);
         }

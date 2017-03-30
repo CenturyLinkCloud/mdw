@@ -1,0 +1,37 @@
+process: # 10293
+  name: RestfulServiceAdapter
+  instance: 1
+  activity: # 1 "2017-01-12 12:54:29"
+    name: Start
+    status: Completed
+  activity: # 7 "2017-01-12 12:54:29"
+    name: Set Request
+    status: Completed
+    result: PATCH
+  activity: # 9 "2017-01-12 12:54:29"
+    name: |
+      PATCH
+      Request
+    status: Completed
+  activity: # 5 "2017-01-12 12:54:32"
+    name: Stop
+    status: Completed
+  variable: # 10714
+    name: httpMethod
+    value: PATCH
+  variable: # 10717
+    name: patchRequest
+    value: |
+      {
+        "description": "Dev Group for PATCH",
+        "name": "Patchy Developers",
+        "users": [{"cuid": "dxoakes"}]
+      }
+  variable: # 10726
+    name: patchResponse
+    value: |
+      {
+        "description": "Dev Group for PATCH",
+        "name": "Patchy Developers",
+        "users": [{"cuid": "{\"cuid\":\"dxoakes\"}"}]
+      }

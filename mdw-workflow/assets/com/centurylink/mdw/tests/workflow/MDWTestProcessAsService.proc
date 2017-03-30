@@ -118,7 +118,7 @@
     {
       "attributes": {
         "Output Documents": "req",
-        "Rule": "req = '''<GetEmployee\">\r\n  <workstationId>dxoakes<\/workstationId>\r\n<\/GetEmployee>'''",
+        "Rule": "req = '''<GetEmployee>\r\n  <workstationId>dxoakes<\/workstationId>\r\n<\/GetEmployee>'''",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=435,y=272,w=100,h=60"
       },

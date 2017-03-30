@@ -74,7 +74,9 @@ public class HttpMessages extends JsonRestService {
             else {
                 httpClient = new HttpHelper(new URL(requestMessage.getUrl()));
                 httpClient.setHeaders(headers);
-                response = httpClient.post(requestMessage.getRequestMessage(), requestMessage.getTimeout(), requestMessage.getTimeout());
+                httpClient.getConnection().setReadTimeout(requestMessage.getTimeout() * 1000);
+                httpClient.getConnection().setConnectTimeout(requestMessage.getTimeout() * 1000);
+                response = httpClient.post(requestMessage.getRequestMessage());
                 code = httpClient.getResponseCode();
             }
         }
