@@ -41,7 +41,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Node', 'DC', 'Step',
   
   Subflow.prototype.prepareDisplay = function(diagram) {
     var maxDisplay = { w: 0, h: 0 };
-    this.display = diagram.getDisplay(this.subprocess.attributes.WORK_DISPLAY_INFO);
+    this.display = this.getDisplay(this.subprocess.attributes.WORK_DISPLAY_INFO);
     
     // title
     var title = { text: this.subprocess.name, x: this.display.x + 10, y: this.display.y + 4 - DC.DEFAULT_FONT_SIZE };
@@ -102,7 +102,16 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Node', 'DC', 'Step',
         return this.steps[i];
     }
   };
-
+  
+  Subflow.prototype.getLinks = function(step) {
+    var links = [];
+    for (var i = 0; i < this.links.length; i++) {
+      if (step == this.links[i].to || step == this.links[i].from)
+        links.push(this.links[i]);
+    }
+    return links;
+  };
+  
   Subflow.prototype.getActivityInstances = function(id) {
     if (this.instances) {
       var actInsts = [];
@@ -123,6 +132,24 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Node', 'DC', 'Step',
       });
       return actInsts;
     }
+  };
+  
+  Subflow.prototype.translate = function(deltaX, deltaY) {
+    var x = this.display.x + deltaX;
+    var y = this.display.y + deltaY;
+    this.subprocess.attributes.WORK_DISPLAY_INFO = this.getDisplayAttr(x, y, this.display.w, this.display.h);
+    
+    this.steps.forEach(function(step) {
+      step.translate(deltaX, deltaY);
+    });
+    this.links.forEach(function(link) {
+      link.translate(deltaX, deltaY);
+    });
+  };
+  
+  Subflow.prototype.resize = function(x, y, deltaX, deltaY) {
+    var display = this.resizeDisplay(x, y, deltaX, deltaY, Step.MIN_SIZE);
+    this.subprocess.attributes.WORK_DISPLAY_INFO = this.getAttr(display);
   };
   
   return Subflow;

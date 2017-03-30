@@ -140,8 +140,8 @@ workflowMod.controller('MdwWorkflowController',
 }]);
 
 workflowMod.factory('Diagram', 
-    ['$document', 'mdw', 'util', 'DC', 'Step', 'Link', 'Subflow', 'Note',
-     function($document, mdw, util, DC, Step, Link, Subflow, Note) {
+    ['$document', 'mdw', 'util', 'DC', 'Title', 'Step', 'Link', 'Subflow', 'Note',
+     function($document, mdw, util, DC, Title, Step, Link, Subflow, Note) {
   var Diagram = function(canvas, process, implementors, instance, editable) {
     this.canvas = canvas;
     this.process = process;
@@ -157,25 +157,26 @@ workflowMod.factory('Diagram',
   Diagram.prototype.draw = function() {
 
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    // TODO: grid when diagram is editable
-    // TODO: status info when instance
     var canvasDisplay = this.prepareDisplay();
 
     this.canvas.width = canvasDisplay.w;
     this.canvas.height = canvasDisplay.h;
 
-    var diagram = this;
-    diagram.drawTitle();
-    diagram.steps.forEach(function(step) {
+    this.drawBoxes = this.process.attributes.NodeStyle == 'BoxIcon'; // TODO: we should make this the default
+    
+    var diagram = this; // forEach access
+    
+    this.title.draw(this);
+    this.steps.forEach(function(step) {
       step.draw(diagram);
     });
-    diagram.links.forEach(function(link) {
+    this.links.forEach(function(link) {
       link.draw(diagram);
     });
-    diagram.subflows.forEach(function(subflow) {
+    this.subflows.forEach(function(subflow) {
       subflow.draw(diagram);
     });
-    diagram.notes.forEach(function(note) {
+    this.notes.forEach(function(note) {
       note.draw(diagram);
     });
   };
@@ -185,23 +186,13 @@ workflowMod.factory('Diagram',
   Diagram.prototype.prepareDisplay = function() {
     var canvasDisplay = { w: 460, h: 460 };
     
-    // process title
-    this.display = this.getDisplay(this.process.attributes.WORK_DISPLAY_INFO);
-    var title = { text: this.process.name, x: this.display.x, y: this.display.y };
-    this.context.font = DC.TITLE_FONT;
-    var textMetrics = this.context.measureText(title.text);
-    title.w = textMetrics.width;
-    title.h = DC.TITLE_FONT_SIZE;
-    if (title.x + title.w > canvasDisplay.w)
-      canvasDisplay.w = title.x + title.w;
-    if (title.y + title.h > canvasDisplay.h)
-      canvasDisplay.h = title.y + title.h;    
-    this.title = title;
-    this.context.font = DC.DEFAULT_FONT;
-
-    this.drawBoxes = this.process.attributes.NodeStyle == 'BoxIcon'; // TODO: we should make this the default
+    var diagram = this; // convenient/inner access
     
-    var diagram = this;
+    // title
+    diagram.title = new Title(this.process);
+    diagram.makeRoom(canvasDisplay, diagram.title.prepareDisplay(diagram));
+    
+    // activities
     diagram.steps = [];
     if (this.process.activities) {
       this.process.activities.forEach(function(activity) {
@@ -213,6 +204,8 @@ workflowMod.factory('Diagram',
         diagram.steps.push(step);
       });
     }
+    
+    // transitions
     diagram.links = [];
     diagram.steps.forEach(function(step) {
       if (step.activity.transitions) {
@@ -225,6 +218,8 @@ workflowMod.factory('Diagram',
         });
       }
     });
+    
+    // embedded subprocesses
     diagram.subflows = [];
     if (this.process.subprocesses) {
       this.process.subprocesses.forEach(function(subproc) {
@@ -238,6 +233,7 @@ workflowMod.factory('Diagram',
       });
     }
 
+    // notes
     diagram.notes = [];
     if (this.process.textNotes) {
       this.process.textNotes.forEach(function(textNote) {
@@ -296,40 +292,6 @@ workflowMod.factory('Diagram',
     this.links.push();
   };
 
-  Diagram.prototype.getDisplay = function(displayAttr) {
-    var display = {};
-    if (displayAttr) {
-      var vals = displayAttr.split(',');
-      vals.forEach(function(val) {
-        if (val.startsWith('x='))
-          display.x = parseInt(val.substring(2));
-        else if (val.startsWith('y='))
-          display.y = parseInt(val.substring(2));
-        else if (val.startsWith('w='))
-          display.w = parseInt(val.substring(2));
-        else if (val.startsWith('h='))
-          display.h = parseInt(val.substring(2));
-      });
-    }
-    return display;
-  };
-  
-  Diagram.prototype.getDisplayAttr = function(display) {
-    var attr = 'x=' + display.x + ',y=' + display.y;
-    if (display.w)
-      attr += ',w=' + display.w + ',h=' + display.h;
-    return attr;
-  };
-
-  Diagram.prototype.drawTitle = function() {
-    this.context.font = DC.TITLE_FONT;
-    this.context.fillStyle = this.titleLinkHover ? DC.HYPERLINK_COLOR : DC.DEFAULT_COLOR;
-    this.context.clearRect(this.title.x, this.title.y, this.title.w, this.title.h);
-    this.context.fillText(this.title.text, this.title.x, this.title.y + this.title.h);
-    this.context.font = DC.DEFAULT_FONT;
-    this.context.fillStyle = DC.DEFAULT_COLOR;
-  };
-  
   Diagram.prototype.getImplementor = function(className) {
     if (this.implementors) {
       for (var i = 0; i < this.implementors.length; i++) {
@@ -590,26 +552,18 @@ workflowMod.factory('Diagram',
     this.dragY = y;
     
     var prevSelect = this.selectObj;
-    if (this.isHover(x, y, this.title)) {
-      this.selectObj = this;
+    this.selectObj = this.getHoverObj(x, y);
+    if (this.selectObj) {
       if (prevSelect && prevSelect !== this.selectObj)
         this.unselect(prevSelect);
       this.select(this.selectObj);
+      if (e.shiftKey && this.selectObj.isStep)
+        this.shiftDrag = true;
     }
     else {
-      this.selectObj = this.getHoverObj(x, y);
-      if (this.selectObj) {
-        if (prevSelect && prevSelect !== this.selectObj)
-          this.unselect(prevSelect);
-        this.select(this.selectObj);
-        if (e.shiftKey && this.selectObj.isStep)
-          this.shiftDrag = true;
-      }
-      else {
-        if (prevSelect)
-          this.unselect(prevSelect);
-        this.selectObj = null;
-      }
+      if (prevSelect)
+        this.unselect(prevSelect);
+      this.selectObj = null;
     }
   };
   
@@ -657,37 +611,25 @@ workflowMod.factory('Diagram',
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;
     this.anchor = -1;
-    var wasTitleLinkHover = this.titleLinkHover ? this.titleLinkHover : false;
-    if (this.isHover(x, y, this.title)) {
-      this.hoverObj = this;
-      $document[0].body.style.cursor = 'pointer';
-      this.titleLinkHover = true;
-    }
-    else {
-      this.hoverObj = this.getHoverObj(x, y);
-      if (this.hoverObj) {
-        if (this.editable && this.hoverObj == this.selectObj) {
-          this.anchor = this.selectObj.getAnchor(x, y);
-          if (this.anchor === 0 || this.anchor == 2)
-            $document[0].body.style.cursor = 'nw-resize';
-          else if (this.anchor == 1 || this.anchor == 3)
-            $document[0].body.style.cursor = 'ne-resize';
-          else
-            $document[0].body.style.cursor = 'pointer';
-        }
-        else {
+    this.hoverObj = this.getHoverObj(x, y);
+    if (this.hoverObj) {
+      if (this.editable && (this.hoverObj == this.selectObj)) {
+        this.anchor = this.hoverObj.getAnchor(x, y);
+        if (this.anchor === 0 || this.anchor == 2)
+          $document[0].body.style.cursor = 'nw-resize';
+        else if (this.anchor == 1 || this.anchor == 3)
+          $document[0].body.style.cursor = 'ne-resize';
+        else
           $document[0].body.style.cursor = 'pointer';
-        }
       }
       else {
-        $document[0].body.style.cursor = '';
-        this.titleLinkHover = false;
+        $document[0].body.style.cursor = 'pointer';
       }
     }
-    
-    if (this.titleLinkHover != wasTitleLinkHover) {
-      this.drawTitle();
+    else {
+      $document[0].body.style.cursor = '';
     }
+    
   };
   
   Diagram.prototype.onMouseDrag = function(e) {
@@ -700,19 +642,6 @@ workflowMod.factory('Diagram',
           this.draw();
           this.drawLine(this.dragX, this.dragY, x, y, 'green');
         }
-      }
-      else if (this.titleLinkHover) {
-        var display = {
-            x: this.display.x += (x - this.dragX),
-            y: this.display.y += (y - this.dragY),
-            w: this.display.w,
-            h: this.display.h
-        };
-        this.dragX = x;
-        this.dragY = y;
-        this.process.attributes.WORK_DISPLAY_INFO = this.getDisplayAttr(display);
-        this.draw();
-        return true;
       }
       else if (this.anchor >= 0) {
         if (this.selectObj.resize) {
@@ -730,12 +659,33 @@ workflowMod.factory('Diagram',
       else if (this.selectObj.translate) {
         var deltaX = x - this.dragX;
         var deltaY = y - this.dragY;
-        this.selectObj.translate(deltaX, deltaY);
         if (this.selectObj.isStep) {
-          let step = this.getStep(this.selectObj.activity.id);
-          this.getLinks(step).forEach(function(link) {
-            link.recalc(step);
-          });
+          var activityId = this.selectObj.activity.id;
+          let step = this.getStep(activityId);
+          if (step) {
+            this.selectObj.translate(deltaX, deltaY);
+            this.getLinks(step).forEach(function(link) {
+              link.recalc(step);
+            });
+          }
+          else {
+            // try subflows
+            var diagram = this;
+            this.subflows.forEach(function(subflow) {
+              let step = subflow.getStep(activityId);
+              if (step) {
+                // only within bounds of subflow
+                if (diagram.selectObj.translate(deltaX, deltaY, subflow.display)) {
+                  subflow.getLinks(step).forEach(function(link) {
+                    link.recalc(step);
+                  });
+                }
+              }
+            });
+          }
+        }
+        else {
+          this.selectObj.translate(deltaX, deltaY);
         }
         this.draw();
         return true;
@@ -744,6 +694,8 @@ workflowMod.factory('Diagram',
   };
   
   Diagram.prototype.getHoverObj = function(x, y) {
+    if (this.isHover(x, y, this.title.display))
+      return this.title;
     for (var i = 0; i < this.steps.length; i++) {
       if (this.isHover(x, y, this.steps[i].display))
         return this.steps[i];
@@ -757,9 +709,12 @@ workflowMod.factory('Diagram',
         if (this.isHover(x, y, subflow.steps[j].display))
           return subflow.steps[j];
       }
+      if (this.isHover(x, y, subflow.display))
+        return subflow;  // subflow but not item within
     }
+    // TODO: notes
   };
-  
+
   Diagram.prototype.isHover = function(x, y, display) {
     return x >= display.x && x <= display.x + display.w &&
         y >= display.y && y <= display.y + display.h;

@@ -81,7 +81,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Node', 'DC', 'WORKFLOW_STATUSES',
   // sets display/title and returns an object with w and h for required size
   Step.prototype.prepareDisplay = function(diagram) {
     var maxDisplay = { w: 0, h: 0};
-    var display = diagram.getDisplay(this.activity.attributes.WORK_DISPLAY_INFO);
+    var display = this.getDisplay(this.activity.attributes.WORK_DISPLAY_INFO);
 
     if (display.x + display.w > maxDisplay.w)
       maxDisplay.w = display.x + display.w;
@@ -117,18 +117,17 @@ stepMod.factory('Step', ['mdw', 'util', 'Node', 'DC', 'WORKFLOW_STATUSES',
   Step.prototype.applyState = function(activityInstances) {
     this.instances = activityInstances;
   };
-  
-  Step.prototype.translate = function(deltaX, deltaY) {
+
+  Step.prototype.translate = function(deltaX, deltaY, limDisplay) {
     var x = this.display.x + deltaX;
     var y = this.display.y + deltaY;
-    this.activity.attributes.WORK_DISPLAY_INFO = 'x=' + x + ',y=' + y + 
-        ',w=' + this.display.w + ',h=' + this.display.h;
+    this.activity.attributes.WORK_DISPLAY_INFO = this.getDisplayAttr(x, y, this.display.w, this.display.h);
+    return true;
   };
   
   Step.prototype.resize = function(x, y, deltaX, deltaY) {
     var display = this.resizeDisplay(x, y, deltaX, deltaY, Step.MIN_SIZE);
-    this.activity.attributes.WORK_DISPLAY_INFO = 'x=' + display.x + ',y=' + display.y + 
-      ',w=' + display.w + ',h=' + display.h;
+    this.activity.attributes.WORK_DISPLAY_INFO = this.getAttr(display);
   };
   
   return Step;

@@ -756,6 +756,26 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     return -1;
   };
   
+  Link.prototype.translate = function(deltaX, deltaY) {
+    var display = {
+      type: this.display.type,
+      lx: this.display.lx + deltaX,
+      ly: this.display.ly + deltaY,
+      xs: [], 
+      ys: []
+    };
+    if (this.display.xs) {
+      this.display.xs.forEach(function(x) {
+        display.xs.push(x + deltaX);
+      });
+    }
+    if (this.display.ys) {
+      this.display.ys.forEach(function(y) {
+        display.ys.push(y + deltaY);
+      });
+    }
+    this.setDisplay(display);
+  };
   
   return Link;
 }]);

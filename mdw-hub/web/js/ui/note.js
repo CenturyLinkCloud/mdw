@@ -30,7 +30,7 @@ noteMod.factory('Note', ['$document', 'mdw', 'util', 'Node', 'DC',
   
   Note.prototype.prepareDisplay = function(diagram) {
     var maxDisplay = { w: 0, h: 0 };
-    this.display = diagram.getDisplay(this.textNote.attributes.WORK_DISPLAY_INFO);
+    this.display = this.getDisplay(this.textNote.attributes.WORK_DISPLAY_INFO);
     
     // boundaries
     if (this.display.x + this.display.w > maxDisplay.w)
