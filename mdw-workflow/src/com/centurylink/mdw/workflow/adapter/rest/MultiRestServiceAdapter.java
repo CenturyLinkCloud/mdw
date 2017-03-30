@@ -26,6 +26,8 @@ import java.util.Map;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.util.HttpAltConnection;
+import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
@@ -40,7 +42,7 @@ public class MultiRestServiceAdapter extends RestServiceAdapter {
     }
 
     /**
-     * Returns an HttpURLConnection based on the configured endpoint, which
+     * Returns an HttpConnection based on the configured endpoint, which
      * includes the resource path. Override for HTTPS or other connection type.
      */
     public Object openConnection(String endpointUri) throws ConnectionException {
@@ -61,7 +63,15 @@ public class MultiRestServiceAdapter extends RestServiceAdapter {
                 endpointUri += query;
             }
             URL url = new URL(endpointUri);
-            return url.openConnection();
+
+            HttpConnection httpConnection;
+            if ("PATCH".equals(getHttpMethod()))
+                httpConnection = new HttpAltConnection(url);
+            else
+                httpConnection = new HttpConnection(url);
+
+            httpConnection.open();
+            return httpConnection;
         }
         catch (Exception ex) {
             throw new ConnectionException(ConnectionException.CONNECTION_DOWN, ex.getMessage(), ex);
@@ -104,6 +114,7 @@ public class MultiRestServiceAdapter extends RestServiceAdapter {
     /**
      * Invokes the RESTful service by submitting an HTTP requests against the configured
      * endpoint URIs.  Override getRequestData() to provide the requestData value (usually a String).
+     * TODO: use JSON instead of XML aggregate.
      */
     @Override
     public String invoke(Object conn, String request, int timeout, Map<String, String> headers)
@@ -145,6 +156,8 @@ public class MultiRestServiceAdapter extends RestServiceAdapter {
                     sb.append(httpHelper.put(request));
                 else if (httpMethod.equals("DELETE"))
                     sb.append(httpHelper.delete());
+                else if (httpMethod.equals("PATCH"))
+                    sb.append(httpHelper.patch(request));
                 else
                     throw new AdapterException("Unsupported HTTP Method: " + httpMethod);
             }
