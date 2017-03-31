@@ -31,7 +31,7 @@
         "WORK_DISPLAY_INFO": "x=226,y=107,w=100,h=60"
       },
       "id": "A3",
-      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestfulServiceAdapter",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
       "name": "GetEmployee",
       "transitions": [{
         "attributes": {"TRANSITION_DISPLAY_INFO": "lx=397,ly=132,type=Elbow,xs=330&465,ys=132&132"},
@@ -57,5 +57,5 @@
       "type": "com.centurylink.mdw.model.StringDocument"
     }
   },
-  "version": "0.5"
+  "version": "0.6"
 }

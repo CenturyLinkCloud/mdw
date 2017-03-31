@@ -64,22 +64,6 @@
     },
     {
       "attributes": {
-        "Rule": "intentional syntax error",
-        "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=497,y=133,w=100,h=60"
-      },
-      "id": "A5",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "Syntax errror",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=770,ly=159,type=ElbowH,xs=601&896,ys=160&160"},
-        "event": "FINISH",
-        "id": "T3",
-        "to": "A3"
-      }]
-    },
-    {
-      "attributes": {
         "DO_LOGGING": "True",
         "PostScriptLang": "Groovy",
         "PreScriptLang": "Groovy",
@@ -244,13 +228,28 @@
           "to": "A4"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=360,ly=231,type=Elbow,xs=227&493,ys=300&163"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=392,ly=230,type=Elbow,xs=227&544,ys=300&166"},
           "event": "FINISH",
           "id": "T22",
           "resultCode": "SyntaxError",
-          "to": "A5"
+          "to": "A14"
         }
       ]
+    },
+    {
+      "attributes": {
+        "Java": "package com.centurylink.mdw.tests.workflow;\r\n\r\nimport java.util.Map;\r\n\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\npublic class SyntaxError_A14 implements JavaExecutor {\r\n  \r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\r\n        this is not java\r\n    }\r\n\r\n}\r\n",
+        "WORK_DISPLAY_INFO": "x=548,y=136,w=100,h=60"
+      },
+      "id": "A14",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Syntax Error",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=774,ly=160,type=Elbow,xs=652&896,ys=160&160"},
+        "event": "FINISH",
+        "id": "T23",
+        "to": "A3"
+      }]
     }
   ],
   "attributes": {
@@ -288,5 +287,5 @@
       "type": "org.w3c.dom.Document"
     }
   },
-  "version": "0.17"
+  "version": "0.18"
 }

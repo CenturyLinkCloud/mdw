@@ -15,7 +15,7 @@ start process("ScriptTest") {
                   bystanderDomDoc: "<xml>I won't change</xml>",
                   modifiedXmlBean: "<xmlBeanToBeModified/>",
                   bystanderXmlBean: "<xml>I won't change</xml>",
-                  telephoneNumbers: "[303-555-7861,303-555-1952]" ]
+                  telephoneNumbers: '["303-555-7861","303-555-1952"]' ]
 }
 wait process
 verify process

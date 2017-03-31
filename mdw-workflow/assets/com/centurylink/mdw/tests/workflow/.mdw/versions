@@ -1,4 +1,4 @@
-#Wed Mar 29 15:28:21 MDT 2017
+#Fri Mar 31 12:24:10 MDT 2017
 A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=3
 ActivityException.test=2
@@ -72,7 +72,7 @@ MDWTestHeterogeneousProcessCall.proc=11
 MDWTestJavaScript.proc=4
 MDWTestLoopBackWaiting.proc=5
 MDWTestMainProcess.proc=3034
-MDWTestProcessAsService.proc=17
+MDWTestProcessAsService.proc=18
 MDWTestSubProcess.proc=1009
 MDWTestSubProcess2.proc=9
 MDWTestSubProcess3.proc=5
@@ -100,7 +100,7 @@ RpcWebServiceAdapter.yaml=1
 RuntimeContext.proc=4
 RuntimeContext.test=2
 RuntimeContext.yaml=1
-ScriptActivityGroovy.test=2
+ScriptActivityGroovy.test=3
 ScriptActivityGroovy.yaml=1
 ScriptActivityJavascript.test=2
 ScriptActivityJavascript.yaml=1
@@ -128,7 +128,7 @@ SmartSubprocMultiple.yaml=1
 SmartSubprocVersion.test=2
 SmartSubprocVersion.yaml=1
 SqlAdapter.proc=6
-SqlAdapter.test=2
+SqlAdapter.test=4
 SqlAdapter.yaml=1
 StartDelayStop.proc=1
 StartStop.test=2

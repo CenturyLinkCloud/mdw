@@ -1,4 +1,4 @@
-#Tue Mar 28 21:42:03 MDT 2017
+#Fri Mar 31 10:02:06 MDT 2017
 ActivityStubbing.test=2
 ActivityStubbing.yaml=1
 ActivityStubbingClosure.test=2
@@ -21,7 +21,7 @@ GetEmployee.xml=2
 GetEmployeeResponse.xml=2
 TestActivityStub.proc=5
 TestActivityStubSubproc.proc=2
-TestAdapterStub.proc=5
+TestAdapterStub.proc=6
 ]AdapterStubEcho.test=1
 ]AdapterStubEcho.yaml=1
 employeeRequest.json=1

@@ -28,7 +28,7 @@ process: # 10229
         "Database": "MySQL",
         "DbInfo": {
           "jdbcUrl": "${~jdbc.*}",
-          "user": "mdw"
+          "user": "${~.*}"
         },
         "MdwBuild": "${~201.*}",
         "MdwHubUrl": "${~http.*}",
