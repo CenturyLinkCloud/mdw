@@ -918,10 +918,14 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    /**
+     * Saves document as raw StringDocument.
+     */
     public Integer notify(String event, String message, int delay) throws ServiceException {
         try {
             EventManager eventManager = ServiceLocator.getEventManager();
-            return eventManager.notifyProcess(event, 0L, message, delay);
+            Long docId = eventManager.createDocument(StringDocument.class.getName(), OwnerType.INTERNAL_EVENT, 0L, message, null);
+            return eventManager.notifyProcess(event, docId, message, delay);
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);

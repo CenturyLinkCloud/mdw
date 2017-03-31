@@ -163,7 +163,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         EventManager eventMgr = ServiceLocator.getEventManager();
         eventName = translatePlaceHolder(eventName, xmlbean, eventMgr);
         Long docid = eventMgr.createDocument(StringDocument.class.getName(), OwnerType.DOCUMENT,
-                new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID)), msgContent);
+                new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID)), msgContent, null);
         logger.debug("Regression tester notify process with event '" + eventName + "'");
         super.notifyProcesses(eventName, docid, msgContent, 0);
         return createSuccessResponse(null);
@@ -325,7 +325,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
                             if (vardef==null) throw new Exception("The variable is not defined: " + varname);
                             if (vardef.isDocument()) {
                                 Long docid = eventManager.createDocument(vardef.getVariableType(),
-                                    OwnerType.PROCESS_INSTANCE, procInstId, param.getStringValue());
+                                    OwnerType.PROCESS_INSTANCE, procInstId, param.getStringValue(), null);
                                 eventManager.setVariableInstance(procInstId, varname, new DocumentReference(docid));
                             } else {
                                 eventManager.setVariableInstance(procInstId, varname, param.getStringValue());
@@ -334,7 +334,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
                             if (var.isDocument()) {
                                 DocumentReference docref = (DocumentReference)var.getData();
                                 eventManager.updateDocumentContent(docref.getDocumentId(),
-                                        param.getStringValue(), var.getType());
+                                        param.getStringValue(), var.getType(), null);
                             } else {
                                 eventManager.setVariableInstance(procInstId, varname, param.getStringValue());
                             }
