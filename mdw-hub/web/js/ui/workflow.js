@@ -712,7 +712,7 @@ workflowMod.factory('Diagram',
       if (this.isHover(x, y, subflow.display))
         return subflow;  // subflow but not item within
     }
-    for (var i = 0; i < this.notes.length; i++) {
+    for (i = 0; i < this.notes.length; i++) {
       if (this.isHover(x, y, this.notes[i].display))
         return this.notes[i];
     }
