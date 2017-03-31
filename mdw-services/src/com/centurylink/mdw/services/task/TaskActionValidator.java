@@ -105,7 +105,7 @@ public class TaskActionValidator {
 
     protected TaskAction getAllowableAction(UserTaskAction taskAction) throws Exception {
         for (TaskAction allowableAction : AllowableTaskActions.getTaskDetailActions(taskAction.getUser(), runtimeContext)) {
-            if (allowableAction.getTaskActionName().equals(taskAction.getAction().toString()))
+            if (allowableAction.getTaskActionName().equals(taskAction.getTaskAction()))
                 return allowableAction;
         }
         return null;

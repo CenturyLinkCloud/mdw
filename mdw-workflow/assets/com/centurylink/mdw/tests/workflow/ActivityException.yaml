@@ -33,16 +33,17 @@ process: # 14209
             "activityId": 26,
             "id": ${~\\d*},
             "processInstanceId": ${~\\d*},
-            "startDate": ${today},
+            "startDate": "${today} ${~.*}",
             "statusCode": 2
           },
           "process": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2",
           "processInstance": {
-            "comments": ${~com\\.centurylink\\.mdw\\.tests\\.workflow v\\d.\\d.\\d\\d\\/MDWTestSubProcess2 v\\d.\\d},
+            "comments": "${~com\\.centurylink\\.mdw\\.tests\\.workflow v\\d.\\d.\\d\\d\\/MDWTestSubProcess2 v\\d.\\d}",
             "id": ${~\\d*},
             "masterRequestId": "${masterRequestId}",
             "owner": "PROCESS_INSTANCE",
             "ownerId": ${~\\d*},
+            "packageName": "com.centurylink.mdw.tests.workflow",
             "processId": ${~\\d*},
             "processName": "MDWTestSubProcess2",
             "secondaryOwner": "ACTIVITY_INSTANCE",
@@ -61,55 +62,55 @@ process: # 14209
           {
             "class": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
             "file": "DynamicJavaActivity.java",
-            "line": 86,
+            "line": 98,
             "method": "execute"
           },
           {
             "class": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
             "file": "DefaultActivityImpl.java",
-            "line": 29,
+            "line": 41,
             "method": "execute"
           },
           {
             "class": "com.centurylink.mdw.services.process.BaseActivity",
             "file": "BaseActivity.java",
-            "line": 209,
+            "line": 221,
             "method": "execute"
           },
           {
             "class": "com.centurylink.mdw.services.process.BaseActivity",
             "file": "BaseActivity.java",
-            "line": 219,
+            "line": 231,
             "method": "executeTimed"
           },
           {
             "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
             "file": "ProcessEngineDriver.java",
-            "line": 363,
+            "line": 379,
             "method": "executeActivity"
           },
           {
             "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
             "file": "ProcessEngineDriver.java",
-            "line": 596,
+            "line": 612,
             "method": "processEvent"
           },
           {
             "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
             "file": "ProcessEngineDriver.java",
-            "line": 562,
+            "line": 578,
             "method": "processEvents"
           },
           {
             "class": "com.centurylink.mdw.services.process.InternalEventDriver",
             "file": "InternalEventDriver.java",
-            "line": 25,
+            "line": 37,
             "method": "run"
           },
           {
             "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$Work",
             "file": "CommonThreadPool.java",
-            "line": 251,
+            "line": 263,
             "method": "run"
           },
           {
@@ -133,7 +134,7 @@ process: # 14209
           {
             "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread",
             "file": "CommonThreadPool.java",
-            "line": 220,
+            "line": 232,
             "method": "run"
           }
         ],

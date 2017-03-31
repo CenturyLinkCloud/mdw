@@ -746,7 +746,7 @@ public class TestCaseRun implements Runnable {
             task.setId(taskInstance.getTaskInstanceId());
 
             UserTaskAction taskAction = new UserTaskAction();
-            taskAction.setAction(task.getOutcome());
+            taskAction.setTaskAction(task.getOutcome());
             taskAction.setUser(user);
             taskAction.setTaskInstanceId(task.getId());
             if (task.getVariables() != null)

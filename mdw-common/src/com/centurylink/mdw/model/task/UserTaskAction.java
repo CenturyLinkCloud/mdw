@@ -30,6 +30,11 @@ import com.centurylink.mdw.model.user.UserAction;
 
 public class UserTaskAction extends UserAction implements Jsonable {
 
+    // allow other possibilities besides UserAction.Action enum
+    private String taskAction;
+    public String getTaskAction() { return taskAction; }
+    public void setTaskAction(String taskAction) { this.taskAction = taskAction; }
+
     public UserTaskAction() {
 
     }
@@ -103,14 +108,6 @@ public class UserTaskAction extends UserAction implements Jsonable {
             json.put("comment", getComment());
 
         return json;
-    }
-
-    public String getTaskAction() {
-        return getAction() == null ? null : getAction().toString();
-    }
-
-    public void setTaskAction(String action) {
-        setAction(Action.valueOf(action));
     }
 
     public Long getTaskInstanceId() {

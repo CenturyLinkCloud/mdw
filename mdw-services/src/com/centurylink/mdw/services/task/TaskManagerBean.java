@@ -1006,7 +1006,7 @@ public class TaskManagerBean implements TaskManager {
         throws TaskException {
         UserTaskAction taskAction = new UserTaskAction();
         taskAction.setTaskInstanceId(taskInstanceId);
-        taskAction.setAction(action);
+        taskAction.setTaskAction(action);
         try {
             taskAction.setUser(UserGroupCache.getUser(userId).getCuid());
             taskAction.setComment(comment);

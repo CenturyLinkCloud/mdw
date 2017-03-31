@@ -293,7 +293,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             task.setId(taskInstance.getTaskInstanceId());
 
             UserTaskAction taskAction = new UserTaskAction();
-            taskAction.setAction(task.getOutcome());
+            taskAction.setTaskAction(task.getOutcome());
             taskAction.setUser(getUser());
             taskAction.setTaskInstanceId(task.getId());
             if (task.getVariables() != null) {

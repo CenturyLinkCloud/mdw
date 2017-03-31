@@ -345,7 +345,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         }
         taskManager.performActionOnTaskInstance(directAction, taskInstId, userId, userId, null, null, true);
         UserTaskAction taskAction = new UserTaskAction();
-        taskAction.setAction(directAction);
+        taskAction.setTaskAction(directAction);
         taskAction.setTaskInstanceId(taskInstId);
         taskAction.setUser(cuid);
         return createSuccessResponse(taskAction.getJson().toString(2));

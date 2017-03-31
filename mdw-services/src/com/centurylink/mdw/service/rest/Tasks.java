@@ -344,8 +344,8 @@ public class Tasks extends JsonRestService implements JsonExportable {
                     // segOne must be the action
                     try {
                         UserTaskAction taskAction = new UserTaskAction(content, segOne);
-                        if (!segOne.equals(taskAction.getAction().toString()))
-                            throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (action): '" + taskAction.getAction() + "' is not: '" + segOne + "'");
+                        if (!segOne.equals(taskAction.getTaskAction().toString()))
+                            throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (action): '" + taskAction.getTaskAction() + "' is not: '" + segOne + "'");
                         taskServices.performTaskAction(taskAction);
                         return null;
                     }
