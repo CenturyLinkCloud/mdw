@@ -79,13 +79,16 @@ module.exports = function(grunt) {
         }, {
           expand: true,
           cwd: 'web/bower_components',
-          src: [ '**/*.css', '!**/*.min.css', '**/fonts/*', '**/*.min.js', '!angular-bootstrap/ui-bootstrap.min.js', '**/*.js.map','!lodash/**' ],
+          src: [ '**/*.css', '!**/*.min.css', '**/fonts/*', '**/*.min.js', '!angular-bootstrap/ui-bootstrap.min.js', '**/*.js.map' ],
           dest: 'dist/lib'
         }, {
           expand: true,
-          cwd: 'web/bower_components/ace-builds/src-min-noconflict',
-          src: [ 'ace.js'],
-          dest: 'dist/lib/ace-builds/src-min-noconflict'
+          cwd: 'web/bower_components/ace-builds/',
+          src: [ 'src-min-noconflict/*'],
+          dest: 'dist/lib/ace-builds/',
+          rename: function(dest, src) {
+            return dest + src.replace(/ace\.js/, 'ace.min.js');
+          }          
         }]
       }
     },
