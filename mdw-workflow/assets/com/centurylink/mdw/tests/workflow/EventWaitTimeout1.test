@@ -6,14 +6,14 @@ send message("REST") {
     payload = '''\
 <ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
   <Action Name="RegressionTest">
-    <Parameter name="MasterRequestId">%%M%%</Parameter>
+    <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
     <Parameter name="Maintenance">Timeout</Parameter>
   </Action>
 </ser:ActionRequest>'''
 }
 sleep 180
 send message("REST") {
-    payload = "<NonTaskAction>%%M%%</NonTaskAction>"
+    payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
 }
 sleep 15
 verify process

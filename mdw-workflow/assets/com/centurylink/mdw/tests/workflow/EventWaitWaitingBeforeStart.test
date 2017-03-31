@@ -1,7 +1,7 @@
 package com.centurylink.mdw.tests.workflow
 
 send message("REST") {
-    payload = "<NonTaskAction>%%M%%</NonTaskAction>"
+    payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
 }
 sleep 30
 start process("MDWTestSuppsEmbedded") {
@@ -9,7 +9,7 @@ start process("MDWTestSuppsEmbedded") {
 }
 sleep 90
 send message("REST") {
-    payload = "<Signal>%%M%%</Signal>"
+    payload = "<Signal>${masterRequestId}</Signal>"
 }
 sleep 30
 verify process
