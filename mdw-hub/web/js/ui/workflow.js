@@ -124,7 +124,9 @@ workflowMod.controller('MdwWorkflowController',
         Inspector.setObj(selObj);
       }
       else {
-        Inspector.setObj($scope.diagram.getBackgroundObj(e));
+        var bgObj = $scope.diagram.getBackgroundObj(e);
+        if (bgObj)
+          Inspector.setObj(bgObj);
       }
     }
   };
@@ -719,7 +721,7 @@ workflowMod.factory('Diagram',
     }
     for (i = 0; i < this.links.length; i++) {
       if (this.links[i].isHover(x, y))
-        return links[i];
+        return this.links[i];
     }
     for (i = 0; i < this.notes.length; i++) {
       if (this.notes[i].isHover(x, y))
@@ -732,12 +734,24 @@ workflowMod.factory('Diagram',
     var rect = this.canvas.getBoundingClientRect();
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;
+    var bgObj = this;
     for (var i = 0; i < this.subflows.length; i++) {
       if (this.subflows[i].isHover(x, y)) {
-        return this.subflows[i];
+        bgObj = this.subflows[i];
+        break;
       }
     }
-    return this;
+    
+    var prevSelObj = this.selectObj;
+    if (bgObj == this)
+      this.selectObj = this.label;
+    else
+      this.selectObj = bgObj;
+    if (prevSelObj && prevSelObj !== this.selectObj)
+      this.unselect(prevSelObj);
+    this.select(this.selectObj);
+    
+    return bgObj;
   }; 
   
   Diagram.prototype.getAnchor = function(x, y) {
