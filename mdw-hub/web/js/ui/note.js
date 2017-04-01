@@ -2,16 +2,16 @@
 
 var noteMod = angular.module('mdwNote', ['mdw']);
 
-noteMod.factory('Note', ['$document', 'mdw', 'util', 'Node', 'DC',
-                         function($document, mdw, util, Node, DC) {
+noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
+                         function($document, mdw, util, Shape, DC) {
   var Note = function(textNote) {
-    Node.apply(this);
+    Shape.apply(this);
     this.textNote = textNote;
     this.workflowType = 'textNote';
     this.isNote = true;
   };
   
-  Note.prototype = new Node();
+  Note.prototype = new Shape();
   
   Note.BOX_OUTLINE_COLOR = 'yellow';
   Note.FONT_SIZE= 13;

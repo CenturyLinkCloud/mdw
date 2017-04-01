@@ -2,16 +2,16 @@
 
 var subflowMod = angular.module('mdwSubflow', ['mdw']);
 
-subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Node', 'DC', 'Step', 'Link',
-                                function($document, mdw, util, Node, DC, Step, Link) {
+subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step', 'Link',
+                                function($document, mdw, util, Shape, DC, Step, Link) {
   var Subflow = function(subprocess) {
-    Node.apply(this);
+    Shape.apply(this);
     this.subprocess = subprocess;
     this.workflowType = 'subprocess';
     this.isSubflow = true;
   };
   
-  Subflow.prototype = new Node();
+  Subflow.prototype = new Shape();
 
   Subflow.BOX_OUTLINE_COLOR = '#337ab7';
   

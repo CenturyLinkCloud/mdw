@@ -2,17 +2,17 @@
 
 var titleMod = angular.module('mdwTitle', ['mdw']);
 
-titleMod.factory('Title', ['$document', 'mdw', 'util', 'Node', 'DC',
-                   function($document, mdw, util, Node, DC) {
+titleMod.factory('Title', ['$document', 'mdw', 'util', 'Shape', 'DC',
+                   function($document, mdw, util, Shape, DC) {
   
   var Title = function(process) {
-    Node.apply(this);
+    Shape.apply(this);
     this.process = process;
     this.workflowType = 'process';
     this.isTitle = true;
   };
   
-  Title.prototype = new Node();
+  Title.prototype = new Shape();
   
   Title.prototype.draw = function(diagram) {
     diagram.context.font = DC.TITLE_FONT;

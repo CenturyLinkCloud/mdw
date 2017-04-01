@@ -2,17 +2,17 @@
 
 var stepMod = angular.module('mdwStep', ['mdw']);
 
-stepMod.factory('Step', ['mdw', 'util', 'Node', 'DC', 'WORKFLOW_STATUSES',
-                         function(mdw, util, Node, DC, WORKFLOW_STATUSES) {
+stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
+                         function(mdw, util, Shape, DC, WORKFLOW_STATUSES) {
   
   var Step = function(activity) {
-    Node.apply(this);
+    Shape.apply(this);
     this.activity = activity;
     this.workflowType = 'activity';
     this.isStep = true;
   };
   
-  Step.prototype = new Node();
+  Step.prototype = new Shape();
   
   Step.INST_W = 8;
   Step.OLD_INST_W = 4;

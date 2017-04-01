@@ -1,16 +1,16 @@
 'use strict';
 
-var nodeMod = angular.module('mdwNode', ['mdw']);
+var shapeMod = angular.module('mdwShape', ['mdw']);
 
 // prototype for rectangular diagram elements
-nodeMod.factory('Node', ['mdw', 'util', 'DC',
+shapeMod.factory('Shape', ['mdw', 'util', 'DC',
                          function(mdw, util, DC) {
   
-  var Node = function() {
+  var Shape = function() {
   };
   
   // get a display object from an attribute value
-  Node.prototype.getDisplay = function(displayAttr) {
+  Shape.prototype.getDisplay = function(displayAttr) {
     var display = {};
     if (displayAttr) {
       var vals = displayAttr.split(',');
@@ -28,21 +28,21 @@ nodeMod.factory('Node', ['mdw', 'util', 'DC',
     return display;
   };
   
-  Node.prototype.getDisplayAttr = function(x, y, w, h) {
+  Shape.prototype.getDisplayAttr = function(x, y, w, h) {
     var attr = 'x=' + x + ',y=' + y;
     if (w)
       attr += ',w=' + w + ',h=' + h;
     return attr;
   };
   
-  Node.prototype.getAttr = function(display) {
+  Shape.prototype.getAttr = function(display) {
     var attr = 'x=' + display.x + ',y=' + display.y;
     if (display.w)
       attr += ',w=' + display.w + ',h=' + display.h;
     return attr;
   };
   
-  Node.prototype.getAnchor = function(x, y) {
+  Shape.prototype.getAnchor = function(x, y) {
     if (Math.abs(this.display.x - x) <= DC.ANCHOR_W && Math.abs(this.display.y - y) <= DC.ANCHOR_W)
       return 0;
     else if (Math.abs(this.display.x + this.display.w - x) <= DC.ANCHOR_W && Math.abs(this.display.y - y) <= DC.ANCHOR_W)
@@ -55,7 +55,7 @@ nodeMod.factory('Node', ['mdw', 'util', 'DC',
       return -1;
   };
   
-  Node.prototype.resizeDisplay = function(x, y, deltaX, deltaY, min) {
+  Shape.prototype.resizeDisplay = function(x, y, deltaX, deltaY, min) {
     var anchor = this.getAnchor(x, y);
     var display = {x: this.display.x, y: this.display.y, w: this.display.w, h: this.display.h};
     var t1, t2;
@@ -103,6 +103,6 @@ nodeMod.factory('Node', ['mdw', 'util', 'DC',
   };
   
   
-  return Node;
+  return Shape;
   
 }]);
