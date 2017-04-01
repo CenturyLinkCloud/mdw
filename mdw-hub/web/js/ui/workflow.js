@@ -117,17 +117,19 @@ workflowMod.controller('MdwWorkflowController',
     $scope.down = true;
     if ($scope.diagram) {
       $scope.diagram.onMouseDown(e);
+      var selObj = $scope.diagram.selectObj;
+      if (selObj && selObj.isLabel)
+        selObj = selObj.owner;
+      if (selObj) {
+        Inspector.setObj(selObj);
+      }
+      else {
+        Inspector.setObj($scope.diagram.getBackgroundObj(e));
+      }
     }
   };
   $scope.mouseUp = function(e) {
     $scope.down = false;
-    if (!$scope.dragging) {
-      var selObj = $scope.diagram.selectObj;
-      if (selObj)
-        Inspector.setObj(selObj);
-      else
-        Inspector.setObj($scope.diagram);
-    }
     $scope.dragging = false;
     if ($scope.diagram) {
       $scope.diagram.onMouseUp(e);
@@ -140,9 +142,10 @@ workflowMod.controller('MdwWorkflowController',
 }]);
 
 workflowMod.factory('Diagram', 
-    ['$document', 'mdw', 'util', 'DC', 'Title', 'Step', 'Link', 'Subflow', 'Note',
-     function($document, mdw, util, DC, Title, Step, Link, Subflow, Note) {
+    ['$document', 'mdw', 'util', 'DC', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note',
+     function($document, mdw, util, DC, Label, Shape, Step, Link, Subflow, Note) {
   var Diagram = function(canvas, process, implementors, instance, editable) {
+    Shape.call(this, process);
     this.canvas = canvas;
     this.process = process;
     this.implementors = implementors;
@@ -154,6 +157,8 @@ workflowMod.factory('Diagram',
     this.anchor = -1;
   };
 
+  Diagram.prototype = new Shape();
+  
   Diagram.prototype.draw = function() {
 
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -166,7 +171,7 @@ workflowMod.factory('Diagram',
     
     var diagram = this; // forEach access
     
-    this.title.draw(this);
+    this.label.draw(this);
     this.steps.forEach(function(step) {
       step.draw(diagram);
     });
@@ -188,9 +193,9 @@ workflowMod.factory('Diagram',
     
     var diagram = this; // convenient/inner access
     
-    // title
-    diagram.title = new Title(this.process);
-    diagram.makeRoom(canvasDisplay, diagram.title.prepareDisplay(diagram));
+    // label
+    diagram.label = new Label(this, this.getDisplay(), DC.TITLE_FONT);
+    diagram.makeRoom(canvasDisplay, diagram.label.prepareDisplay(diagram));
     
     // activities
     diagram.steps = [];
@@ -688,40 +693,52 @@ workflowMod.factory('Diagram',
           this.selectObj.move(deltaX, deltaY);
         }
         this.draw();
+        var obj = this.getHoverObj(x, y);
+        if (obj)
+          this.select(obj);
         return true;
       }
     }
   };
   
   Diagram.prototype.getHoverObj = function(x, y) {
-    if (this.isHover(x, y, this.title.display))
-      return this.title;
+    if (this.label.isHover(x, y))
+      return this.label;
     for (var i = 0; i < this.steps.length; i++) {
-      if (this.isHover(x, y, this.steps[i].display))
+      if (this.steps[i].isHover(x, y))
         return this.steps[i];
     }
-    // TODO: links
     for (i = 0; i < this.subflows.length; i++) {
       var subflow = this.subflows[i];
-      if (this.isHover(x, y, subflow.title))
+      if (subflow.title.isHover(x, y))
         return subflow;
       for (var j = 0; j < subflow.steps.length; j++) {
-        if (this.isHover(x, y, subflow.steps[j].display))
+        if (subflow.steps[j].isHover(x, y))
           return subflow.steps[j];
       }
-      if (this.isHover(x, y, subflow.display))
-        return subflow;  // subflow but not item within
+    }
+    for (i = 0; i < this.links.length; i++) {
+      if (this.links[i].isHover(x, y))
+        return links[i];
     }
     for (i = 0; i < this.notes.length; i++) {
-      if (this.isHover(x, y, this.notes[i].display))
+      if (this.notes[i].isHover(x, y))
         return this.notes[i];
     }
   };
 
-  Diagram.prototype.isHover = function(x, y, display) {
-    return x >= display.x && x <= display.x + display.w &&
-        y >= display.y && y <= display.y + display.h;
-  };
+  // when nothing selectable is hovered
+  Diagram.prototype.getBackgroundObj = function(e) {
+    var rect = this.canvas.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    for (var i = 0; i < this.subflows.length; i++) {
+      if (this.subflows[i].isHover(x, y)) {
+        return this.subflows[i];
+      }
+    }
+    return this;
+  }; 
   
   Diagram.prototype.getAnchor = function(x, y) {
     return -1;

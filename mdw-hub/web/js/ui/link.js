@@ -92,7 +92,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     this.title = { text: label };
     // TODO title coords
     this.title.x = this.display.lx;
-    this.title.y = this.display.ly + DC.DEFAULT_FONT_SIZE;
+    this.title.y = this.display.ly + DC.DEFAULT_FONT.SIZE;
     
     return maxDisplay;
   };
@@ -749,6 +749,11 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
   
   Link.prototype.getDist = function(x1, y1, x2, y2) {
     return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
+  };
+  
+  Link.prototype.isHover = function(x, y) {
+    // TODO
+    return false;
   };
   
   Link.prototype.getAnchor = function(x, y) {

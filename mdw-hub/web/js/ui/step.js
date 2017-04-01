@@ -6,7 +6,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
                          function(mdw, util, Shape, DC, WORKFLOW_STATUSES) {
   
   var Step = function(activity) {
-    Shape.apply(this);
+    Shape.call(this, activity);
     this.activity = activity;
     this.workflowType = 'activity';
     this.isStep = true;
@@ -81,7 +81,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
   // sets display/title and returns an object with w and h for required size
   Step.prototype.prepareDisplay = function(diagram) {
     var maxDisplay = { w: 0, h: 0};
-    var display = this.getDisplay(this.activity.attributes.WORK_DISPLAY_INFO);
+    var display = this.getDisplay();
 
     if (display.x + display.w > maxDisplay.w)
       maxDisplay.w = display.x + display.w;
@@ -99,13 +99,13 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
       var textMetrics = diagram.context.measureText(line.text);
       if (textMetrics.width > title.w)
         title.w = textMetrics.width;
-      title.h += DC.DEFAULT_FONT_SIZE;
+      title.h += DC.DEFAULT_FONT.SIZE;
       line.x = display.x + display.w / 2 - textMetrics.width / 2;
-      line.y = display.y + display.h / 2 + DC.DEFAULT_FONT_SIZE * (i + 0.5);
+      line.y = display.y + display.h / 2 + DC.DEFAULT_FONT.SIZE * (i + 0.5);
       if (line.x + textMetrics.width > maxDisplay.w)
         maxDisplay.w = line.x + textMetrics.width;
-      if (line.y + DC.DEFAULT_FONT_SIZE > maxDisplay.h)
-        maxDisplay.h = line.y + DC.DEFAULT_FONT_SIZE;
+      if (line.y + DC.DEFAULT_FONT.SIZE > maxDisplay.h)
+        maxDisplay.h = line.y + DC.DEFAULT_FONT.SIZE;
     }
 
     this.display = display;
@@ -131,7 +131,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
       else if (y > limDisplay.y + limDisplay.h - this.display.h)
         y = limDisplay.y + limDisplay.h - this.display.h;
     }
-    this.activity.attributes.WORK_DISPLAY_INFO = this.getDisplayAttr(x, y, this.display.w, this.display.h);
+    this.setDisplayAttr(x, y, this.display.w, this.display.h);
     return true;
   };
   

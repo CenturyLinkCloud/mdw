@@ -6,11 +6,13 @@ var shapeMod = angular.module('mdwShape', ['mdw']);
 shapeMod.factory('Shape', ['mdw', 'util', 'DC',
                          function(mdw, util, DC) {
   
-  var Shape = function() {
+  var Shape = function(workflowItem) {
+    this.workflowItem = workflowItem;
   };
   
   // get a display object from an attribute value
-  Shape.prototype.getDisplay = function(displayAttr) {
+  Shape.prototype.getDisplay = function() {
+    var displayAttr = this.workflowItem.attributes.WORK_DISPLAY_INFO;
     var display = {};
     if (displayAttr) {
       var vals = displayAttr.split(',');
@@ -27,12 +29,12 @@ shapeMod.factory('Shape', ['mdw', 'util', 'DC',
     }
     return display;
   };
-  
-  Shape.prototype.getDisplayAttr = function(x, y, w, h) {
+
+  Shape.prototype.setDisplayAttr = function(x, y, w, h) {
     var attr = 'x=' + x + ',y=' + y;
     if (w)
       attr += ',w=' + w + ',h=' + h;
-    return attr;
+    this.workflowItem.attributes.WORK_DISPLAY_INFO = attr;
   };
   
   Shape.prototype.getAttr = function(display) {
@@ -40,6 +42,11 @@ shapeMod.factory('Shape', ['mdw', 'util', 'DC',
     if (display.w)
       attr += ',w=' + display.w + ',h=' + display.h;
     return attr;
+  };
+  
+  Shape.prototype.isHover = function(x, y) {
+    return x >= this.display.x && x <= this.display.x + this.display.w &&
+        y >= this.display.y && y <= this.display.y + this.display.h;
   };
   
   Shape.prototype.getAnchor = function(x, y) {

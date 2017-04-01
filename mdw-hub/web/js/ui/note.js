@@ -5,7 +5,7 @@ var noteMod = angular.module('mdwNote', ['mdw']);
 noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
                          function($document, mdw, util, Shape, DC) {
   var Note = function(textNote) {
-    Shape.apply(this);
+    Shape.call(this, textNote);
     this.textNote = textNote;
     this.workflowType = 'textNote';
     this.isNote = true;
@@ -30,7 +30,7 @@ noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
   
   Note.prototype.prepareDisplay = function(diagram) {
     var maxDisplay = { w: 0, h: 0 };
-    this.display = this.getDisplay(this.textNote.attributes.WORK_DISPLAY_INFO);
+    this.display = this.getDisplay();
     
     // boundaries
     if (this.display.x + this.display.w > maxDisplay.w)
@@ -44,7 +44,7 @@ noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
   Note.prototype.move = function(deltaX, deltaY) {
     var x = this.display.x + deltaX;
     var y = this.display.y + deltaY;
-    this.textNote.attributes.WORK_DISPLAY_INFO = this.getDisplayAttr(x, y, this.display.w, this.display.h);
+    this.setDisplayAttr(x, y, this.display.w, this.display.h);
     return true;
   };
   

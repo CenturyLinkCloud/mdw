@@ -5,7 +5,7 @@ var subflowMod = angular.module('mdwSubflow', ['mdw']);
 subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step', 'Link',
                                 function($document, mdw, util, Shape, DC, Step, Link) {
   var Subflow = function(subprocess) {
-    Shape.apply(this);
+    Shape.call(this, subprocess);
     this.subprocess = subprocess;
     this.workflowType = 'subprocess';
     this.isSubflow = true;
@@ -25,7 +25,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
     diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, Subflow.BOX_OUTLINE_COLOR);
     diagram.context.clearRect(this.title.x - 1, this.title.y, this.title.w + 2, this.title.h);
 
-    diagram.context.fillText(this.title.text, this.title.x, this.title.y + DC.DEFAULT_FONT_SIZE);
+    diagram.context.fillText(this.title.text, this.title.x, this.title.y + DC.DEFAULT_FONT.SIZE);
     this.steps.forEach(function(step) {
       step.draw(diagram);
     });
@@ -41,13 +41,21 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
   
   Subflow.prototype.prepareDisplay = function(diagram) {
     var maxDisplay = { w: 0, h: 0 };
-    this.display = this.getDisplay(this.subprocess.attributes.WORK_DISPLAY_INFO);
+    this.display = this.getDisplay();
     
     // title
-    var title = { text: this.subprocess.name, x: this.display.x + 10, y: this.display.y + 4 - DC.DEFAULT_FONT_SIZE };
+    var title = { 
+        text: this.subprocess.name,
+        x: this.display.x + 10, 
+        y: this.display.y + 4 - DC.DEFAULT_FONT.SIZE,        
+        isHover: function(x, y) {
+          return x >= this.x && x <= this.x + this.w &&
+              y >= this.y && y <= this.y + this.h;
+        }
+    };
     var textMetrics = diagram.context.measureText(title.text);
     title.w = textMetrics.width;
-    title.h = DC.DEFAULT_FONT_SIZE;
+    title.h = DC.DEFAULT_FONT.SIZE;
     if (title.x + title.w > maxDisplay.w)
       maxDisplay.w = title.x + title.w;
     if (title.y + title.h > maxDisplay.h)
@@ -137,7 +145,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
   Subflow.prototype.move = function(deltaX, deltaY) {
     var x = this.display.x + deltaX;
     var y = this.display.y + deltaY;
-    this.subprocess.attributes.WORK_DISPLAY_INFO = this.getDisplayAttr(x, y, this.display.w, this.display.h);
+    this.setDisplayAttr(x, y, this.display.w, this.display.h);
     
     this.steps.forEach(function(step) {
       step.move(deltaX, deltaY);
