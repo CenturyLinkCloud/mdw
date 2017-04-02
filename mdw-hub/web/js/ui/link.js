@@ -6,7 +6,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
                          function(mdw, util, DC) {
 
   var Link = function(transition, from, to) {
-    this.transition = transition;
+    this.transition = this.workflowItem = transition;
     this.from = from;
     this.to = to;
     this.workflowType = 'transition';
@@ -19,6 +19,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
   Link.GAP = 4;
   Link.CR = 8;
   Link.LINK_WIDTH = 3;
+  Link.LINK_HIT_WIDTH = 7;
   Link.CORR = 3; // offset for link start points (TODO: why?)
 
   Link.EVENTS = {
@@ -68,8 +69,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
       
     diagram.context.strokeStyle = color;
     diagram.context.fillStyle = color;
-    this.drawConnector(diagram.context);
-    // todo draw shape
+    this.drawConnector(diagram);
 
     // title
     if (diagram.instance && (!this.instances || this.instances.length === 0))
@@ -149,16 +149,23 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     this.instances = transitionInstances;
   };
   
-  Link.prototype.drawConnector = function(context) {
+  // if hitX and hitY are passed, checks for hover instead of stroking
+  Link.prototype.drawConnector = function(diagram, hitX, hitY) {
+    var context = diagram.context;
     var type = this.display.type;
     var xs = this.display.xs;
     var ys = this.display.ys;
     
+    var hit = false;
+    
     var previousLineWidth = context.lineWidth;
-    context.lineWidth = Link.LINK_WIDTH;
+    if (hitX)
+      context.lineWidth = Link.LINK_HIT_WIDTH;
+    else
+      context.lineWidth = Link.LINK_WIDTH;
     if (!type || type.startsWith('Elbow')) {
       if (xs.length == 2) {
-        this.drawAutoElbowConnector(context);
+        hit = this.drawAutoElbowConnector(context, hitX, hitY);
       }
       else {
         // TODO: make use of Link.CORR
@@ -178,35 +185,38 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
           }
           horizontal = !horizontal;
         }
-        context.stroke();
+        if (!hitX)
+          context.stroke();
       }
     }
     context.lineWidth = previousLineWidth;
     
-    this.drawConnectorArrow(context);
+    if (hitX && !hit && context.isPointInStroke(hitX, hitY))
+      hit = true;
+    
+    if (hit)
+      return true;
+    else
+      return this.drawConnectorArrow(context, hitX, hitY);
   };
   
-  Link.prototype.drawAutoElbowConnector = function(context) {
+  Link.prototype.drawAutoElbowConnector = function(context, hitX, hitY) {
     var xs = this.display.xs;
     var ys = this.display.ys;
     var t;
     var xcorr = xs[0] < xs[1] ? Link.CORR : -Link.CORR;
     var ycorr = ys[0] < ys[1] ? Link.CORR : -Link.CORR;
+    context.beginPath();
     switch (this.getAutoElbowLinkType()) {
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_H:
-        context.beginPath();
         context.moveTo(xs[0] - xcorr, ys[0]);
         context.lineTo(xs[1], ys[1]);
-        context.stroke();
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V:
-        context.beginPath();
         context.moveTo(xs[0], ys[0] - ycorr);
         context.lineTo(xs[1], ys[1]);
-        context.stroke();
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HVH:
-        context.beginPath();
         t = (xs[0] + xs[1]) / 2;
         context.moveTo(xs[0] - xcorr, ys[0]);
         context.lineTo(t > xs[0] ? t - Link.CR : t + Link.CR, ys[0]);
@@ -214,10 +224,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
         context.lineTo(t, ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
         context.quadraticCurveTo(t, ys[1], xs[1] > t ? t + Link.CR : t - Link.CR, ys[1]);
         context.lineTo(xs[1], ys[1]);
-        context.stroke();
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VHV:
-        context.beginPath();
         t = (ys[0] + ys[1]) / 2;
         context.moveTo(xs[0], ys[0] - ycorr);
         context.lineTo(xs[0], t > ys[0] ? t - Link.CR : t + Link.CR);
@@ -225,28 +233,28 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
         context.lineTo(xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, t);
         context.quadraticCurveTo(xs[1], t, xs[1], ys[1] > t ? t + Link.CR : t-Link.CR);
         context.lineTo(xs[1], ys[1]);
-        context.stroke();
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HV:
-        context.beginPath();
         context.moveTo(xs[0] - xcorr, ys[0]);
         context.lineTo(xs[1] > xs[0] ? xs[1] -Link.CR : xs[1] + Link.CR, ys[0]);
         context.quadraticCurveTo(xs[1], ys[0], xs[1], ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR);
         context.lineTo(xs[1], ys[1]);
-        context.stroke();
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VH:
-        context.beginPath();
         context.moveTo(xs[0], ys[0] - ycorr);
         context.lineTo(xs[0], ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
         context.quadraticCurveTo(xs[0], ys[1], xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, ys[1]);
         context.lineTo(xs[1], ys[1]);
-        context.stroke();
         break;
     }
+    
+    if (!hitX)
+      context.stroke();
+    else if (context.isPointInStroke(hitX, hitY))
+      return true;
   };
   
-  Link.prototype.drawConnectorArrow = function(context) {
+  Link.prototype.drawConnectorArrow = function(context, hitX, hitY) {
     var type = this.display.type;
     var xs = this.display.xs;
     var ys = this.display.ys;
@@ -302,8 +310,14 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     context.moveTo(x, y);
     context.lineTo(Math.round(Math.cos(dl)*p + x), Math.round(Math.sin(dl)*p + y));
     context.lineTo(Math.round(Math.cos(dr)*p + x), Math.round(Math.sin(dr)*p + y));
-    context.fill();
-    context.stroke();
+    if (hitX) {
+      return context.isPointInStroke(hitX, hitY);
+    }
+    else {
+      context.fill();
+      context.stroke();
+    }
+    
   };
   
   Link.prototype.getAutoElbowLinkType = function() {
@@ -751,9 +765,19 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
   };
   
-  Link.prototype.isHover = function(x, y) {
-    // TODO
-    return false;
+  Link.prototype.select = function(diagram) {
+    var context = diagram.context;
+    context.fillStyle = 'red';
+    for (var i = 0; i < this.display.xs.length; i++) {
+      var x = this.display.xs[i];
+      var y = this.display.ys[i];
+      context.fillRect(x - DC.ANCHOR_W, y - DC.ANCHOR_W, DC.ANCHOR_W * 2, DC.ANCHOR_W * 2);
+    }
+    context.fillStyle = DC.DEFAULT_COLOR;
+  };
+
+  Link.prototype.isHover = function(diagram, x, y) {
+    return this.drawConnector(diagram, x, y);
   };
   
   Link.prototype.getAnchor = function(x, y) {

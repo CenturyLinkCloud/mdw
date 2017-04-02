@@ -157,6 +157,7 @@ workflowMod.factory('Diagram',
     this.isDiagram = true;
     this.context = this.canvas.getContext("2d");
     this.anchor = -1;
+    this.drawBoxes = process.attributes.NodeStyle == 'BoxIcon';
   };
 
   Diagram.prototype = new Shape();
@@ -164,13 +165,9 @@ workflowMod.factory('Diagram',
   Diagram.prototype.draw = function() {
 
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    var canvasDisplay = this.prepareDisplay();
 
-    this.canvas.width = canvasDisplay.w;
-    this.canvas.height = canvasDisplay.h;
+    this.prepareDisplay();
 
-    this.drawBoxes = this.process.attributes.NodeStyle == 'BoxIcon'; // TODO: we should make this the default
-    
     var diagram = this; // forEach access
     
     this.label.draw(this);
@@ -254,7 +251,8 @@ workflowMod.factory('Diagram',
     canvasDisplay.w += 25;
     canvasDisplay.h += 25;
     
-    return canvasDisplay;
+    this.canvas.width = canvasDisplay.w;
+    this.canvas.height = canvasDisplay.h;
   };
   
   Diagram.prototype.makeRoom = function(canvasDisplay, display) {
@@ -266,11 +264,18 @@ workflowMod.factory('Diagram',
   
   Diagram.prototype.getStep = function(activityId) {
     for (var i = 0; i < this.steps.length; i++) {
-      if (this.steps[i].activity.id === activityId)
+      if (this.steps[i].activity.id == activityId)
         return this.steps[i];
     }
   };
 
+  Diagram.prototype.getLink = function(transitionId) {
+    for (var i = 0; i < this.links.length; i++) {
+      if (this.links[i].transition.id == transitionId)
+        return this.links[i];
+    }
+  };
+  
   Diagram.prototype.getLinks = function(step) {
     var links = [];
     for (var i = 0; i < this.links.length; i++) {
@@ -278,6 +283,31 @@ workflowMod.factory('Diagram',
         links.push(this.links[i]);
     }
     return links;
+  };
+
+  Diagram.prototype.getSubflow = function(subprocessId) {
+    for (var i = 0; i < this.subflows.length; i++) {
+      if (this.subflows[i].subprocess.id == subprocessId)
+        return this.subflows[i];
+    }
+  };
+
+  Diagram.prototype.getNote = function(textNoteId) {
+    for (var i = 0; i < this.notes.length; i++) {
+      if (this.notes[i].textNote.id == textNoteId)
+        return this.notes[i];
+    }
+  };
+  
+  Diagram.prototype.get = function(id) {
+    if (id.startsWith('A'))
+      return this.getStep(id);
+    else if (id.startsWith('T'))
+      return this.getLink(id);
+    else if (id.startsWith('P'))
+      return this.getSubflow(id);
+    else if (id.startsWith('N'))
+      return this.getNote(id);
   };
   
   Diagram.prototype.addLink = function(from, to) {
@@ -558,19 +588,12 @@ workflowMod.factory('Diagram',
     this.dragX = x;
     this.dragY = y;
     
-    var prevSelect = this.selectObj;
     this.selectObj = this.getHoverObj(x, y);
+    this.unselect();
     if (this.selectObj) {
-      if (prevSelect && prevSelect !== this.selectObj)
-        this.unselect(prevSelect);
       this.select(this.selectObj);
       if (e.shiftKey && this.selectObj.isStep)
         this.shiftDrag = true;
-    }
-    else {
-      if (prevSelect)
-        this.unselect(prevSelect);
-      this.selectObj = null;
     }
   };
   
@@ -588,29 +611,8 @@ workflowMod.factory('Diagram',
       }
     }
     this.shiftDrag = false;
-  };
-  
-  // TODO better select indication
-  Diagram.prototype.select = function(obj) {
-    this.selectedObj = obj;
-    var display = obj.display;
-    this.context.fillStyle = 'red';
-    var s = 2;
-    this.context.fillRect(display.x - s, display.y - s, s * 2, s * 2);
-    this.context.fillRect(display.x + display.w - s, display.y - s, s * 2, s * 2);
-    this.context.fillRect(display.x + display.w - 2, display.y + display.h - s, s * 2, s * 2);
-    this.context.fillRect(display.x - 2, display.y + display.h - s, s * 2, s * 2);
-    this.context.fillStyle = DC.DEFAULT_COLOR;
-  };
-
-  Diagram.prototype.unselect = function(obj) {
-    var display = obj.display;
-    var s = 2;
-    this.context.clearRect(display.x - s, display.y - s, s * 2, s * 2);
-    this.context.clearRect(display.x + display.w - s, display.y - s, s * 2, s * 2);
-    this.context.clearRect(display.x + display.w - 2, display.y + display.h - s, s * 2, s * 2);
-    this.context.clearRect(display.x - 2, display.y + display.h - s, s * 2, s * 2);
-    this.selectedObj = null;
+    if (this.selectObj)
+      this.reselect(this.selectObj);
   };
   
   Diagram.prototype.onMouseMove = function(e) {
@@ -644,6 +646,7 @@ workflowMod.factory('Diagram',
       var rect = this.canvas.getBoundingClientRect();
       var x = e.clientX - rect.left;
       var y = e.clientY - rect.top;
+      var diagram = this;
       if (this.shiftDrag) {
         if (this.selectedObj.isStep) {
           this.draw();
@@ -652,14 +655,36 @@ workflowMod.factory('Diagram',
       }
       else if (this.anchor >= 0) {
         if (this.selectObj.resize) {
-          this.selectObj.resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
           if (this.selectObj.isStep) {
-            let step = this.getStep(this.selectObj.activity.id);
-            this.getLinks(step).forEach(function(link) {
-              link.recalc(step);
-            });
+            let activityId = this.selectObj.activity.id;
+            let step = this.getStep(activityId);
+            if (step) {
+              this.selectObj.resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
+              this.getLinks(step).forEach(function(link) {
+                link.recalc(step);
+              });
+            }
+            else {
+              // try subflows
+              this.subflows.forEach(function(subflow) {
+                let step = subflow.getStep(activityId);
+                if (step) {
+                  // only within bounds of subflow
+                  diagram.selectObj.resize(diagram.dragX, diagram.dragY, x - diagram.dragX, y - diagram.dragY, subflow.display);
+                  subflow.getLinks(step).forEach(function(link) {
+                    link.recalc(step);
+                  });
+                }
+              });
+            }
+          }
+          else {
+            this.selectObj.resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
           }
           this.draw();
+          var obj = this.getHoverObj(x, y);
+          if (obj)
+            this.select(obj);
           return true;
         }
       }
@@ -667,7 +692,7 @@ workflowMod.factory('Diagram',
         var deltaX = x - this.dragX;
         var deltaY = y - this.dragY;
         if (this.selectObj.isStep) {
-          var activityId = this.selectObj.activity.id;
+          let activityId = this.selectObj.activity.id;
           let step = this.getStep(activityId);
           if (step) {
             this.selectObj.move(deltaX, deltaY);
@@ -677,16 +702,14 @@ workflowMod.factory('Diagram',
           }
           else {
             // try subflows
-            var diagram = this;
             this.subflows.forEach(function(subflow) {
               let step = subflow.getStep(activityId);
               if (step) {
                 // only within bounds of subflow
-                if (diagram.selectObj.move(deltaX, deltaY, subflow.display)) {
-                  subflow.getLinks(step).forEach(function(link) {
-                    link.recalc(step);
-                  });
-                }
+                diagram.selectObj.move(deltaX, deltaY, subflow.display);
+                subflow.getLinks(step).forEach(function(link) {
+                  link.recalc(step);
+                });
               }
             });
           }
@@ -714,13 +737,19 @@ workflowMod.factory('Diagram',
       var subflow = this.subflows[i];
       if (subflow.title.isHover(x, y))
         return subflow;
-      for (var j = 0; j < subflow.steps.length; j++) {
-        if (subflow.steps[j].isHover(x, y))
-          return subflow.steps[j];
+      if (subflow.isHover(x, y)) {
+        for (var j = 0; j < subflow.steps.length; j++) {
+          if (subflow.steps[j].isHover(x, y))
+            return subflow.steps[j];
+        }
+        for (j = 0; j < subflow.links.length; j++) {
+          if (subflow.links[j].isHover(this, x, y))
+            return subflow.links[j];
+        }
       }
     }
     for (i = 0; i < this.links.length; i++) {
-      if (this.links[i].isHover(x, y))
+      if (this.links[i].isHover(this, x, y))
         return this.links[i];
     }
     for (i = 0; i < this.notes.length; i++) {
@@ -742,17 +771,49 @@ workflowMod.factory('Diagram',
       }
     }
     
-    var prevSelObj = this.selectObj;
+    this.unselect();
     if (bgObj == this)
       this.selectObj = this.label;
     else
       this.selectObj = bgObj;
-    if (prevSelObj && prevSelObj !== this.selectObj)
-      this.unselect(prevSelObj);
+
     this.select(this.selectObj);
     
     return bgObj;
-  }; 
+  };
+  
+  // TODO better select indication
+  Diagram.prototype.select = function(obj) {
+    this.selectedObj = obj;
+    if (this.selectedObj)
+      this.selectedObj.select(this);
+  };
+
+  // removes anchors from currently selected obj, if any
+  Diagram.prototype.unselect = function() {
+    var selObj = this.selectObj; // retain
+    this.draw();
+    this.reselect(selObj);
+  };
+  
+  Diagram.prototype.reselect = function(selObj) {
+    if (selObj) {
+      var id = selObj.workflowItem ? selObj.workflowItem.id : null;
+      if (id) {
+        this.selectObj = this.get(id);
+        if (!this.selectObj) {
+          for (var i = 0; i < this.subflows.length; i++) {
+            this.selectObj = this.subflows[i].get(id);
+            if (this.selectObj)
+              break;
+          }
+        }
+      }
+      else {
+        this.selectObj = this.title;
+      }
+    }
+  };
   
   Diagram.prototype.getAnchor = function(x, y) {
     return -1;

@@ -14,6 +14,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
   Subflow.prototype = new Shape();
 
   Subflow.BOX_OUTLINE_COLOR = '#337ab7';
+  Subflow.HIT_WIDTH = 7;
   
   Subflow.prototype.draw = function(diagram) {
 
@@ -45,12 +46,34 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
     
     // title
     var title = { 
+        subflow: this,
         text: this.subprocess.name,
         x: this.display.x + 10, 
         y: this.display.y + 4 - DC.DEFAULT_FONT.SIZE,        
         isHover: function(x, y) {
-          return x >= this.x && x <= this.x + this.w &&
+          var hov = x >= this.x && x <= this.x + this.w &&
               y >= this.y && y <= this.y + this.h;
+          if (!hov) {
+            var context = diagram.context;
+            var previousLineWidth = context.lineWidth;
+            context.lineWidth = Subflow.HIT_WIDTH;
+            var display = this.subflow.display; 
+            var r = DC.BOX_ROUNDING_RADIUS;
+            context.beginPath();
+            context.moveTo(display.x + r, display.y);
+            context.lineTo(display.x + display.w - r, display.y);
+            context.quadraticCurveTo(display.x + display.w, display.y, x + display.w, display.y + r);
+            context.lineTo(display.x + display.w, display.y + display.h - r);
+            context.quadraticCurveTo(display.x + display.w, display.y + display.h, display.x + display.w - r, display.y + display.h);
+            context.lineTo(display.x + r, display.y + display.h);
+            context.quadraticCurveTo(display.x, display.y + display.h, display.x, display.y + display.h - r);
+            context.lineTo(display.x, display.y + r);
+            context.quadraticCurveTo(display.x, display.y, display.x + r, display.y);
+            context.closePath();
+            hov = context.isPointInStroke(x, y);
+            context.lineWidth = previousLineWidth;
+          }
+          return hov;
         }
     };
     var textMetrics = diagram.context.measureText(title.text);
@@ -106,8 +129,15 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
   
   Subflow.prototype.getStep = function(activityId) {
     for (var i = 0; i < this.steps.length; i++) {
-      if (this.steps[i].activity.id === activityId)
+      if (this.steps[i].activity.id == activityId)
         return this.steps[i];
+    }
+  };
+  
+  Subflow.prototype.getLink = function(transitionId) {
+    for (var i = 0; i < this.links.length; i++) {
+      if (this.links[i].transition.id == transitionId)
+        return this.links[i];
     }
   };
   
@@ -118,6 +148,13 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
         links.push(this.links[i]);
     }
     return links;
+  };
+  
+  Subflow.prototype.get = function(id) {
+    if (id.startsWith('A'))
+      return this.getStep(id);
+    else if (id.startsWith('T'))
+      return this.getLink(id);
   };
   
   Subflow.prototype.getActivityInstances = function(id) {
@@ -157,7 +194,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
   
   Subflow.prototype.resize = function(x, y, deltaX, deltaY) {
     var display = this.resizeDisplay(x, y, deltaX, deltaY, Step.MIN_SIZE);
-    this.subprocess.attributes.WORK_DISPLAY_INFO = this.getAttr(display);
+    this.setDisplayAttr(display.x, display.y, display.w, display.h);
   };
   
   return Subflow;

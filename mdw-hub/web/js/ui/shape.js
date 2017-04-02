@@ -10,6 +10,8 @@ shapeMod.factory('Shape', ['mdw', 'util', 'DC',
     this.workflowItem = workflowItem;
   };
   
+  Shape.MIN_SIZE = 4;
+  
   // get a display object from an attribute value
   Shape.prototype.getDisplay = function() {
     var displayAttr = this.workflowItem.attributes.WORK_DISPLAY_INFO;
@@ -49,20 +51,33 @@ shapeMod.factory('Shape', ['mdw', 'util', 'DC',
         y >= this.display.y && y <= this.display.y + this.display.h;
   };
   
+  // TODO better select indication
+  Shape.prototype.select = function(diagram) {
+    var context = diagram.context;
+    var display = this.display;
+    context.fillStyle = 'red';
+    var s = DC.ANCHOR_W;
+    context.fillRect(display.x - s, display.y - s, s * 2, s * 2);
+    context.fillRect(display.x + display.w - s, display.y - s, s * 2, s * 2);
+    context.fillRect(display.x + display.w - 2, display.y + display.h - s, s * 2, s * 2);
+    context.fillRect(display.x - 2, display.y + display.h - s, s * 2, s * 2);
+    context.fillStyle = DC.DEFAULT_COLOR;
+  };
+
   Shape.prototype.getAnchor = function(x, y) {
-    if (Math.abs(this.display.x - x) <= DC.ANCHOR_W && Math.abs(this.display.y - y) <= DC.ANCHOR_W)
+    if (Math.abs(this.display.x - x) <= DC.ANCHOR_HIT_W && Math.abs(this.display.y - y) <= DC.ANCHOR_HIT_W)
       return 0;
-    else if (Math.abs(this.display.x + this.display.w - x) <= DC.ANCHOR_W && Math.abs(this.display.y - y) <= DC.ANCHOR_W)
+    else if (Math.abs(this.display.x + this.display.w - x) <= DC.ANCHOR_HIT_W && Math.abs(this.display.y - y) <= DC.ANCHOR_HIT_W)
       return 1;
-    else if (Math.abs(this.display.x + this.display.w - x) <= DC.ANCHOR_W && Math.abs(this.display.y + this.display.h - y) <= DC.ANCHOR_W)
+    else if (Math.abs(this.display.x + this.display.w - x) <= DC.ANCHOR_HIT_W && Math.abs(this.display.y + this.display.h - y) <= DC.ANCHOR_HIT_W)
       return 2;
-    else if (Math.abs(this.display.x - x) <= DC.ANCHOR_W && Math.abs(this.display.y + this.display.h - y) <= DC.ANCHOR_W)
+    else if (Math.abs(this.display.x - x) <= DC.ANCHOR_HIT_W && Math.abs(this.display.y + this.display.h - y) <= DC.ANCHOR_HIT_W)
       return 3;
     else 
       return -1;
   };
   
-  Shape.prototype.resizeDisplay = function(x, y, deltaX, deltaY, min) {
+  Shape.prototype.resizeDisplay = function(x, y, deltaX, deltaY, min, limDisplay) {
     var anchor = this.getAnchor(x, y);
     var display = {x: this.display.x, y: this.display.y, w: this.display.w, h: this.display.h};
     var t1, t2;
@@ -106,6 +121,17 @@ shapeMod.factory('Shape', ['mdw', 'util', 'DC',
       if (display.h < min) 
         display.h = min;
     }
+    if (limDisplay) {
+      if (display.x < limDisplay.x)
+        display.x = limDisplay.x;
+      if (display.x + display.w > limDisplay.x + limDisplay.w)
+        display.w = limDisplay.x + limDisplay.w - display.x;
+      if (display.y < limDisplay.y)
+        display.y = limDisplay.y;
+      if (display.y + display.h > limDisplay.y + limDisplay.h)
+        display.h = limDisplay.y + limDisplay.h - display.y;
+    }
+    
     return display;
   };
   

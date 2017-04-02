@@ -48,5 +48,10 @@ noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
     return true;
   };
   
+  Note.prototype.resize = function(x, y, deltaX, deltaY) {
+    var display = this.resizeDisplay(x, y, deltaX, deltaY, Shape.MIN_SIZE);
+    this.setDisplayAttr(display.x, display.y, display.w, display.h);
+  };
+  
   return Note;
 }]);

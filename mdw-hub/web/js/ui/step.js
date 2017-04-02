@@ -132,11 +132,10 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
         y = limDisplay.y + limDisplay.h - this.display.h;
     }
     this.setDisplayAttr(x, y, this.display.w, this.display.h);
-    return true;
   };
   
-  Step.prototype.resize = function(x, y, deltaX, deltaY) {
-    var display = this.resizeDisplay(x, y, deltaX, deltaY, Step.MIN_SIZE);
+  Step.prototype.resize = function(x, y, deltaX, deltaY, limDisplay) {
+    var display = this.resizeDisplay(x, y, deltaX, deltaY, Step.MIN_SIZE, limDisplay);
     this.activity.attributes.WORK_DISPLAY_INFO = this.getAttr(display);
   };
   

@@ -64,6 +64,14 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
         },
         Attributes: 'attributes',
         Documentation: {}
+      },
+      transition: {
+        Definition: {
+          ID: 'id',
+          Result: 'resultCode',
+          Event: 'event'
+        },
+        Attributes: 'attributes'
       }
     },
     instance: {
