@@ -55,7 +55,7 @@ shapeMod.factory('Shape', ['mdw', 'util', 'DC',
   Shape.prototype.select = function(diagram) {
     var context = diagram.context;
     var display = this.display;
-    context.fillStyle = 'red';
+    context.fillStyle = DC.ANCHOR_COLOR;
     var s = DC.ANCHOR_W;
     context.fillRect(display.x - s, display.y - s, s * 2, s * 2);
     context.fillRect(display.x + display.w - s, display.y - s, s * 2, s * 2);

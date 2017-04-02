@@ -16,7 +16,8 @@ dcMod.constant('DC', {
   META_COLOR: 'gray',
   BOX_OUTLINE_COLOR: 'black',
   BOX_ROUNDING_RADIUS: 12,
-  ANCHOR_W: 2,
+  ANCHOR_W: 3,
+  ANCHOR_COLOR: '#ec407a',
   ANCHOR_HIT_W: 7
   
 });

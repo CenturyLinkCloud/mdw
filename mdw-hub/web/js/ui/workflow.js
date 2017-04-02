@@ -193,7 +193,7 @@ workflowMod.factory('Diagram',
     var diagram = this; // convenient/inner access
     
     // label
-    diagram.label = new Label(this, this.getDisplay(), DC.TITLE_FONT);
+    diagram.label = new Label(this, this.process.name, this.getDisplay(), DC.TITLE_FONT);
     diagram.makeRoom(canvasDisplay, diagram.label.prepareDisplay(diagram));
     
     // activities
@@ -772,6 +772,7 @@ workflowMod.factory('Diagram',
     }
     
     this.unselect();
+    
     if (bgObj == this)
       this.selectObj = this.label;
     else

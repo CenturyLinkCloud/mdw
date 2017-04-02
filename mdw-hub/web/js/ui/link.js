@@ -2,8 +2,8 @@
 
 var linkMod = angular.module('mdwLink', ['mdw']);
 
-linkMod.factory('Link', ['mdw', 'util', 'DC',
-                         function(mdw, util, DC) {
+linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
+                         function(mdw, util, DC, Label) {
 
   var Link = function(transition, from, to) {
     this.transition = this.workflowItem = transition;
@@ -71,29 +71,26 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
     diagram.context.fillStyle = color;
     this.drawConnector(diagram);
 
-    // title
     if (diagram.instance && (!this.instances || this.instances.length === 0))
-      diagram.context.fillStyle = Link.UNTRAVERSED;
-    diagram.context.fillText(this.title.text, this.title.x, this.title.y);
-    diagram.context.strokeStyle = DC.DEFAULT_COLOR;
-    diagram.context.fillStyle = DC.DEFAULT_COLOR;
-    
+      this.label.draw(diagram, Link.UNTRAVERSED);
+    else
+      this.label.draw(diagram);
+
+    diagram.context.strokeStyle = DC.DEFAULT_COLOR;    
   };
   
-  // sets display/title and returns an object with w and h for required size
+  // sets display/label and returns an object with w and h for required size
   Link.prototype.prepareDisplay = function(diagram) {
     var maxDisplay = { w: 0, h: 0};
     this.display = this.getDisplay();
     // TODO determine effect on maxDisplay
     
-    // title
-    var label = this.transition.event === 'FINISH' ? '' : this.transition.event + ':';
-    label += this.transition.resultCode ? this.transition.resultCode : ''; 
-    this.title = { text: label };
-    // TODO title coords
-    this.title.x = this.display.lx;
-    this.title.y = this.display.ly + DC.DEFAULT_FONT.SIZE;
-    
+    // label
+    var labelText = this.transition.event === 'FINISH' ? '' : this.transition.event + ':';
+    labelText += this.transition.resultCode ? this.transition.resultCode : ''; 
+    this.label = new Label(this, labelText, { x: this.display.lx, y: this.display.ly }, DC.DEFAULT_FONT);
+    this.label.prepareDisplay(diagram);
+
     return maxDisplay;
   };
   
@@ -143,6 +140,11 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
       attr += display.ys[i];
     }
     this.transition.attributes.TRANSITION_DISPLAY_INFO = attr;
+  };
+  
+  // only for the label
+  Link.prototype.setDisplayAttr = function(x, y, w, h) {
+    this.setDisplay({ lx: x, ly: y, type: this.display.type, xs: this.display.xs, ys: this.display.ys });
   };
   
   Link.prototype.applyState = function(transitionInstances) {
@@ -767,12 +769,13 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
   
   Link.prototype.select = function(diagram) {
     var context = diagram.context;
-    context.fillStyle = 'red';
+    context.fillStyle = DC.ANCHOR_COLOR;
     for (var i = 0; i < this.display.xs.length; i++) {
       var x = this.display.xs[i];
       var y = this.display.ys[i];
       context.fillRect(x - DC.ANCHOR_W, y - DC.ANCHOR_W, DC.ANCHOR_W * 2, DC.ANCHOR_W * 2);
     }
+    this.label.select(diagram);
     context.fillStyle = DC.DEFAULT_COLOR;
   };
 
@@ -786,6 +789,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC',
   };
   
   Link.prototype.move = function(deltaX, deltaY) {
+//    this.setDisplayAttr(this.display.lx + deltaX, this.display.ly + deltaY);
     var display = {
       type: this.display.type,
       lx: this.display.lx + deltaX,
