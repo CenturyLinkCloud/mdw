@@ -599,13 +599,13 @@ workflowMod.factory('Diagram',
   
   Diagram.prototype.onMouseUp = function(e) {
     if (this.shiftDrag && this.dragX && this.dragY) {
-      if (this.selectedObj && this.selectedObj.isStep) {
+      if (this.selectObj && this.selectObj.isStep) {
         var rect = this.canvas.getBoundingClientRect();
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top;
         var destObj = this.getHoverObj(x, y);
         if (destObj && destObj.isStep) {
-          this.addLink(this.selectedObj, destObj);
+          this.addLink(this.selectObj, destObj);
           this.draw();
         }
       }
@@ -648,7 +648,7 @@ workflowMod.factory('Diagram',
       var y = e.clientY - rect.top;
       var diagram = this;
       if (this.shiftDrag) {
-        if (this.selectedObj.isStep) {
+        if (this.selectObj.isStep) {
           this.draw();
           this.drawLine(this.dragX, this.dragY, x, y, 'green');
         }
@@ -771,30 +771,22 @@ workflowMod.factory('Diagram',
       }
     }
     
-    this.unselect();
-    
     if (bgObj == this)
-      this.selectObj = this.label;
+      this.select(this.label);
     else
-      this.selectObj = bgObj;
-
-    this.select(this.selectObj);
+      this.select(bgObj);
     
     return bgObj;
   };
   
-  // TODO better select indication
   Diagram.prototype.select = function(obj) {
-    this.selectedObj = obj;
-    if (this.selectedObj)
-      this.selectedObj.select(this);
+    if (obj)
+      obj.select(this);
   };
 
   // removes anchors from currently selected obj, if any
   Diagram.prototype.unselect = function() {
-    var selObj = this.selectObj; // retain
     this.draw();
-    this.reselect(selObj);
   };
   
   Diagram.prototype.reselect = function(selObj) {
