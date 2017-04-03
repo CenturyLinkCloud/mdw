@@ -41,7 +41,7 @@ public class HttpConnection {
         this.readTimeout = timeout;
     }
 
-    private Map<String,String> headers;
+    Map<String,String> headers;
     public Map<String,String> getHeaders() { return headers; }
     public String getHeader(String name) {
         return headers == null ? null : headers.get(name);
@@ -162,7 +162,7 @@ public class HttpConnection {
         }
     }
 
-    private HttpResponse response;
+    HttpResponse response;
     public HttpResponse getResponse() { return response; }
 
     /**

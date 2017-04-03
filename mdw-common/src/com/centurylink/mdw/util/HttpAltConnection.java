@@ -12,8 +12,10 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
@@ -61,6 +63,9 @@ public class HttpAltConnection extends HttpConnection {
         httpClient = HttpClients.createDefault();
     }
 
+    /**
+     * Note SOCKS protocol not supported.
+     */
     void open(HttpHost proxy) throws IOException {
         this.proxy = proxy;
         httpClient = HttpClients.createDefault();
@@ -134,15 +139,21 @@ public class HttpAltConnection extends HttpConnection {
                 entityRequest.setEntity(new ByteArrayEntity(outputStream.toByteArray()));
             }
             httpResponse = httpClient.execute(methodRequest);
-            HttpResponse response = new HttpResponse(extractResponseBytes(httpResponse.getEntity().getContent()));
-            response.setCode(httpResponse.getStatusLine().getStatusCode());
-            response.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+            response = new HttpResponse(extractResponseBytes(httpResponse.getEntity().getContent()));
             return response;
         }
         finally {
             httpClient.close();
             if (httpResponse != null)
                 httpResponse.close();
+            if (response != null && httpResponse != null) {
+                response.setCode(httpResponse.getStatusLine().getStatusCode());
+                response.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+                headers = new HashMap<String,String>();
+                for (Header header : httpResponse.getAllHeaders()) {
+                    headers.put(header.getName(), header.getValue());
+                }
+            }
         }
     }
 
