@@ -72,10 +72,12 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     this.diagram.context.fillStyle = color;
     this.drawConnector();
 
-    if (this.diagram.instance && (!this.instances || this.instances.length === 0))
-      this.label.draw(Link.UNTRAVERSED);
-    else
-      this.label.draw();
+    if (this.label) {
+      if (this.diagram.instance && (!this.instances || this.instances.length === 0))
+        this.label.draw(Link.UNTRAVERSED);
+      else
+        this.label.draw();
+    }
 
     this.diagram.context.strokeStyle = DC.DEFAULT_COLOR;    
   };
@@ -88,9 +90,11 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     
     // label
     var labelText = this.transition.event === 'FINISH' ? '' : this.transition.event + ':';
-    labelText += this.transition.resultCode ? this.transition.resultCode : ''; 
-    this.label = new Label(this, labelText, { x: this.display.lx, y: this.display.ly }, DC.DEFAULT_FONT);
-    this.label.prepareDisplay();
+    labelText += this.transition.resultCode ? this.transition.resultCode : '';
+    if (labelText.length > 0) {
+      this.label = new Label(this, labelText, { x: this.display.lx, y: this.display.ly }, DC.DEFAULT_FONT);
+      this.label.prepareDisplay();
+    }
 
     return maxDisplay;
   };
@@ -251,10 +255,13 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
         break;
     }
     
-    if (!hitX)
+    if (hitX) {
+      if (context.isPointInStroke(hitX, hitY))
+        return true;
+    }
+    else {
       context.stroke();
-    else if (context.isPointInStroke(hitX, hitY))
-      return true;
+    }
   };
   
   Link.prototype.drawConnectorArrow = function(context, hitX, hitY) {
@@ -776,12 +783,13 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       var y = this.display.ys[i];
       context.fillRect(x - DC.ANCHOR_W, y - DC.ANCHOR_W, DC.ANCHOR_W * 2, DC.ANCHOR_W * 2);
     }
-    this.label.select();
+    if (this.label)
+      this.label.select();
     context.fillStyle = DC.DEFAULT_COLOR;
   };
 
   Link.prototype.isHover = function(x, y) {
-    return this.drawConnector(x, y);
+    return (this.label && this.label.isHover(x, y)) || this.drawConnector(x, y);
   };
   
   Link.prototype.getAnchor = function(x, y) {
@@ -790,7 +798,6 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   };
   
   Link.prototype.move = function(deltaX, deltaY) {
-//    this.setDisplayAttr(this.display.lx + deltaX, this.display.ly + deltaY);
     var display = {
       type: this.display.type,
       lx: this.display.lx + deltaX,
@@ -809,6 +816,16 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       });
     }
     this.setDisplay(display);
+  };
+  
+  Link.prototype.moveLabel = function(deltaX, deltaY) {
+    this.setDisplay({
+      type: this.display.type,
+      lx: this.display.lx + deltaX,
+      ly: this.display.ly + deltaY,
+      xs: this.display.xs, 
+      ys: this.display.ys
+    });
   };
   
   return Link;

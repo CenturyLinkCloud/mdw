@@ -72,6 +72,12 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
           Event: 'event'
         },
         Attributes: 'attributes'
+      },
+      textNote: {
+        Definition: {
+          ID: 'id',
+          Text: 'content'
+        }
       }
     },
     instance: {

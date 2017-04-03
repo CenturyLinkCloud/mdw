@@ -712,6 +712,12 @@ workflowMod.factory('Diagram',
             });
           }
         }
+        else if (this.selectObj.isLink) {
+          var link = this.selectObj;
+          if (link.label && link.label.isHover(this.dragX, this.dragY)) {
+            link.moveLabel(deltaX, deltaY);
+          }
+        }
         else {
           this.selectObj.move(deltaX, deltaY);
         }
