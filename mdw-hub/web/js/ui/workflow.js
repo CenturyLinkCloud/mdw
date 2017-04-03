@@ -622,12 +622,20 @@ workflowMod.factory('Diagram',
     if (this.hoverObj) {
       if (this.editable && (this.hoverObj == this.selectObj)) {
         this.anchor = this.hoverObj.getAnchor(x, y);
-        if (this.anchor === 0 || this.anchor == 2)
-          $document[0].body.style.cursor = 'nw-resize';
-        else if (this.anchor == 1 || this.anchor == 3)
-          $document[0].body.style.cursor = 'ne-resize';
-        else
+        if (this.anchor >= 0) {
+          if (this.hoverObj.isLink) {
+            $document[0].body.style.cursor = 'crosshair';
+          }
+          else {
+            if (this.anchor === 0 || this.anchor == 2)
+              $document[0].body.style.cursor = 'nw-resize';
+            else if (this.anchor == 1 || this.anchor == 3)
+              $document[0].body.style.cursor = 'ne-resize';
+          }
+        }
+        else {
           $document[0].body.style.cursor = 'pointer';
+        }
       }
       else {
         $document[0].body.style.cursor = 'pointer';
@@ -652,6 +660,10 @@ workflowMod.factory('Diagram',
         }
       }
       else if (this.anchor >= 0) {
+        if (this.selectObj.isLink) {
+          this.selectObj.moveAnchor(this.anchor, x - this.dragX, y - this.dragY);
+          this.draw();
+        }
         if (this.selectObj.resize) {
           if (this.selectObj.isStep) {
             let activityId = this.selectObj.activity.id;
@@ -733,28 +745,29 @@ workflowMod.factory('Diagram',
   Diagram.prototype.getHoverObj = function(x, y) {
     if (this.label.isHover(x, y))
       return this.label;
-    for (var i = 0; i < this.steps.length; i++) {
-      if (this.steps[i].isHover(x, y))
-        return this.steps[i];
-    }
+    // links checked before steps for better anchor selectability
     for (i = 0; i < this.subflows.length; i++) {
       var subflow = this.subflows[i];
       if (subflow.title.isHover(x, y))
         return subflow;
       if (subflow.isHover(x, y)) {
-        for (var j = 0; j < subflow.steps.length; j++) {
-          if (subflow.steps[j].isHover(x, y))
-            return subflow.steps[j];
-        }
         for (j = 0; j < subflow.links.length; j++) {
           if (subflow.links[j].isHover(x, y))
             return subflow.links[j];
+        }
+        for (var j = 0; j < subflow.steps.length; j++) {
+          if (subflow.steps[j].isHover(x, y))
+            return subflow.steps[j];
         }
       }
     }
     for (i = 0; i < this.links.length; i++) {
       if (this.links[i].isHover(x, y))
         return this.links[i];
+    }
+    for (var i = 0; i < this.steps.length; i++) {
+      if (this.steps[i].isHover(x, y))
+        return this.steps[i];
     }
     for (i = 0; i < this.notes.length; i++) {
       if (this.notes[i].isHover(x, y))

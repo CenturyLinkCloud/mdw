@@ -192,19 +192,21 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
           }
           horizontal = !horizontal;
         }
-        if (!hitX)
+        if (hitX)
+          hit = context.isPointInStroke(hitX, hitY);
+        else
           context.stroke();
       }
     }
-    context.lineWidth = previousLineWidth;
-    
-    if (hitX && !hit && context.isPointInStroke(hitX, hitY))
-      hit = true;
     
     if (hit)
       return true;
     else
-      return this.drawConnectorArrow(context, hitX, hitY);
+      hit = this.drawConnectorArrow(context, hitX, hitY);
+
+    context.lineWidth = previousLineWidth;
+    
+    return hit;
   };
   
   Link.prototype.drawAutoElbowConnector = function(context, hitX, hitY) {
@@ -793,7 +795,12 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   };
   
   Link.prototype.getAnchor = function(x, y) {
-    // TODO
+    for (var i = 0; i < this.display.xs.length; i++) {
+      var cx = this.display.xs[i];
+      var cy = this.display.ys[i];
+      if (Math.abs(cx - x) <= DC.ANCHOR_HIT_W && Math.abs(cy - y) <= DC.ANCHOR_HIT_W)
+        return i;
+    }
     return -1;
   };
   
@@ -815,6 +822,44 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
         display.ys.push(y + deltaY);
       });
     }
+    this.setDisplay(display);
+  };
+  
+  Link.prototype.moveAnchor = function(anchor, deltaX, deltaY) {
+    var display = {
+      type: this.display.type,
+      lx: this.display.lx,
+      ly: this.display.ly,
+      xs: [], 
+      ys: []
+    };
+    for (var i = 0; i < this.display.xs.length; i++) {
+      if (i == anchor) {
+        display.xs.push(this.display.xs[i] + deltaX);
+        display.ys.push(this.display.ys[i] + deltaY);
+      }
+      else {
+        display.xs.push(this.display.xs[i]);
+        display.ys.push(this.display.ys[i]);
+      }
+    }
+
+//    if (display.type.startsWith('Elbow')) {
+//      if (this.isAnchorHorizontal()) {
+//        if (anchor > 0) 
+//          display.ys[anchor - 1] = this.display.ys[anchor] + deltaY;
+//        if (anchor < display.xs.length - 1)
+//          display.xs[anchor + 1] = this.display.xs[anchor] + deltaX;
+//      }
+//      else {
+//        if (anchor > 0) 
+//          display.xs[anchor - 1] = this.display.xs[anchor] + deltaX;
+//        if (anchor < display.xs.length - 1) 
+//          display.ys[anchor + 1] = this.display.ys[anchor] + deltaY;
+//      }
+//    }
+
+    // TODO: update arrows
     this.setDisplay(display);
   };
   

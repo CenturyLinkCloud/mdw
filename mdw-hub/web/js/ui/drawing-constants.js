@@ -18,6 +18,6 @@ dcMod.constant('DC', {
   BOX_ROUNDING_RADIUS: 12,
   ANCHOR_W: 3,
   ANCHOR_COLOR: '#ec407a',
-  ANCHOR_HIT_W: 7
+  ANCHOR_HIT_W: 8
   
 });
