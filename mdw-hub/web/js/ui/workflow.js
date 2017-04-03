@@ -718,9 +718,9 @@ workflowMod.factory('Diagram',
           this.selectObj.move(deltaX, deltaY);
         }
         this.draw();
-        var obj = this.getHoverObj(x, y);
-        if (obj)
-          this.select(obj);
+        var hovObj = this.getHoverObj(x, y);
+        if (hovObj)
+          this.select(hovObj);
         return true;
       }
     }
