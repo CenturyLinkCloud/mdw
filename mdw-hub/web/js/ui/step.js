@@ -5,8 +5,9 @@ var stepMod = angular.module('mdwStep', ['mdw']);
 stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
                          function(mdw, util, Shape, DC, WORKFLOW_STATUSES) {
   
-  var Step = function(activity) {
-    Shape.call(this, activity);
+  var Step = function(diagram, activity) {
+    Shape.call(this, diagram, activity);
+    this.diagram = diagram;
     this.activity = activity;
     this.workflowType = 'activity';
     this.isStep = true;
@@ -21,7 +22,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
   
   Step.STATUSES = [{status: 'Unknown', color: 'transparent'}].concat(WORKFLOW_STATUSES);
   
-  Step.prototype.draw = function(diagram) {
+  Step.prototype.draw = function() {
     var activity = this.workflowObj = this.activity;
     var shape;
     if (this.implementor.icon && this.implementor.icon.startsWith('shape:'))
@@ -32,54 +33,55 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
       var adj = 0;
       if (shape == 'start' || shape == 'stop')
         adj = 2;
-      diagram.drawState(this.display, this.instances, !diagram.drawBoxes, adj);
+      this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj);
     }
     
     if (this.implementor.icon) {
       var yAdjust = -2;
       if (shape) {
         if ('start' == shape) {
-          diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, 'green', 'white');
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, 'green', 'white');
         }
         else if ('stop' == shape) {
-          diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, 'red', 'white');
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, 'red', 'white');
         }
         else if ('decision' == shape) {
-          diagram.drawDiamond(this.display.x, this.display.y, this.display.w, this.display.h);
+          this.diagram.drawDiamond(this.display.x, this.display.y, this.display.w, this.display.h);
           yAdjust = -8;
         }
         else if ('activity' == shape) {
-          diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);
+          this.diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);
         }
       }
       else {
-        if (diagram.drawBoxes)
-          diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);
+        if (this.diagram.drawBoxes)
+          this.diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);
         var iconSrc = mdw.roots.hub + '/asset/' + this.implementor.icon;
         var iconX = this.display.x + this.display.w / 2 - 12;
         var iconY = this.display.y + 5;
-        diagram.drawImage(iconSrc, iconX, iconY);
+        this.diagram.drawImage(iconSrc, iconX, iconY);
         yAdjust = +4; 
       }
     }
     else {
-      diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);
+      this.diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);
     }
 
     // title
+    var diagram = this.diagram;
     this.title.lines.forEach(function(line) {
       diagram.context.fillText(line.text, line.x, line.y + yAdjust);
     });
     
     // logical id
-    diagram.context.fillStyle = DC.META_COLOR;
-    diagram.context.fillText(activity.id, this.display.x + 2, this.display.y - 2);
-    diagram.context.fillStyle = DC.DEFAULT_COLOR;
+    this.diagram.context.fillStyle = DC.META_COLOR;
+    this.diagram.context.fillText(activity.id, this.display.x + 2, this.display.y - 2);
+    this.diagram.context.fillStyle = DC.DEFAULT_COLOR;
     
   };
   
   // sets display/title and returns an object with w and h for required size
-  Step.prototype.prepareDisplay = function(diagram) {
+  Step.prototype.prepareDisplay = function() {
     var maxDisplay = { w: 0, h: 0};
     var display = this.getDisplay();
 
@@ -96,7 +98,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
     var title = { text: this.activity.name, lines: titleLines, w: 0, h:0 };
     for (var i = 0; i < title.lines.length; i++) {
       var line = title.lines[i];
-      var textMetrics = diagram.context.measureText(line.text);
+      var textMetrics = this.diagram.context.measureText(line.text);
       if (textMetrics.width > title.w)
         title.w = textMetrics.width;
       title.h += DC.DEFAULT_FONT.SIZE;

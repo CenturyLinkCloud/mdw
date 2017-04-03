@@ -4,8 +4,9 @@ var subflowMod = angular.module('mdwSubflow', ['mdw']);
 
 subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step', 'Link',
                                 function($document, mdw, util, Shape, DC, Step, Link) {
-  var Subflow = function(subprocess) {
-    Shape.call(this, subprocess);
+  var Subflow = function(diagram, subprocess) {
+    Shape.call(this, diagram, subprocess);
+    this.diagram = diagram;
     this.subprocess = subprocess;
     this.workflowType = 'subprocess';
     this.isSubflow = true;
@@ -16,31 +17,31 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
   Subflow.BOX_OUTLINE_COLOR = '#337ab7';
   Subflow.HIT_WIDTH = 7;
   
-  Subflow.prototype.draw = function(diagram) {
+  Subflow.prototype.draw = function() {
 
     // runtime state first
     if (this.instances) {
-      diagram.drawState(this.display, this.instances, true);
+      this.diagram.drawState(this.display, this.instances, true);
     }
     
-    diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, Subflow.BOX_OUTLINE_COLOR);
-    diagram.context.clearRect(this.title.x - 1, this.title.y, this.title.w + 2, this.title.h);
+    this.diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, Subflow.BOX_OUTLINE_COLOR);
+    this.diagram.context.clearRect(this.title.x - 1, this.title.y, this.title.w + 2, this.title.h);
 
-    diagram.context.fillText(this.title.text, this.title.x, this.title.y + DC.DEFAULT_FONT.SIZE);
+    this.diagram.context.fillText(this.title.text, this.title.x, this.title.y + DC.DEFAULT_FONT.SIZE);
     this.steps.forEach(function(step) {
-      step.draw(diagram);
+      step.draw();
     });
     this.links.forEach(function(link) {
-      link.draw(diagram);
+      link.draw();
     });
     
     // logical id
-    diagram.context.fillStyle = DC.META_COLOR;
-    diagram.context.fillText('[' + this.subprocess.id + ']', this.display.x + 10, this.display.y + this.display.h + 4);
-    diagram.context.fillStyle = DC.DEFAULT_COLOR;
+    this.diagram.context.fillStyle = DC.META_COLOR;
+    this.diagram.context.fillText('[' + this.subprocess.id + ']', this.display.x + 10, this.display.y + this.display.h + 4);
+    this.diagram.context.fillStyle = DC.DEFAULT_COLOR;
   };
   
-  Subflow.prototype.prepareDisplay = function(diagram) {
+  Subflow.prototype.prepareDisplay = function() {
     var maxDisplay = { w: 0, h: 0 };
     this.display = this.getDisplay();
     
@@ -54,7 +55,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
           var hov = x >= this.x && x <= this.x + this.w &&
               y >= this.y && y <= this.y + this.h;
           if (!hov) {
-            var context = diagram.context;
+            var context = subflow.diagram.context;
             var previousLineWidth = context.lineWidth;
             context.lineWidth = Subflow.HIT_WIDTH;
             var display = this.subflow.display; 
@@ -76,7 +77,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
           return hov;
         }
     };
-    var textMetrics = diagram.context.measureText(title.text);
+    var textMetrics = this.diagram.context.measureText(title.text);
     title.w = textMetrics.width;
     title.h = DC.DEFAULT_FONT.SIZE;
     if (title.x + title.w > maxDisplay.w)
@@ -96,9 +97,9 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
     subflow.steps = [];
     if (this.subprocess.activities) {
       this.subprocess.activities.forEach(function(activity) {
-        var step = new Step(activity);
-        step.implementor = diagram.getImplementor(activity.implementor);
-        step.prepareDisplay(diagram);
+        var step = new Step(subflow.diagram, activity);
+        step.implementor = subflow.diagram.getImplementor(activity.implementor);
+        step.prepareDisplay();
         subflow.steps.push(step);
       });
     }
@@ -106,8 +107,8 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
     subflow.steps.forEach(function(step) {
       if (step.activity.transitions) {
         step.activity.transitions.forEach(function(transition) {
-          var link = new Link(transition, step, subflow.getStep(transition.to));
-          var display = link.prepareDisplay(diagram);
+          var link = new Link(subflow.diagram, transition, step, subflow.getStep(transition.to));
+          var display = link.prepareDisplay();
           subflow.links.push(link);
         });
       }

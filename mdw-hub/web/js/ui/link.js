@@ -5,7 +5,8 @@ var linkMod = angular.module('mdwLink', ['mdw']);
 linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
                          function(mdw, util, DC, Label) {
 
-  var Link = function(transition, from, to) {
+  var Link = function(diagram, transition, from, to) {
+    this.diagram = diagram;
     this.transition = this.workflowItem = transition;
     this.from = from;
     this.to = to;
@@ -52,9 +53,9 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   Link.ELBOW_THRESHOLD = 0.8;
   Link.ELBOW_VH_THRESHOLD = 60;
   
-  Link.prototype.draw = function(diagram) {
+  Link.prototype.draw = function() {
     var color = Link.EVENTS[this.transition.event].color;
-    if (diagram.instance) {
+    if (this.diagram.instance) {
       if (this.instances && this.instances.length > 0) {
         var latest = this.instances[0];
         if (latest.statusCode == 1)
@@ -67,20 +68,20 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       }
     }
       
-    diagram.context.strokeStyle = color;
-    diagram.context.fillStyle = color;
-    this.drawConnector(diagram);
+    this.diagram.context.strokeStyle = color;
+    this.diagram.context.fillStyle = color;
+    this.drawConnector();
 
-    if (diagram.instance && (!this.instances || this.instances.length === 0))
-      this.label.draw(diagram, Link.UNTRAVERSED);
+    if (this.diagram.instance && (!this.instances || this.instances.length === 0))
+      this.label.draw(Link.UNTRAVERSED);
     else
-      this.label.draw(diagram);
+      this.label.draw();
 
-    diagram.context.strokeStyle = DC.DEFAULT_COLOR;    
+    this.diagram.context.strokeStyle = DC.DEFAULT_COLOR;    
   };
   
   // sets display/label and returns an object with w and h for required size
-  Link.prototype.prepareDisplay = function(diagram) {
+  Link.prototype.prepareDisplay = function() {
     var maxDisplay = { w: 0, h: 0};
     this.display = this.getDisplay();
     // TODO determine effect on maxDisplay
@@ -89,7 +90,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     var labelText = this.transition.event === 'FINISH' ? '' : this.transition.event + ':';
     labelText += this.transition.resultCode ? this.transition.resultCode : ''; 
     this.label = new Label(this, labelText, { x: this.display.lx, y: this.display.ly }, DC.DEFAULT_FONT);
-    this.label.prepareDisplay(diagram);
+    this.label.prepareDisplay();
 
     return maxDisplay;
   };
@@ -152,8 +153,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   };
   
   // if hitX and hitY are passed, checks for hover instead of stroking
-  Link.prototype.drawConnector = function(diagram, hitX, hitY) {
-    var context = diagram.context;
+  Link.prototype.drawConnector = function(hitX, hitY) {
+    var context = this.diagram.context;
     var type = this.display.type;
     var xs = this.display.xs;
     var ys = this.display.ys;
@@ -767,20 +768,20 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
   };
   
-  Link.prototype.select = function(diagram) {
-    var context = diagram.context;
+  Link.prototype.select = function() {
+    var context = this.diagram.context;
     context.fillStyle = DC.ANCHOR_COLOR;
     for (var i = 0; i < this.display.xs.length; i++) {
       var x = this.display.xs[i];
       var y = this.display.ys[i];
       context.fillRect(x - DC.ANCHOR_W, y - DC.ANCHOR_W, DC.ANCHOR_W * 2, DC.ANCHOR_W * 2);
     }
-    this.label.select(diagram);
+    this.label.select();
     context.fillStyle = DC.DEFAULT_COLOR;
   };
 
-  Link.prototype.isHover = function(diagram, x, y) {
-    return this.drawConnector(diagram, x, y);
+  Link.prototype.isHover = function(x, y) {
+    return this.drawConnector(x, y);
   };
   
   Link.prototype.getAnchor = function(x, y) {

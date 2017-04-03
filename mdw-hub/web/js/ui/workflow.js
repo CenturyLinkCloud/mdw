@@ -147,7 +147,7 @@ workflowMod.factory('Diagram',
     ['$document', 'mdw', 'util', 'DC', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note',
      function($document, mdw, util, DC, Label, Shape, Step, Link, Subflow, Note) {
   var Diagram = function(canvas, process, implementors, instance, editable) {
-    Shape.call(this, process);
+    Shape.call(this, this, process);
     this.canvas = canvas;
     this.process = process;
     this.implementors = implementors;
@@ -168,20 +168,18 @@ workflowMod.factory('Diagram',
 
     this.prepareDisplay();
 
-    var diagram = this; // forEach access
-    
-    this.label.draw(this);
+    this.label.draw();
     this.steps.forEach(function(step) {
-      step.draw(diagram);
+      step.draw();
     });
     this.links.forEach(function(link) {
-      link.draw(diagram);
+      link.draw();
     });
     this.subflows.forEach(function(subflow) {
-      subflow.draw(diagram);
+      subflow.draw();
     });
     this.notes.forEach(function(note) {
-      note.draw(diagram);
+      note.draw();
     });
   };
   
@@ -194,15 +192,15 @@ workflowMod.factory('Diagram',
     
     // label
     diagram.label = new Label(this, this.process.name, this.getDisplay(), DC.TITLE_FONT);
-    diagram.makeRoom(canvasDisplay, diagram.label.prepareDisplay(diagram));
+    diagram.makeRoom(canvasDisplay, diagram.label.prepareDisplay());
     
     // activities
     diagram.steps = [];
     if (this.process.activities) {
       this.process.activities.forEach(function(activity) {
-        var step = new Step(activity);
+        var step = new Step(diagram, activity);
         step.implementor = diagram.getImplementor(activity.implementor);
-        diagram.makeRoom(canvasDisplay, step.prepareDisplay(diagram));
+        diagram.makeRoom(canvasDisplay, step.prepareDisplay());
         if (diagram.instance)
           step.applyState(diagram.getActivityInstances(activity.id));
         diagram.steps.push(step);
@@ -214,8 +212,8 @@ workflowMod.factory('Diagram',
     diagram.steps.forEach(function(step) {
       if (step.activity.transitions) {
         step.activity.transitions.forEach(function(transition) {
-          var link = new Link(transition, step, diagram.getStep(transition.to));
-          diagram.makeRoom(canvasDisplay, link.prepareDisplay(diagram));
+          var link = new Link(diagram, transition, step, diagram.getStep(transition.to));
+          diagram.makeRoom(canvasDisplay, link.prepareDisplay());
           if (diagram.instance)
             link.applyState(diagram.getTransitionInstances(link.transition.id));
           diagram.links.push(link);
@@ -227,8 +225,8 @@ workflowMod.factory('Diagram',
     diagram.subflows = [];
     if (this.process.subprocesses) {
       this.process.subprocesses.forEach(function(subproc) {
-        var subflow = new Subflow(subproc);
-        diagram.makeRoom(canvasDisplay, subflow.prepareDisplay(diagram));
+        var subflow = new Subflow(diagram, subproc);
+        diagram.makeRoom(canvasDisplay, subflow.prepareDisplay());
         if (diagram.instance) {
           subflow.mainProcessInstanceId = diagram.instance.processInstanceId; // needed for subprocess & task instance retrieval          
           subflow.applyState(diagram.getSubflowInstances(subflow.subprocess.id));
@@ -241,8 +239,8 @@ workflowMod.factory('Diagram',
     diagram.notes = [];
     if (this.process.textNotes) {
       this.process.textNotes.forEach(function(textNote) {
-        var note = new Note(textNote);
-        diagram.makeRoom(canvasDisplay, note.prepareDisplay(diagram));
+        var note = new Note(diagram, textNote);
+        diagram.makeRoom(canvasDisplay, note.prepareDisplay());
         diagram.notes.push(note);
       });
     }
@@ -323,7 +321,7 @@ workflowMod.factory('Diagram',
         to: to.activity.id
     };
     from.activity.transitions.push(transition);
-    var link = new Link(transition, from, to);
+    var link = new Link(this, transition, from, to);
     link.display = {type: Link.LINK_TYPES.ELBOW, lx: 0, ly: 0, xs: [0,0], ys: [0,0]};
     link.calc();
     this.links.push();
@@ -743,13 +741,13 @@ workflowMod.factory('Diagram',
             return subflow.steps[j];
         }
         for (j = 0; j < subflow.links.length; j++) {
-          if (subflow.links[j].isHover(this, x, y))
+          if (subflow.links[j].isHover(x, y))
             return subflow.links[j];
         }
       }
     }
     for (i = 0; i < this.links.length; i++) {
-      if (this.links[i].isHover(this, x, y))
+      if (this.links[i].isHover(x, y))
         return this.links[i];
     }
     for (i = 0; i < this.notes.length; i++) {
@@ -781,7 +779,7 @@ workflowMod.factory('Diagram',
   
   Diagram.prototype.select = function(obj) {
     if (obj)
-      obj.select(this);
+      obj.select();
   };
 
   // removes anchors from currently selected obj, if any

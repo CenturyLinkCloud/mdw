@@ -4,8 +4,9 @@ var noteMod = angular.module('mdwNote', ['mdw']);
 
 noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
                          function($document, mdw, util, Shape, DC) {
-  var Note = function(textNote) {
-    Shape.call(this, textNote);
+  var Note = function(diagram, textNote) {
+    Shape.call(this, diagram, textNote);
+    this.diagram = diagram;
     this.textNote = textNote;
     this.workflowType = 'textNote';
     this.isNote = true;
@@ -17,18 +18,18 @@ noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
   Note.FONT_SIZE= 13;
   Note.FONT= '13px monospace';
 
-  Note.prototype.draw = function(diagram) {
-    diagram.rect(this.display.x, this.display.y, this.display.w, this.display.h, Note.BOX_OUTLINE_COLOR);
+  Note.prototype.draw = function() {
+    this.diagram.rect(this.display.x, this.display.y, this.display.w, this.display.h, Note.BOX_OUTLINE_COLOR);
     if (this.textNote.content) {
       var lines = this.textNote.content.getLines();
-      diagram.context.font = Note.FONT;
+      this.diagram.context.font = Note.FONT;
       for (var i = 0; i < lines.length; i++) {
-        diagram.context.fillText(lines[i], this.display.x + 4, this.display.y + 2 + Note.FONT_SIZE * (i + 1));
+        this.diagram.context.fillText(lines[i], this.display.x + 4, this.display.y + 2 + Note.FONT_SIZE * (i + 1));
       }
     }
   };
   
-  Note.prototype.prepareDisplay = function(diagram) {
+  Note.prototype.prepareDisplay = function() {
     var maxDisplay = { w: 0, h: 0 };
     this.display = this.getDisplay();
     

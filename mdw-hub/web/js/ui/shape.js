@@ -6,7 +6,8 @@ var shapeMod = angular.module('mdwShape', ['mdw']);
 shapeMod.factory('Shape', ['mdw', 'util', 'DC',
                          function(mdw, util, DC) {
   
-  var Shape = function(workflowItem) {
+  var Shape = function(diagram, workflowItem) {
+    this.diagram = diagram;
     this.workflowItem = workflowItem;
   };
   
@@ -52,8 +53,8 @@ shapeMod.factory('Shape', ['mdw', 'util', 'DC',
   };
   
   // TODO better select indication
-  Shape.prototype.select = function(diagram) {
-    var context = diagram.context;
+  Shape.prototype.select = function() {
+    var context = this.diagram.context;
     var display = this.display;
     context.fillStyle = DC.ANCHOR_COLOR;
     var s = DC.ANCHOR_W;
