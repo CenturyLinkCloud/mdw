@@ -186,10 +186,8 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
                     String json = jsonService.getJson((JSONObject)requestObj, metaInfo);
                     if (json == null)
                         response = createSuccessResponse(Format.json);
-                    else {
+                    else
                         response = new Response(json);
-                        response.setStatusCode(200);  // TODO:  Set code based on metaInfo Listener.METAINFO_HTTP_METHOD value
-                    }
 
                     return response;
                 }
@@ -200,10 +198,8 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
                 String xml = xmlService.getXml((XmlObject)requestObj, metaInfo);
                 if (xml == null)
                     return createSuccessResponse(Format.xml);
-                else {
+                else
                     response = new Response(xml);
-                    response.setStatusCode(200);  // TODO:  Set code based on metaInfo Listener.METAINFO_HTTP_METHOD value
-                }
 
                 return response;
             }
@@ -212,10 +208,8 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
                 String text = service.getText(requestObj, metaInfo);
                 if (text == null)
                     return createSuccessResponse(Format.text);
-                else {
+                else
                     response = new Response(text);
-                    response.setStatusCode(200);  // TODO:  Set code based on metaInfo Listener.METAINFO_HTTP_METHOD value
-                }
 
                 return response;
             }
@@ -262,8 +256,10 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
         statusMessage.setCode(code);
         if (message != null)
             statusMessage.setMessage(message);
-        response.setStatusCode(statusMessage.getCode());
-        response.setStatusMessage(statusMessage.getMessage());
+        if (code >= ServiceException.BAD_REQUEST) {
+            response.setStatusCode(statusMessage.getCode());
+            response.setStatusMessage(statusMessage.getMessage());
+        }
         if (format == Format.xml)
             response.setContent(statusMessage.getXml());
         else if (format == Format.json)
