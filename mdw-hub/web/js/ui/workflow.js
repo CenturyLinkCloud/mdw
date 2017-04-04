@@ -460,22 +460,20 @@ workflowMod.factory('Diagram',
     }    
   };
   
-  Diagram.prototype.roundedRect = function(x, y, w, h, color, fill) {
-    this.rect(x, y, w, h, color, fill, DC.BOX_ROUNDING_RADIUS);
+  Diagram.prototype.roundedRect = function(x, y, w, h, border, fill) {
+    this.rect(x, y, w, h, border, fill, DC.BOX_ROUNDING_RADIUS);
   };
   
-  Diagram.prototype.rect = function(x, y, w, h, color, fill, r) {
-    if (color) {
-      if (fill)
-        this.context.fillStyle = color;
-      else
-        this.context.strokeStyle = color;
-    }
+  Diagram.prototype.rect = function(x, y, w, h, border, fill, r) {
+    if (border)
+      this.context.strokeStyle = border;
+    if (fill)
+      this.context.fillStyle = fill;
+
     if (!r) {
+      this.context.strokeRect(x, y, w, h);
       if (fill)
         this.context.fillRect(x, y, w, h);
-      else
-        this.context.strokeRect(x, y, w, h);
     }
     else {
       // rounded corners
@@ -490,15 +488,14 @@ workflowMod.factory('Diagram',
       this.context.lineTo(x, y + r);
       this.context.quadraticCurveTo(x, y, x + r, y);
       this.context.closePath();
+      
+      this.context.stroke();
       if (fill)
         this.context.fill();
-      else
-        this.context.stroke();
     }
-    if (fill)
-      this.context.fillStyle = DC.DEFAULT_COLOR;
-    else
-      this.context.strokeStyle = DC.DEFAULT_COLOR;
+    
+    this.context.fillStyle = DC.DEFAULT_COLOR;
+    this.context.strokeStyle = DC.DEFAULT_COLOR;
   };
   
   Diagram.prototype.drawOval = function(x, y, w, h, fill, fadeTo) {
@@ -588,9 +585,9 @@ workflowMod.factory('Diagram',
     
     this.selectObj = this.getHoverObj(x, y);
     this.unselect();
-    if (this.selectObj) {
+    if (this.selectObj && this) {
       this.select(this.selectObj);
-      if (e.shiftKey && this.selectObj.isStep)
+      if (this.editable && e.shiftKey && this.selectObj.isStep)
         this.shiftDrag = true;
     }
   };

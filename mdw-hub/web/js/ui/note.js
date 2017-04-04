@@ -14,12 +14,14 @@ noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
   
   Note.prototype = new Shape();
   
-  Note.BOX_OUTLINE_COLOR = 'yellow';
+  Note.BOX_FILL_COLOR = '#ffc';
+  Note.BOX_OUTLINE_COLOR = 'gray';
+  Note.BOX_ROUNDING_RADIUS = 2;
   Note.FONT_SIZE= 13;
   Note.FONT= '13px monospace';
 
   Note.prototype.draw = function() {
-    this.diagram.rect(this.display.x, this.display.y, this.display.w, this.display.h, Note.BOX_OUTLINE_COLOR);
+    this.diagram.rect(this.display.x, this.display.y, this.display.w, this.display.h, Note.BOX_OUTLINE_COLOR, Note.BOX_FILL_COLOR, Note.BOX_ROUNDING_RADIUS);
     if (this.textNote.content) {
       var lines = this.textNote.content.getLines();
       this.diagram.context.font = Note.FONT;

@@ -844,20 +844,20 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       }
     }
 
-//    if (display.type.startsWith('Elbow')) {
-//      if (this.isAnchorHorizontal()) {
-//        if (anchor > 0) 
-//          display.ys[anchor - 1] = this.display.ys[anchor] + deltaY;
-//        if (anchor < display.xs.length - 1)
-//          display.xs[anchor + 1] = this.display.xs[anchor] + deltaX;
-//      }
-//      else {
-//        if (anchor > 0) 
-//          display.xs[anchor - 1] = this.display.xs[anchor] + deltaX;
-//        if (anchor < display.xs.length - 1) 
-//          display.ys[anchor + 1] = this.display.ys[anchor] + deltaY;
-//      }
-//    }
+    if (display.type.startsWith('Elbow')) {
+      if (this.isAnchorHorizontal(anchor)) {
+        if (anchor > 0) 
+          display.ys[anchor - 1] = this.display.ys[anchor] + deltaY;
+        if (anchor < display.xs.length - 1)
+          display.xs[anchor + 1] = this.display.xs[anchor] + deltaX;
+      }
+      else {
+        if (anchor > 0) 
+          display.xs[anchor - 1] = this.display.xs[anchor] + deltaX;
+        if (anchor < display.xs.length - 1) 
+          display.ys[anchor + 1] = this.display.ys[anchor] + deltaY;
+      }
+    }
 
     // TODO: update arrows
     this.setDisplay(display);
