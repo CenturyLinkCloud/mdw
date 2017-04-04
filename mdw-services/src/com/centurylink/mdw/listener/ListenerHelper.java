@@ -56,6 +56,7 @@ import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.ServiceHandler;
+import com.centurylink.mdw.services.rest.RestService;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -224,6 +225,9 @@ public class ListenerHelper {
                     else
                         altResponse = new Response((String)obj);
 
+                    if (altResponse.getStatusCode() == null)
+                        altResponse.setStatusCode(getResponseCode(metaInfo));
+
                     if (persistMessage(metaInfo))
                         createResponseDocument(altResponse, eeid);
 
@@ -242,6 +246,9 @@ public class ListenerHelper {
                 }
 
                 Response response = responseObj == null ? null : responseObj instanceof Response ? (Response)responseObj : new Response(responseObj.toString());
+
+                if (response.getStatusCode() == null)
+                    response.setStatusCode(getResponseCode(metaInfo));
 
                 if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
                     createResponseDocument(response, eeid);
@@ -273,10 +280,13 @@ public class ListenerHelper {
                         altResponse = new Response((String)obj);
 
                     response = altResponse;
+                    if (response.getStatusCode() == null)
+                        response.setStatusCode(getResponseCode(metaInfo));
                 }
             }
             if (response == null)
                 response = createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage()));
+
             try {
                 createResponseDocument(response, eeid);
             }
@@ -347,6 +357,9 @@ public class ListenerHelper {
                 }
             }
 
+            if (response.getStatusCode() == null)
+                response.setStatusCode(getResponseCode(metaInfo));
+
             if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
                 createResponseDocument(response, eeid);
             }
@@ -387,6 +400,8 @@ public class ListenerHelper {
                     response = createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage()));
                 }
             }
+            if (response.getStatusCode() == null)
+                response.setStatusCode(getResponseCode(metaInfo));
             try {
                 createResponseDocument(response, eeid);
             }
@@ -394,6 +409,18 @@ public class ListenerHelper {
                 logger.severeException("Failed to persist response", ex);
             }
             return response.getContent();
+        }
+    }
+
+    private int getResponseCode(Map<String,String> metainfo) {
+        try {
+            if (metainfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null)  // Allow services to populate code via metaInfo, same as Rest servlet
+                return Integer.parseInt(metainfo.get(Listener.METAINFO_HTTP_STATUS_CODE));
+            else   // Return 200 for non-error responses, which is what Tomcat returns in HTTP header if not overriden above
+                return RestService.HTTP_200_OK;
+        }
+        catch (NumberFormatException e) {
+            return RestService.HTTP_200_OK;
         }
     }
 
