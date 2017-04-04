@@ -17,6 +17,9 @@ package com.centurylink.mdw.event;
 
 import java.util.Map;
 
+import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.request.Request;
+
 /**
  * <p>
  * The use of this interface would be in the following scenario:
@@ -34,7 +37,7 @@ import java.util.Map;
  * @author aa70413
  *
  */
-public interface ExternalEventHandlerErrorResponse {
+public interface ExternalEventHandlerErrorResponse extends EventHandlerErrorResponse {
 
     /**
      * <p>
@@ -55,4 +58,7 @@ public interface ExternalEventHandlerErrorResponse {
      */
     public String createErrorResponse(String request, Map<String,String> metaInfo, Throwable eventHandlerException);
 
+    public default Response createErrorResponse(Request request, Map<String,String> metaInfo, Throwable eventHandlerException) {
+        return new Response(createErrorResponse(request.getContent(), metaInfo, eventHandlerException));
+    }
 }

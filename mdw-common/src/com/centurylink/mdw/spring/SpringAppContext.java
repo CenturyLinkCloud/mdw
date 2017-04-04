@@ -34,7 +34,7 @@ import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
-import com.centurylink.mdw.event.ExternalEventHandler;
+import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.provider.CacheService;
@@ -268,18 +268,18 @@ public class SpringAppContext implements CacheEnabled, CacheService {
         }
     }
 
-    public ExternalEventHandler getEventHandler(String type, Package pkg) throws IOException, ClassNotFoundException {
+    public EventHandler getEventHandler(String type, Package pkg) throws IOException, ClassNotFoundException {
         String key = pkg == null ? "SpringRootContext" : pkg.toString();
         Map<String, Boolean> set = undefinedEventBeans.get(key);
         if (set != null && set.get(type) != null)
             return null;
 
         try {
-            Class<? extends ExternalEventHandler> implClass;
+            Class<? extends EventHandler> implClass;
             if (pkg == null)
-                implClass = Class.forName(type).asSubclass(ExternalEventHandler.class);
+                implClass = Class.forName(type).asSubclass(EventHandler.class);
             else
-                implClass = pkg.getCloudClassLoader().loadClass(type).asSubclass(ExternalEventHandler.class);
+                implClass = pkg.getCloudClassLoader().loadClass(type).asSubclass(EventHandler.class);
             for (String beanName : getApplicationContext(pkg).getBeanNamesForType(implClass)) {
                 if (getApplicationContext(pkg).isSingleton(beanName))
                     throw new IllegalArgumentException("Bean declaration for injected event handler '" + beanName + "' must have scope=\"prototype\"");

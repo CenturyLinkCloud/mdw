@@ -37,7 +37,7 @@ import com.centurylink.mdw.bpm.PropertyGroupDocument.PropertyGroup;
 import com.centurylink.mdw.cloud.CloudClassLoader;
 import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.event.ExternalEventHandler;
+import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.java.MdwJavaException;
 import com.centurylink.mdw.model.asset.Asset;
@@ -509,23 +509,23 @@ public class Package implements Serializable, Jsonable {
         return getClassLoader().loadClass(implClass).asSubclass(GeneralActivity.class).newInstance();
     }
 
-    public ExternalEventHandler getEventHandler(String classname, String content, Map<String,String> metaInfo)
+    public EventHandler getEventHandler(String classname, String content, Map<String,String> metaInfo)
     throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, MdwJavaException {
         // try dynamic java first (preferred in case patch override is needed)
         try {
             ClassLoader parentLoader = getCloudClassLoader();
-            return (ExternalEventHandler) CompiledJavaCache.getInstance(classname, parentLoader, this);
+            return (EventHandler) CompiledJavaCache.getInstance(classname, parentLoader, this);
         }
         catch (ClassNotFoundException ex) {
             // not located as dynamic java
         }
         String handlerClass = Compatibility.getEventHandler(classname);
-        ExternalEventHandler injected = SpringAppContext.getInstance().getEventHandler(handlerClass, this);
+        EventHandler injected = SpringAppContext.getInstance().getEventHandler(handlerClass, this);
         if (injected != null)
             return injected;
         if (getCloudClassLoader().hasClass(handlerClass))
-          return getCloudClassLoader().loadClass(handlerClass).asSubclass(ExternalEventHandler.class).newInstance();
-        return getClassLoader().loadClass(handlerClass).asSubclass(ExternalEventHandler.class).newInstance();
+          return getCloudClassLoader().loadClass(handlerClass).asSubclass(EventHandler.class).newInstance();
+        return getClassLoader().loadClass(handlerClass).asSubclass(EventHandler.class).newInstance();
     }
 
     public static String formatVersion(int version) {

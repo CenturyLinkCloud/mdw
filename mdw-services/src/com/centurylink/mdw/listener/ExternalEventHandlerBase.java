@@ -228,9 +228,9 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
     protected String createResponseMessage(Exception e, String request, Object msgdoc, Map<String,String> metaInfo) {
         ListenerHelper helper = new ListenerHelper();
         if (e instanceof ServiceException)
-            return helper.createErrorResponse(request, metaInfo, (ServiceException)e);
+            return helper.createErrorResponse(request, metaInfo, (ServiceException)e).getContent();
         else if (e != null)
-            return helper.createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage()));
+            return helper.createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage())).getContent();
         else
             return helper.createAckResponse(request, metaInfo);
     }
