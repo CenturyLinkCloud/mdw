@@ -39,7 +39,8 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
-import com.centurylink.mdw.event.ExternalEventHandler;
+import com.centurylink.mdw.event.EventHandler;
+import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
@@ -49,6 +50,7 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.monitor.CertifiedMessage;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.monitor.UnscheduledEvent;
+import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.variable.Document;
@@ -158,9 +160,11 @@ public class EventManagerBean implements EventManager {
         throws Exception {
         String packageName = metainfo.get(Listener.METAINFO_PACKAGE_NAME);
         Package pkg = PackageCache.getPackage(packageName);
-        ExternalEventHandler handler = pkg.getEventHandler(clsname, request, metainfo);
+        EventHandler handler = pkg.getEventHandler(clsname, request, metainfo);
         XmlObject xmlBean = XmlObject.Factory.parse(request);
-        return handler.handleEventMessage(request, xmlBean, metainfo);
+        Request requestDoc = new Request(0L);
+        requestDoc.setContent(request);
+        return handler.handleEventMessage(requestDoc, xmlBean, metainfo).getContent();
     }
 
     /**
@@ -733,7 +737,13 @@ public class EventManagerBean implements EventManager {
         try {
             transaction = edao.startTransaction();
             Document docvo = new Document();
-            if (doc instanceof String)
+            if (doc instanceof Response) {
+                String statusMsg = ((Response)doc).getStatusMessage() != null ? ((Response)doc).getStatusMessage() : "";
+                docvo.setStatusCode(((Response)doc).getStatusCode());
+                docvo.setStatusMessage(statusMsg.length() > 1000 ? statusMsg.substring(0, 1000) : statusMsg);
+                docvo.setContent(((Response)doc).getContent());
+            }
+            else if (doc instanceof String)
                 docvo.setContent((String)doc);
             else
                 docvo.setObject(doc, type);

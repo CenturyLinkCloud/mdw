@@ -17,12 +17,15 @@ package com.centurylink.mdw.event;
 
 import java.util.Map;
 
+import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.request.Request;
+
 /**
  * The base External Event Handler that can be orchestrated
  * The implementors of this handler will implement this
  *
  */
-public interface ExternalEventHandler {
+public interface ExternalEventHandler extends EventHandler {
 
       /**
       * Handles the external event message
@@ -39,4 +42,9 @@ public interface ExternalEventHandler {
       */
      public String handleEventMessage(String msg, Object msgobj, Map<String,String> metainfo)
      throws EventHandlerException;
+
+     public default Response handleEventMessage(Request msg, Object msgobj, Map<String,String> metainfo)
+     throws EventHandlerException {
+         return new Response(handleEventMessage(msg.getContent(), msgobj, metainfo));
+     }
 }
