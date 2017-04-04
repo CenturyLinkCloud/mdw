@@ -585,7 +585,7 @@ workflowMod.factory('Diagram',
     
     this.selectObj = this.getHoverObj(x, y);
     this.unselect();
-    if (this.selectObj && this) {
+    if (this.selectObj) {
       this.select(this.selectObj);
       if (this.editable && e.shiftKey && this.selectObj.isStep)
         this.shiftDrag = true;
