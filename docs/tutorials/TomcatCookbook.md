@@ -300,7 +300,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   creating your own custom activity.  Double-click on the Check Employee activity and select the Script property tab.  Edit the prescript, adding the Groovy code below to return a request that
   includes employeeId (notice that in your script you can refer to variables directly by their name):
   
-```java  
+```groovy  
 	return ''' <GetEmployee>
       	  <sapId>''' + employeeId + '''</sapId>
     	</GetEmployee>''';
@@ -444,6 +444,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 ##### Implement a SOAP Web Service:
 - The easiest way to expose your process as a SOAP service is to create a document-style WSDL workflow asset that describes it.  In Process Explorer view, right-click on your workflow package and 
   select  New > XML Document.  Name it something appropriate for your service, and select the language/format as WSDL.
+  
    ![xml formatter](images/soapService.png)
  
 - Edit the content of your WSDL to look something like the following (with appropriate substitutions based on your request and response).
