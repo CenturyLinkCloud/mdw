@@ -24,4 +24,4 @@
 
 
 ##### 4: Get Started with MDW Designer
-- MDW Designer User Guide: Refer to the [MDW Designer User Guide:](DesignerUserGuide)
+- MDW Designer User Guide: Refer to the [MDW Designer User Guide:](DesignerUserGuide.md)
