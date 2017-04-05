@@ -14,6 +14,7 @@
  - Chrome and Postman
      - https://www.google.com/chrome
 	 - https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop
+	 
 ### Supported Java Container (Apache Tomcat 8)  
 You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  To be able to develop locally you need an Apache Tomcat: https://tomcat.apache.org.
 
@@ -199,6 +200,7 @@ Note: If you have already installed the Tomcat server from the previous step(s),
   
 - If you've not previously used a Tomcat 8 runtime in Eclipse, clicking Add takes you to a page where you specify your Tomcat location.   Make sure to select a JDK to compile the code 
   and that the selected JDK is Java 1.8.x
+  
    ![xml formatter](images/addTomcatServer2.png)
  
  
@@ -236,10 +238,11 @@ Note: If you have already installed the Tomcat server from the previous step(s),
  
 
 ##### Populate the Input Variable:
+```xml
        <order> 
          <orderId>N12345678</orderId>
        </order>
-    
+```
 - Select the Variables tab in the launch dialog, and populate the request variable with the following content.
    ![xml formatter](images/runPrcoess2.png)
 
@@ -253,7 +256,8 @@ Note: If you have already installed the Tomcat server from the previous step(s),
 
 ##### Change Java Code and Rerun with a Breakpoint:
 - Change the Java source so that validation expects an order number that begins with a digit:
-```
+
+```java
         if (!orderIdNode.getLocalName().equals("orderId"))
             msg = "Missing order ID.";
         else if (!Character.isDigit(orderId.charAt(0)))
@@ -279,7 +283,8 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 ##### Use the Document Web Service Activity:
 - Open the same process definition you started building in the sections above.  Add another String variable called employeeId.  Edit the code in your order validation activity to set employeeId
   from the request:
-```
+  
+```java
     	String employeeId = orderIdNode.getNextSibling().getNextSibling().getFirstChild().getNodeValue();
     	setVariableValue("employeeId", employeeId);
 ```
@@ -294,7 +299,8 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   invocation activities (known in MDW as adapter activities), you can also associate script to be executed before and after the service call.  This can sometimes be a quick alternative to 
   creating your own custom activity.  Double-click on the Check Employee activity and select the Script property tab.  Edit the prescript, adding the Groovy code below to return a request that
   includes employeeId (notice that in your script you can refer to variables directly by their name):
-```  
+  
+```java  
 	return ''' <GetEmployee>
       	  <sapId>''' + employeeId + '''</sapId>
     	</GetEmployee>''';
@@ -304,10 +310,11 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   web service activity, select these new variables in the Request Variable and Response Variable dropdowns respectively.  Edit the postscript as follows (if you've installed the Groovy plugin   
   you'll get syntax highlighting and autocomplete):
     
-```    import org.w3c.dom.Node;
-       import org.w3c.dom.Node;
-       import org.w3c.dom.NodeList;
-       NodeList nodes = employeeServiceResponse.getFirstChild().getChildNodes();
+```java    
+	import org.w3c.dom.Node;
+       	import org.w3c.dom.Node;
+       	import org.w3c.dom.NodeList;
+       	NodeList nodes = employeeServiceResponse.getFirstChild().getChildNodes();
 	    String firstName = null;
 	    String lastName = null;
 	    for (int i = 0; i < nodes.getLength(); i++) {
@@ -333,7 +340,8 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 - Right-click on a blank spot in the designer canvas and select Run to open the launch configuration dialog.  On the Variables tab change the value for orderDoc to include a valid orderNumber 
   (with a digit as the first character), and also your CenturyLink SAP ID for the employeeId. You can also use your workstationId (CUID) in place of the employeeId but make sure to change the 
   code that references the employeeId to workstationId. Click Ok to close it and click Run on the configuration dialog to run it.
-```
+  
+```xml
 	<order>
 	   <orderId>0123456</orderId>
 	   <employeeId>DHO115360</employeeId>
@@ -358,7 +366,8 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 - Right-click on your package in Process Explorer and select New > Activity > General Activity.  For this one use the icon send.gif, which is included in the MDW baseline workflow package,
   or you can use your own 24x24 pixel image (right-click on your package and select New > Web Resource > Binary > GIF > Browse for file).  Also, this time since you're creating an activity 
   to use in multiple places, add the following pagelet definition for configurable attributes.
-```
+  
+```xml
  	<PAGELET>
 		<TEXT NAME="responseCode" LABEL="Response Code" VW="100"/>
 		<TEXT NAME="responseMessage" LABEL="Message" VW="300"/>
@@ -371,8 +380,9 @@ MDW comes with the Document Web Service Activity for consuming document-style se
     
 - Make your activity implementor source code look something like this:
 
-```       package MyPackage;
-	  import com.centurylink.mdw.activity.ActivityException;
+```java      
+	  package MyPackage;
+  	  import com.centurylink.mdw.activity.ActivityException;
 	  import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
 	  import com.centurylink.mdw.common.utilities.timer.Tracked;
 	  import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
@@ -404,6 +414,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 ```
 - Now rework your process so that the three possible outcomes all generate a response using this activity.  For the two error paths set the Response Code to be non-zero in the Design tab.
   Since the validation result is kept in a process variable, you can use a Java Expression as illustrated below to parameterize the Message attribute value.
+  
    ![xml formatter](images/process5.png)
  
 - You can still test your process execution by launching in Designer like we've done previously. However, for your process to be available as a service for consumption by external systems, 
@@ -419,11 +430,13 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   receives a request whose document content matches the configured message pattern.  Note that if a request is received that matches multiple registered event handlers, then it is 
   undefined which of those handlers will be invoked.  For this reason it's imperative that you make the XPath expression unique so that it does not match requests it is not intended to 
   handle (and thereby hijack those requests from their intended handler).
+  
    ![xml formatter](images/externalEventHandler.png)
  
 - In Process Explorer view your event handler appears labeled as its associated message pattern.  You can test it by right-clicking on it and selecting Run, and then filling in the External Event 
   Request in the launch dialog.  When you run this way Designer submits the request document over HTTP to the MDW RESTful listener, so it not only tests your process flow but it also tests your Event 
   Handler registration as well.
+  
    ![xml formatter](images/externalEventHandler2.png)
  
 - After successfully invoking your External Event Handler, you should see the expected response in the console view, and you should also find that a new instance of your service process was created.
@@ -434,7 +447,8 @@ MDW comes with the Document Web Service Activity for consuming document-style se
    ![xml formatter](images/soapService.png)
  
 - Edit the content of your WSDL to look something like the following (with appropriate substitutions based on your request and response).
-```    
+
+```xml    
 	<?xml version="1.0" encoding="UTF-8"?>	
         <wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
         xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
@@ -514,7 +528,8 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 - Click on the System tab and the Messaging navigation link on the left pane and the HTTP Poster (if you don't see the System tab you'll need to be granted Site Admin permissions for
   the environment where you're testing).  The submittal URL for HTTP Poster defaults to the MDW REST endpoint, so change the context root from REST to SOAP as
     illustrated in the screenshot below.  Populate the Message Body with something like the following:
-```
+    
+```xml
        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
        <soapenv:Header/>
          <soapenv:Body>
@@ -530,7 +545,8 @@ MDW comes with the Document Web Service Activity for consuming document-style se
    
 ##### Invoke Your Service through JMS:
 - To invoke through JMS use the raw payload without the SOAP envelope:
-```	
+
+```xml	
 	<GetEmployee>
            <workstationId>ab64967</workstationId>
       	</GetEmployee>
