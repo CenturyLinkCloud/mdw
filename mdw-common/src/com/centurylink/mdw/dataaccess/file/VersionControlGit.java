@@ -283,7 +283,7 @@ public class VersionControlGit implements VersionControl {
                             for (Enumeration<?> e = keys(); e.hasMoreElements();) {
                                 String key = (String)e.nextElement();
                                 String val = (String)get(key);
-                                bw.write(key + "=" + val);
+                                bw.write(key.replaceAll(" ", "\\\\ ").replaceAll("!", "\\\\!") + "=" + val);
                                 bw.newLine();
                             }
                         }
