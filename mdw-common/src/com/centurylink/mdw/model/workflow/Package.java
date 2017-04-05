@@ -586,8 +586,12 @@ public class Package implements Serializable, Jsonable {
         this.externalEvents = new ArrayList<ExternalEvent>();
         if (json.has("eventHandlers")) {
             JSONObject eventHandlersJson = json.getJSONObject("eventHandlers");
-            for (JSONObject eventHandlerJson : JsonUtil.getJsonObjects(eventHandlersJson).values())
-                this.externalEvents.add(new ExternalEvent(eventHandlerJson));
+            Map<String, JSONObject> objects = JsonUtil.getJsonObjects(eventHandlersJson);
+            for (String name : objects.keySet()) {
+                ExternalEvent externalEvent = new ExternalEvent(objects.get(name));
+                externalEvent.setEventName(name);
+                this.externalEvents.add(externalEvent);
+            }
         }
         this.processes = new ArrayList<Process>();
         if (json.has("processes")) {
