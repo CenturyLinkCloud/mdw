@@ -15,13 +15,12 @@ Perform Jenkins Builds (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
  - Designer Build
  - Designer Publish (or Designer Preview)
     
-Upload any needed files to /prod/ecom2/local/apps/MdwPlugin(or Preview) on lxdenvmtc143.dev.qintra.com:
+Commit updateSite files to mdw6/docs/designer/updateSite on GitHub.    
 (Other plugins required in com.centurylink.mdw.designer.feature/feature.xml should already be present.
  If versions have changed, the newer versions may need to be uploaded (esp. cucumber.eclipse).
     
 Test updating Eclipse (Mars/Neon) to the new build.
-  Update Site URL: http://lxdenvmtc143.dev.qintra.com:6101/MdwPlugin
-               or: http://lxdenvmtc143.dev.qintra.com:6101/MdwPluginPreview
+  Update Site URL: http://centurylinkcloud.github.io/MDW/docs/designer/updateSite
 
 (If RCP is to be included in this build)
 Build com.centurylink.mdw.designer.rcp according to the instructions in its build_readme.txt.

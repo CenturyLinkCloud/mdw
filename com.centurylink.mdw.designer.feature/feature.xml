@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.centurylink.mdw.designer.feature"
-      label="MDWDesignerFeature" version="9.1.2"
+      label="MDWDesignerFeature" version="9.1.3"
       provider-name="CenturyLink"
       plugin="com.centurylink.mdw.designer.ui">
 

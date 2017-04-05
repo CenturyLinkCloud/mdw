@@ -116,7 +116,7 @@
       Help > Install New Software. If the MDW Plug-In update site URL does
       not appear in the dialog, click "Add Site..." and enter the location URL as follows:
       <br/>
-      http://lxdenvmtc143.dev.qintra.com:6101/MdwPlugin
+      http://centurylinkcloud.github.io/MDW/docs/designer/updateSite
       <br/>
       Expand the location URL and drill down to the "MDW Plug-In" item.  Click the checkbox and 
       then click "Install...".  Complete the steps in the installation wizard.  Eclipse will confirm

@@ -14,7 +14,7 @@
    </copyright>
 
    <url>
-      <update label="MDW Plug-In Update Site" url="http://lxdenvmtc143.dev.qintra.com:6101/MdwPlugin"/>
+      <update label="MDW Plug-In Update Site" url="http://centurylinkcloud.github.io/MDW/docs/designer/updateSite"/>
    </url>
 
    <plugin
