@@ -208,6 +208,7 @@ Note: If you have already installed the Tomcat server from the previous step(s),
 
 - Before you start the server, you will need to add your MyWorkflow project to your server instance. Right click the server instance, select Add and Remove… and select the MyWorkflow from the 
   left pane and click the Add to move it to the right pane.
+  
    ![xml formatter](images/addTomcatServer4.png)
 
 ##### Run Tomcat:
@@ -304,8 +305,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 ```    import org.w3c.dom.Node;
        import org.w3c.dom.Node;
        import org.w3c.dom.NodeList;
-       
-        NodeList nodes = employeeServiceResponse.getFirstChild().getChildNodes();
+       NodeList nodes = employeeServiceResponse.getFirstChild().getChildNodes();
 	    String firstName = null;
 	    String lastName = null;
 	    for (int i = 0; i < nodes.getLength(); i++) {
@@ -331,11 +331,11 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 - Right-click on a blank spot in the designer canvas and select Run to open the launch configuration dialog.  On the Variables tab change the value for orderDoc to include a valid orderNumber 
   (with a digit as the first character), and also your CenturyLink SAP ID for the employeeId. You can also use your workstationId (CUID) in place of the employeeId but make sure to change the 
   code that references the employeeId to workstationId. Click Ok to close it and click Run on the configuration dialog to run it.
-
-```	   <order>
-	     <orderId>0123456</orderId>
-	     <employeeId>DHO115360</employeeId>
-	   </order>
+```
+	<order>
+	   <orderId>0123456</orderId>
+	   <employeeId>DHO115360</employeeId>
+	</order>
 ```
 - Right-click again on a blank spot and select View Instances.  Double-click the instance to open it.  It should reflect that the service was invoked, your SAP ID was found, and the "true" 
   outcome from Check Employee should be traversed.  Double-click on the Check Employee activity in the process instance.  On the Instance property tab, double-click on the instance row to 
@@ -356,11 +356,11 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 - Right-click on your package in Process Explorer and select New > Activity > General Activity.  For this one use the icon send.gif, which is included in the MDW baseline workflow package,
   or you can use your own 24x24 pixel image (right-click on your package and select New > Web Resource > Binary > GIF > Browse for file).  Also, this time since you're creating an activity 
   to use in multiple places, add the following pagelet definition for configurable attributes.
-  
-```		<PAGELET>
-			<TEXT NAME="responseCode" LABEL="Response Code" VW="100"/>
-			<TEXT NAME="responseMessage" LABEL="Message" VW="300"/>
-		</PAGELET>
+```
+ 	<PAGELET>
+		<TEXT NAME="responseCode" LABEL="Response Code" VW="100"/>
+		<TEXT NAME="responseMessage" LABEL="Message" VW="300"/>
+	</PAGELET>
 ```  
      ![xml formatter](images/newActivity.png)
   
@@ -369,16 +369,16 @@ MDW comes with the Document Web Service Activity for consuming document-style se
     
 - Make your activity implementor source code look something like this:
 
-```        package MyPackage;
-	   import com.centurylink.mdw.activity.ActivityException;
-	   import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-	   import com.centurylink.mdw.common.utilities.timer.Tracked;
-	   import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
-	   import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-	   import com.centurylink.mdw.xml.DomHelper;
+```       package MyPackage;
+	  import com.centurylink.mdw.activity.ActivityException;
+	  import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
+	  import com.centurylink.mdw.common.utilities.timer.Tracked;
+	  import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+	  import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+	  import com.centurylink.mdw.xml.DomHelper;
 	   
-	   @Tracked(LogLevel.TRACE)
-	   public class MyOrderResponseBuilder extends DefaultActivityImpl {
+	  @Tracked(LogLevel.TRACE)
+	  public class MyOrderResponseBuilder extends DefaultActivityImpl {
           @Override
           public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {      
              try {
@@ -386,20 +386,19 @@ MDW comes with the Document Web Service Activity for consuming document-style se
                if (code == null)
                   throw new ActivityException("Missing attribute: responseCode");
                   
-               String resString = "<OrderValidationResponse orderId=\"" + getVariableValue("orderId") + "\">\n"+ "  <Code>" + code + "</Code>\n";
-                    
+               String resString = "<OrderValidationResponse orderId=\"" + getVariableValue("orderId") + "\">\n"+ "  <Code>" + code + "</Code>\n";                  
                if (!code.equals("0"))
                    resString += "  <Message>" + getAttributeValueSmart("responseMessage")+ "</Message>\n";
                    
                resString += "</OrderValidationResponse>";
                setVariableValue("response", DomHelper.toDomDocument(resString));
-             }
-             catch (Exception ex) {
-                throw new ActivityException(ex.getMessage(), ex);
-             }
-             return null;
-    	    }
-	   }
+               }
+               catch (Exception ex) {
+                   throw new ActivityException(ex.getMessage(), ex);
+               }
+               return null;
+    	     }
+	  }
 ```
 - Now rework your process so that the three possible outcomes all generate a response using this activity.  For the two error paths set the Response Code to be non-zero in the Design tab.
   Since the validation result is kept in a process variable, you can use a Java Expression as illustrated below to parameterize the Message attribute value.
@@ -433,9 +432,9 @@ MDW comes with the Document Web Service Activity for consuming document-style se
    ![xml formatter](images/soapService.png)
  
 - Edit the content of your WSDL to look something like the following (with appropriate substitutions based on your request and response).
-    
-```       <?xml version="1.0" encoding="UTF-8"?>	
-       <wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+```    
+	<?xml version="1.0" encoding="UTF-8"?>	
+        <wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
         xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -513,8 +512,8 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 - Click on the System tab and the Messaging navigation link on the left pane and the HTTP Poster (if you don't see the System tab you'll need to be granted Site Admin permissions for
   the environment where you're testing).  The submittal URL for HTTP Poster defaults to the MDW REST endpoint, so change the context root from REST to SOAP as
     illustrated in the screenshot below.  Populate the Message Body with something like the following:
-    
-```       <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+```
+       <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
        <soapenv:Header/>
          <soapenv:Body>
            <GetEmployee>
@@ -529,14 +528,13 @@ MDW comes with the Document Web Service Activity for consuming document-style se
    
 ##### Invoke Your Service through JMS:
 - To invoke through JMS use the raw payload without the SOAP envelope:
-	
-```	  <GetEmployee>
-         <workstationId>ab64967</workstationId>
-      </GetEmployee>
+```	
+	<GetEmployee>
+           <workstationId>ab64967</workstationId>
+      	</GetEmployee>
 ``` 
 - On the MDWHub System tab you can use the JMS Messenger as illustrated below.   
    ![xml formatter](images/jmsMessageEndpoint.png)
-   
    
 - If you have trouble getting Site Admin access, or you prefer to use another tool like SoapUI or SOAtest, you can accomplish the same thing by just making sure the endpoint URL is like that in the screenshot and that your request content inside the SOAP body matches your registered External Event Handler.
 
