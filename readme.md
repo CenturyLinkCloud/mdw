@@ -38,9 +38,9 @@
    [https://nodejs.org/en/download/current](https://nodejs.org/en/download/current)
  - Open a command prompt in the mdw-hub project directory
  ```
- 	- run `npm install`
- 	- run `npm install -g grunt-cli`
- 	- run `npm install -g bower`
+   - run `npm install`
+   - run `npm install -g grunt-cli`
+   - run `npm install -g bower`
  ```
 4. Build the Project
  - Window > Show View > Other > Gradle  > Gradle Tasks
@@ -58,12 +58,13 @@
  - Double-click on the server and set the startup timeout to something large (like 3600s)
  - Under MDW Server Options set the following Java Options (appropriate for your workspace):
  
-```-Dmdw.runtime.env=dev  
--Dmdw.config.location=c:/workspaces/MDW/mdw/config  
--Djavax.net.ssl.trustStore=c:/workspaces/MDW/mdw/deploy/certs/CenturyLinkQCA.jks  
--Djava.net.preferIPv4Stack=true  
--Dmdw.runtime.env=dev
--Xms512m -Xmx1024m -XX:MaxPermSize=256m
+```	
+   -Dmdw.runtime.env=dev  
+   -Dmdw.config.location=c:/workspaces/MDW/mdw/config  
+   -Djavax.net.ssl.trustStore=c:/workspaces/MDW/mdw/deploy/certs/CenturyLinkQCA.jks  
+   -Djava.net.preferIPv4Stack=true  
+   -Dmdw.runtime.env=dev
+   -Xms512m -Xmx1024m -XX:MaxPermSize=256m
 ```
 
 1. Run
