@@ -10,7 +10,6 @@
  - Required Plugins:
      - MDW Designer:                                         
        [Installing and Upgrading the MDW Plugin for Eclipse](docs/tutorial/InstallAndUpgradeMDWPluginforEclipse)
-       
      - Buildship Plugin:                            
        [http://download.eclipse.org/buildship/updates/e46/releases/2.x](http://download.eclipse.org/buildship/updates/e46/releases/2.x)
        
@@ -24,8 +23,8 @@
        [https://tomcat.apache.org](https://tomcat.apache.org)
        
  - Chrome and Postman                                              
-       [https://www.google.com/chrome](https://www.google.com/chrome)                                                                    
-       [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop]                   (https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
+       [https://www.google.com/chrome](https://www.google.com/chrome)                                                                   
+       [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop]           (https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
 	 
 2. Get the Source Code
  - Command-line Git:  
@@ -38,22 +37,22 @@
  - Install NodeJS:                                                                     
    [https://nodejs.org/en/download/current](https://nodejs.org/en/download/current)
  - Open a command prompt in the mdw-hub project directory
+ ```
  	- run `npm install`
  	- run `npm install -g grunt-cli`
  	- run `npm install -g bower`
- 
+ ```
 4. Build the Project
  - Window > Show View > Other > Gradle  > Gradle Tasks
    Select the mdw project and Select Show all Tasks. Expand Other folder in mdw project and double-click the "buildAll" task
 
-5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md)                          
-   or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
+5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
    
 6. Deploy on Tomcat in Eclipse
  - Edit mdw/config/mdw.properties to suit your environment.
  - Edit mdw/config/access.yaml to set devUser to yourself.
  - In Eclipse Servers view, right-click and select New > Server  
-   **Important**: Select the Apache > Tomcat 7.0 or 8.0 (MDW) runtime
+   **Important**: Select the Apache > Tomcat 8.0 (MDW) runtime
    and make you have a jdk 1.8 installed and added it to your class path.
  - Select the mdw-hub module in the Add/Remove wizard page
  - Double-click on the server and set the startup timeout to something large (like 3600s)
@@ -90,11 +89,11 @@
 
 3. Designer Development
  - The designer codebase is contained in the following projects:
-     - com.centurylink.mdw.designer (gradle parent)
-     - com.centurylink.mdw.designer.core
-     - com.centurylink.mdw.designer.feature
-     - com.centurylink.mdw.designer.rcp
-     - com.centurylink.mdw.designer.ui
+     	- com.centurylink.mdw.designer (gradle parent)
+     	- com.centurylink.mdw.designer.core
+     	- com.centurylink.mdw.designer.feature
+     	- com.centurylink.mdw.designer.rcp
+     	- com.centurylink.mdw.designer.ui
      
  - Build Designer
      - These projects use the MDW 5.5 versions of mdw-common as mdw-schemas as dependencies, so to you need these MDW 5.5 projects locally or to have their jars available through a repository.
