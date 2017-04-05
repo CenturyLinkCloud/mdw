@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>File Writer Activity</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>File Writer Activity</h1>
+
+The MDW File Writer adapter activity provides the capability to write to a file on the server file system.
+<br/>
+<br/>
+<h3>Design Attributes</h3>
+The basic design parameters for configuring a File Writer Activity are illustrated in the screenshot below.
+<br/><br/>
+The first attribute to specify is the path of the file to write to.
+This value can reference a property or variable using MDW's <a href="bindingExpressions.html">Java EL Binding</a> syntax. 
+<br/><br/>
+The next attribute indicates whether to append to the file.  If append is not selected, the file will be overwritten with each subsequent activity execution.
+<br/><br/>
+In a real-world scenario, the Content String attribute will almost always be dynamic.
+This can be accomplished through the use of an expression pointing to a process variable as illustrated in the screenshot.
+If the variable is a document-type variable, it will be serialized to a string value using the appropriate translator.
+<br/><br/>
+If you need to perform some specialized output based on additional criteria, you can extend the FileWriterAdapter class and overwrite the getRequestData() method.
+<br/><br/>
+<img src="images/fileWriter.jpg" />
+<br/><br/>
+
+</body>
+</html>

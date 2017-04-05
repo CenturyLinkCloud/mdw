@@ -1,0 +1,272 @@
+<html>
+<head>
+<title>MDW Authentication</title>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="docstyle.css" />
+</head>
+<body>
+<h1>MDW Authentication</h1>
+In a development environment webapp authentication is typically bypassed via the Java system property -DruntimeEnv=dev
+(in this case the webapp user is controlled by the MDW property <code>mdw.hub.user</code>).
+However in a test or production installation, user authentication is an important aspect of webapp security.
+The runtimeEnv development override should <strong>NOT</strong> be used in a production environment, since this bypasses the authentication and authorization controls built into MDW.
+<br/><br/>
+MDW supports three methods for web-based authentication:
+  <ul>
+    <li><a href="#option1">ClearTrust Web Agent</a></li>
+    <li><a href="#option2">Straight LDAP Authentication</a></li>
+    <li><a href="#option3">OAuth 2.0 Authentication</a></li>
+  </ul>
+<h2><a id="option1">Option 1: ClearTrust Web Agent</a></h2>
+This is the standard FOSS authentication method for webapps. It involves a separate Apache web
+server setup which proxies all HTTP traffic to and from your WebLogic, JBoss or ServiceMix app server. This
+mechanism can also provide load balancing and failover by routing requests to designated backend app
+server instances in a cluster. Direct access to the backend app servers is prevented by a servlet
+filter provided by the CenturyLink 
+<a href="http://collaboration.ad.qintra.com/sites/appsec/Access%20Managment%20Team/Forms/AllItems.aspx">Application Security Team</a>.
+<br />
+<br />
+The ClearTrust Web Agent is configured in the Apache web server via entries like the following in
+httpd.conf or proxy.conf:
+<h4>Proxy Configuration for ServiceMix/Fuse</h4>
+<pre>
+##### HTTP Proxy for ServiceMix/Fuse #####
+
+
+ProxyRequests Off
+ProxyTimeout 60
+ProxyStatus On
+ProxyPreserveHost On
+
+## Mod_Proxy Configuration ##
+&lt;Proxy *>
+Order deny,allow
+Allow from all
+&lt;/Proxy>
+
+ProxyPass        /MDWHub  http://10.1.213.47:8181/MDWHub
+ProxyPassReverse /MDWHub  http://10.1.213.47:8181/MDWHub
+ProxyPass        /mdw-admin  http://10.1.213.47:8181/mdw-admin
+ProxyPassReverse /mdw-admin  http://10.1.213.47:8181/mdw-admin
+RequestHeader set X-Forwarded-Proto "https"
+</pre>
+
+<h4>Proxy Configuration for Tomcat</h4>
+<pre>
+##### HTTP Proxy for Tomcat #####
+ProxyRequests Off
+ProxyTimeout 60
+ProxyStatus On
+ProxyPreserveHost On
+
+
+&lt;Proxy *>
+Order deny,allow
+Allow from all
+&lt;/Proxy>
+
+ProxyPass        /mdw  http://lxdenvmtc143.dev.qintra.com:8989/mdw
+ProxyPassReverse /mdw  http://lxdenvmtc143.dev.qintra.com:8989/mdw
+
+ProxyPass        /mdw-admin  http://lxdenvmtc143.dev.qintra.com:8989/mdw-admin
+ProxyPassReverse /mdw-admin  http://lxdenvmtc143.dev.qintra.com:8989/mdw-admin
+
+RequestHeader set X-Forwarded-Proto "https"
+</pre>
+
+<h4>Section in httpd.conf for ClearTrust web agent (example is for ServiceMix/Fuse -- for Tomcat use mdw as root instead of MDWHub)</h4> 
+<pre>
+##### RSA ClearTrust #####
+&lt;IfModule ct_apache_mod.c&gt;
+    CTAgentRoot /opt/apache/apps/ccwf-ssl-50644
+    Alias /cleartrust/ "/opt/apache/ctrust/htdocs/"
+  &lt;Directory "/opt/apache/ctrust/htdocs/"&gt;
+    AuthType Basic
+    Require valid-user
+    AuthName CT
+  &lt;/Directory&gt;
+  &lt;Location /MDWHub&gt;
+    AuthType Basic
+    Require valid-user
+    AuthName CT
+  &lt;/Location&gt;
+&lt;/IfModule&gt;
+</pre>
+
+<br/>
+In addition, the CT Web Agent has its own config file, webagent.conf, which contains a VirtualHost
+section like the following. The locations entries are specific to your app, and are communicated to
+the Infrastructure team.
+<h4>Example webagent.conf configuration (for ServiceMix/Fuse -- for Tomcat use mdw as root instead of MDWHub)</h4>
+<pre>
+<VirtualHost name=* address=* port=*>
+cleartrust.agent.enabled=True
+cleartrust.agent.cookie_name=APPSEC_EMP_SESSION
+cleartrust.agent.server_pool=EMPLOYEE-Test
+# use IOM's entitlements
+cleartrust.agent.web_server_name=qwest.ecom.IOM
+cleartrust.agent.idle_timeout=240 Mins
+cleartrust.agent.login_home_location=/MDWHub/taskList/myTasks
+cleartrust.agent.logout_form_location=/MDWHub/authentication/logout.jsf
+cleartrust.agent.login_form_location_basic=/MDWHub/authentication/login.jsf
+cleartrust.agent.login_error_user_location_basic=/MDWHub/authentication/loginError.jsf
+cleartrust.agent.login_error_pw_location_basic=/MDWHub/authentication/loginError.jsf
+cleartrust.agent.login_error_password_expired=/MDWHub/authentication/loginError.jsf
+cleartrust.agent.login_error_password_expired_forced=/MDWHub/authentication/loginError.jsf
+cleartrust.agent.login_error_password_expired_new_user=/MDWHub/authentication/loginError.jsf
+cleartrust.agent.login_auth_inactive_account=/MDWHub/authentication/loginError.jsf
+cleartrust.agent.login_auth_expired_account=/MDWHub/authentication/loginError.jsf
+cleartrust.agent.login_auth_user_locked_out=/MDWHub/authentication/loginError.jsf
+cleartrust.agent.login_auth_url_access_denied=/MDWHub/authentication/loginError.jsf
+cleartrust.agent.login_server_error=/MDWHub/authentication/loginError.jsf
+</VirtualHost>
+</pre>
+<br/>
+Also, in a typical installation, the Apache proxies will themselves be fronted by a hardware
+device called a Content Services Switch. This allows clients to refer to a logical server name, and
+also provides load-balancing and failover for the Apache web servers.
+<h4>Jetty Configuration for ServiceMix</h4>
+In addition to the Apache web server config, the following items need to be configured in ServiceMix for the proxy
+setup to work correctly:
+<pre>
+ - uncomment this line in etc/org.ops4j.pax.web.cfg (not needed in later versions of ServiceMix/Fuse):
+     org.ops4j.pax.web.config.file=etc/jetty.xml
+ - change in etc/jetty.xml (to match values in org.ops4j.pax.web.cfg):
+     &lt;Set name="port"&gt;&lt;Property name="jetty.port" default="100XX"/&gt;&lt;/Set&gt;
+     &lt;Set name="confidentialPort"&gt;200XX&lt;/Set&gt;
+ - add to etc/jetty.xml:
+     &lt;Set name="forwarded"&gt;true&lt;/Set&gt;
+     &lt;Set name="forwardedForHeader"&gt;none&lt;/Set&gt;
+ - place these two files from MDWWeb/META-INF/mdw into the ServiceMix instance etc directory:
+     CTAPPFilter.config
+     CTECOMFilter.config
+ - comment out this line in etc/CTAPPFilter.config:
+     #useLdapFilter=true
+ - add to etc/system.properties:
+     com.qwest.appsec.CTECOMFilterConfigFilePath=etc/CTECOMFilter.config
+     com.qwest.appsec.CTAPPFilterConfigFilePath=etc/CTAPPFilter.config
+ - in etc/system.properties change runtimeEnv to something other than "dev"
+ - in etc/com.centurylink.mdw.cfg
+     change mdw.hub.url to point to the proxy 
+</pre>
+<br/>
+<br/>
+<h2><a id="option2">Option 2: Straight LDAP Authentication</a></h2>
+This method utilizes pure LDAP connectivity to perform authentication.
+Unless fronted by load-balancing/failover hardware or proxies, this approach is not recommended for end-user web access or web services.
+In other words, it is not recommended that the app servers be accessed directly for authentication since this does not provide failover or load balancing.
+In any case if the app server is accessed directly for this purpose, the login page MUST be processed via HTTPS (meaning SSL must be configured on the app servers).
+This is because the user's credentials are entered on the login page.
+<br/><br/>
+<h4>mdw.jks</h4>
+MDW provides an EXAMPLE identity keystore (<a href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/mdw.jks">mdw.jks</a>)
+which can be used to certify your server's identity to HTTPS web clients.  However, use of this prebuilt keystore will cause users to receive
+a warning from their browser because the keystore is not from a trusted source, and because the configured name in the keystore does not match the server host name.
+The way to get around these warnings is to generate an individual keystore with a digital certificate signed by a trusted Certifying Authority (which is beyond the scope of this document).
+Users can suppress these browser security warnings by importing the certificate from mdw.jks into their browsers.
+<h4>Configuring SSL in Apache Tomcat</h4>
+Copy the keystore file mdw.jks to a location available to your server.
+Then edit your the server.xml configuration for Tomcat to enable SSL:
+<pre>    &lt;Connector
+        protocol="org.apache.coyote.http11.Http11Protocol"
+        port="8443"
+        executor="tomcatThreadPool"
+        connectionTimeout="600000"
+        redirectPort="8443"
+        clientAuth="false"
+        SSLEnabled="true"
+        sslProtocol="TLS"
+        scheme="https" secure="true"
+        keystoreType="JKS"
+        keystoreFile="conf/mdw.jks"
+        keystorePass="guest1"
+        keyAlias="myself">
+    &lt;/Connector>
+</pre>    
+<h4>Configuring SSL in ServiceMix/Fuse</h4>
+Note: A serious bug in the ServiceMix Jetty web container can cause excessive CPU usage when SSL is enabled
+(<a href="http://jira.codehaus.org/browse/JETTY-1435">http://jira.codehaus.org/browse/JETTY-1435</a>).
+If you're using a version of ServiceMix that's suspectible to this bug (4.3.0, 4.4.1) you should upgrade your web bundles according to
+<a href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/ServiceMix/SMX%20Jetty%20and%20Pax%20upgrade.txt">these instructions</a>.
+<br/><br/>
+Copy the keystore file mdw.jks into your SMX_INSTANCE_HOME/etc directory.
+Then add the following property settings to the file SMX_INSTANCE_HOME/etc/org.ops4j.pax.web.cfg
+<pre>org.osgi.service.http.port=8181
+org.osgi.service.http.secure.enabled=true
+org.osgi.service.http.port.secure=8443
+org.ops4j.pax.web.ssl.keystore=etc/mdw.jks
+org.ops4j.pax.web.ssl.password=guest1
+org.ops4j.pax.web.ssl.keypassword=guest1
+org.ops4j.pax.web.config.file=etc/jetty.xml
+org.ops4j.pax.web.session.timeout=60
+</pre>
+Create or modify the file SMX_INSTANCE_HOME/etc/jetty.xml as follows
+(ServiceMix 4.4.0 comes with this version of jetty.xml by default):
+<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//
+DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd"&gt;
+
+&lt;Configure class="org.eclipse.jetty.server.Server"&gt;
+
+    &lt;Call name="addConnector"&gt;
+      &lt;Arg&gt;
+        &lt;New class="org.eclipse.jetty.server.nio.SelectChannelConnector"&gt;
+          &lt;Set name="host"&gt;&lt;Property name="jetty.host" /&gt;&lt;/Set&gt;
+          &lt;Set name="port"&gt;&lt;Property name="jetty.port" default="8181"/&gt;&lt;/Set&gt;
+          &lt;Set name="maxIdleTime"&gt;300000&lt;/Set&gt;
+          &lt;Set name="Acceptors"&gt;2&lt;/Set&gt;
+          &lt;Set name="statsOn"&gt;false&lt;/Set&gt;
+          &lt;Set name="confidentialPort"&gt;8443&lt;/Set&gt;
+          &lt;Set name="forwarded"&gt;true&lt;/Set&gt;
+          &lt;Set name="lowResourcesConnections"&gt;20000&lt;/Set&gt;
+          &lt;Set name="lowResourcesMaxIdleTime"&gt;5000&lt;/Set&gt;
+        &lt;/New&gt;
+      &lt;/Arg&gt;
+    &lt;/Call&gt;
+  
+    &lt;Call name="addBean"&gt;
+      &lt;Arg&gt;
+        &lt;New class="org.eclipse.jetty.plus.jaas.JAASLoginService"&gt;
+      &lt;Set name="name"&gt;default&lt;/Set&gt;
+        &lt;Set name="loginModuleName"&gt;karaf&lt;/Set&gt;
+      &lt;Set name="roleClassNames"&gt;
+      &lt;Array type="java.lang.String"&gt;
+        &lt;Item&gt;org.apache.karaf.jaas.modules.RolePrincipal&lt;/Item&gt;
+      &lt;/Array&gt;
+      &lt;/Set&gt;
+        &lt;/New&gt;
+      &lt;/Arg&gt;
+    &lt;/Call&gt;
+&lt;/Configure&gt;
+</pre>
+<br/><br/>
+With these settings in place and the following system properties
+  <ul>
+    <li>-DruntimeEnv=(something other than dev)</li>
+    <li>-Dmdw.ldap.auth=true</li>
+  </ul>
+unauthenticated users are directed to the login page over HTTPS, and then if authentication is successful they will be routed to the main webapp page over HTTP.
+Since the login page is served up via SSL, users may see a warning in their browser indicating that the SSL certificate is not from a trusted source, or that the hostname does not match the server.
+To avoid this message, users can import the certificate mdw.crt into their browser.
+In Internet Explorer this is accomplished via Tools > Internet Options > Content > Certificates > Import.
+
+<h2><a id="option3">Option 3: OAuth 2.0 Authentication</a></h2>
+Many cloud infrastructures (such as Cloud Foundry or AppFog) support OAuth 2.0 authentication.  To enable this for MDWHub, set the following system properties:
+  <ul>
+    <li>-DruntimeEnv=(something other than dev)</li>
+    <li>-Dmdw.oauth.token.location=(token_url)</li>
+    <li>-Dmdw.oauth.client.id=(app_oauth_client_id)</li>
+    <li>-Dmdw.oauth.client.secret=(app_oauth_secret)</li>
+  </ul>
+... or the following environment variables can be used to designate the OAuth client settings (although the runtimeEnv system property is always needed):
+  <ul>
+    <li>MDW_OAUTH_TOKEN_LOCATION=(token_url)</li>
+    <li>MDW_OAUTH_CLIENT_ID=(app_oauth_client_id)</li>
+    <li>MDW_OAUTH_CLIENT_SECRET=(app_oauth_secret)</li>
+  </ul>
+Clone the <a href="tutorials/mdwdemo.html">mdwdemo</a> project from Git for a working example of this setup.
+</body>
+</html>

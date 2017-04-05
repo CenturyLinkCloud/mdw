@@ -1,0 +1,654 @@
+<html>
+<head>
+<title>Magic Box Rule Language</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<style>
+cite { font-size: x-small; font-style: italic; color: gray; }
+</style>
+<body>
+
+<h1>Magic Box Rule Language Conditions and Expressions</h1>
+<hr>
+<p>Magic Box is an expert system engine 
+with a rule language specialized for processing service orders
+<cite>(with United States Patent 6,493,694)</cite> and it is proven to be useful
+in handling other tree structured documents such as XML and JSON, as
+it offers a good balance between express power and 
+simplicity as well as conciseness ()
+MDW embeds a version of the Magic Box engine for various purposes.
+The most commonly used features of the Magic Box rule language within
+MDW applications are its expressions and conditions. This documentation
+describes only the relevant portion of the rule language with many examples
+to help casual users to start easily. The documentation
+for the full language, the engine and the other features
+can be found from <a href="http://cshare.ad.qintra.com/sites/MDW/Previous%20Documents/mbengdoc/introduction.html">here.</a></p>
+
+<h2>Basic Concepts</h2>
+
+<p>Magic Box language is a document processing language, and a typical Magic Box session
+involves processing one or more documents. The documents it can process
+can be hierarchical, such as XML documents, JSON documents and USO service orders,
+or tabular, such as data contained in a database table or a hash table. With MDW
+the Magic Engine is mainly used to handle hierarchical documents, so this quick
+introduction document will not cover tabular documents.</p>
+<p>Let us start by introducing some common concepts that are referenced
+in various places. We will use the following sample XML document in the examples:</p>
+<pre>
+&lt;ServiceOrder&gt;
+  &lt;DueDate&gt;2011-11-11&lt;/DueDate&gt;
+  &lt;Billing&gt;
+    &lt;Address&gt;
+      &lt;Street&gt;2833 Quick Lane&lt;/Street&gt;
+      &lt;City&gt;Denver&lt;/City&gt;
+    &lt;/Address&gt;
+  &lt;/Billing&gt;
+  &lt;Services&gt;
+    &lt;Line action="add"&gt;
+      &lt;TN&gt;303 662-4545&lt;/TN&gt;
+      &lt;VoiceMail&gt;English&lt;/TN&gt;
+      &lt;CallForwardingNumber&gt;303 662-0001&lt;/TN&gt;
+    &lt;/Line&gt;
+    &lt;Line action="change"&gt;
+      &lt;TN&gt;303 662-7261&lt;/TN&gt;
+    &lt;/Line&gt;
+    &lt;DSL action="recap"&gt;
+      &lt;DN&gt;303 662-7091&lt;/DN&gt;
+      &lt;ISP&gt;MSN&lt;/ISP&gt;
+    &lt;/DSL&gt;
+  &lt;/Services&gt;
+&lt;/ServiceOrder&gt;
+</pre>
+
+<h4>Document and Global Variables</h4>
+<p>The high level objects the Magic Box engine deals with
+are <em>document variables</em> and <em>global variables</em>.
+Both have the same syntax, which is a dollar sign followed by an
+identifier (made of letters, numbers and "_"), such as <code>$ORDER</code>
+and <code>$ServiceOrderNumber</code>. The difference only lies
+what types of values they are bound to: a document variable is 
+bound to a document, whereas a global variable is bound to a simple string as value.
+<cite>(Magic Box also supports tables and sets
+as values but those are not used under MDW context)</cite>.</p>
+
+<p>Within MDW context, document and global variables are typically predefined
+and bound to values that are natural in the context. For example,
+when the language is used as scripts for implementing script activities
+or used as expressions in defining smart attributes for activities,
+the process variables are automatically treated as Magic Box document and global variables.</p>
+<p>When the Magic Box session involves only one document variable, the special syntax <code>$$</code>
+can be used to refer to this document variable <cite>(we will see later that even this 
+short hand can be omitted entirely)</cite>. This is the case
+when the language is used as expressions and conditions for
+place holders in an HTML form, which is the sole document variable. It is also
+the case when the language is used as expressions in the filters of
+MDW automated tester, where <code>$$</code>
+is bound to the request XML/JSON message (or other referenced documentation)
+from which the values are taken from.</p>
+
+<h4>Local Variables</h4>
+Local variables are used to temporarily hold values such
+as the result of computation. Within MDW context,
+local variables are used in very limited areas, mainly
+in existential conditions and pattern matchings (all to be covered later).
+Syntactically, a local variable is just an identifier
+(like global variables but without leading dollar signs),
+such as <code>myVar</code>.
+Local variables can be bound to strings or nodes as values.
+
+<h4>Node References</h4>
+
+<p>In Magic Box terminology, elements within a tree-structured
+document are called <em>nodes</em> and the syntactic elements for specifying
+nodes are called <em>node references</em>.
+A node reference is composed of a global variable (
+must be bound to a document) or a local variable (must be bound to
+a node within a document)
+followed by 1 or more subnode names delimited by dots, as in</p>
+<pre>
+    $ORDER.DueDate
+    $ORDER.Billing.Address.City
+    line.TN
+</pre>
+<p>When Magic Box session is used in the single document mode, the document
+variable <code>$ORDER</code> can be replaced by <code>$$</code>; furthermore,
+if the language is used in the context of simple expression and conditions
+where local variables are not used, we can even omit <code>$$.</code> part,
+as shown below:</p>
+<pre>
+    $$.DueDate
+    DueDate
+    $$.Billing.Address.City
+    Billing.Address.City
+</pre>
+
+<h4>Constants</h4>
+
+Strings and numbers. Examples:
+The 
+<pre>
+    "1001 DISCOVERY DR."
+     125
+</pre>
+Note internally numbers are also represented as strings,
+so <code>125</code> and <code>"125"</code> are indeed the same.
+
+
+
+<h4>Node Attribute References</h4>
+<p>Both service orders and XML documents allow
+to associate attributes to their nodes, in addition to
+organizing nodes in a tree fashion.</p>
+
+<p>Attributes of nodes can be referenced
+by the syntax <samp><var>nodeexpr</var>:<var>attrname</var></samp>,
+where <var>nodeexpr</var> is a node reference, a local variable bound
+to a node, a document reference, or a table reference.
+The special attribute <samp>&amp;</samp> is
+used to represent the name of the node. For example,
+<samp>&amp;$ORDER</samp> represent the root tag name of 
+an XML document if the variable is bound to one.
+<cite>Two other special attributes, # and @, are also supported, 
+but they are not used in MDW environments.</cite>.
+The following are some examples:</p>
+<pre>
+    $ORDER.Services.DSL:action
+    line:action <cite>assuming line is a local variable bound to a "Line" in the order</cite>
+    &line <cite>if line is a local variable bound to a line in the order, this has the value "Line"</cite>
+    &$ORDER <cite>this represents the name of the root element, namely "ServiceOrder"</cite>
+</pre>
+
+<h4>Value Patterns</h4>
+<p>Value patterns is useful in a number of places
+for matching values. Magic Box implements
+the standard regular expressions for this purpose.
+There are two important differences, though,
+in the Magic Box Engine implementation.</p>
+<ul>
+  <li>A Magic Box Engine pattern by default matches the whole string,
+     whereas standard regular expression matches any
+     substring. The difference is not a significant one,
+     as you can match whole string in standard regular
+     expression by prepending the pattern with a <code>^</code>
+     and appending a <code>$</code>, and you can match a
+     partial string in Magic Box Engine  by prepending and appending
+     <code>.*</code>. The choice is made in Magic Box Engine  because
+     matching whole string is a much common need.
+     As a result, the characters <code>^</code> and <code>$</code>
+     lose their special meaning in Magic Box Engine  regular expressions.</li>
+  <li>Binding subpattern to local variables are achieved
+     through the special syntax <code>(...){<var>var</var>}</code>,
+     as in the following example:
+<pre>
+     $ORDER.Billing.Address.Street like "(\d+){streetNumber} .*"
+</pre>
+     The pattern finds the street number and binds it to local
+     variable <code>streetNumber</code>.</li>
+</ul>
+
+<h4>Node Reference Patterns</h4>
+
+<p>Node reference patterns are used to select nodes from documents,
+much like what XPath is designed to do.
+Syntactically, a node reference pattern is composed of a global variable (
+must be bound to a document) or a local variable (must be bound to
+a node within a document)
+followed by 1 or more node name pattern delimited by dots, and a node name pattern
+can be:</p>
+<ul>
+  <li>an actual name, e.g. <code>$ORDER.<em>Billing</em></code>;</li>
+  <li>a set of names (a list of names separated by commas and enclosed in square brackets), 
+  		e.g. <code>$ORDER.Services.<em>[Line,DSL]</em></code>;</li>
+  <li>a value pattern enclosed in double quotes, e.g. <code>$$.Services.<em>"Line|DSL"</em>.TN</code>;</li>
+  <li>attribute selector, in the form of attribute name-value pairs, as in the example
+  		<code>$MyOrder.Services.<em>[action="add"]</em>.TN</code>.</li>
+</ul>
+
+Examples:
+<pre>
+    $ORDER.Billing.Address.[Street,City]
+    billing."Street|City"
+    $ORDER.Services.".*".TN
+    $$.Services.[action="change"].TN
+</pre>
+
+<h2>Expressions</h2>
+
+An expression generates a string value
+as the result of computation. <cite>In full Magic Box language, an expression
+can also generate nodes as values.</cite>
+
+The following description defines what an expression can be:
+<ul>
+  <li>A (string or number) constant, such as <code>"New York"</code> and <code>125</code></li>
+  <li>A global variable, such as <code>$REGION</code>. This syntax
+  		is very often used to access process variables in MDW.</li>
+  <li>A local variable, such as <code>line</code></li>
+  <li>A node reference, such as <code>$ORDER.DueDate</code></li>
+  <li>Node attribute references including those using "&amp;", such as
+  		<code>line:TN</code> and <code>&$$</code>. 
+		For a node in XML document, the name is the tag of the corresponding element.
+		For a node in JSON document, the name is the same as what JSON considers a name.
+  		</li>
+  <li>A function call, which has a function name
+     with a list of arguments, each of which is an expression, more details covered below</li>
+     
+  <li>A conditional expression of the form
+	<code>([<var>cond<sub>1</sub></var>]<var>expr<sub>1</sub></var>;
+		[<var>cond<sub>2</sub></var>]<var>expr<sub>2</sub></var>;
+		... ...;
+		<var>expr<sub>n</sub></var>)</code>, more details covered below.</li>
+  <li>Any expression (primitive or not) enclosed in parentheses</li>
+</ul>
+
+<h4>Values for node reference and variables bound to nodes</h4>
+When a string value is expected, a node reference is evaluated
+to its value. For a node in XML documents, the value is the direct text
+contained in the element, and empty string if the element contains only
+sub elements or nothing at all. For a node in JSON documents,
+the value is the string form if the value from JSON point of view
+is a primitive type (not an array or object), and the value
+is an empty string if the value from JSON point of view
+is an array, an object or nothing at all.
+The same is true for local variables bound to nodes (will cover later when such
+situation may occur).
+
+<h4>Function calls</h4>
+The following are examples of function calls:
+<pre>
+   length("GOOD-BYE")
+   12 * (7 + 5)
+   "Value is " | $ORDER.DueDate | "!"
+   square(squar(2))
+</pre>
+<p>Magic Box allows to define functions easily, either in native implementation
+language (Java and C) or in rule language itself. For expressions used
+in MDW, the following table lists all predefined functions:</p>
+
+<table border=1>
+	<tr><th>Function</th><th>Semantics</th></tr>
+	<tr>
+		<td class="descitem"><var>expr<sub>1</sub></var>+<var>expr<sub>2</sub></var></td>
+		<td>Addition of integers.</td>
+	</tr>
+	<tr>
+		<td class="descitem"><var>expr<sub>1</sub></var>-<var>expr<sub>2</sub></var></td>
+		<td>Subtraction of integers</td>
+	</tr>
+	<tr>
+		<td class="descitem"><var>expr<sub>1</sub></var>*<var>expr<sub>2</sub></var></td>
+		<td>Multiplication of integers.</td>
+	</tr>
+	<tr>
+		<td class="descitem"><var>expr<sub>1</sub></var>/<var>expr<sub>2</sub></var></td>
+		<td>Integer division.</td>
+	</tr>
+	<tr>
+		<td class="descitem"><var>expr<sub>1</sub></var>%<var>expr<sub>2</sub></var></td>
+		<td>Modulo operation.</td>
+	</tr>
+	<tr>
+		<td class="descitem"><var>expr<sub>1</sub></var>|<var>expr<sub>2</sub></var></td>
+		<td>String concatenation.</td>
+	</tr>
+	<tr>
+		<td class="descitem">substring(<var>expr</var>,<var>start</var>)</td>
+		<td>Return a substring of the string value of the expression,
+			 starting from location <var>start</var>, which must be an 
+			 expression evaluated to numbers.</td>
+	</tr>
+	<tr>
+		<td class="descitem">substring(<var>expr</var>,<var>start</var>,<var>end</var>)</td>
+		<td>Return a substring of the string value of the expression,
+		    starting from location <var>start</var> (an expression evaluated 
+		    to a number)
+		    and end before <var>end</var> (another expression evaluated to
+		    numbers.</td>
+	</tr>
+	<tr>
+		<td class="descitem">time(<var>format</var>)</td>
+		<td>Return current time in the given format (which is
+		    an expression), as defined for the Java
+				class <code>SimpleDateFormat</code>.</td>
+	</tr>
+	<tr>
+		<td class="descitem">today()</td>
+		<td>Is equivalent to <code>time("MM-dd-yyyy")</code>.</td>
+	</tr>
+	<tr>
+		<td class="descitem">length(<var>expr</var>)</td>
+		<td>Return the length of the string value of the given expression.</td>
+	</tr>
+		<tr>
+		<td class="descitem">replaceall(<var>expr</var>,<var>pattern</var>,<var>by</var>)</td>
+		<td>Return a string constructed from <var>expr</var> by
+		    replacing all occurances of <var>pattern</var>, which
+		    is a regular expression, by <var>by</var> 
+		    </td>
+	</tr>
+</table>
+
+<h4>Conditional expression</h4>
+Conditional expression takes the following general form:
+<dl>
+   <dt>([<var>cond<sub>1</sub></var>]<var>expr<sub>1</sub></var>;
+		[<var>cond<sub>2</sub></var>]<var>expr<sub>2</sub></var>;
+		... ...;
+		<var>expr<sub>n</sub></var>)</dt>
+</dl>
+<p>where <var>n</var> is 2 or more.
+For those familiar with Java conditional expression syntax, the above
+is similar to Java syntax <code>(<var>cond<sub>1</sub></var>?<var>expr<sub>1</sub></var>:
+<var>cond<sub>2</sub></var>?<var>expr<sub>2</sub></var>: ... ... :<var>expr<sub>n</sub></var>)</code>,
+where <var>cond<sub>n</sub></var> are conditions described in the next section.
+The following are examples of conditional expression:</p>
+<pre>
+   ( [var&gt;12] 12; [var&lt;5] 5; var )
+   ([exist $$.Services.DSL] "hasDSL" ; "noDSL"")
+</pre>
+
+<h2>Conditions</h2>
+
+The following description defines what a condition can be:
+<ul>
+   <li>A basic conditions, such as <code>var &gt; 6</code></li>
+   <li>An existential condition (detail covered below)</li>
+   <li>Negation of a condition, as in <code>not 5&gt;6</code></li>
+   <li>Join of two conditions, as in <code>x&gt;6 and x&lt;12</code></li>
+   <li>Union of two conditions, as in <code>x&lt;6 or x&gt;12</code></li>
+</ul>
+<p>We describe the syntax for all above below, as well as special
+explanations on existence and pattern matching predicates.</p>
+
+<h4>Basic predicates</h4>
+The following table lists basic prediates:
+<table border=1>
+  <tr><th width="200px">Predicate</th><th>Semantics</th></tr>
+  <tr>
+    <td class="descitem"><var>expr<sub>1</sub></var> == <var>expr<sub>2</sub></var></td>
+	<td>String comparsion for equality, such as <code>$$.DueDate=="2012-02-02"</code></td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>expr<sub>1</sub></var> != <var>expr<sub>2</sub></var></td>
+  	<td>String comparsion for inequality, such as <code>line.TN!="303 555-6666"</td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>numexpr<sub>1</sub></var> &lt; <var>numexpr<sub>2</sub></var></td>
+  	<td>Arithmetic comparsion for less-than, such as <code>var&lt;6</code></td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>numexpr<sub>1</sub></var> &lt;= <var>numexpr<sub>2</sub></var></td>
+  	<td>Arithmetic comparsion for less-than or equal-to, such as <code>var&lt;=6</code></td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>numexpr<sub>1</sub></var> &gt; <var>numexpr<sub>2</sub></var></td>
+  	<td>Arithmetic comparsion for greater-than, such as <code>var&gt;6</code></td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>numexpr<sub>1</sub></var> &gt;= <var>numexpr<sub>2</sub></var></td>
+  	<td>Arithmetic comparsion for greater-than or equal-to, such as <code>var&gt;=6</code></td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>dateexpr<sub>1</sub></var> &lt;&lt; <var>dateexpr<sub>2</sub></var></td>
+  	<td>Date comparison for less-than, such as <code>$$.DueDate&lt;&lt;"2000-12-32"</code></td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>dateexpr<sub>1</sub></var> &gt;&gt; <var>dateexpr<sub>2</sub></var></td>
+  	<td>Date comparison for greater-than, such as <code>$$.DueDate&gt;&gt;"2012-01-01"</code></td>
+  </tr>
+  <tr>
+    <td class="descitem">true</td>
+    <td>always evaluates to true</td>
+  </tr>
+  <tr>
+    <td class="descitem">false</td>
+    <td>always evaluates to false</td>
+  </tr>
+  <tr>
+    <td class="descitem"><var>expr</var> like "<var>pattern</var>"</td>
+    <td><var>pattern</var> is a regular expression.
+	Note this matches the whole expression, not just a substring.
+	If you would like to match a substring, need to use <code>.*</code>
+	before and/or after the pattern. Atditionally,
+        variables can be bound to substrings (explanation and examples
+        are in early sections).
+	</td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>expr</var> in <var>nodeval</var>
+  	</td>
+  	<td>When <var>nodeval</var> is bound to a table, the table must have exactly one column.
+  	     The predicate evaluates to true if the value of the expression
+  	     is in table.
+  	    When <var>nodeval</var> is bound to a node and <var>expr</var>
+  	    also evaluates to a node, then the predicate evaluates to true
+  	    if the former node is an ancestor of the latter node.
+  	    When <var>nodeval</var> is bound to a node and <var>expr</var>
+  	    can only evaluate to a string, then the predicate returns
+  	    true if the node contains a child whose name is the same as the string.
+ 	</td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>expr</var> in (<var>string<sub>1</sub></var>, ...)
+  	</td>
+  	<td>Evaluates to true if the value of the expression is in the in-line table.
+ 	</td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>nodeval<sub>1</sub></var> before <var>nodeval<sub>2</sub></var></td>
+  	<td>Evaluates to true if the two nodes have the same parent
+  	    and <var>nodeval<sub>1</sub></var> is sequenced
+  	    before <var>nodeval<sub>2</sub></var>
+ 	</td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>nodeval<sub>1</sub></var> last before <var>nodeval<sub>2</sub></var></td>
+  	<td>Evaluates to true if the node <var>nodeval<sub>1</sub></var> is sequenced
+  	    right before the node <var>nodeval<sub>2</sub>
+  	    (the last node before the second node)</var>
+ 	</td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>nodeval<sub>1</sub></var> after <var>nodeval<sub>2</sub></var></td>
+  	<td>Evaluates to true if the two nodes have the same parent
+  	    and <var>nodeval<sub>1</sub></var> is sequenced
+  	    after <var>nodeval<sub>2</sub></var>
+ 	</td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>nodeval<sub>1</sub></var> first after <var>nodeval<sub>2</sub></var></td>
+  	<td>Evaluates to true if the node <var>nodeval<sub>1</sub></var> is sequenced
+  	    right after the node <var>nodeval<sub>2</sub></var>
+ 	</td>
+  </tr>  
+  <tr>
+  	<td class="descitem"><var>nodeval</var> first</td>
+  	<td>Evaluates to true if the node <var>nodeval</var> is 
+  	    the first child of its parent.
+ 	</td>
+  </tr>
+  <tr>
+  	<td class="descitem"><var>nodeval</var> last</td>
+  	<td>Evaluates to true if the node <var>nodeval</var> is 
+  	    the last child of its parent.
+ 	</td>
+  </tr>
+  <tr>
+  	<td class="descitem">when same_node(<var>nodeval<sub>1</sub></var>,
+  			 <var>nodeval<sub>2</sub></var>)
+  	</td>
+  	<td>Evaluates to true if both arguments are refering to the same node.
+ 	</td>
+  </tr>
+</table>
+<cite>Magic Box allows to define additional relations, called predicates, in Java or in Magic Box
+rule language itself easily, the above set is what MDW has implemented for its
+Magic engine.</cite>
+
+<h4>Compound Conditions</h4>
+Conditions can be combined using the logic operators "and", "or"
+and "not" to form combound conditions.
+<dl>
+  <dt><var>cond<sub>1</sub></var> and <var>cond<sub>2</sub></var></dt>
+  <dd>The composite condition is true if and only if
+      both <var>cond<sub>1</sub></var> and <var>cond<sub>2</sub></var> are true.</dd>
+</dl>
+<dl>
+  <dt><var>cond<sub>1</sub></var> or <var>cond<sub>2</sub></var></dt>
+  <dd>The composite condition is true if and only if
+      at least one of <var>cond<sub>1</sub></var> and <var>cond<sub>2</sub></var> 
+      is true.</dd>
+</dl>
+<dl>
+  <dt>not <var>cond</var></dt>
+  <dd>The composite condition is true when <var>cond</var>
+      is false, and vice versa</dd>
+</dl>
+
+Note that <code>not</code> has higher precedence than <code>and</code>,
+which in turn has higher precedence than <code>or</code>.
+Use parenthesis when the precedence needs to be altered.  
+
+<a name="exist"><!--  --></a>
+<h4>Existence Predicate</h4>
+Existence predicate is one of the most powerful features for conditions.
+There two common forms as shown below:
+<dl>
+  <dt>
+     exist <var>var</var> like <var>nodepattern</var></font>
+     <font color=black>[</font>
+	with (<var>cond</var>)
+     <font color=black>]</font>
+     <br/>
+     exist <var>var</var>
+     <font color=black>[</font>in<font color=black>|</font>before<font color=black>|</font>after<font color=black>]</font>
+     <var>nodeval</var>
+     <font color=black>[</font>
+	with (<var>cond</var>)
+     <font color=black>]</font>
+     </dt>
+  <dd/>
+</dl>
+<p>In the first form, the local variable <var>var</var> is bound to
+     the first node whose names match the given pattern <var>nodepattern</var>,
+     and the nested condition <var>cond</var>, if presents, is satisfied.
+     The local variable can be referenced in the nested condition part.
+     The condition is true when such a node is found, and false otherwise.</p>
+<p>In the second form, the local variable <var>var</var> is bound to
+      the first node that is the child of <var>nodeval</var> (for <code>in</code>),
+      the first node of the same parent before <var>nodeval</var> (for <code>before</code>),
+      or the first node of the same parent after <var>nodeval</var> (for <code>after</code>).
+      If the optional nexted condition <var>cond</var> is present, the predicate
+      will bind the variable to the first node that also satisfies the condition.
+      The condition is true when such a node is found, and false otherwise.</p>
+<p>
+The following are some examples.
+<pre>
+    exist service like $$.Services."Line|DSL" with ( service:action == "add" )
+    exist service in $$.Services with (exist tnOrDn like service."TN|DN" )
+    exist line like $$.Services.Line with line.TN like "303 (...){nxx}-(....){xxxx}"
+    exist line like $$.Services.Line with (exist tn like line.TN and tn like "303.*")
+    exist node like $$.chapter.Services.Line[action="add"].TN
+    exist node like $$..TN
+</pre>
+<p>
+The existence predicate can also be used in the following form:
+<dl>
+  <dt>exist <var>nodepattern</var></dt>
+  <dd/>
+</dl>
+which is a simple case when the optional condition is not needed
+and the variable is not needed, either. Sematically, this
+is equivalent to <code>exist node like <var>nodepattern</var></code>.
+Here is an example (in the nested condition):
+<pre>
+    exist line like $$.Services.Line with (exist line.TN)
+</pre>
+Finally, the existence predicate can be used to check if
+a global variable is bound. The syntax
+is:
+<dl>
+  <dt>exist variable <var>varname</var></dt>
+  <dd/>
+</dl>
+and an example is
+<pre>
+   exist variable REGION
+</pre>
+<h4>Temporary variable</h4>
+<dl>
+  	<dt>when <var>var</var> = <var>expr</var></dt>
+  	<dd/>
+</dl>
+This is a pseudo condition that is always true.
+It is used to hold a value in a variable so that we can use the value
+in later conditions. Example:
+<pre>
+    when tmp = 12*(9-7) and tmp &gt; 30
+</pre>
+
+<h2>Alternative XML Mapping</h2>
+
+<p>For XML documents, by default, the name of the node
+representing an XML element is its tag, and the value of 
+the node is the direct text in the element.
+The attributes of the element are accessed as attributes
+of the node.</p>
+
+<p>There are cases when the XML documents contain a lot of
+generic tags but using some attribute to diffentiate
+the different semantic types. This technique for XML
+is often used for highly dynamic data such as service
+orders, so that the XSD does not have to be changed
+when new data types need to be added. This is
+the case for the form data documents used in MDW,
+where only a few actual XML tags are used
+(e.g. FIELD, SUBFORM, and TABLE).
+For such documents, while the default mapping
+can still be used, the conditions and expressions
+will become cumbersome and far less readable.</p>
+<p>Magic Box offers an alternative mapping to gain
+the readability for such documents. An attribute
+such as NAME in the case of form data document
+is designated as the name of the node (instead of
+using tags), and the tags are accessible
+using a special attribute syntax <code>#node</code>.
+Take the following sample form data document as an example:</p>
+<pre>
+&lt;FORMDATA&gt;
+  &lt;FIELD NAME='COUNTRY'&gt;USA&lt;/FIELD&gt;
+  &lt;FIELD NAME='STATE'&gt;Colorado&lt;/FIELD&gt;
+  &lt;FIELD NAME='DD'&gt;2009-03-09&lt;/FIELD&gt;
+  &lt;SUBFORM NAME='TABLE_DATA_META'&gt;
+     &lt;FIELD NAME='total_rows'&gt;10&lt;/FIELD&gt;
+     &lt;FIELD NAME='start_row'&gt;1&lt;/FIELD&gt;
+  &lt;/SUBFORM&gt;
+  &lt;TABLE NAME='TABLE_DATA'&gt;
+     &lt;ROW&gt;
+        &lt;FIELD NAME='RED'&gt;red&lt;/FIELD&gt;
+        &lt;FIELD NAME='GREEN'&gt;green&lt;/FIELD&gt;
+        &lt;FIELD NAME='BLUE'&gt;blue&lt;/FIELD&gt;
+     &lt;/ROW&gt;
+     &lt;ROW&gt;
+        &lt;FIELD NAME='RED'&gt;rot&lt;/FIELD&gt;
+        &lt;FIELD NAME='GREEN'&gt;gruen&lt;/FIELD&gt;
+        &lt;FIELD NAME='BLUE'&gt;blau&lt;/FIELD&gt;
+     &lt;/ROW&gt;
+     &lt;ROW&gt;
+        &lt;FIELD NAME='RED'&gt;hong&lt;/FIELD&gt;
+        &lt;FIELD NAME='GREEN'&gt;lue&lt;/FIELD&gt;
+        &lt;FIELD NAME='BLUE'&gt;lan&lt;/FIELD&gt;
+     &lt;/ROW&gt;
+  &lt;/TABLE&gt;
+&lt;/FORMDATA&gt;
+</pre>
+<p>The following gives some sample expressions and their corresponding values:</p>
+<ul>
+  <li><code>$$.COUNTRY</code> has the value <code>"USA"</code></li>
+  <li><code>$$.TABLE_DATA_META.total_rows</code> has the value <code>10</code></li>
+  <li><code>exist row in $$.TABLE_DATA with row.RED=="rot"</code> 
+      will bind the variable <var>row</var> to the second row in the table</li>
+  <li><code>#$$.TABLE_DATA</code> has the value <code>"TABLE"</code></li>
+</ul>
+</body>
+</html>

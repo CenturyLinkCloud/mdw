@@ -1,0 +1,134 @@
+<html>
+<head>
+<title>Invoke Subprocess Activity</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Invoke Subprocess Activity</h1>
+
+This activity is used to invoke an independent subprocess.
+The activity can also be used to call a remote process
+(residing in a different MDW application).
+<p>
+If you need to invoke multiple subprocesses (of the same or
+different process definition), where the number of subprocesses
+to invoke may be unknown at design time, 
+you can use the <a href="InvokeMultipleSubprocesses.html">Invoke Multiple Subprocesses</a> activity.</p>
+<p>
+Configuration involves specifying the name and version of the subprocess to be invoked,
+as well as bindings to the input/output parameters of the subprocess.</p>
+
+<h3><a id="smartProcessVersion">Smart Subprocess Versioning</a></h3>
+<p>Before MDW 5.5 you'd explicitly call out the version of the subprocess to be executed.
+This meant that if the subprocess version was incremented, in order to have calling processes
+use the new version you'd have to locate all callers, open their definitions, change to use the new version, and save.</p>
+<p>
+With MDW 5.5 you can use Smart Subprocess Versioning to support greater modularity and encapsulation.
+By default Designer automatically infers a Smart Subprocess Version, even if you select a specific version when
+configuring the caller (although you can turn this off through Window > Preferences > MDW > Process Design > Infer Smart Subprocess/Asset Version Spec).</p>
+<p>
+Here's the way smart versioning works: instead of an exact version you can specify a <i>range</i> of versions that are acceptable to the caller.
+The syntax is modeled on the OSGi version specifier syntax.  Specifically, there are four supported formats:</p>
+<ul>
+  <li>A specific version -- such as 1.2 -- can be specified.</li>
+  <li>Zero can be specified to always use the absolute latest process version.</li>
+  <li>A 'half-open' range -- such as [1.2,2) -- designates an inclusive lower limit and an exclusive upper limit,
+      denoting version 1.2 and any version after this, up to, but not including, version 2.0.</li>
+  <li>An 'unbounded' version range -- such as [1.2 -- denotes version 1.2 and all later versions.</li>    
+</ul>
+If the default smart versioning inference is enabled in Designer, MDW uses the third format behind-the-scenes.
+So, for example, if you choose process "SmartProcessChild v1.0" from the Asset Selector widget as illustrated below, 
+the attribute will be saved as [1.0,2 -- defaulting to an exclusive upper limit of the next major version number. 
+<br/><br/>
+<img src="images/subprocess_select.jpg" />
+<br/><br/>
+At runtime the latest process version falling within the designated range will be invoked.
+ If you want to override the default MDW smart version spec, you can type directly into the Asset Selector widget
+(say, "SmartProcessChild v[1.0" to designate the fourth, or unbounded, version range syntax.
+
+<h3>Subprocess Variable Bindings</h3>
+Designer automatically inspects the parameters defined
+by the subprocess and pre-populates the variable binding
+table with parameter names and their modes.
+Note that the parameter table does not include those
+variables in the subprocess with "Local" mode.
+<p>
+In general, the binding can be a simple string value,
+a variable, or a <a href="bindingExpressions.html">binding expression</a>n expression. 
+A string without '$' or '#' is treated
+as a static string; otherwise it's treated as an
+expression (Java Expression would have ${something} or #{something}), with a single variable ('$' followed by variable
+name) as a special case.
+The following restrictions apply to specific modes:
+<ul>
+  <li>For Input mode, the binding cannot be blank</li>
+  <li>For Output and Input/Output mode, the binding must
+      be a variable ('$' without curly braces, followed by variable name), as
+      that variable will receive the returned value.</li>
+  <li>For Static mode, any binding is treated as static
+      string value, including those containing '$', '#', and quotes.</li>
+  <li>NOTE: For Document type variables, the binding will pass the Document Reference (i.e. 'DOCUMENT:document_id') to the child process.
+      If you need to pass the actual document content, you can use a Java expression to evaluate the variable content instead (i.e. '#{variableName}' ).
+      A good scenario for when you might want to do this is if the parent process is not persisting the Document in the Database (i.e. Service Process 
+      running on performance level 5 or 9 or Non-Service process running on level 9) and the child will execute 
+      in a separate thread (Asynchronous execution) </li>
+</ul>
+See the MDW <a href="bindingExpressions.html">binding expressions</a> documentation for examples of how to 
+pass input variable values.
+
+<p>
+<h2>Invoking Remote Processes</h2>
+Introduced since MDW 4.1, you can invoke remote processes, which
+refer to processes deployed in a different MDW application.
+For example, an IOM process can invoke a process in CCWF.
+<p>
+To invoke a remote process involves the following simple steps:
+<ul>
+  <li>In the <code>mdw.properties</code>, you need to define
+       the property <code>mdw.remote.server.<var>app_name</var></code>,
+       where <var>app_name</var> is the logical name of the application
+       that hosts the remote subprocesses. The logical name must match the property <code>MDWFramework.ApplicationDetails/ApplicationName</code>
+      of that application, which is typically its formal name of application.
+       The value of the property
+       should be the engine URL, which can be one of the following forms:
+       <ul>
+		  <li><code>t3://<var>host</var>:<var>port</var></code> - this is only
+		  	supported when both sides are WebLogic servers. JMS is used
+		  	for sending messages. Note that global trust between 
+		  	the two communicating WebLogic servers must be set up
+		  	to avoid security violation exception.</li>
+		  <li><code>iiop://<var>host</var>:<var>port</var></code> - this is only
+		  	supported when both sides are WebLogic servers, and RMI is used
+		  	for sending messages. This protocol is only supported from MDW 5.2.</li>
+		  <li><code>rmi://<var>host</var>:<var>port</var></code> - this is only
+		  	supported when both sides are Tomcat servers, and RMI is used
+		  	for sending messages. This protocol is only supported from MDW 5.2.</li>
+		  <li><code>http://<var>host</var>:<var>port</var>/<code>service_context_path</code></code> - 
+		    restful services over HTTP are used for sending messages.
+		     This protocol is only supported from MDW 5.2.</li>
+       </ul>
+      The following is an example:
+      <pre>
+      mdw.remote.server.CCWF=t3://lxdnd693.dev.qintra.com:6061
+      mdw.remote.server.IOM=t3://lxdnd695.dev.qintra.com:6091
+      </pre>
+      </li>
+   <li>In the process name field, specify the remote process name,
+      followed by "@", then followed by the logical name of the
+      application. For example, to invoke the process named
+      "UpdateDTVProcess" in CCWF, the process name needs to be
+      specified as "UpdateDTVProcess@CCWF". Note you should
+      perform this step when the above properties are effective,
+      as the designer validates the remote process and populates
+      the parameter table.</li>
+</ul>
+<p>In order for the remote subprocess to send a response back
+to the sender application, the remote application also needs
+to configure the remote server property pointing back to the invoker.
+For example, if an IOM process needs to invoke a subprocess hosted by CCWF,
+the IOM side needs to configure the property <code>mdw.remote.server.CCWF</code>,
+and the CCWF side needs to configure the property <code>mdw.remote.server.IOM</code>.
+</p>
+
+</body>
+</html>

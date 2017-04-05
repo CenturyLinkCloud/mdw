@@ -1,0 +1,223 @@
+<html>
+<head>
+<title>Gherkin Test Script Syntax</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Gherkin Test Script Syntax</h1>
+
+<p>The <a href="automatedTesting.html">MDW Automated Testing</a> facility supports <a href="https://github.com/cucumber/cucumber/wiki/Gherkin">Gherkin</a>
+language feature files for use with the <a href="https://cucumber.io/">Cucumber</a> behavior-driven testing framework. 
+This syntax makes it easy for business users to create and run automated test cases that exercise MDW workflow capabilities.</p>
+
+<p><span style="text-decoration:underline">Note:</span> To run Gherkin test cases in your workflow project you'll need to add the following
+Maven or Gradle dependencies:</p>
+<pre>
+  &lt;dependency>
+    &lt;groupId>info.cukes&lt;/groupId>
+    &lt;artifactId>cucumber-java&lt;/artifactId>
+    &lt;version>1.2.4&lt;/version>
+    &lt;scope>test&lt;/scope>
+  &lt;/dependency>
+  &lt;dependency>
+    &lt;groupId>info.cukes&lt;/groupId>
+    &lt;artifactId>cucumber-groovy&lt;/artifactId>
+    &lt;version>1.2.4&lt;/version>
+    &lt;scope>test&lt;/scope>
+  &lt;/dependency>
+  &lt;dependency>
+    &lt;groupId>com.centurylink.mdw&lt;/groupId>
+    &lt;artifactId>mdw-designer-core&lt;/artifactId>
+    &lt;version>8.6.0&lt;/version>
+    &lt;scope>test&lt;/scope>
+  &lt;/dependency>
+  &lt;dependency>
+    &lt;groupId>org.eclipse.jgit&lt;/groupId>
+    &lt;artifactId>org.eclipse.jgit&lt;/artifactId>
+    &lt;version>3.4.1.201406201815-r&lt;/version>
+    &lt;scope>test&lt;/scope>
+  &lt;/dependency>
+</pre>
+<p>The mdwdemo sample project illustrates the proper setup for executing Gherkin-syntax workflow tests.  This is available
+in the MDW Git repository in CenturyLink Labs: https://8.22.8.164/mdw/mdwdemo.git</p>
+
+<h3>Sections in This Guide</h3>
+
+<ul>
+  <li><a href="#generalSemantics">General Semantics</a></li>
+  <li><a href="#launchProcess">Launch a Process</a></li>
+  <li><a href="#sendMessage">Send a Message</a></li>
+  <li><a href="#performTaskAction">Perform a Task Action</a></li>
+  <li><a href="#notifyWaitingProcesses">Notify Waiting Processes</a></li>
+  <li><a href="#waitForProcessCompletion">Wait for Process Completion</a></li>
+  <li><a href="#verifyProcessResults">Verify Process Results</a></li>
+  <li><a href="#verifyMessageResponse">Verify Message Response</a></li>
+  <li><a href="#stubAdapterResponse">Stub an Adapter Response</a></li>
+</ul>
+
+<h3><a id="generalSemantics">General Semantics</a></h3>
+<p>MDW automated tests use <a href="https://cucumber.io/docs/reference/jvm">Cucumber JVM</a>; specifically, the 
+<a href="https://github.com/cucumber/cucumber-jvm/tree/master/groovy">Groovy Language</a> semantics.  This is relevant for the 
+Cucumber steps definition (sometimes called glue).  When you first create a Gherkin test case in Designer, it generates a steps.groovy
+file in the test cases directory of your project.  This file covers all the common scenarios described below, and it may be extended
+to include less-common scenarios.  The Groovy code for each step has access to all the features of the standard MDW 
+<a href="groovyTestScriptSyntax.html">Groovy Testing DSL</a>.</p> 
+
+<p>STDOUT is directed to the test results execute.log file, and is also visible in Designer's Test Exec view output pane.
+In steps.groovy, Standard Groovy variable substitutions are applied to double-quoted strings, so the following lines both display the master request id for a run:</p> 
+<pre>
+println "masterRequestId: " + masterRequestId
+println "masterRequestId: ${masterRequestId}"
+</pre>
+<p>The context for variable substitutions is an instance of <a href="">DefaultTestCaseExec</a>, which is defined in steps.groovy.  
+By default the master request id for the test is auto-generated, but you can assign it yourself as well.  
+You can also use the standard Groovy <em>assert</em> keyword to check values and fail the test if some condition is not met:</p>
+<pre>
+// ensure a numeric master request id
+masterRequestId = System.currentTimeMillis();
+assert masterRequestId > 0
+</pre>
+<p> If you need to define your own master request id in feature file then you can follow following syntax
+<pre>
+Given masterRequestId "12345"
+<br>or
+<br>Given masterRequestId "$MyApp-{masterRequestId}"
+</pre>
+
+<h3><a id="launchProcess">Launch a Process</a></h3>
+<p>One of the key functions of an MDW test is to run a workflow process and compare the outcome versus the expected
+result.  This concept is explained in detail in the <a href="automatedTesting.html">automated testing documentation</a>.
+The simplest way to start a process is like this:</p>
+<pre>
+When the "MyProcess" workflow is invoked</pre>
+This kicks off the latest version of the process named <em>MyProcess</em> in any workflow package.
+Frequently when launching a process you"ll want specify input variable values, which can be done this way:
+<pre>
+Given process input values:
+      | customerId  | DHO115360          |
+      | orderNumber | ${masterRequestId} |</pre>
+
+<p>To read from a file, add the file to to test case directory and use following syntax:</p>
+<pre>
+Given process input values:
+      | request  | ${file('GetEmployee.xml')} |</pre>
+<h3><a id="sendMessage">Send a Message</a></h3>
+<p>Another way to trigger your workflow is to send an event message:</p>
+<pre>
+When I send "${file('GetEmployeeRequest.xml')}"</pre>
+<p>This sends a message to MDW with the contents of the specified file over the default REST protocol.
+To send a message using another supported protocol use a form like this:</p>
+<pre>
+When I send "SOAP" message "${file('GetEmployeeRequest.xml')}"</pre>
+<p>The SOAP protocol requires that the payload include a SOAP envelope element.
+In either form, the raw message contents can contain dynamic values in the form
+${myRequestPlaceholder}.  Standard Groovy expression evaluation is performed for these values.
+The evaluation context is the same as described in 
+<a href="testResultsFormat.html#dynamicValues">MDW Test Results Format</a>.</p>
+
+<h3><a id="performTaskAction">Perform a Task Action</a></h3>
+<p>For processes that include manual task activities, you can trigger a task action like so:</p>
+<pre>
+And I Claim task "Manual Acknowledgment"</pre>
+<p>This assigns the manual task to the user executing the tests.  The <em>Claim</em> keyword indicates
+the action to be performed on the task, which can be any standard or custom <a href="taskAction.html">Task Action</a>.</p>
+<p>Completing a manual task frequently requires that input data be entered along with the action.  This can be 
+accomplished using the <em>dataTable</em> input just like initializing input variables for a process:</p>
+<pre>
+And I Claim task "Manual Acknowledgment"<br>And I wait 10 seconds<br>And I Complete task "Manual Acknowledgment" with values:
+      | acknowledged | true      | 
+      | ackDate      | ${today}  | 
+      | customerName | Don Oakes |</pre> 
+      
+
+<h3><a id="notifyWaitingProcesses">Notify Waiting Processes</a></h3>
+<p>For test cases that need to notify waiting in-flight processes, the following syntax can be used:</p>
+<pre>
+Given I notify event "S-${masterRequestId}" with message "&lt;/EventCheck&gt;"</pre>
+<p>The event ID parameter (to correlate with the waiting process instance) can embed the following
+server-side placeholders, which will be substituted with the appropriate runtime values:
+<code>${masterRequestId}</code>, <code>${processInstanceId}</code>, <code>${activityInstanceId}</code>,
+<code>${&lt;variable_name&gt;}</code>.</p>
+<p><span style="text-decoration:underline">Note:</span> Although the syntax looks the same as the general
+variable substitution syntax, this special usage involves substitution on the server (the raw placeholders are passed
+in Designer's message to the server, and substitution happens on that side).  In this usage, only the specific expressions
+above are supported.  Unlike the general mechanism, your custom Groovy script bindings cannot be substituted.</p>   
+
+<h3><a id="waitForProcessCompletion">Wait for Process Completion</a></h3>
+<p>Before the process outcome can be compared against the expected results, the test execution
+needs to wait for the process to be completed.  The simplest form of the <span class="cmd">wait</span> command is like this:</p>
+<pre>
+And I await process completion  
+</pre>
+<p>This waits for completion of the process most recently launched through the <span class="cmd">start</span> command, using the default timeout of 60 seconds.
+
+<p>The <span class="cmd">wait</span> command tells process execution to pause for a designated period.  The syntax for sleep is very simple:</p>
+<pre>
+And I wait 20 seconds
+</pre>
+<h3><a id="verifyProcessResults">Verify Process Results</a></h3>
+<p>This compares the expected results file versus the actual results for a process that was
+started through either <em><a href="#launchProcess">start process</a></em> or <em><a href="#sendMessage">send message</a></em>.
+These are stored as files, in the format described in <a href="testResultsFormat.html">MDW Test Results Format</a>
+(this document also describes the Groovy expression mechanism for substituting dynamic values in expected results).
+If the comparison show differences, the test case fails with a message identifying the line number of the first delta.</p>
+<p>If a single process was launched using the <span class="cmd">start</span> command, the following simple form can be used:</p>
+<pre>
+Then the results should match "HandleOrder"</pre>
+
+<p>There's a specific convention for embedded subprocesses like Exception Handlers.  If your test case involves
+invoking an embedded subprocess, you should include that along with the parent process in a single <span class="cmd">verify</span> command:</p>
+<pre>
+Then the results should match "EventCheck, EventCheck Correction Handler"</pre>
+<p>In this example the embedded subprocess for &quot;EventCheck&quot; appears as just "EventCheck Correction Handler&quot;.</p>
+
+<h3><a id="verifyMessageResponse">Verify Message Response</a></h3>
+<p>When a test case involves a <em><a href="#sendMessage">send message</a></em> step to a service process,
+frequently success needs to be evaluated according to the contents of the response:</p>
+
+<p>Usually it's handy to keep the expected response in a standalone file:</p>
+<pre>
+Then the response should match "${file('GetEmployeeResponse.xml')}"</pre>
+<p>An easy way to initially populate the expected response is to run the test case once and copy/paste
+the actual response from the Text Exec view console window.  In your expected response content you can 
+embed dynamic expressions as described in <a href="testResultsFormat.html#dynamicValues">MDW Test Results Format</a>.</p>
+
+<h3><a id="stubAdapterResponse">Stub an AdapterResponse</a></h3>
+<p>If your test process involves an adapter activity, you may want to inject a stubbed response
+to the adapter call so that the test doesn't depend on availability of an external system.
+To inject a stubbed response based on an XPath test condition, use a snippet like this:
+<pre>
+And I stub "GetEmployee" after delay of 5 seconds with a response "${file('GetEmployeeResponse.xml')}"
+</pre>
+<p>This registers a stub handler to respond to any adapter whose request content is XML with a
+"GetEmployee" root node (based on <a href="xpath.html">MDW XPath</a> evaluation), and set the response
+to the contents of the file GetEmployeeResponse.xml.  <p><span style="text-decoration:underline">Note:</span> For adapter stubbing to be applied, the
+"Use Stubbing" checkbox must be selected on the test case launch dialog.</p>
+
+<p>Multiple stub declarations can be included in a test case (before triggering any processes with the adapters you wish to
+stub).  Stubs are consulted in the order they were declared.  If no matching stub is encountered
+for an adapter, then it will be invoked according to its design attributes.</p>
+
+
+<h4><a id="stubSubstitutions">Stub Substitutions</a></h4>
+<p>Expressions in the stubbed response are automatically processed using Groovy variable substitutions.  So, for
+example, the following stub response in EmployeeLookupResponse.xml will contain the actual master request ID at runtime:</p>
+<pre>
+&lt;EmployeeLookupResponse>
+  &lt;masterRequestId>${masterRequestId}&lt;/masterRequestId>
+  &lt;name>Donald Oakes&lt;/name>
+&lt;/EmployeeLookupResponse>
+</pre>
+
+<p>A common scenario requires including some values from the request in the response.  In that case you can make use
+of the implicit <em>request</em> variable, and assign response values using GPath expressions:</p>
+<pre>
+&lt;EmployeeLookupResponse>
+  &lt;masterRequestId>${masterRequestId}&lt;/masterRequestId>
+  &lt;workstationId>${request.userId}&lt;/workstationId>
+  &lt;name>Donald Oakes&lt;/name>
+&lt;/EmployeeLookupResponse>
+</pre>
+
+</body>
+</html>

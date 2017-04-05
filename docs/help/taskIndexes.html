@@ -1,0 +1,38 @@
+<html>
+<head>
+<title>Task Indexes</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Task Indexes</h1>
+
+<p>
+Task indexes are workflow runtime values captured from manual task processes at certain points in the task lifecycle
+(for example when a task is created or when it's completed).
+The main use of task indexes is to enable sorting, filtering and grouping by these values in the MDWHub My Tasks and Workload lists.
+When MDWHub users sort or filter across many tasks, this indexing mechanism provides much better performance vs. sort and filtering
+based on process variable values.  Process variables perform fine for displaying at the task detail level in MDWHub, but aggregate 
+functions benefit by using task indexes.
+</p>
+
+<h3>Configuring in Designer</h3>
+<p>
+Task index values are generally derived from process variables.  For AutoForm manual tasks, the Variables tab in Designer
+has a column for entering an Index Key that will automatically be populated with the associated variable:
+</p>
+<img src="images/autoFormTaskIndexes.jpg" style="border:2px solid gray" />
+<br/><br/>
+<p>
+For Custom manual Tasks, a <a href="bindingExpressions.html">Value Expression</a> can be specified for each index:
+</p>
+<img src="images/customTaskIndexes.jpg" style="border:2px solid gray" /> 
+
+<h3>TaskIndexProviders</h3>
+<p>
+The <a href="../javadoc/com/centurylink/mdw/observer/task/TaskIndexProvider.html">TaskIndexProvider</a> interface provide an extensibility
+mechanism to support custom logic for setting index values based on the <a href="../javadoc/com/centurylink/mdw/model/value/task/TaskRuntimeContext.html">TaskRuntimeContext</a>.
+In Designer a custom TaskIndexProvider implementation can be specified instead of the default behavior provided by MDW. 
+</p>
+
+</body>
+</html>

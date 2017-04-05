@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>Using EventWaitActivity</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Manual Tasks Waiting for Events</h1>
+
+The implementor <code>CustomManualTaskActivity</code>
+allows the manual tasks to listen to external events
+while waiting for users to complete the tasks.
+Please refer to <a href="taskAction.html">this link</a> for general
+description of manual task activities.
+
+<h2>Responding to Events while Waiting for Task to Complete</h2>
+
+It uses the same mechanism as <code>EventWaitActivity</code> to register
+the event waits (following <a href="EventWaitActivity.html">this link</a>
+for details of event wait registration and other details).
+
+<p>
+When the task receives an event while waiting for user to complete the task,
+the task activity can be left in one of the 3 statuses:
+
+<ul>
+  <li>Canceled. The activity instance as well as the task instance will be canceled.</li>
+  <li>Hold. The activity instance will be put on a hold status (showing cyan color
+  		in the designer's process instance view). While the activity instance in hold status,
+  		user completion of the task will be recorded but will not resume the 
+  		activity instance. When the
+  		activity is put back on waiting status (see <a href="EventWaitActivity.html">this link</a>
+  		for discussion on how this can happen), if the task has been completed or
+  		another event it is waiting for has been received,
+  		the activity instance will process that.</li>
+  <li>Waiting. The activity instance continues waiting (i.e. still actively listening for
+      task completion action and events).</li>
+</ul>
+
+<strong>Note:</strong>
+<br>1.  Task activities that listen for <i>non-recurring</i> events should never be
+placed in HOLD status.  This would cause infinite looping whenever a task instance resumes
+waiting from hold status because non-recurring events that have already arrived
+would always trigger a transition.
+<br>2. When you want to call a Correction Handler or Cancellation handler after an event is received completion code should be set to CORRECT or ABORT respectively. 
+Please notice that you do not put Cancelled:: or Hold:: before the completion status like you do for Event Wait activities.
+<p>
+To provide custom code handling unsolicited events, you will need to override 
+<code>processOtherMessage(String message)</code>. 
+The method is passed in with one argument, which is the entire message. The default
+method does nothing. The completion code after processing the message is configured
+in the designer, but you can override it in the code by invoking <code>setReturnCode()</code>.
+
+<h2>Task Callbacks</h2>
+The activity <code>CustomManualTaskActivity</code>
+also supports <em>task callbacks</em>, which are used in the scenario when the task
+instance needs to invoke functionalities through the engine.
+<p>
+The task callbacks work in the following way:
+<ul>
+  <li>Through customized task detail page in the task manager, an API call
+  		is made to the engine, as shown in the following synopsis:
+  		<pre>
+  	FormServer server = new FormServer();
+  	String response = server.callEngine(request, taskInstanceId, timeoutSeconds);
+  		</pre>
+  		</li>
+  <li>MDW sends the request (through EJB) to the activity instance corresponding
+      to the task instance and invokes its customizable method 
+  	 <code>String processTaskCallRequest(String request)</code>. The method
+  	 should typically be overridden to extract data from the request message
+  	 into process variables, and returns a completion code.</li>
+  <li>MDW then puts the task activity instance in hold status and makes a
+     transition according to the completion code.</li>
+  <li>The process definition should have activities processing the request,
+     and finally follows a transition back to the activity. This last transition
+     <em>must</em> have the special label <code>RESUME:Callback</code>,
+     and the preceding activity must return this as its completion code 
+     (or, it returns null completion code and there is not an outgoing transition
+      without label - MDW will follow any transitions with RESUME labels
+      in this case).</li>
+  <li>MDW will then invokes the customizable method 
+  		<code>String processTaskCallResponse()</code>, which should be overridden 
+  		to construct a response message.</li>
+  <li>MDW will put the task activity instance back in waiting status and
+      deliver this response (through JMS) as the return value of the <code>callEngine()</code>
+      method made in the first step above.</li>
+</ul>
+We note that this design is temporarily done for MDW 4.4. 
+MDW 5 will allow customization of task manager done through 
+engine code rather than task manager code (customizing event handlers
+and activity implementors instead of customizing task manager itself)
+and this functionality will then be natively supported, without the 
+need of making API calls from the task manager.
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<html>
+<head>
+<title>MDW Axis WebService Adapter Activity</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>MDW Axis-based Webservice Adapter Activity</h1>
+  This adpater uses <b><i>Axis 1.4</i></b> for completely dynamic invocations. 
+  It supports both <b><i>doc/lit</i></b> and <b><i>rpc/encoded</i></b> services. 
+  <h2>Configuring Adapter Activity</h2>
+  <ul>
+
+	<li><b>WSDL url</b>
+		<ul>
+			<li>Specify url of WSDL. The value of this attribute can be either static or property driven</li>
+		</ul>
+	</li>
+  <li><b>Operation Nm</b>
+    <ul>
+      <li>Name of the operation in WSDL. The value of this attribute can be either static or property driven</li>
+    </ul>
+  </li>
+  <li><b>Log Response</b>
+    <ul>
+      <li>Boolean value of true or false for logging the response into log files</li>
+    </ul>
+  </li>
+  <li><b>Request Params</b>
+    <ul>
+      <li>This specifies list of request parameters to the request. The value(s) could be static for <i>e.g. JohnDoe </i> or any process variables
+          for e.g.<i> $zipCode </i>or <i>$username[current_user]</i>
+          <li>
+          <i>For dynamic binding of process variable values to service input, adapter uses groovy parser.</i></li></li>
+    </ul>
+  </li>
+</ul>
+
+<h2>Handling Response from service</h2>
+Typically, a developer or analyst would write a groovy script which gets executed after service response comes back.
+The adapter analyze response from service and organizes into "response" variable of type java.util.Hashmap. The key in map represents the name of response variable(s) defined in WSDL operation.
+This variable is binded to groovy script and available for developers to manipulate.
+<p>
+<b>Sample groovy code:</b>
+<i>VPN_ID= response.get("return")</i> 
+</p>
+<p>
+<b> The variable response is NOT a process variable.</b> 
+</p>
+
+<p>
+In groovy script a user could write code to manipulate return code of transition. A new feature available as of MDW Release 4.2.12 -
+This adapter can set returncode to "ABORT:", "CANCEL:","CORRECTION:" which could be use to raise those three events 
+</p>
+</body>
+</html>

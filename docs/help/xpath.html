@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>XPath in MDW</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>XPath in MDW</h1>
+XPath is used in many places in MDW to match messages
+with certain patterns and to extract data out of XML documents.
+The standard XPath language, however, is rather cumbersome
+to use when name spaces are involved, as you must declare
+all name spaces as part of the XPath expression.
+<p>
+MDW implements name space agnostic XPath language. So far
+the language supports a subset of the standard XPath language.
+<p>
+Examples of valid MDW XPath expressions include:
+<pre>
+   /Book/Chapter/Section
+   Book/Chapter[@title='The World is Flat']
+   //Order/*[OrderType='N']
+   /Order/@id
+</pre>
+The following table summarizes the syntax:
+<table>
+  <tr><td>*</td><td>Matches any element name</td>
+  <tr><td>//</td><td>Recursive Descent</td></tr>
+  <tr><td>@<i>attribute_name</i></td><td>Matches attribute of the given name</td></tr>
+  <tr><td>@*</td><td>Matches any attribute name</td></tr> 
+  <tr><td>[@<i>attribute_name</i>='<i>value</i>']</td><td>Attribute value filter</td></tr>
+  <tr><td>[<i>child_tag_name</i>='<i>value</i>']</td><td>Child value filter</td></tr>
+</table>
+The double quotes can be used in place of single quote.
+When the value contains only letters and digits, the quotes can be 
+left out (e.g. <code>/Order[OrderType="N"]</code> or <code>/Order[OrderType=N]</code>).
+<p>
+The initial slash is optional when the expression is applied to an
+entire document, which is the case most of times.
+
+</body>
+</html>

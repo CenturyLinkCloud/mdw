@@ -1,0 +1,143 @@
+<html>
+<head>
+<title>Processes</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Processes</h1>
+
+<p>Introduction to processes can be found in <a href='introduction.html'>Introduction</a>.
+The following describes the attributes you can configure.
+</p>
+<ul>
+  <li>Transition with no Label: This describes how transitions without a label is used.
+      <ul>
+        <li>Acts as Default: if the completion code does not match
+        	labels of any outgoing transitions, the transitions 
+        	without labels are then traversed. The transitions
+        	are also traversed when the completion code is null.</li>
+        <li>Matches Null Return Code: with this option,
+        	transitions without labels are only traversed
+        	when the completion code is null. If a transition
+        	should be used as default, the special label <code>DEFAULT</code>
+        	must be specified.</li>
+     </ul></li>
+  <li>Process Type: Regular or Service. See below for description
+  	of service processes.</li>
+  <li>Transition Retry Count Default: the value can be 
+  		either "Retry unlimited" (allowing unlimited retries),
+  		or "Retry not allowed" (allowing no retries).
+  		Note that this attribute only sets the default
+  		for newly created transitions. You can always set individually
+  		the transition retry count after the transitions are created.
+  		Also note that if you change the value of this attribute,
+  		it will not change the existing transitions.</li>
+  <li>Performance Level:
+  		It specifies a performance level for running this processes.
+  		See the section on performance level below for details.</li>
+</li>
+</ul>
+
+<h2>Service Processes</h2>
+<p>Typically, a process is started asynchronously, meaning the 
+originator does not wait for the completion of the process.
+It is often desired for the work flow applications to provide
+also <em>services</em>, which return synchronous responses
+to the requesters in real time.</p>
+
+<p>In order to take advantage of the MDW infrastructure (external event handler,
+adapters, activities, etc),
+MDW provides the so-called <em>service processes</em>  for this purpose.
+Service processes were also known as
+<em>synchronous processes</em> earlier, but we now try to avoid
+this term to avoid confusion with calling a sub process synchronously.</p>
+
+<p>Service processes are executed in a single thread without using internal
+JMS messages. This is to allow the responses being captured and sent back
+to the invoker. Service processes are defined and handled pretty much
+the same way as regular processes, with some limitations incurred by
+the requirement that they are executed in a single thread.</p>
+
+<p>With MDW 4.* and MDW 5.0 implementation, service processes have 
+the following restrictions:</p>
+<ul>
+   <li>No parallel branching is allowed, namely all transitions out of an activity
+   		must be mutual exclusive.</li>
+   <li>No activities can suspend (wait for timer, external event, manual response, etc).
+   		This is to say that
+   		timer wait, event wait, sub process invocation, manual tasks are not allowed.
+   		Adaptor activities are allowed, but you cannot get responses from asynchronous
+   		adaptors as that will require event wait activities. As a result,
+   		fall-out subprocesses and fall-out tasks are not allowed.</li>
+   <li>The process should define an output (or input/output) variable named "response" and set its
+       value, which is used to return as a response. The variable is typically
+       a document of XML Bean type, although any other type can be used
+       and the return message as a string will be translated by the variable
+       translator.</li>
+</ul>
+<p>If an exception is generated during process execution, the exception message
+is captured by MDW and thrown to the external event handler. The standard
+process start event handler will create a standard error message as response.</p>
+
+<p>MDW 4.* and 5.0 implement service processes using a different execution engine
+from the one for executing regular processes. MDW 5.1 has re-implemented 
+the service processes using the same engine for regular processes. As a result,
+MDW 5.1 implementation has less limitations, especially it does allow
+parallel branching (although their execution is serialized), subprocess
+invocation, and synchronization activity.
+The following types activities are still not allowed:</p>
+
+<ul>
+  <li>Event wait and timer wait activities</li>
+  <li>Manual task activities</li>
+  <li>Invoking multiple process activities</li>
+</ul>
+
+<h2>Performance Level</h2>
+
+<p>With MDW 5.2 implementation, you can set 4 different performance levels
+to service processes and 3 to regular processes. Here are their description:</p>
+<ul>
+  <li>1: All process, activity, transition, and
+  		variable instances as well as documents are persisted in database. No in-memory cache
+  		is used.</li>
+  <li>3: All process, activity, transition, and
+  		variable instances as well as documents are persisted in database, but
+  		variable instances and documents are cached for each engine processing session
+  		to speed up read accesses.</li>
+  <li>5: This is for service processes only.
+        All process, activity, and transition instances are persisted in database;
+		variable instances and documents are created in memory cache only, not persisted
+  		in database.</li>
+  <li>9: All process, activity, transition and
+  		variable instances as well as documents are stored in memory cache only. No database
+  		persistence is used. For service processes, one memory cache is used
+  		for each top level invocation to a service process; for regular processes,
+  		a shared memory cache is used for all executions at this performance level.</li>
+</ul>
+
+<p>The performance level of a process instance is typically determined
+by the performance level attribute configured for its process definition,
+and when the attribute is not configured (is blank, 0, or null), the default
+performance levels are used. Two properties are used to specify default performance levels:</p>
+  <ul>
+    <li><code>mdw.performance.level.service</code>: defines the default
+    	performance level for service processes. When the property is not defined,
+    	the hard coded default of 3 is used.</li>
+    <li><code>mdw.performance.level.regular</code>: defines the default
+    	performance level for regular processes. When the property is not defined,
+    	the hard coded default of 3 is used.</li>
+  </ul>
+  
+<p>For service processes, there are two exception rules:</p>
+<ul>
+    <li>For main service processes that are started from event handlers using API call
+    	to the method <code>ProcessEngineDriver.invokeService()</code>,
+    	if the <code>performance_level</code> argument is passed 
+		in with a non-zero value, then this performance level is used.</li>
+	<li>For a service process started as a subprocess of another service process,
+		its performance level is inherited from the parent process.</li>
+</ul>
+
+</body>
+</html>
