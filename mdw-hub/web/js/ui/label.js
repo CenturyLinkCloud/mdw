@@ -49,7 +49,6 @@ labelMod.factory('Label', ['$document', 'mdw', 'util', 'Shape', 'DC',
     var w = this.display.w + Label.SEL_PAD + 2;
     var h = this.display.h + Label.SEL_PAD;
     this.diagram.rect(x, y, w, h, Label.SEL_COLOR, null, Label.SEL_ROUNDING_RADIUS);
-    this.selected = true;
   };
   
   Label.prototype.move = function(deltaX, deltaY) {

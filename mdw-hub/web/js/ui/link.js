@@ -20,7 +20,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   Link.GAP = 4;
   Link.CR = 8;
   Link.LINK_WIDTH = 3;
-  Link.LINK_HIT_WIDTH = 7;
+  Link.LINK_HIT_WIDTH = 8;
   Link.CORR = 3; // offset for link start points (TODO: why?)
 
   Link.EVENTS = {
@@ -199,9 +199,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       }
     }
     
-    if (hit)
-      return true;
-    else
+    if (!hit)
       hit = this.drawConnectorArrow(context, hitX, hitY);
 
     context.lineWidth = previousLineWidth;
@@ -844,20 +842,20 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       }
     }
 
-//    if (display.type.startsWith('Elbow')) {
-//      if (this.isAnchorHorizontal()) {
-//        if (anchor > 0) 
-//          display.ys[anchor - 1] = this.display.ys[anchor] + deltaY;
-//        if (anchor < display.xs.length - 1)
-//          display.xs[anchor + 1] = this.display.xs[anchor] + deltaX;
-//      }
-//      else {
-//        if (anchor > 0) 
-//          display.xs[anchor - 1] = this.display.xs[anchor] + deltaX;
-//        if (anchor < display.xs.length - 1) 
-//          display.ys[anchor + 1] = this.display.ys[anchor] + deltaY;
-//      }
-//    }
+    if (display.type.startsWith('Elbow')) {
+      if (this.isAnchorHorizontal(anchor)) {
+        if (anchor > 0) 
+          display.ys[anchor - 1] = this.display.ys[anchor] + deltaY;
+        if (anchor < display.xs.length - 1)
+          display.xs[anchor + 1] = this.display.xs[anchor] + deltaX;
+      }
+      else {
+        if (anchor > 0) 
+          display.xs[anchor - 1] = this.display.xs[anchor] + deltaX;
+        if (anchor < display.xs.length - 1) 
+          display.ys[anchor + 1] = this.display.ys[anchor] + deltaY;
+      }
+    }
 
     // TODO: update arrows
     this.setDisplay(display);

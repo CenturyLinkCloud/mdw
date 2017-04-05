@@ -33,14 +33,16 @@ import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.event.DefaultExternalEventHandler;
+import com.centurylink.mdw.event.EventHandler;
+import com.centurylink.mdw.event.EventHandlerErrorResponse;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.EventHandlerRegistry;
-import com.centurylink.mdw.event.ExternalEventHandler;
-import com.centurylink.mdw.event.ExternalEventHandlerErrorResponse;
 import com.centurylink.mdw.event.UnparseableMessageException;
+import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.PackageAware;
@@ -54,6 +56,7 @@ import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.ServiceHandler;
+import com.centurylink.mdw.services.rest.RestService;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -195,8 +198,9 @@ public class ListenerHelper {
      * @see FallbackEventHandler
      */
     public String processEvent(String request, Map<String,String> metaInfo) {
-        String altResponse = null;
+        Response altResponse = null;
         Long eeid = 0L;
+        Request requestDoc = new Request(eeid);
 
         try {
             for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
@@ -205,17 +209,29 @@ public class ListenerHelper {
                     request = altRequest;
             }
 
-            if (!StringHelper.isEmpty(request) && persistMessage(metaInfo))
+            if (!StringHelper.isEmpty(request) && persistMessage(metaInfo)) {
                 eeid = createRequestDocument(request, 0L);
+                requestDoc.setId(eeid);
+            }
+
 
             for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
                 CodeTimer timer = new CodeTimer(monitor.getClass().getSimpleName() + ".onHandle()", true);
-                altResponse = (String)monitor.onHandle(request, metaInfo);
+                Object obj = monitor.onHandle(request, metaInfo);
                 timer.stopAndLogTiming("");
-                if (altResponse != null) {
+                if (obj != null) {
+                    if (obj instanceof Response)
+                        altResponse = (Response)obj;
+                    else
+                        altResponse = new Response((String)obj);
+
+                    if (altResponse.getStatusCode() == null)
+                        altResponse.setStatusCode(getResponseCode(metaInfo));
+
                     if (persistMessage(metaInfo))
                         createResponseDocument(altResponse, eeid);
-                    return altResponse;
+
+                    return altResponse.getContent();
                 }
             }
 
@@ -224,38 +240,65 @@ public class ListenerHelper {
             if (serviceHandler != null) {
                 Object responseObj = serviceHandler.invoke(request, metaInfo);
                 for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
-                    altResponse = (String)monitor.onResponse(responseObj, metaInfo);
-                    if (altResponse != null)
-                        responseObj = altResponse;
+                    Object obj = monitor.onResponse(responseObj, metaInfo);
+                    if (obj != null)
+                        responseObj = obj;
                 }
 
-                String response = responseObj == null ? null : responseObj.toString();
+                Response response = responseObj == null ? null : responseObj instanceof Response ? (Response)responseObj : new Response(responseObj.toString());
 
-                if (persistMessage(metaInfo) && !StringHelper.isEmpty(response)) {
+                if (response.getStatusCode() == null)
+                    response.setStatusCode(getResponseCode(metaInfo));
+
+                if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
                     createResponseDocument(response, eeid);
                 }
 
-                return response;
+                return response.getContent();
             }
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            return createErrorResponse(request, metaInfo, ex);
+            Response response = createErrorResponse(request, metaInfo, ex);
+            try {
+                createResponseDocument(response, eeid);
+            }
+            catch (Throwable e) {
+                logger.severeException("Failed to persist response", e);
+            }
+            return response.getContent();
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
+            Response response = null;
             for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
-                altResponse = (String)monitor.onError(ex, metaInfo);
-                if (altResponse != null)
-                    return altResponse;  // TODO: persist onError's altResponse?
-            }
+                Object obj = monitor.onError(ex, metaInfo);
+                if (obj != null) {
+                    if (obj instanceof Response)
+                        altResponse = (Response)obj;
+                    else
+                        altResponse = new Response((String)obj);
 
-            return createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage()));
+                    response = altResponse;
+                    if (response.getStatusCode() == null)
+                        response.setStatusCode(getResponseCode(metaInfo));
+                }
+            }
+            if (response == null)
+                response = createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage()));
+
+            try {
+                createResponseDocument(response, eeid);
+            }
+            catch (Throwable e) {
+                logger.severeException("Failed to persist response", e);
+            }
+            return response.getContent();
         }
 
         // Parse the incoming message
         Object msgdoc = getParsedMessage(request, metaInfo);
-        ExternalEventHandler handler = null;
+        EventHandler handler = null;
         try {
             // find event handler specification
             ExternalEvent eventHandler = findEventHandler(request, msgdoc, metaInfo);
@@ -287,7 +330,7 @@ public class ListenerHelper {
                 Package pkg = PackageCache.getPackage(packageName);
                 if (pkg == null && ServiceRequestHandler.class.getName().equals(clsname)) {
                     // can happen during bootstrap scenario -- just try regular reflection
-                    handler = Class.forName(clsname).asSubclass(ExternalEventHandler.class).newInstance();
+                    handler = Class.forName(clsname).asSubclass(EventHandler.class).newInstance();
                 }
                 else {
                     handler = pkg.getEventHandler(clsname, request, metaInfo);
@@ -299,38 +342,85 @@ public class ListenerHelper {
             if (handler == null)
                 throw new EventHandlerException("Unable to create event handler for class: " + clsname);
 
-            String response = handler.handleEventMessage(request, msgdoc, metaInfo);
+            requestDoc.setContent(request);
+            Response response = handler.handleEventMessage(requestDoc, msgdoc, metaInfo);
 
             for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
-                altResponse = (String)monitor.onResponse(response, metaInfo);
-                if (altResponse != null)
+                Object obj = monitor.onResponse(response, metaInfo);
+                if (obj != null) {
+                    if (obj instanceof Response)
+                        altResponse = (Response)obj;
+                    else
+                        altResponse = new Response((String)obj);
+
                     response = altResponse;
+                }
             }
 
-            if (persistMessage(metaInfo) && !StringHelper.isEmpty(response)) {
-                createResponseDocument(altResponse == null ? response: altResponse, eeid);
+            if (response.getStatusCode() == null)
+                response.setStatusCode(getResponseCode(metaInfo));
+
+            if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
+                createResponseDocument(response, eeid);
             }
-            return response;
+            return response.getContent();
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            return createErrorResponse(request, metaInfo, ex);
+            Response response = createErrorResponse(request, metaInfo, ex);
+            try {
+                createResponseDocument(response, eeid);
+            }
+            catch (Throwable e) {
+                logger.severeException("Failed to persist response", e);
+            }
+            return response.getContent();
         }
         catch (Exception e) {
             logger.severeException("Exception in ListenerHelper.processEvent()", e);
+            Response response = null;
             for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
-                altResponse = (String)monitor.onError(e, metaInfo);
-                if (altResponse != null)
-                    return altResponse;  // TODO: persist onError's altResponse?
+                Object obj = monitor.onError(e, metaInfo);
+                if (obj != null) {
+                    if (obj instanceof Response)
+                        altResponse = (Response)obj;
+                    else
+                        altResponse = new Response((String)obj);
+
+                    response = altResponse;
+                }
             }
 
-            if (handler instanceof ExternalEventHandlerErrorResponse) {
-                metaInfo.put(Listener.METAINFO_ERROR_RESPONSE, Listener.METAINFO_ERROR_RESPONSE_VALUE);
-                return ((ExternalEventHandlerErrorResponse)handler).createErrorResponse(request, metaInfo, e);
+            if (response == null) {
+                if (handler instanceof EventHandlerErrorResponse) {
+                    metaInfo.put(Listener.METAINFO_ERROR_RESPONSE, Listener.METAINFO_ERROR_RESPONSE_VALUE);
+                    response = ((EventHandlerErrorResponse)handler).createErrorResponse(requestDoc, metaInfo, e);
+                }
+                else {
+                    response = createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage()));
+                }
             }
-            else {
-                return createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage()));
+            if (response.getStatusCode() == null)
+                response.setStatusCode(getResponseCode(metaInfo));
+            try {
+                createResponseDocument(response, eeid);
             }
+            catch (Throwable ex) {
+                logger.severeException("Failed to persist response", ex);
+            }
+            return response.getContent();
+        }
+    }
+
+    private int getResponseCode(Map<String,String> metainfo) {
+        try {
+            if (metainfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null)  // Allow services to populate code via metaInfo, same as Rest servlet
+                return Integer.parseInt(metainfo.get(Listener.METAINFO_HTTP_STATUS_CODE));
+            else   // Return 200 for non-error responses, which is what Tomcat returns in HTTP header if not overriden above
+                return RestService.HTTP_200_OK;
+        }
+        catch (NumberFormatException e) {
+            return RestService.HTTP_200_OK;
         }
     }
 
@@ -344,7 +434,7 @@ public class ListenerHelper {
         return createDocument(docType, request, OwnerType.LISTENER_REQUEST, handlerId).getDocumentId();
     }
 
-    private Long createResponseDocument(String response, Long ownerId) throws EventHandlerException {
+    private Long createResponseDocument(Response response, Long ownerId) throws EventHandlerException {
         String docType = String.class.getName();
         return createDocument(docType, response, OwnerType.LISTENER_RESPONSE, ownerId).getDocumentId();
     }
@@ -362,19 +452,23 @@ public class ListenerHelper {
      * @param metaInfo
      * @return String with the error response
      */
-    public String createErrorResponse(String request, Map<String,String> metaInfo, ServiceException ex) {
+    public Response createErrorResponse(String req, Map<String,String> metaInfo, ServiceException ex) {
+        Request request = new Request(0L);
+        request.setContent(req);
+
         /**
          * First check for a default event handler custom error response
          */
-        ExternalEventHandlerErrorResponse errorResponseHandler = getDefaultEventHandlerService();
+        EventHandlerErrorResponse errorResponseHandler = getDefaultEventHandlerService();
         if (errorResponseHandler != null) {
             return errorResponseHandler.createErrorResponse(request, metaInfo,
                     new UnparseableMessageException("Unable to parse request : " + request));
         }
 
+        Response response = new Response();
         String contentType = metaInfo.get(Listener.METAINFO_CONTENT_TYPE);
-        if (contentType == null && request != null && !request.isEmpty())
-            contentType = request.trim().startsWith("{") ? Listener.CONTENT_TYPE_JSON : Listener.CONTENT_TYPE_XML;
+        if (contentType == null && req != null && !req.isEmpty())
+            contentType = req.trim().startsWith("{") ? Listener.CONTENT_TYPE_JSON : Listener.CONTENT_TYPE_XML;
         if (contentType == null)
             contentType = Listener.CONTENT_TYPE_XML; // compatibility
 
@@ -383,12 +477,15 @@ public class ListenerHelper {
         StatusMessage statusMsg = new StatusMessage();
         statusMsg.setCode(ex.getCode());
         statusMsg.setMessage(ex.getMessage());
+        response.setStatusCode(statusMsg.getCode());
+        response.setStatusMessage(statusMsg.getMessage());
         if (contentType.equals(Listener.CONTENT_TYPE_JSON)) {
-            return statusMsg.getJsonString();
+            response.setContent(statusMsg.getJsonString());
         }
         else {
-            return statusMsg.getXml();
+            response.setContent(statusMsg.getXml());
         }
+        return response;
     }
 
     public String createAckResponse(String request, Map<String,String> metaInfo) {
@@ -437,17 +534,17 @@ public class ListenerHelper {
     /**
      * <p>
      * Looks up any registered services for DefaultEventHandler and returns any
-     * that implement ExternalEventHandlerErrorResponse
+     * that implement EventHandlerErrorResponse
      * </p>
      *
-     * @return ExternalEventHandlerErrorResponse
+     * @return EventHandlerErrorResponse
      */
-    private ExternalEventHandlerErrorResponse getDefaultEventHandlerService() {
+    private EventHandlerErrorResponse getDefaultEventHandlerService() {
         List<DefaultExternalEventHandler> defaultHandlers = EventHandlerRegistry.getInstance()
                 .getDefaultEventHandlers();
         for (DefaultExternalEventHandler defaultHandler : defaultHandlers) {
-            if (defaultHandler instanceof ExternalEventHandlerErrorResponse) {
-                return (ExternalEventHandlerErrorResponse) defaultHandler;
+            if (defaultHandler instanceof EventHandlerErrorResponse) {
+                return (EventHandlerErrorResponse) defaultHandler;
             }
         }
         return null;

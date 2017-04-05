@@ -52,10 +52,9 @@ shapeMod.factory('Shape', ['mdw', 'util', 'DC',
         y >= this.display.y && y <= this.display.y + this.display.h;
   };
   
-  // TODO better select indication
   Shape.prototype.select = function() {
-    var context = this.diagram.context;
     var display = this.display;
+    var context = this.diagram.context;
     context.fillStyle = DC.ANCHOR_COLOR;
     var s = DC.ANCHOR_W;
     context.fillRect(display.x - s, display.y - s, s * 2, s * 2);
@@ -64,7 +63,7 @@ shapeMod.factory('Shape', ['mdw', 'util', 'DC',
     context.fillRect(display.x - 2, display.y + display.h - s, s * 2, s * 2);
     context.fillStyle = DC.DEFAULT_COLOR;
   };
-
+  
   Shape.prototype.getAnchor = function(x, y) {
     if (Math.abs(this.display.x - x) <= DC.ANCHOR_HIT_W && Math.abs(this.display.y - y) <= DC.ANCHOR_HIT_W)
       return 0;

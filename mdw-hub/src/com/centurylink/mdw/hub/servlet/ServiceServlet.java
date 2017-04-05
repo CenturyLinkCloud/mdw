@@ -175,6 +175,6 @@ public abstract class ServiceServlet extends HttpServlet {
         String line;
         while ((line = reader.readLine()) != null)
             requestBuffer.append(line).append('\n');
-        return new ListenerHelper().createErrorResponse(requestBuffer.toString(), metaInfo, ex);
+        return new ListenerHelper().createErrorResponse(requestBuffer.toString(), metaInfo, ex).getContent();
     }
 }

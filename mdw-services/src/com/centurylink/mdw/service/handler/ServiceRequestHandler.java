@@ -29,10 +29,12 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.TextService;
 import com.centurylink.mdw.common.service.XmlService;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.event.EventHandlerException;
-import com.centurylink.mdw.event.ExternalEventHandler;
 import com.centurylink.mdw.listener.RegressionTestEventHandler;
+import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.PackageAware;
 import com.centurylink.mdw.service.Action;
@@ -48,7 +50,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlPath;
 
-public class ServiceRequestHandler implements ExternalEventHandler, PackageAware {
+public class ServiceRequestHandler implements EventHandler, PackageAware {
 
     protected static final String MDW_REST_SERVICE_PROVIDER_PACKAGE = "com.centurylink.mdw.service.rest";
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -58,8 +60,10 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
     public void setPackage(Package pkg) { this.pkg = pkg; }
 
     @Override
-    public String handleEventMessage(String request, Object requestObj, Map<String,String> metaInfo)
+    public Response handleEventMessage(Request req, Object requestObj, Map<String,String> metaInfo)
     throws EventHandlerException {
+
+        String request = req.getContent();
 
         TextService service = null;
         String path = metaInfo.get(Listener.METAINFO_REQUEST_PATH);
@@ -91,12 +95,12 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
                     // compatibility for regression test handler
                     if (action.getName().equals("RegressionTest")) {
                         RegressionTestEventHandler handler = new RegressionTestEventHandler();
-                        return handler.handleEventMessage(request, requestObj, metaInfo);
+                        return new Response(handler.handleEventMessage(request, requestObj, metaInfo));
                     }
                     // compatibility for instance level handler
                     if (action.getName().equals("PerformInstanceLevelAction")) {
                         InstanceLevelActionHandler handler = new InstanceLevelActionHandler();
-                        return handler.handleEventMessage(request, requestObj, metaInfo);
+                        return new Response(handler.handleEventMessage(request, requestObj, metaInfo));
                     }
 
                     for (Parameter param : actionRequest.getAction().getParameterList())
@@ -165,6 +169,8 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
                     throw new ServiceException(ServiceException.NOT_FOUND, "Unable to handle service request: " + path);
             }
 
+            Response response = null;
+
             if (format == Format.json || (service instanceof JsonService && !(service instanceof XmlService))) {
                 JsonService jsonService = (JsonService) service;
                 String downloadFormat = metaInfo.get(Listener.METAINFO_DOWNLOAD_FORMAT);
@@ -173,15 +179,17 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
                     // binary download format requires export
                     if (!(jsonService instanceof JsonRestService))
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Export not supported for " + jsonService.getClass());
-                    return ((JsonRestService)jsonService).export(downloadFormat, metaInfo);
+                    return new Response(((JsonRestService)jsonService).export(downloadFormat, metaInfo));
                 }
                 else {
                     metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_JSON);
                     String json = jsonService.getJson((JSONObject)requestObj, metaInfo);
                     if (json == null)
-                        return createSuccessResponse(Format.json);
+                        response = createSuccessResponse(Format.json);
                     else
-                        return json;
+                        response = new Response(json);
+
+                    return response;
                 }
             }
             else if (format == Format.xml) {
@@ -191,7 +199,9 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
                 if (xml == null)
                     return createSuccessResponse(Format.xml);
                 else
-                    return xml;
+                    response = new Response(xml);
+
+                return response;
             }
             else {
                 metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_TEXT);
@@ -199,7 +209,9 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
                 if (text == null)
                     return createSuccessResponse(Format.text);
                 else
-                    return text;
+                    response = new Response(text);
+
+                return response;
             }
         }
         catch (ServiceException ex) {
@@ -213,11 +225,11 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
         }
     }
 
-    protected String createErrorResponse(int code, String message, Format format) throws EventHandlerException {
+    protected Response createErrorResponse(int code, String message, Format format) throws EventHandlerException {
         return createResponse(code, message, format);
     }
 
-    protected String createErrorResponse(Throwable t, Format f) throws EventHandlerException {
+    protected Response createErrorResponse(Throwable t, Format f) throws EventHandlerException {
         if (t instanceof ServiceException && ((ServiceException)t).getCode() >= 400)
             return createResponse(((ServiceException)t).getCode(), t.getMessage(), f);
         Throwable cause = t;
@@ -226,29 +238,36 @@ public class ServiceRequestHandler implements ExternalEventHandler, PackageAware
         return createResponse(-1, cause.toString(), f);
     }
 
-    protected String createErrorResponse(String message, Format format) throws EventHandlerException {
+    protected Response createErrorResponse(String message, Format format) throws EventHandlerException {
         return createResponse(-1, message, format);
     }
 
-    protected String createSuccessResponse(String message, Format format) throws EventHandlerException {
+    protected Response createSuccessResponse(String message, Format format) throws EventHandlerException {
         return createResponse(0, message, format);
     }
 
-    protected String createSuccessResponse(Format format) throws EventHandlerException {
+    protected Response createSuccessResponse(Format format) throws EventHandlerException {
         return createResponse(0, "Success", format);
     }
 
-    protected String createResponse(int code, String message, Format format) throws EventHandlerException {
+    protected Response createResponse(int code, String message, Format format) throws EventHandlerException {
+        Response response = new Response();
         StatusMessage statusMessage = new StatusMessage();
         statusMessage.setCode(code);
         if (message != null)
             statusMessage.setMessage(message);
+        if (code >= ServiceException.BAD_REQUEST) {
+            response.setStatusCode(statusMessage.getCode());
+            response.setStatusMessage(statusMessage.getMessage());
+        }
         if (format == Format.xml)
-            return statusMessage.getXml();
+            response.setContent(statusMessage.getXml());
         else if (format == Format.json)
-            return statusMessage.getJsonString();
+            response.setContent(statusMessage.getJsonString());
         else
-            return "ERROR " + (code == 0 ? "" : code) + ": " + message;
+            response.setContent("ERROR " + (code == 0 ? "" : code) + ": " + message);
+
+        return response;
     }
 
     /**
