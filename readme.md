@@ -4,28 +4,28 @@
 
 ### Developer Setup
 1. Prerequisites
- - Eclipse Neon for JavaEE Developers:  
+ - Eclipse Neon for JavaEE Developers:                              
    [http://www.eclipse.org/downloads]([http://www.eclipse.org/downloads)
    
  - Required Plugins:
-     - MDW Designer:
+     - MDW Designer:                                         
        [Installing and Upgrading the MDW Plugin for Eclipse](docs/tutorial/InstallAndUpgradeMDWPluginforEclipse)
        
-     - Buildship Plugin:
+     - Buildship Plugin:                            
        [http://download.eclipse.org/buildship/updates/e46/releases/2.x](http://download.eclipse.org/buildship/updates/e46/releases/2.x)
        
  - Recommended Plugins:
-     - Groovy:   
+     - Groovy:                                   
        [http://dist.springsource.org/snapshot/GRECLIPSE/e4.6](http://dist.springsource.org/snapshot/GRECLIPSE/e4.6)
-     - Yaml:   
+     - Yaml:                                             
        [http://dadacoalition.org/yedit](http://dadacoalition.org/yedit)
        
- - Tomcat 8:
+ - Tomcat 8:                                  
        [https://tomcat.apache.org](https://tomcat.apache.org)
        
- - Chrome and Postman
-       [https://www.google.com/chrome](https://www.google.com/chrome)
-       [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
+ - Chrome and Postman                                              
+       [https://www.google.com/chrome](https://www.google.com/chrome)                                                                    
+       [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop]                   (https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
 	 
 2. Get the Source Code
  - Command-line Git:  
@@ -35,7 +35,7 @@
    File > Import > General > Existing Projects into Workspace
    
 3. Set up npm and Bower (One-time step)
- - Install NodeJS:
+ - Install NodeJS:                                                                     
    [https://nodejs.org/en/download/current](https://nodejs.org/en/download/current)
  - Open a command prompt in the mdw-hub project directory
  	- run `npm install`
@@ -46,7 +46,7 @@
  - Window > Show View > Other > Gradle  > Gradle Tasks
    Select the mdw project and Select Show all Tasks. Expand Other folder in mdw project and double-click the "buildAll" task
 
-5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md)
+5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md)                          
    or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
    
 6. Deploy on Tomcat in Eclipse
@@ -69,25 +69,24 @@
 
 1. Run
  - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
- - Check MDWHub access:  
+ - Check MDWHub access:                                                
    http://localhost:8080/mdw
    
 2. Code Format
  - Java, Groovy, Javascript and JSON:
-   The Eclipse code formatters are version-controlled in .settings/org.eclipse.jdt.core.prefs, so as long as you're up-to-date with Git you should automatically have the correct settings. If you want to use them for another project, you can download and import them from these formatter files:  
+   The Eclipse code formatters are version-controlled in .settings/org.eclipse.jdt.core.prefs, so as long as you're up-to-date with Git you should automatically have the correct settings. If you want to use them for another project, you can download and import them from these formatter files:   
      - Java/Groovy: https://github.com/CenturyLinkCloud/MDW/docs/MDWCodeFormatter.xml   
      - Javascript/JSON: https://github.com/CenturyLinkCloud/MDW/docs/mdw-javascript-formatter.xml   
-	 Please note that we use **spaces instead of tabs** for indenting all source code.
+     - Please note that we use **spaces instead of tabs** for indenting all source code.
  - XML, HTML and YAML:  
    These have to be configured manually in Eclipse.  For all formats we use **spaces instead of tabs**.
    The following screenshots illustrate how to set these:  
-     - XML:
+     - XML:                                                    
       [xml formatter](docs/help/images/xmlformat.png)
-     - HTML:
+     - HTML:                                                           
       [html formatter](docs/help/images/htmlformat.png)
-     - YAML:
+     - YAML:                                           
       [yaml formatter](docs/help/images/yamlformat.png)
-
 
 3. Designer Development
  - The designer codebase is contained in the following projects:
@@ -96,6 +95,7 @@
      - com.centurylink.mdw.designer.feature
      - com.centurylink.mdw.designer.rcp
      - com.centurylink.mdw.designer.ui
+     
  - Build Designer
      - These projects use the MDW 5.5 versions of mdw-common as mdw-schemas as dependencies, so to you need these MDW 5.5 projects locally or to have their jars available through a repository.
    - Assuming you've got the MDW 5.5 source code locally, in com.centurylink.mdw.designer/gradle.properties, set mdwVersion and mdwOutputDir to point to this location.
