@@ -13,7 +13,7 @@
   </intro>
   <item 
     title="Upgrading the DB Schema and Reference Data"
-    href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/MDW%20Database"
+    href="http://centurylinkcloud.github.io/mdw/docs/MDW%20Database"
     skip="true">
     <description>
       There should be no need for you to update your database schemas unless you are upgrading
@@ -116,7 +116,7 @@
       Help > Install New Software. If the MDW Plug-In update site URL does
       not appear in the dialog, click "Add Site..." and enter the location URL as follows:
       <br/>
-      http://centurylinkcloud.github.io/MDW/docs/designer/updateSite
+      http://centurylinkcloud.github.io/mdw/docs/designer/updateSite
       <br/>
       Expand the location URL and drill down to the "MDW Plug-In" item.  Click the checkbox and 
       then click "Install...".  Complete the steps in the installation wizard.  Eclipse will confirm

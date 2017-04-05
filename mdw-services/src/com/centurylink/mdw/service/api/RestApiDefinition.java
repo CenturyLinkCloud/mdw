@@ -26,7 +26,7 @@ import io.swagger.annotations.SwaggerDefinition;
   info=@Info(title="MDW REST API", description="MDW Application Services", version="6.0.01"),
   schemes={SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
   basePath="/mdw/services",
-  externalDocs=@ExternalDocs(value="MDW", url="https://github.com/CenturyLinkCloud/MDW"))
+  externalDocs=@ExternalDocs(value="MDW", url="https://github.com/CenturyLinkCloud/mdw"))
 public interface RestApiDefinition {
 
 }

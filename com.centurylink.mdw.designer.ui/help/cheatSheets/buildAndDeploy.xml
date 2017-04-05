@@ -82,7 +82,7 @@
   </item>
   <item
     title="Build and Deploy on an OSGi Server"
-    href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Tutorials/MdwServiceMixCookbook.html"
+    href="http://centurylinkcloud.github.io/mdw/docs/tutorials/MdwServiceMixCookbook.html"
     skip="true">
     <description>
       <b>Install the MDW OSGi Bundles in ServiceMix</b>

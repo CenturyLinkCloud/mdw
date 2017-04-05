@@ -16,7 +16,7 @@
   </intro>
   <item
     title="Import a Remote Project through Discovery"
-    href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/MDW%20Designer%20User%20Guide.doc"
+    href="http://centurylinkcloud.github.io/mdw/docs/designer/DesignerUserGuide"
     skip="true">
     <description>
       The easiest way to add a remote project to your workspace is to use the discovery mechanism.
@@ -35,7 +35,7 @@
   </item>
   <item
     title="Running the Remote Project Setup Wizard"
-    href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/MDW%20Designer%20User%20Guide.doc"
+    href="http://centurylinkcloud.github.io/mdw/docs/designer/DesignerUserGuide"
     skip="true">
     <description>
       To manually create a remote project in Eclipse, open the MDW Designer perspective if it's not already active.

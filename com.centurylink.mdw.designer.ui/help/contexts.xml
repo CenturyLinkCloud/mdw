@@ -4,18 +4,18 @@
   <context id="process_explorer_help" title="MDW Process Explorer">
     <description>Displays a hierarchical view of the processes, packages and other entities in your MDW workflow project.</description>
     <topic label="MDW Designer Help" href="help/doc/index.html"/>
-    <topic label="Designer User Guide" href="http://qshare.ad.qintra.com/sites/MDW/User%20Documentation/MDW%20Designer%20User%20Guide.doc"/>
+    <topic label="Designer User Guide" href="http://centurylinkcloud.github.io/mdw/docs/designer/DesignerUserGuide"/>
     <topic label="MDW Introduction" href="help/doc/introduction.html"/>
   </context>
   <context id="process_editor_help" title="MDW Process Editor">
     <description>Provides the designer canvas for laying out your process definitions.</description>
     <topic label="MDW Designer Help" href="help/doc/index.html"/>
-    <topic label="Designer User Guide" href="http://qshare.ad.qintra.com/sites/MDW/User%20Documentation/MDW%20Designer%20User%20Guide.doc"/>
+    <topic label="Designer User Guide" href="http://centurylinkcloud.github.io/mdw/docs/designer/DesignerUserGuide"/>
   </context>
   <context id="toolbox_help" title="MDW Toolbox View">
     <description>Shows the activities available to your workflow processes.  Drag and drop these activities into your process definition.</description>
     <topic label="MDW Designer Help" href="help/doc/index.html"/>
-    <topic label="Designer User Guide" href="http://qshare.ad.qintra.com/sites/MDW/User%20Documentation/MDW%20Designer%20User%20Guide.doc"/>
+    <topic label="Designer User Guide" href="http://centurylinkcloud.github.io/mdw/docs/designer/DesignerUserGuide"/>
   </context>
   <context id="properties_help" title="MDW Properties View">
     <description>Edit the properties associated with MDW workflow elements like processes, activities and transitions.</description>
@@ -33,7 +33,7 @@
   <context id="process_launch_help" title="MDW Process Launch">
     <description>Launches an MDW workflow process via an Eclipse launch configuration.</description>
     <topic label="MDW Designer Help" href="help/doc/index.html"/>
-    <topic label="Designer User Guide" href="http://qshare.ad.qintra.com/sites/MDW/User%20Documentation/MDW%20Designer%20User%20Guide.doc"/>    
+    <topic label="Designer User Guide" href="http://centurylinkcloud.github.io/mdw/docs/designer/DesignerUserGuide"/>    
   </context>
   <context id="extevent_launch_help" title="MDW External Event Launch">
     <description>Fires an external event via an Eclipse launch configuration.</description>

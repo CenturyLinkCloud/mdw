@@ -5,7 +5,7 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CenturyLinkCloud/MDW.git"
+    "url": "https://github.com/CenturyLinkCloud/mdw.git"
   },
   "devDependencies": {
     "grunt": "~0.4.5",

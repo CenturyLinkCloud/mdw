@@ -1,7 +1,6 @@
 build/
 .temp/
 testResults/
-fuseTestResults/
 data/
 projects/
 packages/

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description url="http://centurylinkcloud.github.io/MDW/docs/designer/updateSite">
+   <description url="http://centurylinkcloud.github.io/mdw/docs/designer/updateSite">
       MDW Plug-In Update Site
    </description>
    <feature url="features/com.centurylink.mdw.designer.feature_9.1.3.jar" id="com.centurylink.mdw.designer.feature" version="9.1.3">

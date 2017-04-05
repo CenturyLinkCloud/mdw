@@ -20,7 +20,7 @@ Commit updateSite files to mdw6/docs/designer/updateSite on GitHub.
  If versions have changed, the newer versions may need to be uploaded (esp. cucumber.eclipse).
     
 Test updating Eclipse (Mars/Neon) to the new build.
-  Update Site URL: http://centurylinkcloud.github.io/MDW/docs/designer/updateSite
+  Update Site URL: http://centurylinkcloud.github.io/mdw/docs/designer/updateSite
 
 (If RCP is to be included in this build)
 Build com.centurylink.mdw.designer.rcp according to the instructions in its build_readme.txt.
