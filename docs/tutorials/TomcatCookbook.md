@@ -292,8 +292,8 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   invocation activities (known in MDW as adapter activities), you can also associate script to be executed before and after the service call.  This can sometimes be a quick alternative to 
   creating your own custom activity.  Double-click on the Check Employee activity and select the Script property tab.  Edit the prescript, adding the Groovy code below to return a request that
   includes employeeId (notice that in your script you can refer to variables directly by their name):
-  
-```    	return ''' <GetEmployee>
+```  
+	return ''' <GetEmployee>
       	  <sapId>''' + employeeId + '''</sapId>
     	</GetEmployee>''';
 ```
