@@ -116,8 +116,7 @@ A local project is useful if you want to debug your custom Java source code and 
   In step 1 you were granted permissions in the MDW Demo environment to create and modify workflow assets.  
   With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
 - Update the generated Java source code to resemble the following:
-
-	package MyPackage;
+```package MyPackage;
 	import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
 	import com.centurylink.mdw.common.utilities.timer.Tracked;
 	import org.w3c.dom.Document;
@@ -130,3 +129,4 @@ A local project is useful if you want to debug your custom Java source code and 
 	*/
 	@Tracked(LogLevel.TRACE)
 	public class MyOrderValidatorActivity extends DefaultActivityImpl {
+```
