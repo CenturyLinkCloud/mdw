@@ -115,3 +115,38 @@ A local project is useful if you want to debug your custom Java source code and 
   In step 1 you were granted permissions in the MDW Demo environment to create and modify workflow assets.  
   With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
 - Update the generated Java source code to resemble the following:
+		package MyPackage;
+		import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
+		import com.centurylink.mdw.common.utilities.timer.Tracked;
+		import org.w3c.dom.Document;
+		import org.w3c.dom.Node;
+		import com.centurylink.mdw.activity.ActivityException;
+		import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+		import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+		/**
+		* MDW general activity.
+	    */
+		@Tracked(LogLevel.TRACE)
+		public class MyOrderValidatorActivity extends DefaultActivityImpl {
+    	 	/**
+    	 	* Here's where the main processing for the activity is performed.
+    	 	*     
+    		 * @return the activity result (aka completion code)
+    	 	*/
+    		@Override
+    		public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        		loginfo("Validating order...");
+       		Document request = (Document) getVariableValue("request");
+        		Node orderIdNode = request.getFirstChild().getFirstChild().getNextSibling();
+        		String orderId = orderIdNode.getFirstChild().getNodeValue();
+        		setVariableValue("orderId", orderId);
+        		boolean valid = true;
+        		String msg = "Success";
+        		if(!orderIdNode.getLocalName().equals("orderId")){
+            		msg = "Missing order ID.";
+        		}
+        		valid = msg.equals("Success");
+        		setVariableValue("validationResult", msg);
+        		return valid;
+    		}
+	}
