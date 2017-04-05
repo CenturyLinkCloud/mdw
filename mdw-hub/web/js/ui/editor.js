@@ -10,6 +10,11 @@ editorMod.directive('mdwEditor', ['editorConfig', function (editorConfig) {
     // TODO hardwired options
     acee.setShowPrintMargin(false);
 
+    if (angular.isDefined(opts.basePath)) {
+      var config = window.ace.require('ace/config');
+      config.set('basePath', opts.basePath);      
+    }
+        
     if (angular.isDefined(opts.require)) {
       opts.require.forEach(function (n) {
           window.ace.require(n);

@@ -34,7 +34,8 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
             $scope.aceDirty = false;
           else
             $scope.aceDirty = true;
-        }
+        },
+        basePath: '/mdw/lib/ace-builds/src-min-noconflict'
       };
       
       $scope.initVersion();

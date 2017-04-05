@@ -340,7 +340,8 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         }
     }
 
-    protected HttpHelper getHttpHelper(String endpoint, String user, String password) throws MalformedURLException {
+    @Override
+    protected HttpHelper getHttpHelper(String method, String endpoint, String user, String password) throws MalformedURLException {
         String url = endpoint;
         if (!endpoint.startsWith("http://") && !endpoint.startsWith("https://")) {
             url = getConfig().getServerUrl();
