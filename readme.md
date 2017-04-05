@@ -20,11 +20,11 @@
        [http://dadacoalition.org/yedit](http://dadacoalition.org/yedit)
        
  - Tomcat 8:                                  
-       [https://tomcat.apache.org](https://tomcat.apache.org)
+     - [https://tomcat.apache.org](https://tomcat.apache.org)
        
- - Chrome and Postman                                              
-       - [https://www.google.com/chrome](https://www.google.com/chrome)
-       - [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop]  (https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
+ - Chrome and Postman:                                            
+     - [https://www.google.com/chrome](https://www.google.com/chrome)
+     - [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
 	 
 2. Get the Source Code
  - Command-line Git:  
