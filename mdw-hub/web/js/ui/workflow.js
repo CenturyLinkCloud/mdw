@@ -117,7 +117,7 @@ workflowMod.controller('MdwWorkflowController',
     $scope.down = true;
     if ($scope.diagram) {
       $scope.diagram.onMouseDown(e);
-      var selObj = $scope.diagram.selectObj;
+      var selObj = $scope.diagram.selection.getSelectObj();
       if (selObj && selObj.isLabel)
         selObj = selObj.owner;
       if (selObj) {
@@ -144,8 +144,8 @@ workflowMod.controller('MdwWorkflowController',
 }]);
 
 workflowMod.factory('Diagram', 
-    ['$document', 'mdw', 'util', 'DC', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note',
-     function($document, mdw, util, DC, Label, Shape, Step, Link, Subflow, Note) {
+    ['$document', 'mdw', 'util', 'DC', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Selection',
+     function($document, mdw, util, DC, Label, Shape, Step, Link, Subflow, Note, Selection) {
   var Diagram = function(canvas, process, implementors, instance, editable) {
     Shape.call(this, this, process);
     this.canvas = canvas;
@@ -158,6 +158,7 @@ workflowMod.factory('Diagram',
     this.context = this.canvas.getContext("2d");
     this.anchor = -1;
     this.drawBoxes = process.attributes.NodeStyle == 'BoxIcon';
+    this.selection = new Selection(this);
   };
 
   Diagram.prototype = new Shape();
@@ -277,7 +278,7 @@ workflowMod.factory('Diagram',
   Diagram.prototype.getLinks = function(step) {
     var links = [];
     for (var i = 0; i < this.links.length; i++) {
-      if (step == this.links[i].to || step == this.links[i].from)
+      if (step.activity.id == this.links[i].to.activity.id || step.activity.id == this.links[i].from.activity.id)
         links.push(this.links[i]);
     }
     return links;
@@ -583,31 +584,46 @@ workflowMod.factory('Diagram',
     this.dragX = x;
     this.dragY = y;
     
-    this.selectObj = this.getHoverObj(x, y);
-    this.unselect();
-    if (this.selectObj) {
-      this.select(this.selectObj);
-      if (this.editable && e.shiftKey && this.selectObj.isStep)
-        this.shiftDrag = true;
+    var selObj = this.getHoverObj(x, y);
+    
+    if (this.editable && e.ctrlKey) {
+      if (selObj) {
+        if (this.selection.includes(selObj))
+          this.selection.remove(selObj);
+        else
+          this.selection.add(selObj);
+        selObj.select();
+      }
+    }
+    else {
+      if (!this.selection.includes(selObj)) {
+        // normal single select
+        this.selection.setSelectObj(selObj);
+        this.unselect();
+        if (this.selection.getSelectObj()) {
+          this.selection.getSelectObj().select();
+          if (this.editable && e.shiftKey && this.selection.getSelectObj().isStep)
+            this.shiftDrag = true;
+        }
+      }
     }
   };
   
   Diagram.prototype.onMouseUp = function(e) {
     if (this.shiftDrag && this.dragX && this.dragY) {
-      if (this.selectObj && this.selectObj.isStep) {
+      if (this.selection.getSelectObj() && this.selection.getSelectObj().isStep) {
         var rect = this.canvas.getBoundingClientRect();
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top;
         var destObj = this.getHoverObj(x, y);
         if (destObj && destObj.isStep) {
-          this.addLink(this.selectObj, destObj);
+          this.addLink(this.selection.getSelectObj(), destObj);
           this.draw();
         }
       }
     }
     this.shiftDrag = false;
-    if (this.selectObj)
-      this.reselect(this.selectObj);
+    this.selection.reselect();
   };
   
   Diagram.prototype.onMouseMove = function(e) {
@@ -617,7 +633,7 @@ workflowMod.factory('Diagram',
     this.anchor = -1;
     this.hoverObj = this.getHoverObj(x, y);
     if (this.hoverObj) {
-      if (this.editable && (this.hoverObj == this.selectObj)) {
+      if (this.editable && (this.hoverObj == this.selection.getSelectObj())) {
         this.anchor = this.hoverObj.getAnchor(x, y);
         if (this.anchor >= 0) {
           if (this.hoverObj.isLink) {
@@ -645,28 +661,28 @@ workflowMod.factory('Diagram',
   };
   
   Diagram.prototype.onMouseDrag = function(e) {
-    if (this.selectObj && this.dragX && this.dragY) {
+    if (this.editable && this.selection.getSelectObj() && this.dragX && this.dragY && !e.ctrlKey) {
       var rect = this.canvas.getBoundingClientRect();
       var x = e.clientX - rect.left;
       var y = e.clientY - rect.top;
       var diagram = this;
       if (this.shiftDrag) {
-        if (this.selectObj.isStep) {
+        if (this.selection.getSelectObj().isStep) {
           this.draw();
           this.drawLine(this.dragX, this.dragY, x, y, 'green');
         }
       }
       else if (this.anchor >= 0) {
-        if (this.selectObj.isLink) {
-          this.selectObj.moveAnchor(this.anchor, x - this.dragX, y - this.dragY);
+        if (this.selection.getSelectObj().isLink) {
+          this.selection.getSelectObj().moveAnchor(this.anchor, x - this.dragX, y - this.dragY);
           this.draw();
         }
-        if (this.selectObj.resize) {
-          if (this.selectObj.isStep) {
-            let activityId = this.selectObj.activity.id;
+        if (this.selection.getSelectObj().resize) {
+          if (this.selection.getSelectObj().isStep) {
+            let activityId = this.selection.getSelectObj().activity.id;
             let step = this.getStep(activityId);
             if (step) {
-              this.selectObj.resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
+              this.selection.getSelectObj().resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
               this.getLinks(step).forEach(function(link) {
                 link.recalc(step);
               });
@@ -677,7 +693,7 @@ workflowMod.factory('Diagram',
                 let step = subflow.getStep(activityId);
                 if (step) {
                   // only within bounds of subflow
-                  diagram.selectObj.resize(diagram.dragX, diagram.dragY, x - diagram.dragX, y - diagram.dragY, subflow.display);
+                  diagram.selection.getSelectObj().resize(diagram.dragX, diagram.dragY, x - diagram.dragX, y - diagram.dragY, subflow.display);
                   subflow.getLinks(step).forEach(function(link) {
                     link.recalc(step);
                   });
@@ -686,54 +702,23 @@ workflowMod.factory('Diagram',
             }
           }
           else {
-            this.selectObj.resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
+            this.selection.getSelectObj().resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
           }
           this.draw();
           var obj = this.getHoverObj(x, y);
           if (obj)
-            this.select(obj);
+            obj.select();
           return true;
         }
       }
-      else if (this.selectObj.move) {
+      else {
         var deltaX = x - this.dragX;
         var deltaY = y - this.dragY;
-        if (this.selectObj.isStep) {
-          let activityId = this.selectObj.activity.id;
-          let step = this.getStep(activityId);
-          if (step) {
-            this.selectObj.move(deltaX, deltaY);
-            this.getLinks(step).forEach(function(link) {
-              link.recalc(step);
-            });
-          }
-          else {
-            // try subflows
-            this.subflows.forEach(function(subflow) {
-              let step = subflow.getStep(activityId);
-              if (step) {
-                // only within bounds of subflow
-                diagram.selectObj.move(deltaX, deltaY, subflow.display);
-                subflow.getLinks(step).forEach(function(link) {
-                  link.recalc(step);
-                });
-              }
-            });
-          }
-        }
-        else if (this.selectObj.isLink) {
-          var link = this.selectObj;
-          if (link.label && link.label.isHover(this.dragX, this.dragY)) {
-            link.moveLabel(deltaX, deltaY);
-          }
-        }
-        else {
-          this.selectObj.move(deltaX, deltaY);
-        }
-        this.draw();
-        var hovObj = this.getHoverObj(x, y);
+        this.selection.move(this.dragX, this.dragY, deltaX, deltaY);
+        // non-workflow selection may not be reselected after move
+        var hovObj = this.diagram.getHoverObj(x, y);
         if (hovObj)
-          this.select(hovObj);
+          hovObj.select();
         return true;
       }
     }
@@ -786,48 +771,205 @@ workflowMod.factory('Diagram',
     }
     
     if (bgObj == this)
-      this.select(this.label);
+      this.label.select();
     else
-      this.select(bgObj);
+      bgObj.select();
     
     return bgObj;
   };
   
-  Diagram.prototype.select = function(obj) {
-    if (obj)
-      obj.select();
-  };
-
   // removes anchors from currently selected obj, if any
   Diagram.prototype.unselect = function() {
     this.draw();
   };
   
-  Diagram.prototype.reselect = function(selObj) {
-    if (selObj) {
+  Diagram.prototype.getAnchor = function(x, y) {
+    return -1; // not applicable
+  };
+  
+  return Diagram;
+  
+}]);
+
+// selected object(s)
+workflowMod.factory('Selection', ['mdw', function(mdw) {
+  
+  var Selection = function(diagram) {
+    this.diagram = diagram;
+    this.selectObjs = [];
+  };
+
+  Selection.prototype.includes = function(obj) {
+    for (var i = 0; i < this.selectObjs.length; i++) {
+      if (this.selectObjs[i] === obj)
+        return true;
+    }
+    return false;
+  };
+  
+  Selection.prototype.isMulti = function() {
+    return this.selectObjs.length > 1;
+  };
+
+  Selection.prototype.getSelectObj = function() {
+    if (this.selectObjs.length === 0)
+      return null;
+    else
+      return this.selectObjs[0];
+  };
+  
+  Selection.prototype.setSelectObj = function(obj) {
+    this.selectObjs = obj ? [obj] : [];
+  };
+  
+  Selection.prototype.add = function(obj) {
+    if (!this.includes(obj)) {
+      this.selectObjs.push(obj);
+      if (obj.isStep) {
+        // add any contained links
+        var stepLinks;
+        let step = this.diagram.getStep(obj.activity.id);
+        if (step) {
+          stepLinks = this.diagram.getLinks(obj);
+        }
+        else {
+          for (let i = 0; i < this.diagram.subflows.length; i++) {
+            let subflow = this.diagram.subflows[i];
+            let step = subflow.getStep(obj.activity.id);
+            stepLinks = subflow.getLinks(obj);
+            if (stepLinks)
+              break;
+          }
+        }
+
+        if (stepLinks) {
+          for (let i = 0; i < stepLinks.length ; i++) {
+            var stepLink = stepLinks[i];
+            if (stepLink.from === obj) {
+              if (this.includes(stepLink.to)) {
+                this.add(stepLink);
+                stepLink.select();
+              }
+            }
+            else {
+              if (this.includes(stepLink.from)) {
+                this.add(stepLink);
+                stepLink.select();
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+
+  Selection.prototype.remove = function(obj) {
+    var newSel = [];
+    for (var i = 0; i < this.selectObjs.length; i++) {
+      if (this.selectObjs[i] !== obj)
+        newSel.push(this.selectObjs[i]);
+    }
+    this.selectObjs = newSel;
+  };
+  
+  // works for the primary (single) selection to reenable anchors
+  Selection.prototype.reselect = function() {
+    if (this.getSelectObj() && !this.isMulti()) {
+      var selObj = this.getSelectObj();
       var id = selObj.workflowItem ? selObj.workflowItem.id : null;
       if (id) {
-        this.selectObj = this.get(id);
-        if (!this.selectObj) {
-          for (var i = 0; i < this.subflows.length; i++) {
-            this.selectObj = this.subflows[i].get(id);
-            if (this.selectObj)
+        this.setSelectObj(this.diagram.get(id));
+        if (!this.getSelectObj()) {
+          for (var i = 0; i < this.diagram.subflows.length; i++) {
+            this.setSelectObj(this.diagram.subflows[i].get(id));
+            if (this.getSelectObj())
               break;
           }
         }
       }
       else {
-        this.selectObj = this.title;
+        this.setSelectObj(this.diagram.label);
       }
     }
   };
   
-  Diagram.prototype.getAnchor = function(x, y) {
-    return -1;
+  Selection.prototype.move = function(startX, startY, deltaX, deltaY) {
+    var selection = this;
+    
+    if (!this.isMulti() && this.getSelectObj().isLink) {
+      // move link label
+      var link = this.getSelectObj();
+      if (link.label && link.label.isHover(startX, startY)) {
+        link.moveLabel(deltaX, deltaY);
+      }
+    }
+    else {
+      for (let i = 0; i < this.selectObjs.length; i++) {
+        let selObj = this.selectObjs[i];
+        if (selObj.isStep) {
+          let step = this.diagram.getStep(selObj.activity.id);
+          if (step) {
+            selObj.move(deltaX, deltaY);
+            let links = this.diagram.getLinks(step);
+            for (let j = 0; j < links.length; j++) {
+              if (!this.includes(links[j]))
+                links[j].recalc(step);
+            }
+          }
+          else {
+            // try subflows
+            for (let j = 0; j < this.diagram.subflows.length; j++) {
+              let subflow = this.diagram.subflows[j];
+              let step = subflow.getStep(selObj.activity.id);
+              if (step) {
+                // only within bounds of subflow
+                selObj.move(deltaX, deltaY, subflow.display);
+                let links = subflow.getLinks(step);
+                for (let k = 0; k < links.length; k++) {
+                  if (!this.includes(links[k]))
+                    links[k].recalc(step);
+                }
+              }
+            }
+          }
+        }
+        else {
+          // TODO: prevent subproc links in multisel from moving beyond border
+          selObj.move(deltaX, deltaY);
+        }
+      }
+    }
+    
+    this.diagram.draw();
+    
+    for (let i = 0; i < this.selectObjs.length; i++) {
+      let selObj = this.selectObjs[i];
+      let reselObj = this.find(selObj);
+      if (reselObj) {
+        reselObj.select();
+      }
+    }
+    // TODO: diagram label loses select
   };
   
-  return Diagram;
+  // re-find the selected object after it's been moved
+  Selection.prototype.find = function(obj) {
+    if (obj.workflowItem && obj.workflowItem.id) {
+      var found = this.diagram.get(obj.workflowItem.id);
+      if (found)
+        return found;
+      
+      // try subflows
+      for (let i = 0; i < this.diagram.subflows.length; i++) {
+        let subflow = this.diagram.subflows[i];
+        found = subflow.get(obj.workflowItem.id);
+        if (found)
+          return found;
+      }
+    }    
+  };
   
+  return Selection;
 }]);
 
 // cache implementors
