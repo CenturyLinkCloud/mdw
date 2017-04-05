@@ -119,10 +119,6 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
     }
 
     public ExternalEvent(JSONObject json) throws JSONException {
-        if (json.has("name"))
-            this.eventName = json.getString("name");
-        else
-            this.eventName = json.getString("path");
         this.eventMessagePattern = json.getString("path");
         this.eventHandler = json.getString("handlerClass");
     }
@@ -133,8 +129,6 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
      */
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
-        if (eventName != null && eventName.length() > 0)
-            json.put("name", eventName);
         json.put("path", eventMessagePattern);
         json.put("handlerClass", eventHandler);
         return json;

@@ -543,6 +543,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         String content = new String(read(assetFile));
         ExternalEvent evthVo = new ExternalEvent(new JSONObject(content));
         evthVo.setId(assetFile.getId());
+        int lastDot = assetFile.getName().lastIndexOf('.');
+        evthVo.setEventName(assetFile.getName().substring(0, lastDot));
         evthVo.setPackageName(pkgDir.getPackageName());
         return evthVo;
     }
