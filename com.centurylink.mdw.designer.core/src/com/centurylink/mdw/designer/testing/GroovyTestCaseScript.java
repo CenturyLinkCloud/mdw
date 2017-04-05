@@ -28,6 +28,8 @@ import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
 import com.centurylink.mdw.model.value.attribute.RuleSetVO;
 import com.centurylink.mdw.model.value.process.ProcessInstanceVO;
 import com.centurylink.mdw.model.value.process.ProcessVO;
+import com.centurylink.mdw.model.value.variable.VariableInstanceInfo;
+
 import com.qwest.mbeng.MbengException;
 import com.qwest.mbeng.XmlPath;
 
@@ -586,4 +588,18 @@ public abstract class GroovyTestCaseScript extends Script {
         return asset("com.centurylink.mdw.testing/readme.md").exists();
     }
 
+    public String variable(String varName) {
+        List<ProcessInstanceVO> procInstList = getProcessInstances();
+        if (procInstList == null || procInstList.size() == 0)
+            return "$" + varName;
+        for (ProcessInstanceVO processInstVO : procInstList) {
+            if (processInstVO.getVariables() == null || processInstVO.getVariables().size() == 0)
+                return "$" + varName;
+            for (VariableInstanceInfo var : processInstVO.getVariables()) {
+                if (var.getName().equals(varName))
+                    return var.getStringValue();
+            }
+        }
+        return "$" + varName;
+    }
 }
