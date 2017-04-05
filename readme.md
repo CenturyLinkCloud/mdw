@@ -28,7 +28,7 @@
 	 
 2. Get the Source Code
  - Command-line Git:  
-   `git clone https://github.com/CenturyLinkCloud/MDW.git mdw`
+   `git clone https://github.com/CenturyLinkCloud/mdw.git`
  - in Eclipse:  
    Import the project into your Eclipse workspace:  
    File > Import > General > Existing Projects into Workspace
@@ -75,8 +75,8 @@
 2. Code Format
  - Java, Groovy, Javascript and JSON:
    The Eclipse code formatters are version-controlled in .settings/org.eclipse.jdt.core.prefs, so as long as you're up-to-date with Git you should automatically have the correct settings. If you want to use them for another project, you can download and import them from these formatter files:   
-     - Java/Groovy: https://github.com/CenturyLinkCloud/MDW/docs/MDWCodeFormatter.xml   
-     - Javascript/JSON: https://github.com/CenturyLinkCloud/MDW/docs/mdw-javascript-formatter.xml   
+     - Java/Groovy: https://github.com/CenturyLinkCloud/mdw/docs/MDWCodeFormatter.xml   
+     - Javascript/JSON: https://github.com/CenturyLinkCloud/mdw/docs/mdw-javascript-formatter.xml   
      - Please note that we use **spaces instead of tabs** for indenting all source code.
  - XML, HTML and YAML:  
    These have to be configured manually in Eclipse.  For all formats we use **spaces instead of tabs**.
