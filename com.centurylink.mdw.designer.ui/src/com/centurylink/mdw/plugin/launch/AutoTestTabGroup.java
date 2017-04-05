@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.plugin.launch;
 
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.EnvironmentTab;
@@ -29,7 +30,7 @@ public class AutoTestTabGroup extends AbstractLaunchConfigurationTabGroup {
 
     public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
         ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-                new FunctionTestLaunchTab(),
+                new FunctionTestLaunchTab(ILaunchManager.DEBUG_MODE.equals(mode)),
                 new EnvironmentTab(),
                 new CommonTab() };
         setTabs(tabs);

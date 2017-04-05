@@ -34,8 +34,10 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 import com.centurylink.mdw.designer.testing.TestCase;
+import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 /**
@@ -133,14 +135,15 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
             IType[] types = null;
             try {
                 types = unit.getAllTypes();
-            } catch (JavaModelException e) {
-                GroovyCore.errorRunningGroovy(e);
-                return;
+            }
+            catch (JavaModelException ex) {
+                GroovyCore.errorRunningGroovy(ex);
+                throw new IllegalArgumentException(ex.getMessage(), ex);
             }
             runType = findClassToRun(types);
             if (runType == null) {
                 GroovyCore.errorRunningGroovy(new Exception("Unable to find run type: " + unit));
-                return;
+                throw new IllegalStateException("Unable to find run type: " + unit);
             }
         }
 
@@ -166,6 +169,7 @@ public class AutoTestLaunchShortcut extends AbstractGroovyLaunchShortcut {
             }
         }
         catch (CoreException ex) {
+            MessageDialog.openError(MdwPlugin.getShell(), "Autotest Error", ex.getMessage());
             GroovyCore.errorRunningGroovyFile((IFile) unit.getResource(), ex);
         }
     }

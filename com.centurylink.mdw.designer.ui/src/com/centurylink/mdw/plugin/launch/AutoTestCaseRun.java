@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.plugin.launch;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.eclipse.debug.core.DebugException;
@@ -56,8 +57,15 @@ public class AutoTestCaseRun extends TestCaseRun {
 
     @Override
     public void run() {
-        String mode = debug ? ILaunchManager.DEBUG_MODE : ILaunchManager.RUN_MODE;
-        launchShortcut.launch(new StructuredSelection(autoTestCase.getFile()), mode);
+        try {
+            String mode = debug ? ILaunchManager.DEBUG_MODE : ILaunchManager.RUN_MODE;
+            launchShortcut.launch(new StructuredSelection(autoTestCase.getFile()), mode);
+        }
+        catch (Exception ex) {
+            PluginMessages.log(ex);
+            getAutoTestCase().setStartTime(new Date()); // avoid NPE
+            finishExecution(ex);
+        }
     }
 
     @Override

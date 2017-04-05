@@ -42,7 +42,13 @@ public class FunctionTestLaunchTab extends TestSuiteLaunchTab {
     private Spinner threadIntervalSpinner;
     private Button createReplaceCheckBox;
 
+    private boolean debug;
+
     private Image image = MdwPlugin.getImageDescriptor("icons/auto_test.gif").createImage();
+
+    public FunctionTestLaunchTab(boolean debug) {
+        this.debug = debug;
+    }
 
     @Override
     public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
@@ -189,20 +195,20 @@ public class FunctionTestLaunchTab extends TestSuiteLaunchTab {
 
         if (getErrorMessage() == null) {
             List<String> selectedCases = Arrays.asList(getTestCases());
-            boolean hasNonGherkin = false;
-            boolean hasGherkin = false;
+            int count = selectedCases.size();
+            int gherkinCount = 0;
             // warn if mixed launch
             for (AutomatedTestCase autoTestCase : getProject().getTestCases()) {
                 if (selectedCases.contains(autoTestCase.getPath())) {
                     if (autoTestCase.isGherkin())
-                        hasGherkin = true;
-                    else
-                        hasNonGherkin = true;
+                        gherkinCount++;
                 }
             }
-            if (hasGherkin && hasNonGherkin) {
-                setErrorMessage(
-                        "Mixed Gherkin/non-Gherkin test selections not currently supported.");
+            if (gherkinCount > 0 && count > gherkinCount) {
+                setErrorMessage("Mixed Gherkin/non-Gherkin test selections not currently supported.");
+            }
+            else if (debug && count > 1) {
+                setErrorMessage("Currently only one test case can be debugged.  Select Run mode for multiple cases.");
             }
             else if (!selectedCases.isEmpty() && createReplaceCheckBox.getSelection()) {
                 setWarningMessage("Any existing test results assets will be overwritten.");
