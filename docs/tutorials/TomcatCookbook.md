@@ -6,7 +6,7 @@
    http://www.eclipse.org/downloads
  - Required Plugins:
      - MDW Designer:
-      [Installing and Upgrading the MDW Plugin for Eclipse](InstallAndUpgradeMDWPluginforEclipse)
+      [Installing and Upgrading the MDW Plugin for Eclipse](../designer/InstallAndUpgradeMDWPluginforEclipse.md)
      - Buildship Plugin:   
        http://download.eclipse.org/buildship/updates/e46/releases/2.x
  - Tomcat 8:
@@ -32,7 +32,7 @@ A local project is useful if you want to debug your custom Java source code and 
 ##### Open the Designer Perspective in Eclipse:
 - Launch Eclipse (with the MDW Plug-In installed).
 - From the menus select Window > Open Perspective > Other > MDW Designer.
-- For detailed documentation covering the designer, refer to the [MDW Designer User Guide:](../help/DesignerUserGuide.html)
+- For detailed documentation covering the designer, refer to the [MDW Designer User Guide:](../designer/DesignerUserGuide.md)
  
 ##### Launch the Local Project wizard:
 - Right-click inside the blank Process Explorer view and select New > Local Project.  Select Apache Tomcat as your Java container.  For Asset Persistence choose VCS (MDW 
@@ -188,7 +188,7 @@ A local project is useful if you want to debug your custom Java source code and 
 #### 3. Running Your Process
 
 ##### Ensure Permissions:
-- To follow the remaining steps in this tutorial you need to be granted the appropriate roles in the MDW demo database (unless you've installed a database locally).  An administrator can grant you appropriate access using the MDWHub webapp.  For a detailed discussion of this topic, refer to the "Roles and Permissions" section in the [MDW Designer User Guide](../help/MDWDesignerUserGuide.html).
+- To follow the remaining steps in this tutorial you need to be granted the appropriate roles in the MDW demo database (unless you've installed a database locally).  An administrator can grant you appropriate access using the MDWHub webapp.  For a detailed discussion of this topic, refer to the "Roles and Permissions" section in the [MDW Designer User Guide](../designer/DesignerUserGuide.md).
 
 ##### Create a Tomcat Server:
 Note: If you have already installed the Tomcat server from the previous step(s), you can skip this step.
