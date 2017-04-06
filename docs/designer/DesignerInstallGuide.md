@@ -1,4 +1,4 @@
-![xml formatter](images/mdw_sm.png)
+![xml formatter](../help/images/mdw_sm.png)
 
 ### MDW Designer RCP Install Guide
 
@@ -7,8 +7,8 @@
 ##### 1. Prerequisites
 - Required Plugin:
     - MDW Designer:                                                                               
-      [Installing and Upgrading the MDW Plugin for Eclipse](Installing and Upgrading the MDW Plugin for Eclipse)
-
+      [Installing and Upgrading the MDW Plugin for Eclipse](InstallAndUpgradeMDWPluginforEclipse)
+      
 ##### 2. Designer Installation Steps
 - Download the Installation Zip File from:       
   [http://centurylinkcloud.github.io/MDW/docs/designer](http://centurylinkcloud.github.io/MDW/docs/designer)     
@@ -20,7 +20,7 @@
 - Double click on the file mdw.exe (or set up a shortcut pointing to C:\Program Files\mdw\mdw.exe.
 - Log in using your LDAP user name and password:
 
-  ![xml formatter](images/mdwDesigner.png)
+  ![xml formatter](../help/images/mdwDesigner.png)
 
 ##### 4: Get Started with MDW Designer
 - MDW Designer User Guide: [Refer to the MDW Designer User Guide:](DesignerUserGuide.md)
