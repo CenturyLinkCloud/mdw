@@ -380,10 +380,10 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
 
 inspectMod.factory('Inspector', ['mdw', 'util', function(mdw, util) {
   return {
-    setObj: function(obj) {
+    setObj: function(obj, show) {
       this.obj = obj;
       if (this.listener) {
-        this.listener(obj);
+        this.listener(obj, show);
       }
     },
     getObj: function() {
@@ -432,23 +432,25 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
       };
       
       // show
-      Inspector.listen(function(obj) {
+      Inspector.listen(function(obj, show) {
         scope.setWorkflow(obj);
         scope.$apply();
         
-        if (elem[0].style.display == 'none') {
-          scope.openInspector();
-        }
-        
-        // set workflow element height to accommodate inspector
-        workflowElem[0].style.height = (canvasElem[0].offsetHeight + panelElem[0].offsetHeight - 50) + 'px';
-
-        if (obj.workflowType != 'process') {
-          // scroll into view
-          var objBtmY = canvasElem[0].getBoundingClientRect().top + obj.display.y + obj.display.h;
-          var inspTopY = elem[0].getBoundingClientRect().top;
-          if (objBtmY > inspTopY)
-            $window.scrollBy(0, objBtmY - inspTopY + 10);
+        if (show) {
+          if (elem[0].style.display == 'none') {
+            scope.openInspector();
+          }
+          
+          // set workflow element height to accommodate inspector
+          workflowElem[0].style.height = (canvasElem[0].offsetHeight + panelElem[0].offsetHeight - 50) + 'px';
+  
+          if (obj.workflowType != 'process') {
+            // scroll into view
+            var objBtmY = canvasElem[0].getBoundingClientRect().top + obj.display.y + obj.display.h;
+            var inspTopY = elem[0].getBoundingClientRect().top;
+            if (objBtmY > inspTopY)
+              $window.scrollBy(0, objBtmY - inspTopY + 10);
+          }
         }
       });
       

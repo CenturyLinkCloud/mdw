@@ -120,18 +120,16 @@ workflowMod.controller('MdwWorkflowController',
     $scope.down = true;
     if ($scope.diagram) {
       $scope.diagram.onMouseDown(e);
-      if (!$scope.editable) {
-        var selObj = $scope.diagram.selection.getSelectObj();
-        if (selObj && selObj.isLabel)
-          selObj = selObj.owner;
-        if (selObj) {
-          Inspector.setObj(selObj);
-        }
-        else {
-          var bgObj = $scope.diagram.getBackgroundObj(e);
-          if (bgObj)
-            Inspector.setObj(bgObj);
-        }
+      var selObj = $scope.diagram.selection.getSelectObj();
+      if (selObj && selObj.isLabel)
+        selObj = selObj.owner;
+      if (selObj) {
+        Inspector.setObj(selObj, !$scope.editable);
+      }
+      else {
+        var bgObj = $scope.diagram.getBackgroundObj(e);
+        if (bgObj)
+          Inspector.setObj(bgObj, !$scope.editable);
       }
     }
   };
@@ -154,12 +152,7 @@ workflowMod.controller('MdwWorkflowController',
       if (selObj && selObj.isLabel)
         selObj = selObj.owner;
       if (selObj) {
-        Inspector.setObj(selObj);
-      }
-      else {
-        var bgObj = $scope.diagram.getBackgroundObj(e);
-        if (bgObj)
-          Inspector.setObj(bgObj);
+        Inspector.setObj(selObj, true);
       }
     }
   };
