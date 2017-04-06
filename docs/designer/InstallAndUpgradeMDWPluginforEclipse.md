@@ -5,7 +5,7 @@
   [http://www.oracle.com/technetwork/java/javase/downloads](http://www.oracle.com/technetwork/java/javase/downloads)
   
 - Install Eclipse Neon (4.6.x):                                                                                                         
-   [http://www.eclipse.org/downloads](http://www.eclipse.org/downloads)
+  [http://www.eclipse.org/downloads](http://www.eclipse.org/downloads)
    
 - Launch Eclipse.  Here’s an example command line that includes appropriate JVM memory settings for running and debugging:              
     - `C:\eclipse_4.6.2\eclipse.exe -vm C:\jdk1.8.0_60\bin\javaw.exe -vmargs -Dsun.lang.ClassLoader.allowArraySyntax=true -Xms512m -Xmx1024m -XX:MaxPermSize=256m`
@@ -13,9 +13,9 @@
  (Help > Install New Software > Add > http://centurylinkcloud.github.io/mdw/docs/designer/updateSite/plugins> Install).
  
 #### Optional Plug-Ins: 
-- Gradle Build Support (Note: Only the Gradle IDE item is required):                                                             
-   [http://dist.springsource.com/release/TOOLS/gradle](http://dist.springsource.com/release/TOOLS/gradle)
-
+- Buildship Plugin
+  [http://download.eclipse.org/buildship/updates/e46/releases/2.x](http://download.eclipse.org/buildship/updates/e46/releases/2.x)
+  
 - Groovy Eclipse Plug-In (Groovy script syntax highlighting, auto-complete, etc.):
    [http://dist.springsource.org/snapshot/GRECLIPSE/e4.6](http://dist.springsource.org/snapshot/GRECLIPSE/e4.6)
 
