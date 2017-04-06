@@ -13,8 +13,8 @@
  (Help > Install New Software > Add > http://centurylinkcloud.github.io/mdw/docs/designer/updateSite/plugins> Install).
  
 #### Optional Plug-Ins: 
-- Buildship Plugin:                                                                                  
-  [http://download.eclipse.org/buildship/updates/e46/releases/2.x](http://download.eclipse.org/buildship/updates/e46/releases/2.x)
+- Buildship Plugin:                                                                                                                     
+  [http://download.eclipse.org/buildship/updates/e46/releases/2.x](http://download.eclipse.org/buildship/updates/e46/releases/2.x)
   
 - Groovy Eclipse Plug-In (Groovy script syntax highlighting, auto-complete, etc.):
    [http://dist.springsource.org/snapshot/GRECLIPSE/e4.6](http://dist.springsource.org/snapshot/GRECLIPSE/e4.6)
