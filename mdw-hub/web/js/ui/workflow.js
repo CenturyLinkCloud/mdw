@@ -27,6 +27,7 @@ workflowMod.controller('MdwWorkflowController',
         $scope.canvas.bind('mousedown', $scope.mouseDown);
         $scope.canvas.bind('mouseup', $scope.mouseUp);
         $scope.canvas.bind('mouseout', $scope.mouseOut);
+        $scope.canvas.bind('dblclick', $scope.mouseDoubleClick);
       }, function(error) {
         mdw.messages = error;
       });
@@ -37,6 +38,7 @@ workflowMod.controller('MdwWorkflowController',
       $scope.canvas.bind('mousedown', $scope.mouseDown);
       $scope.canvas.bind('mouseup', $scope.mouseUp);
       $scope.canvas.bind('mouseout', $scope.mouseOut);
+      $scope.canvas.bind('dblclick', $scope.mouseDoubleClick);
     }
   };
   
@@ -45,6 +47,7 @@ workflowMod.controller('MdwWorkflowController',
     $scope.canvas.bind('mousedown', $scope.mouseDown);
     $scope.canvas.bind('mouseup', $scope.mouseUp);
     $scope.canvas.bind('mouseout', $scope.mouseOut);
+    $scope.canvas.bind('dblclick', $scope.mouseDoubleClick);
   };
   
   $scope.renderProcess = function() {
@@ -117,16 +120,18 @@ workflowMod.controller('MdwWorkflowController',
     $scope.down = true;
     if ($scope.diagram) {
       $scope.diagram.onMouseDown(e);
-      var selObj = $scope.diagram.selection.getSelectObj();
-      if (selObj && selObj.isLabel)
-        selObj = selObj.owner;
-      if (selObj) {
-        Inspector.setObj(selObj);
-      }
-      else {
-        var bgObj = $scope.diagram.getBackgroundObj(e);
-        if (bgObj)
-          Inspector.setObj(bgObj);
+      if (!$scope.editable) {
+        var selObj = $scope.diagram.selection.getSelectObj();
+        if (selObj && selObj.isLabel)
+          selObj = selObj.owner;
+        if (selObj) {
+          Inspector.setObj(selObj);
+        }
+        else {
+          var bgObj = $scope.diagram.getBackgroundObj(e);
+          if (bgObj)
+            Inspector.setObj(bgObj);
+        }
       }
     }
   };
@@ -140,12 +145,29 @@ workflowMod.controller('MdwWorkflowController',
   $scope.mouseOut = function(e) {
     $scope.down = false;
     $scope.dragging = false;
+    if ($scope.diagram)
+      $scope.diagram.onMouseOut(e);
+  };
+  $scope.mouseDoubleClick = function(e) {
+    if ($scope.diagram && $scope.editable) {
+      var selObj = $scope.diagram.selection.getSelectObj();
+      if (selObj && selObj.isLabel)
+        selObj = selObj.owner;
+      if (selObj) {
+        Inspector.setObj(selObj);
+      }
+      else {
+        var bgObj = $scope.diagram.getBackgroundObj(e);
+        if (bgObj)
+          Inspector.setObj(bgObj);
+      }
+    }
   };
 }]);
 
 workflowMod.factory('Diagram', 
-    ['$document', 'mdw', 'util', 'DC', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Selection',
-     function($document, mdw, util, DC, Label, Shape, Step, Link, Subflow, Note, Selection) {
+    ['$document', 'mdw', 'util', 'DC', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Marquee', 'Selection',
+     function($document, mdw, util, DC, Label, Shape, Step, Link, Subflow, Note, Marquee, Selection) {
   var Diagram = function(canvas, process, implementors, instance, editable) {
     Shape.call(this, this, process);
     this.canvas = canvas;
@@ -162,6 +184,8 @@ workflowMod.factory('Diagram',
   };
 
   Diagram.prototype = new Shape();
+  
+  Diagram.BOUNDARY_DIM = 25;
   
   Diagram.prototype.draw = function() {
 
@@ -182,14 +206,18 @@ workflowMod.factory('Diagram',
     this.notes.forEach(function(note) {
       note.draw();
     });
+    
+    if (this.marquee) {
+      this.marquee.draw();
+    }
   };
   
   // sets display fields and returns a display with w and h for canvas size
   // (for performance reasons, also initializes steps/links arrays and activity impls)
   Diagram.prototype.prepareDisplay = function() {
-    var canvasDisplay = { w: 460, h: 460 };
+    var canvasDisplay = { w: 640, h: 480 };
     
-    var diagram = this; // convenient/inner access
+    var diagram = this; // forEach inner access
     
     // label
     diagram.label = new Label(this, this.process.name, this.getDisplay(), DC.TITLE_FONT);
@@ -246,9 +274,13 @@ workflowMod.factory('Diagram',
       });
     }
     
-    // allow for external transition instances, etc
-    canvasDisplay.w += 25;
-    canvasDisplay.h += 25;
+    // marquee
+    if (this.marquee)
+      diagram.makeRoom(canvasDisplay, this.marquee.prepareDisplay());
+    
+    // allow extra room
+    canvasDisplay.w += Diagram.BOUNDARY_DIM;
+    canvasDisplay.h += Diagram.BOUNDARY_DIM;
     
     this.canvas.width = canvasDisplay.w;
     this.canvas.height = canvasDisplay.h;
@@ -458,7 +490,7 @@ workflowMod.factory('Diagram',
           }
         }
       }
-    }    
+    }
   };
   
   Diagram.prototype.roundedRect = function(x, y, w, h, border, fill) {
@@ -623,7 +655,23 @@ workflowMod.factory('Diagram',
       }
     }
     this.shiftDrag = false;
-    this.selection.reselect();
+    
+    if (this.marquee) {
+      this.selection.setSelectObj(null);
+      var selObjs = this.marquee.getSelectObjs();
+      for (let i = 0; i < selObjs.length; i++) {
+        selObjs[i].select();
+        this.selection.add(selObjs[i]);
+      }
+      this.marquee = null;
+    }
+    else {
+      this.selection.reselect();
+    }
+  };
+  
+  Diagram.prototype.onMouseOut = function(e) {
+    // TODO anything?
   };
   
   Diagram.prototype.onMouseMove = function(e) {
@@ -661,65 +709,86 @@ workflowMod.factory('Diagram',
   };
   
   Diagram.prototype.onMouseDrag = function(e) {
-    if (this.editable && this.selection.getSelectObj() && this.dragX && this.dragY && !e.ctrlKey) {
+    if (this.editable && this.dragX && this.dragY && !e.ctrlKey) {
       var rect = this.canvas.getBoundingClientRect();
       var x = e.clientX - rect.left;
       var y = e.clientY - rect.top;
-      var diagram = this;
-      if (this.shiftDrag) {
-        if (this.selection.getSelectObj().isStep) {
-          this.draw();
-          this.drawLine(this.dragX, this.dragY, x, y, 'green');
-        }
-      }
-      else if (this.anchor >= 0) {
-        if (this.selection.getSelectObj().isLink) {
-          this.selection.getSelectObj().moveAnchor(this.anchor, x - this.dragX, y - this.dragY);
-          this.draw();
-        }
-        if (this.selection.getSelectObj().resize) {
-          if (this.selection.getSelectObj().isStep) {
-            let activityId = this.selection.getSelectObj().activity.id;
-            let step = this.getStep(activityId);
-            if (step) {
-              this.selection.getSelectObj().resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
-              this.getLinks(step).forEach(function(link) {
-                link.recalc(step);
-              });
+      var deltaX = x - this.dragX;
+      var deltaY = y - this.dragY;
+
+      if (Math.abs(deltaX) > DC.MIN_DRAG || Math.abs(deltaY) > DC.MIN_DRAG) {
+        
+        if (x > rect.right - Diagram.BOUNDARY_DIM)
+          this.canvas.width = this.canvas.width + Diagram.BOUNDARY_DIM;
+        if (y > rect.bottom - Diagram.BOUNDARY_DIM)
+          this.canvas.height = this.canvas.height + Diagram.BOUNDARY_DIM;
+
+        if (this.selection.getSelectObj()) {
+          var diagram = this;
+          if (this.shiftDrag) {
+            if (this.selection.getSelectObj().isStep) {
+              this.draw();
+              this.drawLine(this.dragX, this.dragY, x, y, DC.LINE_COLOR);
             }
-            else {
-              // try subflows
-              this.subflows.forEach(function(subflow) {
-                let step = subflow.getStep(activityId);
+          }
+          else if (this.anchor >= 0) {
+            if (this.selection.getSelectObj().isLink) {
+              this.selection.getSelectObj().moveAnchor(this.anchor, x - this.dragX, y - this.dragY);
+              this.draw();
+            }
+            if (this.selection.getSelectObj().resize) {
+              if (this.selection.getSelectObj().isStep) {
+                let activityId = this.selection.getSelectObj().activity.id;
+                let step = this.getStep(activityId);
                 if (step) {
-                  // only within bounds of subflow
-                  diagram.selection.getSelectObj().resize(diagram.dragX, diagram.dragY, x - diagram.dragX, y - diagram.dragY, subflow.display);
-                  subflow.getLinks(step).forEach(function(link) {
+                  this.selection.getSelectObj().resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
+                  this.getLinks(step).forEach(function(link) {
                     link.recalc(step);
                   });
                 }
-              });
+                else {
+                  // try subflows
+                  this.subflows.forEach(function(subflow) {
+                    let step = subflow.getStep(activityId);
+                    if (step) {
+                      // only within bounds of subflow
+                      diagram.selection.getSelectObj().resize(diagram.dragX, diagram.dragY, x - diagram.dragX, y - diagram.dragY, subflow.display);
+                      subflow.getLinks(step).forEach(function(link) {
+                        link.recalc(step);
+                      });
+                    }
+                  });
+                }
+              }
+              else {
+                this.selection.getSelectObj().resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
+              }
+              this.draw();
+              var obj = this.getHoverObj(x, y);
+              if (obj)
+                obj.select();
+              return true;
             }
           }
           else {
-            this.selection.getSelectObj().resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
+            this.selection.move(this.dragX, this.dragY, deltaX, deltaY);
+            // non-workflow selection may not be reselected after move
+            var hovObj = this.diagram.getHoverObj(x, y);
+            if (hovObj)
+              hovObj.select();
+            return true;
+          }
+        }
+        else {
+          if (this.marquee) {
+            this.marquee.resize(this.dragX, this.dragY, x - this.dragX, y - this.dragY);
+          }
+          else {
+            this.marquee = new Marquee(this);
+            this.marquee.start(this.dragX, this.dragY);
           }
           this.draw();
-          var obj = this.getHoverObj(x, y);
-          if (obj)
-            obj.select();
-          return true;
         }
-      }
-      else {
-        var deltaX = x - this.dragX;
-        var deltaY = y - this.dragY;
-        this.selection.move(this.dragX, this.dragY, deltaX, deltaY);
-        // non-workflow selection may not be reselected after move
-        var hovObj = this.diagram.getHoverObj(x, y);
-        if (hovObj)
-          hovObj.select();
-        return true;
       }
     }
   };

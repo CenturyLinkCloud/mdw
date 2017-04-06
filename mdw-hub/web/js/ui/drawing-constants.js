@@ -13,11 +13,13 @@ dcMod.constant('DC', {
   },
   DEFAULT_COLOR: 'black',
   HYPERLINK_COLOR: '#1565c0',
+  LINE_COLOR: 'green',
   META_COLOR: 'gray',
   BOX_OUTLINE_COLOR: 'black',
   BOX_ROUNDING_RADIUS: 12,
   ANCHOR_W: 3,
   ANCHOR_COLOR: '#ec407a',
-  ANCHOR_HIT_W: 8
+  ANCHOR_HIT_W: 8,
+  MIN_DRAG: 3
   
 });

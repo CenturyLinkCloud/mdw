@@ -368,7 +368,9 @@ public class AssetServicesImpl implements AssetServices {
                 for (String missingDiff : diffs.getDiffs(DiffType.MISSING)) {
                     if (missingDiff.startsWith(pkgVcPath + "/") && !missingDiff.startsWith(pkgVcPath + "/.mdw")) {
                         String assetName = missingDiff.substring(pkgVcPath.length() + 1);
-                        pkgAssets.getAssets().add(getGhostAsset(pkgDir, assetName));
+                        AssetInfo asset = getGhostAsset(pkgDir, assetName);
+                        if (asset != null)
+                          pkgAssets.getAssets().add(asset);
                     }
                 }
             }
@@ -515,7 +517,7 @@ public class AssetServicesImpl implements AssetServices {
                 }
             }
             else {
-                throw new IOException("Cannot locate missing asset in version control: " + getAssetPath());
+                logger.warn("Cannot locate missing asset in version control: " + pkgDir.getPackageName() + "/" + assetName);
             }
         }
         return asset;

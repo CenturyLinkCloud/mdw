@@ -121,6 +121,7 @@ shapeMod.factory('Shape', ['mdw', 'util', 'DC',
       if (display.h < min) 
         display.h = min;
     }
+    
     if (limDisplay) {
       if (display.x < limDisplay.x)
         display.x = limDisplay.x;

@@ -156,6 +156,7 @@ public class AssetContentServlet extends HttpServlet {
 
     /**
      * Note: Processes are updated in Workflow REST service.
+     * TODO: Propagate with authorization.
      */
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (!assetRoot.isDirectory())
