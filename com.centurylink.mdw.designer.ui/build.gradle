@@ -17,14 +17,9 @@ clean {
 }
 
 task copyMdwDocs(type: Copy) {
-    from "${mdwOutputDir}/../../../mdw-hub/web"
-    include "doc/**/*"
-    include "javadoc/**/*"
-    exclude "doc/tutorials/**/*"
-    exclude "**/.metadata"
-    exclude "**/.dmignore"
-    exclude "**/*.docx"
-    into "./help"
+    from "../docs/help"
+    include "**/*"
+    into "./help/doc"
 }
 
 // this is run manually before autobuild
