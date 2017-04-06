@@ -11,7 +11,7 @@
       
 ##### 2. Designer Installation Steps
 - Download the Installation Zip File from:       
-  [http://centurylinkcloud.github.io/MDW/docs/designer](http://centurylinkcloud.github.io/MDW/docs/designer)     
+  [http://centurylinkcloud.github.io/MDW/docs/designer](http://centurylinkcloud.github.io/MDW/docs/designer)     
 - Extract the Zip File Contents
 - Right-click on the downloaded zip file in Windows Explorer and select Extract All…
 - Extract into C:\Program Files or into the desired folder (the archive already contains an MDW subfolder):
