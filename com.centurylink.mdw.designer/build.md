@@ -33,7 +33,13 @@ Publish Release Notes to the MDW Users mailing list.
 Upload the release notes email to the SharePoint site:
   - Select the release notes email in Outlook and from the menu select File > Save As > Save As Type = Text Only.
   - Filename format is MDW Designer Build x.x.x.txt.
-  - Upload to SharePoint under Releases > Release Notes > MDW Designer. 
+  - Upload to SharePoint under Releases > Release Notes > MDW Designer.
+  
+On GitHub:
+  - Close any open issues delivered with this build.
+  - Create a milestone marker for the next upcoming build.
+  - Assign any undelivered issues for this build's milestone to the next build's milestone.
+  - Close this build's milestone in GitHub. 
 
 Update support items delivered with this build to Resolved status.
 
