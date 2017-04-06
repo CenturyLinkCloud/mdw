@@ -125,8 +125,8 @@ Tip: When you upgrade to a new MDW build version in Eclipse, Designer automatica
 
 ##### Next Steps:
 -	Check out some of the other MDW developer cookbooks:
- http://centurylinkcloud.github.io/MDW/docs\tutorials](http://centurylinkcloud.github.io/MDW/docs\tutorials)
+ http://centurylinkcloud.github.io/mdw/docs/tutorials](http://centurylinkcloud.github.io/mdw/docs/tutorials)
 -	Browse through the online help docs, which are the same as those in Eclipse:                             
- 	  [http://centurylinkcloud.github.io/MDW/docs/help/index.html](http://centurylinkcloud.github.io/MDW/docs/help/index.html)
+ 	  [http://centurylinkcloud.github.io/mdw/docs/help](http://centurylinkcloud.github.io/mdw/docs/help)
 -	The MDW JavaDocs:                                                     
-      [http://centurylinkcloud.github.io/MDW/docs/javadoc/index.html](http://centurylinkcloud.github.io/MDW/docs/javadoc/index.html)
+      [http://centurylinkcloud.github.io/mdw/docs/javadoc/index.html](http://centurylinkcloud.github.io/mdw/docs/javadoc/index.html)
