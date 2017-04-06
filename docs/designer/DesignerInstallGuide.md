@@ -7,7 +7,7 @@
 ##### 1. Prerequisites
 - Required Plugin:
     - MDW Designer:                                                                               
-      [Installing and Upgrading the MDW Plugin for Eclipse](InstallAndUpgradeMDWPluginforEclipse)
+    [Installing and Upgrading the MDW Plugin for Eclipse](InstallAndUpgradeMDWPluginforEclipse)
       
 ##### 2. Designer Installation Steps
 - Download the Installation Zip File from:       
@@ -23,4 +23,4 @@
   ![xml formatter](../help/images/mdwDesigner.png)
 
 ##### 4: Get Started with MDW Designer
-- MDW Designer User Guide: [Refer to the MDW Designer User Guide:](DesignerUserGuide.md)
+- MDW Designer User Guide, [MDW Designer User Guide:](DesignerUserGuide.md)
