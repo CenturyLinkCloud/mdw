@@ -5,8 +5,7 @@
  - Eclipse Neon for JavaEE Developers:  
    http://www.eclipse.org/downloads
  - Required Plugins:
-     - MDW Designer:                                                                                                                   
-     [Installing and Upgrading the MDW Plugin for Eclipse](../designer/InstallAndUpgradeMDWPluginforEclipse.md)
+     - MDW Designer:                                                                                                                            [Installing and Upgrading the MDW Plugin for Eclipse](../designer/InstallAndUpgradeMDWPluginforEclipse.md)
      - Buildship Plugin:   
        http://download.eclipse.org/buildship/updates/e46/releases/2.x
  - Tomcat 8:
