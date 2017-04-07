@@ -138,26 +138,26 @@ A local project is useful if you want to debug your custom Java source code and 
 	*/
 	@Tracked(LogLevel.TRACE)
 	public class MyOrderValidatorActivity extends DefaultActivityImpl {
-	    /**
-    	    * Here's where the main processing for the activity is performed. 
-            * @return the activity result (aka completion code)
-    	    */
-    	    @Override
-    	    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
-        	loginfo("Validating order...");
-       		Document request = (Document) getVariableValue("request");
-       		Node orderIdNode = request.getFirstChild().getFirstChild().getNextSibling();
-       		String orderId = orderIdNode.getFirstChild().getNodeValue();
-       		setVariableValue("orderId", orderId);
-       		boolean valid = true;
-       		String msg = "Success";
-       		if(!orderIdNode.getLocalName().equals("orderId")){
-        	   msg = "Missing order ID.";
-        	}
-        	valid = msg.equals("Success");
-        	setVariableValue("validationResult", msg);
-        	return valid;
-    	    }
+		/**
+    		* Here's where the main processing for the activity is performed. 
+         	* @return the activity result (aka completion code)
+    	    	*/
+    	    	@Override
+    	    	public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        		loginfo("Validating order...");
+       			Document request = (Document) getVariableValue("request");
+       			Node orderIdNode = request.getFirstChild().getFirstChild().getNextSibling();
+       			String orderId = orderIdNode.getFirstChild().getNodeValue();
+       			setVariableValue("orderId", orderId);
+       			boolean valid = true;
+       			String msg = "Success";
+       			if(!orderIdNode.getLocalName().equals("orderId")){
+        	   		msg = "Missing order ID.";
+        		}
+        		valid = msg.equals("Success");
+        		setVariableValue("validationResult", msg);
+        		return valid;
+    		}
 	}
   ```
 - Now if you switch back to your process the new activity should appear in the Toolbox View.  From the toolbox, drag your activity onto the canvas and insert it into your process 
@@ -240,11 +240,11 @@ Note: If you have already installed the Tomcat server from the previous step(s),
    ![xml formatter](images/runPrcoess.png)
  
 ##### Populate the Input Variable:
-    ```xml
-    <order> 
-       <orderId>N12345678</orderId>
-    </order>
-    ```
+ ```XML
+ <order> 
+    <orderId>N12345678</orderId>
+ </order>
+ ```
 - Select the Variables tab in the launch dialog, and populate the request variable with the following content.
    ![xml formatter](images/runPrcoess2.png)
 
@@ -329,7 +329,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   }
   if (firstName != null && lastName != null) {
   	runtimeContext.logInfo 'Found employee: ' + firstName + ' ' + lastName;
-        return true;
+	return true;
   }
   else {
        runtimeContext.logInfo 'Employee not found: ' + employeeId;`
@@ -382,23 +382,23 @@ MDW comes with the Document Web Service Activity for consuming document-style se
     
 - Make your activity implementor source code look something like this:
 
-  ```java      
-    package MyPackage;
-    import com.centurylink.mdw.activity.ActivityException;
-    import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-    import com.centurylink.mdw.common.utilities.timer.Tracked;
-    import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
-    import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-    import com.centurylink.mdw.xml.DomHelper;	   
-    
-    @Tracked(LogLevel.TRACE)
-    public class MyOrderResponseBuilder extends DefaultActivityImpl {
-    	@Override
-        public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {      
+```java      
+package MyPackage;
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
+import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import com.centurylink.mdw.xml.DomHelper;                                  
+
+@Tracked(LogLevel.TRACE)
+public class MyOrderResponseBuilder extends DefaultActivityImpl {
+	@Override
+	public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {      
             try {
                 String code = getAttributeValueSmart("responseCode");
                 if (code == null)
-                    throw new ActivityException("Missing attribute: responseCode");   
+                    throw new ActivityException("Missing attribute: responseCode");                            
 		    
                 String resString = "<OrderValidationResponse orderId=\"" + getVariableValue("orderId") + "\">\n"+ "  <Code>" + code + "</Code>\n";                  
                 if (!code.equals("0"))
@@ -451,7 +451,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
  
 - Edit the content of your WSDL to look something like the following (with appropriate substitutions based on your request and response).
 
-  ```xml    
+```xml    
  <?xml version="1.0" encoding="UTF-8"?>	
  <wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -518,7 +518,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
       </wsdl:port>
       </wsdl:service>
   </wsdl:definitions>
-  ```    
+```    
 - Note that the endpoint URL is parameterized in the WSDL <soap:address> so at runtime it will be substituted with the appropriate base URL for the specific environment where it's served from
 - Once you save the WSDL you should be able to access it in your browser from a location similar to: [http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl](http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl)
       
