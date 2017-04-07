@@ -67,12 +67,12 @@
    -Xms512m -Xmx1024m -XX:MaxPermSize=256m
 ```
 
-1. Run
+7. Run
  - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
  - Check MDWHub access:                                                
    http://localhost:8080/mdw
    
-2. Code Format
+8. Code Format
  - Java, Groovy, Javascript and JSON:
    The Eclipse code formatters are version-controlled in .settings/org.eclipse.jdt.core.prefs, so as long as you're up-to-date with Git you should automatically have the correct settings. If you want to use them for another project, you can download and import them from these formatter files:   
      - Java/Groovy: https://github.com/CenturyLinkCloud/mdw/docs/MDWCodeFormatter.xml   
@@ -88,7 +88,7 @@
      - YAML:                                           
       [yaml formatter](docs/help/images/yamlformat.png)
 
-3. Designer Development
+9. Designer Development
  - The designer codebase is contained in the following projects:
      	- com.centurylink.mdw.designer (gradle parent)
      	- com.centurylink.mdw.designer.core
