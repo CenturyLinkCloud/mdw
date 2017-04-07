@@ -9,7 +9,7 @@
    
  - Required Plugins:
      - MDW Designer:                                         
-       [Installing and Upgrading the MDW Plugin for Eclipse](../designer/InstallAndUpgradeMDWPluginforEclipse)
+       [Installing and Upgrading the MDW Plugin for Eclipse](docs/designer/InstallAndUpgradeMDWPluginforEclipse)
      - Buildship Plugin:                            
        [http://download.eclipse.org/buildship/updates/e46/releases/2.x](http://download.eclipse.org/buildship/updates/e46/releases/2.x)
        
