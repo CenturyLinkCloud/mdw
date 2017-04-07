@@ -96,6 +96,7 @@ A local project is useful if you want to debug your custom Java source code and 
    ![xml formatter](images/orderProcess3.png)
    
 - Save your process design by selecting File > Save from the menu (or by clicking the disk icon in the Eclipse toolbar, or by typing ctrl-s).  Elect to overwrite the current version and to keep the process locked after saving.  During iterative development for convenience you'll sometimes overwrite the existing version of a process definition.  However once you've exported to another environment you'll want to increment the version since you cannot re-import a changed process with the same version number.  Details are covered under Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning.
+
    ![xml formatter](images/saveOrderProcess.png)
 
 ##### Get Your Server Running:
