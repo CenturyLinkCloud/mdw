@@ -7,44 +7,44 @@
  - Eclipse Neon for JavaEE Developers:                              
    [http://www.eclipse.org/downloads]([http://www.eclipse.org/downloads)
    
- - Required Plugins:
+   - Required Plugins:
      - MDW Designer:                                         
        [http://centurylinkcloud.github.io/mdw/docs/designer/updateSite](http://centurylinkcloud.github.io/mdw/docs/designer/updateSite)
      - Buildship Plugin:                            
        [http://download.eclipse.org/buildship/updates/e46/releases/2.x](http://download.eclipse.org/buildship/updates/e46/releases/2.x)
        
- - Recommended Plugins:
+   - Recommended Plugins:
      - Groovy:                                   
        [http://dist.springsource.org/snapshot/GRECLIPSE/e4.6](http://dist.springsource.org/snapshot/GRECLIPSE/e4.6)
      - Yaml:                                             
        [http://dadacoalition.org/yedit](http://dadacoalition.org/yedit)
        
- - Tomcat 8:                                  
+   - Tomcat 8:                                  
      - [https://tomcat.apache.org](https://tomcat.apache.org)
        
- - Chrome and Postman:                                            
+   - Chrome and Postman:                                            
      - [https://www.google.com/chrome](https://www.google.com/chrome)
      - [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
 	 
 2. Get the Source Code
- - Command-line Git:  
-   `git clone https://github.com/CenturyLinkCloud/mdw.git`
- - in Eclipse:  
-   Import the project into your Eclipse workspace:  
-   File > Import > General > Existing Projects into Workspace
+   - Command-line Git:  
+     `git clone https://github.com/CenturyLinkCloud/mdw.git`
+   - in Eclipse:  
+     Import the project into your Eclipse workspace:  
+     File > Import > General > Existing Projects into Workspace
    
 3. Set up npm and Bower (One-time step)
- - Install NodeJS:                                                                     
-   [https://nodejs.org/en/download/current](https://nodejs.org/en/download/current)
- - Open a command prompt in the mdw-hub project directory
- ```
-   run npm install
-   run npm install -g grunt-cli
-   run npm install -g bower
- ```
+   - Install NodeJS:                                                                     
+     [https://nodejs.org/en/download/current](https://nodejs.org/en/download/current)
+   - Open a command prompt in the mdw-hub project directory
+    ```
+    run npm install
+    run npm install -g grunt-cli
+    run npm install -g bower
+   ```
 4. Build the Project
- - Window > Show View > Other > Gradle  > Gradle Tasks
-   Select the mdw project and Select Show all Tasks. Expand Other folder in mdw project and double-click the "buildAll" task
+   - Window > Show View > Other > Gradle  > Gradle Tasks
+     Select the mdw project and Select Show all Tasks. Expand Other folder in mdw project and double-click the "buildAll" task
 
 5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
    
