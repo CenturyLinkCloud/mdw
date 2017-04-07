@@ -58,14 +58,14 @@
    - Double-click on the server and set the startup timeout to something large (like 3600s)
    - Under MDW Server Options set the following Java Options (appropriate for your workspace):
  
-   ```	
+    ```	
     -Dmdw.runtime.env=dev  
     -Dmdw.config.location=c:/workspaces/MDW/mdw/config  
     -Djavax.net.ssl.trustStore=c:/workspaces/MDW/mdw/deploy/certs/CenturyLinkQCA.jks  
     -Djava.net.preferIPv4Stack=true  
     -Dmdw.runtime.env=dev
     -Xms512m -Xmx1024m -XX:MaxPermSize=256m
-   ```
+    ```
 
 7. Run
    - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
@@ -89,7 +89,7 @@
       [yaml formatter](docs/help/images/yamlformat.png)
 
 9. Designer Development
-   - The designer codebase is contained in the following projects:
+   - The designer codebase is contained in the following projects:       
      - com.centurylink.mdw.designer (gradle parent)
      - com.centurylink.mdw.designer.core
      - com.centurylink.mdw.designer.feature
