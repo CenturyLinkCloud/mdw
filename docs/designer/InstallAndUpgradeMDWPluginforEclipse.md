@@ -10,7 +10,7 @@
 - Launch Eclipse.  Here’s an example command line that includes appropriate JVM memory settings for running and debugging:              
     - `C:\eclipse_4.6.2\eclipse.exe -vm C:\jdk1.8.0_60\bin\javaw.exe -vmargs -Dsun.lang.ClassLoader.allowArraySyntax=true -Xms512m -Xmx1024m -XX:MaxPermSize=256m`
 - Install the latest version of the MDW Plugin via Eclipse Software Updates:                                                            
- (Help > Install New Software > Add > http://centurylinkcloud.github.io/mdw/docs/designer/updateSite/plugins> Install).
+ (Help > Install New Software > Add > http://centurylinkcloud.github.io/mdw/docs/designer/updateSite> Install).
  
 #### Optional Plug-Ins: 
 - Buildship Plugin:                                                                                                                     
