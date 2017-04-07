@@ -1,4 +1,5 @@
 language: java
 jdk:
   - oraclejdk8
+before_script: gradle -v
 before_script: cd mdw
