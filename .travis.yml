@@ -1,2 +1,4 @@
 before_script: cd mdw
 language: java
+jdk:
+  - oraclejdk8
