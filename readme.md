@@ -89,13 +89,13 @@
       [yaml formatter](docs/help/images/yamlformat.png)
 
 9. Designer Development
-     - The designer codebase is contained in the following projects:
-     	- com.centurylink.mdw.designer (gradle parent)
-	- com.centurylink.mdw.designer.core
-     	- com.centurylink.mdw.designer.feature
-     	- com.centurylink.mdw.designer.rcp
-     	- com.centurylink.mdw.designer.ui
-     
+   - The designer codebase is contained in the following projects:
+     - com.centurylink.mdw.designer (gradle parent)
+     - com.centurylink.mdw.designer.core
+     - com.centurylink.mdw.designer.feature
+     - com.centurylink.mdw.designer.rcp
+     - com.centurylink.mdw.designer.ui
+
    - Build Designer
      - These projects use the MDW 5.5 versions of mdw-common as mdw-schemas as dependencies, so to you need these MDW 5.5 projects locally or to have their jars available through a repository.
      - Assuming you've got the MDW 5.5 source code locally, in com.centurylink.mdw.designer/gradle.properties, set mdwVersion and mdwOutputDir to point to this location.
