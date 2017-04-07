@@ -138,27 +138,26 @@ A local project is useful if you want to debug your custom Java source code and 
 	*/
 	@Tracked(LogLevel.TRACE)
 	public class MyOrderValidatorActivity extends DefaultActivityImpl {
-	   	/**
-    	 	* Here's where the main processing for the activity is performed.
-    	 	*     
-    		 * @return the activity result (aka completion code)
-    	 	*/
-    		@Override
-    		public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
-        		loginfo("Validating order...");
-       			Document request = (Document) getVariableValue("request");
-        		Node orderIdNode = request.getFirstChild().getFirstChild().getNextSibling();
-        		String orderId = orderIdNode.getFirstChild().getNodeValue();
-        		setVariableValue("orderId", orderId);
-        		boolean valid = true;
-        		String msg = "Success";
-        		if(!orderIdNode.getLocalName().equals("orderId")){
-            			msg = "Missing order ID.";
-        		}
-        		valid = msg.equals("Success");
-        		setVariableValue("validationResult", msg);
-        		return valid;
-    		}
+	    /**
+    	    * Here's where the main processing for the activity is performed. 
+            * @return the activity result (aka completion code)
+    	    */
+    	    @Override
+    	    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        	loginfo("Validating order...");
+       		Document request = (Document) getVariableValue("request");
+       		Node orderIdNode = request.getFirstChild().getFirstChild().getNextSibling();
+       		String orderId = orderIdNode.getFirstChild().getNodeValue();
+       		setVariableValue("orderId", orderId);
+       		boolean valid = true;
+       		String msg = "Success";
+       		if(!orderIdNode.getLocalName().equals("orderId")){
+        	   msg = "Missing order ID.";
+        	}
+        	valid = msg.equals("Success");
+        	setVariableValue("validationResult", msg);
+        	return valid;
+    	    }
 	}
   ```
 - Now if you switch back to your process the new activity should appear in the Toolbox View.  From the toolbox, drag your activity onto the canvas and insert it into your process 
@@ -209,13 +208,11 @@ Note: If you have already installed the Tomcat server from the previous step(s),
   
    ![xml formatter](images/addTomcatServer2.png)
  
- 
 - The final page of the New Server wizard is where you designate your workflow project to be deployed on the server.  After that, click Finish to create the server instance.
 - If the Servers view is not visible in your current perspective, from the menu select Window > Show View > Other > Server > Servers.  You should see your Tomcat 7 server in this view.  You can 
   double-click the server to edit its configuration.  Expand the Timeouts section, change the start timeout value to 3600 seconds, and hit Ctrl-S to save your changes.  Then close the editor.
    ![xml formatter](images/addTomcatServer3.png)
  
-
 - Before you start the server, you will need to add your MyWorkflow project to your server instance. Right click the server instance, select Add and Remove… and select the MyWorkflow from the 
   left pane and click the Add to move it to the right pane.
   
@@ -243,11 +240,11 @@ Note: If you have already installed the Tomcat server from the previous step(s),
    ![xml formatter](images/runPrcoess.png)
  
 ##### Populate the Input Variable:
-   ```xml
-   <order> 
-     <orderId>N12345678</orderId>
-   </order>
-   ```
+    ```xml
+    <order> 
+       <orderId>N12345678</orderId>
+    </order>
+    ```
 - Select the Variables tab in the launch dialog, and populate the request variable with the following content.
    ![xml formatter](images/runPrcoess2.png)
 
@@ -322,6 +319,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   NodeList nodes = employeeServiceResponse.getFirstChild().getChildNodes();
   String firstName = null;
   String lastName = null;
+  
   for (int i = 0; i < nodes.getLength(); i++) {
   	Node node = nodes.item(i);
     	if ("firstName".equals(node.getLocalName()))
@@ -357,7 +355,6 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   display the raw SOAP request and response:
    ![xml formatter](images/soapReqestResponse.png)
   
- 
 #### 5. Expose Your Process to External Systems
 
 ##### Designate Your Process as an MDW Service Process:
@@ -393,18 +390,20 @@ MDW comes with the Document Web Service Activity for consuming document-style se
     import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
     import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
     import com.centurylink.mdw.xml.DomHelper;	   
+    
     @Tracked(LogLevel.TRACE)
     public class MyOrderResponseBuilder extends DefaultActivityImpl {
-     	@Override
+    	@Override
         public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {      
             try {
                 String code = getAttributeValueSmart("responseCode");
                 if (code == null)
                     throw new ActivityException("Missing attribute: responseCode");   
+		    
                 String resString = "<OrderValidationResponse orderId=\"" + getVariableValue("orderId") + "\">\n"+ "  <Code>" + code + "</Code>\n";                  
                 if (!code.equals("0"))
                     resString += "  <Message>" + getAttributeValueSmart("responseMessage")+ "</Message>\n";
-                   
+
                 resString += "</OrderValidationResponse>";
                 setVariableValue("response", DomHelper.toDomDocument(resString));
             }
@@ -453,14 +452,12 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 - Edit the content of your WSDL to look something like the following (with appropriate substitutions based on your request and response).
 
   ```xml    
- 	<?xml version="1.0" encoding="UTF-8"?>	
-  	<wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:tns="http://mdw-servicemix.centurylink.com"
-        targetNamespace="http://mdw-servicemix.centurylink.com">
-        <wsdl:types>
+ <?xml version="1.0" encoding="UTF-8"?>	
+ <wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://mdw-servicemix.centurylink.com"
+     targetNamespace="http://mdw-servicemix.centurylink.com">
+     <wsdl:types>
         <xsd:schema>
           <xsd:element name="MyOrderValidationRequest">
         <xsd:complexType>
@@ -520,7 +517,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
         <soap:address location="${mdw.services.url}/SOAP/MyPackage/MyOrderValidation.wsdl" />
       </wsdl:port>
       </wsdl:service>
-      </wsdl:definitions>
+  </wsdl:definitions>
   ```    
 - Note that the endpoint URL is parameterized in the WSDL <soap:address> so at runtime it will be substituted with the appropriate base URL for the specific environment where it's served from
 - Once you save the WSDL you should be able to access it in your browser from a location similar to: [http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl](http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl)
