@@ -204,14 +204,22 @@ server-side placeholders, which will be substituted with the appropriate runtime
 variable substitution syntax, this special usage involves substitution on the server (the raw placeholders are passed
 in Designer's message to the server, and substitution happens on that side).  In this usage, only the specific expressions
 above are supported.  Unlike the general mechanism, your custom Groovy script bindings cannot be substituted.</p>   
-<p>In order for <code>${processInstanceId}</code> and 
-<code>${&lt;variable_name&gt;}</code>s to be correctly substituted, you'll need to specify processName 
+<p>In order for <code>${processInstanceId}</code> to be correctly substituted, you'll need to specify processName 
 for your event, and for <code>${activityInstanceId}</code> you'll also need to specify activityLogicalId:</p>
 <pre>
 notify event("CorrectionEvent-${processInstanceId}-${activityInstanceId}") {
     message = file("CorrectionEventMessageContent.xml").text
     processName = "com.centurylink.mdw.mytests/OrderProcess"
     activityLogicalId = "A7"
+}
+</pre>
+<p>In order for <code>${&lt;variable_name&gt;}</code> to be correctly substituted, you'll need to load the process that has this variable 
+and read the variable value
+</p>
+<pre>
+load process("MyProcess")
+notify event("CorrectionEvent-${variable("varName")}") {
+    message = file("CorrectionEventMessageContent.xml").text
 }
 </pre>
 
