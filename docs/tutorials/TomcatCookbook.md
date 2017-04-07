@@ -124,7 +124,7 @@ A local project is useful if you want to debug your custom Java source code and 
   With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
 - Update the generated Java source code to resemble the following:
 
-  ```java
+```java
 	package MyPackage;
 	import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
 	import com.centurylink.mdw.common.utilities.timer.Tracked;
@@ -138,26 +138,26 @@ A local project is useful if you want to debug your custom Java source code and 
 	*/
 	@Tracked(LogLevel.TRACE)
 	public class MyOrderValidatorActivity extends DefaultActivityImpl {
-		/**
-    		* Here's where the main processing for the activity is performed. 
-         	* @return the activity result (aka completion code)
-    	    	*/
-    	    	@Override
-    	    	public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
-        		loginfo("Validating order...");
-       			Document request = (Document) getVariableValue("request");
-       			Node orderIdNode = request.getFirstChild().getFirstChild().getNextSibling();
-       			String orderId = orderIdNode.getFirstChild().getNodeValue();
-       			setVariableValue("orderId", orderId);
-       			boolean valid = true;
-       			String msg = "Success";
-       			if(!orderIdNode.getLocalName().equals("orderId")){
-        	   		msg = "Missing order ID.";
-        		}
-        		valid = msg.equals("Success");
-        		setVariableValue("validationResult", msg);
-        		return valid;
-    		}
+	    /**
+    	    * Here's where the main processing for the activity is performed. 
+            * @return the activity result (aka completion code)
+    	    */
+    	    @Override
+    	    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        	loginfo("Validating order...");
+       		Document request = (Document) getVariableValue("request");
+      		Node orderIdNode = request.getFirstChild().getFirstChild().getNextSibling();
+      		String orderId = orderIdNode.getFirstChild().getNodeValue();
+       		setVariableValue("orderId", orderId);
+       		boolean valid = true;
+       		String msg = "Success";
+       		if(!orderIdNode.getLocalName().equals("orderId")){
+    		   msg = "Missing order ID.";
+        	}
+        	valid = msg.equals("Success");
+       		setVariableValue("validationResult", msg);
+       		return valid;
+    	    }
 	}
   ```
 - Now if you switch back to your process the new activity should appear in the Toolbox View.  From the toolbox, drag your activity onto the canvas and insert it into your process 
@@ -240,11 +240,11 @@ Note: If you have already installed the Tomcat server from the previous step(s),
    ![xml formatter](images/runPrcoess.png)
  
 ##### Populate the Input Variable:
- ```XML
- <order> 
-    <orderId>N12345678</orderId>
- </order>
- ```
+   ```XML
+   <order> 
+      <orderId>N12345678</orderId>
+   </order>
+   ```
 - Select the Variables tab in the launch dialog, and populate the request variable with the following content.
    ![xml formatter](images/runPrcoess2.png)
 
@@ -328,7 +328,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
         	lastName = node.getFirstChild().getNodeValue();
   }
   if (firstName != null && lastName != null) {
-  	runtimeContext.logInfo 'Found employee: ' + firstName + ' ' + lastName;
+        runtimeContext.logInfo 'Found employee: ' + firstName + ' ' + lastName;
 	return true;
   }
   else {
@@ -398,7 +398,7 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
             try {
                 String code = getAttributeValueSmart("responseCode");
                 if (code == null)
-                    throw new ActivityException("Missing attribute: responseCode");                            
+                    throw new ActivityException("Missing attribute: responseCode");                                                
 		    
                 String resString = "<OrderValidationResponse orderId=\"" + getVariableValue("orderId") + "\">\n"+ "  <Code>" + code + "</Code>\n";                  
                 if (!code.equals("0"))
