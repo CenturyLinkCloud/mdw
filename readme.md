@@ -90,6 +90,7 @@
 
 9. Designer Development
    - The designer codebase is contained in the following projects:
+        - 
      	- com.centurylink.mdw.designer (gradle parent)
 	- com.centurylink.mdw.designer.core
      	- com.centurylink.mdw.designer.feature
