@@ -89,18 +89,18 @@
       [yaml formatter](docs/help/images/yamlformat.png)
 
 9. Designer Development
- - The designer codebase is contained in the following projects:
+   - The designer codebase is contained in the following projects:
      	- com.centurylink.mdw.designer (gradle parent)
-     	- com.centurylink.mdw.designer.core
+	- com.centurylink.mdw.designer.core
      	- com.centurylink.mdw.designer.feature
      	- com.centurylink.mdw.designer.rcp
      	- com.centurylink.mdw.designer.ui
      
- - Build Designer
+   - Build Designer
      - These projects use the MDW 5.5 versions of mdw-common as mdw-schemas as dependencies, so to you need these MDW 5.5 projects locally or to have their jars available through a repository.
-   - Assuming you've got the MDW 5.5 source code locally, in com.centurylink.mdw.designer/gradle.properties, set mdwVersion and mdwOutputDir to point to this location.
-   - (One time) Run an MDW 5.5 build in its workspace and then in com.centurylink.mdw.designer.core, run the gradle task getMdwCommon to copy in the 5.5 dependencies.
-   - (Subsequently) When changes are made to common code in MDW 5.5 and an Eclipse build is performed in that workspace, running devGetMdwCommon will incrementally copy these.
-   - Now an Eclipse build of the Designer projects should show no errors.
- - Debug Designer
-   - To run through Eclipse, right-click on project com.centurylink.mdw.designer.ui and select Debug As > Eclipse Application.
+     - Assuming you've got the MDW 5.5 source code locally, in com.centurylink.mdw.designer/gradle.properties, set mdwVersion and mdwOutputDir to point to this location.
+     - (One time) Run an MDW 5.5 build in its workspace and then in com.centurylink.mdw.designer.core, run the gradle task getMdwCommon to copy in the 5.5 dependencies.
+     - (Subsequently) When changes are made to common code in MDW 5.5 and an Eclipse build is performed in that workspace, running devGetMdwCommon will incrementally copy these.
+     - Now an Eclipse build of the Designer projects should show no errors.
+   - Debug Designer
+     - To run through Eclipse, right-click on project com.centurylink.mdw.designer.ui and select Debug As > Eclipse Application.
