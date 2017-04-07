@@ -63,7 +63,12 @@
   Administrators	Add users and assign them to workgroups and roles.
   ProcessAdmin	Create and change process definitions and artifacts.
   System Admins	Launch processes and configure environments.
-      ```
+  
+  | Header ||
+  |--------------|
+  | 0 | 1 |
+  
+  ```
       Roles:	        Permissions:
       User Admin	    Add users and assign them to workgroups and roles.
       Process Design	Design Create and change process definitions and artifacts
