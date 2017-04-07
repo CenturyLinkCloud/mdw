@@ -79,6 +79,7 @@ A local project is useful if you want to debug your custom Java source code and 
 ##### Create a Workflow Package:
 - The top-level branches in the Process Explorer project tree represent workflow packages.  Your work should be incorporated in a dedicated package, which will be used for managing resources and for insulating your work from that of other users.  For further details refer to the Eclipse Cheat Sheet (Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning).
 - Create your workflow package by right-clicking on your project and selecting New > MDW Package.  Note: make sure your package name complies with Java package naming requirements (eg: no spaces) since it will contain dynamic Java resources.  Leave the Workgroup dropdown blank.
+
    ![xml formatter](images/mdwWorkflowPackage.png)
 
 ##### Create the Service Process:
