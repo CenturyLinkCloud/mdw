@@ -2,7 +2,7 @@
 
 ## MDW
 
-### Developer Setup
+### Developer Setup 
 1. Prerequisites
  - Eclipse Neon for JavaEE Developers:                              
    [http://www.eclipse.org/downloads]([http://www.eclipse.org/downloads)
