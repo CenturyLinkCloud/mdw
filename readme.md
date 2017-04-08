@@ -46,6 +46,7 @@
 4. Build the Projects
    - Window > Show View > Other > Gradle  > Gradle Tasks
      Select the mdw project and Select Show all Tasks. Expand Other folder in mdw project and double-click the "buildAll" task
+     (Note: On Mac, run `gradle buildAll` from the command-line instead, followed by refreshing all projects in Eclipse.)
 
 5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
    
@@ -70,6 +71,7 @@
 
 7. Run
    - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
+     (Note: on Mac it's necessary to right-click on the mdw-hub project in Eclipse and manually add the 'web' folder to the root of the Deployment Assembly: Properties > Deployment Assembly.)
    - Check MDWHub access:                                                
      http://localhost:8080/mdw
    
