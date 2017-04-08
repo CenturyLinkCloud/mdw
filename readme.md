@@ -30,25 +30,32 @@
    - Command-line Git:  
      `git clone https://github.com/CenturyLinkCloud/mdw.git`
    - in Eclipse:  
-     Import the project into your Eclipse workspace:  
+     Import the projects into your Eclipse workspace:  
      File > Import > General > Existing Projects into Workspace
    
-3. Set up npm and Bower (One-time step)
+3. Set up npm and bower (One-time step)
    - Install NodeJS:                                                                     
      [https://nodejs.org/en/download/current](https://nodejs.org/en/download/current)
    - Open a command prompt in the mdw-hub project directory
     ```
-    run npm install
-    run npm install -g grunt-cli
-    run npm install -g bower
+    npm install
+    npm install -g grunt-cli
+    npm install -g bower
+    bower install
    ```
-4. Build the Project
+4. Build the Projects
    - Window > Show View > Other > Gradle  > Gradle Tasks
      Select the mdw project and Select Show all Tasks. Expand Other folder in mdw project and double-click the "buildAll" task
+   - (On Mac): Run `gradle buildAll` from the command-line instead, followed by refreshing all projects in Eclipse.
 
 5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
-   
-6. Deploy on Tomcat in Eclipse
+
+6. Edit configuration files to suit local environment:
+   - mdw/config/mdw.properties
+   - mdw/config/access.yaml
+   - mdw/config/seed_users.json
+   - (On Linux or Mac): Copy mdw-common/META-INF/mdw/spring/application-context.xml to mdw/config/spring/application-context.xml, and edit so that ActiveMQ dataDirectory points to a writeable location.
+7. Deploy on Tomcat in Eclipse
    - Edit mdw/config/mdw.properties to suit your environment.
    - Edit mdw/config/access.yaml to set devUser to yourself.
    - In Eclipse Servers view, right-click and select New > Server  
@@ -67,12 +74,13 @@
     -Xms512m -Xmx1024m -XX:MaxPermSize=256m
     ```
 
-7. Run
+8. Run
    - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
+   - (On Mac): Right-click on the mdw-hub project in Eclipse and manually add the 'web' folder to the root of the Deployment Assembly: Properties > Deployment Assembly.
    - Check MDWHub access:                                                
      http://localhost:8080/mdw
    
-8. Code Format
+0. Code Format
    - Java, Groovy, Javascript and JSON:
      The Eclipse code formatters are version-controlled in .settings/org.eclipse.jdt.core.prefs, so as long as you're up-to-date with Git you should automatically have the correct settings. If you want to use them for another project, you can download and import them from these formatter files:   
      - Java/Groovy: https://github.com/CenturyLinkCloud/mdw/docs/MDWCodeFormatter.xml   
@@ -88,7 +96,7 @@
      - YAML:                                           
       [yaml formatter](docs/help/images/yamlformat.png)
 
-9. Designer Development
+0. Designer Development
    - The designer codebase is contained in the following projects:       
      - com.centurylink.mdw.designer (gradle parent)
      - com.centurylink.mdw.designer.core
