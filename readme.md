@@ -30,10 +30,10 @@
    - Command-line Git:  
      `git clone https://github.com/CenturyLinkCloud/mdw.git`
    - in Eclipse:  
-     Import the project into your Eclipse workspace:  
+     Import the projects into your Eclipse workspace:  
      File > Import > General > Existing Projects into Workspace
    
-3. Set up npm and Bower (One-time step)
+3. Set up npm and bower (One-time step)
    - Install NodeJS:                                                                     
      [https://nodejs.org/en/download/current](https://nodejs.org/en/download/current)
    - Open a command prompt in the mdw-hub project directory
@@ -43,7 +43,7 @@
     npm install -g bower
     bower install
    ```
-4. Build the Project
+4. Build the Projects
    - Window > Show View > Other > Gradle  > Gradle Tasks
      Select the mdw project and Select Show all Tasks. Expand Other folder in mdw project and double-click the "buildAll" task
 
