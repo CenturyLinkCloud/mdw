@@ -4,3 +4,5 @@ jdk:
 before_script: cd mdw
 before_install:
   - chmod +x ./mdw/gradlew
+notifications:
+  slack: mdwcore:9WSiZQJitrLtiiU5BO29Or4R
