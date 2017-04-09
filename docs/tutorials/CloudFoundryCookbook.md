@@ -8,7 +8,7 @@
    http://www.eclipse.org/downloads
  - Required Plugins:
      - MDW Designer:                                                                         
-      [Installing and Upgrading the MDW Plugin for Eclipse](../designer/InstallAndUpgradeMDWPluginforEclipse.md)
+       http://centurylinkcloud.github.io/mdw/docs/designer/updateSite
      - Buildship Plugin:   
        http://download.eclipse.org/buildship/updates/e46/releases/2.x
  - Running MDW Locally:

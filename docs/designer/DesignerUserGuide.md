@@ -63,12 +63,13 @@
   Administrators	Add users and assign them to workgroups and roles.
   ProcessAdmin	Create and change process definitions and artifacts.
   System Admins	Launch processes and configure environments.
-
-    	Roles:           Permissions:
-    	* User Admin     Add users and assign them to workgroups and roles.
-    	* Process Design Create and change process definitions and artifacts.
-    	* Group          Launch processes and configure environments.	 
-   	
+  
+  Roles           |   Permissions
+  ----------------|---------------
+  User Admin | Add users and assign them to workgroups and roles.
+  Process Design | Design Create and change process definitions and artifacts.
+  Group | Launch processes and configure environments.
+ 
 #### Creating Workflow Process
 - At the top level of the Process Explorer tree are workflow packages.  A package is simply a convenient way of grouping processes together.  You can create a new 
   package by clicking on the "New Package" toolbar button, second from the right at the top of Process Explorer.

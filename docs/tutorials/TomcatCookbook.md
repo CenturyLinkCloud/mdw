@@ -6,9 +6,15 @@
    http://www.eclipse.org/downloads
  - Required Plugins:
      - MDW Designer:                                                     
-     [Installing and Upgrading the MDW Plugin for Eclipse](../designer/InstallAndUpgradeMDWPluginforEclipse.md)
+       http://centurylinkcloud.github.io/mdw/docs/designer/updateSite
      - Buildship Plugin:   
        http://download.eclipse.org/buildship/updates/e46/releases/2.x
+       
+ - Recommended Plugins:
+     - Groovy:                                   
+       http://dist.springsource.org/snapshot/GRECLIPSE/e4.6
+     - Yaml:                                             
+       http://dadacoalition.org/yedit
  - Tomcat 8:
      - https://tomcat.apache.org
  - Chrome and Postman
@@ -132,29 +138,28 @@ A local project is useful if you want to debug your custom Java source code and 
 	*/
 	@Tracked(LogLevel.TRACE)
 	public class MyOrderValidatorActivity extends DefaultActivityImpl {
-	   	/**
-    	 	* Here's where the main processing for the activity is performed.
-    	 	*     
-    		 * @return the activity result (aka completion code)
-    	 	*/
-    		@Override
-    		public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
-        		loginfo("Validating order...");
-       			Document request = (Document) getVariableValue("request");
-        		Node orderIdNode = request.getFirstChild().getFirstChild().getNextSibling();
-        		String orderId = orderIdNode.getFirstChild().getNodeValue();
-        		setVariableValue("orderId", orderId);
-        		boolean valid = true;
-        		String msg = "Success";
-        		if(!orderIdNode.getLocalName().equals("orderId")){
-            			msg = "Missing order ID.";
-        		}
-        		valid = msg.equals("Success");
-        		setVariableValue("validationResult", msg);
-        		return valid;
-    		}
+	    /**
+    	    * Here's where the main processing for the activity is performed. 
+            * @return the activity result (aka completion code)
+    	    */
+    	    @Override
+    	    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        	loginfo("Validating order...");
+       		Document request = (Document) getVariableValue("request");
+      		Node orderIdNode = request.getFirstChild().getFirstChild().getNextSibling();
+      		String orderId = orderIdNode.getFirstChild().getNodeValue();
+       		setVariableValue("orderId", orderId);
+       		boolean valid = true;
+       		String msg = "Success";
+       		if(!orderIdNode.getLocalName().equals("orderId")){
+    		   msg = "Missing order ID.";
+        	}
+        	valid = msg.equals("Success");
+       		setVariableValue("validationResult", msg);
+       		return valid;
+    	    }
 	}
-```
+  ```
 - Now if you switch back to your process the new activity should appear in the Toolbox View.  From the toolbox, drag your activity onto the canvas and insert it into your process 
   flow between the Start and Stop activities.
   
@@ -203,13 +208,11 @@ Note: If you have already installed the Tomcat server from the previous step(s),
   
    ![xml formatter](images/addTomcatServer2.png)
  
- 
 - The final page of the New Server wizard is where you designate your workflow project to be deployed on the server.  After that, click Finish to create the server instance.
 - If the Servers view is not visible in your current perspective, from the menu select Window > Show View > Other > Server > Servers.  You should see your Tomcat 7 server in this view.  You can 
   double-click the server to edit its configuration.  Expand the Timeouts section, change the start timeout value to 3600 seconds, and hit Ctrl-S to save your changes.  Then close the editor.
    ![xml formatter](images/addTomcatServer3.png)
  
-
 - Before you start the server, you will need to add your MyWorkflow project to your server instance. Right click the server instance, select Add and Remove… and select the MyWorkflow from the 
   left pane and click the Add to move it to the right pane.
   
@@ -236,13 +239,12 @@ Note: If you have already installed the Tomcat server from the previous step(s),
 - On the Process tab in the launch dialog, select "Monitor Runtime Log" and "Process Instance Live View" to get a feel for how you can watch your process flow in real time.
    ![xml formatter](images/runPrcoess.png)
  
-
 ##### Populate the Input Variable:
-```xml
-       <order> 
-         <orderId>N12345678</orderId>
-       </order>
-```
+   ```XML
+   <order> 
+      <orderId>N12345678</orderId>
+   </order>
+   ```
 - Select the Variables tab in the launch dialog, and populate the request variable with the following content.
    ![xml formatter](images/runPrcoess2.png)
 
@@ -257,12 +259,12 @@ Note: If you have already installed the Tomcat server from the previous step(s),
 ##### Change Java Code and Rerun with a Breakpoint:
 - Change the Java source so that validation expects an order number that begins with a digit:
 
-```java
-        if (!orderIdNode.getLocalName().equals("orderId"))
-            msg = "Missing order ID.";
-        else if (!Character.isDigit(orderId.charAt(0)))
-            msg = "Order ID must begin with a digit.";
-```
+  ```java
+  if (!orderIdNode.getLocalName().equals("orderId"))      
+     msg = "Missing order ID.";
+  else if (!Character.isDigit(orderId.charAt(0)))
+     msg = "Order ID must begin with a digit.";
+  ```
 - Save your changes and run your process again to confirm that this time it fails validation with the appropriate validationResult message.  Note: In the real world Order IDs would likely be 
   unique for each request, so you may want to change the XML input on the process launch Variables tab to something other than the value remembered from the last launch.
   
@@ -284,10 +286,10 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 - Open the same process definition you started building in the sections above.  Add another String variable called employeeId.  Edit the code in your order validation activity to set employeeId
   from the request:
   
-```java
-    	String employeeId = orderIdNode.getNextSibling().getNextSibling().getFirstChild().getNodeValue();
-    	setVariableValue("employeeId", employeeId);
-```
+  ```java
+  String employeeId = orderIdNode.getNextSibling().getNextSibling().getFirstChild().getNodeValue();
+  setVariableValue("employeeId", employeeId);
+  ```
 - Drag the Document Web Service activity onto the design canvas and insert it downstream of Perform Validation.  Label the web service activity "Check Employee", and give it two separate 
   outcomes corresponding to true and false, just like the validation activity.
    ![xml formatter](images/process4.png)
@@ -300,40 +302,41 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   creating your own custom activity.  Double-click on the Check Employee activity and select the Script property tab.  Edit the prescript, adding the Groovy code below to return a request that
   includes employeeId (notice that in your script you can refer to variables directly by their name):
   
-```groovy  
-	return ''' <GetEmployee>
-      	  <sapId>''' + employeeId + '''</sapId>
-    	</GetEmployee>''';
-```
+  ```groovy  
+  return ''' <GetEmployee>
+    <sapId>''' + employeeId + '''</sapId>
+  </GetEmployee>''';
+  ```
 - Add new process variables – click the Process on the canvas and click Variables tab that is on the left navigation under the Design tab - to hold the service request 
   (name=employeeServiceRequest, type=com.centurylink.mdw.model.StringDocument) and response (name=employeeServiceResponse, type=org.w3c.dom.Document).  On the Design tab of the Check Employee 
   web service activity, select these new variables in the Request Variable and Response Variable dropdowns respectively.  Edit the postscript as follows (if you've installed the Groovy plugin   
   you'll get syntax highlighting and autocomplete):
     
-```java    
-	import org.w3c.dom.Node;
-       	import org.w3c.dom.Node;
-       	import org.w3c.dom.NodeList;
-       	NodeList nodes = employeeServiceResponse.getFirstChild().getChildNodes();
-	    String firstName = null;
-	    String lastName = null;
-	    for (int i = 0; i < nodes.getLength(); i++) {
-    		Node node = nodes.item(i);
-    		if ("firstName".equals(node.getLocalName()))
-        		firstName = node.getFirstChild().getNodeValue();
-    		else if ("lastName".equals(node.getLocalName()))
-        		lastName = node.getFirstChild().getNodeValue();
-	    }
-	    if (firstName != null && lastName != null) {
-    	      runtimeContext.logInfo 'Found employee: ' + firstName + ' ' + lastName;
-            return true;
-        }
-        else {
-            runtimeContext.logInfo 'Employee not found: ' + employeeId;`
-            validationResult = 'Employee not found: ' + employeeId;
-            return false;
-        }
-```
+  ```java    
+  import org.w3c.dom.Node;
+  import org.w3c.dom.Node;
+  import org.w3c.dom.NodeList;
+  NodeList nodes = employeeServiceResponse.getFirstChild().getChildNodes();
+  String firstName = null;
+  String lastName = null;
+  
+  for (int i = 0; i < nodes.getLength(); i++) {
+  	Node node = nodes.item(i);
+    	if ("firstName".equals(node.getLocalName()))
+        	firstName = node.getFirstChild().getNodeValue();
+    	else if ("lastName".equals(node.getLocalName()))
+        	lastName = node.getFirstChild().getNodeValue();
+  }
+  if (firstName != null && lastName != null) {
+        runtimeContext.logInfo 'Found employee: ' + firstName + ' ' + lastName;
+	return true;
+  }
+  else {
+       runtimeContext.logInfo 'Employee not found: ' + employeeId;`
+       validationResult = 'Employee not found: ' + employeeId;
+       return false;
+  }
+  ```
 ##### Save and Run Your Process:
 - Save the modified process.  When prompted, elect to "Save as new minor version".  Whenever a process design that has runtime instances is changed structurally (new activities or transitions),
   it is highly recommended that you increment the version number so that Designer can correctly display runtime data in the process instance view.
@@ -341,18 +344,17 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   (with a digit as the first character), and also your CenturyLink SAP ID for the employeeId. You can also use your workstationId (CUID) in place of the employeeId but make sure to change the 
   code that references the employeeId to workstationId. Click Ok to close it and click Run on the configuration dialog to run it.
   
-```xml
-	<order>
-	   <orderId>0123456</orderId>
-	   <employeeId>DHO115360</employeeId>
-	</order>
-```
+  ```xml
+  <order>
+     <orderId>0123456</orderId>
+     <employeeId>DHO115360</employeeId>
+  </order>
+  ```
 - Right-click again on a blank spot and select View Instances.  Double-click the instance to open it.  It should reflect that the service was invoked, your SAP ID was found, and the "true" 
   outcome from Check Employee should be traversed.  Double-click on the Check Employee activity in the process instance.  On the Instance property tab, double-click on the instance row to 
   display the raw SOAP request and response:
    ![xml formatter](images/soapReqestResponse.png)
   
- 
 #### 5. Expose Your Process to External Systems
 
 ##### Designate Your Process as an MDW Service Process:
@@ -367,12 +369,12 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   or you can use your own 24x24 pixel image (right-click on your package and select New > Web Resource > Binary > GIF > Browse for file).  Also, this time since you're creating an activity 
   to use in multiple places, add the following pagelet definition for configurable attributes.
   
-```xml
- 	<PAGELET>
-		<TEXT NAME="responseCode" LABEL="Response Code" VW="100"/>
-		<TEXT NAME="responseMessage" LABEL="Message" VW="300"/>
-	</PAGELET>
-```  
+  ```xml
+  <PAGELET>
+	<TEXT NAME="responseCode" LABEL="Response Code" VW="100"/>
+	<TEXT NAME="responseMessage" LABEL="Message" VW="300"/>
+  </PAGELET>
+  ```  
      ![xml formatter](images/newActivity.png)
   
 - Click Next.  Give a name for the class and click Finish.
@@ -381,37 +383,37 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 - Make your activity implementor source code look something like this:
 
 ```java      
-	  package MyPackage;
-  	  import com.centurylink.mdw.activity.ActivityException;
-	  import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-	  import com.centurylink.mdw.common.utilities.timer.Tracked;
-	  import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
-	  import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-	  import com.centurylink.mdw.xml.DomHelper;
-	   
-	  @Tracked(LogLevel.TRACE)
-	  public class MyOrderResponseBuilder extends DefaultActivityImpl {
-          @Override
-          public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {      
-             try {
-               String code = getAttributeValueSmart("responseCode");
-               if (code == null)
-                  throw new ActivityException("Missing attribute: responseCode");
-                  
-               String resString = "<OrderValidationResponse orderId=\"" + getVariableValue("orderId") + "\">\n"+ "  <Code>" + code + "</Code>\n";                  
-               if (!code.equals("0"))
-                   resString += "  <Message>" + getAttributeValueSmart("responseMessage")+ "</Message>\n";
-                   
-               resString += "</OrderValidationResponse>";
-               setVariableValue("response", DomHelper.toDomDocument(resString));
-               }
-               catch (Exception ex) {
-                   throw new ActivityException(ex.getMessage(), ex);
-               }
-               return null;
-    	     }
-	  }
-```
+package MyPackage;
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
+import com.centurylink.mdw.common.utilities.timer.Tracked;
+import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import com.centurylink.mdw.xml.DomHelper;                                  
+
+@Tracked(LogLevel.TRACE)
+public class MyOrderResponseBuilder extends DefaultActivityImpl {
+	@Override
+	public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {      
+            try {
+                String code = getAttributeValueSmart("responseCode");
+                if (code == null)
+                    throw new ActivityException("Missing attribute: responseCode");                                                
+		    
+                String resString = "<OrderValidationResponse orderId=\"" + getVariableValue("orderId") + "\">\n"+ "  <Code>" + code + "</Code>\n";                  
+                if (!code.equals("0"))
+                    resString += "  <Message>" + getAttributeValueSmart("responseMessage")+ "</Message>\n";
+
+                resString += "</OrderValidationResponse>";
+                setVariableValue("response", DomHelper.toDomDocument(resString));
+            }
+            catch (Exception ex) {
+                throw new ActivityException(ex.getMessage(), ex);
+            }
+            return null;
+    	}
+    }
+  ```
 - Now rework your process so that the three possible outcomes all generate a response using this activity.  For the two error paths set the Response Code to be non-zero in the Design tab.
   Since the validation result is kept in a process variable, you can use a Java Expression as illustrated below to parameterize the Message attribute value.
   
@@ -450,14 +452,12 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 - Edit the content of your WSDL to look something like the following (with appropriate substitutions based on your request and response).
 
 ```xml    
-	<?xml version="1.0" encoding="UTF-8"?>	
-        <wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:tns="http://mdw-servicemix.centurylink.com"
-        targetNamespace="http://mdw-servicemix.centurylink.com">
-        <wsdl:types>
+ <?xml version="1.0" encoding="UTF-8"?>	
+ <wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://mdw-servicemix.centurylink.com"
+     targetNamespace="http://mdw-servicemix.centurylink.com">
+     <wsdl:types>
         <xsd:schema>
           <xsd:element name="MyOrderValidationRequest">
         <xsd:complexType>
@@ -517,7 +517,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
         <soap:address location="${mdw.services.url}/SOAP/MyPackage/MyOrderValidation.wsdl" />
       </wsdl:port>
       </wsdl:service>
-      </wsdl:definitions>
+  </wsdl:definitions>
 ```    
 - Note that the endpoint URL is parameterized in the WSDL <soap:address> so at runtime it will be substituted with the appropriate base URL for the specific environment where it's served from
 - Once you save the WSDL you should be able to access it in your browser from a location similar to: [http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl](http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl)
@@ -530,16 +530,16 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   the environment where you're testing).  The submittal URL for HTTP Poster defaults to the MDW REST endpoint, so change the context root from REST to SOAP as
     illustrated in the screenshot below.  Populate the Message Body with something like the following:
     
-```xml
-       <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-       <soapenv:Header/>
-         <soapenv:Body>
-           <GetEmployee>
-             <workstationId>ab64967</workstationId>
-           </GetEmployee>
-         </soapenv:Body>
-       </soapenv:Envelope>
-```
+  ```xml
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Header/>
+  <soapenv:Body>
+     <GetEmployee>
+       <workstationId>ab64967</workstationId>
+     </GetEmployee>
+  </soapenv:Body>
+  </soapenv:Envelope>
+  ```
 - Click on the Send Message button, and your service process should be executed and you should see a SOAP response like in this screenshot: 
 
    ![xml formatter](images/soapMessageEndpoint.png)
@@ -547,11 +547,11 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 ##### Invoke Your Service through JMS:
 - To invoke through JMS use the raw payload without the SOAP envelope:
 
-```xml	
-	<GetEmployee>
-           <workstationId>ab64967</workstationId>
-      	</GetEmployee>
-``` 
+  ```xml	
+  <GetEmployee>
+     <workstationId>ab64967</workstationId>
+  </GetEmployee>
+  ``` 
 - On the MDWHub System tab you can use the JMS Messenger as illustrated below.   
    ![xml formatter](images/jmsMessageEndpoint.png)
    
