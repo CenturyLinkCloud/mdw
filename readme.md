@@ -60,7 +60,7 @@
    - Edit mdw/config/access.yaml to set devUser to yourself.
    - In Eclipse Servers view, right-click and select New > Server  
      **Important**: Select the Apache > Tomcat 8.0 (MDW) runtime
-     and make you have a jdk 1.8 installed and added it to your class path.
+     and make sure you have a jdk 1.8 installed and added it to your class path.
    - Select the mdw-hub module in the Add/Remove wizard page
    - Double-click on the server and set the startup timeout to something large (like 3600s)
    - Under MDW Server Options set the following Java Options (appropriate for your workspace):
