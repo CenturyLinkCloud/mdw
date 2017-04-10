@@ -1,8 +1,4 @@
-![xml formatter](docs/help/images/mdw_sm.png)
-
-## MDW
-
-### Developer Setup 
+### Core Developer Setup 
 1. Prerequisites
  - Eclipse Neon for JavaEE Developers:                              
    [http://www.eclipse.org/downloads]([http://www.eclipse.org/downloads)
@@ -67,11 +63,11 @@
  
     ```	
     -Dmdw.runtime.env=dev  
-    -Dmdw.config.location=c:/workspaces/MDW/mdw/config  
-    -Djavax.net.ssl.trustStore=c:/workspaces/MDW/mdw/deploy/certs/CenturyLinkQCA.jks  
+    -Dmdw.config.location=c:/workspaces/mdw/mdw/config  
+    -Djavax.net.ssl.trustStore=c:/workspaces/mdw/mdw/deploy/certs/CenturyLinkQCA.jks  
     -Djava.net.preferIPv4Stack=true  
     -Dmdw.runtime.env=dev
-    -Xms512m -Xmx1024m -XX:MaxPermSize=256m
+    -Xms512m -Xmx1024m
     ```
 
 8. Run
@@ -80,13 +76,13 @@
    - Check MDWHub access:                                                
      http://localhost:8080/mdw
    
-0. Code Format
-   - Java, Groovy, Javascript and JSON:
+### Code Format
+1. Java, Groovy, Javascript and JSON:
      The Eclipse code formatters are version-controlled in .settings/org.eclipse.jdt.core.prefs, so as long as you're up-to-date with Git you should automatically have the correct settings. If you want to use them for another project, you can download and import them from these formatter files:   
      - Java/Groovy: https://github.com/CenturyLinkCloud/mdw/docs/MDWCodeFormatter.xml   
      - Javascript/JSON: https://github.com/CenturyLinkCloud/mdw/docs/mdw-javascript-formatter.xml   
      - Please note that we use **spaces instead of tabs** for indenting all source code.
-   - XML, HTML and YAML:  
+2. XML, HTML and YAML:  
      These have to be configured manually in Eclipse.  For all formats we use **spaces instead of tabs**.
      The following screenshots illustrate how to set these:  
      - XML:                                                    
@@ -96,19 +92,40 @@
      - YAML:                                           
       [yaml formatter](docs/help/images/yamlformat.png)
 
-0. Designer Development
-   - The designer codebase is contained in the following projects:       
+### Designer
+1. Designer Projects:       
      - com.centurylink.mdw.designer (gradle parent)
      - com.centurylink.mdw.designer.core
      - com.centurylink.mdw.designer.feature
      - com.centurylink.mdw.designer.rcp
      - com.centurylink.mdw.designer.ui
 
+2. Build and Run:
    - Build Designer
-     - These projects use the MDW 5.5 versions of mdw-common as mdw-schemas as dependencies, so to you need these MDW 5.5 projects locally or to have their jars available through a repository.
+     - These projects use the MDW 5.5 versions of mdw-common as mdw-schemas as dependencies, so to build you need these MDW 5.5 projects locally or to have their jars available through a repository.
      - Assuming you've got the MDW 5.5 source code locally, in com.centurylink.mdw.designer/gradle.properties, set mdwVersion and mdwOutputDir to point to this location.
      - (One time) Run an MDW 5.5 build in its workspace and then in com.centurylink.mdw.designer.core, run the gradle task getMdwCommon to copy in the 5.5 dependencies.
      - (Subsequently) When changes are made to common code in MDW 5.5 and an Eclipse build is performed in that workspace, running devGetMdwCommon will incrementally copy these.
      - Now an Eclipse build of the Designer projects should show no errors.
    - Debug Designer
      - To run through Eclipse, right-click on project com.centurylink.mdw.designer.ui and select Debug As > Eclipse Application.
+
+### Documentation
+1. Source
+   - Documentation is in the /docs directory of the master branch on GitHub
+   - Optionally you can import the /docs project into your Eclipse workspace for editing these artifacts.
+2. Local GitHub Pages
+   - To test doc access before pushing, and to make changes to default layouts and styles, you can build through [Jekyll](https://help.github.com/articles/about-github-pages-and-jekyll/) locally.
+   - Install Ruby 2.1.0 or higher and add its bin directory to your PATH.
+   - Install Bundler:
+     ```
+	 gem install bundler
+	 ```
+   - Download the CURL CA Certs from http://curl.haxx.se/ca/cacert.pem and save in your Ruby installation directory.
+   - Set environment variable SSL_CERT_FILE to point to this this cacert.pem file location.
+   - Build GitHub pages site locally (in the /docs directory):
+     ```
+	 bundle exec jekyll serve --incremental
+	 ```
+   - Access locally in your browser: 
+	  

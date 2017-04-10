@@ -21,17 +21,22 @@
    
 7 - Commit and push these changes to Git.
 
-8 - Perform the Jenkins build (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
+8 - Run all tests locally (TODO: on build box -- depends on issue #14).
+    - Drools tests are known to fail in mdw6.  All others must pass.
+
+9 - Perform the Jenkins build (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
     - MDW6-Build
     - Review console output for errors.
 
-9 - Publish using Jenkins (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
+10 - Publish using Jenkins (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
     - MDW6-Publish-Formal (or -Snapshot)
     - Review console output for errors.
 
-10 - On GitHub:
+11 - On GitHub:
   - Close any open issues delivered with this build.
   - Create a milestone marker for the next upcoming build.
   - Assign any undelivered issues for this build's milestone to the next build's milestone.
-  - Close this build's milestone in GitHub.     
+  - Close this build's milestone in GitHub.
+  
+12 - TODO: Release Notes  
     
