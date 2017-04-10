@@ -7,5 +7,3 @@ Servers/
 testResults/
 npm-debug.log
 notes.txt
-Gemfile.lock
-_site/

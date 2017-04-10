@@ -125,7 +125,7 @@
    - Set environment variable SSL_CERT_FILE to point to this this cacert.pem file location.
    - Build GitHub pages site locally (in the /docs directory):
      ```
-	 bundle exec jekyll serve --incremental
+	 bundle exec jekyll serve --incremental --baseurl ''
 	 ```
    - Access locally in your browser: 
 	  

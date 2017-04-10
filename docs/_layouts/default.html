@@ -15,7 +15,7 @@
       <h1 class="project-name">{{ site.title | default: site.github.repository_name }}</h1>
      -->
       <div style="float:left;position:relative;top:-10px;">
-        <a href="/"><img src="/assets/images/mdw.png" alt="mdw"></a>
+        <a href="{{ site.baseurl }}"><img src="{{ site.baseurl }}/assets/images/mdw.png" alt="mdw"></a>
         <h2 class="project-tagline">{{ site.description | default: site.github.project_tagline }}</h2>
       </div>
       {% if site.github.is_project_page %}
