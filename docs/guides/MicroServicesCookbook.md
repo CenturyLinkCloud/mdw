@@ -114,40 +114,39 @@ A local project is useful if you want to debug your custom Java source code and 
 - With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
 
 - Update the generated Java source code to resemble the following:
-  ```java
-  package MyService;
-  import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-  import com.centurylink.mdw.common.utilities.timer.Tracked;
-  import org.w3c.dom.Document;
-  import org.w3c.dom.Node;
-  import com.centurylink.mdw.activity.ActivityException;
-  import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
-  import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-  @Tracked(LogLevel.TRACE)
-  public class MyOrderValidatorActivity extends DefaultActivityImpl {
-      @Override
-      public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
-      	  loginfo("Validating order...");
-	  boolean valid = false;
-	  try {
-	      JSONObject jsonObj = (JSONObject) getVariableValue("request");
-	      String orderId = (String) jsonObj.get("orderId");
-	      setVariableValue("orderId", orderId);
-	      String msg = "Success";
+```java
+package MyService;
+import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;  
+import com.centurylink.mdw.common.utilities.timer.Tracked;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+@Tracked(LogLevel.TRACE)
+public class MyOrderValidatorActivity extends DefaultActivityImpl {
+	@Override
+	public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+		loginfo("Validating order...");
+	  	boolean valid = false;
+	  	try {
+	      		JSONObject jsonObj = (JSONObject) getVariableValue("request");
+	      		String orderId = (String) jsonObj.get("orderId");
+	      		setVariableValue("orderId", orderId);
+	      		String msg = "Success";
 	      
-	      if (!jsonObj.has("orderId")){
-		  msg = "Missing order ID.";
-   	      }
-              else if (!Character.isDigit(orderId.charAt(0))) {
-		    msg = "Order ID must begin with a digit.";	        
-              }
-	      valid = msg.equals("Success");
-	      setVariableValue("validationResult", msg);
-
-	  } catch (Exception ex) {
-	  	throw new ActivityException(ex.getMessage(), ex);
-	  }
-	  return valid;
+	      		if (!jsonObj.has("orderId")){
+		  		msg = "Missing order ID.";
+   	      		}
+              		else if (!Character.isDigit(orderId.charAt(0))) {
+		    		msg = "Order ID must begin with a digit.";	        
+              		}
+	      		valid = msg.equals("Success");
+	      		setVariableValue("validationResult", msg);
+	  	} catch (Exception ex) {
+	  		throw new ActivityException(ex.getMessage(), ex);
+	  	}
+	  	return valid;
 	}
   }
 
