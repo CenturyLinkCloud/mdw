@@ -115,6 +115,8 @@ A local project is useful if you want to debug your custom Java source code and 
 
 - Update the generated Java source code to resemble the following:
 ```java
+
+
 package MyService;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;  
 import com.centurylink.mdw.common.utilities.timer.Tracked;
@@ -128,20 +130,20 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
 	@Override
 	public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
 		loginfo("Validating order...");
-	  	boolean valid = false;
-	  	try {
-	      		JSONObject jsonObj = (JSONObject) getVariableValue("request");
+		boolean valid = false;
+		try {
+			JSONObject jsonObj = (JSONObject) getVariableValue("request");
 	      		String orderId = (String) jsonObj.get("orderId");
 	      		setVariableValue("orderId", orderId);
 	      		String msg = "Success";
 	      
 	      		if (!jsonObj.has("orderId")){
-		  		msg = "Missing order ID.";
+				msg = "Missing order ID.";
    	      		}
-              		else if (!Character.isDigit(orderId.charAt(0))) {
+            		else if (!Character.isDigit(orderId.charAt(0))) {
 		    		msg = "Order ID must begin with a digit.";	        
-              		}
-	      		valid = msg.equals("Success");
+            		}
+			valid = msg.equals("Success");
 	      		setVariableValue("validationResult", msg);
 	  	} catch (Exception ex) {
 	  		throw new ActivityException(ex.getMessage(), ex);
@@ -149,7 +151,6 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
 	  	return valid;
 	}
   }
-
   ```
 - Now if you switch back to your process the new activity should appear in the Toolbox View. From the toolbox, drag your activity onto the canvas and insert it into your process flow between the Start and Stop activities.
 - Tip: To draw a link (or transition in MDW terminology) between activities on the designer canvas, hold down the Shift key on your keyboard, Click on the upstream activity, and continue holding down the mouse left click button while dragging the cursor to the downstream activity (“shift-click-drag”).
