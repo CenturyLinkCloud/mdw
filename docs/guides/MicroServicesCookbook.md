@@ -127,24 +127,24 @@ A local project is useful if you want to debug your custom Java source code and 
 
 	@Tracked(LogLevel.TRACE)
 	public class MyOrderValidatorActivity extends DefaultActivityImpl {
-    	    @Override
-    	    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
-        	loginfo("Validating order...");
+		@Override
+		public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+		loginfo("Validating order...");
 		boolean valid = false;
-       		try {
+       	try {
 			JSONObject jsonObj = (JSONObject) getVariableValue("request");
-	      		String orderId = (String) jsonObj.get("orderId");
-	      		setVariableValue("orderId", orderId);
-	      		String msg = "Success";
+	      	String orderId = (String) jsonObj.get("orderId");
+	      	setVariableValue("orderId", orderId);
+	      	String msg = "Success";
 	      
-	      		if (!jsonObj.has("orderId")){
+	      	if (!jsonObj.has("orderId")){
 				msg = "Missing order ID.";
-   	      		}
-            		else if (!Character.isDigit(orderId.charAt(0))) {
+   	      	}
+            	else if (!Character.isDigit(orderId.charAt(0))) {
 		    		msg = "Order ID must begin with a digit.";	        
-            		}
+            }
 			valid = msg.equals("Success");
-	      		setVariableValue("validationResult", msg);
+	      	setVariableValue("validationResult", msg);
 	  	} catch (Exception ex) {
 	  		throw new ActivityException(ex.getMessage(), ex);
 	  	}
