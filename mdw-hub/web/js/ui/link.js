@@ -21,7 +21,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   Link.CR = 8;
   Link.LINK_WIDTH = 3;
   Link.LINK_HIT_WIDTH = 8;
-  Link.CORR = 3; // offset for link start points (TODO: why?)
+  Link.CORR = 3; // offset for link start points
+  Link.LABEL_CORR = 3;
 
   Link.EVENTS = {
     START: {color: 'green'},
@@ -92,7 +93,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     var labelText = this.transition.event === 'FINISH' ? '' : this.transition.event + ':';
     labelText += this.transition.resultCode ? this.transition.resultCode : '';
     if (labelText.length > 0) {
-      this.label = new Label(this, labelText, { x: this.display.lx, y: this.display.ly }, DC.DEFAULT_FONT);
+      this.label = new Label(this, labelText, { x: this.display.lx, y: this.display.ly + Link.LABEL_CORR }, DC.DEFAULT_FONT);
       this.label.prepareDisplay();
     }
 
