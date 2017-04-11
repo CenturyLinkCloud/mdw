@@ -115,21 +115,23 @@ A local project is useful if you want to debug your custom Java source code and 
 
 - Update the generated Java source code to resemble the following:
 ```java
-package MyService;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;  
-import com.centurylink.mdw.common.utilities.timer.Tracked;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
-import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-@Tracked(LogLevel.TRACE)
-public class MyOrderValidatorActivity extends DefaultActivityImpl {
-	@Override
-	public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
-		loginfo("Validating order...");
+	package MyService;
+	import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
+	import com.centurylink.mdw.common.utilities.timer.Tracked;
+	import com.centurylink.mdw.java.JavaExecutionException;
+	import com.centurylink.mdw.activity.ActivityException;
+	import com.centurylink.mdw.model.request.Request;
+	import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+	import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+	import org.json.JSONObject;
+
+	@Tracked(LogLevel.TRACE)
+	public class MyOrderValidatorActivity extends DefaultActivityImpl {
+    	    @Override
+    	    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        	loginfo("Validating order...");
 		boolean valid = false;
-		try {
+       		try {
 			JSONObject jsonObj = (JSONObject) getVariableValue("request");
 	      		String orderId = (String) jsonObj.get("orderId");
 	      		setVariableValue("orderId", orderId);
