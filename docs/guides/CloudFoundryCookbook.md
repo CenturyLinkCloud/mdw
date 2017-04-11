@@ -1,6 +1,4 @@
- 
-![xml formatter](images/mdw_sm.png)
-   
+
 ### MDW Cloud Foundry Cookbook
 
 ### Prerequisites

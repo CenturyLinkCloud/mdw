@@ -1,6 +1,5 @@
- ![xml formatter](images/mdw_sm.png)
-   
 ### MDW Tomcat Cookbook
+
 ### Prerequisites
  - Eclipse Neon for JavaEE Developers:  
    http://www.eclipse.org/downloads
