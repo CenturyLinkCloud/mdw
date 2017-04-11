@@ -98,6 +98,71 @@ A local project is useful if you want to debug your custom Java source code and 
 
    ![xml formatter](images/saveMyOrderProcess.png)
 
+##### Create a Dynamic Java Custom Activity:
+- Right-click on your package in Process Explorer and select New > Activity > General Activity.
+- On the first page of the wizard, enter a label to identify your activity in the Toolbox view.
+
+   ![xml formatter](images/myOrderValidator.png)
+   
+- Click Next and enter a class name for your activity implementor. The Java package name is the same as your workflow package name.
+
+   ![xml formatter](images/myOrderValidatorActivity.png)
+   
+- When you click Finish the Java code for a skeleton implementation is generated. You’ll also see the Java class under your package in Process Explorer. 
+- This source code resides under src/main/workflow and is known as a Dynamic Java workflow asset. It’s dynamic because it can be changed without needing any kind of application deployment. Naturally there are rigorous controls in place to prevent unauthorized modifications.
+- In step 1 you were granted permissions in the MDW Demo environment to create and modify workflow assets.
+- With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
+
+- Update the generated Java source code to resemble the following:
+  ```java
+  package MyService;
+	import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
+	import com.centurylink.mdw.common.utilities.timer.Tracked;
+	import org.w3c.dom.Document;
+	import org.w3c.dom.Node;
+	import com.centurylink.mdw.activity.ActivityException;
+	import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+	import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+	/**
+	* MDW general activity.
+	*/
+	@Tracked(LogLevel.TRACE)
+	public class MyOrderValidatorActivity extends DefaultActivityImpl {
+	    /**
+    	    * Here's where the main processing for the activity is performed. 
+            * @return the activity result (aka completion code)
+    	    */
+    	    @Override
+    	    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        	loginfo("Validating order...");
+       		Document request = (Document) getVariableValue("request");
+      		Node orderIdNode = request.getFirstChild().getFirstChild().getNextSibling();
+      		String orderId = orderIdNode.getFirstChild().getNodeValue();
+       		setVariableValue("orderId", orderId);
+       		boolean valid = true;
+       		String msg = "Success";
+       		if(!orderIdNode.getLocalName().equals("orderId")){
+    		   msg = "Missing order ID.";
+        	}
+        	valid = msg.equals("Success");
+       		setVariableValue("validationResult", msg);
+       		return valid;
+    	    }
+	}
+  ```
+- Now if you switch back to your process the new activity should appear in the Toolbox View. From the toolbox, drag your activity onto the canvas and insert it into your process flow between the Start and Stop activities.
+- Tip: To draw a link (or transition in MDW terminology) between activities on the designer canvas, hold down the Shift key on your keyboard, Click on the upstream activity, and continue holding down the mouse left click button while dragging the cursor to the downstream activity (“shift-click-drag”).
+- Your activity can be dragged like this and used in other processes designed by other users. Actually the proper term in MDW for this reusable element in the Toolbox is activity implementor. This conveys the idea that it’s actually a template to be dragged and configured as an activity in the canvas, and it also conveys the fact that it always corresponds to a Java class. To take this reuse concept a step further, your activity implementor can be made discoverable so that it can easily be imported into other environments and reused across domains. If you click on the light bulb icon at the top of the Toolbox you’ll get an idea how items in the palette can be imported from a file or discovered in the corporate repository.
+- Double click the activity in the canvas, and in its Definition property tab change the label to something like “Validate Order”. When you click back on the canvas the activity reflects its new label.
+
+   ![xml formatter](images/myOrderValidatorActivity2.png)
+   
+- Note: If you select the Design property tab for your activity you’ll see that it’s blank. A non-trivial activity would allow certain aspects (such as endpoint URLs) to be configurable, so that it could readily be reused. For example, take a look at the Design tab for the Start activity. You control what appears on the Design tab through the pagelet XML for the activity implementor. In the creation wizard we left the pagelet XML blank, so the Design tab for our activity is empty. But to continue with the example of the start activity, find the Process Start icon in the Toolbox and view its Design tab (for the implementor, not the activity on the canvas). This gives you an idea of how the pagelet XML relates to the fields on the Design tab for the activity user. Since we’re on the subject you may be interested to know how you can customize the icon for your activity implementor. On the Definition tab you can choose one of the built-in shapes, or more flexibly choose any GIF, JPG or PNG asset that you can easily add to your workflow package.
+
+##### Add Multiple Activity Outcomes:
+- Drag a Process Finish activity from the Toolbox, and add another outbound transition from “Validate Order”. Assign Result Code values of “true” and “false” to the respective transitions as illustrated below. Save your process definition. The value passed in setReturnCode() in your activity’s execute() method dictates which of these two paths will be.
+
+   ![xml formatter](images/myOrderValidatorActivity3.png)
 
 ##### Get Your Server Running:
 - Depending on which supported container you're using, you can follow one of the server setup exercises.  You'll need to follow the steps from one of these guides to the point where MDW is deployed and you're able to start and stop your server from the Eclipse Servers view. 
