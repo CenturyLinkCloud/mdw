@@ -1,6 +1,3 @@
-  
-![xml formatter](images/mdw_sm.png)
-   
 ### MDW Designer User Guide
 
 #### Getting Started with MDW Designer
