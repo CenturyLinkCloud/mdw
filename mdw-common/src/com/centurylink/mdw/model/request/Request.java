@@ -99,6 +99,10 @@ public class Request implements Jsonable {
     public String getStatusMessage() { return statusMessage; }
     public void setStatusMessage(String message) { this.statusMessage = message; }
 
+    private JSONObject meta;
+    public JSONObject getMeta() { return meta; }
+    public void setMeta(JSONObject info) { meta = info; }
+
     public Request(Long id) {
         this.id = id;
     }

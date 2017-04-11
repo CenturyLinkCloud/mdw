@@ -15,9 +15,11 @@
  */
 package com.centurylink.mdw.listener;
 
+import java.util.HashSet;
 //import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -201,6 +203,7 @@ public class ListenerHelper {
         Response altResponse = null;
         Long eeid = 0L;
         Request requestDoc = new Request(eeid);
+        Set<String> reqMetaInfo = new HashSet<String>(metaInfo.keySet());
 
         try {
             for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
@@ -212,6 +215,9 @@ public class ListenerHelper {
             if (!StringHelper.isEmpty(request) && persistMessage(metaInfo)) {
                 eeid = createRequestDocument(request, 0L);
                 requestDoc.setId(eeid);
+
+                if (persistMeta(metaInfo))
+                    requestDoc.setMeta(createRequestMetaDocument(metaInfo, reqMetaInfo, eeid));
             }
 
 
@@ -228,9 +234,11 @@ public class ListenerHelper {
                     if (altResponse.getStatusCode() == null)
                         altResponse.setStatusCode(getResponseCode(metaInfo));
 
-                    if (persistMessage(metaInfo))
-                        createResponseDocument(altResponse, eeid);
-
+                    if (persistMessage(metaInfo)) {
+                        Long ownerId = createResponseDocument(altResponse, eeid);
+                        if (persistMeta(metaInfo))
+                            altResponse.setMeta(createResponseMetaDocument(metaInfo, reqMetaInfo, ownerId));
+                    }
                     return altResponse.getContent();
                 }
             }
@@ -251,7 +259,9 @@ public class ListenerHelper {
                     response.setStatusCode(getResponseCode(metaInfo));
 
                 if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
-                    createResponseDocument(response, eeid);
+                    Long ownerId = createResponseDocument(response, eeid);
+                    if (persistMeta(metaInfo))
+                        response.setMeta(createResponseMetaDocument(metaInfo, reqMetaInfo, ownerId));
                 }
 
                 return response.getContent();
@@ -261,7 +271,7 @@ public class ListenerHelper {
             logger.severeException(ex.getMessage(), ex);
             Response response = createErrorResponse(request, metaInfo, ex);
             try {
-                createResponseDocument(response, eeid);
+                createResponseMetaDocument(metaInfo, reqMetaInfo, createResponseDocument(response, eeid));
             }
             catch (Throwable e) {
                 logger.severeException("Failed to persist response", e);
@@ -288,7 +298,8 @@ public class ListenerHelper {
                 response = createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage()));
 
             try {
-                createResponseDocument(response, eeid);
+                createResponseMetaDocument(metaInfo, reqMetaInfo, createResponseDocument(response, eeid));
+
             }
             catch (Throwable e) {
                 logger.severeException("Failed to persist response", e);
@@ -361,7 +372,9 @@ public class ListenerHelper {
                 response.setStatusCode(getResponseCode(metaInfo));
 
             if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
-                createResponseDocument(response, eeid);
+                Long ownerId = createResponseDocument(response, eeid);
+                if (persistMeta(metaInfo))
+                    response.setMeta(createResponseMetaDocument(metaInfo, reqMetaInfo, ownerId));
             }
             return response.getContent();
         }
@@ -369,7 +382,7 @@ public class ListenerHelper {
             logger.severeException(ex.getMessage(), ex);
             Response response = createErrorResponse(request, metaInfo, ex);
             try {
-                createResponseDocument(response, eeid);
+                createResponseMetaDocument(metaInfo, reqMetaInfo, createResponseDocument(response, eeid));
             }
             catch (Throwable e) {
                 logger.severeException("Failed to persist response", e);
@@ -403,7 +416,7 @@ public class ListenerHelper {
             if (response.getStatusCode() == null)
                 response.setStatusCode(getResponseCode(metaInfo));
             try {
-                createResponseDocument(response, eeid);
+                createResponseMetaDocument(metaInfo, reqMetaInfo, createResponseDocument(response, eeid));
             }
             catch (Throwable ex) {
                 logger.severeException("Failed to persist response", ex);
@@ -429,6 +442,11 @@ public class ListenerHelper {
                 && !Listener.CONTENT_TYPE_DOWNLOAD.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
     }
 
+    private boolean persistMeta(Map<String,String> metaInfo) {
+        return !"true".equalsIgnoreCase(metaInfo.get(Listener.METAINFO_NO_META_PERSISTENCE))
+                && !Listener.CONTENT_TYPE_DOWNLOAD.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
+    }
+
     private Long createRequestDocument(String request, Long handlerId) throws EventHandlerException {
         String docType = isJson(request) ? JSONObject.class.getName() : XmlObject.class.getName();
         return createDocument(docType, request, OwnerType.LISTENER_REQUEST, handlerId).getDocumentId();
@@ -437,6 +455,71 @@ public class ListenerHelper {
     private Long createResponseDocument(Response response, Long ownerId) throws EventHandlerException {
         String docType = String.class.getName();
         return createDocument(docType, response, OwnerType.LISTENER_RESPONSE, ownerId).getDocumentId();
+    }
+
+    private JSONObject createRequestMetaDocument(Map<String,String> metaInfo, Set<String> reqMetaInfo, Long ownerId) throws EventHandlerException, JSONException{
+        JSONObject meta = new JSONObject();
+        JSONObject headers = new JSONObject();
+
+        for (String key : metaInfo.keySet()) {
+            if (Listener.AUTHENTICATED_USER_HEADER.equals(key) ||
+                Listener.METAINFO_HTTP_STATUS_CODE.equals(key) ||
+                Listener.METAINFO_PROTOCOL.equals(key) ||
+                Listener.METAINFO_SERVICE_CLASS.equals(key) ||
+                Listener.METAINFO_REQUEST_URL.equals(key) ||
+                Listener.METAINFO_HTTP_METHOD.equals(key) ||
+                Listener.METAINFO_REMOTE_HOST.equals(key) ||
+                Listener.METAINFO_REMOTE_ADDR.equals(key) ||
+                Listener.METAINFO_REMOTE_PORT.equals(key) ||
+                Listener.METAINFO_REQUEST_PATH.equals(key) ||
+                Listener.METAINFO_REQUEST_QUERY_STRING.equals(key) ||
+                Listener.METAINFO_CONTENT_TYPE.equals(key) ||
+                !reqMetaInfo.contains(key))
+                meta.put(key, metaInfo.get(key));
+            else {
+                headers.put(key, metaInfo.get(key));
+            }
+        }
+
+        meta.put("headers", headers);
+
+        createDocument(JSONObject.class.getName(), meta, OwnerType.META, ownerId);
+        return meta;
+    }
+
+    private JSONObject createResponseMetaDocument(Map<String,String> metaInfo, Set<String> reqMetaInfo, Long ownerId) throws EventHandlerException, JSONException{
+        JSONObject meta = new JSONObject();
+        JSONObject headers = new JSONObject();
+
+        for (String key : metaInfo.keySet()) {
+            if (!Listener.AUTHENTICATED_USER_HEADER.equals(key)
+                    && !Listener.METAINFO_HTTP_STATUS_CODE.equals(key)
+                    && !Listener.METAINFO_ACCEPT.equals(key)
+                    && !Listener.METAINFO_DOWNLOAD_FORMAT.equals(key)
+                    && !reqMetaInfo.contains(key))
+                headers.put(key, metaInfo.get(key));
+            else {
+              //  meta.put(key, metaInfo.get(key)); // Do we want all the request header info also in response??
+            }
+        }
+
+     // these always get populated if present
+        if (metaInfo.get(Listener.METAINFO_REQUEST_ID) != null)
+            headers.put(Listener.METAINFO_REQUEST_ID, metaInfo.get(Listener.METAINFO_REQUEST_ID));
+        if (metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID) != null)
+            headers.put(Listener.METAINFO_MDW_REQUEST_ID, metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID));
+        if (metaInfo.get(Listener.METAINFO_CORRELATION_ID) != null)
+            headers.put(Listener.METAINFO_CORRELATION_ID, metaInfo.get(Listener.METAINFO_CORRELATION_ID));
+        if (metaInfo.get(Listener.METAINFO_DOCUMENT_ID) != null)
+            headers.put(Listener.METAINFO_DOCUMENT_ID, metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
+
+        if (!headers.has(Listener.METAINFO_CONTENT_TYPE))
+            headers.put(Listener.METAINFO_CONTENT_TYPE, "text/xml");
+
+        meta.put("headers", headers);
+
+        createDocument(JSONObject.class.getName(), meta, OwnerType.META, ownerId);
+        return meta;
     }
 
     /**
