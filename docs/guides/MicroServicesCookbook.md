@@ -115,8 +115,6 @@ A local project is useful if you want to debug your custom Java source code and 
 
 - Update the generated Java source code to resemble the following:
 ```java
-
-
 package MyService;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;  
 import com.centurylink.mdw.common.utilities.timer.Tracked;
@@ -151,7 +149,7 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
 	  	return valid;
 	}
   }
-  ```
+```
 - Now if you switch back to your process the new activity should appear in the Toolbox View. From the toolbox, drag your activity onto the canvas and insert it into your process flow between the Start and Stop activities.
 - Tip: To draw a link (or transition in MDW terminology) between activities on the designer canvas, hold down the Shift key on your keyboard, Click on the upstream activity, and continue holding down the mouse left click button while dragging the cursor to the downstream activity (“shift-click-drag”).
 - Your activity can be dragged like this and used in other processes designed by other users. Actually the proper term in MDW for this reusable element in the Toolbox is activity implementor. This conveys the idea that it’s actually a template to be dragged and configured as an activity in the canvas, and it also conveys the fact that it always corresponds to a Java class. To take this reuse concept a step further, your activity implementor can be made discoverable so that it can easily be imported into other environments and reused across domains. If you click on the light bulb icon at the top of the Toolbox you’ll get an idea how items in the palette can be imported from a file or discovered in the corporate repository.
