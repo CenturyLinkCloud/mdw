@@ -110,18 +110,18 @@ A local project is useful if you want to debug your custom Java source code and 
    
 - When you click Finish the Java code for a skeleton implementation is generated. You’ll also see the Java class under your package in Process Explorer. 
 - This source code resides under src/main/workflow and is known as a Dynamic Java workflow asset. It’s dynamic because it can be changed without needing any kind of application deployment. Naturally there are rigorous controls in place to prevent unauthorized modifications.
-- In step 1 you were granted permissions in the MDW Demo environment to create and modify workflow assets.
+- In step 1 you were granted permissions in the MDW environment to create and modify workflow assets.
 - With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
 
 - Update the generated Java source code to resemble the following:
 ```java
 	package MyService;
-	import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
-	import com.centurylink.mdw.common.utilities.timer.Tracked;
+	import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+	import com.centurylink.mdw.util.timer.Tracked;
 	import com.centurylink.mdw.java.JavaExecutionException;
 	import com.centurylink.mdw.activity.ActivityException;
 	import com.centurylink.mdw.model.request.Request;
-	import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
+	import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 	import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 	import org.json.JSONObject;
 
@@ -196,7 +196,7 @@ A local project is useful if you want to debug your custom Java source code and 
   ![xml formatter](images/viewOrderInstance.png)
  
 ##### Register an External Event Handler:
-- The lookup you just performed took a simple string input and returned nothing.  A real service would likely take an XML or JSON document as input, and return something similar with the results.  To expose this process as a service you'll need to register an External Event Handler.  An External Event Handler is the MDW mechanism for performing content-based routing of incoming requests to your service process.  So in our example it's a way of specifying that an JSON payload like the following should be routed to the MyOrderProcess service process:
+- The MyOrderProcess you just performed took a simple string input and returned nothing.  A real service would likely take an XML or JSON document as input, and return something similar with the results.  To expose this process as a service you'll need to register an External Event Handler.  An External Event Handler is the MDW mechanism for performing content-based routing of incoming requests to your service process.  So in our example it's a way of specifying that an JSON payload like the following should be routed to the MyOrderProcess service process:
   ```json
   { "orderId":"12345678"}
   ```
