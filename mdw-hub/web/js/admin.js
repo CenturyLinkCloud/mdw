@@ -8,14 +8,13 @@ var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket'
 ]);
 
 adminApp.config(function($httpProvider) {
-  $httpProvider.defaults.headers.get = { 'Accept': 'application/json' };
+  $httpProvider.defaults.headers.get = { 'Content-Type': 'application/json' };
   $httpProvider.defaults.headers.post = { 'Accept': 'application/json' };
   $httpProvider.interceptors.push(function($q, mdw) {
     return {
       'request': function(config) {
         if (config.url.startsWith(mdw.roots.services)) {
           mdw.hubLoading(true);
-          // config.headers['Authorization'] = "Bearer yoyo";
         }
         return config;
       },

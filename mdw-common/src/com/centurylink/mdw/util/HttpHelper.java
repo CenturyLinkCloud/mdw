@@ -133,6 +133,23 @@ public class HttpHelper {
         return getResponseBytes();
     }
 
+    public String options() throws IOException {
+        return new String(optionsBytes());
+    }
+
+    /**
+     * Perform an HTTP OPTIONS request against the URL.
+     * @return the string response from the server
+     */
+    public byte[] optionsBytes() throws IOException {
+        if (!connection.isOpen())
+            connection.open();
+
+        connection.prepare("OPTIONS");
+        response = connection.readInput();
+        return getResponseBytes();
+    }
+
     /**
      * Perform an HTTP PUT request to the URL.
      * @param content bytes

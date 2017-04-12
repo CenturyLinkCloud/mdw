@@ -257,6 +257,9 @@
   width: 100%;
   padding-right: 15px;
 }
+.mdw-panel-embedded {
+	margin: 15px;
+}
 .mdw-hr {
   border-top: 1px solid #e0e0e0;
 }

@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.net.URL;
 import java.util.Map;
 
 import javax.ws.rs.Path;
@@ -31,8 +32,11 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.HttpHelper;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Path("/Assets")
@@ -52,15 +56,29 @@ public class Assets extends JsonRestService {
     @ApiOperation(value="Retrieve an asset or all the asset packages",
         notes="If assetPath is not present, returns all assetPackages.",
         response=PackageList.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
 
-        AssetServices assetServices = ServiceLocator.getAssetServices();
         try {
+            Query query = getQuery(path, headers);
+            String discoveryUrl = getDiscoveryUrl(path, query);
+            if (discoveryUrl != null) {
+                HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(discoveryUrl));
+                try {
+                    return new JSONObject(helper.get());
+                }
+                catch (JSONException ex) {
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR, "Invalid response from: " + discoveryUrl, ex);
+                }
+            }
+
+            AssetServices assetServices = ServiceLocator.getAssetServices();
+
             String pkg = getSegment(path, 1);
             String asset = pkg == null ? null : getSegment(path, 2);
 
             if (pkg == null) {
-                Query query = getQuery(path, headers);
                 if (query.hasFilters())
                     return assetServices.getAssetPackageList(query).getJson();
                 else
@@ -90,5 +108,19 @@ public class Assets extends JsonRestService {
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
+    }
+
+    /**
+     * The discoveryUrl param tells us to retrieve from a remote instance.
+     * We retrieve the discovery package list on the server to avoid browser CORS complications.
+     */
+    private String getDiscoveryUrl(String path, Query query) {
+        String url = query.getFilter("discoveryUrl");
+        if (url != null) {
+            if (!url.endsWith("/"))
+                url += "/";
+            url += "services/" + path;
+        }
+        return url;
     }
 }
