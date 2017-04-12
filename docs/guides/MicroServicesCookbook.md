@@ -299,7 +299,7 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 Besides implementing services by way of an MDW workflow process, you can easily expose your Dynamic Java class as a REST service using JAX-RS annotations.
  
 ##### Create a Java Asset to Implement a Resource Service:
-- Right-click on your package in Process Explorer view and select new > Java Source.  By convention the Java class name will also be the name of your service resource.  Also by convention your workflow package name is the root of the REST endpoint URL path that consumers will use to access your service.  For this simple example we're using the myPackage.  In a real-world app you'll probably use a qualified package name like com.centurylink.my.services, and in that case you can specify a simplified URL path through the JAX-RS Path annotation, which will be illustrated later.
+- Right-click on your package in Process Explorer view and select new > Java Source.  By convention the Java class name will also be the name of your service resource.  Also by convention your workflow package name is the root of the REST endpoint URL path that consumers will use to access your service.  For this simple example we're using the MyServices.  In a real-world app you'll probably use a qualified package name like com.centurylink.my.services, and in that case you can specify a simplified URL path through the JAX-RS Path annotation, which will be illustrated later.
   
   ![xml formatter](images/createOrderProcessJavaAsset.png)
 
@@ -451,9 +451,9 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
    ![xml formatter](images/swaggerExample.png)
  
 ##### Add a Sample Request and Response:
-- Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "myPackage.api.samples" and add a JSON asset named Employees_Get1.json with the following content:
+- Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "MyServices.api.samples" and add a JSON asset named Employees_Get1.json with the following content:
   ```jason
-     // GET request to services/myPackage/Employees/dxoakes
+     // GET request to services/MyServices/Employees/dxoakes
      {
      "cuid": "dxoakes",
      "name": "Donald Oakes",
