@@ -223,7 +223,7 @@ public class RestServlet extends ServiceServlet {
         else
             response.setContentType(metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
 
-        if (metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null)
+        if (metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null && !metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE).equals("0"))
             response.setStatus(Integer.parseInt(metaInfo.get(Listener.METAINFO_HTTP_STATUS_CODE)));
 
         if (logger.isMdwDebugEnabled()) {

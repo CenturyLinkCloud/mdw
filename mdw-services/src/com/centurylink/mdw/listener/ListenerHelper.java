@@ -427,7 +427,7 @@ public class ListenerHelper {
 
     private int getResponseCode(Map<String,String> metainfo) {
         try {
-            if (metainfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null)  // Allow services to populate code via metaInfo, same as Rest servlet
+            if (metainfo.get(Listener.METAINFO_HTTP_STATUS_CODE) != null && !metainfo.get(Listener.METAINFO_HTTP_STATUS_CODE).equals("0"))  // Allow services to populate code via metaInfo, same as Rest servlet
                 return Integer.parseInt(metainfo.get(Listener.METAINFO_HTTP_STATUS_CODE));
             else   // Return 200 for non-error responses, which is what Tomcat returns in HTTP header if not overriden above
                 return RestService.HTTP_200_OK;
