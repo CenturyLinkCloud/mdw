@@ -115,7 +115,7 @@ A local project is useful if you want to debug your custom Java source code and 
 
 - Update the generated Java source code to resemble the following:
 ```java
-	package MyService;
+	package MyServices;
 	import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 	import com.centurylink.mdw.util.timer.Tracked;
 	import com.centurylink.mdw.java.JavaExecutionException;
@@ -306,7 +306,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 - Implement a REST service, using the JAX-RS @Path annotation and extending the MDW JsonRestService class:
      
   ```java
-       package MyService;
+       package MyServices;
        import java.util.Map;
        import javax.ws.rs.Path;
        import org.json.JSONException;
@@ -335,7 +335,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
   ```    
 - Access your service using a GET request from your browser with a URL like the following:
     
-    - [http://localhost:8080/mdw/Services/MyService/Employee/dxoakes](http://localhost:8080/mdw/Services/MyService/Employee/dxoakes)
+    - [http://localhost:8080/mdw/Services/MyServices/Employee/dxoakes](http://localhost:8080/mdw/Services/MyServices/Employee/dxoakes)
  
 ##### Add Create Capability to Your REST Service:
 - In the REST paradigm, creates are performed via HTTP POST.  So to implement the ability to add a new Employee, override the post() method:
@@ -374,7 +374,7 @@ With MDW REST services you can automatically generate Swagger documentation just
 ##### Add @ApiOperation Annotations to Your Methods:
 - The ApiOperation annotation documents the specifics of a service endpoint operation, including any input or output model types.  The ApiImplicitParams annotation is useful for indicating the body content of a POST or PUT requests.  After adding these annotations to Employees.java, the code will look something like this:
   ```
-       package myPackage;
+       package MyServices;
        import java.util.Map;
        import javax.ws.rs.Path;
        import org.json.JSONException;
@@ -443,7 +443,7 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
 - Open MDW in your browser and click on the Services tab.  Notice that API path for your service (/MyServices/Employees) includes its package name to distinguish it from standard MDW services.
    ![xml formatter](images/restServiceAPIs.png)
 
-- Click on the /myPackage/Employees link.  The JSON and YAML tabs include the Swagger Spec API definitions for the Employees endpoint.  Click on the YAML tab to view a human-readable representation of your Employees API.  Notice that much of the information is provided by annotations from the MDW base service class.
+- Click on the /MyServices/Employees link.  The JSON and YAML tabs include the Swagger Spec API definitions for the Employees endpoint.  Click on the YAML tab to view a human-readable representation of your Employees API.  Notice that much of the information is provided by annotations from the MDW base service class.
    ![xml formatter](images/yamlExample.png)
 
 - Scroll down to the "definitions" section to see the Employee model object definition as well as other referenced types.
