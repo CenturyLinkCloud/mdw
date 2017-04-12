@@ -2,8 +2,8 @@
 
 var assetMod = angular.module('assets', ['ngResource', 'mdw']);
 
-assetMod.controller('PackagesController', ['$scope', '$location', '$http', 'mdw', 'Assets', 'GitVcs', 'WorkflowCache', 'JSON_DOWNLOAD',
-                                           function($scope, $location, $http, mdw, Assets, GitVcs, WorkflowCache, JSON_DOWNLOAD) {
+assetMod.controller('PackagesController', ['$scope', '$location', '$http', '$cookieStore', 'mdw', 'Assets', 'GitVcs', 'WorkflowCache', 'JSON_DOWNLOAD',
+                                           function($scope, $location, $http, $cookieStore, mdw, Assets, GitVcs, WorkflowCache, JSON_DOWNLOAD) {
   $scope.pkgList = Assets.get({}, 
     function(data) {
       if (!$scope.pkgList.packages || $scope.pkgList.packages.length === 0)
@@ -117,6 +117,47 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$http', 'mdw'
   $scope.exportZip = function() {
     window.location = mdw.roots.hub + '/asset/packages?app=mdw-admin&packages=' + 
         $scope.getExportPackagesParam();
+  };
+
+  $scope.discoveryUrl = $cookieStore.get('discoveryUrl');
+  $scope.discover = function() {
+    $cookieStore.put('discoveryUrl', $scope.discoveryUrl);
+    $scope.discoveredPkgList = null;
+    $scope.pkgList = Assets.get({discoveryUrl: $scope.discoveryUrl}, 
+      function(data) {
+        $scope.discoveryMessage = null;
+        $scope.discoveredPkgList = data;
+        $scope.discoveredPkgList.selectedState = { all: false };
+        $scope.discoveredPkgList.toggleAll = function() {
+          $scope.discoveredPkgList.packages.forEach(function(pkg) {
+            pkg.selected = $scope.discoveredPkgList.selectedState.all;
+          });
+        };
+        $scope.discoveredPkgList.notAllSelected = function() {
+          $scope.discoveredPkgList.selectedState.all = false;
+        };
+        $scope.discoveredPkgList.getSelected = function() {
+          var selected = [];
+          if ($scope.discoveredPkgList.packages) {
+            $scope.discoveredPkgList.packages.forEach(function(pkg) {
+              if (pkg.selected)
+                selected.push(pkg);
+            });
+          }
+          return selected;
+        };
+      },
+      function(error) {
+        if (error.data.status)
+          $scope.discoveryMessage = 'Discovery failed: ' + error.data.status.message;
+      }
+    );    
+  };
+  
+  $scope.importDiscovered = function() {
+    $scope.discoveredPkgList.getSelected().forEach(function(pkg) {
+      console.log('todo: importing: ' + pkg.name);
+    });
   };
 
   $scope.refresh = function() {
