@@ -40,7 +40,7 @@ public class AuthenticatedUser extends User implements SelfSerializable {
     }
 
     public AuthenticatedUser(User user, Map<String,String> attributes) {
-        user.setCuid(user.getCuid());
+        setCuid(user.getCuid());
         setId(user.getId());
         setName(user.getName());
         setWorkgroups(user.getWorkgroups());

@@ -150,6 +150,11 @@ public class HttpHelper {
                 out.write(buffer, 0, len);
             }
         }
+        finally {
+            response = new HttpResponse(null);
+            response.setCode(connection.getConnection().getResponseCode());
+            response.setMessage(connection.getConnection().getResponseMessage());
+        }
     }
 
     public String options() throws IOException {
