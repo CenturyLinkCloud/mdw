@@ -155,9 +155,25 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$http', '$coo
   };
   
   $scope.importDiscovered = function() {
+    var pkgsObj = { packages: [] };
+    
     $scope.discoveredPkgList.getSelected().forEach(function(pkg) {
-      console.log('todo: importing: ' + pkg.name);
+      pkgsObj.packages.push(pkg.name);
     });
+    
+    $scope.pkgList = Assets.put({discoveryUrl: $scope.discoveryUrl}, pkgsObj, 
+      function(data) {
+        $scope.discoveryMessage = null;
+        // leave cache error logging to the server side
+        if ($scope.cacheRefresh)
+          WorkflowCache.refresh({}, { distributed: true });
+        $location.path('/packages');
+      },
+      function(error) {
+        if (error.data.status)
+          $scope.discoveryMessage = 'Import failed: ' + error.data.status.message;
+      }
+    );
   };
 
   $scope.refresh = function() {
@@ -244,7 +260,8 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util',
 
 assetMod.factory('Assets', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/Services/Assets/:packageName/:assetName', mdw.serviceParams(), {
-    get: { method: 'GET', isArray: false }
+    get: { method: 'GET', isArray: false },
+    put: { method: 'PUT'}
   });
 }]);
 

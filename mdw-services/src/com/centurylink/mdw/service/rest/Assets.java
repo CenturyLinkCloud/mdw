@@ -15,7 +15,10 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.io.File;
 import java.net.URL;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Path;
@@ -23,8 +26,14 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.file.VcsArchiver;
+import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
@@ -33,6 +42,12 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.LoggerProgressMonitor;
+import com.centurylink.mdw.util.timer.ProgressMonitor;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -43,6 +58,8 @@ import io.swagger.annotations.ApiOperation;
 @Api("Workflow assets")
 public class Assets extends JsonRestService {
 
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
         return Entity.Asset;
@@ -50,6 +67,8 @@ public class Assets extends JsonRestService {
 
     /**
      * Retrieve workflow asset, package or packages
+     * The discoveryUrl param tells us to retrieve from a remote instance.
+     * For this case We retrieve the discovery package list on the server to avoid browser CORS complications.
      */
     @Override
     @Path("/{assetPath}")
@@ -62,9 +81,10 @@ public class Assets extends JsonRestService {
 
         try {
             Query query = getQuery(path, headers);
-            String discoveryUrl = getDiscoveryUrl(path, query);
+            String discoveryUrl = query.getFilter("discoveryUrl");
             if (discoveryUrl != null) {
-                HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(discoveryUrl));
+                String url = discoveryUrl + "/services/" + path;
+                HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
                 try {
                     return new JSONObject(helper.get());
                 }
@@ -111,16 +131,53 @@ public class Assets extends JsonRestService {
     }
 
     /**
-     * The discoveryUrl param tells us to retrieve from a remote instance.
-     * We retrieve the discovery package list on the server to avoid browser CORS complications.
+     * Import discovered assets.
      */
-    private String getDiscoveryUrl(String path, Query query) {
-        String url = query.getFilter("discoveryUrl");
-        if (url != null) {
-            if (!url.endsWith("/"))
-                url += "/";
-            url += "services/" + path;
+    @Override
+    @Path("/packages")
+    @ApiOperation(value="Import discovered asset packages", response=StatusMessage.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="discoveryUrl", paramType="query", required=true),
+        @ApiImplicitParam(name="packages", paramType="body", required=true, dataType="List")})
+    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        Query query = getQuery(path, headers);
+        String discoveryUrl = query.getFilter("discoveryUrl");
+        if (discoveryUrl == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: discoveryUrl");
+        List<String> pkgs = new JsonArray(content.getJSONArray("packages")).getList();
+        Query discQuery = new Query(path);
+        discQuery.setArrayFilter("packages", pkgs.toArray(new String[0]));
+
+        try {
+            // download from discovery server
+            String url = discoveryUrl + "/asset/packages?packages=" + discQuery.getFilter("packages");
+            HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
+            File tempDir = new File(ApplicationContext.getTempDirectory());
+            File tempFile = new File(tempDir + "/pkgDownload_" + StringHelper.filenameDateToString(new Date()) + ".zip");
+            logger.info("Saving package import temporary file: " + tempFile);
+            helper.download(tempFile);
+
+            // import packages
+            ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
+            VersionControl vcs = new VersionControlGit();
+            File assetRoot = ApplicationContext.getAssetRoot();
+            vcs.connect(null, null, null, assetRoot);
+            progressMonitor.start("Archive existing assets");
+            VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
+            archiver.backup();
+            logger.info("Unzipping " + tempFile + " into: " + assetRoot);
+            FileHelper.unzipFile(tempFile, assetRoot, null, null, true);
+            archiver.archive(true);
+            progressMonitor.done();
+            tempFile.delete();
+
+            this.propagatePut(content, headers);
         }
-        return url;
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+
+        return null;
     }
 }

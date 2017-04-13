@@ -127,7 +127,6 @@ public class HttpConnection {
         connection = (HttpURLConnection)url.openConnection(proxy);
     }
 
-
     public void prepare(String method) throws IOException {
         if (readTimeout >= 0)
             connection.setReadTimeout(readTimeout);

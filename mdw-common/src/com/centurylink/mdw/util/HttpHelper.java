@@ -18,6 +18,7 @@ package com.centurylink.mdw.util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -131,6 +132,24 @@ public class HttpHelper {
         connection.prepare("GET");
         response = connection.readInput();
         return getResponseBytes();
+    }
+
+    public void download(File toFile) throws IOException {
+        if (!connection.isOpen())
+            connection.open();
+
+        connection.prepare("GET");
+
+        try (
+            InputStream in = connection.getConnection().getInputStream();
+            FileOutputStream out = new FileOutputStream(toFile);
+        ) {
+            byte[] buffer = new byte[16 * 1024];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                out.write(buffer, 0, len);
+            }
+        }
     }
 
     public String options() throws IOException {
