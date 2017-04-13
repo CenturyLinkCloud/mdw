@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -61,6 +62,9 @@ public class AuthenticatedUser extends JsonRestService {
             UserServices userServices = ServiceLocator.getUserServices();
             User userVO = userServices.getUser(authUser);
             return userVO.getJsonWithRoles();
+        }
+        catch (DataAccessException ex) {
+                throw new ServiceException(ex.getCode(), ex.getMessage(), ex);
         }
         catch (Exception ex) {
             throw new ServiceException("Error getting authenticated user: " + authUser, ex);

@@ -87,6 +87,12 @@ public class Users extends JsonRestService {
                     return userServices.getUsers(query.getStart(), query.getMax()).getJson();
             }
         }
+        catch (DataAccessException ex) {
+            if (ex.getCode() >= HTTP_400_BAD_REQUEST)
+                throw new ServiceException(ex.getCode(), ex.getMessage(), ex);
+            else
+                throw new ServiceException(HTTP_500_INTERNAL_ERROR, ex.getMessage(), ex);
+        }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
@@ -131,7 +137,10 @@ public class Users extends JsonRestService {
             return null;
         }
         catch (DataAccessException ex) {
-            throw new ServiceException(HTTP_500_INTERNAL_ERROR, ex.getMessage(), ex);
+            if (ex.getCode() >= HTTP_400_BAD_REQUEST)
+                throw new ServiceException(ex.getCode(), ex.getMessage(), ex);
+            else
+                throw new ServiceException(HTTP_500_INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 

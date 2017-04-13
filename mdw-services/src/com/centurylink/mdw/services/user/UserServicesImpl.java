@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -114,7 +115,7 @@ public class UserServicesImpl implements UserServices {
             return user;
         }
         catch (CachingException ex) {
-            throw new DataAccessException("Cannot find user: " + cuid, ex);
+            throw new DataAccessException(ServiceException.NOT_FOUND, "Cannot find user: " + cuid, ex);
         }
     }
 
