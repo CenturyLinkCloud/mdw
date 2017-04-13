@@ -24,7 +24,7 @@
           </div>
         </div>
         <ul class="mdw-checklist">
-          <li ng-repeat="discoveredPkg in discoveredPkgList.packages">
+          <li ng-repeat="discoveredPkg in discoveredPkgList.packages" ng-if="discoveredPkg.vcsDiff != 'MISSING'">
             <div style="float:left;">
               <input type="checkbox" ng-model="discoveredPkg.selected" ng-change="discoveredPkgList.notAllSelected()"></input>
             </div>

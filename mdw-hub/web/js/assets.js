@@ -120,6 +120,8 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$http', '$coo
   };
 
   $scope.discoveryUrl = $cookieStore.get('discoveryUrl');
+  if (!$scope.discoveryUrl)
+    $scope.discoveryUrl = 'https://mdw.useast.appfog.ctl.io/mdw';
   $scope.discover = function() {
     $cookieStore.put('discoveryUrl', $scope.discoveryUrl);
     $scope.discoveredPkgList = null;
