@@ -208,7 +208,6 @@ public class Activities extends JsonRestService implements JsonExportable {
             id = new Long(activityInstanceId);
         }
         catch (NumberFormatException e) {
-            // TODO Auto-generated catch block
             id = 0L;
         }
         return id;
