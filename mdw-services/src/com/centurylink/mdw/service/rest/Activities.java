@@ -35,6 +35,8 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.ActivityCount;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
@@ -179,6 +181,7 @@ public class Activities extends JsonRestService implements JsonExportable {
             completionCode = parameters.get("completionCode");
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         workflowServices.actionActivity(activityInstanceId, action, completionCode);
+
         return null;
 
     }
@@ -195,5 +198,25 @@ public class Activities extends JsonRestService implements JsonExportable {
         catch (ParseException ex) {
             throw new JSONException(ex);
         }
+    }
+
+    @Override
+    protected Long getEntityId(String path, Object content, Map<String,String> headers) {
+        String activityInstanceId = getSegment(path, 1);
+        Long id;
+        try {
+            id = new Long(activityInstanceId);
+        }
+        catch (NumberFormatException e) {
+            // TODO Auto-generated catch block
+            id = 0L;
+        }
+        return id;
+    }
+
+    @Override
+    protected Action getAction(String path, Object content, Map<String,String> headers) {
+        String action = getSegment(path, 2);
+        return UserAction.getAction(action);
     }
 }
