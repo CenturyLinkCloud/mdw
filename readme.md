@@ -64,8 +64,6 @@
     ```	
     -Dmdw.runtime.env=dev  
     -Dmdw.config.location=c:/workspaces/mdw/mdw/config  
-    -Djavax.net.ssl.trustStore=c:/workspaces/mdw/mdw/config/certs/trust.jks 
-    -Djava.net.preferIPv4Stack=true  
     -Dmdw.runtime.env=dev
     -Xms512m -Xmx1024m
     ```
