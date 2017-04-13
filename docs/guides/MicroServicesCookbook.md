@@ -7,7 +7,7 @@ This document contains information about creating, exposing and consuming servic
    http://www.eclipse.org/downloads
  - Required Plugins:
      - MDW Designer:
-       http://centurylinkcloud.github.io/mdw/docs/designer/updateSite
+       http://centurylinkcloud.github.io/mdw/designer/updateSite
      - Buildship Plugin:   
        http://download.eclipse.org/buildship/updates/e46/releases/2.x
  - Recommended Plugins:
