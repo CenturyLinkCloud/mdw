@@ -5,7 +5,7 @@
    
    - Required Plugins:
      - MDW Designer:                                         
-       [http://centurylinkcloud.github.io/mdw/docs/designer/updateSite](http://centurylinkcloud.github.io/mdw/docs/designer/updateSite)
+       [http://centurylinkcloud.github.io/mdw/designer/updateSite](http://centurylinkcloud.github.io/mdw/designer/updateSite)
      - Buildship Plugin:                            
        [http://download.eclipse.org/buildship/updates/e46/releases/2.x](http://download.eclipse.org/buildship/updates/e46/releases/2.x)
        
@@ -64,7 +64,7 @@
     ```	
     -Dmdw.runtime.env=dev  
     -Dmdw.config.location=c:/workspaces/mdw/mdw/config  
-    -Djavax.net.ssl.trustStore=c:/workspaces/mdw/mdw/deploy/certs/CenturyLinkQCA.jks  
+    -Djavax.net.ssl.trustStore=c:/workspaces/mdw/mdw/config/certs/trust.jks 
     -Djava.net.preferIPv4Stack=true  
     -Dmdw.runtime.env=dev
     -Xms512m -Xmx1024m
