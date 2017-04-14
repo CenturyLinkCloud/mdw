@@ -1110,19 +1110,21 @@ public class DesignerDataAccess  {
         return xml;
     }
 
-    public List<String> getRoleNames() throws RemoteException,DataAccessException {
+    public List<String> getRoleNames() throws RemoteException, DataAccessException {
         if (userAccessServer != null && userAccessServer.isOnline())
             return userAccessServer.getRoleNames();
-        else if (userinfo != null && userinfo.isOnline())
+        else if (dbSchemaVersion != DataAccess.schemaVersion6 && userinfo != null
+                && userinfo.isOnline())
             return userinfo.getRoleNames();
         else
             return baselineData.getUserRoles();
     }
 
-    public UserVO getUser(String cuid) throws RemoteException,DataAccessException {
+    public UserVO getUser(String cuid) throws RemoteException, DataAccessException {
         if (userAccessServer != null && userAccessServer.isOnline())
             return userAccessServer.getUser(cuid);
-        else if (userinfo != null && userinfo.isOnline())
+        else if (dbSchemaVersion != DataAccess.schemaVersion6 && userinfo != null
+                && userinfo.isOnline())
             return userinfo.getUser(cuid);
         else
             return new UserVO(cuid);
@@ -1181,7 +1183,8 @@ public class DesignerDataAccess  {
     public List<UserGroupVO> getAllGroups() throws RemoteException,DataAccessException {
         if (userAccessServer != null && userAccessServer.isOnline())
             return userAccessServer.getAllGroups(false);
-        else if (userinfo != null && userinfo.isOnline())
+        else if (dbSchemaVersion != DataAccess.schemaVersion6 && userinfo != null
+                && userinfo.isOnline())
             return userinfo.getAllGroups(false);
         else {
             // baseline workgroups
@@ -1627,7 +1630,8 @@ public class DesignerDataAccess  {
         userAction.setSource("Designer");
         if (userAccessServer != null && userAccessServer.isOnline())
             userAccessServer.auditLogUserAction(userAction);
-        else if (userinfo != null && userinfo.isOnline())
+        else if (dbSchemaVersion != DataAccess.schemaVersion6 && userinfo != null
+                && userinfo.isOnline())
             userinfo.auditLogUserAction(userAction);
     }
 

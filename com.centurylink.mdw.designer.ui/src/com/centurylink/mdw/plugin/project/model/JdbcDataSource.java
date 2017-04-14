@@ -33,6 +33,8 @@ public class JdbcDataSource {
     public static final String DEFAULT_DB_USER_OLD = "mdw";
     public static final String DEFAULT_DB_PASSWORD = "mdwdemo";
     public static final String DEFAULT_DB_PASSWORD_OLD = "mdw";
+    public static final String DEFAULT_DRIVER_MDW6 = "org.mariadb.jdbc.Driver";
+    public static final String DEFAULT_JDBC_URL_MDW6 = "jdbc:mariadb://localhost:3308/mdw";
 
     /**
      * TODO: mariadb

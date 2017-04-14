@@ -313,10 +313,7 @@ public class ProjectPersist extends DefaultHandler {
             sb.append("/>\n");
         }
 
-        if (workflowProject.getPersistType() == PersistType.None) {
-            // do nothing
-        }
-        else {
+        if (workflowProject.getPersistType() != PersistType.None && !workflowProject.checkRequiredVersion(6, 0)) {
             sb.append("  <database jdbcUrl=\""
                     + workflowProject.getMdwDataSource().getJdbcUrlWithEncryptedCredentials()
                     + "\"");
