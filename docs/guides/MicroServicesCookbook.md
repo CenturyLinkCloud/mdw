@@ -238,7 +238,7 @@ At this point your process is already exposed through all the protocols that MDW
 response = " { "orderId":"12345678"}"
 ```
 
--  Notice that process variables are implicitly available and assignable from within your script.  Notice also that we're building a string here, which MDW automatically translates to the appropriate type (org.w3c.dom.Document).  Save the script content and also the process.  If you run the process again through the event handler you should see the correct response in the Eclipse console, and the values should be correctly populated for the instance.
+-  Notice that process variables are implicitly available and assignable from within your script.  Notice also that we're building a string here, which MDW automatically translates to the appropriate type (org.jason.JSONObject).  Save the script content and also the process.  If you run the process again through the event handler you should see the correct response in the Eclipse console, and the values should be correctly populated for the instance.
   
 #### 4. Consume a RESTFul Web Service
 MDW comes with Adapter activities for consuming services over many protocols from within your workflow processes.  In this exercise we'll use the REST Service Adapter activity to invoke the MyOrderProcess service you just created.
