@@ -185,7 +185,7 @@ public class DesignerDataAccess  {
         if (mode == Mode.VCS) {
             DataAccess.currentSchemaVersion = DataAccess.supportedSchemaVersion = dbSupportedSchemaVersion = dbSchemaVersion = current_server.getSchemaVersion();
             baselineData = new MdwBaselineData();
-            if (dbSchemaVersion != DataAccess.schemaVersion6) {
+            if (dbSchemaVersion < DataAccess.schemaVersion6) {
                 // user auth access directly through db is still supported to avoid confusion (TODO prefs)
                 DatabaseAccess db = new DatabaseAccess(current_server.getDatabaseUrl(), connectParams);
                 userinfo = DataAccess.getUserDataAccess(dbSchemaVersion, dbSupportedSchemaVersion, db);
@@ -1115,7 +1115,7 @@ public class DesignerDataAccess  {
     public List<String> getRoleNames() throws RemoteException, DataAccessException {
         if (userAccessServer != null && userAccessServer.isOnline())
             return userAccessServer.getRoleNames();
-        else if (dbSchemaVersion != DataAccess.schemaVersion6 && userinfo != null
+        else if (dbSchemaVersion < DataAccess.schemaVersion6 && userinfo != null
                 && userinfo.isOnline())
             return userinfo.getRoleNames();
         else
@@ -1125,7 +1125,7 @@ public class DesignerDataAccess  {
     public UserVO getUser(String cuid) throws RemoteException, DataAccessException {
         if (userAccessServer != null && userAccessServer.isOnline())
             return userAccessServer.getUser(cuid);
-        else if (dbSchemaVersion != DataAccess.schemaVersion6 && userinfo != null
+        else if (dbSchemaVersion < DataAccess.schemaVersion6 && userinfo != null
                 && userinfo.isOnline())
             return userinfo.getUser(cuid);
         else
@@ -1185,7 +1185,7 @@ public class DesignerDataAccess  {
     public List<UserGroupVO> getAllGroups() throws RemoteException,DataAccessException {
         if (userAccessServer != null && userAccessServer.isOnline())
             return userAccessServer.getAllGroups(false);
-        else if (dbSchemaVersion != DataAccess.schemaVersion6 && userinfo != null
+        else if (dbSchemaVersion < DataAccess.schemaVersion6 && userinfo != null
                 && userinfo.isOnline())
             return userinfo.getAllGroups(false);
         else {
@@ -1632,7 +1632,7 @@ public class DesignerDataAccess  {
         userAction.setSource("Designer");
         if (userAccessServer != null && userAccessServer.isOnline())
             userAccessServer.auditLogUserAction(userAction);
-        else if (dbSchemaVersion != DataAccess.schemaVersion6 && userinfo != null
+        else if (dbSchemaVersion < DataAccess.schemaVersion6 && userinfo != null
                 && userinfo.isOnline())
             userinfo.auditLogUserAction(userAction);
     }

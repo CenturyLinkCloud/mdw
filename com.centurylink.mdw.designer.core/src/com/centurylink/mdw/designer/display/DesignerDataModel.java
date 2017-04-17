@@ -1191,7 +1191,7 @@ public class DesignerDataModel {
     }
 
     public void reloadPriviledges(DesignerDataAccess dao, String cuid) throws DataAccessException, RemoteException {
-        if (dao.noDatabase() && dao.getDatabaseSchemaVersion() != DataAccess.schemaVersion6) {
+        if (dao.noDatabase() && dao.getDatabaseSchemaVersion() < DataAccess.schemaVersion6) {
             user = new UserVO();
             user.setCuid(cuid);
             user.setName(cuid);
