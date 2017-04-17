@@ -273,7 +273,8 @@ public class DesignerDataAccess  {
     }
 
     public boolean noDatabase() {
-        return current_server.getDatabaseUrl()==null;
+        return current_server.getVersionControl() == null
+                && current_server.getDatabaseUrl() == null;
     }
 
     public int getDatabaseSchemaVersion() {
