@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.workflow.drools.cache;
+package com.centurylink.mdw.drools;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,11 +27,12 @@ import java.util.TreeMap;
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.KnowledgeBuilder;
+import org.drools.builder.KnowledgeBuilderConfiguration;
 import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
-import org.drools.compiler.PackageBuilderConfiguration;
 import org.drools.io.ResourceFactory;
 
+import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.cache.CachingException;
@@ -39,10 +40,11 @@ import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.workflow.drools.DecisionTableProvider;
 
+@RegisteredService(CacheService.class)
 public class DroolsKnowledgeBaseCache implements PreloadableCache  {
 
     private static final String[] LANGUAGES = new String[] {Asset.DROOLS, Asset.EXCEL, Asset.EXCEL_2007, Asset.GUIDED};
@@ -187,11 +189,9 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
             throw new CachingException("No asset found for: '" + key.name + "'");
         }
 
-        PackageBuilderConfiguration pbConfig = null;
-        pbConfig = new PackageBuilderConfiguration();
-        pbConfig.setProperty("drools.dialect.java.compiler", "JANINO");
-
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(pbConfig);
+        KnowledgeBuilderConfiguration conf = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(null, key.loader);
+        conf.setProperty("drools.dialect.default", "mvel");
+        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(conf);
 
         String rules = null;
         String format = asset.getLanguage();

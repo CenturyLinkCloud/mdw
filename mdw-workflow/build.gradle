@@ -35,25 +35,14 @@ dependencies {
     compile project(":mdw-common")
     compile project(":mdw-services")
     
+    // build-time-only dependencies (exluded in mdw-hub deployment)
+    compile fileTree(dir: "assets/com/centurylink/mdw/drools", includes: ["*.jar"])
+    compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1"
+    
     compile group: "org.apache.velocity", name: "velocity", version: "1.7"
     
-    compile(group: "org.drools", name: "drools-core", version: "5.6.0.Final") { exclude(group: "org.eclipse.jdt.core.compiler") }
-    compile(group: "org.drools", name: "drools-templates", version: "5.6.0.Final") { exclude(group: "org.eclipse.jdt.core.compiler") }
-    compile(group: "org.drools", name: "drools-decisiontables", version: "5.6.0.Final") { exclude(group: "org.eclipse.jdt.core.compiler") }
-    compile(group: "org.drools", name: "drools-compiler", version: "5.6.0.Final") { exclude(group: "org.eclipse.jdt.core.compiler") }
-    compile(group: "org.drools", name: "knowledge-api", version: "5.6.0.Final") { exclude(group: "org.eclipse.jdt.core.compiler") }
-    compile(group: "org.drools", name: "knowledge-internal-api", version: "5.6.0.Final") { exclude(group: "org.eclipse.jdt.core.compiler") }
-    // drools ecj dependency not compatible with java 8
-    compile group: "org.eclipse.jdt.core.compiler", name: "ecj", version: "4.6.1"  
-    
-    compile group: "org.mvel", name: "mvel2", version: "2.1.8.Final"
-    compile group: "org.antlr", name: "antlr-runtime", version: "3.3"
-	
     compile group: "junit", name: "junit", version:"4.8.1"
-    
-    compile group: "oro", name: "oro", version: "2.0.8"
-    
-    compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1"
+    compile group: "oro", name: "oro", version: "2.0.8"    
 }
 
 task cleanJar {

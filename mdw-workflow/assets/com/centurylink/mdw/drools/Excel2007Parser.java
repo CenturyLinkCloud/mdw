@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.workflow.drools;
+package com.centurylink.mdw.drools;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,9 +36,9 @@ import org.drools.template.parser.DataListener;
 import org.drools.template.parser.DecisionTableParseException;
 
 public class Excel2007Parser implements DecisionTableParser {
-    
+
     public static final String DEFAULT_RULESHEET_NAME = "Decision Tables";
-    
+
     private boolean useFirstSheet;
     private Map<String, List<DataListener>> listeners = new HashMap<String, List<DataListener>>();
 
@@ -54,10 +57,18 @@ public class Excel2007Parser implements DecisionTableParser {
         this.listeners.put(DEFAULT_RULESHEET_NAME, listeners);
         this.useFirstSheet = true;
     }
-    
-    public void parseFile(InputStream inStream) {
+
+    public void parseFile(File file) {
         try {
-            XSSFWorkbook workbook = new XSSFWorkbook(inStream);
+            parseFile(new FileInputStream(file));
+        }
+        catch (FileNotFoundException ex) {
+            throw new DecisionTableParseException(ex.getMessage(), ex);
+        }
+    }
+
+    public void parseFile(InputStream inStream) {
+        try (XSSFWorkbook workbook = new XSSFWorkbook(inStream)) {
             if (useFirstSheet) {
                 XSSFSheet sheet = workbook.getSheetAt(0);
                 processSheet(sheet, listeners.get(DEFAULT_RULESHEET_NAME));
@@ -73,10 +84,11 @@ public class Excel2007Parser implements DecisionTableParser {
             throw new DecisionTableParseException(ex.getMessage(), ex);
         }
     }
-    
-    
+
+
+    @SuppressWarnings("deprecation")
     private void processSheet(XSSFSheet sheet, List<? extends DataListener> listeners) {
-        
+
         int mergedRegionCount = sheet.getNumMergedRegions();
         CellRangeAddress[] mergedRanges = new CellRangeAddress[mergedRegionCount];
         for (int i = 0; i < mergedRegionCount; i++) {
@@ -91,7 +103,7 @@ public class Excel2007Parser implements DecisionTableParser {
                     XSSFCell cell = row.getCell(cellNum);
                     if (cell != null) {
                         CellRangeAddress merged = getRangeIfMerged(cell, mergedRanges);
-        
+
                         if (merged != null) {
                             XSSFRow topRow = sheet.getRow(merged.getFirstRow());
                             XSSFCell topLeft = topRow.getCell(merged.getFirstColumn());
@@ -113,8 +125,8 @@ public class Excel2007Parser implements DecisionTableParser {
         }
         finishSheet(listeners);
     }
-    
-    
+
+
     private CellRangeAddress getRangeIfMerged(XSSFCell cell, CellRangeAddress[] mergedRanges) {
         for (int i = 0; i < mergedRanges.length; i++) {
             CellRangeAddress range = mergedRanges[i];
@@ -123,23 +135,23 @@ public class Excel2007Parser implements DecisionTableParser {
         }
         return null;
     }
-    
+
     private void newRow(List<? extends DataListener> listeners, int row, int cols) {
         for (DataListener listener : listeners) {
             listener.newRow(row, cols);
         }
     }
-    
+
     private void newCell(List<? extends DataListener> listeners, int row, int column, String value, int mergedColStart) {
         for (DataListener listener : listeners) {
             listener.newCell(row, column, value, mergedColStart);
         }
     }
-    
+
     private void finishSheet(List<? extends DataListener> listeners) {
         for (DataListener listener : listeners) {
             listener.finishSheet();
         }
     }
-    
+
 }

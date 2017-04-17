@@ -20,10 +20,10 @@ import org.drools.KnowledgeBase;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.StrategyException;
+import com.centurylink.mdw.drools.DroolsKnowledgeBaseCache;
+import com.centurylink.mdw.drools.KnowledgeBaseAsset;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.observer.task.ParameterizedStrategy;
-import com.centurylink.mdw.workflow.drools.cache.DroolsKnowledgeBaseCache;
-import com.centurylink.mdw.workflow.drools.cache.KnowledgeBaseAsset;
 
 public abstract class RulesBasedStrategy extends ParameterizedStrategy {
 

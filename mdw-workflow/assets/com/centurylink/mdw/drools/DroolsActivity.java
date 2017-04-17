@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.workflow.activity.rules;
+package com.centurylink.mdw.drools;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,8 +38,8 @@ import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-import com.centurylink.mdw.workflow.drools.cache.DroolsKnowledgeBaseCache;
-import com.centurylink.mdw.workflow.drools.cache.KnowledgeBaseAsset;
+import com.centurylink.mdw.drools.DroolsKnowledgeBaseCache;
+import com.centurylink.mdw.drools.KnowledgeBaseAsset;
 
 @Tracked(LogLevel.TRACE)
 public class DroolsActivity extends DefaultActivityImpl implements RuleActivity {

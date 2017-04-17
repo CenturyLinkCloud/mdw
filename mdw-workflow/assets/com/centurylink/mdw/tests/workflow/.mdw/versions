@@ -1,4 +1,3 @@
-#Fri Mar 31 17:01:51 MDT 2017
 A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=3
 ActivityException.test=2
@@ -17,13 +16,13 @@ DocumentHandling.test=2
 DocumentHandling.yaml=1
 DocumentLvl9BindingAsyncSubprocess.test=2
 DocumentLvl9BindingAsyncSubprocess.yaml=1
-DroolsActivity.proc=14
+DroolsActivity.proc=15
 DroolsActivity.test=2
 DroolsActivity.yaml=1
-DroolsDecisionTable.proc=2
+DroolsDecisionTable.proc=3
 DroolsDecisionTable.test=2
 DroolsDecisionTable.yaml=1
-DroolsDecisionTableMultisheet.proc=2
+DroolsDecisionTableMultisheet.proc=3
 DroolsMultisheetDecisionTable.test=2
 DroolsMultisheetDecisionTable.yaml=1
 EmbeddedWithSubprocess.proc=7
@@ -185,7 +184,7 @@ drools-multiSheetDecisionTable.xlsx=1
 drools-multisheet-decision-table.test=1
 drools-multisheet-decision-table.yaml=1
 drools-orderRoutingDecisionTable.xlsx=1
-drools-orderRoutingDrool.drl=1
+drools-orderRoutingDrool.drl=2
 jsonToJson.groovy=1
 jsonToXml.groovy=2
 multiSheetDecisionTable.xlsx=3
@@ -193,10 +192,10 @@ orderRoutingDecisionTable.xlsx=5
 orderRoutingDroolRules.drl=6
 service-heteroproc-parallel-action.xml=2
 service-heteroproc-parallel-response.xml=1
-test=1SubprocessVariable.test\=1
+test=1SubprocessVariable.test=1
 tester-ping.json=1
 tester-ping.xml=2
 tester-pong.json=1
 tester-pong.xml=2
 xslt-transform-request.xml=1
-yaml=1SubprocessVariable.yaml\=1
+yaml=1SubprocessVariable.yaml=1

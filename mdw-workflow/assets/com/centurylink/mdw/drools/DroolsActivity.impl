@@ -1,7 +1,7 @@
 {
   "category": "com.centurylink.mdw.activity.types.RuleActivity",
   "icon": "drools.jpg",
-  "implementorClass": "com.centurylink.mdw.workflow.activity.rules.DroolsActivity",
+  "implementorClass": "com.centurylink.mdw.drools.DroolsActivity",
   "label": "Drools Activity",
   "pagelet": "<PAGELET>\n  <DROPDOWN NAME='KnowledgeBase' LABEL='Knowledge Base' SOURCE='RuleSets' TYPE='DROOLS,GUIDED' />\n  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>\n  <HYPERLINK URL='/MDWWeb/doc/droolsActivities.html'>\n    Drools Activity Help\n  <\/HYPERLINK>\n<\/PAGELET>"
 }
