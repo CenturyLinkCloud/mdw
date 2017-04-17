@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.workflow.task.strategy;
+package com.centurylink.mdw.drools;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +23,7 @@ import org.drools.KnowledgeBase;
 import org.drools.command.CommandFactory;
 import org.drools.runtime.StatelessKnowledgeSession;
 
+import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.task.TaskInstance;
@@ -34,6 +35,7 @@ import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+@RegisteredService(SubTaskStrategy.class)
 public class RulesBasedSubTaskStrategy extends RulesBasedStrategy implements SubTaskStrategy {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

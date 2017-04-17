@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.workflow.task.strategy;
+package com.centurylink.mdw.drools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ import org.drools.KnowledgeBase;
 import org.drools.command.CommandFactory;
 import org.drools.runtime.StatelessKnowledgeSession;
 
+import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -34,6 +35,7 @@ import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+@RegisteredService(AutoAssignStrategy.class)
 public class RulesBasedAutoAssignStrategy extends RulesBasedStrategy implements AutoAssignStrategy {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
