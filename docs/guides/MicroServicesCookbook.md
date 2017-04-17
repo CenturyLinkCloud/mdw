@@ -200,7 +200,7 @@ A local project is useful if you want to debug your custom Java source code and 
   ```json
   { "orderId":"12345678"}
   ```
-- To create an Event Handler, right-click on your MyServices package in Process Explorer and select New > Event Handler > External Event Handler and populate the wizard page as illustrated.  The Message Pattern in this case represents an XPath expression that tells MDW that matching requests should go through this handler.  The built-in Process Launch handler simply runs an instance of the selected process, passing along the request document.
+- To create an Event Handler, right-click on your MyServices package in Process Explorer and select New > Event Handler > External Event Handler and populate the wizard page as illustrated. The MyEventHandler will generate a JSON file which will be used to create the external event in MDW. The Message Pattern in this case represents an XPath expression that tells MDW that matching requests should go through this handler.  The built-in Process Launch handler simply runs an instance of the selected process, passing along the request document.
 Note: If you're using a shared database you'll want to make your Message Pattern unique.
 
   ![xml formatter](images/orderEventHandler.png)
@@ -210,7 +210,7 @@ Note: If you're using a shared database you'll want to make your Message Pattern
 
   ![xml formatter](images/populateOrderExternalValue.png)
   
--  After launching, if you view the values for your latest instance you'll see that the request variable was correctly populated with the incoming payload, but the MyOrderProcess returned nothing because this time orderId was not populated.  There are many ways in MDW to pull values from a request document and use them in workflow activities like the LDAP adapter.  For simplicity we'll use the XPath binding feature in the process start activity.
+-  After launching, if you view the values for your latest instance you'll see that the request variable was correctly populated with the incoming payload, but the MyOrderProcess returned nothing because this time orderId was not populated.  There are many ways in MDW to pull values from a request document and use them in workflow activities.  For simplicity we'll use the XPath binding feature in the process start activity.
 
 ##### Map an Input Variable Binding:
 - On the Design tab for the Start activity in your process, enter a Binding Expression value of xpath:/MyOrderProcess/orderId mapped to the orderId input variable.
@@ -233,7 +233,7 @@ At this point your process is already exposed through all the protocols that MDW
    ![xml formatter](images/restMessageEndpointResponse???.png)
  
 ##### Create the Response:
-- The response output variable has so far remained unpopulated.  There are innumerable ways to build a response, and in a real-world service this might be cumulative based on multiple workflow steps.  To keep this exercise simple we'll use a PostScript on the LDAP Adapter activity we already have.  On the Script tab for this activity, move the response variable over to the Writable column.  Then make sure the selected PostScript language is Groovy, and click the Edit Script link.  Write a script like the following to populate the response:
+- The response output variable has so far remained unpopulated.  There are innumerable ways to build a response, and in a real-world service this might be cumulative based on multiple workflow steps.  To keep this exercise simple we'll use a PostScript on the Check Employee Adapter activity we already have.  On the Script tab for this activity, move the response variable over to the Writable column.  Then make sure the selected PostScript language is Groovy, and click the Edit Script link.  Write a script like the following to populate the response:
 
 ```groovy
 response = " { "orderId":"12345678"}"
