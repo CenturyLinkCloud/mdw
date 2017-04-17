@@ -229,8 +229,7 @@ At this point your process is already exposed through all the protocols that MDW
 - On the MDWHub System tab you can use the HTTP Poster to submit to the REST endpoint as illustrated below.
    ![xml formatter](images/restMessageEndpoint.png)
    
-- Click on the Send, and your service process should be executed and you should see a response like in this screenshot:
-   ![xml formatter](images/restMessageEndpointResponse???.png)
+- Click on the Send, and your service process should be executed and you should see a response.
  
 ##### Create the Response:
 - The response output variable has so far remained unpopulated.  There are innumerable ways to build a response, and in a real-world service this might be cumulative based on multiple workflow steps.  To keep this exercise simple we'll use a PostScript on the Check Employee Adapter activity we already have.  On the Script tab for this activity, move the response variable over to the Writable column.  Then make sure the selected PostScript language is Groovy, and click the Edit Script link.  Write a script like the following to populate the response:
@@ -248,30 +247,50 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 - Open the same process definition you started building in the sections above.  Add another String variable called employeeId.  Edit the code in your order validation activity to set employeeId from the request:
 
   ```java
-  String employeeId = (String) jsonObj.get("employeeId");
-  setVariableValue("employeeId", employeeId);
+  String employeeId = (String) jsonObj.get("workstationId");
+  setVariableValue("workstationId", workstationId);
   ```
 - Create a new process to consume your service.  From the Toolbox view drag a RESTful Service Adapter onto the canvas and insert it into your process flow. Label the web service activity "Check Employee", and give it two separate outcomes corresponding to true and false, just like the validation activity.
    ![xml formatter](images/consumeMyOrderProcess.png)
    
-- On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL you used for testing your service in Section 3.  [http://localhost:8080/mdw/Services/REST](http://localhost:8080/mdw/Services/REST)
+- On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL you used for testing your service in Section 3.  [http://localhost:8080/mdw/Services/MyServices](http://localhost:8080/mdw/Services/MyServices)
 
 
 ##### Add Pre and Post Script:
 - With the REST activity in a real-world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above.  To simplify this tutorial, let's take advantage of the Pre and Post script to build the request and pull values out of the response.  On the Script property tab for the Invoke MyOrderProcess activity, edit the prescript, adding the Groovy code below to return the request JSON posted to the service (if you've installed the Groovy Eclipse plugin you'll get syntax highlighting and autocomplete):
 
   ```groovy
-  return                                                     
-    TBD
+  return '''
+  { "GetEmployee": {
+	"workstationId": "ab64967"
+  }''';
   ```
   
 - Edit the postscript as follows:                                              
   ```groovy                                                                                 
-    TBD
+  import org.json.JSONObject;
+
+  JSONObject jsonObj = (JSONObject) getVariableValue('employeeServiceResponse');
+  String firstName = null;
+  String lastName = null;
+  String workstationId = null;
+
+  if (jsonObj.has('workstationId')
+	workstationId = (String) jsonObj.get('workstationId');
+
+  if (firstName != null && lastName != null) {
+	runtimeContext.logInfo 'Found employee: ' + firstName + ' )' + lastName;
+	return true;
+  }
+  else {
+	runtimeContext.logInfo 'Employee not found: ' + workstationId;`
+	validationResult = 'Employee not found: ' + workstationId;
+	return false;
+  }
   ```
   
 ##### Save and Run Your Process:
-- Launch your process, entering employeeId on the process launch Variables tab.  View the instance to confirm that employeeName was populated as expected.
+- Launch your process, entering your cuid on the process launch Variables tab.  View the instance to confirm that employeeName was populated as expected.
 - In the process instance view, double-click the Invoke MyOrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire.  
    ![xml formatter](images/orderProcessActivityInstance.png)
  
