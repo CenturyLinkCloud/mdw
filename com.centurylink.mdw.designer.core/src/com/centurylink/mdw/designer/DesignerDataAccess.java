@@ -171,6 +171,7 @@ public class DesignerDataAccess  {
         this.oldNamespaces = oldNamespaces;
         this.remoteAssetRetrieve = remoteRetrieve;
         Mode mode;
+        String compatDs = null;
         if (current_server.getVersionControl() != null)
             mode = Mode.VCS;
         else if (current_server.getDatabaseUrl() != null)
@@ -184,12 +185,13 @@ public class DesignerDataAccess  {
         if (mode == Mode.VCS) {
             DataAccess.currentSchemaVersion = DataAccess.supportedSchemaVersion = dbSupportedSchemaVersion = dbSchemaVersion = current_server.getSchemaVersion();
             baselineData = new MdwBaselineData();
-            // user auth access directly through db is still supported to avoid confusion (TODO prefs)
-            DatabaseAccess db = new DatabaseAccess(current_server.getDatabaseUrl(), connectParams);
-            userinfo = DataAccess.getUserDataAccess(dbSchemaVersion, dbSupportedSchemaVersion, db);
-            String compatDs = null;
-            if (!"jdbc://dummy".equals(current_server.getDatabaseUrl()))
-                compatDs = DataAccess.isUseCompatibilityDatasource(db) ? current_server.getDatabaseUrl() : null;
+            if (dbSchemaVersion != DataAccess.schemaVersion6) {
+                // user auth access directly through db is still supported to avoid confusion (TODO prefs)
+                DatabaseAccess db = new DatabaseAccess(current_server.getDatabaseUrl(), connectParams);
+                userinfo = DataAccess.getUserDataAccess(dbSchemaVersion, dbSupportedSchemaVersion, db);
+                if (!"jdbc://dummy".equals(current_server.getDatabaseUrl()))
+                    compatDs = DataAccess.isUseCompatibilityDatasource(db) ? current_server.getDatabaseUrl() : null;
+            }
             loader = new LoaderPersisterVcs(cuid, current_server.getRootDirectory(), current_server.getVersionControl(), baselineData, compatDs);
             persister = (ProcessPersister) loader;
             rtinfo = new RuntimeDataAccessRest((RestfulServer)server);
