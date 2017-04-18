@@ -201,17 +201,17 @@ A local project is useful if you want to debug your custom Java source code and 
   ```json
   { "orderId":"12345678"}
   ```
-- To create an Event Handler, right-click on your MyServices package in Process Explorer and select New > Event Handler > External Event Handler and populate the wizard page as illustrated. The MyEventHandler will generate a JSON file which will be used to create the external event in MDW. The Message Pattern in this case represents an XPath expression that tells MDW that matching requests should go through this handler.  The built-in Process Launch handler simply runs an instance of the selected process, passing along the request document.
+- To create an Event Handler, right-click on your MyServices package in Process Explorer and select New > Event Handler > External Event Handler and populate the wizard page as illustrated. The MyEventHandler will generate a JSON file which will be used to create the external event in MDW. The Message Pattern in this case represents an XPath expression that tells MDW that matching requests should go through this handler.  The built-in Process Launch handler simply runs an instance of the selected process, passing along the request.
 Note: If you're using a shared database you'll want to make your Message Pattern unique.
 
   ![xml formatter](images/orderEventHandler.png)
 
--  Click Finish, and you should see the Event Handler appear under your package in Process Explorer.  You can view and edit details on the Definition properties tab for the handler.
-- Run your process again, but this time use the External Event tab to specify a JSON value like the following.  This tells Designer to send a REST request to MDW with the designated payload
+-  Click Finish and you should see the Event Handler appears under your package in Process Explorer.  You can view and edit details on the Definition properties tab for the handler.
+- Run your process again, but this time use the External Event tab to specify a JSON value like the following.  This tells Designer to send a REST request to MDW with the designated payload.
 
   ![xml formatter](images/populateOrderExternalValue.png)
   
--  After launching, if you view the values for your latest instance you'll see that the request variable was correctly populated with the incoming payload, but the MyOrderProcess returned nothing because this time orderId was not populated.  There are many ways in MDW to pull values from a request document and use them in workflow activities.  For simplicity we'll use the XPath binding feature in the process start activity.
+-  After launching, if you view the values for your latest instance you'll see that the request variable was correctly populated with the incoming payload, but the MyOrderProcess returned nothing because this time orderId was not populated.  There are many ways in MDW to pull values from a request and use them in workflow activities.  For simplicity we'll use the XPath binding feature in the process start activity.
 
 ##### Map an Input Variable Binding:
 - On the Design tab for the Start activity in your process, enter a Binding Expression value of xpath:/MyOrderProcess/orderId mapped to the orderId input variable.
