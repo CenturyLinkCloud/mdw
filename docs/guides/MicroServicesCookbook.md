@@ -4,7 +4,7 @@ This document contains information about creating, exposing and consuming servic
 
 ### Prerequisites
  - Eclipse Neon for JavaEE Developers:  
-   [http://www.eclipse.org/downloads]{http://www.eclipse.org/downloads}
+   [http://www.eclipse.org/downloads](http://www.eclipse.org/downloads)
  - Required Plugins:
      - MDW Designer:
        http://centurylinkcloud.github.io/mdw/designer/updateSite
