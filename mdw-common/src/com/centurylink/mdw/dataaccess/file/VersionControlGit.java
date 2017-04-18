@@ -125,7 +125,6 @@ public class VersionControlGit implements VersionControl {
     public void setCredentialsProvider(CredentialsProvider provider) { this.credentialsProvider = provider; }
 
     public VersionControlGit() {
-        System.out.println("CREATING VC Git: " + this.hashCode());
     }
 
     public void connect(String repositoryUrl, String user, String password, File localDir) throws IOException {

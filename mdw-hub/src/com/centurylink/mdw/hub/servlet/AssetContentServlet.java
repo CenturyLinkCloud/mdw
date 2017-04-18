@@ -57,6 +57,7 @@ import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -274,7 +275,15 @@ public class AssetContentServlet extends HttpServlet {
      * Also audit logs
      */
     private void authorizeForUpdate(HttpSession session, Entity entity, String includes) throws AuthorizationException, DataAccessException {
-        AuthenticatedUser user = (AuthenticatedUser)session.getAttribute("authenticatedUser");
+        AuthenticatedUser user;
+        if (ApplicationContext.isServiceApiOpen()) {
+            String cuid = ApplicationContext.getServiceUser();
+            user = new AuthenticatedUser(UserGroupCache.getUser(cuid));
+        }
+        else {
+            user = (AuthenticatedUser)session.getAttribute("authenticatedUser");
+        }
+
         if (user == null)
             throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED, "Authentication failure");
         if (!user.hasRole(Role.PROCESS_DESIGN))

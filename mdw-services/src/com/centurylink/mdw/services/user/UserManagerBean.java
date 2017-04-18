@@ -407,21 +407,12 @@ public class UserManagerBean implements UserManager {
      */
     public AuthenticatedUser loadUser(String cuid)
     throws UserException, DataAccessException {
-        AuthenticatedUser authUser = new AuthenticatedUser();
         // load user
         User user = getUser(cuid);
         if (user == null) {
             return null;
         }
-        authUser.setCuid(user.getCuid());
-        authUser.setId(user.getId());
-        authUser.setName(user.getName());
-        authUser.setWorkgroups(user.getWorkgroups());
-
-        // load preferences
-        authUser.setAttributes(getUserPreferences(user.getId()));
-
-        return authUser;
+        return new AuthenticatedUser(user, getUserPreferences(user.getId()));
     }
 
     /**

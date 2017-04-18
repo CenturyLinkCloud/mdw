@@ -1,12 +1,12 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=147,y=28,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=158,y=28,w=60,h=40"},
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=164,ly=59,type=Elbow,xs=177&177,ys=72&119"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=175,ly=59,type=Elbow,xs=188&188,ys=72&119"},
         "event": "FINISH",
         "id": "T2",
         "to": "A3"
@@ -18,13 +18,13 @@
         "Output Documents": "xmlBeanVar",
         "Rule": "import com.centurylink.mdw.service.ApplicationSummaryDocument \r\nimport com.centurylink.mdw.service.ApplicationSummaryDocument.ApplicationSummary     \r\n\r\nxmlBeanVar = ApplicationSummaryDocument.Factory.newInstance();  \r\nApplicationSummary appSummary = xmlBeanVar.addNewApplicationSummary(); \r\nappSummary.setMdwVersion('5.5');",
         "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=130,y=123,w=100,h=60"
+        "WORK_DISPLAY_INFO": "x=138,y=123,w=100,h=60"
       },
       "id": "A3",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
       "name": "Setup XMLBean",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=182,ly=202,type=Elbow,xs=182&182,ys=187&218"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=188,ly=202,type=Elbow,xs=188&188,ys=187&218"},
         "event": "FINISH",
         "id": "T4",
         "to": "A1"
@@ -42,7 +42,7 @@
         "WORK_DISPLAY_INFO": "x=134,y=222,w=105,h=72"
       },
       "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.rules.DroolsDecisionTableActivity",
+      "implementor": "com.centurylink.mdw.drools.DroolsDecisionTableActivity",
       "name": "Drools \r\nDecision Table",
       "transitions": [
         {
@@ -117,5 +117,5 @@
       "type": "org.apache.xmlbeans.XmlObject"
     }
   },
-  "version": "0.2"
+  "version": "0.3"
 }

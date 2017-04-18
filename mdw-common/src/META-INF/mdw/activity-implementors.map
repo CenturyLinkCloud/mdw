@@ -1,1 +1,3 @@
 com.centurylink.mdw.workflow.activity.ControlledActivityImpl=com.centurylink.mdw.workflow.activity.DefaultActivityImpl
+com.centurylink.mdw.workflow.activity.rules.DroolsActivity=com.centurylink.mdw.drools.DroolsActivity
+com.centurylink.mdw.workflow.activity.rules.DroolsDecisionTableActivity=com.centurylink.mdw.drools.DroolsDecisionTableActivity

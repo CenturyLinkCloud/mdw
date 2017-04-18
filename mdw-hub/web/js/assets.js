@@ -2,8 +2,8 @@
 
 var assetMod = angular.module('assets', ['ngResource', 'mdw']);
 
-assetMod.controller('PackagesController', ['$scope', '$location', '$http', 'mdw', 'Assets', 'GitVcs', 'WorkflowCache', 'JSON_DOWNLOAD',
-                                           function($scope, $location, $http, mdw, Assets, GitVcs, WorkflowCache, JSON_DOWNLOAD) {
+assetMod.controller('PackagesController', ['$scope', '$location', '$http', '$cookieStore', 'mdw', 'Assets', 'GitVcs', 'WorkflowCache', 'JSON_DOWNLOAD',
+                                           function($scope, $location, $http, $cookieStore, mdw, Assets, GitVcs, WorkflowCache, JSON_DOWNLOAD) {
   $scope.pkgList = Assets.get({}, 
     function(data) {
       if (!$scope.pkgList.packages || $scope.pkgList.packages.length === 0)
@@ -119,6 +119,65 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$http', 'mdw'
         $scope.getExportPackagesParam();
   };
 
+  $scope.discoveryUrl = $cookieStore.get('discoveryUrl');
+  if (!$scope.discoveryUrl)
+    $scope.discoveryUrl = 'https://mdw.useast.appfog.ctl.io/mdw';
+  $scope.discover = function() {
+    $cookieStore.put('discoveryUrl', $scope.discoveryUrl);
+    $scope.discoveredPkgList = null;
+    $scope.pkgList = Assets.get({discoveryUrl: $scope.discoveryUrl}, 
+      function(data) {
+        $scope.discoveryMessage = null;
+        $scope.discoveredPkgList = data;
+        $scope.discoveredPkgList.selectedState = { all: false };
+        $scope.discoveredPkgList.toggleAll = function() {
+          $scope.discoveredPkgList.packages.forEach(function(pkg) {
+            pkg.selected = $scope.discoveredPkgList.selectedState.all;
+          });
+        };
+        $scope.discoveredPkgList.notAllSelected = function() {
+          $scope.discoveredPkgList.selectedState.all = false;
+        };
+        $scope.discoveredPkgList.getSelected = function() {
+          var selected = [];
+          if ($scope.discoveredPkgList.packages) {
+            $scope.discoveredPkgList.packages.forEach(function(pkg) {
+              if (pkg.selected)
+                selected.push(pkg);
+            });
+          }
+          return selected;
+        };
+      },
+      function(error) {
+        if (error.data.status)
+          $scope.discoveryMessage = 'Discovery failed: ' + error.data.status.message;
+      }
+    );    
+  };
+  
+  $scope.importDiscovered = function() {
+    var pkgsObj = { packages: [] };
+    
+    $scope.discoveredPkgList.getSelected().forEach(function(pkg) {
+      pkgsObj.packages.push(pkg.name);
+    });
+    
+    $scope.pkgList = Assets.put({discoveryUrl: $scope.discoveryUrl}, pkgsObj, 
+      function(data) {
+        $scope.discoveryMessage = null;
+        // leave cache error logging to the server side
+        if ($scope.cacheRefresh)
+          WorkflowCache.refresh({}, { distributed: true });
+        $location.path('/packages');
+      },
+      function(error) {
+        if (error.data.status)
+          $scope.discoveryMessage = 'Import failed: ' + error.data.status.message;
+      }
+    );
+  };
+
   $scope.refresh = function() {
     WorkflowCache.refresh({}, { distributed: true });
   };  
@@ -203,7 +262,8 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util',
 
 assetMod.factory('Assets', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/Services/Assets/:packageName/:assetName', mdw.serviceParams(), {
-    get: { method: 'GET', isArray: false }
+    get: { method: 'GET', isArray: false },
+    put: { method: 'PUT'}
   });
 }]);
 

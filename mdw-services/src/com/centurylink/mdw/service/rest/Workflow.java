@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +26,6 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;

@@ -15,16 +15,6 @@
   <Cache Name="AssetCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.cache.impl.AssetCache</Property>
   </Cache>
-  <Cache Name="DroolsKnowledgeBaseCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.workflow.drools.cache.DroolsKnowledgeBaseCache</Property>
-    <!-- 
-    <Property Name="PreLoaded">
-      orderRoutingDecisionTable
-      multiSheetDecisionTable~EastWest
-      orderRoutingRules{Certified=true,Code=Secret Value}
-    </Property>
-     -->  
-  </Cache>
   <Cache Name="PackageCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.cache.impl.PackageCache</Property>
   </Cache>

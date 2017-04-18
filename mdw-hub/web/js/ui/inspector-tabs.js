@@ -52,7 +52,9 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
           Description: 'description'
         },
         Attributes: 'attributes',
-        Documentation: {},
+        Documentation: { 
+          '_attribute': { name: 'Documentation', markdown: true }
+        },
         Monitoring: {},
         Stubbing: {}
       },
@@ -63,7 +65,9 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
           Description: 'description'
         },
         Attributes: 'attributes',
-        Documentation: {}
+        Documentation: { 
+          '_attribute': { name: 'Documentation', markdown: true }
+        }
       },
       transition: {
         Definition: {

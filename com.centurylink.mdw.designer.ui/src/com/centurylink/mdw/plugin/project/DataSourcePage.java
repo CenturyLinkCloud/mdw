@@ -65,19 +65,29 @@ public class DataSourcePage extends WizardPage implements IFacetWizardPage {
             prevUser = MdwPlugin.getStringPref(prefix + "-" + ProjectPersist.MDW_DB_USER);
         }
 
-        if (prevDriver.length() > 0)
+        boolean isMdw6 = getProject().checkRequiredVersion(6, 0);
+
+        if (isMdw6)
+            getDataSource().setDriver(JdbcDataSource.DEFAULT_DRIVER_MDW6);
+        else if (prevDriver.length() > 0)
             getDataSource().setDriver(prevDriver);
         else
             getDataSource().setDriver(JdbcDataSource.DEFAULT_DRIVER);
         driverComboBox.setText(getDataSource().getDriver());
 
-        if (prevUrl.length() > 0)
+        if (isMdw6)
+            getDataSource().setJdbcUrl(JdbcDataSource.DEFAULT_JDBC_URL_MDW6);
+        else if (prevUrl.length() > 0)
             getDataSource().setJdbcUrl(prevUrl);
         else
             getDataSource().setJdbcUrl(JdbcDataSource.DEFAULT_JDBC_URL);
         jdbcUrlTextField.setText(getDataSource().getJdbcUrl());
 
-        if (prevUser.length() > 0) {
+        if (isMdw6) {
+            getDataSource().setDbUser(JdbcDataSource.DEFAULT_DB_USER_OLD);
+            getDataSource().setDbPassword(JdbcDataSource.DEFAULT_DB_PASSWORD_OLD);
+        }
+        else if (prevUser.length() > 0) {
             getDataSource().setDbUser(prevUser);
         }
         else {
@@ -107,7 +117,7 @@ public class DataSourcePage extends WizardPage implements IFacetWizardPage {
 
     /**
      * draw the widgets using a grid layout
-     * 
+     *
      * @param parent
      *            - the parent composite
      */

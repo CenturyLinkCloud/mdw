@@ -313,22 +313,21 @@ public class ProjectPersist extends DefaultHandler {
             sb.append("/>\n");
         }
 
-        if (workflowProject.getPersistType() == PersistType.None) {
-            // do nothing
-        }
-        else {
-            sb.append("  <database jdbcUrl=\""
-                    + workflowProject.getMdwDataSource().getJdbcUrlWithEncryptedCredentials()
-                    + "\"");
-            if (workflowProject.getMdwDataSource().getSchemaOwner() != null)
-                sb.append(" schemaOwner=\"" + workflowProject.getMdwDataSource().getSchemaOwner()
+        if (!workflowProject.checkRequiredVersion(6, 0)) {
+            if (workflowProject.getPersistType() != PersistType.None) {
+                sb.append("  <database jdbcUrl=\""
+                        + workflowProject.getMdwDataSource().getJdbcUrlWithEncryptedCredentials()
                         + "\"");
-            sb.append("/>\n");
-        }
+                if (workflowProject.getMdwDataSource().getSchemaOwner() != null)
+                    sb.append(" schemaOwner=\""
+                            + workflowProject.getMdwDataSource().getSchemaOwner() + "\"");
+                sb.append("/>\n");
+            }
 
-        if (workflowProject.getFilesToIgnore() != null)
-            sb.append("  <filesToIgnore duringUpdate=\""
-                    + workflowProject.getFilesToIgnoreDuringUpdate() + "\"/>\n");
+            if (workflowProject.getFilesToIgnore() != null)
+                sb.append("  <filesToIgnore duringUpdate=\""
+                        + workflowProject.getFilesToIgnoreDuringUpdate() + "\"/>\n");
+        }
 
         sb.append("</mdw-workflow>\n");
 

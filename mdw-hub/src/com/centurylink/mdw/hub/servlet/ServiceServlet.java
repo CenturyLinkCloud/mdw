@@ -156,11 +156,16 @@ public abstract class ServiceServlet extends HttpServlet {
               }
             }
             else {
-                // TODO more general approach
-                String[] allowed = new String[]{"/Services/AppSummary", "/Services/GetAppSummary", "/services/AppSummary", "/Services/System/sysInfo"};
-                for (String allow : allowed) {
-                    if (request.getRequestURI().equals("/" + ApplicationContext.getMdwHubContextRoot() + allow))
-                        return;
+                if ("GET".equalsIgnoreCase(request.getMethod())) {
+                    // allow GET access to app summary and assets (for discovery)
+                    // TODO more general approach
+                    String[] allowed = new String[] { "/Services/AppSummary",
+                            "/Services/GetAppSummary", "/services/AppSummary",
+                            "/Services/System/sysInfo", "/services/Assets" };
+                    for (String allow : allowed) {
+                        if (request.getRequestURI().equals("/" + ApplicationContext.getMdwHubContextRoot() + allow))
+                            return;
+                    }
                 }
                 headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
                 throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");

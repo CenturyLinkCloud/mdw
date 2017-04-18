@@ -72,6 +72,7 @@ import com.centurylink.mdw.dataaccess.RemoteAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.UserDataAccess;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.VersionControlDummy;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
@@ -171,6 +172,7 @@ public class DesignerDataAccess  {
         this.oldNamespaces = oldNamespaces;
         this.remoteAssetRetrieve = remoteRetrieve;
         Mode mode;
+        String compatDs = null;
         if (current_server.getVersionControl() != null)
             mode = Mode.VCS;
         else if (current_server.getDatabaseUrl() != null)
@@ -184,12 +186,13 @@ public class DesignerDataAccess  {
         if (mode == Mode.VCS) {
             DataAccess.currentSchemaVersion = DataAccess.supportedSchemaVersion = dbSupportedSchemaVersion = dbSchemaVersion = current_server.getSchemaVersion();
             baselineData = new MdwBaselineData();
-            // user auth access directly through db is still supported to avoid confusion (TODO prefs)
-            DatabaseAccess db = new DatabaseAccess(current_server.getDatabaseUrl(), connectParams);
-            userinfo = DataAccess.getUserDataAccess(dbSchemaVersion, dbSupportedSchemaVersion, db);
-            String compatDs = null;
-            if (!"jdbc://dummy".equals(current_server.getDatabaseUrl()))
-                compatDs = DataAccess.isUseCompatibilityDatasource(db) ? current_server.getDatabaseUrl() : null;
+            if (dbSchemaVersion < DataAccess.schemaVersion6) {
+                // user auth access directly through db is still supported to avoid confusion (TODO prefs)
+                DatabaseAccess db = new DatabaseAccess(current_server.getDatabaseUrl(), connectParams);
+                userinfo = DataAccess.getUserDataAccess(dbSchemaVersion, dbSupportedSchemaVersion, db);
+                if (!"jdbc://dummy".equals(current_server.getDatabaseUrl()))
+                    compatDs = DataAccess.isUseCompatibilityDatasource(db) ? current_server.getDatabaseUrl() : null;
+            }
             loader = new LoaderPersisterVcs(cuid, current_server.getRootDirectory(), current_server.getVersionControl(), baselineData, compatDs);
             persister = (ProcessPersister) loader;
             rtinfo = new RuntimeDataAccessRest((RestfulServer)server);
@@ -271,7 +274,8 @@ public class DesignerDataAccess  {
     }
 
     public boolean noDatabase() {
-        return current_server.getDatabaseUrl()==null;
+        return current_server.getDatabaseUrl() == null
+                && current_server.getVersionControl() instanceof VersionControlDummy;
     }
 
     public int getDatabaseSchemaVersion() {
@@ -1110,7 +1114,7 @@ public class DesignerDataAccess  {
         return xml;
     }
 
-    public List<String> getRoleNames() throws RemoteException,DataAccessException {
+    public List<String> getRoleNames() throws RemoteException, DataAccessException {
         if (userAccessServer != null && userAccessServer.isOnline())
             return userAccessServer.getRoleNames();
         else if (userinfo != null && userinfo.isOnline())
@@ -1119,7 +1123,7 @@ public class DesignerDataAccess  {
             return baselineData.getUserRoles();
     }
 
-    public UserVO getUser(String cuid) throws RemoteException,DataAccessException {
+    public UserVO getUser(String cuid) throws RemoteException, DataAccessException {
         if (userAccessServer != null && userAccessServer.isOnline())
             return userAccessServer.getUser(cuid);
         else if (userinfo != null && userinfo.isOnline())

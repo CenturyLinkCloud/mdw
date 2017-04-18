@@ -216,7 +216,10 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getCode()));
+            if (ex.getCode() > 0)
+                metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getCode()));
+            else
+                metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, "500");
             return createResponse(ex.getCode(), ex.getMessage(), format);
         }
         catch (Exception ex) {

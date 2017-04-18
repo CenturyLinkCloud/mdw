@@ -51,6 +51,7 @@ public interface OwnerType {
     public static final String ADAPTER_RESPONSE = "ADAPTER_RESPONSE"; // owner ID is activity instance ID
     public static final String LISTENER_REQUEST = "LISTENER_REQUEST";   // owner ID is processInstanceId (if present)
     public static final String LISTENER_RESPONSE = "LISTENER_RESPONSE"; // owner ID is the document ID of LISTENER_REQUEST
+    public static final String META = "META"; // owner ID is the document ID of the LISTENER/ADAPTER_REQUEST or LISTENER/ADAPTER_RESPONSE
 
     public static final String NOTIFICATION_ACTIVITY = "NOTIFICATION_ACTIVITY"; // owner ID is activity instance ID
 
