@@ -3,7 +3,7 @@
 This document contains information about creating, exposing and consuming services through a RESTFul Web Service. For a SOAP document-style Web Service, refer to [TomcatCookbook](TomcatCookbook.md).
 
 ### Prerequisites
- - Eclipse Neon for JavaEE Developers:  
+ - Eclipse Neon for JavaEE Developers:                                                                                 
    [http://www.eclipse.org/downloads](http://www.eclipse.org/downloads)
  - Required Plugins:
      - MDW Designer:
