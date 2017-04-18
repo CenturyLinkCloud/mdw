@@ -171,7 +171,8 @@ A local project is useful if you want to debug your custom Java source code and 
     - [Tomcat Server Setup](TomcatCookbook.md)
     - [Cloud Foundry Setup](CloudFoundryCookbook.md)
 - You can confirm that MDW was successfully deployed by accessing MDWHub in your browser:
-     - Tomcat:  [http://localhost:8080/mdw](http://localhost:8080/mdw)
+     - Tomcat:                                                                                  
+       [http://localhost:8080/mdw](http://localhost:8080/mdw)
  
 - Troubleshooting: if you encounter an exception like below, it means you need to download the JCE 8 Unlimited Strength Jurisdiction Policy Files for JRE 1.8.  Or JCE 8 Unlimited Strength Jurisdiction Policy Files  for JRE 1.8
  
