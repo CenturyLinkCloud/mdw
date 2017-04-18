@@ -6,7 +6,7 @@ This document contains information about creating, exposing and consuming servic
  - Eclipse Neon for JavaEE Developers:                                                                                 
    [http://www.eclipse.org/downloads](http://www.eclipse.org/downloads)
  - Required Plugins:
-     - MDW Designer:
+     - MDW Designer:                                                    
        http://centurylinkcloud.github.io/mdw/designer/updateSite
      - Buildship Plugin:   
        http://download.eclipse.org/buildship/updates/e46/releases/2.x
@@ -23,13 +23,13 @@ This document contains information about creating, exposing and consuming servic
 
 ### Java Containers
 You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  The differences between local and remote development are described in later sections of this tutorial.  To be able to develop locally you need one of the following containers installed.  At certain points in this tutorial, we'll link to container-specific steps in the Cookbooks for each supported container.
-
+  
 ### Supported Java Containers: 
 -	Apache Tomcat 8:
-    - https://tomcat.apache.org
+    - [https://tomcat.apache.org](https://tomcat.apache.org)
     - [TomcatCookbook](TomcatCookbook.md)
 -   Pivotal Cloud Foundry 2.x:
-    - http://pivotal.io/platform
+    - [http://pivotal.io/platform](http://pivotal.io/platform)
     - [CloudFoundryCookbook](CloudFoundryCookbook.md)
  
 ### MDW Database:
