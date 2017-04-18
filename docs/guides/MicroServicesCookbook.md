@@ -4,7 +4,7 @@ This document contains information about creating, exposing and consuming servic
 
 ### Prerequisites
  - Eclipse Neon for JavaEE Developers:  
-   http://www.eclipse.org/downloads
+   [http://www.eclipse.org/downloads]{http://www.eclipse.org/downloads}
  - Required Plugins:
      - MDW Designer:
        http://centurylinkcloud.github.io/mdw/designer/updateSite
@@ -153,7 +153,7 @@ A local project is useful if you want to debug your custom Java source code and 
         }
 ```
 - Now if you switch back to your process the new activity should appear in the Toolbox View. From the toolbox, drag your activity onto the canvas and insert it into your process flow between the Start and Stop activities.
-- Tip: To draw a link (or transition in MDW terminology) between activities on the designer canvas, hold down the Shift key on your keyboard, Click on the upstream activity, and continue holding down the mouse left click button while dragging the cursor to the downstream activity (“shift-click-drag”).
+- Tip: To draw a link (or transition in MDW terminology) between activities on the designer canvas, hold down the Shift key on your keyboard, Click on the upstream activity, and continue holding down the mouse left click button while dragging the cursor to the downstream activity (“shift+click+drag”).
 - Your activity can be dragged like this and used in other processes designed by other users. Actually the proper term in MDW for this reusable element in the Toolbox is activity implementor. This conveys the idea that it’s actually a template to be dragged and configured as an activity in the canvas, and it also conveys the fact that it always corresponds to a Java class. To take this reuse concept a step further, your activity implementor can be made discoverable so that it can easily be imported into other environments and reused across domains. If you click on the light bulb icon at the top of the Toolbox you’ll get an idea how items in the palette can be imported from a file or discovered in the corporate repository.
 - Double click the activity in the canvas, and in its Definition property tab change the label to something like “Validate Order”. When you click back on the canvas the activity reflects its new label.
 
@@ -168,17 +168,17 @@ A local project is useful if you want to debug your custom Java source code and 
 
 ##### Get Your Server Running:
 - Depending on which supported container you're using, you can follow one of the server setup exercises.  You'll need to follow the steps from one of these guides to the point where MDW is deployed and you're able to start and stop your server from the Eclipse Servers view. 
-    - Tomcat Server Setup
-    - Cloud Foundry Setup
+    - [Tomcat Server Setup(TomcatCookbook.md)
+    - [Cloud Foundry Setup](CloudFoundryCookbook.md)
 - You can confirm that MDW was successfully deployed by accessing MDWHub in your browser:
-     - Tomcat:  http://localhost:8080/mdw
+     - Tomcat:  [http://localhost:8080/mdw](http://localhost:8080/mdw)
  
 - Troubleshooting: if you encounter an exception like below, it means you need to download the JCE 8 Unlimited Strength Jurisdiction Policy Files for JRE 1.8.  Or JCE 8 Unlimited Strength Jurisdiction Policy Files  for JRE 1.8
  
 	    java.security.InvalidKeyException: Illegal key size or default parameters
  
 ##### Open the Process Launch Dialog:
-- Right-click on the MyOrderProcess process in Process Explorer view and Select Run.  Designer will present the launch dialog and open a connection to the server to confirm that it's running (required for launching a process).
+- Right-click on the MyOrderProcess process in Process Explorer view and Select Run.  Designer will present the launch dialog and open a connection to the server to confirm that it's running 'required for launching a process'.
 - On the Process tab in the launch dialog, select "Monitor Runtime Log" and "Process Instance Live View" to get a feel for how you can watch your process flow in real time.
 
   ![xml formatter](images/myOrderProcessRunConfig.png)
