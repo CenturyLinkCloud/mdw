@@ -245,10 +245,10 @@ response = " { "orderId":"12345678"}"
 MDW comes with Adapter activities for consuming services over many protocols from within your workflow processes.  In this exercise we'll use the REST Service Adapter activity to invoke the MyOrderProcess service you just created.
  
 ##### Create a Process with a REST Service Activity:
-- Open the same process definition you started building in the sections above.  Add another String variable called employeeId.  Edit the code in your order validation activity to set employeeId from the request:
+- Open the same process definition you started building in the sections above.  Add another String variable called employeeId.  Edit the code in your order validation activity to set workstationId from the request:
 
   ```java
-  String employeeId = (String) jsonObj.get("workstationId");
+  String workstationId = (String) jsonObj.get("workstationId");
   setVariableValue("workstationId", workstationId);
   ```
 - Create a new process to consume your service.  From the Toolbox view drag a RESTful Service Adapter onto the canvas and insert it into your process flow. Label the web service activity "Check Employee", and give it two separate outcomes corresponding to true and false, just like the validation activity.
@@ -355,7 +355,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
   ```    
 - Access your service using a GET request from your browser with a URL like the following:
     
-    - [http://localhost:8080/mdw/Services/MyServices/Employee/dxoakes](http://localhost:8080/mdw/Services/MyServices/Employee/dxoakes)
+    - [http://localhost:8080/mdw/Services/MyServices/Employees/dxoakes](http://localhost:8080/mdw/Services/MyServices/Employees/dxoakes)
  
 ##### Add Create Capability to Your REST Service:
 - In the REST paradigm, creates are performed via HTTP POST.  So to implement the ability to add a new Employee, override the post() method:
@@ -368,7 +368,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
            String id = emp.getCuid();
            if (id == null)
               throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing user id");
-           if (id.equals("ab64967"))
+           if (id.equals("dxoakes"))
               throw new ServiceException(HTTP_409_CONFLICT, "Employee id exists: " + id);
            
            // TODO: actual work to create the employee
