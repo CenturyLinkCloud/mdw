@@ -168,7 +168,7 @@ A local project is useful if you want to debug your custom Java source code and 
 
 ##### Get Your Server Running:
 - Depending on which supported container you're using, you can follow one of the server setup exercises.  You'll need to follow the steps from one of these guides to the point where MDW is deployed and you're able to start and stop your server from the Eclipse Servers view. 
-    - [Tomcat Server Setup(TomcatCookbook.md)
+    - [Tomcat Server Setup](TomcatCookbook.md)
     - [Cloud Foundry Setup](CloudFoundryCookbook.md)
 - You can confirm that MDW was successfully deployed by accessing MDWHub in your browser:
      - Tomcat:  [http://localhost:8080/mdw](http://localhost:8080/mdw)
