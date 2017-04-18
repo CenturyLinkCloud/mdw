@@ -116,7 +116,7 @@ war {
         include "META-INF/services/**" 
     }
     from("dist") {
-        include "**/*"
+        exclude "hub-ui/" // exclude module-dist
     }
     from("../mdw-common/src") {
         include "META-INF/mdw/namespaces.map"

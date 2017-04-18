@@ -1,0 +1,11 @@
+.bowerrc
+.classpath
+.project
+build.gradle
+grunt.launch
+manifest.yml
+src/
+.settings/
+deploy/
+web/
+dist/

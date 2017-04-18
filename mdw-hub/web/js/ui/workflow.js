@@ -3,8 +3,8 @@
 var workflowMod = angular.module('mdwWorkflow', ['mdw', 'drawingConstants']);
 
 workflowMod.controller('MdwWorkflowController', 
-    ['$scope', '$http', '$routeParams', 'mdw', 'util', 'mdwImplementors', 'Diagram', 'Inspector',
-    function($scope, $http, $routeParams, mdw, util, mdwImplementors, Diagram, Inspector) {
+    ['$scope', '$http', 'mdw', 'util', 'mdwImplementors', 'Diagram', 'Inspector',
+    function($scope, $http, mdw, util, mdwImplementors, Diagram, Inspector) {
   
   $scope.init = function(canvas) {
     if ($scope.serviceBase.endsWith('/'))
