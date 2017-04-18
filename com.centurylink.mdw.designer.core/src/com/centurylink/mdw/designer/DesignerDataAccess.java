@@ -72,6 +72,7 @@ import com.centurylink.mdw.dataaccess.RemoteAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.UserDataAccess;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.VersionControlDummy;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
@@ -273,8 +274,8 @@ public class DesignerDataAccess  {
     }
 
     public boolean noDatabase() {
-        return current_server.getVersionControl() == null
-                && current_server.getDatabaseUrl() == null;
+        return current_server.getDatabaseUrl() == null
+                && current_server.getVersionControl() instanceof VersionControlDummy;
     }
 
     public int getDatabaseSchemaVersion() {
@@ -1116,8 +1117,7 @@ public class DesignerDataAccess  {
     public List<String> getRoleNames() throws RemoteException, DataAccessException {
         if (userAccessServer != null && userAccessServer.isOnline())
             return userAccessServer.getRoleNames();
-        else if (dbSchemaVersion < DataAccess.schemaVersion6 && userinfo != null
-                && userinfo.isOnline())
+        else if (userinfo != null && userinfo.isOnline())
             return userinfo.getRoleNames();
         else
             return baselineData.getUserRoles();
@@ -1126,8 +1126,7 @@ public class DesignerDataAccess  {
     public UserVO getUser(String cuid) throws RemoteException, DataAccessException {
         if (userAccessServer != null && userAccessServer.isOnline())
             return userAccessServer.getUser(cuid);
-        else if (dbSchemaVersion < DataAccess.schemaVersion6 && userinfo != null
-                && userinfo.isOnline())
+        else if (userinfo != null && userinfo.isOnline())
             return userinfo.getUser(cuid);
         else
             return new UserVO(cuid);
@@ -1186,8 +1185,7 @@ public class DesignerDataAccess  {
     public List<UserGroupVO> getAllGroups() throws RemoteException,DataAccessException {
         if (userAccessServer != null && userAccessServer.isOnline())
             return userAccessServer.getAllGroups(false);
-        else if (dbSchemaVersion < DataAccess.schemaVersion6 && userinfo != null
-                && userinfo.isOnline())
+        else if (userinfo != null && userinfo.isOnline())
             return userinfo.getAllGroups(false);
         else {
             // baseline workgroups
@@ -1633,8 +1631,7 @@ public class DesignerDataAccess  {
         userAction.setSource("Designer");
         if (userAccessServer != null && userAccessServer.isOnline())
             userAccessServer.auditLogUserAction(userAction);
-        else if (dbSchemaVersion < DataAccess.schemaVersion6 && userinfo != null
-                && userinfo.isOnline())
+        else if (userinfo != null && userinfo.isOnline())
             userinfo.auditLogUserAction(userAction);
     }
 
