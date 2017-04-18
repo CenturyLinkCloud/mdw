@@ -178,7 +178,7 @@ A local project is useful if you want to debug your custom Java source code and 
 	    java.security.InvalidKeyException: Illegal key size or default parameters
  
 ##### Open the Process Launch Dialog:
-- Right-click on the MyOrderProcess process in Process Explorer view and Select Run.  Designer will present the launch dialog and open a connection to the server to confirm that it's running 'required for launching a process'.
+- Right-click on the MyOrderProcess process in Process Explorer view and Select Run.  Designer will present the launch dialog and open a connection to the server to confirm that it's running `required for launching a process`.
 - On the Process tab in the launch dialog, select "Monitor Runtime Log" and "Process Instance Live View" to get a feel for how you can watch your process flow in real time.
 
   ![xml formatter](images/myOrderProcessRunConfig.png)
