@@ -435,7 +435,7 @@ workflowMod.factory('Diagram',
                   display.y - Step.OLD_INST_W * rem - del,
                   display.w + Step.OLD_INST_W * 2* rem + 2 * del,
                   display.h + Step.OLD_INST_W * 2 * rem + 2 * del,
-                  status.color, true, rounding);
+                  status.color, status.color, rounding);
             } 
             else {
               this.rect(
@@ -443,7 +443,7 @@ workflowMod.factory('Diagram',
                   display.y - Step.OLD_INST_W * rem,
                   display.w + Step.OLD_INST_W * 2 * rem,
                   display.h + Step.OLD_INST_W * 2 * rem,
-                  status.color, true, 0);
+                  status.color, status.color, 0);
             }
             rem--;
             this.context.clearRect(
@@ -460,7 +460,7 @@ workflowMod.factory('Diagram',
                   display.y - adj, 
                   display.w + 2 * adj, 
                   display.h + 2* adj, 
-                  status.color, true, rounding);
+                  status.color, status.color, rounding);
               x1 = display.x + del;
               y1 = display.y + del;
               w1 = display.w - 2 * del;
@@ -472,7 +472,7 @@ workflowMod.factory('Diagram',
               w1 = display.w - Step.OLD_INST_W * 2 * i - 2 * del;
               h1 = display.h - Step.OLD_INST_W * 2 * i - 2 * del;
               if (w1 > 0 && h1 > 0)
-                this.rect(x1, y1, w1, h1, status.color, true);
+                this.rect(x1, y1, w1, h1, status.color, status.color);
             }
             x1 += Step.OLD_INST_W - 1;
             y1 += Step.OLD_INST_W - 1;
