@@ -40,9 +40,7 @@ public class NewTaskTemplateWizard extends WorkflowAssetWizard {
     @SuppressWarnings("restriction")
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         super.init(workbench, selection,
-                new TaskTemplate(org.eclipse.ui.internal.ide.IDEWorkbenchPlugin.getDefault()
-                        .getDialogSettings().getSection("NewWizardAction")
-                        .get(TaskTemplate.TASK_TYPE)));
+                new TaskTemplate(TaskTemplate.TASK_TYPE));
     }
 
     @Override
