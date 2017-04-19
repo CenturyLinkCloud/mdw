@@ -217,7 +217,7 @@ public abstract class RestService {
         String descrip = getEntityDescription(path, content, headers);
         if (descrip.length() > 1000)
             descrip = descrip.substring(0, 999);
-        UserAction userAction = new UserAction(user.getName(), action, entity, entityId, descrip);
+        UserAction userAction = new UserAction(user.getCuid(), action, entity, entityId, descrip);
         userAction.setSource(getSource());
         return userAction;
     }
