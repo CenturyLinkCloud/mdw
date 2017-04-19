@@ -6,3 +6,4 @@ dist/
 .grunt
 hub-ui*.tgz
 /lib/
+/bin/
