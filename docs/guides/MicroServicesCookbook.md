@@ -257,8 +257,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 - Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add a new employee from your browser:
    ![xml formatter](images/restPostRequest.png)
    
-   
-      ![xml formatter](images/restPostResponse.png)
+   ![xml formatter](images/restPostResponse.png)
    
 #### 2. Add Swagger API Annotations
 
