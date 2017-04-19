@@ -197,7 +197,7 @@ A local project is useful if you want to debug your custom Java source code and 
   ![xml formatter](images/viewOrderInstance.png)
  
 ##### Register an External Event Handler:
-- The MyOrderProcess you just performed took a simple string input and returned nothing.  A real service would likely take an XML or JSON document as input, and return something similar with the results.  To expose this process as a service you'll need to register an External Event Handler.  An External Event Handler is the MDW mechanism for performing content-based routing of incoming requests to your service process.  So in our example it's a way of specifying that an JSON payload like the following should be routed to the MyOrderProcess service process:
+- The MyOrderProcess you just performed took a simple string input and returned nothing.  A real service would likely take an XML or JSON as input, and return something similar with the results.  To expose this process as a service you'll need to register an External Event Handler.  An External Event Handler is the MDW mechanism for performing content-based routing of incoming requests to your service process.  So in our example it's a way of specifying that an JSON payload like the following should be routed to the MyOrderProcess service process:
   ```json
   { "orderId":"12345678"}
   ```
