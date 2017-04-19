@@ -1,11 +1,15 @@
+.npmignore
 .bowerrc
 .classpath
 .project
 build.gradle
+Gruntfile.js
 grunt.launch
 manifest.yml
 src/
+build/
 .settings/
 deploy/
 web/
 dist/
+hub-ui*.tgz

@@ -102,6 +102,13 @@ module.exports = function(grunt) {
       }      
     },
     concat: {
+      options: {
+        banner: "'use strict';\r\n",
+        process: function(src, filepath) {
+          return '// source: ' + filepath + '\r\n' +
+            src.replace(/(^|\r\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
+          }
+      },
       'hub-ui': {
         src: ['web/lib/hub-ui.js', 'web/js/ui/**/*.js', 'web/js/mdw.js', 'web/js/util.js', 'web/js/constants.js', 'dist/hub-ui/templates.js'],
         dest: 'dist/hub-ui/src.js'
@@ -145,6 +152,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['jshint', 'string-replace', 'copy:dist']);
   grunt.registerTask('dist', ['jshint', 'string-replace', 'copy:dist', 'ngtemplates:mdw', 'concat:hub-ui', 'cssmin:hub-ui', 'webpack:hub-ui']);
+  // hub-ui is just for local dev where dist has already been run -- otherwise use dist 
   grunt.registerTask('hub-ui', ['ngtemplates:mdw', 'concat:hub-ui', 'cssmin:hub-ui', 'webpack:hub-ui']);
   grunt.registerTask('test', ['jasmine']);
 };

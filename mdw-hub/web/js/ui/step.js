@@ -56,7 +56,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
       else {
         if (this.diagram.drawBoxes)
           this.diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);
-        var iconSrc = mdw.roots.hub + '/asset/' + this.implementor.icon;
+        var iconSrc = 'asset/' + this.implementor.icon;
         var iconX = this.display.x + this.display.w / 2 - 12;
         var iconY = this.display.y + 5;
         this.diagram.drawImage(iconSrc, iconX, iconY);

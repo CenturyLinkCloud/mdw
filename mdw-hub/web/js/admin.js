@@ -2,9 +2,9 @@
 
 var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ngCookies', 'ui.bootstrap', 'chart.js', 
  'mdwChart', 'mdwActions', 'mdwList', 'mdwEditor', 'mdwValues', 'mdwPanel', 'mdwWorkflow', 'mdwShape', 'mdwStep', 'mdwLink', 
- 'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwInspector', 'mdwInspectorTabs', 'authUser', 'mdw', 'util', 'constants', 
- 'routes', 'users', 'groups', 'roles', 'assets', 'edit', 'testing', 'tasks', 'task', 'processes', 'activities', 'requests', 
- 'services', 'system', 'solutions', 'message', 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
+ 'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwInspector', 'mdwInspectorTabs', 'authUser', 'mdw', 'util', 'mdwUtil', 
+ 'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'edit', 'testing', 'tasks', 'task', 'processes', 'activities', 
+ 'requests', 'services', 'system', 'solutions', 'message', 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
 ]);
 
 adminApp.config(function($httpProvider) {
@@ -334,45 +334,6 @@ adminApp.directive('fileUpload', [function() {
   };
 }]);
 
-adminApp.filter('highlight', function($sce) {
-  return function(input, lang) {
-    if (lang === 'test') {
-      lang = 'groovy';
-    }
-    else if (lang === 'spring' || lang === 'camel') {
-      lang = 'xml';
-    }
-    else if (lang === 'proc' || lang === 'task' || lang === 'impl' || lang === 'evth' || lang == 'pagelet') {
-      if (input.trim().startsWith('{'))
-        lang = 'json';
-      else
-        lang = 'xml';
-    }
-    if (lang && hljs.getLanguage(lang) && input) {
-      return hljs.highlight(lang, input.removeCrs()).value;
-    }
-    else if (input)
-      return input.replace(/&/g,'&amp;').replace(/</g,'&lt;');
-    else
-      return input;
-  };
-}).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
-
-adminApp.filter('markdown', function($sce) {
-  marked.setOptions({
-    highlight: function (code) {
-      return hljs.highlightAuto(code).value;
-    }
-  });
-  
-  return function(input) {
-    if (input)
-        return marked(input);
-    else
-      return input;
-  };
-}).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
-
 adminApp.filter('lineLimit', ['$filter', function($filter) {
   return function(input, limit) {
     if (input) {
@@ -454,35 +415,3 @@ angular.element(document).ready(function() {
     }
   });
 });
-
-// in case js string does not supply startsWith() and endsWith()
-if (typeof String.prototype.startsWith != 'function') {
-  String.prototype.startsWith = function(prefix) {
-    return this.indexOf(prefix) === 0;
-  };
-}
-if (typeof String.prototype.endsWith !== 'function') {
-  String.prototype.endsWith = function(suffix) {
-      return this.indexOf(suffix, this.length - suffix.length) !== -1;
-  };
-}
-// remove DOS/Windows CR characters
-String.prototype.removeCrs = function() {
-  return this.replace(/\r/g, '');
-};
-// split into lines (removing CRs first)
-String.prototype.getLines = function() {
-  return this.removeCrs().split(/\n/);
-};
-// count lines
-String.prototype.lineCount = function() {
-  return this.getLines().length;
-};
-// line numbers
-String.prototype.lineNumbers = function() {
-  var lines = this.getLines();
-  var lineNums = '';
-  for (var i = 1; i < lines.length + 1; i++)
-    lineNums += i + '\n';
-  return lineNums;
-};

@@ -27,7 +27,7 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "angular": "^1.6.4",
+    "angular": ">=1.4.7",
     "bootstrap-css-only": "^3.3.7",
     "highlightjs": "^9.10.0",
     "marked": "^0.3.6"
