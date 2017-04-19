@@ -2,8 +2,8 @@
 
 var editMod = angular.module('edit', ['ngResource', 'mdw']);
 
-editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util', 'Assets', 'Asset', 'WorkflowCache', 'GitVcs',
-                                         function($scope, $routeParams, mdw, util, Assets, Asset, WorkflowCache, GitVcs) {
+editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams', 'mdw', 'util', 'Assets', 'Asset', 'WorkflowCache', 'GitVcs',
+                                         function($scope, $cookieStore, $routeParams, mdw, util, Assets, Asset, WorkflowCache, GitVcs) {
   
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
@@ -40,6 +40,7 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
       
       $scope.initVersion();
       $scope.initOptions();
+      $scope.initGitCredentials();
       
       $scope.asset.url = mdw.roots.hub + '/asset/' + $scope.packageName + '/' +  $scope.asset.name;
       
@@ -74,6 +75,20 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
     };    
   };
   
+  $scope.initGitCredentials = function() {
+    var user = $cookieStore.get('gitUser');
+    var password = $cookieStore.get('gitPassword');
+    if (user && password) {
+      $scope.gitCredentials = {
+        user: user,
+        password: password
+      };
+    }
+    else {
+      $scope.gitCredentials = null;
+    }
+  };
+  
   $scope.isDirty = function() {
     if ($scope.process)
       return $scope.procDirty;
@@ -91,8 +106,15 @@ editMod.controller('EditorController', ['$scope', '$routeParams', 'mdw', 'util',
     $scope.message = null;
   };
   
+  $scope.isShowGitCredentials = function() {
+    return $scope.options.commitAndPush && !$scope.gitCredentials;    
+  };
+  
   $scope.save = function() {
     console.log('saving: ' + $scope.asset.packageName + '/' + $scope.asset.name + ' v' + $scope.version.selected);
+    if ($scope.options.commitAndPush && $scope.gitUser && $scope.getPassword) {
+      $cookieStore.get('gitUser');
+    }
     Asset.put({
       packageName: $scope.asset.packageName,
       assetName: $scope.asset.name,
