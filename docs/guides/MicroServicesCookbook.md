@@ -66,7 +66,7 @@ A local project is useful if you want to debug your custom Java source code and 
 
   ![xml formatter](images/importBasePackages.png)
 
-- After you click Next it'll take a few moments for Designer to locate the available packages.  Once these are displayed, expand both the base and the hub packages and select the same MDW version as you did when creating the project.
+- After you click Next it'll take a few moments for Designer to locate the available packages.  Once these are displayed, expand the base, db and hub packages and select the same MDW version as you did when creating the project.
 
   ![xml formatter](images/importBasePackages2.png)
 - Click Finish, and the packages will be downloaded and become visible in your Process Explorer project tree.
