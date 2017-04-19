@@ -257,6 +257,9 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 - Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add a new employee from your browser:
    ![xml formatter](images/restPostRequest.png)
    
+   
+      ![xml formatter](images/restPostResponse.png)
+   
 #### 2. Add Swagger API Annotations
 
 With MDW REST services you can automatically generate Swagger documentation just by adding the appropriate annotations to your Dynamic Java.  This is not only a convenient way to maintain this documentation, but it also means that it's always up-to-date with the implementation.  Swagger documentation is a powerful way to communicate the specifics of your REST interface to potential consumers.  Swagger annotations represent a convenient mechanism for service developers to produce this documentation without having to hand-craft the JSON or YAML results.
