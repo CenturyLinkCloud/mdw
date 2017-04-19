@@ -5,5 +5,6 @@ dist/
 .tmp/
 .grunt
 hub-ui*.tgz
-/lib/
+hub-ui.css
+hub-ui.js
 /bin/

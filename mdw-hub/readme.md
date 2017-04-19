@@ -2,7 +2,7 @@
 
 ## Install
 ```bash
-npm install mdw-hub --save
+npm install hub-ui --save
 ```
 
 ## Usage
@@ -30,12 +30,12 @@ myApp.controller('myController', ['$scope',
 <head>
   <title>My Hub-UI</title>
   <link rel="stylesheet" href="node_modules/bootstrap-css-only/css/bootstrap.css">
-  <link rel="stylesheet" href="../bower_components/highlightjs/styles/default.css">  
-  <link rel="stylesheet" href="node_modules/hub-ui/lib/hub-ui.css">
-  <script src="node_modules/angular/angular.js"></script>  
-  <script src="node_modules/marked/lib/marked.js"></script>
+  <link rel="stylesheet" href="node_modules/highlightjs/styles/default.css">  
+  <link rel="stylesheet" href="node_modules/hub-ui/hub-ui.css">
+  <script src="node_modules/angular/angular.js"></script>
+  <script src="node_modules/marked/lib/marked.js"></script>  
   <script src="node_modules/highlightjs/highlight.pack.js"></script>
-  <script src="node_modules/hub-ui/lib/hub-ui.js"></script>
+  <script src="node_modules/hub-ui/hub-ui.js"></script>
   <script src="my.js"></script>
 </head>
 <body ng-controller="myController">

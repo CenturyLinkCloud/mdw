@@ -119,7 +119,7 @@ module.exports = function(grunt) {
     cssmin: {
       'hub-ui': {
         files: {
-          'lib/hub-ui.css': ['web/css/mdw-admin.css']
+          'hub-ui.css': ['web/css/mdw-admin.css']
         }
       }
     },
@@ -127,7 +127,7 @@ module.exports = function(grunt) {
       'hub-ui': {
         entry: './dist/hub-ui/src.js',
         output: {
-          path: __dirname + '/lib/',
+          path: __dirname + '/',
           filename: 'hub-ui.js'
         },
         plugins: [
@@ -152,9 +152,9 @@ module.exports = function(grunt) {
     },
   });
 
-  grunt.registerTask('default', ['jshint', 'string-replace', 'copy:dist']);
+  grunt.registerTask('default', ['jshint', 'string-replace', 'copy:dist', 'ngtemplates:mdw', 'concat:hub-ui', 'cssmin:hub-ui', 'webpack:hub-ui']);
   grunt.registerTask('dist', ['jshint', 'string-replace', 'copy:dist', 'ngtemplates:mdw', 'concat:hub-ui', 'cssmin:hub-ui', 'webpack:hub-ui']);
-  // hub-ui is just for local dev where dist has already been run -- otherwise use dist 
+  // hub-ui is just for local dev where dist has already been run -- otherwise use default or dist 
   grunt.registerTask('hub-ui', ['ngtemplates:mdw', 'concat:hub-ui', 'cssmin:hub-ui', 'webpack:hub-ui']);
   grunt.registerTask('test', ['jasmine']);
 };
