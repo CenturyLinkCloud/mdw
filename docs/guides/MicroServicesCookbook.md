@@ -231,9 +231,9 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 	}
 
   ```    
-- Access your service using a GET request from your browser with a URL like the following:
+- Access your service using a POST request from your browser with a URL like the following:
     
-    - [http://localhost:8080/mdw/Services/MyServices/Employees/dxoakes](http://localhost:8080/mdw/Services/MyServices/Employees/dxoakes)
+    - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)
  
 ##### Add Create Capability to Your REST Service:
 - In the REST paradigm, creates are performed via HTTP POST.  So to implement the ability to add a new Employee, override the post() method:
