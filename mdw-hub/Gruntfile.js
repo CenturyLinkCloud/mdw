@@ -5,6 +5,7 @@ module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
 
   var webpack = require("webpack");
+  var path = require('path');
   
   grunt.config.init({
     pkg: grunt.file.readJSON('package.json'),
@@ -125,7 +126,7 @@ module.exports = function(grunt) {
       'hub-ui': {
         entry: './dist/hub-ui/src.js',
         output: {
-          path: '/workspaces/mdw6/mdw-hub/lib/',
+          path: __dirname + '/lib/',
           filename: 'hub-ui.js'
         },
         plugins: [
