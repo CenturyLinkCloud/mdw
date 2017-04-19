@@ -196,29 +196,6 @@ A local project is useful if you want to debug your custom Java source code and 
 
   ![xml formatter](images/viewOrderInstance.png)
  
-#### 3. Expose as a RESTFul Web Service
-At this point your process is already exposed through all the protocols that MDW supports (the default behavior).  When you tested it above using Designer you were consuming it over the REST interface.  
- 
-##### Invoke Your Service through REST:
-- If you're familiar with a tool like Postman, you can use that to create and send a request for your service.  The MDWHub System tab also includes the HTTP Poster utility that you can use to test your service.  Access MDWHub in your browser through a URL like this: [http://localhost:8080/mdw](http://localhost:8080/mdw).
-- Click on the System tab, Messaging and the HTTP Poster. This is the default behavior. If you don't see the System tab you'll need to be granted Site Admin permissions for the environment where you're testing.  The submittal URL for HTTP Poster defaults to the MDW REST endpoint and the Message Body with something like the following:
-  ```json
-   { "orderId":"12345678"}
-  ```        
-- On the MDWHub System tab you can use the HTTP Poster to submit to the REST endpoint as illustrated below.
-   ![xml formatter](images/restMessageEndpoint.png)
-   
-- Click on the Send, and your service process should be executed and you should see a response.
- 
-##### Create the Response:
-- The response output variable has so far remained unpopulated.  There are innumerable ways to build a response, and in a real-world service this might be cumulative based on multiple workflow steps.  To keep this exercise simple we'll use a PostScript on the Check Employee Adapter activity we already have.  On the Script tab for this activity, move the response variable over to the Writable column.  Then make sure the selected PostScript language is Groovy, and click the Edit Script link.  Write a script like the following to populate the response:
-
-```groovy
-response = " { "orderId":"12345678"}"
-```
-
--  Notice that process variables are implicitly available and assignable from within your script.  Notice also that we're building a string here, which MDW automatically translates to the appropriate type (org.jason.JSONObject).  Save the script content and also the process.  If you run the process again through the event handler you should see the correct response in the Eclipse console, and the values should be correctly populated for the instance.
-  
 #### 3. Expose a RESTFul Web Service using JAX-RS API
 #### 1. Implement a JAX-RS Web Service
 
