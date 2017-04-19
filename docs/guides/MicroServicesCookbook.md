@@ -66,7 +66,7 @@ A local project is useful if you want to debug your custom Java source code and 
 
   ![xml formatter](images/importBasePackages.png)
 
-- After you click Next it'll take a few moments for Designer to locate the available packages.  Once these are displayed, expand both the base and the hub packages and select the same MDW version as you did when creating the project.
+- After you click Next it'll take a few moments for Designer to locate the available packages.  Once these are displayed, expand the base, db and hub packages and select the same MDW version as you did when creating the project.
 
   ![xml formatter](images/importBasePackages2.png)
 - Click Finish, and the packages will be downloaded and become visible in your Process Explorer project tree.
@@ -196,124 +196,7 @@ A local project is useful if you want to debug your custom Java source code and 
 
   ![xml formatter](images/viewOrderInstance.png)
  
-##### Register an External Event Handler:
-- The MyOrderProcess you just performed took a simple string input and returned nothing.  A real service would likely take an XML or JSON as input, and return something similar with the results.  To expose this process as a service you'll need to register an External Event Handler.  An External Event Handler is the MDW mechanism for performing content-based routing of incoming requests to your service process.  So in our example it's a way of specifying that an JSON payload like the following should be routed to the MyOrderProcess service process:
-  ```json
-  { "orderId":"12345678"}
-  ```
-- To create an Event Handler, right-click on your MyServices package in Process Explorer and select New > Event Handler > External Event Handler and populate the wizard page as illustrated. The MyEventHandler will generate a JSON file which will be used to create the external event in MDW. The Message Pattern in this case represents an XPath expression that tells MDW that matching requests should go through this handler.  The built-in Process Launch handler simply runs an instance of the selected process, passing along the request.
-Note: If you're using a shared database you'll want to make your Message Pattern unique.
-
-  ![xml formatter](images/orderEventHandler.png)
-
--  Click Finish and you should see the Event Handler appears under your package in Process Explorer.  You can view and edit details on the Definition properties tab for the handler.
-- Run your process again, but this time use the External Event tab to specify a JSON value like the following.  This tells Designer to send a REST request to MDW with the designated payload.
-
-  ![xml formatter](images/populateOrderExternalValue.png)
-  
--  After launching, if you view the values for your latest instance you'll see that the request variable was correctly populated with the incoming payload, but the MyOrderProcess returned nothing because this time orderId was not populated.  There are many ways in MDW to pull values from a request and use them in workflow activities.  For simplicity we'll use the XPath binding feature in the process start activity.
-
-##### Map an Input Variable Binding:
-- On the Design tab for the Start activity in your process, enter a Binding Expression value of xpath:/MyOrderProcess/orderId mapped to the orderId input variable.
-
-  ![xml formatter](images/mapInputOrderValue.png)
-
-#### 3. Expose as a RESTFul Web Service
-At this point your process is already exposed through all the protocols that MDW supports (the default behavior).  When you tested it above using Designer you were consuming it over the REST interface.  
- 
-##### Invoke Your Service through REST:
-- If you're familiar with a tool like Postman, you can use that to create and send a request for your service.  The MDWHub System tab also includes the HTTP Poster utility that you can use to test your service.  Access MDWHub in your browser through a URL like this: [http://localhost:8080/mdw](http://localhost:8080/mdw).
-- Click on the System tab, Messaging and the HTTP Poster. This is the default behavior. If you don't see the System tab you'll need to be granted Site Admin permissions for the environment where you're testing.  The submittal URL for HTTP Poster defaults to the MDW REST endpoint and the Message Body with something like the following:
-  ```json
-   { "orderId":"12345678"}
-  ```        
-- On the MDWHub System tab you can use the HTTP Poster to submit to the REST endpoint as illustrated below.
-   ![xml formatter](images/restMessageEndpoint.png)
-   
-- Click on the Send, and your service process should be executed and you should see a response.
- 
-##### Create the Response:
-- The response output variable has so far remained unpopulated.  There are innumerable ways to build a response, and in a real-world service this might be cumulative based on multiple workflow steps.  To keep this exercise simple we'll use a PostScript on the Check Employee Adapter activity we already have.  On the Script tab for this activity, move the response variable over to the Writable column.  Then make sure the selected PostScript language is Groovy, and click the Edit Script link.  Write a script like the following to populate the response:
-
-```groovy
-response = " { "orderId":"12345678"}"
-```
-
--  Notice that process variables are implicitly available and assignable from within your script.  Notice also that we're building a string here, which MDW automatically translates to the appropriate type (org.jason.JSONObject).  Save the script content and also the process.  If you run the process again through the event handler you should see the correct response in the Eclipse console, and the values should be correctly populated for the instance.
-  
-#### 4. Consume a RESTFul Web Service
-MDW comes with Adapter activities for consuming services over many protocols from within your workflow processes.  In this exercise we'll use the REST Service Adapter activity to invoke the MyOrderProcess service you just created.
- 
-##### Create a Process with a REST Service Activity:
-- Open the same process definition you started building in the sections above.  Add another String variable called employeeId.  Edit the code in your order validation activity to set workstationId from the request:
-
-  ```java
-  String workstationId = (String) jsonObj.get("workstationId");
-  setVariableValue("workstationId", workstationId);
-  ```
-- Create a new process to consume your service.  From the Toolbox view drag a RESTful Service Adapter onto the canvas and insert it into your process flow. Label the web service activity "Check Employee", and give it two separate outcomes corresponding to true and false, just like the validation activity.
-   ![xml formatter](images/consumeMyOrderProcess.png)
-   
-- On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL you used for testing your service in Section 3.  [http://localhost:8080/mdw/Services/MyServices](http://localhost:8080/mdw/Services/MyServices)
-
-
-##### Add Pre and Post Script:
-- With the REST activity in a real-world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above.  To simplify this tutorial, let's take advantage of the Pre and Post script to build the request and pull values out of the response.  On the Script property tab for the Invoke MyOrderProcess activity, edit the prescript, adding the Groovy code below to return the request JSON posted to the service (if you've installed the Groovy Eclipse plugin you'll get syntax highlighting and autocomplete):
-
-  ```groovy
-  return '''
-  { "GetEmployee": {
-	"workstationId": "ab64967"
-  }''';
-  ```
-  
-- Edit the postscript as follows:                                              
-  ```groovy                                                                                 
-  import org.json.JSONObject;
-
-  JSONObject jsonObj = (JSONObject) getVariableValue('employeeServiceResponse');
-  String firstName = null;
-  String lastName = null;
-  String workstationId = null;
-
-  if (jsonObj.has('workstationId')
-	workstationId = (String) jsonObj.get('workstationId');
-
-  if (firstName != null && lastName != null) {
-	runtimeContext.logInfo 'Found employee: ' + firstName + ' )' + lastName;
-	return true;
-  }
-  else {
-	runtimeContext.logInfo 'Employee not found: ' + workstationId;`
-	validationResult = 'Employee not found: ' + workstationId;
-	return false;
-  }
-  ```
-  
-##### Save and Run Your Process:
-- Launch your process, entering your cuid on the process launch Variables tab.  View the instance to confirm that employeeName was populated as expected.
-- In the process instance view, double-click the Invoke MyOrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire.  
-   ![xml formatter](images/orderProcessActivityInstance.png)
- 
-##### Stub Mode and Response Simulation:
-- At times when performing services orchestration using MDW you may be designing a flow before one or more of your consumed services is not yet available.  Or you may not be ready to make an actual call because you're still debugging your workflow.  For situations like this MDW provides Stub Mode and Response Simulation.  Stub Mode is for local development and Automated Testing.  Response Simulation is used to hardwire the responses for specific adapter activities within a given environment.  Both of these features are accessed via the Simulation property tab.  Click this tab for the Invoke Check Employee REST adapter in the process you just build.  To try out Stub Mode, depress the Stub Server button (no need to Configure since the defaults should be fine).
-
-   ![xml formatter](images/orderProcessStubMode.png)
-   
-- Note that this is a global setting; meaning once the stub server's running it intercepts all adapter activity requests.  Note also that it can be difficult to determine whether the button is depressed (i.e. stubbing is on).
-
-- Once you've got stub mode turned on, run the process again and you'll be presented with a dialog prompting you for the desired response for this case.
-
-   ![xml formatter](images/stubResponse.png)
-   
-- Whatever is typed in the Response Message textbox will be returned to your process as the adapter response, and you should be able to confirm this by checking the runtime values of the process instance.
-- To simulate a response, disable the stub server and instead set Simulation Mode to On.  Then provide a Return Code (not currently used), Chance (weighted probability when multiple responses), and Response value for each different hardwired response scenario.
-
-   ![xml formatter](images/simulateResponse.png)
-
-- These simulated response settings are meant to be per-environment, so they don't get saved with the process definition but rather as so-called "override attributes".  For this reason there's a Save button directly on the Simulation property tab.
-
-#### JAX-RS Web Service
+#### 3. Expose a RESTFul Web Service using JAX-RS API
 #### 1. Implement a JAX-RS Web Service
 
 Besides implementing services by way of an MDW workflow process, you can easily expose your Dynamic Java class as a REST service using JAX-RS annotations.
@@ -499,3 +382,75 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
 ##### View the Samples in MDWHub:
 - Now that your sample requests have been created in accordance with the MDW naming convention, they'll automatically be associated with the corresponding service path.  And they'll also be displayed in the Samples tab for your service in MDWHub:
    ![xml formatter](images/jsonSamples.png)
+
+#### 4. Consume a RESTFul Web Service
+MDW comes with Adapter activities for consuming services over many protocols from within your workflow processes.  In this exercise we'll use the REST Service Adapter activity to invoke the MyOrderProcess service you just created.
+ 
+##### Create a Process with a REST Service Activity:
+- Open the same process definition you started building in the sections above.  Add another String variable called employeeId.  Edit the code in your order validation activity to set workstationId from the request:
+
+  ```java
+  String workstationId = (String) jsonObj.get("workstationId");
+  setVariableValue("workstationId", workstationId);
+  ```
+- Create a new process to consume your service.  From the Toolbox view drag a RESTful Service Adapter onto the canvas and insert it into your process flow. Label the web service activity "Check Employee", and give it two separate outcomes corresponding to true and false, just like the validation activity.
+   ![xml formatter](images/consumeMyOrderProcess.png)
+   
+- On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL you used for testing your service in Section 3.  [http://localhost:8080/mdw/Services/MyServices](http://localhost:8080/mdw/Services/MyServices)
+
+
+##### Add Pre and Post Script:
+- With the REST activity in a real-world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above.  To simplify this tutorial, let's take advantage of the Pre and Post script to build the request and pull values out of the response.  On the Script property tab for the Invoke MyOrderProcess activity, edit the prescript, adding the Groovy code below to return the request JSON posted to the service (if you've installed the Groovy Eclipse plugin you'll get syntax highlighting and autocomplete):
+
+  ```groovy
+  return '''
+  { "GetEmployee": {
+	"workstationId": "ab64967"
+  }''';
+  ```
+  
+- Edit the postscript as follows:                                              
+  ```groovy                                                                                 
+  import org.json.JSONObject;
+
+  JSONObject jsonObj = (JSONObject) getVariableValue('employeeServiceResponse');
+  String firstName = null;
+  String lastName = null;
+  String workstationId = null;
+
+  if (jsonObj.has('workstationId')
+	workstationId = (String) jsonObj.get('workstationId');
+
+  if (firstName != null && lastName != null) {
+	runtimeContext.logInfo 'Found employee: ' + firstName + ' )' + lastName;
+	return true;
+  }
+  else {
+	runtimeContext.logInfo 'Employee not found: ' + workstationId;`
+	validationResult = 'Employee not found: ' + workstationId;
+	return false;
+  }
+  ```
+  
+##### Save and Run Your Process:
+- Launch your process, entering your cuid on the process launch Variables tab.  View the instance to confirm that employeeName was populated as expected.
+- In the process instance view, double-click the Invoke MyOrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire.  
+   ![xml formatter](images/orderProcessActivityInstance.png)
+ 
+##### Stub Mode and Response Simulation:
+- At times when performing services orchestration using MDW you may be designing a flow before one or more of your consumed services is not yet available.  Or you may not be ready to make an actual call because you're still debugging your workflow.  For situations like this MDW provides Stub Mode and Response Simulation.  Stub Mode is for local development and Automated Testing.  Response Simulation is used to hardwire the responses for specific adapter activities within a given environment.  Both of these features are accessed via the Simulation property tab.  Click this tab for the Invoke Check Employee REST adapter in the process you just build.  To try out Stub Mode, depress the Stub Server button (no need to Configure since the defaults should be fine).
+
+   ![xml formatter](images/orderProcessStubMode.png)
+   
+- Note that this is a global setting; meaning once the stub server's running it intercepts all adapter activity requests.  Note also that it can be difficult to determine whether the button is depressed (i.e. stubbing is on).
+
+- Once you've got stub mode turned on, run the process again and you'll be presented with a dialog prompting you for the desired response for this case.
+
+   ![xml formatter](images/stubResponse.png)
+   
+- Whatever is typed in the Response Message textbox will be returned to your process as the adapter response, and you should be able to confirm this by checking the runtime values of the process instance.
+- To simulate a response, disable the stub server and instead set Simulation Mode to On.  Then provide a Return Code (not currently used), Chance (weighted probability when multiple responses), and Response value for each different hardwired response scenario.
+
+   ![xml formatter](images/simulateResponse.png)
+
+- These simulated response settings are meant to be per-environment, so they don't get saved with the process definition but rather as so-called "override attributes".  For this reason there's a Save button directly on the Simulation property tab.
