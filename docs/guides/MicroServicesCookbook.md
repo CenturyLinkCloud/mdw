@@ -209,32 +209,27 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 - Implement a REST service, using the JAX-RS @Path annotation and extending the MDW JsonRestService class:
      
   ```java
-       package MyServices;
-       import java.util.Map;
-       import javax.ws.rs.Path;
-       import org.json.JSONException;
-       import org.json.JSONObject;
-       import com.centurylink.mdw.common.service.ServiceException;
-       import com.centurylink.mdw.model.user.User;
-       import com.centurylink.mdw.services.rest.JsonRestService;
-       @Path("/Employees")
-       public class Employees extends JsonRestService {
-          @Override
-          @Path("/{id}")
-          public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
-             String id = getSegment(path, 2);
-             if ("dxoakes".equals(id)) {
-                User emp = new User(id);
-                emp.setName("Donald Oakes");
-                emp.setAttribute("Email", "donald.oakes@centurylink.com");
-                emp.setAttribute("Phone", "303 992 9747");
-                return emp.getJson();
-             }
-             else {
-                return null;
-             }
-         }
-      }
+  	package MyServices;
+	import java.util.HashMap;
+	import java.util.Map;
+	import javax.ws.rs.Path;
+	import org.json.JSONObject;
+	import com.centurylink.mdw.common.service.ServiceException;
+	import com.centurylink.mdw.services.ServiceLocator;
+	import com.centurylink.mdw.services.WorkflowServices;
+	import com.centurylink.mdw.services.rest.JsonRestService;
+	@Path("/Orders")
+	public class Orders extends JsonRestService {
+		@Override
+		public JSONObject post(String path, JSONObject content, Map<String, String> headers) throws ServiceException{
+			Map<String,Object> stringParams = new HashMap<String,Object>();
+			WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+			Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
+		
+			return (JSONObject) response;
+		}
+	}
+
   ```    
 - Access your service using a GET request from your browser with a URL like the following:
     
