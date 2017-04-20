@@ -7,7 +7,7 @@ before_install:
   - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
   - npm install grunt-cli -g
   - npm --version
-install: npm install mdw
+install: npm --prefix mdw install mdw
 notifications:
   slack: mdwcore:9WSiZQJitrLtiiU5BO29Or4R
   email:
