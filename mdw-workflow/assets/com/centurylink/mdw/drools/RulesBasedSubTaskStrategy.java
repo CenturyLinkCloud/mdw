@@ -19,11 +19,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-//import org.drools.KnowledgeBase;
-import org.drools.command.CommandFactory;
-//import org.drools.runtime.StatelessKnowledgeSession;
-import org.kie.internal.KnowledgeBase;
-import org.kie.internal.runtime.StatelessKnowledgeSession;
+import org.kie.api.KieBase;
+import org.kie.api.runtime.StatelessKieSession;
+import org.kie.internal.command.CommandFactory;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.common.StrategyException;
@@ -42,11 +40,12 @@ public class RulesBasedSubTaskStrategy extends RulesBasedStrategy implements Sub
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
+    @SuppressWarnings("unchecked")
     public String getSubTaskPlan(TaskRuntimeContext masterTaskContext) throws StrategyException {
         TaskInstance masterTaskInstance = masterTaskContext.getTaskInstanceVO();
-        KnowledgeBase knowledgeBase = getKnowledgeBase();
+        KieBase knowledgeBase = getKnowledgeBase();
 
-        StatelessKnowledgeSession knowledgeSession = knowledgeBase.newStatelessKnowledgeSession();
+        StatelessKieSession knowledgeSession = knowledgeBase.newStatelessKieSession();
 
         List<Object> facts = new ArrayList<Object>();
         facts.add(getParameters());

@@ -16,28 +16,25 @@
 package com.centurylink.mdw.drools;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
 
-//import org.drools.KnowledgeBase;
-import org.kie.internal.KnowledgeBase;
-import org.kie.internal.KnowledgeBaseFactory;
-//import org.drools.KnowledgeBaseFactory;
-//import org.drools.builder.KnowledgeBuilder;
-import org.kie.internal.builder.KnowledgeBuilder;
-import org.kie.internal.builder.KnowledgeBuilderConfiguration;
-//import org.drools.builder.KnowledgeBuilderConfiguration;
-//import org.drools.builder.KnowledgeBuilderFactory;
-import org.kie.internal.builder.KnowledgeBuilderFactory;
-import org.kie.internal.io.ResourceFactory;
-import org.kie.api.io.ResourceType;
-//import org.drools.builder.ResourceType;
-//import org.drools.io.ResourceFactory;
+import org.kie.api.KieBase;
+import org.kie.api.KieBaseConfiguration;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.Message;
+import org.kie.api.builder.Results;
+import org.kie.api.runtime.KieContainer;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.Compatibility;
@@ -45,8 +42,11 @@ import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -133,15 +133,15 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
         return knowledgeBaseAsset;
     }
 
-    public static KnowledgeBase getKnowledgeBase(String name) {
+    public static KieBase getKnowledgeBase(String name) {
         return getKnowledgeBase(name, null, null);
     }
 
-    public static KnowledgeBase getKnowledgeBase(String name, String modifier) {
+    public static KieBase getKnowledgeBase(String name, String modifier) {
         return getKnowledgeBase(name, modifier, null);
     }
 
-    public static KnowledgeBase getKnowledgeBase(String name, String modifier, Map<String,String> attributes) {
+    public static KieBase getKnowledgeBase(String name, String modifier, Map<String,String> attributes) {
         KnowledgeBaseAsset kbrs = getKnowledgeBaseAsset(name, modifier, attributes);
         if (kbrs == null)
             return null;
@@ -196,12 +196,9 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
             throw new CachingException("No asset found for: '" + key.name + "'");
         }
 
-        KnowledgeBuilderConfiguration conf = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(null, key.loader);
-        conf.setProperty("drools.dialect.default", "mvel");
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(conf);
-
         String rules = null;
         String format = asset.getLanguage();
+        String name = asset.getName();
 
         if (format.equals(Asset.EXCEL) || format.equals(Asset.EXCEL_2007) || format.equals(Asset.CSV)) {
             // decision table XLS, XLSX or CSV
@@ -218,6 +215,8 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
                 rules = doCompatibilityCodeSubstitutions(asset.getLabel(), rules);
             if (logger.isDebugEnabled())
                 logger.debug("Converted rule for " + asset.getDescription() + ":\n" + rules + "\n================================");
+
+            name = name.substring(0, name.lastIndexOf('.')) + ".drl";
         }
         else if (format.equals(Asset.DROOLS) || format.equals(Asset.GUIDED)) {
             // drools DRL or BRL
@@ -229,22 +228,48 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
             throw new CachingException("Unsupported rules format '" + format + "' for " + asset.getDescription());
         }
 
-        ResourceType resourceType = format.equals(Asset.GUIDED) ? ResourceType.BRL : ResourceType.DRL;
-        kbuilder.add(ResourceFactory.newByteArrayResource(rules.getBytes()), resourceType);
+        KieServices kieServices = KieServices.Factory.get();
+        KieFileSystem kfs = kieServices.newKieFileSystem();
+        kfs.write("src/main/resources/" + name, // this is bewildering
+                    kieServices.getResources().newByteArrayResource(rules.getBytes()));
 
-        if (kbuilder.hasErrors()) {
+        // force setting system properties or else the following throws an NPE
+        getProperties();
+        KieBuilder kieBuilder = kieServices.newKieBuilder(kfs, key.loader).buildAll();
+        Results results = kieBuilder.getResults();
+        if(results.hasMessages(Message.Level.ERROR)) {
             if (format.equals(Asset.EXCEL) || format.equals(Asset.EXCEL_2007)) {
                 // log the converted rules
                 logger.severe("Converted rule for " + asset.getDescription() + ":\n" + rules + "\n================================");
             }
-            throw new CachingException("Error parsing knowledge base from rules for " + asset.getDescription() + "\n" + kbuilder.getErrors());
+            throw new CachingException("Error parsing knowledge base from rules for " + asset.getLabel() + "\n" + results.getMessages());
         }
         else {
-            KnowledgeBase knowledgeBase = KnowledgeBaseFactory.newKnowledgeBase();
-            knowledgeBase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-            logger.info("Loaded KnowledgeBase from Asset: " + asset.getLabel());
-            return new KnowledgeBaseAsset(knowledgeBase, asset);
+            KieContainer kieContainer =
+                    kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+            KieBaseConfiguration kieBaseConfiguration = kieServices.newKieBaseConfiguration(getProperties());
+            KieBase kieBase = kieContainer.newKieBase(kieBaseConfiguration);
+            System.out.println("Loaded KnowledgeBase: " + asset.getLabel());
+            return new KnowledgeBaseAsset(kieBase, asset);
         }
+    }
+
+    private static Properties properties;
+    public static Properties getProperties() throws IOException {
+        if (properties == null) {
+            properties = new Properties();
+            File file = new File(System.getProperty(PropertyManager.MDW_CONFIG_LOCATION) + "/drools/drools.packagebuilder.conf");
+            if (file.exists()) {
+                properties.load(new FileInputStream(file));
+            }
+            else {
+                Package thisPkg = PackageCache.getPackage(DroolsKnowledgeBaseCache.class.getPackage().getName());
+                properties.load(thisPkg.getCloudClassLoader().getResourceAsStream("drools.packagebuilder.conf"));
+            }
+            for (Object key : properties.keySet())
+                System.setProperty(key.toString(), (String)properties.get(key));
+        }
+        return properties;
     }
 
     public static Asset getAsset(Key key) {

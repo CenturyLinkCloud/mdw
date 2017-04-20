@@ -18,10 +18,10 @@ package com.centurylink.mdw.drools;
 import java.util.ArrayList;
 import java.util.List;
 
-//import org.drools.KnowledgeBase;
-import org.kie.internal.KnowledgeBase;
-import org.kie.internal.runtime.StatelessKnowledgeSession;
-import org.drools.command.CommandFactory;
+import org.kie.api.KieBase;
+import org.kie.api.runtime.StatelessKieSession;
+import org.kie.internal.command.CommandFactory;
+
 //import org.drools.runtime.StatelessKnowledgeSession;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.common.StrategyException;
@@ -42,10 +42,11 @@ public class RulesBasedAutoAssignStrategy extends RulesBasedStrategy implements 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
 
+    @SuppressWarnings("unchecked")
     public User selectAssignee(TaskInstance taskInstanceVO) throws ObserverException{
       User user = new User();
       UserManager userManager = ServiceLocator.getUserManager();
-      KnowledgeBase knowledgeBase = null;
+      KieBase knowledgeBase = null;
       logger.info("Getting knowledgeBase");
       try
       {
@@ -57,7 +58,7 @@ public class RulesBasedAutoAssignStrategy extends RulesBasedStrategy implements 
         e.printStackTrace();
       }
 
-      StatelessKnowledgeSession knowledgeSession = knowledgeBase.newStatelessKnowledgeSession();
+      StatelessKieSession knowledgeSession = knowledgeBase.newStatelessKieSession();
 
       List<Object> facts = new ArrayList<Object>();
       facts.add(getParameters());

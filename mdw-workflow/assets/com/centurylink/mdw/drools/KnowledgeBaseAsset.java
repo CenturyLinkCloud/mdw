@@ -15,8 +15,7 @@
  */
 package com.centurylink.mdw.drools;
 
-//import org.drools.KnowledgeBase;
-import org.kie.internal.KnowledgeBase;
+import org.kie.api.KieBase;
 
 import com.centurylink.mdw.model.asset.Asset;
 
@@ -28,10 +27,10 @@ public class KnowledgeBaseAsset {
   private Asset asset;
   public Asset getAsset() { return asset; }
 
-  private KnowledgeBase knowledgeBase;
-  public KnowledgeBase getKnowledgeBase() { return knowledgeBase; }
+  private KieBase knowledgeBase;
+  public KieBase getKnowledgeBase() { return knowledgeBase; }
 
-  public KnowledgeBaseAsset(KnowledgeBase knowledgeBase, Asset asset) {
+  public KnowledgeBaseAsset(KieBase knowledgeBase, Asset asset) {
       this.knowledgeBase = knowledgeBase;
       this.asset = asset;
   }

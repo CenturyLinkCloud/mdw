@@ -19,11 +19,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-//import org.drools.KnowledgeBase;
-import org.drools.command.CommandFactory;
-//import org.drools.runtime.StatelessKnowledgeSession;
-import org.kie.internal.KnowledgeBase;
-import org.kie.internal.runtime.StatelessKnowledgeSession;
+import org.kie.api.KieBase;
+import org.kie.api.runtime.StatelessKieSession;
+import org.kie.internal.command.CommandFactory;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.common.StrategyException;
@@ -35,10 +33,11 @@ import com.centurylink.mdw.observer.task.RoutingStrategy;
 @RegisteredService(RoutingStrategy.class)
 public class RulesBasedRoutingStrategy extends RulesBasedStrategy implements RoutingStrategy {
 
+    @SuppressWarnings("unchecked")
     public List<String> determineWorkgroups(TaskTemplate taskTemplate, TaskInstance taskInstance) throws StrategyException {
-        KnowledgeBase knowledgeBase = getKnowledgeBase();
+        KieBase knowledgeBase = getKnowledgeBase();
 
-        StatelessKnowledgeSession knowledgeSession = knowledgeBase.newStatelessKnowledgeSession();
+        StatelessKieSession knowledgeSession = knowledgeBase.newStatelessKieSession();
 
         List<Object> facts = new ArrayList<Object>();
         facts.add(getParameters());

@@ -19,11 +19,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-//import org.drools.KnowledgeBase;
-import org.drools.command.CommandFactory;
-//import org.drools.runtime.StatelessKnowledgeSession;
-import org.kie.internal.KnowledgeBase;
-import org.kie.internal.runtime.StatelessKnowledgeSession;
+import org.kie.api.KieBase;
+import org.kie.api.runtime.StatelessKieSession;
+import org.kie.internal.command.CommandFactory;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.common.StrategyException;
@@ -36,13 +34,14 @@ import com.centurylink.mdw.observer.task.PrioritizationStrategy;
 public class RulesBasedPrioritizationStrategy extends RulesBasedStrategy implements PrioritizationStrategy {
 
     @Override
+    @SuppressWarnings("unchecked")
     public Date determineDueDate(TaskTemplate taskTemplate) throws StrategyException {
 
         TaskInstance taskInstanceVO = new TaskInstance();  // for holding values
 
         // execute rules only once (results are stored in taskInstanceVO)
-        KnowledgeBase knowledgeBase = getKnowledgeBase();
-        StatelessKnowledgeSession knowledgeSession = knowledgeBase.newStatelessKnowledgeSession();
+        KieBase knowledgeBase = getKnowledgeBase();
+        StatelessKieSession knowledgeSession = knowledgeBase.newStatelessKieSession();
 
         List<Object> facts = new ArrayList<Object>();
         facts.add(getParameters());

@@ -16,6 +16,5 @@
 			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="assets/com/centurylink/mdw/drools/jbpm-flow-builder.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

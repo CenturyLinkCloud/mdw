@@ -15,14 +15,11 @@
  */
 package com.centurylink.mdw.drools;
 
-//import org.drools.KnowledgeBase;
-import org.kie.internal.KnowledgeBase;
+import org.kie.api.KieBase;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.StrategyException;
-import com.centurylink.mdw.drools.DroolsKnowledgeBaseCache;
-import com.centurylink.mdw.drools.KnowledgeBaseAsset;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.observer.task.ParameterizedStrategy;
 
@@ -30,11 +27,11 @@ public abstract class RulesBasedStrategy extends ParameterizedStrategy {
 
     public static final String DECISION_TABLE_SHEET = "Decision Table Sheet";
 
-    protected KnowledgeBase getKnowledgeBase() throws StrategyException {
+    protected KieBase getKnowledgeBase() throws StrategyException {
         Object kbName = getParameter(getKnowledgeBaseAttributeName());
         if (kbName == null)
             throw new StrategyException("Missing strategy parameter: " + getKnowledgeBaseAttributeName());
-        KnowledgeBase knowledgeBase = getKnowledgeBase(kbName.toString(), getDecisionTableSheetName());
+        KieBase knowledgeBase = getKnowledgeBase(kbName.toString(), getDecisionTableSheetName());
         if (knowledgeBase == null)
             throw new StrategyException("Cannot load knowledge base: " + kbName);
 
@@ -54,7 +51,7 @@ public abstract class RulesBasedStrategy extends ParameterizedStrategy {
      * Override to apply additional or non-standard attribute conditions.
      * @throws StrategyException
      */
-    protected KnowledgeBase getKnowledgeBase(String name, String modifier) throws StrategyException {
+    protected KieBase getKnowledgeBase(String name, String modifier) throws StrategyException {
         KnowledgeBaseAsset kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseAsset(name, modifier, null, getClassLoader());
 
         if (kbrs == null) {

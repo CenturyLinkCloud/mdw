@@ -15,8 +15,8 @@
  */
 package com.centurylink.mdw.drools;
 
-//import org.drools.KnowledgeBase;
-import org.kie.internal.KnowledgeBase;
+import org.kie.api.KieBase;
+
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
@@ -28,7 +28,7 @@ public class DroolsDecisionTableActivity extends DroolsActivity {
     public static final String DECISION_TABLE_SHEET = "DecisionTableSheet";
 
     @Override
-    protected KnowledgeBase getKnowledgeBase(String name, String version) throws ActivityException {
+    protected KieBase getKnowledgeBase(String name, String version) throws ActivityException {
         String decisionTableSheetName = null;
         try {
             decisionTableSheetName = getAttributeValueSmart(DECISION_TABLE_SHEET);

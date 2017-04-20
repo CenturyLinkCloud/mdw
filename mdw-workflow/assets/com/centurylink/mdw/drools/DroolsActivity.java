@@ -21,26 +21,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import org.drools.KnowledgeBase;
-import org.kie.internal.KnowledgeBase;
-import org.drools.command.CommandFactory;
-//import org.drools.runtime.StatelessKnowledgeSession;
-import org.kie.internal.runtime.StatelessKnowledgeSession;
+import org.kie.internal.command.CommandFactory;
+import org.kie.api.KieBase;
+import org.kie.api.runtime.StatelessKieSession;
+
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.RuleActivity;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
-import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-import com.centurylink.mdw.drools.DroolsKnowledgeBaseCache;
-import com.centurylink.mdw.drools.KnowledgeBaseAsset;
 
 @Tracked(LogLevel.TRACE)
 public class DroolsActivity extends DefaultActivityImpl implements RuleActivity {
@@ -51,6 +48,7 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
 
 
     @Override
+    @SuppressWarnings("unchecked")
     public void execute() throws ActivityException {
 
         String knowledgeBaseName = null;
@@ -66,12 +64,12 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
         if (StringHelper.isEmpty(knowledgeBaseName))
             throw new ActivityException("Missing attribute: " + KNOWLEDGE_BASE);
 
-        KnowledgeBase knowledgeBase = getKnowledgeBase(knowledgeBaseName, knowledgeBaseVersion);
+        KieBase knowledgeBase = getKnowledgeBase(knowledgeBaseName, knowledgeBaseVersion);
         if (knowledgeBase == null)
             throw new ActivityException("Cannot load KnowledgeBase: " + knowledgeBaseName);
 
         // TODO stateful session option
-        StatelessKnowledgeSession knowledgeSession = knowledgeBase.newStatelessKnowledgeSession();
+        StatelessKieSession kSession = knowledgeBase.newStatelessKieSession();
 
         List<Object> facts = new ArrayList<Object>();
         Map<String,Object> values = new HashMap<String,Object>();
@@ -82,9 +80,9 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
         }
         facts.add(values);
 
-        setGlobalValues(knowledgeSession);
+        setGlobalValues(kSession);
 
-        knowledgeSession.execute(CommandFactory.newInsertElements(facts));
+        kSession.execute(CommandFactory.newInsertElements(facts));
 
         String temp = getAttributeValue(OUTPUTDOCS);
         setOutputDocuments(temp == null ? new String[0] : temp.split("#"));
@@ -102,7 +100,7 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
     /**
      * Get knowledge base with no modifiers.
      */
-    protected KnowledgeBase getKnowledgeBase(String name, String version) throws ActivityException {
+    protected KieBase getKnowledgeBase(String name, String version) throws ActivityException {
         return getKnowledgeBase(name, version, null);
     }
 
@@ -110,7 +108,7 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
      * Returns the asset based on specified version/range whose attributes match the custom attribute
      * Override to apply additional or non-standard conditions.
      */
-    protected KnowledgeBase getKnowledgeBase(String name, String assetVersion, String modifier) throws ActivityException {
+    protected KieBase getKnowledgeBase(String name, String assetVersion, String modifier) throws ActivityException {
         Map<String,String> customAttrs = null;
         KnowledgeBaseAsset kbrs;
         if (assetVersion == null)
@@ -138,9 +136,9 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
      */
     protected ClassLoader getClassLoader() {
         ClassLoader loader = null;
-        Package pkg =PackageCache.getProcessPackage(getProcessId());
+        Package pkg = PackageCache.getProcessPackage(getProcessId());
         if (pkg != null) {
-            loader = pkg.getClassLoader();
+            loader = pkg.getCloudClassLoader();
         }
         if (loader == null) {
             loader = getClass().getClassLoader();
@@ -148,7 +146,7 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
         return loader;
     }
 
-    protected void setGlobalValues(StatelessKnowledgeSession knowledgeSession) throws ActivityException {
+    protected void setGlobalValues(StatelessKieSession knowledgeSession) throws ActivityException {
         knowledgeSession.setGlobal("activity", this); // TODO deprecate
         knowledgeSession.setGlobal("runtimeContext", getRuntimeContext());
         knowledgeSession.setGlobal("now", new Date());
