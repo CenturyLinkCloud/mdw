@@ -321,13 +321,8 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
 MDW comes with Adapter activities for consuming services over many protocols from within your workflow processes.  In this exercise we'll use the REST Service Adapter activity to invoke the MyOrderProcess service you just created.
  
 ##### Create a Process with a REST Service Activity:
-- Open the same process definition you started building in the sections above.  Add another String variable called employeeId.  Edit the code in your order validation activity to set workstationId from the request:
-
-  ```java
-  String workstationId = (String) jsonObj.get("workstationId");
-  setVariableValue("workstationId", workstationId);
-  ```
-- Create a new process to consume your service.  From the Toolbox view drag a RESTful Service Adapter onto the canvas and insert it into your process flow. Label the web service activity "Check Employee", and give it two separate outcomes corresponding to true and false, just like the validation activity.
+- Open the same process definition you started building in the sections above.  
+- Create a new process to consume your service.  From the Toolbox view drag a RESTful Service Adapter onto the canvas and insert it into your process flow. Label the web service activity "Check Orders", and give it two separate outcomes corresponding to true and false, just like the validation activity.
    ![xml formatter](images/consumeMyOrderProcess.png)
    
 - On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL you used for testing your service in Section 3.  [http://localhost:8080/mdw/Services/MyServices](http://localhost:8080/mdw/Services/MyServices)
