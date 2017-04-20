@@ -295,7 +295,7 @@ With MDW REST services you can automatically generate Swagger documentation just
 MDWHub comes with a UI for displaying your generated Swagger API documentation, along with the standard MDW REST APIs.
  
 ##### Access the MDWHub Service API Page for Your Service:
-- Open MDW in your browser and click on the Services tab.  Notice that API path for your service (/MyServices/Employees) includes its package name to distinguish it from standard MDW services.
+- Open MDW in your browser and click on the Services tab.  Notice that API path for your service (/MyServices/Orders) includes its package name to distinguish it from standard MDW services.
    ![xml formatter](images/restServiceAPIs.png)
 
 - Click on the /MyServices/Orders link.  The JSON and YAML tabs include the Swagger Spec API definitions for the Orders endpoint.  Click on the YAML tab to view a human-readable representation of your Orders API.  Notice that much of the information is provided by annotations from the MDW base service class.
