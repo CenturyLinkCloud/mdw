@@ -142,3 +142,9 @@ war {
         attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
     }
 }
+
+archivesBaseName = "mdw"
+
+artifacts {
+    archives war, javadocJar, sourcesJar
+}

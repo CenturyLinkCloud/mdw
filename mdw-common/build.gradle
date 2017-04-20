@@ -6,7 +6,7 @@ eclipse {
         }
     }
 }
-    
+
 dependencies {
     compile fileTree(dir: '../mdw/libs', include: '*.jar')
     compile group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
@@ -98,4 +98,11 @@ jar {
         attributes("MDW-Version": mdwVersion)
         attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
     }
+}
+
+archivesBaseName = "mdw-common"
+
+ 
+artifacts {
+    archives jar, javadocJar, sourcesJar
 }

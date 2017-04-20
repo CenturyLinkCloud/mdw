@@ -134,3 +134,8 @@ task publishBuild(dependsOn: [publishBase, publishJars, publishWar, publishAsset
         println "*** MDW build ${mdwVersion} published to ${publishBaseUrl} ***"
     }
 }
+
+task publishToMavenCentral(type: GradleBuild) {
+      buildFile = "build.gradle"
+      tasks = ["uploadArchives"]
+  }

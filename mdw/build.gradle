@@ -41,6 +41,8 @@ task publishFormal {
 subprojects {
     apply plugin: "java"
     apply plugin: "eclipse-wtp"
+    apply plugin: 'maven'
+    apply plugin: 'signing'
     
     eclipse {
         classpath {
@@ -89,6 +91,59 @@ subprojects {
         exclude "**/.metadata/"
         exclude "**/.*ignore"
     }    
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
+    signing {
+        sign configurations.archives
+    }
+    uploadArchives {
+        repositories {
+          mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+      
+            repository(url: mavenRepoUrl) {
+              authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+      
+            snapshotRepository(url: mavenSnapshotRepoUrl) {
+              authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+      
+            pom.project {
+              name 'MDW Framework'
+              groupId 'com.centurylink.mdw'
+              version = mdwVersion
+              packaging 'jar'
+              // optionally artifactId can be defined here
+              description 'MDW is a BPM framework'
+              url 'http://centurylinkcloud.github.io/mdw/'
+      
+              scm {
+                connection 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
+                developerConnection 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
+                url 'https://github.com/CenturyLinkCloud/mdw.git'
+              }
+      
+              licenses {
+                license {
+                  name 'The Apache License, Version 2.0'
+                  url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                }
+              }
+      
+              developers {
+                developer {
+                  id 'magrawa'
+                  name 'Manoj Agrawal'
+                  email 'manoj.a.agrawal@gmail.com'
+                }
+              }
+            }
+          }
+        }
+      }
 }
 
 task cleanJavadocs(type: Delete) {
@@ -144,4 +199,10 @@ task testTomcatMdwdev(type: GradleBuild) {
   buildFile = "test.gradle"
   tasks = ["autoTestAndPublish"]
   startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}"]
+}
+
+task publishToMavenCentral(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["publishToMavenCentral"]
+    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }

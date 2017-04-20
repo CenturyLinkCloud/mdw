@@ -25,3 +25,9 @@ jar {
         attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
     }
 }
+
+archivesBaseName = "mdw-services"
+
+artifacts {
+    archives jar, javadocJar, sourcesJar
+}
