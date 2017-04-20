@@ -5,6 +5,7 @@ before_script: cd mdw
 before_install:
   - chmod +x ./mdw/gradlew
   - npm install grunt-cli -g
+install: npm install
 notifications:
   slack: mdwcore:9WSiZQJitrLtiiU5BO29Or4R
   email:
