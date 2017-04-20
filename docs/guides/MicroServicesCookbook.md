@@ -283,11 +283,11 @@ With MDW REST services you can automatically generate Swagger documentation just
 		}
 	}
   ```
-##### Add Swagger Annotations to the Employee Model Class:
-- To enable consumers to easily create request content and interpret responses, you can annotate the related model objects so that they're discovered when documentation is generated.  In the Employee dynamic Java class, add the following class-level annotation:
+##### Add Swagger Annotations to the Orders Class:
+- To enable consumers to easily create request content and interpret responses, you can annotate the related model objects so that they're discovered when documentation is generated.  In the Orders dynamic Java class, add the following class-level annotation:
   ```swager
-      @ApiModel(value="Employee", description="Centurylink employee")
-      public class Employee extends UserVO implements Jsonable {
+      @ApiModel(value="Order", description="Centurylink Order")
+      public class Orders extends JsonRestService {
       // Add your logic.
 
   ```
@@ -298,10 +298,10 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
 - Open MDW in your browser and click on the Services tab.  Notice that API path for your service (/MyServices/Employees) includes its package name to distinguish it from standard MDW services.
    ![xml formatter](images/restServiceAPIs.png)
 
-- Click on the /MyServices/Orders link.  The JSON and YAML tabs include the Swagger Spec API definitions for the Employees endpoint.  Click on the YAML tab to view a human-readable representation of your Employees API.  Notice that much of the information is provided by annotations from the MDW base service class.
+- Click on the /MyServices/Orders link.  The JSON and YAML tabs include the Swagger Spec API definitions for the Orders endpoint.  Click on the YAML tab to view a human-readable representation of your Orders API.  Notice that much of the information is provided by annotations from the MDW base service class.
    ![xml formatter](images/yamlExample.png)
 
-- Scroll down to the "definitions" section to see the Employee model object definition as well as other referenced types.
+- Scroll down to the "definitions" section to see the Orders object definition as well as other referenced types.
 - Now click on the Swagger subtab to explore the friendly swagger-editor UI for your service.
    ![xml formatter](images/swaggerExample.png)
  
