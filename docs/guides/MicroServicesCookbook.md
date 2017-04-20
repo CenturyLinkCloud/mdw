@@ -245,31 +245,40 @@ With MDW REST services you can automatically generate Swagger documentation just
 ##### Add the @Api Annotation to Your Service:
 - The Swagger Api annotation goes on your class declaration along with the JAX-RS Path annotation.  The tag value in your annotation provides a high-level description of the its purpose:
   ```swagger
-     	@Path("/Orders")
+     @Path("/Orders")
 	@Api("CenturyLink orders service")
 	public class Orders extends JsonRestService {
          …
   ```
 ##### Add @ApiOperation Annotations to Your Methods:
-- The ApiOperation annotation documents the specifics of a service endpoint operation, including any input or output model types.  The ApiImplicitParams annotation is useful for indicating the body content of a POST or PUT requests.  After adding these annotations to Employees.java, the code will look something like this:
+- The ApiOperation annotation documents the specifics of a service endpoint operation, including any input or output model types.  The ApiImplicitParams annotation is useful for indicating the body content of a POST or PUT requests.  After adding these annotations to Orders.java, the code will look something like this:
   ```java
-       package MyServices;
+ 	package MyServices;
 	import java.util.HashMap;
 	import java.util.Map;
 	import javax.ws.rs.Path;
 	import org.json.JSONObject;
 	import com.centurylink.mdw.common.service.ServiceException;
+	import com.centurylink.mdw.common.service.types.StatusMessage;
 	import com.centurylink.mdw.services.ServiceLocator;
 	import com.centurylink.mdw.services.WorkflowServices;
 	import com.centurylink.mdw.services.rest.JsonRestService;
+	import io.swagger.annotations.Api;
+	import io.swagger.annotations.ApiImplicitParam;
+	import io.swagger.annotations.ApiImplicitParams;
+	import io.swagger.annotations.ApiOperation;
 	@Path("/Orders")
 	@Api("CenturyLink orders service")
 	public class Orders extends JsonRestService {
 		@Override
+		@ApiOperation(value="Create an order",
+		notes="Does not actually create anything as yet.", response=StatusMessage.class)
+		@ApiImplicitParams({@ApiImplicitParam(name="Order", paramType="body", dataType="MyServices.Order")})
 		public JSONObject post(String path, JSONObject content, Map<String, String> headers) throws ServiceException{
 			Map<String,Object> stringParams = new HashMap<String,Object>();
 			WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
 			Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
+		
 			return (JSONObject) response;
 		}
 	}
