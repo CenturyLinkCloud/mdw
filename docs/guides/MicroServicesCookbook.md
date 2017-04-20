@@ -236,23 +236,17 @@ Besides implementing services by way of an MDW workflow process, you can easily 
     - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)
  
 ##### Add Create Capability to Your REST Service:
-- In the REST paradigm, creates are performed via HTTP POST.  So to implement the ability to add a new Employee, override the post() method:
+- In the REST paradigm, creates are performed via HTTP POST.  So to implement the ability to add an order, override the post() method:
      
   ```java
        @Override
-       protected JSONObject post(String path, JSONObject content, Map<String, String> headers)
-                    throws ServiceException, JSONException {
-           User emp = new User(content);
-           String id = emp.getCuid();
-           if (id == null)
-              throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing user id");
-           if (id.equals("dxoakes"))
-              throw new ServiceException(HTTP_409_CONFLICT, "Employee id exists: " + id);
-           
-           // TODO: actual work to create the employee
-           System.out.println("Creating user: " + emp.getJson().toString(2));
-           return null; // null indicates successful POST
-       }
+	@Override
+	public JSONObject post(String path, JSONObject content, Map<String, String> headers) throws ServiceException{
+		Map<String,Object> stringParams = new HashMap<String,Object>();
+		WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+		Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
+		return (JSONObject) response;
+	}
   ```
 - Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add an order from your browser and you will see the response showing in the JSON format.
    ![xml formatter](images/restPostRequestAndResponse.png)
