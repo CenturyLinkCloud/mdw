@@ -1,10 +1,10 @@
 language: java
 jdk:
-  - oraclejdk8
+  - openjdk8
 before_script: cd mdw
 before_install:
   - chmod +x ./mdw/gradlew
-  - npm install grunt-cli -g
+  - npm install grunt-cli -g npm@'>=3.13.0'
 install: npm install mdw
 notifications:
   slack: mdwcore:9WSiZQJitrLtiiU5BO29Or4R
