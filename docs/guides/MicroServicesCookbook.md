@@ -209,7 +209,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 - Implement a REST service, using the JAX-RS @Path annotation and extending the MDW JsonRestService class:
      
   ```java
-  	package MyServices;
+  package MyServices;
 	import java.util.HashMap;
 	import java.util.Map;
 	import javax.ws.rs.Path;
@@ -234,30 +234,9 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 - Access your service using a POST request from your browser with a URL like the following:
     
     - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)
- 
-##### Add Create Capability to Your REST Service:
-- In the REST paradigm, creates are performed via HTTP POST.  So to implement the ability to add a new Employee, override the post() method:
-     
-  ```java
-       @Override
-       protected JSONObject post(String path, JSONObject content, Map<String, String> headers)
-                    throws ServiceException, JSONException {
-           User emp = new User(content);
-           String id = emp.getCuid();
-           if (id == null)
-              throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing user id");
-           if (id.equals("dxoakes"))
-              throw new ServiceException(HTTP_409_CONFLICT, "Employee id exists: " + id);
-           
-           // TODO: actual work to create the employee
-           System.out.println("Creating user: " + emp.getJson().toString(2));
-           return null; // null indicates successful POST
-       }
-  ```
-- Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add a new employee from your browser:
-   ![xml formatter](images/restPostRequest.png)
-   
-   ![xml formatter](images/restPostResponse.png)
+
+- Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add an order from your browser and you will see the response showing in the JSON format.
+   ![xml formatter](images/restPostRequestAndResponse.png)
    
 #### 2. Add Swagger API Annotations
 
