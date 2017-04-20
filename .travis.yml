@@ -4,8 +4,8 @@ jdk:
 before_script: cd mdw
 before_install:
   - chmod +x ./mdw/gradlew
-  - npm install grunt-cli
-install: npm install mdw -g npm@'>=3.10.10'
+  - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
+install: npm install mdw
 notifications:
   slack: mdwcore:9WSiZQJitrLtiiU5BO29Or4R
   email:
