@@ -209,7 +209,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 - Implement a REST service, using the JAX-RS @Path annotation and extending the MDW JsonRestService class:
      
   ```java
-  	package MyServices;
+  package MyServices;
 	import java.util.HashMap;
 	import java.util.Map;
 	import javax.ws.rs.Path;
@@ -234,30 +234,9 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 - Access your service using a POST request from your browser with a URL like the following:
     
     - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)
- 
-##### Add Create Capability to Your REST Service:
-- In the REST paradigm, creates are performed via HTTP POST.  So to implement the ability to add a new Employee, override the post() method:
-     
-  ```java
-       @Override
-       protected JSONObject post(String path, JSONObject content, Map<String, String> headers)
-                    throws ServiceException, JSONException {
-           User emp = new User(content);
-           String id = emp.getCuid();
-           if (id == null)
-              throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing user id");
-           if (id.equals("dxoakes"))
-              throw new ServiceException(HTTP_409_CONFLICT, "Employee id exists: " + id);
-           
-           // TODO: actual work to create the employee
-           System.out.println("Creating user: " + emp.getJson().toString(2));
-           return null; // null indicates successful POST
-       }
-  ```
-- Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add a new employee from your browser:
-   ![xml formatter](images/restPostRequest.png)
-   
-   ![xml formatter](images/restPostResponse.png)
+
+- Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add an order from your browser and you will see the response showing in the JSON format.
+   ![xml formatter](images/restPostRequestAndResponse.png)
    
 #### 2. Add Swagger API Annotations
 
@@ -266,40 +245,49 @@ With MDW REST services you can automatically generate Swagger documentation just
 ##### Add the @Api Annotation to Your Service:
 - The Swagger Api annotation goes on your class declaration along with the JAX-RS Path annotation.  The tag value in your annotation provides a high-level description of the its purpose:
   ```swagger
-     	@Path("/Orders")
+     @Path("/Orders")
 	@Api("CenturyLink orders service")
 	public class Orders extends JsonRestService {
          …
   ```
 ##### Add @ApiOperation Annotations to Your Methods:
-- The ApiOperation annotation documents the specifics of a service endpoint operation, including any input or output model types.  The ApiImplicitParams annotation is useful for indicating the body content of a POST or PUT requests.  After adding these annotations to Employees.java, the code will look something like this:
+- The ApiOperation annotation documents the specifics of a service endpoint operation, including any input or output model types.  The ApiImplicitParams annotation is useful for indicating the body content of a POST or PUT requests.  After adding these annotations to Orders.java, the code will look something like this:
   ```java
-       package MyServices;
+ 	package MyServices;
 	import java.util.HashMap;
 	import java.util.Map;
 	import javax.ws.rs.Path;
 	import org.json.JSONObject;
 	import com.centurylink.mdw.common.service.ServiceException;
+	import com.centurylink.mdw.common.service.types.StatusMessage;
 	import com.centurylink.mdw.services.ServiceLocator;
 	import com.centurylink.mdw.services.WorkflowServices;
 	import com.centurylink.mdw.services.rest.JsonRestService;
+	import io.swagger.annotations.Api;
+	import io.swagger.annotations.ApiImplicitParam;
+	import io.swagger.annotations.ApiImplicitParams;
+	import io.swagger.annotations.ApiOperation;
 	@Path("/Orders")
 	@Api("CenturyLink orders service")
 	public class Orders extends JsonRestService {
 		@Override
+		@ApiOperation(value="Create an order",
+		notes="Does not actually create anything as yet.", response=StatusMessage.class)
+		@ApiImplicitParams({@ApiImplicitParam(name="Order", paramType="body", dataType="MyServices.Order")})
 		public JSONObject post(String path, JSONObject content, Map<String, String> headers) throws ServiceException{
 			Map<String,Object> stringParams = new HashMap<String,Object>();
 			WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
 			Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
+		
 			return (JSONObject) response;
 		}
 	}
   ```
-##### Add Swagger Annotations to the Employee Model Class:
-- To enable consumers to easily create request content and interpret responses, you can annotate the related model objects so that they're discovered when documentation is generated.  In the Employee dynamic Java class, add the following class-level annotation:
+##### Add Swagger Annotations to the Orders Class:
+- To enable consumers to easily create request content and interpret responses, you can annotate the related model objects so that they're discovered when documentation is generated.  In the Orders dynamic Java class, add the following class-level annotation:
   ```swager
-      @ApiModel(value="Employee", description="Centurylink employee")
-      public class Employee extends UserVO implements Jsonable {
+      @ApiModel(value="Order", description="Centurylink Order")
+      public class Orders extends JsonRestService {
       // Add your logic.
 
   ```
@@ -307,13 +295,13 @@ With MDW REST services you can automatically generate Swagger documentation just
 MDWHub comes with a UI for displaying your generated Swagger API documentation, along with the standard MDW REST APIs.
  
 ##### Access the MDWHub Service API Page for Your Service:
-- Open MDW in your browser and click on the Services tab.  Notice that API path for your service (/MyServices/Employees) includes its package name to distinguish it from standard MDW services.
+- Open MDW in your browser and click on the Services tab.  Notice that API path for your service (/MyServices/Orders) includes its package name to distinguish it from standard MDW services.
    ![xml formatter](images/restServiceAPIs.png)
 
-- Click on the /MyServices/Orders link.  The JSON and YAML tabs include the Swagger Spec API definitions for the Employees endpoint.  Click on the YAML tab to view a human-readable representation of your Employees API.  Notice that much of the information is provided by annotations from the MDW base service class.
+- Click on the /MyServices/Orders link.  The JSON and YAML tabs include the Swagger Spec API definitions for the Orders endpoint.  Click on the YAML tab to view a human-readable representation of your Orders API.  Notice that much of the information is provided by annotations from the MDW base service class.
    ![xml formatter](images/yamlExample.png)
 
-- Scroll down to the "definitions" section to see the Employee model object definition as well as other referenced types.
+- Scroll down to the "definitions" section to see the Orders object definition as well as other referenced types.
 - Now click on the Swagger subtab to explore the friendly swagger-editor UI for your service.
    ![xml formatter](images/swaggerExample.png)
  
