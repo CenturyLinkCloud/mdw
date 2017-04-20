@@ -1,6 +1,6 @@
 language: java
 jdk:
-  - openjdk8
+  - oraclejdk8
 before_script: cd mdw
 before_install:
   - chmod +x ./mdw/gradlew
