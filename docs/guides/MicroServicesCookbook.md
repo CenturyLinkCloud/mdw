@@ -254,10 +254,8 @@ Besides implementing services by way of an MDW workflow process, you can easily 
            return null; // null indicates successful POST
        }
   ```
-- Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add a new employee from your browser:
-   ![xml formatter](images/restPostRequest.png)
-   
-   ![xml formatter](images/restPostResponse.png)
+- Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add an order from your browser and you will see the response showing in the JSON format.
+   ![xml formatter](images/restPostRequestAndResponse.png)
    
 #### 2. Add Swagger API Annotations
 
