@@ -112,13 +112,6 @@ public class UserDataAccess extends UserDataAccessDb {
         try {
             db.openConnection();
             Long id = user.getId();
-
-            // check if the user is in  deleted user-info list
-            String sql = "select USER_INFO_ID  from USER_INFO u where u.CUID=? AND END_DATE is not NULL";
-            ResultSet rs = db.runSelect(sql, user.getCuid());
-            if (rs.next()) {
-                id = rs.getLong(1);
-            }
             if (id == null || id.longValue() <= 0L) {
                 id = db.isMySQL() ? null : getNextId("MDW_COMMON_ID_SEQ");
                 String query = "insert into USER_INFO"
@@ -135,12 +128,11 @@ public class UserDataAccess extends UserDataAccessDb {
                     db.runUpdate(query, args);
             }
             else {
-                String query = "update USER_INFO set CUID=?, NAME=?,END_DATE=? where USER_INFO_ID=?";
-                Object[] args = new Object[4];
+                String query = "update USER_INFO set CUID=?, NAME=? where USER_INFO_ID=?";
+                Object[] args = new Object[3];
                 args[0] = user.getCuid();
                 args[1] = user.getName();
-                args[2] = null;
-                args[3] = id;
+                args[2] = id;
                 db.runUpdate(query, args);
             }
             db.commit();
@@ -785,8 +777,8 @@ public class UserDataAccess extends UserDataAccessDb {
         String query = "insert into USER_GROUP_MAPPING" + " (USER_GROUP_MAPPING_ID, USER_INFO_ID,"
                 + "  CREATE_USR, CREATE_DT, USER_GROUP_ID) values ("
                 + (db.isMySQL() ? "null" : "MDW_COMMON_ID_SEQ.NEXTVAL") + ", "
-                + "(select distinct user_info_id from user_info where cuid = ? and END_DATE is NULL), 'MDW', "
-                + now() + ", " + "(select user_group_id from user_group where group_name = ?))";
+                + "(select user_info_id from user_info where cuid = ?), 'MDW', " + now() + ", "
+                + "(select user_group_id from user_group where group_name = ?))";
         try {
             db.openConnection();
             String[] params = new String[] { cuid, group };
@@ -805,8 +797,8 @@ public class UserDataAccess extends UserDataAccessDb {
 
     public void removeUserFromGroup(String cuid, String group) throws DataAccessException {
         String query = "delete from USER_GROUP_MAPPING "
-                + " where user_info_id = (select distinct user_info_id from user_info where cuid = '"
-                + cuid + "' and END_DATE is NULL)"
+                + " where user_info_id = (select user_info_id from user_info where cuid = '" + cuid
+                + "') "
                 + " and user_group_id = (select user_group_id from user_group where group_name = '"
                 + group + "')";
         try {
@@ -829,8 +821,7 @@ public class UserDataAccess extends UserDataAccessDb {
                 + " (USER_ROLE_MAPPING_ID, USER_ROLE_MAPPING_OWNER, USER_ROLE_MAPPING_OWNER_ID,"
                 + "  CREATE_DT,CREATE_USR,USER_ROLE_ID) values ("
                 + (db.isMySQL() ? "null" : "MDW_COMMON_ID_SEQ.NEXTVAL") + ",'USER', "
-                + "(select distinct user_info_id from user_info where cuid = ? and END_DATE is NULL),"
-                + now() + ",'MDW',"
+                + "(select user_info_id from user_info where cuid = ?)," + now() + ",'MDW',"
                 + "(select user_role_id from user_role where user_role_name = ?))";
         try {
             db.openConnection();
@@ -851,8 +842,8 @@ public class UserDataAccess extends UserDataAccessDb {
     public void removeUserFromRole(String cuid, String role) throws DataAccessException {
         // delete user-role mapping
         String query = "delete from USER_ROLE_MAPPING "
-                + " where USER_ROLE_MAPPING_OWNER_ID= (select distinct user_info_id from user_info where cuid = '"
-                + cuid + "' and END_DATE is NULL ) "
+                + " where USER_ROLE_MAPPING_OWNER_ID= (select user_info_id from user_info where cuid = '"
+                + cuid + "') "
                 + " and user_role_id = (select user_role_id from user_role where user_role_name = '"
                 + role + "')";
         try {
