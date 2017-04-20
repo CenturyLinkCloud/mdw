@@ -209,7 +209,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 - Implement a REST service, using the JAX-RS @Path annotation and extending the MDW JsonRestService class:
      
   ```java
-  	package MyServices;
+  package MyServices;
 	import java.util.HashMap;
 	import java.util.Map;
 	import javax.ws.rs.Path;
@@ -234,20 +234,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 - Access your service using a POST request from your browser with a URL like the following:
     
     - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)
- 
-##### Add Create Capability to Your REST Service:
-- In the REST paradigm, creates are performed via HTTP POST.  So to implement the ability to add an order, override the post() method:
-     
-  ```java
-       @Override
-	@Override
-	public JSONObject post(String path, JSONObject content, Map<String, String> headers) throws ServiceException{
-		Map<String,Object> stringParams = new HashMap<String,Object>();
-		WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-		Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
-		return (JSONObject) response;
-	}
-  ```
+
 - Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add an order from your browser and you will see the response showing in the JSON format.
    ![xml formatter](images/restPostRequestAndResponse.png)
    
