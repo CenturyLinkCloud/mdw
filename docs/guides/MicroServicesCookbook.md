@@ -359,7 +359,8 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 ##### Save and Run Your Process:
 - Launch your process, entering your cuid on the process launch Variables tab.  View the instance to confirm that employeeName was populated as expected.
 - In the process instance view, double-click the Invoke MyOrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire.  
-   ![xml formatter](images/orderProcessActivityInstance.png) //TODO: Need to replace this screenshot with a new one.
+   //TODO: Need to replace this screenshot with a new one.
+   ![xml formatter](images/orderProcessActivityInstance.png) 
  
 ##### Stub Mode and Response Simulation:
 - At times when performing services orchestration using MDW you may be designing a flow before one or more of your consumed services is not yet available.  Or you may not be ready to make an actual call because you're still debugging your workflow.  For situations like this MDW provides Stub Mode and Response Simulation.  Stub Mode is for local development and Automated Testing.  Response Simulation is used to hardwire the responses for specific adapter activities within a given environment.  Both of these features are accessed via the Simulation property tab.  Click this tab for the Invoke Check Orders REST adapter in the process you just build.  To try out Stub Mode, depress the Stub Server button (no need to Configure since the defaults should be fine).
