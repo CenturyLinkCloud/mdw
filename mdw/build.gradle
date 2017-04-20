@@ -135,9 +135,9 @@ subprojects {
       
               developers {
                 developer {
-                  id 'magrawa'
-                  name 'Manoj Agrawal'
-                  email 'manoj.a.agrawal@gmail.com'
+                  id 'mdwdev'
+                  name 'MDW Development'
+                  email 'mdwdev@centurylink.com'
                 }
               }
             }
