@@ -24,13 +24,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderConfiguration;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.ResourceFactory;
+//import org.drools.KnowledgeBase;
+import org.kie.internal.KnowledgeBase;
+import org.kie.internal.KnowledgeBaseFactory;
+//import org.drools.KnowledgeBaseFactory;
+//import org.drools.builder.KnowledgeBuilder;
+import org.kie.internal.builder.KnowledgeBuilder;
+import org.kie.internal.builder.KnowledgeBuilderConfiguration;
+//import org.drools.builder.KnowledgeBuilderConfiguration;
+//import org.drools.builder.KnowledgeBuilderFactory;
+import org.kie.internal.builder.KnowledgeBuilderFactory;
+import org.kie.internal.io.ResourceFactory;
+import org.kie.api.io.ResourceType;
+//import org.drools.builder.ResourceType;
+//import org.drools.io.ResourceFactory;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.Compatibility;

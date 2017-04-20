@@ -21,10 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.drools.KnowledgeBase;
+//import org.drools.KnowledgeBase;
+import org.kie.internal.KnowledgeBase;
 import org.drools.command.CommandFactory;
-import org.drools.runtime.StatelessKnowledgeSession;
-
+//import org.drools.runtime.StatelessKnowledgeSession;
+import org.kie.internal.runtime.StatelessKnowledgeSession;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.RuleActivity;
 import com.centurylink.mdw.cache.impl.PackageCache;

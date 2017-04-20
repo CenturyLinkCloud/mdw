@@ -15,7 +15,8 @@
  */
 package com.centurylink.mdw.drools;
 
-import org.drools.KnowledgeBase;
+//import org.drools.KnowledgeBase;
+import org.kie.internal.KnowledgeBase;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;

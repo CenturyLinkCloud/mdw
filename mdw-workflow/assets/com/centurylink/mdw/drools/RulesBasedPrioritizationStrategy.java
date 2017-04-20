@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.drools.KnowledgeBase;
+//import org.drools.KnowledgeBase;
 import org.drools.command.CommandFactory;
-import org.drools.runtime.StatelessKnowledgeSession;
+//import org.drools.runtime.StatelessKnowledgeSession;
+import org.kie.internal.KnowledgeBase;
+import org.kie.internal.runtime.StatelessKnowledgeSession;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.common.StrategyException;

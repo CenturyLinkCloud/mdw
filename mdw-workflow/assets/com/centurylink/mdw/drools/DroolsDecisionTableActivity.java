@@ -15,8 +15,8 @@
  */
 package com.centurylink.mdw.drools;
 
-import org.drools.KnowledgeBase;
-
+//import org.drools.KnowledgeBase;
+import org.kie.internal.KnowledgeBase;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
