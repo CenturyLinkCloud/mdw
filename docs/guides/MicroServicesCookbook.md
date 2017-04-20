@@ -363,18 +363,18 @@ MDW comes with Adapter activities for consuming services over many protocols fro
  
 ##### Stub Mode and Response Simulation:
 - At times when performing services orchestration using MDW you may be designing a flow before one or more of your consumed services is not yet available.  Or you may not be ready to make an actual call because you're still debugging your workflow.  For situations like this MDW provides Stub Mode and Response Simulation.  Stub Mode is for local development and Automated Testing.  Response Simulation is used to hardwire the responses for specific adapter activities within a given environment.  Both of these features are accessed via the Simulation property tab.  Click this tab for the Invoke Check Orders REST adapter in the process you just build.  To try out Stub Mode, depress the Stub Server button (no need to Configure since the defaults should be fine).
-
-   ![xml formatter](images/orderProcessStubMode.png) //TODO: Need to replace this screenshot with a new one.
+   //TODO: Need to replace this screenshot with a new one.
+   ![xml formatter](images/orderProcessStubMode.png) 
    
 - Note that this is a global setting; meaning once the stub server's running it intercepts all adapter activity requests.  Note also that it can be difficult to determine whether the button is depressed (i.e. stubbing is on).
 
 - Once you've got stub mode turned on, run the process again and you'll be presented with a dialog prompting you for the desired response for this case.
-
-   ![xml formatter](images/stubResponse.png) //TODO: Need to replace this screenshot with a new one.
+   //TODO: Need to replace this screenshot with a new one.
+   ![xml formatter](images/stubResponse.png) 
    
 - Whatever is typed in the Response Message textbox will be returned to your process as the adapter response, and you should be able to confirm this by checking the runtime values of the process instance.
 - To simulate a response, disable the stub server and instead set Simulation Mode to On.  Then provide a Return Code (not currently used), Chance (weighted probability when multiple responses), and Response value for each different hardwired response scenario.
-
-   ![xml formatter](images/simulateResponse.png) //TODO: Need to replace this screenshot with a new one.
+   //TODO: Need to replace this screenshot with a new one.
+   ![xml formatter](images/simulateResponse.png) 
 
 - These simulated response settings are meant to be per-environment, so they don't get saved with the process definition but rather as so-called "override attributes".  For this reason there's a Save button directly on the Simulation property tab.
