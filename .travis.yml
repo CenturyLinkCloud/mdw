@@ -9,8 +9,8 @@ before_install:
   - npm install grunt-cli -g
   - npm --version
 install: 
-  - npm --prefix ../mdw-hub install ../mdw-hub
-  - bower install jquery --config.directory=../mdw-hub
+  - npm --prefix mdw-hub install mdw-hub
+  - bower install jquery --config.directory=mdw-hub
 notifications:
   slack: mdwcore:9WSiZQJitrLtiiU5BO29Or4R
   email:
