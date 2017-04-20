@@ -326,39 +326,60 @@ MDW comes with Adapter activities for consuming services over many protocols fro
    
 - On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL you used for testing your service in Section 3.  [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)
 
-##### Add Pre and Post Script:
-- With the REST activity in a real-world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above.  To simplify this tutorial, let's take advantage of the Pre and Post script to build the request and pull values out of the response.  On the Script property tab for the Invoke MyOrderProcess activity, edit the prescript, adding the Groovy code below to return the request JSON posted to the service (if you've installed the Groovy Eclipse plugin you'll get syntax highlighting and autocomplete):
+##### Implement MDW REST Activity API:
+- With the REST activity in a real-world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above.  To simplify this tutorial, we will implement a very simple java code to use the mdw built-in operations to return the request JSON posted to the service :
 
-```groovy
- return '''
- { 
-    "orderId": "12345678"
- }''';
-```  
-- Edit the postscript as follows:                                              
-  ```groovy                                                                                 
-  import org.json.JSONObject;
+```java
+package com.centurylink.mdw.workflow.order.activity;
+import java.util.HashMap;
+import java.util.Map;
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.connector.adapter.AdapterException;
+import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
 
-  JSONObject jsonObj = (JSONObject) getVariableValue('response');
-  String orderId = null;
-
-  if (jsonObj.has('orderId')
-	orderId = (String) jsonObj.get('orderId');
-
-  if (orderId != null) {
-	runtimeContext.logInfo 'Found orderId: ' + orderId;
-	return true;
-  }
-  else {
-	runtimeContext.logInfo 'OrderId not found: ' + orderId;`
-	validationResult = 'orderId not found: ' + orderId;
-	return false;
+public class CheckOrdersRest extends RestServiceAdapter {
+	@Override
+	public String invoke(Object conn, String request, int timeout, Map<String, String> headers)
+			throws ConnectionException, AdapterException {		
+		if (conn != null) {
+			return super.invoke(conn, request, timeout, headers);
+		} else {
+			logger.debug("Order service is disabled, continuing with flow");
+			return "Ok";
+		}
+	}
+	@Override
+	protected String getRequestData() throws ActivityException {
+		String varname = getAttributeValue(REQUEST_VARIABLE);
+		if (StringHelper.isEmpty(varname)) {
+			throw new ActivityException("Variable not found for Check Orders");
+		}
+		JSONObject orderRequest = new JSONObject();
+		try {
+			orderRequest.put("orderId", varname); //????
+		} catch (JSONException e) {
+			logger.severe("Unable to build response : message " + e.getMessage());
+		}
+		return orderRequest.toString();
+	}
+	@Override
+	public Map<String, String> getRequestHeaders() {
+		Map<String, String> requestHeaders = super.getRequestHeaders();
+		if (requestHeaders == null)
+			requestHeaders = new HashMap<String, String>();
+		requestHeaders.put("Content-Type", "application/json");
+		return requestHeaders;
+	}
   }
   ```
   
 ##### Save and Run Your Process:
-- Launch your process, entering your cuid on the process launch Variables tab.  View the instance to confirm that employeeName was populated as expected.
-- In the process instance view, double-click the Invoke MyOrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire.  
+- Launch your process, entering the orderId as you did in previous steps.  View the instance to confirm that the orderId was populated as expected.
+- In the process instance view, double-click the Invoke MyOrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire.  You can also view the same results like the following:
 
    ![xml formatter](images/orderProcessActivityInstance.png) 
    
@@ -372,11 +393,13 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 - Note that this is a global setting; meaning once the stub server's running it intercepts all adapter activity requests.  Note also that it can be difficult to determine whether the button is depressed (i.e. stubbing is on).
 
 - Once you've got stub mode turned on, run the process again and you'll be presented with a dialog prompting you for the desired response for this case.
+
    //TODO: Need to replace this screenshot with a new one.
    ![xml formatter](images/stubResponse.png) 
    
 - Whatever is typed in the Response Message textbox will be returned to your process as the adapter response, and you should be able to confirm this by checking the runtime values of the process instance.
 - To simulate a response, disable the stub server and instead set Simulation Mode to On.  Then provide a Return Code (not currently used), Chance (weighted probability when multiple responses), and Response value for each different hardwired response scenario.
+
    //TODO: Need to replace this screenshot with a new one.
    ![xml formatter](images/simulateResponse.png) 
 
