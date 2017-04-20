@@ -232,8 +232,8 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 
   ```    
 - Access your service using a POST request from your browser with a URL like the following:
-    
-    - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)
+
+    - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)            
 
 - Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add an order from your browser and you will see the response showing in the JSON format.
    ![xml formatter](images/restPostRequestAndResponse.png)
@@ -244,15 +244,15 @@ With MDW REST services you can automatically generate Swagger documentation just
  
 ##### Add the @Api Annotation to Your Service:
 - The Swagger Api annotation goes on your class declaration along with the JAX-RS Path annotation.  The tag value in your annotation provides a high-level description of the its purpose:
-  ```swagger
-     @Path("/Orders")
+```swagger
+ 	@Path("/Orders")
 	@Api("CenturyLink orders service")
 	public class Orders extends JsonRestService {
          …
-  ```
+```
 ##### Add @ApiOperation Annotations to Your Methods:
 - The ApiOperation annotation documents the specifics of a service endpoint operation, including any input or output model types.  The ApiImplicitParams annotation is useful for indicating the body content of a POST or PUT requests.  After adding these annotations to Orders.java, the code will look something like this:
-  ```java
+```java
  	package MyServices;
 	import java.util.HashMap;
 	import java.util.Map;
@@ -282,15 +282,14 @@ With MDW REST services you can automatically generate Swagger documentation just
 			return (JSONObject) response;
 		}
 	}
-  ```
+```
 ##### Add Swagger Annotations to the Orders Class:
 - To enable consumers to easily create request content and interpret responses, you can annotate the related model objects so that they're discovered when documentation is generated.  In the Orders dynamic Java class, add the following class-level annotation:
-  ```swager
+```swager
       @ApiModel(value="Order", description="Centurylink Order")
       public class Orders extends JsonRestService {
       // Add your logic.
-
-  ```
+```
 #### 3. View Generated REST APIs in MDWHub
 MDWHub comes with a UI for displaying your generated Swagger API documentation, along with the standard MDW REST APIs.
  
@@ -307,12 +306,12 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
  
 ##### Add a Sample Request and Response:
 - Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "MyServices.api.samples" and add a JSON asset named Orders_Create.json with the following content:
-  ```jason
+```jason
      // POST request to Services/MyServices/Orders
      {
      "orderId":"12345678"
      }
-  ```
+```
 ##### View the Samples in MDWHub:
 - Now that your sample requests have been created in accordance with the MDW naming convention, they'll automatically be associated with the corresponding service path.  And they'll also be displayed in the Samples tab for your service in MDWHub:
    ![xml formatter](images/jsonSamples.png)
@@ -325,38 +324,34 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 - Create a new process to consume your service.  From the Toolbox view drag a RESTful Service Adapter onto the canvas and insert it into your process flow. Label the web service activity "Check Orders", and give it two separate outcomes corresponding to true and false, just like the validation activity.
    ![xml formatter](images/consumeMyOrderProcess.png)
    
-- On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL you used for testing your service in Section 3.  [http://localhost:8080/mdw/Services/MyServices](http://localhost:8080/mdw/Services/MyServices)
-
+- On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL you used for testing your service in Section 3.  [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)
 
 ##### Add Pre and Post Script:
 - With the REST activity in a real-world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above.  To simplify this tutorial, let's take advantage of the Pre and Post script to build the request and pull values out of the response.  On the Script property tab for the Invoke MyOrderProcess activity, edit the prescript, adding the Groovy code below to return the request JSON posted to the service (if you've installed the Groovy Eclipse plugin you'll get syntax highlighting and autocomplete):
 
-  ```groovy
-  return '''
-  { "GetEmployee": {
-	"workstationId": "ab64967"
-  }''';
-  ```
-  
+```groovy
+ return '''
+ { 
+    "orderId": "12345678"
+ }''';
+```  
 - Edit the postscript as follows:                                              
   ```groovy                                                                                 
   import org.json.JSONObject;
 
-  JSONObject jsonObj = (JSONObject) getVariableValue('employeeServiceResponse');
-  String firstName = null;
-  String lastName = null;
-  String workstationId = null;
+  JSONObject jsonObj = (JSONObject) getVariableValue('response');
+  String orderId = null;
 
-  if (jsonObj.has('workstationId')
-	workstationId = (String) jsonObj.get('workstationId');
+  if (jsonObj.has('orderId')
+	orderId = (String) jsonObj.get('orderId');
 
-  if (firstName != null && lastName != null) {
-	runtimeContext.logInfo 'Found employee: ' + firstName + ' )' + lastName;
+  if (orderId != null) {
+	runtimeContext.logInfo 'Found orderId: ' + orderId;
 	return true;
   }
   else {
-	runtimeContext.logInfo 'Employee not found: ' + workstationId;`
-	validationResult = 'Employee not found: ' + workstationId;
+	runtimeContext.logInfo 'OrderId not found: ' + orderId;`
+	validationResult = 'orderId not found: ' + orderId;
 	return false;
   }
   ```
@@ -364,22 +359,22 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 ##### Save and Run Your Process:
 - Launch your process, entering your cuid on the process launch Variables tab.  View the instance to confirm that employeeName was populated as expected.
 - In the process instance view, double-click the Invoke MyOrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire.  
-   ![xml formatter](images/orderProcessActivityInstance.png)
+   ![xml formatter](images/orderProcessActivityInstance.png) //TODO: Need to replace this screenshot with a new one.
  
 ##### Stub Mode and Response Simulation:
-- At times when performing services orchestration using MDW you may be designing a flow before one or more of your consumed services is not yet available.  Or you may not be ready to make an actual call because you're still debugging your workflow.  For situations like this MDW provides Stub Mode and Response Simulation.  Stub Mode is for local development and Automated Testing.  Response Simulation is used to hardwire the responses for specific adapter activities within a given environment.  Both of these features are accessed via the Simulation property tab.  Click this tab for the Invoke Check Employee REST adapter in the process you just build.  To try out Stub Mode, depress the Stub Server button (no need to Configure since the defaults should be fine).
+- At times when performing services orchestration using MDW you may be designing a flow before one or more of your consumed services is not yet available.  Or you may not be ready to make an actual call because you're still debugging your workflow.  For situations like this MDW provides Stub Mode and Response Simulation.  Stub Mode is for local development and Automated Testing.  Response Simulation is used to hardwire the responses for specific adapter activities within a given environment.  Both of these features are accessed via the Simulation property tab.  Click this tab for the Invoke Check Orders REST adapter in the process you just build.  To try out Stub Mode, depress the Stub Server button (no need to Configure since the defaults should be fine).
 
-   ![xml formatter](images/orderProcessStubMode.png)
+   ![xml formatter](images/orderProcessStubMode.png) //TODO: Need to replace this screenshot with a new one.
    
 - Note that this is a global setting; meaning once the stub server's running it intercepts all adapter activity requests.  Note also that it can be difficult to determine whether the button is depressed (i.e. stubbing is on).
 
 - Once you've got stub mode turned on, run the process again and you'll be presented with a dialog prompting you for the desired response for this case.
 
-   ![xml formatter](images/stubResponse.png)
+   ![xml formatter](images/stubResponse.png) //TODO: Need to replace this screenshot with a new one.
    
 - Whatever is typed in the Response Message textbox will be returned to your process as the adapter response, and you should be able to confirm this by checking the runtime values of the process instance.
 - To simulate a response, disable the stub server and instead set Simulation Mode to On.  Then provide a Return Code (not currently used), Chance (weighted probability when multiple responses), and Response value for each different hardwired response scenario.
 
-   ![xml formatter](images/simulateResponse.png)
+   ![xml formatter](images/simulateResponse.png) //TODO: Need to replace this screenshot with a new one.
 
 - These simulated response settings are meant to be per-environment, so they don't get saved with the process definition but rather as so-called "override attributes".  For this reason there's a Save button directly on the Simulation property tab.
