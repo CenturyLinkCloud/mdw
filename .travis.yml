@@ -4,7 +4,7 @@ jdk:
 before_script: cd mdw
 before_install:
   - chmod +x ./mdw/gradlew
-  - npm install grunt-cli -g npm@'>=3.13.0'
+  - npm install grunt-cli -g npm@'>=3.10.10'
 install: npm install mdw
 notifications:
   slack: mdwcore:9WSiZQJitrLtiiU5BO29Or4R
@@ -12,4 +12,4 @@ notifications:
     recipients:
       - MdwCoreTeam@CenturyLink.com
     on_success: never # default: change
-    on_failure: always # default: always
+    on_failure: never # default: always
