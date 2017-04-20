@@ -1,7 +1,10 @@
 language: java
 jdk:
   - oraclejdk8
-before_script: cd mdw
+before_script: 
+  - cd mdw-hub
+  - bower install
+  - cd ../mdw
 before_install:
   - chmod +x ./mdw/gradlew
   - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
@@ -10,7 +13,6 @@ before_install:
   - npm --version
 install: 
   - npm --prefix mdw-hub install mdw-hub
-  - bower install --config.directory=mdw-hub
 notifications:
   slack: mdwcore:9WSiZQJitrLtiiU5BO29Or4R
   email:
