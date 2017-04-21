@@ -124,31 +124,30 @@ A local project is useful if you want to debug your custom Java source code and 
   import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
   import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
   import org.json.JSONObject;
+  
   @Tracked(LogLevel.TRACE)
   public class MyOrderValidatorActivity extends DefaultActivityImpl {
-	@Override
+  	@Override
 	public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
 		loginfo("Validating order...");
 		boolean valid = false;
-       	        try {
+       		try {
 			JSONObject jsonObj = (JSONObject) getVariableValue("request");
-	      	        String orderId = (String) jsonObj.get("orderId");
-	      	        setVariableValue("orderId", orderId);
-	      	        String msg = "Success";
-	      
-	      	        if (!jsonObj.has("orderId")){
-			        msg = "Missing order ID.";
-   	      	        }
-            	        else if (!Character.isDigit(orderId.charAt(0))) {
-		    	        msg = "Order ID must begin with a digit.";	        
-                        }
+	      	     	String orderId = (String) jsonObj.get("orderId");
+	      	       	setVariableValue("orderId", orderId);
+	      	       	String msg = "Success";
+	   		if (!jsonObj.has("orderId")){
+				msg = "Missing order ID.";
+   	      		}
+            		else if (!Character.isDigit(orderId.charAt(0))) {
+		    		msg = "Order ID must begin with a digit.";	        
+                     	}
 			valid = msg.equals("Success");
 	      	        setVariableValue("validationResult", msg);
-	   	} catch (Exception ex) {
-	  	 	throw new ActivityException(ex.getMessage(), ex);
-	  	}
-		
-	   	return valid;
+		} catch (Exception ex) {
+	  		throw new ActivityException(ex.getMessage(), ex);
+	 	}
+		return valid;
 	}
   }
   ```
@@ -275,7 +274,6 @@ public class Orders extends JsonRestService {
 		Map<String,Object> stringParams = new HashMap<String,Object>();
 		WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
 		Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
-		
 		return (JSONObject) response;
 	}
 }
@@ -337,40 +335,42 @@ MDW comes with Adapter activities for consuming services over many protocols fro
   import com.centurylink.mdw.connector.adapter.ConnectionException;
   import com.centurylink.mdw.util.StringHelper;
   import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
+  
   public class CheckOrdersRest extends RestServiceAdapter {
-	  @Override
-	  public String invoke(Object conn, String request, int timeout, Map<String, String> headers)
+	@Override
+	public String invoke(Object conn, String request, int timeout, Map<String, String> headers)
 			  throws ConnectionException, AdapterException {		
-		  if (conn != null) {
-			  return super.invoke(conn, request, timeout, headers);
-		  } else {
-			  logger.debug("Order service is disabled, continuing with flow");
-			  return "Ok";
-		  }
-	  }
-	  @Override
-	  public String getRequestData() throws ActivityException {
-		  String varname = getAttributeValue(REQUEST_VARIABLE);
-		  if (StringHelper.isEmpty(varname)) {
-			  throw new ActivityException("Variable not found for Check Orders");
-		  }
-		  JSONObject orderRequest = new JSONObject();
-		  try {
-			  orderRequest.put("orderId", varname);
-		  } catch (JSONException e) {
-			  logger.severe("Unable to build response : message " + e.getMessage());
-		  }
-		  return orderRequest.toString();
-	  }
-	  @Override
-	  public Map<String, String> getRequestHeaders() {
-		  Map<String, String> requestHeaders = super.getRequestHeaders();
-		  if (requestHeaders == null)
-			  requestHeaders = new HashMap<String, String>();
-		  requestHeaders.put("Content-Type", "application/json");
-		  return requestHeaders;
-	  }
-    }
+		if (conn != null) {
+			return super.invoke(conn, request, timeout, headers);
+		} else {
+			logger.debug("Order service is disabled, continuing with flow");
+	  		return "Ok";
+		}
+	}
+	@Override
+	public String getRequestData() throws ActivityException {
+		String varname = getAttributeValue(REQUEST_VARIABLE);
+		if (StringHelper.isEmpty(varname)) {
+			throw new ActivityException("Variable not found for Check Orders");
+		}
+		JSONObject orderRequest = new JSONObject();
+		try {
+			orderRequest.put("orderId", varname);
+		} catch (JSONException e) {
+			logger.severe("Unable to build response : message " + e.getMessage());
+		}
+		return orderRequest.toString();
+	}
+	@Override
+	public Map<String, String> getRequestHeaders() {
+		Map<String, String> requestHeaders = super.getRequestHeaders();
+		if (requestHeaders == null)
+			requestHeaders = new HashMap<String, String>();
+			requestHeaders.put("Content-Type", "application/json");
+			return requestHeaders;
+	  	}
+    	}
+  }
   ```
 ##### Save and Run Your Process:
 - Launch your process, entering the orderId as you did in previous steps.  View the instance to confirm that the orderId was populated as expected.
