@@ -160,7 +160,7 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
 
    ![xml formatter](images/myOrderValidatorActivity2.png)
    
-- Note: If you select the Design property tab for your activity youâ€™ll see that it is blank. A non-trivial activity would allow certain aspects (such as endpoint URLs) to be configurable, so that it could readily be reused. For example, take a look at the Design tab for the Start activity. You control what appears on the Design tab through the pagelet XML for the activity implementor. In the creation wizard we left the pagelet XML blank, so the Design tab for our activity is empty. But to continue with the example of the start activity, find the Process Start icon in the Toolbox and view its Design tab (for the implementor, not the activity on the canvas). This gives you an idea of how the pagelet XML relates to the fields on the Design tab for the activity user. Since we are on the subject you may be interested to know how you can customize the icon for your activity implementor. On the Definition tab you can choose one of the built-in shapes, or more flexibly choose any GIF, JPG or PNG asset that you can easily add to your workflow package.
+- Note: If you select the Design property tab for your activity you will see that it is blank. A non-trivial activity would allow certain aspects (such as endpoint URLs) to be configurable, so that it could readily be reused. For example, take a look at the Design tab for the Start activity. You control what appears on the Design tab through the pagelet XML for the activity implementor. In the creation wizard we left the pagelet XML blank, so the Design tab for our activity is empty. But to continue with the example of the start activity, find the Process Start icon in the Toolbox and view its Design tab (for the implementor, not the activity on the canvas). This gives you an idea of how the pagelet XML relates to the fields on the Design tab for the activity user. Since we are on the subject you may be interested to know how you can customize the icon for your activity implementor. On the Definition tab you can choose one of the built-in shapes, or more flexibly choose any GIF, JPG or PNG asset that you can easily add to your workflow package.
 
 ##### Add Multiple Activity Outcomes:
 - Drag a Process Finish activity from the Toolbox, and add another outbound transition from Validate Order. Assign Result Code values of true and false to the respective transitions as illustrated below. Save your process definition. The value passed in setReturnCode() in your activity execute() method dictates which of these two paths will be.
@@ -168,7 +168,7 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
    ![xml formatter](images/myOrderValidatorActivity3.png)
 
 ##### Get Your Server Running:
-- Depending on which supported container you're using, you can follow one of the server setup exercises.  You'll need to follow the steps from one of these guides to the point where MDW is deployed and you're able to start and stop your server from the Eclipse Servers view. 
+- Depending on which supported container you're using, you can follow one of the server setup exercises.  You will need to follow the steps from one of these guides to the point where MDW is deployed and you're able to start and stop your server from the Eclipse Servers view. 
     - [Tomcat Server Setup](TomcatCookbook.md)
     - [Cloud Foundry Setup](CloudFoundryCookbook.md)
 - You can confirm that MDW was successfully deployed by accessing MDWHub in your browser:
@@ -180,7 +180,7 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
 	    java.security.InvalidKeyException: Illegal key size or default parameters
  
 ##### Open the Process Launch Dialog:
-- Right-click on the MyOrderProcess process in Process Explorer view and Select Run.  Designer will present the launch dialog and open a connection to the server to confirm that it's running `(required for launching a process)`.
+- Right-click on the MyOrderProcess process in Process Explorer view and Select Run.  Designer will present the launch dialog and open a connection to the server to confirm that it is running `(required for launching a process)`.
 - On the Process tab in the launch dialog, select "Monitor Runtime Log" and "Process Instance Live View" to get a feel for how you can watch your process flow in real time.
 
   ![xml formatter](images/myOrderProcessRunConfig.png)
