@@ -153,16 +153,16 @@ A local project is useful if you want to debug your custom Java source code and 
         }
 ```
 - Now if you switch back to your process the new activity should appear in the Toolbox View. From the toolbox, drag your activity onto the canvas and insert it into your process flow between the Start and Stop activities.
-- Tip: To draw a link (or transition in MDW terminology) between activities on the designer canvas, hold down the Shift key on your keyboard, Click on the upstream activity, and continue holding down the mouse left click button while dragging the cursor to the downstream activity (â€œshift+click+dragâ€�).
+- Tip: To draw a link (or transition in MDW terminology) between activities on the designer canvas, hold down the Shift key on your keyboard, Click on the upstream activity, and continue holding down the mouse left click button while dragging the cursor to the downstream activity (shift+click+drag).
 - Your activity can be dragged like this and used in other processes designed by other users. Actually the proper term in MDW for this reusable element in the Toolbox is activity implementor. This conveys the idea that itâ€™s actually a template to be dragged and configured as an activity in the canvas, and it also conveys the fact that it always corresponds to a Java class. To take this reuse concept a step further, your activity implementor can be made discoverable so that it can easily be imported into other environments and reused across domains. If you click on the light bulb icon at the top of the Toolbox youâ€™ll get an idea how items in the palette can be imported from a file or discovered in the corporate repository.
-- Double click the activity in the canvas, and in its Definition property tab change the label to something like â€œValidate Orderâ€�. When you click back on the canvas the activity reflects its new label.
+- Double click the activity in the canvas, and in its Definition property tab change the label to something like Validate Order. When you click back on the canvas the activity reflects its new label.
 
    ![xml formatter](images/myOrderValidatorActivity2.png)
    
 - Note: If you select the Design property tab for your activity youâ€™ll see that itâ€™s blank. A non-trivial activity would allow certain aspects (such as endpoint URLs) to be configurable, so that it could readily be reused. For example, take a look at the Design tab for the Start activity. You control what appears on the Design tab through the pagelet XML for the activity implementor. In the creation wizard we left the pagelet XML blank, so the Design tab for our activity is empty. But to continue with the example of the start activity, find the Process Start icon in the Toolbox and view its Design tab (for the implementor, not the activity on the canvas). This gives you an idea of how the pagelet XML relates to the fields on the Design tab for the activity user. Since weâ€™re on the subject you may be interested to know how you can customize the icon for your activity implementor. On the Definition tab you can choose one of the built-in shapes, or more flexibly choose any GIF, JPG or PNG asset that you can easily add to your workflow package.
 
 ##### Add Multiple Activity Outcomes:
-- Drag a Process Finish activity from the Toolbox, and add another outbound transition from â€œValidate Orderâ€�. Assign Result Code values of â€œtrueâ€� and â€œfalseâ€� to the respective transitions as illustrated below. Save your process definition. The value passed in setReturnCode() in your activityâ€™s execute() method dictates which of these two paths will be.
+- Drag a Process Finish activity from the Toolbox, and add another outbound transition from Validate Order. Assign Result Code values of true and false to the respective transitions as illustrated below. Save your process definition. The value passed in setReturnCode() in your activityâ€™s execute() method dictates which of these two paths will be.
 
    ![xml formatter](images/myOrderValidatorActivity3.png)
 
@@ -209,27 +209,26 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 - Implement a REST service, using the JAX-RS @Path annotation and extending the MDW JsonRestService class:
      
   ```java
-  package MyServices;
-	import java.util.HashMap;
-	import java.util.Map;
-	import javax.ws.rs.Path;
-	import org.json.JSONObject;
-	import com.centurylink.mdw.common.service.ServiceException;
-	import com.centurylink.mdw.services.ServiceLocator;
-	import com.centurylink.mdw.services.WorkflowServices;
-	import com.centurylink.mdw.services.rest.JsonRestService;
-	@Path("/Orders")
-	public class Orders extends JsonRestService {
-		@Override
-		public JSONObject post(String path, JSONObject content, Map<String, String> headers) throws ServiceException{
-			Map<String,Object> stringParams = new HashMap<String,Object>();
-			WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-			Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
+package MyServices;
+import java.util.HashMap;
+import java.util.Map;
+import javax.ws.rs.Path;
+import org.json.JSONObject;
+import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.rest.JsonRestService;
+@Path("/Orders")
+public class Orders extends JsonRestService {
+	@Override
+	public JSONObject post(String path, JSONObject content, Map<String, String> headers) throws ServiceException{
+		Map<String,Object> stringParams = new HashMap<String,Object>();
+		WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+		Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
 		
-			return (JSONObject) response;
-		}
+		return (JSONObject) response;
 	}
-
+}
   ```    
 - Access your service using a POST request from your browser with a URL like the following:
 
@@ -375,7 +374,6 @@ public class CheckOrdersRest extends RestServiceAdapter {
 	}
   }
   ```
-  
 ##### Save and Run Your Process:
 - Launch your process, entering the orderId as you did in previous steps.  View the instance to confirm that the orderId was populated as expected.
 - In the process instance view, double-click the Invoke MyOrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire.  You can also view the same results like the following:
