@@ -245,50 +245,49 @@ With MDW REST services you can automatically generate Swagger documentation just
 ##### Add the @Api Annotation to Your Service:
 - The Swagger Api annotation goes on your class declaration along with the JAX-RS Path annotation.  The tag value in your annotation provides a high-level description of the its purpose:
 ```swagger
- 	@Path("/Orders")
-	@Api("CenturyLink orders service")
-	public class Orders extends JsonRestService {
-         â€¦
+@Path("/Orders")	
+@Api("CenturyLink orders service")
+public class Orders extends JsonRestService {
 ```
 ##### Add @ApiOperation Annotations to Your Methods:
 - The ApiOperation annotation documents the specifics of a service endpoint operation, including any input or output model types.  The ApiImplicitParams annotation is useful for indicating the body content of a POST or PUT requests.  After adding these annotations to Orders.java, the code will look something like this:
 ```java
- 	package MyServices;
-	import java.util.HashMap;
-	import java.util.Map;
-	import javax.ws.rs.Path;
-	import org.json.JSONObject;
-	import com.centurylink.mdw.common.service.ServiceException;
-	import com.centurylink.mdw.common.service.types.StatusMessage;
-	import com.centurylink.mdw.services.ServiceLocator;
-	import com.centurylink.mdw.services.WorkflowServices;
-	import com.centurylink.mdw.services.rest.JsonRestService;
-	import io.swagger.annotations.Api;
-	import io.swagger.annotations.ApiImplicitParam;
-	import io.swagger.annotations.ApiImplicitParams;
-	import io.swagger.annotations.ApiOperation;
-	@Path("/Orders")
-	@Api("CenturyLink orders service")
-	public class Orders extends JsonRestService {
-		@Override
-		@ApiOperation(value="Create an order",
-		notes="Does not actually create anything as yet.", response=StatusMessage.class)
-		@ApiImplicitParams({@ApiImplicitParam(name="Order", paramType="body", dataType="MyServices.Order")})
-		public JSONObject post(String path, JSONObject content, Map<String, String> headers) throws ServiceException{
-			Map<String,Object> stringParams = new HashMap<String,Object>();
-			WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-			Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
+package MyServices;
+import java.util.HashMap;
+import java.util.Map;
+import javax.ws.rs.Path;
+import org.json.JSONObject;
+import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.rest.JsonRestService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+@Path("/Orders")
+@Api("CenturyLink orders service")
+public class Orders extends JsonRestService {
+	@Override
+	@ApiOperation(value="Create an order",
+	notes="Does not actually create anything as yet.", response=StatusMessage.class)
+	@ApiImplicitParams({@ApiImplicitParam(name="Order", paramType="body", dataType="MyServices.Order")})
+	public JSONObject post(String path, JSONObject content, Map<String, String> headers) throws ServiceException{
+		Map<String,Object> stringParams = new HashMap<String,Object>();
+		WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+		Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
 		
-			return (JSONObject) response;
-		}
+		return (JSONObject) response;
 	}
+}
 ```
 ##### Add Swagger Annotations to the Orders Class:
 - To enable consumers to easily create request content and interpret responses, you can annotate the related model objects so that they're discovered when documentation is generated.  In the Orders dynamic Java class, add the following class-level annotation:
 ```swager
-      @ApiModel(value="Order", description="Centurylink Order")
-      public class Orders extends JsonRestService {
-      // Add your logic.
+@ApiModel(value="Order", description="Centurylink Order")
+public class Orders extends JsonRestService {
+// Add your logic.
 ```
 #### 3. View Generated REST APIs in MDWHub
 MDWHub comes with a UI for displaying your generated Swagger API documentation, along with the standard MDW REST APIs.
@@ -307,10 +306,10 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
 ##### Add a Sample Request and Response:
 - Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "MyServices.api.samples" and add a JSON asset named Orders_Create.json with the following content:
 ```jason
-     // POST request to Services/MyServices/Orders
-     {
-     "orderId":"12345678"
-     }
+// POST request to Services/MyServices/Orders
+{
+"orderId":"12345678"
+}
 ```
 ##### View the Samples in MDWHub:
 - Now that your sample requests have been created in accordance with the MDW naming convention, they'll automatically be associated with the corresponding service path.  And they'll also be displayed in the Samples tab for your service in MDWHub:
@@ -353,14 +352,14 @@ public class CheckOrdersRest extends RestServiceAdapter {
 		}
 	}
 	@Override
-	protected String getRequestData() throws ActivityException {
+	public String getRequestData() throws ActivityException {
 		String varname = getAttributeValue(REQUEST_VARIABLE);
 		if (StringHelper.isEmpty(varname)) {
 			throw new ActivityException("Variable not found for Check Orders");
 		}
 		JSONObject orderRequest = new JSONObject();
 		try {
-			orderRequest.put("orderId", varname); //????
+			orderRequest.put("orderId", varname);
 		} catch (JSONException e) {
 			logger.severe("Unable to build response : message " + e.getMessage());
 		}
