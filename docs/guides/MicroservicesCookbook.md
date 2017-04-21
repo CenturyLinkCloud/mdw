@@ -114,7 +114,7 @@ A local project is useful if you want to debug your custom Java source code and 
 - With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
 
 - Update the generated Java source code to resemble the following:
-  ```java
+```java
 package MyServices;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -150,7 +150,7 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
 		return valid;
 	}
 }
-  ```
+```
 - Now if you switch back to your process the new activity should appear in the Toolbox View. From the toolbox, drag your activity onto the canvas and insert it into your process flow between the Start and Stop activities.
 - Tip: To draw a link (or transition in MDW terminology) between activities on the designer canvas, hold down the Shift key on your keyboard, Click on the upstream activity, and continue holding down the mouse left click button while dragging the cursor to the downstream activity (shift+click+drag).
 - Your activity can be dragged like this and used in other processes designed by other users. Actually the proper term in MDW for this reusable element in the Toolbox is activity implementor. This conveys the idea that itâ€™s actually a template to be dragged and configured as an activity in the canvas, and it also conveys the fact that it always corresponds to a Java class. To take this reuse concept a step further, your activity implementor can be made discoverable so that it can easily be imported into other environments and reused across domains. If you click on the light bulb icon at the top of the Toolbox youâ€™ll get an idea how items in the palette can be imported from a file or discovered in the corporate repository.
@@ -206,7 +206,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
   ![xml formatter](images/createOrderProcessJavaAsset.png)
 
 - Implement a REST service, using the JAX-RS @Path annotation and extending the MDW JsonRestService class:
-  ```java
+```java
   package MyServices;
   import java.util.HashMap;
   import java.util.Map;
@@ -227,7 +227,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 		return (JSONObject) response;
 	}
   }
-  ```    
+```   
 - Access your service using a POST request from your browser with a URL like the following:
 
     - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)            
@@ -248,7 +248,7 @@ public class Orders extends JsonRestService {
 ```
 ##### Add @ApiOperation Annotations to Your Methods:
 - The ApiOperation annotation documents the specifics of a service endpoint operation, including any input or output model types.  The ApiImplicitParams annotation is useful for indicating the body content of a POST or PUT requests.  After adding these annotations to Orders.java, the code will look something like this:
-  ```java
+```java
 package MyServices;
 import java.util.HashMap;
 import java.util.Map;
@@ -324,7 +324,7 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 
 ##### Implement MDW REST Activity API:
 - With the REST activity in a real-world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above.  To simplify this tutorial, we will implement a very simple java code to use the mdw built-in operations to return the request JSON posted to the service :
-  ```java
+```java
 package com.centurylink.mdw.workflow.order.activity;
 import java.util.HashMap;
 import java.util.Map;
@@ -370,7 +370,7 @@ public class CheckOrdersRest extends RestServiceAdapter {
 		}
 	}
 }
-  ```
+```
 ##### Save and Run Your Process:
 - Launch your process, entering the orderId as you did in previous steps.  View the instance to confirm that the orderId was populated as expected.
 - In the process instance view, double-click the Invoke MyOrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire.  You can also view the same results like the following:
