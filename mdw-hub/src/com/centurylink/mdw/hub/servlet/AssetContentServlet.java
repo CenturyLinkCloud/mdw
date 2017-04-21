@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONObject;
+
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.Query;
@@ -57,6 +59,7 @@ import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.StringHelper;
@@ -217,13 +220,21 @@ public class AssetContentServlet extends HttpServlet {
                 if (pkg == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Package not found: " + pkgName);
 
-                // TODO processes
                 String assetName = path.substring(lastSlash + 1);
-                Asset asset = persisterVcs.getAsset(pkg.getId(), assetName);
+                String version = request.getParameter("version");
+                boolean verChange = false;
+                Asset asset = null;
+                // TODO event handler and implementors
+                if (assetName.endsWith(".proc")) {
+                    asset = persisterVcs.getProcessBase(pkgName + "/" + assetName.substring(0, assetName.length() - 5), 0);
+                }
+                else {
+                    asset = persisterVcs.getAsset(pkg.getId(), assetName);
+                }
+
                 if (asset == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + pkgName + "/" + assetName);
 
-                String version = request.getParameter("version");
                 if (version == null)
                     version = asset.getVersionString();
                 logger.info("Saving asset: " + path + " v" + version);
@@ -235,16 +246,32 @@ public class AssetContentServlet extends HttpServlet {
                 while((read = is.read(bytes)) != -1)
                     baos.write(bytes, 0, read);
 
-                asset.setRawContent(baos.toByteArray());
                 int ver = asset.getVersion();
+
+                if (asset instanceof Process) {
+                    asset = new Process(new JSONObject(new String(baos.toByteArray())));
+                    asset.setName(assetName.substring(0, assetName.length() - 5));
+                    asset.setPackageName(pkgName);
+                }
+                else {
+                    asset.setRawContent(baos.toByteArray());
+                }
+
                 int newVer = Asset.parseVersion(version);
                 if (newVer < ver)
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid asset version: v" + version);
-                boolean verChange = newVer != ver;
+                verChange = newVer != ver;
                 asset.setVersion(newVer);
                 PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkgName);
-                persisterVcs.save(asset, pkgDir);
-                persisterVcs.updateAsset(asset);
+                if (asset instanceof Process) {
+                    persisterVcs.save((Process)asset, pkgDir);
+                    persisterVcs.updateProcess((Process)asset);
+                }
+                else {
+                    persisterVcs.save(asset, pkgDir);
+                    persisterVcs.updateAsset(asset);
+                }
+
                 if (verChange) {
                     persisterVcs.persistPackage(pkg, PersistType.NEW_VERSION);
                 }

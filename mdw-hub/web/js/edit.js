@@ -134,7 +134,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       comment: $scope.version.comment,
       distributedSave: $scope.options.distributedSave
     }, 
-    $scope.asset.content, 
+    $scope.process ? JSON.stringify($scope.process, null, 2) : $scope.asset.content, 
     function success(response) {
       $scope.message = null;
       $scope.aceDirty = false;
@@ -182,5 +182,5 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   
   $scope.refreshCaches = function() {
     WorkflowCache.refresh({}, { distributed: $scope.options.distributedSave });
-  }  
+  };  
 }]);

@@ -1421,6 +1421,18 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
+    /**
+     * updates the version
+     */
+    public void updateProcess(Process process) throws DataAccessException {
+        try {
+            versionControl.setRevision(getProcessFile(process), getAssetRevision(process));
+        }
+        catch (IOException ex) {
+            throw new DataAccessException(ex.getMessage(), ex);
+        }
+    }
+
     public void renameAsset(Asset asset, String newName) throws DataAccessException  {
         File logicalFile = versionControl.getFile(asset.getId());
         PackageDir pkgDir = getPackageDir(logicalFile);
