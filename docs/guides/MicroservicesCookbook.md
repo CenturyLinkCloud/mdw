@@ -206,7 +206,6 @@ Besides implementing services by way of an MDW workflow process, you can easily 
   ![xml formatter](images/createOrderProcessJavaAsset.png)
 
 - Implement a REST service, using the JAX-RS @Path annotation and extending the MDW JsonRestService class:
-     
   ```java
   package MyServices;
   import java.util.HashMap;
@@ -249,7 +248,7 @@ public class Orders extends JsonRestService {
 ```
 ##### Add @ApiOperation Annotations to Your Methods:
 - The ApiOperation annotation documents the specifics of a service endpoint operation, including any input or output model types.  The ApiImplicitParams annotation is useful for indicating the body content of a POST or PUT requests.  After adding these annotations to Orders.java, the code will look something like this:
-```java
+  ```java
 package MyServices;
 import java.util.HashMap;
 import java.util.Map;
@@ -325,7 +324,6 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 
 ##### Implement MDW REST Activity API:
 - With the REST activity in a real-world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above.  To simplify this tutorial, we will implement a very simple java code to use the mdw built-in operations to return the request JSON posted to the service :
-
   ```java
 package com.centurylink.mdw.workflow.order.activity;
 import java.util.HashMap;
