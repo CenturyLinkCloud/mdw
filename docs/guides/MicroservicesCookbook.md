@@ -327,8 +327,8 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 - On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL you used for testing your service in Section 3.  [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)
 
 ##### Implement MDW REST Activity API:
-- With the REST activity in a real-world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above.  To simplify this tutorial, we will implement a very simple java code to use the mdw built-in operations to return the request JSON posted to the service :
-
+- With the REST activity in a real world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above. To simplify this tutorial, we will implement a very simple java code to use the
+mdw built-in operations to return the request JSON posted to the service:
 ```java 
 package com.centurylink.mdw.workflow.order.activity;
 import java.util.HashMap;
