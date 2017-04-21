@@ -108,7 +108,7 @@ A local project is useful if you want to debug your custom Java source code and 
 
    ![xml formatter](images/myOrderValidatorActivity.png)
    
-- When you click Finish the Java code for a skeleton implementation is generated. Youâ€™ll also see the Java class under your package in Process Explorer. 
+- When you click Finish the Java code for a skeleton implementation is generated. You will also see the Java class under your package in Process Explorer. 
 - This source code resides under src/main/workflow and is known as a Dynamic Java workflow asset. It's dynamic because it can be changed without needing any kind of application deployment. Naturally there are rigorous controls in place to prevent unauthorized modifications.
 - In step 1 you were granted permissions in the MDW environment to create and modify workflow assets.
 - With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
