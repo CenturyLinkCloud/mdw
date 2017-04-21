@@ -109,47 +109,47 @@ A local project is useful if you want to debug your custom Java source code and 
    ![xml formatter](images/myOrderValidatorActivity.png)
    
 - When you click Finish the Java code for a skeleton implementation is generated. Youâ€™ll also see the Java class under your package in Process Explorer. 
-- This source code resides under src/main/workflow and is known as a Dynamic Java workflow asset. Itâ€™s dynamic because it can be changed without needing any kind of application deployment. Naturally there are rigorous controls in place to prevent unauthorized modifications.
+- This source code resides under src/main/workflow and is known as a Dynamic Java workflow asset. It's dynamic because it can be changed without needing any kind of application deployment. Naturally there are rigorous controls in place to prevent unauthorized modifications.
 - In step 1 you were granted permissions in the MDW environment to create and modify workflow assets.
 - With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
 
 - Update the generated Java source code to resemble the following:
   ```java
-  package MyServices;
-  import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
-  import com.centurylink.mdw.util.timer.Tracked;
-  import com.centurylink.mdw.java.JavaExecutionException;
-  import com.centurylink.mdw.activity.ActivityException;
-  import com.centurylink.mdw.model.request.Request;
-  import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
-  import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-  import org.json.JSONObject;
+package MyServices;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
+import com.centurylink.mdw.java.JavaExecutionException;
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import org.json.JSONObject;
   
-  @Tracked(LogLevel.TRACE)
-  public class MyOrderValidatorActivity extends DefaultActivityImpl {
-  	@Override
+@Tracked(LogLevel.TRACE)
+public class MyOrderValidatorActivity extends DefaultActivityImpl {
+	@Override
 	public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
 		loginfo("Validating order...");
 		boolean valid = false;
-       		try {
+		try {
 			JSONObject jsonObj = (JSONObject) getVariableValue("request");
-	      	     	String orderId = (String) jsonObj.get("orderId");
-	      	       	setVariableValue("orderId", orderId);
-	      	       	String msg = "Success";
-	   		if (!jsonObj.has("orderId")){
+			String orderId = (String) jsonObj.get("orderId");
+			setVariableValue("orderId", orderId);
+			String msg = "Success";
+			if (!jsonObj.has("orderId")){
 				msg = "Missing order ID.";
-   	      		}
-            		else if (!Character.isDigit(orderId.charAt(0))) {
-		    		msg = "Order ID must begin with a digit.";	        
-                     	}
+			}
+			else if (!Character.isDigit(orderId.charAt(0))) {
+				msg = "Order ID must begin with a digit.";	        
+			}
 			valid = msg.equals("Success");
-	      	        setVariableValue("validationResult", msg);
+			setVariableValue("validationResult", msg);
 		} catch (Exception ex) {
-	  		throw new ActivityException(ex.getMessage(), ex);
-	 	}
+			throw new ActivityException(ex.getMessage(), ex);
+		}
 		return valid;
 	}
-  }
+}
   ```
 - Now if you switch back to your process the new activity should appear in the Toolbox View. From the toolbox, drag your activity onto the canvas and insert it into your process flow between the Start and Stop activities.
 - Tip: To draw a link (or transition in MDW terminology) between activities on the designer canvas, hold down the Shift key on your keyboard, Click on the upstream activity, and continue holding down the mouse left click button while dragging the cursor to the downstream activity (shift+click+drag).
@@ -217,6 +217,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
   import com.centurylink.mdw.services.ServiceLocator;
   import com.centurylink.mdw.services.WorkflowServices;
   import com.centurylink.mdw.services.rest.JsonRestService;
+  
   @Path("/Orders")
   public class Orders extends JsonRestService {
 	@Override
@@ -263,6 +264,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+
 @Path("/Orders")
 @Api("CenturyLink orders service")
 public class Orders extends JsonRestService {
@@ -325,31 +327,30 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 - With the REST activity in a real-world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above.  To simplify this tutorial, we will implement a very simple java code to use the mdw built-in operations to return the request JSON posted to the service :
 
   ```java
-  package com.centurylink.mdw.workflow.order.activity;
-  import java.util.HashMap;
-  import java.util.Map;
-  import org.json.JSONException;
-  import org.json.JSONObject;
-  import com.centurylink.mdw.activity.ActivityException;
-  import com.centurylink.mdw.connector.adapter.AdapterException;
-  import com.centurylink.mdw.connector.adapter.ConnectionException;
-  import com.centurylink.mdw.util.StringHelper;
-  import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
+package com.centurylink.mdw.workflow.order.activity;
+import java.util.HashMap;
+import java.util.Map;
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.connector.adapter.AdapterException;
+import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
   
-  public class CheckOrdersRest extends RestServiceAdapter {
+public class CheckOrdersRest extends RestServiceAdapter {
 	@Override
 	public String invoke(Object conn, String request, int timeout, Map<String, String> headers)
-			  throws ConnectionException, AdapterException {		
+		throws ConnectionException, AdapterException {		
 		if (conn != null) {
 			return super.invoke(conn, request, timeout, headers);
 		} else {
 			logger.debug("Order service is disabled, continuing with flow");
-	  		return "Ok";
+			return "Ok";
 		}
 	}
 	@Override
 	public String getRequestData() throws ActivityException {
-		String varname = getAttributeValue(REQUEST_VARIABLE);
 		if (StringHelper.isEmpty(varname)) {
 			throw new ActivityException("Variable not found for Check Orders");
 		}
@@ -368,9 +369,9 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 			requestHeaders = new HashMap<String, String>();
 			requestHeaders.put("Content-Type", "application/json");
 			return requestHeaders;
-	  	}
-    	}
-  }
+		}
+	}
+}
   ```
 ##### Save and Run Your Process:
 - Launch your process, entering the orderId as you did in previous steps.  View the instance to confirm that the orderId was populated as expected.
