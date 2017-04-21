@@ -26,8 +26,8 @@ jar {
     }
 }
 
-archivesBaseName = "mdw-services"
+/*archivesBaseName = "mdw-services"
 
 artifacts {
     archives jar, javadocJar, sourcesJar
-}
+}*/

@@ -143,8 +143,8 @@ war {
     }
 }
 
-archivesBaseName = "mdw"
+/*archivesBaseName = "mdw"
 
 artifacts {
     archives war, javadocJar, sourcesJar
-}
+}*/

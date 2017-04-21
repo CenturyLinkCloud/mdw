@@ -100,9 +100,9 @@ jar {
     }
 }
 
-archivesBaseName = "mdw-common"
+//archivesBaseName = "mdw-common"
 
  
-artifacts {
+/*artifacts {
     archives jar, javadocJar, sourcesJar
-}
+}*/
