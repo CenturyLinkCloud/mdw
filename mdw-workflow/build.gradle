@@ -62,8 +62,7 @@ jar {
     }
 }
 
-/*archivesBaseName = "mdw-workflow"
-
+archivesBaseName = "mdw-workflow"
 artifacts {
     archives jar, javadocJar, sourcesJar
-}*/
+}

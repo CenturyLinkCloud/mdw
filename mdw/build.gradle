@@ -91,14 +91,26 @@ subprojects {
         exclude "**/.metadata/"
         exclude "**/.*ignore"
     }    
-/*     task javadocJar(type: Jar) {
+    ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+    
+    if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
+        signing {
+            required = { isReleaseVersion  && "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+            sign configurations.archives
+         }
+    }
+    else {
+        tasks.withType(Javadoc).all { enabled = false }  
+    }
+    
+    task javadocJar(type: Jar) {
+        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         classifier = 'javadoc'
         from javadoc
     }
-   signing {
-        sign configurations.archives
-    }*/
-    uploadArchives {
+
+    uploadArchives {        
+        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         repositories {
           mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
