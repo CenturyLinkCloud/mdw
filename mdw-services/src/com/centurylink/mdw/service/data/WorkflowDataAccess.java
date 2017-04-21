@@ -106,7 +106,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
             // default excludes embedded subprocs
             sb.append(" and pi.owner != '").append(OwnerType.MAIN_PROCESS_INSTANCE).append("'\n");
             if ("true".equals(query.getFilter("master")))
-                sb.append(" and pi.owner != '").append(OwnerType.PROCESS_INSTANCE).append("'\n");
+                sb.append(" and pi.owner NOT IN ( '").append(OwnerType.PROCESS_INSTANCE).append("' , '").append(OwnerType.ERROR).append("' )\n");
         }
         else {
             String ownerId = query.getFilter("ownerId");
