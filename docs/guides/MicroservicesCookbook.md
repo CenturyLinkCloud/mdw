@@ -279,6 +279,7 @@ public class Orders extends JsonRestService {
 	}
 }
 ```
+
 ##### Add Swagger Annotations to the Orders Class:
 - To enable consumers to easily create request content and interpret responses, you can annotate the related model objects so that they're discovered when documentation is generated.  In the Orders dynamic Java class, add the following class-level annotation:
 ```swager
