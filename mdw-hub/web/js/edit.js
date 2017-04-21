@@ -76,6 +76,10 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   };
   
   $scope.initGitCredentials = function() {
+    // for transient values
+    $scope.git = {};
+    
+    // gitCredentials populated from cookie values
     var user = $cookieStore.get('gitUser');
     var password = $cookieStore.get('gitPassword');
     if (user && password) {
@@ -97,7 +101,12 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   };
   
   $scope.isSaveEnabled = function() {
-    return $scope.isDirty() && (!$scope.commitAndSave || $scope.version.comment);
+    if (!$scope.isDirty())
+      return false;
+    if ($scope.options.commitAndPush) {
+      return $scope.version.comment && (!$scope.isShowGitCredentials() || ($scope.git.user && $scope.git.password));
+    }
+    return true;
   };
   
   $scope.cancelSave = function() {
@@ -112,8 +121,11 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   
   $scope.save = function() {
     console.log('saving: ' + $scope.asset.packageName + '/' + $scope.asset.name + ' v' + $scope.version.selected);
-    if ($scope.options.commitAndPush && $scope.gitUser && $scope.getPassword) {
-      $cookieStore.get('gitUser');
+    if ($scope.options.commitAndPush && $scope.git.user && $scope.git.password) {
+      $cookieStore.put('gitUser', $scope.git.user);
+      $cookieStore.put('gitPassword', $scope.git.password);
+      $scope.gitCredentials = { user: $scope.git.user, password: $scope.git.password };
+      $scope.git = {};
     }
     Asset.put({
       packageName: $scope.asset.packageName,
@@ -128,18 +140,20 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       $scope.aceDirty = false;
       $scope.asset.version = $scope.version.selected;
       var commitMsg = $scope.version.comment;
-      if ($scope.options.cacheRefresh) {
-        WorkflowCache.refresh({}, { distributed: $scope.options.distributedSave });
-      }
       if ($scope.options.commitAndPush) {
         GitVcs.push({
           pkgPath: $scope.asset.packageName,
           asset: $scope.asset.name,
-          gitAction: 'push'
+          gitAction: 'push',
+        }, { 
+          comment: commitMsg, 
+          user: $scope.gitCredentials.user,
+          password: $scope.gitCredentials.password
         },
-        { comment: commitMsg },
         function success(response) {
-          $scope.closePopover();
+          $scope.setPopElem(null);  // in anticipation of having been closed by POST
+          if ($scope.options.cacheRefresh)
+            $scope.refreshCaches(); // best effort
         },
         function error(response) {
           if (response.data.status)
@@ -152,9 +166,9 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       }
       else {
         $scope.closePopover();
+        if ($scope.options.cacheRefresh)
+          $scope.refreshCaches(); // best effort
       }
-      
-      $scope.initVersion();
     }, 
     function error(response) {
       if (response.data.status)
@@ -166,4 +180,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
     });
   };
   
+  $scope.refreshCaches = function() {
+    WorkflowCache.refresh({}, { distributed: $scope.options.distributedSave });
+  }  
 }]);

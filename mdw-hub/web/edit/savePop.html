@@ -36,13 +36,13 @@
       <label class="mdw-label">Commit Message:</label>
       <input type="text" ng-model="version.comment" ng-disabled="!options.commitAndPush" style="width:350px">
     </div>
-    <div>
+    <div ng-if="isShowGitCredentials()">
       <label class="mdw-label">Git User:</label>
-      <input type="text" ng-model="gitUser" ng-if="isShowGitCredentials()">
+      <input type="text" ng-model="git.user">
     </div>
-    <div>
+    <div ng-if="isShowGitCredentials()">
       <label class="mdw-label">Git Password:</label>
-      <input type="password" ng-model="gitPassword" ng-if="isShowGitCredentials()">
+      <input type="password" ng-model="git.password">
     </div>
   </div>
   <hr style="margin-top:8px;margin-bottom:10px;">

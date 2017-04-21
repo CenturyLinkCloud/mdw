@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.ws.rs.Path;
 
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -155,6 +156,10 @@ public class GitVcs extends JsonRestService {
                         if (!content.has("comment"))
                             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing comment");
                         String comment = content.getString("comment");
+                        if (content.has("user")) {
+                            vcGit.setCredentialsProvider(new UsernamePasswordCredentialsProvider(
+                                    content.getString("user"), content.getString("password")));
+                        }
                         vcGit.pull(branch);
                         // TODO add if new
                         vcGit.commit(pushPath, comment);

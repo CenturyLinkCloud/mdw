@@ -9,7 +9,7 @@
           <span ng-if="isDirty()"> *</span>
         </div>
         <div class="mdw-heading-actions" style="padding-top:8px;">
-          <a class="btn btn-default" href="" 
+          <a class="btn btn-default" href="" ng-disabled="!isDirty()"
             uib-popover-template="'edit/savePop.html'" popover-placement="left-top" pop-click>
             Save
           </a>            
