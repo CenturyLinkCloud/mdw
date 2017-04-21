@@ -130,5 +130,6 @@
      ```
 	 bundle exec jekyll serve --incremental --baseurl ''
 	 ```
-   - Access locally in your browser: 
+   - Access locally in your browser:
+     http://127.0.0.1:4000/
 	  
