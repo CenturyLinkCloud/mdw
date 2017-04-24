@@ -23,14 +23,14 @@ overview: true
     <div class="unit one-third">
       <h2>CloudFoundry Cookbook</h2>
       <p>Deploying on CloudFoundry</p>
-      <a href="/guides/CloudFoundryCookbook">CloudFoundry Cookbook &rarr;</a>
+      <a href="CloudFoundryCookbook">CloudFoundry Cookbook &rarr;</a>
     </div>
     <div class="unit one-third">
       <h2>Microservices Cookbooks</h2>
       <p>
         Cookbooks to get you started with Microservices.
       </p>
-      <a href="/guides/MicroservicesCookbook">Microservices Cookbooks &rarr;</a>
+      <a href="MicroservicesCookbook">Microservices Cookbooks &rarr;</a>
     </div>
     <div class="clear"></div>
   </div>
