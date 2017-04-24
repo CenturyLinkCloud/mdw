@@ -5,6 +5,7 @@ baseurl: /mdw
 markdown: kramdown
 highlighter: rouge
 
+repository: https://github.com/CenturyLinkCloud/mdw
 help_url: http://centurylinkcloud.github.io/mdw/
 
 defaults:
