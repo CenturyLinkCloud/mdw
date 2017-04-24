@@ -79,6 +79,16 @@ public class MdwSettings implements PreferenceConstants {
         discoveryUrl = s;
     }
 
+    private String discoveryUrlMdw6;
+
+    public String getDiscoveryUrlMdw6() {
+        return discoveryUrlMdw6;
+    }
+
+    public void setDiscoveryUrlMdw6(String s) {
+        discoveryUrlMdw6 = s;
+    }
+
     private int httpConnectTimeout;
 
     public int getHttpConnectTimeout() {
@@ -355,6 +365,9 @@ public class MdwSettings implements PreferenceConstants {
         setDiscoveryUrl(store.getString(PREFS_DISCOVERY_URL));
         if (getDiscoveryUrl().length() == 0)
             setDiscoveryUrl(store.getDefaultString(PREFS_DISCOVERY_URL));
+        setDiscoveryUrlMdw6(store.getString(PREFS_DISCOVERY_URL_MDW6));
+        if (getDiscoveryUrlMdw6().length() == 0)
+            setDiscoveryUrlMdw6(store.getDefaultString(PREFS_DEFAULT_DISCOVERY_URL_MDW6));
         setIncludePreviewBuilds(store.getBoolean(PREFS_INCLUDE_PREVIEW_BUILDS));
         setJdbcFetchSize(store.getInt(PREFS_JDBC_FETCH_SIZE));
         if (getJdbcFetchSize() == 0)
@@ -412,6 +425,7 @@ public class MdwSettings implements PreferenceConstants {
         store.setDefault(PREFS_MDW_RELEASES_URL, PREFS_DEFAULT_MDW_RELEASES_URL);
         store.setDefault(PREFS_WORKSPACE_SETUP_URL, PREFS_DEFAULT_WORKSPACE_SETUP_URL);
         store.setDefault(PREFS_DISCOVERY_URL, PREFS_DEFAULT_DISCOVERY_URL);
+        store.setDefault(PREFS_DISCOVERY_URL_MDW6, PREFS_DEFAULT_DISCOVERY_URL_MDW6);
         store.setDefault(PREFS_HTTP_CONNECT_TIMEOUT_MS, Server.DEFAULT_CONNECT_TIMEOUT);
         store.setDefault(PREFS_HTTP_READ_TIMEOUT_MS, Server.DEFAULT_READ_TIMEOUT);
         store.setDefault(PREFS_JDBC_FETCH_SIZE, PREFS_DEFAULT_JDBC_FETCH_SIZE);

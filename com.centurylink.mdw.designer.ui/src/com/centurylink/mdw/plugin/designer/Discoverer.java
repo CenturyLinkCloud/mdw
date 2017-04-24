@@ -27,6 +27,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -76,68 +78,84 @@ public class Discoverer {
             httpHelper.setFollowHtmlHeadMetaRefresh(true);
 
         String content = httpHelper.get();
-        if (content.startsWith("<!"))
-            content = content.substring(content.indexOf("\n") + 1);
-        if (content.contains("&nbsp;"))
-            content = content.replaceAll("&nbsp;", "")
-                    .replace("<HR size=\"1\" noshade=\"noshade\">", "");
-        if (!parent.hasParent() && httpHelper.getRedirect() != null)
-            parent.setName(httpHelper.getRedirect().toString());
-        try {
-            List<String> links = parseDirectoryResponse(content);
-            if (!parent.hasParent())
-                topLevelFolders = links.size();
-            if (latestVersionsOnly) {
-                List<String> latestLinks = new ArrayList<String>();
-                String latestDir = null;
-                for (String link : links) {
-                    if (!link.endsWith("-SNAPSHOT/")) // snapshots excluded from
-                                                      // "latest only"
-                    {
-                        if (link.matches("[0-9.]*/")) {
-                            if ((latestDir == null || latestDir.compareTo(link) < 0))
-                                latestDir = link;
-                        }
-                        else {
-                            latestLinks.add(link);
+        if (content.startsWith("{")) {
+            try {
+                JSONArray jsonArray = (JSONArray) (new JSONObject(content)).get("packages");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObj = new JSONObject(jsonArray.get(i).toString());
+                    File child = new File(parent,
+                            jsonObj.get("name") + " v" + jsonObj.get("version"));
+                    parent.addChild(child);
+                }
+            }
+            catch (Exception ex) {
+                throw new DiscoveryException("Error crawling: " + parentUrl, ex);
+            }
+        }
+        else {
+            if (content.startsWith("<!"))
+                content = content.substring(content.indexOf("\n") + 1);
+            if (content.contains("&nbsp;"))
+                content = content.replaceAll("&nbsp;", "")
+                        .replace("<HR size=\"1\" noshade=\"noshade\">", "");
+            if (!parent.hasParent() && httpHelper.getRedirect() != null)
+                parent.setName(httpHelper.getRedirect().toString());
+            try {
+                List<String> links = parseDirectoryResponse(content);
+                if (!parent.hasParent())
+                    topLevelFolders = links.size();
+                if (latestVersionsOnly) {
+                    List<String> latestLinks = new ArrayList<String>();
+                    String latestDir = null;
+                    for (String link : links) {
+                        if (!link.endsWith("-SNAPSHOT/")) // snapshots excluded from
+                                                          // "latest only"
+                        {
+                            if (link.matches("[0-9.]*/")) {
+                                if ((latestDir == null || latestDir.compareTo(link) < 0))
+                                    latestDir = link;
+                            }
+                            else {
+                                latestLinks.add(link);
+                            }
                         }
                     }
+
+                    if (latestDir != null)
+                        latestLinks.add(latestDir);
+
+                    links = latestLinks;
                 }
 
-                if (latestDir != null)
-                    latestLinks.add(latestDir);
-
-                links = latestLinks;
-            }
-
-            for (String link : links) {
-                if (link.endsWith("/") && (MdwPlugin.getSettings().isIncludePreviewBuilds()
-                        || !link.endsWith("-SNAPSHOT/"))) {
-                    // directory
-                    if (!parent.hasParent())
-                        progressMonitor.subTask("Scanning " + link);
-                    Folder child = new Folder(link.substring(0, link.length() - 1));
-                    if (link.matches("[0-9.]*/"))
+                for (String link : links) {
+                    if (link.endsWith("/") && (MdwPlugin.getSettings().isIncludePreviewBuilds()
+                            || !link.endsWith("-SNAPSHOT/"))) {
+                        // directory
+                        if (!parent.hasParent())
+                            progressMonitor.subTask("Scanning " + link);
+                        Folder child = new Folder(link.substring(0, link.length() - 1));
+                        if (link.matches("[0-9.]*/"))
+                            parent.addChild(0, child);
+                        else
+                            parent.addChild(child);
+                        crawlForPackageFiles(child);
+                        if (!parent.hasParent()) // topLevel
+                            progressMonitor.worked(80 / topLevelFolders);
+                    }
+                    else if (link.endsWith(".xml") || link.endsWith(".json")) {
+                        // XML or JSON file
+                        File child = new File(parent, link);
                         parent.addChild(0, child);
-                    else
-                        parent.addChild(child);
-                    crawlForPackageFiles(child);
-                    if (!parent.hasParent()) // topLevel
-                        progressMonitor.worked(80 / topLevelFolders);
-                }
-                else if (link.endsWith(".xml") || link.endsWith(".json")) {
-                    // XML or JSON file
-                    File child = new File(parent, link);
-                    parent.addChild(0, child);
-                    child.setUrl(new URL(getFullUrl(child)));
+                        child.setUrl(new URL(getFullUrl(child)));
+                    }
                 }
             }
-        }
-        catch (InterruptedException iex) {
-            throw iex;
-        }
-        catch (Exception ex) {
-            throw new DiscoveryException("Error crawling: " + parentUrl, ex);
+            catch (InterruptedException iex) {
+                throw iex;
+            }
+            catch (Exception ex) {
+                throw new DiscoveryException("Error crawling: " + parentUrl, ex);
+            }
         }
     }
 

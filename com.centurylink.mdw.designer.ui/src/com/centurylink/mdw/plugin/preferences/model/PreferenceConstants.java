@@ -25,12 +25,15 @@ public interface PreferenceConstants {
     public static final String PREFS_DEFAULT_MDW_RELEASES_URL = "http://lxdenvmtc143.dev.qintra.com:7021/maven/repository";
     public static final String PREFS_DEFAULT_WORKSPACE_SETUP_URL = "http://lxdenvmtc143.dev.qintra.com:7021/Environment";
     public static final String PREFS_DEFAULT_DISCOVERY_URL = "http://lxdenvmtc143.dev.qintra.com:7021/Discovery";
+    public static final String PREFS_DEFAULT_DISCOVERY_URL_MDW6 = "https://mdw.useast.appfog.ctl.io/mdw";
 
     public static final String PREFS_DEFAULT_COPYRIGHT_NOTICE = "/**\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n */";
 
     public static final String PREFS_MDW_RELEASES_URL = "MdwPrefsReleasesUrl";
     public static final String PREFS_WORKSPACE_SETUP_URL = "MdwPrefsWorkspaceSetupUrl";
     public static final String PREFS_DISCOVERY_URL = "MdwPrefsDiscoveryUrl";
+    public static final String PREFS_DISCOVERY_URL_MDW6 = "Mdw6PrefsDiscoveryUrl";
+
     public static final String PREFS_JDBC_FETCH_SIZE = "JdbcFetchSize";
     public static final String PREFS_DEFAULT_JDBC_FETCH_SIZE = "200";
     public static final String PREFS_COPYRIGHT_NOTICE = "MdwPrefsCopyrightNotice";

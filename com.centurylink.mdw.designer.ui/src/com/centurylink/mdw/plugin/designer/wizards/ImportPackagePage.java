@@ -199,6 +199,8 @@ public class ImportPackagePage extends WizardPage {
         gd.horizontalSpan = 2;
         discoveryUrlText.setLayoutData(gd);
         String discUrl = MdwPlugin.getSettings().getDiscoveryUrl();
+        if (getProject().checkRequiredVersion(6, 0))
+            discUrl = MdwPlugin.getSettings().getDiscoveryUrlMdw6()+"/services/";
         discoveryUrlText.setText(discUrl.endsWith("/") ? discUrl + "Assets" : discUrl + "/assets");
         discoveryUrlText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {

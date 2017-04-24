@@ -142,100 +142,133 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                     monitor.subTask("Importing selected packages...");
                     monitor.worked(10);
 
+                     StringBuffer sb = new StringBuffer();
                     for (File pkgFile : importPackageSelectPage.getSelectedPackages()) {
                         ProgressMonitor progressMonitor = new SwtProgressMonitor(
                                 new SubProgressMonitor(monitor, 100));
-                        if (pkgFile.getContent() == null && pkgFile.getUrl() != null) { // download
-                                                                                        // postponed
-                                                                                        // for
-                                                                                        // discovered
-                                                                                        // assets
-                            HttpHelper httpHelper = new HttpHelper(pkgFile.getUrl());
-                            httpHelper.setConnectTimeout(
-                                    MdwPlugin.getSettings().getHttpConnectTimeout());
-                            httpHelper.setReadTimeout(MdwPlugin.getSettings().getHttpReadTimeout());
-                            pkgFile.setContent(httpHelper.get());
+                        if (pkgFile.getContent() == null) { // download
+                                                            // postponed
+                                                            // for
+                                                            // discovered
+                            if (pkgFile.getUrl() != null) { // assets
+                                HttpHelper httpHelper = new HttpHelper(pkgFile.getUrl());
+                                httpHelper.setConnectTimeout(
+                                        MdwPlugin.getSettings().getHttpConnectTimeout());
+                                httpHelper.setReadTimeout(
+                                        MdwPlugin.getSettings().getHttpReadTimeout());
+                                pkgFile.setContent(httpHelper.get());
+                            }
+                            else {
+                                String fileName = pkgFile.getName();
+                                if (sb.length() > 0)
+                                    sb.append("," + fileName.substring(0, fileName.indexOf(" ")));
+                                else
+                                    sb.append(fileName.substring(0, fileName.indexOf(" ")));
+                            }
                         }
                         String pkgFileContent = pkgFile.getContent();
+                        if (pkgFileContent != null) {
+                            Importer importer = new Importer(designerProxy.getPluginDataAccess(),
+                                    wfp.isFilePersist() && wfp.isRemote() ? null : getShell());
+                            WorkflowPackage importedPackage = importer.importPackage(wfp,
+                                    pkgFileContent, progressMonitor);
+                            if (importedPackage == null) // canceled
+                            {
+                                progressMonitor.done();
+                                break;
+                            }
+                            else {
+                                if (upgradeAssets) {
+                                    progressMonitor.subTask(
+                                            "Upgrading activity implementors and other assets...");
+                                    designerProxy.upgradeAssets(importedPackage);
+                                }
 
-                        Importer importer = new Importer(designerProxy.getPluginDataAccess(),
-                                wfp.isFilePersist() && wfp.isRemote() ? null : getShell());
-                        WorkflowPackage importedPackage = importer.importPackage(wfp,
-                                pkgFileContent, progressMonitor);
-                        if (importedPackage == null) // canceled
-                        {
+                                if (wfp.isFilePersist()) // file system eclipse
+                                                         // sync
+                                    wfp.getSourceProject().refreshLocal(2, null);
+                                // TODO refresh Archive in case existing package
+                                // was
+                                // moved there
+
+                                importedPackage.addElementChangeListener(wfp);
+                                for (WorkflowProcess pv : importedPackage.getProcesses())
+                                    pv.addElementChangeListener(wfp);
+                                for (ExternalEvent ee : importedPackage.getExternalEvents())
+                                    ee.addElementChangeListener(wfp);
+                                for (ActivityImpl ai : importedPackage.getActivityImpls())
+                                    ai.addElementChangeListener(wfp);
+                                for (WorkflowAsset wa : importedPackage.getAssets())
+                                    wa.addElementChangeListener(wfp);
+                                importedPackages.add(importedPackage);
+
+                                if (wfp.isRemote() && wfp.isFilePersist()) {
+                                    // zip and upload imported packages to
+                                    // server
+                                    java.io.File tempDir = wfp.getTempDir();
+                                    if (!tempDir.exists()) {
+                                        if (!tempDir.mkdirs())
+                                            throw new IOException(
+                                                    "Unable to create temp directory: " + tempDir);
+                                    }
+                                    java.io.File zipFile = new java.io.File(tempDir + "/packages"
+                                            + StringHelper.filenameDateToString(new Date())
+                                            + ".zip");
+                                    java.io.File assetDir = wfp.getAssetDir();
+                                    List<java.io.File> includes = new ArrayList<java.io.File>();
+                                    for (WorkflowPackage pkg : importedPackages)
+                                        includes.add(new java.io.File(
+                                                assetDir + "/" + pkg.getName().replace('.', '/')));
+                                    // TODO populate excludes with non-imported
+                                    // package dirs (why, since these are not in
+                                    // includes?)
+                                    FileHelper.createZipFileWith(assetDir, zipFile, includes);
+                                    String uploadUrl = wfp.getServiceUrl()
+                                            + "/upload?overwrite=true&assetZip=true&user="
+                                            + importPackagePage.getProject().getUser()
+                                                    .getUsername();
+                                    InputStream is = new FileInputStream(zipFile);
+                                    try {
+                                        ByteArrayOutputStream os = new ByteArrayOutputStream();
+                                        int read = 0;
+                                        byte[] bytes = new byte[1024];
+                                        while ((read = is.read(bytes)) != -1)
+                                            os.write(bytes, 0, read);
+
+                                        String encryptedPassword = CryptUtil
+                                                .encrypt(wfp.getMdwDataSource().getDbPassword());
+                                        HttpHelper httpHelper = new HttpHelper(new URL(uploadUrl),
+                                                wfp.getMdwDataSource().getDbUser(),
+                                                encryptedPassword);
+                                        byte[] resp = httpHelper.postBytes(os.toByteArray());
+                                        PluginMessages
+                                                .log("Asset download respose: " + new String(resp));
+                                    }
+                                    finally {
+                                        is.close();
+                                    }
+                                }
+                            }
                             progressMonitor.done();
-                            break;
                         }
-                        else {
-                            if (upgradeAssets) {
-                                progressMonitor.subTask(
-                                        "Upgrading activity implementors and other assets...");
-                                designerProxy.upgradeAssets(importedPackage);
-                            }
-
-                            if (wfp.isFilePersist()) // file system eclipse sync
-                                wfp.getSourceProject().refreshLocal(2, null);
-                            // TODO refresh Archive in case existing package was
-                            // moved there
-
-                            importedPackage.addElementChangeListener(wfp);
-                            for (WorkflowProcess pv : importedPackage.getProcesses())
-                                pv.addElementChangeListener(wfp);
-                            for (ExternalEvent ee : importedPackage.getExternalEvents())
-                                ee.addElementChangeListener(wfp);
-                            for (ActivityImpl ai : importedPackage.getActivityImpls())
-                                ai.addElementChangeListener(wfp);
-                            for (WorkflowAsset wa : importedPackage.getAssets())
-                                wa.addElementChangeListener(wfp);
-                            importedPackages.add(importedPackage);
-
-                            if (wfp.isRemote() && wfp.isFilePersist()) {
-                                // zip and upload imported packages to server
-                                java.io.File tempDir = wfp.getTempDir();
-                                if (!tempDir.exists()) {
-                                    if (!tempDir.mkdirs())
-                                        throw new IOException(
-                                                "Unable to create temp directory: " + tempDir);
-                                }
-                                java.io.File zipFile = new java.io.File(tempDir + "/packages"
-                                        + StringHelper.filenameDateToString(new Date()) + ".zip");
-                                java.io.File assetDir = wfp.getAssetDir();
-                                List<java.io.File> includes = new ArrayList<java.io.File>();
-                                for (WorkflowPackage pkg : importedPackages)
-                                    includes.add(new java.io.File(
-                                            assetDir + "/" + pkg.getName().replace('.', '/')));
-                                // TODO populate excludes with non-imported
-                                // package dirs (why, since these are not in
-                                // includes?)
-                                FileHelper.createZipFileWith(assetDir, zipFile, includes);
-                                String uploadUrl = wfp.getServiceUrl()
-                                        + "/upload?overwrite=true&assetZip=true&user="
-                                        + importPackagePage.getProject().getUser().getUsername();
-                                InputStream is = new FileInputStream(zipFile);
-                                try {
-                                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                                    int read = 0;
-                                    byte[] bytes = new byte[1024];
-                                    while ((read = is.read(bytes)) != -1)
-                                        os.write(bytes, 0, read);
-
-                                    String encryptedPassword = CryptUtil
-                                            .encrypt(wfp.getMdwDataSource().getDbPassword());
-                                    HttpHelper httpHelper = new HttpHelper(new URL(uploadUrl),
-                                            wfp.getMdwDataSource().getDbUser(), encryptedPassword);
-                                    byte[] resp = httpHelper.postBytes(os.toByteArray());
-                                    PluginMessages
-                                            .log("Asset download respose: " + new String(resp));
-                                }
-                                finally {
-                                    is.close();
-                                }
-                            }
-                        }
-                        progressMonitor.done();
                     }
-
+                    if (sb.length() > 0) {
+                        java.io.File tempDir = wfp.getTempDir();
+                        if (!tempDir.exists()) {
+                            if (!tempDir.mkdirs())
+                                throw new IOException(
+                                        "Unable to create temp directory: " + tempDir);
+                        }
+                        java.io.File tempFile = new java.io.File(tempDir + "/pkgDownload_"
+                                + StringHelper.filenameDateToString(new Date()) + ".zip");
+                        String url = MdwPlugin.getSettings().getDiscoveryUrlMdw6()
+                                + "/asset/packages?packages=" + sb.toString();
+                        HttpHelper httpHelper = new HttpHelper(new URL(url));
+                        httpHelper
+                                .setConnectTimeout(MdwPlugin.getSettings().getHttpConnectTimeout());
+                        httpHelper.setReadTimeout(MdwPlugin.getSettings().getHttpReadTimeout());
+                        httpHelper.download(tempFile);
+                    }
                     wfp.getDesignerProxy().getCacheRefresh().doRefresh(true);
                 }
                 catch (ActionCancelledException ex) {
