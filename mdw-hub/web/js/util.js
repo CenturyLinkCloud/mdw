@@ -1,7 +1,7 @@
 'use strict';
 
 var utilMod = angular.module('util', []);
-utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
+utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) {
   return {
     months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     dayMs: 24 * 3600 * 1000, 
@@ -145,6 +145,27 @@ utilMod.factory('util', ['$http', 'mdw', function($http, mdw) {
       var dot = version.indexOf('.');
       var maj = version.substring(0, dot);
       return (parseInt(maj) + 1) + '.0';
+    },
+    // gets expression coordinates
+    getExpr: function(input) {
+      var dollarCurly = input.indexOf('${');
+      if (dollarCurly >= 0) {
+        var endCurly = input.indexOf('}', dollarCurly);
+        if (endCurly >= 0) {
+          return { start: dollarCurly, stop: endCurly, expr: input.substring(dollarCurly + 2, endCurly) };
+        }
+      }
+      return null;
+    },
+    // substitutes all occurrences based in the it object 
+    substExpr: function(input, it) {
+      var output = input;
+      var expr;
+      while((expr = this.getExpr(output)) !== null) {
+        var evalsTo = $parse(expr.expr)({it: it});
+        output = output.substring(0, expr.start) + evalsTo + output.substring(expr.stop + 1);
+      }
+      return output;
     },
     buildException: function(exceptHolder) {
     	// Uses the callback mechanism to update the except variable (gets around jshint error)

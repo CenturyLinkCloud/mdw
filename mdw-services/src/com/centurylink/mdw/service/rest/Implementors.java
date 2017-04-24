@@ -68,7 +68,7 @@ public class Implementors extends JsonRestService {
                     impl.setAttributeDescription(null);
                     JSONObject implJson = impl.getJson();
                     implJson.put("pagelet", pageletJson);
-                    return impl.getJson();
+                    return implJson;
                 }
                 else {
                     return impl.getJson();
