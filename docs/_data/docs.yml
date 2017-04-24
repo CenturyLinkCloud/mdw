@@ -1,0 +1,28 @@
+- title: Why MDW?
+  docs:
+  - differentiators
+  - featuresGuide
+  
+  title: Getting Started
+  docs:
+  - home
+  - quickstart
+  - installation
+  - usage
+  - structure
+  - configuration
+
+- title: Customization
+  docs:
+  - mdw-hub
+
+- title: Deployment
+  docs:
+  - release-notes
+
+
+- title: Miscellaneous
+  docs:
+  - troubleshooting
+  - sites
+  - upgrading
