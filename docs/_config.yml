@@ -1,5 +1,5 @@
 repository: "CenturyLinkCloud/mdw"
-theme: jekyll-theme-cayman
+#theme: jekyll-theme-cayman
 baseurl: /mdw
 
 markdown: kramdown
