@@ -748,7 +748,8 @@
 	
 }
 .mdw-canvas {
-	
+	/* prevent highlighting on double-click */
+	user-select: none;
 }
 .mdw-legend {
   list-style-type: none;
