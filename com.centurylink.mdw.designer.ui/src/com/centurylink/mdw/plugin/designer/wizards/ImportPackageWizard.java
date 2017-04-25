@@ -42,6 +42,9 @@ import com.centurylink.mdw.common.utilities.HttpHelper;
 import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.common.utilities.timer.ActionCancelledException;
 import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
+import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.file.VcsArchiver;
+import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.designer.DesignerPerspective;
@@ -142,10 +145,10 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                     monitor.subTask("Importing selected packages...");
                     monitor.worked(10);
 
-                     StringBuffer sb = new StringBuffer();
+                    StringBuffer sb = new StringBuffer();
+                    ProgressMonitor progressMonitor = new SwtProgressMonitor(
+                             new SubProgressMonitor(monitor, 100));
                     for (File pkgFile : importPackageSelectPage.getSelectedPackages()) {
-                        ProgressMonitor progressMonitor = new SwtProgressMonitor(
-                                new SubProgressMonitor(monitor, 100));
                         if (pkgFile.getContent() == null) { // download
                                                             // postponed
                                                             // for
@@ -268,6 +271,19 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                                 .setConnectTimeout(MdwPlugin.getSettings().getHttpConnectTimeout());
                         httpHelper.setReadTimeout(MdwPlugin.getSettings().getHttpReadTimeout());
                         httpHelper.download(tempFile);
+                        VersionControl vcs = new VersionControlGit();
+                        vcs.connect(null, null, null, wfp.getAssetDir());
+                        progressMonitor.subTask(
+                                "Archive existing assets...");
+                        java.io.File assetDir = wfp.getAssetDir();
+                        VcsArchiver archiver = new VcsArchiver(assetDir, tempDir, vcs, progressMonitor);
+                        archiver.backup();
+                        PluginMessages.log("Unzipping " + tempFile + " into: " + assetDir);
+                        FileHelper.unzipFile(tempFile, assetDir, null, null, true);
+                        archiver.archive();
+                        wfp.refreshProject();
+                        progressMonitor.done();
+                        tempFile.delete();
                     }
                     wfp.getDesignerProxy().getCacheRefresh().doRefresh(true);
                 }
