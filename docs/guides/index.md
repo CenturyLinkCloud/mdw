@@ -1,7 +1,6 @@
 ---
 layout: default
-title: Guides
-overview: true
+title: Guide
 ---
 
 <section class="intro">

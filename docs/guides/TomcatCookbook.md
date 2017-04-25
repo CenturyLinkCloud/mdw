@@ -1,3 +1,8 @@
+---
+layout: docs
+title: Guide
+---
+
 ### MDW Tomcat Cookbook
 
 ### Prerequisites

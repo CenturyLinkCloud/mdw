@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Guide
+---
 
 ### MDW Cloud Foundry Cookbook
 

@@ -1,3 +1,7 @@
+---
+layout: docs
+title: Guide
+---
 ### MDW Microservices
 
 This document contains information about creating, exposing and consuming services through a RESTFul Web Service. For a SOAP document-style Web Service, refer to [TomcatCookbook](TomcatCookbook.md).

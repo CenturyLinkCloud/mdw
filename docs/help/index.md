@@ -1,12 +1,9 @@
-<html>
-<head>
-<title>MDW Help Topics</title>
-<link rel="stylesheet" type="text/css" href="docstyle.css"/>
-</head>
-<body>
-<h1>MDW Help Topics</h1>
-
-<h2>Contents</h2>
+---
+layout: help
+title: MDW Help Topics
+---
+<section class="intro">
+<div class="grid">
 <h3>General Information</h3>
 <ul>
   <li><a href='introduction.html'>Introduction</a></li>
@@ -86,6 +83,5 @@
   <li><a href='blv.html'>Business Live View</a></li>
   <li><a href='eventmgr.html'>Event Manager</a></li>
 </ul>
-
-</body>
-</html>
+</div>
+</section>
