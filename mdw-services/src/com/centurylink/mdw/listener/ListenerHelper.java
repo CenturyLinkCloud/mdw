@@ -483,7 +483,7 @@ public class ListenerHelper {
 
         meta.put("headers", headers);
 
-        createDocument(JSONObject.class.getName(), meta, OwnerType.META, ownerId);
+        createDocument(JSONObject.class.getName(), meta, OwnerType.LISTENER_REQUEST_META, ownerId);
         return meta;
     }
 
@@ -518,7 +518,7 @@ public class ListenerHelper {
 
         meta.put("headers", headers);
 
-        createDocument(JSONObject.class.getName(), meta, OwnerType.META, ownerId);
+        createDocument(JSONObject.class.getName(), meta, OwnerType.LISTENER_RESPONSE_META, ownerId);
         return meta;
     }
 

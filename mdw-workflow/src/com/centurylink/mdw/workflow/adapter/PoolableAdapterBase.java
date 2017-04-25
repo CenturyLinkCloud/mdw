@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
+import org.json.JSONObject;
+
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.AdapterInvocationError;
@@ -52,6 +54,7 @@ import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.event.StubHelper;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
@@ -493,6 +496,13 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
                     OwnerType.ADAPTER_REQUEST, getActivityInstanceId());
+
+            if (docref.getDocumentId() > 0L) {
+                JSONObject meta = getRequestMeta();
+                if (meta != null && meta.length() > 0)
+                    createDocument(JSONObject.class.getName(), meta, OwnerType.ADAPTER_REQUEST_META, docref.getDocumentId());
+            }
+
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -501,9 +511,20 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
     }
 
     protected Long logResponse(String message) {
+        return logResponse(new Response(message));
+    }
+
+    protected Long logResponse(Response response) {
         try {
-            DocumentReference docref = createDocument(String.class.getName(), message,
-                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
+            DocumentReference docref = createDocument(String.class.getName(), response.getContent(),
+                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId(), response.getStatusCode(), response.getStatusMessage());
+
+            if (docref.getDocumentId() > 0L) {
+                JSONObject meta = getResponseMeta();
+                if (meta != null && meta.length() > 0)
+                    createDocument(JSONObject.class.getName(), meta, OwnerType.ADAPTER_RESPONSE_META, docref.getDocumentId());
+            }
+
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -511,15 +532,18 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
         }
     }
 
-    protected Long logResponse(Response response) {
-        try {
-            DocumentReference docref = createDocument(String.class.getName(), response.getContent(),
-                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId(), response.getStatusCode(), response.getStatusMessage());
-            return docref.getDocumentId();
-        } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            return null;
-        }
+    protected JSONObject getRequestMeta() throws Exception {
+        JSONObject meta = new JSONObject();
+        meta.put("headers", JsonUtil.getJson(getRequestHeaders()));
+
+        return meta;
+    }
+
+    protected JSONObject getResponseMeta() throws Exception {
+        JSONObject meta = new JSONObject();
+        meta.put("headers", JsonUtil.getJson(getResponseHeaders()));
+
+        return meta;
     }
 
     protected boolean isStubMode() {

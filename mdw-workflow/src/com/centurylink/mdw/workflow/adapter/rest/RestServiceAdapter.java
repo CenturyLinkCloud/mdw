@@ -20,12 +20,14 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.adapter.HeaderAwareAdapter;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
@@ -149,7 +151,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
         }
         catch (IOException ex) {
             if (httpHelper != null && httpHelper.getResponse() != null)
-                logResponse(httpHelper.getResponse());
+                logResponse(new Response(httpHelper.getResponse()));
             /**
              * Plugs into automatic retrying
              */
@@ -209,6 +211,10 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
      * Override to specify HTTP request headers.
      */
     public Map<String,String> getRequestHeaders() {
+
+        if (super.getRequestHeaders() != null)
+            return super.getRequestHeaders();
+
         try {
             Map<String,String> headers = null;
             String headersVar = getAttributeValueSmart(HEADERS_VARIABLE);
@@ -227,6 +233,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     }
                 }
             }
+            super.setRequestHeaders(headers);
             return headers;
         }
         catch (Exception ex) {
@@ -272,5 +279,22 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
         }
     }
 
+    @Override
+    protected JSONObject getRequestMeta() throws Exception {
+        JSONObject meta = super.getRequestMeta();
+        meta.put("http_method", getHttpMethod());
+        meta.put("url", getEndpointUri());
+
+        return meta;
+    }
+
+    @Override
+    protected JSONObject getResponseMeta() throws Exception {
+        JSONObject meta = super.getResponseMeta();
+        meta.put("http_method", getHttpMethod());
+        meta.put("url", getEndpointUri());
+
+        return meta;
+    }
 
 }

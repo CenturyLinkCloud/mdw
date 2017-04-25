@@ -26,6 +26,7 @@ import java.util.Map;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.util.HttpAltConnection;
 import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
@@ -184,7 +185,7 @@ public class MultiRestServiceAdapter extends RestServiceAdapter {
         }
         sb.append("\r\n</RESTResponseList>");
         if (savedException != null) {
-            logResponse(sb.toString());
+            logResponse(new Response(sb.toString()));
             throw new ConnectionException(-1, savedException.getMessage(), savedException);
         }
 

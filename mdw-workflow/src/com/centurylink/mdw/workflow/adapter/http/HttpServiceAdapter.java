@@ -41,6 +41,10 @@ public class HttpServiceAdapter extends PoolableAdapterBase {
     public static final String CONNECT_TIMEOUT = "ConnectTimeout";
     public static final String READ_TIMEOUT = "ReadTimeout";
 
+    private Map<String,String> requestHeaders = null;
+    protected Map<String,String> getRequestHeaders() { return requestHeaders; }
+    protected void setRequestHeaders(Map<String,String> headers) { requestHeaders = headers; }
+
     /**
      * <p>
      * Allows the overriding of this method without overriding invoke()

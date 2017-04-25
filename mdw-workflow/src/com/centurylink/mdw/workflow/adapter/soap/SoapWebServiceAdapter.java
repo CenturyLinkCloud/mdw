@@ -31,12 +31,14 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.TransformerException;
 
+import org.json.JSONObject;
 import org.w3c.dom.Node;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -156,7 +158,7 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
         }
         catch (IOException ex) {
             if (httpHelper != null && httpHelper.getResponse() != null)
-                logResponse(httpHelper.getResponse());
+                logResponse(new Response(httpHelper.getResponse()));
             this.logexception(ex.getMessage(), ex);
             throw new ConnectionException(-1, ex.getMessage(), ex);
         }
@@ -345,5 +347,21 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
         return stubRequest;
     }
 
+    @Override
+    protected JSONObject getRequestMeta() throws Exception {
+        JSONObject json = super.getRequestMeta();
+        json.put("http_method", "POST");
+        json.put("url", getWsdlUrl());
 
+        return json;
+    }
+
+    @Override
+    protected JSONObject getResponseMeta() throws Exception {
+        JSONObject json = super.getRequestMeta();
+        json.put("http_method", "POST");
+        json.put("url", getWsdlUrl());
+
+        return json;
+    }
 }
