@@ -5,7 +5,6 @@ baseurl: /mdw
 markdown: kramdown
 highlighter: rouge
 
-#repository: https://github.com/CenturyLinkCloud/mdw
 help_url: http://centurylinkcloud.github.io/mdw/
 
 defaults:
@@ -21,8 +20,6 @@ description: Feature rich custumizable workflow engine
 url: http://centurylinkcloud.github.io/mdw/
 
 logo: /assets/imgages/mdw.png
-
-#timezone: America/Denver
 
 collections:
   docs:

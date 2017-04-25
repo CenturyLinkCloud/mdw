@@ -1,7 +1,6 @@
 ---
-layout: default
 title: Why MDW?
-permalink: /docs/differentiators
+permalink: /docs/differentiators/
 overview: true
 ---
 

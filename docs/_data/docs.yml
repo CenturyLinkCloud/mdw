@@ -1,27 +1,28 @@
-- title: Why MDW?
+- title: Why MDW
   docs:
   - differentiators
-  - featuresGuide
-  
-  title: Getting Started
-  docs:
-  - quickstart
-  - installation
-  - usage
-  - structure
-  - configuration
+  - features-guide
 
+- title: Documentation
+  docs:
+  - javadoc
+  - help
+
+- title: Guides
+  docs:
+  - TomcatCookbook
+  
 - title: Customization
   docs:
   - mdw-hub
 
-- title: Deployment
+- title: Development
   docs:
-  - release-notes
-
+  - coding-standards
 
 - title: Miscellaneous
   docs:
+  - release-notes
   - troubleshooting
   - sites
   - upgrading

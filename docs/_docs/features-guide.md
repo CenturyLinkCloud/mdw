@@ -1,7 +1,6 @@
 ---
-layout: default
 title: MDW Features
-permalink: /docs/featuresGuide
+permalink: /docs/features-guide/
 overview: true
 ---
 
