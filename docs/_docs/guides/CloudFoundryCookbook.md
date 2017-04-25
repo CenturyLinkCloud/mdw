@@ -1,6 +1,6 @@
 ---
-layout: docs
-title: Guide
+permalink: /docs/guides/CloudFoundryCookbook/
+title: CloudFoundry Cookbook
 ---
 
 ### MDW Cloud Foundry Cookbook

@@ -3,14 +3,16 @@
   - differentiators
   - features-guide
 
+- title: Guides
+  docs:
+  - guides/TomcatCookbook
+  - guides/MicroservicesCookbook
+  - guides/CloudFoundryCookbook
+  
 - title: Documentation
   docs:
   - javadoc
   - help
-
-- title: Guides
-  docs:
-  - TomcatCookbook
   
 - title: Customization
   docs:

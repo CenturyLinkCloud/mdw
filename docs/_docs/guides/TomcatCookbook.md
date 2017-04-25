@@ -1,6 +1,6 @@
 ---
-layout: docs
-title: Guide
+permalink: /docs/guides/TomcatCookbook/
+title: Tomcat Cookbook
 ---
 
 ### MDW Tomcat Cookbook

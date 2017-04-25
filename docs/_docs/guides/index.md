@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Guide
+permalink: /docs/guides/
 ---
 
 <section class="intro">
