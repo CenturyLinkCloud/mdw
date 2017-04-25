@@ -398,13 +398,13 @@ public class CheckOrdersRest extends RestServiceAdapter {
 
 - Once you've got stub mode turned on, run the process again and you'll be presented with a dialog prompting you for the desired response for this case.
 
-   //TODO: Need to replace this screenshot with a new one.
+   TODO: Need to replace this screenshot with a new one.
    ![xml formatter](images/stubResponse.png) 
    
 - Whatever is typed in the Response Message textbox will be returned to your process as the adapter response, and you should be able to confirm this by checking the runtime values of the process instance.
 - To simulate a response, disable the stub server and instead set Simulation Mode to On.  Then provide a Return Code (not currently used), Chance (weighted probability when multiple responses), and Response value for each different hardwired response scenario.
 
-   //TODO: Need to replace this screenshot with a new one.
+   TODO: Need to replace this screenshot with a new one.
    ![xml formatter](images/simulateResponse.png) 
 
 - These simulated response settings are meant to be per-environment, so they don't get saved with the process definition but rather as so-called "override attributes".  For this reason there's a Save button directly on the Simulation property tab.

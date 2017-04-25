@@ -96,21 +96,23 @@ public class ProjectSection extends PropertySection implements ElementChangeList
         sourceProjectEditor.setValue(project.getSourceProjectName());
         sourceProjectEditor.setEditable(false);
 
-        // jdbc url text field
-        jdbcUrlEditor = new PropertyEditor(project, PropertyEditor.TYPE_TEXT);
-        jdbcUrlEditor.setLabel("JDBC URL");
-        jdbcUrlEditor.addValueChangeListener(new ValueChangeListener() {
-            public void propertyValueChanged(Object newValue) {
-                project.getMdwDataSource().setJdbcUrlWithCredentials(((String) newValue).trim());
-                project.getMdwDataSource().setEntrySource("projectSection");
-                WorkflowProjectManager.updateProject(project);
-                project.fireElementChangeEvent(ChangeType.SETTINGS_CHANGE,
-                        project.getMdwDataSource());
-            }
-        });
-        jdbcUrlEditor.render(composite);
-        jdbcUrlEditor.setValue(project.getMdwDataSource().getJdbcUrlWithMaskedCredentials());
-        jdbcUrlEditor.setEditable(!project.isReadOnly());
+        if (!project.checkRequiredVersion(6, 0)) {
+            // jdbc url text field
+            jdbcUrlEditor = new PropertyEditor(project, PropertyEditor.TYPE_TEXT);
+            jdbcUrlEditor.setLabel("JDBC URL");
+            jdbcUrlEditor.addValueChangeListener(new ValueChangeListener() {
+                public void propertyValueChanged(Object newValue) {
+                    project.getMdwDataSource().setJdbcUrlWithCredentials(((String) newValue).trim());
+                    project.getMdwDataSource().setEntrySource("projectSection");
+                    WorkflowProjectManager.updateProject(project);
+                    project.fireElementChangeEvent(ChangeType.SETTINGS_CHANGE,
+                            project.getMdwDataSource());
+                }
+            });
+            jdbcUrlEditor.render(composite);
+            jdbcUrlEditor.setValue(project.getMdwDataSource().getJdbcUrlWithMaskedCredentials());
+            jdbcUrlEditor.setEditable(!project.isReadOnly());
+        }
 
         // host text field
         hostEditor = new PropertyEditor(project, PropertyEditor.TYPE_TEXT);
@@ -272,11 +274,9 @@ public class ProjectSection extends PropertySection implements ElementChangeList
 
     public void elementChanged(ElementChangeEvent ece) {
         if (ece.getChangeType().equals(ChangeType.SETTINGS_CHANGE)) {
-            if (ece.getNewValue() instanceof JdbcDataSource) {
+            if (ece.getNewValue() instanceof JdbcDataSource && jdbcUrlEditor != null) {
                 JdbcDataSource dataSource = (JdbcDataSource) ece.getNewValue();
-                if (!"projectSection".equals(dataSource.getEntrySource())) // avoid
-                                                                           // overwriting
-                {
+                if (!"projectSection".equals(dataSource.getEntrySource())) { // avoid overwriting
                     String newJdbcUrl = dataSource.getJdbcUrlWithMaskedCredentials();
                     jdbcUrlEditor.setValue(newJdbcUrl);
                 }

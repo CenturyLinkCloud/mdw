@@ -85,17 +85,17 @@ public class ProjectSettingsPropertyPage extends ProjectPropertyPage {
         addSeparator(composite);
         createMdwVersionControls(composite);
         addSeparator(composite);
+
         if (getProject().getPersistType() == PersistType.Git) {
             createGitRepositoryControls(composite);
+            addSeparator(composite);
         }
 
-        if (getProject().getPersistType() == PersistType.None) {
-            // do nothing
-        }
-        else {
+        if (getProject().getPersistType() != PersistType.None && !getProject().checkRequiredVersion(6, 0)) {
             createJdbcUrlControls(composite);
+            addSeparator(composite);
         }
-        addSeparator(composite);
+
         if (getProject().isRemote())
             createHostPortContextRootControls(composite);
         else
@@ -449,7 +449,7 @@ public class ProjectSettingsPropertyPage extends ProjectPropertyPage {
                         getProject().getMdwVcsRepository());
             }
         }
-        if (!databaseJdbcUrlTextField.getText().trim().equals(originalJdbcUrl)) {
+        if (databaseJdbcUrlTextField != null && !databaseJdbcUrlTextField.getText().trim().equals(originalJdbcUrl)) {
             getProject().getMdwDataSource().setEntrySource("projectSettingsPropertyPage");
             getProject().fireElementChangeEvent(ChangeType.SETTINGS_CHANGE,
                     getProject().getMdwDataSource());

@@ -163,6 +163,9 @@ public class ProcessCache implements CacheEnabled, CacheService {
     }
 
     private Process getProcess0(String procname, int version) {
+        if (procname.endsWith(".proc"))
+            procname = procname.substring(0, procname.length() - 5);
+
         Process procdef = null;
 
         if (version == 0) {

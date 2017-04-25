@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.designer.utils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -317,6 +318,9 @@ public class RestfulServer extends Server {
         }
         catch (SocketTimeoutException ex) {
             throw new IOException("Timeout after " + getReadTimeout() + " ms", ex);
+        }
+        catch (FileNotFoundException ex) {
+            throw ex;
         }
         catch (IOException ex) {
             throw new IOException("Unable to connect to " + getMdwWebUrl(), ex);

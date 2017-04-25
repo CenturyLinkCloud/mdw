@@ -2,8 +2,8 @@
 
 var inspectMod = angular.module('mdwInspector', ['mdw']);
 
-inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'util', 'Inspector', 'InspectorTabs',
-                                                 function($scope, $parse, mdw, util, Inspector, InspectorTabs) {
+inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'mdw', 'util', 'Inspector', 'InspectorTabs', 'Configurator',
+                                                 function($scope, $http, $parse, mdw, util, Inspector, InspectorTabs, Configurator) {
   
   $scope.setWorkflow = function(obj) {
     $scope.diagramObject = obj;
@@ -21,6 +21,8 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
     else
       $scope.tabs = InspectorTabs.definition[$scope.workflowType];
     
+    var editable = $scope.diagramObject.diagram.editable;
+    
     var filteredTabs = {};
     util.getProperties($scope.tabs).forEach(function(tabName) {
       var tab = $scope.tabs[tabName];
@@ -31,11 +33,13 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
             filteredTabs[tabName] = tab;
         }
         else {
-          filteredTabs[tabName] = tab;
+          if (tabName !== 'Design' || editable)
+            filteredTabs[tabName] = tab;
         }
       }
       else {
-        filteredTabs[tabName] = tab;
+        if (tabName !== 'Attributes' || !editable)
+          filteredTabs[tabName] = tab;
       }
     });
     $scope.tabs = filteredTabs;
@@ -52,10 +56,25 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$parse', 'mdw', 'uti
   
   $scope.setActiveTab = function(tabName) {
     $scope.drilledValue = null;
+    $scope.configurator = null;
     $scope.activeTabName = tabName;
     $scope.activeTab = $scope.tabs[tabName];
     $scope.activeTabValues = [];
 
+    // design tab uses configurator
+    if ('Design' == tabName) {
+      if ($scope.activeTab._template) {
+        var templateUrl = util.substExpr($scope.activeTab._template, $scope.workflowObject);
+        $http.get(templateUrl).then(function(res) {
+          $scope.configurator = new Configurator($scope.workflowType, $scope.workflowObject, res);
+        });
+      }
+      else {
+        $scope.configurator = new Configurator($scope.workflowType, $scope.workflowObject);
+      }
+      return;
+    }
+      
     var tabInfo = $scope.runtimeInfo ? $scope.runtimeInfo : $scope.workflowObject;
     
     // check for array type

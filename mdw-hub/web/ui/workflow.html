@@ -28,7 +28,7 @@
           </li>
         </ul>
         <!-- tab values for object -->
-        <div class="mdw-inspector-values" ng-if="!activeTabValues[0].values && !drilledValue">
+        <div class="mdw-inspector-values" ng-if="!activeTabValues[0].values && !drilledValue && activeTabName != 'Design'">
           <div class="mdw-markdown-content" ng-if="activeTabValues[0].isMarkdown" ng-bind-html="activeTabValues[0].value | markdown | unsafe">
           </div>
           <div ng-repeat="tabValue in activeTabValues" ng-if="!drilledValue && !activeTabValues[0].isMarkdown" style="display:flex">
@@ -50,7 +50,7 @@
           </div>
         </div>
         <!-- tab values for array of object -->
-        <div class="mdw-inspector-values" ng-if="activeTabValues[0].values && !drilledValue">
+        <div class="mdw-inspector-values" ng-if="activeTabValues[0].values && !drilledValue && activeTabName != 'Design'">
           <div ng-repeat="tabValue in activeTabValues" ng-if="!drilledValue">
             <div class="mdw-inspector-value" ng-if="tabValue.names && $index == 0">
               <span class="mdw-pre" ng-repeat="name in tabValue.names"><span class="mdw-ul">{{name.name}}</span>{{name.pad}}</span>
@@ -69,6 +69,12 @@
           <div class="mdw-resource-content">
             <pre><code class="mdw-code" 
               ng-bind-html="drilledValue.full | highlight:drilledValue.language | unsafe"></code></pre>
+          </div>
+        </div>
+        <!-- design section -->
+        <div class="mdw-inspector-values" ng-if="activeTabName == 'Design'">
+          <div>
+          {{configurator.x()}}
           </div>
         </div>
       </div>

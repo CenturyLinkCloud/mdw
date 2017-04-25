@@ -22,6 +22,9 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
           Description: 'description',
           Created: 'created' 
         },
+        Design: {
+          
+        },
         /* named object:
          * Tabular content evaluated against named obj collection (eg: 'variables'),
          * with prop names being labels and prop values evaluated.
@@ -38,10 +41,10 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
          * designate special behavior for assets (TODO: refactor).
          */
         Attributes: 'attributes',
-        Versions: {},
         Documentation: { 
           '_attribute': { name: 'Documentation', markdown: true }
         },
+        // Versions: {},  TODO
         Monitoring: {}
       },
       activity: {
@@ -50,6 +53,9 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
           Name: 'name',
           Implementor: 'implementor',
           Description: 'description'
+        },
+        Design: {
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}'
         },
         Attributes: 'attributes',
         Documentation: { 

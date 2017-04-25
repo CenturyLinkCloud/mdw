@@ -748,7 +748,8 @@
 	
 }
 .mdw-canvas {
-	
+	/* prevent highlighting on double-click */
+	user-select: none;
 }
 .mdw-legend {
   list-style-type: none;
@@ -823,7 +824,7 @@
   width: 100%;
   border: 1px solid lightgray;
   border-radius: 4px;
-  margin: 12px;  
+  margin: 10px;
   padding: 8px;
   overflow-y: auto;
   overflow-x: auto;

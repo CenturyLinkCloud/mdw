@@ -88,14 +88,14 @@ workflowMod.controller('MdwWorkflowController',
       $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id })
         .then(function success(response) {
           $scope.instance = response.data;
-          $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.instance, $scope.editable, $scope.hubBase);
+          $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
           $scope.diagram.draw();
         }, function error(response) {
           mdw.messages = response.statusText;
       });
     }
     else {
-      $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.instance, $scope.editable, $scope.hubBase);
+      $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
       $scope.diagram.draw();
     }
   };
@@ -161,14 +161,14 @@ workflowMod.controller('MdwWorkflowController',
 workflowMod.factory('Diagram', 
     ['$document', 'mdw', 'util', 'DC', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Marquee', 'Selection',
      function($document, mdw, util, DC, Label, Shape, Step, Link, Subflow, Note, Marquee, Selection) {
-  var Diagram = function(canvas, process, implementors, instance, editable, imgBase) {
+  var Diagram = function(canvas, process, implementors, imgBase, editable, instance) {
     Shape.call(this, this, process);
     this.canvas = canvas;
     this.process = process;
     this.implementors = implementors;
-    this.instance = instance;
-    this.editable = editable;
     this.imgBase = imgBase;
+    this.editable = editable;
+    this.instance = instance;
     this.workflowType = 'process';
     this.isDiagram = true;
     this.context = this.canvas.getContext("2d");

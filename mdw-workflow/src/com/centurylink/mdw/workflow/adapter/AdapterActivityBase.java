@@ -521,7 +521,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
 
             Object altRequest = null;
             for (AdapterMonitor monitor : monitors) {
-                altRequest = monitor.onInvoke(runtimeContext, request, headers);
+                altRequest = monitor.onRequest(runtimeContext, request, headers);
                 if (altRequest != null)
                     request = altRequest;
             }
