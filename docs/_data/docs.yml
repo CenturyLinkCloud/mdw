@@ -14,9 +14,10 @@
   - javadoc
   - help
   
-- title: Customization
+- title: Designer
   docs:
-  - mdw-hub
+  - designer/user-guide
+  - designer/plugin-upgrade
 
 - title: Development
   docs:

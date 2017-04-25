@@ -1,6 +1,7 @@
 ---
 layout: help
 title: MDW Help Topics
+permalink: /docs/help/
 ---
 <section class="intro">
 <div class="grid">
