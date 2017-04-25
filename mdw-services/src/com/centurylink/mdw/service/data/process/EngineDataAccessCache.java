@@ -101,8 +101,12 @@ public class EngineDataAccessCache implements EngineDataAccess {
                   db.stopTransaction(tw);
             }
         }
-        else
-            return edadb.getDocument(documentId, forUpdate);
+        else {
+            Document upToDateDoc = edadb.getDocument(documentId, forUpdate);
+            // Also update the cache
+            if (upToDateDoc!=null) documentCache.put(documentId, upToDateDoc);
+            return upToDateDoc;
+        }
     }
 
     public synchronized Document getDocument(Long documentId, boolean forUpdate) throws SQLException {
