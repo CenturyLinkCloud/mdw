@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.util.StringHelper;
 
 public class Request implements Jsonable {
@@ -83,9 +84,7 @@ public class Request implements Jsonable {
     public String getContent() { return content; }
     public void setContent(String c) { this.content = c; }
 
-    private String responseContent;
-    public String getResponseContent() { return responseContent; }
-    public void setResponseContent(String rc) { this.responseContent = rc; }
+    public String getResponseContent() { return response == null ? null : response.getContent(); }
 
     private boolean outbound;
     public boolean isOutbound() { return outbound; }
@@ -102,6 +101,10 @@ public class Request implements Jsonable {
     private JSONObject meta;
     public JSONObject getMeta() { return meta; }
     public void setMeta(JSONObject info) { meta = info; }
+
+    private Response response;
+    public Response getResponse() { return response; }
+    public void setResponse(Response resp) { response = resp; }
 
     public Request(Long id) {
         this.id = id;
@@ -139,7 +142,7 @@ public class Request implements Jsonable {
         if (json.has("content"))
             content = json.getString("content");
         if (json.has("responseContent"))
-            responseContent = json.getString("responseContent");
+            response = new Response(json.getString("responseContent"));
         if (json.has("statusCode"))
             statusCode = json.getInt("statusCode");
         if (json.has("statusMessage"))
@@ -178,8 +181,12 @@ public class Request implements Jsonable {
             json.put("outbound", outbound);
         if (content != null)
             json.put("content", content);
-        if (responseContent != null)
-            json.put("responseContent", responseContent);
+        if (meta != null)
+            json.put("meta", meta);
+        if (response != null && response.getContent() != null)
+            json.put("responseContent", response.getContent());
+        if (response != null && response.getMeta() != null)
+            json.put("responseMeta", response.getMeta());
         if (statusCode != null)
             json.put("statusCode", statusCode);
         if (statusMessage != null)
