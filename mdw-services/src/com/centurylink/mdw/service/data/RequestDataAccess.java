@@ -258,7 +258,7 @@ public class RequestDataAccess extends CommonDataAccess {
                             foundInMongo = true;
 
                             // Get META
-                            if (metaId > 0L && owner_type_meta != null) {
+                            if (metaId > 0L) {
                                 mongoCollection = DatabaseAccess.getMongoDb().getCollection(owner_type_meta);
                                 mongoQuery = new org.bson.Document("_id", metaId);
                                 c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
@@ -333,7 +333,7 @@ public class RequestDataAccess extends CommonDataAccess {
                             foundInMongo = true;
 
                             // Get META
-                            if (metaId > 0L && owner_type_meta != null) {
+                            if (metaId > 0L) {
                                 mongoCollection = DatabaseAccess.getMongoDb().getCollection(owner_type_meta);
                                 mongoQuery = new org.bson.Document("_id", metaId);
                                 c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
@@ -350,6 +350,12 @@ public class RequestDataAccess extends CommonDataAccess {
                         responseRs = db.runSelect(query, request.getResponseId());
                         if (responseRs.next())
                             response.setContent(responseRs.getString("content"));
+                        //Get META
+                        if (metaId > 0L) {
+                            rs = db.runSelect(query, metaId);
+                            if (rs.next())
+                                response.setMeta(new JSONObject(rs.getString("content")));
+                        }
                     }
 
                     request.setResponse(response);
