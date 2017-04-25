@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.designer;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,9 @@ public class UserDataAccessRest extends ServerAccessRest implements UserDataAcce
                 return new UserVO(cuid);  // user not found -- no privileges
             else
                 return new UserVO(jsonObj);
+        }
+        catch (FileNotFoundException ex) {
+            return null;
         }
         catch (IOException ex) {
             throw new DataAccessOfflineException(ex.getMessage(), ex);

@@ -1197,16 +1197,18 @@ public class DesignerDataModel {
             user.setName(cuid);
             user.addRoleForGroup(UserGroupVO.COMMON_GROUP, UserRoleVO.PROCESS_DESIGN);
             user.addRoleForGroup(UserGroupVO.SITE_ADMIN_GROUP, UserRoleVO.PROCESS_DESIGN);
-        } else {
+        }
+        else {
             user = dao.getUser(cuid);
-            if (user==null) {
+            if (user == null) {
                 if (allowAnyUserToRead) {
                     user = new UserVO();
                     user.setCuid(cuid);
                     user.setName(cuid);
                     if (UserGroupVO.DEFAULT_ALL_ROLES)
                         user.addRoleForGroup(UserGroupVO.COMMON_GROUP, UserRoleVO.VIEW_ONLY);
-                } else {
+                }
+                else {
                     throw new DataAccessException("You are not authorized to access this site");
                 }
             }
