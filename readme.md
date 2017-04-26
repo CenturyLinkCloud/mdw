@@ -84,7 +84,7 @@
      These have to be configured manually in Eclipse.  For all formats we use **spaces instead of tabs**.
      The following screenshots illustrate how to set these:  
      - XML:                                                    
-      [xml formatter](docs/help/images/xmlformat.png)
+      [xml formatter](docs/_docs/help/images/xmlformat.png)
      - HTML:                                                           
       [html formatter](docs/help/images/htmlformat.png)
      - YAML:                                           
