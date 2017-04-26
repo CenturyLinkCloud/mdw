@@ -22,8 +22,8 @@ This document contains information about creating, exposing and consuming servic
  - Servers:
      - Refer to `Supported Java Containers` in this tutorial 
  - Chrome and Postman
-     - https://www.google.com/chrome
-	  - https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop
+     - [https://www.google.com/chrome](https://www.google.com/chrome)
+	  - [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
 
 ### Java Containers
 You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  The differences between local and remote development are described in later sections of this tutorial.  To be able to develop locally you need one of the following containers installed.  At certain points in this tutorial, we'll link to container-specific steps in the Cookbooks for each supported container.
