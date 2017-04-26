@@ -39,7 +39,7 @@ You can perform many cloud development activities using a remote workflow projec
 ### MDW Database:
 - MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a MySQL or Oracle 
   database. Generally for cloud development you'll point to a pre-existing central database.  If you want to host your own database, you'll need to configure an instance of MySQL 
-  with the MDW db schema. The SQL scripts for installing the MDW schema are available here: [this readme](../../mdw/database/mysql/readme.txt).
+  with the MDW db schema. The SQL scripts for installing the MDW schema are available here: [this readme](../../../mdw/database/mysql/readme.txt).
   
 ### Local Development:
 #### 1. Create a Local Project
@@ -48,7 +48,7 @@ A local project is useful if you want to debug your custom Java source code and 
 ##### Open the Designer Perspective in Eclipse:
 - Launch Eclipse (with the MDW Plug-In installed).
 - From the menus select Window > Open Perspective > Other > MDW Designer.
-- For detailed documentation covering the designer, refer to the [MDW Designer User Guide](../designer/DesignerUserGuide.md)
+- For detailed documentation covering the designer, refer to the [MDW Designer User Guide](../designer/user-guide.md)
  
 ##### Launch the Local Project wizard:
 - Right-click inside the blank Process Explorer view and select New > Local Project.  Select the Supported Java Container you'll be deploying in, and the type of [Asset Persistence](../help/assetPersistence.html)  you'll use.
