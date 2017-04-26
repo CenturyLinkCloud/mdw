@@ -22,8 +22,8 @@ This document contains information about creating, exposing and consuming servic
  - Servers:
      - Refer to `Supported Java Containers` in this tutorial 
  - Chrome and Postman
-     - https://www.google.com/chrome
-	  - https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop
+     - [https://www.google.com/chrome](https://www.google.com/chrome)
+	  - [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
 
 ### Java Containers
 You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  The differences between local and remote development are described in later sections of this tutorial.  To be able to develop locally you need one of the following containers installed.  At certain points in this tutorial, we'll link to container-specific steps in the Cookbooks for each supported container.
@@ -311,7 +311,7 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
 ##### Add a Sample Request and Response:
 - Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "MyServices.api.samples" and add a JSON asset named Order_Create.json with the following content:
 
-```jason
+  ```jason
 // POST request to Services/MyServices/Order
 {
 "orderId":"12345678"
