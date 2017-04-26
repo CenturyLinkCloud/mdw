@@ -53,14 +53,14 @@ A local project is useful if you want to debug your custom Java source code and 
 ##### Launch the Local Project wizard:
 - Right-click inside the blank Process Explorer view and select New > Local Project.  Select the Supported Java Container you'll be deploying in, and the type of [Asset Persistence](../help/assetPersistence.html)  you'll use.
 
-  ![xml formatter](images/workflow.png)
+  ![xml formatter](../images/workflow.png)
 - When you click Next, you'll be presented with the Tomcat for your local development.  Enter the settings for your environment.  For details about these settings, refer to the 
   server-specific cookbooks listed above under "Supported Java Containers" section.
   
-  ![xml formatter](images/tomcatSetting.png)
+  ![xml formatter](../images/tomcatSetting.png)
 - Click Next again and enter your database connection info.  The password for database is "mdw". 
 
-  ![xml formatter](images/dbSetting.png)
+  ![xml formatter](../images/dbSetting.png)
   
 - Click Finish to generate your local project.
 
@@ -68,11 +68,11 @@ A local project is useful if you want to debug your custom Java source code and 
 - When you create design artifacts in MDW, these are organized into workflow packages, which are different from Java packages in that they can contain assets in a wide variety of formats.  Much of the MDW framework's core functionality itself is delivered this way.  The essential assets required by MDW are included in the packages "com.centurylink.mdw.base" and "com.centurylink.mdw.hub".  If you choose the built-in database asset persistence, these base packages will already exist, and you can skip down to Section 2.  Otherwise, if you're using a new database or VCS asset persistence, you'll need to import these packages locally from the MDW repository as follows.
 - Expand your newly-created workflow project in Process Explorer and you'll see that it currently contains no packages.  Right-click on the project and select Import > Package.  Choose the "Discover" option and leave the repository location as the default.
 
-  ![xml formatter](images/importBasePackages.png)
+  ![xml formatter](../images/importBasePackages.png)
 
 - After you click Next it'll take a few moments for Designer to locate the available packages.  Once these are displayed, expand the base, db and hub packages and select the same MDW version as you did when creating the project.
 
-  ![xml formatter](images/importBasePackages2.png)
+  ![xml formatter](../images/importBasePackages2.png)
 - Click Finish, and the packages will be downloaded and become visible in your Process Explorer project tree.
  
 ### Workflow Services
@@ -82,35 +82,35 @@ A local project is useful if you want to debug your custom Java source code and 
 - The top-level branches in the Process Explorer project tree represent workflow packages.  Your work should be incorporated in a dedicated package, which will be used for managing resources and for insulating your work from that of other users.  For further details refer to the Eclipse Cheat Sheet (Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning).
 - Create your workflow package by right-clicking on your project and selecting New > MDW Package.  Note: make sure your package name complies with Java package naming requirements (eg: no spaces) since it will contain dynamic Java resources.  Leave the Workgroup dropdown blank.
 
-   ![xml formatter](images/mdwWorkflowMyServicePackage.png)
+   ![xml formatter](../images/mdwWorkflowMyServicePackage.png)
 
 ##### Create the Service Process:
 -  Right-click on your new package in Process Explorer and select New > MDW Process.  Enter the process name and description (no workgroup), and click Finish.
 
-   ![xml formatter](images/myOrderProcess.png)
+   ![xml formatter](../images/myOrderProcess.png)
  
 -  After your process is created, double-click on the process title or on a blank area somewhere in the canvas to display the Properties View.  Select the Design properties tab and check "Service Process" to identify MyOrderProcess as a synchronous process returning a response. 
 
-   ![xml formatter](images/myOrderProcess2.png)
+   ![xml formatter](../images/myOrderProcess2.png)
  
 ##### Add some Process Variables:
 -  The convention in MDW is that a service request variable is named "request" and a service response variable is named "response".  There's the option to name these differently, but for simplicity let's go along with the convention here.  On the Variables property tab, create these two variables in your process with type org.json.JSONObject.  Set the mode for the request variable to be Input, and the mode for the response to be Output.  Add String variables orderId and validationResult.
 
-   ![xml formatter](images/myOrderProcessVariable.png)
+   ![xml formatter](../images/myOrderProcessVariable.png)
    
 - Save your process design by selecting File > Save from the menu (or by clicking the disk icon in the Eclipse toolbar, or by typing ctrl-s).  Elect to overwrite the current version and to keep the process locked after saving.  During iterative development for convenience you'll sometimes overwrite the existing version of a process definition.  However once you've exported to another environment you'll want to increment the version since you cannot re-import a changed process with the same version number.  Details are covered under Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning.  
 
-   ![xml formatter](images/saveMyOrderProcess.png)
+   ![xml formatter](../images/saveMyOrderProcess.png)
 
 ##### Create a Dynamic Java Custom Activity:
 - Right-click on your package in Process Explorer and select New > Activity > General Activity.
 - On the first page of the wizard, enter a label to identify your activity in the Toolbox view.
 
-   ![xml formatter](images/myOrderValidator.png)
+   ![xml formatter](../images/myOrderValidator.png)
    
 - Click Next and enter a class name for your activity implementor. The Java package name is the same as your workflow package name.
 
-   ![xml formatter](images/myOrderValidatorActivity.png)
+   ![xml formatter](../images/myOrderValidatorActivity.png)
    
 - When you click Finish the Java code for a skeleton implementation is generated. You will also see the Java class under your package in Process Explorer. 
 - This source code resides under src/main/workflow and is known as a Dynamic Java workflow asset. It's dynamic because it can be changed without needing any kind of application deployment. Naturally there are rigorous controls in place to prevent unauthorized modifications.
@@ -162,14 +162,14 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
 - Your activity can be dragged like this and used in other processes designed by other users. Actually the proper term in MDW for this reusable element in the Toolbox is activity implementor. This conveys the idea that it is actually a template to be dragged and configured as an activity in the canvas, and it also conveys the fact that it always corresponds to a Java class. To take this reuse concept a step further, your activity implementor can be made discoverable so that it can easily be imported into other environments and reused across domains. If you click on the light bulb icon at the top of the Toolbox you will get an idea how items in the palette can be imported from a file or discovered in the corporate repository.
 - Double click the activity in the canvas, and in its Definition property tab change the label to something like Validate Order. When you click back on the canvas the activity reflects its new label.
 
-   ![xml formatter](images/myOrderValidatorActivity2.png)
+   ![xml formatter](../images/myOrderValidatorActivity2.png)
    
 - Note: If you select the Design property tab for your activity you will see that it is blank. A non-trivial activity would allow certain aspects (such as endpoint URLs) to be configurable, so that it could readily be reused. For example, take a look at the Design tab for the Start activity. You control what appears on the Design tab through the pagelet XML for the activity implementor. In the creation wizard we left the pagelet XML blank, so the Design tab for our activity is empty. But to continue with the example of the start activity, find the Process Start icon in the Toolbox and view its Design tab (for the implementor, not the activity on the canvas). This gives you an idea of how the pagelet XML relates to the fields on the Design tab for the activity user. Since we are on the subject you may be interested to know how you can customize the icon for your activity implementor. On the Definition tab you can choose one of the built-in shapes, or more flexibly choose any GIF, JPG or PNG asset that you can easily add to your workflow package.
 
 ##### Add Multiple Activity Outcomes:
 - Drag a Process Finish activity from the Toolbox, and add another outbound transition from Validate Order. Assign Result Code values of true and false to the respective transitions as illustrated below. Save your process definition. The value passed in setReturnCode() in your activity execute() method dictates which of these two paths will be.
 
-   ![xml formatter](images/myOrderValidatorActivity3.png)
+   ![xml formatter](../images/myOrderValidatorActivity3.png)
 
 ##### Get Your Server Running:
 - Depending on which supported container you're using, you can follow one of the server setup exercises.  You will need to follow the steps from one of these guides to the point where MDW is deployed and you're able to start and stop your server from the Eclipse Servers view. 
@@ -187,19 +187,19 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
 - Right-click on the MyOrderProcess process in Process Explorer view and Select Run.  Designer will present the launch dialog and open a connection to the server to confirm that it is running `(required for launching a process)`.
 - On the Process tab in the launch dialog, select "Monitor Runtime Log" and "Process Instance Live View" to get a feel for how you can watch your process flow in real time.
 
-  ![xml formatter](images/myOrderProcessRunConfig.png)
+  ![xml formatter](../images/myOrderProcessRunConfig.png)
  
 ##### Populate the Input Variable:
 - Select the Variables tab in the launch dialog, and populate the orderId input.
 
-  ![xml formatter](images/populateOrderInputVariable.png)
+  ![xml formatter](../images/populateOrderInputVariable.png)
  
 ##### Launch and View an Instance:
 - Click Run on the launch dialog to run an instance of your process.  In the Live View you should see the new instance progress down the happy path with the Validate Order outcome equal to 'true'.  For processes not displayed in Live View, you can open an instance manually by right-clicking on your process in Process Explorer view and selecting View Instances.  The latest instance will appear at the top of the Process Instances list, and you can double-click to open its runtime view. 
 
 - In Designer Perspective, a legend appears showing what the borders surrounding the activities mean.  To inspect the runtime variable values for the instance, click the Values property tab.
 
-  ![xml formatter](images/viewOrderInstance.png)
+  ![xml formatter](../images/viewOrderInstance.png)
  
 #### 3. Expose a RESTFul Web Service using JAX-RS API
 #### 1. Implement a JAX-RS Web Service
@@ -209,7 +209,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 ##### Create a Java Asset to Implement a Resource Service:
 - Right-click on your package in Process Explorer view and select new > Java Source.  By convention the Java class name will also be the name of your service resource.  Also by convention your workflow package name is the root of the REST endpoint URL path that consumers will use to access your service.  For this simple example we're using the MyServices.  In a real-world app you'll probably use a qualified package name like com.centurylink.my.services, and in that case you can specify a simplified URL path through the JAX-RS Path annotation, which will be illustrated later.
   
-  ![xml formatter](images/createOrderProcessJavaAsset.png)
+  ![xml formatter](../images/createOrderProcessJavaAsset.png)
 
 - Implement a REST service, using the JAX-RS @Path annotation and extending the MDW JsonRestService class:
 ```java  
@@ -239,7 +239,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
     - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)            
 
 - Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add an order from your browser and you will see the response showing in the JSON format.
-   ![xml formatter](images/restPostRequestAndResponse.png)
+   ![xml formatter](../images/restPostRequestAndResponse.png)
    
 #### 2. Add Swagger API Annotations
 
@@ -299,14 +299,14 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
  
 ##### Access the MDWHub Service API Page for Your Service:
 - Open MDW in your browser and click on the Services tab.  Notice that API path for your service (/MyServices/Orders) includes its package name to distinguish it from standard MDW services.
-   ![xml formatter](images/restServiceAPIs.png)
+   ![xml formatter](../images/restServiceAPIs.png)
 
 - Click on the /MyServices/Orders link.  The JSON and YAML tabs include the Swagger Spec API definitions for the Orders endpoint.  Click on the YAML tab to view a human-readable representation of your Orders API.  Notice that much of the information is provided by annotations from the MDW base service class.
-   ![xml formatter](images/yamlExample.png)
+   ![xml formatter](../images/yamlExample.png)
 
 - Scroll down to the "definitions" section to see the Orders object definition as well as other referenced types.
 - Now click on the Swagger subtab to explore the friendly swagger-editor UI for your service.
-   ![xml formatter](images/swaggerExample.png)
+   ![xml formatter](../images/swaggerExample.png)
  
 ##### Add a Sample Request and Response:
 - Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "MyServices.api.samples" and add a JSON asset named Orders_Create.json with the following content:
@@ -318,7 +318,7 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
 ```
 ##### View the Samples in MDWHub:
 - Now that your sample requests have been created in accordance with the MDW naming convention, they will automatically be associated with the corresponding service path.  And they'll also be displayed in the Samples tab for your service in MDWHub:
-   ![xml formatter](images/jsonSamples.png)
+   ![xml formatter](../images/jsonSamples.png)
 
 #### 4. Consume a RESTFul Web Service
 MDW comes with Adapter activities for consuming services over many protocols from within your workflow processes.  In this exercise we'll use the REST Service Adapter activity to invoke the MyOrderProcess service you just created.
@@ -326,7 +326,7 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 ##### Create a Process with a REST Service Activity:
 - Open the same process definition you started building in the sections above.  
 - Create a new process to consume your service.  From the Toolbox view drag a RESTful Service Adapter onto the canvas and insert it into your process flow. Label the web service activity "Check Orders", and give it two separate outcomes corresponding to true and false, just like the validation activity.
-   ![xml formatter](images/consumeMyOrderProcess.png)
+   ![xml formatter](../images/consumeMyOrderProcess.png)
    
 - On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL you used for testing your service in Section 3.  [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)
 
@@ -385,26 +385,26 @@ public class CheckOrdersRest extends RestServiceAdapter {
 - Launch your process, entering the orderId as you did in previous steps.  View the instance to confirm that the orderId was populated as expected.
 - In the process instance view, double-click the Invoke MyOrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire.  You can also view the same results like the following:
 
-   ![xml formatter](images/orderProcessActivityInstance.png) 
+   ![xml formatter](../images/orderProcessActivityInstance.png) 
    
-   ![xml formatter](images/orderProcessActivityInstance2.png) 
+   ![xml formatter](../images/orderProcessActivityInstance2.png) 
  
 ##### Stub Mode and Response Simulation:
 - At times when performing services orchestration using MDW you may be designing a flow before one or more of your consumed services is not yet available.  Or you may not be ready to make an actual call because you're still debugging your workflow.  For situations like this MDW provides Stub Mode and Response Simulation.  Stub Mode is for local development and Automated Testing.  Response Simulation is used to hardwire the responses for specific adapter activities within a given environment.  Both of these features are accessed via the Simulation property tab.  Click this tab for the Invoke Check Orders REST adapter in the process you just build.  To try out Stub Mode, depress the Stub Server button (no need to Configure since the defaults should be fine).
 
-   ![xml formatter](images/orderProcessStubMode.png) 
+   ![xml formatter](../images/orderProcessStubMode.png) 
    
 - Note that this is a global setting; meaning once the stub server's running it intercepts all adapter activity requests.  Note also that it can be difficult to determine whether the button is depressed (i.e. stubbing is on).
 
 - Once you've got stub mode turned on, run the process again and you'll be presented with a dialog prompting you for the desired response for this case.
 
    TODO: Need to replace this screenshot with a new one.
-   ![xml formatter](images/stubResponse.png) 
+   ![xml formatter](../images/stubResponse.png) 
    
 - Whatever is typed in the Response Message textbox will be returned to your process as the adapter response, and you should be able to confirm this by checking the runtime values of the process instance.
 - To simulate a response, disable the stub server and instead set Simulation Mode to On.  Then provide a Return Code (not currently used), Chance (weighted probability when multiple responses), and Response value for each different hardwired response scenario.
 
    TODO: Need to replace this screenshot with a new one.
-   ![xml formatter](images/simulateResponse.png) 
+   ![xml formatter](../images/simulateResponse.png) 
 
 - These simulated response settings are meant to be per-environment, so they don't get saved with the process definition but rather as so-called "override attributes".  For this reason there's a Save button directly on the Simulation property tab.

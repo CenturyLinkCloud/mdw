@@ -29,15 +29,15 @@ This project is available from our GitHub instance of the CenturyLink.  You can 
 -	Copy the repository URL into your clipboard: `https://github.com/CenturyLinkCloud/mdw/mdw-demo.git`
 -	Right-click in Git Repositories view and select Paste Repository Path or URI.
 
-    ![xml formatter](images/cloneMdw6Demo.png)
+    ![xml formatter](../images/cloneMdw6Demo.png)
 
 -	Click Next and make sure the master branch is selected:
 
-    ![xml formatter](images/masterBranch.png)
+    ![xml formatter](../images/masterBranch.png)
 
 -	Click Next again.  Point to your workspace/mdw-demo for the Destination Directory.  Check "Import all existing Eclipse projects after clone finishes".  Then click Finish.
 
-     ![xml formatter](images/saveMdwDemo.png)
+     ![xml formatter](../images/saveMdwDemo.png)
 　
 ##### MDW Designer Perspective:
 -	To best view mdw-demo's workflow assets, switch to Designer Perspective (Window > Perspective > Open Perspective > Other > MDW Designer).

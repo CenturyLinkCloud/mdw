@@ -27,5 +27,5 @@
   docs:
   - release-notes
   - troubleshooting
-  - sites
+  - db/MdwDatabaseTables
   - upgrading
