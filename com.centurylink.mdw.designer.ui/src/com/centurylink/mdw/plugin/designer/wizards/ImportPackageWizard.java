@@ -35,6 +35,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.common.utilities.CryptUtil;
 import com.centurylink.mdw.common.utilities.FileHelper;
@@ -45,6 +46,7 @@ import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.value.process.PackageVO;
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.PluginMessages;
 import com.centurylink.mdw.plugin.designer.DesignerPerspective;
@@ -56,16 +58,18 @@ import com.centurylink.mdw.plugin.designer.model.ElementChangeEvent.ChangeType;
 import com.centurylink.mdw.plugin.designer.model.ExternalEvent;
 import com.centurylink.mdw.plugin.designer.model.File;
 import com.centurylink.mdw.plugin.designer.model.Folder;
-import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
-import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.designer.model.WorkflowAsset;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
+import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
+import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 public class ImportPackageWizard extends Wizard implements IImportWizard {
     private ImportPackagePage importPackagePage;
     private ImportPackageSelectPage importPackageSelectPage;
+
+    private List<java.io.File> fileList = new ArrayList<java.io.File>();
 
     ImportPackageSelectPage getImportPackageSelectPage() {
         return importPackageSelectPage;
@@ -273,16 +277,30 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                         httpHelper.download(tempFile);
                         VersionControl vcs = new VersionControlGit();
                         vcs.connect(null, null, null, wfp.getAssetDir());
-                        progressMonitor.subTask(
-                                "Archive existing assets...");
+                        progressMonitor.subTask("Archive existing assets...");
                         java.io.File assetDir = wfp.getAssetDir();
-                        VcsArchiver archiver = new VcsArchiver(assetDir, tempDir, vcs, progressMonitor);
+                        VcsArchiver archiver = new VcsArchiver(assetDir, tempDir, vcs,
+                                progressMonitor);
                         archiver.backup();
                         PluginMessages.log("Unzipping " + tempFile + " into: " + assetDir);
                         FileHelper.unzipFile(tempFile, assetDir, null, null, true);
                         archiver.archive();
-                        wfp.refreshProject();
                         progressMonitor.done();
+                        FileHelper.unzipFile(tempFile, tempDir, null, null, true);
+                        wfp.getSourceProject().refreshLocal(2, null);
+                        java.io.File explodedDir = new java.io.File(tempDir + "/com");
+                        if (explodedDir.isDirectory()) {
+                            for (java.io.File file : getFilesRecursive(explodedDir,
+                                    ".json")) {
+                                WorkflowPackage workflowPackage = new WorkflowPackage();
+                                workflowPackage.setProject(wfp);
+                                workflowPackage.setPackageVO(new PackageVO(new JSONObject(
+                                        FileHelper.getFileContents(file.getPath()))));
+                                workflowPackage.addElementChangeListener(wfp);
+                                importedPackages.add(workflowPackage);
+                            }
+                            FileHelper.deleteRecursive(explodedDir);
+                        }
                         tempFile.delete();
                     }
                     wfp.getDesignerProxy().getCacheRefresh().doRefresh(true);
@@ -330,5 +348,15 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
 
     void setHasOldImplementors(boolean hasOldImplementors) {
         importPackageSelectPage.showUpgradeAssetsComposite(hasOldImplementors);
+    }
+
+    public List<java.io.File> getFilesRecursive(java.io.File src, String extn) {
+        for (java.io.File file : src.listFiles()) {
+            if (file.isFile() && file.getName().endsWith(extn))
+                fileList.add(file);
+            else if (file.isDirectory())
+                getFilesRecursive(file, extn);
+        }
+        return fileList;
     }
 }
