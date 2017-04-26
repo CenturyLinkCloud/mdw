@@ -3,18 +3,21 @@
   - differentiators
   - features-guide
 
+- title: Guides
+  docs:
+  - guides/TomcatCookbook
+  - guides/MicroservicesCookbook
+  - guides/CloudFoundryCookbook
+  
 - title: Documentation
   docs:
   - javadoc
   - help
-
-- title: Guides
-  docs:
-  - TomcatCookbook
   
-- title: Customization
+- title: Designer
   docs:
-  - mdw-hub
+  - designer/user-guide
+  - designer/plugin-upgrade
 
 - title: Development
   docs:
@@ -24,5 +27,5 @@
   docs:
   - release-notes
   - troubleshooting
-  - sites
+  - db/MdwDatabaseTables
   - upgrading

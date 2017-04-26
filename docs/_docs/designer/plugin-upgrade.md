@@ -1,3 +1,8 @@
+---
+permalink: /docs/designer/plugin-upgrade/
+title: MDW Plugin for Eclipse
+---
+
 ### Installing and Upgrading the MDW Plugin for Eclipse
 
 #### Set Up Eclipse on Your PC:

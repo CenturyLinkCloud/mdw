@@ -1,3 +1,7 @@
+---
+permalink: /docs/designer/user-guide/
+title: Designer User Guide
+---
 ### MDW Designer User Guide
 
 #### Getting Started with MDW Designer
@@ -13,25 +17,25 @@
   is through the mechanism referred to as “Discovery”, which does not require knowledge of database connection info or server hosts and ports.  To discover a workflow 
   project, from the menu select File > Import > MDW Designer Import > Workflow Project(s):
   
-  ![xml formatter](images/mdwDesignerWorkflowImport.png)
+  ![xml formatter](../images/mdwDesignerWorkflowImport.png)
   
 - Then click Next and select Discover as the import mechanism:
 
-  ![xml formatter](images/mdwDesignerWorkflowImport2.png)
+  ![xml formatter](../images/mdwDesignerWorkflowImport2.png)
 
 - Once you’ve selected a workflow project and clicked Next, you’ll be presented with a list of available environments.  Your permissions in each 
   environment will depend on the roles you’ve been granted by the administrators (as described below in the section entitled Roles and Permissions). Click Finish.
   
-  ![xml formatter](images/mdwDesignerWorkflowImport3.png)
+  ![xml formatter](../images/mdwDesignerWorkflowImport3.png)
   
 - The top-level elements in the Process Explorer tree represent the project environments you’ve imported.  If you expand the tree, you’ll see some workflow processes and 
   packages that reside in the database for the environment you selected:
   
-  ![xml formatter](images/mdwDesignerWorkflowImport4.png)
+  ![xml formatter](../images/mdwDesignerWorkflowImport4.png)
   
 - You can view a process definition by double-clicking it in the Process Explorer tree:
 
-  ![xml formatter](images/mdwDesignerWorkflowImport5.png)
+  ![xml formatter](../images/mdwDesignerWorkflowImport5.png)
   
 ###  Roles and Permissions
 - Before you can create or change processes in MDW Designer, you'll need to be added to Users, Workgroups and Roles for your environment.  An administrator can grant you 
@@ -40,26 +44,26 @@
   
 - Click the New button to open the New User page:
 
-  ![xml formatter](images/addUser.png)
+  ![xml formatter](../images/addUser.png)
   
 - Once the required fields (.*) have been filled out, click Save button to save the change.
 
-  ![xml formatter](images/addUser2.png)
+  ![xml formatter](../images/addUser2.png)
 
 - Next, click Workgroups link and click New button to open the New Workgroup page. Enter your name and select the name of the group you are adding from the Parent drop down list box.  
   You may need to repeat this step to add yourself to each group listed in the drop down list box.
   
-  ![xml formatter](images/addGroup.png)
+  ![xml formatter](../images/addGroup.png)
   
 - Now click Roles link and click New button to open the New Role page. Enter your name and click Save.  
 
-  ![xml formatter](images/addRole.png) 
+  ![xml formatter](../images/addRole.png) 
 
 - The Admin tab is available to users who have the Administrators role.  The table below summarizes the MDW built-in roles and their permissions.
-  Role	Permissions
-  Administrators	Add users and assign them to workgroups and roles.
-  ProcessAdmin	Create and change process definitions and artifacts.
-  System Admins	Launch processes and configure environments.
+  Role  Permissions
+  Administrators  Add users and assign them to workgroups and roles.
+  ProcessAdmin  Create and change process definitions and artifacts.
+  System Admins Launch processes and configure environments.
   
   Roles           |   Permissions
   ----------------|---------------
@@ -71,7 +75,7 @@
 - At the top level of the Process Explorer tree are workflow packages.  A package is simply a convenient way of grouping processes together.  You can create a new 
   package by clicking on the "New Package" toolbar button, second from the right at the top of Process Explorer.
   
-  ![xml formatter](images/mdwWorkflowPackage.png)
+  ![xml formatter](../images/mdwWorkflowPackage.png)
  
 - Click Finish.  Your package should appear in your project’s tree.
 
@@ -82,12 +86,12 @@
 
 - TIP: you can hover your mouse over a toolbar button to get a tooltip description of what the button does.
 
-  ![xml formatter](images/mdwWorkflowPackage2.png)
+  ![xml formatter](../images/mdwWorkflowPackage2.png)
  
 - Once the process has been created it will be opened in the Process Editor view, and the Toolbox view will be populated with the available activities for insertion into
   your process flow.
   
-  ![xml formatter](images/mdwWorkflowProcess.png)
+  ![xml formatter](../images/mdwWorkflowProcess.png)
 
 - Note: MDW implements a locking feature to facilitate collaborative process development.  Initially your newly-created process will be locked to you.  Once you make 
   changes and save the process, your lock will automatically removed, and the process will display as read-only.  There is an icon on the Process Editor toolbar that 
@@ -95,7 +99,7 @@
 
 - The Process Editor toolbar looks like this:
 
-  ![xml formatter](images/toolbar.jpg)
+  ![xml formatter](../images/toolbar.jpg)
 
 - You can hover over each of the icons for a tooltip explanation of their functionality.  Many of these functions are also available from the right click menu either in
   Process Explorer or from the Designer Canvas itself.
@@ -106,7 +110,7 @@
   Right-click on the process in the Process Explorer tree and select > Run.  This will open the Process Launch Configuration dialog where you can specify parameters and 
   run your process.
   
-  ![xml formatter](images/mdwWorkflowProcessRun.png)
+  ![xml formatter](../images/mdwWorkflowProcessRun.png)
 
 - Any process will need a Master Request ID.  This functions as a unique external identifier with business meaning (such as an order number) that will identify the 
   entity this process instance is dealing with.  By default the Master Request ID is populated, so you can simply click the "Run" button.  However, if there are input 

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bson.json.JsonWriterSettings;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
@@ -36,6 +37,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
+import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestList;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
@@ -233,6 +235,15 @@ public class RequestDataAccess extends CommonDataAccess {
                 ownerType = rs.getString("owner_type");
                 ownerId = rs.getLong("owner_id");
                 if (withContent) {
+                    // Get META info as well
+                    Long metaId = 0L;
+                    String owner_type_meta = ownerType + "_META";
+                    query = "select document_id from document where owner_id = ? and owner_type = '" + owner_type_meta + "'";
+                    db.openConnection();
+                    rs = db.runSelect(query, id);
+                    if (rs.next()) {
+                        metaId = rs.getLong("document_id");
+                    }
                     boolean foundInMongo = false;
                     if (DatabaseAccess.getMongoDb() != null) {
                         CodeTimer timer = new CodeTimer("Load mongodb doc", true);
@@ -245,6 +256,17 @@ public class RequestDataAccess extends CommonDataAccess {
                             else
                                 request.setContent(c.getString("CONTENT"));
                             foundInMongo = true;
+
+                            // Get META
+                            if (metaId > 0L) {
+                                mongoCollection = DatabaseAccess.getMongoDb().getCollection(owner_type_meta);
+                                mongoQuery = new org.bson.Document("_id", metaId);
+                                c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
+                                if (c != null) {
+                                    if (c.getBoolean("isJSON", false))
+                                        request.setMeta(new JSONObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
+                                }
+                            }
                         }
                         timer.stopAndLogTiming(null);
                     }
@@ -253,6 +275,12 @@ public class RequestDataAccess extends CommonDataAccess {
                         rs = db.runSelect(query, id);
                         if (rs.next())
                             request.setContent(rs.getString("content"));
+                        //Get META
+                        if (metaId > 0L) {
+                            rs = db.runSelect(query, metaId);
+                            if (rs.next())
+                                request.setMeta(new JSONObject(rs.getString("content")));
+                        }
                     }
                 }
             }
@@ -281,6 +309,16 @@ public class RequestDataAccess extends CommonDataAccess {
                 request.setStatusMessage(responseRs.getString("status_message"));
 
                 if (withResponseContent) {
+                    Response response = new Response();
+                    // Get META info as well
+                    Long metaId = 0L;
+                    String owner_type_meta = responseOwnerType + "_META";
+                    query = "select document_id from document where owner_id = ? and owner_type = '" + owner_type_meta + "'";
+                    db.openConnection();
+                    rs = db.runSelect(query, request.getResponseId());
+                    if (rs.next()) {
+                        metaId = rs.getLong("document_id");
+                    }
                     boolean foundInMongo = false;
                     if (DatabaseAccess.getMongoDb() != null) {
                         CodeTimer timer = new CodeTimer("Load mongodb doc", true);
@@ -289,10 +327,21 @@ public class RequestDataAccess extends CommonDataAccess {
                         org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                         if (c != null) {
                             if (c.getBoolean("isJSON", false))
-                                request.setContent(c.get("CONTENT", org.bson.Document.class).toJson(new JsonWriterSettings(true)));
+                                response.setContent(c.get("CONTENT", org.bson.Document.class).toJson(new JsonWriterSettings(true)));
                             else
-                                request.setContent(c.getString("CONTENT"));
+                                response.setContent(c.getString("CONTENT"));
                             foundInMongo = true;
+
+                            // Get META
+                            if (metaId > 0L) {
+                                mongoCollection = DatabaseAccess.getMongoDb().getCollection(owner_type_meta);
+                                mongoQuery = new org.bson.Document("_id", metaId);
+                                c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
+                                if (c != null) {
+                                    if (c.getBoolean("isJSON", false))
+                                        response.setMeta(new JSONObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
+                                }
+                            }
                         }
                         timer.stopAndLogTiming(null);
                     }
@@ -300,8 +349,16 @@ public class RequestDataAccess extends CommonDataAccess {
                         query = "select content from document_content where document_id = ?";
                         responseRs = db.runSelect(query, request.getResponseId());
                         if (responseRs.next())
-                            request.setResponseContent(responseRs.getString("content"));
+                            response.setContent(responseRs.getString("content"));
+                        //Get META
+                        if (metaId > 0L) {
+                            rs = db.runSelect(query, metaId);
+                            if (rs.next())
+                                response.setMeta(new JSONObject(rs.getString("content")));
+                        }
                     }
+
+                    request.setResponse(response);
                 }
             }
 
