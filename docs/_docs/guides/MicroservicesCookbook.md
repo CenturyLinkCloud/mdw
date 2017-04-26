@@ -89,7 +89,7 @@ A local project is useful if you want to debug your custom Java source code and 
 
    ![xml formatter](../images/myOrderProcess.png)
  
--  After your process is created, double-click on the process title or on a blank area somewhere in the canvas to display the Properties View.  Select the Design properties tab and check "Service Process" to identify MyOrderProcess as a synchronous process returning a response. 
+-  After your process is created, double-click on the process title or on a blank area somewhere in the canvas to display the Properties View.  Select the Design properties tab and check "Service Process" to identify OrderProcess as a synchronous process returning a response. 
 
    ![xml formatter](../images/myOrderProcess2.png)
  
@@ -223,7 +223,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
   import com.centurylink.mdw.services.WorkflowServices;
   import com.centurylink.mdw.services.rest.JsonRestService;
   
-  @Path("/Orders")
+  @Path("/Order")
   public class Orders extends JsonRestService {
 	@Override
 	public JSONObject post(String path, JSONObject content, Map<String, String> headers) throws ServiceException{
@@ -236,7 +236,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 ```   
 - Access your service using a POST request from your browser with a URL like the following:
 
-  - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Order)            
+  - [http://localhost:8080/mdw/Services/MyServices/Order](http://localhost:8080/mdw/Services/MyServices/Order)            
 
 - Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add an order from your browser and you will see the response showing in the JSON format.
    ![xml formatter](../images/restPostRequestAndResponse.png)
@@ -248,7 +248,7 @@ With MDW REST services you can automatically generate Swagger documentation just
 ##### Add the @Api Annotation to Your Service:
 - The Swagger Api annotation goes on your class declaration along with the JAX-RS Path annotation.  The tag value in your annotation provides a high-level description of the its purpose:
 ```swagger
-@Path("/Orders")	
+@Path("/Order")	
 @Api("CenturyLink orders service")
 public class Orders extends JsonRestService {
 ```
@@ -271,7 +271,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-@Path("/Orders")
+@Path("/Order")
 @Api("CenturyLink orders service")
 public class Orders extends JsonRestService {
 	@Override
@@ -301,21 +301,23 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
 - Open MDW in your browser and click on the Services tab.  Notice that API path for your service (/MyServices/Order) includes its package name to distinguish it from standard MDW services.
    ![xml formatter](../images/restServiceAPIs.png)
 
-- Click on the /MyServices/Orders link.  The JSON and YAML tabs include the Swagger Spec API definitions for the Orders endpoint.  Click on the YAML tab to view a human-readable representation of your Orders API.  Notice that much of the information is provided by annotations from the MDW base service class.
+- Click on the /MyServices/Orders link.  The JSON and YAML tabs include the Swagger Spec API definitions for the Order endpoint.  Click on the YAML tab to view a human-readable representation of your Order API.  Notice that much of the information is provided by annotations from the MDW base service class.
    ![xml formatter](../images/yamlExample.png)
 
-- Scroll down to the "definitions" section to see the Orders object definition as well as other referenced types.
+- Scroll down to the "definitions" section to see the Order object definition as well as other referenced types.
 - Now click on the Swagger subtab to explore the friendly swagger-editor UI for your service.
    ![xml formatter](../images/swaggerExample.png)
  
 ##### Add a Sample Request and Response:
-- Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "MyServices.api.samples" and add a JSON asset named Orders_Create.json with the following content:  
+- Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "MyServices.api.samples" and add a JSON asset named Order_Create.json with the following content:
+
 ```jason
-// POST request to Services/MyServices/Orders
+// POST request to Services/MyServices/Order
 {
 "orderId":"12345678"
 }
 ```
+
 ##### View the Samples in MDWHub:
 - Now that your sample requests have been created in accordance with the MDW naming convention, they will automatically be associated with the corresponding service path.  And they'll also be displayed in the Samples tab for your service in MDWHub:
    ![xml formatter](../images/jsonSamples.png)

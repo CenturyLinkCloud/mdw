@@ -1,4 +1,4 @@
-- title: Why MDW
+- title: Introduction
   docs:
   - mdw-intro
   - differentiators
@@ -30,6 +30,4 @@
 - title: Miscellaneous
   docs:
   - release-notes
-  - troubleshooting
   - db/MdwDatabaseTables
-  - upgrading
