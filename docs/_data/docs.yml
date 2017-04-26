@@ -1,7 +1,9 @@
 - title: Why MDW
   docs:
+  - mdw-intro
   - differentiators
   - features-guide
+  - mdw-components
 
 - title: Guides
   docs:
@@ -22,6 +24,8 @@
 - title: Development
   docs:
   - coding-standards
+  - development/built-in-activities
+  - development/built-in-variable-types
 
 - title: Miscellaneous
   docs:
