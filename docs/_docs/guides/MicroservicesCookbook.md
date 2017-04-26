@@ -66,7 +66,7 @@ A local project is useful if you want to debug your custom Java source code and 
 
 ### The MDW Base Package:
 - When you create design artifacts in MDW, these are organized into workflow packages, which are different from Java packages in that they can contain assets in a wide variety of formats.  Much of the MDW framework's core functionality itself is delivered this way.  The essential assets required by MDW are included in the packages "com.centurylink.mdw.base" and "com.centurylink.mdw.hub".  If you choose the built-in database asset persistence, these base packages will already exist, and you can skip down to Section 2.  Otherwise, if you're using a new database or VCS asset persistence, you'll need to import these packages locally from the MDW repository as follows.
-- Expand your newly-created workflow project in Process Explorer and you'll see that it currently contains no packages.  Right-click on the project and select Import > Package.  Choose the "Discover" option and leave the repository location as the default.
+- Expand your newly-created workflow project in Process Explorer and you'll see that it currently contains no packages.  Right-click on the project and select Import > Package.  Choose the "Discover" option and leave the repository location as the default. `Note: The Asset Discovery URL is yet to be determined. In the meantime, take the default URL.`
 
   ![xml formatter](../images/importBasePackages.png)
 
@@ -236,7 +236,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 ```   
 - Access your service using a POST request from your browser with a URL like the following:
 
-    - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)            
+  - [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Order)            
 
 - Save your Dynamic Java asset, and use the MDWHub HTTP Poster tool to submit a POST request to add an order from your browser and you will see the response showing in the JSON format.
    ![xml formatter](../images/restPostRequestAndResponse.png)
@@ -298,7 +298,7 @@ public class Orders extends JsonRestService {
 MDWHub comes with a UI for displaying your generated Swagger API documentation, along with the standard MDW REST APIs.
  
 ##### Access the MDWHub Service API Page for Your Service:
-- Open MDW in your browser and click on the Services tab.  Notice that API path for your service (/MyServices/Orders) includes its package name to distinguish it from standard MDW services.
+- Open MDW in your browser and click on the Services tab.  Notice that API path for your service (/MyServices/Order) includes its package name to distinguish it from standard MDW services.
    ![xml formatter](../images/restServiceAPIs.png)
 
 - Click on the /MyServices/Orders link.  The JSON and YAML tabs include the Swagger Spec API definitions for the Orders endpoint.  Click on the YAML tab to view a human-readable representation of your Orders API.  Notice that much of the information is provided by annotations from the MDW base service class.
@@ -309,7 +309,7 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
    ![xml formatter](../images/swaggerExample.png)
  
 ##### Add a Sample Request and Response:
-- Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "MyServices.api.samples" and add a JSON asset named Orders_Create.json with the following content:
+- Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "MyServices.api.samples" and add a JSON asset named Orders_Create.json with the following content:  
 ```jason
 // POST request to Services/MyServices/Orders
 {
@@ -321,90 +321,20 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
    ![xml formatter](../images/jsonSamples.png)
 
 #### 4. Consume a RESTFul Web Service
-MDW comes with Adapter activities for consuming services over many protocols from within your workflow processes.  In this exercise we'll use the REST Service Adapter activity to invoke the MyOrderProcess service you just created.
+MDW comes with Adapter activities for consuming services over many protocols from within your workflow processes.  In this exercise we'll use the REST Service Adapter activity to invoke the OrderProcess service you just created.
  
 ##### Create a Process with a REST Service Activity:
 - Open the same process definition you started building in the sections above.  
-- Create a new process to consume your service.  From the Toolbox view drag a RESTful Service Adapter onto the canvas and insert it into your process flow. Label the web service activity "Check Orders", and give it two separate outcomes corresponding to true and false, just like the validation activity.
+- Create a new process to consume a service.  From the Toolbox view drag a RESTful Service Adapter onto the canvas and insert it into your process flow. Label the web service activity "Submit Order" as shown on the image bellow.
    ![xml formatter](../images/consumeMyOrderProcess.png)
    
-- On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL you used for testing your service in Section 3.  [http://localhost:8080/mdw/Services/MyServices/Orders](http://localhost:8080/mdw/Services/MyServices/Orders)
-
-##### Implement MDW REST Activity API:
-- With the REST activity in a real world workflow, you might bind document variables to the service input and output through the Request Variable and Response Variable dropdowns pictured above. To simplify this tutorial, we will implement a very simple java code to use the
-mdw built-in operations to return the request JSON posted to the service:
-```java 
-package com.centurylink.mdw.workflow.order.activity;
-import java.util.HashMap;
-import java.util.Map;
-import org.json.JSONException;
-import org.json.JSONObject;
-import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
+- On the Design tab for the web service activity, set the HTTP Method to POST and enter the same REST endpoint URL to consume a service from within your workflow. This example shows how to consume an existing service:  http://lxdenvmtc143.dev.qintra.com:8515/mdw/services/Ping  
+  ![xml formatter](../images/consumeMyOrderProcess2.png)
   
-public class CheckOrdersRest extends RestServiceAdapter {
-	@Override
-	public String invoke(Object conn, String request, int timeout, Map<String, String> headers)
-		throws ConnectionException, AdapterException {		
-		if (conn != null) {
-			return super.invoke(conn, request, timeout, headers);
-		} else {
-			logger.debug("Order service is disabled, continuing with flow");
-			return "Ok";
-		}
-	}
-	@Override
-	public String getRequestData() throws ActivityException {
-		if (StringHelper.isEmpty(varname)) {
-			throw new ActivityException("Variable not found for Check Orders");
-		}
-		JSONObject orderRequest = new JSONObject();
-		try {
-			orderRequest.put("orderId", varname);
-		} catch (JSONException e) {
-			logger.severe("Unable to build response : message " + e.getMessage());
-		}
-		return orderRequest.toString();
-	}
-	@Override
-	public Map<String, String> getRequestHeaders() {
-		Map<String, String> requestHeaders = super.getRequestHeaders();
-		if (requestHeaders == null)
-			requestHeaders = new HashMap<String, String>();
-			requestHeaders.put("Content-Type", "application/json");
-			return requestHeaders;
-		}
-	}
-}
-```
-
 ##### Save and Run Your Process:
 - Launch your process, entering the orderId as you did in previous steps.  View the instance to confirm that the orderId was populated as expected.
-- In the process instance view, double-click the Invoke MyOrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire.  You can also view the same results like the following:
+- In the process instance view, double-click the OrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire. 
 
-   ![xml formatter](../images/orderProcessActivityInstance.png) 
-   
-   ![xml formatter](../images/orderProcessActivityInstance2.png) 
+   ![xml formatter](../images/orderProcessActivityInstance.png)   
+   ![xml formatter](../images/orderProcessActivityInstance2.png)    
  
-##### Stub Mode and Response Simulation:
-- At times when performing services orchestration using MDW you may be designing a flow before one or more of your consumed services is not yet available.  Or you may not be ready to make an actual call because you're still debugging your workflow.  For situations like this MDW provides Stub Mode and Response Simulation.  Stub Mode is for local development and Automated Testing.  Response Simulation is used to hardwire the responses for specific adapter activities within a given environment.  Both of these features are accessed via the Simulation property tab.  Click this tab for the Invoke Check Orders REST adapter in the process you just build.  To try out Stub Mode, depress the Stub Server button (no need to Configure since the defaults should be fine).
-
-   ![xml formatter](../images/orderProcessStubMode.png) 
-   
-- Note that this is a global setting; meaning once the stub server's running it intercepts all adapter activity requests.  Note also that it can be difficult to determine whether the button is depressed (i.e. stubbing is on).
-
-- Once you've got stub mode turned on, run the process again and you'll be presented with a dialog prompting you for the desired response for this case.
-
-   TODO: Need to replace this screenshot with a new one.
-   ![xml formatter](../images/stubResponse.png) 
-   
-- Whatever is typed in the Response Message textbox will be returned to your process as the adapter response, and you should be able to confirm this by checking the runtime values of the process instance.
-- To simulate a response, disable the stub server and instead set Simulation Mode to On.  Then provide a Return Code (not currently used), Chance (weighted probability when multiple responses), and Response value for each different hardwired response scenario.
-
-   TODO: Need to replace this screenshot with a new one.
-   ![xml formatter](../images/simulateResponse.png) 
-
-- These simulated response settings are meant to be per-environment, so they don't get saved with the process definition but rather as so-called "override attributes".  For this reason there's a Save button directly on the Simulation property tab.
