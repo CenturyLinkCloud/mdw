@@ -13,6 +13,6 @@ overview: true
  - Services Framework 
  -- The extensible service-oriented foundation for interacting with external systems. 
  - Business Intelligence 
- -- The design facility for identifying milestones and authoring reports to aggregate collected data. 
+ -- The design facility for identifying milestones and authoring reports to aggregate collected data.
 
-    ![MDW Components](/img/MdwComponents.png)
+    ![MDW Components]({{ site.baseurl }}/img/MdwComponents.png)
