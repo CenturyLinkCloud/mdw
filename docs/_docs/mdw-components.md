@@ -15,4 +15,4 @@ overview: true
  - Business Intelligence 
  -- The design facility for identifying milestones and authoring reports to aggregate collected data. 
 
-    ![MDW Components](../../img/MdwComponents.png)
+    ![MDW Components](/img/MdwComponents.png)
