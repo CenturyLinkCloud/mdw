@@ -16,3 +16,5 @@ overview: true
  -- The design facility for identifying milestones and authoring reports to aggregate collected data.
 
     ![MDW Components](../img/MdwComponents.png)
+    ![xml formatter](/docs/_docs/help/images/xmlformat.png)
+    ![xml formatter](docs/_docs/help/images/xmlformat.png)
