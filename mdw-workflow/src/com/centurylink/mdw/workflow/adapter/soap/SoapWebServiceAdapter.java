@@ -41,6 +41,7 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
+import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
@@ -350,8 +351,8 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
     @Override
     protected JSONObject getRequestMeta() throws Exception {
         JSONObject json = super.getRequestMeta();
-        json.put("http_method", "POST");
-        json.put("url", getWsdlUrl());
+        json.put(Listener.METAINFO_HTTP_METHOD, "POST");
+        json.put(Listener.METAINFO_REQUEST_URL, getWsdlUrl());
 
         return json;
     }
@@ -359,8 +360,8 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
     @Override
     protected JSONObject getResponseMeta() throws Exception {
         JSONObject json = super.getRequestMeta();
-        json.put("http_method", "POST");
-        json.put("url", getWsdlUrl());
+        json.put(Listener.METAINFO_HTTP_METHOD, "POST");
+        json.put(Listener.METAINFO_REQUEST_URL, getWsdlUrl());
 
         return json;
     }

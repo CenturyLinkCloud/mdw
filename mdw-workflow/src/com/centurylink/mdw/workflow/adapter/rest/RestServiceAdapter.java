@@ -29,6 +29,7 @@ import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
+import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.HttpAltConnection;
@@ -282,8 +283,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     @Override
     protected JSONObject getRequestMeta() throws Exception {
         JSONObject meta = super.getRequestMeta();
-        meta.put("http_method", getHttpMethod());
-        meta.put("url", getEndpointUri());
+        meta.put(Listener.METAINFO_HTTP_METHOD, getHttpMethod());
+        meta.put(Listener.METAINFO_REQUEST_URL, getEndpointUri());
 
         return meta;
     }
@@ -291,8 +292,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     @Override
     protected JSONObject getResponseMeta() throws Exception {
         JSONObject meta = super.getResponseMeta();
-        meta.put("http_method", getHttpMethod());
-        meta.put("url", getEndpointUri());
+        meta.put(Listener.METAINFO_HTTP_METHOD, getHttpMethod());
+        meta.put(Listener.METAINFO_REQUEST_URL, getEndpointUri());
 
         return meta;
     }
