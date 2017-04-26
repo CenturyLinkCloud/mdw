@@ -26,8 +26,10 @@ permalink: /docs/db/MdwDatabaseTables/
 | VARIABLE_INSTANCE | Runtime | Runtime value for a Process Variable. |
 | WORK_TRANSITION_INSTANCE | Runtime | Runtime instance of a workflow Transition. |
 
+<div class="note">
+  <h5> Terminology </h5>
+</div>
 
-| Terminology | Description |
 |----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Activity | The most granular unit of work in a process definition   (a single step executed in the flow). |
 | Activity Implementor | The business logic underlying an activity (implemented   in Java code).  Registered implementors   appear in the Designer Toolbox view. |
