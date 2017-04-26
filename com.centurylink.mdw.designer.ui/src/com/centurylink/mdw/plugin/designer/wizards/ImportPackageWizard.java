@@ -299,9 +299,9 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                                 workflowPackage.addElementChangeListener(wfp);
                                 importedPackages.add(workflowPackage);
                             }
+                            FileHelper.deleteRecursive(explodedDir);
                         }
                         tempFile.delete();
-                        FileHelper.deleteRecursive(explodedDir);
                     }
                     wfp.getDesignerProxy().getCacheRefresh().doRefresh(true);
                 }
