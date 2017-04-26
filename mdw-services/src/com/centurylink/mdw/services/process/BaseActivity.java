@@ -1381,7 +1381,8 @@ public abstract class BaseActivity implements GeneralActivity {
                             String msg = "Attempt to change value of non-output document '" + varName + "'";
                             if (Object.class.getName().equals(varType))
                               msg += ".  Please make sure and implement an equals() comparator in your Object.";
-                            throw new ActivityException(msg);
+                            // Removed ActivityException, now just log it
+                            logger.debug(msg);
                         }
                     }
                     else {
