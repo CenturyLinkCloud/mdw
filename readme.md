@@ -84,11 +84,11 @@
      These have to be configured manually in Eclipse.  For all formats we use **spaces instead of tabs**.
      The following screenshots illustrate how to set these:  
      - XML:                                                    
-      [xml formatter]({{ site.baseurl }}/docs/help/images/xmlformat.png)
+      ![xml formatter]({{ site.baseurl }}/docs/help/images/xmlformat.png)
      - HTML:                                                           
-      [html formatter](docs/help/images/htmlformat.png)
+      ![html formatter](docs/help/images/htmlformat.png)
      - YAML:                                           
-      [yaml formatter](docs/help/images/yamlformat.png)
+      ![yaml formatter](docs/help/images/yamlformat.png)
 
 ### Designer
 1. Designer Projects:       
