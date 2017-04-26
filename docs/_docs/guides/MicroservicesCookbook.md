@@ -31,10 +31,10 @@ You can perform many cloud development activities using a remote workflow projec
 ### Supported Java Containers: 
 -   Apache Tomcat 8:
     - [https://tomcat.apache.org](https://tomcat.apache.org)
-    - [TomcatCookbook](TomcatCookbook.md)
+    - [TomcatCookbook](./TomcatCookbook.md)
 -   Pivotal Cloud Foundry 2.x:
     - [http://pivotal.io/platform](http://pivotal.io/platform)
-    - [CloudFoundryCookbook](CloudFoundryCookbook.md)
+    - [CloudFoundryCookbook](./CloudFoundryCookbook.md)
  
 ### MDW Database:
 - MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a MySQL or Oracle 
