@@ -20,10 +20,11 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
         Definition: {
           Name: 'name',
           Description: 'description',
-          Created: 'created' 
+          Created: 'created',
+            '_template': mdw.roots.hub + '/js/ui/templates/processDefinition.json'
         },
         Design: {
-          
+          '_template': mdw.roots.services + '/js/ui/templates/process.json'
         },
         /* named object:
          * Tabular content evaluated against named obj collection (eg: 'variables'),
@@ -33,7 +34,8 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
         Variables: { 'variables': {
           Name: '=',
           Type: 'type',
-          Mode: 'category'
+          Mode: 'category',
+          '_template': mdw.roots.services + '/js/ui/templates/variables.json'
         }},
         /* string:
          * Evaluated string refers to obj collection for list-type display.
@@ -42,51 +44,67 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
          */
         Attributes: 'attributes',
         Documentation: { 
-          '_attribute': { name: 'Documentation', markdown: true }
+          '_attribute': { name: 'Documentation', markdown: true },
+          '_template': mdw.roots.services + '/js/ui/templates/documentation.json'
         },
         // Versions: {},  TODO
-        Monitoring: {}
+        Monitoring: {
+          '_attributes': 'monitoring', // TODO not fully baked 
+          '_template': mdw.roots.hub + '/js/ui/templates/monitoring.json'
+        }
       },
       activity: {
         Definition: {
           ID: 'id',
           Name: 'name',
           Implementor: 'implementor',
-          Description: 'description'
+          Description: 'description',
+          '_template': mdw.roots.hub + '/js/ui/templates/activityDefinition.json'
         },
         Design: {
           '_template': mdw.roots.services + '/services/Implementors/${it.implementor}'
         },
         Attributes: 'attributes',
         Documentation: { 
-          '_attribute': { name: 'Documentation', markdown: true }
+          '_attribute': { name: 'Documentation', markdown: true },
+          '_template': mdw.roots.hub + '/js/ui/templates/documentation.json'
         },
-        Monitoring: {},
-        Stubbing: {}
+        Monitoring: {
+          '_attributes': 'monitoring', // TODO not fully baked 
+          '_template': mdw.roots.hub + '/js/ui/templates/monitoring.json'
+        },
+        Stubbing: {
+          '_attributes': 'stubbing', // TODO not fully baked 
+          '_template': mdw.roots.hub + '/js/ui/templates/stubbing.json'
+        }
       },
       subprocess: {
         Definition: {
           ID: 'id',
           Name: 'name',
-          Description: 'description'
+          Description: 'description',
+          '_template': mdw.roots.hub + '/js/ui/templates/definition.json'          
         },
         Attributes: 'attributes',
         Documentation: { 
-          '_attribute': { name: 'Documentation', markdown: true }
+          '_attribute': { name: 'Documentation', markdown: true },
+          '_template': mdw.roots.hub + '/js/ui/templates/documentation.json'          
         }
       },
       transition: {
         Definition: {
           ID: 'id',
           Result: 'resultCode',
-          Event: 'event'
+          Event: 'event',
+          '_template': mdw.roots.hub + '/js/ui/templates/transitionDefinition.json'
         },
         Attributes: 'attributes'
       },
       textNote: {
         Definition: {
           ID: 'id',
-          Text: 'content'
+          Text: 'content',
+          '_template': mdw.roots.hub + '/js/ui/templates/textNote.json'          
         }
       }
     },

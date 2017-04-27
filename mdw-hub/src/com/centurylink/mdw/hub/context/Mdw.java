@@ -38,6 +38,10 @@ public class Mdw {
     public String getWebToolsRoot() { return webToolsRoot; }
     public void setWebToolsRoot(String webToolsRoot) { this.webToolsRoot = webToolsRoot; }
 
+    private String docsRoot;
+    public String getDocsRoot() { return docsRoot; }
+    public void setDocsRoot(String docsRoot) { this.docsRoot = docsRoot; }
+
     private File assetRoot;
     public File getAssetRoot() { return assetRoot; }
 

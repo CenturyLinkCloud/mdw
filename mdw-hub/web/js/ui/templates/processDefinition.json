@@ -1,0 +1,18 @@
+{
+  "category": "object",
+  "pagelet": {"widgets": [
+    {
+      "type": "text",
+      "name": "name",
+      "label": "Name",
+      "multiline": true,
+      "rows": 2
+    },
+    {
+      "type": "text",
+      "name": "description",
+      "label": "Description",
+      "multiline": true
+    }
+  ]}
+}

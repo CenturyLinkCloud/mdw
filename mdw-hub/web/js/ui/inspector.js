@@ -10,6 +10,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
     $scope.workflowType = obj.workflowType;
     $scope.workflowObject = obj[obj.workflowType];
     $scope.runtimeInfo = null;  // can be object or array
+    $scope.editable = $scope.diagramObject.diagram.editable;
     
     if ($scope.workflowType == 'process')
       $scope.runtimeInfo = $scope.diagramObject.instance;
@@ -21,25 +22,30 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
     else
       $scope.tabs = InspectorTabs.definition[$scope.workflowType];
     
-    var editable = $scope.diagramObject.diagram.editable;
     
     var filteredTabs = {};
     util.getProperties($scope.tabs).forEach(function(tabName) {
       var tab = $scope.tabs[tabName];
-      if (typeof tab === 'object') {
-        var tabProps = util.getProperties(tab);
-        if (tabProps[0] && typeof tab[tabProps[1]] == 'function') {
-          if (tab[tabProps[1]]($scope.diagramObject, $scope.workflowObject))
-            filteredTabs[tabName] = tab;
+      
+      // editable tabs require a template property
+      if (!$scope.editable || ($scope.editable && tab._template)) {
+        if (typeof tab === 'object') {
+          var tabProps = util.getProperties(tab);
+          // when _template is only prop (eg: Design tab)
+          var onlyShowForEdit = tabProps.length === 1 && tabProps[0] === '_template';
+          if ($scope.editable || !onlyShowForEdit) {
+            if (tabProps[0] && typeof tab[tabProps[1]] == 'function') {
+              if (tab[tabProps[1]]($scope.diagramObject, $scope.workflowObject))
+                filteredTabs[tabName] = tab;
+            }
+            else {
+              filteredTabs[tabName] = tab;
+            }
+          }
         }
         else {
-          if (tabName !== 'Design' || editable)
-            filteredTabs[tabName] = tab;
-        }
-      }
-      else {
-        if (tabName !== 'Attributes' || !editable)
           filteredTabs[tabName] = tab;
+        }
       }
     });
     $scope.tabs = filteredTabs;
@@ -62,16 +68,11 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
     $scope.activeTabValues = [];
 
     // design tab uses configurator
-    if ('Design' == tabName) {
-      if ($scope.activeTab._template) {
-        var templateUrl = util.substExpr($scope.activeTab._template, $scope.workflowObject);
-        $http.get(templateUrl).then(function(res) {
-          $scope.configurator = new Configurator($scope.workflowType, $scope.workflowObject, res);
-        });
-      }
-      else {
-        $scope.configurator = new Configurator($scope.workflowType, $scope.workflowObject);
-      }
+    if ($scope.editable) {
+      var templateUrl = util.substExpr($scope.activeTab._template, $scope.workflowObject);
+      $http.get(templateUrl).then(function(res) {
+        $scope.configurator = new Configurator(tabName, $scope.workflowType, $scope.workflowObject, $scope.diagramObject, res.data);
+      });
       return;
     }
       
@@ -219,7 +220,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
         if (atProp == '_url' && tabObj[$scope.activeTab[atProp]]) {
           $scope.activeTabValues[i-1].url = tabObj[$scope.activeTab[atProp]];
         }
-        else {
+        else if (!atProp.startsWith('_')) {
           $scope.activeTabValues.push({
             name: atProp,
             value: tabObj[$scope.activeTab[atProp]]
@@ -289,7 +290,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
                 val.asset.url = '#/asset/' + val.asset.path;
               }
             }
-            if (!tabInfo[prop + '_assetVersion'] && prop != 'processversion')
+            if (!tabInfo[prop + '_assetVersion'] && prop != 'processversion' && !prop.startsWith('_'))
               $scope.activeTabValues.push(val);
           }          
         }
@@ -334,7 +335,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
     // column labels
     var names = [];
     for (var k = 0; k < labels.length; k++) {
-      if (labels[k] != '_url') {
+      if (!labels[k].startsWith('_')) {
         var name = { name: labels[k]};
         if (k < labels.length - 1)
           name.pad = util.padTrailing('', colWidths[k] - labels[k].length + colSpacing);
@@ -349,7 +350,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
         if (field.value.startsWith('DOCUMENT:')) {
           field.url = '#/workflow/processes/' + $scope.workflowObject.id + '/values/' + fields[j-1].value;
         }
-        if (labels[j] == '_url') {
+        if (!labels[j].startsWith('_')) {
           // applies to previous field
           fields[j-1].url = field.value;
         }

@@ -6,8 +6,13 @@
     <div class="panel panel-default mdw-inspector-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
-          Inspector{{workflowObject.name || workflowType == 'transition' ? ': ' : ''}}
-          <span class="mdw-heading-sub">{{workflowType == 'transition' ? 'Transition' : workflowObject.name}}</span>
+          {{editable ? 'Configure' : 'Inspector'}}{{workflowObject.name || workflowType == 'transition' ? ': ' : ''}}
+          <span class="mdw-heading-sub">{{workflowType == 'transition' ? 'Transition' : workflowObject.name.removeCrs().replaceAll('\n', ' ')}}</span>
+        </div>
+        <div class="mdw-help-icon">
+          <a href="{{configurator.helpLink.url}}" ng-if="configurator.helpLink" title="{{configurator.helpLink.name}}" target="_blank">
+            <span class="glyphicon glyphicon-question-sign mdw-icon-btn"></span>
+          </a>
         </div>
         <div class="mdw-heading-actions">
           <a class="btn mdw-inspector-btn" ng-click="initInspector()">
@@ -28,7 +33,7 @@
           </li>
         </ul>
         <!-- tab values for object -->
-        <div class="mdw-inspector-values" ng-if="!activeTabValues[0].values && !drilledValue && activeTabName != 'Design'">
+        <div class="mdw-inspector-values" ng-if="!activeTabValues[0].values && !drilledValue && !editable">
           <div class="mdw-markdown-content" ng-if="activeTabValues[0].isMarkdown" ng-bind-html="activeTabValues[0].value | markdown | unsafe">
           </div>
           <div ng-repeat="tabValue in activeTabValues" ng-if="!drilledValue && !activeTabValues[0].isMarkdown" style="display:flex">
@@ -50,7 +55,7 @@
           </div>
         </div>
         <!-- tab values for array of object -->
-        <div class="mdw-inspector-values" ng-if="activeTabValues[0].values && !drilledValue && activeTabName != 'Design'">
+        <div class="mdw-inspector-values" ng-if="activeTabValues[0].values && !drilledValue && !editable">
           <div ng-repeat="tabValue in activeTabValues" ng-if="!drilledValue">
             <div class="mdw-inspector-value" ng-if="tabValue.names && $index == 0">
               <span class="mdw-pre" ng-repeat="name in tabValue.names"><span class="mdw-ul">{{name.name}}</span>{{name.pad}}</span>
@@ -72,9 +77,13 @@
           </div>
         </div>
         <!-- design section -->
-        <div class="mdw-inspector-values" ng-if="activeTabName == 'Design'">
-          <div>
-          {{configurator.x()}}
+        <div class="mdw-inspector-values" ng-if="editable">
+          <div ng-repeat="widget in configurator.getWidgets()" class="mdw-widget" style="height:{{widget.height}}px;">
+            <div class="mdw-widget-label">
+              {{widget.label}}<span class="mdw-pre">{{widget.pad}}</span>
+            </div>
+            <div class="mdw-widget-value" ng-include="'ui/widgets/' + widget.type + '.html'">
+            </div>
           </div>
         </div>
       </div>

@@ -22,7 +22,7 @@ constantsMod.constant('EXCEL_DOWNLOAD', 'DownloadFormat=xlsx');
 constantsMod.constant('JSON_DOWNLOAD', 'DownloadFormat=json');
 constantsMod.constant('ZIP_DOWNLOAD', 'DownloadFormat=zip');
 
-// TODO: should be dynamic through a service
+// TODO: should be dynamic through a service 
 constantsMod.constant('DOCUMENT_TYPES', {
   'org.w3c.dom.Document': 'xml',
   'org.apache.xmlbeans.XmlObject': 'xml',
