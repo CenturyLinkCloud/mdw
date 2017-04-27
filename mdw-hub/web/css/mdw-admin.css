@@ -750,6 +750,9 @@
 .mdw-canvas {
 	/* prevent highlighting on double-click */
 	user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;	
 }
 .mdw-legend {
   list-style-type: none;
@@ -831,16 +834,52 @@
   white-space: nowrap;
 }
 .mdw-inspector-label {
-  margin-right: 10px;
+  font-weight: bold;
+  margin-right: 12px;
   white-space: nowrap;
 }
 .mdw-inspector-value {
   width: 100%;
   overflow-x: none;
-  height: 18px;  
+  height: 18px;
 }
 .mdw-inspector-btn {
 	padding-left: 0 !important;
+}
+.mdw-help-icon {
+	float: left;
+	margin-left: 8px;
+	position: relative;
+	top: 3px;
+}
+.mdw-help-icon .glyphicon {
+	font-size: 18px;
+}
+.mdw-widget {
+	display: flex;
+}
+.mdw-widget select {
+  height: 22px;
+}
+.mdw-widget input {
+  padding: 2px 3px;
+}
+.mdw-widget textarea {
+  padding: 2px 3px;
+}
+.mdw-widget-label {
+  font-weight: bold;
+  margin-right: 12px;
+  white-space: nowrap;
+  padding-top: 5px;
+}
+.mdw-widget-value {
+	font-family: sans-serif;
+  width: 100%;
+}
+.mdw-widget-value {
+	position: relative;
+	top: 3px;
 }
 .mdw-editor {
   position: absolute !important;

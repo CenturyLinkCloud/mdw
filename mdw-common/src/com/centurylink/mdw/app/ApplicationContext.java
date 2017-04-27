@@ -425,6 +425,18 @@ public class ApplicationContext {
         return url;
     }
 
+    private static String docsUrl;
+    public static String getDocsUrl() {
+        if (docsUrl == null) {
+            docsUrl = PropertyManager.getProperty(PropertyNames.DOCS_URL);
+            if (docsUrl == null)
+                docsUrl = "http://centurylinkcloud.github.io/mdw/docs";
+            if (docsUrl.endsWith("/"))
+                docsUrl = docsUrl.substring(1);
+        }
+        return docsUrl;
+    }
+
     private static String getContextRoot(String url) {
         int k1 = url.indexOf("://");
         if (k1<0) return "Unknown";

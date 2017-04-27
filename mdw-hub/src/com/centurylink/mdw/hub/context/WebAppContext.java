@@ -69,6 +69,8 @@ public class WebAppContext {
 
             String webToolsUrl = PropertyManager.getProperty(PropertyNames.WEBTOOLS_URL);
             mdw.setWebToolsRoot(webToolsUrl);
+
+            mdw.setDocsRoot(ApplicationContext.getDocsUrl());
         }
         return mdw;
     }
