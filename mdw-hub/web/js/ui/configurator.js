@@ -71,7 +71,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
   };
 
   Configurator.prototype.getTemplate = function() {
-    return template;
+    return this.template;
   };
   
   Configurator.prototype.getWidgets = function() {
@@ -126,17 +126,17 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
     }
     
     if (helpWidgetIndex > -1) {
-      var widget = this.template.pagelet.widgets[helpWidgetIndex];
+      var widg = this.template.pagelet.widgets[helpWidgetIndex];
       this.template.pagelet.widgets.splice(helpWidgetIndex, 1);
       return {
-        name: widget.name,
-        url: mdw.roots.docs + '/help' + widget.url.substring(11)
+        name: widg.name,
+        url: mdw.roots.docs + '/help' + widg.url.substring(11)
       };
     }
     else {
       return null;
     }
-  }
+  };
   
   return Configurator;
 }]);
