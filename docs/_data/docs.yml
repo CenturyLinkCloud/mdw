@@ -4,6 +4,10 @@
   - differentiators
   - features-guide
   - mdw-components
+  
+- title: Demo
+  docs:
+  - link-to-demo
 
 - title: Guides
   docs:

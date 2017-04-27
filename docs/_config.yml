@@ -15,7 +15,8 @@ defaults:
     values:
       layout: "docs"
 
-name: MDW, Workflow engine, Microservices
+title: MDW workflow framework with built-in microservices
+name: MDW
 description: Feature rich custumizable workflow engine
 url: http://centurylinkcloud.github.io/mdw/
 
@@ -27,9 +28,6 @@ collections:
     output: true
     
 gems:
-  - jekyll-avatar
-  - jekyll-feed
-  - jekyll-mentions
   - jekyll-redirect-from
   - jekyll-seo-tag
   - jekyll-sitemap
