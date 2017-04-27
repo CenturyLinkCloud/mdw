@@ -92,6 +92,8 @@ subprojects {
         exclude "**/.*ignore"
     }    
     ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+    ext.ossrhUsername = System.getProperty("ossrhUsername")
+    ext.ossrhPassword = System.getProperty("ossrhPassword")
     
     if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
         signing {
