@@ -202,8 +202,8 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                                 for (ActivityImpl ai : importedPackage.getActivityImpls())
                                     ai.addElementChangeListener(wfp);
                                 for (WorkflowAsset wa : importedPackage.getAssets())
-                                    wa.addElementChangeListener(wfp);
-                                importedPackages.add(importedPackage);*/
+                                    wa.addElementChangeListener(wfp);*/
+                                importedPackages.add(importedPackage);
 
                                 if (wfp.isRemote() && wfp.isFilePersist()) {
                                     // zip and upload imported packages to
