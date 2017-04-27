@@ -31,10 +31,10 @@ You can perform many cloud development activities using a remote workflow projec
 ### Supported Java Containers: 
 -   Apache Tomcat 8:
     - [https://tomcat.apache.org](https://tomcat.apache.org)
-    - [TomcatCookbook](./TomcatCookbook.md)
+    - [TomcatCookbook](../TomcatCookbook/)
 -   Pivotal Cloud Foundry 2.x:
     - [http://pivotal.io/platform](http://pivotal.io/platform)
-    - [CloudFoundryCookbook](./CloudFoundryCookbook.md)
+    - [CloudFoundryCookbook](../CloudFoundryCookbook/)
  
 ### MDW Database:
 - MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a MySQL or Oracle 
@@ -334,7 +334,10 @@ MDW comes with Adapter activities for consuming services over many protocols fro
   ![xml formatter](../images/consumeMyOrderProcess2.png)
   
 ##### Save and Run Your Process:
-- Launch your process, entering the orderId as you did in previous steps.  View the instance to confirm that the orderId was populated as expected.
+- Send a POST request from your browser with a URL like the following as you did in section 3:
+http://localhost:8080/mdw/Services/MyServices/Order
+- On the Designer, view the instance to confirm that the orderId was populated as expected.
+- In the process instance view, double-click the OrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire. 
 - In the process instance view, double-click the OrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire. 
 
    ![xml formatter](../images/orderProcessActivityInstance.png)   
