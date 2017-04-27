@@ -324,6 +324,7 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                     .findView(ProcessExplorerView.VIEW_ID);
             if (processExplorer != null) {
                 processExplorer.handleRefresh();
+                processExplorer.expand(topFolder);
             }
             return true;
         }
