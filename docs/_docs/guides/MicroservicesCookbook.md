@@ -31,10 +31,10 @@ You can perform many cloud development activities using a remote workflow projec
 ### Supported Java Containers: 
 -   Apache Tomcat 8:
     - [https://tomcat.apache.org](https://tomcat.apache.org)
-    - [TomcatCookbook](TomcatCookbook.md)
+    - [TomcatCookbook](./TomcatCookbook.md)
 -   Pivotal Cloud Foundry 2.x:
     - [http://pivotal.io/platform](http://pivotal.io/platform)
-    - [CloudFoundryCookbook](CloudFoundryCookbook.md)
+    - [CloudFoundryCookbook](./CloudFoundryCookbook.md)
  
 ### MDW Database:
 - MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a MySQL or Oracle 
@@ -53,14 +53,14 @@ A local project is useful if you want to debug your custom Java source code and 
 ##### Launch the Local Project wizard:
 - Right-click inside the blank Process Explorer view and select New > Local Project.  Select the Supported Java Container you'll be deploying in, and the type of [Asset Persistence](../help/assetPersistence.html)  you'll use.
 
-  ![xml formatter](../images/workflow.png)
+  ![workflow](../images/workflow.png)
 - When you click Next, you'll be presented with the Tomcat for your local development.  Enter the settings for your environment.  For details about these settings, refer to the 
   server-specific cookbooks listed above under "Supported Java Containers" section.
   
-  ![xml formatter](../images/tomcatSetting.png)
+  ![tomcat Setting](../images/tomcatSetting.png)
 - Click Next again and enter your database connection info.  The password for database is "mdw". 
 
-  ![xml formatter](../images/dbSetting.png)
+  ![dbSetting](../images/dbSetting.png)
   
 - Click Finish to generate your local project.
 
@@ -68,11 +68,11 @@ A local project is useful if you want to debug your custom Java source code and 
 - When you create design artifacts in MDW, these are organized into workflow packages, which are different from Java packages in that they can contain assets in a wide variety of formats.  Much of the MDW framework's core functionality itself is delivered this way.  The essential assets required by MDW are included in the packages "com.centurylink.mdw.base" and "com.centurylink.mdw.hub".  If you choose the built-in database asset persistence, these base packages will already exist, and you can skip down to Section 2.  Otherwise, if you're using a new database or VCS asset persistence, you'll need to import these packages locally from the MDW repository as follows.
 - Expand your newly-created workflow project in Process Explorer and you'll see that it currently contains no packages.  Right-click on the project and select Import > Package.  Choose the "Discover" option and leave the repository location as the default. `Note: The Asset Discovery URL is yet to be determined. In the meantime, take the default URL.`
 
-  ![xml formatter](../images/importBasePackages.png)
+  ![import Base Packages](../images/importBasePackages.png)
 
 - After you click Next it'll take a few moments for Designer to locate the available packages.  Once these are displayed, expand the base, db and hub packages and select the same MDW version as you did when creating the project.
 
-  ![xml formatter](../images/importBasePackages2.png)
+  ![importBasePackages2](../images/importBasePackages2.png)
 - Click Finish, and the packages will be downloaded and become visible in your Process Explorer project tree.
  
 ### Workflow Services
@@ -82,21 +82,21 @@ A local project is useful if you want to debug your custom Java source code and 
 - The top-level branches in the Process Explorer project tree represent workflow packages.  Your work should be incorporated in a dedicated package, which will be used for managing resources and for insulating your work from that of other users.  For further details refer to the Eclipse Cheat Sheet (Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning).
 - Create your workflow package by right-clicking on your project and selecting New > MDW Package.  Note: make sure your package name complies with Java package naming requirements (eg: no spaces) since it will contain dynamic Java resources.  Leave the Workgroup dropdown blank.
 
-   ![xml formatter](../images/mdwWorkflowMyServicePackage.png)
+   ![WorkflowMyServicePackage](../images/mdwWorkflowMyServicePackage.png)
 
 ##### Create the Service Process:
 -  Right-click on your new package in Process Explorer and select New > MDW Process.  Enter the process name and description (no workgroup), and click Finish.
 
-   ![xml formatter](../images/myOrderProcess.png)
+   ![Order Process](../images/myOrderProcess.png)
  
 -  After your process is created, double-click on the process title or on a blank area somewhere in the canvas to display the Properties View.  Select the Design properties tab and check "Service Process" to identify OrderProcess as a synchronous process returning a response. 
 
-   ![xml formatter](../images/myOrderProcess2.png)
+   ![OrderProcess2](../images/myOrderProcess2.png)
  
 ##### Add some Process Variables:
 -  The convention in MDW is that a service request variable is named "request" and a service response variable is named "response".  There's the option to name these differently, but for simplicity let's go along with the convention here.  On the Variables property tab, create these two variables in your process with type org.json.JSONObject.  Set the mode for the request variable to be Input, and the mode for the response to be Output.  Add String variables orderId and validationResult.
 
-   ![xml formatter](../images/myOrderProcessVariable.png)
+   ![myOrderProcessVariable](../images/myOrderProcessVariable.png)
    
 - Save your process design by selecting File > Save from the menu (or by clicking the disk icon in the Eclipse toolbar, or by typing ctrl-s).  Elect to overwrite the current version and to keep the process locked after saving.  During iterative development for convenience you'll sometimes overwrite the existing version of a process definition.  However once you've exported to another environment you'll want to increment the version since you cannot re-import a changed process with the same version number.  Details are covered under Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning.  
 

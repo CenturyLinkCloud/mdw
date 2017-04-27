@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.json.JSONObject;
 
@@ -53,23 +54,18 @@ import com.centurylink.mdw.plugin.designer.DesignerPerspective;
 import com.centurylink.mdw.plugin.designer.DesignerProxy;
 import com.centurylink.mdw.plugin.designer.Importer;
 import com.centurylink.mdw.plugin.designer.SwtProgressMonitor;
-import com.centurylink.mdw.plugin.designer.model.ActivityImpl;
 import com.centurylink.mdw.plugin.designer.model.ElementChangeEvent.ChangeType;
-import com.centurylink.mdw.plugin.designer.model.ExternalEvent;
 import com.centurylink.mdw.plugin.designer.model.File;
 import com.centurylink.mdw.plugin.designer.model.Folder;
-import com.centurylink.mdw.plugin.designer.model.WorkflowAsset;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
-import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
+import com.centurylink.mdw.plugin.designer.views.ProcessExplorerView;
 import com.centurylink.mdw.plugin.project.WorkflowProjectManager;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 public class ImportPackageWizard extends Wizard implements IImportWizard {
     private ImportPackagePage importPackagePage;
     private ImportPackageSelectPage importPackageSelectPage;
-
-    private List<java.io.File> fileList = new ArrayList<java.io.File>();
 
     ImportPackageSelectPage getImportPackageSelectPage() {
         return importPackageSelectPage;
@@ -197,7 +193,7 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                                 // TODO refresh Archive in case existing package
                                 // was
                                 // moved there
-
+                                /*
                                 importedPackage.addElementChangeListener(wfp);
                                 for (WorkflowProcess pv : importedPackage.getProcesses())
                                     pv.addElementChangeListener(wfp);
@@ -206,7 +202,7 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                                 for (ActivityImpl ai : importedPackage.getActivityImpls())
                                     ai.addElementChangeListener(wfp);
                                 for (WorkflowAsset wa : importedPackage.getAssets())
-                                    wa.addElementChangeListener(wfp);
+                                    wa.addElementChangeListener(wfp);*/
                                 importedPackages.add(importedPackage);
 
                                 if (wfp.isRemote() && wfp.isFilePersist()) {
@@ -285,23 +281,23 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                         PluginMessages.log("Unzipping " + tempFile + " into: " + assetDir);
                         FileHelper.unzipFile(tempFile, assetDir, null, null, true);
                         archiver.archive();
-                        progressMonitor.done();
                         FileHelper.unzipFile(tempFile, tempDir, null, null, true);
                         wfp.getSourceProject().refreshLocal(2, null);
                         java.io.File explodedDir = new java.io.File(tempDir + "/com");
                         if (explodedDir.isDirectory()) {
-                            for (java.io.File file : getFilesRecursive(explodedDir,
-                                    ".json")) {
+                            List<java.io.File> fileList = FileHelper.getFilesRecursive(
+                                    explodedDir, ".json", new ArrayList<java.io.File>());
+                            for (java.io.File file : fileList) {
                                 WorkflowPackage workflowPackage = new WorkflowPackage();
                                 workflowPackage.setProject(wfp);
                                 workflowPackage.setPackageVO(new PackageVO(new JSONObject(
                                         FileHelper.getFileContents(file.getPath()))));
-                                workflowPackage.addElementChangeListener(wfp);
                                 importedPackages.add(workflowPackage);
                             }
                             FileHelper.deleteRecursive(explodedDir);
                         }
                         tempFile.delete();
+                        progressMonitor.done();
                     }
                     wfp.getDesignerProxy().getCacheRefresh().doRefresh(true);
                 }
@@ -323,6 +319,13 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                 DesignerPerspective.promptForShowPerspective(
                         PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
                         importedPackages.get(0));
+            IWorkbenchPage page = MdwPlugin.getActivePage();
+            ProcessExplorerView processExplorer = (ProcessExplorerView) page
+                    .findView(ProcessExplorerView.VIEW_ID);
+            if (processExplorer != null) {
+                processExplorer.handleRefresh();
+                processExplorer.expand(topFolder);
+            }
             return true;
         }
         catch (InterruptedException ex) {
@@ -348,15 +351,5 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
 
     void setHasOldImplementors(boolean hasOldImplementors) {
         importPackageSelectPage.showUpgradeAssetsComposite(hasOldImplementors);
-    }
-
-    public List<java.io.File> getFilesRecursive(java.io.File src, String extn) {
-        for (java.io.File file : src.listFiles()) {
-            if (file.isFile() && file.getName().endsWith(extn))
-                fileList.add(file);
-            else if (file.isDirectory())
-                getFilesRecursive(file, extn);
-        }
-        return fileList;
     }
 }

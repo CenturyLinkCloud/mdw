@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -65,7 +66,8 @@ public class Pagelet implements Jsonable {
 
         SAXParser parser = parserFactory.newSAXParser();
         parser.parse(src, new DefaultHandler() {
-            private Widget curWidg = null;
+            private Stack<Widget> widgs = new Stack<>();;
+            private Map<String,String> widgNameToElem = new HashMap<>();
             private boolean inOpt;
 
             // attributes for workflow project
@@ -80,33 +82,87 @@ public class Pagelet implements Jsonable {
                     inOpt = true;
                 }
                 else {
-                    curWidg = new Widget(name.toLowerCase());
+                    Map<String,String> attrsMap = new HashMap<>();
                     for (int i = 0; i < attrs.getLength(); i++) {
-                        curWidg.setAttribute(attrs.getQName(i).toLowerCase(), attrs.getValue(i));
+                        attrsMap.put(attrs.getQName(i).toLowerCase(), attrs.getValue(i));
                     }
-                    widgets.add(curWidg);
+                    String type = translateType(name.toLowerCase(), attrsMap);
+                    Widget widget = new Widget(attrsMap.get("name"), type);
+                    attrsMap.remove("name");
+                    attrsMap.remove("type");
+                    widget.setAttributes(attrsMap);
+                    if (widget.getName() != null)
+                        widgNameToElem.put(widget.getName(), name);
+                    if (widgs.isEmpty())
+                        widgets.add(widget);
+                    else
+                        widgs.peek().addWidget(widget);
+                    widgs.push(widget);
                 }
             }
 
             @Override
             public void endElement(String uri, String localName, String name) throws SAXException {
-                if (name.equals("OPTION"))
+                if (name.equals("OPTION")) {
                     inOpt = false;
-                else
-                    curWidg = null;
+                }
+                else {
+                    if (!widgs.isEmpty()) {
+                        String elemName = widgNameToElem.get(widgs.peek());
+                        // assumes unnamed widgets can't have children
+                        if (elemName == null || elemName.equals(name))
+                            widgs.pop();
+                    }
+                }
             }
 
             public void characters(char[] ch, int start, int length) throws SAXException {
-                if (curWidg != null) {
+                if (!widgs.isEmpty()) {
                     if (inOpt) {
-                        curWidg.addOption(new String(ch).substring(start, start + length).trim());
+                        widgs.peek().addOption(new String(ch).substring(start, start + length).trim());
                     }
-                    else if (curWidg.getAttribute("name") == null) {
-                        curWidg.setAttribute("name", new String(ch).substring(start, start + length).trim());
+                    else if (widgs.peek().getName() == null) {
+                        widgs.peek().setName(new String(ch).substring(start, start + length).trim());
                     }
                 }
             }
         });
+    }
+
+    /**
+     * Translate widget type.
+     */
+    private String translateType(String type, Map<String,String> attrs) {
+        String translated = type.toLowerCase();
+        if ("select".equals(type))
+            translated = "dropdown";
+        else if ("boolean".equals(type))
+            translated = "checkbox";
+        else if ("hyperlink".equals(type)) {
+            if (attrs.containsKey("url"))
+                translated = "link";
+            else
+                translated = "text";
+        }
+        else {
+            // asset-driven
+            String source = attrs.get("source");
+            if ("TaskTemplates".equals(source)) {
+                attrs.put("source", "Assets");
+                attrs.put("extension", "task");
+            }
+            else if ("RuleSets".equals(source)) {
+                String format = attrs.get("type");
+                if (format != null) {
+                    String ext = Asset.getFileExtension(format.split(",")[0]);
+                    if (ext != null) {
+                        attrs.put("source", "Assets");
+                        attrs.put("extension", ext.substring(1));
+                    }
+                }
+            }
+        }
+        return translated;
     }
 
     public Pagelet(JSONObject json) throws JSONException {
@@ -117,7 +173,6 @@ public class Pagelet implements Jsonable {
         if (json.has("attributes"))
             attributes = JsonUtil.getMap(json.getJSONObject("attributes"));
     }
-
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
@@ -138,15 +193,22 @@ public class Pagelet implements Jsonable {
 
     public class Widget implements Jsonable {
 
-        public Widget(String type) {
+        public Widget(String name, String type) {
+            this.name = name;
             this.type = type;
         }
 
         private String type;
         public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
+
+        private String name;
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
 
         private Map<String,String> attributes;
+        /**
+         * everything but name, type and options
+         */
         public Map<String,String> getAttributes() { return attributes; }
         public void setAttributes(Map<String,String> attrs) { this.attributes = attrs; }
 
@@ -154,18 +216,28 @@ public class Pagelet implements Jsonable {
         public List<String> getOptions() { return options; }
         public void setOptions(List<String> options) { this.options = options; }
 
+        private List<Widget> widgets;
+        public List<Widget> getWidgets() { return widgets; }
+        public void setWidgets(List<Widget> widgets) { this.widgets = widgets; }
+
+        public void addWidget(Widget widget) {
+            if (widgets == null)
+                widgets = new ArrayList<>();
+            widgets.add(widget);
+        }
+
         public String getAttribute(String name) {
             if (attributes == null)
                 return null;
             else
                 return attributes.get(name);
         }
+
         public void setAttribute(String name, String val) {
             if (attributes == null)
                 attributes = new HashMap<String,String>();
-            this.attributes.put(name, val);
+            attributes.put(name, val);
         }
-
 
         public void addOption(String option) {
             if (options == null)
@@ -174,29 +246,55 @@ public class Pagelet implements Jsonable {
         }
 
         public Widget(JSONObject json) throws JSONException {
+            // name and type are mandatory
+            name = json.getString("name");
             type = json.getString("type");
-            if (json.has("attributes"))
-                attributes = JsonUtil.getMap(json.getJSONObject("attributes"));
+            Map<String,String> map = JsonUtil.getMap(json);
+
+            for (String key : map.keySet()) {
+                if (!key.equals("name") && !key.equals("type") && !key.equals("options"))
+                    setAttribute(key, json.getString(key));
+            }
+
             if (json.has("options")) {
                 options = new ArrayList<>();
                 JSONArray arr = json.getJSONArray("options");
                 for (int i = 0; i < arr.length(); i++)
                     options.add(arr.getString(i));
             }
+
+            if (json.has("widgets")) {
+                widgets = new ArrayList<>();
+                JSONArray arr = json.getJSONArray("widgets");
+                for (int i = 0; i < arr.length(); i++)
+                    widgets.add(new Widget(arr.getJSONObject(i)));
+            }
         }
 
         public JSONObject getJson() throws JSONException {
             JSONObject json = new JSONObject();
+            json.put("name", name);
             json.put("type", type);
-            JSONObject attrsJson = JsonUtil.getJson(attributes);
-            if (attrsJson != null)
-                json.put("attributes", attrsJson);
+
+            if (attributes != null) {
+                for (String key : attributes.keySet())
+                    json.put(key, attributes.get(key));
+            }
+
             if (options != null) {
                 JSONArray arr = new JSONArray();
                 for (String option : options)
                     arr.put(option);
                 json.put("options", arr);
             }
+
+            if (widgets != null) {
+                JSONArray arr = new JSONArray();
+                for (Widget widget : widgets)
+                    arr.put(widget.getJson());
+                json.put("widgets", arr);
+            }
+
             return json;
         }
 

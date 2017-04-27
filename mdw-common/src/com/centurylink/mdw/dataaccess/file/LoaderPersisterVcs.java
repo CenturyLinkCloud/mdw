@@ -1034,14 +1034,14 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public List<ActivityImplementor> getActivityImplementors() throws DataAccessException {
         try {
-            Map<String,ActivityImplementor> impls = new HashMap<String,ActivityImplementor>();
+            Map<String,ActivityImplementor> impls = new HashMap<>();
             for (PackageDir pkgDir : getPackageDirs()) {
                 for (ActivityImplementor impl : loadActivityImplementors(pkgDir)) {
                     if (!impls.containsKey(impl.getImplementorClassName()))
                         impls.put(impl.getImplementorClassName(), impl);
                 }
             }
-            List<ActivityImplementor> modifiableList = new ArrayList<ActivityImplementor>();
+            List<ActivityImplementor> modifiableList = new ArrayList<>();
             modifiableList.addAll(Arrays.asList(impls.values().toArray(new ActivityImplementor[0])));
             return modifiableList;
         }

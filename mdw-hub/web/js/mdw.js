@@ -11,7 +11,8 @@ mdwMod.factory('mdw', function() {
     roots: {
       services: $mdwServicesRoot,
       hub: $mdwHubRoot,
-      webTools: $mdwWebToolsRoot
+      webTools: $mdwWebToolsRoot,
+      docs: $mdwDocsRoot
     },
     serviceParams: function() {
       return { 

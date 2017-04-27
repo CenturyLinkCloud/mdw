@@ -65,9 +65,12 @@ String.prototype.removeCrs = function() {
 String.prototype.getLines = function() {
   return this.removeCrs().split(/\n/);
 };
-//count lines
+// count lines
 String.prototype.lineCount = function() {
   return this.getLines().length;
+};
+String.prototype.replaceAll = function(target, replacement) {
+  return this.split(target).join(replacement);
 };
 // line numbers
 String.prototype.lineNumbers = function() {
