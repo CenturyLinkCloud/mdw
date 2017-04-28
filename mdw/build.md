@@ -32,6 +32,7 @@
 
 11 - Publish using Jenkins (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
     - MDW6-Publish-Formal (or -Snapshot)
+    - Publish to Maven Central using mdw6-publish-maven-central (for formal build only)
     - Review console output for errors.
 
 12 - On GitHub:
