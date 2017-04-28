@@ -63,6 +63,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
   $scope.setActiveTab = function(tabName) {
     $scope.drilledValue = null;
     $scope.configurator = null;
+    $scope.editing = null;
     $scope.activeTabName = tabName;
     $scope.activeTab = $scope.tabs[tabName];
     $scope.activeTabValues = [];
@@ -350,7 +351,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
         if (field.value.startsWith('DOCUMENT:')) {
           field.url = '#/workflow/processes/' + $scope.workflowObject.id + '/values/' + fields[j-1].value;
         }
-        if (!labels[j].startsWith('_')) {
+        if (labels[j] == '_url') {
           // applies to previous field
           fields[j-1].url = field.value;
         }
@@ -396,6 +397,31 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
       }
     }
   };
+  
+  $scope.edit = function(widget) {
+    $scope.editing = widget;
+    $scope.editOptions = {
+      theme: 'eclipse', 
+      mode: widget.name === 'Java' ? 'java' : (widget.language ? widget.language.toLowerCase() : 'groovy'),
+      onChange: function() {
+        // first call happens on load
+        if ($scope.editDirty === undefined) {
+          $scope.editDirty = false;
+        }
+        else {
+          $scope.configurator.valueChanged(widget);
+          $scope.$parent.setDirty($scope.$parent.process);
+        }
+      },
+      basePath: '/mdw/lib/ace-builds/src-min-noconflict'
+    };    
+    $scope.configurator.edit(widget);
+  };
+  
+  $scope.valueChanged = function(widget) {
+    $scope.configurator.valueChanged(widget);
+    $scope.onChange($scope.process);
+  };  
 }]);
 
 inspectMod.factory('Inspector', ['mdw', 'util', function(mdw, util) {
@@ -454,8 +480,9 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
       // show
       Inspector.listen(function(obj, show) {
         scope.setWorkflow(obj);
+                
         scope.$apply();
-        
+
         if (show) {
           if (elem[0].style.display == 'none') {
             scope.openInspector();

@@ -77,7 +77,7 @@
           </div>
         </div>
         <!-- design section -->
-        <div class="mdw-inspector-values" ng-if="editable">
+        <div class="mdw-inspector-values" ng-if="editable && !editing">
           <div ng-repeat="widget in configurator.getWidgets()" class="mdw-widget" style="height:{{widget.height}}px;">
             <div class="mdw-widget-label">
               {{widget.label}}<span class="mdw-pre">{{widget.pad}}</span>
@@ -86,6 +86,9 @@
             </div>
           </div>
         </div>
+        <div class="mdw-inspector-values" ng-if="editing">
+          <div mdw-editor="editOptions" ng-model="editing.value" class="mdw-widget-edit"></div>
+        </div>        
       </div>
     </div>
   </div>

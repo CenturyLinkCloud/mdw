@@ -12,8 +12,11 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
     $scope.onProcessChange = function(proc) {
       var wasDirty = $scope.procDirty;
       $scope.procDirty = true;
-      if (!wasDirty)
-        $scope.$digest();
+      if (!wasDirty) {
+        var phase = this.$root.$$phase;
+        if (phase !== '$apply' && phase !== '$digest')
+          $scope.$digest();
+      }
       $scope.process = proc;
     };
   }
@@ -100,6 +103,13 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       return $scope.aceDirty;
   };
   
+  $scope.setDirty = function(dirty) {
+    if ($scope.process)
+      $scope.procDirty = dirty;
+    else
+      $scope.aceDirty = dirty;
+  };
+  
   $scope.isSaveEnabled = function() {
     if (!$scope.isDirty())
       return false;
@@ -182,5 +192,13 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   
   $scope.refreshCaches = function() {
     WorkflowCache.refresh({}, { distributed: $scope.options.distributedSave });
-  };  
+  };
+  
+  $scope.$on('$locationChangeStart', function(event) {
+    if ($scope.isDirty()) {
+      var answer = confirm("Your changes will be lost.\nClick OK to confirm you want to leave this page.");
+      if (!answer)
+        event.preventDefault();
+    }
+  });  
 }]);

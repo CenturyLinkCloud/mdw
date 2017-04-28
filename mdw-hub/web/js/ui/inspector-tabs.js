@@ -32,11 +32,12 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
          * Note: '=' refers to the identity (name) of each obj in collection
          */
         Variables: { 'variables': {
-          Name: '=',
-          Type: 'type',
-          Mode: 'category',
+            Name: '=',
+            Type: 'type',
+            Mode: 'category',
+          },
           '_template': mdw.roots.services + '/js/ui/templates/variables.json'
-        }},
+        },
         /* string:
          * Evaluated string refers to obj collection for list-type display.
          * Note: 'attributes' and 'assetAttrs' objects at the bottom of file

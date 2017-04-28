@@ -116,7 +116,7 @@ public class AssetVersionSpec {
 
     public static String getDefaultSmartVersionSpec(String version) {
         int dot = version.indexOf('.');
-        int major = dot > 0 ? Integer.parseInt(version.substring(0, dot)) : 0 ;
+        int major = dot > 0 ? Integer.parseInt(version.substring(0, dot)) : 0;
         return "[" + version + "," + ++major + ")";
     }
 }

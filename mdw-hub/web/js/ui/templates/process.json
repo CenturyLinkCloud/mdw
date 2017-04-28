@@ -1,0 +1,24 @@
+{
+  "category": "process",
+  "pagelet": {"widgets": [
+    {
+      "type": "checkbox",
+      "name": "_isService",
+      "label": "Service Process"
+    },
+    {
+      "type": "dropdown",
+      "name": "PerformanceLevel",
+      "label": "Performance Level",
+      "options": [
+        "0", "1", "3", "5", "9"
+      ],
+      "default": "0"
+    },
+    {
+      "name": "Process Design Help",
+      "type": "link",
+      "url": "/MDWWeb/doc/process.html"
+    }    
+  ]}
+}

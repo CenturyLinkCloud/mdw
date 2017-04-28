@@ -17,6 +17,7 @@ package com.centurylink.mdw.model.asset;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +128,9 @@ public class Pagelet implements Jsonable {
                 }
             }
         });
+
+        adjustWidgets();
+
     }
 
     /**
@@ -144,25 +148,70 @@ public class Pagelet implements Jsonable {
             else
                 translated = "text";
         }
+        else if ("rule".equals(type)) {
+            if ("EXPRESSION".equals(attrs.get("type"))) {
+                translated = "expression";
+            }
+            else if ("TRANSFORM".equals(attrs.get("type"))) {
+                translated = "edit";
+                attrs.put("label", "Transform");
+            }
+            else  {
+                translated = "edit";
+                attrs.put("label", "Script");
+            }
+            attrs.remove("type");
+        }
+        else if ("Java".equals(attrs.get("name"))) {
+            translated = "edit";
+        }
         else {
             // asset-driven
             String source = attrs.get("source");
-            if ("TaskTemplates".equals(source)) {
-                attrs.put("source", "Assets");
-                attrs.put("extension", "task");
+            if ("Process".equals(source)) {
+                translated = "asset";
+                attrs.put("source", "proc");
+            }
+            else if ("TaskTemplates".equals(source)) {
+                translated = "asset";
+                attrs.put("source", "task");
             }
             else if ("RuleSets".equals(source)) {
                 String format = attrs.get("type");
                 if (format != null) {
                     String ext = Asset.getFileExtension(format.split(",")[0]);
                     if (ext != null) {
-                        attrs.put("source", "Assets");
-                        attrs.put("extension", ext.substring(1));
+                        translated = "asset";
+                        attrs.put("source", ext.substring(1));
                     }
                 }
             }
         }
         return translated;
+    }
+
+    /**
+     * Adds companion widgets as needed.
+     */
+    private void adjustWidgets() {
+        // adjust to add script language options param
+        Map<Integer,Widget> companions = new HashMap<>();
+        for (int i = 0; i < widgets.size(); i++) {
+            Widget widget = widgets.get(i);
+            if ("expression".equals(widget.type) || ("edit".equals(widget.type) && !"Java".equals(widget.name))) {
+                Widget companion = new Widget("SCRIPT", "dropdown");
+                companion.setAttribute("label", "Language");
+                companion.options = Arrays.asList(widget.getAttribute("languages").split(","));
+                if (companion.options.contains("Groovy"))
+                    companion.setAttribute("default", "Groovy");
+                companions.put(i, companion);
+            }
+        }
+        int offset = 0;
+        for (int idx : companions.keySet()) {
+            widgets.add(idx + offset, companions.get(idx));
+            offset++;
+        }
     }
 
     public Pagelet(JSONObject json) throws JSONException {
@@ -301,6 +350,8 @@ public class Pagelet implements Jsonable {
         public String getJsonName() {
             return "widget";
         }
+
+
     }
 
 }

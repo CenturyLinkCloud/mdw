@@ -860,12 +860,17 @@
 }
 .mdw-widget select {
   height: 22px;
+  margin-right: 5px;
 }
 .mdw-widget input {
   padding: 2px 3px;
 }
 .mdw-widget textarea {
   padding: 2px 3px;
+}
+.mdw-widget a {
+	position: relative;
+	top: 3px;
 }
 .mdw-widget-label {
   font-weight: bold;
@@ -881,6 +886,14 @@
 	position: relative;
 	top: 3px;
 }
+.mdw-widget-edit {
+  position: absolute !important;
+  top: 45px;
+  left: 125px;
+  bottom: 0;
+  right: 0;
+  font-size: 13px !important; 
+}
 .mdw-editor {
   position: absolute !important;
   top: 80px;
@@ -893,6 +906,10 @@
 	font-size: 13px;
   font-weight: bold;
   padding: 4px 6px;
+}
+.mdw-dirty {
+	font-weight: bold;
+	font-size: 22px;
 }
 .panel-heading a {
   font-weight: bold;

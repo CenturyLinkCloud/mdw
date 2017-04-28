@@ -27,6 +27,7 @@ module.exports = function(grunt) {
           setTimeout: false,
           angular: false,
           require: false,
+          confirm: false,
           $mdwHubRoot: false,
           $mdwServicesRoot: false,
           $mdwWebToolsRoot: false,

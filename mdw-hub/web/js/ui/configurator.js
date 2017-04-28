@@ -25,6 +25,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
     var labelWidth = 10;
     for (let i = 0; i < this.template.pagelet.widgets.length; i++) {
       var widget = this.template.pagelet.widgets[i];
+      
       // label
       if (!widget.label)
         widget.label = widget.name;
@@ -35,11 +36,25 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
       if (this.template.category === 'object') {
         widget.value = this.workflowObj[widget.name];
       }
+      else if (this.template.category === 'process') {
+        if (widget.name === '_isService')
+          widget.value = this.workflowObj.attributes.PROCESS_VISIBILITY === 'SERVICE' ? 'true' : 'false';
+        else
+          widget.value = this.workflowObj.attributes[widget.name];
+      }
       else {
         widget.value = this.workflowObj.attributes[widget.name];
       }
       if (!widget.value && widget.default)
         widget.value = widget.default;
+
+      if (widget.type === 'checkbox' && widget.value) {
+        widget.value = widget.value.toLowerCase();
+      }
+      else if (widget.type === 'edit') {
+        if (widget.value)
+          widget.label += '*';
+      }
       
       // width && height
       widget.width = widget.vw;
@@ -57,11 +72,12 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
           widget.options = this.getVariableNames();
         else if (widget.source === 'DocumentVariables')
           widget.options = this.getVariableNames(true);
-        else if (widget.source === 'Assets')
-            this.setSourceAssetOptions(widget);
+        else if (widget.type === 'asset')
+          this.initAssetOptions(widget);
         
-        // TODO: parameterized, UserGroup, 
+        // TODO: parameterized, UserGroup, TaskCategory
       }
+      
     }
     
     // padding
@@ -89,13 +105,27 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
     return varNames;
   };
     
-  Configurator.prototype.setSourceAssetOptions = function(widget) {
-    $http.get(mdw.roots.services + '/services/Assets?extension=' + widget.ext + "&app=mdw-admin").then(function(res) {
-      widget.options = [];
+  Configurator.prototype.initAssetOptions = function(widget) {
+    widget.options = [];
+    var selectAsset;
+    if (widget.value) {
+      var spaceV = widget.value.lastIndexOf(' v');
+      if (spaceV > 0)
+        selectAsset = widget.value.substring(0, spaceV);
+      else
+        selectAsset = widget.value;
+      if (widget.source == 'proc')
+        selectAsset += '.proc';  // process attrs saved without ext 
+    }
+    $http.get(mdw.roots.services + '/services/Assets?extension=' + widget.source + "&app=mdw-admin").then(function(res) {
       if (res.data.packages) {
         res.data.packages.forEach(function(pkg) {
           pkg.assets.forEach(function(asset) {
-            widget.options.push(pkg.name + '/' + asset.name + ' v' + asset.version);
+            var base = pkg.name + '/' + asset.name;
+            var option = base + ' v' + asset.version;
+            widget.options.push(option);
+            if (base === selectAsset)
+              widget.value = option; 
           });
         });
       }
@@ -109,8 +139,10 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
     var widgets = [];
     var tab = this.tab;
     this.template.pagelet.widgets.forEach(function(widget) {
-      if ((widget.section && tab === widget.section) || (!widget.section && tab === 'Design'))
-        widgets.push(widget);
+      if (!widget.hidden) {
+        if ((widget.section && tab === widget.section) || (!widget.section && tab === 'Design'))
+          widgets.push(widget);
+      }
     });
     this.template.pagelet.widgets = widgets;
   };
@@ -135,6 +167,46 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
     }
     else {
       return null;
+    }
+  };
+  
+  Configurator.prototype.edit = function(widget) {
+  };
+  
+  Configurator.prototype.valueChanged = function(widget) {
+    if (this.template.category === 'object') {
+      this.workflowObj[widget.name] = widget.value;
+    }
+    else if (this.template.category === 'process') {
+      if (widget.name === '_isService')
+        this.workflowObj.attributes.PROCESS_VISIBILITY = widget.value === 'true' ? 'SERVICE' : 'PUBLIC';
+      else
+        this.workflowObj.attributes[widget.name] = widget.value;
+    }
+    else {
+      if (widget.type === 'asset')
+        this.setAssetValue(widget);
+      else
+        this.workflowObj.attributes[widget.name] = widget.value;
+    }
+  };
+  
+  Configurator.prototype.setAssetValue = function(widget) {
+    var asset = widget.value;
+    var version;
+    var spaceV = widget.value.lastIndexOf(' v');
+    if (spaceV > 0) {
+      var minVer = asset.substring(spaceV + 2);
+      var dot = minVer.indexOf('.');
+      var major = dot > 0 ? parseInt(minVer.substring(0, dot)) : 0;
+      version = '[' + minVer + ',' + major++ + ")";
+      asset = asset.substring(0, spaceV);
+    }
+    
+    this.workflowObj.attributes[widget.name] = asset;
+    if (version) {
+      if (widget.name === 'processname')
+        this.workflowObj.attributes.processversion = version;
     }
   };
   

@@ -108,7 +108,8 @@ workflowMod.controller('MdwWorkflowController',
     if ($scope.diagram) {
       if ($scope.dragging) {
         if ($scope.diagram.onMouseDrag(e)) {
-          $scope.onChange($scope.process);
+          if ($scope.onChange)
+            $scope.onChange($scope.process);
         }
       }
       else {
@@ -1054,6 +1055,7 @@ workflowMod.factory('mdwImplementors', ['mdw', function(mdw) {
 //       - version: for non-latest process version
 //       - renderState: if true, display runtime overlay
 //       - editable: if true, workflow can be modified
+//   - on-process-change: handler for process change event
 //   - service-base: endpoint url root
 //   - hub-base: MDWHub url root
 workflowMod.directive('mdwWorkflow', [function() {
@@ -1062,7 +1064,7 @@ workflowMod.directive('mdwWorkflow', [function() {
     templateUrl: 'ui/workflow.html',
     scope: {
       process: '=process',
-      onChange: '=onchange',
+      onChange: '=onProcessChange',
       renderState: '@renderState',
       editable: '@editable',
       serviceBase: '@serviceBase',
