@@ -1,4 +1,5 @@
 <select ng-readonly="widget.readonly" ng-model="widget.value" ng-change="valueChanged(widget)">
   <option ng-repeat="option in widget.options" value="{{option}}">{{option}}</option>
 </select>
-<a href="" style="top:0;">Edit</a>
+<a href="{{widget.assetUrl}}" ng-if="widget.value" target="_blank" style="top:0;">Open</a>
+<a href="" ng-if="!widget.value" ng-click="newAsset(widget.source)" target="_blank" style="top:0;">New...</a>

@@ -3,5 +3,5 @@
   "icon": "adapter.png",
   "implementorClass": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
   "label": "JDBC SQL Adapter",
-  "pagelet": "<PAGELET>\n  <TEXT NAME='jdbcDataSource' LABEL='JDBC DataSource' />\n  <DROPDOWN NAME='queryType' LABEL='Query Type' DEFAULT='Select' VW='100'>\n    <OPTION>Select<\/OPTION>\n    <OPTION>Update<\/OPTION>\n  <\/DROPDOWN>\n  <DROPDOWN NAME='parameterVariable' LABEL='Parameter(s) Variable' SOURCE='Variables' VW='150' />\n  <TEXT NAME='sqlQuery' LABEL='SQL Query' SOURCE='Variables' MULTILINE='true' />\n  <HYPERLINK URL='/MDWWeb/doc/sqlAdapter.html'>\n    SQL Adapter Help\n  <\/HYPERLINK>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <TEXT NAME='jdbcDataSource' LABEL='JDBC DataSource'/>\n  <SELECT NAME='queryType' LABEL='Query Type' DEFAULT='Select' VW='100'>\n    <OPTION>Select<\/OPTION>\n    <OPTION>Update<\/OPTION>\n  <\/SELECT>\n  <DROPDOWN NAME='parameterVariable' LABEL='Parameter(s) Variable' SOURCE='Variables' VW='150'/>\n  <TEXT NAME='sqlQuery' LABEL='SQL Query' SOURCE='Variables' MULTILINE='true'/>\n  <HYPERLINK URL='/MDWWeb/doc/sqlAdapter.html'>SQL Adapter Help<\/HYPERLINK>\n<\/PAGELET>"
 }

@@ -3,5 +3,5 @@
   "icon": "send.gif",
   "implementorClass": "com.centurylink.mdw.workflow.activity.event.PublishEventMessage",
   "label": "Publish Event Message",
-  "pagelet": "<PAGELET>\n   <TEXT NAME='Event Name'/>\n   <TEXT NAME='Message' MULTILINE='true' VH='150'/>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <TEXT NAME='Event Name'/>\n  <TEXT NAME='Message' MULTILINE='true' VH='150'/>\n<\/PAGELET>"
 }

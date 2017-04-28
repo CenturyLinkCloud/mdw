@@ -3,5 +3,5 @@
   "icon": "excel.gif",
   "implementorClass": "com.centurylink.mdw.drools.DroolsDecisionTableActivity",
   "label": "Drools Decision Table",
-  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='KnowledgeBase' LABEL='Knowledge Base' SOURCE='RuleSets' TYPE='EXCEL_2007' />\n  <TEXT NAME='DecisionTableSheet' LABEL='Worksheet (Optional)' VW='175'/>\n  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/> \n  <HYPERLINK URL='/MDWWeb/doc/droolsActivities.html'>\n    Decision Table Activity Help\n  <\/HYPERLINK>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='KnowledgeBase' LABEL='Knowledge Base' SOURCE='RuleSets' TYPE='EXCEL_2007'/>\n  <TEXT NAME='DecisionTableSheet' LABEL='Worksheet (Optional)' VW='175'/>\n  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>\n  <HYPERLINK URL='/MDWWeb/doc/droolsActivities.html'>Decision Table Activity Help<\/HYPERLINK>\n<\/PAGELET>"
 }

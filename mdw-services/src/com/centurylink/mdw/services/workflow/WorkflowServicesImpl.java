@@ -15,7 +15,10 @@
  */
 package com.centurylink.mdw.services.workflow;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -711,7 +714,18 @@ public class WorkflowServicesImpl implements WorkflowServices {
         int version = query.getIntFilter("version");
         if (version < 0)
             version = 0;
+        boolean forUpdate = query.getBooleanFilter("forUpdate");
         Process process = ProcessCache.getProcess(processName, version);
+        if (forUpdate) {
+            // load from file
+            try {
+                byte[] bytes = Files.readAllBytes(Paths.get(process.getRawFile().getAbsolutePath()));
+                process = new Process(new JSONObject(new String(bytes)));
+            }
+            catch (Exception ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error reading process: " + process.getRawFile());
+            }
+        }
         if (process == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath);
 

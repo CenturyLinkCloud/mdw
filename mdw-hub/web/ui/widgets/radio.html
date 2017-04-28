@@ -1,0 +1,4 @@
+<label ng-repeat="option in widget.options">
+  <input type="radio" ng-model="widget.value" value="{{option}}" ng-change="valueChanged(widget)">
+  {{option}}
+</label>

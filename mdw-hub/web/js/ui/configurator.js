@@ -124,8 +124,10 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
             var base = pkg.name + '/' + asset.name;
             var option = base + ' v' + asset.version;
             widget.options.push(option);
-            if (base === selectAsset)
-              widget.value = option; 
+            if (base === selectAsset) {
+              widget.value = option;
+              widget.assetUrl = mdw.roots.hub + '/#/asset/' + base;
+            }
           });
         });
       }
@@ -199,14 +201,19 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
       var minVer = asset.substring(spaceV + 2);
       var dot = minVer.indexOf('.');
       var major = dot > 0 ? parseInt(minVer.substring(0, dot)) : 0;
-      version = '[' + minVer + ',' + major++ + ")";
+      version = '[' + minVer + ',' + (++major) + ")";
       asset = asset.substring(0, spaceV);
     }
+
+    if (asset.endsWith('.proc'))
+      asset = asset.substring(0, asset.length - 5);
     
     this.workflowObj.attributes[widget.name] = asset;
     if (version) {
       if (widget.name === 'processname')
         this.workflowObj.attributes.processversion = version;
+      else
+        this.workflowObj.attributes[widget.name + '_assetVersion'] = version;
     }
   };
   
