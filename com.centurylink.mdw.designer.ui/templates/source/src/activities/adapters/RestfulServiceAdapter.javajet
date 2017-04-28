@@ -10,7 +10,7 @@ package <%=adapterActivity.getJavaPackage()%>;
 import java.net.HttpURLConnection;
 import java.util.Map;
 
-import com.centurylink.mdw.common.utilities.HttpHelper;
+import com.centurylink.mdw.common.util.HttpHelper;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.activity.ActivityException;

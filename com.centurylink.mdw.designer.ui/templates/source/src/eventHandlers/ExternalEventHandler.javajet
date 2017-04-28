@@ -10,8 +10,8 @@ package <%=eventHandler.getJavaPackage()%>;
 import java.util.Map;
 
 import com.centurylink.mdw.common.constant.OwnerType;
-import com.centurylink.mdw.common.utilities.logger.LoggerUtil;
-import com.centurylink.mdw.common.utilities.logger.StandardLogger;
+import com.centurylink.mdw.util.log.LoggerUtil;  
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.listener.ExternalEventHandlerBase;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.event.EventHandlerException;
