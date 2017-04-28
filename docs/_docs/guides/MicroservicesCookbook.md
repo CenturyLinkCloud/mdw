@@ -349,7 +349,6 @@ MDW comes with Adapter activities for consuming services over many protocols fro
 http://localhost:8080/mdw/Services/MyServices/Order
 - On the Designer, view the instance to confirm that the orderId was populated as expected.
 - In the process instance view, double-click the OrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire. 
-- In the process instance view, double-click the OrderProcess activity instance.  Then on the Instance property tab, double-click on the activity instance row.  The Activity Instance dialog shows you the raw request and response values that were sent over the wire. 
 
    ![alt text](../images/orderProcessActivityInstance.png "orderProcessActivityInstance")   
    ![alt text](../images/orderProcessActivityInstance2.png "orderProcessActivityInstance2")    
