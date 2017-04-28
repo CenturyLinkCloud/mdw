@@ -39,8 +39,17 @@ You can perform many cloud development activities using a remote workflow projec
 ### MDW Database:
 - MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a MySQL or Oracle 
   database. Generally for cloud development you'll point to a pre-existing central database.  If you want to host your own database, you'll need to configure an instance of MySQL 
-  with the MDW db schema. The SQL scripts for installing the MDW schema are available here: [this readme](../../../../mdw/database/mysql/readme.txt/).
+  with the MDW db schema. The SQL scripts for installing the MDW schema and setting up an MDW database in MySQL:  
   
+		Note: on Linux it's required to set the MySQL system variable lower_case_table_names to 1:
+		http://dev.mysql.com/doc/refman/5.0/en/server-system-variables.html#sysvar_lower_case_table_names
+		Run the following scripts in this order. These scripts are found in mdw/database/mysql directory.
+		1. create_tables.sql	
+		2. create_indexes.sql
+		3. add_fkeys.sql
+		4. baseline_inserts.sql (This script inserts a basic set of reference data into some of the tables created above).
+		5. seed_users.sql (Edit the seed_users.sql script to add initial MDW users.  At least one of these should be granted Site Admin access to enable them to add users through the Administration webapp). 
+		
 ### Local Development:
 #### 1. Create a Local Project
 A local project is useful if you want to debug your custom Java source code and Groovy scripts.  The standard MDW war file is deployed as part of the steps outlined in this tutorial.

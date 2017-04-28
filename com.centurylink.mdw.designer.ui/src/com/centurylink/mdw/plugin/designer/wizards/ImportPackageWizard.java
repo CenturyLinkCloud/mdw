@@ -193,16 +193,7 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                                 // TODO refresh Archive in case existing package
                                 // was
                                 // moved there
-                                /*
-                                importedPackage.addElementChangeListener(wfp);
-                                for (WorkflowProcess pv : importedPackage.getProcesses())
-                                    pv.addElementChangeListener(wfp);
-                                for (ExternalEvent ee : importedPackage.getExternalEvents())
-                                    ee.addElementChangeListener(wfp);
-                                for (ActivityImpl ai : importedPackage.getActivityImpls())
-                                    ai.addElementChangeListener(wfp);
-                                for (WorkflowAsset wa : importedPackage.getAssets())
-                                    wa.addElementChangeListener(wfp);*/
+
                                 importedPackages.add(importedPackage);
 
                                 if (wfp.isRemote() && wfp.isFilePersist()) {
@@ -285,8 +276,8 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                         wfp.getSourceProject().refreshLocal(2, null);
                         java.io.File explodedDir = new java.io.File(tempDir + "/com");
                         if (explodedDir.isDirectory()) {
-                            List<java.io.File> fileList = FileHelper.getFilesRecursive(
-                                    explodedDir, ".json", new ArrayList<java.io.File>());
+                            List<java.io.File> fileList = FileHelper.getFilesRecursive(explodedDir,
+                                    ".json", new ArrayList<java.io.File>());
                             for (java.io.File file : fileList) {
                                 WorkflowPackage workflowPackage = new WorkflowPackage();
                                 workflowPackage.setProject(wfp);
@@ -313,8 +304,6 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
 
         try {
             getContainer().run(true, true, op);
-            for (WorkflowPackage importedPackage : importedPackages)
-                importedPackage.fireElementChangeEvent(ChangeType.ELEMENT_CREATE, importedPackage);
             if (importedPackages.size() > 0)
                 DesignerPerspective.promptForShowPerspective(
                         PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
