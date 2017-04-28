@@ -210,13 +210,15 @@ public class ImportPackagePage extends WizardPage {
 
         createSpacer(radioGroup, 3);
 
-        createSpacer(radioGroup, 1);
-        latestVersionsCheckbox = new Button(radioGroup, SWT.CHECK | SWT.LEFT);
-        gd = new GridData(GridData.BEGINNING);
-        gd.horizontalSpan = 2;
-        latestVersionsCheckbox.setLayoutData(gd);
-        latestVersionsCheckbox.setText("Show only latest released versions");
-        latestVersionsCheckbox.setSelection(true);
+        if (!getProject().checkRequiredVersion(6, 0)) {
+            createSpacer(radioGroup, 1);
+            latestVersionsCheckbox = new Button(radioGroup, SWT.CHECK | SWT.LEFT);
+            gd = new GridData(GridData.BEGINNING);
+            gd.horizontalSpan = 2;
+            latestVersionsCheckbox.setLayoutData(gd);
+            latestVersionsCheckbox.setText("Show only latest released versions");
+            latestVersionsCheckbox.setSelection(true);
+        }
 
         new Label(radioGroup, SWT.NONE);
         Link link = new Link(radioGroup, SWT.SINGLE);
@@ -246,7 +248,7 @@ public class ImportPackagePage extends WizardPage {
     private void enableDiscoveryControls(boolean enabled) {
         if (discoveryUrlText.isEnabled() != enabled)
             discoveryUrlText.setEnabled(enabled);
-        if (latestVersionsCheckbox.isEnabled() != enabled)
+        if (latestVersionsCheckbox != null && latestVersionsCheckbox.isEnabled() != enabled)
             latestVersionsCheckbox.setEnabled(enabled);
     }
 
@@ -317,7 +319,11 @@ public class ImportPackagePage extends WizardPage {
             ((ImportPackageWizard) getWizard()).setHasOldImplementors(false);
 
             final String url = discoveryUrlText.getText().trim();
-            final boolean latestVersionsOnly = latestVersionsCheckbox.getSelection();
+            final boolean latestVersionsOnly;
+            if (latestVersionsCheckbox != null)
+                latestVersionsOnly = latestVersionsCheckbox.getSelection();
+            else
+                latestVersionsOnly = true;
 
             // display a progress dialog since this can take a while
             ProgressMonitorDialog pmDialog = new MdwProgressMonitorDialog(getShell());
