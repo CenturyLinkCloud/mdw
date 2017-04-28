@@ -256,6 +256,7 @@ With MDW REST services you can automatically generate Swagger documentation just
  
 ##### Add the @Api Annotation to Your Service:
 - The Swagger Api annotation goes on your class declaration along with the JAX-RS Path annotation.  The tag value in your annotation provides a high-level description of the its purpose:
+
   ```swagger
 @Path("/Order")	
 @Api("CenturyLink orders service")
@@ -298,6 +299,7 @@ public class Orders extends JsonRestService {
 
 ##### Add Swagger Annotations to the Orders Class:
 - To enable consumers to easily create request content and interpret responses, you can annotate the related model objects so that they're discovered when documentation is generated.  In the Orders dynamic Java class, add the following class-level annotation:
+
   ```swager
 @ApiModel(value="Order", description="Centurylink Order")
 public class Orders extends JsonRestService {
