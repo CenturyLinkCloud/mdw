@@ -3,5 +3,5 @@
   "icon": "process.jpg",
   "implementorClass": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
   "label": "Invoke Subprocess",
-  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='processname' LABEL='Subprocess' SOURCE='Process' EDITABLE='TRUE' REFRESH='true' VW='375'/>\n  <DROPDOWN NAME='processversion' LABEL='Version' SOURCE='ProcessVersion' REFRESH='true' VW='150' HIDDEN='true'/>\n  <SELECT NAME='synchronous' DEFAULT='TRUE'>\n    <OPTION>TRUE<\/OPTION>\n    <OPTION>FALSE<\/OPTION>\n  <\/SELECT>\n  <MAPPING NAME='variables' SOURCE='Subprocess' VH='320'/>\n  <HYPERLINK URL='/MDWWeb/doc/InvokeSubProcessActivity.html'>\n    Subprocess Activity Help\n  <\/HYPERLINK>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='processname' LABEL='Subprocess' SOURCE='Process' EDITABLE='TRUE' REFRESH='true' VW='375'/>\n  <DROPDOWN NAME='processversion' LABEL='Version' SOURCE='ProcessVersion' REFRESH='true' VW='150' HIDDEN='true'/>\n  <BOOLEAN NAME='synchronous' DEFAULT='true'/>\n  <MAPPING NAME='variables' SOURCE='Subprocess' VH='320'/>\n  <HYPERLINK URL='/MDWWeb/doc/InvokeSubProcessActivity.html'>\n    Subprocess Activity Help\n  <\/HYPERLINK>\n<\/PAGELET>"
 }

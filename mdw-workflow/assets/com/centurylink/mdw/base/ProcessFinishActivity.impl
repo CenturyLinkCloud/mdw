@@ -3,5 +3,5 @@
   "icon": "shape:stop",
   "implementorClass": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
   "label": "Process Finish",
-  "pagelet": "<PAGELET ICON=\"shape:stop\" LABEL=\"Process Finish\" BASETYPES=\"com.centurylink.mdw.activity.types.FinishActivity\">\n  <HYPERLINK URL=\"/MDWWeb/doc/ProcessFinishActivity.html\">Process Finish Activity Help<\/HYPERLINK>\n  <DROPDOWN NAME=\"TerminationAction\" LABEL=\"Termination Action\">\n    <OPTION>Complete Process<\/OPTION>\n    <OPTION>Cancel Process<\/OPTION>\n  <\/DROPDOWN>\n  <TEXT NAME=\"CompletionCode\" LABEL=\"Completion Code\"/>\n  <DROPDOWN NAME=\"DoNotNotifyCaller\" LABEL=\"Do Not Notify Caller\" DEFAULT=\"false\">\n    <OPTION>false<\/OPTION>\n    <OPTION>true<\/OPTION>\n  <\/DROPDOWN>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <HYPERLINK URL=\"/MDWWeb/doc/ProcessFinishActivity.html\">Process Finish Activity Help<\/HYPERLINK>\n  <DROPDOWN NAME=\"TerminationAction\" LABEL=\"Termination Action\">\n    <OPTION>Complete Process<\/OPTION>\n    <OPTION>Cancel Process<\/OPTION>\n  <\/DROPDOWN>\n  <TEXT NAME=\"CompletionCode\" LABEL=\"Completion Code\"/>\n  <DROPDOWN NAME=\"DoNotNotifyCaller\" LABEL=\"Do Not Notify Caller\" DEFAULT=\"false\">\n    <OPTION>false<\/OPTION>\n    <OPTION>true<\/OPTION>\n  <\/DROPDOWN>\n<\/PAGELET>"
 }

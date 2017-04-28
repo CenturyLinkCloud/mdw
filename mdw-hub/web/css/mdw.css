@@ -835,6 +835,9 @@ a.mdw_listLinks:hover {
   /* IE9 does not support CSS3 linear-gradient */
   filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#fefefe', endColorstr='#d5d8da');  
 }
+.mdw_tab a {
+	outline: none;
+}
 .mdw_tab_active {
   cursor: default;
   background: linear-gradient(to bottom, #fefefe, #d5d8da);
