@@ -17,8 +17,10 @@ process: # 10158
     name: |
       Change
       Non-Output Docs
-    status: Failed
-    result: com.centurylink.mdw.activity.ActivityException: Attempt to change value of non-output document 'changedXmlBean'...
+    status: Completed
+  activity: # 2 "2017-04-28 18:23:04"
+    name: Stop
+    status: Completed
   variable: # 10476
     name: changedDomDoc
     value: |
