@@ -150,9 +150,8 @@ public class TaskTemplate extends Asset implements Jsonable {
     private List<String> getGroups(String groupAttributeName) {
       List<String> groups = new ArrayList<String>();
       String groupsString = this.getAttribute(groupAttributeName);
-      if (groupsString!=null && groupsString.length()>0) {
-        for (String group : groupsString.split("#"))
-          groups.add(group);
+      if (groupsString != null && groupsString.length() > 0) {
+          return StringHelper.parseList(groupsString);
       }
       return groups;
     }

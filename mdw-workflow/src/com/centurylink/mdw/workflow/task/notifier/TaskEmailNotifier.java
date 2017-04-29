@@ -17,6 +17,7 @@ package com.centurylink.mdw.workflow.task.notifier;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -427,7 +428,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         if (noticeGroups == null)
             return null;
         try {
-            return toMailAddresses(getGroupEmails(noticeGroups.split("#")));
+            return toMailAddresses(getGroupEmails(StringHelper.parseList(noticeGroups)));
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -447,7 +448,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
             List<String> groups;
             if (taskInstanceVO.isTemplateBased()) groups = taskInstanceVO.getGroups();
             else groups = taskManager.getGroupsForTaskInstance(taskInstanceVO);
-            return toMailAddresses(getGroupEmails(groups.toArray(new String[groups.size()])));
+            return toMailAddresses(getGroupEmails(groups));
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -466,7 +467,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
      */
     protected Address[] getGroupEmailAddresses(String[] groups) throws ObserverException, AddressException {
         try {
-            return toMailAddresses(getGroupEmails(groups));
+            return toMailAddresses(getGroupEmails(Arrays.asList(groups)));
         }
         catch (MdwException e) {
             logger.severeException(e.getMessage(), e);
@@ -474,7 +475,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         }
     }
 
-    public List<String> getGroupEmails(String[] groups) throws UserException, DataAccessException {
+    public List<String> getGroupEmails(List<String> groups) throws UserException, DataAccessException {
         UserManager userManager = ServiceLocator.getUserManager();
         return userManager.getEmailAddressesForGroups(groups);
     }

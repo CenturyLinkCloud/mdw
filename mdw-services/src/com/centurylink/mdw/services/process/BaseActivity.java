@@ -63,6 +63,7 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.ServiceLocatorException;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -1261,7 +1262,7 @@ public abstract class BaseActivity implements GeneralActivity {
     protected Object executeScript(String script, String language, Map<String,Object> addlBindings) throws ActivityException {
 
         String temp = getAttributeValue(OUTPUTDOCS);
-        outputDocuments = temp == null ? new String[0] : temp.split("#");
+        outputDocuments = temp == null ? new String[0] : StringHelper.parseList(temp).toArray(new String[0]);
         Object retObj = null;
         try {
             if (Compatibility.hasCodeSubstitutions())

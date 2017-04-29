@@ -15,21 +15,15 @@
  */
 package com.centurylink.mdw.plugin.designer.properties.convert;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.centurylink.mdw.common.utilities.StringHelper;
 
 public class ListConverter implements ValueConverter {
     public Object toModelValue(String propertyValue) throws ConversionException {
         if (propertyValue == null)
             return null;
-
-        List<String> values = new ArrayList<String>();
-        for (String s : propertyValue.split("#")) {
-            if (s.length() > 0)
-                values.add(s);
-        }
-
-        return values;
+        return StringHelper.parseList(propertyValue);
     }
 
     public String toPropertyValue(Object modelValue) throws ConversionException {

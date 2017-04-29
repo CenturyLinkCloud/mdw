@@ -83,7 +83,7 @@ public class TransformActivity extends ScriptExecutorActivity {
             if (StringHelper.isEmpty(outputDocument)) {
                 throw new ActivityException("Output document has not been specified.");
             }
-            setOutputDocuments(new String[]{outputDocument});
+            setOutputDocuments(StringHelper.parseList(outputDocument).toArray(new String[0]));
 
             if (transformLanguage.equals(GPATH)) {
                 executeGPath();

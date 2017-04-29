@@ -500,6 +500,10 @@ public class WorkflowProject extends WorkflowElement
         return getMdwMajorVersion() * 1000;
     }
 
+    public boolean checkRequiredVersion(int major) {
+        return checkRequiredVersion(major, 0);
+    }
+
     public boolean checkRequiredVersion(int major, int minor) {
         return checkRequiredVersion(major, minor, 0);
     }

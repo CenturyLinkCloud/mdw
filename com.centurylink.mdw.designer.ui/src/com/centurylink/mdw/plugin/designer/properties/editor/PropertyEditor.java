@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.Viewer;
@@ -53,6 +52,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.centurylink.mdw.common.Compatibility;
 import com.centurylink.mdw.common.constant.WorkAttributeConstant;
+import com.centurylink.mdw.common.utilities.StringHelper;
 import com.centurylink.mdw.model.data.task.TaskCategory;
 import com.centurylink.mdw.model.value.event.BamMessageDefinition;
 import com.centurylink.mdw.plugin.MdwPlugin;
@@ -85,8 +85,7 @@ public class PropertyEditor {
     public static final String TYPE_IMAGE_COMBO = "IMAGE_DROPDOWN";
     public static final String TYPE_LINK = "HYPERLINK";
     public static final String TYPE_INFO = "NOTE";
-    public static final String TYPE_SCRIPT = "RULE"; // not here; see
-                                                     // ScriptSection
+    public static final String TYPE_SCRIPT = "RULE"; // not here; see ScriptSection
     public static final String TYPE_RADIO = "SELECT";
     public static final String TYPE_CHECKBOX = "BOOLEAN";
     public static final String TYPE_SWITCH = "SWITCH";
@@ -1421,10 +1420,7 @@ public class PropertyEditor {
 
         public Object[] getElements(Object inputElement) {
             String valueString = (String) inputElement;
-            StringTokenizer st = new StringTokenizer(valueString, "#");
-            content = new ArrayList<String>();
-            while (st.hasMoreTokens())
-                content.add(st.nextToken());
+            content = StringHelper.parseList(valueString);
             return content.toArray();
         }
 
@@ -1445,13 +1441,7 @@ public class PropertyEditor {
         }
 
         private String calcValue() {
-            String value = "";
-            for (int i = 0; i < content.size(); i++) {
-                if (i > 0)
-                    value += "#";
-                value += content.get(i);
-            }
-            return value;
+            return StringHelper.serialize(content, getProject().checkRequiredVersion(6, 0, 4));
         }
 
         public void clear() {

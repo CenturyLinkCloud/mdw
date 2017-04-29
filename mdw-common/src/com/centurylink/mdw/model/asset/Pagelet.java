@@ -139,9 +139,20 @@ public class Pagelet implements Jsonable {
     private String translateType(String type, Map<String,String> attrs) {
         String translated = type.toLowerCase();
         if ("select".equals(type))
-            translated = "dropdown";
+            translated = "radio";
         else if ("boolean".equals(type))
             translated = "checkbox";
+        else if ("list".equals(type)) {
+            translated = "picklist";
+            String lbl = attrs.get("label");
+            if (lbl == null)
+                lbl = attrs.get("name");
+            if ("Output Documents".equals(lbl)) {
+                attrs.put("label", "Documents");
+                attrs.put("unselectedLabel", "Read-Only");
+                attrs.put("selectedLabel", "Writable");
+            }
+        }
         else if ("hyperlink".equals(type)) {
             if (attrs.containsKey("url"))
                 translated = "link";

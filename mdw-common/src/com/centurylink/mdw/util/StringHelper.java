@@ -35,6 +35,9 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 /**
  * Helper classes for String utilities.
  */
@@ -1238,6 +1241,43 @@ public class StringHelper {
         return sb.toString();
     }
 
+    public static List<String> parseList(String value) {
+        List<String> list = new ArrayList<String>();
+        if (value.startsWith("[")) {
+            try {
+                JSONArray jsonArr = new JSONArray(value);
+                for (int i = 0; i < jsonArr.length(); i++)
+                    list.add(jsonArr.getString(i));
+            }
+            catch (JSONException ex) {
+                throw new StringParseException(ex);
+            }
+        }
+        else {
+            StringTokenizer st = new StringTokenizer(value, "#");
+            while (st.hasMoreTokens())
+                list.add(st.nextToken());
+        }
+        return list;
+    }
+
+    public static String serialize(List<String> list, boolean json) {
+        String value = "";
+        if (json) {
+            JSONArray jsonArr = new JSONArray();
+            for (String str : list)
+                jsonArr.put(str);
+            return jsonArr.toString(); // no pretty
+        }
+        else {
+            for (int i = 0; i < list.size(); i++) {
+                if (i > 0)
+                    value += "#";
+                value += list.get(i);
+            }
+        }
+        return value;
+    }
 
     public static Map<String,String> parseMap(String map) {
         HashMap<String,String> hash = new LinkedHashMap<String,String>();
@@ -1488,6 +1528,18 @@ public class StringHelper {
     }
     public static Date parseIsoDate(String iso) throws java.text.ParseException {
         return isoDateFormat.parse(iso);
+    }
+
+    public static class StringParseException extends RuntimeException {
+        public StringParseException(String message) {
+            super(message);
+        }
+        public StringParseException(String message, Throwable cause) {
+            super(message, cause);
+        }
+        public StringParseException(Throwable cause) {
+            super(cause);
+        }
     }
 
 }
