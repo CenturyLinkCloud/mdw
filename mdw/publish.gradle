@@ -1,5 +1,6 @@
 // publishes build output to a maven repository
-// eg: mdw repo or nexus
+// eg: mdw repo or maven central
+
 repositories {
     mavenCentral()
 }
@@ -139,3 +140,17 @@ task publishToMavenCentral(type: GradleBuild) {
       buildFile = "build.gradle"
       tasks = ["uploadArchives"]
   }
+
+def createReleaseTag = {
+      def tagName = "release/${mdwVersion}"
+      ("git tag $tagName").execute()
+      ("git push origin $tagName").execute()
+      return "$tagName"
+  }
+  
+ 
+task tagRelease(type: GradleBuild){
+    doLast {
+        println createReleaseTag()
+    }
+}
