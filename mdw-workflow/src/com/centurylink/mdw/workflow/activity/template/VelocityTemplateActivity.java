@@ -92,7 +92,7 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
     protected void mergeTemplate() throws ActivityException {
         try {
             String temp = getAttributeValue(OUTPUTDOCS);
-            setOutputDocuments(temp == null ? new String[0] : temp.split("#"));
+            setOutputDocuments(temp == null ? new String[0] : StringHelper.parseList(temp).toArray(new String[0]));
 
             // get the template from the cache
             Asset templateVO = getTemplate(templateName);

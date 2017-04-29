@@ -85,7 +85,7 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
         kSession.execute(CommandFactory.newInsertElements(facts));
 
         String temp = getAttributeValue(OUTPUTDOCS);
-        setOutputDocuments(temp == null ? new String[0] : temp.split("#"));
+        setOutputDocuments(temp == null ? new String[0] : StringHelper.parseList(temp).toArray(new String[0]));
 
         // TODO handle document variables
         Process processVO = getProcessDefinition();

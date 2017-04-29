@@ -441,11 +441,11 @@ public class UserManagerBean implements UserManager {
      * @param groups
      * @return array of e-mail addresses
      */
-    public List<String> getEmailAddressesForGroups(String[] groups)
+    public List<String> getEmailAddressesForGroups(List<String> groups)
     throws DataAccessException, UserException {
       List<String> addresses = new ArrayList<String>();
       String preferredEmail =null;
-      for (User user : getUsersForGroups(groups)) {
+      for (User user : getUsersForGroups(groups.toArray(new String[0]))) {
           if (!"dev".equalsIgnoreCase(user.getCuid())) {
               user.setAttributes(getUserPreferences(user.getId()));
               preferredEmail = user.getEmail();

@@ -64,7 +64,7 @@ public class JavaSection extends PropertySection implements IFilter {
 
         // output docs
         outputDocsPropertyEditor = new PropertyEditor(activity, PropertyEditor.TYPE_PICKLIST);
-        outputDocsPropertyEditor.setLabel("Reference Vars:Read-Only~Writable");
+        outputDocsPropertyEditor.setLabel("Documents:Read-Only~Writable");
 
         outputDocsPropertyEditor.setValueOptions(activity.getProcess().getDocRefVariableNames());
         outputDocsPropertyEditor.addValueChangeListener(new ValueChangeListener() {

@@ -17,6 +17,7 @@ package com.centurylink.mdw.workflow.activity.notification;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,7 +139,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
         List<Address> recipients = new ArrayList<Address>();
 
         if (!StringHelper.isEmpty(groups)) {
-            for (Address address : getGroupEmailAddresses(groups.split("#"))) {
+            for (Address address : getGroupEmailAddresses(StringHelper.parseList(groups))) {
                 if (!recipients.contains(address))
                     recipients.add(address);
             }
@@ -197,7 +198,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
      * @return an array with the valid e-mail addresses
      * @throws AddressException
      */
-    protected Address[] getGroupEmailAddresses(String[] groups)
+    protected Address[] getGroupEmailAddresses(List<String> groups)
     throws ActivityException, AddressException {
         try {
             return toMailAddresses(getGroupEmails(groups));
@@ -208,7 +209,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
         }
     }
 
-    public List<String> getGroupEmails(String[] groups) throws UserException, DataAccessException {
+    public List<String> getGroupEmails(List<String> groups) throws UserException, DataAccessException {
         UserManager userManager = ServiceLocator.getUserManager();
         return userManager.getEmailAddressesForGroups(groups);
     }
@@ -235,7 +236,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
             }
             catch (CachingException ex) {group=null;}
             if (group != null) {
-                return getGroupEmailAddresses(new String[] { group.getName() });
+                return getGroupEmailAddresses(Arrays.asList(new String[]{group.getName()}));
             }
             else {
                 int atIdx = recip.indexOf('@');
@@ -258,7 +259,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
                 }
                 catch (CachingException ex) {group=null;}
                 if (group != null) {
-                    for (Address address : getGroupEmailAddresses(new String[] { group.getName() })) {
+                    for (Address address : getGroupEmailAddresses(Arrays.asList(new String[]{group.getName()}))) {
                         if (!addresses.contains(address))
                             addresses.add(address);
                     }

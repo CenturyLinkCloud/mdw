@@ -328,9 +328,9 @@ public interface UserManager {
      * An email address is composed of user's cuid appended
      * with "@centurylink.com"
      * @param groups
-     * @return array of e-mail addresses
+     * @return list of e-mail addresses
      */
-    public List<String> getEmailAddressesForGroups(String[] groups)
+    public List<String> getEmailAddressesForGroups(List<String> groups)
     throws DataAccessException, UserException;
 
     /**

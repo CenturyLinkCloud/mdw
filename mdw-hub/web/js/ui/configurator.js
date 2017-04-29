@@ -2,8 +2,8 @@
 
 var configMod = angular.module('mdwConfigurator', ['mdw']);
 
-configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_TYPES',
-                  function($http, mdw, util, Assets, DOCUMENT_TYPES) {
+configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups', 'Compatibility', 'DOCUMENT_TYPES',
+                  function($http, mdw, util, Assets, Workgroups, Compatibility, DOCUMENT_TYPES) {
   
   var Configurator = function(tab, workflowType, workflowObj, diagramObj, template) {
     this.tab = tab;
@@ -16,6 +16,10 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
   };
   
   Configurator.prototype.initValues = function() {
+
+    // we need workgroups populated
+    if (!Workgroups.groupList)
+      Workgroups.groupList = Workgroups.get();
     
     // help link
     this.helpLink = this.getHelpLink();
@@ -31,6 +35,20 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
         widget.label = widget.name;
       if (widget.label.length > labelWidth)
         labelWidth = widget.label.length;
+
+      // options source
+      if (widget.source) {
+        if (widget.source === 'Variables')
+          widget.options = this.getVariableNames();
+        else if (widget.source === 'DocumentVariables')
+          widget.options = this.getVariableNames(true);
+        else if (widget.source === 'UserGroup')
+          widget.options = this.getWorkgroups();
+        else if (widget.type === 'asset')
+          this.initAssetOptions(widget);
+        
+        // TODO: parameterized, UserGroup, TaskCategory
+      }
       
       // value
       if (this.template.category === 'object') {
@@ -55,6 +73,30 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
         if (widget.value)
           widget.label += '*';
       }
+      else if (widget.type === 'picklist') {
+        if (widget.value)
+          widget.value = Compatibility.getArray(widget.value);
+        widget.unselected = [];
+        for (let j = 0; j < widget.options.length; j++) {
+          let option = widget.options[j];
+          if (widget.value.indexOf(option) == -1)
+            widget.unselected.push(option);
+        }
+//        widget.add = function() {
+//          console.log('adding...');
+//        };
+//        widget.remove = function() {
+//          widget.sel.forEach(function(sel)) {
+//            widget.unselected.push(sel);
+//          };
+//          var newVal = [];
+//          widget.value.forEach(function(val)) {
+//            if (widget.sel.indexOf(val) == -1)
+//              newVal.push(val);
+//          };
+//          widget.value = newVal;
+//        };
+      }
       
       // width && height
       widget.width = widget.vw;
@@ -64,18 +106,6 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
       if (widget.multiline) {
         widget.rows = widget.rows ? widget.rows : 8;
         widget.height = widget.rows * 17.5 + 10;
-      }
-      
-      // options source
-      if (widget.source) {
-        if (widget.source === 'Variables')
-          widget.options = this.getVariableNames();
-        else if (widget.source === 'DocumentVariables')
-          widget.options = this.getVariableNames(true);
-        else if (widget.type === 'asset')
-          this.initAssetOptions(widget);
-        
-        // TODO: parameterized, UserGroup, TaskCategory
       }
       
     }
@@ -103,6 +133,10 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'DOCUMENT_T
       }
     });
     return varNames;
+  };
+  
+  Configurator.prototype.getWorkgroups = function() {
+    return Workgroups.groupList;
   };
     
   Configurator.prototype.initAssetOptions = function(widget) {
