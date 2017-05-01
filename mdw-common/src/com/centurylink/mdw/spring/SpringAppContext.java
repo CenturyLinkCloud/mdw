@@ -79,13 +79,17 @@ public class SpringAppContext implements CacheEnabled, CacheService {
         if (packageContexts != null) {
             synchronized (pkgContextLock) {
                 for (MdwCloudAppContext appContext : packageContexts.values())
-                    appContext.close();
+                    shutDown(appContext);
             }
         }
 
         if (springAppContext != null) {
             springAppContext.close();
         }
+    }
+
+    private void shutDown(MdwCloudAppContext pkgContext) {
+        pkgContext.close();
     }
 
     private GenericXmlApplicationContext springAppContext;
@@ -119,7 +123,8 @@ public class SpringAppContext implements CacheEnabled, CacheService {
 
     public void loadPackageContexts() throws IOException {
         synchronized (pkgContextLock) {
-            packageContexts = loadPackageContexts(getApplicationContext());
+            if (packageContexts == null)
+                packageContexts = loadPackageContexts(getApplicationContext());
         }
     }
 
@@ -332,6 +337,10 @@ public class SpringAppContext implements CacheEnabled, CacheService {
     @Override
     public void clearCache() {
         synchronized (pkgContextLock) {
+            if (packageContexts != null) {
+                for (MdwCloudAppContext appContext : packageContexts.values())
+                    shutDown(appContext);
+            }
             packageContexts = null;
         }
     }
