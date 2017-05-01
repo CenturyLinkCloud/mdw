@@ -7,7 +7,7 @@ title: Tomcat Cookbook
 
 ### Prerequisites
  - Eclipse Neon for JavaEE Developers:  
-   http://www.eclipse.org/downloads
+   [http://www.eclipse.org/downloads](http://www.eclipse.org/downloads)
  - Required Plugins:
      - MDW Designer:                                                     
        http://centurylinkcloud.github.io/mdw/designer/updateSite
@@ -20,18 +20,27 @@ title: Tomcat Cookbook
      - Yaml:                                             
        http://dadacoalition.org/yedit
  - Tomcat 8:
-     - https://tomcat.apache.org
+     - [https://tomcat.apache.org](https://tomcat.apache.org)
  - Chrome and Postman
-     - https://www.google.com/chrome
-	 - https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop
-	 
+     - [https://www.google.com/chrome](https://www.google.com/chrome)     
+     - [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
+     
 ### Supported Java Container (Apache Tomcat 8)  
-You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  To be able to develop locally you need an Apache Tomcat: https://tomcat.apache.org.
+You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  To be able to develop locally you need an Apache Tomcat: [https://tomcat.apache.org](https://tomcat.apache.org).
 
 ### MDW Database:
 - MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a MySQL or Oracle 
   database. Generally for cloud development you'll point to a pre-existing central database.  If you want to host your own database, you'll need to configure an instance of MySQL 
-  with the MDW db schema. The SQL scripts for installing the MDW schema are available here: [this readme](../../mdw/database/mysql/readme.txt).
+  with the MDW db schema. The SQL scripts for installing the MDW schema and setting up an MDW database in MySQL:  
+  
+		Note: on Linux it's required to set the MySQL system variable lower_case_table_names to 1:
+		http://dev.mysql.com/doc/refman/5.0/en/server-system-variables.html#sysvar_lower_case_table_names
+		Run the following scripts in this order. These scripts are found in mdw/database/mysql directory.
+		1. create_tables.sql	
+		2. create_indexes.sql
+		3. add_fkeys.sql
+		4. baseline_inserts.sql (This script inserts a basic set of reference data into some of the tables created above).
+		5. seed_users.sql (Edit the seed_users.sql script to add initial MDW users.  At least one of these should be granted Site Admin access to enable them to add users through the Administration webapp). 
   
 
 ### Workflow Services
@@ -42,21 +51,21 @@ A local project is useful if you want to debug your custom Java source code and 
 ##### Open the Designer Perspective in Eclipse:
 - Launch Eclipse (with the MDW Plug-In installed).
 - From the menus select Window > Open Perspective > Other > MDW Designer.
-- For detailed documentation covering the designer, refer to the [MDW Designer User Guide](../designer/DesignerUserGuide.md)
+- For detailed documentation covering the designer, refer to the [MDW Designer User Guide](../../designer/user-guide/)
  
 ##### Launch the Local Project wizard:
 - Right-click inside the blank Process Explorer view and select New > Local Project.  Select Apache Tomcat as your Java container.  For Asset Persistence choose VCS (MDW 
   will create a local Git repo where it'll store the workflow metadata for your assets).
   
-  ![xml formatter](../images/workflow.png)
+   ![alt text](../images/workflow.png "workflow")
   
 - Click Next.  Enter information about your Tomcat installation.  If you don't know what your Tomcat User password is, enter "tomcat".
 
-  ![xml formatter](../images/addTomcatServer.png)
+  ![alt textr](../images/addTomcatServer.png "addTomcatServer")
     
 - Click Next again and enter your database connection info.  The password for the database is "mdw".  
 
-  ![xml formatter](../images/dbSetting.png)
+  ![alt text](../images/dbSetting.png "dbSetting")
 
 - Click Finish to generate your local project and download MDW into your Tomcat webapps directory.
 
@@ -69,12 +78,12 @@ A local project is useful if you want to debug your custom Java source code and 
 - Expand your newly-created workflow project in Process Explorer and you'll see that it currently contains no workflow packages.  
   Right-click on the project and select Import > Package.  Choose the "Discover" option and leave the repository location as the default.
   
-  ![xml formatter](../images/importBasePackages.png)
+  ![alt text](../images/importBasePackages.png "importBasePackages")
  
 - After you click Next it'll take a few moments for Designer to locate the available packages.  Once these are displayed, expand both the base package and 
   the hub package and select the same MDW version as you did when creating the project.
   
-  ![xml formatter](../images/importBasePackages2.png)
+  ![alt text](../images/importBasePackages2.png "importBasePackages2")
   
 - Click Finish, and the packages will be downloaded and become visible in your Process Explorer project tree.
 
@@ -85,7 +94,7 @@ A local project is useful if you want to debug your custom Java source code and 
   (eg: no spaces) since it will contain dynamic Java resources.  Leave the Workgroup dropdown blank. If you don’t see MDW Package when you right click your project, click File > New > 
   MDW Package from the top menu bar. 
   
-  ![xml formatter](../images/mdwWorkflowPackage.png)
+  ![alt text](../images/mdwWorkflowPackage.png "mdwWorkflowPackage")
 
 #### Local Development
 
@@ -95,12 +104,12 @@ A local project is useful if you want to debug your custom Java source code and 
 - Right-click on your new package in Process Explorer and select New > MDW Process.  Enter the process name and description and click Finish. 
   If you don’t see MDW Process when you right click your new package, click File > New > MDW Process from the top menu bar.
   
-  ![xml formatter](../images/newProcess.png)
+  ![alt text](../images/newProcess.png "newProcess")
 
 ##### Add some Process Variables:
 - Double-click on the process title or on a blank area somewhere in the canvas to display the Properties View.  
   Select the Variables property tab and add an input variable (request) and two local variables (orderId and validationResult) with types as depicted below.
-  ![xml formatter](../images/addProcessVariables.png)
+  ![xml formatter](../images/addProcessVariables.png "addProcessVariables")
  
 - Save your process design by selecting File > Save from the menu (or by clicking the disk icon in the Eclipse toolbar, or by typing ctrl-s).  
   Elect to overwrite the current version and to keep the process locked after saving.  During iterative development for convenience you'll 
@@ -108,18 +117,18 @@ A local project is useful if you want to debug your custom Java source code and 
   increment the version since you cannot re-import a changed process with the same version number.  
   Details are covered under Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning.
   
-  ![xml formatter](../images/saveProcess.png)
+  ![alt text](../images/saveProcess.png "saveProcess")
  
 
 ##### Create a Dynamic Java Custom Activity:
 - Right-click on your package in Process Explorer and select New > Activity > General Activity.  
   On the first page of the wizard, enter a label to identify your activity in the Toolbox view.
   
-  ![xml formatter](../images/addActivity.png)
+  ![alt text](../images/addActivity.png "addActivity")
  
 - Click Next and enter a class name for your activity implementor.  The Java package name is the same as your workflow package name.
 
-  ![xml formatter](../images/addActivity2.png)
+  ![alt text](../images/addActivity2.png "addActivity2")
  
 - When you click Finish the Java code for a skeleton implementation is generated.  You'll also see the Java class under your package in Process Explorer.  
   This source code resides under src/main/workflow and is known as a Dynamic Java workflow asset.  It's dynamic because it can be changed without needing 
@@ -128,7 +137,7 @@ A local project is useful if you want to debug your custom Java source code and 
   With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
 - Update the generated Java source code to resemble the following:
 
-```java
+  ```java
 	package MyPackage;
 	import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
 	import com.centurylink.mdw.common.utilities.timer.Tracked;
@@ -179,7 +188,7 @@ A local project is useful if you want to debug your custom Java source code and 
 - Double click the activity in the canvas, and in its Definition property tab change the label to something like "Validate Order".  When you click back on the canvas the activity 
   reflects its new label.
   
-  ![xml formatter](../images/process2.png)
+  ![alt text](../images/process2.png "process2")
  
 - Note: If you select the Design property tab for your activity you'll see that it's blank.  A non-trivial activity would allow certain aspects (such as endpoint URLs) to be 
   configurable, so that it could readily be reused.  For example, take a look at the Design tab for the Start activity.  You control what appears on the Design tab through the pagelet 
@@ -192,12 +201,12 @@ A local project is useful if you want to debug your custom Java source code and 
 - Drag a Process Finish activity from the Toolbox, and add another outbound transition from "Validate Order".   Assign Result Code values of "true" and "false" to the respective 
   transitions as illustrated below.  Save your process definition.  The value passed in setReturnCode() in your activity's execute() method dictates which of these two paths will be 
 
-  ![xml formatter](../images/process3.png)
+  ![alt text](../images/process3.png "process3")
  
 #### 3. Running Your Process
 
 ##### Ensure Permissions:
-- To follow the remaining steps in this tutorial you need to be granted the appropriate roles in the MDW demo database (unless you've installed a database locally).  An administrator can grant you appropriate access using the MDWHub webapp.  For a detailed discussion of this topic, refer to the "Roles and Permissions" section in the [MDW Designer User Guide](../designer/DesignerUserGuide.md).
+- To follow the remaining steps in this tutorial you need to be granted the appropriate roles in the MDW demo database (unless you've installed a database locally).  An administrator can grant you appropriate access using the MDWHub webapp.  For a detailed discussion of this topic, refer to the "Roles and Permissions" section in the [MDW Designer User Guide](../../designer/user-guide/).
 
 ##### Create a Tomcat Server:
 Note: If you have already installed the Tomcat server from the previous step(s), you can skip this step.
@@ -205,22 +214,22 @@ Note: If you have already installed the Tomcat server from the previous step(s),
   From the menu select File > New > Other > Server > Server.  Click Next and select Apache > Tomcat 8.0 (MDW) from the options.  To be able to debug your Dynamic Java it's important 
   that you select Tomcat 8.0 (MDW) instead of the standard Tomcat 8.0 Server.  The server name is arbitrary, so you can make is something friendlier than the default.
   
-  ![xml formatter](../images/addTomcatServer.png)
+  ![alt text](../images/addTomcatServer.png "addTomcatServer")
   
 - If you've not previously used a Tomcat 8 runtime in Eclipse, clicking Add takes you to a page where you specify your Tomcat location.   Make sure to select a JDK to compile the code 
   and that the selected JDK is Java 1.8.x
   
-   ![xml formatter](../images/addTomcatServer2.png)
+   ![alt text](../images/addTomcatServer2.png "addTomcatServer2")
  
 - The final page of the New Server wizard is where you designate your workflow project to be deployed on the server.  After that, click Finish to create the server instance.
 - If the Servers view is not visible in your current perspective, from the menu select Window > Show View > Other > Server > Servers.  You should see your Tomcat 7 server in this view.  You can 
   double-click the server to edit its configuration.  Expand the Timeouts section, change the start timeout value to 3600 seconds, and hit Ctrl-S to save your changes.  Then close the editor.
-   ![xml formatter](../images/addTomcatServer3.png)
+   ![alt text](../images/addTomcatServer3.png "addTomcatServer3")
  
 - Before you start the server, you will need to add your MyWorkflow project to your server instance. Right click the server instance, select Add and Remove… and select the MyWorkflow from the 
   left pane and click the Add to move it to the right pane.
   
-   ![xml formatter](../images/addTomcatServer4.png)
+   ![alt text(../images/addTomcatServer4.png "addTomcatServer4")
 
 ##### Run Tomcat:
 - Now that you've created the WTP server instance, the Servers view gives you a handy way to start and stop Tomcat.  And output is directed to the Eclipse Console view, where you can click on 
@@ -241,16 +250,16 @@ Note: If you have already installed the Tomcat server from the previous step(s),
 - Right-click on your process that is under your workflow package in Process Explorer view and Select Run. You can also right-click on your Designer and Select Run.  Designer will present the 
   launch dialog and open a connection to the server to confirm that it's running (required for launching a process).
 - On the Process tab in the launch dialog, select "Monitor Runtime Log" and "Process Instance Live View" to get a feel for how you can watch your process flow in real time.
-   ![xml formatter](../images/runPrcoess.png)
+   ![alt textr](../images/runPrcoess.png "runPrcoess")
  
 ##### Populate the Input Variable:
-   ```XML
+   ```xml
    <order> 
       <orderId>N12345678</orderId>
    </order>
    ```
 - Select the Variables tab in the launch dialog, and populate the request variable with the following content.
-   ![xml formatter](../images/runPrcoess2.png)
+   ![xml formatter](../images/runPrcoess2.png "runPrcoess2")
 
 ##### Launch and View an Instance:
 - Click Run on the launch dialog to run an instance of your process.  In the Live View you should see the new instance progress down the happy path with the Validate Order outcome equal to  
@@ -258,7 +267,7 @@ Note: If you have already installed the Tomcat server from the previous step(s),
   instance will appear at the top of the Process Instances list, and you can double-click to open its runtime view.
 - In Designer Perspective when a process instance is visible, a legend appears showing what the borders surrounding the activities mean.  To inspect the runtime variable values for the 
   instance, click the Values property tab.
-   ![xml formatter](../images/processInstance.png)
+   ![alt text](../images/processInstance.png "processInstance")
 
 ##### Change Java Code and Rerun with a Breakpoint:
 - Change the Java source so that validation expects an order number that begins with a digit:
@@ -296,7 +305,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   ```
 - Drag the Document Web Service activity onto the design canvas and insert it downstream of Perform Validation.  Label the web service activity "Check Employee", and give it two separate 
   outcomes corresponding to true and false, just like the validation activity.
-   ![xml formatter](../images/process4.png)
+   ![alt text](../images/process4.png "process4")
  
   On the Design tab of the service, set the Endpoint/WSDL URL to: [http://localhost:8080/mdw/Services/SOAP](http://localhost:8080/mdw/Services/SOAP).
 
@@ -311,12 +320,11 @@ MDW comes with the Document Web Service Activity for consuming document-style se
     <sapId>''' + employeeId + '''</sapId>
   </GetEmployee>''';
   ```
-- Add new process variables – click the Process on the canvas and click Variables tab that is on the left navigation under the Design tab - to hold the service request 
+- Add new process variables. Click the Process on the canvas and click Variables tab that is on the left navigation under the Design tab - to hold the service request 
   (name=employeeServiceRequest, type=com.centurylink.mdw.model.StringDocument) and response (name=employeeServiceResponse, type=org.w3c.dom.Document).  On the Design tab of the Check Employee 
-  web service activity, select these new variables in the Request Variable and Response Variable dropdowns respectively.  Edit the postscript as follows (if you've installed the Groovy plugin   
-  you'll get syntax highlighting and autocomplete):
+  web service activity, select these new variables in the Request Variable and Response Variable dropdowns respectively.  Edit the postscript as follows (if you've installed the Groovy plugin you'll get syntax highlighting and autocomplete):
     
-  ```java    
+  ```groovy    
   import org.w3c.dom.Node;
   import org.w3c.dom.Node;
   import org.w3c.dom.NodeList;
@@ -357,7 +365,8 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 - Right-click again on a blank spot and select View Instances.  Double-click the instance to open it.  It should reflect that the service was invoked, your SAP ID was found, and the "true" 
   outcome from Check Employee should be traversed.  Double-click on the Check Employee activity in the process instance.  On the Instance property tab, double-click on the instance row to 
   display the raw SOAP request and response:
-   ![xml formatter](../images/soapReqestResponse.png)
+  
+   ![alt text](../images/soapReqestResponse.png "soapReqestResponse")
   
 #### 5. Expose Your Process to External Systems
 
@@ -379,14 +388,14 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 	<TEXT NAME="responseMessage" LABEL="Message" VW="300"/>
   </PAGELET>
   ```  
-     ![xml formatter](../images/newActivity.png)
+     ![alt text](../images/newActivity.png "newActivity")
   
 - Click Next.  Give a name for the class and click Finish.
-    ![xml formatter](../images/newActivity2.png)
+    ![alt text](../images/newActivity2.png "newActivity2")
     
 - Make your activity implementor source code look something like this:
 
-```java      
+```java
 package MyPackage;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
@@ -403,11 +412,9 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
                 String code = getAttributeValueSmart("responseCode");
                 if (code == null)
                     throw new ActivityException("Missing attribute: responseCode");                                                
-		    
                 String resString = "<OrderValidationResponse orderId=\"" + getVariableValue("orderId") + "\">\n"+ "  <Code>" + code + "</Code>\n";                  
                 if (!code.equals("0"))
                     resString += "  <Message>" + getAttributeValueSmart("responseMessage")+ "</Message>\n";
-
                 resString += "</OrderValidationResponse>";
                 setVariableValue("response", DomHelper.toDomDocument(resString));
             }
@@ -417,11 +424,12 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
             return null;
     	}
     }
-  ```
+ ```
+
 - Now rework your process so that the three possible outcomes all generate a response using this activity.  For the two error paths set the Response Code to be non-zero in the Design tab.
   Since the validation result is kept in a process variable, you can use a Java Expression as illustrated below to parameterize the Message attribute value.
   
-   ![xml formatter](../images/process5.png)
+   ![alt text](../images/process5.png "process5")
  
 - You can still test your process execution by launching in Designer like we've done previously. However, for your process to be available as a service for consumption by external systems, 
   you'll need to register an event handler.
@@ -437,13 +445,13 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
   undefined which of those handlers will be invoked.  For this reason it's imperative that you make the XPath expression unique so that it does not match requests it is not intended to 
   handle (and thereby hijack those requests from their intended handler).
   
-   ![xml formatter](../images/externalEventHandler.png)
+   ![alt text](../images/externalEventHandler.png "externalEventHandler")
  
 - In Process Explorer view your event handler appears labeled as its associated message pattern.  You can test it by right-clicking on it and selecting Run, and then filling in the External Event 
   Request in the launch dialog.  When you run this way Designer submits the request document over HTTP to the MDW RESTful listener, so it not only tests your process flow but it also tests your Event 
   Handler registration as well.
   
-   ![xml formatter](../images/externalEventHandler2.png)
+   ![alt text](../images/externalEventHandler2.png "externalEventHandler2")
  
 - After successfully invoking your External Event Handler, you should see the expected response in the console view, and you should also find that a new instance of your service process was created.
 
@@ -451,7 +459,7 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
 - The easiest way to expose your process as a SOAP service is to create a document-style WSDL workflow asset that describes it.  In Process Explorer view, right-click on your workflow package and 
   select  New > XML Document.  Name it something appropriate for your service, and select the language/format as WSDL.
   
-   ![xml formatter](../images/soapService.png)
+   ![alt text](../images/soapService.png "soapService")
  
 - Edit the content of your WSDL to look something like the following (with appropriate substitutions based on your request and response).
 
@@ -532,8 +540,7 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
       
 - Click on the System tab and the Messaging navigation link on the left pane and the HTTP Poster (if you don't see the System tab you'll need to be granted Site Admin permissions for
   the environment where you're testing).  The submittal URL for HTTP Poster defaults to the MDW REST endpoint, so change the context root from REST to SOAP as
-    illustrated in the screenshot below.  Populate the Message Body with something like the following:
-    
+    illustrated in the screenshot below.  Populate the Message Body with something like the following:    
   ```xml
   <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
   <soapenv:Header/>
@@ -546,7 +553,7 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
   ```
 - Click on the Send Message button, and your service process should be executed and you should see a SOAP response like in this screenshot: 
 
-   ![xml formatter](../images/soapMessageEndpoint.png)
+   ![alt text](../images/soapMessageEndpoint.png "soapMessageEndpoint")
    
 ##### Invoke Your Service through JMS:
 - To invoke through JMS use the raw payload without the SOAP envelope:
@@ -557,7 +564,7 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
   </GetEmployee>
   ``` 
 - On the MDWHub System tab you can use the JMS Messenger as illustrated below.   
-   ![xml formatter](../images/jmsMessageEndpoint.png)
+   ![alt text](../images/jmsMessageEndpoint.png "jmsMessageEndpoint")
    
 - If you have trouble getting Site Admin access, or you prefer to use another tool like SoapUI or SOAtest, you can accomplish the same thing by just making sure the endpoint URL is like that in the screenshot and that your request content inside the SOAP body matches your registered External Event Handler.
 
