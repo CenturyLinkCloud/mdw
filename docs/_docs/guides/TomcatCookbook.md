@@ -72,16 +72,15 @@ A local project is useful if you want to debug your custom Java source code and 
 ##### The MDW Base Package:
 - The design artifacts in MDW are known as workflow assets.  When you create processes or other assets these are organized into workflow packages, 
   which are different from Java packages in that they can contain assets in a wide variety of formats.  Much of the MDW framework's core functionality 
-  is itself delivered as workflow assets.  The essential assets required by MDW are included in the packages "com.centurylink.mdw.base" and "com.centurylink.mdw.hub".  
+  is itself delivered as workflow assets.  The essential assets required by MDW are included in the packages `com.centurylink.mdw.base` and `com.centurylink.mdw.hub`.  
   The first step in setting up your workspace is to import these packages locally from the MDW repository.
   
 - Expand your newly-created workflow project in Process Explorer and you'll see that it currently contains no workflow packages.  
-  Right-click on the project and select Import > Package.  Choose the "Discover" option and leave the repository location as the default.
+  Right-click on the project and select Import > Package.  Choose the `Discover` option and leave the repository location as the default. `Note: The Asset Discovery URL is yet to be determined. In the meantime, take the default URL.`
   
   ![alt text](../images/importBasePackages.png "importBasePackages")
  
-- After you click Next it'll take a few moments for Designer to locate the available packages.  Once these are displayed, expand both the base package and 
-  the hub package and select the same MDW version as you did when creating the project.
+- After you click Next it'll take a few moments for Designer to locate the available packages.  Once these are displayed, expand the base, db and hub packages and select the same MDW version as you did when creating the project.
   
   ![alt text](../images/importBasePackages2.png "importBasePackages2")
   
