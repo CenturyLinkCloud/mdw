@@ -72,7 +72,7 @@ title: Designer User Guide
 If you would like to create a new process from scratch,  refer to one of the following cookbooks hosted on CenturyLink's GitHub:  
 - [MicroservicesCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/)
 - [TomcatCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/TomcatCookbook/)
-- [TomcatCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/CloudFoundryCookbook/)
+- [CloudFoundryCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/CloudFoundryCookbook/)
 
 #####  1.  Create a  Workflow Process
 - At the top level of the Process Explorer tree are workflow packages.  A package is simply a convenient way of grouping processes together.  You can create a new 
@@ -119,15 +119,15 @@ If you would like to create a new process from scratch,  refer to one of the fol
  
 #####  3.  View  Your  Workflow Activity Instance
 - At this point your process consists of just a Start and Stop activity, but you can still run it.  Check in Servers view and make sure your server is running.  
-  Right-click on the process in the Process Explorer tree and select > Run.  This will open the Process Launch Configuration dialog where you can specify parameters and 
-  run your process.
+  Right-click on the process in the Process Explorer tree and select > `Run`.  This will open the Process Launch Configuration dialog where you can specify parameters and 
+  run your process. If you do not see the `Run` option, refresh the mdw-demo project from the MDW Designer perspective.
   
   ![alt text](../images/mdwWorkflowProcessRun.png "mdwWorkflowProcessRun")
 
 - Any process will need a Master Request ID.  This functions as a unique external identifier with business meaning (such as an order number) that will identify the 
   entity this process instance is dealing with.  By default the Master Request ID is populated, so you can simply click the "Run" button.  However, if there are input 
   variables for your process that you'd like to initialize, you can do so by selecting the Variables tab and entering their values.  These values will be remembered 
-  for subsequent launches of this process.
+  for subsequent launches of this process. Here is an example of the input value and since the data type of the request is a JSONObject, the value has to be in a JSON object format.
 
   ![alt text](../images/mdwWorkflowProcessRun2.png "mdwWorkflowProcessRun2")
   
@@ -138,5 +138,7 @@ If you would like to create a new process from scratch,  refer to one of the fol
   
   ![alt text](../images/mdwWorkflowProcessRunResult2.png "mdwWorkflowProcessRunResult2")
   
- Note:  Details for creating and implementing custom activities, refer to the MDW cookbooks. 
+- Please note that the response has no data, as we did not implement any code to build it.  Details for creating and implementing custom activities, building a response object, etc., please refer to the MDW cookbooks listed above, under section: `How to Use MDW Designer`. 
+
+- You can also explore any of the existing MDW processes by expanding the existing packages in mdw-demo project from MDW Designer perspective. You can start with the HandleOrder in com.centurylink.mdw.demo.intro package.
  
