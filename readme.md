@@ -1,4 +1,7 @@
+
 [![Build Status](https://travis-ci.org/CenturyLinkCloud/mdw.svg?branch=master)](https://travis-ci.org/CenturyLinkCloud/mdw)
+[![Dependency Status](https://gemnasium.com/badges/github.com/CenturyLinkCloud/mdw.svg)](https://gemnasium.com/github.com/CenturyLinkCloud/mdw)
+
 ### Core Developer Setup 
 1. Prerequisites
  - Eclipse Neon for JavaEE Developers:                              
