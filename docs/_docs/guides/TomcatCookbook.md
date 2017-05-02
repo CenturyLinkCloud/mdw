@@ -568,6 +568,7 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
   </GetEmployee>
   ``` 
 - On the MDWHub System tab you can use the JMS Messenger as illustrated below.   
+
    ![alt text](../images/jmsMessageEndpoint.png "jmsMessageEndpoint")
    
 - If you have trouble getting Site Admin access, or you prefer to use another tool like SoapUI or SOAtest, you can accomplish the same thing by just making sure the endpoint URL is like that in the screenshot and that your request content inside the SOAP body matches your registered External Event Handler.
