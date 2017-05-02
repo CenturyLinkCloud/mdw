@@ -469,7 +469,6 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
  
 - Edit the content of your WSDL to look something like the following with appropriate substitutions based on your request and response:
 ```xml
- <?xml version="1.0" encoding="UTF-8"?>
  <wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://mdw-servicemix.centurylink.com"
