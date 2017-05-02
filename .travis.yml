@@ -4,6 +4,7 @@ jdk:
 before_script: 
   - cd mdw-hub
   - bower install
+  - npm install grunt-cli -g
   - cd ../mdw
 before_install:
   - chmod +x ./mdw/gradlew
