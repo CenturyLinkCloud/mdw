@@ -8,7 +8,10 @@
         "emailAddress": "mdwapp@centurylink.com"
       },      
       "groups": [
-        "Common"
+        "Common",
+        "MDW Support",
+        "Developers",
+        "Site Admin"
       ],
       "Common": [
         "Process Execution",
@@ -146,6 +149,27 @@
       "Site Admin": [
         "User Admin"
       ]
-    }
+    },
+    {
+      "name": "Vimala Gubbi Nagaraja",
+      "cuid": "ab75728",
+      "attributes": {
+        "emailAddress": "Vimala.Gubbinagaraja@centurylink.com",
+        "phoneNumber": "0000000000"
+      },      
+      "groups": [
+        "Common",
+        "MDW Support",
+        "Developers",
+        "Site Admin"
+      ],
+      "Common": [
+        "Process Execution",
+        "Process Design"
+      ],
+      "Site Admin": [
+        "User Admin"
+      ]
+    }    
   ]
 }
