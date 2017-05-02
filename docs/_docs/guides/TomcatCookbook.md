@@ -469,7 +469,7 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
  
 - Edit the content of your WSDL to look something like the following with appropriate substitutions based on your request and response:
 ```xml
- <?xml version="1.0" encoding="UTF-8"?>	
+ <?xml version="1.0" encoding="UTF-8"?>
  <wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://mdw-servicemix.centurylink.com"
@@ -536,25 +536,7 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
       </wsdl:service>
  </wsdl:definitions>
 ```
-- Note that the endpoint URL is parameterized in the WSDL <soap:address> so at runtime it will be substituted with the appropriate base URL for the specific environment where it's served from
-- Once you save the WSDL you should be able to access it in your browser from a location similar to: [http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl](http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl)
-      
-##### Invoke Your Service:
-- The MDWHub System tab includes a utility that you can use to test your service.  Access MDWHub in your browser through a URL like this:
-  [http://localhost:8080/mdw/Services/SOAP](http://localhost:8080/mdw/Services/SOAP).
-      
-- Click on the System tab and the Messaging navigation link on the left pane and the HTTP Poster (if you do not see the System tab you will need to be granted Site Admin permissions for
-  the environment where you are testing).  The submittal URL for HTTP Poster defaults to the MDW REST endpoint, so change the context root from REST to SOAP as illustrated in the screenshot below.  Populate the Message Body with something like the following:    
-  ```xml
-  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-  <soapenv:Header/>
-  <soapenv:Body>
-     <GetEmployee>
-       <workstationId>ab64967</workstationId>
-     </GetEmployee>
-  </soapenv:Body>
-  </soapenv:Envelope>
-  ```
+
 - Click on the Send Message button, and your service process should be executed and you should see a SOAP response like in this screenshot: 
 
    ![alt text](../images/soapMessageEndpoint.png "soapMessageEndpoint")
