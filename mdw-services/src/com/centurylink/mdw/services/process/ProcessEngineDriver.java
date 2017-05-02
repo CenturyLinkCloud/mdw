@@ -243,10 +243,9 @@ public class ProcessEngineDriver {
         String handlerProcName = EventType.getHandlerName(eventType);
         if (handlerProcName != null) {
             Process packageHandlerProc = null;
-            // TODO: unfound on first try logs exception
-            packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName.toLowerCase(), 0);
+            packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName.toLowerCase());
             if (packageHandlerProc == null)
-                packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName, 0);
+                packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName);
             if (packageHandlerProc != null) {
                 if (packageHandlerProc.getName().equals(process.getName())) {
                     logger.warn("Package handler recursion is not allowed. "

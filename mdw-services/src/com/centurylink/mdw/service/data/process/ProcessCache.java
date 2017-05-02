@@ -77,7 +77,14 @@ public class ProcessCache implements CacheEnabled, CacheService {
     }
 
     public static Process getProcess(String procname, int version) {
-        return getSingleton().getProcess0(procname, version);
+        return getSingleton().getProcess0(procname, version, true);
+    }
+
+    /**
+     * Returns null when not found rather than throwing an exception.
+     */
+    public static Process getProcess(String name) {
+        return getSingleton().getProcess0(name, 0, false);
     }
 
     private void putInCache(Process process) {
@@ -162,7 +169,7 @@ public class ProcessCache implements CacheEnabled, CacheService {
         }
     }
 
-    private Process getProcess0(String procname, int version) {
+    private Process getProcess0(String procname, int version, boolean exceptionWhenNotFound) {
         if (procname.endsWith(".proc"))
             procname = procname.substring(0, procname.length() - 5);
 
@@ -185,7 +192,7 @@ public class ProcessCache implements CacheEnabled, CacheService {
 
         if (procdef == null) {
             synchronized(processMap) {
-                procdef = loadProcess(procname, version);
+                procdef = loadProcess(procname, version, exceptionWhenNotFound);
                 if (procdef != null) {
                     procdef.removeDeletedTransitions();
                     putInCache(procdef, version == 0);
@@ -206,12 +213,12 @@ public class ProcessCache implements CacheEnabled, CacheService {
         }
     }
 
-    private Process loadProcess(String procname, int version) {
+    private Process loadProcess(String procname, int version, boolean exceptionWhenNotFound) {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
             Process proc = eventMgr.getProcess(procname, version);
 
-            if (proc == null)
+            if (proc == null && exceptionWhenNotFound)
                 throw new Exception("Process not found " + procname + (version == 0 ? "" : " v" + version));
             return proc;
         }
