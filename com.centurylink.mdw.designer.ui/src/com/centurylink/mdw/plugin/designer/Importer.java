@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.plugin.designer;
 
+import java.io.File;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,10 +44,13 @@ import com.centurylink.mdw.common.exception.DataAccessException;
 import com.centurylink.mdw.common.utilities.JsonUtil;
 import com.centurylink.mdw.common.utilities.timer.ActionCancelledException;
 import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
+import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.ProcessExporter;
 import com.centurylink.mdw.dataaccess.ProcessImporter;
 import com.centurylink.mdw.dataaccess.ProcessPersister;
+import com.centurylink.mdw.dataaccess.file.PackageDir;
+import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.designer.DesignerCompatibility;
 import com.centurylink.mdw.designer.utils.NodeMetaInfo;
 import com.centurylink.mdw.designer.utils.ProcessWorker;
@@ -70,6 +75,7 @@ import com.centurylink.mdw.plugin.designer.model.WorkflowAssetFactory;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
 import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
 import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
+import com.centurylink.mdw.plugin.project.model.VcsRepository;
 import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 
 public class Importer {
@@ -92,7 +98,7 @@ public class Importer {
 
     public WorkflowPackage importPackage(final WorkflowProject project, final String content,
             final ProgressMonitor progressMonitor) throws DataAccessException, RemoteException,
-            ActionCancelledException, JSONException, XmlException {
+            ActionCancelledException, JSONException, XmlException, IOException {
         CodeTimer timer = new CodeTimer("importPackage()");
         int preexistingVersion = -1;
         importedPackageVO = null;
@@ -167,12 +173,37 @@ public class Importer {
 
         final List<WorkflowElement> conflicts = new ArrayList<WorkflowElement>();
         final List<WorkflowElement> conflictsWithDifferences = new ArrayList<WorkflowElement>();
+        final List<WorkflowElement> versionMismatches = new ArrayList<WorkflowElement>();
 
         final List<ProcessVO> existingProcessVOs = new ArrayList<ProcessVO>();
         List<ProcessVO> processVOsToBeImported = new ArrayList<ProcessVO>();
         ProcessExporter exporter = null;
         for (ProcessVO importedProcessVO : importedPackageVO.getProcesses()) {
-            WorkflowProcess existingProcess = project.getProcess(importedProcessVO.getProcessName(),
+            WorkflowProcess existingProcess = project
+                    .getProcess(importedProcessVO.getProcessName());
+            if (existingProcess != null) {
+                progressMonitor.subTask("Comparing process versions");
+                VcsRepository gitRepo = project.getMdwVcsRepository();
+                VersionControlGit versionControl = new VersionControlGit();
+                String gitUser = null;
+                String gitPassword = null;
+                if (MdwPlugin.getSettings().isUseDiscoveredVcsCredentials()) {
+                    gitUser = gitRepo.getUser();
+                    gitPassword = gitRepo.getPassword();
+                }
+                versionControl.connect(gitRepo.getRepositoryUrl(), gitUser, gitPassword,
+                        project.getProjectDir());
+                AssetRevision revision = versionControl.getRevision(new File(
+                        new PackageDir(project.getAssetDir(), importedPackageVO, versionControl)
+                                .getPath() + "\\" + importedProcessVO.getProcessName() + ".proc"));
+                if (revision != null) {
+                    if (revision.getVersion() != importedProcessVO.getVersion()) {
+                        versionMismatches.add(existingProcess);
+                    }
+                }
+            }
+
+            existingProcess = project.getProcess(importedProcessVO.getProcessName(),
                     importedProcessVO.getVersionString());
             if (existingProcess != null) {
                 conflicts.add(existingProcess);
@@ -245,6 +276,35 @@ public class Importer {
             throw new ActionCancelledException();
 
         progressMonitor.progress(10);
+
+        if (versionMismatches.size() > 0) {
+            Collections.sort(versionMismatches, new Comparator<WorkflowElement>() {
+                public int compare(WorkflowElement we1, WorkflowElement we2) {
+                    return we1.getLabel().compareToIgnoreCase(we2.getLabel());
+                }
+            });
+            final String msg = "The following process versions in '"
+                    + importedPackageVO.getPackageName()
+                    + "' mismatch with the .mdw/versions file.\nThese versions in the package versions file will be overwritten.\n";
+
+            if (shell != null) {
+                shell.getDisplay().syncExec(new Runnable() {
+                    public void run() {
+                        int res = PluginMessages.uiList(shell, msg, "Package Import",
+                                versionMismatches);
+                        if (res == Dialog.CANCEL)
+                            importedPackageVO = null;
+                    }
+                });
+            }
+            else {
+                String msg2 = msg;
+                for (WorkflowElement we : versionMismatches) {
+                    msg2 += "   " + we.getLabel() + "\n";
+                }
+                PluginMessages.log(msg2);
+            }
+        }
 
         final List<RuleSetVO> existingRuleSets = new ArrayList<RuleSetVO>();
         List<RuleSetVO> ruleSetsToBeImported = new ArrayList<RuleSetVO>();
