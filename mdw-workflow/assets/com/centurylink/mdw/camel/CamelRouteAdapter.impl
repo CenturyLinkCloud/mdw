@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
+  "icon": "camel.gif",
+  "implementorClass": "com.centurylink.mdw.camel.adapter.CamelRouteAdapter",
+  "label": "Camel Route Adapter",
+  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='RouteDefinition' LABEL='Route Definition' SOURCE='RuleSets' TYPE='CAMEL_ROUTE' />\n  <BOOLEAN LABEL='Asynchronous' NAME='Asynchronous' />\n  <DROPDOWN NAME='REQUEST_VARIABLE' LABEL='Request Variable' SOURCE='Variables' VW='200'/>\n  <DROPDOWN NAME='RESPONSE_VARIABLE' LABEL='Response Variable' SOURCE='Variables' VW='200'/>\n  <HYPERLINK URL='/MDWWeb/doc/todo.html'>\n    Camel Route Adapter Help\n  <\/HYPERLINK>\n<\/PAGELET>"
+}
