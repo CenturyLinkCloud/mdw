@@ -435,6 +435,9 @@ public class RequestDataAccess extends CommonDataAccess {
         }
     }
 
+    /**
+     * TODO: honor status in query
+     */
     private String getInboundRequestsWhere(Query query) {
         StringBuilder clause = new StringBuilder();
         clause.append("where d.owner_type = '" + OwnerType.LISTENER_REQUEST + "'\n");
@@ -519,6 +522,9 @@ public class RequestDataAccess extends CommonDataAccess {
         }
     }
 
+    /**
+     * TODO: honor status in query
+     */
     private String getOutboundRequestsWhere(Query query) {
         StringBuilder clause = new StringBuilder();
         clause.append("where d.owner_type = '" + OwnerType.ADAPTER_REQUEST + "'\n");

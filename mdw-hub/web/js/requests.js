@@ -2,23 +2,25 @@
 
 var requestMod = angular.module('requests', ['mdw']);
 
-requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'mdw', 'util', 'REQUEST_STATUSES',
-                                             function($scope, $http, $location, mdw, util, REQUEST_STATUSES) {
+requestMod.controller('RequestsController', ['$scope', '$http', '$location', '$cookieStore', 'mdw', 'util', 'REQUEST_STATUSES',
+                                             function($scope, $http, $location, $cookieStore, mdw, util, REQUEST_STATUSES) {
   
-
-  // is this in the context of the Services tab
+  // is this in the context of the Workflow or Services tab?
   $scope.context = $location.path().startsWith('/service') ? 'service' : 'workflow';
   $scope.defaultType = $scope.context == 'service' ? 'inboundRequests' : 'masterRequests';
   
   // two-way bound to/from directive
   $scope.requestList = {};
-  $scope.requestFilter = { 
-      status: '[Active]',
-      sort: 'receivedDate',
-      type: $scope.defaultType,
-      descending: true
-  }; 
-
+  $scope.requestFilter = $cookieStore.get($scope.context + '_requestFilter');
+  if (!$scope.requestFilter) {
+    $scope.requestFilter = { 
+        status: '[Active]',
+        sort: 'receivedDate',
+        type: $scope.defaultType,
+        descending: true
+    }; 
+  }
+  
   if ($scope.context == 'service') {
     $scope.requestTypes = {
         inboundRequests: 'Inbound', 
@@ -52,6 +54,7 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
         requestInstances.endDate = util.formatDateTime(util.correctDbDate(new Date(requestInstances.endDate), dbDate));
     });
     requestList.context = $scope.context;
+    $cookieStore.put($scope.context + '_requestFilter', $scope.requestFilter);    
   });   
   
   

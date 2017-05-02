@@ -2,16 +2,26 @@
 
 var processMod = angular.module('processes', ['mdw']);
 
-processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams', 'mdw', 'util', 'PROCESS_STATUSES',
-                                              function($scope, $http, $routeParams, mdw, util, PROCESS_STATUSES) {
+processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams', '$cookieStore', 'mdw', 'util', 'PROCESS_STATUSES',
+                                              function($scope, $http, $routeParams, $cookieStore, mdw, util, PROCESS_STATUSES) {
   // two-way bound to/from directive
   $scope.processList = {};
-  $scope.processFilter = { 
-      master: true,
-      status: '[Active]',
-      sort: 'startDate',
-      descending: true
-  };
+  
+  $scope.processFilter = $cookieStore.get('processFilter');
+  if (!$scope.processFilter) {
+    $scope.processFilter = { 
+        master: true,
+        status: '[Active]',
+        sort: 'startDate',
+        descending: true
+    };
+  }
+  else {
+    // don't remember these
+    $scope.processFilter.processId = null;
+    $scope.processFilter.instanceId = null;
+    $scope.processFilter.masterRequestId = null;
+  }
   
   // pseudo-status [Active] means non-final
   $scope.allStatuses = ['[Active]'].concat(PROCESS_STATUSES);
@@ -41,6 +51,7 @@ processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams',
       if (processInstance.endDate)
         processInstance.endDate = util.formatDateTime(util.correctDbDate(new Date(processInstance.endDate), dbDate));
     });
+    $cookieStore.put('processFilter', $scope.processFilter);
   });  
   
   // instanceId, masterRequestId, processName, packageName
