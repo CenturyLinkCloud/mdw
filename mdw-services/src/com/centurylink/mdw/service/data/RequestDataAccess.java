@@ -300,7 +300,7 @@ public class RequestDataAccess extends CommonDataAccess {
             else if (OwnerType.LISTENER_REQUEST.equals(ownerType)) {
                 responseOwnerType = OwnerType.LISTENER_RESPONSE;
                 responseQuery += " from document where owner_type='" + responseOwnerType + "' and owner_id = ?";
-                responseRs = db.runSelect(responseQuery, ownerId);
+                responseRs = db.runSelect(responseQuery, id);
             }
             if (responseRs != null && responseRs.next()) {
                 request.setResponseId(responseRs.getLong("document_id"));

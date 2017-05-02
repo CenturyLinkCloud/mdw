@@ -193,6 +193,11 @@ routesSvc.factory('routes', function() {
         controller: 'RequestController'
       },
       {
+        path: '/workflow/requestHeaders/:requestId',
+        templateUrl: 'requests/requestHeaders.html',
+        controller: 'RequestController'
+      },
+      {
         path: '/workflow/masterRequests/:masterRequestId',
         templateUrl: 'requests/request.html',
         controller: 'RequestController'
@@ -200,6 +205,11 @@ routesSvc.factory('routes', function() {
       {
         path: '/workflow/responses/:requestId',
         templateUrl: 'requests/response.html',
+        controller: 'RequestController'
+      },
+      {
+        path: '/workflow/responseHeaders/:requestId',
+        templateUrl: 'requests/responseHeaders.html',
         controller: 'RequestController'
       },
       {
@@ -276,11 +286,6 @@ routesSvc.factory('routes', function() {
         controller: 'RequestsController'
       },
       {
-        path: '/serviceRequests/:requestId',
-        templateUrl: 'requests/request.html',
-        controller: 'RequestController'
-      },
-      {
         path: '/service/masterRequests/:masterRequestId',
         templateUrl: 'requests/request.html',
         controller: 'RequestController'
@@ -291,8 +296,18 @@ routesSvc.factory('routes', function() {
         controller: 'RequestController'
       },
       {
+        path: '/service/requestHeaders/:requestId',
+        templateUrl: 'requests/requestHeaders.html',
+        controller: 'RequestController'
+      },
+      {
         path: '/service/responses/:requestId',
         templateUrl: 'requests/response.html',
+        controller: 'RequestController'
+      },
+      {
+        path: '/service/responseHeaders/:requestId',
+        templateUrl: 'requests/responseHeaders.html',
         controller: 'RequestController'
       },
       {

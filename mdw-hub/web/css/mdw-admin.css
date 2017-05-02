@@ -474,6 +474,9 @@
   font-size: 13px;
   margin-bottom: 5px;
 }
+.mdw-resource-value {
+	font-weight: bold;
+}
 .mdw-resource-content {
   background-color: #f3f3f3;
   padding: 5px;
@@ -936,6 +939,9 @@
 .mdw-dirty {
 	font-weight: bold;
 	font-size: 22px;
+}
+.mdw-highlight {
+	color: #880000;
 }
 .panel-heading a {
   font-weight: bold;

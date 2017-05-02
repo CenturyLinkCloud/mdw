@@ -57,7 +57,6 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', '$c
     $cookieStore.put($scope.context + '_requestFilter', $scope.requestFilter);    
   });   
   
-  
   $scope.typeaheadMatchSelection = null;
   // docId or masterRequestId
   $scope.findTypeaheadMatches = function(typed) {
@@ -98,11 +97,11 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', '$c
   
 }]);
 
-requestMod.controller('RequestController', ['$scope', '$location', '$route', '$routeParams', 'mdw', 'Request',
-                                             function($scope, $location, $route, $routeParams, mdw, Request) {
+requestMod.controller('RequestController', ['$scope', '$location', '$route', '$routeParams', 'mdw', 'util', 'Request',
+                                             function($scope, $location, $route, $routeParams, mdw, util, Request) {
   $scope.context = $location.path().startsWith('/service/') ? 'service' : 'workflow';
   
-  var response = $route.current.loadedTemplateUrl == 'requests/response.html';
+  var response = $route.current.loadedTemplateUrl.startsWith('requests/response');
   var master = false;
   var id = $routeParams.requestId;
   var masterReqId = $routeParams.masterRequestId;
@@ -118,6 +117,8 @@ requestMod.controller('RequestController', ['$scope', '$location', '$route', '$r
         $scope.request.responseFormat = 'json';
       else if (trimmed.startsWith('<'))
         $scope.request.responseFormat = 'xml';
+      if ($scope.request.responseMeta && $scope.request.responseMeta.headers)
+        $scope.request.responseMetaHeaders = $scope.getMetaHeaders($scope.request.responseMeta.headers);
     }
     else {
       trimmed = $scope.request.content.trim();
@@ -125,8 +126,25 @@ requestMod.controller('RequestController', ['$scope', '$location', '$route', '$r
         $scope.request.format = 'json';
       else if (trimmed.startsWith('<'))
         $scope.request.format = 'xml';
+      if ($scope.request.meta && $scope.request.meta.headers)
+        $scope.request.metaHeaders = $scope.getMetaHeaders($scope.request.meta.headers);
     }
   });
+  
+  // returns text to represent the meta.headers
+  $scope.getMetaHeaders = function(headers) {
+    var metaHeaders = '';
+    var propNames = util.getProperties(headers).sort();
+    var maxLen = 0;
+    propNames.forEach(function(propName) {
+      if (propName.length > maxLen)
+        maxLen = propName.length;
+    });
+    propNames.forEach(function(propName) {
+      metaHeaders += util.padTrailing(propName + ':', maxLen + 3) + '<span class="mdw-highlight">' + headers[propName] + '</span>\n';
+    });
+    return metaHeaders;
+  };
 }]);
 
 requestMod.factory('Request', ['$resource', 'mdw', function($resource, mdw) {

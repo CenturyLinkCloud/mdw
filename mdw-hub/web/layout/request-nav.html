@@ -3,9 +3,17 @@
     <a ng-if="request.masterRequestId" href="#/{{context}}/masterRequests/{{request.masterRequestId}}">Request</a>
     <a ng-if="!request.masterRequestId" href="#/{{context}}/requests/{{request.id}}">Request</a>
   </li>
+  <li nav-link="requests/requestHeaders">
+    <a href="#/{{context}}/requestHeaders/{{request.id}}">Request Headers</a>
+  </li>
+</ul>
+<ul class="nav mdw-nav">
   <li nav-link="requests/response" ng-if="request.responseId">
     <a ng-if="request.masterRequestId" href="#/{{context}}/masterResponses/{{request.masterRequestId}}">Response</a>
     <a ng-if="!request.masterRequestId" href="#/{{context}}/responses/{{request.id}}">Response</a>
+  </li>
+  <li nav-link="requests/responseHeaders">
+    <a href="#/{{context}}/responseHeaders/{{request.id}}">Response Headers</a>
   </li>
 </ul>
 <ul class="nav mdw-nav">

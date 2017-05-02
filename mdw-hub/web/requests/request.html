@@ -15,11 +15,11 @@
           Process ID: <a class="mdw-item-highlight" href="#/workflow/processes/{{request.processInstanceId}}">{{request.processInstanceId}}</a>
         </div>
         <div class="mdw-resource-info">
-          <span ng-if="!request.outbound">Received: <span style="font-weight:bold;">{{request.created}}</span></span>
-          <span ng-if="request.outbound">Sent: <span style="font-weight:bold;">{{request.created}}</span></span>
-        </div>
-        <div class="mdw-resource-info" ng-if="request.responseId">
-          Responded: <span style="font-weight:bold;">{{request.responded}}</span>
+          <div ng-if="!request.outbound">Received: <span class="mdw-resource-value">{{request.created}}</span></div>
+          <div ng-if="request.outbound">Sent: <span class="mdw-resource-value">{{request.created}}</span></div>
+          <div ng-if="request.responseId">Responded: <span class="mdw-resource-value">{{request.responded}}</span></div>
+          <div ng-if="request.statusCode">Status Code: <span class="mdw-resource-value">{{request.statusCode}}</span></div>          
+          <div ng-if="request.statusMessage">Status Message: <span class="mdw-resource-value">{{request.statusMessage}}</span></div>          
         </div>
         <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="request.content | highlight:request.format | unsafe"></code></pre>
       </div>
