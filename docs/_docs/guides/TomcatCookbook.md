@@ -467,7 +467,7 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
   
    ![alt text](../images/soapService.png "soapService")
  
-- Edit the content of your WSDL to look something like the following (with appropriate substitutions based on your request and response).
+- Edit the content of your WSDL to look something like the following with appropriate substitutions based on your request and response:
 ```xml
  <?xml version="1.0" encoding="UTF-8"?>	
  <wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -534,7 +534,7 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
         <soap:address location="${mdw.services.url}/SOAP/MyPackage/MyOrderValidation.wsdl" />
       </wsdl:port>
       </wsdl:service>
-  </wsdl:definitions>
+ </wsdl:definitions>
 ```
 - Note that the endpoint URL is parameterized in the WSDL <soap:address> so at runtime it will be substituted with the appropriate base URL for the specific environment where it's served from
 - Once you save the WSDL you should be able to access it in your browser from a location similar to: [http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl](http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl)
