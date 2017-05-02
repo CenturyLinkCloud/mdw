@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/CenturyLinkCloud/mdw.svg?branch=master)](https://travis-ci.org/CenturyLinkCloud/mdw)
 ### Core Developer Setup 
 1. Prerequisites
  - Eclipse Neon for JavaEE Developers:                              
