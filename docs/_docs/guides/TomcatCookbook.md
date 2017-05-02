@@ -535,7 +535,7 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
       </wsdl:port>
       </wsdl:service>
   </wsdl:definitions>
-```    
+```
 - Note that the endpoint URL is parameterized in the WSDL <soap:address> so at runtime it will be substituted with the appropriate base URL for the specific environment where it's served from
 - Once you save the WSDL you should be able to access it in your browser from a location similar to: [http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl](http://localhost:8080/mdw/SOAP/MyPackage/MyOrderValidation.wsdl)
       
