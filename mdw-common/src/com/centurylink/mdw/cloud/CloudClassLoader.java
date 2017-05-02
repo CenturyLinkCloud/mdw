@@ -25,9 +25,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -300,9 +302,6 @@ public class CloudClassLoader extends ClassLoader {
             return new ByteArrayInputStream(b);
     }
 
-    /**
-     * Only looks on file system.
-     */
     @Override
     public URL getResource(String name) {
         URL result = null;
@@ -319,9 +318,56 @@ public class CloudClassLoader extends ClassLoader {
                 }
             }
         }
-        if (result == null)
+        if (result == null) {
+            if (assetRoot != null) {
+                for (Asset jarAsset : getJarAssets()) {
+                    File jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
+                    try {
+                        byte[] b = findInJarFile(jarFile, name);
+                        if (b != null) {
+                            return new URL("jar:file:/" + jarFile.getAbsolutePath().replace('\\', '/') + "!/" + name);
+                        }
+                    }
+                    catch (Exception ex) {
+                        logger.severeException("Error loading resource: " + name, ex);
+                    }
+                }
+            }
+
             result = super.findResource(name);
+        }
         return result;
+    }
+
+    @Override
+    public Enumeration<URL> getResources(String name) throws IOException {
+        Vector<URL> resUrls = null;
+
+        if (assetRoot != null) {
+            for (Asset jarAsset : getJarAssets()) {
+                File jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
+                try {
+                    byte[] b = findInJarFile(jarFile, name);
+                    if (b != null) {
+                        if (resUrls == null)
+                            resUrls = new Vector<>();
+                        resUrls.addElement(new URL("jar:file:/" + jarFile.getAbsolutePath().replace('\\', '/') + "!/" + name));
+                    }
+                }
+                catch (Exception ex) {
+                    logger.severeException("Error loading resource: " + name, ex);
+                }
+            }
+        }
+        if (resUrls != null) {
+            Enumeration<URL> superEnum = super.getResources(name);
+            while (superEnum.hasMoreElements()) {
+                resUrls.addElement(superEnum.nextElement());
+            }
+            return resUrls.elements();
+        }
+
+        return super.getResources(name);
     }
 
     @Override
