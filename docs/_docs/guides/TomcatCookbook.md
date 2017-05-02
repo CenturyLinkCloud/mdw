@@ -466,74 +466,68 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
   select  New > XML Document.  Name it something appropriate for your service, and select the language/format as WSDL.
   
    ![alt text](../images/soapService.png "soapService")
- 
-- Edit the content of your WSDL to look something like the following with appropriate substitutions based on your request and response:
-```xml
- <wsdl:definitions name="wsdl-first" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://mdw-servicemix.centurylink.com"
-     targetNamespace="http://mdw-servicemix.centurylink.com">
-     <wsdl:types>
-        <xsd:schema>
-          <xsd:element name="MyOrderValidationRequest">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="orderId" type="xsd:string" />
-            <xsd:element name="employeeId" type="xsd:string" />
-          </xsd:sequence>
-        </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="OrderValidationResponse">
-          <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="Code" type="xsd:string" />
-            <xsd:element name="Message" type="xsd:string" minOccurs="0" />
-          </xsd:sequence>
-          <xsd:attribute name="orderId" type="xsd:string" use="required" />
-          </xsd:complexType>
-        </xsd:element>
-      </xsd:schema>
-      </wsdl:types>
-      <wsdl:message name="OrderValidationRequestMessage">
-    	  <wsdl:part name="payload" element="MyOrderValidationRequest" />
-      </wsdl:message> 
-      <wsdl:message name="OrderValidationResponseMessage">
-        <wsdl:part name="payload" element="OrderValidationResponse" />
-      </wsdl:message>
-      <wsdl:portType name="ValidateOrder">
-      <wsdl:operation name="ValidateOrder">
-        <wsdl:input message="tns:OrderValidationRequestMessage" />
-        <wsdl:output message="tns:OrderValidationResponseMessage" />
-      </wsdl:operation>
-      </wsdl:portType>
-      <wsdl:binding name="OrderValidationSOAPBinding" type="tns:ValidateOrder">
-      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
-      <wsdl:operation name="ValidateOrder">
-        <wsdl:input>
-          <soap:body use="literal" />
-        </wsdl:input>
-        <wsdl:output>
-          <soap:body use="literal" />
-        </wsdl:output>
-      </wsdl:operation>
-      </wsdl:binding>
-      <wsdl:service name="OrderValidationService">
-      <wsdl:port binding="tns:OrderValidationSOAPBinding" name="soap">
-        <soap:address location="${mdw.services.url}/SOAP/DonsPackage/DonsOrderValidation.wsdl" />
-      </wsdl:port>
-      </wsdl:service>
-      </wsdl:definitions>
-        <wsdl:output>
-          <soap:body use="literal" />
-        </wsdl:output>
-      </wsdl:operation>
-      </wsdl:binding>
-      <wsdl:service name="OrderValidationService">
-      <wsdl:port binding="tns:OrderValidationSOAPBinding" name="soap">
-        <soap:address location="${mdw.services.url}/SOAP/MyPackage/MyOrderValidation.wsdl" />
-      </wsdl:port>
-      </wsdl:service>
- </wsdl:definitions>
+   
+- Edit the content of your WSDL to look something like the following with appropriate substitutions based on your request and response.
+
+```xml 
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="wsdl-first"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tns="http://mdw-servicemix.centurylink.com" targetNamespace="http://mdw-servicemix.centurylink.com">
+	<wsdl:types>
+		<xsd:schema>
+			<xsd:element name="MyOrderValidationRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="orderId" type="xsd:string" />
+						<xsd:element name="employeeId" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="MyOrderValidationResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Code" type="xsd:string" />
+						<xsd:element name="Message" type="xsd:string"
+							minOccurs="0" />
+					</xsd:sequence>
+					<xsd:attribute name="orderId" type="xsd:string" use="required" />
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="MyOrderValidationRequestMessage">
+		<wsdl:part name="payload" element="MyOrderValidationRequest" />
+	</wsdl:message>
+	<wsdl:message name="MyOrderalidationResponseMessage">
+		<wsdl:part name="payload" element=MyOrderValidationResponse" />
+	</wsdl:message>
+	<wsdl:portType name="ValidateOrder">
+		<wsdl:operation name="ValidateOrder">
+			<wsdl:input message="tns:MyOrderValidationRequestMessage" />
+			<wsdl:output message="tns:MyOrderValidationResponseMessage" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="MyOrderValidationSOAPBinding" type="tns:ValidateOrder">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="ValidateOrder">
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="MyOrderValidationService">
+		<wsdl:port binding="tns:MyOrderValidationSOAPBinding" name="soap">
+			<soap:address
+				location="${mdw.services.url}/SOAP/MyPackage/MyOrderValidation.wsdl" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
 ```
 
 - Click on the Send Message button, and your service process should be executed and you should see a SOAP response like in this screenshot: 
