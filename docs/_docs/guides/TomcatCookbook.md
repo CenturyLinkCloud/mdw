@@ -261,7 +261,7 @@ A local project is useful if you want to debug your custom Java source code and 
      </order>
   ```
 - Select the Variables tab in the launch dialog, and populate the request variable with the following content.
-   ![runPrcoess2](../images/runPrcoess2.png "runPrcoess2")
+   ![alt textr](../images/runPrcoess2.png "runPrcoess2")
 
 ##### Launch and View an Instance:
 - Click Run on the launch dialog to run an instance of your process.  In the Live View you should see the new instance progress down the happy path with the Validate Order outcome equal to  
