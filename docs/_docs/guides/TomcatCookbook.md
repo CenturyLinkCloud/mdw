@@ -109,7 +109,7 @@ A local project is useful if you want to debug your custom Java source code and 
 
 - Select the Variables property tab and add an input variable (request) and two local variables (orderId and validationResult) with types as depicted below.
 
-  ![xml formatter](../images/addProcessVariables.png "addProcessVariables")
+  ![addProcessVariables](../images/addProcessVariables.png "addProcessVariables")
  
 - Save your process design by selecting File > Save from the menu (or by clicking the disk icon in the Eclipse toolbar, or by typing ctrl-s).  Select to overwrite the current version and to keep the process locked after saving.  During iterative development for convenience you will sometimes overwrite the existing version of a process definition.  However once you've exported to another environment you'll want to increment the version since you cannot re-import a changed process with the same version number.  Details are covered under Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning.
   
@@ -261,7 +261,7 @@ A local project is useful if you want to debug your custom Java source code and 
      </order>
   ```
 - Select the Variables tab in the launch dialog, and populate the request variable with the following content.
-   ![xml formatter](../images/runPrcoess2.png "runPrcoess2")
+   ![runPrcoess2](../images/runPrcoess2.png "runPrcoess2")
 
 ##### Launch and View an Instance:
 - Click Run on the launch dialog to run an instance of your process.  In the Live View you should see the new instance progress down the happy path with the Validate Order outcome equal to  
