@@ -130,12 +130,10 @@ A local project is useful if you want to debug your custom Java source code and 
 
 ```java
 package MyServices;
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.java.JavaExecutionException;
-import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.model.request.Request;
-import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import org.json.JSONObject;
   
