@@ -26,7 +26,6 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.provider.CacheService;
-import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -204,8 +203,7 @@ public class ProcessCache implements CacheEnabled, CacheService {
 
     private Process loadProcess(Long processId) {
         try {
-            EventManager eventMgr = ServiceLocator.getEventManager();
-            return eventMgr.getProcess(processId);
+            return ServiceLocator.getWorkflowServices().loadProcessDefinition(processId);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -213,13 +211,11 @@ public class ProcessCache implements CacheEnabled, CacheService {
         }
     }
 
-    private Process loadProcess(String procname, int version, boolean exceptionWhenNotFound) {
+    private Process loadProcess(String name, int version, boolean exceptionWhenNotFound) {
         try {
-            EventManager eventMgr = ServiceLocator.getEventManager();
-            Process proc = eventMgr.getProcess(procname, version);
-
+            Process proc = ServiceLocator.getWorkflowServices().loadProcessDefinition(name, version);
             if (proc == null && exceptionWhenNotFound)
-                throw new Exception("Process not found " + procname + (version == 0 ? "" : " v" + version));
+                throw new Exception("Process not found " + name + (version == 0 ? "" : " v" + version));
             return proc;
         }
         catch (Exception ex) {

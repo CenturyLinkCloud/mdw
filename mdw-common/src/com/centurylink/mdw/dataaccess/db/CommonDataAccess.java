@@ -205,6 +205,23 @@ public class CommonDataAccess {
         return value;
     }
 
+    public Map<String,String> getAttributes(String ownerType, Long ownerId)
+    throws SQLException {
+        try {
+            db.openConnection();
+            List<Attribute> attrs = getAttributes1(ownerType, ownerId);
+            if (attrs == null)
+                return null;
+            Map<String,String> attributes = new HashMap<String,String>();
+            for (Attribute attr : attrs)
+                attributes.put(attr.getAttributeName(), attr.getAttributeValue());
+            return attributes;
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
     protected List<Attribute> getAttributes0(String ownerType, Long ownerId)
     throws SQLException {
         String query = "select ATTRIBUTE_ID, ATTRIBUTE_NAME, ATTRIBUTE_VALUE from ATTRIBUTE " +
@@ -245,7 +262,7 @@ public class CommonDataAccess {
         return attrs;
     }
 
-    protected Attribute getAttribute0(String ownerType, Long ownerId, String attrname)
+    public Attribute getAttribute0(String ownerType, Long ownerId, String attrname)
         throws SQLException
     {
         db.openConnection();
@@ -279,7 +296,7 @@ public class CommonDataAccess {
           addAttributes0(ownerType, ownerId, attrs);
     }
 
-    protected Long setAttribute0(String ownerType, Long ownerId,
+    public Long setAttribute0(String ownerType, Long ownerId,
             String attrname, String attrvalue)
             throws SQLException {
         String query = "select ATTRIBUTE_ID from ATTRIBUTE where " +

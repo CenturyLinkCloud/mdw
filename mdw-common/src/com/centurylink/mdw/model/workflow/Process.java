@@ -982,8 +982,6 @@ public class Process extends Asset implements Jsonable {
     public Process(JSONObject json) throws JSONException {
         if (json.has("name"))
             setName(json.getString("name"));
-        if (json.has("version"))
-            setVersion(parseVersion(json.getString("version")));
         if (json.has("description"))
             setProcessDescription(json.getString("description"));
         if (json.has("attributes")) {
@@ -1045,7 +1043,6 @@ public class Process extends Asset implements Jsonable {
      */
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
-        json.put("version", getVersionString());
         if (getProcessDescription() != null && !getProcessDescription().isEmpty())
           json.put("description", getProcessDescription());
         if (attributes != null && !attributes.isEmpty()) {

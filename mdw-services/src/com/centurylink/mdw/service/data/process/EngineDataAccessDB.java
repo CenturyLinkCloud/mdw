@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.service.data.process;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,7 +31,6 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.TableSequenceName;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.event.EventType;
@@ -52,9 +53,6 @@ import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.util.StringHelper;
 import com.mongodb.client.MongoCollection;
-import static com.mongodb.client.model.Filters.*;
-
-
 
 /**
  * TODO: Remove non-engine-related data access from this class.
@@ -1423,10 +1421,6 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             String attrname, String attrvalue)
     throws SQLException {
         return super.setAttribute0(ownerType, ownerId, attrname, attrvalue);
-    }
-
-    public List<Attribute> getAttributes(String ownerType, Long ownerId) throws SQLException {
-        return super.getAttributes1(ownerType, ownerId);
     }
 
     public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws SQLException {

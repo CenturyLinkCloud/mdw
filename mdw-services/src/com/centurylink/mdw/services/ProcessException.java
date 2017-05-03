@@ -17,40 +17,21 @@ package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.MdwException;
 
-/**
- *
- */
 public class ProcessException extends MdwException {
 
-    private static final long serialVersionUID = 1L;
-    /**
-     * @param pMessage
-     */
-    public ProcessException(String pMessage) {
-        super(pMessage);
+    public ProcessException(String message) {
+        super(message);
     }
 
-    /**
-     * @param pCode
-     * @param pMessage
-     */
-    public ProcessException(int pCode, String pMessage) {
-        super(pCode, pMessage);
+    public ProcessException(int code, String message) {
+        super(code, message);
     }
 
-    /**
-     * @param pCode
-     * @param pMessage
-     * @param pTh
-     */
-    public ProcessException(int pCode, String pMessage, Throwable pTh) {
-        super(pCode, pMessage, pTh);
+    public ProcessException(int code, String message, Throwable cause) {
+        super(code, message, cause);
     }
 
-
-    public ProcessException(String message, Throwable t) {
-        super(message, t);
+    public ProcessException(String message, Throwable cause) {
+        super(message, cause);
     }
-
-
 }

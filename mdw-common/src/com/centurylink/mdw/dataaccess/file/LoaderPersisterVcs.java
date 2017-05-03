@@ -60,7 +60,6 @@ import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.Transition;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
 
@@ -397,19 +396,13 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public Process loadProcess(PackageDir pkgDir, AssetFile assetFile, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
-        String content = new String(read(assetFile));
-        Process process = new Process(new JSONObject(content));
+        Process process;
         if (deep) {
-            Long loadId = process.getProcessId();
-            Transition obsoleteStartTransition = null;
-            for (Transition t : process.getTransitions()) {
-                if (t.getFromWorkId().equals(loadId)) {
-                    obsoleteStartTransition = t;
-                    break;
-                }
-            }
-            if (obsoleteStartTransition != null)
-                process.getTransitions().remove(obsoleteStartTransition);
+            String content = new String(read(assetFile));
+            process = new Process(new JSONObject(content));
+        }
+        else {
+            process = new Process();
         }
 
         process.setId(assetFile.getId());
@@ -417,12 +410,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         process.setName(assetFile.getName().substring(0, lastDot));
         process.setLanguage(Asset.PROCESS);
         process.setRawFile(assetFile);
-        int version = assetFile.getRevision().getVersion();
-        if (process.getVersion() != version)
-            throw new DataAccessException(process.getName() + " process version in package "
-                    + pkgDir.getPackageName() + " does not match with .mdw/version file");
-        process.setVersion(version); // TODO remove version from process XML for
-                                     // file-persist
+        process.setVersion(assetFile.getRevision().getVersion());
         process.setModifyDate(assetFile.getRevision().getModDate());
         process.setModifyingUser(assetFile.getRevision().getModUser());
         process.setRevisionComment(assetFile.getRevision().getComment());

@@ -19,7 +19,6 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,16 +31,13 @@ import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
-import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.model.Response;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.event.EventType;
@@ -557,6 +553,7 @@ public class EventManagerBean implements EventManager {
      * @throws ProcessException
      * @throws DataAccessException
      */
+    @Override
     public List<ProcessInstance> getProcessInstances(String masterRequestId, String processName)
     throws ProcessException, DataAccessException {
         TransactionWrapper transaction = null;
@@ -634,28 +631,6 @@ public class EventManagerBean implements EventManager {
             edao.stopTransaction(transaction);
         }
         return ai;
-    }
-
-    /**
-     * Returns the process instance based on the passed in params
-     *
-     * @param pProcessId Unique Identifier for the process
-     * @param pOwner Owner of the process instance
-     * @param pOwnerId Unique Id for the owner
-     * @return ProcessInstance object
-     */
-    public List<ProcessInstance> getProcessInstances(Long pProcessId, String pOwner, Long pOwnerId)
-    throws ProcessException, DataAccessException {
-        TransactionWrapper transaction = null;
-        EngineDataAccessDB edao = new EngineDataAccessDB();
-        try {
-            transaction = edao.startTransaction();
-            return edao.getProcessInstances(pProcessId, pOwner, pOwnerId);
-        } catch (SQLException e) {
-            throw new ProcessException(0, "Failed to remove event waits", e);
-        } finally {
-            edao.stopTransaction(transaction);
-        }
     }
 
     /**
@@ -768,58 +743,6 @@ public class EventManagerBean implements EventManager {
         } catch (Exception ex) {
             throw new DataAccessException(-1, ex.getMessage(), ex);
         }
-    }
-
-    /**
-     * Builds the value object that represents a process
-     *
-     * @param pProcessId
-     * @return ProcessVO
-     */
-    public Process getProcess(Long id)
-    throws DataAccessException, ProcessException {
-        CodeTimer timer = new CodeTimer("getProcessVO()", true);
-        ProcessLoader loader = DataAccess.getProcessLoader();
-        Process processVO;
-        try {
-            processVO = loader.loadProcess(id, true);
-            if (processVO != null) {
-                // all db attributes are override attributes
-                Map<String,String> attributes = getAttributes(OwnerType.PROCESS, id);
-                if (attributes != null)
-                    processVO.applyOverrideAttributes(attributes);
-            }
-        } catch (com.centurylink.mdw.dataaccess.DataAccessException e) {
-            throw new DataAccessException(0, "Cannot load process ID: " + id + " (" + e.getMessage() + ")", e);
-        }
-        timer.stopAndLogTiming("");
-        return processVO;
-    }
-
-    /**
-     * Builds the value object that represents a process
-     *
-     * @param pProcessName
-     * @param pVersion
-     * @return ProcessVO
-     */
-    public Process getProcess(String procname, int version)
-    throws DataAccessException {
-        CodeTimer timer = new CodeTimer("getProcessVO()", true);
-        Process processVO = null;
-        try {
-            processVO = DataAccess.getProcessLoader().getProcessBase(procname, version);
-            if (processVO != null) {
-                // all db attributes are override attributes
-                Map<String,String> attributes = getAttributes(OwnerType.PROCESS, processVO.getProcessId());
-                if (attributes != null)
-                    processVO.applyOverrideAttributes(attributes);
-            }
-        } catch (Exception e) {
-            throw new DataAccessException(0, "Cannot load process: " + procname + " v" + version + " (" + e.getMessage() + ")", e);
-        }
-        timer.stopAndLogTiming("");
-        return processVO;
     }
 
     public List<EventLog> getEventLogs(String pEventName, String pEventSource,
@@ -1333,26 +1256,6 @@ public class EventManagerBean implements EventManager {
             edao.setAttributes(ownerType, ownerId, attributes);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to set attributes for " + ownerType + ": " + ownerId, e);
-        } finally {
-            edao.stopTransaction(transaction);
-        }
-    }
-
-    public Map<String,String> getAttributes(String ownerType, Long ownerId)
-    throws DataAccessException {
-        TransactionWrapper transaction = null;
-        EngineDataAccessDB edao = new EngineDataAccessDB();
-        try {
-            transaction = edao.startTransaction();
-            List<Attribute> attrs = edao.getAttributes(ownerType, ownerId);
-            if (attrs == null)
-                return null;
-            Map<String,String> attributes = new HashMap<String,String>();
-            for (Attribute attr : attrs)
-                attributes.put(attr.getAttributeName(), attr.getAttributeValue());
-            return attributes;
-        } catch (SQLException e) {
-            throw new DataAccessException(-1, "Failed to get attributes for " + ownerType + ": " + ownerId, e);
         } finally {
             edao.stopTransaction(transaction);
         }

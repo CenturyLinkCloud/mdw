@@ -29,14 +29,12 @@ import com.centurylink.mdw.cache.CacheEnabled;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.event.CertifiedMessageManager;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
@@ -348,31 +346,6 @@ public class AdapterConnectionPool
                 this.processWaitingRequests(true);
             }
         }
-    }
-
-    private void updatePoolProperty(String pn, String pv) throws Exception {
-        String attrname = PropertyNames.MDW_CONNECTION_POOL + "." + getName() + "." + pn;
-        if (pv!=null && pv.length()==0) pv = null;
-        EventManager eventMgr = ServiceLocator.getEventManager();
-        eventMgr.setAttribute(OwnerType.SYSTEM, 0L, attrname, pv);
-        if (pv!=null) properties.put(pn, pv);
-        else properties.remove(pn);
-    }
-
-    /**
-     * Enable and disable the connection pool globally. Used by admin GUI
-     * The method informs all managed servers in the cluster through JMS broadcast.
-     *
-     * @param yes
-     * @throws Exception when there is JMS broadcast error. Later exceptions will be in the log only
-     */
-    public synchronized void setEnabled(boolean yes) throws Exception {
-        this.updatePoolProperty(AdapterConnectionPool.PROP_DISABLED, yes?"false":"true");
-        Thread.sleep(2000);        // to ensure database update is committed
-        CacheRegistration.broadcastRefresh(
-                PropertyManager.class.getName() + "," +
-                AdapterConnectionPool.class.getName() + ":" + getName(),
-                MessengerFactory.newInternalMessenger());
     }
 
     public List<String> getWaitingRequests() {

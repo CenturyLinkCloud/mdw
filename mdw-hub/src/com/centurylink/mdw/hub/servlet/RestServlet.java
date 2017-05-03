@@ -219,7 +219,7 @@ public class RestServlet extends ServiceServlet {
         String responseString = new ListenerHelper().processEvent(requestString, metaInfo);
         populateResponseHeaders(reqHeaderKeys, metaInfo, response);
         if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) == null)
-            response.setContentType("text/xml");
+            response.setContentType("application/json");
         else
             response.setContentType(metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
 

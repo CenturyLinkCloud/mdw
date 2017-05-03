@@ -278,47 +278,10 @@ public interface EventManager {
     public List<ProcessInstance> getProcessInstances(String masterRequestId, String processName)
     throws ProcessException, DataAccessException;
 
-    /**
-     * Returns the process instance based on the passed in params
-     *
-     * @param pProcessId Unique Identifier for the process
-     * @param pOwner Owner type of the process instance
-     * @param pOwnerId Id for the owner
-     * @return Process instance object
-     */
-    public List<ProcessInstance> getProcessInstances(Long pProcessId, String pOwner, Long pOwnerId)
-    throws ProcessException, DataAccessException;
-
-    /**
-     * Update the status of the process instance. Used by task manager.
-     * @param pProcInstId
-     * @param status
-     * @throws ProcessException
-     * @throws DataAccessException
-     */
-    public void updateProcessInstanceStatus(Long pProcInstId, Integer status)
-    throws ProcessException, DataAccessException;
-
     ////////////////////////////////////////////
     // find/get process definition
     ////////////////////////////////////////////
 
-    /**
-     * get the process definition by process ID
-     * @param processId process ID
-     * @return process definition
-     */
-    public Process getProcess(Long processId)
-    throws DataAccessException, ProcessException;
-
-    /**
-     * get the process definition by process name and version
-     * @param procname process name
-     * @param version process version
-     * @return process definition
-     */
-    public Process getProcess(String procname, int version)
-    throws DataAccessException;
     ////
     //// the followings are for scheduled events (timer tasks and long-delayed internal messages)
     ////
@@ -404,15 +367,6 @@ public interface EventManager {
     //
     // miscellaneous
     //
-
-    public void setAttribute(String ownerType, Long ownerId, String attrname, String attrvalue)
-    throws DataAccessException;
-
-    public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes)
-    throws DataAccessException;
-
-    public Map<String,String> getAttributes(String ownerType, Long ownerId)
-    throws DataAccessException;
 
     public void sendInternalEvent(String message)
     throws ProcessException;
