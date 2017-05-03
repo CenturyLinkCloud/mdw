@@ -135,14 +135,14 @@ public class ListenerHelper {
             }
         }
 
-        if (isForFallbackHandler(request))
+        if (isForFallbackHandler(request, metaInfo))
             return EventHandlerCache.fallbackHandler;
         else
             return EventHandlerCache.serviceHandler;
     }
 
-    private boolean isForFallbackHandler(String request) {
-        return request != null && request.startsWith("<_mdw");
+    private boolean isForFallbackHandler(String request, Map<String,String> metaInfo) {
+        return request != null && (request.startsWith("<_mdw") || !Listener.METAINFO_PROTOCOL_REST.equals(metaInfo.get(Listener.METAINFO_PROTOCOL)));
     }
 
     private String parseHandlerSpec(String spec, Map<String,String> metainfo) {

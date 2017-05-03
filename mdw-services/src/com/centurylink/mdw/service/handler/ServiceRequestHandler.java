@@ -278,7 +278,9 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
      */
     protected TextService getServiceInstance(Map<String,String> headers) throws ServiceException {
         try {
-            String[] pathSegments = headers.get(Listener.METAINFO_REQUEST_PATH).split("/");
+            String[] pathSegments = headers.get(Listener.METAINFO_REQUEST_PATH) != null ? headers.get(Listener.METAINFO_REQUEST_PATH).split("/") : null;
+            if (pathSegments == null)
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Unable to find a service or handler for given request");
             String contentType = headers.get(Listener.METAINFO_CONTENT_TYPE);
             String serviceClassName = MDW_REST_SERVICE_PROVIDER_PACKAGE + "." + pathSegments[0];
             try {
