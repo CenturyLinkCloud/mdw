@@ -25,7 +25,7 @@
       "attributes": {
         "WORK_DISPLAY_INFO": "x=323,y=115,w=183,h=59",
         "processname": "com.centurylink.mdw.tests.workflow/SmartProcessChild",
-        "processversion": "[2.4,3)",
+        "processversion": "[2.3,3)",
         "synchronous": "FALSE",
         "variables": "inputVar=${myvar}"
       },
@@ -93,6 +93,5 @@
       "category": "INPUT",
       "type": "java.lang.String"
     }
-  },
-  "version": "0.4"
+  }
 }

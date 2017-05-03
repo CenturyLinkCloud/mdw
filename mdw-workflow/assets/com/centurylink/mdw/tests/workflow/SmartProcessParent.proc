@@ -46,7 +46,7 @@
         "Force Parallel Execution": "FALSE",
         "STATUS_AFTER_EVENT": "Hold",
         "WORK_DISPLAY_INFO": "x=317,y=302,w=107,h=64",
-        "processmap": "SmartProcessChild,com.centurylink.mdw.tests.workflow/SmartProcessChild,[2.4\\,3),;SmartProcessChild2,com.centurylink.mdw.tests.workflow/SmartProcessChild2,[0.4\\,1),",
+        "processmap": "SmartProcessChild,com.centurylink.mdw.tests.workflow/SmartProcessChild,[2.3\\,3),;SmartProcessChild2,com.centurylink.mdw.tests.workflow/SmartProcessChild2,[0.3\\,1),",
         "synchronous": "TRUE"
       },
       "id": "A4",
@@ -146,8 +146,8 @@
     {
       "attributes": {
         "WORK_DISPLAY_INFO": "x=139,y=217,w=100,h=60",
-        "processname": "com.centurylink.mdw.tests.workflow/SmartProcessChildCompat",
-        "processversion": "[10.3,11)",
+        "processname": "SmartProcessChildCompat",
+        "processversion": "10002",
         "synchronous": "TRUE"
       },
       "id": "A10",
@@ -221,6 +221,5 @@
       "category": "INPUT",
       "type": "java.lang.String"
     }
-  },
-  "version": "0.7"
+  }
 }
