@@ -215,6 +215,5 @@
       "category": "LOCAL",
       "type": "org.apache.xmlbeans.XmlObject"
     }
-  },
-  "version": "0.6"
+  }
 }

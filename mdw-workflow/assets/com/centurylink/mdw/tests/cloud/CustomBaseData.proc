@@ -74,6 +74,5 @@
       "category": "LOCAL",
       "type": "java.lang.Float"
     }
-  },
-  "version": "0.5"
+  }
 }

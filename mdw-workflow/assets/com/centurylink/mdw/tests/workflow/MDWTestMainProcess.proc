@@ -693,6 +693,5 @@
       "category": "STATIC",
       "type": "org.w3c.dom.Document"
     }
-  },
-  "version": "3.37"
+  }
 }

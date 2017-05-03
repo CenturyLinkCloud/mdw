@@ -158,6 +158,5 @@
       "category": "INPUT",
       "type": "com.centurylink.mdw.xml.XmlBeanWrapper"
     }
-  },
-  "version": "0.8"
+  }
 }

@@ -53,6 +53,5 @@
       "category": "OUTPUT",
       "type": "java.lang.String"
     }
-  },
-  "version": "1.1"
+  }
 }

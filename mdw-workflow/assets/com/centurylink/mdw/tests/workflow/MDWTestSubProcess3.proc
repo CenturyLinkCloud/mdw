@@ -60,6 +60,5 @@
       "category": "INPUT",
       "type": "org.w3c.dom.Document"
     }
-  },
-  "version": "0.4"
+  }
 }

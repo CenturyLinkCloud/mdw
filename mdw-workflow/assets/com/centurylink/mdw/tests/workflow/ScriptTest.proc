@@ -259,6 +259,5 @@
       "category": "INPUT",
       "type": "java.util.List<String>"
     }
-  },
-  "version": "0.21"
+  }
 }

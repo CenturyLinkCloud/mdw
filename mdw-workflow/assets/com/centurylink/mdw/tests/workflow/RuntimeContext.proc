@@ -52,6 +52,5 @@
   "variables": {"mrid": {
     "category": "LOCAL",
     "type": "java.lang.String"
-  }},
-  "version": "0.2"
+  }}
 }

@@ -158,6 +158,5 @@
       "category": "INPUT",
       "type": "java.lang.Integer"
     }
-  },
-  "version": "0.3"
+  }
 }

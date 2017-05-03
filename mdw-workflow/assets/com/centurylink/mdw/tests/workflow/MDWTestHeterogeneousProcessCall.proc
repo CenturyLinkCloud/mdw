@@ -250,6 +250,5 @@
       "category": "INPUT",
       "type": "java.lang.String"
     }
-  },
-  "version": "0.10"
+  }
 }

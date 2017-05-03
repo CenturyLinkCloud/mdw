@@ -71,6 +71,5 @@
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
     "WORK_DISPLAY_INFO": "x=40,y=26,w=84,h=27"
-  },
-  "version": "0.2"
+  }
 }

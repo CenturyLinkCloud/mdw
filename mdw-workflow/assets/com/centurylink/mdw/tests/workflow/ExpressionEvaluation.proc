@@ -44,6 +44,5 @@
       "category": "INPUT",
       "type": "com.centurylink.mdw.common.service.Jsonable"
     }
-  },
-  "version": "0.1"
+  }
 }

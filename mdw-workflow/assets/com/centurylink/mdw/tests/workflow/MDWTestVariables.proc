@@ -60,6 +60,5 @@
       "category": "LOCAL",
       "type": "java.util.Map<String,String>"
     }
-  },
-  "version": "0.3"
+  }
 }

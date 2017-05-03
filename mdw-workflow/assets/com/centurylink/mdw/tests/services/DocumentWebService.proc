@@ -60,6 +60,5 @@
       "category": "LOCAL",
       "type": "org.w3c.dom.Document"
     }
-  },
-  "version": "0.7"
+  }
 }

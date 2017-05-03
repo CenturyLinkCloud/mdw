@@ -62,6 +62,5 @@
       "category": "LOCAL",
       "type": "org.yaml.snakeyaml.Yaml"
     }
-  },
-  "version": "0.5"
+  }
 }

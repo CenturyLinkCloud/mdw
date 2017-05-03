@@ -286,6 +286,5 @@
       "category": "OUTPUT",
       "type": "org.w3c.dom.Document"
     }
-  },
-  "version": "0.18"
+  }
 }

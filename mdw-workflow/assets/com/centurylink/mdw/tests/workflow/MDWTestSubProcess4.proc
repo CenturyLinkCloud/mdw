@@ -73,6 +73,5 @@
       "category": "OUTPUT",
       "type": "com.centurylink.mdw.model.StringDocument"
     }
-  },
-  "version": "0.6"
+  }
 }
