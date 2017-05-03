@@ -503,7 +503,7 @@ public class ListenerHelper {
             }
         }
 
-     // these always get populated if present
+        // these always get populated if present
         if (metaInfo.get(Listener.METAINFO_REQUEST_ID) != null)
             headers.put(Listener.METAINFO_REQUEST_ID, metaInfo.get(Listener.METAINFO_REQUEST_ID));
         if (metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID) != null)
@@ -512,9 +512,11 @@ public class ListenerHelper {
             headers.put(Listener.METAINFO_CORRELATION_ID, metaInfo.get(Listener.METAINFO_CORRELATION_ID));
         if (metaInfo.get(Listener.METAINFO_DOCUMENT_ID) != null)
             headers.put(Listener.METAINFO_DOCUMENT_ID, metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
+        if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) != null)
+            headers.put(Listener.METAINFO_CONTENT_TYPE, metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
 
         if (!headers.has(Listener.METAINFO_CONTENT_TYPE))
-            headers.put(Listener.METAINFO_CONTENT_TYPE, "text/xml");
+            headers.put(Listener.METAINFO_CONTENT_TYPE, "application/json");
 
         meta.put("headers", headers);
 
