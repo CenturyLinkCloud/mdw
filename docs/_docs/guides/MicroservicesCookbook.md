@@ -318,8 +318,7 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
  
 ##### Add a Sample Request and Response:
 - Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "MyServices.api.samples" and add a JSON asset named Order_Create.json with the following content:
-
-  ```jason
+```jason
 // POST request to Services/MyServices/Order
 {
 "orderId":"12345678"
