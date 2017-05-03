@@ -238,7 +238,7 @@ Besides implementing services by way of an MDW workflow process, you can easily 
 	public JSONObject post(String path, JSONObject content, Map<String, String> headers) throws ServiceException{
 		Map<String,Object> stringParams = new HashMap<String,Object>();
 		WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-		Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
+		Object response = workflowServices.invokeServiceProcess("MyServices/OrderProcess", content, null, stringParams, headers);
 		return (JSONObject) response;
 	}
   }
