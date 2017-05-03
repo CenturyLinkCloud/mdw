@@ -11,7 +11,7 @@ process: # 10407
   activity: # 13 "2017-03-13 18:58:41"
     name: Scripts with syntax error
     status: Failed
-    result: com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'MDWTestMainProcessv3_34_Scriptswithsyntaxerror_13'...
+    result: com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'MDWTestMainProcessv3_${~\\d*}_Scriptswithsyntaxerror_13'...
   variable: # 10901
     name: processCase
     value: DEFAULT

@@ -15,7 +15,7 @@ process: # 10299
     value: SmartProcessChild
   variable: # 10729
     name: procVer
-    value: 2.4
+    value: 2.3
 process: # 10296
   name: SmartProcessParent
   instance: 1
@@ -47,7 +47,7 @@ process: # 10296
     value: SmartProcessChild
   variable: # 10731
     name: singleSubprocVer
-    value: 2.4
+    value: 2.3
   variable: # 10737
     name: singleSubprocVerOld
     value: 1.1

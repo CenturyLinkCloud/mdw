@@ -74,67 +74,67 @@ process: # 14209
           {
             "class": "com.centurylink.mdw.services.process.BaseActivity",
             "file": "BaseActivity.java",
-            "line": 221,
+            "line": ${~\\d*},
             "method": "execute"
           },
           {
             "class": "com.centurylink.mdw.services.process.BaseActivity",
             "file": "BaseActivity.java",
-            "line": 231,
+            "line": ${~\\d*},
             "method": "executeTimed"
           },
           {
             "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
             "file": "ProcessEngineDriver.java",
-            "line": 379,
+            "line": ${~\\d*},
             "method": "executeActivity"
           },
           {
             "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
             "file": "ProcessEngineDriver.java",
-            "line": 612,
+            "line": ${~\\d*},
             "method": "processEvent"
           },
           {
             "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
             "file": "ProcessEngineDriver.java",
-            "line": 578,
+            "line": ${~\\d*},
             "method": "processEvents"
           },
           {
             "class": "com.centurylink.mdw.services.process.InternalEventDriver",
             "file": "InternalEventDriver.java",
-            "line": 37,
+            "line": ${~\\d*},
             "method": "run"
           },
           {
             "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$Work",
             "file": "CommonThreadPool.java",
-            "line": 263,
+            "line": ${~\\d*},
             "method": "run"
           },
           {
             "class": "java.util.concurrent.ThreadPoolExecutor",
             "file": "ThreadPoolExecutor.java",
-            "line": 1142,
+            "line": ${~\\d*},
             "method": "runWorker"
           },
           {
             "class": "java.util.concurrent.ThreadPoolExecutor$Worker",
             "file": "ThreadPoolExecutor.java",
-            "line": 617,
+            "line": ${~\\d*},
             "method": "run"
           },
           {
             "class": "java.lang.Thread",
             "file": "Thread.java",
-            "line": 745,
+            "line": ${~\\d*},
             "method": "run"
           },
           {
             "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread",
             "file": "CommonThreadPool.java",
-            "line": 232,
+            "line": ${~\\d*},
             "method": "run"
           }
         ],
