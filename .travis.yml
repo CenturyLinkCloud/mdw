@@ -18,8 +18,8 @@ notifications:
   slack:
     rooms:
       - mdwcore:9WSiZQJitrLtiiU5BO29Or4R#general
-    on_success: never # default: change
-    on_failure: always # default: always
+    on_success:change # default: change
+    on_failure:change # default: always
   email:
     recipients:
       - MdwCoreTeam@CenturyLink.com
