@@ -277,7 +277,7 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                         java.io.File explodedDir = new java.io.File(tempDir + "/com");
                         if (explodedDir.isDirectory()) {
                             List<java.io.File> fileList = FileHelper.getFilesRecursive(explodedDir,
-                                    ".json", new ArrayList<java.io.File>());
+                                    "package.json", new ArrayList<java.io.File>());
                             for (java.io.File file : fileList) {
                                 WorkflowPackage workflowPackage = new WorkflowPackage();
                                 workflowPackage.setProject(wfp);
