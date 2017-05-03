@@ -397,10 +397,9 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public Process loadProcess(PackageDir pkgDir, AssetFile assetFile, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
-        Process process;
+        String content = new String(read(assetFile));
+        Process process = new Process(new JSONObject(content));
         if (deep) {
-            String content = new String(read(assetFile));
-            process = new Process(new JSONObject(content));
             Long loadId = process.getProcessId();
             Transition obsoleteStartTransition = null;
             for (Transition t : process.getTransitions()) {
@@ -412,16 +411,18 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             if (obsoleteStartTransition != null)
                 process.getTransitions().remove(obsoleteStartTransition);
         }
-        else {
-            process = new Process();
-        }
 
         process.setId(assetFile.getId());
         int lastDot = assetFile.getName().lastIndexOf('.');
         process.setName(assetFile.getName().substring(0, lastDot));
         process.setLanguage(Asset.PROCESS);
         process.setRawFile(assetFile);
-        process.setVersion(assetFile.getRevision().getVersion());  // TODO remove version from process XML for file-persist
+        int version = assetFile.getRevision().getVersion();
+        if (process.getVersion() != version)
+            throw new DataAccessException(process.getName() + " process version in package "
+                    + pkgDir.getPackageName() + " does not match with .mdw/version file");
+        process.setVersion(version); // TODO remove version from process XML for
+                                     // file-persist
         process.setModifyDate(assetFile.getRevision().getModDate());
         process.setModifyingUser(assetFile.getRevision().getModUser());
         process.setRevisionComment(assetFile.getRevision().getComment());
