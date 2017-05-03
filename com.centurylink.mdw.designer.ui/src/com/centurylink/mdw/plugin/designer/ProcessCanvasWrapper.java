@@ -157,7 +157,6 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
 
     private boolean dirty;
     private int zoomLevel = 100;
-    private boolean allowInPlaceLabelEditing = false;
     private Color readOnlyBackgroundColor = new Color(248, 248, 248);
 
     public ProcessCanvasWrapper(Composite parent, WorkflowProcess processVersion) {
@@ -231,7 +230,6 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
 
     public void populate() {
         MdwSettings settings = MdwPlugin.getSettings();
-        allowInPlaceLabelEditing = settings.isInPlaceLabelEditing();
         RGB rgb = settings.getReadOnlyBackground();
         readOnlyBackgroundColor = new Color(rgb.red, rgb.green, rgb.blue);
 
@@ -553,7 +551,7 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
                 });
                 mouseEvent.consume();
             }
-            if (!isInstance() && !allowInPlaceLabelEditing
+            if (!isInstance()
                     && (getFlowchartPage().canvas.getAnchor() == -2
                             || designerCanvasSelection instanceof Note))
                 mouseEvent.consume(); // no in-place editing unless specified
@@ -580,9 +578,9 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
             else
                 handleSelection(mouseEvent);
 
-            if (!isInstance() && !allowInPlaceLabelEditing
+            if (!isInstance()
                     && getFlowchartPage().canvas.getAnchor() == -2)
-                mouseEvent.consume(); // no in-place editing unless specified
+                mouseEvent.consume(); // no in-place editing
 
             final boolean isSubProcessActivity = designerCanvasSelection instanceof Activity
                     && ((Activity) designerCanvasSelection).isSubProcessInvoke();
@@ -610,7 +608,7 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
                 }
             });
         }
-        else if (event.getID() == KeyEvent.KEY_PRESSED && !allowInPlaceLabelEditing) {
+        else if (event.getID() == KeyEvent.KEY_PRESSED) {
             KeyEvent keyEvent = (KeyEvent) event;
 
             int keycode = keyEvent.getKeyCode();

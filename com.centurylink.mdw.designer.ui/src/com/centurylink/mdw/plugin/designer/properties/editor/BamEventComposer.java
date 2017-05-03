@@ -18,12 +18,6 @@ package com.centurylink.mdw.plugin.designer.properties.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import noNamespace.DropdownT;
-import noNamespace.OptionT;
-import noNamespace.PAGELETDocument;
-import noNamespace.PageletT;
-import noNamespace.TableT;
-
 import org.apache.xmlbeans.XmlException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -37,20 +31,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
 
-import com.centurylink.mdw.plugin.MdwPlugin;
-import com.centurylink.mdw.plugin.PluginMessages;
-import com.centurylink.mdw.plugin.designer.DirtyStateListener;
-import com.centurylink.mdw.plugin.designer.model.Activity;
-import com.centurylink.mdw.plugin.designer.model.WorkflowAsset;
-import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
-import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
-import com.centurylink.mdw.plugin.designer.model.Transition;
-import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
-import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
-import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 import com.centurylink.mdw.model.value.attribute.AttributeVO;
 import com.centurylink.mdw.model.value.event.BamMessageDefinition;
 import com.centurylink.mdw.model.value.process.PackageVO;
+import com.centurylink.mdw.plugin.PluginMessages;
+import com.centurylink.mdw.plugin.designer.DirtyStateListener;
+import com.centurylink.mdw.plugin.designer.model.Activity;
+import com.centurylink.mdw.plugin.designer.model.Transition;
+import com.centurylink.mdw.plugin.designer.model.WorkflowAsset;
+import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
+import com.centurylink.mdw.plugin.designer.model.WorkflowPackage;
+import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
+import com.centurylink.mdw.plugin.project.model.WorkflowProject;
+
+import noNamespace.DropdownT;
+import noNamespace.OptionT;
+import noNamespace.PAGELETDocument;
+import noNamespace.PageletT;
+import noNamespace.TableT;
 
 /**
  * Widget for editing BAM events.
@@ -89,8 +87,7 @@ public class BamEventComposer extends Composer {
 
     public BamEventComposer(Composite parent, int style, int width, boolean readOnly) {
         super(parent, style, width, readOnly);
-        eventDataField = MdwPlugin.getDefault().getPreferenceStore()
-                .getBoolean(PreferenceConstants.PREFS_SHOW_BAM_EVENT_DATA_INPUT_FIELD);
+        eventDataField = false;
         createControls();
     }
 

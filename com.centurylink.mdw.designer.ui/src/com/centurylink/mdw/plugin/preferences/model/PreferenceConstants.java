@@ -22,17 +22,17 @@ import com.centurylink.mdw.plugin.PluginMessages;
  */
 public interface PreferenceConstants {
     // TODO: externalize these URLs
+    public static final String PREFS_DEFAULT_ASSET_DISCOVERY_URL = "https://mdw.useast.appfog.ctl.io/mdw";
+    public static final String PREFS_DEFAULT_PROJECT_DISCOVERY_URL = "http://lxdenvmtc143.dev.qintra.com:7021/Discovery";
     public static final String PREFS_DEFAULT_MDW_RELEASES_URL = "http://lxdenvmtc143.dev.qintra.com:7021/maven/repository";
     public static final String PREFS_DEFAULT_WORKSPACE_SETUP_URL = "http://lxdenvmtc143.dev.qintra.com:7021/Environment";
-    public static final String PREFS_DEFAULT_DISCOVERY_URL = "http://lxdenvmtc143.dev.qintra.com:7021/Discovery";
-    public static final String PREFS_DEFAULT_DISCOVERY_URL_MDW6 = "https://mdw.useast.appfog.ctl.io/mdw";
 
     public static final String PREFS_DEFAULT_COPYRIGHT_NOTICE = "/**\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n */";
 
     public static final String PREFS_MDW_RELEASES_URL = "MdwPrefsReleasesUrl";
     public static final String PREFS_WORKSPACE_SETUP_URL = "MdwPrefsWorkspaceSetupUrl";
-    public static final String PREFS_DISCOVERY_URL = "MdwPrefsDiscoveryUrl";
-    public static final String PREFS_DISCOVERY_URL_MDW6 = "Mdw6PrefsDiscoveryUrl";
+    public static final String PREFS_ASSET_DISCOVERY_URL = "MdwAssetDiscoveryUrl";
+    public static final String PREFS_PROJECT_DISCOVERY_URL = "MdwProjectDiscoveryUrl";
 
     public static final String PREFS_JDBC_FETCH_SIZE = "JdbcFetchSize";
     public static final String PREFS_DEFAULT_JDBC_FETCH_SIZE = "200";
@@ -42,18 +42,17 @@ public interface PreferenceConstants {
     public static final String PREFS_CURRENT_CODE_FORMATTER = "MdwCurrentCodeFormatter";
 
     public static final String PREFS_ALLOW_ASSETS_WITHOUT_EXTENSIONS = "MdwAllowAssetNamesWithoutExtensions";
-    public static final String PREFS_IN_PLACE_LABEL_EDITING = "MdwInPlaceLabelEditing";
     public static final String PREFS_COMPARE_CONFLICTING_ASSETS = "MdwCompareConflictingAssets";
     public static final String PREFS_ALLOW_DELETE_ARCHIVED_PROCESSES = "AllowDeleteArchivedProcesses";
     public static final String PREFS_DOUBLE_CLICK_OPENS_SUBPROCESSES_AND_SCRIPTS = "DoubleClickOpensSubprocessesAndScripts";
     public static final String PREFS_INFER_SMART_SUBPROC_VERSION_SPEC = "InferSmartSubprocVersionSpec";
-    public static final String PREFS_SHOW_BAM_EVENT_DATA_INPUT_FIELD = "ShowBamEventDataInputField";
     public static final String PREFS_EMBEDDED_EDITOR_FOR_EXCEL = "UseEmbeddedEditorForExcel";
     public static final String PREFS_READONLY_BG_RED = "MdwReadOnlyBackgroundRed";
     public static final String PREFS_READONLY_BG_GREEN = "MdwReadOnlyBackgroundGreen";
     public static final String PREFS_READONLY_BG_BLUE = "MdwReadOnlyBackgroundBlue";
     public static final String PREFS_WEB_BASED_PROCESS_LAUNCH = "MdwWebBasedProcessLaunch";
     public static final String PREFS_WARN_OVERRIDE_ATTRS_NOT_CARRIED_FORWARD = "MdwWarnOverrideAttrsNotCarriedForward";
+    public static final String PREFS_VALIDATE_PROCESS_VERSIONS = "MdwValidateProcessVersions";
 
     // TODO: error reporting via REST service instead of SMTP
     public static final String PREFS_SMTP_HOST = "MdwSmtpHost";

@@ -532,7 +532,7 @@ public class WorkflowProjectManager implements IResourceChangeListener {
     }
 
     public List<WorkflowApplication> discoverWorkflowApps() throws DiscoveryException {
-        String urlBase = MdwPlugin.getSettings().getDiscoveryUrl();
+        String urlBase = MdwPlugin.getSettings().getProjectDiscoveryUrl();
         if (!urlBase.endsWith("/"))
             urlBase += "/";
         String ctxRoot = urlBase.endsWith("Discovery/") ? "" : "MDWWeb/";

@@ -251,8 +251,8 @@ public class DesignerProxy {
                     gitUser = gitRepo.getUser();
                     gitPassword = gitRepo.getPassword();
                 }
-                versionControl.connect(gitRepo.getRepositoryUrl(), gitUser, gitPassword,
-                        project.getProjectDir());
+                versionControl.connect(gitRepo.getRepositoryUrl(), gitUser, gitPassword, project.getProjectDir());
+                versionControl.setValidateVersions(!project.checkRequiredVersion(6) && MdwPlugin.getSettings().isValidateProcessVersions());
                 restfulServer.setVersionControl(versionControl);
                 restfulServer.setRootDirectory(project.getAssetDir());
                 if (project.isRemote()) {
@@ -949,8 +949,9 @@ public class DesignerProxy {
                     persistType = com.centurylink.mdw.dataaccess.ProcessPersister.PersistType.CREATE_JSON;
                 else
                     persistType = com.centurylink.mdw.dataaccess.ProcessPersister.PersistType.NEW_VERSION;
-                Long id = dataAccess.getDesignerDataAccess().savePackage(newPackage.getPackageVO(),
-                        persistType);
+                if (project.checkRequiredVersion(6))
+                    newPackage.getPackageVO().setSchemaVersion(DataAccess.schemaVersion6);
+                Long id = dataAccess.getDesignerDataAccess().savePackage(newPackage.getPackageVO(), persistType);
                 newPackage.getPackageVO().setId(id);
                 // update the process tree
                 newPackage.getProject().addPackage(newPackage);

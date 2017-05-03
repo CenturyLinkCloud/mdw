@@ -35,7 +35,8 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
 
     private Text mdwReleasesUrlTextField;
     private Button includePreviewReleasesCheckbox;
-    private Text discoveryUrlTextField;
+    private Text assetDiscoveryUrlTextField;
+    private Text projectDiscoveryUrlTextField;
     private Text workspaceSetupUrlTextField;
     private Text httpConnectTimeoutText;
     private Text httpReadTimeoutText;
@@ -47,10 +48,19 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
     }
 
     protected Control createContents(Composite parent) {
-        // discovery url
-        createLabel(parent, "Discovery URL:", 1);
-        discoveryUrlTextField = createTextField(parent, 330, 2);
-        discoveryUrlTextField.addModifyListener(new ModifyListener() {
+        // asset discovery url
+        createLabel(parent, "Asset Discovery URL:", 1);
+        assetDiscoveryUrlTextField = createTextField(parent, 330, 2);
+        assetDiscoveryUrlTextField.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                validate();
+            }
+        });
+
+        // project discovery url
+        createLabel(parent, "Project Discovery URL:", 1);
+        projectDiscoveryUrlTextField = createTextField(parent, 330, 2);
+        projectDiscoveryUrlTextField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 validate();
             }
@@ -135,7 +145,8 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
         store.setValue(PREFS_MDW_RELEASES_URL, mdwReleasesUrlTextField.getText().trim());
         store.setValue(PREFS_INCLUDE_PREVIEW_BUILDS, includePreviewReleasesCheckbox.getSelection());
         store.setValue(PREFS_WORKSPACE_SETUP_URL, workspaceSetupUrlTextField.getText().trim());
-        store.setValue(PREFS_DISCOVERY_URL, discoveryUrlTextField.getText().trim());
+        store.setValue(PREFS_ASSET_DISCOVERY_URL, assetDiscoveryUrlTextField.getText().trim());
+        store.setValue(PREFS_PROJECT_DISCOVERY_URL, projectDiscoveryUrlTextField.getText().trim());
         store.setValue(PREFS_HTTP_CONNECT_TIMEOUT_MS,
                 Integer.parseInt(httpConnectTimeoutText.getText()));
         store.setValue(PREFS_HTTP_READ_TIMEOUT_MS, Integer.parseInt(httpReadTimeoutText.getText()));
@@ -149,7 +160,8 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
         mdwReleasesUrlTextField.setText(store.getString(PREFS_MDW_RELEASES_URL));
         includePreviewReleasesCheckbox.setSelection(store.getBoolean(PREFS_INCLUDE_PREVIEW_BUILDS));
         workspaceSetupUrlTextField.setText(store.getString(PREFS_WORKSPACE_SETUP_URL));
-        discoveryUrlTextField.setText(store.getString(PREFS_DISCOVERY_URL));
+        assetDiscoveryUrlTextField.setText(store.getString(PREFS_ASSET_DISCOVERY_URL));
+        projectDiscoveryUrlTextField.setText(store.getString(PREFS_PROJECT_DISCOVERY_URL));
         httpConnectTimeoutText.setText(String.valueOf(store.getInt(PREFS_HTTP_CONNECT_TIMEOUT_MS)));
         httpReadTimeoutText.setText(String.valueOf(store.getInt(PREFS_HTTP_READ_TIMEOUT_MS)));
         smtpHostTextField.setText(store.getString(PREFS_SMTP_HOST));
@@ -158,10 +170,10 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
 
     protected void initializeFromDefaults() {
         IPreferenceStore store = getPreferenceStore();
-
         mdwReleasesUrlTextField.setText(store.getDefaultString(PREFS_MDW_RELEASES_URL));
         workspaceSetupUrlTextField.setText(store.getDefaultString(PREFS_WORKSPACE_SETUP_URL));
-        discoveryUrlTextField.setText(store.getDefaultString(PREFS_DISCOVERY_URL));
+        assetDiscoveryUrlTextField.setText(store.getDefaultString(PREFS_ASSET_DISCOVERY_URL));
+        projectDiscoveryUrlTextField.setText(store.getDefaultString(PREFS_PROJECT_DISCOVERY_URL));
         httpConnectTimeoutText
                 .setText(String.valueOf(store.getDefaultInt(PREFS_HTTP_CONNECT_TIMEOUT_MS)));
         httpReadTimeoutText
@@ -185,8 +197,13 @@ public class UrlsPreferencePage extends PreferencePage implements PreferenceCons
             setValid(false);
             return false;
         }
-        if (!checkString(discoveryUrlTextField.getText().trim())) {
-            setErrorMessage("Invalid Discovery URL.");
+        if (!checkString(assetDiscoveryUrlTextField.getText().trim())) {
+            setErrorMessage("Invalid Asset Discovery URL.");
+            setValid(false);
+            return false;
+        }
+        if (!checkString(projectDiscoveryUrlTextField.getText().trim())) {
+            setErrorMessage("Invalid Project Discovery URL.");
             setValid(false);
             return false;
         }

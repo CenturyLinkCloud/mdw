@@ -198,9 +198,9 @@ public class ImportPackagePage extends WizardPage {
         gd.widthHint = 350;
         gd.horizontalSpan = 2;
         discoveryUrlText.setLayoutData(gd);
-        String discUrl = MdwPlugin.getSettings().getDiscoveryUrl();
-        if (getProject().checkRequiredVersion(6, 0))
-            discUrl = MdwPlugin.getSettings().getDiscoveryUrlMdw6()+"/services/";
+        String discUrl = MdwPlugin.getSettings().getAssetDiscoveryUrl() + "/services/";
+        if (!getProject().checkRequiredVersion(6))
+            discUrl = MdwPlugin.getSettings().getProjectDiscoveryUrl();
         discoveryUrlText.setText(discUrl.endsWith("/") ? discUrl + "Assets" : discUrl + "/assets");
         discoveryUrlText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -222,7 +222,7 @@ public class ImportPackagePage extends WizardPage {
 
         new Label(radioGroup, SWT.NONE);
         Link link = new Link(radioGroup, SWT.SINGLE);
-        link.setText(" Configure <A>Default Discovery base URL</A>");
+        link.setText(" Configure <A>Default Discovery URL</A>");
         link.setLayoutData(new GridData(GridData.END));
         link.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -230,7 +230,7 @@ public class ImportPackagePage extends WizardPage {
                         UrlsPreferencePage.PREF_PAGE_ID, null, null);
                 if (pref != null) {
                     pref.open();
-                    String discUrl = MdwPlugin.getSettings().getDiscoveryUrl();
+                    String discUrl = MdwPlugin.getSettings().getProjectDiscoveryUrl();
                     discoveryUrlText.setText(
                             discUrl.endsWith("/") ? discUrl + "Assets" : discUrl + "/assets");
                 }

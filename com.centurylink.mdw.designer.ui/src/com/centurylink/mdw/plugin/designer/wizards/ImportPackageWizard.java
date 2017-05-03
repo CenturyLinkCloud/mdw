@@ -255,7 +255,7 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                         }
                         java.io.File tempFile = new java.io.File(tempDir + "/pkgDownload_"
                                 + StringHelper.filenameDateToString(new Date()) + ".zip");
-                        String url = MdwPlugin.getSettings().getDiscoveryUrlMdw6()
+                        String url = MdwPlugin.getSettings().getAssetDiscoveryUrl()
                                 + "/asset/packages?packages=" + sb.toString();
                         HttpHelper httpHelper = new HttpHelper(new URL(url));
                         httpHelper

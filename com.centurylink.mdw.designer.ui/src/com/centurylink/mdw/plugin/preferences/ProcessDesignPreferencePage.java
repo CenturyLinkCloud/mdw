@@ -39,12 +39,11 @@ import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
  */
 public class ProcessDesignPreferencePage extends PreferencePage implements PreferenceConstants {
     private Button allowAssetNamesWithoutExtensionsCheckbox;
-    private Button inPlaceLabelEditingCheckbox;
+    private Button validateProcessVersionsCheckbox;
     private Button compareConflictingAssetsCheckbox;
     private Button allowDeleteArchivedProcessesCheckbox;
     private Button doubleClickOpensSubprocsAndScriptsCheckbox;
     private Button inferSmartSubprocVersionSpecCheckbox;
-    private Button showBamEventDataFieldCheckbox;
     private Button warnOverrideAttrsNotCarriedForwardCheckbox;
     private Button embeddedEditorForExcelCheckbox;
     private Button resetArtifactNagButton;
@@ -68,6 +67,10 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
         allowAssetNamesWithoutExtensionsCheckbox = createCheckbox(parent,
                 "Allow Asset Names without Extensions (MDW <= 5.2)", 3);
 
+        // validate process versions
+        validateProcessVersionsCheckbox = createCheckbox(parent,
+                "Validate Process Versions (VCS Assets, MDW < 6.0)", 3);
+
         // double click to open subprocs and scripts
         doubleClickOpensSubprocsAndScriptsCheckbox = createCheckbox(parent,
                 "Double Click Opens Subprocesses and Scripts", 3);
@@ -83,14 +86,6 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
         // internal editor for excel
         embeddedEditorForExcelCheckbox = createCheckbox(parent,
                 "Use Embedded Editor for Excel Spreadsheet Assets", 3);
-
-        // in-place editing
-        inPlaceLabelEditingCheckbox = createCheckbox(parent,
-                "In-Place Label Editing (Requires Process Re-Open)", 3);
-
-        // show the Event Data field on the BAM tab
-        showBamEventDataFieldCheckbox = createCheckbox(parent, "Show BAM Event Data Input Field",
-                3);
 
         // warn when override attributes will not be carried forward
         warnOverrideAttrsNotCarriedForwardCheckbox = createCheckbox(parent,
@@ -186,7 +181,7 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
 
         store.setValue(PREFS_ALLOW_ASSETS_WITHOUT_EXTENSIONS,
                 allowAssetNamesWithoutExtensionsCheckbox.getSelection());
-        store.setValue(PREFS_IN_PLACE_LABEL_EDITING, inPlaceLabelEditingCheckbox.getSelection());
+        store.setValue(PREFS_VALIDATE_PROCESS_VERSIONS, validateProcessVersionsCheckbox.getSelection());
         store.setValue(PREFS_COMPARE_CONFLICTING_ASSETS,
                 compareConflictingAssetsCheckbox.getSelection());
         store.setValue(PREFS_ALLOW_DELETE_ARCHIVED_PROCESSES,
@@ -195,8 +190,6 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
                 doubleClickOpensSubprocsAndScriptsCheckbox.getSelection());
         store.setValue(PREFS_INFER_SMART_SUBPROC_VERSION_SPEC,
                 inferSmartSubprocVersionSpecCheckbox.getSelection());
-        store.setValue(PREFS_SHOW_BAM_EVENT_DATA_INPUT_FIELD,
-                showBamEventDataFieldCheckbox.getSelection());
         store.setValue(PREFS_WARN_OVERRIDE_ATTRS_NOT_CARRIED_FORWARD,
                 warnOverrideAttrsNotCarriedForwardCheckbox.getSelection());
         store.setValue(PREFS_EMBEDDED_EDITOR_FOR_EXCEL,
@@ -214,7 +207,7 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
         IPreferenceStore store = getPreferenceStore();
         allowAssetNamesWithoutExtensionsCheckbox
                 .setSelection(store.getBoolean(PREFS_ALLOW_ASSETS_WITHOUT_EXTENSIONS));
-        inPlaceLabelEditingCheckbox.setSelection(store.getBoolean(PREFS_IN_PLACE_LABEL_EDITING));
+        validateProcessVersionsCheckbox.setSelection(store.getBoolean(PREFS_VALIDATE_PROCESS_VERSIONS));
         compareConflictingAssetsCheckbox
                 .setSelection(store.getBoolean(PREFS_COMPARE_CONFLICTING_ASSETS));
         allowDeleteArchivedProcessesCheckbox
@@ -223,8 +216,6 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
                 .setSelection(store.getBoolean(PREFS_DOUBLE_CLICK_OPENS_SUBPROCESSES_AND_SCRIPTS));
         inferSmartSubprocVersionSpecCheckbox
                 .setSelection(store.getBoolean(PREFS_INFER_SMART_SUBPROC_VERSION_SPEC));
-        showBamEventDataFieldCheckbox
-                .setSelection(store.getBoolean(PREFS_SHOW_BAM_EVENT_DATA_INPUT_FIELD));
         warnOverrideAttrsNotCarriedForwardCheckbox
                 .setSelection(store.getBoolean(PREFS_WARN_OVERRIDE_ATTRS_NOT_CARRIED_FORWARD));
         embeddedEditorForExcelCheckbox
@@ -245,8 +236,8 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
 
         allowAssetNamesWithoutExtensionsCheckbox
                 .setSelection(store.getDefaultBoolean(PREFS_ALLOW_ASSETS_WITHOUT_EXTENSIONS));
-        inPlaceLabelEditingCheckbox
-                .setSelection(store.getDefaultBoolean(PREFS_IN_PLACE_LABEL_EDITING));
+        validateProcessVersionsCheckbox
+                .setSelection(store.getDefaultBoolean(PREFS_VALIDATE_PROCESS_VERSIONS));
         compareConflictingAssetsCheckbox
                 .setSelection(store.getDefaultBoolean(PREFS_COMPARE_CONFLICTING_ASSETS));
         allowDeleteArchivedProcessesCheckbox
@@ -255,8 +246,6 @@ public class ProcessDesignPreferencePage extends PreferencePage implements Prefe
                 store.getDefaultBoolean(PREFS_DOUBLE_CLICK_OPENS_SUBPROCESSES_AND_SCRIPTS));
         inferSmartSubprocVersionSpecCheckbox
                 .setSelection(store.getDefaultBoolean(PREFS_INFER_SMART_SUBPROC_VERSION_SPEC));
-        showBamEventDataFieldCheckbox
-                .setSelection(store.getDefaultBoolean(PREFS_SHOW_BAM_EVENT_DATA_INPUT_FIELD));
         warnOverrideAttrsNotCarriedForwardCheckbox.setSelection(
                 store.getDefaultBoolean(PREFS_WARN_OVERRIDE_ATTRS_NOT_CARRIED_FORWARD));
         embeddedEditorForExcelCheckbox

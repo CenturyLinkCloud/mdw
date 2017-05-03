@@ -69,24 +69,20 @@ public class MdwSettings implements PreferenceConstants {
         workspaceSetupUrl = s;
     }
 
-    private String discoveryUrl;
-
-    public String getDiscoveryUrl() {
-        return discoveryUrl;
+    private String assetDiscoveryUrl;
+    public String getAssetDiscoveryUrl() {
+        return assetDiscoveryUrl;
+    }
+    public void setAssetDiscoveryUrl(String s) {
+        assetDiscoveryUrl = s;
     }
 
-    public void setDiscoveryUrl(String s) {
-        discoveryUrl = s;
+    private String projectDiscoveryUrl;
+    public String getProjectDiscoveryUrl() {
+        return projectDiscoveryUrl;
     }
-
-    private String discoveryUrlMdw6;
-
-    public String getDiscoveryUrlMdw6() {
-        return discoveryUrlMdw6;
-    }
-
-    public void setDiscoveryUrlMdw6(String s) {
-        discoveryUrlMdw6 = s;
+    public void setProjectDiscoveryUrl(String s) {
+        projectDiscoveryUrl = s;
     }
 
     private int httpConnectTimeout;
@@ -149,16 +145,6 @@ public class MdwSettings implements PreferenceConstants {
         copyrightNotice = s;
     }
 
-    private boolean inPlaceLabelEditing;
-
-    public boolean isInPlaceLabelEditing() {
-        return inPlaceLabelEditing;
-    }
-
-    public void setInPlaceLabelEditing(boolean b) {
-        inPlaceLabelEditing = b;
-    }
-
     private boolean compareConflictingAssetsDuringImport;
 
     public boolean isCompareConflictingAssetsDuringImport() {
@@ -187,6 +173,16 @@ public class MdwSettings implements PreferenceConstants {
 
     public void setAllowAssetNamesWithoutExtensions(boolean b) {
         allowAssetNamesWithoutExtensions = b;
+    }
+
+    private boolean validateProcessVersions;
+
+    public boolean isValidateProcessVersions() {
+        return validateProcessVersions;
+    }
+
+    public void setValidateProcessVersions(boolean b) {
+        this.validateProcessVersions = b;
     }
 
     private boolean useEmbeddedEditorForExcelAssets;
@@ -362,12 +358,12 @@ public class MdwSettings implements PreferenceConstants {
         setWorkspaceSetupUrl(store.getString(PREFS_WORKSPACE_SETUP_URL));
         if (getWorkspaceSetupUrl().length() == 0)
             setWorkspaceSetupUrl(store.getDefaultString(PREFS_WORKSPACE_SETUP_URL));
-        setDiscoveryUrl(store.getString(PREFS_DISCOVERY_URL));
-        if (getDiscoveryUrl().length() == 0)
-            setDiscoveryUrl(store.getDefaultString(PREFS_DISCOVERY_URL));
-        setDiscoveryUrlMdw6(store.getString(PREFS_DISCOVERY_URL_MDW6));
-        if (getDiscoveryUrlMdw6().length() == 0)
-            setDiscoveryUrlMdw6(store.getDefaultString(PREFS_DEFAULT_DISCOVERY_URL_MDW6));
+        setAssetDiscoveryUrl(store.getString(PREFS_ASSET_DISCOVERY_URL));
+        if (getAssetDiscoveryUrl().length() == 0)
+            setAssetDiscoveryUrl(store.getDefaultString(PREFS_DEFAULT_ASSET_DISCOVERY_URL));
+        setProjectDiscoveryUrl(store.getString(PREFS_PROJECT_DISCOVERY_URL));
+        if (getProjectDiscoveryUrl().length() == 0)
+            setProjectDiscoveryUrl(store.getDefaultString(PREFS_PROJECT_DISCOVERY_URL));
         setIncludePreviewBuilds(store.getBoolean(PREFS_INCLUDE_PREVIEW_BUILDS));
         setJdbcFetchSize(store.getInt(PREFS_JDBC_FETCH_SIZE));
         if (getJdbcFetchSize() == 0)
@@ -375,11 +371,10 @@ public class MdwSettings implements PreferenceConstants {
         setCopyrightNotice(store.getString(PREFS_COPYRIGHT_NOTICE));
         if (getCopyrightNotice().length() == 0)
             setCopyrightNotice(store.getDefaultString(PREFS_COPYRIGHT_NOTICE));
-        setInPlaceLabelEditing(store.getBoolean(PREFS_IN_PLACE_LABEL_EDITING));
         setCompareConflictingAssetsDuringImport(store.getBoolean(PREFS_COMPARE_CONFLICTING_ASSETS));
         setAllowDeleteArchivedProcesses(store.getBoolean(PREFS_ALLOW_DELETE_ARCHIVED_PROCESSES));
-        setAllowAssetNamesWithoutExtensions(
-                store.getBoolean(PREFS_ALLOW_ASSETS_WITHOUT_EXTENSIONS));
+        setAllowAssetNamesWithoutExtensions(store.getBoolean(PREFS_ALLOW_ASSETS_WITHOUT_EXTENSIONS));
+        setValidateProcessVersions(store.getBoolean(PREFS_VALIDATE_PROCESS_VERSIONS));
         setUseEmbeddedEditorForExcelAssets(store.getBoolean(PREFS_EMBEDDED_EDITOR_FOR_EXCEL));
         setDoubleClickOpensSubprocessesAndScripts(
                 store.getBoolean(PREFS_DOUBLE_CLICK_OPENS_SUBPROCESSES_AND_SCRIPTS));
@@ -416,7 +411,8 @@ public class MdwSettings implements PreferenceConstants {
     public boolean isComplete() {
         return getMdwReleasesUrl() != null && getMdwReleasesUrl().length() > 0
                 && getWorkspaceSetupUrl() != null && getWorkspaceSetupUrl().length() > 0
-                && getDiscoveryUrl() != null && getDiscoveryUrl().length() > 0
+                && getAssetDiscoveryUrl() != null && getAssetDiscoveryUrl().length() > 0
+                && getProjectDiscoveryUrl() != null && getProjectDiscoveryUrl().length() > 0
                 && getSmtpHost() != null && getSmtpHost().length() > 0 && getSmtpPort() > 0;
     }
 
@@ -424,8 +420,8 @@ public class MdwSettings implements PreferenceConstants {
         IPreferenceStore store = MdwPlugin.getDefault().getPreferenceStore();
         store.setDefault(PREFS_MDW_RELEASES_URL, PREFS_DEFAULT_MDW_RELEASES_URL);
         store.setDefault(PREFS_WORKSPACE_SETUP_URL, PREFS_DEFAULT_WORKSPACE_SETUP_URL);
-        store.setDefault(PREFS_DISCOVERY_URL, PREFS_DEFAULT_DISCOVERY_URL);
-        store.setDefault(PREFS_DISCOVERY_URL_MDW6, PREFS_DEFAULT_DISCOVERY_URL_MDW6);
+        store.setDefault(PREFS_ASSET_DISCOVERY_URL, PREFS_DEFAULT_ASSET_DISCOVERY_URL);
+        store.setDefault(PREFS_PROJECT_DISCOVERY_URL, PREFS_DEFAULT_PROJECT_DISCOVERY_URL);
         store.setDefault(PREFS_HTTP_CONNECT_TIMEOUT_MS, Server.DEFAULT_CONNECT_TIMEOUT);
         store.setDefault(PREFS_HTTP_READ_TIMEOUT_MS, Server.DEFAULT_READ_TIMEOUT);
         store.setDefault(PREFS_JDBC_FETCH_SIZE, PREFS_DEFAULT_JDBC_FETCH_SIZE);
