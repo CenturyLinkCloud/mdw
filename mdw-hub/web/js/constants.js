@@ -36,7 +36,11 @@ constantsMod.constant('DOCUMENT_TYPES', {
   'org.apache.camel.component.cxf.CxfPayload': 'xml',
   'com.centurylink.mdw.common.service.Jsonable': 'json',
   'org.yaml.snakeyaml.Yaml': 'yaml',
-  'java.lang.Exception': 'json'
+  'java.lang.Exception': 'json',
+  'java.util.List<Integer>': 'json',
+  'java.util.List<Long>': 'json',
+  'java.util.List<String>': 'json',
+  'java.util.Map<String,String>': 'json'
 });
 
 constantsMod.constant('WORKFLOW_STATUSES', [

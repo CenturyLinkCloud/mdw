@@ -705,6 +705,7 @@
 }
 .mdw-dirty {
   font-weight: bolder;
+  color: #d32f2f;
 }
 .mdw-item-heading {
   font-weight: bold;

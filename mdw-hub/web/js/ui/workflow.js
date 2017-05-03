@@ -60,7 +60,7 @@ workflowMod.controller('MdwWorkflowController',
     if (processVersion)
       workflowUrl += '/v' + processVersion;
     if ($scope.editable)
-      workflowUrl += '?forUpdate=true';
+      workflowUrl += '?forUpdate=true'; // TODO: honor forUpdate
     $http({ method: 'GET', url: workflowUrl })
       .then(function success(response) {
         $scope.process = response.data;

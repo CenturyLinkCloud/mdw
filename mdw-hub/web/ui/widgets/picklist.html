@@ -10,12 +10,12 @@
   </div>
   <div class="mdw-widget-picklist-btns">
     <div style="margin-bottom:5px;">
-      <button ng-disabled="widget.readonly" ng-click="widget.add()">
+      <button ng-disabled="widget.readonly" ng-click="valueChanged(widget, 'add')">
         <span class="glyphicon glyphicon-chevron-right"></span>
       </button>
     </div>
     <div>
-      <button ng-disabled="widget.readonly" ng-click="widget.remove()">
+      <button ng-disabled="widget.readonly" ng-click="valueChanged(widget, 'remove')">
         <span class="glyphicon glyphicon-chevron-left"></span>
       </button>
     </div>

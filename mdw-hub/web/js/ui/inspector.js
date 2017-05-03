@@ -418,9 +418,9 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
     $scope.configurator.edit(widget);
   };
   
-  $scope.valueChanged = function(widget) {
-    $scope.configurator.valueChanged(widget);
-    $scope.onChange($scope.process);
+  $scope.valueChanged = function(widget, evt) {
+    if ($scope.configurator.valueChanged(widget, evt))
+      $scope.onChange($scope.process);
   };  
 }]);
 

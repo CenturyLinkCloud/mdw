@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.services.workflow;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -721,6 +720,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(process.getRawFile().getAbsolutePath()));
                 process = new Process(new JSONObject(new String(bytes)));
+                process.setName(processName.substring(lastSlash + 1));
+                process.setPackageName(processName.substring(0, lastSlash));
             }
             catch (Exception ex) {
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error reading process: " + process.getRawFile());

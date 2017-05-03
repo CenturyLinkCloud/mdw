@@ -76,26 +76,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       else if (widget.type === 'picklist') {
         if (widget.value)
           widget.value = Compatibility.getArray(widget.value);
-        widget.unselected = [];
-        for (let j = 0; j < widget.options.length; j++) {
-          let option = widget.options[j];
-          if (widget.value.indexOf(option) == -1)
-            widget.unselected.push(option);
-        }
-//        widget.add = function() {
-//          console.log('adding...');
-//        };
-//        widget.remove = function() {
-//          widget.sel.forEach(function(sel)) {
-//            widget.unselected.push(sel);
-//          };
-//          var newVal = [];
-//          widget.value.forEach(function(val)) {
-//            if (widget.sel.indexOf(val) == -1)
-//              newVal.push(val);
-//          };
-//          widget.value = newVal;
-//        };
+        this.setUnselected(widget);
       }
       
       // width && height
@@ -138,7 +119,22 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
   Configurator.prototype.getWorkgroups = function() {
     return Workgroups.groupList;
   };
-    
+  
+  // init the unselected options base on value
+  Configurator.prototype.setUnselected = function(widget) {
+    if (!widget.value) {
+      widget.unselected = widget.options.slice();
+    }
+    else {
+      widget.unselected = [];
+      for (let i = 0; i < widget.options.length; i++) {
+        let option = widget.options[i];
+        if (!widget.value || widget.value.indexOf(option) == -1)
+          widget.unselected.push(option);
+      }
+    }
+  };
+  
   Configurator.prototype.initAssetOptions = function(widget) {
     widget.options = [];
     var selectAsset;
@@ -209,7 +205,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
   Configurator.prototype.edit = function(widget) {
   };
   
-  Configurator.prototype.valueChanged = function(widget) {
+  Configurator.prototype.valueChanged = function(widget, evt) {
     if (this.template.category === 'object') {
       this.workflowObj[widget.name] = widget.value;
     }
@@ -219,12 +215,41 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       else
         this.workflowObj.attributes[widget.name] = widget.value;
     }
-    else {
-      if (widget.type === 'asset')
+    else if (widget.type === 'asset') {
         this.setAssetValue(widget);
-      else
-        this.workflowObj.attributes[widget.name] = widget.value;
     }
+    else if (widget.type === 'picklist') {
+      
+      if (evt === 'add' && widget.unsel) {
+        if (!widget.value)
+          widget.value = [];
+        widget.unsel.forEach(function(unsel) {
+          widget.value.push(unsel);
+        });
+        this.setUnselected(widget);
+        widget.unsel = widget.sel = null;
+        this.valueChanged(widget);
+      }
+      else if (evt === 'remove' && widget.sel) {
+        let newVal = [];
+        widget.value.forEach(function(val) {
+          if (widget.sel.indexOf(val) == -1)
+            newVal.push(val);
+        });
+        widget.value = newVal;
+        this.setUnselected(widget);
+        widget.sel = widget.unsel = null;
+        this.valueChanged(widget);
+      }
+      else {
+        return false;
+      }
+      this.workflowObj.attributes[widget.name] = widget.value ? JSON.stringify(widget.value) : widget.value;
+    }
+    else {
+      this.workflowObj.attributes[widget.name] = widget.value;
+    }
+    return true;
   };
   
   Configurator.prototype.setAssetValue = function(widget) {
