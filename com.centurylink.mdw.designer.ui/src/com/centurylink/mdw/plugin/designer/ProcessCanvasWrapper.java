@@ -1146,6 +1146,24 @@ public class ProcessCanvasWrapper extends DesignerPanelWrapper implements AWTEve
                     refresh();
                 }
             });
+
+            // open in hub
+            if (getProject().checkRequiredVersion(6)) {
+                MenuItem hubItem = new MenuItem(popupMenu, SWT.PUSH);
+                hubItem.setText("Open in MDWHub");
+                ImageDescriptor hubImageDesc = MdwPlugin.getImageDescriptor("icons/webtools.gif");
+                hubItem.setImage(hubImageDesc.createImage());
+                hubItem.addSelectionListener(new SelectionAdapter() {
+                    public void widgetSelected(SelectionEvent e) {
+                        String resourcePath;
+                        if (isInstance())
+                            resourcePath = "#/workflow/processes/" + getProcess().getProcessInstance().getId();
+                        else
+                            resourcePath = "#/workflow/definitions/" + getProcess().getPackage().getName() + "/" + getProcess().getName();
+                        WebLaunchActions.getLaunchAction(getProject(), WebApp.MdwHub).launch(getProject(), resourcePath);
+                    }
+                });
+            }
         }
 
         // process definition and open calling process instance
