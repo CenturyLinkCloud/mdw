@@ -344,6 +344,7 @@ public class CloudClassLoader extends ClassLoader {
         Vector<URL> resUrls = null;
 
         if (assetRoot != null) {
+            String sep = File.separator.equals("/") ? "" : "/";
             for (Asset jarAsset : getJarAssets()) {
                 File jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
                 try {
@@ -351,7 +352,7 @@ public class CloudClassLoader extends ClassLoader {
                     if (b != null) {
                         if (resUrls == null)
                             resUrls = new Vector<>();
-                        resUrls.addElement(new URL("jar:file:/" + jarFile.getAbsolutePath().replace('\\', '/') + "!/" + name));
+                        resUrls.addElement(new URL("jar:file:" + sep + jarFile.getAbsolutePath().replace('\\', '/') + "!/" + name));
                     }
                 }
                 catch (Exception ex) {
