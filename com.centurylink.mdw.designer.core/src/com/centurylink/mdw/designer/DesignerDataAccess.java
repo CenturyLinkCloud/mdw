@@ -194,6 +194,7 @@ public class DesignerDataAccess  {
                     compatDs = DataAccess.isUseCompatibilityDatasource(db) ? current_server.getDatabaseUrl() : null;
             }
             loader = new LoaderPersisterVcs(cuid, current_server.getRootDirectory(), current_server.getVersionControl(), baselineData, compatDs);
+            ((LoaderPersisterVcs)loader).setMdwVersion(DataAccess.currentSchemaVersion/1000);
             persister = (ProcessPersister) loader;
             rtinfo = new RuntimeDataAccessRest((RestfulServer)server);
             userAccessServer = new UserDataAccessRest((RestfulServer)server);
