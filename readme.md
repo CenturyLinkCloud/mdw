@@ -47,8 +47,8 @@
     bower install
    ```
 4. Build the Projects
-   - Window > Show View > Other > Gradle  > Gradle Tasks
-     Select the mdw project and Select Show all Tasks. Expand Other folder in mdw project and double-click the "buildAll" task
+   - Window > Show View > Other > Gradle  > Gradle Tasks.
+   - Select the mdw project and Select Show Refresh Tasks for All Projects icon. Expand mdw project and build and double-click the `build` task.
    - (On Mac): Run `gradle buildAll` from the command-line instead, followed by refreshing all projects in Eclipse.
 
 5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
