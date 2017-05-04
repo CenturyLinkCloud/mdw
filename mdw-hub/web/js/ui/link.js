@@ -194,7 +194,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
           horizontal = !horizontal;
         }
         if (hitX)
-          hit = context.isPointInStroke(hitX, hitY);
+          hit = context.isPointInStroke && context.isPointInStroke(hitX, hitY);
         else
           context.stroke();
       }
@@ -257,7 +257,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     }
     
     if (hitX) {
-      if (context.isPointInStroke(hitX, hitY))
+      if (context.isPointInStroke && context.isPointInStroke(hitX, hitY))
         return true;
     }
     else {
@@ -322,7 +322,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     context.lineTo(Math.round(Math.cos(dl)*p + x), Math.round(Math.sin(dl)*p + y));
     context.lineTo(Math.round(Math.cos(dr)*p + x), Math.round(Math.sin(dr)*p + y));
     if (hitX) {
-      return context.isPointInStroke(hitX, hitY);
+      return context.isPointInStroke && context.isPointInStroke(hitX, hitY);
     }
     else {
       context.fill();
