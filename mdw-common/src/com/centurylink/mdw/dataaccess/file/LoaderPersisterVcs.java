@@ -40,7 +40,6 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.BaselineData;
@@ -52,7 +51,6 @@ import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.ExternalEvent;
-import com.centurylink.mdw.model.monitor.ServiceLevelAgreement;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.variable.VariableType;
@@ -431,12 +429,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                         if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
                             removeObsoleteTaskActivityAttributes(activity);
                         }
-                        else {
-                            // create the task template from activity attributes
-                            TaskTemplate taskVo = getTask(process.getProcessName(), activity);
-                            taskVo.setPackageName(process.getPackageName());
-                            save(taskVo, pkgDir);
-                        }
                     }
                 }
             }
@@ -449,12 +441,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                             if (impl.isManualTask()) {
                                 if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
                                     removeObsoleteTaskActivityAttributes(activity);
-                                }
-                                else {
-                                    // create the task template from activity attributes
-                                    TaskTemplate taskVo = getTask(process.getProcessName(), activity);
-                                    taskVo.setPackageName(process.getPackageName());
-                                    save(taskVo, pkgDir);
                                 }
                             }
                         }
@@ -743,61 +729,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             }
             manualTaskActivity.setAttributes(attributes);
         }
-    }
-
-    protected TaskTemplate getTask(String processName, Activity manualTaskActivity) {
-        TaskTemplate task = new TaskTemplate();
-        String logicalId = manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_LOGICAL_ID);
-        if (StringHelper.isEmpty(logicalId)) {
-            logicalId = processName + ":" + manualTaskActivity.getAttribute(WorkAttributeConstant.LOGICAL_ID);
-            manualTaskActivity.setAttribute(TaskActivity.ATTRIBUTE_TASK_LOGICAL_ID, logicalId);
-        }
-        task.setLogicalId(manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_LOGICAL_ID));
-        task.setTaskName(manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_NAME));
-        task.setTaskCategory(manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_CATEGORY));
-        task.setComment(manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_DESC));
-        // attributes
-        String sla = manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_SLA);
-        String slaUnits = manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_SLA_UNITS);
-        if (StringHelper.isEmpty(slaUnits))
-            slaUnits = "Hours";
-        if (sla != null && sla.trim().length() > 0)
-            task.setAttribute(TaskAttributeConstant.TASK_SLA, String.valueOf(ServiceLevelAgreement.unitsToSeconds(sla, slaUnits)));
-        String alertInterval = manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_ALERT_INTERVAL);
-        int alertSecs;
-        if (alertInterval != null && alertInterval.trim().length() > 0) {
-            String alertIntervalUnits = manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_ALERT_INTERVAL_UNITS);
-            if (StringHelper.isEmpty(alertIntervalUnits))
-                alertIntervalUnits = ServiceLevelAgreement.INTERVAL_MINUTES;
-            alertSecs = ServiceLevelAgreement.unitsToSeconds(alertInterval, alertIntervalUnits);
-            if (alertSecs != 0)
-                task.setAttribute(TaskAttributeConstant.ALERT_INTERVAL, String.valueOf(alertSecs));
-        }
-        task.setAttribute(TaskAttributeConstant.VARIABLES, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_VARIABLES));
-        task.setAttribute(TaskAttributeConstant.GROUPS, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_GROUPS));
-        task.setAttribute(TaskAttributeConstant.INDICES, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_INDICES));
-        task.setAttribute(TaskAttributeConstant.NOTICES, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_NOTICES));
-        task.setAttribute(TaskAttributeConstant.NOTICE_GROUPS, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_NOTICE_GROUPS));
-        task.setAttribute(TaskAttributeConstant.RECIPIENT_EMAILS, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_RECIPIENT_EMAILS));
-        task.setAttribute(TaskAttributeConstant.CC_GROUPS, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_CC_GROUPS));
-        task.setAttribute(TaskAttributeConstant.CC_EMAILS, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_CC_EMAILS));
-        task.setAttribute(TaskAttributeConstant.AUTO_ASSIGN, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_AUTOASSIGN));
-        task.setAttribute(TaskAttributeConstant.AUTO_ASSIGN_RULES, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_AUTO_ASSIGN_RULES));
-        task.setAttribute(TaskAttributeConstant.ROUTING_STRATEGY, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_ROUTING));
-        task.setAttribute(TaskAttributeConstant.ROUTING_RULES, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_ROUTING_RULES));
-        task.setAttribute(TaskAttributeConstant.SUBTASK_STRATEGY, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_SUBTASK_STRATEGY));
-        task.setAttribute(TaskAttributeConstant.SUBTASK_RULES, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_SUBTASK_RULES));
-        task.setAttribute(TaskAttributeConstant.INDEX_PROVIDER, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_INDEX_PROVIDER));
-        task.setAttribute(TaskAttributeConstant.ASSIGNEE_VAR, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_ASSIGNEE_VAR));
-        task.setAttribute(TaskAttributeConstant.FORM_NAME, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_FORM_NAME));
-        task.setAttribute(TaskAttributeConstant.PRIORITY, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_PRIORITY));
-        task.setAttribute(TaskAttributeConstant.PRIORITY_STRATEGY, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_PRIORITIZATION));
-        task.setAttribute(TaskAttributeConstant.PRIORITIZATION_RULES, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_PRIORITIZATION_RULES));
-        task.setAttribute(TaskAttributeConstant.CUSTOM_PAGE, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_CUSTOM_PAGE));
-        task.setAttribute(TaskAttributeConstant.CUSTOM_PAGE_ASSET_VERSION, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_CUSTOM_PAGE_ASSET_VERSION));
-        task.setAttribute(TaskAttributeConstant.RENDERING_ENGINE, manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_RENDERING));
-
-        return task;
     }
 
     // loader api methods
