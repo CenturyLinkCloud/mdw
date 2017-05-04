@@ -14,15 +14,6 @@
 - Create a public mdw-demo repository on GitHub [\#7](https://github.com/CenturyLinkCloud/mdw/issues/7)
 - Zero-db Designer access for mdw6 [\#4](https://github.com/CenturyLinkCloud/mdw/issues/4)
 - Camel support in mdw6 [\#2](https://github.com/CenturyLinkCloud/mdw/issues/2)
-
-**Closed issues:**
-
-- Process version discrepancies [\#49](https://github.com/CenturyLinkCloud/mdw/issues/49)
-- Tag build in Git from Jenkins [\#29](https://github.com/CenturyLinkCloud/mdw/issues/29)
-
-## [release/6.0.03-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/release/6.0.03-SNAPSHOT) (2017-04-28)
-**Implemented enhancements:**
-
 - Distributable hub-ui Angular module for embedable workflow view [\#72](https://github.com/CenturyLinkCloud/mdw/issues/72)
 - Rename GitHub repository to mdw \(lowercase\). [\#68](https://github.com/CenturyLinkCloud/mdw/issues/68)
 - ExternalEventHandler File Naming [\#61](https://github.com/CenturyLinkCloud/mdw/issues/61)
@@ -42,6 +33,8 @@
 
 **Closed issues:**
 
+- Process version discrepancies [\#49](https://github.com/CenturyLinkCloud/mdw/issues/49)
+- Tag build in Git from Jenkins [\#29](https://github.com/CenturyLinkCloud/mdw/issues/29)
 - Testing if outside user can create issues here [\#81](https://github.com/CenturyLinkCloud/mdw/issues/81)
 - Add workgroups and roles to a user with previous end-dated rows [\#77](https://github.com/CenturyLinkCloud/mdw/issues/77)
 - MDW Hub Process UI view does not show correct color on waiting activity of a completed process [\#74](https://github.com/CenturyLinkCloud/mdw/issues/74)
