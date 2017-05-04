@@ -44,10 +44,9 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
           widget.options = this.getVariableNames(true);
         else if (widget.source === 'UserGroup')
           widget.options = this.getWorkgroups();
-        else if (widget.type === 'asset')
-          this.initAssetOptions(widget);
+        // asset options are handled after setting value
         
-        // TODO: parameterized, UserGroup, TaskCategory
+        // TODO: parameterized, TaskCategory
       }
       
       // value
@@ -62,10 +61,13 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       }
       else {
         widget.value = this.workflowObj.attributes[widget.name];
+        if (widget.type === 'asset')
+          this.initAssetOptions(widget);
       }
       if (!widget.value && widget.default)
         widget.value = widget.default;
 
+      // value handling for some widget types
       if (widget.type === 'checkbox' && widget.value) {
         widget.value = widget.value.toLowerCase();
       }

@@ -56,7 +56,6 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
               y >= this.y && y <= this.y + this.h;
           if (!hov) {
             var context = subflow.diagram.context;
-            var previousLineWidth = context.lineWidth;
             context.lineWidth = Subflow.HIT_WIDTH;
             var display = this.subflow.display; 
             var r = DC.BOX_ROUNDING_RADIUS;
@@ -72,7 +71,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
             context.quadraticCurveTo(display.x, display.y, display.x + r, display.y);
             context.closePath();
             hov = context.isPointInStroke(x, y);
-            context.lineWidth = previousLineWidth;
+            context.lineWidth = DC.DEFAULT_LINE_WIDTH;
           }
           return hov;
         }

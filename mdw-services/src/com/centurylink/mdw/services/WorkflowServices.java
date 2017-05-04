@@ -189,10 +189,4 @@ public interface WorkflowServices {
 
     public ProcessRun runProcess(ProcessRun runRequest) throws ServiceException, JSONException;
 
-    // TODO: The methods below were moved from EventManagerBean and could be redundant.
-    public Process loadProcessDefinition(String procname, int version)
-    throws DataAccessException;
-
-    public Process loadProcessDefinition(Long id)
-    throws DataAccessException;
 }

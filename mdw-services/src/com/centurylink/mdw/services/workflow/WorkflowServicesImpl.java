@@ -46,7 +46,6 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
@@ -1251,48 +1250,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
-    }
-
-
-    // TODO: The methods below were moved from EventManagerBean and could be redundant.
-
-    public Process loadProcessDefinition(String procname, int version)
-    throws DataAccessException {
-        CodeTimer timer = new CodeTimer("getProcessVO()", true);
-        Process processVO = null;
-        try {
-            processVO = DataAccess.getProcessLoader().getProcessBase(procname, version);
-            if (processVO != null) {
-                // all db attributes are override attributes
-                Map<String,String> attributes = getAttributes(OwnerType.PROCESS, processVO.getProcessId());
-                if (attributes != null)
-                    processVO.applyOverrideAttributes(attributes);
-            }
-        } catch (Exception e) {
-            throw new DataAccessException(0, "Cannot load process: " + procname + " v" + version + " (" + e.getMessage() + ")", e);
-        }
-        timer.stopAndLogTiming("");
-        return processVO;
-    }
-
-    public Process loadProcessDefinition(Long id)
-    throws DataAccessException {
-        CodeTimer timer = new CodeTimer("getProcessVO()", true);
-        ProcessLoader loader = DataAccess.getProcessLoader();
-        Process processVO;
-        try {
-            processVO = loader.loadProcess(id, true);
-            if (processVO != null) {
-                // all db attributes are override attributes
-                Map<String,String> attributes = getAttributes(OwnerType.PROCESS, id);
-                if (attributes != null)
-                    processVO.applyOverrideAttributes(attributes);
-            }
-        } catch (Exception e) {
-            throw new DataAccessException(0, "Cannot load process ID: " + id + " (" + e.getMessage() + ")", e);
-        }
-        timer.stopAndLogTiming("");
-        return processVO;
     }
 
 }

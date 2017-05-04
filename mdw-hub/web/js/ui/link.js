@@ -55,22 +55,11 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   Link.ELBOW_VH_THRESHOLD = 60;
   
   Link.prototype.draw = function() {
-    var color = Link.EVENTS[this.transition.event].color;
-    if (this.diagram.instance) {
-      if (this.instances && this.instances.length > 0) {
-        var latest = this.instances[0];
-        if (latest.statusCode == 1)
-          color = Link.INITIATED;
-        else
-          color = Link.TRAVERSED;
-      }
-      else {
-        color = Link.UNTRAVERSED;
-      }
-    }
-      
+    var color = this.getColor();
+        
     this.diagram.context.strokeStyle = color;
     this.diagram.context.fillStyle = color;
+    
     this.drawConnector();
 
     if (this.label) {
@@ -81,6 +70,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     }
 
     this.diagram.context.strokeStyle = DC.DEFAULT_COLOR;    
+    this.diagram.context.fillStyle = DC.DEFAULT_COLOR;
   };
   
   // sets display/label and returns an object with w and h for required size
@@ -157,6 +147,23 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     this.instances = transitionInstances;
   };
   
+  Link.prototype.getColor = function() {
+    var color = Link.EVENTS[this.transition.event].color;
+    if (this.diagram.instance) {
+      if (this.instances && this.instances.length > 0) {
+        var latest = this.instances[0];
+        if (latest.statusCode == 1)
+          color = Link.INITIATED;
+        else
+          color = Link.TRAVERSED;
+      }
+      else {
+        color = Link.UNTRAVERSED;
+      }
+    }
+    return color;
+  };
+  
   // if hitX and hitY are passed, checks for hover instead of stroking
   Link.prototype.drawConnector = function(hitX, hitY) {
     var context = this.diagram.context;
@@ -166,11 +173,18 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     
     var hit = false;
     
-    var previousLineWidth = context.lineWidth;
-    if (hitX)
+    var color = this.getColor();
+    context.strokeStyle = color;
+    context.fillStyle = color;
+    
+    if (hitX) {
       context.lineWidth = Link.LINK_HIT_WIDTH;
-    else
+      context.strokeStyle = DC.TRANSPARENT;
+    }
+    else {
       context.lineWidth = Link.LINK_WIDTH;
+    }
+    
     if (!type || type.startsWith('Elbow')) {
       if (xs.length == 2) {
         hit = this.drawAutoElbowConnector(context, hitX, hitY);
@@ -203,7 +217,9 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     if (!hit)
       hit = this.drawConnectorArrow(context, hitX, hitY);
 
-    context.lineWidth = previousLineWidth;
+    context.lineWidth = DC.DEFAULT_LINE_WIDTH;
+    context.strokeStyle = DC.DEFAULT_COLOR;
+    context.fillStyle = DC.DEFAULT_COLOR;
     
     return hit;
   };
@@ -266,6 +282,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   };
   
   Link.prototype.drawConnectorArrow = function(context, hitX, hitY) {
+    
     var type = this.display.type;
     var xs = this.display.xs;
     var ys = this.display.ys;
@@ -328,7 +345,6 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       context.fill();
       context.stroke();
     }
-    
   };
   
   Link.prototype.getAutoElbowLinkType = function() {

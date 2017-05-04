@@ -21,15 +21,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.provider.CacheService;
-import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.CodeTimer;
 
 /**
  * Lazily loads the Processes for use by the RuntimeEngine.
@@ -201,19 +203,37 @@ public class ProcessCache implements CacheEnabled, CacheService {
         return procdef;
     }
 
-    private Process loadProcess(Long processId) {
+    private Process loadProcess(Long id) {
+        CodeTimer timer = new CodeTimer("ProcessCache.loadProcess()", true);
         try {
-            return ServiceLocator.getWorkflowServices().loadProcessDefinition(processId);
+            Process proc = DataAccess.getProcessLoader().loadProcess(id, true);
+            if (proc != null) {
+                // all db attributes are override attributes
+                Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, id);
+                if (attributes != null)
+                    proc.applyOverrideAttributes(attributes);
+            }
+            return proc;
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             return null;
         }
+        finally {
+            timer.stopAndLogTiming("");
+        }
     }
 
     private Process loadProcess(String name, int version, boolean exceptionWhenNotFound) {
+        CodeTimer timer = new CodeTimer("ProcessCache.loadProcess()", true);
         try {
-            Process proc = ServiceLocator.getWorkflowServices().loadProcessDefinition(name, version);
+            Process proc = DataAccess.getProcessLoader().getProcessBase(name, version);
+            if (proc != null) {
+                // all db attributes are override attributes
+                Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, proc.getProcessId());
+                if (attributes != null)
+                    proc.applyOverrideAttributes(attributes);
+            }
             if (proc == null && exceptionWhenNotFound)
                 throw new Exception("Process not found " + name + (version == 0 ? "" : " v" + version));
             return proc;
@@ -223,5 +243,12 @@ public class ProcessCache implements CacheEnabled, CacheService {
             logger.severeException(ex.getMessage(), ex);
             return null;
         }
+        finally {
+            timer.stopAndLogTiming("");
+        }
+    }
+
+    private WorkflowDataAccess getWorkflowDao() {
+        return new WorkflowDataAccess();
     }
 }
