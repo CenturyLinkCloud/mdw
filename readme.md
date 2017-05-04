@@ -54,13 +54,11 @@
 5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
 
 6. Edit configuration files to suit local environment:
-   - mdw/config/mdw.properties
-   - mdw/config/access.yaml
+   - Edit mdw/config/mdw.properties to suit your environment.
+   - Edit mdw/config/access.yaml to set devUser to yourself.
    - mdw/config/seed_users.json
    - (On Linux or Mac): Copy mdw-common/META-INF/mdw/spring/application-context.xml to mdw/config/spring/application-context.xml, and edit so that ActiveMQ dataDirectory points to a writeable location.
 7. Deploy on Tomcat in Eclipse
-   - Edit mdw/config/mdw.properties to suit your environment.
-   - Edit mdw/config/access.yaml to set devUser to yourself.
    - In Eclipse Servers view, right-click and select New > Server  
      **Important**: Select the Apache > Tomcat 8.0 (MDW) runtime
      and make sure you have a jdk 1.8 installed and added it to your class path.
