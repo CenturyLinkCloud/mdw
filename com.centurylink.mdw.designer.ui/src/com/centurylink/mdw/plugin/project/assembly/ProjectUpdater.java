@@ -125,7 +125,7 @@ public class ProjectUpdater implements IRunnableWithProgress {
 
     /**
      * Update framework jars in the context of another operation.
-     * 
+     *
      * @param monitor
      *            if null, will launch a stand-alone progress dialog
      */
@@ -322,7 +322,7 @@ public class ProjectUpdater implements IRunnableWithProgress {
 
     /**
      * Update webapp jars in the context of another operation.
-     * 
+     *
      * @param monitor
      *            if null, will launch a stand-alone progress dialog
      */
@@ -388,7 +388,7 @@ public class ProjectUpdater implements IRunnableWithProgress {
 
     /**
      * Update the mapping files in the context of another operation.
-     * 
+     *
      * @param monitor
      *            if null, will launch a stand-alone progress dialog
      */
@@ -478,12 +478,19 @@ public class ProjectUpdater implements IRunnableWithProgress {
                 // also handle case where properties are commented out
                 mdwProps = mdwProps.replaceFirst("#?mdw.asset.location=.*", "mdw.asset.location="
                         + workflowProject.getAssetDir().toString().replace('\\', '/'));
-                mdwProps = mdwProps.replaceFirst("#?mdw.git.local.path=.*", "mdw.git.local.path="
-                        + workflowProject.getProjectDir().toString().replace('\\', '/'));
-                if (workflowProject.getMdwVcsRepository().getRepositoryUrl() != null)
-                    mdwProps = mdwProps.replaceFirst("#?mdw.git.remote.url=.*",
-                            "mdw.git.remote.url="
-                                    + workflowProject.getMdwVcsRepository().getRepositoryUrl());
+                if (workflowProject.getMdwVcsRepository().hasRemoteRepository()) {
+                    mdwProps = mdwProps.replaceFirst("#?mdw.git.local.path=.*", "mdw.git.local.path="
+                            + workflowProject.getProjectDir().toString().replace('\\', '/'));
+                    if (workflowProject.getMdwVcsRepository().getRepositoryUrl() != null)
+                        mdwProps = mdwProps.replaceFirst("#?mdw.git.remote.url=.*",
+                                "mdw.git.remote.url="
+                                        + workflowProject.getMdwVcsRepository().getRepositoryUrl());
+                } else
+                {
+                    mdwProps = mdwProps.replaceFirst("mdw.git.local.path=", "# mdw.git.local.path=");
+                    mdwProps = mdwProps.replaceFirst("mdw.git.remote.url=", "# mdw.git.remote.url=");
+                    mdwProps = mdwProps.replaceFirst("mdw.git.branch=", "# mdw.git.branch=");
+                }
             }
             else {
                 mdwProps = mdwProps.replaceFirst("mdw.asset.location=", "# mdw.asset.location=");
@@ -574,7 +581,7 @@ public class ProjectUpdater implements IRunnableWithProgress {
 
     /**
      * Update APP-INF/lib jars from the MDW Release site.
-     * 
+     *
      * @param monitor
      *            if null, will launch a stand-alone progress dialog
      */
@@ -1066,7 +1073,7 @@ public class ProjectUpdater implements IRunnableWithProgress {
 
     /**
      * Update .temp/deploy war from the MDW Release site.
-     * 
+     *
      * @param monitor
      *            if null, will launch a stand-alone progress dialog
      */
