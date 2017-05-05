@@ -8,7 +8,6 @@
 - Distributable hub-ui Angular module for embedable workflow view [\#72](https://github.com/CenturyLinkCloud/mdw/issues/72)
 - Switch mdw-demo to use Gradle instead of Maven [\#48](https://github.com/CenturyLinkCloud/mdw/issues/48)
 - Display process and activity markdown documentation in MDWHub [\#46](https://github.com/CenturyLinkCloud/mdw/issues/46)
-- Provide a Bus example in com.centurylink.mdw.demo.camel [\#45](https://github.com/CenturyLinkCloud/mdw/issues/45)
 - Automated builds for mdw6 [\#41](https://github.com/CenturyLinkCloud/mdw/issues/41)
 - Create OAuth Server Instance in AppFog [\#37](https://github.com/CenturyLinkCloud/mdw/issues/37)
 - Tag build in Git from Jenkins [\#29](https://github.com/CenturyLinkCloud/mdw/issues/29)
@@ -17,12 +16,14 @@
 - Populate statusCode and statusMessage on listener response documents [\#11](https://github.com/CenturyLinkCloud/mdw/issues/11)
 - Save protocol metadata as part of request and response documents [\#10](https://github.com/CenturyLinkCloud/mdw/issues/10)
 - Publicly available discovery site for asset imports [\#5](https://github.com/CenturyLinkCloud/mdw/issues/5)
+- Publish mdw 6.0.x war/jars to Maven Central [\#3](https://github.com/CenturyLinkCloud/mdw/issues/3)
 - Camel support in mdw6 [\#2](https://github.com/CenturyLinkCloud/mdw/issues/2)
 
 **Closed issues:**
 
 - Add workgroups and roles to a user with previous end-dated rows [\#77](https://github.com/CenturyLinkCloud/mdw/issues/77)
 - MDW Hub Process UI view does not show correct color on waiting activity of a completed process [\#74](https://github.com/CenturyLinkCloud/mdw/issues/74)
+- HTTP response status codes on REST requests [\#73](https://github.com/CenturyLinkCloud/mdw/issues/73)
 - Swagger page Try It button is non-functional [\#64](https://github.com/CenturyLinkCloud/mdw/issues/64)
 - mdw-admin caching issue [\#27](https://github.com/CenturyLinkCloud/mdw/issues/27)
 - Add group where existing with null end date [\#23](https://github.com/CenturyLinkCloud/mdw/issues/23)
