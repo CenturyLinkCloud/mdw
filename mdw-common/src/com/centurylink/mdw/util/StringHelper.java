@@ -1350,44 +1350,68 @@ public class StringHelper {
     public static List<String[]> parseTable(String string,
             char field_delimiter, char row_delimiter, int columnCount) {
         List<String[]> table = new ArrayList<String[]>();
-        if (string==null) return table;
-        int row_start = 0;
-        int field_start;
-        int n = string.length();
-        String[] row;
-        int m, j;
-        StringBuffer sb;
-        while (row_start<n) {
-            row = new String[columnCount];
-            table.add(row);
-            j = 0;
-            field_start = row_start;
-            char ch=field_delimiter;
-            while (ch==field_delimiter) {
-                sb = new StringBuffer();
-                boolean escaped = false;
-                for (m=field_start; m<n; m++) {
-                    ch = string.charAt(m);
-                    if (ch=='\\' && !escaped) {
-                        escaped = true;
-                    }
-                    else {
-                        if (!escaped && (ch==field_delimiter || ch==row_delimiter)) {
-                            break;
+        if (string != null) {
+            if (string.startsWith("[")) {
+                List<String[]> rows = new ArrayList<String[]>();
+                try {
+                    JSONArray outer = new JSONArray(string);
+                    for (int i = 0; i < outer.length(); i++) {
+                        String[] row = new String[columnCount];
+                        JSONArray inner = outer.getJSONArray(i);
+                        for (int j = 0; j < row.length; j++) {
+                            if (inner.length() > j)
+                                row[j] = inner.getString(j);
+                            else
+                                row[j] = "";
                         }
-                        else {
-                            sb.append(ch);
-                            escaped = false;
-                        }
+                        rows.add(row);
                     }
+                    return rows;
                 }
-                if (j<columnCount) row[j] = sb.toString();
-                if (m>=n || ch==row_delimiter) {
-                    row_start = m+1;
-                    break;
-                } else {  // ch==field_delimiter
-                    field_start = m+1;
-                    j++;
+                catch (JSONException ex) {
+                    throw new StringParseException(ex.getMessage(), ex);
+                }
+            }
+            else {
+                int row_start = 0;
+                int field_start;
+                int n = string.length();
+                String[] row;
+                int m, j;
+                StringBuffer sb;
+                while (row_start<n) {
+                    row = new String[columnCount];
+                    table.add(row);
+                    j = 0;
+                    field_start = row_start;
+                    char ch=field_delimiter;
+                    while (ch==field_delimiter) {
+                        sb = new StringBuffer();
+                        boolean escaped = false;
+                        for (m=field_start; m<n; m++) {
+                            ch = string.charAt(m);
+                            if (ch=='\\' && !escaped) {
+                                escaped = true;
+                            }
+                            else {
+                                if (!escaped && (ch==field_delimiter || ch==row_delimiter)) {
+                                    break;
+                                }
+                                else {
+                                    sb.append(ch);
+                                    escaped = false;
+                                }
+                            }
+                        }
+                        if (j<columnCount) row[j] = sb.toString();
+                        if (m>=n || ch==row_delimiter) {
+                            row_start = m+1;
+                            break;
+                        } else {  // ch==field_delimiter
+                            field_start = m+1;
+                            j++;
+                        }
+                    }
                 }
             }
         }
