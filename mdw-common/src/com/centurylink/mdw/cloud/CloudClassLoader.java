@@ -348,8 +348,8 @@ public class CloudClassLoader extends ClassLoader {
             for (Asset jarAsset : getJarAssets()) {
                 File jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
                 try {
-                    byte[] b = findInJarFile(jarFile, name);
-                    if (b != null) {
+                    JarFile jf = new JarFile(jarFile);
+                    if (jf.getEntry(name) != null) {
                         if (resUrls == null)
                             resUrls = new Vector<>();
                         resUrls.addElement(new URL("jar:file:" + sep + jarFile.getAbsolutePath().replace('\\', '/') + "!/" + name));
