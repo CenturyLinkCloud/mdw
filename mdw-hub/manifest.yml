@@ -2,7 +2,7 @@ applications:
 - name: mdw
   instances: 1
   host: mdw
-  path: ../mdw/deploy/app/mdw-6.0.03-SNAPSHOT.war
+  path: ../mdw/deploy/app/mdw-6.0.03.war
   buildpack: java_buildpack
 
 env:

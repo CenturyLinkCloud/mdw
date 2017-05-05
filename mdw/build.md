@@ -44,7 +44,7 @@
 13 - Release Notes
   - If you are doing it first time then do following in root of your workspace dir
     gem install github_changelog_generator
-  - github_changelog_generator --exclude-labels designer,internal
+  - github_changelog_generator --exclude-labels designer,internal,wontfix,duplicate
   - commit and push generated CHANGELOG.md to GitHub
 
 14 - TODO: Publish NPM package  
