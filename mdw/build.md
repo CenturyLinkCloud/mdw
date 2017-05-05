@@ -41,5 +41,7 @@
   - Assign any undelivered issues for this build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub.
   
-13 - TODO: Release Notes  
+13 - TODO: Release Notes
+
+14 - TODO: Publish NPM package  
     

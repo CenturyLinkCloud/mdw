@@ -31,10 +31,15 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       var widget = this.template.pagelet.widgets[i];
       
       // label
-      if (!widget.label)
-        widget.label = widget.name;
-      if (widget.label.length > labelWidth)
-        labelWidth = widget.label.length;
+      if (widget.label === 'Bindings') {
+        widget.hideLabel = true;
+      }
+      else {
+        if (!widget.label)
+          widget.label = widget.name;
+        if (widget.label.length > labelWidth)
+          labelWidth = widget.label.length;
+      }
 
       // options source
       if (widget.source) {
@@ -80,6 +85,15 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
           widget.value = Compatibility.getArray(widget.value);
         this.setUnselected(widget);
       }
+      else if (widget.type === 'mapping') {
+        if (widget.value)
+          widget.value = Compatibility.getMap(widget.value);
+        
+        if (widget.source === 'Subprocess')
+          this.initSubprocBindings(widget, this.workflowObj.attributes.processname);
+        else
+          this.initBindings(widget, this.process.variables);
+      }
       
       // width && height
       widget.width = widget.vw;
@@ -95,8 +109,9 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     
     // padding
     this.template.pagelet.widgets.forEach(function(widget) {
-      widget.pad = util.padTrailing('', labelWidth - widget.label.length);
-    });    
+      if (!widget.hideLabel)
+          widget.pad = util.padTrailing('', labelWidth - widget.label.length);
+    });
   };
 
   Configurator.prototype.getTemplate = function() {
@@ -135,6 +150,40 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
           widget.unselected.push(option);
       }
     }
+  };
+  
+  Configurator.prototype.initSubprocBindings = function(widget, subproc) {
+    var spaceV = subproc.lastIndexOf(' v');
+    if (spaceV > 0)
+      subproc = subproc(0, spaceV);
+
+    var configurator = this;
+    $http.get(mdw.roots.services + '/services/Workflow/' + subproc + "?app=mdw-admin").then(function(res) {
+      if (res.data.variables) {
+        configurator.initBindings(widget, res.data.variables, true);
+      }
+    });
+  };
+  
+  // init bindings
+  Configurator.prototype.initBindings = function(widget, vars, includeOuts) {
+    widget.bindingVars = [];
+    util.getProperties(vars).forEach(function(varName) {
+      var variable = vars[varName];
+      if (variable.category === 'INPUT' || variable.category === 'INOUT' || (includeOuts && variable.category === 'OUTPUT')) {
+        variable.name = varName;
+        widget.bindingVars.push(variable);
+      }
+    });
+    widget.bindingVars.sort(function(v1, v2) {
+      if (widget.value) {
+        if (widget.value[v1.name] && !widget.value[v2.name])
+          return -1;
+        else if (widget.value[v2.name] && !widget.value[v1.name])
+          return 1;
+      }
+      return v1.name.localeCompare(v2.name);
+    });
   };
   
   Configurator.prototype.initAssetOptions = function(widget) {
@@ -247,6 +296,16 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
         return false;
       }
       this.workflowObj.attributes[widget.name] = widget.value ? JSON.stringify(widget.value) : widget.value;
+    }
+    else if (widget.type === 'mapping') {
+      if (widget.value) {
+        util.getProperties(widget.value).forEach(function(name) {
+          if (!widget.value[name].trim()) {
+            delete widget.value[name];
+          }
+        });
+        this.workflowObj.attributes[widget.name] = JSON.stringify(widget.value);
+      }
     }
     else {
       this.workflowObj.attributes[widget.name] = widget.value;

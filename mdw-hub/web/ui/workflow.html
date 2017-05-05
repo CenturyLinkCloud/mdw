@@ -79,7 +79,7 @@
         <!-- design section -->
         <div class="mdw-inspector-values" ng-if="editable && !editing">
           <div ng-repeat="widget in configurator.getWidgets()" class="mdw-widget" style="height:{{widget.height}}px;">
-            <div class="mdw-widget-label">
+            <div class="mdw-widget-label" ng-if="!widget.hideLabel">
               {{widget.label}}<span class="mdw-pre">{{widget.pad}}</span>
             </div>
             <div class="mdw-widget-value" ng-include="'ui/widgets/' + widget.type + '.html'">

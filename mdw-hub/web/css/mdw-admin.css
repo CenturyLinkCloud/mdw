@@ -924,6 +924,25 @@
   font-family: monospace;
   margin-bottom: 2px;	
 }
+.mdw-widget-map {
+	display: table;
+	border-spacing: 2px;
+	margin-left: -7px;
+}
+.mdw-widget-map > div {
+	display: table-row;
+}
+.mdw-widget-map > div > div {
+	 display: table-cell;
+	 padding-right: 15px;
+	 padding-bottom: 5px;
+	 padding-left: 5px;
+}
+.mdw-widget-map-lbl {
+  font-family: monospace;
+  margin-bottom: 2px; 
+  font-weight: 600;
+}
 .mdw-editor {
   position: absolute !important;
   top: 80px;

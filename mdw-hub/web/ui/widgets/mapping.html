@@ -1,0 +1,18 @@
+<div class="mdw-widget-map">
+  <div class="mdw-widget-map-lbl">
+    <div ng-if="!widget.source">Input Variable</div>
+    <div ng-if="widget.source">{{widget.source}} Variable</div>
+    <div>Type</div>
+    <div>Mode</div>
+    <div>Binding Expression</div>
+  </div>
+  <div ng-repeat="bindingVar in widget.bindingVars">
+    <div>{{bindingVar.name}}</div>
+    <div>{{bindingVar.type}}</div>
+    <div>{{bindingVar.category}}</div>
+    <div>
+      <input type="text" ng-disabled="widget.readonly" ng-model="widget.value[bindingVar.name]" 
+        ng-change="valueChanged(widget)" style="width:{{widget.width}}px;">
+    </div>
+  </div>
+</div>

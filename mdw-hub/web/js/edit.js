@@ -148,6 +148,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
     function success(response) {
       $scope.message = null;
       $scope.aceDirty = false;
+      $scope.procDirty = false;
       $scope.asset.version = $scope.version.selected;
       var commitMsg = $scope.version.comment;
       if ($scope.options.commitAndPush) {
