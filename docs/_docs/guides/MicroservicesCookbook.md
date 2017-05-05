@@ -60,28 +60,29 @@ A local project is useful if you want to debug your custom Java source code and 
 - For detailed documentation covering the designer, refer to the [MDW Designer User Guide](../../designer/user-guide/)
  
 ##### Launch the Local Project wizard:
-- Right-click inside the blank Process Explorer view and select New > Local Project.  Select the Supported Java Container you'll be deploying in, and the type of [Asset Persistence](../../help/assetPersistence.html)  you'll use.
+- Right-click inside the blank Process Explorer view and select New > Local Project.  Select the Supported Java Container you will be deploying in, and the type of [Asset Persistence](../../help/assetPersistence.html)  you will use.
 
   ![alt text](../images/workflow.png "workflow")
 - When you click Next, you'll be presented with the Tomcat for your local development.  Enter the settings for your environment.  For details about these settings, refer to the 
   server-specific cookbooks listed above under "Supported Java Containers" section.
   
   ![alt text](../images/tomcatSetting.png "tomcatSetting")
-- Click Next again and enter your database connection info.  The password for database is "mdw". 
+- Click Next again and enter your database connection info.  The password for database is `mdw`. 
 
   ![alt text](../images/dbSetting.png "dbSetting")
   
 - Click Finish to generate your local project.
 
 ### The MDW Base Package:
-- When you create design artifacts in MDW, these are organized into workflow packages, which are different from Java packages in that they can contain assets in a wide variety of formats.  Much of the MDW framework's core functionality itself is delivered this way.  The essential assets required by MDW are included in the packages "com.centurylink.mdw.base" and "com.centurylink.mdw.hub".  If you choose the built-in database asset persistence, these base packages will already exist, and you can skip down to Section 2.  Otherwise, if you're using a new database or VCS asset persistence, you'll need to import these packages locally from the MDW repository as follows.
-- Expand your newly-created workflow project in Process Explorer and you'll see that it currently contains no packages.  Right-click on the project and select Import > Package.  Choose the "Discover" option and leave the repository location as the default. `Note: The Asset Discovery URL is yet to be determined. In the meantime, take the default URL.`
+- When you create design artifacts in MDW, these are organized into workflow packages, which are different from Java packages in that they can contain assets in a wide variety of formats.  Much of the MDW framework's core functionality itself is delivered this way.  The essential assets required by MDW are included in the packages `com.centurylink.mdw.base` and `com.centurylink.mdw.hub`.  If you choose the built-in database asset persistence, these base packages will already exist, and you can skip down to Section 2.  Otherwise, if you're using a new database or VCS asset persistence, you'll need to import these packages locally from the MDW repository as follows.
+- Expand your newly-created workflow project in Process Explorer and you will see that it currently contains no packages.  Right-click on the project and select Import > Package.  Choose the `Discover` option and leave the repository location as the default. 
 
   ![alt text](../images/importBasePackages.png "importBasePackages")
 
-- After you click Next it'll take a few moments for Designer to locate the available packages.  Once these are displayed, expand the base, db and hub packages and select the same MDW version as you did when creating the project.
+- After you click Next it will take a few moments for Designer to locate the available packages.  Once these are displayed, put a check mark on base, db and hub packages.
 
   ![alt text](../images/importBasePackages2.png "importBasePackages2")
+  
 - Click Finish, and the packages will be downloaded and become visible in your Process Explorer project tree.
  
 ### Workflow Services
@@ -260,6 +261,7 @@ With MDW REST services you can automatically generate Swagger documentation just
 @Api("CenturyLink orders service")
 public class Orders extends JsonRestService {
 ```
+
 ##### Add @ApiOperation Annotations to Your Methods:
 - The ApiOperation annotation documents the specifics of a service endpoint operation, including any input or output model types.  The ApiImplicitParams annotation is useful for indicating the body content of a POST or PUT requests.  After adding these annotations to Orders.java, the code will look something like this:   
 
@@ -297,11 +299,13 @@ public class Orders extends JsonRestService {
 
 ##### Add Swagger Annotations to the Orders Class:
 - To enable consumers to easily create request content and interpret responses, you can annotate the related model objects so that they're discovered when documentation is generated.  In the Orders dynamic Java class, add the following class-level annotation:
-```swagger
-@ApiModel(value="Order", description="Centurylink Order")
+
+  ```swagger
+@ApiModel(value="Order", description="Centurylink Order")	
 public class Orders extends JsonRestService {
 // Add your logic.
 ```
+
 #### 3. View Generated REST APIs in MDWHub
 MDWHub comes with a UI for displaying your generated Swagger API documentation, along with the standard MDW REST APIs.
  
@@ -318,11 +322,12 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
  
 ##### Add a Sample Request and Response:
 - Sample payloads in MDW are by convention kept in an asset package under the service package whose name ends with "api.samples".  Each sample should be named to indicate its path and purpose, with an underscore separating these two parts.  Create a new MDW package named "MyServices.api.samples" and add a JSON asset named Order_Create.json with the following content:
-```jason
-// POST request to Services/MyServices/Order
-{
-"orderId":"12345678"
-}
+
+  ```jason
+ // POST request to Services/MyServices/Order
+  {
+   "orderId":"12345678"
+  }
 ```
 
 ##### View the Samples in MDWHub:
