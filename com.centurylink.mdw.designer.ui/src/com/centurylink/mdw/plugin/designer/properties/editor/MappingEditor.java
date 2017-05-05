@@ -28,12 +28,15 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import com.centurylink.mdw.plugin.designer.model.Activity;
-import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
-import com.centurylink.mdw.plugin.designer.model.VariableBinding;
 import com.centurylink.mdw.common.utilities.StringHelper;
+import com.centurylink.mdw.common.utilities.StringHelper.StringParseException;
 import com.centurylink.mdw.model.value.variable.VariableVO;
+import com.centurylink.mdw.plugin.designer.model.Activity;
+import com.centurylink.mdw.plugin.designer.model.VariableBinding;
+import com.centurylink.mdw.plugin.designer.model.WorkflowProcess;
 
 public class MappingEditor extends TableEditor {
     public static final String TYPE_MAPPING = "MAPPING";
@@ -174,20 +177,35 @@ public class MappingEditor extends TableEditor {
      * the activity attribute.
      */
     public String serializeMapping(List<VariableBinding> bindings) {
-        StringBuffer sb = new StringBuffer();
-        boolean first = true;
-        for (VariableBinding variableBinding : bindings) {
-            if (first)
-                first = false;
-            else
-                sb.append(getRowDelimiter());
-            sb.append(variableBinding.getVariableVO().getVariableName());
-            sb.append(getColumnDelimiter());
-            sb.append(StringHelper.escapeWithBackslash(
-                    variableBinding.getExpression() == null ? "" : variableBinding.getExpression(),
-                    ";"));
+        if (getProject().checkRequiredVersion(6, 0, 4)) {
+            if (bindings.isEmpty())
+                return "";
+            JSONObject json = new JSONObject();
+            try {
+                for (VariableBinding variableBinding : bindings) {
+                    json.put(variableBinding.getVariableVO().getVariableName(), variableBinding.getExpression());
+                }
+            }
+            catch (JSONException ex) {
+                throw new StringParseException(ex.getMessage(), ex);
+            }
+            return json.toString();
         }
-        return sb.toString();
+        else {
+            StringBuffer sb = new StringBuffer();
+            boolean first = true;
+            for (VariableBinding variableBinding : bindings) {
+                if (first)
+                    first = false;
+                else
+                    sb.append(getRowDelimiter());
+                sb.append(variableBinding.getVariableVO().getVariableName());
+                sb.append(getColumnDelimiter());
+                sb.append(StringHelper.escapeWithBackslash(
+                    variableBinding.getExpression() == null ? "" : variableBinding.getExpression(), ";"));
+            }
+            return sb.toString();
+        }
     }
 
     @SuppressWarnings("rawtypes")

@@ -37,6 +37,7 @@ import java.util.zip.GZIPOutputStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Helper classes for String utilities.
@@ -1199,31 +1200,45 @@ public class StringHelper {
     }
 
     public static String getMapValue(String map, String name, char delimiter) {
-        int name_start=0;
-        int n = map.length();
-        int m = name.length();
-        while (name_start>=0) {
-            name_start = map.indexOf(name, name_start);
-            if (name_start>=0) {
-                if ((name_start==0||map.charAt(name_start-1)==delimiter)
-                    && (name_start+m==n || map.charAt(name_start+m)=='=')) {
-                    int value_start = name_start+m+1;
-                    int k;
-                    char ch;
-                    boolean escaped = false;
-                    for (k=value_start; k<n; k++) {
-                        if (escaped) escaped = false;
-                        else {
-                            ch = map.charAt(k);
-                            if (ch=='\\') escaped = true;
-                            else if (ch==delimiter) break;
-                        }
-                    }
-                    return map.substring(value_start, k);
-                } else name_start += m;
+        if (map.startsWith("{")) {
+            try {
+                JSONObject json = new JSONObject(map);
+                if (json.has(name))
+                    return json.getString(name);
+                else
+                    return null;
+            }
+            catch (JSONException ex) {
+                throw new StringParseException(ex);
             }
         }
-        return null;
+        else {
+            int name_start=0;
+            int n = map.length();
+            int m = name.length();
+            while (name_start>=0) {
+                name_start = map.indexOf(name, name_start);
+                if (name_start>=0) {
+                    if ((name_start==0||map.charAt(name_start-1)==delimiter)
+                        && (name_start+m==n || map.charAt(name_start+m)=='=')) {
+                        int value_start = name_start+m+1;
+                        int k;
+                        char ch;
+                        boolean escaped = false;
+                        for (k=value_start; k<n; k++) {
+                            if (escaped) escaped = false;
+                            else {
+                                ch = map.charAt(k);
+                                if (ch=='\\') escaped = true;
+                                else if (ch==delimiter) break;
+                            }
+                        }
+                        return map.substring(value_start, k);
+                    } else name_start += m;
+                }
+            }
+            return null;
+        }
     }
 
     public static String formatMap(Map<String,String> map) {
@@ -1281,41 +1296,52 @@ public class StringHelper {
 
     public static Map<String,String> parseMap(String map) {
         HashMap<String,String> hash = new LinkedHashMap<String,String>();
-        if (map==null) return hash;
-        int name_start = 0;
-        int n = map.length();
-        int m;
-        while (name_start<n) {
-            m = name_start;
-            char ch = map.charAt(m);
-            while (ch!='=' && ch!=';' && m<n-1) {
-                m++;
-                ch = map.charAt(m);
+        if (map != null) {
+            if (map.startsWith("{")) {
+                try {
+                    return JsonUtil.getMap(new JSONObject(map));
+                }
+                catch (JSONException ex) {
+                    throw new StringParseException(ex);
+                }
             }
-            if (ch=='=') {
-                int value_start = m+1;
-                boolean escaped = false;
-                for (m=value_start; m<n; m++) {
-                    if (escaped) escaped = false;
-                    else {
+            else {
+                int name_start = 0;
+                int n = map.length();
+                int m;
+                while (name_start<n) {
+                    m = name_start;
+                    char ch = map.charAt(m);
+                    while (ch!='=' && ch!=';' && m<n-1) {
+                        m++;
                         ch = map.charAt(m);
-                        if (ch=='\\') escaped = true;
-                        else if (ch==';') break;
+                    }
+                    if (ch=='=') {
+                        int value_start = m+1;
+                        boolean escaped = false;
+                        for (m=value_start; m<n; m++) {
+                            if (escaped) escaped = false;
+                            else {
+                                ch = map.charAt(m);
+                                if (ch=='\\') escaped = true;
+                                else if (ch==';') break;
+                            }
+                        }
+                        hash.put(map.substring(name_start,value_start-1).trim(),
+                                map.substring(value_start, m).trim());
+                        name_start = m+1;
+                    } else if (ch==';') {
+                        if (m>name_start) {
+                            hash.put(map.substring(name_start, m).trim(), null);
+                        }
+                        name_start = m+1;
+                    } else {    // m == n-1
+                        if (m>name_start) {
+                            hash.put(map.substring(name_start, m).trim(), null);
+                        }
+                        name_start = m+1;
                     }
                 }
-                hash.put(map.substring(name_start,value_start-1).trim(),
-                        map.substring(value_start, m).trim());
-                name_start = m+1;
-            } else if (ch==';') {
-                if (m>name_start) {
-                    hash.put(map.substring(name_start, m).trim(), null);
-                }
-                name_start = m+1;
-            } else {    // m == n-1
-                if (m>name_start) {
-                    hash.put(map.substring(name_start, m).trim(), null);
-                }
-                name_start = m+1;
             }
         }
         return hash;
