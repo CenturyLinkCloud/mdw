@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.json.JSONArray;
 
 import com.centurylink.jface.viewers.TreeComboCellEditor;
 import com.centurylink.jface.viewers.TreeComboCellEditor.SelectionModifier;
@@ -885,7 +886,7 @@ public class TableEditor extends PropertyEditor {
     public interface TableModelUpdater {
         /**
          * Creates a new row instance
-         * 
+         *
          * @return the newly-created row object
          */
         public Object create();
@@ -910,27 +911,46 @@ public class TableEditor extends PropertyEditor {
         }
 
         protected String serialize(List tableValue) {
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < tableValue.size(); i++) {
-                if (i > 0)
-                    sb.append(rowDelimiter);
-                DefaultRowImpl row = (DefaultRowImpl) tableValue.get(i);
-                for (int j = 0; j < row.columnValues.length; j++) {
-                    if (row.isPadded()) {
-                        if (j == 0)
-                            continue; // ignore dummy column
-                        if (j > 1)
-                            sb.append(columnDelimiter);
+            if (getProject().checkRequiredVersion(6, 0, 4)) {
+                JSONArray outer = new JSONArray();
+                for (int i = 0; i < tableValue.size(); i++) {
+                    JSONArray inner = new JSONArray();
+                    DefaultRowImpl row = (DefaultRowImpl) tableValue.get(i);
+                    for (int j = 0; j < row.columnValues.length; j++) {
+                        if (row.isPadded()) {
+                            if (j == 0)
+                                continue; // ignore dummy column
+                        }
+                        if (row.columnValues[j] != null)
+                            inner.put(row.columnValues[j]);
                     }
-                    else {
-                        if (j > 0)
-                            sb.append(columnDelimiter);
-                    }
-                    if (row.columnValues[j] != null)
-                        sb.append(StringHelper.escapeWithBackslash(row.columnValues[j], ",;"));
+                    outer.put(inner);
                 }
+                return outer.toString();
             }
-            return sb.toString();
+            else {
+                StringBuffer sb = new StringBuffer();
+                for (int i = 0; i < tableValue.size(); i++) {
+                    if (i > 0)
+                        sb.append(rowDelimiter);
+                    DefaultRowImpl row = (DefaultRowImpl) tableValue.get(i);
+                    for (int j = 0; j < row.columnValues.length; j++) {
+                        if (row.isPadded()) {
+                            if (j == 0)
+                                continue; // ignore dummy column
+                            if (j > 1)
+                                sb.append(columnDelimiter);
+                        }
+                        else {
+                            if (j > 0)
+                                sb.append(columnDelimiter);
+                        }
+                        if (row.columnValues[j] != null)
+                            sb.append(StringHelper.escapeWithBackslash(row.columnValues[j], ",;"));
+                    }
+                }
+                return sb.toString();
+            }
         }
     }
 
