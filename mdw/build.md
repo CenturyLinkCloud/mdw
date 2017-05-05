@@ -41,7 +41,11 @@
   - Assign any undelivered issues for this build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub.
   
-13 - TODO: Release Notes
+13 - Release Notes
+  - If you are doing it first time then do following in root of your workspace dir
+    gem install github_changelog_generator
+  - github_changelog_generator --exclude-labels designer,internal
+  - commit and push generated CHANGELOG.md to GitHub
 
 14 - TODO: Publish NPM package  
     

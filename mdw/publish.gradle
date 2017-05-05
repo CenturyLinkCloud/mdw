@@ -142,7 +142,7 @@ task publishToMavenCentral(type: GradleBuild) {
   }
 
 def createReleaseTag = {
-      def tagName = "release/${mdwVersion}"
+      def tagName = "v${mdwVersion}"
       ("git tag $tagName").execute()
       ("git push origin $tagName").execute()
       return "$tagName"
