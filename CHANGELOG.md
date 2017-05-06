@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased](https://github.com/CenturyLinkCloud/mdw/tree/HEAD)
+## [Released](https://github.com/CenturyLinkCloud/mdw/releases/tag/v6.0.03)
 
 **Implemented enhancements:**
 
