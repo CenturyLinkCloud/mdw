@@ -347,8 +347,7 @@ public class CloudClassLoader extends ClassLoader {
             String sep = File.separator.equals("/") ? "" : "/";
             for (Asset jarAsset : getJarAssets()) {
                 File jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
-                try {
-                    JarFile jf = new JarFile(jarFile);
+                try (JarFile jf = new JarFile(jarFile)) {
                     if (jf.getEntry(name) != null) {
                         if (resUrls == null)
                             resUrls = new Vector<>();
