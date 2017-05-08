@@ -15,6 +15,8 @@
           <div ng-if="request.meta.Protocol">Protocol: <span class="mdw-resource-value">{{request.meta.Protocol}}</span></div>
           <div ng-if="request.meta.RequestURL">URL: <span class="mdw-resource-value">{{request.meta.RequestURL}}</span></div>
           <div ng-if="request.meta.HttpMethod">Method: <span class="mdw-resource-value">{{request.meta.HttpMethod}}</span></div>
+          <div ng-if="request.meta.topic">Topic: <span class="mdw-resource-value">{{request.meta.topic}}</span></div>
+          <div ng-if="request.meta.uri">URI: <span class="mdw-resource-value">{{request.meta.uri}}</span></div>
           <div ng-if="request.meta.ServiceClass">Service Class: <span class="mdw-resource-value">{{request.meta.ServiceClass}}</span></div>
         </div>
         <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="request.metaHeaders | unsafe"></code></pre>
