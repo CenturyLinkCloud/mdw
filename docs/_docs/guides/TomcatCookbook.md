@@ -76,11 +76,11 @@ A local project is useful if you want to debug your custom Java source code and 
   The first step in setting up your workspace is to import these packages locally from the MDW repository.
   
 - Expand your newly-created workflow project in Process Explorer and you'll see that it currently contains no workflow packages.  
-  Right-click on the project and select Import > Package.  Choose the `Discover` option and leave the repository location as the default. `Note: The Asset Discovery URL is yet to be determined. In the meantime, take the default URL.`
+  Right-click on the project and select Import > Package.  Choose the `Discover` option and leave the repository location as the default. 
   
   ![alt text](../images/importBasePackages.png "importBasePackages")
  
-- After you click Next it will take a few moments for Designer to locate the available packages.  Once these are displayed, expand the base, db and hub packages and select the same MDW version as you did when creating the project.
+- After you click Next it will take a few moments for Designer to locate the available packages.   Once these are displayed, put a check mark on base, db and hub packages.
   
   ![alt text](../images/importBasePackages2.png "importBasePackages2")
   

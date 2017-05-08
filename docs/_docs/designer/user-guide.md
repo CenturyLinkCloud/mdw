@@ -7,34 +7,14 @@ title: Designer User Guide
 #### Getting Started with MDW Designer
 - The MDW Designer application comes with an Eclipse plug-in for developers, which requires a setup and that information can be found in the `readme.md` file in any of the following mdw projects hosted on CenturyLink's GitHub site:
      - [MDW Demo](https://github.com/mdw-dev/mdw-demo)
-     - [Full–Blown MDW 6](https://github.com/CenturyLinkCloud/mdw)
+     - [Full-Blown MDW 6](https://github.com/CenturyLinkCloud/mdw)
 
 - In addition to this document, there is a great deal of online help docs and guides that are available via the menu option, HELP on the home page, as well as on Eclipse under Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning, etc. 
 
 - Once you've installed and launched MDW Designer, you will be able to view processes for various projects and environments in the Process Explorer view. 
 - If you have cloned an existing mdw project from the GitHub, you will see the mdw project from the MDW Designer perspective. You can refer to the `How to use MDW Designer` in this document to start exploring the MDW Designer.
  
-- If however, you have not cloned the mdw project from the GitHub, initially the MDW Designer view will be empty until you have imported a project.  The most convenient way to accomplish this is through the mechanism referred to as Discovery, which does not require knowledge of database connection information or server hosts and ports.  To discover a workflow project, go to the menu and select File > Import > MDW Designer Import > Project(s):
-  
-   ![alt text](../images/mdwDesignerWorkflowImport.png "mdwDesignerWorkflowImport")
-  
-- Then click Next and select Discover as the import mechanism:
-   `Note: This image needs to be replaced when mdw6 demo project is available on AppFog.`  
-   ![alt text](../images/mdwDesignerWorkflowImport2.png "mdwDesignerWorkflowImport2")
-
-- Once you have selected a workflow project and clicked Next, you will be presented with a list of available environments.  Your permissions in each 
-  environment will depend on the roles you have been granted by the administrators (as described below in the section entitled Roles and Permissions). Click Finish.
-   `Note: This image needs to be replaced when mdw6 demo project is available on AppFog.`  
-   ![alt text](../images/mdwDesignerWorkflowImport3.png "mdwDesignerWorkflowImport3")
-  
-- The top-level elements in the Process Explorer tree represent the project environments you have imported.  If you expand the tree, you will see some workflow processes and 
-  packages that reside in the database for the environment you selected:
-   `Note: This image needs to be replaced when mdw6 demo project is available on AppFog.`  
-   ![alt text](../images/mdwDesignerWorkflowImport4.png "mdwDesignerWorkflowImport4")
-  
-- You can view a process definition by double-clicking it in the Process Explorer tree:
-  `Note: This image needs to be replaced when mdw6 demo project is available on AppFog.`  
-  ![alt text](../images/mdwDesignerWorkflowImport5.png "mdwDesignerWorkflowImport5")
+- If however, you have not cloned the mdw project from the GitHub, please refer to `Clone mdw-demo project into your workspace` in the mdw-demo/readme.md file and return to this guide to continue.
   
 ####  Roles and Permissions
 - Before you can create or change processes in MDW Designer, you'll need to be added to Users, Workgroups and Roles for your environment.  An administrator can grant you 
@@ -69,7 +49,7 @@ title: Designer User Guide
  
                                            
 #### How to Use MDW Designer
-If you would like to create a new process from scratch,  refer to one of the following cookbooks hosted on CenturyLink's GitHub:  
+If you would like to create a new process from scratch,  refer to one of the following cookbooks hosted in CenturyLink's GitHub repository:  
 - [MicroservicesCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/)
 - [TomcatCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/TomcatCookbook/)
 - [CloudFoundryCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/CloudFoundryCookbook/)
