@@ -1,4 +1,5 @@
-<select ng-disabled="widget.readonly" ng-model="widget.value" ng-change="valueChanged(widget)">
+<select ng-disabled="widget.readonly" ng-model="widget.value" ng-change="valueChanged(widget)"
+  class="mdw-widget-dropdown">
   <option ng-repeat="option in widget.options" value="{{option}}">{{option}}</option>
 </select>
 <a href="{{widget.assetUrl}}" ng-if="widget.value" target="_blank" style="top:0;">Open</a>

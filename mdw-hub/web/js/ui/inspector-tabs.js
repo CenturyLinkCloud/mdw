@@ -65,6 +65,9 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
         Design: {
           '_template': mdw.roots.services + '/services/Implementors/${it.implementor}'
         },
+        Events: {
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}'
+        },
         Attributes: 'attributes',
         Documentation: { 
           '_attribute': { name: 'Documentation', markdown: true },
