@@ -14,18 +14,22 @@ Perform Jenkins Builds (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
  - MDW55 - Build
  - Designer Build
  - Designer Publish (or Designer Preview)
-    
-Commit updateSite files to mdw6/docs/designer/updateSite on GitHub (and remove old ones).    
-(Other plugins required in com.centurylink.mdw.designer.feature/feature.xml should already be present.
- If versions have changed, the newer versions may need to be uploaded (esp. cucumber.eclipse).
+
+Publish to the Update Site on GitHub:
+ - Download the updateSite artifacts from the Jenkins workspace:
+   http://lxdenvmtc143.dev.qintra.com:8181/jenkins/job/Designer%20Build/ws/com.centurylink.mdw.designer.ui/updateSite/
+ - Commit them to mdw6/docs/designer/updateSite on GitHub (and remove any old ones).    
+ - Other plugins required in com.centurylink.mdw.designer.feature/feature.xml should already be present.
+   If versions have changed, the newer versions may need to be uploaded (esp. cucumber.eclipse).
     
 Test updating Eclipse (Mars/Neon) to the new build.
   Update Site URL: http://centurylinkcloud.github.io/mdw/designer/updateSite
 
 (If RCP is to be included in this build)
-Build com.centurylink.mdw.designer.rcp according to the instructions in its build_readme.txt.
+Build com.centurylink.mdw.designer.rcp according to the instructions in its build.md.
 
 Publish Release Notes to the MDW Users mailing list.
+  (TODO: this procedure is changing to host the Release Notes on GitHub Pages)
   View the Git revision history (in workspace dir):
   git log  --name-status --abbrev-commit --after={2017-01-08} com.centurylink.mdw.designer com.centurylink.mdw.designer.core com.centurylink.mdw.designer.ui com.centurylink.mdw.designer.feature com.centurylink.mdw.designer.rcp > notes.txt
   Use this information to produce the release notes email.
