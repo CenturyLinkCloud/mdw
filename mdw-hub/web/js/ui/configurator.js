@@ -187,14 +187,15 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     });
   };
   
-  Configurator.prototype.initTableValues = function(tblWidget) {
+  Configurator.prototype.initTableValues = function(tblWidget, assetOptions) {
     tblWidget.widgetRows = [];
     var assetWidgets = []; // must be uniform source
     if (!tblWidget.value || tblWidget.value.length === 0) {
       tblWidget.value = [];
+      tblWidget.value.push([]);
       tblWidget.widgets.forEach(function(widget) {
         if (tblWidget.source !== 'ProcessVersion')
-          tblWidget.value.push('');
+          tblWidget.value[0].push('');
       });
     }
     for (let i = 0; i < tblWidget.value.length; i++) {
@@ -207,6 +208,10 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
             value: tblWidget.value[i][j],
             parent: tblWidget
           };
+          if (!widget.value && widget.default)
+            rowWidget.value = widget.default;
+          if (widget.readonly)
+            rowWidget.readonly = widget.readonly;
           if (widget.type === 'asset') {
             rowWidget.source = widget.source;
             assetWidgets.push(rowWidget);
@@ -217,10 +222,10 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       tblWidget.widgetRows.push(widgetRow);
     }
     if (assetWidgets.length > 0)
-      this.initAssetOptions(assetWidgets);
+      this.initAssetOptions(assetWidgets, assetOptions);
   };
 
-  Configurator.prototype.initAssetOptions = function(widgets) {
+  Configurator.prototype.initAssetOptions = function(widgets, assetOptions) {
     var selectAssets = [];
     for (let i = 0; i < widgets.length; i++) {
       let widget = widgets[i];
@@ -237,24 +242,39 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       }
       selectAssets.push(selectAsset);
     }
-    $http.get(mdw.roots.services + '/services/Assets?extension=' + widgets[0].source + "&app=mdw-admin").then(function(res) {
-      if (res.data.packages) {
-        res.data.packages.forEach(function(pkg) {
-          pkg.assets.forEach(function(asset) {
-            var base = pkg.name + '/' + asset.name;
-            var option = base + ' v' + asset.version;
-            for (let i = 0; i < widgets.length; i++) {
-              let widget = widgets[i];
-              widget.options.push(option);
-              if (base === selectAssets[i]) {
-                widget.value = option;
-                widget.assetUrl = mdw.roots.hub + '/#/asset/' + base;
-              }
-            }
-          });
-        });
+    if (assetOptions) {
+      for (let i = 0; i < widgets.length; i++) {
+        let widget = widgets[i];
+        widget.options = assetOptions;
+        for (let j = 0; j < widget.options.length; j++) {
+          var assetVer = this.getAssetVersion(widget.options[j]);
+          if (assetVer.asset === selectAssets[i]) {
+            widget.value = widget.options[j];
+            widget.assetUrl = mdw.roots.hub + '/#/asset/' + assetVer.asset;
+          }
+        }
       }
-    });
+    }
+    else {
+      $http.get(mdw.roots.services + '/services/Assets?extension=' + widgets[0].source + "&app=mdw-admin").then(function(res) {
+        if (res.data.packages) {
+          res.data.packages.forEach(function(pkg) {
+            pkg.assets.forEach(function(asset) {
+              var base = pkg.name + '/' + asset.name;
+              var option = base + ' v' + asset.version;
+              for (let i = 0; i < widgets.length; i++) {
+                let widget = widgets[i];
+                widget.options.push(option);
+                if (base === selectAssets[i]) {
+                  widget.value = option;
+                  widget.assetUrl = mdw.roots.hub + '/#/asset/' + base;
+                }
+              }
+            });
+          });
+        }
+      });
+    }
   };
   
   Configurator.prototype.filterWidgets = function() {
@@ -309,6 +329,23 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       else
         this.workflowObj.attributes[widget.name] = widget.value;
     }
+    else if (widget.type === 'table') {
+      // only evts are handled at this level
+      if (evt) {
+        if (evt === 'new') {
+          widget.value.push([]);
+          widget.widgets.forEach(function(w) {
+            widget.value[0].push('');
+          });
+          this.initTableValues(widget, this.getAssetOptions(widget));
+        }
+        else if (evt.startsWith('del_')) {
+          widget.value.splice(parseInt(evt.substring(4)), 1);
+          this.initTableValues(widget, this.getAssetOptions(widget));
+        }
+        this.workflowObj.attributes[widget.name] = JSON.stringify(this.removeEmptyRows(widget.value));        
+      }
+    }
     else if (widget.parent) {
       if (widget.parent.type === 'table') {
         var tblWidget = widget.parent;
@@ -319,10 +356,12 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
             var valueRow = [];
             for (let j = 0; j < widgetRow.length; j++) {
               if (widgetRow[j].source === 'proc') {
-                var assetVersion = this.getAssetVersion(widgetRow[j]);
-                valueRow.push(assetVersion.asset);
-                if (assetVersion.version)
-                  valueRow.push(assetVersion.version);
+                var assetVersion = this.getAssetVersion(widgetRow[j].value, true);
+                if (assetVersion) {
+                  valueRow.push(assetVersion.asset);
+                  if (assetVersion.version)
+                    valueRow.push(assetVersion.version);
+                }
               }
               else {
                 valueRow.push(widgetRow[j].value);  
@@ -331,14 +370,13 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
             tblWidget.value.push(valueRow);
           }
         }
-        this.workflowObj.attributes[tblWidget.name] = JSON.stringify(tblWidget.value);
+        this.workflowObj.attributes[tblWidget.name] = JSON.stringify(this.removeEmptyRows(tblWidget.value));
       }
     }
     else if (widget.type === 'asset') {
         this.setAssetValue(widget);
     }
     else if (widget.type === 'picklist') {
-      
       if (evt === 'add' && widget.unsel) {
         if (!widget.value)
           widget.value = [];
@@ -381,12 +419,26 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     return true;
   };
   
+  // avoid re-retrieving asset select options
+  Configurator.prototype.getAssetOptions = function(widget) {
+    if (widget.type === 'table' && widget.widgetRows) {
+      for (let i = 0; i < widget.widgetRows.length; i++) {
+        var widgetRow = widget.widgetRows[i];
+        for (let j = 0; j < widget.widgetRows[i].length; j++) {
+          var w = widget.widgetRows[i][j];
+          if (w.type === 'asset' && w.options && w.options.length > 0)
+            return w.options;
+        }
+      }
+    }
+  };
+  
   // returns an obj with asset, version props
-  Configurator.prototype.getAssetVersion = function(widget) {
-    if (widget.value) {
-      var asset = widget.value;
+  Configurator.prototype.getAssetVersion = function(value, stripProc) {
+    if (value) {
+      var asset = value;
       var version;
-      var spaceV = widget.value.lastIndexOf(' v');
+      var spaceV = value.lastIndexOf(' v');
       if (spaceV > 0) {
         var minVer = asset.substring(spaceV + 2);
         var dot = minVer.indexOf('.');
@@ -395,7 +447,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
         asset = asset.substring(0, spaceV);
       }
   
-      if (asset.endsWith('.proc'))
+      if (stripProc && asset.endsWith('.proc'))
         asset = asset.substring(0, asset.length - 5);
   
       var assetVersion = { asset: asset};
@@ -406,13 +458,32 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
   };
   
   Configurator.prototype.setAssetValue = function(widget) {
-    var assetVersion = this.getAssetVersion(widget);
+    var assetVersion = this.getAssetVersion(widget.value, true);
     this.workflowObj.attributes[widget.name] = assetVersion.asset;
     if (assetVersion.version) {
       if (widget.name === 'processname')
         this.workflowObj.attributes.processversion = assetVersion.version;
       else
         this.workflowObj.attributes[widget.name + '_assetVersion'] = assetVersion.version;
+    }
+  };
+  
+  Configurator.prototype.removeEmptyRows = function(tableValue) {
+    if (tableValue) {
+      var ret = [];
+      for (let i = 0; i < tableValue.length; i++) {
+        var hasAnyValue = false;
+        for (let j = 0; j < tableValue[i].length; j++) {
+          if (tableValue[i][j]) {
+            hasAnyValue = true;
+            break;
+          }
+        }
+        if (hasAnyValue)
+          ret.push(tableValue[i]);
+      }
+      if (ret.length !== 0)
+        return ret;
     }
   };
   
