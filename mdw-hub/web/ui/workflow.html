@@ -78,17 +78,24 @@
         </div>
         <!-- design section -->
         <div class="mdw-inspector-values" ng-if="editable && !editing">
-          <div ng-repeat="widget in configurator.getWidgets()" class="mdw-widget" style="height:{{widget.height}}px;">
-            <div class="mdw-widget-label" ng-if="!widget.hideLabel">
+          <div ng-repeat="widget in configurator.getWidgets()" 
+            ng-if="widget.type != 'table' && widget.type != 'mapping'" 
+            class="mdw-widget" style="height:{{widget.height}}px;">
+            <div class="mdw-widget-label">
               {{widget.label}}<span class="mdw-pre">{{widget.pad}}</span>
             </div>
             <div class="mdw-widget-value" ng-include="'ui/widgets/' + widget.type + '.html'">
             </div>
           </div>
+          <div ng-repeat="tblWidget in configurator.getWidgets()" 
+            ng-if="tblWidget.type == 'table' || tblWidget.type == 'mapping'" class="mdw-widget">
+            <div class="mdw-widget-value" ng-include="'ui/widgets/' + tblWidget.type + '.html'">
+            </div>
+          </div>
         </div>
         <div class="mdw-inspector-values" ng-if="editing">
           <div mdw-editor="editOptions" ng-model="editing.value" class="mdw-widget-edit"></div>
-        </div>        
+        </div>
       </div>
     </div>
   </div>

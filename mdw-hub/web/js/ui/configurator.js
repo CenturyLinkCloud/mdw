@@ -31,15 +31,10 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       var widget = this.template.pagelet.widgets[i];
       
       // label
-      if (widget.label === 'Bindings') {
-        widget.hideLabel = true;
-      }
-      else {
-        if (!widget.label)
-          widget.label = widget.name;
-        if (widget.label.length > labelWidth)
-          labelWidth = widget.label.length;
-      }
+      if (!widget.label)
+        widget.label = widget.name;
+      if (widget.label.length > labelWidth)
+        labelWidth = widget.label.length;
 
       // options source
       if (widget.source) {
@@ -88,11 +83,15 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       else if (widget.type === 'mapping') {
         if (widget.value)
           widget.value = Compatibility.getMap(widget.value);
-        
         if (widget.source === 'Subprocess')
           this.initSubprocBindings(widget, this.workflowObj.attributes.processname);
         else
           this.initBindings(widget, this.process.variables);
+      }
+      else if (widget.type === 'table') {
+        if (widget.value)
+          widget.value = Compatibility.getTable(widget.value);
+        this.initTableValues(widget);
       }
       
       // width && height
@@ -109,8 +108,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     
     // padding
     this.template.pagelet.widgets.forEach(function(widget) {
-      if (!widget.hideLabel)
-          widget.pad = util.padTrailing('', labelWidth - widget.label.length);
+        widget.pad = util.padTrailing('', labelWidth - widget.label.length);
     });
   };
 
@@ -183,6 +181,15 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
           return 1;
       }
       return v1.name.localeCompare(v2.name);
+    });
+  };
+  
+  Configurator.prototype.initTableValues = function(tblWidget) {
+    for (let i = 0; i < tblWidget.value.length; i++) {
+      var row = tblWidget.value[i];
+    }
+    tblWidget.widgets.forEach(function(widget) {
+      
     });
   };
   
