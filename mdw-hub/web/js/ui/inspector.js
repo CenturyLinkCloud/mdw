@@ -72,7 +72,9 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
     if ($scope.editable) {
       var templateUrl = util.substExpr($scope.activeTab._template, $scope.workflowObject);
       $http.get(templateUrl).then(function(res) {
-        $scope.configurator = new Configurator(tabName, $scope.workflowType, $scope.workflowObject, $scope.diagramObject, res.data);
+        var template = res.data;
+        $scope.configurator = new Configurator(tabName, $scope.workflowType, $scope.workflowObject, $scope.diagramObject, template);
+        $scope.configurator.initValues($scope.edit);
       });
       return;
     }
@@ -409,13 +411,13 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
           $scope.editDirty = false;
         }
         else {
-          $scope.configurator.valueChanged(widget);
+          if ($scope.configurator.valueChanged(widget))
+            $scope.onChange($scope.process);
           $scope.$parent.setDirty($scope.$parent.process);
         }
       },
       basePath: '/mdw/lib/ace-builds/src-min-noconflict'
     };    
-    $scope.configurator.edit(widget);
   };
   
   $scope.valueChanged = function(widget, evt) {

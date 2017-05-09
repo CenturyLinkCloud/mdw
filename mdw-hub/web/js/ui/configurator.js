@@ -12,10 +12,9 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     this.diagramObj = diagramObj;
     this.process = diagramObj.diagram.process;
     this.template = template;
-    this.initValues();
   };
   
-  Configurator.prototype.initValues = function() {
+  Configurator.prototype.initValues = function(editCallback) {
 
     // we need workgroups populated
     if (!Workgroups.groupList)
@@ -96,7 +95,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
         this.initTableValues(widget);
       }
       else if (widget.type === 'editor') {
-        console.log("i'm an editor");
+        editCallback(widget);
       }
       
       // width && height
@@ -323,15 +322,12 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     }
   };
   
-  Configurator.prototype.edit = function(widget) {
-  };
-  
   Configurator.prototype.valueChanged = function(widget, evt) {
     if (this.template.category === 'object') {
       this.workflowObj[widget.name] = widget.value;
     }
     else if (this.template.category === 'attribute') {
-      this.workflowObj[widget.name] = widget.value;
+      this.workflowObj.attributes[widget.name] = widget.value;
     }
     else if (this.template.category === 'process') {
       if (widget.name === '_isService')
@@ -420,6 +416,11 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
             delete widget.value[name];
           }
         });
+        this.workflowObj.attributes[widget.name] = JSON.stringify(widget.value);
+      }
+    }
+    else if (widget.type === 'editor') {
+      if (widget.value) {
         this.workflowObj.attributes[widget.name] = JSON.stringify(widget.value);
       }
     }
