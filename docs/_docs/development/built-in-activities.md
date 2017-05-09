@@ -27,6 +27,7 @@ permalink: /docs/development/built-in-activities/
  - Decision Table
  - Velocity Template
  - Dynamic Java
+ - Crossmap
 
 ### Adapter Activities
  - MDW Web Service
