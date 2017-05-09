@@ -1,6 +1,11 @@
 // publishes build output to a maven repository
 // eg: mdw repo or maven central
 
+plugins {
+    id "org.ajoberstar.grgit" version "1.7.1"
+  }
+
+
 repositories {
     mavenCentral()
 }
@@ -141,16 +146,24 @@ task publishToMavenCentral(type: GradleBuild) {
       tasks = ["uploadArchives"]
   }
 
-def createReleaseTag = {
-      def tagName = "v${mdwVersion}"
-      ("git tag -a $tagName -m \"tagging for release\"").execute()
-      ("git push origin $tagName").execute()
-      return "$tagName"
-  }
-  
- 
-task tagRelease(type: GradleBuild){
-    doLast {
-        println createReleaseTag()
+
+import org.ajoberstar.grgit.*
+
+task tagRelease {
+  description = 'Tags the current head with the project\'s version.'
+  doLast {      
+    grgit.tag.add {
+      name = version
+      message = "Release of v${mdwVersion}"
+      //pointsTo = "b7ec814aa58db0bb61ab19e580ff9259b2a4db1d"
     }
+  }
+}
+
+task pushToOrigin {
+  dependsOn tagRelease
+  description = 'Pushes current branch committed changes to origin repo.'
+  doLast {
+    grgit.push(tags: true)
+  }
 }

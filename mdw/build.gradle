@@ -226,3 +226,10 @@ task tagRelease(type: GradleBuild) {
     tasks = ["tagRelease"]
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
+
+task pushToOrigin(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["pushToOrigin"]
+    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
+}
+
