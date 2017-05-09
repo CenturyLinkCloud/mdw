@@ -52,6 +52,9 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       if (this.template.category === 'object') {
         widget.value = this.workflowObj[widget.name];
       }
+      else if (this.template.category === 'attribute') {
+        widget.value = this.workflowObj.attributes[widget.name];
+      }
       else if (this.template.category === 'process') {
         if (widget.name === '_isService')
           widget.value = this.workflowObj.attributes.PROCESS_VISIBILITY === 'SERVICE' ? 'true' : 'false';
@@ -91,6 +94,9 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
         if (widget.value)
           widget.value = Compatibility.getTable(widget.value);
         this.initTableValues(widget);
+      }
+      else if (widget.type === 'editor') {
+        console.log("i'm an editor");
       }
       
       // width && height
@@ -278,7 +284,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
   };
   
   Configurator.prototype.filterWidgets = function() {
-    if (this.template.category === 'object')
+    if (this.template.category === 'object' || this.template.category === 'attribute')
       return;
     
     var widgets = [];
@@ -286,7 +292,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     this.template.pagelet.widgets.forEach(function(widget) {
       if (!widget.hidden) {
         // TODO unsupported sections: Bindings, CC Recipients 
-        if ((widget.section && tab === widget.section) || ((!widget.section || widget.section == 'Recipients') && tab === 'Design'))
+        if ((widget.section && tab === widget.section) || ((!widget.section || widget.section == 'Recipients') && tab == 'Design'))
           widgets.push(widget);
       }
     });
@@ -297,7 +303,8 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     var helpWidgetIndex = -1;
     for (let i = 0; i < this.template.pagelet.widgets.length; i++) {
       var widget = this.template.pagelet.widgets[i];
-      if (widget.type == 'link' && widget.url && widget.url.startsWith('/MDWWeb/doc')) {
+      if (widget.type == 'link' && widget.url && widget.url.startsWith('/MDWWeb/doc') && 
+          ((!widget.section && this.tab == 'Design') || this.tab === widget.section)) {
         helpWidgetIndex = i;
         break;
       }
@@ -321,6 +328,9 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
   
   Configurator.prototype.valueChanged = function(widget, evt) {
     if (this.template.category === 'object') {
+      this.workflowObj[widget.name] = widget.value;
+    }
+    else if (this.template.category === 'attribute') {
       this.workflowObj[widget.name] = widget.value;
     }
     else if (this.template.category === 'process') {

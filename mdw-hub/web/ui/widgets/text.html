@@ -1,5 +1,5 @@
 <input type="text" ng-if="!widget.multiline" ng-disabled="widget.readonly" 
   ng-model="widget.value" ng-change="valueChanged(widget)" style="width:{{widget.width}}px;">
 <textarea ng-if="widget.multiline" rows="{{widget.rows}}" ng-disabled="widget.readonly" 
-  ng-model="widget.value" ng-change="valueChanged(widget)" style="width:{{widget.width}}px;">
+  ng-model="widget.value" ng-change="valueChanged(widget)" style="width:{{widget.hideLabel ? '100%' : widget.width + 'px'}};">
 </textarea>
