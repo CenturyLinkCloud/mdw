@@ -35,7 +35,7 @@ You can perform many cloud development activities using a remote workflow projec
   
 		Note: on Linux it's required to set the MySQL system variable lower_case_table_names to 1:
 		http://dev.mysql.com/doc/refman/5.0/en/server-system-variables.html#sysvar_lower_case_table_names
-		Run the following scripts in this order. These scripts are found in mdw/database/mysql directory.
+		Run the following scripts in this order. These scripts are found in workflow/assets/.../db/ directory
 		1. create_tables.sql	
 		2. create_indexes.sql
 		3. add_fkeys.sql
