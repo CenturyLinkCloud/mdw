@@ -264,8 +264,11 @@ public class ProjectInflator {
 
         // pom.xml
         JetAccess jet;
-        if (workflowProject.isFilePersist())
-            jet = getJet("cloud/cloud_fs_pom.xmljet", sourceProject, "pom.xml", null);
+        if (workflowProject.isFilePersist()) {
+            String template = workflowProject.checkRequiredVersion(6, 0) ? "cloud/cloud_fs_pom.xmljet"
+                    : "cloud/55/cloud_fs_pom.xmljet";
+            jet = getJet(template, sourceProject, "pom.xml", null);
+        }
         else
             jet = getJet("osgi/remote_pom.xmljet", sourceProject, "pom.xml", null);
         generator.createFile(jet, monitor);
