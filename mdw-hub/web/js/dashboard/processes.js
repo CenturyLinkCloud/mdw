@@ -2,9 +2,10 @@
 
 var dashboardProcsMod = angular.module('dashboardProcesses', ['mdw']);
 
-dashboardProcsMod.controller('DashboardProcessesController', ['$scope', '$http', 'mdw', 'util', 'PROCESS_STATUSES', 
-                                             function($scope, $http, mdw, util, PROCESS_STATUSES) {
+dashboardProcsMod.controller('DashboardProcessesController', ['$scope', '$http', '$routeParams', 'mdw', 'util', 'PROCESS_STATUSES', 
+                                             function($scope, $http, $routeParams, mdw, util, PROCESS_STATUSES) {
   
+	$scope.chartType= "chart chart-"+$routeParams.chart;	
   $scope.processBreakdowns = {
       instanceCounts: '/services/Processes/instanceCounts', // returns selected InstanceCounts
       'Master': {

@@ -26,6 +26,11 @@ processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams',
   // pseudo-status [Active] means non-final
   $scope.allStatuses = ['[Active]'].concat(PROCESS_STATUSES);
   
+  $scope.setSelectedChart=function(selChart){
+	   $scope.selectedChart= selChart;
+	   window.location.href='#/dashboard/processes?chart='+selChart;
+  };
+  
   // preselected procDef
   if ($routeParams.procPkg && $routeParams.proc) {
     $scope.processFilter.master = false;

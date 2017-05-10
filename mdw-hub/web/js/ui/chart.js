@@ -2,14 +2,19 @@
 
 var chartMod = angular.module('mdwChart', ['mdw']);
 
-chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw', 'util', 'EXCEL_DOWNLOAD', 
-                                             function($scope, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
-  $scope.init = function() {
 
-    $scope.spans = ['Week', 'Month'];
+chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw', 'util', 'EXCEL_DOWNLOAD' ,
+                                             function($scope, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
+	
+
+	$scope.init = function() {
+		
+	$scope.spans = ['Week', 'Month'];	
+	
     $scope.span = 'Week';
     $scope.days = 7;
-
+    $scope.hours=24;
+    
     // TODO hardcoded
     $scope.initialSelect = 5;
     
@@ -53,15 +58,45 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
   $scope.chartOptions = {
     legendCallback: function(chart) {
       var text = [];
+      var top;
+      var label;
+      var title;
       text.push('<ul class="mdw-chart-legend">');
-      for (var i = 0; i < chart.data.datasets.length; i++) {
+      if(chart.config.type ==='pie'){
+    	 
+    	   	  for (var i = 0; i < chart.data.labels.length; i++) {
+    		  text.push('  <li>');
+    		  text.push('    <span class="mdw-chart-legend-icon" style="background-color:' + chart.config.options.colors[i] + ';' + 
+    		            'border-color:' + chart.config.options.colors[i] + '"></span>');
+    		  var selLabelValue = chart.data.labels[i];
+    		  top = $scope.getTop(selLabelValue);
+    	        
+    	        if (top) {
+    	          label = $scope.getLabel(top, true);
+    	          title = $scope.getTitle(top);
+    	        }
+    	        if (label) {
+    	          if (title)
+    	            text.push('    <span class="mdw-chart-legend-text" title="' + title + '">' + label + '</span>');
+    	          else
+    	            text.push('    <span class="mdw-chart-legend-text">' + label + '</span>');
+    	        }
+    	        else {
+    	          text.push('    <span class="mdw-chart-legend-text">' + selLabelValue + '</span>');
+    	        }
+    	        text.push('  </li>');
+    	  }
+    	  text.push('</ul>');
+
+          return text.join('\n  ');
+       
+      }
+      for (var j = 0; j < chart.data.datasets.length; j++) {
         text.push('  <li>');
-        text.push('    <span class="mdw-chart-legend-icon" style="background-color:' + chart.data.datasets[i].backgroundColor + ';' + 
-            'border-color:' + chart.data.datasets[i].borderColor + '"></span>');
-        var selFieldValue = chart.data.datasets[i].label;
-        var top = $scope.getTop(selFieldValue);
-        var label;
-        var title;
+        text.push('    <span class="mdw-chart-legend-icon" style="background-color:' + chart.data.datasets[j].backgroundColor + ';' + 
+            'border-color:' + chart.data.datasets[j].borderColor + '"></span>');
+        var selFieldValue = chart.data.datasets[j].label;
+        top = $scope.getTop(selFieldValue);
         if (top) {
           label = $scope.getLabel(top, true);
           title = $scope.getTitle(top);
@@ -223,13 +258,16 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
       $scope.dateObjs = data;
 
       // TODO: handle 'Other'
-      if (breakdown) {
+      var seriesData = [];
+      var seriesTotal = 0;
+      if (breakdown && $scope.chartType ==='chart chart-line') {
         $scope.selected.forEach(function(sel) {
-          $scope.series.push(sel);
-          var seriesData = [];
-          var seriesTotal = 0;
-          $scope.data.push(seriesData);
-          $scope.dates.forEach(function(date) {
+        	$scope.series.push(sel);  	
+          seriesData = [];
+          seriesTotal = 0;
+           $scope.data.push(seriesData); 
+         
+           $scope.dates.forEach(function(date) {
             var ct = 0;
             var dateCounts = $scope.dateObjs[date];
             if (dateCounts) {
@@ -241,17 +279,58 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
                 }
               }
             }
-            seriesData.push(ct);
+             seriesData.push(ct);
+   
           });
           var top = $scope.getTop(sel);
-          if (top)
-            top.seriesTotal = seriesTotal;
-          $scope.total += seriesTotal; // TODO: overall total not used for breakdown
-        });
+          if (top){
+              top.seriesTotal = seriesTotal;
+              $scope.total += seriesTotal; // TODO: overall total not used for breakdown
+             }
+         });
+       }else if (breakdown && $scope.chartType ==='chart chart-pie'){
+    	  // As pie chart has only one dataset. 
+       	  seriesData = [];
+          $scope.labels = $scope.selected;
+       	  $scope.selected.forEach(function(sel) {
+          	  var seriesTotal = 0;
+              $scope.dates.forEach(function(date) {
+              var ct = 0;
+              var dateCounts = $scope.dateObjs[date];
+              if (dateCounts) {
+                for (var k = 0; k < dateCounts.length; k++) {
+                  if (dateCounts[k][$scope.selField] == sel) {
+                    ct = dateCounts[k].count;
+                    seriesTotal += ct; 
+                    break;
+                  }
+                }
+              }
+      
+            });
+            var top = $scope.getTop(sel);
+            if (top){
+                top.seriesTotal = seriesTotal;
+                $scope.total += seriesTotal; // TODO: overall total not used for breakdown
+                $scope.data.push(seriesTotal);
+               }
+           });
       }
       else {
+    	// just one total per date  
+    	  if($scope.chartType ==='chart chart-pie'){
+    		    seriesData = [];
+    	        $scope.dates.forEach(function(date) {
+    	          var ct = 0;
+    	          var dateCounts = $scope.dateObjs[date];
+    	          if (dateCounts && dateCounts[0])
+    	            ct = dateCounts[0].count;
+    	          $scope.data.push(ct);
+    	          $scope.total += ct;
+    	        });
+      	  }else{
         // just one total per date
-        var seriesData = [];
+        seriesData = [];
         $scope.data.push(seriesData);
         $scope.dates.forEach(function(date) {
           var ct = 0;
@@ -263,7 +342,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
         });
         $scope.series.push('Total (' + $scope.total + ')');
       }
-      
+     }
       if ($scope.breakdownConfig.debug) {
         console.log('$scope.labels: ' + $scope.labels);
         console.log('$scope.series: ' + $scope.series);
@@ -387,14 +466,18 @@ chartMod.directive('mdwDashboardChart', function() {
     templateUrl: 'ui/chart.html',
     scope: {
       label: '@mdwChartLabel',
+      chartType: '@mdwChartType',
       breakdownConfig: '=mdwChartBreakdowns',
       listRoute: '@mdwList'
+    	 
     },
     // require: ['label', 'breakdowns'],
     controller: 'MdwChartController',
     controllerAs: 'mdwChart',
+    
     link: function link(scope, elem, attrs, ctrls) {
-      scope.init();
+   
+    scope.init();
     }
   };
 });
@@ -421,3 +504,4 @@ chartMod.directive('selectPop', [function() {
     }
   };
 }]);
+
