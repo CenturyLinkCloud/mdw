@@ -488,7 +488,9 @@ public final class FileHelper {
                     if (outfile.exists() && !overwrite)
                         throw new IOException("Output file already exists: " + outfile);
                     if (entry.isDirectory()) {
-                        if (!outfile.exists() && !outfile.mkdirs())
+                        if (outfile.exists())
+                            deleteRecursive(outfile);
+                        if (!outfile.mkdirs())
                             throw new IOException("Unable to create directory: " + outfile);
                     }
                     else {
