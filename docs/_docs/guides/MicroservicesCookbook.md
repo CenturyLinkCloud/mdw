@@ -4,7 +4,7 @@ title: Microservices Cookbook
 ---
 ### MDW Microservices
 
-This document contains information about creating, exposing and consuming services through a RESTFul Web Service. For a SOAP document-style Web Service, refer to [TomcatCookbook](../TomcatCookbook/).
+This document contains information about creating, exposing and consuming services through a RESTFul WebService. For a SOAP document-style WebService, refer to [TomcatCookbook](../TomcatCookbook/).
 
 ### Prerequisites
  - Eclipse Neon for JavaEE Developers:                                                                                 
