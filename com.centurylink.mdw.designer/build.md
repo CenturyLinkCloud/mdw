@@ -35,7 +35,7 @@ On GitHub:
 
 Release Notes
   - If you are doing it first time then install rubu (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
-  - github_changelog_generator --include-labels designer --exclude-tags-regex [v6.0.*]  --no-pull-request  --output Designer_CHANGELOG.md --future-release v9.1.x
+  - github_changelog_generator --include-labels designer --exclude-tags-regex [v6.0.*] --exclude-labels internal,wontfix,duplicate,documentation --no-pull-request  --output Designer_CHANGELOG.md --future-release v9.1.x
   - commit and push generated Designer_CHANGELOG.md to GitHub 
   - git commit Designer_CHANGELOG.md -m "Designer Release notes"
   - Create the release on GitHub, copy the notes from Designer_CHANGELOG.md

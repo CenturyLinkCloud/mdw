@@ -47,7 +47,7 @@
 13 - Release Notes
   - If you are doing it first time then install rubu (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
     `gem install github_changelog_generator`
-  - github_changelog_generator --exclude-labels designer,internal,wontfix,duplicate --exclude-tags-regex  [v9.*] --no-pull-request --future-release v6.0.03
+  - github_changelog_generator --exclude-labels designer,internal,wontfix,duplicate,documentation --exclude-tags-regex  [v9.*] --no-pull-request --future-release v6.0.03
   - commit and push generated CHANGELOG.md to GitHub 
   - git commit CHANGELOG.md -m "Release notes"
   - Create the release on GitHub, copy the notes from CHANGELOG.md
