@@ -3,8 +3,8 @@
 var workflowMod = angular.module('mdwWorkflow', ['mdw', 'drawingConstants']);
 
 workflowMod.controller('MdwWorkflowController', 
-    ['$scope', '$http', 'mdw', 'util', 'mdwImplementors', 'Diagram', 'Inspector',
-    function($scope, $http, mdw, util, mdwImplementors, Diagram, Inspector) {
+    ['$scope', '$http', 'mdw', 'util', 'mdwImplementors', 'Diagram', 'Inspector', 'Toolbox',
+    function($scope, $http, mdw, util, mdwImplementors, Diagram, Inspector, Toolbox) {
   
   $scope.init = function(canvas) {
     if ($scope.serviceBase.endsWith('/'))
@@ -99,6 +99,8 @@ workflowMod.controller('MdwWorkflowController',
     else {
       $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
       $scope.diagram.draw();
+      if ($scope.editable)
+        $scope.toolbox = new Toolbox($scope.diagram, $scope.implementors, $scope.hubBase);
     }
   };
   

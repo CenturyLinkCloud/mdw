@@ -109,6 +109,11 @@ public class AssetContentServlet extends HttpServlet {
             }
         }
         else {
+            if (path.indexOf('/') == -1) {
+                // must be qualified
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
             AssetInfo asset = new AssetInfo(assetRoot, path);
             boolean gitRemote = "true".equalsIgnoreCase(request.getParameter("gitRemote"));
 

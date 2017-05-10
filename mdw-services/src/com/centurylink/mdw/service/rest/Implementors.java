@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,7 @@ public class Implementors extends JsonRestService {
             String implClassName = getSegment(path, 1);
             if (implClassName == null) {
                 List<ActivityImplementor> impls = workflowServices.getImplementors();
+                Collections.sort(impls);
                 return JsonUtil.getJsonArray(impls).getJson();
             }
             else {

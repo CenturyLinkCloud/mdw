@@ -37,8 +37,9 @@
           </a>            
         </div>
       </div>
-      <div class="mdw-image-container" ng-if="process && asset.view == 'content' && asset.content">
+      <div class="mdw-section" ng-if="process && asset.view == 'content' && asset.content">
         <mdw-workflow process="process" service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}">
+        </mdw-workflow>
       </div>
       <div class="mdw-item-content" ng-if="asset.view == 'content' && (asset.content || asset.isImage)">
         <pre ng-if="!asset.isBinary && !asset.isMarkdown && !process" class="mdw-line-nums">{{asset.lineNums}}</pre>

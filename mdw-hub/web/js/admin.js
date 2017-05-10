@@ -2,10 +2,10 @@
 
 var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ngCookies', 'ui.bootstrap', 'chart.js', 
  'mdwChart', 'mdwActions', 'mdwList', 'mdwEditor', 'mdwValues', 'mdwPanel', 'mdwWorkflow', 'mdwShape', 'mdwStep', 'mdwLink', 
- 'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwInspector', 'mdwInspectorTabs', 'mdwConfigurator', 'mdwCompatibility', 
- 'authUser', 'mdw', 'util', 'mdwUtil', 'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'edit', 'testing', 
- 'tasks', 'task', 'processes', 'activities', 'requests', 'services', 'system', 'solutions', 'message', 'dashboardProcesses', 
- 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
+ 'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwInspector', 'mdwInspectorTabs', 'mdwToolbox', 'mdwConfigurator', 
+ 'mdwCompatibility', 'authUser', 'mdw', 'util', 'mdwUtil', 'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'edit', 
+ 'testing', 'tasks', 'task', 'processes', 'activities', 'requests', 'services', 'system', 'solutions', 'message', 
+ 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
 ]);
 
 adminApp.config(function($httpProvider) {
