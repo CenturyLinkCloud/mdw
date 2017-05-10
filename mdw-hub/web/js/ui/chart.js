@@ -8,13 +8,10 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
 	
 
 	$scope.init = function() {
-		
 	$scope.spans = ['Week', 'Month'];	
-	
-    $scope.span = 'Week';
+	$scope.span = 'Week';
     $scope.days = 7;
-    $scope.hours=24;
-    
+      
     // TODO hardcoded
     $scope.initialSelect = 5;
     
@@ -266,7 +263,6 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
           seriesData = [];
           seriesTotal = 0;
            $scope.data.push(seriesData); 
-         
            $scope.dates.forEach(function(date) {
             var ct = 0;
             var dateCounts = $scope.dateObjs[date];
@@ -317,7 +313,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
            });
       }
       else {
-    	// just one total per date  
+    	// just one total per date (without breakdown) 
     	  if($scope.chartType ==='chart chart-pie'){
     		    seriesData = [];
     	        $scope.dates.forEach(function(date) {
