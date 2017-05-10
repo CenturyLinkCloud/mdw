@@ -34,8 +34,7 @@ On GitHub:
   - Close this build's milestone in GitHub. 
 
 Release Notes
-  - If you are doing it first time then do following in root of your workspace dir
-    `gem install github_changelog_generator`
+  - If you are doing it first time then install rubu (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
   - github_changelog_generator --include-labels designer --exclude-tags-regex [v6.0.*]  --no-pull-request  --output Designer_CHANGELOG.md --future-release v9.1.x
   - commit and push generated Designer_CHANGELOG.md to GitHub 
   - git commit Designer_CHANGELOG.md -m "Designer Release notes"

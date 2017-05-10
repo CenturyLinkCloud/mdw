@@ -45,7 +45,7 @@
   - Close this build's milestone in GitHub.
   
 13 - Release Notes
-  - If you are doing it first time then do following in root of your workspace dir
+  - If you are doing it first time then install rubu (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
     `gem install github_changelog_generator`
   - github_changelog_generator --exclude-labels designer,internal,wontfix,duplicate --exclude-tags-regex  [v9.*] --no-pull-request --future-release v6.0.03
   - commit and push generated CHANGELOG.md to GitHub 
